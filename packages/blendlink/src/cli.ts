@@ -25,11 +25,7 @@ async function main(): Promise<number> {
     }
     case 'sync': {
       const config = await loadConfig(process.cwd())
-      const outcomes = await syncAll(config, {
-        force: flags.has('--force'),
-        only: positional[0],
-      })
-      for (const outcome of outcomes) {
+      const report = (outcome: Awaited<ReturnType<typeof syncAll>>[number]) => {
         const stats = outcome.stats
           ? ` — ${(outcome.stats.bytes / 1024).toFixed(0)}kB, ${outcome.stats.triangles} tris`
           : ''
@@ -37,6 +33,20 @@ async function main(): Promise<number> {
           `${outcome.action === 'exported' ? '✓ synced ' : '· skipped'} ${outcome.scene} in ${(outcome.durationMs / 1000).toFixed(1)}s${stats}`,
         )
         for (const warning of outcome.warnings) console.warn(`  ! ${warning}`)
+      }
+      const outcomes = await syncAll(config, {
+        force: flags.has('--force'),
+        only: positional[0],
+      })
+      outcomes.forEach(report)
+      if (flags.has('--watch')) {
+        const { watchScenes } = await import('./watch.js')
+        await watchScenes(config, (outcome) => {
+          if ('error' in outcome) console.error(`✗ ${outcome.scene}: ${outcome.error}`)
+          else report(outcome)
+        })
+        console.log('watching for .blend saves — ctrl-c to stop')
+        await new Promise(() => {}) // stay alive until interrupted
       }
       return 0
     }
