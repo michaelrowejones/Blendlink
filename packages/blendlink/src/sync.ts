@@ -38,6 +38,16 @@ export async function syncScene(
   options: { force?: boolean } = {},
 ): Promise<SyncOutcome> {
   const started = Date.now()
+  if (scene.external) {
+    return {
+      scene: scene.name,
+      action: 'skipped',
+      durationMs: 0,
+      warnings: [
+        'external scene — artifacts are owned by another pipeline; stamp them with `blendlink typegen <glb> --blend <file>` and check drift with `blendlink verify`',
+      ],
+    }
+  }
   const hash = sourceHash(scene, blender.version)
   const existing = readManifest(scene.manifestPath)
   if (
@@ -96,13 +106,16 @@ export async function syncAll(
   config: ResolvedConfig,
   options: { force?: boolean; only?: string } = {},
 ): Promise<SyncOutcome[]> {
-  const blender = await discoverBlender(config.blenderPath)
   const scenes = options.only
     ? config.scenes.filter((scene) => scene.name === options.only)
     : config.scenes
   if (options.only && scenes.length === 0) {
     throw new Error(`No scene named "${options.only}" in blendlink.config.`)
   }
+  const needsBlender = scenes.some((scene) => !scene.external)
+  const blender = needsBlender
+    ? await discoverBlender(config.blenderPath)
+    : ({ version: 'none', executable: '' } as BlenderInstall)
   const outcomes: SyncOutcome[] = []
   for (const scene of scenes) {
     outcomes.push(await syncScene(scene, blender, options))
@@ -148,21 +161,21 @@ export async function verifyAll(config: ResolvedConfig): Promise<VerifyIssue[]> 
         fix: 'Run `blendlink sync` and commit source + artifacts together.',
       })
     }
-    // Source drift needs the same Blender-version salt; without Blender we
-    // can only compare blend bytes when the recorded hash used this salt —
-    // so recompute against every hash component we can and flag byte drift.
-    if (manifest.sourceHash && existsSync(scene.blendPath)) {
+    // Blend-byte drift check: works Blender-free for synced AND external
+    // scenes, as long as the manifest was stamped with blendBytesHash
+    // (sync does this automatically; external pipelines via typegen --blend).
+    if (manifest.blendBytesHash && existsSync(scene.blendPath)) {
       const blendBytesHash = createHash('sha256')
         .update(readFileSync(scene.blendPath))
         .digest('hex')
         .slice(0, 16)
-      const manifestBlendHash = (manifest as SceneManifest & { blendBytesHash?: string })
-        .blendBytesHash
-      if (manifestBlendHash && manifestBlendHash !== blendBytesHash) {
+      if (manifest.blendBytesHash !== blendBytesHash) {
         issues.push({
           scene: scene.name,
           problem: `${scene.blendPath} changed after the last sync`,
-          fix: 'Run `blendlink sync` (requires Blender) and commit the regenerated artifacts.',
+          fix: scene.external
+            ? 'Re-run your export pipeline, then `blendlink typegen <glb> --blend <file>`, and commit.'
+            : 'Run `blendlink sync` (requires Blender) and commit the regenerated artifacts.',
         })
       }
     }

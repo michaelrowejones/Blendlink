@@ -17,6 +17,16 @@ export interface SceneConfig {
   bake?: BakeSettings
   /** Raw exporter kwargs, RNA-filtered in Blender (escape hatch). */
   exporterOverrides?: Record<string, unknown>
+  /** GLB produced by an external pipeline (overrides the derived path). */
+  glb?: string
+  /** Public URL override matching `glb`. */
+  url?: string
+  /**
+   * Artifacts are owned by an external pipeline: `sync` never exports this
+   * scene, but `verify` still drift-checks the manifest, GLB, and .blend.
+   * Stamp the manifest via `blendlink typegen <glb> --blend <file>`.
+   */
+  external?: boolean
 }
 
 export interface BlendlinkConfig {
@@ -39,6 +49,7 @@ export interface ResolvedScene {
   manifestPath: string
   modulePath: string
   settings: ExportSettings
+  external: boolean
 }
 
 export interface ResolvedConfig {
@@ -64,8 +75,8 @@ export function resolveConfig(config: BlendlinkConfig, root: string): ResolvedCo
     return {
       name,
       blendPath: resolve(root, scene.file),
-      glbPath: join(outDir, `${name}.glb`),
-      url: `${urlPrefix}/${name}.glb`,
+      glbPath: scene.glb ? resolve(root, scene.glb) : join(outDir, `${name}.glb`),
+      url: scene.url ?? `${urlPrefix}/${name}.glb`,
       manifestPath: join(genDir, `${name}.manifest.json`),
       modulePath: join(genDir, `${name}.gen.ts`),
       settings: {
@@ -75,6 +86,7 @@ export function resolveConfig(config: BlendlinkConfig, root: string): ResolvedCo
         ...(scene.bake ? { bake: scene.bake } : {}),
         ...(scene.exporterOverrides ? { exporterOverrides: scene.exporterOverrides } : {}),
       },
+      external: scene.external ?? false,
     } satisfies ResolvedScene
   })
   return { root, blenderPath: config.blenderPath, scenes }

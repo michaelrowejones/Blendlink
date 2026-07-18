@@ -66,17 +66,29 @@ async function main(): Promise<number> {
       // GLB-generic mode: no Blender, no config required.
       const glbPath = positional[0]
       if (!glbPath) {
-        console.error('usage: blendlink typegen <file.glb> [--name n] [--url u] [--out dir]')
+        console.error('usage: blendlink typegen <file.glb> [--name n] [--url u] [--out dir] [--blend file.blend]')
         return 2
       }
       const name = flagValue('--name') ?? basename(glbPath).replace(/\.glb$/i, '')
       const url = flagValue('--url') ?? `/${basename(glbPath)}`
       const outDir = resolve(process.cwd(), flagValue('--out') ?? dirname(glbPath))
+      // --blend stamps provenance so `blendlink verify` and the Blender addon
+      // can detect drift even when an external pipeline produced the GLB.
+      const blend = flagValue('--blend')
       const { manifest, module } = await generateSceneModule({
         glbPath: resolve(process.cwd(), glbPath),
         url,
         exportName: name,
+        ...(blend ? { sourceBlend: blend } : {}),
       })
+      if (blend) {
+        const { createHash } = await import('node:crypto')
+        const { readFileSync } = await import('node:fs')
+        manifest.blendBytesHash = createHash('sha256')
+          .update(readFileSync(resolve(process.cwd(), blend)))
+          .digest('hex')
+          .slice(0, 16)
+      }
       mkdirSync(outDir, { recursive: true })
       writeFileSync(join(outDir, `${name}.manifest.json`), JSON.stringify(manifest, null, 2) + '\n')
       writeFileSync(join(outDir, `${name}.gen.ts`), module)
