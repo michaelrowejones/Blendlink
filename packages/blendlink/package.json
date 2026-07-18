@@ -1,0 +1,37 @@
+{
+  "name": "blendlink",
+  "version": "0.0.1",
+  "description": "Typed scene modules for any GLB — Blender sync first-class.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "blendlink": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "blender"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-assets.mjs",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.2.1",
+    "@gltf-transform/extensions": "^4.2.1",
+    "chokidar": "^4.0.3",
+    "meshoptimizer": "^0.24.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "@types/node": "^24.0.0"
+  }
+}
