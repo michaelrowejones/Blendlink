@@ -20,6 +20,24 @@ blendlink sync      # export + generate typed modules (uses your installed Blend
 blendlink doctor    # check Blender, config, drift, and environment any time
 ```
 
+No `.blend` yet? `init` drops in a bundled sample scene (a crate with a
+collider, socket, hotspot, animation clip, and a light group) so your first
+`sync` produces a working typed module to explore.
+
+## Support matrix
+
+| Surface | Tested | Expected to work |
+| --- | --- | --- |
+| Blender (CLI sync) | 5.2 LTS | 4.2+ — exporter kwargs are RNA-introspected per version; a `.blend` saved by a newer Blender than yours is refused, never corrupted |
+| Blender (addon) | 5.2 LTS | 4.2+ (extension manifest minimum; GPU overlay auto-disables headless) |
+| three.js | r182 via drei `useGLTF` | any glTF consumer — output is standard GLB, no runtime dependency |
+| Node | 24 | 18+ |
+
+The synced surface is deliberately small (names, extras, clips, curves,
+markers, bakes) — bridges die of version-tracking burden, and the escape
+hatch (`exporterOverrides`) is RNA-filtered inside Blender so unknown
+options degrade to a warning, not a crash.
+
 Commit the generated artifacts (plain git — no LFS, no postinstall).
 `blendlink verify` in CI catches drift without needing Blender installed.
 `blendlink sync --watch` re-syncs on every save from Blender.

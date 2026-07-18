@@ -1,6 +1,12 @@
-import { existsSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { readdirSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { dirname, join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+/** Bundled sample scene — resolves from src/ and dist/ alike. */
+const SAMPLE_BLEND = join(
+  dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'sample.blend',
+)
 
 const SKIP_DIRS = new Set(['node_modules', '.git', '.next', 'dist', 'out', 'build'])
 const MAX_DEPTH = 4
@@ -33,14 +39,25 @@ export interface InitResult {
   configPath: string
   scenes: string[]
   created: boolean
+  /** True when the bundled sample.blend was copied in (no blends existed). */
+  sampleCopied: boolean
 }
 
 export function initProject(root: string): InitResult {
   const configPath = join(root, 'blendlink.config.mjs')
   if (existsSync(configPath) || existsSync(join(root, 'blendlink.config.js'))) {
-    return { configPath, scenes: [], created: false }
+    return { configPath, scenes: [], created: false, sampleCopied: false }
   }
-  const blends = findBlendFiles(root)
+  let blends = findBlendFiles(root)
+  let sampleCopied = false
+  if (blends.length === 0 && existsSync(SAMPLE_BLEND)) {
+    // No scene yet: drop in the bundled sample so the very first
+    // `blendlink sync` produces a working typed module to explore.
+    mkdirSync(join(root, 'assets'), { recursive: true })
+    copyFileSync(SAMPLE_BLEND, join(root, 'assets', 'sample.blend'))
+    blends = ['assets/sample.blend']
+    sampleCopied = true
+  }
   const sceneLines =
     blends.length > 0
       ? blends.map((file) => `    { file: '${file}' },`).join('\n')
@@ -60,5 +77,5 @@ ${sceneLines}
 export default config
 `
   writeFileSync(configPath, config)
-  return { configPath, scenes: blends, created: true }
+  return { configPath, scenes: blends, created: true, sampleCopied }
 }

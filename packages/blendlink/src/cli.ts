@@ -200,10 +200,10 @@ async function main(): Promise<number> {
         return 0
       }
       console.log(`✓ created blendlink.config.mjs`)
-      if (result.scenes.length > 0) {
-        for (const scene of result.scenes) console.log(`  ◦ found ${scene}`)
+      if (result.sampleCopied) {
+        console.log('  ◦ no .blend files found — copied the bundled sample to assets/sample.blend')
       } else {
-        console.log('  ◦ no .blend files found — add scenes to the config when you have one')
+        for (const scene of result.scenes) console.log(`  ◦ found ${scene}`)
       }
       console.log(
         '\nnext steps:\n' +
@@ -212,6 +212,21 @@ async function main(): Promise<number> {
           '  3. blendlink verify        add to CI for Blender-free drift checks\n' +
           '  4. blendlink doctor        check your setup any time',
       )
+      if (result.sampleCopied) {
+        console.log(
+          '\nthen use it from React Three Fiber (drei):\n' +
+            "  import { useGLTF } from '@react-three/drei'\n" +
+            "  import { sample } from './src/generated/sample.gen'\n" +
+            '\n' +
+            '  function Scene() {\n' +
+            '    const { nodes } = useGLTF(sample.url) as unknown as SampleGLTF\n' +
+            '    return <primitive object={nodes[sample.nodes.Crate]} />\n' +
+            '  }\n' +
+            '\n' +
+            '  open assets/sample.blend, rename Crate, run `blendlink sync` —\n' +
+            '  the build now fails at compile time. That is the point.',
+        )
+      }
       return 0
     }
     case 'doctor': {
