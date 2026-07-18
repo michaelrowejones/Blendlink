@@ -81,8 +81,9 @@ async function main(): Promise<number> {
       writeFileSync(join(outDir, `${name}.manifest.json`), JSON.stringify(manifest, null, 2) + '\n')
       writeFileSync(join(outDir, `${name}.gen.ts`), module)
       console.log(
-        `✓ typegen ${name}: ${manifest.nodes.length} nodes, ${manifest.materials.length} materials, ${manifest.clips.length} clips → ${join(outDir, `${name}.gen.ts`)}`,
+        `✓ typegen ${name}: ${manifest.nodes.length} nodes, ${manifest.materials.length} materials, ${Object.keys(manifest.clips).length} clips → ${join(outDir, `${name}.gen.ts`)}`,
       )
+      for (const warning of manifest.vocabulary.warnings) console.warn(`  ! ${warning}`)
       return 0
     }
     default:
