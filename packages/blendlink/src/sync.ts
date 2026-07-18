@@ -56,12 +56,20 @@ export async function syncScene(
     blender,
   })
 
+  const states: Record<string, { url: string }> = {}
+  for (const [state, path] of Object.entries(exported.bakedStates)) {
+    const file = path.split(/[\\/]/).pop()!
+    states[state] = { url: scene.url.replace(/[^/]+$/, file) }
+  }
   const { manifest, module } = await generateSceneModule({
     glbPath: scene.glbPath,
     url: scene.url,
     exportName: scene.name,
     sourceBlend: scene.blendPath,
     sourceHash: hash,
+    sidecar: exported.sidecar,
+    excluded: exported.excluded,
+    ...(Object.keys(states).length > 0 ? { states } : {}),
   })
   manifest.blendBytesHash = createHash('sha256')
     .update(readFileSync(scene.blendPath))
@@ -71,12 +79,16 @@ export async function syncScene(
   writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
   writeFileSync(scene.modulePath, module)
 
+  const warnings = [...exported.warnings, ...manifest.vocabulary.warnings]
+  if (exported.excluded.length > 0) {
+    warnings.push(`excluded by -noimp: ${exported.excluded.join(', ')}`)
+  }
   return {
     scene: scene.name,
     action: 'exported',
     durationMs: Date.now() - started,
     stats: manifest.stats,
-    warnings: exported.warnings,
+    warnings,
   }
 }
 

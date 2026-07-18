@@ -7,6 +7,14 @@ export type { ExportSettings, ExportResult } from './invoke.js'
 export { readBlendHeader } from './blendHeader.js'
 export type { BlendHeader } from './blendHeader.js'
 export { generateSceneModule } from './typegen.js'
-export type { SceneManifest, NodeKind, TypegenOutput } from './typegen.js'
+export type { SceneManifest, NodeKind, TypegenOutput, CurveData } from './typegen.js'
+export { parseVocabulary } from './vocabulary.js'
+export type {
+  Vocabulary,
+  ColliderEntry,
+  LodChain,
+  AnchorEntry,
+  PhysicsEntry,
+} from './vocabulary.js'
 export { syncAll, syncScene, verifyAll } from './sync.js'
 export type { SyncOutcome, VerifyIssue } from './sync.js'

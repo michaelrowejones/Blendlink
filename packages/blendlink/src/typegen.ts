@@ -1,12 +1,20 @@
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import { NodeIO } from '@gltf-transform/core'
+import { NodeIO, type Node } from '@gltf-transform/core'
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions'
 import { MeshoptDecoder } from 'meshoptimizer'
+import { parseVocabulary, type Vocabulary, type VocabularyNodeInput } from './vocabulary.js'
+import type { BlendSidecar } from './invoke.js'
+
+export interface CurveData {
+  kind: 'bezier' | 'points'
+  cyclic: boolean
+  points: BlendSidecar['curves'][number]['points']
+}
 
 export interface SceneManifest {
   generator: 'blendlink'
-  schemaVersion: 1
+  schemaVersion: 2
   /** Content hash of the GLB — cache-busting key and drift signal. */
   hash: string
   url: string
@@ -16,8 +24,17 @@ export interface SceneManifest {
   blendBytesHash?: string
   nodes: Array<{ name: string; kind: NodeKind; extras?: Record<string, unknown> }>
   materials: string[]
-  clips: string[]
+  /** Clip name → duration in seconds (from sampler inputs). */
+  clips: Record<string, { duration: number }>
+  /** Scene timeline markers as named seconds (scroll-scrub waypoints). */
+  markers: Record<string, number>
+  curves: Record<string, CurveData>
+  vocabulary: Vocabulary
+  /** Objects removed by -noimp (reported, never silent). */
+  excluded: string[]
   stats: { bytes: number; triangles: number; meshes: number; texturesBytes: number }
+  /** Baked-mode state textures (lighting states blended/swapped at runtime). */
+  states?: Record<string, { url: string }>
 }
 
 export type NodeKind = 'Mesh' | 'SkinnedMesh' | 'Bone' | 'Camera' | 'Light' | 'Object3D'
@@ -38,13 +55,11 @@ const THREE_TYPE: Record<NodeKind, string> = {
 }
 
 /**
- * Parse a GLB and emit the typed scene module + manifest.
+ * Parse a GLB (+ optional Blender sidecar) and emit the typed scene module.
  *
- * Deliberately GLB-generic (reads the export, not the .blend): the same
- * typegen serves downloaded assets and other DCCs, with Blender-specific
- * value arriving via extras (custom properties) that survive export.
- * Emitted type shapes are gltfjsx-compatible (`nodes` / `materials` maps
- * keyed by name) so existing gltfjsx users migrate by deleting code.
+ * GLB-generic by design: names, materials, clips, extras, and the naming
+ * vocabulary all read from the export. The sidecar (curves, markers, empty
+ * display types) is the Blender-first upgrade, absent for plain GLBs.
  */
 export async function generateSceneModule(options: {
   glbPath: string
@@ -52,6 +67,9 @@ export async function generateSceneModule(options: {
   exportName: string
   sourceBlend?: string
   sourceHash?: string
+  sidecar?: BlendSidecar
+  excluded?: string[]
+  states?: Record<string, { url: string }>
 }): Promise<TypegenOutput> {
   await MeshoptDecoder.ready
   const io = new NodeIO()
@@ -61,8 +79,14 @@ export async function generateSceneModule(options: {
   const document = await io.readBinary(new Uint8Array(glbBytes))
   const root = document.getRoot()
 
+  const parentOf = new Map<Node, Node>()
+  for (const node of root.listNodes()) {
+    for (const child of node.listChildren()) parentOf.set(child, node)
+  }
+
   const seen = new Map<string, number>()
   const nodes: SceneManifest['nodes'] = []
+  const vocabularyInput: VocabularyNodeInput[] = []
   for (const node of root.listNodes()) {
     const name = uniqueName(node.getName() || 'Node', seen)
     const mesh = node.getMesh()
@@ -76,12 +100,20 @@ export async function generateSceneModule(options: {
             ? 'Light'
             : 'Object3D'
     const extras = node.getExtras()
+    const hasExtras = extras && Object.keys(extras).length > 0
     nodes.push({
       name,
       kind,
-      ...(extras && Object.keys(extras).length > 0
-        ? { extras: extras as Record<string, unknown> }
-        : {}),
+      ...(hasExtras ? { extras: extras as Record<string, unknown> } : {}),
+    })
+    const world = node.getWorldMatrix()
+    vocabularyInput.push({
+      name,
+      kind,
+      parent: parentOf.get(node)?.getName() ?? null,
+      worldPosition: [round(world[12]!), round(world[13]!), round(world[14]!)],
+      worldQuaternion: quaternionFromMatrix(world),
+      ...(hasExtras ? { extras: extras as Record<string, unknown> } : {}),
     })
   }
 
@@ -89,10 +121,31 @@ export async function generateSceneModule(options: {
   const materials = root
     .listMaterials()
     .map((material) => uniqueName(material.getName() || 'Material', materialSeen))
+
   const clipSeen = new Map<string, number>()
-  const clips = root
-    .listAnimations()
-    .map((animation) => uniqueName(animation.getName() || 'Clip', clipSeen))
+  const clips: SceneManifest['clips'] = {}
+  for (const animation of root.listAnimations()) {
+    const name = uniqueName(animation.getName() || 'Clip', clipSeen)
+    let duration = 0
+    for (const sampler of animation.listSamplers()) {
+      const input = sampler.getInput()
+      if (!input) continue
+      const max = input.getMax([0])
+      duration = Math.max(duration, max[0] ?? 0)
+    }
+    clips[name] = { duration: round(duration) }
+  }
+
+  const markers: SceneManifest['markers'] = {}
+  for (const marker of options.sidecar?.markers ?? []) {
+    markers[marker.name] = marker.time
+  }
+  const curves: SceneManifest['curves'] = {}
+  for (const curve of options.sidecar?.curves ?? []) {
+    curves[curve.name] = { kind: curve.kind, cyclic: curve.cyclic, points: curve.points }
+  }
+
+  const vocabulary = parseVocabulary(vocabularyInput, options.sidecar)
 
   let triangles = 0
   let meshes = 0
@@ -111,7 +164,7 @@ export async function generateSceneModule(options: {
 
   const manifest: SceneManifest = {
     generator: 'blendlink',
-    schemaVersion: 1,
+    schemaVersion: 2,
     hash: createHash('sha256').update(glbBytes).digest('hex').slice(0, 16),
     url: options.url,
     ...(options.sourceBlend ? { sourceBlend: options.sourceBlend } : {}),
@@ -119,10 +172,57 @@ export async function generateSceneModule(options: {
     nodes,
     materials,
     clips,
+    markers,
+    curves,
+    vocabulary,
+    excluded: options.excluded ?? [],
     stats: { bytes: glbBytes.length, triangles, meshes, texturesBytes },
+    ...(options.states ? { states: options.states } : {}),
   }
 
   return { manifest, module: renderModule(options.exportName, manifest) }
+}
+
+function round(value: number): number {
+  return Math.round(value * 1e6) / 1e6
+}
+
+/** Rotation quaternion from a column-major 4x4, scale-normalized. */
+function quaternionFromMatrix(m: number[]): [number, number, number, number] {
+  const sx = Math.hypot(m[0]!, m[1]!, m[2]!) || 1
+  const sy = Math.hypot(m[4]!, m[5]!, m[6]!) || 1
+  const sz = Math.hypot(m[8]!, m[9]!, m[10]!) || 1
+  const r00 = m[0]! / sx, r01 = m[4]! / sy, r02 = m[8]! / sz
+  const r10 = m[1]! / sx, r11 = m[5]! / sy, r12 = m[9]! / sz
+  const r20 = m[2]! / sx, r21 = m[6]! / sy, r22 = m[10]! / sz
+  const trace = r00 + r11 + r22
+  let x: number, y: number, z: number, w: number
+  if (trace > 0) {
+    const s = 0.5 / Math.sqrt(trace + 1)
+    w = 0.25 / s
+    x = (r21 - r12) * s
+    y = (r02 - r20) * s
+    z = (r10 - r01) * s
+  } else if (r00 > r11 && r00 > r22) {
+    const s = 2 * Math.sqrt(1 + r00 - r11 - r22)
+    w = (r21 - r12) / s
+    x = 0.25 * s
+    y = (r01 + r10) / s
+    z = (r02 + r20) / s
+  } else if (r11 > r22) {
+    const s = 2 * Math.sqrt(1 + r11 - r00 - r22)
+    w = (r02 - r20) / s
+    x = (r01 + r10) / s
+    y = 0.25 * s
+    z = (r12 + r21) / s
+  } else {
+    const s = 2 * Math.sqrt(1 + r22 - r00 - r11)
+    w = (r10 - r01) / s
+    x = (r02 + r20) / s
+    y = (r12 + r21) / s
+    z = 0.25 * s
+  }
+  return [round(x), round(y), round(z), round(w)]
 }
 
 function uniqueName(name: string, seen: Map<string, number>): string {
@@ -135,15 +235,16 @@ const quote = (value: string) => JSON.stringify(value)
 const key = (value: string) => (/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(value) ? value : quote(value))
 
 function renderModule(exportName: string, manifest: SceneManifest): string {
+  const pascalName = pascal(exportName)
   const nodeEntries = manifest.nodes
     .map((node) => `  ${key(node.name)}: ${quote(node.name)},`)
+    .join('\n')
+  const nodeTypes = manifest.nodes
+    .map((node) => `    ${key(node.name)}: ${THREE_TYPE[node.kind]}`)
     .join('\n')
   const extrasEntries = manifest.nodes
     .filter((node) => node.extras)
     .map((node) => `  ${key(node.name)}: ${JSON.stringify(node.extras)},`)
-    .join('\n')
-  const nodeTypes = manifest.nodes
-    .map((node) => `    ${key(node.name)}: ${THREE_TYPE[node.kind]}`)
     .join('\n')
   const materialEntries = manifest.materials
     .map((name) => `  ${key(name)}: ${quote(name)},`)
@@ -151,9 +252,33 @@ function renderModule(exportName: string, manifest: SceneManifest): string {
   const materialTypes = manifest.materials
     .map((name) => `    ${key(name)}: THREE.MeshStandardMaterial`)
     .join('\n')
-  const clipUnion = manifest.clips.length
-    ? manifest.clips.map(quote).join(' | ')
-    : 'never'
+  const clipEntries = Object.entries(manifest.clips)
+    .map(([name, clip]) => `  ${key(name)}: { duration: ${clip.duration} },`)
+    .join('\n')
+  const markerEntries = Object.entries(manifest.markers)
+    .map(([name, time]) => `  ${key(name)}: ${time},`)
+    .join('\n')
+  const curveEntries = Object.entries(manifest.curves)
+    .map(
+      ([name, curve]) =>
+        `  ${key(name)}: ${JSON.stringify({ kind: curve.kind, cyclic: curve.cyclic, points: curve.points })},`,
+    )
+    .join('\n')
+  const socketEntries = manifest.vocabulary.sockets
+    .map(
+      (socket) =>
+        `  ${key(socket.name)}: { position: ${JSON.stringify(socket.position)}, quaternion: ${JSON.stringify(socket.quaternion)}, parent: ${JSON.stringify(socket.parent)} },`,
+    )
+    .join('\n')
+  const hotspotEntries = manifest.vocabulary.hotspots
+    .map(
+      (hotspot) =>
+        `  ${key(hotspot.name)}: { position: ${JSON.stringify(hotspot.position)}, quaternion: ${JSON.stringify(hotspot.quaternion)}${hotspot.extras ? `, extras: ${JSON.stringify(hotspot.extras)}` : ''} },`,
+    )
+    .join('\n')
+  const stateEntries = Object.entries(manifest.states ?? {})
+    .map(([name, state]) => `  ${key(name)}: ${quote(state.url)},`)
+    .join('\n')
 
   return `/* Generated by blendlink — do not edit. Source: ${manifest.sourceBlend ?? manifest.url} */
 import type * as THREE from 'three'
@@ -167,19 +292,50 @@ ${nodeEntries}
   materials: {
 ${materialEntries}
   },
-  clips: [${manifest.clips.map(quote).join(', ')}] as const,
+  /** Clip durations in seconds — scroll-scrub without string guessing. */
+  clips: {
+${clipEntries}
+  },
+  /** Timeline markers as named seconds (scroll waypoints). */
+  markers: {
+${markerEntries}
+  },
+  /** Blender curves, Y-up converted. bezier: co/handleLeft/handleRight. */
+  curves: {
+${curveEntries}
+  },
+  /** SOCKET_ empties — typed attach points. */
+  sockets: {
+${socketEntries}
+  },
+  /** HOTSPOT_ empties — typed annotation anchors. */
+  hotspots: {
+${hotspotEntries}
+  },
+  /** Baked lighting-state texture URLs (swap material.map at runtime). */
+  states: {
+${stateEntries}
+  },
+  colliders: ${JSON.stringify(manifest.vocabulary.colliders)} as const,
+  lods: ${JSON.stringify(manifest.vocabulary.lods)} as const,
+  physics: ${JSON.stringify(manifest.vocabulary.physics)} as const,
   /** Blender custom properties (glTF extras), typed as literals. */
   extras: {
 ${extrasEntries}
   },
 } as const
 
-export type ${pascal(exportName)}NodeName = keyof typeof ${exportName}.nodes
-export type ${pascal(exportName)}MaterialName = keyof typeof ${exportName}.materials
-export type ${pascal(exportName)}ClipName = ${clipUnion}
+export type ${pascalName}NodeName = keyof typeof ${exportName}.nodes
+export type ${pascalName}MaterialName = keyof typeof ${exportName}.materials
+export type ${pascalName}ClipName = keyof typeof ${exportName}.clips
+export type ${pascalName}MarkerName = keyof typeof ${exportName}.markers
+export type ${pascalName}CurveName = keyof typeof ${exportName}.curves
+export type ${pascalName}SocketName = keyof typeof ${exportName}.sockets
+export type ${pascalName}HotspotName = keyof typeof ${exportName}.hotspots
+export type ${pascalName}StateName = keyof typeof ${exportName}.states
 
 /** gltfjsx-compatible result shape for useGLTF casts. */
-export interface ${pascal(exportName)}GLTF {
+export interface ${pascalName}GLTF {
   nodes: {
 ${nodeTypes}
   }

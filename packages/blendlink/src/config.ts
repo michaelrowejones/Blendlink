@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { basename, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import type { ExportSettings } from './invoke.js'
+import type { BakeSettings, ExportSettings } from './invoke.js'
 
 export interface SceneConfig {
   /** Path to the .blend, relative to the config file. */
@@ -12,6 +12,9 @@ export interface SceneConfig {
   collection?: string
   /** Skip image export for fast dev loops ('NONE'); default 'AUTO'. */
   imageFormat?: 'AUTO' | 'NONE'
+  /** 'baked': Cycles Combined atlas + unlit export ("the bake is the painting"). */
+  mode?: 'standard' | 'baked'
+  bake?: BakeSettings
   /** Raw exporter kwargs, RNA-filtered in Blender (escape hatch). */
   exporterOverrides?: Record<string, unknown>
 }
@@ -68,6 +71,8 @@ export function resolveConfig(config: BlendlinkConfig, root: string): ResolvedCo
       settings: {
         ...(scene.collection ? { collection: scene.collection } : {}),
         imageFormat: scene.imageFormat ?? 'AUTO',
+        ...(scene.mode ? { mode: scene.mode } : {}),
+        ...(scene.bake ? { bake: scene.bake } : {}),
         ...(scene.exporterOverrides ? { exporterOverrides: scene.exporterOverrides } : {}),
       },
     } satisfies ResolvedScene

@@ -12,13 +12,44 @@ const EXPORT_SCRIPT = join(
   'export_scene.py',
 )
 
+export interface BakeSettings {
+  /** Atlas size in px. Default 2048. */
+  size?: number
+  /** Max adaptive samples. Default 128. */
+  samples?: number
+  /** Bake margin px (island spacing follows it). Default 48. */
+  margin?: number
+  /** Lighting states: each bakes with the listed collections hidden. */
+  states?: Array<{ name: string; hideCollections?: string[] }>
+}
+
 export interface ExportSettings {
   /** Export only this collection (and children); omit for the whole file. */
   collection?: string
   /** 'AUTO' embeds textures; 'NONE' skips image export (fast dev loops). */
   imageFormat?: 'AUTO' | 'NONE'
+  /** 'baked': bake Cycles Combined to an atlas and export unlit. */
+  mode?: 'standard' | 'baked'
+  bake?: BakeSettings
+  /** Curve sampling resolution for non-bezier splines. Default 64. */
+  curveSamples?: number
   /** Escape hatch: raw exporter kwargs, RNA-filtered inside Blender. */
   exporterOverrides?: Record<string, unknown>
+}
+
+export interface BlendSidecar {
+  fps: number
+  markers: Array<{ name: string; frame: number; time: number }>
+  empties: Array<{ name: string; displayType: string; size: number }>
+  curves: Array<{
+    name: string
+    kind: 'bezier' | 'points'
+    cyclic: boolean
+    points: Array<
+      | [number, number, number]
+      | { co: [number, number, number]; handleLeft: [number, number, number]; handleRight: [number, number, number] }
+    >
+  }>
 }
 
 export interface ExportResult {
@@ -27,6 +58,12 @@ export interface ExportResult {
   blenderVersion: string
   exporterKwargsDropped: string[]
   warnings: string[]
+  /** Objects removed by the -noimp convention (never silently). */
+  excluded: string[]
+  /** Blender-only data the GLB cannot carry. */
+  sidecar: BlendSidecar
+  /** Baked mode: state name → final PNG path on disk. */
+  bakedStates: Record<string, string>
   durationMs: number
 }
 
@@ -111,8 +148,8 @@ export async function exportBlend(options: {
 
     const result = JSON.parse(readFileSync(resultPath, 'utf8')) as Omit<
       ExportResult,
-      'glbPath' | 'durationMs'
-    >
+      'glbPath' | 'durationMs' | 'bakedStates'
+    > & { baked?: { states?: Record<string, string> } }
     if (exitCode !== 0) {
       result.warnings = [
         ...result.warnings,
@@ -124,8 +161,20 @@ export async function exportBlend(options: {
     renameOrCopy(tempGlb, staging)
     renameSync(staging, options.outPath)
 
+    // Baked-mode state textures are written beside the temp GLB; move them
+    // out before the temp dir is destroyed.
+    const bakedStates: Record<string, string> = {}
+    for (const [state, tempPath] of Object.entries(result.baked?.states ?? {})) {
+      const finalPath = options.outPath.replace(/\.glb$/i, '') + `.${state}.png`
+      if (existsSync(tempPath)) {
+        renameOrCopy(tempPath, finalPath)
+        bakedStates[state] = finalPath
+      }
+    }
+
     return {
       ...result,
+      bakedStates,
       glbPath: options.outPath,
       durationMs: Date.now() - started,
     }
