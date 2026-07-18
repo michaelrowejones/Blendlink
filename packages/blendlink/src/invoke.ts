@@ -20,6 +20,9 @@ export interface BakeSettings {
   samples?: number
   /** Bake margin px (island spacing follows it). Default 48. */
   margin?: number
+  /** Bake at N× the atlas size and box-resolve down — free anti-aliasing
+   * (Cycles bakes have none) at zero runtime cost. 2 is the sweet spot. */
+  supersample?: number
   /** Lighting states: each bakes with the listed collections hidden. */
   states?: Array<{ name: string; hideCollections?: string[] }>
 }
@@ -42,6 +45,7 @@ export interface ExportSettings {
 }
 
 export interface BakePlan {
+  supersample: number
   atlasSize: number
   marginPx: number
   samples: number

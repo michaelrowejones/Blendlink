@@ -41,6 +41,7 @@ async function main(): Promise<number> {
       const outcomes = await syncAll(config, {
         force: flags.has('--force'),
         only: positional[0],
+        draft: flags.has('--draft'),
       })
       outcomes.forEach(report)
       if (flags.has('--watch')) {
@@ -48,7 +49,7 @@ async function main(): Promise<number> {
         await watchScenes(config, (outcome) => {
           if ('error' in outcome) console.error(`✗ ${outcome.scene}: ${outcome.error}`)
           else report(outcome)
-        })
+        }, { draft: flags.has('--draft') })
         console.log('watching for .blend saves — ctrl-c to stop')
         await new Promise(() => {}) // stay alive until interrupted
       }
@@ -145,9 +146,12 @@ async function main(): Promise<number> {
           console.error(`✗ ${scene.name}: Blender returned no plan`)
           return 1
         }
+        const supersampled = plan.supersample > 1
+          ? ` (baked at ${plan.atlasSize * plan.supersample}px, resolved down)`
+          : ''
         console.log(
-          `\nbake plan — ${scene.name}: ${plan.atlasSize}px atlas, ${plan.samples} samples, ` +
-            `margin ${plan.marginPx}px`,
+          `\nbake plan — ${scene.name}: ${plan.atlasSize}px atlas${supersampled}, ` +
+            `${plan.samples} samples, margin ${plan.marginPx}px`,
         )
         const rows = plan.objects.map((entry) => ({
           name: entry.name,
@@ -222,8 +226,9 @@ async function main(): Promise<number> {
         'blendlink — typed scene modules for any GLB, Blender sync first-class\n\n' +
           'commands:\n' +
           '  init                     scaffold blendlink.config.mjs from found .blend files\n' +
-          '  sync [scene] [--force] [--watch]\n' +
-          '                           export .blend scenes (external scenes run their build command)\n' +
+          '  sync [scene] [--force] [--watch] [--draft]\n' +
+          '                           export .blend scenes (external scenes run their build command;\n' +
+          '                           --draft = quarter-res preview bakes, refused by verify)\n' +
           '  plan [scene]             what the bake will do: objects, texel density, atlas share, states\n' +
           '  verify                   Blender-free drift check (CI)\n' +
           '  typegen <glb> [--blend f.blend] [...]\n' +

@@ -34,6 +34,12 @@ export interface SceneConfig {
    * pipelines too. Runs from the config root.
    */
   build?: string
+  /**
+   * Extra files (relative to the config root) whose changes should also
+   * trigger an external rebuild — e.g. the pipeline config that carries
+   * bake sizes. Without this, only the .blend gates drift.
+   */
+  inputs?: string[]
 }
 
 export interface BlendlinkConfig {
@@ -58,6 +64,7 @@ export interface ResolvedScene {
   settings: ExportSettings
   external: boolean
   build?: string
+  inputs?: string[]
   /** Config root — cwd for external build commands. */
   root: string
 }
@@ -98,6 +105,9 @@ export function resolveConfig(config: BlendlinkConfig, root: string): ResolvedCo
       },
       external: scene.external ?? false,
       ...(scene.build ? { build: scene.build } : {}),
+      ...(scene.inputs
+        ? { inputs: scene.inputs.map((input) => resolve(root, input)) }
+        : {}),
       root,
     } satisfies ResolvedScene
   })

@@ -18,6 +18,7 @@ export interface WatchHandle {
 export async function watchScenes(
   config: ResolvedConfig,
   onOutcome: (outcome: SyncOutcome | { scene: string; error: string }) => void,
+  options: { draft?: boolean } = {},
 ): Promise<WatchHandle> {
   const blender = config.scenes.some((scene) => !scene.external)
     ? await discoverBlender(config.blenderPath)
@@ -35,7 +36,7 @@ export async function watchScenes(
     }
     inFlight.add(scene.name)
     try {
-      onOutcome(await syncScene(scene, blender))
+      onOutcome(await syncScene(scene, blender, options))
     } catch (error) {
       onOutcome({
         scene: scene.name,

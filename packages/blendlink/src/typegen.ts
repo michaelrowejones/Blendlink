@@ -43,6 +43,10 @@ export interface SceneManifest {
   lightGroups?: Record<string, { url: string; maxValue: number }>
   /** Wall-clock of the last sync — powers plan-time estimates. */
   lastSyncDurationMs?: number
+  /** Combined hash of the declared extra input files (external scenes). */
+  inputsHash?: string
+  /** True when produced by `sync --draft` (quarter res) — never commit. */
+  draft?: boolean
 }
 
 export type NodeKind = 'Mesh' | 'SkinnedMesh' | 'Bone' | 'Camera' | 'Light' | 'Object3D'

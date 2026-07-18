@@ -43,15 +43,44 @@ function blendBytesHashOf(path: string): string {
   return createHash('sha256').update(readFileSync(path)).digest('hex').slice(0, 16)
 }
 
+/** Combined hash of an external scene's declared extra inputs (e.g. its
+ * pipeline config) — so config edits gate rebuilds like blend edits do. */
+function inputsHashOf(scene: ResolvedScene): string | null {
+  if (!scene.inputs || scene.inputs.length === 0) return null
+  const digest = createHash('sha256')
+  for (const input of scene.inputs) {
+    if (existsSync(input)) digest.update(readFileSync(input))
+  }
+  return digest.digest('hex').slice(0, 16)
+}
+
+/** sync --draft: quarter resolution, an eighth of the samples — a seconds-
+ * scale look preview. The manifest is stamped draft so verify refuses it. */
+function draftSettings(scene: ResolvedScene): ResolvedScene['settings'] {
+  if (scene.settings.mode !== 'baked') return scene.settings
+  const bake = scene.settings.bake ?? {}
+  return {
+    ...scene.settings,
+    bake: {
+      ...bake,
+      size: Math.max(256, Math.floor((bake.size ?? 2048) / 4)),
+      samples: Math.max(8, Math.floor((bake.samples ?? 128) / 8)),
+      supersample: 1,
+    },
+  }
+}
+
 /** External scenes: artifacts owned by another pipeline; run its declared
  * build command when the .blend drifted, skip when everything matches. */
 function syncExternalScene(scene: ResolvedScene, options: { force?: boolean }): SyncOutcome {
   const started = Date.now()
   const blendHash = existsSync(scene.blendPath) ? blendBytesHashOf(scene.blendPath) : null
+  const inputsHash = inputsHashOf(scene)
   const manifest = readManifest(scene.manifestPath)
   const inSync =
     blendHash !== null &&
     manifest?.blendBytesHash === blendHash &&
+    (inputsHash === null || manifest?.inputsHash === inputsHash) &&
     existsSync(scene.glbPath) &&
     existsSync(scene.modulePath)
   if (inSync && !options.force) {
@@ -87,10 +116,12 @@ function syncExternalScene(scene: ResolvedScene, options: { force?: boolean }): 
       'build command finished but the manifest is not stamped with the current .blend — make sure it ends with `blendlink typegen <glb> --blend <file>`',
     )
   } else {
-    // Stamp the build command (for the addon's "run this") and the duration
-    // (for plan-time estimates).
+    // Stamp the build command (for the addon's "run this"), the duration
+    // (for plan-time estimates), and the inputs hash (drift gate).
     rebuilt.syncHint = scene.build
     rebuilt.lastSyncDurationMs = Date.now() - started
+    const freshInputsHash = inputsHashOf(scene)
+    if (freshInputsHash) rebuilt.inputsHash = freshInputsHash
     writeFileSync(scene.manifestPath, JSON.stringify(rebuilt, null, 2) + '\n')
   }
   emitProgress(1, `${scene.name} up to date`)
@@ -104,11 +135,15 @@ function syncExternalScene(scene: ResolvedScene, options: { force?: boolean }): 
   }
 }
 
-/** Input-hash cache key: blend bytes + settings + Blender version. */
-function sourceHash(scene: ResolvedScene, blenderVersion: string): string {
+/** Input-hash cache key: blend bytes + effective settings + Blender version. */
+function sourceHash(
+  scene: ResolvedScene,
+  settings: ResolvedScene['settings'],
+  blenderVersion: string,
+): string {
   return createHash('sha256')
     .update(readFileSync(scene.blendPath))
-    .update(JSON.stringify(scene.settings))
+    .update(JSON.stringify(settings))
     .update(blenderVersion)
     .digest('hex')
     .slice(0, 16)
@@ -125,13 +160,14 @@ function readManifest(path: string): SceneManifest | null {
 export async function syncScene(
   scene: ResolvedScene,
   blender: BlenderInstall,
-  options: { force?: boolean } = {},
+  options: { force?: boolean; draft?: boolean } = {},
 ): Promise<SyncOutcome> {
   const started = Date.now()
   if (scene.external) {
     return syncExternalScene(scene, options)
   }
-  const hash = sourceHash(scene, blender.version)
+  const settings = options.draft ? draftSettings(scene) : scene.settings
+  const hash = sourceHash(scene, settings, blender.version)
   const existing = readManifest(scene.manifestPath)
   if (
     !options.force &&
@@ -150,7 +186,7 @@ export async function syncScene(
   const exported = await exportBlend({
     blendPath: scene.blendPath,
     outPath: scene.glbPath,
-    settings: scene.settings,
+    settings,
     blender,
   })
 
@@ -182,6 +218,7 @@ export async function syncScene(
     .slice(0, 16)
   manifest.syncHint = DEFAULT_SYNC_HINT
   manifest.lastSyncDurationMs = Date.now() - started
+  if (options.draft && scene.settings.mode === 'baked') manifest.draft = true
   mkdirSync(dirname(scene.manifestPath), { recursive: true })
   writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
   writeFileSync(scene.modulePath, module)
@@ -190,6 +227,9 @@ export async function syncScene(
   const warnings = [...exported.warnings, ...manifest.vocabulary.warnings]
   if (exported.excluded.length > 0) {
     warnings.push(`excluded by -noimp: ${exported.excluded.join(', ')}`)
+  }
+  if (manifest.draft) {
+    warnings.push('draft bake (quarter resolution) — run `blendlink sync` before committing')
   }
   return {
     scene: scene.name,
@@ -203,7 +243,7 @@ export async function syncScene(
 
 export async function syncAll(
   config: ResolvedConfig,
-  options: { force?: boolean; only?: string } = {},
+  options: { force?: boolean; only?: string; draft?: boolean } = {},
 ): Promise<SyncOutcome[]> {
   const scenes = options.only
     ? config.scenes.filter((scene) => scene.name === options.only)
@@ -240,6 +280,27 @@ export async function verifyAll(config: ResolvedConfig): Promise<VerifyIssue[]> 
         fix: 'Run `blendlink sync` and commit the generated files.',
       })
       continue
+    }
+    if (manifest.draft) {
+      issues.push({
+        scene: scene.name,
+        problem: 'draft artifacts (quarter-resolution preview) are committed',
+        fix: 'Run `blendlink sync` (full quality) and commit the regenerated files.',
+      })
+      continue
+    }
+    if (scene.external) {
+      const currentInputsHash = inputsHashOf(scene)
+      if (currentInputsHash && manifest.inputsHash && manifest.inputsHash !== currentInputsHash) {
+        issues.push({
+          scene: scene.name,
+          problem: 'a declared input file (e.g. the pipeline config) changed after the last sync',
+          fix: scene.build
+            ? `Run \`${scene.build}\` (or \`blendlink sync\`) and commit.`
+            : 'Re-run your export pipeline and commit.',
+        })
+        continue
+      }
     }
     if (!existsSync(scene.glbPath)) {
       issues.push({

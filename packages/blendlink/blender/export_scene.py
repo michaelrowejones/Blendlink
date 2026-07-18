@@ -288,6 +288,18 @@ def save_dithered(image, path: str) -> None:
     image.save_render(path, scene=scene)
 
 
+def save_resolved(image, path: str, final_size: int) -> None:
+    """Save at final_size: supersampled bakes resolve down through a copy so
+    the live bake target keeps its full resolution for the next state."""
+    if image.size[0] == final_size:
+        save_dithered(image, path)
+        return
+    duplicate = image.copy()
+    duplicate.scale(final_size, final_size)
+    save_dithered(duplicate, path)
+    bpy.data.images.remove(duplicate)
+
+
 def set_collections_hidden(names: list, hidden: bool) -> None:
     for name in names:
         collection = bpy.data.collections.get(name)
@@ -372,6 +384,7 @@ def compute_bake_plan(settings: dict) -> dict:
         if obj.type == "MESH" and is_collision_proxy(obj)
     )
     return {
+        "supersample": max(1, int(bake.get("supersample", 1))),
         "atlasSize": size,
         "marginPx": margin_px,
         "samples": int(bake.get("samples", 128)),
@@ -408,7 +421,7 @@ def mute_emission() -> list:
 
 def bake_light_groups(
     proxy, image, margin_px: int, grouped_lights: dict, out_glb: str,
-    progress_start: float, progress_step: float,
+    progress_start: float, progress_step: float, final_size: int,
 ) -> dict:
     """Solo-bake each light group's full contribution (direct + indirect).
 
@@ -450,7 +463,7 @@ def bake_light_groups(
                 rgb /= peak
                 image.pixels.foreach_set(pixels)
             layer_path = out_glb + f".light.{name}.png"
-            save_dithered(image, layer_path)
+            save_resolved(image, layer_path, final_size)
             layers[name] = {"path": layer_path, "maxValue": max(peak, 1.0)}
     finally:
         scene.world = world_prev
@@ -467,10 +480,16 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     size = int(bake.get("size", 2048))
     samples = int(bake.get("samples", 128))
     margin_px = int(bake.get("margin", 48))
+    # Cycles bakes have no edge anti-aliasing; baking at N× and box-resolving
+    # down (Blender's bilinear scale on an exact 2× grid IS a box filter) is
+    # the standard workaround — quality at zero runtime cost.
+    supersample = max(1, int(bake.get("supersample", 1)))
+    bake_size = size * supersample
+    bake_margin = margin_px * supersample
     states = bake.get("states") or [{"name": "default", "hideCollections": []}]
 
     progress(0.10, "packing bake atlas")
-    bake_prepare_geometry(margin_px, size)
+    bake_prepare_geometry(bake_margin, bake_size)
     bake_engine(samples)
     proxy, hidden = bake_proxy()
 
@@ -485,7 +504,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     state_paths = {}
     group_layers = {}
     image = bpy.data.images.new(
-        "blendlink-bake", width=size, height=size, alpha=False, float_buffer=True,
+        "blendlink-bake", width=bake_size, height=bake_size, alpha=False, float_buffer=True,
     )
     bake_jobs = len(states) + len(grouped_lights)
     per_job = 0.6 / max(bake_jobs, 1)
@@ -497,16 +516,16 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             light.hide_render = True
         try:
             for state in states:
-                progress(0.15 + job * per_job, f"baking {state['name']} at {size}px")
+                progress(0.15 + job * per_job, f"baking {state['name']} at {bake_size}px")
                 job += 1
                 hide = state.get("hideCollections", [])
                 set_collections_hidden(hide, True)
                 try:
-                    bake_state(proxy, image, margin_px)
+                    bake_state(proxy, image, bake_margin)
                 finally:
                     set_collections_hidden(hide, False)
                 state_path = out_glb + f".state.{state['name']}.png"
-                save_dithered(image, state_path)
+                save_resolved(image, state_path, size)
                 state_paths[state["name"]] = state_path
         finally:
             for light, old in grouped_prev:
@@ -514,8 +533,9 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
 
         if grouped_lights:
             group_layers = bake_light_groups(
-                proxy, image, margin_px, grouped_lights, out_glb,
+                proxy, image, bake_margin, grouped_lights, out_glb,
                 progress_start=0.15 + job * per_job, progress_step=per_job,
+                final_size=size,
             )
     finally:
         mesh = proxy.data
