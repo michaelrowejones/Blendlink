@@ -12,5 +12,10 @@ Works with plain three.js and React Three Fiber via drei's `useGLTF` — no
 runtime library, no engine, no lock-in. Delete blendlink and your GLB and
 generated types keep working forever.
 
+A companion Blender addon (`packages/blender-addon`) makes the vocabulary
+one-click inside Blender: tag colliders/LODs/rigid bodies, drop typed anchor
+empties, see the lint live, watch sync status, and preview what blendlink
+sees as a viewport overlay. Authoring-only — the CLI still owns export.
+
 Status: pre-release spike. See `docs/` in the flagship project for the full
 vision and research trail.

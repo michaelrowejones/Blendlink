@@ -1,0 +1,30 @@
+schema_version = "1.0.0"
+
+id = "blendlink"
+version = "0.2.0"
+name = "Blendlink"
+tagline = "Author the blendlink web vocabulary and see sync status"
+maintainer = "Michael Rowe Jones <michaelrowejones@gmail.com>"
+type = "add-on"
+
+website = "https://github.com/michaelcup/blendlink"
+tags = ["Pipeline", "Development", "3D View"]
+
+blender_version_min = "4.2.0"
+
+# GPL-3.0-or-later is mandatory for extensions.blender.org uploads.
+# The npm/TypeScript side of blendlink is a separate program (MIT).
+license = ["SPDX:GPL-3.0-or-later"]
+copyright = ["2026 Michael Rowe Jones"]
+
+[permissions]
+files = "Read the blendlink manifest beside your project for sync status"
+
+[build]
+paths_exclude_pattern = [
+  "__pycache__/",
+  "/.git/",
+  "/*.zip",
+  "/tests/",
+  "**/*_test.py",
+]

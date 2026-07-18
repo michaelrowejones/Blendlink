@@ -3,3 +3,5 @@ dist/
 *.tsbuildinfo
 .blendlink-cache/
 *.blend1
+__pycache__/
+packages/blender-addon/*.zip
