@@ -75,62 +75,109 @@ class BLENDLINK_PT_tag(_BlendlinkPanelMixin, bpy.types.Panel):
         layout.operator("blendlink.clear_tag", icon="X")
 
 
-class BLENDLINK_PT_physics(_BlendlinkPanelMixin, bpy.types.Panel):
-    bl_idname = "BLENDLINK_PT_physics"
-    bl_parent_id = "BLENDLINK_PT_main"
-    bl_label = "Physics"
-
-    @classmethod
-    def poll(cls, context):
-        obj = context.active_object
-        if obj is None:
-            return False
-        classification = vocab.classify(obj.name)
-        return classification is not None and classification.kind == "rigid"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-        obj = context.active_object
-        if "mass" in obj:
-            layout.prop(obj, '["mass"]', text="Mass", slider=True)
-        if "friction" in obj:
-            layout.prop(obj, '["friction"]', text="Friction", slider=True)
+_ROLE_UI = {
+    "collider": ("MESH_ICOSPHERE", "Collider"),
+    "rigid": ("RIGID_BODY", "Rigid Body"),
+    "lod": ("MOD_DECIM", "LOD Level"),
+    "noimp": ("EXPORT", "Excluded"),
+    "socket": ("EMPTY_ARROWS", "Socket"),
+    "hotspot": ("INFO", "Hotspot"),
+    "audio": ("SPEAKER", "Audio Anchor"),
+}
 
 
-_ANCHOR_LABEL = {"socket": "Socket", "hotspot": "Hotspot", "audio": "Audio Anchor"}
-
-
-class BLENDLINK_PT_anchor(_BlendlinkPanelMixin, bpy.types.Panel):
-    bl_idname = "BLENDLINK_PT_anchor"
-    bl_parent_id = "BLENDLINK_PT_main"
-    bl_label = "Anchor"
-
-    @classmethod
-    def poll(cls, context):
-        obj = context.active_object
-        if obj is None:
-            return False
-        classification = vocab.classify(obj.name)
-        return classification is not None and classification.kind in _ANCHOR_LABEL
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-        obj = context.active_object
-        classification = vocab.classify(obj.name)
-        layout.label(
-            text=f"{_ANCHOR_LABEL[classification.kind]}: {classification.anchor_name}",
-            icon="EMPTY_ARROWS",
+def describe(classification) -> str:
+    """One sentence: what this designation DOES in the web build. The
+    research finding: legible designation systems state consequences, not
+    just labels."""
+    if classification is None:
+        return "No designation — renders as-is in the web build"
+    kind = classification.kind
+    if kind == "collider":
+        shape = "a convex-hull" if classification.shape == "convex" else "an exact-mesh"
+        if classification.proxy_only:
+            return (
+                f"Ships for physics only: hidden in the web build, "
+                f"its mesh becomes {shape} collider named {classification.base!r}"
+            )
+        return f"Renders normally, and the web build also gets {shape} collider"
+    if kind == "rigid":
+        return "Simulated as a rigid body in the web build (mass and friction below)"
+    if kind == "lod":
+        return (
+            f"Level {classification.lod_index} of the {classification.base!r} chain — "
+            f"the web build switches levels by camera distance"
         )
+    if kind == "noimp":
+        return "Never exported — reference geometry that stays in Blender"
+    if kind == "socket":
+        return (
+            f"Typed attach point {classification.anchor_name!r}: its transform is "
+            f"exported for mounting objects in code; no geometry"
+        )
+    if kind == "hotspot":
+        return (
+            f"Interactive marker {classification.anchor_name!r}: the web UI shows "
+            f"its title and body at this position"
+        )
+    if kind == "audio":
+        return f"Positional audio emitter {classification.anchor_name!r} for the web scene"
+    return ""
+
+
+class BLENDLINK_PT_designation(_BlendlinkPanelMixin, bpy.types.Panel):
+    bl_idname = "BLENDLINK_PT_designation"
+    bl_parent_id = "BLENDLINK_PT_main"
+    bl_label = "Designation"
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
+
+    def draw(self, context):
+        layout = self.layout
+        obj = context.active_object
+        extras = {key: obj[key] for key in obj.keys()}
+        classification = vocab.classify(obj.name, extras)
+
+        if classification is None:
+            layout.label(text="None — renders as-is", icon="OBJECT_DATA")
+            return
+        icon, label = _ROLE_UI.get(classification.kind, ("OBJECT_DATA", classification.kind))
+        header = layout.row(align=True)
+        header.label(text=label, icon=icon)
+        if isinstance(extras.get(vocab.ROLE_PROPERTY), str):
+            header.label(text="(set by property)", icon="PROPERTIES")
+
+        # The consequence, wrapped to the panel width.
+        text = describe(classification)
+        words, line = text.split(), ""
+        box = layout.box()
+        for word in words:
+            if len(line) + len(word) + 1 > 38:
+                box.label(text=line)
+                line = word
+            else:
+                line = f"{line} {word}".strip()
+        if line:
+            box.label(text=line)
+
+        column = layout.column()
+        column.use_property_split = True
+        column.use_property_decorate = False
+        if classification.kind == "rigid":
+            if "mass" in obj:
+                column.prop(obj, '["mass"]', text="Mass", slider=True)
+            if "friction" in obj:
+                column.prop(obj, '["friction"]', text="Friction", slider=True)
+        if classification.kind == "lod" and "lod_distance" in obj:
+            column.prop(obj, '["lod_distance"]', text="Switch Distance")
         if classification.kind == "hotspot":
             if "title" in obj:
-                layout.prop(obj, '["title"]', text="Title")
+                column.prop(obj, '["title"]', text="Title")
             if "body" in obj:
-                layout.prop(obj, '["body"]', text="Body")
-        if obj.parent is not None:
+                column.prop(obj, '["body"]', text="Body")
+        if classification.kind in ("socket", "hotspot", "audio") and obj.parent is not None:
             layout.label(text=f"Attached to {obj.parent.name}", icon="LINKED")
 
 
@@ -166,8 +213,7 @@ class BLENDLINK_PT_checks(_BlendlinkPanelMixin, bpy.types.Panel):
 classes = (
     BLENDLINK_PT_main,
     BLENDLINK_PT_tag,
-    BLENDLINK_PT_physics,
-    BLENDLINK_PT_anchor,
+    BLENDLINK_PT_designation,
     BLENDLINK_PT_checks,
 )
 

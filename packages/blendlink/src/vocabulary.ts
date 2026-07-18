@@ -81,6 +81,34 @@ const AUDIO = /^audio[-_](.+)$/i
 /** Words that look like vocabulary but don't parse — the lint targets. */
 const NEAR_MISS = /col+only|con+vcol|socket|hotspot|[-_]lod[-_]?\d/i
 
+/** Blender's duplicate auto-numbering. Godot's canonical suffix bug
+ * (godot#78881) is silently ignoring "Crate-col.001"; we parse tolerantly
+ * instead — the numbered stem is matched, with an info-level lint. */
+const NUMBERED = /^(.+)(\.\d{3})$/
+
+/** Explicit role property: wins over the name when both are present.
+ * The escape hatch for the cases where names structurally fail — the
+ * 63-byte limit, linked objects that cannot be renamed, multi-role. */
+const ROLE_PROPERTY = 'blendlink_role'
+const ROLE_VALUES = new Set([
+  'col', 'convcol', 'colonly', 'convcolonly', 'rigid', 'noimp',
+])
+
+/** Effective name for suffix matching: tolerate `.NNN` duplicate numbering
+ * by folding it into the base ("Crate-col.001" matches as "Crate.001-col"). */
+function effectiveName(name: string): { matchName: string; dup: string } {
+  const match = name.match(NUMBERED)
+  if (!match) return { matchName: name, dup: '' }
+  return { matchName: match[1]!, dup: match[2]! }
+}
+
+const COLLIDER_SHAPES: Record<string, { convex: boolean; proxyOnly: boolean }> = {
+  col: { convex: false, proxyOnly: false },
+  convcol: { convex: true, proxyOnly: false },
+  colonly: { convex: false, proxyOnly: true },
+  convcolonly: { convex: true, proxyOnly: true },
+}
+
 export function parseVocabulary(
   nodes: VocabularyNodeInput[],
   sidecar?: Pick<BlendSidecar, 'empties'>,
@@ -100,10 +128,48 @@ export function parseVocabulary(
   const lodGroups = new Map<string, LodChain>()
 
   for (const node of nodes) {
-    const collider = node.name.match(COLLIDER)
-    if (collider) {
-      const convex = Boolean(collider[1])
-      const proxyOnly = Boolean(collider[2])
+    const { matchName, dup } = effectiveName(node.name)
+    if (dup && (matchName.match(COLLIDER) || RIGID.test(matchName) || LOD.test(matchName))) {
+      const base = matchName.replace(COLLIDER, '').replace(RIGID, '').replace(LOD, '')
+      const tag = matchName.slice(base.length)
+      vocabulary.warnings.push(
+        `${node.name} carries Blender duplicate numbering after its tag; ` +
+          `blendlink parses it anyway, but strict engines (Godot) would not — ` +
+          `consider renaming to ${base}${dup}${tag}.`,
+      )
+    }
+
+    // Explicit property override: wins over the name when both are present.
+    const rawRole = node.extras?.[ROLE_PROPERTY]
+    let explicitRole: string | null = null
+    if (typeof rawRole === 'string') {
+      const normalized = rawRole.toLowerCase().trim()
+      if (ROLE_VALUES.has(normalized)) {
+        explicitRole = normalized
+      } else {
+        vocabulary.warnings.push(
+          `${node.name} has ${ROLE_PROPERTY}="${rawRole}" which is not a known role ` +
+            `(${[...ROLE_VALUES].join(', ')}).`,
+        )
+      }
+    }
+
+    const nameCollider = matchName.match(COLLIDER)
+    const nameRole = nameCollider
+      ? `${nameCollider[1] ? 'conv' : ''}col${nameCollider[2] ? 'only' : ''}`
+      : RIGID.test(matchName)
+        ? 'rigid'
+        : null
+    if (explicitRole && nameRole && explicitRole !== nameRole) {
+      vocabulary.warnings.push(
+        `${node.name}: name says "${nameRole}" but ${ROLE_PROPERTY} says ` +
+          `"${explicitRole}" — the property wins.`,
+      )
+    }
+    const role = explicitRole ?? nameRole
+
+    if (role && role in COLLIDER_SHAPES) {
+      const { convex, proxyOnly } = COLLIDER_SHAPES[role]!
       const empty = emptyByName.get(node.name)
       const primitive = empty
         ? empty.displayType === 'SPHERE'
@@ -111,7 +177,8 @@ export function parseVocabulary(
           : ('box' as const)
         : null
       vocabulary.colliders.push({
-        name: node.name.replace(COLLIDER, ''),
+        // Logical name: tag stripped, duplicate numbering preserved.
+        name: nameCollider ? `${matchName.replace(COLLIDER, '')}${dup}` : node.name,
         shape: primitive ?? (convex ? 'convex' : 'trimesh'),
         proxyOnly,
         parent: node.parent,
@@ -122,9 +189,35 @@ export function parseVocabulary(
       continue
     }
 
-    const lod = node.name.match(LOD)
+    if (role === 'rigid') {
+      const extras = node.extras ?? {}
+      vocabulary.physics.push({
+        node: node.name,
+        type: 'rigid',
+        ...(typeof extras['mass'] === 'number' ? { mass: extras['mass'] } : {}),
+        ...(typeof extras['friction'] === 'number' ? { friction: extras['friction'] } : {}),
+        ...(typeof extras['restitution'] === 'number'
+          ? { restitution: extras['restitution'] }
+          : {}),
+        ...(typeof extras['physics_layer'] === 'string'
+          ? { layer: extras['physics_layer'] }
+          : {}),
+      })
+      continue
+    }
+
+    if (role === 'noimp') {
+      // Exporter directive; when it reaches the parser (GLB-generic flows)
+      // there is nothing to remove — report so it is never silent.
+      vocabulary.warnings.push(
+        `${node.name} is marked noimp but is present in the GLB (the export step removes these; typegen alone cannot).`,
+      )
+      continue
+    }
+
+    const lod = matchName.match(LOD)
     if (lod) {
-      const base = node.name.replace(LOD, '')
+      const base = `${matchName.replace(LOD, '')}${dup}`
       const chain = lodGroups.get(base) ?? { base, levels: [] }
       const distance = node.extras?.['lod_distance']
       chain.levels.push({
@@ -159,23 +252,6 @@ export function parseVocabulary(
           `${node.name} is a ${node.kind}; anchors are usually Empties — its geometry will render.`,
         )
       }
-      continue
-    }
-
-    if (RIGID.test(node.name)) {
-      const extras = node.extras ?? {}
-      vocabulary.physics.push({
-        node: node.name,
-        type: 'rigid',
-        ...(typeof extras['mass'] === 'number' ? { mass: extras['mass'] } : {}),
-        ...(typeof extras['friction'] === 'number' ? { friction: extras['friction'] } : {}),
-        ...(typeof extras['restitution'] === 'number'
-          ? { restitution: extras['restitution'] }
-          : {}),
-        ...(typeof extras['physics_layer'] === 'string'
-          ? { layer: extras['physics_layer'] }
-          : {}),
-      })
       continue
     }
 

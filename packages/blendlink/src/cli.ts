@@ -111,6 +111,83 @@ async function main(): Promise<number> {
       for (const warning of manifest.vocabulary.warnings) console.warn(`  ! ${warning}`)
       return 0
     }
+    case 'plan': {
+      const config = await loadConfig(process.cwd())
+      const { discoverBlender } = await import('./discover.js')
+      const { exportBlend } = await import('./invoke.js')
+      const { readFileSync, existsSync } = await import('node:fs')
+      const scenes = positional[0]
+        ? config.scenes.filter((scene) => scene.name === positional[0])
+        : config.scenes
+      if (positional[0] && scenes.length === 0) {
+        console.error(`No scene named "${positional[0]}" in blendlink.config.`)
+        return 2
+      }
+      const bakedScenes = scenes.filter(
+        (scene) => !scene.external && scene.settings.mode === 'baked',
+      )
+      for (const scene of scenes) {
+        if (scene.external) console.log(`· ${scene.name}: external — its pipeline owns the bake`)
+        else if (scene.settings.mode !== 'baked')
+          console.log(`· ${scene.name}: standard export — nothing to bake`)
+      }
+      if (bakedScenes.length === 0) return 0
+      const blender = await discoverBlender(config.blenderPath)
+      for (const scene of bakedScenes) {
+        const result = await exportBlend({
+          blendPath: scene.blendPath,
+          outPath: scene.glbPath,
+          settings: { ...scene.settings, planOnly: true },
+          blender,
+        })
+        const plan = result.plan
+        if (!plan) {
+          console.error(`✗ ${scene.name}: Blender returned no plan`)
+          return 1
+        }
+        console.log(
+          `\nbake plan — ${scene.name}: ${plan.atlasSize}px atlas, ${plan.samples} samples, ` +
+            `margin ${plan.marginPx}px`,
+        )
+        const rows = plan.objects.map((entry) => ({
+          name: entry.name,
+          px: `${entry.pxPerMeter.toFixed(0)}px/m`,
+          share: `${(entry.uvShare * 100).toFixed(1)}%`,
+          area: `${entry.areaM2.toFixed(2)}m²`,
+        }))
+        const width = Math.max(...rows.map((row) => row.name.length), 6)
+        console.log(`  ${'object'.padEnd(width)}  ${'px/m'.padStart(8)}  ${'atlas'.padStart(6)}  ${'area'.padStart(8)}`)
+        for (const row of rows) {
+          console.log(`  ${row.name.padEnd(width)}  ${row.px.padStart(8)}  ${row.share.padStart(6)}  ${row.area.padStart(8)}`)
+        }
+        const bakes = [
+          `${plan.states.length} state${plan.states.length === 1 ? '' : 's'} (${plan.states.join(', ')})`,
+          ...(plan.lightGroups.length > 0
+            ? [`${plan.lightGroups.length} light group${plan.lightGroups.length === 1 ? '' : 's'} (${plan.lightGroups.join(', ')})`]
+            : []),
+        ]
+        console.log(
+          `  atlas occupancy ${(plan.occupancy * 100).toFixed(0)}% · ${bakes.join(' + ')} = ${plan.bakeCount} bakes`,
+        )
+        if (plan.collisionProxies.length > 0) {
+          console.log(
+            `  collision proxies excluded from the bake: ${plan.collisionProxies.join(', ')}`,
+          )
+        }
+        if (existsSync(scene.manifestPath)) {
+          try {
+            const manifest = JSON.parse(readFileSync(scene.manifestPath, 'utf8'))
+            if (manifest.lastSyncDurationMs) {
+              console.log(`  last sync took ${(manifest.lastSyncDurationMs / 1000).toFixed(1)}s`)
+            }
+          } catch {
+            /* no estimate available */
+          }
+        }
+        for (const warning of plan.warnings) console.warn(`  ! ${warning}`)
+      }
+      return 0
+    }
     case 'init': {
       const { initProject } = await import('./init.js')
       const result = initProject(process.cwd())
@@ -147,6 +224,7 @@ async function main(): Promise<number> {
           '  init                     scaffold blendlink.config.mjs from found .blend files\n' +
           '  sync [scene] [--force] [--watch]\n' +
           '                           export .blend scenes (external scenes run their build command)\n' +
+          '  plan [scene]             what the bake will do: objects, texel density, atlas share, states\n' +
           '  verify                   Blender-free drift check (CI)\n' +
           '  typegen <glb> [--blend f.blend] [...]\n' +
           '                           generate types from an existing GLB\n' +

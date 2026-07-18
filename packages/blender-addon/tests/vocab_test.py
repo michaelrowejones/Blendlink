@@ -32,8 +32,9 @@ class ClassifyTests(unittest.TestCase):
 
 
 class NumberedTests(unittest.TestCase):
-    def test_numbered_hides_suffix_token(self):
-        self.assertIsNone(vocab.classify("Crate-colonly.001"))
+    def test_numbered_names_parse_tolerantly(self):
+        c = vocab.classify("Crate-colonly.001")
+        self.assertEqual((c.kind, c.base, c.proxy_only), ("collider", "Crate.001", True))
         self.assertEqual(vocab.numbered_token("Crate-colonly.001"), "Crate-colonly")
         self.assertEqual(vocab.fix_numbered("Crate-colonly.001"), "Crate.001-colonly")
         self.assertEqual(vocab.fix_numbered("Rock_LOD1.002"), "Rock.002_LOD1")
@@ -63,9 +64,21 @@ class LintTests(unittest.TestCase):
         issues = vocab.lint([vocab.SceneNode("Wall-collonly")])
         self.assertTrue(any("did not match" in i.message for i in issues))
 
-    def test_numbered_fixable(self):
+    def test_numbered_fixable_info(self):
         issues = vocab.lint([vocab.SceneNode("Crate-colonly.001")])
-        self.assertTrue(any(i.fixable_numbered for i in issues))
+        numbered = [i for i in issues if i.fixable_numbered]
+        self.assertEqual(len(numbered), 1)
+        self.assertEqual(numbered[0].severity, "INFO")
+
+    def test_role_property_wins_and_disagreement_lints(self):
+        c = vocab.classify("Anything", {"blendlink_role": "convcolonly"})
+        self.assertEqual((c.kind, c.shape, c.proxy_only), ("collider", "convex", True))
+        issues = vocab.lint([
+            vocab.SceneNode("Fence-col", extras={"blendlink_role": "rigid"}),
+            vocab.SceneNode("Crate", extras={"blendlink_role": "colider"}),
+        ])
+        self.assertTrue(any("the property wins" in i.message for i in issues))
+        self.assertTrue(any("not a known role" in i.message for i in issues))
 
     def test_lod_gap_and_missing_zero(self):
         issues = vocab.lint([

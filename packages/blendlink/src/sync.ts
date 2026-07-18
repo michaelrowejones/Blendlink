@@ -86,9 +86,11 @@ function syncExternalScene(scene: ResolvedScene, options: { force?: boolean }): 
     warnings.push(
       'build command finished but the manifest is not stamped with the current .blend — make sure it ends with `blendlink typegen <glb> --blend <file>`',
     )
-  } else if (rebuilt.syncHint !== scene.build) {
-    // Stamp the build command so the Blender addon can show "run this".
+  } else {
+    // Stamp the build command (for the addon's "run this") and the duration
+    // (for plan-time estimates).
     rebuilt.syncHint = scene.build
+    rebuilt.lastSyncDurationMs = Date.now() - started
     writeFileSync(scene.manifestPath, JSON.stringify(rebuilt, null, 2) + '\n')
   }
   emitProgress(1, `${scene.name} up to date`)
@@ -157,6 +159,11 @@ export async function syncScene(
     const file = path.split(/[\\/]/).pop()!
     states[state] = { url: scene.url.replace(/[^/]+$/, file) }
   }
+  const lightGroups: Record<string, { url: string; maxValue: number }> = {}
+  for (const [group, layer] of Object.entries(exported.bakedLightGroups)) {
+    const file = layer.path.split(/[\\/]/).pop()!
+    lightGroups[group] = { url: scene.url.replace(/[^/]+$/, file), maxValue: layer.maxValue }
+  }
   emitProgress(0.85, `generating types for ${scene.name}`)
   const { manifest, module } = await generateSceneModule({
     glbPath: scene.glbPath,
@@ -167,12 +174,14 @@ export async function syncScene(
     sidecar: exported.sidecar,
     excluded: exported.excluded,
     ...(Object.keys(states).length > 0 ? { states } : {}),
+    ...(Object.keys(lightGroups).length > 0 ? { lightGroups } : {}),
   })
   manifest.blendBytesHash = createHash('sha256')
     .update(readFileSync(scene.blendPath))
     .digest('hex')
     .slice(0, 16)
   manifest.syncHint = DEFAULT_SYNC_HINT
+  manifest.lastSyncDurationMs = Date.now() - started
   mkdirSync(dirname(scene.manifestPath), { recursive: true })
   writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
   writeFileSync(scene.modulePath, module)

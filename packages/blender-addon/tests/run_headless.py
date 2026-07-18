@@ -164,12 +164,17 @@ def main():
     exit_code = syncrun.drain_blocking(timeout_seconds=60)
     expect(exit_code == 3, f"expected exit 3, got {exit_code}")
 
-    # --- anchor panel poll + copy-hint gating ---
+    # --- designation card + copy-hint gating ---
     ui = sys.modules[f"{PACKAGE}.ui"]
     select_only(hotspot)
-    expect(ui.BLENDLINK_PT_anchor.poll(bpy.context), "anchor panel should show for a hotspot")
-    select_only(barrel)
-    expect(not ui.BLENDLINK_PT_anchor.poll(bpy.context), "anchor panel should hide otherwise")
+    expect(ui.BLENDLINK_PT_designation.poll(bpy.context), "designation card should show for the active object")
+    text = ui.describe(vocab.classify(hotspot.name))
+    expect("Interactive marker" in text, f"hotspot consequence wrong: {text}")
+    text = ui.describe(vocab.classify("Crate-colonly"))
+    expect("hidden in the web build" in text, f"colonly consequence wrong: {text}")
+    text = ui.describe(vocab.classify("Anything", {"blendlink_role": "convcol"}))
+    expect("convex-hull" in text, f"property-role consequence wrong: {text}")
+    expect(ui.describe(None).startswith("No designation"), "no-designation text wrong")
     expect(not bpy.ops.blendlink.copy_sync_hint.poll(), "copy hint should be disabled without a manifest hint")
 
     addon.unregister()

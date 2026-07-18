@@ -42,6 +42,42 @@ Every token is linted — typos like `-collonly` warn instead of failing silentl
 | Bezier curves | typed Y-up point data for camera paths |
 | Timeline markers | named seconds for scroll-scrub bindings |
 | `mode: 'baked'` scenes | Cycles Combined atlas + unlit export, lighting states |
+| A **Light Group** on a light (native Cycles field) | interactive light: baked as an additive layer with runtime tint/strength |
+| `blendlink_role` custom property | explicit role override — wins over the name (for long names, linked objects, multi-role) |
+
+Names parse tolerantly: Blender's `.001` duplicate numbering after a tag
+still matches (with a lint nudge), `-`/`_` are interchangeable, matching is
+case-insensitive. Anything that *almost* parses warns instead of silently
+doing nothing.
+
+## Know before you bake
+
+```bash
+blendlink plan
+```
+
+prints what a baked scene will actually do — per-object texel density
+(px/m), atlas share, occupancy, the state and light-group list, collision
+proxies excluded from the pack, and how long the last sync took — with
+lints for the classic re-bake causes (an object far below median density
+will look blurry; far above is hogging the atlas).
+
+## Interactive lights over a baked base
+
+Assign a light to a Cycles **Light Group** (`Object ▸ Shading ▸ Light
+Group`) and baked mode excludes it from the base states and solo-bakes its
+full contribution — direct and bounced, real falloff — as a peak-normalized
+layer. The manifest records `lightGroups: { name: { url, maxValue } }`.
+At runtime, in linear space:
+
+```glsl
+color = stateColor + Σ layerᵢ(uv) * maxValueᵢ * tintᵢ * strengthᵢ
+```
+
+Dim it, tint it, flicker it (Quake's `"a"–"z"` lightstyle strings at 10fps
+still hold up) — no re-bake. Light adds linearly, so this is physically
+exact, and unlike mask-times-flat-color approaches the layer keeps the
+light's actual baked bounce.
 
 ## Companion Blender addon
 

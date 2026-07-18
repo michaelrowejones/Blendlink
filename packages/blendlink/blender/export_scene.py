@@ -19,6 +19,7 @@ import os
 import re
 import sys
 
+import bmesh
 import bpy
 
 
@@ -115,7 +116,17 @@ def collect_sidecar(settings: dict) -> dict:
 
 
 NOIMP_PATTERN = re.compile(r"[-_]noimp$", re.IGNORECASE)
+# Collision-only proxies ship in the GLB (physics needs the geometry) but
+# never render — keep them out of the atlas pack and the bake.
+COLONLY_PATTERN = re.compile(r"[-_](conv)?colonly(\.\d{3})?$", re.IGNORECASE)
 ATLAS_UV = "BLENDLINK_ATLAS"
+
+
+def is_collision_proxy(obj) -> bool:
+    role = obj.get("blendlink_role")
+    if isinstance(role, str) and role.lower().strip() in ("colonly", "convcolonly"):
+        return True
+    return bool(COLONLY_PATTERN.search(obj.name))
 
 
 # ---------------------------------------------------------------------------
@@ -132,7 +143,8 @@ ATLAS_UV = "BLENDLINK_ATLAS"
 def render_meshes() -> list:
     return [
         obj for obj in bpy.context.scene.objects
-        if obj.type == "MESH" and not obj.hide_render and len(obj.data.polygons) > 0
+        if obj.type == "MESH" and not obj.hide_render
+        and len(obj.data.polygons) > 0 and not is_collision_proxy(obj)
     ]
 
 
@@ -294,6 +306,162 @@ def progress(fraction: float, label: str) -> None:
     print(f"##blendlink {json.dumps(payload)}", flush=True)
 
 
+def compute_bake_plan(settings: dict) -> dict:
+    """Everything an artist wants to know BEFORE the bake, computed from the
+    UV pack alone (no Cycles work): per-object texel density, atlas share,
+    occupancy, and the state list. The re-bake causes on record are density
+    discovered too late and one object hogging the atlas — this is the lint.
+    """
+    bake = settings.get("bake", {})
+    size = int(bake.get("size", 2048))
+    margin_px = int(bake.get("margin", 48))
+    states = bake.get("states") or [{"name": "default"}]
+    bake_prepare_geometry(margin_px, size)
+
+    objects = []
+    total_uv = 0.0
+    for obj in render_meshes():
+        bm = bmesh.new()
+        bm.from_mesh(obj.data)
+        bm.transform(obj.matrix_world)
+        surface = sum(face.calc_area() for face in bm.faces)
+        uv_layer = bm.loops.layers.uv.get(ATLAS_UV)
+        uv_area = 0.0
+        if uv_layer is not None:
+            for face in bm.faces:
+                coords = [loop[uv_layer].uv for loop in face.loops]
+                shoelace = 0.0
+                for i, current in enumerate(coords):
+                    following = coords[(i + 1) % len(coords)]
+                    shoelace += current.x * following.y - following.x * current.y
+                uv_area += abs(shoelace) / 2.0
+        bm.free()
+        total_uv += uv_area
+        px_per_meter = ((uv_area * size * size) / surface) ** 0.5 if surface > 0 else 0.0
+        objects.append({
+            "name": obj.name,
+            "areaM2": round(surface, 3),
+            "uvShare": round(uv_area, 5),
+            "pxPerMeter": round(px_per_meter, 1),
+        })
+
+    objects.sort(key=lambda entry: -entry["uvShare"])
+    warnings = []
+    densities = sorted(entry["pxPerMeter"] for entry in objects if entry["pxPerMeter"] > 0)
+    if densities:
+        median = densities[len(densities) // 2]
+        for entry in objects:
+            if entry["pxPerMeter"] > 0 and median > 0:
+                ratio = entry["pxPerMeter"] / median
+                if ratio < 0.5:
+                    warnings.append(
+                        f"{entry['name']} bakes at {entry['pxPerMeter']:.0f}px/m, "
+                        f"{median / entry['pxPerMeter']:.1f}x below the median — it will look blurry"
+                    )
+                elif ratio > 2.0:
+                    warnings.append(
+                        f"{entry['name']} bakes at {entry['pxPerMeter']:.0f}px/m, "
+                        f"{ratio:.1f}x above the median — it is hogging atlas space"
+                    )
+    light_groups = sorted({
+        obj.lightgroup for obj in bpy.context.scene.objects
+        if obj.type == "LIGHT" and getattr(obj, "lightgroup", "")
+    })
+    collision_proxies = sorted(
+        obj.name for obj in bpy.context.scene.objects
+        if obj.type == "MESH" and is_collision_proxy(obj)
+    )
+    return {
+        "atlasSize": size,
+        "marginPx": margin_px,
+        "samples": int(bake.get("samples", 128)),
+        "occupancy": round(total_uv, 4),
+        "states": [state["name"] for state in states],
+        "lightGroups": light_groups,
+        "bakeCount": len(states) + len(light_groups),
+        "objects": objects,
+        "collisionProxies": collision_proxies,
+        "warnings": warnings,
+    }
+
+
+def mute_emission() -> list:
+    """Best-effort: zero unlinked emission during light-group solo bakes so
+    emissive surfaces don't stamp themselves into every group's layer.
+    Node-driven emission is left alone (its bounce stays in the base)."""
+    muted = []
+    for material in bpy.data.materials:
+        if not material.use_nodes:
+            continue
+        for node in material.node_tree.nodes:
+            sockets = []
+            if node.type == "EMISSION":
+                sockets.append(node.inputs.get("Strength"))
+            elif node.type == "BSDF_PRINCIPLED":
+                sockets.append(node.inputs.get("Emission Strength"))
+            for socket in sockets:
+                if socket is not None and not socket.is_linked and socket.default_value:
+                    muted.append((socket, socket.default_value))
+                    socket.default_value = 0.0
+    return muted
+
+
+def bake_light_groups(
+    proxy, image, margin_px: int, grouped_lights: dict, out_glb: str,
+    progress_start: float, progress_step: float,
+) -> dict:
+    """Solo-bake each light group's full contribution (direct + indirect).
+
+    Cycles cannot bake light-group AOVs, but a Combined bake with only that
+    group's lights enabled IS its contribution, by linearity. World goes
+    black and unlinked emission is muted so nothing else leaks in. Layers
+    are peak-normalized to survive 8-bit PNG; maxValue rides the manifest so
+    the runtime can rescale (layer * maxValue * tint * strength, added in
+    linear space).
+    """
+    import numpy as np
+
+    scene = bpy.context.scene
+    all_lights = [obj for obj in scene.objects if obj.type == "LIGHT"]
+    lights_prev = [(light, light.hide_render) for light in all_lights]
+    world_prev = scene.world
+    black = bpy.data.worlds.new("BLENDLINK_BLACK_WORLD")
+    black.use_nodes = True
+    background = black.node_tree.nodes.get("Background")
+    if background is not None:
+        background.inputs["Color"].default_value = (0.0, 0.0, 0.0, 1.0)
+        background.inputs["Strength"].default_value = 0.0
+    muted = mute_emission()
+
+    layers = {}
+    try:
+        scene.world = black
+        for index, (name, lights) in enumerate(sorted(grouped_lights.items())):
+            progress(progress_start + index * progress_step, f"baking light group '{name}'")
+            for light, _ in lights_prev:
+                light.hide_render = light not in lights
+            bake_state(proxy, image, margin_px)
+
+            pixels = np.empty(image.size[0] * image.size[1] * 4, dtype=np.float32)
+            image.pixels.foreach_get(pixels)
+            rgb = pixels.reshape(-1, 4)[:, :3]
+            peak = float(rgb.max())
+            if peak > 1.0:
+                rgb /= peak
+                image.pixels.foreach_set(pixels)
+            layer_path = out_glb + f".light.{name}.png"
+            save_dithered(image, layer_path)
+            layers[name] = {"path": layer_path, "maxValue": max(peak, 1.0)}
+    finally:
+        scene.world = world_prev
+        for light, old in lights_prev:
+            light.hide_render = old
+        for socket, value in muted:
+            socket.default_value = value
+        bpy.data.worlds.remove(black)
+    return layers
+
+
 def run_baked_mode(settings: dict, out_glb: str) -> dict:
     bake = settings.get("bake", {})
     size = int(bake.get("size", 2048))
@@ -306,23 +474,49 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     bake_engine(samples)
     proxy, hidden = bake_proxy()
 
+    # Lights assigned to a Cycles Light Group become interactive: excluded
+    # from the base/state bakes, then solo-baked as additive contribution
+    # layers (light adds linearly — Quake lightstyles' 30-year-old exploit).
+    grouped_lights = {}
+    for obj in bpy.context.scene.objects:
+        if obj.type == "LIGHT" and getattr(obj, "lightgroup", ""):
+            grouped_lights.setdefault(obj.lightgroup, []).append(obj)
+
     state_paths = {}
+    group_layers = {}
     image = bpy.data.images.new(
         "blendlink-bake", width=size, height=size, alpha=False, float_buffer=True,
     )
+    bake_jobs = len(states) + len(grouped_lights)
+    per_job = 0.6 / max(bake_jobs, 1)
+    job = 0
     try:
-        per_state = 0.6 / max(len(states), 1)
-        for index, state in enumerate(states):
-            progress(0.15 + index * per_state, f"baking {state['name']} at {size}px")
-            hide = state.get("hideCollections", [])
-            set_collections_hidden(hide, True)
-            try:
-                bake_state(proxy, image, margin_px)
-            finally:
-                set_collections_hidden(hide, False)
-            state_path = out_glb + f".state.{state['name']}.png"
-            save_dithered(image, state_path)
-            state_paths[state["name"]] = state_path
+        grouped_flat = [light for lights in grouped_lights.values() for light in lights]
+        grouped_prev = [(light, light.hide_render) for light in grouped_flat]
+        for light, _ in grouped_prev:
+            light.hide_render = True
+        try:
+            for state in states:
+                progress(0.15 + job * per_job, f"baking {state['name']} at {size}px")
+                job += 1
+                hide = state.get("hideCollections", [])
+                set_collections_hidden(hide, True)
+                try:
+                    bake_state(proxy, image, margin_px)
+                finally:
+                    set_collections_hidden(hide, False)
+                state_path = out_glb + f".state.{state['name']}.png"
+                save_dithered(image, state_path)
+                state_paths[state["name"]] = state_path
+        finally:
+            for light, old in grouped_prev:
+                light.hide_render = old
+
+        if grouped_lights:
+            group_layers = bake_light_groups(
+                proxy, image, margin_px, grouped_lights, out_glb,
+                progress_start=0.15 + job * per_job, progress_step=per_job,
+            )
     finally:
         mesh = proxy.data
         bpy.data.objects.remove(proxy)
@@ -361,14 +555,20 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
         mesh.uv_layers.active_index = 0
         mesh.uv_layers[0].active_render = True
 
-    return {"states": {name: path for name, path in state_paths.items()}}
+    return {
+        "states": {name: path for name, path in state_paths.items()},
+        "lightGroups": group_layers,
+    }
 
 
 def remove_noimp_objects() -> list[str]:
-    """Godot's -noimp convention: never export, but never silently either."""
+    """Godot's -noimp convention: never export, but never silently either.
+    The blendlink_role custom property is the explicit override channel."""
     removed = []
     for obj in list(bpy.context.scene.objects):
-        if NOIMP_PATTERN.search(obj.name):
+        role = obj.get("blendlink_role")
+        by_property = isinstance(role, str) and role.lower().strip() == "noimp"
+        if by_property or NOIMP_PATTERN.search(obj.name):
             removed.append(obj.name)
             bpy.data.objects.remove(obj, do_unlink=True)
     return sorted(removed)
@@ -378,6 +578,25 @@ def main() -> None:
     out_path, settings_path, result_path = parse_argv()
     with open(settings_path, "r", encoding="utf-8") as handle:
         settings = json.load(handle)
+
+    if settings.get("planOnly"):
+        excluded = remove_noimp_objects()
+        plan = compute_bake_plan(settings)
+        result = {
+            "ok": True,
+            "blenderVersion": bpy.app.version_string,
+            "exporterKwargsDropped": [],
+            "warnings": [],
+            "collection": settings.get("collection"),
+            "excluded": excluded,
+            "sidecar": {"fps": 0, "markers": [], "empties": [], "curves": []},
+            "baked": {},
+            "plan": plan,
+        }
+        with open(result_path, "w", encoding="utf-8") as handle:
+            json.dump(result, handle)
+        print("BLENDLINK_OK plan")
+        return
 
     desired = {
         "filepath": out_path,

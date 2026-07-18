@@ -36,6 +36,24 @@ export interface ExportSettings {
   curveSamples?: number
   /** Escape hatch: raw exporter kwargs, RNA-filtered inside Blender. */
   exporterOverrides?: Record<string, unknown>
+  /** Compute the bake plan (UV pack + density stats) and stop — no bake,
+   * no GLB. The answer to "what is it planning to bake?". */
+  planOnly?: boolean
+}
+
+export interface BakePlan {
+  atlasSize: number
+  marginPx: number
+  samples: number
+  /** Sum of packed UV areas (0..1) — atlas occupancy. */
+  occupancy: number
+  states: string[]
+  lightGroups: string[]
+  bakeCount: number
+  objects: Array<{ name: string; areaM2: number; uvShare: number; pxPerMeter: number }>
+  /** In the GLB for physics, but kept out of the atlas and bake. */
+  collisionProxies: string[]
+  warnings: string[]
 }
 
 export interface BlendSidecar {
@@ -65,6 +83,10 @@ export interface ExportResult {
   sidecar: BlendSidecar
   /** Baked mode: state name → final PNG path on disk. */
   bakedStates: Record<string, string>
+  /** Baked mode: interactive light group → additive layer PNG + peak scale. */
+  bakedLightGroups: Record<string, { path: string; maxValue: number }>
+  /** planOnly runs: the bake plan (and nothing else was produced). */
+  plan?: BakePlan
   durationMs: number
 }
 
@@ -135,8 +157,9 @@ export async function exportBlend(options: {
     // Trust the sentinel + artifacts over the exit code: Blender sometimes
     // crashes during process shutdown AFTER a fully successful export
     // (observed: EXCEPTION_ACCESS_VIOLATION freeing the scene on exit).
+    const planOnly = options.settings?.planOnly === true
     const sentinel = stdout.includes('BLENDLINK_OK')
-    const artifactsComplete = existsSync(resultPath) && existsSync(tempGlb)
+    const artifactsComplete = existsSync(resultPath) && (planOnly || existsSync(tempGlb))
     if (!sentinel || !artifactsComplete) {
       const stderrTail = (stderr + '\n' + stdout).split('\n').slice(-15).join('\n')
       throw new BlendExportError(
@@ -149,21 +172,35 @@ export async function exportBlend(options: {
 
     const result = JSON.parse(readFileSync(resultPath, 'utf8')) as Omit<
       ExportResult,
-      'glbPath' | 'durationMs' | 'bakedStates'
-    > & { baked?: { states?: Record<string, string> } }
+      'glbPath' | 'durationMs' | 'bakedStates' | 'bakedLightGroups'
+    > & {
+      baked?: {
+        states?: Record<string, string>
+        lightGroups?: Record<string, { path: string; maxValue: number }>
+      }
+    }
     if (exitCode !== 0) {
       result.warnings = [
         ...result.warnings,
         `Blender crashed during shutdown (code ${exitCode}) after a successful export.`,
       ]
     }
+    if (planOnly) {
+      return {
+        ...result,
+        bakedStates: {},
+        bakedLightGroups: {},
+        glbPath: options.outPath,
+        durationMs: Date.now() - started,
+      }
+    }
     mkdirSync(dirname(options.outPath), { recursive: true })
     const staging = options.outPath + '.tmp-' + process.pid
     renameOrCopy(tempGlb, staging)
     renameSync(staging, options.outPath)
 
-    // Baked-mode state textures are written beside the temp GLB; move them
-    // out before the temp dir is destroyed.
+    // Baked-mode state/light textures are written beside the temp GLB; move
+    // them out before the temp dir is destroyed.
     const bakedStates: Record<string, string> = {}
     for (const [state, tempPath] of Object.entries(result.baked?.states ?? {})) {
       const finalPath = options.outPath.replace(/\.glb$/i, '') + `.${state}.png`
@@ -172,10 +209,19 @@ export async function exportBlend(options: {
         bakedStates[state] = finalPath
       }
     }
+    const bakedLightGroups: Record<string, { path: string; maxValue: number }> = {}
+    for (const [group, layer] of Object.entries(result.baked?.lightGroups ?? {})) {
+      const finalPath = options.outPath.replace(/\.glb$/i, '') + `.light.${group}.png`
+      if (existsSync(layer.path)) {
+        renameOrCopy(layer.path, finalPath)
+        bakedLightGroups[group] = { path: finalPath, maxValue: layer.maxValue }
+      }
+    }
 
     return {
       ...result,
       bakedStates,
+      bakedLightGroups,
       glbPath: options.outPath,
       durationMs: Date.now() - started,
     }

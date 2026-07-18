@@ -74,4 +74,30 @@ describe('parseVocabulary', () => {
     expect(result.colliders).toHaveLength(0)
     expect(result.warnings.some((warning) => warning.includes('did not match'))).toBe(true)
   })
+
+  it('parses Blender duplicate numbering tolerantly, with a lint', () => {
+    const result = parseVocabulary([node('Crate-colonly.001')])
+    expect(result.colliders).toEqual([
+      expect.objectContaining({ name: 'Crate.001', shape: 'trimesh', proxyOnly: true }),
+    ])
+    expect(result.warnings.some((warning) => warning.includes('duplicate numbering'))).toBe(true)
+  })
+
+  it('honors the blendlink_role property, which wins over the name', () => {
+    const result = parseVocabulary([
+      node('LongNameNoTag', { extras: { blendlink_role: 'convcolonly' } }),
+      node('Fence-col', { extras: { blendlink_role: 'rigid', mass: 2 } }),
+    ])
+    expect(result.colliders).toEqual([
+      expect.objectContaining({ name: 'LongNameNoTag', shape: 'convex', proxyOnly: true }),
+    ])
+    expect(result.physics).toEqual([expect.objectContaining({ node: 'Fence-col', mass: 2 })])
+    expect(result.warnings.some((warning) => warning.includes('the property wins'))).toBe(true)
+  })
+
+  it('warns on unknown blendlink_role values', () => {
+    const result = parseVocabulary([node('Crate', { extras: { blendlink_role: 'colider' } })])
+    expect(result.colliders).toHaveLength(0)
+    expect(result.warnings.some((warning) => warning.includes('not a known role'))).toBe(true)
+  })
 })

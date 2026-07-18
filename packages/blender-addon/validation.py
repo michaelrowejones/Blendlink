@@ -97,12 +97,13 @@ def recompute(scene) -> bool:
     overlay: list[OverlayItem] = []
     counts: dict[str, int] = {}
     for obj in scene.objects:
+        extras = {key: obj[key] for key in obj.keys()}
         nodes.append(vocab.SceneNode(
             name=obj.name,
             is_empty=obj.type == "EMPTY",
-            extras={key: obj[key] for key in obj.keys()},
+            extras=extras,
         ))
-        classification = vocab.classify(obj.name)
+        classification = vocab.classify(obj.name, extras)
         if classification is None:
             continue
         counts[classification.kind] = counts.get(classification.kind, 0) + 1
