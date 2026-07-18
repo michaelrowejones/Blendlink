@@ -15,6 +15,7 @@
 #   passing a stale kwarg raises TypeError and aborts the export).
 
 import json
+import os
 import re
 import sys
 
@@ -282,6 +283,17 @@ def set_collections_hidden(names: list, hidden: bool) -> None:
             collection.hide_render = hidden
 
 
+def progress(fraction: float, label: str) -> None:
+    """Stream a machine-readable progress line (only when a wrapper asks).
+
+    The invoker echoes ##blendlink lines live to whoever launched the sync
+    (e.g. the Blender addon's Sync Now progress bar)."""
+    if os.environ.get("BLENDLINK_PROGRESS") != "1":
+        return
+    payload = {"fraction": max(0.0, min(1.0, fraction)), "label": label}
+    print(f"##blendlink {json.dumps(payload)}", flush=True)
+
+
 def run_baked_mode(settings: dict, out_glb: str) -> dict:
     bake = settings.get("bake", {})
     size = int(bake.get("size", 2048))
@@ -289,6 +301,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     margin_px = int(bake.get("margin", 48))
     states = bake.get("states") or [{"name": "default", "hideCollections": []}]
 
+    progress(0.10, "packing bake atlas")
     bake_prepare_geometry(margin_px, size)
     bake_engine(samples)
     proxy, hidden = bake_proxy()
@@ -298,7 +311,9 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
         "blendlink-bake", width=size, height=size, alpha=False, float_buffer=True,
     )
     try:
+        per_state = 0.6 / max(len(states), 1)
         for index, state in enumerate(states):
+            progress(0.15 + index * per_state, f"baking {state['name']} at {size}px")
             hide = state.get("hideCollections", [])
             set_collections_hidden(hide, True)
             try:
@@ -317,6 +332,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             obj.hide_render = old
 
     # Rebuild every material as an unlit view of the default-state bake.
+    progress(0.78, "rebuilding materials unlit")
     first_state = states[0]["name"]
     baked = bpy.data.images.load(state_paths[first_state], check_existing=False)
     baked.colorspace_settings.name = "sRGB"
@@ -406,6 +422,7 @@ def main() -> None:
     if settings.get("mode") == "baked":
         baked_report = run_baked_mode(settings, out_path)
 
+    progress(0.82, "writing glTF")
     bpy.ops.export_scene.gltf(**kwargs)
 
     result = {

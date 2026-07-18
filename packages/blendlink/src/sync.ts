@@ -4,8 +4,12 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { discoverBlender, type BlenderInstall } from './discover.js'
 import { exportBlend } from './invoke.js'
+import { emitProgress } from './progress.js'
 import { generateSceneModule, type SceneManifest } from './typegen.js'
 import type { ResolvedConfig, ResolvedScene } from './config.js'
+
+/** What the addon's Sync Now runs; also shown to humans in the panel. */
+const DEFAULT_SYNC_HINT = 'npx blendlink sync'
 
 export interface SyncOutcome {
   scene: string
@@ -69,11 +73,13 @@ function syncExternalScene(scene: ResolvedScene, options: { force?: boolean }): 
       ],
     }
   }
+  emitProgress(0.03, `running build for ${scene.name}`)
   const result = spawnSync(scene.build, { shell: true, cwd: scene.root, stdio: 'inherit' })
   if (result.status !== 0) {
     throw new Error(`build command failed for "${scene.name}" (exit ${result.status}): ${scene.build}`)
   }
   const warnings: string[] = []
+  emitProgress(0.95, 'stamping manifest')
   const rebuilt = readManifest(scene.manifestPath)
   const freshBlendHash = existsSync(scene.blendPath) ? blendBytesHashOf(scene.blendPath) : null
   if (!rebuilt || rebuilt.blendBytesHash !== freshBlendHash) {
@@ -85,6 +91,7 @@ function syncExternalScene(scene: ResolvedScene, options: { force?: boolean }): 
     rebuilt.syncHint = scene.build
     writeFileSync(scene.manifestPath, JSON.stringify(rebuilt, null, 2) + '\n')
   }
+  emitProgress(1, `${scene.name} up to date`)
   return {
     scene: scene.name,
     action: 'built',
@@ -130,9 +137,14 @@ export async function syncScene(
     existsSync(scene.glbPath) &&
     existsSync(scene.modulePath)
   ) {
+    if (existing && !existing.syncHint) {
+      existing.syncHint = DEFAULT_SYNC_HINT
+      writeFileSync(scene.manifestPath, JSON.stringify(existing, null, 2) + '\n')
+    }
     return { scene: scene.name, action: 'skipped', durationMs: Date.now() - started, warnings: [] }
   }
 
+  emitProgress(0.05, `exporting ${scene.name} with Blender`)
   const exported = await exportBlend({
     blendPath: scene.blendPath,
     outPath: scene.glbPath,
@@ -145,6 +157,7 @@ export async function syncScene(
     const file = path.split(/[\\/]/).pop()!
     states[state] = { url: scene.url.replace(/[^/]+$/, file) }
   }
+  emitProgress(0.85, `generating types for ${scene.name}`)
   const { manifest, module } = await generateSceneModule({
     glbPath: scene.glbPath,
     url: scene.url,
@@ -159,9 +172,11 @@ export async function syncScene(
     .update(readFileSync(scene.blendPath))
     .digest('hex')
     .slice(0, 16)
+  manifest.syncHint = DEFAULT_SYNC_HINT
   mkdirSync(dirname(scene.manifestPath), { recursive: true })
   writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
   writeFileSync(scene.modulePath, module)
+  emitProgress(1, `${scene.name} up to date`)
 
   const warnings = [...exported.warnings, ...manifest.vocabulary.warnings]
   if (exported.excluded.length > 0) {

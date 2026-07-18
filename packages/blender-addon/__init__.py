@@ -27,6 +27,8 @@ def register():
 
 
 def unregister():
+    from . import syncrun
+    syncrun.shutdown()
     overlay.unregister()
     handlers.unregister()
     props.unregister_pointers()

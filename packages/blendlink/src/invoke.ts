@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { discoverBlender, type BlenderInstall } from './discover.js'
 import { readBlendHeader } from './blendHeader.js'
+import { ProgressEcho, progressEnabled } from './progress.js'
 
 const EXPORT_SCRIPT = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -201,7 +202,13 @@ function run(
     const child = spawn(executable, args, { shell: false, windowsHide: true })
     let stdout = ''
     let stderr = ''
-    child.stdout.on('data', (data) => (stdout += data))
+    // Blender's stdout is captured for the sentinel contract, but progress
+    // lines from the export script must stream live to whoever is watching.
+    const echo = progressEnabled() ? new ProgressEcho() : null
+    child.stdout.on('data', (data) => {
+      stdout += data
+      echo?.push(String(data))
+    })
     child.stderr.on('data', (data) => (stderr += data))
 
     const timer = setTimeout(() => {

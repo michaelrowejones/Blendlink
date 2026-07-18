@@ -327,6 +327,81 @@ class BLENDLINK_OT_select_issue(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class BLENDLINK_OT_sync_now(bpy.types.Operator):
+    """Save the file and run the project sync in the background"""
+    bl_idname = "blendlink.sync_now"
+    bl_label = "Sync Now"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        from . import syncrun, syncstatus
+        if syncrun.is_running():
+            cls.poll_message_set("A sync is already running")
+            return False
+        if not bpy.data.filepath:
+            cls.poll_message_set("Save the file first so there is something to sync")
+            return False
+        if syncstatus.project_root() is None:
+            cls.poll_message_set("No blendlink.config.mjs found near this file")
+            return False
+        return True
+
+    def execute(self, context):
+        from . import syncrun, syncstatus
+        if bpy.data.is_dirty:
+            bpy.ops.wm.save_mainfile()
+        syncstatus.refresh(force=True)
+        # Always run the orchestrator: it hash-gates external builds and
+        # skips instantly when everything is already in sync.
+        command = "npx blendlink sync"
+        error = syncrun.start(command, syncstatus.project_root())
+        if error is not None:
+            self.report({"ERROR"}, error)
+            return {"CANCELLED"}
+        self.report({"INFO"}, "Syncing in the background...")
+        return {"FINISHED"}
+
+
+class BLENDLINK_OT_sync_cancel(bpy.types.Operator):
+    """Stop the running sync"""
+    bl_idname = "blendlink.sync_cancel"
+    bl_label = "Cancel Sync"
+    bl_options = {"INTERNAL"}
+
+    @classmethod
+    def poll(cls, context):
+        from . import syncrun
+        return syncrun.is_running()
+
+    def execute(self, context):
+        from . import syncrun
+        syncrun.cancel()
+        self.report({"INFO"}, "Sync canceled")
+        return {"FINISHED"}
+
+
+class BLENDLINK_OT_open_sync_log(bpy.types.Operator):
+    """Open the last sync log in the system viewer"""
+    bl_idname = "blendlink.open_sync_log"
+    bl_label = "Open Sync Log"
+    bl_options = {"INTERNAL"}
+
+    @classmethod
+    def poll(cls, context):
+        from . import syncrun
+        import os
+        if not syncrun.last_log_path() or not os.path.exists(syncrun.last_log_path()):
+            cls.poll_message_set("No sync has run yet")
+            return False
+        return True
+
+    def execute(self, context):
+        from . import syncrun
+        bpy.ops.wm.path_open(filepath=syncrun.last_log_path())
+        return {"FINISHED"}
+
+
 class BLENDLINK_OT_copy_sync_hint(bpy.types.Operator):
     """Copy the sync command to the clipboard to run it in a terminal"""
     bl_idname = "blendlink.copy_sync_hint"
@@ -381,6 +456,9 @@ classes = (
     BLENDLINK_OT_add_anchor,
     BLENDLINK_OT_fix_numbered,
     BLENDLINK_OT_select_issue,
+    BLENDLINK_OT_sync_now,
+    BLENDLINK_OT_sync_cancel,
+    BLENDLINK_OT_open_sync_log,
     BLENDLINK_OT_copy_sync_hint,
     BLENDLINK_OT_refresh_checks,
     BLENDLINK_OT_refresh_sync,

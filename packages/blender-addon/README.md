@@ -13,9 +13,14 @@ never syncs — `blendlink sync` on the npm side owns that. What it does:
   near-miss tokens (`-collonly`), LOD gaps, anchors with geometry, and
   Blender's `.001` duplicate numbering that silently hides a suffix tag
   (with a one-click fix that moves the number into the base name).
-- **Sync status** — whether the saved `.blend` matches the last
-  `blendlink sync`, by comparing the manifest's `blendBytesHash` against the
-  file on disk. Manifest discovery walks up to `blendlink.config.mjs`.
+- **Sync status + Sync Now** — whether the saved `.blend` matches the last
+  `blendlink sync` (manifest `blendBytesHash` vs the file on disk; discovery
+  walks up to `blendlink.config.mjs`). When out of sync, a **Sync Now**
+  button saves the file and runs `npx blendlink sync` as a background
+  subprocess — Blender stays fully usable, a progress bar tracks the
+  `##blendlink` progress lines the pipeline emits, and failures surface an
+  open-log button. The addon still never implements export logic; it only
+  invokes the CLI the project already uses.
 - **Viewport overlay** — draws what blendlink sees: collider proxies as green
   wireframes, sockets as RGB axes, hotspots and audio anchors as labeled
   crosses. Respects the global overlay toggle; X-ray mode in preferences.

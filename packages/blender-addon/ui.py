@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import bpy
 
-from . import syncstatus, validation, vocab
+from . import syncrun, syncstatus, validation, vocab
 
 _DEFAULT_CATEGORY = "Blendlink"
 
@@ -21,14 +21,32 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        status, icon, label = syncstatus.status()
-        row = layout.row(align=True)
-        row.label(text=label, icon=icon)
-        row.operator("blendlink.refresh_sync", text="", icon="FILE_REFRESH")
-        if status in ("NEEDS_SYNC", "UNSAVED_EDITS") and syncstatus.sync_hint():
-            hint = layout.row(align=True)
-            hint.label(text=f"Run: {syncstatus.sync_hint()}", icon="CONSOLE")
-            hint.operator("blendlink.copy_sync_hint", text="", icon="COPYDOWN")
+        if syncrun.is_running():
+            fraction, label = syncrun.progress()
+            if hasattr(layout, "progress"):
+                row = layout.row(align=True)
+                row.progress(factor=fraction, type="BAR", text=label or "syncing")
+                row.operator("blendlink.sync_cancel", text="", icon="X")
+            else:
+                row = layout.row(align=True)
+                row.label(text=f"{label} ({fraction:.0%})", icon="FILE_REFRESH")
+                row.operator("blendlink.sync_cancel", text="", icon="X")
+        else:
+            status, icon, label = syncstatus.status()
+            row = layout.row(align=True)
+            row.label(text=label, icon=icon)
+            row.operator("blendlink.refresh_sync", text="", icon="FILE_REFRESH")
+            exit_code = syncrun.last_exit_code()
+            if exit_code not in (None, 0):
+                failed = layout.row(align=True)
+                failed.label(text=f"Last sync failed (exit {exit_code})", icon="ERROR")
+                failed.operator("blendlink.open_sync_log", text="", icon="TEXT")
+            if status in ("NEEDS_SYNC", "UNSAVED_EDITS"):
+                layout.operator("blendlink.sync_now", icon="FILE_REFRESH")
+                if syncstatus.sync_hint():
+                    hint = layout.row(align=True)
+                    hint.label(text=f"Or run: {syncstatus.sync_hint()}", icon="CONSOLE")
+                    hint.operator("blendlink.copy_sync_hint", text="", icon="COPYDOWN")
 
         counts = validation.result().counts
         if counts:

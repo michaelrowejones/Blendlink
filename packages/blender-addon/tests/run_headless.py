@@ -133,6 +133,37 @@ def main():
     syncstatus.refresh(force=True)
     expect(syncstatus.status()[0] == "NO_FILE", f"unsaved file status: {syncstatus.status()}")
 
+    # --- sync runner: subprocess + progress protocol + exit handling ---
+    import tempfile
+    syncrun = sys.modules[f"{PACKAGE}.syncrun"]
+    work = Path(tempfile.mkdtemp(prefix="blendlink-syncrun-"))
+    (work / "fake_sync.mjs").write_text(
+        'const p = (fraction, label) => console.log("##blendlink " + JSON.stringify({ fraction, label }))\n'
+        'p(0.2, "warming up")\n'
+        'await new Promise(r => setTimeout(r, 150))\n'
+        'p(0.7, "almost there")\n'
+        'console.log("plain output line")\n'
+        'p(1, "done")\n',
+        encoding="utf8",
+    )
+    error = syncrun.start("node fake_sync.mjs", str(work))
+    expect(error is None, f"syncrun.start failed: {error}")
+    expect(syncrun.is_running(), "runner should be running")
+    exit_code = syncrun.drain_blocking(timeout_seconds=60)
+    expect(exit_code == 0, f"fake sync exited {exit_code}")
+    fraction, label = syncrun.progress()
+    expect(fraction == 1.0 and label == "done", f"progress ended at {fraction} {label!r}")
+    expect(not syncrun.is_running(), "runner should have stopped")
+    log_path = Path(syncrun.last_log_path())
+    expect(log_path.exists() and "plain output line" in log_path.read_text(encoding="utf8"),
+           "log file missing subprocess output")
+
+    # failing command surfaces a nonzero exit code
+    error = syncrun.start("node -e \"process.exit(3)\"", str(work))
+    expect(error is None, f"syncrun.start (fail case) errored: {error}")
+    exit_code = syncrun.drain_blocking(timeout_seconds=60)
+    expect(exit_code == 3, f"expected exit 3, got {exit_code}")
+
     # --- anchor panel poll + copy-hint gating ---
     ui = sys.modules[f"{PACKAGE}.ui"]
     select_only(hotspot)

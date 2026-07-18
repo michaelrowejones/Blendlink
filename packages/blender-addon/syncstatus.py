@@ -29,6 +29,7 @@ _state = {
     "blend_hash": None,
     "blend_mtime": 0,
     "searched_for": None,
+    "root": None,  # directory containing blendlink.config.mjs
 }
 
 STATUS_UI = {
@@ -50,10 +51,15 @@ def sync_hint() -> str:
     return _state["hint"]
 
 
+def project_root() -> str | None:
+    """Directory containing blendlink.config.mjs, once discovered."""
+    return str(_state["root"]) if _state["root"] else None
+
+
 def reset():
     _state.update(
         status="NO_FILE", detail="", hint="", manifest_path=None, manifest_mtime=0,
-        blend_hash=None, blend_mtime=0, searched_for=None,
+        blend_hash=None, blend_mtime=0, searched_for=None, root=None,
     )
 
 
@@ -91,6 +97,7 @@ def _find_manifest(blend_path: Path) -> Path | None:
         if directory.parent == directory:
             break
         directory = directory.parent
+    _state["root"] = root
     if root is None:
         return None
     for manifest_path in _iter_manifests(root):

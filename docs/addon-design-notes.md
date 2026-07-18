@@ -75,6 +75,22 @@ registers the handlers; the offscreen test uses `gpu.init()` (5.2+).
   self-hosted `server-generate` repo JSON can give auto-updates outside the
   platform (Install-from-Disk installs never get updates).
 
+## Sync Now (added 0.3.0 — boundary refined, not broken)
+
+The original rule was "the addon never syncs". The refined rule: the addon
+never *implements* sync — but it may *invoke* the project's own CLI on an
+explicit user click. Sync Now runs `npx blendlink sync` via
+`subprocess.Popen` (never blocking the UI): a worker thread that touches no
+bpy forwards stdout into a `queue.Queue`, a `bpy.app.timers` pump drains it
+on the main thread — the exact thread pattern from the Blender docs. The
+pipeline emits `##blendlink {"fraction","label"}` lines when
+`BLENDLINK_PROGRESS=1` (set by the runner; silent for humans), which drive a
+`layout.progress()` bar (4.0+). Cancel kills the process tree (taskkill /T
+on Windows); unregister cancels and removes the pump timer. Output lands in
+`extension_path_user` (`sync-log.txt`) with an open-log button on failure.
+Platform posture: still self-contained (fully useful offline), subprocess is
+user-initiated and local-only.
+
 ## Not built (deliberately)
 
 - **glTF export hooks** (`glTF2ExportUserExtension`): blendlink's exporter
