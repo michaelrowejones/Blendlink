@@ -23,6 +23,9 @@ export interface BakeSettings {
   /** Bake at N× the atlas size and box-resolve down — free anti-aliasing
    * (Cycles bakes have none) at zero runtime cost. 2 is the sweet spot. */
   supersample?: number
+  /** OIDN-denoise the baked images before saving (runs after margin
+   * dilation, so the bake-time-denoise margin bug does not apply). */
+  denoise?: boolean
   /** Lighting states: each bakes with the listed collections hidden. */
   states?: Array<{ name: string; hideCollections?: string[] }>
 }

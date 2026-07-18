@@ -288,16 +288,78 @@ def save_dithered(image, path: str) -> None:
     image.save_render(path, scene=scene)
 
 
-def save_resolved(image, path: str, final_size: int) -> None:
+def save_denoised(image, path: str) -> None:
+    """OIDN via a throwaway compositor scene: Image → Denoise → Composite.
+
+    The stage scene is EMPTY (renders instantly under Workbench) and its
+    Composite output becomes the written file, through the same Standard
+    view + dither contract. Runs after margin dilation, sidestepping the
+    bake-time-denoise margin-darkening bug (blender#94573)."""
+    stage = bpy.data.scenes.new("BLENDLINK_DENOISE_STAGE")
+    tree = None
+    owns_tree = False
+    try:
+        stage.render.engine = "BLENDER_WORKBENCH"
+        stage.render.resolution_x = image.size[0]
+        stage.render.resolution_y = image.size[1]
+        stage.render.resolution_percentage = 100
+        stage.view_settings.view_transform = "Standard"
+        stage.view_settings.look = "None"
+        stage.view_settings.exposure = 0.0
+        stage.render.dither_intensity = 1.0
+        settings = stage.render.image_settings
+        settings.file_format = "PNG"
+        settings.color_mode = "RGB"
+        settings.color_depth = "8"
+        # Blender 5.x: the compositor is a node group on the scene; output
+        # flows through NodeGroupOutput (CompositorNodeComposite is gone).
+        # 4.x keeps the embedded scene.node_tree.
+        if hasattr(stage, "node_tree") and not hasattr(stage, "compositing_node_group"):
+            stage.use_nodes = True
+            tree = stage.node_tree
+            tree.nodes.clear()
+            sink = tree.nodes.new("CompositorNodeComposite")
+            owns_tree = False
+        else:
+            tree = bpy.data.node_groups.new("BLENDLINK_DENOISE_TREE", "CompositorNodeTree")
+            tree.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+            sink = tree.nodes.new("NodeGroupOutput")
+            stage.compositing_node_group = tree
+            owns_tree = True
+        source = tree.nodes.new("CompositorNodeImage")
+        source.image = image
+        denoise = tree.nodes.new("CompositorNodeDenoise")
+        tree.links.new(source.outputs["Image"], denoise.inputs["Image"])
+        tree.links.new(denoise.outputs["Image"], sink.inputs["Image"])
+        stage.render.filepath = path
+        bpy.ops.render.render(write_still=True, scene=stage.name)
+    finally:
+        if tree is not None and owns_tree and tree.name in bpy.data.node_groups:
+            bpy.data.node_groups.remove(tree)
+        bpy.data.scenes.remove(stage)
+
+
+def save_resolved(image, path: str, final_size: int, denoise: bool = False) -> None:
     """Save at final_size: supersampled bakes resolve down through a copy so
     the live bake target keeps its full resolution for the next state."""
-    if image.size[0] == final_size:
-        save_dithered(image, path)
-        return
-    duplicate = image.copy()
-    duplicate.scale(final_size, final_size)
-    save_dithered(duplicate, path)
-    bpy.data.images.remove(duplicate)
+    target = image
+    duplicate = None
+    if image.size[0] != final_size:
+        duplicate = image.copy()
+        duplicate.scale(final_size, final_size)
+        target = duplicate
+    try:
+        if denoise:
+            try:
+                save_denoised(target, path)
+            except Exception as error:  # noqa: BLE001 — enhancement, never a gate
+                print(f"BLENDLINK_DENOISE_FALLBACK {error}")
+                save_dithered(target, path)
+        else:
+            save_dithered(target, path)
+    finally:
+        if duplicate is not None:
+            bpy.data.images.remove(duplicate)
 
 
 def set_collections_hidden(names: list, hidden: bool) -> None:
@@ -422,6 +484,7 @@ def mute_emission() -> list:
 def bake_light_groups(
     proxy, image, margin_px: int, grouped_lights: dict, out_glb: str,
     progress_start: float, progress_step: float, final_size: int,
+    denoise: bool = False,
 ) -> dict:
     """Solo-bake each light group's full contribution (direct + indirect).
 
@@ -463,7 +526,7 @@ def bake_light_groups(
                 rgb /= peak
                 image.pixels.foreach_set(pixels)
             layer_path = out_glb + f".light.{name}.png"
-            save_resolved(image, layer_path, final_size)
+            save_resolved(image, layer_path, final_size, denoise=denoise)
             layers[name] = {"path": layer_path, "maxValue": max(peak, 1.0)}
     finally:
         scene.world = world_prev
@@ -484,6 +547,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     # down (Blender's bilinear scale on an exact 2× grid IS a box filter) is
     # the standard workaround — quality at zero runtime cost.
     supersample = max(1, int(bake.get("supersample", 1)))
+    denoise = bool(bake.get("denoise", False))
     bake_size = size * supersample
     bake_margin = margin_px * supersample
     states = bake.get("states") or [{"name": "default", "hideCollections": []}]
@@ -525,7 +589,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
                 finally:
                     set_collections_hidden(hide, False)
                 state_path = out_glb + f".state.{state['name']}.png"
-                save_resolved(image, state_path, size)
+                save_resolved(image, state_path, size, denoise=denoise)
                 state_paths[state["name"]] = state_path
         finally:
             for light, old in grouped_prev:
@@ -535,7 +599,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             group_layers = bake_light_groups(
                 proxy, image, bake_margin, grouped_lights, out_glb,
                 progress_start=0.15 + job * per_job, progress_step=per_job,
-                final_size=size,
+                final_size=size, denoise=denoise,
             )
     finally:
         mesh = proxy.data

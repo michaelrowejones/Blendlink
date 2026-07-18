@@ -62,6 +62,22 @@ proxies excluded from the pack, and how long the last sync took — with
 lints for the classic re-bake causes (an object far below median density
 will look blurry; far above is hogging the atlas).
 
+## Quality dials (baked mode)
+
+```js
+bake: {
+  size: 2048,
+  samples: 128,
+  supersample: 2,   // bake at 2x, box-resolve down: free AA + 4x sampling
+  denoise: true,    // OIDN after margin dilation — kills residual noise
+}
+```
+
+`blendlink sync --draft` flips to quarter-res/eighth-samples previews for
+look iteration (verify refuses committed drafts). Multi-atlas splitting by
+camera proximity is proven in the flagship pipeline and lands here when a
+second project needs it.
+
 ## Interactive lights over a baked base
 
 Assign a light to a Cycles **Light Group** (`Object ▸ Shading ▸ Light
