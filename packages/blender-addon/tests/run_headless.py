@@ -133,6 +133,14 @@ def main():
     syncstatus.refresh(force=True)
     expect(syncstatus.status()[0] == "NO_FILE", f"unsaved file status: {syncstatus.status()}")
 
+    # --- anchor panel poll + copy-hint gating ---
+    ui = sys.modules[f"{PACKAGE}.ui"]
+    select_only(hotspot)
+    expect(ui.BLENDLINK_PT_anchor.poll(bpy.context), "anchor panel should show for a hotspot")
+    select_only(barrel)
+    expect(not ui.BLENDLINK_PT_anchor.poll(bpy.context), "anchor panel should hide otherwise")
+    expect(not bpy.ops.blendlink.copy_sync_hint.poll(), "copy hint should be disabled without a manifest hint")
+
     addon.unregister()
     print("BLENDLINK_ADDON_TESTS_PASSED")
 

@@ -21,10 +21,14 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        _status, icon, label = syncstatus.status()
+        status, icon, label = syncstatus.status()
         row = layout.row(align=True)
         row.label(text=label, icon=icon)
         row.operator("blendlink.refresh_sync", text="", icon="FILE_REFRESH")
+        if status in ("NEEDS_SYNC", "UNSAVED_EDITS") and syncstatus.sync_hint():
+            hint = layout.row(align=True)
+            hint.label(text=f"Run: {syncstatus.sync_hint()}", icon="CONSOLE")
+            hint.operator("blendlink.copy_sync_hint", text="", icon="COPYDOWN")
 
         counts = validation.result().counts
         if counts:
@@ -77,6 +81,41 @@ class BLENDLINK_PT_physics(_BlendlinkPanelMixin, bpy.types.Panel):
             layout.prop(obj, '["friction"]', text="Friction", slider=True)
 
 
+_ANCHOR_LABEL = {"socket": "Socket", "hotspot": "Hotspot", "audio": "Audio Anchor"}
+
+
+class BLENDLINK_PT_anchor(_BlendlinkPanelMixin, bpy.types.Panel):
+    bl_idname = "BLENDLINK_PT_anchor"
+    bl_parent_id = "BLENDLINK_PT_main"
+    bl_label = "Anchor"
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        if obj is None:
+            return False
+        classification = vocab.classify(obj.name)
+        return classification is not None and classification.kind in _ANCHOR_LABEL
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        obj = context.active_object
+        classification = vocab.classify(obj.name)
+        layout.label(
+            text=f"{_ANCHOR_LABEL[classification.kind]}: {classification.anchor_name}",
+            icon="EMPTY_ARROWS",
+        )
+        if classification.kind == "hotspot":
+            if "title" in obj:
+                layout.prop(obj, '["title"]', text="Title")
+            if "body" in obj:
+                layout.prop(obj, '["body"]', text="Body")
+        if obj.parent is not None:
+            layout.label(text=f"Attached to {obj.parent.name}", icon="LINKED")
+
+
 class BLENDLINK_PT_checks(_BlendlinkPanelMixin, bpy.types.Panel):
     bl_idname = "BLENDLINK_PT_checks"
     bl_parent_id = "BLENDLINK_PT_main"
@@ -110,6 +149,7 @@ classes = (
     BLENDLINK_PT_main,
     BLENDLINK_PT_tag,
     BLENDLINK_PT_physics,
+    BLENDLINK_PT_anchor,
     BLENDLINK_PT_checks,
 )
 

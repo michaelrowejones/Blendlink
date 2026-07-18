@@ -22,6 +22,9 @@ export interface SceneManifest {
   sourceHash?: string
   /** Hash of the .blend bytes alone — lets Blender-free CI detect drift. */
   blendBytesHash?: string
+  /** Command that regenerates these artifacts — surfaced by the Blender
+   * addon when the saved .blend is ahead of the last sync. */
+  syncHint?: string
   nodes: Array<{ name: string; kind: NodeKind; extras?: Record<string, unknown> }>
   materials: string[]
   /** Clip name → duration in seconds (from sampler inputs). */

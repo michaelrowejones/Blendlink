@@ -29,9 +29,13 @@ async function main(): Promise<number> {
         const stats = outcome.stats
           ? ` — ${(outcome.stats.bytes / 1024).toFixed(0)}kB, ${outcome.stats.triangles} tris`
           : ''
+        const verb = { exported: '✓ synced ', built: '✓ built  ', skipped: '· in sync' }[
+          outcome.action
+        ]
         console.log(
-          `${outcome.action === 'exported' ? '✓ synced ' : '· skipped'} ${outcome.scene} in ${(outcome.durationMs / 1000).toFixed(1)}s${stats}`,
+          `${verb} ${outcome.scene}${outcome.action === 'skipped' ? '' : ` in ${(outcome.durationMs / 1000).toFixed(1)}s`}${stats}`,
         )
+        if (outcome.vocabulary) console.log(`  ◦ ${outcome.vocabulary}`)
         for (const warning of outcome.warnings) console.warn(`  ! ${warning}`)
       }
       const outcomes = await syncAll(config, {
@@ -70,7 +74,16 @@ async function main(): Promise<number> {
         return 2
       }
       const name = flagValue('--name') ?? basename(glbPath).replace(/\.glb$/i, '')
-      const url = flagValue('--url') ?? `/${basename(glbPath)}`
+      let url = flagValue('--url') ?? `/${basename(glbPath)}`
+      // Git Bash rewrites leading-slash args into C:/Program Files/Git/...
+      // Catch the corruption instead of stamping a filesystem path as a URL.
+      if (/^[A-Za-z]:[\\/]/.test(url)) {
+        console.error(
+          `--url looks like a Windows filesystem path (${url}) — if you ran this from Git Bash, its path conversion mangled the argument. Run from PowerShell/cmd, or set MSYS_NO_PATHCONV=1.`,
+        )
+        return 2
+      }
+      if (!url.startsWith('/') && !/^https?:/.test(url)) url = `/${url}`
       const outDir = resolve(process.cwd(), flagValue('--out') ?? dirname(glbPath))
       // --blend stamps provenance so `blendlink verify` and the Blender addon
       // can detect drift even when an external pipeline produced the GLB.
@@ -98,13 +111,46 @@ async function main(): Promise<number> {
       for (const warning of manifest.vocabulary.warnings) console.warn(`  ! ${warning}`)
       return 0
     }
+    case 'init': {
+      const { initProject } = await import('./init.js')
+      const result = initProject(process.cwd())
+      if (!result.created) {
+        console.log('blendlink.config already exists — nothing to do.')
+        return 0
+      }
+      console.log(`✓ created blendlink.config.mjs`)
+      if (result.scenes.length > 0) {
+        for (const scene of result.scenes) console.log(`  ◦ found ${scene}`)
+      } else {
+        console.log('  ◦ no .blend files found — add scenes to the config when you have one')
+      }
+      console.log(
+        '\nnext steps:\n' +
+          '  1. blendlink sync          export scenes + generate typed modules\n' +
+          '  2. commit the generated artifacts (plain git, no LFS needed)\n' +
+          '  3. blendlink verify        add to CI for Blender-free drift checks\n' +
+          '  4. blendlink doctor        check your setup any time',
+      )
+      return 0
+    }
+    case 'doctor': {
+      const { doctor } = await import('./doctor.js')
+      const lines = await doctor(process.cwd())
+      const icon = { ok: '✓', warn: '!', fail: '✗' }
+      for (const line of lines) console.log(`${icon[line.level]} ${line.message}`)
+      return lines.some((line) => line.level === 'fail') ? 1 : 0
+    }
     default:
       console.error(
         'blendlink — typed scene modules for any GLB, Blender sync first-class\n\n' +
           'commands:\n' +
-          '  sync [scene] [--force]   export .blend scenes from blendlink.config.mjs\n' +
+          '  init                     scaffold blendlink.config.mjs from found .blend files\n' +
+          '  sync [scene] [--force] [--watch]\n' +
+          '                           export .blend scenes (external scenes run their build command)\n' +
           '  verify                   Blender-free drift check (CI)\n' +
-          '  typegen <glb> [...]      generate types from an existing GLB\n' +
+          '  typegen <glb> [--blend f.blend] [...]\n' +
+          '                           generate types from an existing GLB\n' +
+          '  doctor                   check Blender, config, drift, and environment\n' +
           '  discover                 locate the Blender executable',
       )
       return command ? 2 : 0

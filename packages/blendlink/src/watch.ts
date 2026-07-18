@@ -19,7 +19,9 @@ export async function watchScenes(
   config: ResolvedConfig,
   onOutcome: (outcome: SyncOutcome | { scene: string; error: string }) => void,
 ): Promise<WatchHandle> {
-  const blender = await discoverBlender(config.blenderPath)
+  const blender = config.scenes.some((scene) => !scene.external)
+    ? await discoverBlender(config.blenderPath)
+    : ({ version: 'none', executable: '' } as Awaited<ReturnType<typeof discoverBlender>>)
   const byPath = new Map<string, ResolvedScene>(
     config.scenes.map((scene) => [normalize(scene.blendPath), scene]),
   )

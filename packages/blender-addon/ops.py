@@ -327,6 +327,28 @@ class BLENDLINK_OT_select_issue(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class BLENDLINK_OT_copy_sync_hint(bpy.types.Operator):
+    """Copy the sync command to the clipboard to run it in a terminal"""
+    bl_idname = "blendlink.copy_sync_hint"
+    bl_label = "Copy Sync Command"
+    bl_options = {"INTERNAL"}
+
+    @classmethod
+    def poll(cls, context):
+        from . import syncstatus
+        if not syncstatus.sync_hint():
+            cls.poll_message_set("The manifest does not record a sync command")
+            return False
+        return True
+
+    def execute(self, context):
+        from . import syncstatus
+        hint = syncstatus.sync_hint()
+        context.window_manager.clipboard = hint
+        self.report({"INFO"}, f"Copied: {hint}")
+        return {"FINISHED"}
+
+
 class BLENDLINK_OT_refresh_checks(bpy.types.Operator):
     """Re-run the vocabulary checks now"""
     bl_idname = "blendlink.refresh_checks"
@@ -359,6 +381,7 @@ classes = (
     BLENDLINK_OT_add_anchor,
     BLENDLINK_OT_fix_numbered,
     BLENDLINK_OT_select_issue,
+    BLENDLINK_OT_copy_sync_hint,
     BLENDLINK_OT_refresh_checks,
     BLENDLINK_OT_refresh_sync,
 )

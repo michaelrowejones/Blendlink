@@ -27,6 +27,13 @@ export interface SceneConfig {
    * Stamp the manifest via `blendlink typegen <glb> --blend <file>`.
    */
   external?: boolean
+  /**
+   * Shell command that rebuilds an external scene's artifacts (must end by
+   * re-stamping the manifest, e.g. via `typegen --blend`). When set, `sync`
+   * runs it whenever the .blend drifted — so `sync --watch` covers bespoke
+   * pipelines too. Runs from the config root.
+   */
+  build?: string
 }
 
 export interface BlendlinkConfig {
@@ -50,6 +57,9 @@ export interface ResolvedScene {
   modulePath: string
   settings: ExportSettings
   external: boolean
+  build?: string
+  /** Config root — cwd for external build commands. */
+  root: string
 }
 
 export interface ResolvedConfig {
@@ -87,6 +97,8 @@ export function resolveConfig(config: BlendlinkConfig, root: string): ResolvedCo
         ...(scene.exporterOverrides ? { exporterOverrides: scene.exporterOverrides } : {}),
       },
       external: scene.external ?? false,
+      ...(scene.build ? { build: scene.build } : {}),
+      root,
     } satisfies ResolvedScene
   })
   return { root, blenderPath: config.blenderPath, scenes }

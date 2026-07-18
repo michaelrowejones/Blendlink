@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
@@ -8,10 +9,90 @@ import type { ResolvedConfig, ResolvedScene } from './config.js'
 
 export interface SyncOutcome {
   scene: string
-  action: 'exported' | 'skipped'
+  action: 'exported' | 'built' | 'skipped'
   durationMs: number
   stats?: SceneManifest['stats']
+  /** Human summary of what the vocabulary parser found ("3 colliders, 1 socket"). */
+  vocabulary?: string
   warnings: string[]
+}
+
+function vocabularySummary(manifest: SceneManifest | null): string | undefined {
+  const vocabulary = manifest?.vocabulary
+  if (!vocabulary) return undefined
+  const parts = (
+    [
+      ['collider', vocabulary.colliders?.length],
+      ['LOD chain', vocabulary.lods?.length],
+      ['socket', vocabulary.sockets?.length],
+      ['hotspot', vocabulary.hotspots?.length],
+      ['audio anchor', vocabulary.audio?.length],
+      ['rigid body', vocabulary.physics?.length],
+    ] as const
+  )
+    .filter(([, count]) => (count ?? 0) > 0)
+    .map(([label, count]) => `${count} ${label}${count === 1 ? '' : 's'}`)
+  return parts.length > 0 ? parts.join(', ') : undefined
+}
+
+function blendBytesHashOf(path: string): string {
+  return createHash('sha256').update(readFileSync(path)).digest('hex').slice(0, 16)
+}
+
+/** External scenes: artifacts owned by another pipeline; run its declared
+ * build command when the .blend drifted, skip when everything matches. */
+function syncExternalScene(scene: ResolvedScene, options: { force?: boolean }): SyncOutcome {
+  const started = Date.now()
+  const blendHash = existsSync(scene.blendPath) ? blendBytesHashOf(scene.blendPath) : null
+  const manifest = readManifest(scene.manifestPath)
+  const inSync =
+    blendHash !== null &&
+    manifest?.blendBytesHash === blendHash &&
+    existsSync(scene.glbPath) &&
+    existsSync(scene.modulePath)
+  if (inSync && !options.force) {
+    // Stamp the build command even when skipping, so the Blender addon can
+    // show "run this" the moment the artist's next save causes drift.
+    if (scene.build && manifest && manifest.syncHint !== scene.build) {
+      manifest.syncHint = scene.build
+      writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
+    }
+    return { scene: scene.name, action: 'skipped', durationMs: Date.now() - started, warnings: [] }
+  }
+  if (!scene.build) {
+    return {
+      scene: scene.name,
+      action: 'skipped',
+      durationMs: Date.now() - started,
+      warnings: [
+        'external scene is out of date but has no `build` command — run your pipeline, then `blendlink typegen <glb> --blend <file>` (or add `build` to the scene config so sync can do it)',
+      ],
+    }
+  }
+  const result = spawnSync(scene.build, { shell: true, cwd: scene.root, stdio: 'inherit' })
+  if (result.status !== 0) {
+    throw new Error(`build command failed for "${scene.name}" (exit ${result.status}): ${scene.build}`)
+  }
+  const warnings: string[] = []
+  const rebuilt = readManifest(scene.manifestPath)
+  const freshBlendHash = existsSync(scene.blendPath) ? blendBytesHashOf(scene.blendPath) : null
+  if (!rebuilt || rebuilt.blendBytesHash !== freshBlendHash) {
+    warnings.push(
+      'build command finished but the manifest is not stamped with the current .blend — make sure it ends with `blendlink typegen <glb> --blend <file>`',
+    )
+  } else if (rebuilt.syncHint !== scene.build) {
+    // Stamp the build command so the Blender addon can show "run this".
+    rebuilt.syncHint = scene.build
+    writeFileSync(scene.manifestPath, JSON.stringify(rebuilt, null, 2) + '\n')
+  }
+  return {
+    scene: scene.name,
+    action: 'built',
+    durationMs: Date.now() - started,
+    ...(rebuilt?.stats ? { stats: rebuilt.stats } : {}),
+    ...(vocabularySummary(rebuilt) ? { vocabulary: vocabularySummary(rebuilt) } : {}),
+    warnings,
+  }
 }
 
 /** Input-hash cache key: blend bytes + settings + Blender version. */
@@ -39,14 +120,7 @@ export async function syncScene(
 ): Promise<SyncOutcome> {
   const started = Date.now()
   if (scene.external) {
-    return {
-      scene: scene.name,
-      action: 'skipped',
-      durationMs: 0,
-      warnings: [
-        'external scene — artifacts are owned by another pipeline; stamp them with `blendlink typegen <glb> --blend <file>` and check drift with `blendlink verify`',
-      ],
-    }
+    return syncExternalScene(scene, options)
   }
   const hash = sourceHash(scene, blender.version)
   const existing = readManifest(scene.manifestPath)
@@ -98,6 +172,7 @@ export async function syncScene(
     action: 'exported',
     durationMs: Date.now() - started,
     stats: manifest.stats,
+    ...(vocabularySummary(manifest) ? { vocabulary: vocabularySummary(manifest) } : {}),
     warnings,
   }
 }

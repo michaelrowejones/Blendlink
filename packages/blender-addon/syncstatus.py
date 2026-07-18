@@ -23,6 +23,7 @@ _MAX_SCAN_DEPTH = 6
 _state = {
     "status": "NO_FILE",  # NO_FILE | NO_MANIFEST | IN_SYNC | NEEDS_SYNC | UNSAVED_EDITS
     "detail": "",
+    "hint": "",  # manifest syncHint: the command that regenerates the artifacts
     "manifest_path": None,
     "manifest_mtime": 0,
     "blend_hash": None,
@@ -44,9 +45,14 @@ def status() -> tuple[str, str, str]:
     return _state["status"], icon, label
 
 
+def sync_hint() -> str:
+    """Command that regenerates the artifacts (from the manifest), or ''."""
+    return _state["hint"]
+
+
 def reset():
     _state.update(
-        status="NO_FILE", detail="", manifest_path=None, manifest_mtime=0,
+        status="NO_FILE", detail="", hint="", manifest_path=None, manifest_mtime=0,
         blend_hash=None, blend_mtime=0, searched_for=None,
     )
 
@@ -144,8 +150,10 @@ def refresh(force: bool = False) -> bool:
         try:
             manifest = json.loads(Path(_state["manifest_path"]).read_text(encoding="utf8"))
             _state["detail"] = manifest.get("blendBytesHash", "")
+            _state["hint"] = manifest.get("syncHint", "")
         except (OSError, json.JSONDecodeError):
             _state["detail"] = ""
+            _state["hint"] = ""
         _state["manifest_mtime"] = manifest_mtime
 
     if bpy.data.is_dirty:

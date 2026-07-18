@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "blendlink"
-version = "0.2.0"
+version = "0.2.1"
 name = "Blendlink"
 tagline = "Author the blendlink web vocabulary and see sync status"
 maintainer = "Michael Rowe Jones <michaelrowejones@gmail.com>"
@@ -19,6 +19,7 @@ copyright = ["2026 Michael Rowe Jones"]
 
 [permissions]
 files = "Read the blendlink manifest beside your project for sync status"
+clipboard = "Copy the project sync command so you can run it in a terminal"
 
 [build]
 paths_exclude_pattern = [
