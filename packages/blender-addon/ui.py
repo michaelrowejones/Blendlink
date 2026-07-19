@@ -167,17 +167,13 @@ class BLENDLINK_PT_designation(_BlendlinkPanelMixin, bpy.types.Panel):
         column.use_property_split = True
         column.use_property_decorate = False
         if classification.kind == "rigid":
-            if "mass" in obj:
-                column.prop(obj, '["mass"]', text="Mass", slider=True)
-            if "friction" in obj:
-                column.prop(obj, '["friction"]', text="Friction", slider=True)
-        if classification.kind == "lod" and "lod_distance" in obj:
-            column.prop(obj, '["lod_distance"]', text="Switch Distance")
+            _draw_prop(column, obj, "mass", "Mass", slider=True)
+            _draw_prop(column, obj, "friction", "Friction", slider=True)
+        if classification.kind == "lod":
+            _draw_prop(column, obj, "lod_distance", "Switch Distance")
         if classification.kind == "hotspot":
-            if "title" in obj:
-                column.prop(obj, '["title"]', text="Title")
-            if "body" in obj:
-                column.prop(obj, '["body"]', text="Body")
+            _draw_prop(column, obj, "title", "Title")
+            _draw_prop(column, obj, "body", "Body")
         if classification.kind in ("socket", "hotspot", "audio") and obj.parent is not None:
             layout.label(text=f"Attached to {obj.parent.name}", icon="LINKED")
         _draw_atlas_controls(layout, obj)
@@ -205,6 +201,23 @@ def density_summary(entry) -> list[str]:
     return lines
 
 
+def _prop_key(obj, bare: str) -> str | None:
+    """Namespaced key first (blendlink_*), bare key as the deprecated
+    fallback — bare names collide with other addons' ID properties."""
+    namespaced = f"blendlink_{bare}"
+    if namespaced in obj:
+        return namespaced
+    if bare in obj:
+        return bare
+    return None
+
+
+def _draw_prop(column, obj, bare: str, text: str, slider: bool = False):
+    key = _prop_key(obj, bare)
+    if key is not None:
+        column.prop(obj, f'["{key}"]', text=text, slider=slider)
+
+
 def _draw_atlas_controls(layout, obj):
     """Baked-atlas density control (meshes only): the artist's lightmap
     scale, applied by the bake pipeline as an island pre-scale."""
@@ -213,9 +226,10 @@ def _draw_atlas_controls(layout, obj):
     column = layout.column()
     column.use_property_split = True
     column.use_property_decorate = False
-    if "texel_weight" in obj:
-        column.prop(obj, '["texel_weight"]', text="Lightmap Scale", slider=True)
-        if float(obj["texel_weight"] or 0) == 0:
+    weight_key = _prop_key(obj, "texel_weight")
+    if weight_key is not None:
+        column.prop(obj, f'["{weight_key}"]', text="Lightmap Scale", slider=True)
+        if float(obj[weight_key] or 0) == 0:
             column.label(text="Excluded from the atlas (still lights)", icon="INFO")
     else:
         column.operator("blendlink.set_texel_weight", icon="TEXTURE")

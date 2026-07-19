@@ -36,8 +36,10 @@ export interface SceneManifest {
   /** Objects removed by -noimp (reported, never silent). */
   excluded: string[]
   stats: { bytes: number; triangles: number; meshes: number; texturesBytes: number }
-  /** Baked-mode state textures (lighting states blended/swapped at runtime). */
-  states?: Record<string, { url: string }>
+  /** Baked-mode state textures (lighting states blended/swapped at runtime).
+   * The entry marked default is the one baked into the GLB's materials.
+   * Full runtime contract: docs/MANIFEST.md. */
+  states?: Record<string, { url: string; default?: true }>
   /** Interactive light groups: additive contribution layers. Runtime:
    * color = state + Σ layer(url) * maxValue * tint * strength, linear space. */
   lightGroups?: Record<string, { url: string; maxValue: number }>
@@ -53,6 +55,31 @@ export interface SceneManifest {
 }
 
 export type NodeKind = 'Mesh' | 'SkinnedMesh' | 'Bone' | 'Camera' | 'Light' | 'Object3D'
+
+export const MANIFEST_SCHEMA_VERSION = 2
+
+/** The ONE manifest reader: enforces schemaVersion (which was write-only
+ * once — every consumer blind-cast, so a future reshape would have been
+ * silently misread). Policy: additive-only within a version; bump on
+ * reshape; readers refuse other versions loudly. */
+export function parseManifest(json: string): SceneManifest | null {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(json)
+  } catch {
+    return null
+  }
+  const manifest = parsed as SceneManifest
+  if (manifest?.generator !== 'blendlink') return null
+  if (manifest.schemaVersion !== MANIFEST_SCHEMA_VERSION) {
+    throw new Error(
+      `Manifest schemaVersion ${String(manifest.schemaVersion)} is not the ` +
+        `supported version ${MANIFEST_SCHEMA_VERSION} — re-run blendlink sync ` +
+        `with a matching blendlink release.`,
+    )
+  }
+  return manifest
+}
 
 export interface TypegenOutput {
   manifest: SceneManifest
@@ -100,11 +127,22 @@ export async function generateSceneModule(options: {
     for (const child of node.listChildren()) parentOf.set(child, node)
   }
 
-  const seen = new Map<string, number>()
   const nodes: SceneManifest['nodes'] = []
+  const nodeIndexByName = new Map<string, number>()
+  const sanitizeNotes: string[] = []
   const vocabularyInput: VocabularyNodeInput[] = []
   for (const node of root.listNodes()) {
-    const name = uniqueName(node.getName() || 'Node', seen)
+    const raw = node.getName() || 'Node'
+    // The typed map keys must be the names three.js REPORTS after load:
+    // GLTFLoader sanitizes node names (dots stripped, spaces to _), so a
+    // raw "Crate.001" key would type-check and then return undefined from
+    // getObjectByName — the exact silent failure the tool exists to kill.
+    const name = sanitizeNodeName(raw)
+    if (name !== raw) {
+      sanitizeNotes.push(
+        `node "${raw}" loads as "${name}" in three.js (loader-sanitized) — the typed map uses the loaded name.`,
+      )
+    }
     const mesh = node.getMesh()
     const kind: NodeKind = node.getSkin()
       ? 'SkinnedMesh'
@@ -117,14 +155,28 @@ export async function generateSceneModule(options: {
             : 'Object3D'
     const extras = node.getExtras()
     const hasExtras = extras && Object.keys(extras).length > 0
-    nodes.push({
+    const entry = {
       name,
       kind,
       ...(hasExtras ? { extras: extras as Record<string, unknown> } : {}),
-    })
+    }
+    const existing = nodeIndexByName.get(name)
+    if (existing !== undefined) {
+      // Last-wins, matching drei's useGraph — an invented "_1" key would
+      // type-check against an object drei never creates.
+      sanitizeNotes.push(
+        `duplicate node name "${name}" after sanitization — the typed map keeps the last (drei semantics).`,
+      )
+      nodes[existing] = entry
+    } else {
+      nodeIndexByName.set(name, nodes.length)
+      nodes.push(entry)
+    }
     const world = node.getWorldMatrix()
+    // Vocabulary parsing sees the RAW name: the `.NNN` tolerance and suffix
+    // rules are authored-name semantics, not loaded-name semantics.
     vocabularyInput.push({
-      name,
+      name: raw,
       kind,
       parent: parentOf.get(node)?.getName() ?? null,
       worldPosition: [round(world[12]!), round(world[13]!), round(world[14]!)],
@@ -134,9 +186,14 @@ export async function generateSceneModule(options: {
   }
 
   const materialSeen = new Map<string, number>()
-  const materials = root
-    .listMaterials()
-    .map((material) => uniqueName(material.getName() || 'Material', materialSeen))
+  const unlitMaterials = new Set<string>()
+  const materials = root.listMaterials().map((material) => {
+    const name = uniqueName(material.getName() || 'Material', materialSeen)
+    // KHR_materials_unlit loads as MeshBasicMaterial — typing it Standard
+    // would let `roughness = 1` type-check and silently do nothing.
+    if (material.getExtension('KHR_materials_unlit')) unlitMaterials.add(name)
+    return name
+  })
 
   const clipSeen = new Map<string, number>()
   const clips: SceneManifest['clips'] = {}
@@ -162,6 +219,7 @@ export async function generateSceneModule(options: {
   }
 
   const vocabulary = parseVocabulary(vocabularyInput, options.sidecar)
+  vocabulary.warnings.push(...sanitizeNotes)
 
   let triangles = 0
   let meshes = 0
@@ -197,7 +255,7 @@ export async function generateSceneModule(options: {
     ...(options.lightGroups ? { lightGroups: options.lightGroups } : {}),
   }
 
-  return { manifest, module: renderModule(options.exportName, manifest) }
+  return { manifest, module: renderModule(options.exportName, manifest, unlitMaterials) }
 }
 
 function round(value: number): number {
@@ -248,10 +306,21 @@ function uniqueName(name: string, seen: Map<string, number>): string {
   return count === 0 ? name : `${name}_${count}`
 }
 
+/** three.js PropertyBinding.sanitizeNodeName: whitespace becomes _, and
+ * the reserved track characters []%$.:/ are stripped on load. The typed
+ * map must key by what getObjectByName will actually find. */
+function sanitizeNodeName(name: string): string {
+  return name.replace(/\s/g, '_').replace(/[\[\]%$.:/]/g, '')
+}
+
 const quote = (value: string) => JSON.stringify(value)
 const key = (value: string) => (/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(value) ? value : quote(value))
 
-function renderModule(exportName: string, manifest: SceneManifest): string {
+function renderModule(
+  exportName: string,
+  manifest: SceneManifest,
+  unlitMaterials: Set<string> = new Set(),
+): string {
   const pascalName = pascal(exportName)
   const nodeEntries = manifest.nodes
     .map((node) => `  ${key(node.name)}: ${quote(node.name)},`)
@@ -267,7 +336,9 @@ function renderModule(exportName: string, manifest: SceneManifest): string {
     .map((name) => `  ${key(name)}: ${quote(name)},`)
     .join('\n')
   const materialTypes = manifest.materials
-    .map((name) => `    ${key(name)}: THREE.MeshStandardMaterial`)
+    .map((name) =>
+      `    ${key(name)}: THREE.${unlitMaterials.has(name) ? 'MeshBasicMaterial' : 'MeshStandardMaterial'}`,
+    )
     .join('\n')
   const clipEntries = Object.entries(manifest.clips)
     .map(([name, clip]) => `  ${key(name)}: { duration: ${clip.duration} },`)

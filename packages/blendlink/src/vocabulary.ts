@@ -74,12 +74,19 @@ export interface Vocabulary {
 const COLLIDER = /[-_](conv)?col(only)?$/i
 const RIGID = /[-_]rigid$/i
 const LOD = /[-_]lod(\d+)$/i
-const SOCKET = /^socket[-_](.+)$/i
-const HOTSPOT = /^hotspot[-_](.+)$/i
-const AUDIO = /^audio[-_](.+)$/i
+const NOIMP = /[-_]noimp$/i
+// Anchor prefixes are EXACT-CASE (Unreal's SOCKET_ convention): the
+// case-insensitive version turned every "Socket_2way" electrical fixture
+// into an anchor. Suffixes stay tolerant (their typo class is real);
+// deliberate ALL-CAPS prefixes don't have that failure mode.
+const SOCKET = /^SOCKET[-_](.+)$/
+const HOTSPOT = /^HOTSPOT[-_](.+)$/
+const AUDIO = /^AUDIO[-_](.+)$/
 
-/** Words that look like vocabulary but don't parse — the lint targets. */
-const NEAR_MISS = /col+only|con+vcol|socket|hotspot|[-_]lod[-_]?\d/i
+/** Words that look like vocabulary but don't parse — the lint targets.
+ * Prefix tokens require their separator: bare "socket" fired on every
+ * WallSocket/EyeSocket in a hard-surface scene. */
+const NEAR_MISS = /col+only|con+vcol|^(socket|hotspot|audio)[-_]|[-_]lod[-_]?\d|[-_]noimp/i
 
 /** Blender's duplicate auto-numbering. Godot's canonical suffix bug
  * (godot#78881) is silently ignoring "Crate-col.001"; we parse tolerantly
@@ -93,6 +100,29 @@ const ROLE_PROPERTY = 'blendlink_role'
 const ROLE_VALUES = new Set([
   'col', 'convcol', 'colonly', 'convcolonly', 'rigid', 'noimp',
 ])
+
+/** Authored parameter properties are namespaced `blendlink_*` — bare names
+ * collide with other addons' ID properties, which the glTF exporter dumps
+ * wholesale into extras (a real A.N.T. Landscape collision motivated this).
+ * Bare names still read, with a deprecation lint, until 1.0. */
+function readProp(
+  node: VocabularyNodeInput,
+  key: string,
+  warnings: string[],
+): unknown {
+  const extras = node.extras
+  if (!extras) return undefined
+  const namespaced = extras[`blendlink_${key}`]
+  if (namespaced !== undefined) return namespaced
+  const bare = extras[key]
+  if (bare !== undefined) {
+    warnings.push(
+      `${node.name}: property "${key}" should be "blendlink_${key}" — bare ` +
+        `names collide with other addons' extras; bare reading goes away at 1.0.`,
+    )
+  }
+  return bare
+}
 
 /** Effective name for suffix matching: tolerate `.NNN` duplicate numbering
  * by folding it into the base ("Crate-col.001" matches as "Crate.001-col"). */
@@ -154,12 +184,52 @@ export function parseVocabulary(
       }
     }
 
+    // Precedence: property → anchor prefix → name suffix. A deliberate
+    // ALL-CAPS prefix outranks a suffix; when both appear the ambiguity is
+    // linted instead of silently resolved differently per parser (the
+    // hand-mirrored era had TS and the addon disagreeing on SOCKET_Lid-col).
+    if (!explicitRole) {
+      const socket = node.name.match(SOCKET)
+      const hotspot = node.name.match(HOTSPOT)
+      const audio = node.name.match(AUDIO)
+      const anchorMatch = socket ?? hotspot ?? audio
+      if (anchorMatch) {
+        if (COLLIDER.test(matchName) || RIGID.test(matchName) || LOD.test(matchName)) {
+          vocabulary.warnings.push(
+            `${node.name} carries both an anchor prefix and a name suffix — ` +
+              `the prefix wins; drop one to make the intent unambiguous.`,
+          )
+        }
+        const entry: AnchorEntry = {
+          name: anchorMatch[1]!,
+          node: node.name,
+          parent: node.parent,
+          position: node.worldPosition,
+          quaternion: node.worldQuaternion,
+          ...(node.extras && Object.keys(node.extras).length > 0
+            ? { extras: node.extras }
+            : {}),
+        }
+        if (socket) vocabulary.sockets.push(entry)
+        else if (hotspot) vocabulary.hotspots.push(entry)
+        else vocabulary.audio.push(entry)
+        if (node.kind !== 'Object3D') {
+          vocabulary.warnings.push(
+            `${node.name} is a ${node.kind}; anchors are usually Empties — its geometry will render.`,
+          )
+        }
+        continue
+      }
+    }
+
     const nameCollider = matchName.match(COLLIDER)
     const nameRole = nameCollider
       ? `${nameCollider[1] ? 'conv' : ''}col${nameCollider[2] ? 'only' : ''}`
       : RIGID.test(matchName)
         ? 'rigid'
-        : null
+        : NOIMP.test(matchName)
+          ? 'noimp'
+          : null
     if (explicitRole && nameRole && explicitRole !== nameRole) {
       vocabulary.warnings.push(
         `${node.name}: name says "${nameRole}" but ${ROLE_PROPERTY} says ` +
@@ -190,18 +260,17 @@ export function parseVocabulary(
     }
 
     if (role === 'rigid') {
-      const extras = node.extras ?? {}
+      const mass = readProp(node, 'mass', vocabulary.warnings)
+      const friction = readProp(node, 'friction', vocabulary.warnings)
+      const restitution = readProp(node, 'restitution', vocabulary.warnings)
+      const layer = readProp(node, 'physics_layer', vocabulary.warnings)
       vocabulary.physics.push({
         node: node.name,
         type: 'rigid',
-        ...(typeof extras['mass'] === 'number' ? { mass: extras['mass'] } : {}),
-        ...(typeof extras['friction'] === 'number' ? { friction: extras['friction'] } : {}),
-        ...(typeof extras['restitution'] === 'number'
-          ? { restitution: extras['restitution'] }
-          : {}),
-        ...(typeof extras['physics_layer'] === 'string'
-          ? { layer: extras['physics_layer'] }
-          : {}),
+        ...(typeof mass === 'number' ? { mass } : {}),
+        ...(typeof friction === 'number' ? { friction } : {}),
+        ...(typeof restitution === 'number' ? { restitution } : {}),
+        ...(typeof layer === 'string' ? { layer } : {}),
       })
       continue
     }
@@ -219,39 +288,13 @@ export function parseVocabulary(
     if (lod) {
       const base = `${matchName.replace(LOD, '')}${dup}`
       const chain = lodGroups.get(base) ?? { base, levels: [] }
-      const distance = node.extras?.['lod_distance']
+      const distance = readProp(node, 'lod_distance', vocabulary.warnings)
       chain.levels.push({
         index: Number(lod[1]),
         node: node.name,
         ...(typeof distance === 'number' ? { distance } : {}),
       })
       lodGroups.set(base, chain)
-      continue
-    }
-
-    const socket = node.name.match(SOCKET)
-    const hotspot = node.name.match(HOTSPOT)
-    const audio = node.name.match(AUDIO)
-    const anchorMatch = socket ?? hotspot ?? audio
-    if (anchorMatch) {
-      const entry: AnchorEntry = {
-        name: anchorMatch[1]!,
-        node: node.name,
-        parent: node.parent,
-        position: node.worldPosition,
-        quaternion: node.worldQuaternion,
-        ...(node.extras && Object.keys(node.extras).length > 0
-          ? { extras: node.extras }
-          : {}),
-      }
-      if (socket) vocabulary.sockets.push(entry)
-      else if (hotspot) vocabulary.hotspots.push(entry)
-      else vocabulary.audio.push(entry)
-      if (node.kind !== 'Object3D') {
-        vocabulary.warnings.push(
-          `${node.name} is a ${node.kind}; anchors are usually Empties — its geometry will render.`,
-        )
-      }
       continue
     }
 

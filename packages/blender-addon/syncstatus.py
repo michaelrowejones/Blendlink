@@ -168,6 +168,14 @@ def refresh(force: bool = False) -> bool:
     if force or manifest_mtime != _state["manifest_mtime"]:
         try:
             manifest = json.loads(Path(_state["manifest_path"]).read_text(encoding="utf8"))
+            if manifest.get("schemaVersion") != 2:
+                # Unsupported schema reads as NEEDS_SYNC (self-healing), not
+                # as a blind-cast misread.
+                print(
+                    "blendlink addon: manifest schemaVersion "
+                    f"{manifest.get('schemaVersion')!r} unsupported — resync"
+                )
+                manifest = {}
             _state["detail"] = manifest.get("blendBytesHash", "")
             _state["hint"] = manifest.get("syncHint", "")
             plan = manifest.get("bakePlan") or {}

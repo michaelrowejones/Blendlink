@@ -5,7 +5,7 @@ import { dirname } from 'node:path'
 import { discoverBlender, type BlenderInstall } from './discover.js'
 import { exportBlend } from './invoke.js'
 import { emitProgress } from './progress.js'
-import { generateSceneModule, type SceneManifest } from './typegen.js'
+import { generateSceneModule, parseManifest, type SceneManifest } from './typegen.js'
 import type { ResolvedConfig, ResolvedScene } from './config.js'
 
 /** What the addon's Sync Now runs; also shown to humans in the panel. */
@@ -151,8 +151,15 @@ function sourceHash(
 
 function readManifest(path: string): SceneManifest | null {
   try {
-    return JSON.parse(readFileSync(path, 'utf8')) as SceneManifest
-  } catch {
+    return parseManifest(readFileSync(path, 'utf8'))
+  } catch (error) {
+    // A schemaVersion mismatch is LOUD but self-healing: warn, treat the
+    // scene as needing a sync, and the resync rewrites at the current
+    // version. Silence here once meant blind-cast misreads.
+    if (error instanceof Error && error.message.includes('schemaVersion')) {
+      console.warn(`! ${path}: ${error.message}`)
+      return null
+    }
     return null
   }
 }
@@ -190,10 +197,12 @@ export async function syncScene(
     blender,
   })
 
-  const states: Record<string, { url: string }> = {}
-  for (const [state, path] of Object.entries(exported.bakedStates)) {
+  const states: Record<string, { url: string; default?: true }> = {}
+  for (const [index, [state, path]] of Object.entries(exported.bakedStates).entries()) {
     const file = path.split(/[\\/]/).pop()!
-    states[state] = { url: scene.url.replace(/[^/]+$/, file) }
+    // The first state is baked into the GLB's materials — mark it so a
+    // runtime doesn't have to infer the base from JSON key order.
+    states[state] = { url: scene.url.replace(/[^/]+$/, file), ...(index === 0 ? { default: true as const } : {}) }
   }
   const lightGroups: Record<string, { url: string; maxValue: number }> = {}
   for (const [group, layer] of Object.entries(exported.bakedLightGroups)) {

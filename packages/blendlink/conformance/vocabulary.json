@@ -1,0 +1,28 @@
+{
+  "$comment": "Shared vocabulary conformance cases. Executed by BOTH src/vocabulary.conformance.test.ts (vitest) and the addon's headless tests against vocab.py. The three parsers (vocabulary.ts, vocab.py, export_scene.py's noimp filter) drifted three ways once — any vocabulary change MUST update this file and pass on both sides. Kinds: collider|rigid|lod|noimp|socket|hotspot|audio|none.",
+  "cases": [
+    { "name": "Crate-col", "expect": { "kind": "collider", "shape": "trimesh", "proxyOnly": false, "base": "Crate" } },
+    { "name": "Crate-convcol", "expect": { "kind": "collider", "shape": "convex", "proxyOnly": false, "base": "Crate" } },
+    { "name": "Wall-colonly", "expect": { "kind": "collider", "shape": "trimesh", "proxyOnly": true, "base": "Wall" } },
+    { "name": "Wall_CONVCOLONLY", "expect": { "kind": "collider", "shape": "convex", "proxyOnly": true, "base": "Wall" } },
+    { "name": "Crate-colonly.001", "expect": { "kind": "collider", "shape": "trimesh", "proxyOnly": true, "base": "Crate.001" } },
+    { "name": "Barrel-rigid", "expect": { "kind": "rigid" } },
+    { "name": "Arm_rigid", "expect": { "kind": "rigid" }, "$comment": "documented residual risk: rigging shorthand collides; lint-visible, by design" },
+    { "name": "Tower_LOD1", "expect": { "kind": "lod", "lodIndex": 1 } },
+    { "name": "Tower-lod0.001", "expect": { "kind": "lod", "lodIndex": 0, "base": "Tower.001" } },
+    { "name": "RefGrid-noimp", "expect": { "kind": "noimp" } },
+    { "name": "RefGrid-noimp.001", "expect": { "kind": "noimp" }, "$comment": "the three-layer contradiction case: addon blessed it, exporter shipped it, typegen was silent" },
+    { "name": "SOCKET_Muzzle", "expect": { "kind": "socket", "anchorName": "Muzzle" } },
+    { "name": "HOTSPOT-Info", "expect": { "kind": "hotspot", "anchorName": "Info" } },
+    { "name": "AUDIO_Fireplace", "expect": { "kind": "audio", "anchorName": "Fireplace" } },
+    { "name": "SOCKET_Top.001", "expect": { "kind": "socket", "anchorName": "Top.001" } },
+    { "name": "Socket_2way", "expect": { "kind": "none" }, "$comment": "exact-case prefixes: an electrical socket mesh is not an anchor" },
+    { "name": "WallSocket", "expect": { "kind": "none" }, "$comment": "no separator, no match, no near-miss noise" },
+    { "name": "EyeSocket_L", "expect": { "kind": "none" } },
+    { "name": "HOTSPOT_lod2", "expect": { "kind": "hotspot", "anchorName": "lod2" }, "$comment": "precedence: deliberate ALL-CAPS prefix outranks a suffix" },
+    { "name": "SOCKET_Lid-col", "expect": { "kind": "socket", "anchorName": "Lid-col" }, "$comment": "prefix wins; the ambiguity is linted, not silently re-ranked" },
+    { "name": "Anything", "extras": { "blendlink_role": "convcol" }, "expect": { "kind": "collider", "shape": "convex", "proxyOnly": false } },
+    { "name": "Crate-col", "extras": { "blendlink_role": "rigid" }, "expect": { "kind": "rigid" }, "$comment": "property beats name" },
+    { "name": "PlainMesh", "expect": { "kind": "none" } }
+  ]
+}

@@ -14,10 +14,18 @@ COLLIDER_RE = re.compile(r"[-_](conv)?col(only)?$", re.IGNORECASE)
 RIGID_RE = re.compile(r"[-_]rigid$", re.IGNORECASE)
 LOD_RE = re.compile(r"[-_]lod(\d+)$", re.IGNORECASE)
 NOIMP_RE = re.compile(r"[-_]noimp$", re.IGNORECASE)
-SOCKET_RE = re.compile(r"^socket[-_](.+)$", re.IGNORECASE)
-HOTSPOT_RE = re.compile(r"^hotspot[-_](.+)$", re.IGNORECASE)
-AUDIO_RE = re.compile(r"^audio[-_](.+)$", re.IGNORECASE)
-NEAR_MISS_RE = re.compile(r"col+only|con+vcol|socket|hotspot|[-_]lod[-_]?\d", re.IGNORECASE)
+# Anchor prefixes are EXACT-CASE (Unreal's SOCKET_ convention): the
+# case-insensitive version turned every "Socket_2way" electrical fixture
+# into an anchor. Suffixes stay tolerant.
+SOCKET_RE = re.compile(r"^SOCKET[-_](.+)$")
+HOTSPOT_RE = re.compile(r"^HOTSPOT[-_](.+)$")
+AUDIO_RE = re.compile(r"^AUDIO[-_](.+)$")
+# Prefix tokens require their separator — bare "socket" fired on every
+# WallSocket/EyeSocket in a hard-surface scene.
+NEAR_MISS_RE = re.compile(
+    r"col+only|con+vcol|^(socket|hotspot|audio)[-_]|[-_]lod[-_]?\d|[-_]noimp",
+    re.IGNORECASE,
+)
 # Blender's duplicate auto-numbering ("Crate-colonly.001") hides end-of-name
 # tokens from every suffix regex above.
 NUMBERED_RE = re.compile(r"^(?P<stem>.+)(?P<dup>\.\d{3})$")
@@ -201,7 +209,8 @@ def lint(nodes: list[SceneNode]) -> list[LintIssue]:
             ))
         if classification.kind == "lod" and classification.lod_index is not None:
             lod_groups.setdefault(classification.base, []).append(classification.lod_index)
-            if classification.lod_index > 0 and "lod_distance" not in node.extras:
+            if classification.lod_index > 0 and "blendlink_lod_distance" not in node.extras \
+                    and "lod_distance" not in node.extras:
                 issues.append(LintIssue(
                     "INFO",
                     f'"{node.name}" has no lod_distance custom property',

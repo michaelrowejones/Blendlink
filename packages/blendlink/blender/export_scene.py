@@ -128,7 +128,10 @@ def collect_sidecar(settings: dict) -> dict:
     return {"fps": fps, "markers": markers, "empties": empties, "curves": curves}
 
 
-NOIMP_PATTERN = re.compile(r"[-_]noimp$", re.IGNORECASE)
+# .NNN-tolerant like every other suffix: the un-tolerant version shipped
+# RefGrid-noimp.001 to the web while the addon blessed it (conformance
+# fixture cases lock all three parsers together now).
+NOIMP_PATTERN = re.compile(r"[-_]noimp(\.\d{3})?$", re.IGNORECASE)
 # Collision-only proxies ship in the GLB (physics needs the geometry) but
 # never render — keep them out of the atlas pack and the bake.
 COLONLY_PATTERN = re.compile(r"[-_](conv)?colonly(\.\d{3})?$", re.IGNORECASE)

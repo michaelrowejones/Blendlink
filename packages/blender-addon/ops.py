@@ -109,13 +109,13 @@ class BLENDLINK_OT_tag_rigid(bpy.types.Operator):
             base = vocab.strip_structural(obj.name)
             if not _rename(obj, f"{base}{_SEP}rigid"):
                 continue
-            obj["mass"] = self.mass
-            obj.id_properties_ui("mass").update(
+            obj["blendlink_mass"] = self.mass
+            obj.id_properties_ui("blendlink_mass").update(
                 min=0.0, soft_max=100.0, precision=2,
                 description="Rigid-body mass in kilograms",
             )
-            obj["friction"] = self.friction
-            obj.id_properties_ui("friction").update(
+            obj["blendlink_friction"] = self.friction
+            obj.id_properties_ui("blendlink_friction").update(
                 min=0.0, max=1.0, precision=2,
                 description="Surface friction coefficient",
             )
@@ -156,8 +156,8 @@ class BLENDLINK_OT_set_lod(bpy.types.Operator):
             if not _rename(obj, f"{base}_LOD{self.level}"):
                 continue
             if self.distance > 0.0:
-                obj["lod_distance"] = self.distance
-                obj.id_properties_ui("lod_distance").update(
+                obj["blendlink_lod_distance"] = self.distance
+                obj.id_properties_ui("blendlink_lod_distance").update(
                     min=0.0, soft_max=500.0, subtype="DISTANCE",
                     description="Camera distance where this level takes over",
                 )
@@ -272,10 +272,10 @@ class BLENDLINK_OT_add_anchor(bpy.types.Operator):
         else:
             anchor.location = context.scene.cursor.location
         if self.kind == "HOTSPOT":
-            anchor["title"] = self.anchor_name
-            anchor.id_properties_ui("title").update(description="Heading shown in the web hotspot")
-            anchor["body"] = ""
-            anchor.id_properties_ui("body").update(description="Body text shown in the web hotspot")
+            anchor["blendlink_title"] = self.anchor_name
+            anchor.id_properties_ui("blendlink_title").update(description="Heading shown in the web hotspot")
+            anchor["blendlink_body"] = ""
+            anchor.id_properties_ui("blendlink_body").update(description="Body text shown in the web hotspot")
         for obj in context.selected_objects:
             obj.select_set(False)
         anchor.select_set(True)
@@ -355,8 +355,8 @@ class BLENDLINK_OT_set_texel_weight(bpy.types.Operator):
         for obj in context.selected_editable_objects:
             if obj.type != "MESH":
                 continue
-            obj["texel_weight"] = self.weight
-            obj.id_properties_ui("texel_weight").update(
+            obj["blendlink_texel_weight"] = self.weight
+            obj.id_properties_ui("blendlink_texel_weight").update(
                 min=0.0, soft_max=4.0, precision=2,
                 description=(
                     "Lightmap scale: linear texel-density multiplier for the "

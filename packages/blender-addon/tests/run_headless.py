@@ -46,12 +46,49 @@ def select_only(*objects):
     bpy.context.view_layer.objects.active = objects[-1] if objects else None
 
 
+def run_conformance(vocab):
+    """Execute the SHARED vocabulary fixture — the same JSON vitest runs
+    against vocabulary.ts. The hand-mirrored parsers drifted three ways
+    once; this block is the Python half of the contract that stops it."""
+    import json
+
+    fixture_path = ADDON_DIR.parent / "blendlink" / "conformance" / "vocabulary.json"
+    cases = json.loads(fixture_path.read_text(encoding="utf8"))["cases"]
+    for index, case in enumerate(cases):
+        result = vocab.classify(case["name"], case.get("extras"))
+        expected = case["expect"]
+        label = f"conformance[{index}] {case['name']}"
+        if expected["kind"] == "none":
+            expect(result is None, f"{label}: expected no classification, got {result}")
+            continue
+        expect(result is not None, f"{label}: expected {expected['kind']}, got None")
+        expect(result.kind == expected["kind"],
+               f"{label}: expected {expected['kind']}, got {result.kind}")
+        if "shape" in expected:
+            expect(result.shape == expected["shape"],
+                   f"{label}: shape {result.shape} != {expected['shape']}")
+        if "proxyOnly" in expected:
+            expect(result.proxy_only == expected["proxyOnly"],
+                   f"{label}: proxy_only {result.proxy_only} != {expected['proxyOnly']}")
+        if "base" in expected and result.kind not in ("socket", "hotspot", "audio"):
+            expect(result.base == expected["base"],
+                   f"{label}: base {result.base!r} != {expected['base']!r}")
+        if "lodIndex" in expected:
+            expect(result.lod_index == expected["lodIndex"],
+                   f"{label}: lod_index {result.lod_index} != {expected['lodIndex']}")
+        if "anchorName" in expected:
+            expect(result.anchor_name == expected["anchorName"],
+                   f"{label}: anchor_name {result.anchor_name!r} != {expected['anchorName']!r}")
+    print(f"conformance: {len(cases)} cases agree with vocabulary.ts")
+
+
 def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     addon = load_addon()
     vocab = sys.modules[f"{PACKAGE}.vocab"]
     validation = sys.modules[f"{PACKAGE}.validation"]
     syncstatus = sys.modules[f"{PACKAGE}.syncstatus"]
+    run_conformance(vocab)
 
     # --- tagging: multi-object, retag replaces the previous suffix ---
     crate = make_cube("Crate")
@@ -79,8 +116,8 @@ def main():
     select_only(barrel)
     bpy.ops.blendlink.tag_rigid(mass=12.5, friction=0.4)
     expect(barrel.name == "Barrel-rigid", barrel.name)
-    expect(abs(barrel["mass"] - 12.5) < 1e-6, "mass not set")
-    ui_data = barrel.id_properties_ui("mass").as_dict()
+    expect(abs(barrel["blendlink_mass"] - 12.5) < 1e-6, "mass not set")
+    ui_data = barrel.id_properties_ui("blendlink_mass").as_dict()
     expect("kilograms" in ui_data.get("description", ""), f"mass ui_data missing: {ui_data}")
 
     # --- LOD ---
@@ -88,7 +125,7 @@ def main():
     select_only(rock)
     bpy.ops.blendlink.set_lod(level=1, distance=12.0)
     expect(rock.name == "Rock_LOD1", rock.name)
-    expect(abs(rock["lod_distance"] - 12.0) < 1e-6, "lod_distance not set")
+    expect(abs(rock["blendlink_lod_distance"] - 12.0) < 1e-6, "lod_distance not set")
 
     # --- anchors: parented empty, one undo step, hotspot props ---
     select_only(barrel)
@@ -100,7 +137,7 @@ def main():
     select_only(barrel)
     bpy.ops.blendlink.add_anchor(kind="HOTSPOT", anchor_name="Info")
     hotspot = bpy.context.active_object
-    expect(hotspot["title"] == "Info", "hotspot title prop missing")
+    expect(hotspot["blendlink_title"] == "Info", "hotspot title prop missing")
 
     # --- noimp ---
     grid = make_cube("RefGrid")
@@ -167,8 +204,8 @@ def main():
     # --- lightmap scale (texel weight) ---
     select_only(barrel)
     bpy.ops.blendlink.set_texel_weight(weight=2.0)
-    expect(abs(barrel["texel_weight"] - 2.0) < 1e-6, "texel_weight not set")
-    ui_data = barrel.id_properties_ui("texel_weight").as_dict()
+    expect(abs(barrel["blendlink_texel_weight"] - 2.0) < 1e-6, "texel_weight not set")
+    ui_data = barrel.id_properties_ui("blendlink_texel_weight").as_dict()
     expect("Lightmap scale" in ui_data.get("description", ""), f"texel_weight ui missing: {ui_data}")
 
     # --- bake-plan density readout (plan cached from the manifest) ---

@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { discoverBlender } from './discover.js'
 import { loadConfig, type ResolvedConfig } from './config.js'
-import type { SceneManifest } from './typegen.js'
+import { parseManifest, type SceneManifest } from './typegen.js'
 
 export interface DoctorLine {
   level: 'ok' | 'warn' | 'fail'
@@ -16,8 +16,11 @@ const hash16 = (path: string) =>
 
 function readManifest(path: string): SceneManifest | null {
   try {
-    return JSON.parse(readFileSync(path, 'utf8')) as SceneManifest
-  } catch {
+    return parseManifest(readFileSync(path, 'utf8'))
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('schemaVersion')) {
+      console.warn(`! ${path}: ${error.message}`)
+    }
     return null
   }
 }
