@@ -39,9 +39,16 @@ export function readBlendHeader(path: string): BlendHeader {
   if (plain.subarray(0, 7).toString('latin1') !== 'BLENDER') {
     return { version: null, compression: plain === head ? 'unknown' : compression }
   }
-  const digits = plain.subarray(9, 12).toString('latin1')
-  if (!/^\d{3}$/.test(digits)) return { version: null, compression }
-  const packed = Number(digits)
+  const header = plain.subarray(0, 24).toString('latin1')
+  // Classic header (through 4.x): "BLENDER" + pointer char + endian char +
+  // 3 version digits ("BLENDER-v405" = 4.5). Large header (5.0+):
+  // "BLENDER" + 2-digit header size + "-" + 2-digit format version +
+  // endian char + 4 version digits ("BLENDER17-01v0502" = 5.2). The guard
+  // this feeds was silently dead for every 5.x file until the new shape
+  // was parsed — version: null must stay a loud, tested edge.
+  const match = /^BLENDER(?:[-_][vV](\d{3})|\d{2}-\d{2}[vV](\d{4}))/.exec(header)
+  if (!match) return { version: null, compression }
+  const packed = Number(match[1] ?? match[2])
   return { version: [Math.floor(packed / 100), packed % 100], compression }
 }
 

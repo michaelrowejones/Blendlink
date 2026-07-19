@@ -278,6 +278,13 @@ main().then(
   (code) => process.exit(code),
   (error) => {
     console.error(error instanceof Error ? error.message : error)
+    // The invoker collects Blender's last stderr/stdout lines on failure —
+    // showing them is the difference between a fixable traceback and a
+    // dead-end "the export script failed".
+    const detail = (error as { detail?: { stderrTail?: string } })?.detail
+    if (detail?.stderrTail) {
+      console.error('\n--- Blender output tail ---\n' + detail.stderrTail)
+    }
     process.exit(1)
   },
 )

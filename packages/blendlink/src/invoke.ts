@@ -268,27 +268,41 @@ function run(
     const child = spawn(executable, args, { shell: false, windowsHide: true })
     let stdout = ''
     let stderr = ''
+    // INACTIVITY timeout, not a wall-clock one: a legitimate 4K multi-state
+    // bake exceeds any fixed budget, but a healthy Blender keeps talking
+    // (Cycles sample logs, progress lines). Silence is the hang signal.
+    let timer: NodeJS.Timeout
+    const arm = () => {
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        // Blender must die as a tree on Windows or helpers linger.
+        if (process.platform === 'win32' && child.pid) {
+          spawn('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true })
+        } else {
+          child.kill('SIGKILL')
+        }
+        reject(new BlendExportError(
+          `Blender produced no output for ${timeoutMs}ms — treating it as hung.`,
+          {
+            exitCode: null,
+            stderrTail: stderr.split('\n').slice(-15).join('\n'),
+          },
+        ))
+      }, timeoutMs)
+    }
     // Blender's stdout is captured for the sentinel contract, but progress
     // lines from the export script must stream live to whoever is watching.
     const echo = progressEnabled() ? new ProgressEcho() : null
     child.stdout.on('data', (data) => {
       stdout += data
       echo?.push(String(data))
+      arm()
     })
-    child.stderr.on('data', (data) => (stderr += data))
-
-    const timer = setTimeout(() => {
-      // Blender must die as a tree on Windows or helpers linger.
-      if (process.platform === 'win32' && child.pid) {
-        spawn('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true })
-      } else {
-        child.kill('SIGKILL')
-      }
-      reject(new BlendExportError(`Blender timed out after ${timeoutMs}ms.`, {
-        exitCode: null,
-        stderrTail: stderr.split('\n').slice(-15).join('\n'),
-      }))
-    }, timeoutMs)
+    child.stderr.on('data', (data) => {
+      stderr += data
+      arm()
+    })
+    arm()
 
     child.on('error', (error) => {
       clearTimeout(timer)

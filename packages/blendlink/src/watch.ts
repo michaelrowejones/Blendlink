@@ -40,7 +40,13 @@ export async function watchScenes(
     } catch (error) {
       onOutcome({
         scene: scene.name,
-        error: error instanceof Error ? error.message : String(error),
+        error: error instanceof Error
+          ? error.message
+            + ((error as { detail?: { stderrTail?: string } }).detail?.stderrTail
+              ? '\n--- Blender output tail ---\n'
+                + (error as { detail?: { stderrTail?: string } }).detail!.stderrTail
+              : '')
+          : String(error),
       })
     } finally {
       inFlight.delete(scene.name)
