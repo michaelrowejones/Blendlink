@@ -364,43 +364,58 @@ def bake_state(proxy, image, margin_px: int) -> None:
     )
 
 
-def fill_image_background(image) -> None:
-    """Fill every un-baked texel with the atlas's mean covered color.
-
-    Mip level N keeps only 1/2^N of the authored island padding, so the deep
-    mips of a black-background atlas average dark halos into island edges.
-    The bake-margin dilation provides island-local padding; beyond its reach
-    a CONSTANT mean fill is the right far-field: deep mips blend toward a
-    plausible mid-tone instead of black, and a constant compresses exactly
-    as well as black did (a content-following fill balloons file sizes).
-    Coverage comes from alpha: the bake target clears transparent and Cycles
-    writes opaque texels.
-    """
+def image_coverage(image):
+    """Boolean (height, width) coverage from the bake target's alpha: the
+    target clears transparent and Cycles writes opaque texels."""
     import numpy as np
 
     width, height = image.size
     pixels = np.empty(width * height * 4, dtype=np.float32)
     image.pixels.foreach_get(pixels)
-    rgba = pixels.reshape(height, width, 4)
-    covered = rgba[:, :, 3] > 0.5
-    holes = int(covered.size - covered.sum())
-    if holes == 0:
+    return pixels.reshape(height, width, 4)[:, :, 3] > 0.5
+
+
+def flatten_saved_background(path: str, covered) -> None:
+    """Rewrite the saved atlas's background to ONE constant byte value.
+
+    Mip level N keeps only 1/2^N of the authored island padding, so the deep
+    mips of a black-background atlas average dark halos into island edges.
+    The bake-margin dilation covers the island-local band; the far-field
+    wants the mean island color — but as an exact CONSTANT: dither and OIDN
+    both put grain on the saved background, and grain on invisible pixels
+    balloons the encoded payloads. Byte surgery on the saved file, after
+    every lossy stage, is the only ordering that guarantees flatness.
+    """
+    import numpy as np
+
+    if covered.all():
         # Full alpha coverage means the transparent clear never happened —
         # say so, a silent skip here once hid a broken coverage contract.
         print("blendlink: background fill skipped — alpha reports full coverage")
         return
     if covered.sum() < covered.size * 0.01:
-        # Alpha never marked coverage — filling would flood the atlas.
         print("blendlink: background fill skipped — no baked coverage in alpha")
+        return
+    image = bpy.data.images.load(path, check_existing=False)
+    try:
+        width, height = image.size
+        if (height, width) != covered.shape:
+            print("blendlink: background fill skipped — saved size mismatch")
+            return
+        pixels = np.empty(width * height * 4, dtype=np.float32)
+        image.pixels.foreach_get(pixels)
+        rgba = pixels.reshape(height, width, 4)
+        # Byte-backed pixels round-trip as value/255 with no transforms, so
+        # a k/255 constant survives the re-save exactly.
+        mean = np.round(rgba[:, :, :3][covered].mean(axis=0) * 255.0) / 255.0
+        rgba[:, :, :3][~covered] = mean
         rgba[:, :, 3] = 1.0
         image.pixels.foreach_set(pixels)
-        image.update()
-        return
-    mean = rgba[:, :, :3][covered].mean(axis=0)
-    rgba[:, :, :3][~covered] = mean
-    rgba[:, :, 3] = 1.0
-    image.pixels.foreach_set(pixels)
-    image.update()
+        image.filepath_raw = path
+        image.file_format = "PNG"
+        image.save()
+    finally:
+        bpy.data.images.remove(image)
 
 
 def save_dithered(image, path: str) -> None:
@@ -467,10 +482,6 @@ def save_denoised(image, path: str) -> None:
 def save_resolved(image, path: str, final_size: int, denoise: bool = False) -> None:
     """Save at final_size: supersampled bakes resolve down through a copy so
     the live bake target keeps its full resolution for the next state."""
-    # Fill before the resolve so the downscale averages island color, never
-    # background. The live target's islands are untouched, and the next
-    # state's use_clear wipes the fill again.
-    fill_image_background(image)
     target = image
     duplicate = None
     if image.size[0] != final_size:
@@ -478,6 +489,9 @@ def save_resolved(image, path: str, final_size: int, denoise: bool = False) -> N
         duplicate.scale(final_size, final_size)
         target = duplicate
     try:
+        # Coverage at the SAVED size (alpha survives the resolve scale);
+        # captured before saving because the 8-bit save discards alpha.
+        covered = image_coverage(target)
         if denoise:
             try:
                 save_denoised(target, path)
@@ -486,6 +500,7 @@ def save_resolved(image, path: str, final_size: int, denoise: bool = False) -> N
                 save_dithered(target, path)
         else:
             save_dithered(target, path)
+        flatten_saved_background(path, covered)
     finally:
         if duplicate is not None:
             bpy.data.images.remove(duplicate)
