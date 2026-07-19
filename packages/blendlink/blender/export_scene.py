@@ -413,20 +413,9 @@ def bake_proxy() -> tuple:
     )
 
 
-def bake_state(proxy, image, margin_px: int, emit: bool = True) -> None:
-    scene = bpy.context.scene
-    scene.render.bake.use_clear = True
-    scene.render.bake.margin = margin_px
-    for flag in (
-        "use_pass_direct", "use_pass_indirect", "use_pass_diffuse",
-        "use_pass_glossy", "use_pass_transmission",
-    ):
-        setattr(scene.render.bake, flag, True)
-    # Light-group layers pass emit=False: surface self-emission already
-    # lives in the base state, and mute_emission cannot reach node-driven
-    # (linked) emission — baking it into every layer would add N+1 copies
-    # of the monitor glow at runtime.
-    scene.render.bake.use_pass_emit = emit
+def set_bake_targets(proxy, image) -> None:
+    """Point every proxy material's bake-target node at `image` and select
+    exactly the proxy — shared setup for state, layer, and guide bakes."""
     for material in {slot.material for slot in proxy.material_slots if slot.material}:
         material.use_nodes = True
         nodes = material.node_tree.nodes
@@ -443,10 +432,69 @@ def bake_state(proxy, image, margin_px: int, emit: bool = True) -> None:
     bpy.ops.object.select_all(action="DESELECT")
     proxy.select_set(True)
     bpy.context.view_layer.objects.active = proxy
+
+
+def bake_state(proxy, image, margin_px: int, emit: bool = True) -> None:
+    scene = bpy.context.scene
+    scene.render.bake.use_clear = True
+    scene.render.bake.margin = margin_px
+    for flag in (
+        "use_pass_direct", "use_pass_indirect", "use_pass_diffuse",
+        "use_pass_glossy", "use_pass_transmission",
+    ):
+        setattr(scene.render.bake, flag, True)
+    # Light-group layers pass emit=False: surface self-emission already
+    # lives in the base state, and mute_emission cannot reach node-driven
+    # (linked) emission — baking it into every layer would add N+1 copies
+    # of the monitor glow at runtime.
+    scene.render.bake.use_pass_emit = emit
+    set_bake_targets(proxy, image)
     bpy.ops.object.bake(
         type="COMBINED", target="IMAGE_TEXTURES", margin=margin_px,
         use_clear=True, uv_layer=ATLAS_UV,
     )
+
+
+def bake_denoise_guides(proxy, size: int, group: str, margin_px: int) -> tuple:
+    """Albedo + normal guide bakes for GUIDED OIDN denoising.
+
+    Unguided OIDN reads authored micro-texture (plaster, wood grain) as
+    noise and launders it away; the Denoise node's Albedo/Normal inputs are
+    the fix. Both guides are cheap — one sample: albedo is a lightless
+    surface evaluation, the normal pass is deterministic.
+    """
+    scene = bpy.context.scene
+    prior_samples = scene.cycles.samples
+    prior_adaptive = scene.cycles.use_adaptive_sampling
+    scene.cycles.samples = 1
+    scene.cycles.use_adaptive_sampling = False
+    try:
+        albedo = bpy.data.images.new(
+            f"blendlink-albedo-{group}", width=size, height=size,
+            alpha=True, float_buffer=True,
+        )
+        set_bake_targets(proxy, albedo)
+        scene.render.bake.use_pass_direct = False
+        scene.render.bake.use_pass_indirect = False
+        scene.render.bake.use_pass_color = True
+        bpy.ops.object.bake(
+            type="DIFFUSE", target="IMAGE_TEXTURES", margin=margin_px,
+            use_clear=True, uv_layer=ATLAS_UV,
+        )
+        normal = bpy.data.images.new(
+            f"blendlink-normal-{group}", width=size, height=size,
+            alpha=True, float_buffer=True,
+        )
+        set_bake_targets(proxy, normal)
+        scene.render.bake.normal_space = "OBJECT"
+        bpy.ops.object.bake(
+            type="NORMAL", target="IMAGE_TEXTURES", margin=margin_px,
+            use_clear=True, uv_layer=ATLAS_UV,
+        )
+        return albedo, normal
+    finally:
+        scene.cycles.samples = prior_samples
+        scene.cycles.use_adaptive_sampling = prior_adaptive
 
 
 def hide_collections(names: list) -> list:
@@ -617,7 +665,7 @@ def bake_light_groups(
     proxies: dict, images: dict, margins: dict, final_sizes: dict,
     grouped_lights: dict, out_glb: str,
     progress_start: float, progress_step: float,
-    denoise: bool = False,
+    denoise: bool = False, guides: dict | None = None,
 ) -> dict:
     """Solo-bake each light group's full contribution (direct + indirect).
 
@@ -661,7 +709,11 @@ def bake_light_groups(
                     image.pixels.foreach_set(pixels)
                 suffix = "" if group == "main" else f".{group}"
                 layer_path = out_glb + f".light.{name}{suffix}.png"
-                save_resolved(image, layer_path, final_sizes[group], denoise=denoise)
+                guide_albedo, guide_normal = (guides or {}).get(group, (None, None))
+                save_resolved(
+                    image, layer_path, final_sizes[group], denoise=denoise,
+                    albedo=guide_albedo, normal=guide_normal,
+                )
                 layers[name][group] = {"path": layer_path, "maxValue": max(peak, 1.0)}
     finally:
         for light, old in lights_prev:
@@ -768,6 +820,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     bake_jobs = (len(states) + len(grouped_lights)) * max(len(groups), 1)
     per_job = 0.6 / max(bake_jobs, 1)
     job = 0
+    guides = {}
     try:
         grouped_flat = [light for lights in grouped_lights.values() for light in lights]
         grouped_prev = [(light, light.hide_render) for light in grouped_flat]
@@ -780,6 +833,16 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
                 # GEOMETRY, not just lights.
                 built = build_proxies()
                 try:
+                    if denoise:
+                        # Guides bake once per group (1 sample each) on the
+                        # first proxies that include the group.
+                        for name in built:
+                            if name not in guides:
+                                guides[name] = bake_denoise_guides(
+                                    built[name][0],
+                                    final_sizes[name] * supersample,
+                                    name, margins[name],
+                                )
                     for name in groups:
                         progress(0.15 + job * per_job,
                                  f"baking {state['name']}/{name} at {final_sizes[name] * supersample}px")
@@ -803,7 +866,11 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
                             "not peak-normalized; reduce light energy or accept the clip)"
                         )
                     path = state_file(state["name"], name)
-                    save_resolved(images[name], path, final_sizes[name], denoise=denoise)
+                    guide_albedo, guide_normal = guides.get(name, (None, None))
+                    save_resolved(
+                        images[name], path, final_sizes[name], denoise=denoise,
+                        albedo=guide_albedo, normal=guide_normal,
+                    )
                     state_paths[state["name"]][name] = path
         finally:
             for light, old in grouped_prev:
@@ -816,7 +883,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
                     {name: proxy for name, (proxy, _) in built.items()},
                     images, margins, final_sizes, grouped_lights, out_glb,
                     progress_start=0.15 + job * per_job, progress_step=per_job,
-                    denoise=denoise,
+                    denoise=denoise, guides=guides,
                 )
             finally:
                 release_proxies(built)
@@ -824,6 +891,10 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
         for image in images.values():
             if image.name in bpy.data.images:
                 bpy.data.images.remove(image)
+        for albedo, normal in guides.values():
+            for guide in (albedo, normal):
+                if guide is not None and guide.name in bpy.data.images:
+                    bpy.data.images.remove(guide)
 
     # Rebuild every baked material as an unlit view of its group's
     # default-state atlas. Dynamic meshes never enter this loop, so their

@@ -244,20 +244,30 @@ def save_resolved(
 ) -> None:
     """Save at final_size: supersampled bakes resolve down through a copy so
     the live bake target keeps its full resolution for the next state. Then
-    flatten the saved background to a constant."""
+    flatten the saved background to a constant. Guide images (albedo/normal
+    for GUIDED OIDN) are resolved alongside — a size-mismatched guide would
+    misalign the denoiser's texture/noise separation."""
     target = image
-    duplicate = None
+    disposables = []
     if image.size[0] != final_size:
         duplicate = image.copy()
         duplicate.scale(final_size, final_size)
+        disposables.append(duplicate)
         target = duplicate
+    guides = {"albedo": albedo, "normal": normal}
+    for name, guide in guides.items():
+        if guide is not None and guide.size[0] != final_size:
+            scaled = guide.copy()
+            scaled.scale(final_size, final_size)
+            disposables.append(scaled)
+            guides[name] = scaled
     try:
         # Coverage at the SAVED size (alpha survives the resolve scale);
         # captured before saving because the 8-bit save discards alpha.
         covered = image_coverage(target)
         if denoise:
             try:
-                save_denoised(target, path, albedo=albedo, normal=normal)
+                save_denoised(target, path, albedo=guides["albedo"], normal=guides["normal"])
             except Exception as error:  # noqa: BLE001 — enhancement, never a gate
                 print(f"BLENDLINK_DENOISE_FALLBACK {error}")
                 save_dithered(target, path)
@@ -265,8 +275,8 @@ def save_resolved(
             save_dithered(target, path)
         flatten_saved_background(path, covered)
     finally:
-        if duplicate is not None:
-            bpy.data.images.remove(duplicate)
+        for disposable in disposables:
+            bpy.data.images.remove(disposable)
 
 
 # --------------------------------------------------------------------------
