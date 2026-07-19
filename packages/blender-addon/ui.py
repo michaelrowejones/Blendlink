@@ -274,22 +274,45 @@ def _draw_atlas_controls(layout, obj):
             readout.label(text="from last sync — resync to refresh", icon="TIME")
 
 
+class BLENDLINK_UL_bake_table(bpy.types.UIList):
+    """object | atlas | shading | density — the whole bake at a glance."""
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_prop):
+        split = layout.split(factor=0.36)
+        split.label(text=item.name, icon="MESH_DATA")
+        rest = split.split(factor=0.3)
+        rest.label(text=item.atlas)
+        tail = rest.split(factor=0.35)
+        tail.label(
+            text=item.shading,
+            icon="LIGHT" if item.shading == "dynamic" else "TEXTURE",
+        )
+        density = item.density + (f" · {item.weight}" if item.weight else "")
+        tail.label(text=density)
+
+
 class BLENDLINK_PT_bake(_BlendlinkPanelMixin, bpy.types.Panel):
     """What the next bake will do, from the last sync's plan: settings,
-    atlases with occupancy and membership, dynamic meshes. Numbers come
-    from the manifest — the panel is the trust surface, the config file
-    (blendlink.config.mjs) is where settings change."""
+    atlases with occupancy and membership, the per-object table, dynamic
+    meshes. Numbers come from the manifest — the panel is the trust
+    surface; the config file (blendlink.config.mjs) is where settings
+    change. ALWAYS visible: an empty panel that explains itself beats a
+    hidden one (a poll-gated version was invisible on external scenes and
+    read as broken)."""
     bl_idname = "BLENDLINK_PT_bake"
     bl_parent_id = "BLENDLINK_PT_main"
     bl_label = "Bake"
 
-    @classmethod
-    def poll(cls, context):
-        return syncstatus.bake_plan() is not None
-
     def draw(self, context):
         layout = self.layout
-        plan = syncstatus.bake_plan() or {}
+        plan = syncstatus.bake_plan()
+        if plan is None:
+            column = layout.column(align=True)
+            column.scale_y = 0.85
+            column.label(text="No bake plan in the manifest yet.", icon="INFO")
+            column.label(text="blendlink scenes: run a sync (mode: 'baked').")
+            column.label(text="External pipelines: pass typegen --plan.")
+            return
         if syncstatus.status()[0] != "IN_SYNC":
             layout.label(text="From the last sync — resync to refresh", icon="TIME")
 
@@ -318,6 +341,18 @@ class BLENDLINK_PT_bake(_BlendlinkPanelMixin, bpy.types.Panel):
             )
             op = row.operator("blendlink.select_atlas_objects", text="", icon="RESTRICT_SELECT_OFF")
             op.atlas = name
+
+        session = context.window_manager.blendlink
+        header = layout.row(align=True)
+        header.label(text="object · atlas · shading · density", icon="SPREADSHEET")
+        header.operator("blendlink.refresh_bake_table", text="", icon="FILE_REFRESH")
+        if len(session.bake_rows) > 0:
+            layout.template_list(
+                "BLENDLINK_UL_bake_table", "", session, "bake_rows",
+                session, "bake_row_index", rows=6,
+            )
+        else:
+            layout.label(text="Press refresh to fill the table", icon="FORWARD")
         layout.operator("blendlink.preview_atlas_uvs", icon="UV")
 
         dynamic = plan.get("dynamicObjects") or []
@@ -366,6 +401,7 @@ class BLENDLINK_PT_checks(_BlendlinkPanelMixin, bpy.types.Panel):
 
 
 classes = (
+    BLENDLINK_UL_bake_table,
     BLENDLINK_PT_main,
     BLENDLINK_PT_tag,
     BLENDLINK_PT_designation,

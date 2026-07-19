@@ -105,6 +105,18 @@ async function main(): Promise<number> {
           .digest('hex')
           .slice(0, 16)
       }
+      // External pipelines attach their own bake plan so the addon's Bake
+      // panel and table work for ANY scene, not just internally-baked ones.
+      const planFile = flagValue('--plan')
+      if (planFile) {
+        const { readFileSync, existsSync } = await import('node:fs')
+        const planPath = resolve(process.cwd(), planFile)
+        if (existsSync(planPath)) {
+          manifest.bakePlan = JSON.parse(readFileSync(planPath, 'utf8'))
+        } else {
+          console.warn(`! --plan ${planFile} not found — manifest stamped without a bake plan`)
+        }
+      }
       mkdirSync(outDir, { recursive: true })
       writeFileSync(join(outDir, `${name}.manifest.json`), JSON.stringify(manifest, null, 2) + '\n')
       writeFileSync(join(outDir, `${name}.gen.ts`), module)

@@ -254,7 +254,25 @@ def main():
     expect(crate.data.uv_layers.active.name == "BLENDLINK_ATLAS",
            "preview did not activate the atlas UV layer")
     ui_bake = sys.modules[f"{PACKAGE}.ui"]
-    expect(ui_bake.BLENDLINK_PT_bake.poll(bpy.context), "bake panel should show with a plan")
+    # ALWAYS visible — a poll-gated panel was invisible on external scenes
+    # and read as broken.
+    expect(not hasattr(ui_bake.BLENDLINK_PT_bake, "poll"),
+           "bake panel must not be poll-gated")
+    bpy.ops.blendlink.refresh_bake_table()
+    rows = bpy.context.window_manager.blendlink.bake_rows
+    expect(len(rows) > 0, "bake table refresh produced no rows")
+    crate_row = next((row for row in rows if row.name == crate.name), None)
+    expect(crate_row is not None, "crate missing from bake table")
+    expect(crate_row.shading == "baked", f"crate shading {crate_row.shading}")
+    expect(crate_row.atlas == "near", f"crate atlas {crate_row.atlas}")
+    select_only(barrel)
+    bpy.ops.blendlink.set_shading(mode="DYNAMIC")
+    bpy.ops.blendlink.refresh_bake_table()
+    rows = bpy.context.window_manager.blendlink.bake_rows
+    barrel_row = next((row for row in rows if row.name == barrel.name), None)
+    expect(barrel_row is not None and barrel_row.shading == "dynamic",
+           "live dynamic override not reflected in the table")
+    bpy.ops.blendlink.set_shading(mode="AUTO")
     syncstatus._state["bake_plan"] = None
     syncstatus._state["plan"] = {}
 

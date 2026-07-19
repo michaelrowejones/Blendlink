@@ -574,6 +574,63 @@ def _select_only(context, objs):
     context.view_layer.objects.active = active
 
 
+class BLENDLINK_OT_refresh_bake_table(bpy.types.Operator):
+    """Rebuild the bake table from the last sync's plan plus the LIVE scene
+    (shading and atlas overrides reflect current properties; objects added
+    since the sync appear marked as new)"""
+    bl_idname = "blendlink.refresh_bake_table"
+    bl_label = "Refresh Bake Table"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        from . import syncstatus, ui
+        plan = syncstatus.bake_plan() or {}
+        rows = context.window_manager.blendlink.bake_rows
+        rows.clear()
+        planned = {}
+        for entry in plan.get("objects", []):
+            planned[entry.get("name", "")] = entry
+        dynamic_reasons = {
+            entry.get("name", ""): entry.get("reason", "")
+            for entry in plan.get("dynamicObjects", [])
+        }
+        for obj in sorted(context.scene.objects, key=lambda o: o.name):
+            if obj.type != "MESH" or obj.hide_render:
+                continue
+            row = rows.add()
+            row.name = obj.name
+            note = ui._dynamic_note(obj)
+            if note is not None:
+                row.shading = "dynamic"
+                row.atlas = "—"
+                row.density = note.replace("Dynamic — ", "")
+                continue
+            if obj.name in dynamic_reasons and "blendlink_dynamic" not in obj:
+                row.shading = "dynamic"
+                row.atlas = "—"
+                row.density = dynamic_reasons[obj.name]
+                continue
+            row.shading = "baked"
+            entry = planned.get(obj.name)
+            override = obj.get("blendlink_atlas")
+            if isinstance(override, str):
+                row.atlas = override + " (set)"
+            elif entry is not None:
+                row.atlas = str(entry.get("atlas", "main"))
+            else:
+                row.atlas = "new — resync"
+            if entry is not None:
+                px = entry.get("pxPerMeter")
+                row.density = f"{px:.0f} px/m" if px else ""
+                auto = entry.get("autoWeight", 1.0)
+                artist = entry.get("artistWeight", 1.0)
+                if auto != 1.0 or artist != 1.0:
+                    row.weight = f"{auto:g}×{artist:g}"
+        context.window_manager.blendlink.bake_row_index = -1
+        self.report({"INFO"}, f"{len(rows)} meshes in the bake table")
+        return {"FINISHED"}
+
+
 class BLENDLINK_OT_sync_now(bpy.types.Operator):
     """Save the file and run the project sync in the background"""
     bl_idname = "blendlink.sync_now"
@@ -708,6 +765,7 @@ classes = (
     BLENDLINK_OT_set_shading,
     BLENDLINK_OT_select_atlas_objects,
     BLENDLINK_OT_preview_atlas_uvs,
+    BLENDLINK_OT_refresh_bake_table,
     BLENDLINK_OT_sync_now,
     BLENDLINK_OT_sync_cancel,
     BLENDLINK_OT_open_sync_log,
