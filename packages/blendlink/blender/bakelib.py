@@ -221,6 +221,8 @@ def flatten_saved_background(path: str, covered, label: str = "", log=print) -> 
         image.filepath_raw = path
         image.file_format = "PNG"
         image.save()
+        holes = int(covered.size - covered.sum())
+        log(f"blendlink: flattened {holes} background texels of {tag} to a constant")
     finally:
         bpy.data.images.remove(image)
 
