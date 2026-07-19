@@ -1,7 +1,7 @@
 {
     "name":  "blendlink",
     "version":  "0.3.0",
-    "description":  "Typed scene modules for any GLB â€” Blender sync first-class.",
+    "description":  "Typed scene modules for any GLB - Blender sync first-class.",
     "type":  "module",
     "license":  "MIT",
     "bin":  {

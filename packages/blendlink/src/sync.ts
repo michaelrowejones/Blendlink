@@ -167,7 +167,7 @@ function readManifest(path: string): SceneManifest | null {
 export async function syncScene(
   scene: ResolvedScene,
   blender: BlenderInstall,
-  options: { force?: boolean; draft?: boolean } = {},
+  options: { force?: boolean; draft?: boolean; allowNewerFile?: boolean } = {},
 ): Promise<SyncOutcome> {
   const started = Date.now()
   if (scene.external) {
@@ -195,6 +195,7 @@ export async function syncScene(
     outPath: scene.glbPath,
     settings,
     blender,
+    ...(options.allowNewerFile ? { allowNewerFile: true } : {}),
   })
 
   const states: Record<string, { url: string; default?: true }> = {}
@@ -253,7 +254,7 @@ export async function syncScene(
 
 export async function syncAll(
   config: ResolvedConfig,
-  options: { force?: boolean; only?: string; draft?: boolean } = {},
+  options: { force?: boolean; only?: string; draft?: boolean; allowNewerFile?: boolean } = {},
 ): Promise<SyncOutcome[]> {
   const scenes = options.only
     ? config.scenes.filter((scene) => scene.name === options.only)
@@ -287,6 +288,16 @@ export async function verifyAll(config: ResolvedConfig): Promise<VerifyIssue[]> 
       issues.push({
         scene: scene.name,
         problem: `missing generated manifest (${scene.manifestPath})`,
+        fix: 'Run `blendlink sync` and commit the generated files.',
+      })
+      continue
+    }
+    if (!existsSync(scene.modulePath)) {
+      // A deleted gen.ts previously passed verify and failed later as an
+      // unrelated-looking TS error in the app build.
+      issues.push({
+        scene: scene.name,
+        problem: `missing generated module (${scene.modulePath})`,
         fix: 'Run `blendlink sync` and commit the generated files.',
       })
       continue

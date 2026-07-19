@@ -62,9 +62,11 @@ export function initProject(root: string): InitResult {
     blends.length > 0
       ? blends.map((file) => `    { file: '${file}' },`).join('\n')
       : `    // { file: 'assets/scene.blend' },`
-  const config = `// blendlink — typed scene modules from .blend files.
+  const config = `// @ts-check
+// blendlink — typed scene modules from .blend files.
 // Docs: https://github.com/michaelcup/blendlink
 // Each scene becomes <genDir>/<name>.gen.ts + .manifest.json and <outDir>/<name>.glb.
+/** @type {import('blendlink').BlendlinkConfig} */
 const config = {
   // outDir: 'public/models',   // where GLBs land (served statically)
   // genDir: 'src/generated',   // where typed modules land

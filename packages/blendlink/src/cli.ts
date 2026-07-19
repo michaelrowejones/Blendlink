@@ -5,6 +5,7 @@ import { syncAll, verifyAll } from './sync.js'
 import { generateSceneModule } from './typegen.js'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const [command, ...rest] = process.argv.slice(2)
 const flags = new Set(rest.filter((arg) => arg.startsWith('--')))
@@ -42,6 +43,7 @@ async function main(): Promise<number> {
         force: flags.has('--force'),
         only: positional[0],
         draft: flags.has('--draft'),
+        allowNewerFile: flags.has('--allow-newer'),
       })
       outcomes.forEach(report)
       if (flags.has('--watch')) {
@@ -235,7 +237,7 @@ async function main(): Promise<number> {
         console.log(
           '\nthen use it from React Three Fiber (drei):\n' +
             "  import { useGLTF } from '@react-three/drei'\n" +
-            "  import { sample } from './src/generated/sample.gen'\n" +
+            "  import { sample, type SampleGLTF } from './src/generated/sample.gen'\n" +
             '\n' +
             '  function Scene() {\n' +
             '    const { nodes } = useGLTF(sample.url) as unknown as SampleGLTF\n' +
@@ -255,22 +257,39 @@ async function main(): Promise<number> {
       for (const line of lines) console.log(`${icon[line.level]} ${line.message}`)
       return lines.some((line) => line.level === 'fail') ? 1 : 0
     }
-    default:
-      console.error(
+    case 'version':
+    case '--version':
+    case '-v': {
+      const { readFileSync: read } = await import('node:fs')
+      const pkg = JSON.parse(
+        read(join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf8'),
+      ) as { version: string }
+      console.log(pkg.version)
+      return 0
+    }
+    default: {
+      const usage =
         'blendlink — typed scene modules for any GLB, Blender sync first-class\n\n' +
-          'commands:\n' +
-          '  init                     scaffold blendlink.config.mjs from found .blend files\n' +
-          '  sync [scene] [--force] [--watch] [--draft]\n' +
-          '                           export .blend scenes (external scenes run their build command;\n' +
-          '                           --draft = quarter-res preview bakes, refused by verify)\n' +
-          '  plan [scene]             what the bake will do: objects, texel density, atlas share, states\n' +
-          '  verify                   Blender-free drift check (CI)\n' +
-          '  typegen <glb> [--blend f.blend] [...]\n' +
-          '                           generate types from an existing GLB\n' +
-          '  doctor                   check Blender, config, drift, and environment\n' +
-          '  discover                 locate the Blender executable',
-      )
-      return command ? 2 : 0
+        'commands:\n' +
+        '  init                     scaffold blendlink.config.mjs from found .blend files\n' +
+        '  sync [scene] [--force] [--watch] [--draft] [--allow-newer]\n' +
+        '                           export .blend scenes (external scenes run their build command;\n' +
+        '                           --draft = quarter-res preview bakes, refused by verify)\n' +
+        '  plan [scene] [--json]    what the bake will do: objects, texel density, atlas share, states\n' +
+        '  verify                   Blender-free drift check (CI)\n' +
+        '  typegen <glb> [--blend f.blend] [...]\n' +
+        '                           generate types from an existing GLB\n' +
+        '  doctor                   check Blender, config, drift, and environment\n' +
+        '  discover                 locate the Blender executable\n' +
+        '  help                     this text (also --help); version prints the version'
+      const wantsHelp = !command || command === 'help' || command === '--help' || command === '-h'
+      if (wantsHelp) {
+        console.log(usage)
+        return 0
+      }
+      console.error(`unknown command "${command}"\n\n${usage}`)
+      return 2
+    }
   }
 }
 

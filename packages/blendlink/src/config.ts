@@ -83,12 +83,60 @@ export function defineScene(scene: SceneConfig): SceneConfig {
   return scene
 }
 
+const SCENE_KEYS = new Set([
+  'file', 'name', 'glb', 'url', 'collection', 'imageFormat', 'mode', 'bake',
+  'curveSamples', 'exporterOverrides', 'external', 'build', 'inputs',
+])
+const CONFIG_KEYS = new Set(['outDir', 'genDir', 'urlPrefix', 'blenderPath', 'scenes'])
+
+/** Config-file tools live or die on validation quality (Content Collections
+ * beat Contentlayer on exactly this): a typo'd key or a bad mode string
+ * must fail with a fix, never silently produce a lit export. */
+function validateConfig(config: BlendlinkConfig, root: string): void {
+  const problems: string[] = []
+  for (const key of Object.keys(config)) {
+    if (!CONFIG_KEYS.has(key)) problems.push(`unknown config key "${key}" — known: ${[...CONFIG_KEYS].join(', ')}`)
+  }
+  for (const scene of config.scenes) {
+    const label = scene.name ?? scene.file ?? '(unnamed scene)'
+    for (const key of Object.keys(scene)) {
+      if (!SCENE_KEYS.has(key)) problems.push(`scene ${label}: unknown key "${key}" — known: ${[...SCENE_KEYS].join(', ')}`)
+    }
+    if (!scene.file) problems.push(`scene ${label}: "file" is required`)
+    else if (!scene.external && !existsSync(resolve(root, scene.file))) {
+      problems.push(`scene ${label}: file not found: ${scene.file}`)
+    }
+    if (scene.mode !== undefined && scene.mode !== 'standard' && scene.mode !== 'baked') {
+      problems.push(`scene ${label}: mode "${String(scene.mode)}" is not 'standard' | 'baked'`)
+    }
+    if (scene.bake && scene.mode !== 'baked') {
+      problems.push(`scene ${label}: has bake settings but mode is not 'baked' — the bake would silently not run; add mode: 'baked'`)
+    }
+  }
+  if (problems.length > 0) {
+    throw new Error('blendlink config problems:\n  - ' + problems.join('\n  - '))
+  }
+}
+
 export function resolveConfig(config: BlendlinkConfig, root: string): ResolvedConfig {
+  validateConfig(config, root)
   const outDir = resolve(root, config.outDir ?? 'public/models')
   const genDir = resolve(root, config.genDir ?? 'src/generated')
   const urlPrefix = config.urlPrefix ?? '/models'
+  const seenNames = new Map<string, string>()
   const scenes = config.scenes.map((scene) => {
     const name = scene.name ?? camel(basename(scene.file).replace(/\.blend$/i, ''))
+    const previous = seenNames.get(name)
+    if (previous !== undefined) {
+      // Two files camelizing to one name silently share every output path —
+      // the second sync overwrites the first, last-writer-wins.
+      throw new Error(
+        `scenes "${previous}" and "${scene.file}" both resolve to the name ` +
+          `"${name}" and would overwrite each other's outputs — set an ` +
+          `explicit name on one of them.`,
+      )
+    }
+    seenNames.set(name, scene.file)
     return {
       name,
       blendPath: resolve(root, scene.file),
@@ -127,7 +175,8 @@ export async function loadConfig(root: string): Promise<ResolvedConfig> {
     return resolveConfig(module.default, root)
   }
   throw new Error(
-    'No blendlink.config.mjs found. Create one with defineConfig({ scenes: [defineScene({ file: "assets/scene.blend" })] }).',
+    'No blendlink.config.mjs found — run `blendlink init` to scaffold one ' +
+      '(it finds your .blend files and writes the config for you).',
   )
 }
 
