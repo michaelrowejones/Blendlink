@@ -24,6 +24,7 @@ _state = {
     "status": "NO_FILE",  # NO_FILE | NO_MANIFEST | IN_SYNC | NEEDS_SYNC | UNSAVED_EDITS
     "detail": "",
     "hint": "",  # manifest syncHint: the command that regenerates the artifacts
+    "plan": {},  # manifest bakePlan objects keyed by object name
     "manifest_path": None,
     "manifest_mtime": 0,
     "blend_hash": None,
@@ -51,6 +52,16 @@ def sync_hint() -> str:
     return _state["hint"]
 
 
+def plan_for(object_name: str) -> dict | None:
+    """Bake-plan entry for an object from the last sync's manifest, or None.
+
+    Entries carry pxPerMeter / screenDensity / uvShare / autoWeight /
+    artistWeight — the numbers the density readout shows next to the
+    Lightmap Scale slider. Stale when status() is not IN_SYNC.
+    """
+    return _state["plan"].get(object_name)
+
+
 def project_root() -> str | None:
     """Directory containing blendlink.config.mjs, once discovered."""
     return str(_state["root"]) if _state["root"] else None
@@ -58,8 +69,9 @@ def project_root() -> str | None:
 
 def reset():
     _state.update(
-        status="NO_FILE", detail="", hint="", manifest_path=None, manifest_mtime=0,
-        blend_hash=None, blend_mtime=0, searched_for=None, root=None,
+        status="NO_FILE", detail="", hint="", plan={}, manifest_path=None,
+        manifest_mtime=0, blend_hash=None, blend_mtime=0, searched_for=None,
+        root=None,
     )
 
 
@@ -158,9 +170,16 @@ def refresh(force: bool = False) -> bool:
             manifest = json.loads(Path(_state["manifest_path"]).read_text(encoding="utf8"))
             _state["detail"] = manifest.get("blendBytesHash", "")
             _state["hint"] = manifest.get("syncHint", "")
+            plan = manifest.get("bakePlan") or {}
+            _state["plan"] = {
+                entry["name"]: entry
+                for entry in plan.get("objects", [])
+                if isinstance(entry, dict) and "name" in entry
+            }
         except (OSError, json.JSONDecodeError):
             _state["detail"] = ""
             _state["hint"] = ""
+            _state["plan"] = {}
         _state["manifest_mtime"] = manifest_mtime
 
     if bpy.data.is_dirty:

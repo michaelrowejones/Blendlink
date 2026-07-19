@@ -105,7 +105,7 @@ export interface ExportResult {
   bakedStates: Record<string, string>
   /** Baked mode: interactive light group → additive layer PNG + peak scale. */
   bakedLightGroups: Record<string, { path: string; maxValue: number }>
-  /** planOnly runs: the bake plan (and nothing else was produced). */
+  /** Baked mode: the bake plan (planOnly runs produce ONLY this). */
   plan?: BakePlan
   durationMs: number
 }

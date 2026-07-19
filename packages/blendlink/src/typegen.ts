@@ -4,7 +4,7 @@ import { NodeIO, type Node } from '@gltf-transform/core'
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions'
 import { MeshoptDecoder } from 'meshoptimizer'
 import { parseVocabulary, type Vocabulary, type VocabularyNodeInput } from './vocabulary.js'
-import type { BlendSidecar } from './invoke.js'
+import type { BakePlan, BlendSidecar } from './invoke.js'
 
 export interface CurveData {
   kind: 'bezier' | 'points'
@@ -47,6 +47,9 @@ export interface SceneManifest {
   inputsHash?: string
   /** True when produced by `sync --draft` (quarter res) — never commit. */
   draft?: boolean
+  /** Baked mode: the last sync's bake plan (density, shares, weights) —
+   * the addon shows per-object numbers next to the Lightmap Scale slider. */
+  bakePlan?: BakePlan
 }
 
 export type NodeKind = 'Mesh' | 'SkinnedMesh' | 'Bone' | 'Camera' | 'Light' | 'Object3D'

@@ -256,6 +256,9 @@ def bake_prepare_geometry(margin_px: int, size: int) -> None:
     # into neighbours; FRACTION guarantees an absolute gap.
     bpy.ops.uv.pack_islands(
         rotate=True,
+        # 90-degree steps keep island edges texel-aligned — they dilate,
+        # mip, and block-compress cleaner than free rotation.
+        rotate_method="CARDINAL",
         scale=True,
         merge_overlap=False,
         margin_method="FRACTION",
@@ -315,6 +318,18 @@ def bake_proxy() -> tuple:
     bpy.ops.object.join()
     proxy = copies[0]
     proxy.name = "BLENDLINK_BAKE_PROXY"
+    # Meshes without materials cannot host a bake-target node — Cycles dies
+    # with "No active image found". Bare primitives are the first thing a
+    # new user bakes, so give the proxy a neutral surface instead.
+    default = bpy.data.materials.get("BLENDLINK_DEFAULT_SURFACE")
+    if default is None:
+        default = bpy.data.materials.new("BLENDLINK_DEFAULT_SURFACE")
+        default.use_nodes = True
+    if not proxy.material_slots:
+        proxy.data.materials.append(default)
+    for slot in proxy.material_slots:
+        if slot.material is None:
+            slot.material = default
     return proxy, hidden
 
 
@@ -347,6 +362,54 @@ def bake_state(proxy, image, margin_px: int) -> None:
         type="COMBINED", target="IMAGE_TEXTURES", margin=margin_px,
         use_clear=True, uv_layer=ATLAS_UV,
     )
+
+
+def fill_image_background(image) -> None:
+    """Pull-push fill every un-baked texel with nearby island color.
+
+    Mip level N keeps only 1/2^N of the authored island padding, so the deep
+    mips of a black-background atlas average dark halos into island edges.
+    Bake-margin dilation reaches a fixed width; this fills the REST of the
+    atlas by pyramid pull-push (Substance's "infinite padding"), so no
+    background-colored texel survives at any mip level. Coverage comes from
+    alpha: the bake target is created transparent and Cycles writes opaque
+    texels.
+    """
+    import numpy as np
+
+    width, height = image.size
+    pixels = np.empty(width * height * 4, dtype=np.float32)
+    image.pixels.foreach_get(pixels)
+    rgba = pixels.reshape(height, width, 4)
+    weight = (rgba[:, :, 3] > 0.5).astype(np.float32)
+    holes = int(weight.size - weight.sum())
+    if holes == 0:
+        return
+    if weight.sum() < weight.size * 0.01:
+        # Alpha never marked coverage — filling would flood the atlas.
+        rgba[:, :, 3] = 1.0
+        image.pixels.foreach_set(pixels)
+        image.update()
+        return
+    levels = [(rgba[:, :, :3] * weight[:, :, None], weight)]
+    while levels[-1][0].shape[0] > 1 and levels[-1][0].shape[1] > 1:
+        color, count = levels[-1]
+        half_h, half_w = color.shape[0] // 2, color.shape[1] // 2
+        levels.append((
+            color.reshape(half_h, 2, half_w, 2, 3).sum(axis=(1, 3)),
+            count.reshape(half_h, 2, half_w, 2).sum(axis=(1, 3)),
+        ))
+    color, count = levels[-1]
+    filled = color / np.maximum(count, 1e-8)[:, :, None]
+    for color, count in reversed(levels[:-1]):
+        filled = filled.repeat(2, axis=0).repeat(2, axis=1)
+        covered = count > 0
+        filled[covered] = color[covered] / count[covered][:, None]
+    empty = weight < 0.5
+    rgba[:, :, :3][empty] = filled[empty]
+    rgba[:, :, 3] = 1.0
+    image.pixels.foreach_set(pixels)
+    image.update()
 
 
 def save_dithered(image, path: str) -> None:
@@ -413,6 +476,10 @@ def save_denoised(image, path: str) -> None:
 def save_resolved(image, path: str, final_size: int, denoise: bool = False) -> None:
     """Save at final_size: supersampled bakes resolve down through a copy so
     the live bake target keeps its full resolution for the next state."""
+    # Fill before the resolve so the downscale averages island color, never
+    # background. The live target's islands are untouched, and the next
+    # state's use_clear wipes the fill again.
+    fill_image_background(image)
     target = image
     duplicate = None
     if image.size[0] != final_size:
@@ -660,8 +727,11 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
 
     state_paths = {}
     group_layers = {}
+    # alpha=True is the coverage contract: bake use_clear resets to
+    # transparent, Cycles writes opaque texels, fill_image_background reads
+    # the difference.
     image = bpy.data.images.new(
-        "blendlink-bake", width=bake_size, height=bake_size, alpha=False, float_buffer=True,
+        "blendlink-bake", width=bake_size, height=bake_size, alpha=True, float_buffer=True,
     )
     bake_jobs = len(states) + len(grouped_lights)
     per_job = 0.6 / max(bake_jobs, 1)
@@ -815,7 +885,12 @@ def main() -> None:
     sidecar = collect_sidecar(settings)
 
     baked_report = {}
+    plan = None
     if settings.get("mode") == "baked":
+        # The plan rides along on every real sync so the manifest can carry
+        # per-object density — the addon shows it next to the Lightmap Scale
+        # slider. The UV prep it runs is idempotent; the bake re-runs it.
+        plan = compute_bake_plan(settings)
         baked_report = run_baked_mode(settings, out_path)
 
     progress(0.82, "writing glTF")
@@ -830,6 +905,7 @@ def main() -> None:
         "excluded": excluded,
         "sidecar": sidecar,
         "baked": baked_report,
+        "plan": plan,
     }
     with open(result_path, "w", encoding="utf-8") as handle:
         json.dump(result, handle)

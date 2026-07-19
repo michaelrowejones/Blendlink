@@ -219,6 +219,7 @@ export async function syncScene(
   manifest.syncHint = DEFAULT_SYNC_HINT
   manifest.lastSyncDurationMs = Date.now() - started
   if (options.draft && scene.settings.mode === 'baked') manifest.draft = true
+  if (exported.plan) manifest.bakePlan = exported.plan
   mkdirSync(dirname(scene.manifestPath), { recursive: true })
   writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
   writeFileSync(scene.modulePath, module)

@@ -183,6 +183,28 @@ class BLENDLINK_PT_designation(_BlendlinkPanelMixin, bpy.types.Panel):
         _draw_atlas_controls(layout, obj)
 
 
+def density_summary(entry) -> list[str]:
+    """Bake-plan entry → the consequence lines shown under the slider.
+
+    The card's thesis applies to density too: state what the number MEANS
+    (perceived quality at the camera), not just the raw px/m.
+    """
+    if not entry:
+        return []
+    lines = []
+    px = entry.get("pxPerMeter")
+    share = entry.get("uvShare")
+    if px:
+        share_text = f" · {share * 100:.1f}% of atlas" if share else ""
+        lines.append(f"{px:.0f} px/m{share_text}")
+    screen = entry.get("screenDensity")
+    if screen:
+        auto = entry.get("autoWeight", 1.0)
+        auto_text = f" · auto {auto:g}x" if auto != 1.0 else ""
+        lines.append(f"screen density {screen:.0f}{auto_text}")
+    return lines
+
+
 def _draw_atlas_controls(layout, obj):
     """Baked-atlas density control (meshes only): the artist's lightmap
     scale, applied by the bake pipeline as an island pre-scale."""
@@ -197,6 +219,16 @@ def _draw_atlas_controls(layout, obj):
             column.label(text="Excluded from the atlas (still lights)", icon="INFO")
     else:
         column.operator("blendlink.set_texel_weight", icon="TEXTURE")
+    # Density from the last sync's bake plan: the slider's consequence,
+    # shown where the slider lives instead of only in the terminal.
+    lines = density_summary(syncstatus.plan_for(obj.name))
+    if lines:
+        readout = layout.column(align=True)
+        readout.scale_y = 0.8
+        for line in lines:
+            readout.label(text=line, icon="NONE")
+        if syncstatus.status()[0] != "IN_SYNC":
+            readout.label(text="from last sync — resync to refresh", icon="TIME")
 
 
 class BLENDLINK_PT_checks(_BlendlinkPanelMixin, bpy.types.Panel):

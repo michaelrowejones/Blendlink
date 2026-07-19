@@ -127,13 +127,19 @@ async function main(): Promise<number> {
       const bakedScenes = scenes.filter(
         (scene) => !scene.external && scene.settings.mode === 'baked',
       )
+      const asJson = flags.has('--json')
       for (const scene of scenes) {
+        if (asJson) break
         if (scene.external) console.log(`· ${scene.name}: external — its pipeline owns the bake`)
         else if (scene.settings.mode !== 'baked')
           console.log(`· ${scene.name}: standard export — nothing to bake`)
       }
-      if (bakedScenes.length === 0) return 0
+      if (bakedScenes.length === 0) {
+        if (asJson) console.log(JSON.stringify({ scenes: [] }, null, 2))
+        return 0
+      }
       const blender = await discoverBlender(config.blenderPath)
+      const jsonScenes: Array<{ scene: string; plan: unknown }> = []
       for (const scene of bakedScenes) {
         const result = await exportBlend({
           blendPath: scene.blendPath,
@@ -145,6 +151,10 @@ async function main(): Promise<number> {
         if (!plan) {
           console.error(`✗ ${scene.name}: Blender returned no plan`)
           return 1
+        }
+        if (asJson) {
+          jsonScenes.push({ scene: scene.name, plan })
+          continue
         }
         const supersampled = plan.supersample > 1
           ? ` (baked at ${plan.atlasSize * plan.supersample}px, resolved down)`
@@ -198,6 +208,7 @@ async function main(): Promise<number> {
         }
         for (const warning of plan.warnings) console.warn(`  ! ${warning}`)
       }
+      if (asJson) console.log(JSON.stringify({ scenes: jsonScenes }, null, 2))
       return 0
     }
     case 'init': {

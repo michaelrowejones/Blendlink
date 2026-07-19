@@ -171,8 +171,24 @@ def main():
     ui_data = barrel.id_properties_ui("texel_weight").as_dict()
     expect("Lightmap scale" in ui_data.get("description", ""), f"texel_weight ui missing: {ui_data}")
 
-    # --- designation card + copy-hint gating ---
+    # --- bake-plan density readout (plan cached from the manifest) ---
     ui = sys.modules[f"{PACKAGE}.ui"]
+    syncstatus._state["plan"] = {
+        "Desk": {
+            "name": "Desk", "pxPerMeter": 619.0, "uvShare": 0.031,
+            "screenDensity": 249.0, "autoWeight": 2.0, "artistWeight": 1.0,
+        },
+    }
+    entry = syncstatus.plan_for("Desk")
+    expect(entry is not None and entry["pxPerMeter"] == 619.0, "plan_for lookup failed")
+    expect(syncstatus.plan_for("Missing") is None, "plan_for must miss cleanly")
+    lines = ui.density_summary(entry)
+    expect(lines == ["619 px/m · 3.1% of atlas", "screen density 249 · auto 2x"],
+           f"density summary wrong: {lines}")
+    expect(ui.density_summary(None) == [], "empty plan should produce no lines")
+    syncstatus._state["plan"] = {}
+
+    # --- designation card + copy-hint gating ---
     select_only(hotspot)
     expect(ui.BLENDLINK_PT_designation.poll(bpy.context), "designation card should show for the active object")
     text = ui.describe(vocab.classify(hotspot.name))
