@@ -26,6 +26,16 @@ from pathlib import Path
 
 import bpy
 
+# UV-layer names are a cross-parser contract (exporter, external pipelines,
+# the addon's preview/materialize operators). This module is their ONE home;
+# the addon mirrors the strings and its headless test asserts they match.
+ATLAS_UV = "BLENDLINK_ATLAS"          # the packed bake/export layer (derived)
+AUTHORED_UV = "BLENDLINK_ATLAS_AUTHORED"  # the artist's editable layer (opt-in)
+# The addon's viewport-only checker inspection modifier. show_render=False,
+# but freeze/export paths evaluate the VIEWPORT depsgraph — see
+# remove_checker_overrides.
+CHECKER_MODIFIER = "BLENDLINK-checker-override"
+
 
 # --------------------------------------------------------------------------
 # Progress protocol
@@ -304,15 +314,68 @@ def texel_weight_of(obj, keys=("blendlink_texel_weight", "texel_weight")) -> flo
     return 1.0
 
 
-def scale_islands(objs, uv_name: str, weight_for) -> None:
+def stage_atlas_layers(objs, uv_name: str = ATLAS_UV,
+                       authored_name: str = AUTHORED_UV, log=print) -> list:
+    """Create the pack workspace layer on every mesh.
+
+    Source per mesh: the artist's AUTHORED layer when present — its islands
+    AND pin flags are adopted so pack(pin=True) can hold pinned islands
+    where the artist placed them — else the first UV layer, with pins
+    forced clear (artists pin UVs for live-unwrap; a stale pin in a working
+    layer must never lock the atlas pack). The authored layer itself is
+    only ever READ — overwriting it is the top UV2 bug class elsewhere.
+
+    The new layer becomes active-for-editing so the UV ops hit it — but
+    NOT active_render: an Image Texture with an unconnected Vector samples
+    the active-render map, so flipping it here would bake every implicit-UV
+    texture through the PACKED coordinates.
+
+    Returns the names of objects that carried an authored layer.
+    """
+    authored_names = []
+    for obj in objs:
+        mesh = obj.data
+        authored = mesh.uv_layers.get(authored_name)
+        source = authored if authored is not None else mesh.uv_layers[0]
+        values = [loop.uv.copy() for loop in source.data]
+        pins = [loop.pin_uv for loop in source.data] if authored is not None else None
+        previous = mesh.uv_layers.get(uv_name)
+        if previous is not None and previous != source:
+            mesh.uv_layers.remove(previous)
+        layer = mesh.uv_layers.new(name=uv_name)
+        if layer is None:
+            raise RuntimeError(
+                f"{obj.name}: could not add the {uv_name} UV layer "
+                "(Blender's 8-layer limit) — remove unused UV maps"
+            )
+        for index, loop in enumerate(layer.data):
+            loop.uv = values[index]
+            loop.pin_uv = bool(pins[index]) if pins is not None else False
+        mesh.uv_layers.active = layer
+        if authored is not None:
+            authored_names.append(obj.name)
+    if authored_names:
+        log(
+            f"blendlink: honoring authored atlas UVs ({authored_name}) on "
+            f"{len(authored_names)} mesh(es): " + ", ".join(sorted(authored_names))
+        )
+    return authored_names
+
+
+def scale_islands(objs, uv_name: str, weight_for, held: dict | None = None) -> None:
     """Pre-scale each object's islands; pack_islands(scale=True) preserves
-    relative island scale, so the pre-scale IS the weight."""
+    relative island scale, so the pre-scale IS the weight. `held` is the
+    per-loop mask from average_unpinned — held (pinned-island) loops keep
+    their authored scale."""
     for obj in objs:
         final = float(weight_for(obj))
         if final != 1.0:
             layer = obj.data.uv_layers.get(uv_name)
             if layer is not None:
-                for loop in layer.data:
+                mask = (held or {}).get(obj.name)
+                for index, loop in enumerate(layer.data):
+                    if mask is not None and mask[index]:
+                        continue
                     loop.uv *= final
 
 
@@ -357,7 +420,53 @@ def average(objs) -> None:
     bpy.ops.object.mode_set(mode="OBJECT")
 
 
-def pack(objs, margin_px: int, size: int) -> None:
+def average_unpinned(objs, uv_name: str) -> dict:
+    """Equalize px/m across islands EXCEPT pinned ones — a pinned island is
+    an authored placement whose scale must survive untouched.
+
+    Islands are resolved by Blender's own selection ops (select_pinned +
+    select_linked), so "island" here is exactly the unit pack_islands will
+    constrain — a hand-rolled island walk would drift from the packer.
+    The pin flags are then EXPANDED over each held island (uv.pin on the
+    grown selection): idempotent for the packer, and it makes the held set
+    readable per-loop in object mode, which is the returned mask.
+
+    Returns {object name: per-loop held mask} for weight pre-scales to
+    skip (objects with no held loops are absent). With no pins anywhere
+    this degrades to average().
+    """
+    packable = [obj for obj in objs if len(obj.data.polygons) > 0]
+    if not packable:
+        return {}
+    tools = bpy.context.scene.tool_settings
+    prior_sync = tools.use_uv_select_sync
+    # The uv.select_* ops below act on UV selection, not mesh selection.
+    tools.use_uv_select_sync = False
+    try:
+        select_only(packable)
+        bpy.ops.object.mode_set(mode="EDIT")
+        bpy.ops.mesh.select_all(action="SELECT")
+        bpy.ops.uv.select_all(action="DESELECT")
+        bpy.ops.uv.select_pinned()
+        bpy.ops.uv.select_linked()
+        bpy.ops.uv.pin(clear=False)
+        bpy.ops.uv.select_all(action="INVERT")
+        bpy.ops.uv.average_islands_scale()
+        bpy.ops.object.mode_set(mode="OBJECT")
+    finally:
+        tools.use_uv_select_sync = prior_sync
+    held = {}
+    for obj in packable:
+        layer = obj.data.uv_layers.get(uv_name)
+        if layer is None:
+            continue
+        mask = [loop.pin_uv for loop in layer.data]
+        if any(mask):
+            held[obj.name] = mask
+    return held
+
+
+def pack(objs, margin_px: int, size: int, pin: bool = False) -> None:
     packable = [obj for obj in objs if len(obj.data.polygons) > 0]
     if not packable:
         return
@@ -365,7 +474,7 @@ def pack(objs, margin_px: int, size: int) -> None:
     bpy.ops.object.mode_set(mode="EDIT")
     bpy.ops.mesh.select_all(action="SELECT")
     bpy.ops.uv.select_all(action="SELECT")
-    bpy.ops.uv.pack_islands(
+    kwargs = dict(
         rotate=True,
         rotate_method="CARDINAL",
         scale=True,
@@ -374,7 +483,34 @@ def pack(objs, margin_px: int, size: int) -> None:
         margin=(margin_px + 4) / size,
         shape_method="CONCAVE",
     )
+    if pin:
+        # LOCKED: islands containing any pinned UV keep position AND scale;
+        # everything else packs around them. With zero pins present the
+        # result is byte-identical to pin=False (verified on 5.2), so the
+        # unchanged-inputs-pack-identically invariant holds.
+        kwargs.update(pin=True, pin_method="LOCKED")
+    bpy.ops.uv.pack_islands(**kwargs)
     bpy.ops.object.mode_set(mode="OBJECT")
+
+
+def remove_checker_overrides(objs, log=print) -> int:
+    """Strip the addon's checker-override modifiers (viewport UV-density
+    inspection). They ship show_render=False, but freeze_evaluated_meshes
+    and glTF export both evaluate the VIEWPORT depsgraph, where the
+    override IS applied — a leftover would bake and export the checker
+    material onto everything. Call this before any evaluate or export."""
+    stripped = 0
+    for obj in objs:
+        for modifier in [m for m in getattr(obj, "modifiers", [])
+                         if m.name.startswith(CHECKER_MODIFIER)]:
+            obj.modifiers.remove(modifier)
+            stripped += 1
+    if stripped:
+        log(
+            f"blendlink: removed {stripped} leftover checker-override "
+            "modifier(s) — a viewport inspection aid that must never bake"
+        )
+    return stripped
 
 
 # --------------------------------------------------------------------------

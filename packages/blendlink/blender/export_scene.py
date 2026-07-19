@@ -135,7 +135,8 @@ NOIMP_PATTERN = re.compile(r"[-_]noimp(\.\d{3})?$", re.IGNORECASE)
 # Collision-only proxies ship in the GLB (physics needs the geometry) but
 # never render — keep them out of the atlas pack and the bake.
 COLONLY_PATTERN = re.compile(r"[-_](conv)?colonly(\.\d{3})?$", re.IGNORECASE)
-ATLAS_UV = "BLENDLINK_ATLAS"
+# UV-layer names live in bakelib (the one home); the addon mirrors them.
+ATLAS_UV = bakelib.ATLAS_UV
 
 
 def is_collision_proxy(obj) -> bool:
@@ -331,31 +332,18 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
     # Unwrapped meshes get a real projection — Blender's default UV reset
     # maps every face to the full unit square, which shatters the pack.
     bakelib.ensure_authored_uvs(meshes)
-
-    for obj in meshes:
-        mesh = obj.data
-        source = mesh.uv_layers[0]
-        values = [loop.uv.copy() for loop in source.data]
-        previous = mesh.uv_layers.get(ATLAS_UV)
-        if previous is not None and previous != source:
-            mesh.uv_layers.remove(previous)
-        atlas = mesh.uv_layers.new(name=ATLAS_UV)
-        for loop, value in zip(atlas.data, values):
-            loop.uv = value
-        # Active-for-editing so the UV ops below hit the atlas layer — but
-        # NOT active_render: an Image Texture with an unconnected Vector
-        # samples the active-render map, so flipping it here would bake
-        # every implicit-UV texture through the PACKED coordinates. The
-        # authored layer keeps active_render until the unlit rebuild strips
-        # the extra layers at export.
-        mesh.uv_layers.active = atlas
+    # Atlas workspace layer per mesh. Meshes carrying the artist's
+    # BLENDLINK_ATLAS_AUTHORED layer (the addon's Materialize operator)
+    # contribute its islands and pin flags instead of the first UV layer —
+    # opt-in by presence.
+    authored = set(bakelib.stage_atlas_layers(meshes))
 
     atlases = atlas_config(bake)
     groups, assign_warnings = assign_atlases(meshes, atlases)
     reference = max(entry["size"] for entry in atlases.values())
     base_margin = int(bake.get("margin", 48))
     weights = compute_texel_weights(meshes)
-    layout = {"_warnings": assign_warnings}
+    layout = {"_warnings": assign_warnings, "_authored": authored, "_held": {}}
     for name, entry in atlases.items():
         objs = groups[name]
         margin = max(1, round(base_margin * entry["size"] / reference))
@@ -366,12 +354,32 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
         # arbitrary), then apply texel weights as island pre-scales —
         # pack_islands(scale=True) preserves relative island scale, so the
         # pre-scale IS the weight (Unity Scale-in-Lightmap semantics).
-        bakelib.average(objs)
+        # Islands the artist PINNED in an authored layer sit this out
+        # entirely: not averaged, not weighted, and pack(pin=True) locks
+        # them in place while the rest packs around them.
+        held = bakelib.average_unpinned(objs, ATLAS_UV)
+        layout["_held"].update(held)
         bakelib.scale_islands(
             objs, ATLAS_UV,
             lambda obj: weights[obj.name]["auto"] * weights[obj.name]["artist"],
+            held=held,
         )
-        bakelib.pack(objs, margin * supersample, entry["size"] * supersample)
+        bakelib.pack(objs, margin * supersample, entry["size"] * supersample, pin=True)
+        for obj in objs:
+            mask = held.get(obj.name)
+            if not mask:
+                continue
+            layer = obj.data.uv_layers.get(ATLAS_UV)
+            outside = any(
+                mask[index] and not (-0.001 <= loop.uv.x <= 1.001
+                                     and -0.001 <= loop.uv.y <= 1.001)
+                for index, loop in enumerate(layer.data)
+            )
+            if outside:
+                layout["_warnings"].append(
+                    f"{obj.name}: pinned atlas islands reach outside the 0..1 "
+                    "square — that area cannot be baked (move or unpin them)"
+                )
     return layout
 
 
@@ -533,12 +541,15 @@ def compute_bake_plan(settings: dict) -> dict:
     weights = compute_texel_weights(meshes)
     group_of = {
         obj.name: name
-        for name, entry in layout.items() if name != "_warnings"
+        for name, entry in layout.items() if not name.startswith("_")
         for obj in entry["objects"]
     }
     group_size = {
-        name: entry["size"] for name, entry in layout.items() if name != "_warnings"
+        name: entry["size"]
+        for name, entry in layout.items() if not name.startswith("_")
     }
+    authored = layout.get("_authored", set())
+    held = layout.get("_held", {})
     objects = []
     group_uv = {name: 0.0 for name in group_size}
     for obj in meshes:
@@ -563,7 +574,7 @@ def compute_bake_plan(settings: dict) -> dict:
         px_per_meter = ((uv_area * atlas_px * atlas_px) / surface) ** 0.5 if surface > 0 else 0.0
         distance = nearest_camera_distance(obj, cameras)
         entry = weights.get(obj.name, {"auto": 1.0, "artist": 1.0})
-        objects.append({
+        record = {
             "name": obj.name,
             "atlas": group,
             "areaM2": round(surface, 3),
@@ -574,7 +585,13 @@ def compute_bake_plan(settings: dict) -> dict:
             "screenDensity": round(px_per_meter * distance, 1) if distance is not None else None,
             "autoWeight": entry["auto"],
             "artistWeight": entry["artist"],
-        })
+        }
+        # Authored-layer trail (additive fields): an honored layer must be
+        # visible in the plan, never a silent exporter-side decision.
+        if obj.name in authored:
+            record["authored"] = True
+            record["pinned"] = bool(held.get(obj.name))
+        objects.append(record)
     camera_position = cameras[0] if cameras else None
     total_uv = max(group_uv.values()) if group_uv else 0.0
 
@@ -614,7 +631,7 @@ def compute_bake_plan(settings: dict) -> dict:
         if obj.type == "MESH" and not obj.hide_render and dynamic_reason(obj)
     ]
     populated = [name for name, entry in layout.items()
-                 if name != "_warnings" and entry["objects"]]
+                 if not name.startswith("_") and entry["objects"]]
     return {
         "supersample": max(1, int(bake.get("supersample", 1))),
         "atlasSize": size,
@@ -742,7 +759,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     layout = bake_prepare_geometry(bake, supersample)
     groups = {
         name: entry for name, entry in layout.items()
-        if name != "_warnings" and entry["objects"]
+        if not name.startswith("_") and entry["objects"]
     }
     bake_engine(samples)
 
@@ -976,6 +993,16 @@ def main() -> None:
     with open(settings_path, "r", encoding="utf-8") as handle:
         settings = json.load(handle)
 
+    # The addon's checker override is viewport-only inspection, but freeze
+    # and glTF export evaluate the VIEWPORT depsgraph — strip leftovers
+    # before anything evaluates, or the checker material bakes and ships.
+    stripped = bakelib.remove_checker_overrides(bpy.data.objects)
+    strip_warnings = (
+        [f"removed {stripped} leftover checker-override modifier(s) "
+         "(the addon's viewport UV inspection — never baked or exported)"]
+        if stripped else []
+    )
+
     if settings.get("planOnly"):
         excluded = remove_noimp_objects()
         plan = compute_bake_plan(settings)
@@ -983,7 +1010,7 @@ def main() -> None:
             "ok": True,
             "blenderVersion": bpy.app.version_string,
             "exporterKwargsDropped": [],
-            "warnings": [],
+            "warnings": strip_warnings,
             "collection": settings.get("collection"),
             "excluded": excluded,
             "sidecar": {"fps": 0, "markers": [], "empties": [], "curves": []},
@@ -1026,7 +1053,7 @@ def main() -> None:
     kwargs = {key: value for key, value in desired.items() if key in supported}
     dropped = sorted(set(desired) - supported)
 
-    warnings = []
+    warnings = list(strip_warnings)
     missing = missing_libraries()
     if missing:
         warnings.append(f"missing linked libraries: {', '.join(missing)}")

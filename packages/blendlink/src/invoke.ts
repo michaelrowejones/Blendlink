@@ -79,6 +79,12 @@ export interface BakePlan {
     autoWeight: number
     /** Artist texel_weight custom property (1 = default, 0 = excluded). */
     artistWeight: number
+    /** True when the mesh carried a BLENDLINK_ATLAS_AUTHORED layer and the
+     * pack reused its islands instead of re-deriving from the first UV. */
+    authored?: boolean
+    /** Authored only: true when at least one island is pinned — pinned
+     * islands hold position and scale; the rest packs around them. */
+    pinned?: boolean
   }>
   /** In the GLB for physics, but kept out of the atlas and bake. */
   collisionProxies: string[]
