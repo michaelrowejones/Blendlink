@@ -156,14 +156,22 @@ async function main(): Promise<number> {
         const rows = plan.objects.map((entry) => ({
           name: entry.name,
           px: `${entry.pxPerMeter.toFixed(0)}px/m`,
+          screen: entry.screenDensity !== null ? entry.screenDensity.toFixed(0) : '—',
           share: `${(entry.uvShare * 100).toFixed(1)}%`,
-          area: `${entry.areaM2.toFixed(2)}m²`,
+          weight: entry.artistWeight === 1 && entry.autoWeight === 1
+            ? '—'
+            : `${entry.autoWeight.toFixed(2)}×${entry.artistWeight.toFixed(2)}`,
         }))
         const width = Math.max(...rows.map((row) => row.name.length), 6)
-        console.log(`  ${'object'.padEnd(width)}  ${'px/m'.padStart(8)}  ${'atlas'.padStart(6)}  ${'area'.padStart(8)}`)
+        console.log(
+          `  ${'object'.padEnd(width)}  ${'px/m'.padStart(8)}  ${'screen'.padStart(7)}  ${'atlas'.padStart(6)}  ${'weight'.padStart(11)}`,
+        )
         for (const row of rows) {
-          console.log(`  ${row.name.padEnd(width)}  ${row.px.padStart(8)}  ${row.share.padStart(6)}  ${row.area.padStart(8)}`)
+          console.log(
+            `  ${row.name.padEnd(width)}  ${row.px.padStart(8)}  ${row.screen.padStart(7)}  ${row.share.padStart(6)}  ${row.weight.padStart(11)}`,
+          )
         }
+        console.log('  (screen = px/m × camera distance; equal values = equal perceived quality)')
         const bakes = [
           `${plan.states.length} state${plan.states.length === 1 ? '' : 's'} (${plan.states.join(', ')})`,
           ...(plan.lightGroups.length > 0

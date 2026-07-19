@@ -140,12 +140,62 @@ def is_collision_proxy(obj) -> bool:
 # ---------------------------------------------------------------------------
 
 
+def texel_weight_of(obj) -> float:
+    """Artist lightmap scale (Unity semantics): linear per-axis multiplier,
+    default 1; 0 excludes the object from the atlas and export while it
+    keeps lighting the bakes."""
+    try:
+        return max(0.0, float(obj.get("texel_weight", 1.0)))
+    except (TypeError, ValueError):
+        return 1.0
+
+
 def render_meshes() -> list:
     return [
         obj for obj in bpy.context.scene.objects
         if obj.type == "MESH" and not obj.hide_render
         and len(obj.data.polygons) > 0 and not is_collision_proxy(obj)
+        and texel_weight_of(obj) > 0.0
     ]
+
+
+def quantize_half_pow2(value: float) -> float:
+    """Snap to 2^(k/2): pack-layout hysteresis across minor scene edits."""
+    import math
+
+    if value <= 0.0:
+        return 0.0
+    return 2.0 ** (round(math.log2(value) * 2.0) / 2.0)
+
+
+def compute_texel_weights(meshes: list) -> dict:
+    """auto (camera-distance, median-normalized, clamped, quantized) × artist.
+
+    The auto weight equalizes texels-per-SCREEN-pixel: required linear
+    density is proportional to 1/distance from the authored camera. Scenes
+    without a camera get a flat baseline (artist weights still apply).
+    """
+    from mathutils import Vector
+
+    camera = bpy.context.scene.camera
+    raw = {}
+    for obj in meshes:
+        auto = 1.0
+        if camera is not None:
+            center = obj.matrix_world @ (
+                0.125 * sum((Vector(corner) for corner in obj.bound_box), Vector())
+            )
+            distance = max((camera.matrix_world.translation - center).length, 0.2)
+            auto = 1.0 / distance
+        raw[obj.name] = auto
+    values = sorted(raw.values())
+    median = values[len(values) // 2] if values else 1.0
+    weights = {}
+    for obj in meshes:
+        normalized = raw[obj.name] / median if median > 0 else 1.0
+        auto = quantize_half_pow2(min(max(normalized, 0.25), 4.0))
+        weights[obj.name] = {"auto": auto, "artist": texel_weight_of(obj)}
+    return weights
 
 
 def bake_prepare_geometry(margin_px: int, size: int) -> None:
@@ -176,6 +226,27 @@ def bake_prepare_geometry(margin_px: int, size: int) -> None:
             loop.uv = value
         mesh.uv_layers.active = atlas
         atlas.active_render = True
+        obj.select_set(True)
+    bpy.context.view_layer.objects.active = meshes[0]
+    # Baseline: equalize px/m across the atlas (authored UV scales are
+    # arbitrary), then apply texel weights as island pre-scales —
+    # pack_islands(scale=True) preserves relative island scale, so the
+    # pre-scale IS the weight (Unity Scale-in-Lightmap semantics).
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.uv.select_all(action="SELECT")
+    bpy.ops.uv.average_islands_scale()
+    bpy.ops.object.mode_set(mode="OBJECT")
+    weights = compute_texel_weights(meshes)
+    for obj in meshes:
+        entry = weights[obj.name]
+        final = entry["auto"] * entry["artist"]
+        if final != 1.0:
+            layer = obj.data.uv_layers.get(ATLAS_UV)
+            for loop in layer.data:
+                loop.uv *= final
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in meshes:
         obj.select_set(True)
     bpy.context.view_layer.objects.active = meshes[0]
     bpy.ops.object.mode_set(mode="EDIT")
@@ -392,9 +463,15 @@ def compute_bake_plan(settings: dict) -> dict:
     states = bake.get("states") or [{"name": "default"}]
     bake_prepare_geometry(margin_px, size)
 
+    from mathutils import Vector
+
+    camera = bpy.context.scene.camera
+    camera_position = camera.matrix_world.translation if camera else None
+    meshes = render_meshes()
+    weights = compute_texel_weights(meshes)
     objects = []
     total_uv = 0.0
-    for obj in render_meshes():
+    for obj in meshes:
         bm = bmesh.new()
         bm.from_mesh(obj.data)
         bm.transform(obj.matrix_world)
@@ -412,30 +489,46 @@ def compute_bake_plan(settings: dict) -> dict:
         bm.free()
         total_uv += uv_area
         px_per_meter = ((uv_area * size * size) / surface) ** 0.5 if surface > 0 else 0.0
+        distance = None
+        if camera_position is not None:
+            center = obj.matrix_world @ (
+                0.125 * sum((Vector(corner) for corner in obj.bound_box), Vector())
+            )
+            distance = max((camera_position - center).length, 0.2)
+        entry = weights.get(obj.name, {"auto": 1.0, "artist": 1.0})
         objects.append({
             "name": obj.name,
             "areaM2": round(surface, 3),
             "uvShare": round(uv_area, 5),
             "pxPerMeter": round(px_per_meter, 1),
+            "cameraDistance": round(distance, 2) if distance is not None else None,
+            # Equal perceived quality = equal px/m x distance.
+            "screenDensity": round(px_per_meter * distance, 1) if distance is not None else None,
+            "autoWeight": entry["auto"],
+            "artistWeight": entry["artist"],
         })
 
-    objects.sort(key=lambda entry: -entry["uvShare"])
+    # Worst perceived quality first — the offender list leads.
+    objects.sort(key=lambda entry: entry["screenDensity"] if entry["screenDensity"] is not None else entry["pxPerMeter"])
     warnings = []
-    densities = sorted(entry["pxPerMeter"] for entry in objects if entry["pxPerMeter"] > 0)
+    metric = "screenDensity" if camera_position is not None else "pxPerMeter"
+    densities = sorted(entry[metric] for entry in objects if entry[metric])
     if densities:
         median = densities[len(densities) // 2]
         for entry in objects:
-            if entry["pxPerMeter"] > 0 and median > 0:
-                ratio = entry["pxPerMeter"] / median
+            value = entry[metric]
+            if value and median > 0:
+                ratio = value / median
                 if ratio < 0.5:
                     warnings.append(
-                        f"{entry['name']} bakes at {entry['pxPerMeter']:.0f}px/m, "
-                        f"{median / entry['pxPerMeter']:.1f}x below the median — it will look blurry"
+                        f"{entry['name']} sits {median / value:.1f}x below the median "
+                        f"screen density — it will look blurry at its closest approach "
+                        f"(raise its texel_weight)"
                     )
                 elif ratio > 2.0:
                     warnings.append(
-                        f"{entry['name']} bakes at {entry['pxPerMeter']:.0f}px/m, "
-                        f"{ratio:.1f}x above the median — it is hogging atlas space"
+                        f"{entry['name']} sits {ratio:.1f}x above the median screen "
+                        f"density — it is hogging atlas space (lower its texel_weight)"
                     )
     light_groups = sorted({
         obj.lightgroup for obj in bpy.context.scene.objects

@@ -57,7 +57,20 @@ export interface BakePlan {
   states: string[]
   lightGroups: string[]
   bakeCount: number
-  objects: Array<{ name: string; areaM2: number; uvShare: number; pxPerMeter: number }>
+  objects: Array<{
+    name: string
+    areaM2: number
+    uvShare: number
+    pxPerMeter: number
+    /** Distance from the scene camera to the object center (null: no camera). */
+    cameraDistance: number | null
+    /** px/m × distance — equal values = equal perceived quality. */
+    screenDensity: number | null
+    /** Auto texel weight (camera-distance, median-normalized, quantized). */
+    autoWeight: number
+    /** Artist texel_weight custom property (1 = default, 0 = excluded). */
+    artistWeight: number
+  }>
   /** In the GLB for physics, but kept out of the atlas and bake. */
   collisionProxies: string[]
   warnings: string[]

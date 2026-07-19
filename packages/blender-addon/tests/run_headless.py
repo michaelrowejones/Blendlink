@@ -164,6 +164,13 @@ def main():
     exit_code = syncrun.drain_blocking(timeout_seconds=60)
     expect(exit_code == 3, f"expected exit 3, got {exit_code}")
 
+    # --- lightmap scale (texel weight) ---
+    select_only(barrel)
+    bpy.ops.blendlink.set_texel_weight(weight=2.0)
+    expect(abs(barrel["texel_weight"] - 2.0) < 1e-6, "texel_weight not set")
+    ui_data = barrel.id_properties_ui("texel_weight").as_dict()
+    expect("Lightmap scale" in ui_data.get("description", ""), f"texel_weight ui missing: {ui_data}")
+
     # --- designation card + copy-hint gating ---
     ui = sys.modules[f"{PACKAGE}.ui"]
     select_only(hotspot)

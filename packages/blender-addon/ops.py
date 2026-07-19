@@ -327,6 +327,50 @@ class BLENDLINK_OT_select_issue(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class BLENDLINK_OT_set_texel_weight(bpy.types.Operator):
+    """Add a lightmap scale to selected meshes — a linear density multiplier
+    for the baked atlas (2 doubles resolution per axis; 0 excludes the
+    object from the atlas while it keeps lighting the bake)"""
+    bl_idname = "blendlink.set_texel_weight"
+    bl_label = "Set Lightmap Scale"
+    bl_options = {"REGISTER", "UNDO"}
+
+    weight: bpy.props.FloatProperty(
+        name="Scale", default=1.0, min=0.0, soft_max=4.0,
+        description="Linear texel-density multiplier (0 excludes from the atlas)",
+    )
+
+    @classmethod
+    def poll(cls, context):
+        if context.mode != "OBJECT":
+            cls.poll_message_set("Switch to Object Mode")
+            return False
+        if not any(o.type == "MESH" for o in context.selected_editable_objects):
+            cls.poll_message_set("Select a mesh")
+            return False
+        return True
+
+    def execute(self, context):
+        tagged = 0
+        for obj in context.selected_editable_objects:
+            if obj.type != "MESH":
+                continue
+            obj["texel_weight"] = self.weight
+            obj.id_properties_ui("texel_weight").update(
+                min=0.0, soft_max=4.0, precision=2,
+                description=(
+                    "Lightmap scale: linear texel-density multiplier for the "
+                    "baked atlas. 0 excludes the object from the atlas but it "
+                    "still lights the bake"
+                ),
+            )
+            tagged += 1
+        from . import validation
+        validation.mark_dirty()
+        self.report({"INFO"}, f"Set lightmap scale {self.weight:g} on {tagged} object(s)")
+        return {"FINISHED"}
+
+
 class BLENDLINK_OT_sync_now(bpy.types.Operator):
     """Save the file and run the project sync in the background"""
     bl_idname = "blendlink.sync_now"
@@ -456,6 +500,7 @@ classes = (
     BLENDLINK_OT_add_anchor,
     BLENDLINK_OT_fix_numbered,
     BLENDLINK_OT_select_issue,
+    BLENDLINK_OT_set_texel_weight,
     BLENDLINK_OT_sync_now,
     BLENDLINK_OT_sync_cancel,
     BLENDLINK_OT_open_sync_log,

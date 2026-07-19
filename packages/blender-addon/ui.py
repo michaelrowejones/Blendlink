@@ -142,6 +142,7 @@ class BLENDLINK_PT_designation(_BlendlinkPanelMixin, bpy.types.Panel):
 
         if classification is None:
             layout.label(text="None — renders as-is", icon="OBJECT_DATA")
+            _draw_atlas_controls(layout, obj)
             return
         icon, label = _ROLE_UI.get(classification.kind, ("OBJECT_DATA", classification.kind))
         header = layout.row(align=True)
@@ -179,6 +180,23 @@ class BLENDLINK_PT_designation(_BlendlinkPanelMixin, bpy.types.Panel):
                 column.prop(obj, '["body"]', text="Body")
         if classification.kind in ("socket", "hotspot", "audio") and obj.parent is not None:
             layout.label(text=f"Attached to {obj.parent.name}", icon="LINKED")
+        _draw_atlas_controls(layout, obj)
+
+
+def _draw_atlas_controls(layout, obj):
+    """Baked-atlas density control (meshes only): the artist's lightmap
+    scale, applied by the bake pipeline as an island pre-scale."""
+    if obj.type != "MESH":
+        return
+    column = layout.column()
+    column.use_property_split = True
+    column.use_property_decorate = False
+    if "texel_weight" in obj:
+        column.prop(obj, '["texel_weight"]', text="Lightmap Scale", slider=True)
+        if float(obj["texel_weight"] or 0) == 0:
+            column.label(text="Excluded from the atlas (still lights)", icon="INFO")
+    else:
+        column.operator("blendlink.set_texel_weight", icon="TEXTURE")
 
 
 class BLENDLINK_PT_checks(_BlendlinkPanelMixin, bpy.types.Panel):
