@@ -167,6 +167,17 @@ def image_coverage(image):
     return pixels.reshape(height, width, 4)[:, :, 3] > 0.5
 
 
+def clear_image(image) -> None:
+    """Zero every texel (transparent black) — for a state where an entire
+    atlas group is hidden, so stale pixels from the previous state never
+    ship as that state's atlas."""
+    import numpy as np
+
+    width, height = image.size
+    image.pixels.foreach_set(np.zeros(width * height * 4, dtype=np.float32))
+    image.update()
+
+
 def clipped_fraction(image, covered=None) -> float:
     """Fraction of covered texels above 1.0 — the 8-bit save clips them
     silently, so callers can warn instead."""

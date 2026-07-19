@@ -37,12 +37,18 @@ export interface SceneManifest {
   excluded: string[]
   stats: { bytes: number; triangles: number; meshes: number; texturesBytes: number }
   /** Baked-mode state textures (lighting states blended/swapped at runtime).
-   * The entry marked default is the one baked into the GLB's materials.
-   * Full runtime contract: docs/MANIFEST.md. */
-  states?: Record<string, { url: string; default?: true }>
+   * Single-atlas scenes carry `url`; multi-atlas scenes carry `atlases`
+   * (atlas group → url). The entry marked default is baked into the GLB's
+   * materials. Full runtime contract: docs/MANIFEST.md. */
+  states?: Record<string, { url?: string; atlases?: Record<string, string>; default?: true }>
   /** Interactive light groups: additive contribution layers. Runtime:
-   * color = state + Σ layer(url) * maxValue * tint * strength, linear space. */
-  lightGroups?: Record<string, { url: string; maxValue: number }>
+   * color = state + Σ layer * maxValue * tint * strength, linear space.
+   * Flat {url, maxValue} for single-atlas; `atlases` map otherwise. */
+  lightGroups?: Record<string, {
+    url?: string
+    maxValue?: number
+    atlases?: Record<string, { url: string; maxValue: number }>
+  }>
   /** Wall-clock of the last sync — powers plan-time estimates. */
   lastSyncDurationMs?: number
   /** Combined hash of the declared extra input files (external scenes). */
@@ -111,8 +117,8 @@ export async function generateSceneModule(options: {
   sourceHash?: string
   sidecar?: BlendSidecar
   excluded?: string[]
-  states?: Record<string, { url: string }>
-  lightGroups?: Record<string, { url: string; maxValue: number }>
+  states?: SceneManifest['states']
+  lightGroups?: SceneManifest['lightGroups']
 }): Promise<TypegenOutput> {
   await MeshoptDecoder.ready
   const io = new NodeIO()
@@ -364,13 +370,20 @@ function renderModule(
         `  ${key(hotspot.name)}: { position: ${JSON.stringify(hotspot.position)}, quaternion: ${JSON.stringify(hotspot.quaternion)}${hotspot.extras ? `, extras: ${JSON.stringify(hotspot.extras)}` : ''} },`,
     )
     .join('\n')
+  // Single-atlas entries stay ergonomic strings; multi-atlas entries carry
+  // their full shape (the composition recipe consumes either).
   const stateEntries = Object.entries(manifest.states ?? {})
-    .map(([name, state]) => `  ${key(name)}: ${quote(state.url)},`)
+    .map(([name, state]) =>
+      `  ${key(name)}: ${state.url !== undefined ? quote(state.url) : JSON.stringify(state.atlases ?? {})},`,
+    )
     .join('\n')
   const lightGroupEntries = Object.entries(manifest.lightGroups ?? {})
-    .map(
-      ([name, group]) =>
-        `  ${key(name)}: { url: ${quote(group.url)}, maxValue: ${group.maxValue} },`,
+    .map(([name, group]) =>
+      `  ${key(name)}: ${
+        group.url !== undefined
+          ? `{ url: ${quote(group.url)}, maxValue: ${group.maxValue ?? 1} }`
+          : JSON.stringify(group.atlases ?? {})
+      },`,
     )
     .join('\n')
 

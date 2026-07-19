@@ -28,6 +28,11 @@ export interface BakeSettings {
   denoise?: boolean
   /** Lighting states: each bakes with the listed collections hidden. */
   states?: Array<{ name: string; hideCollections?: string[] }>
+  /** Named atlases. Objects auto-assign by nearest-camera proximity
+   * (first declared atlas whose maxCameraDistance covers them; else the
+   * catch-all without one) and override per-object via the blendlink_atlas
+   * property. Omit for the single implicit atlas "main" sized by `size`. */
+  atlases?: Record<string, { size?: number; maxCameraDistance?: number }>
 }
 
 export interface ExportSettings {
@@ -57,8 +62,12 @@ export interface BakePlan {
   states: string[]
   lightGroups: string[]
   bakeCount: number
+  /** Per-atlas summary when atlases are declared (or the implicit main). */
+  atlases?: Record<string, { size: number; occupancy: number; objects: number }>
   objects: Array<{
     name: string
+    /** Which atlas the object landed in (property override or proximity). */
+    atlas?: string
     areaM2: number
     uvShare: number
     pxPerMeter: number
@@ -104,10 +113,11 @@ export interface ExportResult {
   excluded: string[]
   /** Blender-only data the GLB cannot carry. */
   sidecar: BlendSidecar
-  /** Baked mode: state name → final PNG path on disk. */
-  bakedStates: Record<string, string>
-  /** Baked mode: interactive light group → additive layer PNG + peak scale. */
-  bakedLightGroups: Record<string, { path: string; maxValue: number }>
+  /** Baked mode: state name → atlas group → final PNG path on disk.
+   * Single-atlas scenes use the one implicit group "main". */
+  bakedStates: Record<string, Record<string, string>>
+  /** Baked mode: light group → atlas group → additive layer + peak scale. */
+  bakedLightGroups: Record<string, Record<string, { path: string; maxValue: number }>>
   /** Baked mode: the bake plan (planOnly runs produce ONLY this). */
   plan?: BakePlan
   durationMs: number
@@ -199,8 +209,8 @@ export async function exportBlend(options: {
       'glbPath' | 'durationMs' | 'bakedStates' | 'bakedLightGroups'
     > & {
       baked?: {
-        states?: Record<string, string>
-        lightGroups?: Record<string, { path: string; maxValue: number }>
+        states?: Record<string, Record<string, string>>
+        lightGroups?: Record<string, Record<string, { path: string; maxValue: number }>>
       }
     }
     if (exitCode !== 0) {
@@ -224,21 +234,34 @@ export async function exportBlend(options: {
     renameSync(staging, options.outPath)
 
     // Baked-mode state/light textures are written beside the temp GLB; move
-    // them out before the temp dir is destroyed.
-    const bakedStates: Record<string, string> = {}
-    for (const [state, tempPath] of Object.entries(result.baked?.states ?? {})) {
-      const finalPath = options.outPath.replace(/\.glb$/i, '') + `.${state}.png`
-      if (existsSync(tempPath)) {
-        renameOrCopy(tempPath, finalPath)
-        bakedStates[state] = finalPath
+    // them out before the temp dir is destroyed. Python names every file as
+    // <temp glb> + suffix, so the final path is the same suffix on the real
+    // GLB path — shape-agnostic across single- and multi-atlas scenes.
+    const outBase = options.outPath.replace(/\.glb$/i, '')
+    const relocate = (tempPath: string): string | null => {
+      if (!existsSync(tempPath)) return null
+      const suffix = tempPath
+        .slice(tempGlb.length)
+        .replace(/^\.glb/i, '')
+        .replace(/^\.state\./, '.')
+      const finalPath = outBase + suffix
+      renameOrCopy(tempPath, finalPath)
+      return finalPath
+    }
+    const bakedStates: Record<string, Record<string, string>> = {}
+    for (const [state, byGroup] of Object.entries(result.baked?.states ?? {})) {
+      for (const [group, tempPath] of Object.entries(byGroup ?? {})) {
+        const finalPath = relocate(tempPath)
+        if (finalPath) (bakedStates[state] ??= {})[group] = finalPath
       }
     }
-    const bakedLightGroups: Record<string, { path: string; maxValue: number }> = {}
-    for (const [group, layer] of Object.entries(result.baked?.lightGroups ?? {})) {
-      const finalPath = options.outPath.replace(/\.glb$/i, '') + `.light.${group}.png`
-      if (existsSync(layer.path)) {
-        renameOrCopy(layer.path, finalPath)
-        bakedLightGroups[group] = { path: finalPath, maxValue: layer.maxValue }
+    const bakedLightGroups: Record<string, Record<string, { path: string; maxValue: number }>> = {}
+    for (const [light, byGroup] of Object.entries(result.baked?.lightGroups ?? {})) {
+      for (const [group, layer] of Object.entries(byGroup ?? {})) {
+        const finalPath = relocate(layer.path)
+        if (finalPath) {
+          (bakedLightGroups[light] ??= {})[group] = { path: finalPath, maxValue: layer.maxValue }
+        }
       }
     }
 

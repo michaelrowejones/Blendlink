@@ -206,26 +206,100 @@ def visible_render_meshes() -> list:
     ]
 
 
+def camera_positions() -> list:
+    """World positions of EVERY scene camera — density and atlas assignment
+    both want the worst case over authored viewpoints, not just the active
+    camera (a compact/portrait camera can approach closer than the main)."""
+    return [
+        obj.matrix_world.translation.copy()
+        for obj in bpy.context.scene.objects
+        if obj.type == "CAMERA"
+    ]
+
+
+def nearest_camera_distance(obj, cameras: list):
+    """Distance from the object's bounds center to the closest camera, or
+    None when the scene has no cameras. Floored at 0.2m."""
+    if not cameras:
+        return None
+    from mathutils import Vector
+
+    center = obj.matrix_world @ (
+        0.125 * sum((Vector(corner) for corner in obj.bound_box), Vector())
+    )
+    return max(min((position - center).length for position in cameras), 0.2)
+
+
+def atlas_config(bake: dict) -> dict:
+    """Declared atlases, or the implicit single atlas 'main'. Each entry:
+    {size, maxCameraDistance?}. Users configure ATLASES; objects are
+    auto-assigned by proximity and overridden per-object — never a
+    hand-maintained object list in the config."""
+    atlases = bake.get("atlases")
+    if not atlases:
+        return {"main": {"size": int(bake.get("size", 2048))}}
+    resolved = {}
+    for name, entry in atlases.items():
+        resolved[name] = {"size": int(entry.get("size", 2048))}
+        if "maxCameraDistance" in entry:
+            resolved[name]["maxCameraDistance"] = float(entry["maxCameraDistance"])
+    return resolved
+
+
+def assign_atlases(meshes: list, atlases: dict) -> tuple:
+    """group -> [objects], plus warnings. Precedence per object: the
+    blendlink_atlas property wins; else the first declared atlas whose
+    maxCameraDistance covers the object's nearest-camera distance; else
+    the catch-all (last atlas without a threshold). The resolved group is
+    stamped back as blendlink_atlas so it ships in the GLB extras for the
+    runtime (the export scene is disposable; the .blend is never saved).
+    """
+    names = list(atlases)
+    catch_all = next(
+        (name for name in reversed(names) if "maxCameraDistance" not in atlases[name]),
+        names[-1],
+    )
+    cameras = camera_positions()
+    groups = {name: [] for name in names}
+    warnings = []
+    for obj in meshes:
+        override = obj.get("blendlink_atlas")
+        group = None
+        if isinstance(override, str):
+            if override in atlases:
+                group = override
+            else:
+                warnings.append(
+                    f"{obj.name}: blendlink_atlas '{override}' is not a declared "
+                    f"atlas ({', '.join(names)}) — auto-assigned instead"
+                )
+        if group is None:
+            group = catch_all
+            distance = nearest_camera_distance(obj, cameras)
+            if distance is not None:
+                for name in names:
+                    threshold = atlases[name].get("maxCameraDistance")
+                    if threshold is not None and distance <= threshold:
+                        group = name
+                        break
+        obj["blendlink_atlas"] = group
+        groups[group].append(obj)
+    return groups, warnings
+
+
 def compute_texel_weights(meshes: list) -> dict:
     """auto (camera-distance, median-normalized, clamped, quantized) × artist.
 
     The auto weight equalizes texels-per-SCREEN-pixel: required linear
-    density is proportional to 1/distance from the authored camera. Scenes
-    without a camera get a flat baseline (artist weights still apply).
+    density is proportional to 1/distance, taken as the WORST CASE over
+    every authored camera. Scenes without a camera get a flat baseline
+    (artist weights still apply).
     """
-    from mathutils import Vector
-
-    camera = bpy.context.scene.camera
+    cameras = camera_positions()
     raw = {}
     for obj in meshes:
-        auto = 1.0
-        if camera is not None:
-            center = obj.matrix_world @ (
-                0.125 * sum((Vector(corner) for corner in obj.bound_box), Vector())
-            )
-            distance = max((camera.matrix_world.translation - center).length, 0.2)
-            auto = 1.0 / distance
-        raw[obj.name] = auto
+        distance = nearest_camera_distance(obj, cameras)
+        raw[obj.name] = 1.0 / distance if distance is not None else 1.0
     values = sorted(raw.values())
     median = values[len(values) // 2] if values else 1.0
     weights = {}
@@ -236,7 +310,15 @@ def compute_texel_weights(meshes: list) -> dict:
     return weights
 
 
-def bake_prepare_geometry(margin_px: int, size: int) -> None:
+def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
+    """Freeze, unwrap-fallback, then per-atlas average + weight + pack.
+
+    Returns the layout: {group: {objects, size, margin}} at FINAL
+    resolution (bake-time images are ×supersample; the pack margin is a
+    fraction, identical at both scales). The config margin is authored
+    against the LARGEST declared atlas and scales down per group, so a
+    small background atlas never spends 40% of itself on gutters.
+    """
     meshes = render_meshes()
     if not meshes:
         raise SystemExit(
@@ -267,17 +349,30 @@ def bake_prepare_geometry(margin_px: int, size: int) -> None:
         # authored layer keeps active_render until the unlit rebuild strips
         # the extra layers at export.
         mesh.uv_layers.active = atlas
-    # Baseline: equalize px/m across the atlas (authored UV scales are
-    # arbitrary), then apply texel weights as island pre-scales —
-    # pack_islands(scale=True) preserves relative island scale, so the
-    # pre-scale IS the weight (Unity Scale-in-Lightmap semantics).
-    bakelib.average(meshes)
+
+    atlases = atlas_config(bake)
+    groups, assign_warnings = assign_atlases(meshes, atlases)
+    reference = max(entry["size"] for entry in atlases.values())
+    base_margin = int(bake.get("margin", 48))
     weights = compute_texel_weights(meshes)
-    bakelib.scale_islands(
-        meshes, ATLAS_UV,
-        lambda obj: weights[obj.name]["auto"] * weights[obj.name]["artist"],
-    )
-    bakelib.pack(meshes, margin_px, size)
+    layout = {"_warnings": assign_warnings}
+    for name, entry in atlases.items():
+        objs = groups[name]
+        margin = max(1, round(base_margin * entry["size"] / reference))
+        layout[name] = {"objects": objs, "size": entry["size"], "margin": margin}
+        if not objs:
+            continue
+        # Baseline: equalize px/m across THIS atlas (authored UV scales are
+        # arbitrary), then apply texel weights as island pre-scales —
+        # pack_islands(scale=True) preserves relative island scale, so the
+        # pre-scale IS the weight (Unity Scale-in-Lightmap semantics).
+        bakelib.average(objs)
+        bakelib.scale_islands(
+            objs, ATLAS_UV,
+            lambda obj: weights[obj.name]["auto"] * weights[obj.name]["artist"],
+        )
+        bakelib.pack(objs, margin * supersample, entry["size"] * supersample)
+    return layout
 
 
 def bake_engine(samples: int) -> None:
@@ -383,16 +478,21 @@ def compute_bake_plan(settings: dict) -> dict:
     size = int(bake.get("size", 2048))
     margin_px = int(bake.get("margin", 48))
     states = bake.get("states") or [{"name": "default"}]
-    bake_prepare_geometry(margin_px, size)
+    layout = bake_prepare_geometry(bake)
 
-    from mathutils import Vector
-
-    camera = bpy.context.scene.camera
-    camera_position = camera.matrix_world.translation if camera else None
+    cameras = camera_positions()
     meshes = render_meshes()
     weights = compute_texel_weights(meshes)
+    group_of = {
+        obj.name: name
+        for name, entry in layout.items() if name != "_warnings"
+        for obj in entry["objects"]
+    }
+    group_size = {
+        name: entry["size"] for name, entry in layout.items() if name != "_warnings"
+    }
     objects = []
-    total_uv = 0.0
+    group_uv = {name: 0.0 for name in group_size}
     for obj in meshes:
         bm = bmesh.new()
         bm.from_mesh(obj.data)
@@ -409,17 +509,15 @@ def compute_bake_plan(settings: dict) -> dict:
                     shoelace += current.x * following.y - following.x * current.y
                 uv_area += abs(shoelace) / 2.0
         bm.free()
-        total_uv += uv_area
-        px_per_meter = ((uv_area * size * size) / surface) ** 0.5 if surface > 0 else 0.0
-        distance = None
-        if camera_position is not None:
-            center = obj.matrix_world @ (
-                0.125 * sum((Vector(corner) for corner in obj.bound_box), Vector())
-            )
-            distance = max((camera_position - center).length, 0.2)
+        group = group_of.get(obj.name, next(iter(group_size)))
+        atlas_px = group_size[group]
+        group_uv[group] += uv_area
+        px_per_meter = ((uv_area * atlas_px * atlas_px) / surface) ** 0.5 if surface > 0 else 0.0
+        distance = nearest_camera_distance(obj, cameras)
         entry = weights.get(obj.name, {"auto": 1.0, "artist": 1.0})
         objects.append({
             "name": obj.name,
+            "atlas": group,
             "areaM2": round(surface, 3),
             "uvShare": round(uv_area, 5),
             "pxPerMeter": round(px_per_meter, 1),
@@ -429,6 +527,8 @@ def compute_bake_plan(settings: dict) -> dict:
             "autoWeight": entry["auto"],
             "artistWeight": entry["artist"],
         })
+    camera_position = cameras[0] if cameras else None
+    total_uv = max(group_uv.values()) if group_uv else 0.0
 
     # Worst perceived quality first — the offender list leads.
     objects.sort(key=lambda entry: entry["screenDensity"] if entry["screenDensity"] is not None else entry["pxPerMeter"])
@@ -465,19 +565,30 @@ def compute_bake_plan(settings: dict) -> dict:
         for obj in bpy.context.scene.objects
         if obj.type == "MESH" and not obj.hide_render and dynamic_reason(obj)
     ]
+    populated = [name for name, entry in layout.items()
+                 if name != "_warnings" and entry["objects"]]
     return {
         "supersample": max(1, int(bake.get("supersample", 1))),
         "atlasSize": size,
         "marginPx": margin_px,
         "samples": int(bake.get("samples", 128)),
+        # Compat number: the fullest atlas. Per-atlas detail rides below.
         "occupancy": round(total_uv, 4),
+        "atlases": {
+            name: {
+                "size": group_size[name],
+                "occupancy": round(group_uv[name], 4),
+                "objects": len(layout[name]["objects"]),
+            }
+            for name in group_size
+        },
         "dynamicObjects": dynamic_objects,
         "states": [state["name"] for state in states],
         "lightGroups": light_groups,
-        "bakeCount": len(states) + len(light_groups),
+        "bakeCount": (len(states) + len(light_groups)) * max(len(populated), 1),
         "objects": objects,
         "collisionProxies": collision_proxies,
-        "warnings": warnings,
+        "warnings": warnings + layout.get("_warnings", []),
     }
 
 
@@ -503,8 +614,9 @@ def mute_emission() -> list:
 
 
 def bake_light_groups(
-    proxy, image, margin_px: int, grouped_lights: dict, out_glb: str,
-    progress_start: float, progress_step: float, final_size: int,
+    proxies: dict, images: dict, margins: dict, final_sizes: dict,
+    grouped_lights: dict, out_glb: str,
+    progress_start: float, progress_step: float,
     denoise: bool = False,
 ) -> dict:
     """Solo-bake each light group's full contribution (direct + indirect).
@@ -530,23 +642,27 @@ def bake_light_groups(
             progress(progress_start + index * progress_step, f"baking light group '{name}'")
             for light, _ in lights_prev:
                 light.hide_render = light not in lights
-            # emit=False: node-driven emission escapes mute_emission and
-            # would stamp itself into EVERY layer plus the base state.
-            bake_state(proxy, image, margin_px, emit=False)
+            layers[name] = {}
+            for group, proxy in proxies.items():
+                image = images[group]
+                # emit=False: node-driven emission escapes mute_emission and
+                # would stamp itself into EVERY layer plus the base state.
+                bake_state(proxy, image, margins[group], emit=False)
 
-            pixels = np.empty(image.size[0] * image.size[1] * 4, dtype=np.float32)
-            image.pixels.foreach_get(pixels)
-            rgb = pixels.reshape(-1, 4)[:, :3]
-            # Normalize to a high percentile, not the global max: one hot
-            # bulb-filament texel would otherwise crush the whole room's
-            # contribution into the bottom bits of an 8-bit PNG.
-            peak = float(np.quantile(rgb.max(axis=1), 0.999))
-            if peak > 1.0:
-                np.clip(rgb / peak, 0.0, 1.0, out=rgb)
-                image.pixels.foreach_set(pixels)
-            layer_path = out_glb + f".light.{name}.png"
-            save_resolved(image, layer_path, final_size, denoise=denoise)
-            layers[name] = {"path": layer_path, "maxValue": max(peak, 1.0)}
+                pixels = np.empty(image.size[0] * image.size[1] * 4, dtype=np.float32)
+                image.pixels.foreach_get(pixels)
+                rgb = pixels.reshape(-1, 4)[:, :3]
+                # Normalize to a high percentile, not the global max: one hot
+                # bulb-filament texel would otherwise crush the whole room's
+                # contribution into the bottom bits of an 8-bit PNG.
+                peak = float(np.quantile(rgb.max(axis=1), 0.999))
+                if peak > 1.0:
+                    np.clip(rgb / peak, 0.0, 1.0, out=rgb)
+                    image.pixels.foreach_set(pixels)
+                suffix = "" if group == "main" else f".{group}"
+                layer_path = out_glb + f".light.{name}{suffix}.png"
+                save_resolved(image, layer_path, final_sizes[group], denoise=denoise)
+                layers[name][group] = {"path": layer_path, "maxValue": max(peak, 1.0)}
     finally:
         for light, old in lights_prev:
             light.hide_render = old
@@ -570,11 +686,15 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     bake_margin = margin_px * supersample
     states = bake.get("states") or [{"name": "default", "hideCollections": []}]
 
-    progress(0.10, "packing bake atlas")
-    bake_prepare_geometry(bake_margin, bake_size)
+    progress(0.10, "packing bake atlases")
+    layout = bake_prepare_geometry(bake, supersample)
+    groups = {
+        name: entry for name, entry in layout.items()
+        if name != "_warnings" and entry["objects"]
+    }
     bake_engine(samples)
 
-    warnings = []
+    warnings = list(layout.get("_warnings", []))
     non_mesh = sorted(
         obj.name for obj in bpy.context.scene.objects
         if obj.type in ("CURVE", "FONT", "META", "SURFACE") and not obj.hide_render
@@ -607,11 +727,45 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     group_layers = {}
     # alpha=True is the coverage contract: bake use_clear resets to
     # transparent, Cycles writes opaque texels, the background flatten
-    # reads the difference.
-    image = bpy.data.images.new(
-        "blendlink-bake", width=bake_size, height=bake_size, alpha=True, float_buffer=True,
-    )
-    bake_jobs = len(states) + len(grouped_lights)
+    # reads the difference. One image per atlas group.
+    images = {
+        name: bpy.data.images.new(
+            f"blendlink-bake-{name}",
+            width=entry["size"] * supersample, height=entry["size"] * supersample,
+            alpha=True, float_buffer=True,
+        )
+        for name, entry in groups.items()
+    }
+    margins = {name: entry["margin"] * supersample for name, entry in groups.items()}
+    final_sizes = {name: entry["size"] for name, entry in groups.items()}
+
+    def build_proxies() -> dict:
+        """One joined proxy PER GROUP, ALL built before ANY bake: baking
+        group A with group B's originals hidden but no proxy standing in
+        would lose B's bounce and shadows (the flagship learned this the
+        hard way). Returns {group: (proxy, hidden)}; groups fully hidden by
+        the current state are skipped."""
+        built = {}
+        for name, entry in groups.items():
+            visible = [
+                obj for obj in entry["objects"]
+                if not any(coll.hide_render for coll in obj.users_collection)
+            ]
+            if visible:
+                built[name] = bakelib.join_proxy(
+                    visible, f"BLENDLINK_BAKE_PROXY_{name}", "BLENDLINK_DEFAULT_SURFACE",
+                )
+        return built
+
+    def release_proxies(built: dict) -> None:
+        for proxy, hidden in built.values():
+            bakelib.release_proxy(proxy, hidden)
+
+    def state_file(state_name: str, group: str) -> str:
+        suffix = "" if group == "main" else f".{group}"
+        return out_glb + f".state.{state_name}{suffix}.png"
+
+    bake_jobs = (len(states) + len(grouped_lights)) * max(len(groups), 1)
     per_job = 0.6 / max(bake_jobs, 1)
     job = 0
     try:
@@ -621,68 +775,103 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             light.hide_render = True
         try:
             for state in states:
-                progress(0.15 + job * per_job, f"baking {state['name']} at {bake_size}px")
-                job += 1
                 saved_collections = hide_collections(state.get("hideCollections", []))
-                # The proxy is rebuilt per state so hideCollections changes
-                # GEOMETRY, not just lights — a proxy built once escapes the
-                # hidden collections and every state bakes the same meshes.
-                proxy, hidden = bake_proxy()
+                # Proxies are rebuilt per state so hideCollections changes
+                # GEOMETRY, not just lights.
+                built = build_proxies()
                 try:
-                    bake_state(proxy, image, bake_margin)
+                    for name in groups:
+                        progress(0.15 + job * per_job,
+                                 f"baking {state['name']}/{name} at {final_sizes[name] * supersample}px")
+                        job += 1
+                        if name in built:
+                            bake_state(built[name][0], images[name], margins[name])
+                        else:
+                            bakelib.clear_image(images[name])
                 finally:
-                    bakelib.release_proxy(proxy, hidden)
+                    release_proxies(built)
                     restore_collections(saved_collections)
-                clipped = bakelib.clipped_fraction(image, image_coverage(image))
-                if clipped > 0.001:
-                    warnings.append(
-                        f"state '{state['name']}': {clipped * 100:.1f}% of texels "
-                        "exceed 1.0 and clip in the 8-bit save (states are not "
-                        "peak-normalized; reduce light energy or accept the clip)"
+                state_paths[state["name"]] = {}
+                for name in groups:
+                    clipped = bakelib.clipped_fraction(
+                        images[name], image_coverage(images[name]),
                     )
-                state_path = out_glb + f".state.{state['name']}.png"
-                save_resolved(image, state_path, size, denoise=denoise)
-                state_paths[state["name"]] = state_path
+                    if clipped > 0.001:
+                        warnings.append(
+                            f"state '{state['name']}' atlas '{name}': {clipped * 100:.1f}% "
+                            "of texels exceed 1.0 and clip in the 8-bit save (states are "
+                            "not peak-normalized; reduce light energy or accept the clip)"
+                        )
+                    path = state_file(state["name"], name)
+                    save_resolved(images[name], path, final_sizes[name], denoise=denoise)
+                    state_paths[state["name"]][name] = path
         finally:
             for light, old in grouped_prev:
                 light.hide_render = old
 
         if grouped_lights:
-            proxy, hidden = bake_proxy()
+            built = build_proxies()
             try:
                 group_layers = bake_light_groups(
-                    proxy, image, bake_margin, grouped_lights, out_glb,
+                    {name: proxy for name, (proxy, _) in built.items()},
+                    images, margins, final_sizes, grouped_lights, out_glb,
                     progress_start=0.15 + job * per_job, progress_step=per_job,
-                    final_size=size, denoise=denoise,
+                    denoise=denoise,
                 )
             finally:
-                bakelib.release_proxy(proxy, hidden)
+                release_proxies(built)
     finally:
-        if image.name in bpy.data.images:
-            bpy.data.images.remove(image)
+        for image in images.values():
+            if image.name in bpy.data.images:
+                bpy.data.images.remove(image)
 
-    # Rebuild every material as an unlit view of the default-state bake.
+    # Rebuild every baked material as an unlit view of its group's
+    # default-state atlas. Dynamic meshes never enter this loop, so their
+    # real materials survive untouched.
     progress(0.78, "rebuilding materials unlit")
     first_state = states[0]["name"]
-    baked = bpy.data.images.load(state_paths[first_state], check_existing=False)
-    baked.colorspace_settings.name = "sRGB"
+    baked_by_group = {}
+    for name in groups:
+        baked = bpy.data.images.load(state_paths[first_state][name], check_existing=False)
+        baked.colorspace_settings.name = "sRGB"
+        baked_by_group[name] = baked
+
+    def rebuild_unlit(material, image) -> None:
+        material.use_nodes = True
+        nodes = material.node_tree.nodes
+        nodes.clear()
+        output = nodes.new("ShaderNodeOutputMaterial")
+        background = nodes.new("ShaderNodeBackground")
+        uv = nodes.new("ShaderNodeUVMap")
+        uv.uv_map = ATLAS_UV
+        texture = nodes.new("ShaderNodeTexImage")
+        texture.image = image
+        material.node_tree.links.new(uv.outputs["UV"], texture.inputs["Vector"])
+        material.node_tree.links.new(texture.outputs["Color"], background.inputs["Color"])
+        material.node_tree.links.new(background.outputs["Background"], output.inputs["Surface"])
+
+    claimed = {}     # material -> atlas group that rebuilt it
+    duplicates = {}  # (material name, group) -> per-group copy
     for obj in render_meshes():
+        group = obj.get("blendlink_atlas", next(iter(groups), "main"))
         for slot in obj.material_slots:
             material = slot.material
             if material is None:
                 continue
-            material.use_nodes = True
-            nodes = material.node_tree.nodes
-            nodes.clear()
-            output = nodes.new("ShaderNodeOutputMaterial")
-            background = nodes.new("ShaderNodeBackground")
-            uv = nodes.new("ShaderNodeUVMap")
-            uv.uv_map = ATLAS_UV
-            texture = nodes.new("ShaderNodeTexImage")
-            texture.image = baked
-            material.node_tree.links.new(uv.outputs["UV"], texture.inputs["Vector"])
-            material.node_tree.links.new(texture.outputs["Color"], background.inputs["Color"])
-            material.node_tree.links.new(background.outputs["Background"], output.inputs["Surface"])
+            owner = claimed.get(material)
+            if owner is None:
+                claimed[material] = group
+                rebuild_unlit(material, baked_by_group[group])
+            elif owner != group:
+                # A material shared across atlas groups must fork: each copy
+                # samples its own group's atlas.
+                duplicate = duplicates.get((material.name, group))
+                if duplicate is None:
+                    duplicate = material.copy()
+                    duplicate.name = f"{material.name}.{group}"
+                    rebuild_unlit(duplicate, baked_by_group[group])
+                    duplicates[(material.name, group)] = duplicate
+                slot.material = duplicate
         # Atlas becomes TEXCOORD_0 everywhere (a shared glTF material can
         # only reference one texcoord index).
         mesh = obj.data

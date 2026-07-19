@@ -112,6 +112,24 @@ function validateConfig(config: BlendlinkConfig, root: string): void {
     if (scene.bake && scene.mode !== 'baked') {
       problems.push(`scene ${label}: has bake settings but mode is not 'baked' — the bake would silently not run; add mode: 'baked'`)
     }
+    if (scene.bake?.atlases) {
+      const entries = Object.entries(scene.bake.atlases)
+      if (entries.length === 0) {
+        problems.push(`scene ${label}: bake.atlases is empty — omit it for the single implicit atlas`)
+      } else if (!entries.some(([, atlas]) => atlas.maxCameraDistance === undefined)) {
+        problems.push(
+          `scene ${label}: every atlas declares maxCameraDistance — declare one ` +
+            `catch-all atlas without it, or distant objects have nowhere to go`,
+        )
+      }
+      for (const [name, atlas] of entries) {
+        for (const key of Object.keys(atlas)) {
+          if (key !== 'size' && key !== 'maxCameraDistance') {
+            problems.push(`scene ${label}: atlas "${name}": unknown key "${key}" — known: size, maxCameraDistance`)
+          }
+        }
+      }
+    }
   }
   if (problems.length > 0) {
     throw new Error('blendlink config problems:\n  - ' + problems.join('\n  - '))

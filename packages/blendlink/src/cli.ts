@@ -165,11 +165,14 @@ async function main(): Promise<number> {
           `\nbake plan — ${scene.name}: ${plan.atlasSize}px atlas${supersampled}, ` +
             `${plan.samples} samples, margin ${plan.marginPx}px`,
         )
+        const multiAtlas = Object.keys(plan.atlases ?? {}).length > 1
         const rows = plan.objects.map((entry) => ({
           name: entry.name,
           px: `${entry.pxPerMeter.toFixed(0)}px/m`,
           screen: entry.screenDensity !== null ? entry.screenDensity.toFixed(0) : '—',
-          share: `${(entry.uvShare * 100).toFixed(1)}%`,
+          share: multiAtlas
+            ? `${entry.atlas}:${(entry.uvShare * 100).toFixed(1)}%`
+            : `${(entry.uvShare * 100).toFixed(1)}%`,
           weight: entry.artistWeight === 1 && entry.autoWeight === 1
             ? '—'
             : `${entry.autoWeight.toFixed(2)}×${entry.artistWeight.toFixed(2)}`,
@@ -190,9 +193,14 @@ async function main(): Promise<number> {
             ? [`${plan.lightGroups.length} light group${plan.lightGroups.length === 1 ? '' : 's'} (${plan.lightGroups.join(', ')})`]
             : []),
         ]
-        console.log(
-          `  atlas occupancy ${(plan.occupancy * 100).toFixed(0)}% · ${bakes.join(' + ')} = ${plan.bakeCount} bakes`,
-        )
+        const occupancyText = plan.atlases
+          ? Object.entries(plan.atlases)
+              .map(([name, atlas]) =>
+                `${name} ${atlas.size}px ${(atlas.occupancy * 100).toFixed(0)}% (${atlas.objects} objects)`,
+              )
+              .join(' · ')
+          : `atlas occupancy ${(plan.occupancy * 100).toFixed(0)}%`
+        console.log(`  ${occupancyText} · ${bakes.join(' + ')} = ${plan.bakeCount} bakes`)
         if (plan.collisionProxies.length > 0) {
           console.log(
             `  collision proxies excluded from the bake: ${plan.collisionProxies.join(', ')}`,

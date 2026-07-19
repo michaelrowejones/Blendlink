@@ -198,17 +198,39 @@ export async function syncScene(
     ...(options.allowNewerFile ? { allowNewerFile: true } : {}),
   })
 
-  const states: Record<string, { url: string; default?: true }> = {}
-  for (const [index, [state, path]] of Object.entries(exported.bakedStates).entries()) {
-    const file = path.split(/[\\/]/).pop()!
-    // The first state is baked into the GLB's materials — mark it so a
-    // runtime doesn't have to infer the base from JSON key order.
-    states[state] = { url: scene.url.replace(/[^/]+$/, file), ...(index === 0 ? { default: true as const } : {}) }
+  const toUrl = (path: string) => scene.url.replace(/[^/]+$/, path.split(/[\\/]/).pop()!)
+  // Single-atlas scenes keep the flat {url} shape; multi-atlas scenes carry
+  // an additive `atlases` map (group → url). The first state is baked into
+  // the GLB's materials — marked so a runtime never infers from key order.
+  const states: NonNullable<SceneManifest['states']> = {}
+  for (const [index, [state, byGroup]] of Object.entries(exported.bakedStates).entries()) {
+    const groups = Object.keys(byGroup)
+    const flat = groups.length === 1 && groups[0] === 'main'
+    states[state] = {
+      ...(flat
+        ? { url: toUrl(byGroup['main']!) }
+        : {
+            atlases: Object.fromEntries(
+              groups.map((group) => [group, toUrl(byGroup[group]!)]),
+            ),
+          }),
+      ...(index === 0 ? { default: true as const } : {}),
+    }
   }
-  const lightGroups: Record<string, { url: string; maxValue: number }> = {}
-  for (const [group, layer] of Object.entries(exported.bakedLightGroups)) {
-    const file = layer.path.split(/[\\/]/).pop()!
-    lightGroups[group] = { url: scene.url.replace(/[^/]+$/, file), maxValue: layer.maxValue }
+  const lightGroups: NonNullable<SceneManifest['lightGroups']> = {}
+  for (const [light, byGroup] of Object.entries(exported.bakedLightGroups)) {
+    const groups = Object.keys(byGroup)
+    const flat = groups.length === 1 && groups[0] === 'main'
+    lightGroups[light] = flat
+      ? { url: toUrl(byGroup['main']!.path), maxValue: byGroup['main']!.maxValue }
+      : {
+          atlases: Object.fromEntries(
+            groups.map((group) => [
+              group,
+              { url: toUrl(byGroup[group]!.path), maxValue: byGroup[group]!.maxValue },
+            ]),
+          ),
+        }
   }
   emitProgress(0.85, `generating types for ${scene.name}`)
   const { manifest, module } = await generateSceneModule({
