@@ -365,15 +365,16 @@ def bake_state(proxy, image, margin_px: int) -> None:
 
 
 def fill_image_background(image) -> None:
-    """Pull-push fill every un-baked texel with nearby island color.
+    """Fill every un-baked texel with the atlas's mean covered color.
 
     Mip level N keeps only 1/2^N of the authored island padding, so the deep
     mips of a black-background atlas average dark halos into island edges.
-    Bake-margin dilation reaches a fixed width; this fills the REST of the
-    atlas by pyramid pull-push (Substance's "infinite padding"), so no
-    background-colored texel survives at any mip level. Coverage comes from
-    alpha: the bake target is created transparent and Cycles writes opaque
-    texels.
+    The bake-margin dilation provides island-local padding; beyond its reach
+    a CONSTANT mean fill is the right far-field: deep mips blend toward a
+    plausible mid-tone instead of black, and a constant compresses exactly
+    as well as black did (a content-following fill balloons file sizes).
+    Coverage comes from alpha: the bake target clears transparent and Cycles
+    writes opaque texels.
     """
     import numpy as np
 
@@ -381,36 +382,22 @@ def fill_image_background(image) -> None:
     pixels = np.empty(width * height * 4, dtype=np.float32)
     image.pixels.foreach_get(pixels)
     rgba = pixels.reshape(height, width, 4)
-    weight = (rgba[:, :, 3] > 0.5).astype(np.float32)
-    holes = int(weight.size - weight.sum())
+    covered = rgba[:, :, 3] > 0.5
+    holes = int(covered.size - covered.sum())
     if holes == 0:
         # Full alpha coverage means the transparent clear never happened —
         # say so, a silent skip here once hid a broken coverage contract.
         print("blendlink: background fill skipped — alpha reports full coverage")
         return
-    if weight.sum() < weight.size * 0.01:
+    if covered.sum() < covered.size * 0.01:
         # Alpha never marked coverage — filling would flood the atlas.
         print("blendlink: background fill skipped — no baked coverage in alpha")
         rgba[:, :, 3] = 1.0
         image.pixels.foreach_set(pixels)
         image.update()
         return
-    levels = [(rgba[:, :, :3] * weight[:, :, None], weight)]
-    while levels[-1][0].shape[0] > 1 and levels[-1][0].shape[1] > 1:
-        color, count = levels[-1]
-        half_h, half_w = color.shape[0] // 2, color.shape[1] // 2
-        levels.append((
-            color.reshape(half_h, 2, half_w, 2, 3).sum(axis=(1, 3)),
-            count.reshape(half_h, 2, half_w, 2).sum(axis=(1, 3)),
-        ))
-    color, count = levels[-1]
-    filled = color / np.maximum(count, 1e-8)[:, :, None]
-    for color, count in reversed(levels[:-1]):
-        filled = filled.repeat(2, axis=0).repeat(2, axis=1)
-        covered = count > 0
-        filled[covered] = color[covered] / count[covered][:, None]
-    empty = weight < 0.5
-    rgba[:, :, :3][empty] = filled[empty]
+    mean = rgba[:, :, :3][covered].mean(axis=0)
+    rgba[:, :, :3][~covered] = mean
     rgba[:, :, 3] = 1.0
     image.pixels.foreach_set(pixels)
     image.update()
