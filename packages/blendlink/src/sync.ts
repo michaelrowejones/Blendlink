@@ -255,6 +255,16 @@ export async function syncScene(
   mkdirSync(dirname(scene.manifestPath), { recursive: true })
   writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
   writeFileSync(scene.modulePath, module)
+  if (scene.settings.mode === 'baked') {
+    // The composition recipe is written ONCE and then owned by the user
+    // (shadcn model): it carries the shader-injection code the manifest
+    // contract alone cannot hand a median three.js user.
+    const recipePath = scene.modulePath.replace(/\.gen\.ts$/, '.baked.ts')
+    if (!existsSync(recipePath)) {
+      const { renderBakedRecipe } = await import('./bakedRecipe.js')
+      writeFileSync(recipePath, renderBakedRecipe(scene.name))
+    }
+  }
   emitProgress(1, `${scene.name} up to date`)
 
   const warnings = [...exported.warnings, ...manifest.vocabulary.warnings]

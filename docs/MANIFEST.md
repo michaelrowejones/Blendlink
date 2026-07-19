@@ -27,14 +27,24 @@ runtime must:
    color = state + Σ lightGroup(url) × maxValue × tint × strength
    ```
 
-- `states` — `{ name: { url, default? } }`. The entry with `default: true`
-  is the state already baked into the GLB's materials; other states are
-  full alternative atlases to swap or blend. States are NOT peak-
-  normalized: baked values above 1.0 clip at save (the sync warns with the
-  clipped-texel percentage).
-- `lightGroups` — `{ name: { url, maxValue } }`. Layers ARE normalized (to
-  the 99.9th-percentile peak); multiply the decoded sample by `maxValue`
-  to recover linear light before tinting and adding.
+- `states` — `{ name: { url?, atlases?, default? } }`. Single-atlas scenes
+  carry `url`; multi-atlas scenes carry `atlases` (atlas group → url;
+  each mesh's group is stamped as `blendlink_atlas` in its node extras —
+  walk ancestors, multi-primitive meshes surface it on a parent). The
+  entry with `default: true` is the state already baked into the GLB's
+  materials; other states are full alternative atlases to swap or blend
+  (a day/night sweep is a crossfade between two states). States are NOT
+  peak-normalized: baked values above 1.0 clip at save (the sync warns
+  with the clipped-texel percentage).
+- `lightGroups` — `{ name: { url, maxValue } }` or `{ name: { atlases:
+  { group: { url, maxValue } } } }`. Layers ARE normalized (to the
+  99.9th-percentile peak); multiply the decoded sample by `maxValue` to
+  recover linear light before tinting and adding.
+- Dynamic meshes (`blendlink_dynamic`, armature-deformed, or transparent)
+  keep their real glTF materials and are lit by the runtime — do not
+  patch them into the baked composition.
+- A working composition (`<scene>.baked.ts`) is emitted once beside the
+  generated module and is owned by the user thereafter.
 - Atlas textures use `ClampToEdge` wrapping; the atlas background is a
   constant (mean island color) so mip tails never halo — do not "clean it
   up".
