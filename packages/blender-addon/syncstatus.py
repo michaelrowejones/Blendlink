@@ -25,6 +25,7 @@ _state = {
     "detail": "",
     "hint": "",  # manifest syncHint: the command that regenerates the artifacts
     "plan": {},  # manifest bakePlan objects keyed by object name
+    "bake_plan": None,  # the whole bakePlan dict from the manifest
     "manifest_path": None,
     "manifest_mtime": 0,
     "blend_hash": None,
@@ -52,6 +53,13 @@ def sync_hint() -> str:
     return _state["hint"]
 
 
+def bake_plan() -> dict | None:
+    """The whole cached bakePlan from the last sync's manifest (settings,
+    atlases, objects, dynamicObjects), or None. Stale when status() is not
+    IN_SYNC — display it, but say so."""
+    return _state.get("bake_plan")
+
+
 def plan_for(object_name: str) -> dict | None:
     """Bake-plan entry for an object from the last sync's manifest, or None.
 
@@ -69,7 +77,7 @@ def project_root() -> str | None:
 
 def reset():
     _state.update(
-        status="NO_FILE", detail="", hint="", plan={}, manifest_path=None,
+        status="NO_FILE", detail="", hint="", plan={}, bake_plan=None, manifest_path=None,
         manifest_mtime=0, blend_hash=None, blend_mtime=0, searched_for=None,
         root=None,
     )
@@ -179,6 +187,7 @@ def refresh(force: bool = False) -> bool:
             _state["detail"] = manifest.get("blendBytesHash", "")
             _state["hint"] = manifest.get("syncHint", "")
             plan = manifest.get("bakePlan") or {}
+            _state["bake_plan"] = plan if isinstance(plan, dict) and plan else None
             _state["plan"] = {
                 entry["name"]: entry
                 for entry in plan.get("objects", [])
@@ -188,6 +197,7 @@ def refresh(force: bool = False) -> bool:
             _state["detail"] = ""
             _state["hint"] = ""
             _state["plan"] = {}
+            _state["bake_plan"] = None
         _state["manifest_mtime"] = manifest_mtime
 
     if bpy.data.is_dirty:

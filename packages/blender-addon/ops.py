@@ -371,6 +371,209 @@ class BLENDLINK_OT_set_texel_weight(bpy.types.Operator):
         return {"FINISHED"}
 
 
+def _atlas_items(self, context):
+    """Enum items from the last sync's plan — Auto first, then each
+    declared atlas by name."""
+    from . import syncstatus
+    plan = syncstatus.bake_plan() or {}
+    items = [("__AUTO__", "Auto (by camera proximity)", "Remove the override")]
+    for name in (plan.get("atlases") or {"main": {}}):
+        items.append((name, name, f"Force into the '{name}' atlas"))
+    return items
+
+
+class BLENDLINK_OT_set_atlas(bpy.types.Operator):
+    """Choose which atlas the selected meshes bake into — Auto assigns by
+    camera proximity; a named atlas forces membership"""
+    bl_idname = "blendlink.set_atlas"
+    bl_label = "Set Atlas"
+    bl_options = {"REGISTER", "UNDO"}
+    bl_property = "atlas"
+
+    atlas: bpy.props.EnumProperty(name="Atlas", items=_atlas_items)
+
+    @classmethod
+    def poll(cls, context):
+        return any(obj.type == "MESH" for obj in context.selected_editable_objects)
+
+    def execute(self, context):
+        changed = 0
+        for obj in context.selected_editable_objects:
+            if obj.type != "MESH":
+                continue
+            if self.atlas == "__AUTO__":
+                if "blendlink_atlas" in obj:
+                    del obj["blendlink_atlas"]
+            else:
+                obj["blendlink_atlas"] = self.atlas
+            changed += 1
+        label = "Auto" if self.atlas == "__AUTO__" else self.atlas
+        self.report({"INFO"}, f"Atlas → {label} on {changed} object(s)")
+        return {"FINISHED"}
+
+
+class BLENDLINK_OT_set_shading(bpy.types.Operator):
+    """Bake this mesh into the atlas, keep it dynamic (real materials, lit
+    at runtime), or let blendlink decide (armature/transparency auto-detect)"""
+    bl_idname = "blendlink.set_shading"
+    bl_label = "Set Shading"
+    bl_options = {"REGISTER", "UNDO"}
+    bl_property = "mode"
+
+    mode: bpy.props.EnumProperty(name="Shading", items=[
+        ("AUTO", "Auto", "Baked unless armature-deformed or transparent"),
+        ("DYNAMIC", "Dynamic (lit)", "Keep real materials; lit at runtime"),
+        ("BAKED", "Baked (forced)", "Bake even if auto-detection says dynamic"),
+    ])
+
+    @classmethod
+    def poll(cls, context):
+        return any(obj.type == "MESH" for obj in context.selected_editable_objects)
+
+    def execute(self, context):
+        changed = 0
+        for obj in context.selected_editable_objects:
+            if obj.type != "MESH":
+                continue
+            if self.mode == "AUTO":
+                if "blendlink_dynamic" in obj:
+                    del obj["blendlink_dynamic"]
+            else:
+                obj["blendlink_dynamic"] = 1 if self.mode == "DYNAMIC" else 0
+            changed += 1
+        self.report({"INFO"}, f"Shading → {self.mode.title()} on {changed} object(s)")
+        return {"FINISHED"}
+
+
+class BLENDLINK_OT_select_atlas_objects(bpy.types.Operator):
+    """Select every object the last sync assigned to this atlas"""
+    bl_idname = "blendlink.select_atlas_objects"
+    bl_label = "Select Atlas Objects"
+    bl_options = {"REGISTER", "UNDO"}
+
+    atlas: bpy.props.StringProperty()
+
+    def execute(self, context):
+        from . import syncstatus
+        plan = syncstatus.bake_plan() or {}
+        names = {
+            entry["name"] for entry in plan.get("objects", [])
+            if entry.get("atlas", "main") == self.atlas
+        }
+        bpy.ops.object.select_all(action="DESELECT")
+        selected = 0
+        for name in names:
+            obj = context.scene.objects.get(name)
+            if obj is None:
+                continue
+            try:
+                obj.select_set(True)
+                context.view_layer.objects.active = obj
+                selected += 1
+            except RuntimeError:
+                continue
+        self.report({"INFO"}, f"Selected {selected}/{len(names)} objects in '{self.atlas}'")
+        return {"FINISHED"}
+
+
+class BLENDLINK_OT_preview_atlas_uvs(bpy.types.Operator):
+    """Pack preview atlas UVs from the last sync's plan so the UV editor
+    shows what the bake will produce (writes the BLENDLINK_ATLAS layer;
+    one undo step reverses it)"""
+    bl_idname = "blendlink.preview_atlas_uvs"
+    bl_label = "Preview Atlas UVs"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        from . import syncstatus
+        if syncstatus.bake_plan() is None:
+            cls.poll_message_set("No bake plan yet — run a sync first")
+            return False
+        return context.mode == "OBJECT"
+
+    def execute(self, context):
+        from . import syncstatus
+        plan = syncstatus.bake_plan()
+        # REPLAY the plan, never recompute it: assignments and final weights
+        # come from the manifest, so this cannot drift from the exporter.
+        atlases = plan.get("atlases") or {"main": {"size": plan.get("atlasSize", 2048)}}
+        reference = max(entry.get("size", 2048) for entry in atlases.values())
+        base_margin = int(plan.get("marginPx", 48))
+        groups = {}
+        for entry in plan.get("objects", []):
+            obj = context.scene.objects.get(entry.get("name", ""))
+            if obj is None or obj.type != "MESH" or len(obj.data.polygons) == 0:
+                continue
+            weight = float(entry.get("autoWeight", 1.0)) * float(entry.get("artistWeight", 1.0))
+            groups.setdefault(entry.get("atlas", "main"), []).append((obj, weight))
+        if not groups:
+            self.report({"WARNING"}, "No plan objects found in this scene — resync?")
+            return {"CANCELLED"}
+        packed = 0
+        for name, members in groups.items():
+            size = atlases.get(name, {}).get("size", 2048)
+            margin = max(1, round(base_margin * size / reference))
+            for obj, _ in members:
+                mesh = obj.data
+                if len(mesh.uv_layers) == 0:
+                    continue
+                source = mesh.uv_layers[0]
+                values = [loop.uv.copy() for loop in source.data]
+                previous = mesh.uv_layers.get("BLENDLINK_ATLAS")
+                if previous is not None and previous != source:
+                    mesh.uv_layers.remove(previous)
+                layer = mesh.uv_layers.new(name="BLENDLINK_ATLAS")
+                for loop, value in zip(layer.data, values):
+                    loop.uv = value
+                mesh.uv_layers.active = layer
+            objs = [obj for obj, _ in members]
+            _select_only(context, objs)
+            if context.view_layer.objects.active is None:
+                continue
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_all(action="SELECT")
+            bpy.ops.uv.select_all(action="SELECT")
+            bpy.ops.uv.average_islands_scale()
+            bpy.ops.object.mode_set(mode="OBJECT")
+            for obj, weight in members:
+                if weight != 1.0:
+                    layer = obj.data.uv_layers.get("BLENDLINK_ATLAS")
+                    if layer is not None:
+                        for loop in layer.data:
+                            loop.uv *= weight
+            _select_only(context, objs)
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_all(action="SELECT")
+            bpy.ops.uv.select_all(action="SELECT")
+            # Mirrors the exporter's pack contract (CARDINAL/CONCAVE/FRACTION).
+            bpy.ops.uv.pack_islands(
+                rotate=True, rotate_method="CARDINAL", scale=True,
+                merge_overlap=False, margin_method="FRACTION",
+                margin=(margin + 4) / size, shape_method="CONCAVE",
+            )
+            bpy.ops.object.mode_set(mode="OBJECT")
+            packed += 1
+        self.report(
+            {"INFO"},
+            f"Packed {packed} preview atlas(es) into the BLENDLINK_ATLAS UV layer "
+            "— open a UV Editor to inspect (Ctrl+Z reverses)",
+        )
+        return {"FINISHED"}
+
+
+def _select_only(context, objs):
+    bpy.ops.object.select_all(action="DESELECT")
+    active = None
+    for obj in objs:
+        try:
+            obj.select_set(True)
+            active = obj
+        except RuntimeError:
+            continue
+    context.view_layer.objects.active = active
+
+
 class BLENDLINK_OT_sync_now(bpy.types.Operator):
     """Save the file and run the project sync in the background"""
     bl_idname = "blendlink.sync_now"
@@ -501,6 +704,10 @@ classes = (
     BLENDLINK_OT_fix_numbered,
     BLENDLINK_OT_select_issue,
     BLENDLINK_OT_set_texel_weight,
+    BLENDLINK_OT_set_atlas,
+    BLENDLINK_OT_set_shading,
+    BLENDLINK_OT_select_atlas_objects,
+    BLENDLINK_OT_preview_atlas_uvs,
     BLENDLINK_OT_sync_now,
     BLENDLINK_OT_sync_cancel,
     BLENDLINK_OT_open_sync_log,

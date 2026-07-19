@@ -225,6 +225,39 @@ def main():
     expect(ui.density_summary(None) == [], "empty plan should produce no lines")
     syncstatus._state["plan"] = {}
 
+    # --- bake visibility: atlas/shading controls + plan-replay UV preview ---
+    syncstatus._state["bake_plan"] = {
+        "samples": 8, "marginPx": 12, "supersample": 1,
+        "atlases": {"near": {"size": 256, "occupancy": 0.4, "objects": 1},
+                    "far": {"size": 128, "occupancy": 0.1, "objects": 1}},
+        "objects": [
+            {"name": "Crate-convcol", "atlas": "near", "autoWeight": 2.0, "artistWeight": 1.0},
+            {"name": "Rock_LOD1", "atlas": "far", "autoWeight": 1.0, "artistWeight": 1.0},
+        ],
+        "dynamicObjects": [], "states": ["default"], "lightGroups": [], "bakeCount": 2,
+    }
+    syncstatus._state["plan"] = {e["name"]: e for e in syncstatus._state["bake_plan"]["objects"]}
+    select_only(crate)
+    bpy.ops.blendlink.set_atlas(atlas="near")
+    expect(crate["blendlink_atlas"] == "near", "set_atlas did not stamp the property")
+    bpy.ops.blendlink.set_atlas(atlas="__AUTO__")
+    expect("blendlink_atlas" not in crate, "set_atlas Auto did not remove the override")
+    bpy.ops.blendlink.set_shading(mode="DYNAMIC")
+    expect(crate["blendlink_dynamic"] == 1, "set_shading DYNAMIC failed")
+    bpy.ops.blendlink.set_shading(mode="AUTO")
+    expect("blendlink_dynamic" not in crate, "set_shading AUTO did not clear")
+    bpy.ops.blendlink.select_atlas_objects(atlas="near")
+    expect(crate.select_get(), "select_atlas_objects missed the near member")
+    bpy.ops.blendlink.preview_atlas_uvs()
+    expect(crate.data.uv_layers.get("BLENDLINK_ATLAS") is not None,
+           "preview did not create the atlas UV layer")
+    expect(crate.data.uv_layers.active.name == "BLENDLINK_ATLAS",
+           "preview did not activate the atlas UV layer")
+    ui_bake = sys.modules[f"{PACKAGE}.ui"]
+    expect(ui_bake.BLENDLINK_PT_bake.poll(bpy.context), "bake panel should show with a plan")
+    syncstatus._state["bake_plan"] = None
+    syncstatus._state["plan"] = {}
+
     # --- designation card + copy-hint gating ---
     select_only(hotspot)
     expect(ui.BLENDLINK_PT_designation.poll(bpy.context), "designation card should show for the active object")

@@ -241,10 +241,17 @@ def _draw_atlas_controls(layout, obj):
     scale, applied by the bake pipeline as an island pre-scale."""
     if obj.type != "MESH":
         return
+    # Shading + atlas membership are per-object bake decisions — the two
+    # controls artists reach for most, so they live on the card.
+    row = layout.row(align=True)
+    row.operator_menu_enum("blendlink.set_shading", "mode", icon="SHADING_RENDERED")
     note = _dynamic_note(obj)
     if note is not None:
         layout.label(text=note, icon="LIGHT")
         return
+    atlas_override = obj.get("blendlink_atlas")
+    atlas_text = f"Atlas: {atlas_override}" if isinstance(atlas_override, str) else "Atlas: Auto"
+    layout.operator_menu_enum("blendlink.set_atlas", "atlas", text=atlas_text, icon="TEXTURE")
     column = layout.column()
     column.use_property_split = True
     column.use_property_decorate = False
@@ -265,6 +272,68 @@ def _draw_atlas_controls(layout, obj):
             readout.label(text=line, icon="NONE")
         if syncstatus.status()[0] != "IN_SYNC":
             readout.label(text="from last sync — resync to refresh", icon="TIME")
+
+
+class BLENDLINK_PT_bake(_BlendlinkPanelMixin, bpy.types.Panel):
+    """What the next bake will do, from the last sync's plan: settings,
+    atlases with occupancy and membership, dynamic meshes. Numbers come
+    from the manifest — the panel is the trust surface, the config file
+    (blendlink.config.mjs) is where settings change."""
+    bl_idname = "BLENDLINK_PT_bake"
+    bl_parent_id = "BLENDLINK_PT_main"
+    bl_label = "Bake"
+
+    @classmethod
+    def poll(cls, context):
+        return syncstatus.bake_plan() is not None
+
+    def draw(self, context):
+        layout = self.layout
+        plan = syncstatus.bake_plan() or {}
+        if syncstatus.status()[0] != "IN_SYNC":
+            layout.label(text="From the last sync — resync to refresh", icon="TIME")
+
+        settings = layout.column(align=True)
+        settings.scale_y = 0.85
+        supersample = plan.get("supersample", 1)
+        supersample_text = f" · {supersample}x supersample" if supersample > 1 else ""
+        settings.label(
+            text=f"{plan.get('samples', '?')} samples · margin {plan.get('marginPx', '?')}px"
+                 f"{supersample_text}",
+            icon="SCENE",
+        )
+        settings.label(text="Settings live in blendlink.config.mjs", icon="FILE_SCRIPT")
+
+        atlases = plan.get("atlases") or {"main": {"size": plan.get("atlasSize", 0),
+                                                   "occupancy": plan.get("occupancy", 0),
+                                                   "objects": len(plan.get("objects", []))}}
+        box = layout.box()
+        box.label(text=f"{len(atlases)} atlas(es)", icon="TEXTURE")
+        for name, atlas in atlases.items():
+            row = box.row(align=True)
+            occupancy = atlas.get("occupancy", 0.0)
+            row.label(
+                text=f"{name}: {atlas.get('size', '?')}px · {occupancy * 100:.0f}% full "
+                     f"· {atlas.get('objects', '?')} objects",
+            )
+            op = row.operator("blendlink.select_atlas_objects", text="", icon="RESTRICT_SELECT_OFF")
+            op.atlas = name
+        layout.operator("blendlink.preview_atlas_uvs", icon="UV")
+
+        dynamic = plan.get("dynamicObjects") or []
+        if dynamic:
+            names = ", ".join(entry.get("name", "?") for entry in dynamic[:4])
+            more = f" +{len(dynamic) - 4}" if len(dynamic) > 4 else ""
+            layout.label(text=f"Dynamic (lit): {names}{more}", icon="LIGHT")
+
+        bakes = plan.get("bakeCount")
+        states = plan.get("states") or []
+        lights = plan.get("lightGroups") or []
+        if bakes:
+            layout.label(
+                text=f"{len(states)} state(s) + {len(lights)} light group(s) = {bakes} bakes",
+                icon="RENDER_STILL",
+            )
 
 
 class BLENDLINK_PT_checks(_BlendlinkPanelMixin, bpy.types.Panel):
@@ -300,6 +369,7 @@ classes = (
     BLENDLINK_PT_main,
     BLENDLINK_PT_tag,
     BLENDLINK_PT_designation,
+    BLENDLINK_PT_bake,
     BLENDLINK_PT_checks,
 )
 
