@@ -476,10 +476,66 @@ class BLENDLINK_OT_select_atlas_objects(bpy.types.Operator):
         return {"FINISHED"}
 
 
+# UV-layer and checker names MIRROR packages/blendlink/blender/bakelib.py —
+# the one home for the contract. The headless test imports bakelib and
+# asserts these match, the same trick the vocabulary conformance uses.
+ATLAS_UV = "BLENDLINK_ATLAS"
+AUTHORED_UV = "BLENDLINK_ATLAS_AUTHORED"
+CHECKER_MODIFIER = "BLENDLINK-checker-override"
+
+
+def _stage_atlas_layer(mesh) -> bool:
+    """Mirror of bakelib.stage_atlas_layers for ONE mesh: the authored
+    layer's islands and pin flags when present, else the first UV layer
+    with pins cleared (a stale live-unwrap pin must never lock the pack).
+    Returns True when the authored layer was adopted."""
+    authored = mesh.uv_layers.get(AUTHORED_UV)
+    source = authored if authored is not None else mesh.uv_layers[0]
+    values = [loop.uv.copy() for loop in source.data]
+    pins = [loop.pin_uv for loop in source.data] if authored is not None else None
+    previous = mesh.uv_layers.get(ATLAS_UV)
+    if previous is not None and previous != source:
+        mesh.uv_layers.remove(previous)
+    layer = mesh.uv_layers.new(name=ATLAS_UV)
+    if layer is None:
+        raise RuntimeError(
+            f"{mesh.name}: could not add {ATLAS_UV} (UV-layer limit) — "
+            "remove unused UV maps"
+        )
+    for index, loop in enumerate(layer.data):
+        loop.uv = values[index]
+        loop.pin_uv = bool(pins[index]) if pins is not None else False
+    mesh.uv_layers.active = layer
+    return authored is not None
+
+
+def _average_unpinned(context) -> None:
+    """Mirror of bakelib.average_unpinned on the current selection:
+    equalize px/m across islands EXCEPT pinned ones. Blender's own
+    select_pinned + select_linked resolve the islands, then uv.pin expands
+    the flags island-wide so loop.pin_uv is the held mask afterwards."""
+    tools = context.scene.tool_settings
+    prior_sync = tools.use_uv_select_sync
+    tools.use_uv_select_sync = False
+    try:
+        bpy.ops.object.mode_set(mode="EDIT")
+        bpy.ops.mesh.select_all(action="SELECT")
+        bpy.ops.uv.select_all(action="DESELECT")
+        bpy.ops.uv.select_pinned()
+        bpy.ops.uv.select_linked()
+        bpy.ops.uv.pin(clear=False)
+        bpy.ops.uv.select_all(action="INVERT")
+        bpy.ops.uv.average_islands_scale()
+        bpy.ops.object.mode_set(mode="OBJECT")
+    finally:
+        tools.use_uv_select_sync = prior_sync
+
+
 class BLENDLINK_OT_preview_atlas_uvs(bpy.types.Operator):
     """Pack preview atlas UVs from the last sync's plan so the UV editor
     shows what the bake will produce (writes the BLENDLINK_ATLAS layer;
-    one undo step reverses it)"""
+    one undo step reverses it). Meshes with a materialized authored layer
+    contribute its islands — pinned islands hold position and scale"""
     bl_idname = "blendlink.preview_atlas_uvs"
     bl_label = "Preview Atlas UVs"
     bl_options = {"REGISTER", "UNDO"}
@@ -511,53 +567,325 @@ class BLENDLINK_OT_preview_atlas_uvs(bpy.types.Operator):
             self.report({"WARNING"}, "No plan objects found in this scene — resync?")
             return {"CANCELLED"}
         packed = 0
+        authored_count = 0
         for name, members in groups.items():
             size = atlases.get(name, {}).get("size", 2048)
             margin = max(1, round(base_margin * size / reference))
             for obj, _ in members:
-                mesh = obj.data
-                if len(mesh.uv_layers) == 0:
+                if len(obj.data.uv_layers) == 0:
                     continue
-                source = mesh.uv_layers[0]
-                values = [loop.uv.copy() for loop in source.data]
-                previous = mesh.uv_layers.get("BLENDLINK_ATLAS")
-                if previous is not None and previous != source:
-                    mesh.uv_layers.remove(previous)
-                layer = mesh.uv_layers.new(name="BLENDLINK_ATLAS")
-                for loop, value in zip(layer.data, values):
-                    loop.uv = value
-                mesh.uv_layers.active = layer
+                if _stage_atlas_layer(obj.data):
+                    authored_count += 1
             objs = [obj for obj, _ in members]
             _select_only(context, objs)
             if context.view_layer.objects.active is None:
                 continue
-            bpy.ops.object.mode_set(mode="EDIT")
-            bpy.ops.mesh.select_all(action="SELECT")
-            bpy.ops.uv.select_all(action="SELECT")
-            bpy.ops.uv.average_islands_scale()
-            bpy.ops.object.mode_set(mode="OBJECT")
+            _average_unpinned(context)
             for obj, weight in members:
                 if weight != 1.0:
-                    layer = obj.data.uv_layers.get("BLENDLINK_ATLAS")
+                    layer = obj.data.uv_layers.get(ATLAS_UV)
                     if layer is not None:
                         for loop in layer.data:
-                            loop.uv *= weight
+                            if not loop.pin_uv:
+                                loop.uv *= weight
             _select_only(context, objs)
             bpy.ops.object.mode_set(mode="EDIT")
             bpy.ops.mesh.select_all(action="SELECT")
             bpy.ops.uv.select_all(action="SELECT")
-            # Mirrors the exporter's pack contract (CARDINAL/CONCAVE/FRACTION).
+            # Mirrors the exporter's pack contract (CARDINAL/CONCAVE/FRACTION,
+            # pin=LOCKED; with zero pins the result is identical to no pin).
             bpy.ops.uv.pack_islands(
                 rotate=True, rotate_method="CARDINAL", scale=True,
                 merge_overlap=False, margin_method="FRACTION",
                 margin=(margin + 4) / size, shape_method="CONCAVE",
+                pin=True, pin_method="LOCKED",
             )
             bpy.ops.object.mode_set(mode="OBJECT")
             packed += 1
+        honored = f", honoring {authored_count} authored layer(s)" if authored_count else ""
         self.report(
             {"INFO"},
-            f"Packed {packed} preview atlas(es) into the BLENDLINK_ATLAS UV layer "
-            "— open a UV Editor to inspect (Ctrl+Z reverses)",
+            f"Packed {packed} preview atlas(es) into the {ATLAS_UV} UV layer"
+            f"{honored} — open a UV Editor to inspect (Ctrl+Z reverses)",
+        )
+        return {"FINISHED"}
+
+
+class BLENDLINK_OT_materialize_atlas_uvs(bpy.types.Operator):
+    """Persist the previewed pack as an authored, editable UV layer the
+    export honors: move islands freely, pin (P in the UV editor) the ones
+    that must hold — the next sync locks pinned islands in place and packs
+    everything else around them"""
+    bl_idname = "blendlink.materialize_atlas_uvs"
+    bl_label = "Materialize Editable UVs"
+    bl_options = {"REGISTER", "UNDO"}
+
+    overwrite: bpy.props.BoolProperty(
+        name="Overwrite Authored Layer",
+        description="Replace an existing authored layer — its edits and pins are lost",
+        default=False,
+    )
+
+    @classmethod
+    def poll(cls, context):
+        if context.mode != "OBJECT":
+            cls.poll_message_set("Switch to Object Mode")
+            return False
+        if not any(o.type == "MESH" for o in context.selected_editable_objects):
+            cls.poll_message_set("Select the meshes to materialize")
+            return False
+        return True
+
+    def execute(self, context):
+        made, kept, missing = [], [], []
+        for obj in context.selected_editable_objects:
+            if obj.type != "MESH":
+                continue
+            mesh = obj.data
+            atlas = mesh.uv_layers.get(ATLAS_UV)
+            if atlas is None:
+                missing.append(obj.name)
+                continue
+            existing = mesh.uv_layers.get(AUTHORED_UV)
+            # NEVER silently overwrite an authored layer — the artist's
+            # edits and pins live there. Explicit opt-in via the redo panel.
+            if existing is not None and not self.overwrite:
+                kept.append(obj.name)
+                continue
+            values = [loop.uv.copy() for loop in atlas.data]
+            if existing is not None:
+                mesh.uv_layers.remove(existing)
+            layer = mesh.uv_layers.new(name=AUTHORED_UV)
+            if layer is None:
+                self.report(
+                    {"ERROR"},
+                    f"{obj.name}: could not add {AUTHORED_UV} (UV-layer limit) "
+                    "— remove unused UV maps",
+                )
+                return {"CANCELLED"}
+            for index, loop in enumerate(layer.data):
+                loop.uv = values[index]
+                loop.pin_uv = False
+            mesh.uv_layers.active = layer
+            made.append(obj.name)
+        if not made and not kept:
+            self.report(
+                {"WARNING"},
+                "No previewed atlas UVs on the selection — run Preview Atlas UVs first",
+            )
+            return {"CANCELLED"}
+        parts = []
+        if made:
+            parts.append(
+                f"Materialized {len(made)} authored layer(s) — edit freely, "
+                "pin (P) islands to hold them through the next sync"
+            )
+        if kept:
+            parts.append(
+                f"kept {len(kept)} existing authored layer(s) untouched "
+                f"(enable Overwrite to replace): {', '.join(kept)}"
+            )
+        if missing:
+            parts.append(f"no preview UVs on {len(missing)}")
+        self.report({"WARNING"} if kept or missing else {"INFO"}, "; ".join(parts))
+        return {"FINISHED"}
+
+
+# --- checker inspection override -------------------------------------------
+# TexTools-style: a geometry-nodes modifier sets a shared checker material
+# in the VIEWPORT only (show_render=False), never touching user material
+# slots. The exporter additionally strips strays before evaluating, because
+# freeze/export walk the viewport depsgraph where the override IS applied.
+
+_CHECKER_PREFIX = "BLENDLINK-checker"
+_GRID_IMAGE_RES = 1024
+# Blender's generated UV_GRID image draws fixed 32px checkers at any
+# resolution (measured on 5.2), so one repeat holds RES/32 cells.
+_UV_GRID_CELL_PX = 32
+
+
+def _checker_image(kind: str):
+    name = f"{_CHECKER_PREFIX}-grid-{'uv' if kind == 'UV_GRID' else 'color'}"
+    image = bpy.data.images.get(name)
+    if image is None:
+        image = bpy.data.images.new(name, _GRID_IMAGE_RES, _GRID_IMAGE_RES)
+        image.generated_type = kind
+    return image
+
+
+def _checker_material(mode: str, size: int, cell_px: int):
+    if mode == "DENSITY":
+        name = f"{_CHECKER_PREFIX}-DENSITY-{size}px-{cell_px}t"
+        # One generated checker cell (32px in the image) must span cell_px
+        # REAL atlas texels: scale = atlas / (cells-per-repeat × cell_px).
+        cells = _GRID_IMAGE_RES // _UV_GRID_CELL_PX
+        scale = size / (cells * cell_px)
+        image, interpolation = _checker_image("UV_GRID"), "Closest"
+    else:
+        name = f"{_CHECKER_PREFIX}-UVGRID-{size}px"
+        # One lettered color grid across the whole atlas: cells are fixed
+        # in ATLAS space (density still comparable) and letters say WHERE
+        # an island landed.
+        scale = 1.0
+        image, interpolation = _checker_image("COLOR_GRID"), "Linear"
+    material = bpy.data.materials.get(name)
+    if material is not None:
+        return material
+    material = bpy.data.materials.new(name)
+    material.use_nodes = True
+    tree = material.node_tree
+    tree.nodes.clear()
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    emission = tree.nodes.new("ShaderNodeEmission")
+    texture = tree.nodes.new("ShaderNodeTexImage")
+    texture.image = image
+    texture.interpolation = interpolation
+    mapping = tree.nodes.new("ShaderNodeMapping")
+    mapping.inputs["Scale"].default_value = (scale, scale, 1.0)
+    uvmap = tree.nodes.new("ShaderNodeUVMap")
+    uvmap.uv_map = ATLAS_UV
+    tree.links.new(uvmap.outputs["UV"], mapping.inputs["Vector"])
+    tree.links.new(mapping.outputs["Vector"], texture.inputs["Vector"])
+    tree.links.new(texture.outputs["Color"], emission.inputs["Color"])
+    tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+    return material
+
+
+def _checker_group(mode: str, size: int, cell_px: int):
+    """Geometry-nodes group per (mode, atlas size): Set Material with the
+    checker as the socket DEFAULT (5.2 rejects material id-props on the
+    modifier, so the material rides inside the group)."""
+    material = _checker_material(mode, size, cell_px)
+    group = bpy.data.node_groups.get(material.name)
+    if group is not None:
+        return group
+    group = bpy.data.node_groups.new(material.name, "GeometryNodeTree")
+    group.is_modifier = True
+    group.interface.new_socket("Geometry", in_out="INPUT", socket_type="NodeSocketGeometry")
+    group.interface.new_socket("Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry")
+    source = group.nodes.new("NodeGroupInput")
+    sink = group.nodes.new("NodeGroupOutput")
+    set_material = group.nodes.new("GeometryNodeSetMaterial")
+    set_material.inputs["Material"].default_value = material
+    group.links.new(source.outputs["Geometry"], set_material.inputs["Geometry"])
+    group.links.new(set_material.outputs["Geometry"], sink.inputs["Geometry"])
+    return group
+
+
+def _checker_mode() -> str:
+    """Current mode derived from the FILE (robust across undo and reload):
+    the first checker modifier found names its node group by mode."""
+    for obj in bpy.data.objects:
+        for modifier in getattr(obj, "modifiers", []):
+            if modifier.name.startswith(CHECKER_MODIFIER) and modifier.node_group:
+                if "-DENSITY-" in modifier.node_group.name:
+                    return "DENSITY"
+                if "-UVGRID-" in modifier.node_group.name:
+                    return "UVGRID"
+    return "OFF"
+
+
+def _checker_sweep() -> tuple:
+    """Strip every checker override and datablock, strays included."""
+    removed = 0
+    for obj in bpy.data.objects:
+        for modifier in [m for m in getattr(obj, "modifiers", [])
+                         if m.name.startswith(CHECKER_MODIFIER)]:
+            obj.modifiers.remove(modifier)
+            removed += 1
+    blocks = 0
+    for collection in (bpy.data.node_groups, bpy.data.materials, bpy.data.images):
+        for block in [b for b in collection if b.name.startswith(_CHECKER_PREFIX)]:
+            collection.remove(block)
+            blocks += 1
+    return removed, blocks
+
+
+class BLENDLINK_OT_toggle_checker(bpy.types.Operator):
+    """Cycle the atlas checker: OFF → DENSITY (one checker cell = a fixed
+    count of real atlas texels — judge density AFTER packing, the pack
+    rescales islands) → UV GRID (one lettered grid across the whole atlas —
+    seams, orientation, and where islands landed) → OFF. Viewport-only:
+    a geometry-nodes override, render and export never see it"""
+    bl_idname = "blendlink.toggle_checker"
+    bl_label = "Toggle Atlas Checker"
+    bl_options = {"REGISTER", "UNDO"}
+
+    cell_px: bpy.props.IntProperty(
+        name="Texels per Checker", default=8, min=1, soft_max=64,
+        description="DENSITY mode: real atlas texels covered by one checker cell",
+    )
+
+    @classmethod
+    def poll(cls, context):
+        from . import syncstatus
+        if syncstatus.bake_plan() is None:
+            cls.poll_message_set("No bake plan yet — run a sync first")
+            return False
+        if context.mode != "OBJECT":
+            cls.poll_message_set("Switch to Object Mode")
+            return False
+        return True
+
+    def execute(self, context):
+        from . import syncstatus
+        current = _checker_mode()
+        if current == "UVGRID":
+            removed, blocks = _checker_sweep()
+            self.report({"INFO"}, f"Checker off — removed {removed} override(s)")
+            return {"FINISHED"}
+        mode = "DENSITY" if current == "OFF" else "UVGRID"
+        plan = syncstatus.bake_plan()
+        atlases = plan.get("atlases") or {"main": {"size": plan.get("atlasSize", 2048)}}
+        targets, skipped = [], []
+        for entry in plan.get("objects", []):
+            obj = context.scene.objects.get(entry.get("name", ""))
+            if obj is None or obj.type != "MESH":
+                continue
+            if obj.data.uv_layers.get(ATLAS_UV) is None:
+                skipped.append(obj.name)
+                continue
+            size = int(atlases.get(entry.get("atlas", "main"), {}).get("size", 2048))
+            targets.append((obj, size))
+        if not targets:
+            self.report(
+                {"WARNING"},
+                "Nothing to inspect — run Preview Atlas UVs first "
+                "(the checker samples the previewed layer)",
+            )
+            return {"CANCELLED"}
+        for obj, size in targets:
+            group = _checker_group(mode, size, self.cell_px)
+            modifier = next(
+                (m for m in obj.modifiers if m.name.startswith(CHECKER_MODIFIER)),
+                None,
+            )
+            if modifier is None:
+                modifier = obj.modifiers.new(name=CHECKER_MODIFIER, type="NODES")
+            modifier.node_group = group
+            modifier.show_render = False
+        label = (
+            f"Density checker: 1 cell = {self.cell_px}×{self.cell_px} atlas texels"
+            if mode == "DENSITY"
+            else "UV grid: one lettered grid across each atlas"
+        )
+        note = f" — skipped {len(skipped)} without preview UVs" if skipped else ""
+        self.report({"INFO"}, f"{label} on {len(targets)} mesh(es){note} (viewport only)")
+        return {"FINISHED"}
+
+
+class BLENDLINK_OT_checker_cleanup(bpy.types.Operator):
+    """Remove every checker override and its datablocks from the file,
+    strays included (the exporter also strips leftovers defensively)"""
+    bl_idname = "blendlink.checker_cleanup"
+    bl_label = "Remove Checker Overrides"
+    bl_options = {"REGISTER", "UNDO"}
+
+    def execute(self, context):
+        removed, blocks = _checker_sweep()
+        self.report(
+            {"INFO"},
+            f"Removed {removed} checker override(s) and {blocks} datablock(s)",
         )
         return {"FINISHED"}
 
@@ -765,6 +1093,9 @@ classes = (
     BLENDLINK_OT_set_shading,
     BLENDLINK_OT_select_atlas_objects,
     BLENDLINK_OT_preview_atlas_uvs,
+    BLENDLINK_OT_materialize_atlas_uvs,
+    BLENDLINK_OT_toggle_checker,
+    BLENDLINK_OT_checker_cleanup,
     BLENDLINK_OT_refresh_bake_table,
     BLENDLINK_OT_sync_now,
     BLENDLINK_OT_sync_cancel,

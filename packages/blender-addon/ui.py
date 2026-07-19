@@ -354,6 +354,20 @@ class BLENDLINK_PT_bake(_BlendlinkPanelMixin, bpy.types.Panel):
         else:
             layout.label(text="Press refresh to fill the table", icon="FORWARD")
         layout.operator("blendlink.preview_atlas_uvs", icon="UV")
+        # Inspect → materialize: judge the pack with a real-texel checker,
+        # then persist it as an editable layer and pin what must hold.
+        from . import ops as _ops
+        mode = _ops._checker_mode()
+        row = layout.row(align=True)
+        next_label = {
+            "OFF": "Checker: Density",
+            "DENSITY": "Checker: UV Grid",
+            "UVGRID": "Checker: Off",
+        }[mode]
+        row.operator("blendlink.toggle_checker", text=next_label, icon="TEXTURE")
+        if mode != "OFF":
+            row.operator("blendlink.checker_cleanup", text="", icon="X")
+        layout.operator("blendlink.materialize_atlas_uvs", icon="PINNED")
 
         dynamic = plan.get("dynamicObjects") or []
         if dynamic:

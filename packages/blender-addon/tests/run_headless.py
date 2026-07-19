@@ -273,6 +273,86 @@ def main():
     expect(barrel_row is not None and barrel_row.shading == "dynamic",
            "live dynamic override not reflected in the table")
     bpy.ops.blendlink.set_shading(mode="AUTO")
+
+    # --- UV control: constants conformance, materialize, authored preview,
+    # checker cycle (propose → inspect → materialize → commit) ---
+    bakelib_path = ADDON_DIR.parent / "blendlink" / "blender" / "bakelib.py"
+    bakelib_spec = importlib.util.spec_from_file_location("blendlink_bakelib", bakelib_path)
+    bakelib = importlib.util.module_from_spec(bakelib_spec)
+    bakelib_spec.loader.exec_module(bakelib)
+    ops = sys.modules[f"{PACKAGE}.ops"]
+    # The addon MIRRORS bakelib's layer/modifier names (it cannot import a
+    # per-project bakelib); this assert is the conformance lock.
+    expect(ops.ATLAS_UV == bakelib.ATLAS_UV, "ATLAS_UV drifted from bakelib")
+    expect(ops.AUTHORED_UV == bakelib.AUTHORED_UV, "AUTHORED_UV drifted from bakelib")
+    expect(ops.CHECKER_MODIFIER == bakelib.CHECKER_MODIFIER,
+           "CHECKER_MODIFIER drifted from bakelib")
+
+    # materialize: copies the preview into an editable authored layer
+    select_only(crate)
+    bpy.ops.blendlink.materialize_atlas_uvs()
+    authored = crate.data.uv_layers.get(ops.AUTHORED_UV)
+    expect(authored is not None, "materialize did not create the authored layer")
+    expect(crate.data.uv_layers.active.name == ops.AUTHORED_UV,
+           "authored layer should be active for editing")
+    atlas_values = [tuple(d.uv) for d in crate.data.uv_layers.get(ops.ATLAS_UV).data]
+    expect([tuple(d.uv) for d in authored.data] == atlas_values,
+           "authored layer differs from the previewed pack")
+    expect(not any(d.pin_uv for d in authored.data), "materialize must not pre-pin")
+
+    # never silently overwrite: an artist edit survives a re-materialize
+    authored.data[0].uv = (0.123, 0.456)
+    bpy.ops.blendlink.materialize_atlas_uvs()
+    authored = crate.data.uv_layers.get(ops.AUTHORED_UV)
+    expect(abs(authored.data[0].uv[0] - 0.123) < 1e-6,
+           "re-materialize silently overwrote the authored layer")
+    bpy.ops.blendlink.materialize_atlas_uvs(overwrite=True)
+    authored = crate.data.uv_layers.get(ops.AUTHORED_UV)
+    expect(abs(authored.data[0].uv[0] - atlas_values[0][0]) < 1e-6,
+           "overwrite=True did not refresh the authored layer")
+
+    # pinned authored islands hold EXACTLY through a preview replay
+    authored = crate.data.uv_layers.get(ops.AUTHORED_UV)
+    for d in authored.data:
+        d.uv = (d.uv[0] * 0.2 + 0.75, d.uv[1] * 0.2 + 0.75)
+        d.pin_uv = True
+    pinned_values = [tuple(d.uv) for d in authored.data]
+    bpy.ops.blendlink.preview_atlas_uvs()
+    atlas = crate.data.uv_layers.get(ops.ATLAS_UV)
+    drift = max(abs(d.uv[0] - x) + abs(d.uv[1] - y)
+                for d, (x, y) in zip(atlas.data, pinned_values))
+    expect(drift < 1e-6, f"pinned authored islands drifted {drift} in the preview")
+
+    # checker cycle: OFF → DENSITY → UVGRID → OFF, viewport-only
+    expect(ops._checker_mode() == "OFF", "checker should start OFF")
+    bpy.ops.blendlink.toggle_checker()
+    expect(ops._checker_mode() == "DENSITY", "first toggle should be DENSITY")
+    mod = next(m for m in crate.modifiers if m.name.startswith(ops.CHECKER_MODIFIER))
+    expect(mod.show_render is False, "checker must be viewport-only")
+    expect("-DENSITY-256px" in mod.node_group.name,
+           f"unexpected checker group {mod.node_group.name}")
+    material = bpy.data.materials.get(mod.node_group.name)
+    expect(material is not None, "checker material missing")
+    mapping = next(n for n in material.node_tree.nodes if n.type == "MAPPING")
+    # 256px atlas, 8-texel cells, 32 generated cells per repeat → scale 1.0
+    expect(abs(mapping.inputs["Scale"].default_value[0] - 1.0) < 1e-6,
+           f"density scale wrong: {mapping.inputs['Scale'].default_value[0]}")
+    bpy.ops.blendlink.toggle_checker()
+    expect(ops._checker_mode() == "UVGRID", "second toggle should be UVGRID")
+    bpy.ops.blendlink.toggle_checker()
+    expect(ops._checker_mode() == "OFF", "third toggle should be OFF")
+    expect(not any(m.name.startswith(ops.CHECKER_MODIFIER)
+                   for o in bpy.data.objects for m in getattr(o, "modifiers", [])),
+           "checker modifiers left behind after the OFF cycle")
+    expect(not any(b.name.startswith("BLENDLINK-checker") for b in bpy.data.materials),
+           "checker materials left behind after the OFF cycle")
+
+    # cleanup strips strays (a modifier with no node group)
+    rock.modifiers.new(name=ops.CHECKER_MODIFIER, type="NODES")
+    bpy.ops.blendlink.checker_cleanup()
+    expect(not any(m.name.startswith(ops.CHECKER_MODIFIER) for m in rock.modifiers),
+           "cleanup missed a stray checker modifier")
+
     syncstatus._state["bake_plan"] = None
     syncstatus._state["plan"] = {}
 
