@@ -201,6 +201,24 @@ def density_summary(entry) -> list[str]:
     return lines
 
 
+def _dynamic_note(obj) -> str | None:
+    """Display-only mirror of the exporter's dynamic_reason (export_scene.py
+    is the source of truth): why this mesh is lit at runtime, or None."""
+    explicit = obj.get("blendlink_dynamic")
+    if explicit is not None:
+        return "Dynamic — lit at runtime (property)" if explicit else None
+    if any(mod.type == "ARMATURE" for mod in obj.modifiers):
+        return "Dynamic — armature-deformed"
+    for slot in obj.material_slots:
+        material = slot.material
+        if material is None:
+            continue
+        if getattr(material, "surface_render_method", "") == "BLENDED" \
+                or getattr(material, "blend_method", "OPAQUE") == "BLEND":
+            return f"Dynamic — transparent ({material.name})"
+    return None
+
+
 def _prop_key(obj, bare: str) -> str | None:
     """Namespaced key first (blendlink_*), bare key as the deprecated
     fallback — bare names collide with other addons' ID properties."""
@@ -222,6 +240,10 @@ def _draw_atlas_controls(layout, obj):
     """Baked-atlas density control (meshes only): the artist's lightmap
     scale, applied by the bake pipeline as an island pre-scale."""
     if obj.type != "MESH":
+        return
+    note = _dynamic_note(obj)
+    if note is not None:
+        layout.label(text=note, icon="LIGHT")
         return
     column = layout.column()
     column.use_property_split = True

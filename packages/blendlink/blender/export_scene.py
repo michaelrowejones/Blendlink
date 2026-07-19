@@ -160,12 +160,39 @@ def texel_weight_of(obj) -> float:
     return bakelib.texel_weight_of(obj)
 
 
+def dynamic_reason(obj) -> str | None:
+    """Why this mesh is DYNAMIC (lit at runtime) instead of baked, or None.
+
+    Mixed scenes are the honest answer to characters, glass, and hand-held
+    lights: a static lightmap on a deforming or see-through surface is
+    wrong by construction, so those keep their real materials and real-time
+    lighting while the environment ships as the painting. Explicit override:
+    the blendlink_dynamic property (truthy = lit, 0/False = force-bake).
+    """
+    explicit = obj.get("blendlink_dynamic")
+    if explicit is not None:
+        return "blendlink_dynamic property" if explicit else None
+    if any(mod.type == "ARMATURE" for mod in obj.modifiers):
+        return "armature-deformed (a static lightmap cannot deform)"
+    for slot in obj.material_slots:
+        material = slot.material
+        if material is None:
+            continue
+        if getattr(material, "surface_render_method", "") == "BLENDED":
+            return f"transparent material {material.name!r}"
+        if getattr(material, "blend_method", "OPAQUE") == "BLEND":
+            return f"transparent material {material.name!r}"
+    return None
+
+
 def render_meshes() -> list:
+    """The BAKED mesh set: everything the atlas pack and bake touch.
+    Dynamic (lit) meshes still export — they are simply not in here."""
     return [
         obj for obj in bpy.context.scene.objects
         if obj.type == "MESH" and not obj.hide_render
         and len(obj.data.polygons) > 0 and not is_collision_proxy(obj)
-        and texel_weight_of(obj) > 0.0
+        and texel_weight_of(obj) > 0.0 and dynamic_reason(obj) is None
     ]
 
 
@@ -212,7 +239,10 @@ def compute_texel_weights(meshes: list) -> dict:
 def bake_prepare_geometry(margin_px: int, size: int) -> None:
     meshes = render_meshes()
     if not meshes:
-        raise SystemExit("baked mode: no render meshes in the scene")
+        raise SystemExit(
+            "baked mode: no bakeable meshes in the scene (every render mesh "
+            "is dynamic, zero-weight, or a collision proxy)"
+        )
     # Two-phase evaluate-then-assign: interleaving dirties the depsgraph
     # mid-loop and makes inter-object modifiers order-dependent.
     bakelib.freeze_evaluated_meshes(meshes)
@@ -430,12 +460,18 @@ def compute_bake_plan(settings: dict) -> dict:
         obj.name for obj in bpy.context.scene.objects
         if obj.type == "MESH" and is_collision_proxy(obj)
     )
+    dynamic_objects = [
+        {"name": obj.name, "reason": dynamic_reason(obj)}
+        for obj in bpy.context.scene.objects
+        if obj.type == "MESH" and not obj.hide_render and dynamic_reason(obj)
+    ]
     return {
         "supersample": max(1, int(bake.get("supersample", 1))),
         "atlasSize": size,
         "marginPx": margin_px,
         "samples": int(bake.get("samples", 128)),
         "occupancy": round(total_uv, 4),
+        "dynamicObjects": dynamic_objects,
         "states": [state["name"] for state in states],
         "lightGroups": light_groups,
         "bakeCount": len(states) + len(light_groups),
@@ -547,6 +583,16 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
         warnings.append(
             "renderable non-mesh objects are not baked and will render lit "
             f"(convert to mesh): {', '.join(non_mesh)}"
+        )
+    # Auto-dynamic must never be a surprise: name each lit mesh and why.
+    dynamic = sorted(
+        f"{obj.name} ({dynamic_reason(obj)})"
+        for obj in bpy.context.scene.objects
+        if obj.type == "MESH" and not obj.hide_render and dynamic_reason(obj)
+    )
+    if dynamic:
+        warnings.append(
+            "dynamic (lit at runtime, excluded from the bake): " + ", ".join(dynamic)
         )
 
     # Lights assigned to a Cycles Light Group become interactive: excluded

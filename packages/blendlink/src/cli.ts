@@ -198,6 +198,9 @@ async function main(): Promise<number> {
             `  collision proxies excluded from the bake: ${plan.collisionProxies.join(', ')}`,
           )
         }
+        for (const dynamic of plan.dynamicObjects ?? []) {
+          console.log(`  dynamic (lit at runtime): ${dynamic.name} — ${dynamic.reason}`)
+        }
         if (existsSync(scene.manifestPath)) {
           try {
             const manifest = JSON.parse(readFileSync(scene.manifestPath, 'utf8'))

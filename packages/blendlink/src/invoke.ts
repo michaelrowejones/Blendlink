@@ -73,6 +73,9 @@ export interface BakePlan {
   }>
   /** In the GLB for physics, but kept out of the atlas and bake. */
   collisionProxies: string[]
+  /** Mixed scenes: meshes that keep real materials and runtime lighting
+   * (explicit blendlink_dynamic, armature-deformed, or transparent). */
+  dynamicObjects: Array<{ name: string; reason: string }>
   warnings: string[]
 }
 
