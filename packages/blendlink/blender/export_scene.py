@@ -384,9 +384,13 @@ def fill_image_background(image) -> None:
     weight = (rgba[:, :, 3] > 0.5).astype(np.float32)
     holes = int(weight.size - weight.sum())
     if holes == 0:
+        # Full alpha coverage means the transparent clear never happened —
+        # say so, a silent skip here once hid a broken coverage contract.
+        print("blendlink: background fill skipped — alpha reports full coverage")
         return
     if weight.sum() < weight.size * 0.01:
         # Alpha never marked coverage — filling would flood the atlas.
+        print("blendlink: background fill skipped — no baked coverage in alpha")
         rgba[:, :, 3] = 1.0
         image.pixels.foreach_set(pixels)
         image.update()
