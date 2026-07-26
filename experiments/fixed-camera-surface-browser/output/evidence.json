@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-fixed-camera-surface-browser-differential",
+  "status": "prototype",
+  "source": {
+    "path": "packages/blendlink/src/threeFixedCameraAppearance.ts",
+    "sha256": "1a1c31036584102511add7ce38f563812194c5a3fb8933a296e8397a8cbe4e51"
+  },
+  "browser": {
+    "chrome": true,
+    "webgl2": true,
+    "failures": []
+  },
+  "evidence": {
+    "ready": true,
+    "webgl2": true,
+    "geometryPreserved": true,
+    "foregroundMaterialPreserved": true,
+    "installedMaterialChanged": true,
+    "installedMaterialType": "MeshBasicMaterial",
+    "bindingCount": 1,
+    "materialCount": 1,
+    "raycast": {
+      "object": "Selected surface primitive",
+      "distance": 5.099019513592786
+    },
+    "wrongAspectError": "Fixed Camera Appearance viewport aspect 1 does not match the authored capture aspect 2.",
+    "movedCameraError": "Fixed Camera Appearance camera matrix changed from the authored capture (world max delta 0.25, projection max delta 0).",
+    "samplePoints": {
+      "receiver": {
+        "x": 314,
+        "y": 200
+      },
+      "foreground": {
+        "x": 486,
+        "y": 200
+      }
+    },
+    "render": {
+      "calls": 2,
+      "triangles": 4
+    },
+    "disposed": {
+      "materialRestored": true,
+      "foregroundMaterialPreserved": true,
+      "geometryPreserved": true,
+      "installedMaterialDisposed": true
+    }
+  },
+  "pixels": {
+    "projectedReceiver": [
+      26,
+      196,
+      235
+    ],
+    "restoredReceiver": [
+      239,
+      118,
+      47
+    ],
+    "projectedForeground": [
+      230,
+      43,
+      208
+    ],
+    "restoredForeground": [
+      230,
+      43,
+      208
+    ]
+  },
+  "captures": {
+    "projected": {
+      "path": "experiments/fixed-camera-surface-browser/output/projected-surface.png",
+      "sha256": "43f9de2e949e0bab39c20122c51538b5b384b8fba3b8cd117ebfed9ed55a474e"
+    },
+    "restored": {
+      "path": "experiments/fixed-camera-surface-browser/output/restored-surface.png",
+      "sha256": "39793c9760513a1387f0ded589c713ae62a9eb5540a13475ee8b50af83c423d8"
+    }
+  },
+  "boundary": "This proves the package-owned runtime projector on one synthetic static opaque surface. It does not prove compiler capture, manifest/asset-graph publication, R3F lifecycle, or Splash production parity."
+}

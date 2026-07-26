@@ -1,0 +1,251 @@
+﻿{
+    "schemaVersion":  1,
+    "archive":  {
+                    "bytes":  256907103,
+                    "sha256":  "d3e31955432149483d70e5a61b0b03f56b037b467265556449d58a302c8f3b58"
+                },
+    "extractedRoot":  "blender-3.6-splash",
+    "fileCount":  48,
+    "files":  [
+                  {
+                      "path":  ".DS_Store",
+                      "bytes":  6148,
+                      "sha256":  "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3"
+                  },
+                  {
+                      "path":  "blender-3.6-splash.blend",
+                      "bytes":  7878056,
+                      "sha256":  "c65a4203f136ed2dabb076a0f13a347818da1e14ff73c84bd0b08caffbb36ef4"
+                  },
+                  {
+                      "path":  "pro/lib/cam/camera_rig.blend",
+                      "bytes":  462216,
+                      "sha256":  "6c7ebb0176651fbb29a78a633864aade2778ca5d19a6f89ef115bed4ed3c6867"
+                  },
+                  {
+                      "path":  "pro/lib/char/cat/maps/cat.base_color.tif",
+                      "bytes":  668045,
+                      "sha256":  "907630ebc5dbe4b38e2c9769e029ad27f3e61524688f038de663a2c4267ea8c2"
+                  },
+                  {
+                      "path":  "pro/lib/char/cat/publish/cat.v001.blend",
+                      "bytes":  25882542,
+                      "sha256":  "56dd90feb8b6713dbe14feaa018b9706dcb11a4463b4c16b3f0a3ef74904c1a7"
+                  },
+                  {
+                      "path":  "pro/lib/char/dog/dog.rigging.blend",
+                      "bytes":  5394344,
+                      "sha256":  "98de997122658ae0bb414d497ffcd965b5b09a29a71c51d46b14fa69c2f78fa6"
+                  },
+                  {
+                      "path":  "pro/lib/char/dog/maps/dog.base_color.tif",
+                      "bytes":  859305,
+                      "sha256":  "2d2be39f6f562b758b456a346491fb3238290c1f3d00cef28dddba50f157708c"
+                  },
+                  {
+                      "path":  "pro/lib/char/dog/publish/dog.v001.blend",
+                      "bytes":  4641636,
+                      "sha256":  "0380574a15ef85f11b85f50a9ce38c959f976fff64fc0109a9b535ba8dc0c046"
+                  },
+                  {
+                      "path":  "pro/lib/env/power_cable/power_cable.blend",
+                      "bytes":  2997878,
+                      "sha256":  "377e45fefc2d27bc4ee858d3d33039ca4c1ddec9293a7351136fa344dc4ea44b"
+                  },
+                  {
+                      "path":  "pro/lib/lgt/lighting_rigs.blend",
+                      "bytes":  1060020,
+                      "sha256":  "0a794cd58be173c10ba35967af4fa59579b9ffad0b60c33acbd12ce52b52a870"
+                  },
+                  {
+                      "path":  "pro/lib/lgt/outline_setup.blend",
+                      "bytes":  923112,
+                      "sha256":  "072f6546d4b386295e32cac66f1bfb9a2fc65e3a3fe1f22b3dff9c8d422f35de"
+                  },
+                  {
+                      "path":  "pro/lib/lgt/shadow_proxy_setup.blend",
+                      "bytes":  1039938,
+                      "sha256":  "04110e0eeb773a3b8679b3f9d9dd29017e1a601750d18f413e3e35bb790318d3"
+                  },
+                  {
+                      "path":  "pro/lib/lgt/world.blend",
+                      "bytes":  5748788,
+                      "sha256":  "eca6956232935dd2b93ca771fb927c3dd6b95b4e82fe9d8027633a92ab906a09"
+                  },
+                  {
+                      "path":  "pro/lib/maps/patterns/paper_01/paper_01.tif",
+                      "bytes":  6107540,
+                      "sha256":  "d2f82d0ad7d0cfeaa791dc39e2829ad206c4f5b792a2e0fa459d7c4dc6c109d5"
+                  },
+                  {
+                      "path":  "pro/lib/maps/patterns/patches_01/patches_01.tif",
+                      "bytes":  51026,
+                      "sha256":  "32b1f5fedb416c320aa15a46b1854ea376f06ab67a63cf5d8084bdab2e852571"
+                  },
+                  {
+                      "path":  "pro/lib/maps/patterns/plates_01/plates_01.tif",
+                      "bytes":  288327,
+                      "sha256":  "a686b284d04de0dec81a04a075b7c5457643fa91ea604d03ea4cb7bcc13dbff1"
+                  },
+                  {
+                      "path":  "pro/lib/maps/patterns/reflection_01/reflection_01.tif",
+                      "bytes":  65512,
+                      "sha256":  "5e6152ae6c69a5440fe0ab695f923334eeea8c8e4aeb83c8026af21f59927b6e"
+                  },
+                  {
+                      "path":  "pro/lib/maps/patterns/reflection_02/reflection_02.tif",
+                      "bytes":  9894,
+                      "sha256":  "9ba57e5577a8e871369cdffe871205086f1bde9380f48ed9eead5bc6d1426ff2"
+                  },
+                  {
+                      "path":  "pro/lib/maps/patterns/speckles_01/speckles_01.tif",
+                      "bytes":  29066,
+                      "sha256":  "b0b3170576003572e1d367948869413747576c1cd052d3bb9ce3b302c038df9e"
+                  },
+                  {
+                      "path":  "pro/lib/maps/patterns/wood_01/wood_01.tif",
+                      "bytes":  149620,
+                      "sha256":  "7684b5d60c34512873af6e647dd6a44688a9ba779bfabb00262f373d9197eb7b"
+                  },
+                  {
+                      "path":  "pro/lib/maps/patterns/wood_02/wood_02.tif",
+                      "bytes":  139432,
+                      "sha256":  "93099c6c938def42806104435375d80471278e52323b501f02173106ecd9d176"
+                  },
+                  {
+                      "path":  "pro/lib/matlib/materials_generic.blend",
+                      "bytes":  1643504,
+                      "sha256":  "3e0867838db4af77325a5c426385025fa5c6ac5e71ac9457e32bdfc11adda7b6"
+                  },
+                  {
+                      "path":  "pro/lib/nodes/Better_Curve_Deform.blend",
+                      "bytes":  6168098,
+                      "sha256":  "346701fc954dedeabd2c35494619c6df41c2e09e88431e5bc29f0c50e66484fa"
+                  },
+                  {
+                      "path":  "pro/lib/nodes/CollisionAvoidance.blend",
+                      "bytes":  6454098,
+                      "sha256":  "3641f715019b2c14c4fc375ca67e6f84c0fa0ee2b4cc93a3577a125d8bfb38f4"
+                  },
+                  {
+                      "path":  "pro/lib/nodes/compositing.blend",
+                      "bytes":  174050342,
+                      "sha256":  "c3276220caf33e22db92e08bff6923098b5270dfa7dad9fc13ecfb5506226c30"
+                  },
+                  {
+                      "path":  "pro/lib/nodes/Curve_Deform_Iterative.blend",
+                      "bytes":  11287128,
+                      "sha256":  "77d3330d28136f9599e6e150b9e0d77adee21216679a63aa9d0895dc3d433d80"
+                  },
+                  {
+                      "path":  "pro/lib/nodes/rigging_misc.blend",
+                      "bytes":  7068548,
+                      "sha256":  "cb953bccad257b065d9ecb4f138ea0e0c2102967b4be7807ca9cb94b51af5582"
+                  },
+                  {
+                      "path":  "pro/lib/nodes/shading.blend",
+                      "bytes":  10175203,
+                      "sha256":  "f3249671c0768ce3250d46e5bc5d27d9b00e8c110d7d608c4e70394e22d53bd3"
+                  },
+                  {
+                      "path":  "pro/lib/nodes/utilities.blend",
+                      "bytes":  2556570,
+                      "sha256":  "a6967161bb7c986549a2e1bdd0dabb0d3d01915f8d2fae1ecf72d9b8e3fe89e4"
+                  },
+                  {
+                      "path":  "pro/lib/nodes/UV_Deform.blend",
+                      "bytes":  6124602,
+                      "sha256":  "aefc14f25234b4625bf71c7f6f65ae62dfa3c2559cde96028806ad0c6fbd7ee8"
+                  },
+                  {
+                      "path":  "pro/lib/props/arm_umbrella/arm_umbrella.blend",
+                      "bytes":  11476376,
+                      "sha256":  "0d240987071d887212747c7ff8b60c8f10a674146e221f42f3847326ed389e25"
+                  },
+                  {
+                      "path":  "pro/lib/props/inflatable_ramp/inflatable_ramp.blend",
+                      "bytes":  7793508,
+                      "sha256":  "95b971b60383e9024609bc31810ae59878eaa2bc8b3f91c5211eb50272d477a1"
+                  },
+                  {
+                      "path":  "pro/lib/props/pencil/pencil.blend",
+                      "bytes":  6541124,
+                      "sha256":  "dc73850371e85f876b1a0e812288c6c5ce7fa3d0dea8d3691f996778732e2c71"
+                  },
+                  {
+                      "path":  "pro/lib/props/rocket_exterior/rocket_exterior.blend",
+                      "bytes":  80198624,
+                      "sha256":  "91a0fb3b54d1c2110348fe475214923c1fb23f8f50cfa76f97acc461fa71ab7d"
+                  },
+                  {
+                      "path":  "pro/lib/props/screwdriver/screwdriver.blend",
+                      "bytes":  6692300,
+                      "sha256":  "d164ee2f477a785146ec89af63f637a1f1961e6eaa5f0d40c5714a35307fc351"
+                  },
+                  {
+                      "path":  "pro/lib/props/spanner/spanner.blend",
+                      "bytes":  6309760,
+                      "sha256":  "01c105f66b0a089e99ef281dce839aaad3ba657bb26300f0ca4e83f72028080c"
+                  },
+                  {
+                      "path":  "pro/lib/props/toolbox/toolbox.blend",
+                      "bytes":  6916197,
+                      "sha256":  "0857cb41bd2c8ed67d545fd4d4e668747330ebc3e2685e6f2bf39cb6586c4231"
+                  },
+                  {
+                      "path":  "pro/lib/scripts/lighting_rig_setup.blend",
+                      "bytes":  890668,
+                      "sha256":  "1385cb7d27a5f1b99fc6e6b15ebab48a7359cab8233fea7627f044a1469a1d52"
+                  },
+                  {
+                      "path":  "pro/lib/sets/barn/barn.blend",
+                      "bytes":  22483608,
+                      "sha256":  "321b96500376d3e4da39eca55f0fcbfa63f62b146c6b044f6eb72ef273b3117c"
+                  },
+                  {
+                      "path":  "pro/lib/sets/rocket_interior/maps/parachute_button.tif",
+                      "bytes":  220946,
+                      "sha256":  "d303b10d2004279a0ea1d4e5432dca5335f1eeea9b43e65b1042119ac75421a4"
+                  },
+                  {
+                      "path":  "pro/lib/sets/rocket_interior/maps/rocket_interior.detail.1001.tif",
+                      "bytes":  574069,
+                      "sha256":  "083f69d3b1869eeee0f958f0004f7985f6db5a446f3ad57b1b32d72544ea1e15"
+                  },
+                  {
+                      "path":  "pro/lib/sets/rocket_interior/maps/rocket_interior.detail.1002.tif",
+                      "bytes":  227027,
+                      "sha256":  "32c720400a18de065ff813b94f91c8ed69a51f6738e787d67aa8f460e4404d64"
+                  },
+                  {
+                      "path":  "pro/lib/sets/rocket_interior/maps/rocket_interior.shading.1001.tif",
+                      "bytes":  216959,
+                      "sha256":  "969698082c44812d16e325777d456284ef050e7c65450417986926cf38efce61"
+                  },
+                  {
+                      "path":  "pro/lib/sets/rocket_interior/rocket_interior.blend",
+                      "bytes":  106897940,
+                      "sha256":  "9c6c184af92af781278b9e357a0d228cb906cdd94ad35af9df9ccd69eb68ce98"
+                  },
+                  {
+                      "path":  "pro/lib/sets/rocket_interior/rocket_interior.pilot_chair.blend",
+                      "bytes":  9817430,
+                      "sha256":  "88401a76551d5d0d935ed5abb9ea75505610173f2436e7a76d0ad1e0653ac039"
+                  },
+                  {
+                      "path":  "promo/annecy_banner/annecy_banner.blend",
+                      "bytes":  49684984,
+                      "sha256":  "55b1d6a73531c4decf31ef345d24b4e90b882a9043a0f545084926a8395ca351"
+                  },
+                  {
+                      "path":  "promo/annecy_banner/maps/sky_splash.png",
+                      "bytes":  1068903,
+                      "sha256":  "00d88be2fbf65064ac79f03e49b25c122bc16095cab1f0ca9ddb7edde23ba3e3"
+                  },
+                  {
+                      "path":  "README.txt",
+                      "bytes":  203,
+                      "sha256":  "23c5a9e974e17c6d50003f708dd93b4c97a27f4acb4ee02e7b4c00d6a16349c0"
+                  }
+              ]
+}

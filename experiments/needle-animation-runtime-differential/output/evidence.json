@@ -1,0 +1,434 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-23T23:33:33.371Z",
+  "browser": "150.0.7871.129",
+  "url": "http://127.0.0.1:5173/experiments/needle-animation-runtime-differential/index.html",
+  "scope": {
+    "capabilityId": "NDL-ANM-001",
+    "claim": "Needle runtime-only animation/deformation differential",
+    "addonPipelineEndToEndCoherence": false,
+    "reason": "The shared GLB was exported by Blendlink, then independently loaded and played through the exact add-on-selected Needle runtime package stack."
+  },
+  "versions": {
+    "needleEngine": "5.1.4",
+    "projectThreePackage": "@needle-tools/three@0.169.21",
+    "engineThreePackage": "@needle-tools/three@0.169.19",
+    "vite": "7.3.6",
+    "playwright": "1.60.0"
+  },
+  "coherentTree": {
+    "command": "npm ls --all",
+    "exitCode": 0,
+    "outputLines": 746,
+    "outputSha256": "a3ed26ed83bdce3735b683a401c1a3a562fc2000a5a564fd4166df8648a6adeb"
+  },
+  "glbStructure": {
+    "extensionsUsed": [],
+    "extensionsRequired": [],
+    "containsNeedleComponents": false,
+    "animationNames": [
+      "RigMotion",
+      "MorphMotion",
+      "TransformMotion"
+    ]
+  },
+  "sources": {
+    "experimentPage": {
+      "path": "experiments/needle-animation-runtime-differential/index.html",
+      "sha256": "52c632db71618678c9591c2bf9ba0e7bf75e93b31fb4a239d82b8d4c1ed9fc28"
+    },
+    "experimentBrowser": {
+      "path": "experiments/needle-animation-runtime-differential/main.ts",
+      "sha256": "c3f262e277b4047f7798c5ce0033da85c00ff86233bb292a4a256258fc47b591"
+    },
+    "experimentRunner": {
+      "path": "experiments/needle-animation-runtime-differential/run.mjs",
+      "sha256": "04597576957652a8c97d992597381898b3c45522eb2f8ae04ec23e274478ad95"
+    },
+    "experimentResearch": {
+      "path": "experiments/needle-animation-runtime-differential/README.md",
+      "sha256": "cf8f65f4aa622acec0d42d209277d92262711376ee5a0d69cb54dab6b7da0dba"
+    },
+    "coherentPackage": {
+      "path": "experiments/needle-coherent-addon-1.4.2/package.json",
+      "sha256": "41753af69993e942ded85003cddd81f861cc0eb215b28fd42653a73aba89debc"
+    },
+    "coherentLock": {
+      "path": "experiments/needle-coherent-addon-1.4.2/package-lock.json",
+      "sha256": "70b4564d2a569b78e0fd47c9f33e6d5ba87a747717b9c898790b451d5b7febd5"
+    },
+    "needleEngineManifest": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/package.json",
+      "sha256": "522f0a5aa64c22fe76a5d7c6fd0f039fce396eb841324512862c0d704bcacb38"
+    },
+    "needleEngineEntry": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/lib/needle-engine.js",
+      "sha256": "c6fefdeda5137b38a611c587bca9c93f9f56068ffdf88c0d2b2d3bd0a1bae261"
+    },
+    "needleEngineConstants": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/src/engine/engine_constants.ts",
+      "sha256": "2c96b074cf105e82d60f9b81a328d7bbc23e0ca1b7009dcaebead54b20a0fb3d"
+    },
+    "needleWebComponent": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/src/engine/webcomponents/needle-engine.ts",
+      "sha256": "16ffc3bd7ce8b107f81ffc9507d86519f7d075637f6b9ec5bfcc1e39d59f539f"
+    },
+    "needleLoader": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/src/engine/engine_loaders.ts",
+      "sha256": "3df0fbf23e1d36451cc7827fdbc26bb8c4a594d91dfd358526aca4b8ef6d9a73"
+    },
+    "needleAnimationAutoplay": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/src/engine-components/AnimationUtilsAutoplay.ts",
+      "sha256": "5461d15f7c747a627a009c27c9b714393daf45a24aa47eeaf4718bc01dbb3a12"
+    },
+    "needleAnimationComponent": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/src/engine-components/Animation.ts",
+      "sha256": "e2d49582ac429b8a40a48c9b1bca767dc38184c9cd6a38c762142b18ab8155f4"
+    },
+    "needleAnimationRegistry": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/src/engine/engine_animation.ts",
+      "sha256": "ffefe5c590222a3de63098df4206840b74f230de9ecad0a48f643458c3d5cb65"
+    },
+    "needleContext": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/src/engine/engine_context.ts",
+      "sha256": "84a02111e67f81b67beb023455de175c8567933a04949889b51a0cb38cafb509"
+    },
+    "projectThreeManifest": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/three/package.json",
+      "sha256": "65fe3f7a609ac1145cbc8e58d0cfe254f2cabb16f5e3c41acf68f0cac4ec64a7"
+    },
+    "engineThreeManifest": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/node_modules/three/package.json",
+      "sha256": "17bdbf08346fcbab12c79ca75847a0e90f26be57a0faac241a4a3564faa9e463"
+    },
+    "engineThreeAnimationMixer": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/node_modules/three/src/animation/AnimationMixer.js",
+      "sha256": "e697538dd75f36f18b3e7d71382ce6a57160232c1e7c016a659360289d5511eb"
+    },
+    "engineThreeSkinnedMesh": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/node_modules/three/src/objects/SkinnedMesh.js",
+      "sha256": "39d3412a75af39deb8eaafb97871fe9e2c05dfdd2e334f475c08e39b6c45907d"
+    },
+    "engineDracoDecoder": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/node_modules/three/examples/jsm/libs/draco/gltf/draco_decoder.js",
+      "sha256": "a47cd7c84911c5175bb0511c01ba41ddafb71873fd391f055def514398f5e7c4"
+    },
+    "engineDracoWasm": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/node_modules/three/examples/jsm/libs/draco/gltf/draco_decoder.wasm",
+      "sha256": "a680d927bed9cb864ddbd63521868891af2bfbe755092761b4837487618df8ac"
+    },
+    "engineBasisTranscoder": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/node_modules/three/examples/jsm/libs/basis/basis_transcoder.js",
+      "sha256": "9042facffa0b63ec1c897919c5db43f000c3dee03d9698b6b2465bb06446d298"
+    },
+    "engineBasisWasm": {
+      "path": "experiments/needle-coherent-addon-1.4.2/node_modules/@needle-tools/engine/node_modules/three/examples/jsm/libs/basis/basis_transcoder.wasm",
+      "sha256": "6cf17dc889352c42e9acf8897107978d127005fe3386c36a0e3845e27967630a"
+    },
+    "sharedGlb": {
+      "path": "experiments/animation-deformation-browser/output/animation-deformation-fixture.glb",
+      "sha256": "4a1a84533c19c890a926fd8e593d22da6672537f07deb548f7293ef036e6c318"
+    },
+    "sharedBlenderOracle": {
+      "path": "experiments/animation-deformation-browser/output/blender-reference.json",
+      "sha256": "b9fc192526357c724028f45108df74ee24edf83139d0b6065f5be9d5162ecc17"
+    },
+    "blendlinkDifferentialEvidence": {
+      "path": "experiments/animation-deformation-browser/output/evidence.json",
+      "sha256": "42dca794a0112a10277cc0bf09cfab63c62c49f79f5b59f69cdc136d9964c889"
+    }
+  },
+  "artifacts": {
+    "sharedBlendSha256": "8751613018d1e8d32221841fc9567144b66ea269cde6183a3851d7d9d50254f3",
+    "sharedGlbSha256": "4a1a84533c19c890a926fd8e593d22da6672537f07deb548f7293ef036e6c318",
+    "sharedReferenceSha256": "b9fc192526357c724028f45108df74ee24edf83139d0b6065f5be9d5162ecc17",
+    "screenshotSha256": "98420ae23c7c12104aa2a15ebc8faa818b58fcca2d09117b7fff7a887a718ccf",
+    "canvasSha256": "130506c8bffdbc67b10f57d511887db80987f145e5172a8fd3e752cccb617dcd"
+  },
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+      "location": {
+        "url": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_decoder.js?range=true",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+      "location": {
+        "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=block",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+      "location": {
+        "url": "https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+      "location": {
+        "url": "https://needle.tools/api/v1/rum/t",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+      "location": {
+        "url": "https://needle.tools/api/v1/rum/t",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failedRequests": [
+    {
+      "url": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_decoder.js?range=true",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=block",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    },
+    {
+      "url": "https://needle.tools/api/v1/rum/t",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    },
+    {
+      "url": "https://needle.tools/api/v1/rum/t",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    }
+  ],
+  "httpErrors": [],
+  "expectedOfflineExternalFailures": {
+    "console": 5,
+    "requests": 5
+  },
+  "unexpectedConsoleErrors": [],
+  "unexpectedFailedRequests": [],
+  "evidence": {
+    "engineAdvertisedVersion": "0.0.0",
+    "engineThreeRevision": "169.19",
+    "projectThreeRevision": "169.20",
+    "globalThreeRevision": "169.19",
+    "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "webglRenderer": "WebKit WebGL",
+    "loadingPath": "<needle-engine src autoplay>",
+    "playbackPath": "Animation.play(exclusive:false)/pause/time/update",
+    "component": {
+      "constructorName": "Animation",
+      "autoCreatedWithoutNeedleComponentMetadata": true,
+      "initialAutoplayActionNames": [
+        "TransformMotion"
+      ],
+      "animationNames": [
+        "RigMotion",
+        "MorphMotion",
+        "TransformMotion"
+      ],
+      "actionCount": 3,
+      "coordinatedClipCount": 3,
+      "playReturnedPromise": true,
+      "registeredMixerCount": 1
+    },
+    "crossCopy": {
+      "projectAndEngineObject3DConstructorsSame": false,
+      "projectAndEngineAnimationMixerConstructorsSame": false,
+      "loadedRootIsEngineObject3D": true,
+      "loadedRootIsProjectObject3D": false,
+      "skinnedMeshIsEngineSkinnedMesh": true,
+      "skinnedMeshIsProjectSkinnedMesh": false,
+      "componentMixerIsEngineAnimationMixer": true,
+      "componentMixerIsProjectAnimationMixer": false,
+      "projectVectorAcceptedByLoadedObject": true,
+      "projectVectorPositionDelta": 0
+    },
+    "clipNames": [
+      "RigMotion",
+      "MorphMotion",
+      "TransformMotion"
+    ],
+    "clipDurations": [
+      1.0416666269302368,
+      1.0416666269302368,
+      1.0416666269302368
+    ],
+    "animationTrackCount": 9,
+    "samples": [
+      {
+        "frame": 1,
+        "timeSeconds": 0.041666666666666664,
+        "transformPositionError": 0,
+        "transformQuaternionAngleRadians": 0,
+        "morphInfluenceError": 0,
+        "deformedPointHausdorff": 0,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      },
+      {
+        "frame": 4.5,
+        "timeSeconds": 0.1875,
+        "transformPositionError": 5.972094663188382e-8,
+        "transformQuaternionAngleRadians": 0.0000016170334775746948,
+        "morphInfluenceError": 7.450580596923828e-9,
+        "deformedPointHausdorff": 8.924432083143596e-7,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      },
+      {
+        "frame": 7,
+        "timeSeconds": 0.2916666666666667,
+        "transformPositionError": 1.6900822542294398e-8,
+        "transformQuaternionAngleRadians": 0.000005250793702322261,
+        "morphInfluenceError": 2.980230823235175e-8,
+        "deformedPointHausdorff": 5.037779322048238e-8,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      },
+      {
+        "frame": 10.5,
+        "timeSeconds": 0.4375,
+        "transformPositionError": 6.728765319357977e-8,
+        "transformQuaternionAngleRadians": 0.00001854875572584217,
+        "morphInfluenceError": 0,
+        "deformedPointHausdorff": 0.0000024948608249076833,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      },
+      {
+        "frame": 13,
+        "timeSeconds": 0.5416666666666666,
+        "transformPositionError": 3.3801644452895215e-8,
+        "transformQuaternionAngleRadians": 0,
+        "morphInfluenceError": 5.96046164647035e-8,
+        "deformedPointHausdorff": 1.604602159748293e-7,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      },
+      {
+        "frame": 16.5,
+        "timeSeconds": 0.6875,
+        "transformPositionError": 3.003425057343598e-8,
+        "transformQuaternionAngleRadians": 0.000020675359814108688,
+        "morphInfluenceError": 2.9802322387695312e-8,
+        "deformedPointHausdorff": 0.000003404018437687732,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      },
+      {
+        "frame": 19,
+        "timeSeconds": 0.7916666666666666,
+        "transformPositionError": 3.0871903293872925e-8,
+        "transformQuaternionAngleRadians": 0,
+        "morphInfluenceError": 3.576276419448021e-8,
+        "deformedPointHausdorff": 7.976173761898318e-8,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      },
+      {
+        "frame": 22.5,
+        "timeSeconds": 0.9375,
+        "transformPositionError": 4.280032699210963e-8,
+        "transformQuaternionAngleRadians": 0.0007764617121151781,
+        "morphInfluenceError": 0,
+        "deformedPointHausdorff": 0.000011744743372712443,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      },
+      {
+        "frame": 25,
+        "timeSeconds": 1.0416666666666667,
+        "transformPositionError": 0,
+        "transformQuaternionAngleRadians": 4.2146848510894035e-8,
+        "morphInfluenceError": 0,
+        "deformedPointHausdorff": 7.6084936842137e-8,
+        "browserGeometryVertices": 6,
+        "browserDeformedUniquePoints": 6
+      }
+    ],
+    "maxima": {
+      "transformPositionError": 6.728765319357977e-8,
+      "transformQuaternionAngleRadians": 0.0007764617121151781,
+      "morphInfluenceError": 5.96046164647035e-8,
+      "deformedPointHausdorff": 0.000011744743372712443
+    },
+    "keyMaxima": {
+      "transformPositionError": 3.3801644452895215e-8,
+      "transformQuaternionAngleRadians": 0.000005250793702322261,
+      "morphInfluenceError": 5.96046164647035e-8,
+      "deformedPointHausdorff": 1.604602159748293e-7
+    },
+    "subframeMaxima": {
+      "transformPositionError": 6.728765319357977e-8,
+      "transformQuaternionAngleRadians": 0.0007764617121151781,
+      "morphInfluenceError": 2.9802322387695312e-8,
+      "deformedPointHausdorff": 0.000011744743372712443
+    },
+    "pixels": {
+      "total": 388800,
+      "nonBackground": 24913,
+      "chromatic": 388631,
+      "corner": [
+        71,
+        86,
+        113,
+        255
+      ]
+    }
+  },
+  "disposal": {
+    "elementDisconnected": true,
+    "elementContextCleared": true,
+    "rendererClearedFromContext": true,
+    "registeredMixersAfterDispose": 0,
+    "actionsRunningAfterDispose": 0
+  },
+  "assertions": {
+    "exactNeedleEnginePackage": true,
+    "exactProjectAndNestedThreePackages": true,
+    "sameGlbAndBlenderOracleAsBlendlinkDifferential": true,
+    "needleWebComponentLoader": true,
+    "metadataFreeNeedleAnimationFallback": true,
+    "defaultAutoplayStartsOneOfThreeIndependentClips": true,
+    "developerCoordinatedAllClipsNonExclusive": true,
+    "needleAnimationComponentPlayback": true,
+    "nineFixedTimesIncludingFourSubframes": true,
+    "objectTranslationAndQuaternion": true,
+    "animatedMorphInfluence": true,
+    "twoBoneSkinnedWorldPointSet": true,
+    "crossCopyIdentityRecorded": true,
+    "crossCopyVectorInteropMeasured": true,
+    "browserRenderedNonblankArtifact": true,
+    "disposalCompleted": true
+  },
+  "limits": [
+    "Runtime-only evidence: the GLB is the Blendlink production export, not an export produced by the Needle Blender add-on or Needle build pipeline.",
+    "The GLB intentionally has no NEEDLE_components metadata. Needle Engine autoplay creates its Animation component through AnimationUtils.autoplayAnimations.",
+    "The test controls a runtime-created Needle Animation component after load. It does not exercise AnimatorController, PlayableDirector, or generated project scripts.",
+    "Chromium/ANGLE WebGL evidence only; Firefox, WebKit, mobile GPUs, physical GPUs, WebGPU, CDN/base-path, and strict CSP are not covered.",
+    "Nine times cover five authored keys and four fractional subframes. Constraints, drivers, NLA strip blending, additive clips, root motion, topology-changing modifiers, VAT, and KHR_animation_pointer remain outside it.",
+    "The project and Engine package tree intentionally contains two @needle-tools/three patch versions. Constructor identity and structural Vector3 interoperability are measured; no general cross-copy safety claim is made.",
+    "External font or telemetry request failures, if any, are recorded rather than treated as animation/deformation failures. Page and runtime errors still fail the gate."
+  ]
+}

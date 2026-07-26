@@ -1,0 +1,626 @@
+{
+  "schemaVersion": 1,
+  "classification": "untouched Blendlink Final planner result; no source mutation or adapter",
+  "command": "node \"C:\\\\Users\\\\micha\\\\Documents\\\\GitHub\\\\blendlink\\\\packages\\\\blendlink\\\\dist\\\\cli.js\" \"plan\" \"dogwalkUntouched\" \"--json\"",
+  "cwd": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\dogwalk-zero-config-audit",
+  "exitCode": 1,
+  "signal": null,
+  "stderr": "",
+  "result": {
+    "scenes": [
+      {
+        "scene": "dogwalkUntouched",
+        "quality": "final",
+        "plan": null,
+        "inspection": {
+          "errors": [
+            {
+              "code": "material.used-needs-bake",
+              "material": "birch_branches_albedo_01",
+              "usedBy": [
+                "GEO-birch_branch-001",
+                "GEO-birch_branch-002",
+                "GEO-birch_branch-003",
+                "GEO-birch_branch-004",
+                "GEO-birch_branch-005",
+                "GEO-birch_branch-006",
+                "GEO-birch_branch-007",
+                "GEO-birch_branch-008",
+                "GEO-birch_branch-009",
+                "GEO-birch_branch-010",
+                "GEO-birch_branch-011",
+                "GEO-birch_branch-012",
+                "GEO-birch_branch-013",
+                "GEO-birch_branch-014",
+                "GEO-birch_branch-015"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "birch_tree",
+              "usedBy": [
+                "GEO-birch_tree_002",
+                "GEO-birch_tree_002_folds",
+                "GEO-birch_tree_004",
+                "GEO-birch_tree_004_folded",
+                "GEO-birch_tree_005",
+                "GEO-birch_tree_005_unfolded"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "birch_tree_fade",
+              "usedBy": [
+                "GEO-birch_tree_002.001",
+                "GEO-birch_tree_004.001",
+                "GEO-birch_tree_005_unfolded.001"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "birch_tree_outer_layer",
+              "usedBy": [
+                "GEO-birch_tree_002_folds.001",
+                "GEO-birch_tree_004_folded.001"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "boulder_cut",
+              "usedBy": [
+                "GEO-boulder_002"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "bushlets_blue_fan",
+              "usedBy": [
+                "GEO-bushlets_blue_fan_002",
+                "GEO-bushlets_blue_fan_002_01",
+                "GEO-bushlets_blue_fan_004",
+                "GEO-bushlets_blue_fan_004_01"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "chocomel",
+              "usedBy": [
+                "GEO-chocomel-ears",
+                "GEO-chocomel-eyes",
+                "GEO-chocomel-fur_cape",
+                "GEO-chocomel-fur_collar",
+                "GEO-chocomel-fur_skirt",
+                "GEO-chocomel-hair_top-L",
+                "GEO-chocomel-hair_top-R",
+                "GEO-chocomel-head",
+                "GEO-chocomel-jaw",
+                "GEO-chocomel-nose",
+                "GEO-chocomel-tail",
+                "GEO-chocomel-tongue",
+                "GEO-chocomel-under_side",
+                "GEO-chocomel-upper_mouth",
+                "GEO-chocomel_leg-front",
+                "GEO-chocomel_leg-rear"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "dogwood",
+              "usedBy": [
+                "GEO-dogwood_001",
+                "GEO-dogwood_002",
+                "GEO-dogwood_003",
+                "GEO-dogwood_004",
+                "GEO-dogwood_005",
+                "GEO-dogwood_006",
+                "GEO-dogwood_007",
+                "GEO-dogwood_008"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "grass",
+              "usedBy": [
+                "GEO-grass_001",
+                "GEO-grass_004",
+                "GEO-grass_006",
+                "GEO-grass_009",
+                "GEO-grass_010",
+                "GEO-grass_013",
+                "GEO-grass_015"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "leash_handle-base",
+              "usedBy": [
+                "GEO-leash",
+                "GEO-leash_handle",
+                "GEO-leash_hook"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "leash_handle-button",
+              "usedBy": [
+                "GEO-leash_handle-button"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "leash_handle-metal",
+              "usedBy": [
+                "GEO-leash_hook"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "pinda",
+              "usedBy": [
+                "GEO-pinda-arm",
+                "GEO-pinda-eye",
+                "GEO-pinda-eyebrows",
+                "GEO-pinda-hair",
+                "GEO-pinda-hat",
+                "GEO-pinda-hat_pom_pom",
+                "GEO-pinda-head",
+                "GEO-pinda-leg",
+                "GEO-pinda-nose",
+                "GEO-pinda-scarf",
+                "GEO-pinda-shoe",
+                "GEO-pinda-thumb",
+                "GEO-pinda-torso"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "pinda_tears",
+              "usedBy": [
+                "GEO-tears-1-L",
+                "GEO-tears-1-R",
+                "GEO-tears-2-L",
+                "GEO-tears-2-R",
+                "GEO-tears-3-L",
+                "GEO-tears-3-R"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "pinda-mouths",
+              "usedBy": [
+                "GEO-mouth-01",
+                "GEO-mouth-02",
+                "GEO-mouth-03",
+                "GEO-mouth-04",
+                "GEO-mouth-05",
+                "GEO-mouth-06",
+                "GEO-mouth-07",
+                "GEO-mouth-08",
+                "GEO-mouth-09",
+                "GEO-mouth-10",
+                "GEO-mouth-11",
+                "GEO-mouth-12",
+                "GEO-mouth-13",
+                "GEO-mouth-14",
+                "GEO-mouth-15",
+                "GEO-mouth-16",
+                "GEO-mouth-17",
+                "GEO-mouth-18",
+                "GEO-mouth-19",
+                "GEO-mouth-20",
+                "GEO-mouth-21",
+                "GEO-mouth-22",
+                "GEO-mouth-23",
+                "GEO-mouth-24"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "roots",
+              "usedBy": [
+                "GEO-root_02",
+                "GEO-root_03"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "shadow_caster",
+              "usedBy": [
+                "LGT-shadow_caster",
+                "LGT-shadow_caster.001",
+                "LGT-shadow_caster.002"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "snowman_branch",
+              "usedBy": [
+                "GEO-snowman-stick_arm.L.001",
+                "GEO-snowman-stick_arm.R.001",
+                "GEO-snowman-stick_arm_branch.001"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "snowman_pebble",
+              "usedBy": [
+                "GEO-snowman-eye_pebble.L.001",
+                "GEO-snowman-eye_pebble.R.001",
+                "GEO-snowman-pebble-button.003",
+                "GEO-snowman-pebble-button.004",
+                "GEO-snowman-pebble-button.005",
+                "GEO-snowman-pebble-mouth.006",
+                "GEO-snowman-pebble-mouth.007",
+                "GEO-snowman-pebble-mouth.008",
+                "GEO-snowman-pebble-mouth.009",
+                "GEO-snowman-pebble-mouth.010",
+                "GEO-snowman-pebble-mouth.011"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "snowman_snow",
+              "usedBy": [
+                "GEO-snoman-head.001",
+                "GEO-snowman-body.001"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "treat",
+              "usedBy": [
+                "GEO-treat"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            },
+            {
+              "code": "material.used-needs-bake",
+              "material": "tree_stump_fade",
+              "usedBy": [
+                "GEO-pine_tree-001.013",
+                "GEO-pine_tree-001.015",
+                "GEO-pine_tree-001.016",
+                "GEO-pine_tree-001.017",
+                "GEO-pine_tree-001.018"
+              ],
+              "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+              "reasons": [
+                "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+                "Transparent BSDF is not a portable stock glTF material node.",
+                "Mix is not a portable stock glTF material node.",
+                "Math is not a portable stock glTF material node.",
+                "Map Range is not a portable stock glTF material node.",
+                "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+                "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+                "Vector Math is not a portable stock glTF material node.",
+                "Clamp is not a portable stock glTF material node.",
+                "Geometry is not a portable stock glTF material node.",
+                "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+                "Subsurface Scale is authored but is omitted by glTF."
+              ]
+            }
+          ],
+          "warnings": []
+        }
+      }
+    ]
+  },
+  "identities": {
+    "cli": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\cli.js",
+      "sha256": "c9ee7428199d964f5e1599fb913f4267772ab85aec76730c780086c3be2f47a9"
+    },
+    "exporter": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\blender\\export_scene.py",
+      "sha256": "3ef0548c82eec2bfc08345e2fe937e94008300742a00e4e36694c175cd83625b"
+    },
+    "source": {
+      "path": "C:/Users/micha/Downloads/blender-4.5-splash.blend",
+      "sha256": "7f8718cfd89baf59151cc4ba431eeab38b9ff260ffa0054d93293f228a70cc36"
+    }
+  }
+}

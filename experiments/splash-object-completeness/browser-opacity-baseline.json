@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "case": "splash-opacity-baseline",
+  "url": "http://127.0.0.1:4192/?variant=baseline",
+  "page": {
+    "status": 200
+  },
+  "canvas": {
+    "cssWidth": 1200,
+    "cssHeight": 600,
+    "width": 1200,
+    "height": 600,
+    "webgl": {
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "renderer": "WebKit WebGL",
+      "contextLost": false
+    }
+  },
+  "glb": [
+    {
+      "url": "http://127.0.0.1:4192/models/blender40SplashSelectedSky/42b25ffd9077ac2705bf18d34c2bb5ce779ebf112fa8edebd41c3d390dbbd53b/blender40SplashSelectedSky.glb?v=5f35c83835716a73",
+      "status": 200,
+      "ok": true,
+      "contentType": "model/gltf-binary",
+      "bytes": 39823320,
+      "sha256": "5f35c83835716a735deb39512013d3ada0d720b661cda48df44bf9830ba30d20",
+      "hashSource": "verification-fetch",
+      "hashFetchStatus": 200,
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache"
+    }
+  ],
+  "screenshot": {
+    "file": "browser-opacity-baseline.png",
+    "width": 1200,
+    "height": 600,
+    "effectivelyMonochrome": false,
+    "entropy": 6.6459517296298145,
+    "rgbStandardDeviations": [
+      58.67143677224285,
+      66.73400700498351,
+      69.05074535596015
+    ]
+  },
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": [],
+    "http": [],
+    "ignoredConsole": [
+      {
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "url": "http://127.0.0.1:4192/favicon.ico"
+      }
+    ],
+    "ignoredHttp": []
+  },
+  "assertions": {
+    "pageHttpSuccess": true,
+    "exactlyOneGlbLoaded": true,
+    "glbHttpSuccess": true,
+    "glbBodyCaptured": true,
+    "canvasNonzero": true,
+    "webglAvailable": true,
+    "visiblyNonblank": true,
+    "noRelevantBrowserErrors": true
+  },
+  "passed": true
+}

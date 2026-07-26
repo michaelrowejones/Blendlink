@@ -6,8 +6,8 @@ import bpy
 
 
 def _update_category(self, context):
-    from . import ui
-    ui.re_register_category(self.category)
+    from . import presentation_ui
+    presentation_ui.re_register_category(self.category)
 
 
 class BlendlinkPreferences(bpy.types.AddonPreferences):

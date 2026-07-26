@@ -1,0 +1,1633 @@
+{
+  "schemaVersion": 1,
+  "command": "node experiments/blender-52-exporter-cells/run.mjs",
+  "sourceIdentity": "output/source-identity.json",
+  "generation": {
+    "blender": {
+      "buildDate": "2026-07-14",
+      "buildHash": "fbe6228777e7",
+      "version": "5.2.0 LTS",
+      "versionTuple": [
+        5,
+        2,
+        0
+      ]
+    },
+    "fixtures": [
+      {
+        "blend": "fixtures/portable-factors.blend",
+        "materials": [
+          "Cell.AlphaBlend",
+          "Cell.Anisotropy",
+          "Cell.Clearcoat",
+          "Cell.CorePrincipled",
+          "Cell.EmissiveStrength",
+          "Cell.SheenFullWeight",
+          "Cell.Specular",
+          "Cell.TextureTransform",
+          "Cell.TransmissionVolume",
+          "Cell.Unlit"
+        ],
+        "name": "portable-factors",
+        "objects": [
+          "AlphaBlend",
+          "Anisotropy",
+          "Camera",
+          "Clearcoat",
+          "CorePrincipled",
+          "EmissiveStrength",
+          "Key",
+          "SheenFullWeight",
+          "Specular",
+          "TextureTransform",
+          "TransmissionVolume",
+          "Unlit"
+        ],
+        "stockGlb": "stock/portable-factors.glb"
+      },
+      {
+        "blend": "fixtures/portable-alpha-mask.blend",
+        "materials": [
+          "Cell.AlphaMask"
+        ],
+        "name": "portable-alpha-mask",
+        "objects": [
+          "AlphaMask",
+          "Camera",
+          "Key"
+        ],
+        "stockGlb": "stock/portable-alpha-mask.glb"
+      },
+      {
+        "blend": "fixtures/unsupported-procedural.blend",
+        "materials": [
+          "Cell.UnsupportedNoise"
+        ],
+        "name": "unsupported-procedural",
+        "objects": [
+          "Camera",
+          "Key",
+          "UnsupportedNoise"
+        ],
+        "stockGlb": "stock/unsupported-procedural.glb"
+      }
+    ],
+    "gltfExporter": {
+      "blInfo": {
+        "author": "Blender Foundation, Khronos Group",
+        "name": "glTF 2.0 format",
+        "support": "OFFICIAL"
+      },
+      "version": "5.2.39"
+    },
+    "needleEquivalentStockExportArgs": {
+      "check_existing": false,
+      "export_animations": true,
+      "export_apply": true,
+      "export_cameras": true,
+      "export_format": "GLB",
+      "export_image_format": "AUTO",
+      "export_import_convert_lighting_mode": "COMPAT",
+      "export_jpeg_quality": 100,
+      "export_lights": true,
+      "gltf_export_id": "Needle Engine",
+      "use_active_scene": true,
+      "use_visible": false
+    },
+    "schemaVersion": 1
+  },
+  "stock": {
+    "portable-factors": {
+      "path": "output/stock/portable-factors.glb",
+      "bytes": 19192,
+      "sha256": "ae8f231eb6294831e371aad9ec3477a3b18a0971264e5bd7772bd1d18b65c27d",
+      "inspection": {
+        "asset": {
+          "generator": "Khronos glTF Blender I/O v5.2.39",
+          "version": "2.0"
+        },
+        "extensionsUsed": [
+          "KHR_lights_punctual",
+          "KHR_materials_anisotropy",
+          "KHR_materials_clearcoat",
+          "KHR_materials_dispersion",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_iridescence",
+          "KHR_materials_sheen",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_materials_unlit",
+          "KHR_materials_volume",
+          "KHR_texture_transform"
+        ],
+        "extensionsRequired": [
+          "KHR_lights_punctual",
+          "KHR_texture_transform"
+        ],
+        "materials": [
+          {
+            "name": "Cell.AlphaBlend",
+            "alphaMode": "BLEND",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.8199999928474426,
+                0.18000000715255737,
+                0.11999999731779099,
+                0.3799999952316284
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          },
+          {
+            "name": "Cell.Anisotropy",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6800000071525574,
+                0.699999988079071,
+                0.7300000190734863,
+                1
+              ],
+              "metallicFactor": 0.8500000238418579,
+              "roughnessFactor": 0.23999999463558197
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_anisotropy": {
+                "anisotropyStrength": 0.6499999761581421,
+                "anisotropyRotation": 1.2566370801612687
+              }
+            }
+          },
+          {
+            "name": "Cell.Clearcoat",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.11999999731779099,
+                0.20000000298023224,
+                0.7200000286102295,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_clearcoat": {
+                "clearcoatFactor": 0.699999988079071,
+                "clearcoatRoughnessFactor": 0.1599999964237213
+              }
+            }
+          },
+          {
+            "name": "Cell.CorePrincipled",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.18000000715255737,
+                0.41999998688697815,
+                0.800000011920929,
+                1
+              ],
+              "metallicFactor": 0.3499999940395355,
+              "roughnessFactor": 0.27000001072883606
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          },
+          {
+            "name": "Cell.EmissiveStrength",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.009999999776482582,
+                0.009999999776482582,
+                0.009999999776482582,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": [
+              0.22222223142047012,
+              0.5,
+              1
+            ],
+            "extensions": {
+              "KHR_materials_emissive_strength": {
+                "emissiveStrength": 3.5999999046325684
+              }
+            }
+          },
+          {
+            "name": "Cell.SheenFullWeight",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.1599999964237213,
+                0.05999999865889549,
+                0.029999999329447746,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_sheen": {
+                "sheenColorFactor": [
+                  0.8199999928474426,
+                  0.2800000011920929,
+                  0.11999999731779099
+                ],
+                "sheenRoughnessFactor": 0.41999998688697815
+              }
+            }
+          },
+          {
+            "name": "Cell.Specular",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5799999833106995,
+                0.12999999523162842,
+                0.46000000834465027,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.6000000238418579,
+                "specularColorFactor": [
+                  0.7400000095367432,
+                  0.9200000166893005,
+                  1
+                ]
+              }
+            }
+          },
+          {
+            "name": "Cell.TextureTransform",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorTexture": {
+                "extensions": {
+                  "KHR_texture_transform": {
+                    "offset": [
+                      0.10223989097508102,
+                      0.3973317571986347
+                    ],
+                    "rotation": 0.30000001192092896,
+                    "scale": [
+                      2,
+                      0.5
+                    ]
+                  }
+                },
+                "index": 0
+              },
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          },
+          {
+            "name": "Cell.TransmissionVolume",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": false,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6000000238418579,
+                0.8299999833106995,
+                0.9200000166893005,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.10000000149011612
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_transmission": {
+                "transmissionFactor": 0.8199999928474426
+              },
+              "KHR_materials_volume": {
+                "attenuationColor": [
+                  0.6200000047683716,
+                  0.800000011920929,
+                  0.949999988079071
+                ],
+                "attenuationDistance": 4.999999925494195,
+                "thicknessFactor": 0.44999998807907104
+              },
+              "KHR_materials_iridescence": {
+                "iridescenceIor": 1.4199999570846558,
+                "iridescenceFactor": 0.6399999856948853,
+                "iridescenceThicknessMaximum": 460
+              },
+              "KHR_materials_dispersion": {
+                "dispersion": 0.18000000715255737
+              },
+              "KHR_materials_ior": {
+                "ior": 1.3300000429153442
+              }
+            }
+          },
+          {
+            "name": "Cell.Unlit",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.07999999821186066,
+                0.7200000286102295,
+                0.30000001192092896,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.9
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_unlit": {}
+            }
+          }
+        ],
+        "threeMaterials": [
+          {
+            "name": "Cell.AlphaBlend",
+            "type": "MeshStandardMaterial",
+            "transparent": true,
+            "opacity": 0.38,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.Anisotropy",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0.85000002,
+            "roughness": 0.23999999,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "attenuationDistance": null,
+            "sheen": 0,
+            "sheenRoughness": 1,
+            "specularIntensity": 1,
+            "anisotropy": 0.64999998,
+            "anisotropyRotation": 1.25663708,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "dispersion": 0,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.Clearcoat",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "clearcoat": 0.69999999,
+            "clearcoatRoughness": 0.16,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "attenuationDistance": null,
+            "sheen": 0,
+            "sheenRoughness": 1,
+            "specularIntensity": 1,
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "dispersion": 0,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.CorePrincipled",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0.34999999,
+            "roughness": 0.27000001,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.EmissiveStrength",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 3.5999999,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.SheenFullWeight",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "attenuationDistance": null,
+            "sheen": 1,
+            "sheenRoughness": 0.41999999,
+            "specularIntensity": 1,
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "dispersion": 0,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.Specular",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "attenuationDistance": null,
+            "sheen": 0,
+            "sheenRoughness": 1,
+            "specularIntensity": 0.60000002,
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "dispersion": 0,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.TextureTransform",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 1,
+            "hasMap": true,
+            "mapTransform": {
+              "offset": [
+                0.10223989,
+                0.39733176
+              ],
+              "repeat": [
+                2,
+                0.5
+              ],
+              "rotation": 0.30000001,
+              "channel": 0
+            }
+          },
+          {
+            "name": "Cell.TransmissionVolume",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.1,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "transmission": 0.81999999,
+            "thickness": 0.44999999,
+            "ior": 1.33000004,
+            "attenuationDistance": 4.99999993,
+            "sheen": 0,
+            "sheenRoughness": 1,
+            "specularIntensity": 1,
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "iridescence": 0.63999999,
+            "iridescenceIOR": 1.41999996,
+            "dispersion": 0.18000001,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.Unlit",
+            "type": "MeshBasicMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "hasMap": false,
+            "mapTransform": null
+          }
+        ]
+      }
+    },
+    "portable-alpha-mask": {
+      "path": "output/stock/portable-alpha-mask.glb",
+      "bytes": 3232,
+      "sha256": "5c8c57460d18c09f56722f95a577f674fb65bc32852fb95b9fb2ccb2c03095ba",
+      "inspection": {
+        "asset": {
+          "generator": "Khronos glTF Blender I/O v5.2.39",
+          "version": "2.0"
+        },
+        "extensionsUsed": [
+          "KHR_lights_punctual"
+        ],
+        "extensionsRequired": [
+          "KHR_lights_punctual"
+        ],
+        "materials": [
+          {
+            "name": "Cell.AlphaMask",
+            "alphaMode": "MASK",
+            "alphaCutoff": 0.41999998688697815,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.1599999964237213,
+                0.7799999713897705,
+                0.2800000011920929,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          }
+        ],
+        "threeMaterials": [
+          {
+            "name": "Cell.AlphaMask",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0.41999999,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 1,
+            "hasMap": true,
+            "mapTransform": {
+              "offset": [
+                0,
+                0
+              ],
+              "repeat": [
+                1,
+                1
+              ],
+              "rotation": 0,
+              "channel": 0
+            }
+          }
+        ]
+      }
+    },
+    "unsupported-procedural": {
+      "path": "output/stock/unsupported-procedural.glb",
+      "bytes": 2616,
+      "sha256": "a6d60d9faa27edcecdbff72362cb06df78741f78f5c0b4442062a031e5d4f014",
+      "inspection": {
+        "asset": {
+          "generator": "Khronos glTF Blender I/O v5.2.39",
+          "version": "2.0"
+        },
+        "extensionsUsed": [
+          "KHR_lights_punctual"
+        ],
+        "extensionsRequired": [
+          "KHR_lights_punctual"
+        ],
+        "materials": [
+          {
+            "name": "Cell.UnsupportedNoise",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          }
+        ],
+        "threeMaterials": [
+          {
+            "name": "Cell.UnsupportedNoise",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          }
+        ]
+      }
+    }
+  },
+  "blendlink": {
+    "packageVersion": "0.8.0",
+    "cliSha256": "c9ee7428199d964f5e1599fb913f4267772ab85aec76730c780086c3be2f47a9",
+    "materialAnalyzer": {
+      "verifiedExporterVersion": "5.2.39",
+      "source": {
+        "path": "packages/blender-addon/procedural.py",
+        "sha256": "fa5a921e74316aa437751baed9066d737125229f945df359dd9447c178d6d042"
+      },
+      "copiedRuntime": {
+        "path": "packages/blendlink/dist/blender/procedural.py",
+        "sha256": "fa5a921e74316aa437751baed9066d737125229f945df359dd9447c178d6d042"
+      }
+    },
+    "plans": {
+      "portableFactors": {
+        "command": "node ../../packages/blendlink/dist/cli.js plan portableFactors --json",
+        "exitCode": 0,
+        "stdout": {
+          "scenes": [
+            {
+              "scene": "portableFactors",
+              "quality": "final",
+              "plan": null
+            }
+          ]
+        },
+        "stderr": ""
+      },
+      "portableAlphaMask": {
+        "command": "node ../../packages/blendlink/dist/cli.js plan portableAlphaMask --json",
+        "exitCode": 0,
+        "stdout": {
+          "scenes": [
+            {
+              "scene": "portableAlphaMask",
+              "quality": "final",
+              "plan": null
+            }
+          ]
+        },
+        "stderr": ""
+      },
+      "unsupportedProcedural": {
+        "command": "node ../../packages/blendlink/dist/cli.js plan unsupportedProcedural --json",
+        "exitCode": 1,
+        "stdout": {
+          "scenes": [
+            {
+              "scene": "unsupportedProcedural",
+              "quality": "final",
+              "plan": null,
+              "inspection": {
+                "errors": [
+                  {
+                    "code": "material.used-needs-bake",
+                    "material": "Cell.UnsupportedNoise",
+                    "usedBy": [
+                      "UnsupportedNoise"
+                    ],
+                    "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+                    "reasons": [
+                      "Noise Texture contributes to the active surface but cannot be represented as editable glTF."
+                    ]
+                  }
+                ],
+                "warnings": []
+              }
+            }
+          ]
+        },
+        "stderr": ""
+      }
+    },
+    "compiled": {
+      "command": "node ../../packages/blendlink/dist/cli.js compile portableFactors --force",
+      "stdout": "✓ synced  portableFactors in 1.8s — 19kB, 120 tris\n",
+      "stderr": "  ! No Blendlink scene recipe is saved in this .blend. The generated starter can only use a diagnostic fallback camera/look, which may frame the wrong subject. In Blender, run Set Up Blendlink Scene, choose the Website Camera and rendering ownership, save, then rebuild.\n  ! Web Light \"Key\": Blender's 0.00918043 rad sun angle has no glTF light field; the website uses a directional light and its shadow recipe.\n",
+      "path": "output/blendlink/portableFactors.glb",
+      "bytes": 19192,
+      "sha256": "ae8f231eb6294831e371aad9ec3477a3b18a0971264e5bd7772bd1d18b65c27d",
+      "copies": [
+        {
+          "path": "output/blendlink/portableFactors.glb",
+          "bytes": 19192,
+          "sha256": "ae8f231eb6294831e371aad9ec3477a3b18a0971264e5bd7772bd1d18b65c27d"
+        },
+        {
+          "path": "output/blendlink/portableFactors/f021443c703f838858a77ed1927e37a05a275d342cb2ae2dcf36ca3a534d5506/portableFactors.glb",
+          "bytes": 19192,
+          "sha256": "ae8f231eb6294831e371aad9ec3477a3b18a0971264e5bd7772bd1d18b65c27d"
+        }
+      ],
+      "manifest": {
+        "path": "output/generated/portableFactors.manifest.json",
+        "bytes": 10644,
+        "sha256": "d6c45dbc628457eef0873a4627ef759efbc436575fe843dece03c4d57db53b1d",
+        "materialDiagnostics": {
+          "records": [
+            {
+              "material": "Cell.AlphaBlend",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "AlphaBlend"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.Anisotropy",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "Anisotropy"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.Clearcoat",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "Clearcoat"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.CorePrincipled",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "CorePrincipled"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.EmissiveStrength",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "EmissiveStrength"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.SheenFullWeight",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "SheenFullWeight"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.Specular",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "Specular"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.TextureTransform",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "TextureTransform"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.TransmissionVolume",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "TransmissionVolume"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            },
+            {
+              "material": "Cell.Unlit",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "Unlit"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            }
+          ],
+          "exact": 10,
+          "approximated": 0,
+          "needsBake": 0,
+          "cyclesAppearanceBlocked": 0
+        }
+      },
+      "inspection": {
+        "asset": {
+          "generator": "Khronos glTF Blender I/O v5.2.39",
+          "version": "2.0"
+        },
+        "extensionsUsed": [
+          "KHR_lights_punctual",
+          "KHR_materials_anisotropy",
+          "KHR_materials_clearcoat",
+          "KHR_materials_dispersion",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_iridescence",
+          "KHR_materials_sheen",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_materials_unlit",
+          "KHR_materials_volume",
+          "KHR_texture_transform"
+        ],
+        "extensionsRequired": [
+          "KHR_lights_punctual",
+          "KHR_texture_transform"
+        ],
+        "materials": [
+          {
+            "name": "Cell.AlphaBlend",
+            "alphaMode": "BLEND",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.8199999928474426,
+                0.18000000715255737,
+                0.11999999731779099,
+                0.3799999952316284
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          },
+          {
+            "name": "Cell.Anisotropy",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6800000071525574,
+                0.699999988079071,
+                0.7300000190734863,
+                1
+              ],
+              "metallicFactor": 0.8500000238418579,
+              "roughnessFactor": 0.23999999463558197
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_anisotropy": {
+                "anisotropyStrength": 0.6499999761581421,
+                "anisotropyRotation": 1.2566370801612687
+              }
+            }
+          },
+          {
+            "name": "Cell.Clearcoat",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.11999999731779099,
+                0.20000000298023224,
+                0.7200000286102295,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_clearcoat": {
+                "clearcoatFactor": 0.699999988079071,
+                "clearcoatRoughnessFactor": 0.1599999964237213
+              }
+            }
+          },
+          {
+            "name": "Cell.CorePrincipled",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.18000000715255737,
+                0.41999998688697815,
+                0.800000011920929,
+                1
+              ],
+              "metallicFactor": 0.3499999940395355,
+              "roughnessFactor": 0.27000001072883606
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          },
+          {
+            "name": "Cell.EmissiveStrength",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.009999999776482582,
+                0.009999999776482582,
+                0.009999999776482582,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": [
+              0.22222223142047012,
+              0.5,
+              1
+            ],
+            "extensions": {
+              "KHR_materials_emissive_strength": {
+                "emissiveStrength": 3.5999999046325684
+              }
+            }
+          },
+          {
+            "name": "Cell.SheenFullWeight",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.1599999964237213,
+                0.05999999865889549,
+                0.029999999329447746,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_sheen": {
+                "sheenColorFactor": [
+                  0.8199999928474426,
+                  0.2800000011920929,
+                  0.11999999731779099
+                ],
+                "sheenRoughnessFactor": 0.41999998688697815
+              }
+            }
+          },
+          {
+            "name": "Cell.Specular",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5799999833106995,
+                0.12999999523162842,
+                0.46000000834465027,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.6000000238418579,
+                "specularColorFactor": [
+                  0.7400000095367432,
+                  0.9200000166893005,
+                  1
+                ]
+              }
+            }
+          },
+          {
+            "name": "Cell.TextureTransform",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorTexture": {
+                "extensions": {
+                  "KHR_texture_transform": {
+                    "offset": [
+                      0.10223989097508102,
+                      0.3973317571986347
+                    ],
+                    "rotation": 0.30000001192092896,
+                    "scale": [
+                      2,
+                      0.5
+                    ]
+                  }
+                },
+                "index": 0
+              },
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          },
+          {
+            "name": "Cell.TransmissionVolume",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": false,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6000000238418579,
+                0.8299999833106995,
+                0.9200000166893005,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.10000000149011612
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_transmission": {
+                "transmissionFactor": 0.8199999928474426
+              },
+              "KHR_materials_volume": {
+                "attenuationColor": [
+                  0.6200000047683716,
+                  0.800000011920929,
+                  0.949999988079071
+                ],
+                "attenuationDistance": 4.999999925494195,
+                "thicknessFactor": 0.44999998807907104
+              },
+              "KHR_materials_iridescence": {
+                "iridescenceIor": 1.4199999570846558,
+                "iridescenceFactor": 0.6399999856948853,
+                "iridescenceThicknessMaximum": 460
+              },
+              "KHR_materials_dispersion": {
+                "dispersion": 0.18000000715255737
+              },
+              "KHR_materials_ior": {
+                "ior": 1.3300000429153442
+              }
+            }
+          },
+          {
+            "name": "Cell.Unlit",
+            "alphaMode": "OPAQUE",
+            "alphaCutoff": null,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.07999999821186066,
+                0.7200000286102295,
+                0.30000001192092896,
+                1
+              ],
+              "metallicFactor": 0,
+              "roughnessFactor": 0.9
+            },
+            "emissiveFactor": null,
+            "extensions": {
+              "KHR_materials_unlit": {}
+            }
+          }
+        ],
+        "threeMaterials": [
+          {
+            "name": "Cell.AlphaBlend",
+            "type": "MeshStandardMaterial",
+            "transparent": true,
+            "opacity": 0.38,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.Anisotropy",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0.85000002,
+            "roughness": 0.23999999,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "attenuationDistance": null,
+            "sheen": 0,
+            "sheenRoughness": 1,
+            "specularIntensity": 1,
+            "anisotropy": 0.64999998,
+            "anisotropyRotation": 1.25663708,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "dispersion": 0,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.Clearcoat",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "clearcoat": 0.69999999,
+            "clearcoatRoughness": 0.16,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "attenuationDistance": null,
+            "sheen": 0,
+            "sheenRoughness": 1,
+            "specularIntensity": 1,
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "dispersion": 0,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.CorePrincipled",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0.34999999,
+            "roughness": 0.27000001,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.EmissiveStrength",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 3.5999999,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.SheenFullWeight",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "attenuationDistance": null,
+            "sheen": 1,
+            "sheenRoughness": 0.41999999,
+            "specularIntensity": 1,
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "dispersion": 0,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.Specular",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "attenuationDistance": null,
+            "sheen": 0,
+            "sheenRoughness": 1,
+            "specularIntensity": 0.60000002,
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "dispersion": 0,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.TextureTransform",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 1,
+            "hasMap": true,
+            "mapTransform": {
+              "offset": [
+                0.10223989,
+                0.39733176
+              ],
+              "repeat": [
+                2,
+                0.5
+              ],
+              "rotation": 0.30000001,
+              "channel": 0
+            }
+          },
+          {
+            "name": "Cell.TransmissionVolume",
+            "type": "MeshPhysicalMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "metalness": 0,
+            "roughness": 0.1,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "transmission": 0.81999999,
+            "thickness": 0.44999999,
+            "ior": 1.33000004,
+            "attenuationDistance": 4.99999993,
+            "sheen": 0,
+            "sheenRoughness": 1,
+            "specularIntensity": 1,
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "iridescence": 0.63999999,
+            "iridescenceIOR": 1.41999996,
+            "dispersion": 0.18000001,
+            "emissiveIntensity": 1,
+            "hasMap": false,
+            "mapTransform": null
+          },
+          {
+            "name": "Cell.Unlit",
+            "type": "MeshBasicMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0,
+            "hasMap": false,
+            "mapTransform": null
+          }
+        ]
+      }
+    },
+    "compiledAlphaMask": {
+      "command": "node ../../packages/blendlink/dist/cli.js compile portableAlphaMask --force",
+      "stdout": "✓ synced  portableAlphaMask in 2.0s — 3kB, 12 tris\n",
+      "stderr": "  ! No Blendlink scene recipe is saved in this .blend. The generated starter can only use a diagnostic fallback camera/look, which may frame the wrong subject. In Blender, run Set Up Blendlink Scene, choose the Website Camera and rendering ownership, save, then rebuild.\n  ! Web Light \"Key\": Blender's 0.00918043 rad sun angle has no glTF light field; the website uses a directional light and its shadow recipe.\n",
+      "path": "output/blendlink/portableAlphaMask.glb",
+      "bytes": 3232,
+      "sha256": "5c8c57460d18c09f56722f95a577f674fb65bc32852fb95b9fb2ccb2c03095ba",
+      "copies": [
+        {
+          "path": "output/blendlink/portableAlphaMask.glb",
+          "bytes": 3232,
+          "sha256": "5c8c57460d18c09f56722f95a577f674fb65bc32852fb95b9fb2ccb2c03095ba"
+        },
+        {
+          "path": "output/blendlink/portableAlphaMask/3fdbd2dd412cb43e923b15659812f4e0ef4a4cd5819bfc50c413fcdbd130513d/portableAlphaMask.glb",
+          "bytes": 3232,
+          "sha256": "5c8c57460d18c09f56722f95a577f674fb65bc32852fb95b9fb2ccb2c03095ba"
+        }
+      ],
+      "manifest": {
+        "path": "output/generated/portableAlphaMask.manifest.json",
+        "bytes": 3696,
+        "sha256": "f083c95edfa3069a2d00887daba1b952abae62b8f323e304cfdffc41cff673f8",
+        "materialDiagnostics": {
+          "records": [
+            {
+              "material": "Cell.AlphaMask",
+              "status": "exact",
+              "label": "Exact glTF",
+              "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+              "reasons": [],
+              "cyclesAppearance": {
+                "status": "compatible",
+                "blockers": []
+              },
+              "usedBy": [
+                "AlphaMask"
+              ],
+              "materialCompilation": {
+                "intent": "automatic",
+                "outcome": "preserved",
+                "fidelity": "full-surface",
+                "limitations": [],
+                "transport": "stock"
+              }
+            }
+          ],
+          "exact": 1,
+          "approximated": 0,
+          "needsBake": 0,
+          "cyclesAppearanceBlocked": 0
+        }
+      },
+      "inspection": {
+        "asset": {
+          "generator": "Khronos glTF Blender I/O v5.2.39",
+          "version": "2.0"
+        },
+        "extensionsUsed": [
+          "KHR_lights_punctual"
+        ],
+        "extensionsRequired": [
+          "KHR_lights_punctual"
+        ],
+        "materials": [
+          {
+            "name": "Cell.AlphaMask",
+            "alphaMode": "MASK",
+            "alphaCutoff": 0.41999998688697815,
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.1599999964237213,
+                0.7799999713897705,
+                0.2800000011920929,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicFactor": 0,
+              "roughnessFactor": 0.5
+            },
+            "emissiveFactor": null,
+            "extensions": {}
+          }
+        ],
+        "threeMaterials": [
+          {
+            "name": "Cell.AlphaMask",
+            "type": "MeshStandardMaterial",
+            "transparent": false,
+            "opacity": 1,
+            "alphaTest": 0.41999999,
+            "metalness": 0,
+            "roughness": 0.5,
+            "emissiveIntensity": 1,
+            "hasMap": true,
+            "mapTransform": {
+              "offset": [
+                0,
+                0
+              ],
+              "repeat": [
+                1,
+                1
+              ],
+              "rotation": 0,
+              "channel": 0
+            }
+          }
+        ]
+      }
+    }
+  },
+  "classifications": {
+    "portableFactors": {
+      "relation": "verified-match-with-contextual-diagnostics",
+      "stockStructure": "all asserted core/KHR material mappings emitted",
+      "threeR184": "loaded",
+      "blendlinkPlan": "accepted",
+      "blendlinkCompile": "succeeded and retained the Needle-equivalent stock GLB byte-for-byte",
+      "limitations": [
+        "Sheen Weight is Exact only at the exporter-faithful unlinked 0 and 1 endpoints; partial and linked weights stay loud.",
+        "Thin Film is Exact only for the verified constant Principled inputs paired with enabled canonical glTF Material Output iridescence.",
+        "No browser pixels are claimed by this structural/loader gate."
+      ]
+    },
+    "portableAlphaMask": {
+      "relation": "verified-match-with-stricter-graph-guardrails",
+      "stockStructure": "alphaMode=MASK with authored alphaCutoff",
+      "threeR184": "loaded",
+      "blendlinkPlan": "accepted only for Blender 5.2.39-recognized clip topology",
+      "blendlinkCompile": "succeeded and retained the Needle-equivalent stock GLB byte-for-byte"
+    },
+    "unsupportedProcedural": {
+      "relation": "verified-improvement-over-the-pinned-Needle-wrapper",
+      "stockStructure": "stock exporter cannot preserve the Noise Texture graph as editable glTF",
+      "threeR184": "loaded fallback payload",
+      "blendlinkPlan": "refused with material.used-needs-bake; pinned Needle invokes this same stock exporter without an analogous material-portability preflight in its export wrapper"
+    }
+  }
+}

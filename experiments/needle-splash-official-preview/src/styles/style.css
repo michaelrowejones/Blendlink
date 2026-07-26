@@ -1,0 +1,15 @@
+html {
+  height: -webkit-fill-available;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+needle-engine {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}

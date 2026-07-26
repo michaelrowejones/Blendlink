@@ -1,0 +1,491 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-23T18:25:31.461Z",
+  "url": "http://127.0.0.1:5173/",
+  "browser": "150.0.7871.129",
+  "execution": {
+    "needle": "Actual pinned GroundProjectedEnv TypeScript class and its nested Three dependency",
+    "blendlink": "Current installLoadedThreeCompiledScene production source module",
+    "renderer": "System Chromium with ANGLE SwiftShader flags",
+    "viewport": [
+      480,
+      360
+    ],
+    "deviceScaleFactor": 1
+  },
+  "versions": {
+    "needleEngine": "5.1.7",
+    "needleThree": "0.169.19",
+    "blendlink": "0.8.0",
+    "blendlinkThree": "0.184.0"
+  },
+  "source": {
+    "needleGroundProjection": {
+      "path": "experiments/needle-spike/node_modules/@needle-tools/engine/src/engine-components/GroundProjection.ts",
+      "sha256": "30abd50cd872c62d59d0b6e3cfaefb3f7701145f7820c4b6532197827e9e9627"
+    },
+    "needleGroundedSkybox": {
+      "path": "experiments/needle-spike/node_modules/@needle-tools/engine/node_modules/three/examples/jsm/objects/GroundedSkybox.js",
+      "sha256": "2c15df3f78e136fe37ba3adcdba38ee0bf867cffc54b545f688d85778e8774c2"
+    },
+    "blendlinkThreeRuntime": {
+      "path": "packages/blendlink/src/threeRuntime.ts",
+      "sha256": "fa2d80538e09d8ac808fafffbb140168c4dbb4b3c44f214fbd83be1f30572b73"
+    },
+    "blendlinkRuntime": {
+      "path": "packages/blendlink/src/runtime.ts",
+      "sha256": "19d9df98a8e69e6c4f133af67ea84a3cc2ee3a1f231959576d99d3fbf6ac7b18"
+    },
+    "blendlinkRenderableBounds": {
+      "path": "packages/blendlink/src/threeRenderableBounds.ts",
+      "sha256": "fd23edf6eca4c47338a7c7e5a7d2706e90231d315d95fad1d1da4968d5b866d3"
+    },
+    "blendlinkGroundedCameraSafety": {
+      "path": "packages/blendlink/src/threeGroundedCameraSafety.ts",
+      "sha256": "bfe32e1ff34627510c7b0477d8be36bacaa383396dfc7acc5f28a7d4128c23b8"
+    },
+    "blendlinkGroundedSkybox": {
+      "path": "node_modules/three/examples/jsm/objects/GroundedSkybox.js",
+      "sha256": "14ad38d785bb998bba0dc9e74b5d8f93ea45753b24341be539755d8e567ee456"
+    },
+    "fixtureMain": {
+      "path": "experiments/ground-projection-browser/main.ts",
+      "sha256": "c77c3cf94cd9ca6a7c00d87b9365656e136eb4799bf7f5bf7314ea0f207abecd"
+    },
+    "fixtureRunner": {
+      "path": "experiments/ground-projection-browser/run.mjs",
+      "sha256": "3ce29fe95d81ef2cf456476ae3b18b29aaf62143bea28e103f05b5a395c0ee5b"
+    },
+    "fixtureHdr": {
+      "generated": "32x16 RGBE axis chart served at /axis.hdr",
+      "sha256": "7ce88847c62146bd4f8fc82af777da4e41894da21a2332dc7ffd4a895685bb3a"
+    }
+  },
+  "pageErrors": [
+    "Failed to fetch"
+  ],
+  "ignoredNeedleBootstrapErrors": [
+    "Failed to fetch"
+  ],
+  "consoleErrors": [
+    "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+    "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+  ],
+  "requestFailures": [
+    {
+      "url": "https://cdn.needle.tools/static/three/0.179.1/basis2/basis_transcoder.wasm",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    },
+    {
+      "url": "https://cdn.needle.tools/static/three/0.179.1/basis2/basis_transcoder.js",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    }
+  ],
+  "unrelatedNeedleDecoderFailures": [
+    {
+      "url": "https://cdn.needle.tools/static/three/0.179.1/basis2/basis_transcoder.wasm",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    },
+    {
+      "url": "https://cdn.needle.tools/static/three/0.179.1/basis2/basis_transcoder.js",
+      "error": "net::ERR_NETWORK_ACCESS_DENIED"
+    }
+  ],
+  "interceptedRequests": [
+    "https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_decoder.js?range=true",
+    "https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_decoder.js"
+  ],
+  "shared": {
+    "common": {
+      "mae": 0.056048900462962965,
+      "rmse": 0.23783784450288348,
+      "maxError": 6,
+      "changedPixels": 34814,
+      "changedPixelsOver8": 0,
+      "pixelCount": 172800
+    },
+    "rotated": {
+      "mae": 51.458094618055554,
+      "rmse": 76.65512061117869,
+      "maxError": 220,
+      "changedPixels": 172800,
+      "changedPixelsOver8": 172800,
+      "pixelCount": 172800
+    },
+    "needleEquirectangularRotationEffect": {
+      "mae": 0,
+      "rmse": 0,
+      "maxError": 0,
+      "changedPixels": 0,
+      "changedPixelsOver8": 0,
+      "pixelCount": 172800
+    },
+    "blendlinkEquirectangularRotationEffect": {
+      "mae": 51.451568287037034,
+      "rmse": 76.65086076502024,
+      "maxError": 220,
+      "changedPixels": 172800,
+      "changedPixelsOver8": 172800,
+      "pixelCount": 172800
+    },
+    "intensity": {
+      "mae": 0.03722800925925926,
+      "rmse": 0.19336505965736492,
+      "maxError": 4,
+      "changedPixels": 23986,
+      "changedPixelsOver8": 0,
+      "pixelCount": 172800
+    },
+    "autoFit": {
+      "mae": 0.05556423611111111,
+      "rmse": 1.4271689958069411,
+      "maxError": 250,
+      "changedPixels": 29367,
+      "changedPixelsOver8": 11,
+      "pixelCount": 172800
+    },
+    "cameraUnsafeToReference": {
+      "mae": 4.289291087962963,
+      "rmse": 26.47182983634224,
+      "maxError": 248,
+      "changedPixels": 14180,
+      "changedPixelsOver8": 14180,
+      "pixelCount": 172800
+    },
+    "cameraRepairedToReference": {
+      "mae": 0,
+      "rmse": 0,
+      "maxError": 0,
+      "changedPixels": 0,
+      "changedPixelsOver8": 0,
+      "pixelCount": 172800
+    }
+  },
+  "cells": {
+    "needleCommon": {
+      "summary": {
+        "mean": [
+          68.30892361111111,
+          62.606377314814814,
+          34.64895833333333,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 16128,
+      "projectionPosition": [
+        0,
+        2,
+        0
+      ]
+    },
+    "blendlinkCommon": {
+      "summary": {
+        "mean": [
+          68.28614583333334,
+          62.57989583333333,
+          34.63575810185185,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 65024,
+      "projectionPosition": [
+        0,
+        2,
+        0
+      ]
+    },
+    "needleRotated": {
+      "summary": {
+        "mean": [
+          68.30892361111111,
+          62.606377314814814,
+          34.64895833333333,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 16128,
+      "projectionPosition": [
+        0,
+        2,
+        0
+      ]
+    },
+    "blendlinkRotated": {
+      "summary": {
+        "mean": [
+          55.27211226851852,
+          64.36622106481481,
+          48.020943287037035,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 65024,
+      "projectionPosition": [
+        0,
+        2,
+        0
+      ]
+    },
+    "needleIntensity": {
+      "summary": {
+        "mean": [
+          44.42596643518519,
+          40.690925925925924,
+          22.471840277777776,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 16128,
+      "projectionPosition": [
+        0,
+        2,
+        0
+      ]
+    },
+    "blendlinkIntensity": {
+      "summary": {
+        "mean": [
+          44.40982638888889,
+          40.6743287037037,
+          22.46131365740741,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 65024,
+      "projectionPosition": [
+        0,
+        2,
+        0
+      ]
+    },
+    "needleAutoFit": {
+      "summary": {
+        "mean": [
+          123.00463541666667,
+          77.36766203703704,
+          37.832251157407406,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 16128,
+      "projectionPosition": [
+        3,
+        0.5,
+        1
+      ]
+    },
+    "blendlinkAutoFit": {
+      "summary": {
+        "mean": [
+          122.98659143518519,
+          77.38206597222222,
+          37.841087962962966,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 65024,
+      "projectionPosition": [
+        3,
+        0.5,
+        1
+      ]
+    },
+    "cameraUnsafe": {
+      "summary": {
+        "mean": [
+          115.61590856481482,
+          100.47300925925926,
+          85.75921875,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 158621
+      },
+      "geometryTriangles": 65024,
+      "projectionPosition": [
+        0,
+        0.5,
+        0
+      ],
+      "cameraFar": 86.60254037844386,
+      "requiredFar": 97.07741346030804,
+      "clippedVertexCount": 282
+    },
+    "cameraRepaired": {
+      "summary": {
+        "mean": [
+          130.8668113425926,
+          101.91792245370371,
+          86.86683449074074,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 65024,
+      "projectionPosition": [
+        0,
+        0.5,
+        0
+      ],
+      "cameraFar": 97.07741346030804,
+      "requiredFar": 97.07741346030804,
+      "clippedVertexCount": 0
+    },
+    "cameraReference": {
+      "summary": {
+        "mean": [
+          130.6555613425926,
+          101.76398148148148,
+          86.58575810185185,
+          255
+        ],
+        "opaquePixels": 172800,
+        "nonBlackPixels": 172800
+      },
+      "geometryTriangles": 65024,
+      "projectionPosition": [
+        0,
+        0.5,
+        0
+      ],
+      "cameraFar": 1000,
+      "requiredFar": 97.07741346030804,
+      "clippedVertexCount": 0
+    }
+  },
+  "cameraOwnership": {
+    "rejectedPerspective": {
+      "kind": "perspective",
+      "message": "application-owned camera far plane 10.000 clips 4939 Grounded Backdrop vertices; at least 97.218 is required for this view. Increase camera.far in the website or reduce environment.groundRadius.",
+      "farUnchanged": true,
+      "projectionUnchanged": true,
+      "rootRolledBack": true,
+      "sceneChildren": 0
+    },
+    "rejectedOrthographic": {
+      "kind": "orthographic",
+      "message": "application-owned camera far plane 10.000 clips 4939 Grounded Backdrop vertices; at least 97.218 is required for this view. Increase camera.far in the website or reduce environment.groundRadius.",
+      "farUnchanged": true,
+      "projectionUnchanged": true,
+      "rootRolledBack": true,
+      "sceneChildren": 0
+    }
+  },
+  "disposed": {
+    "needleCommon": {
+      "geometryBefore": 2,
+      "geometryAfterRemove": 2,
+      "geometryAfterManualDispose": 1,
+      "remainedParented": false,
+      "componentDisposedGeometry": false
+    },
+    "blendlinkCommon": {
+      "geometryBefore": 1,
+      "geometryAfterDispose": 0,
+      "remainedParented": false,
+      "installerDisposedGeometry": true
+    },
+    "needleRotated": {
+      "geometryBefore": 2,
+      "geometryAfterRemove": 2,
+      "geometryAfterManualDispose": 1,
+      "remainedParented": false,
+      "componentDisposedGeometry": false
+    },
+    "blendlinkRotated": {
+      "geometryBefore": 1,
+      "geometryAfterDispose": 0,
+      "remainedParented": false,
+      "installerDisposedGeometry": true
+    },
+    "needleIntensity": {
+      "geometryBefore": 2,
+      "geometryAfterRemove": 2,
+      "geometryAfterManualDispose": 1,
+      "remainedParented": false,
+      "componentDisposedGeometry": false
+    },
+    "blendlinkIntensity": {
+      "geometryBefore": 1,
+      "geometryAfterDispose": 0,
+      "remainedParented": false,
+      "installerDisposedGeometry": true
+    },
+    "needleAutoFit": {
+      "geometryBefore": 3,
+      "geometryAfterRemove": 3,
+      "geometryAfterManualDispose": 2,
+      "remainedParented": false,
+      "componentDisposedGeometry": false
+    },
+    "blendlinkAutoFit": {
+      "geometryBefore": 2,
+      "geometryAfterDispose": 1,
+      "remainedParented": false,
+      "installerDisposedGeometry": true
+    },
+    "cameraUnsafe": {
+      "geometryBefore": 2,
+      "geometryAfterDispose": 1,
+      "remainedParented": false,
+      "installerDisposedGeometry": true
+    },
+    "cameraRepaired": {
+      "geometryBefore": 2,
+      "geometryAfterDispose": 1,
+      "remainedParented": false,
+      "installerDisposedGeometry": true
+    },
+    "cameraReference": {
+      "geometryBefore": 2,
+      "geometryAfterDispose": 1,
+      "remainedParented": false,
+      "installerDisposedGeometry": true
+    }
+  },
+  "assertions": {
+    "actualPinnedNeedleClassExecuted": true,
+    "blendlinkProductionInstallerExecuted": true,
+    "commonProjectionPixelsWithinThreshold": true,
+    "rawEquirectangularBehaviorDifferenceObserved": true,
+    "needleRawEquirectangularRotationNoOpObserved": true,
+    "blendlinkRawEquirectangularRotationEffectObserved": true,
+    "intensityPixelsWithinThreshold": true,
+    "autoFitPositionAndPixelsWithinThreshold": true,
+    "unsafePackageFallbackControlVisiblyClips": true,
+    "packageFallbackCameraRepairMatchesSafeReference": true,
+    "unsafePerspectiveAndOrthographicApplicationCamerasRejectedWithoutMutation": true,
+    "exactGeometryBudgetsObserved": true,
+    "blendlinkDisposalObserved": true,
+    "needleDisableRetentionObserved": true,
+    "nonBlankOpaqueRenders": true
+  },
+  "limits": [
+    "Chromium / ANGLE SwiftShader only; no physical-GPU timing, mobile, Firefox, WebKit, or WebGPU evidence.",
+    "The fixture uses a generated 32x16 RGBE axis chart, not a production photographic HDR.",
+    "The common pixel threshold was chosen to detect gross visual/orientation regressions, not to certify exact image identity.",
+    "The rotation result applies to the raw equirectangular mapping used by Blendlink publication. Needle has a separate CubeUV shader branch; a PMREM/CubeUV visual differential remains pending.",
+    "Auto-fit covers visible meshes beneath the compiled root at installation; later application-driven transforms and visibility changes do not continuously refit the projection.",
+    "Projected horizon blur, AR/passthrough blending, camera motion after the one-time safety check, and repeated context-loss cycles remain unverified.",
+    "Renderer memory counters show resource release behavior, not process-level VRAM reclamation.",
+    "Importing the pinned Needle class transitively starts its default Google DRACO bootstrap; the fixture fulfills that unrelated request with an inert same-run response because no glTF/DRACO path is under test.",
+    "The same Needle import also starts an unrelated Basis/KTX bootstrap. Network-restricted Chromium rejects it; the exact URLs and console messages are retained in evidence and no glTF/KTX path is under test."
+  ]
+}

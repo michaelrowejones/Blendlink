@@ -1,0 +1,402 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-splash-retained-source-eevee-controls",
+  "status": "prototype",
+  "scope": "Fixture-specific one-variable controls for the exact Blender 4.0 Splash derivative; these do not validate a general material compiler.",
+  "createdUtc": "2026-07-24T17:30:37.099631+00:00",
+  "toolchain": {
+    "blender": "5.2.0 LTS",
+    "blenderVersion": [
+      5,
+      2,
+      0
+    ],
+    "blenderBuildHash": "fbe6228777e7",
+    "python": "3.13.13"
+  },
+  "source": {
+    "path": "artifacts/release-dogfood/blender-4-splash/fixtures/blender-4.0-splash-selected-sky.blend",
+    "sha256Before": "9f9527030372e7f478bea487b59633af79be2bfaec4b57ff945aae56817c027a",
+    "sha256After": "9f9527030372e7f478bea487b59633af79be2bfaec4b57ff945aae56817c027a",
+    "saved": false,
+    "look": {
+      "engine": "BLENDER_EEVEE",
+      "frame": 1,
+      "resolution": [
+        4000,
+        2000,
+        30
+      ],
+      "viewTransform": "Filmic",
+      "look": "Medium High Contrast",
+      "exposure": -0.10554122924804688,
+      "gamma": 1.1831185817718506,
+      "useCurveMapping": true,
+      "compositor": "Compositing Nodetree"
+    }
+  },
+  "controlScene": {
+    "transportDeviation": "Fresh in-memory scene and PNG output only; exact source collections, objects, world, camera, render/Eevee state, Filmic look/curves, view-layer exclusions, and copied compositor are retained.",
+    "resolvedLook": {
+      "viewTransform": "Filmic",
+      "look": "Medium High Contrast",
+      "exposure": -0.10554122924804688,
+      "gamma": 1.1831185817718506,
+      "useCurveMapping": true
+    },
+    "copyReport": {
+      "render": {
+        "copied": [
+          "resolution_x",
+          "resolution_y",
+          "resolution_percentage",
+          "preview_pixel_size",
+          "pixel_aspect_x",
+          "pixel_aspect_y",
+          "ppm_factor",
+          "ppm_base",
+          "fps",
+          "fps_base",
+          "frame_map_old",
+          "frame_map_new",
+          "dither_intensity",
+          "filter_size",
+          "film_transparent",
+          "use_freestyle",
+          "threads",
+          "threads_mode",
+          "use_motion_blur",
+          "motion_blur_shutter",
+          "motion_blur_position",
+          "hair_type",
+          "hair_subdiv",
+          "use_high_quality_normals",
+          "anisotropic_filter",
+          "use_border",
+          "border_min_x",
+          "border_min_y",
+          "border_max_x",
+          "border_max_y",
+          "use_crop_to_border",
+          "use_placeholder",
+          "use_overwrite",
+          "save_output",
+          "use_compositing",
+          "use_sequencer",
+          "use_file_extension",
+          "use_lock_interface",
+          "use_render_cache",
+          "use_stamp_time",
+          "use_stamp_date",
+          "use_stamp_frame",
+          "use_stamp_frame_range",
+          "use_stamp_camera",
+          "use_stamp_lens",
+          "use_stamp_scene",
+          "use_stamp_note",
+          "use_stamp_marker",
+          "use_stamp_filename",
+          "use_stamp_sequencer_strip",
+          "use_stamp_render_time",
+          "stamp_note_text",
+          "use_stamp",
+          "use_stamp_labels",
+          "metadata_input",
+          "use_stamp_memory",
+          "use_stamp_hostname",
+          "stamp_font_size",
+          "stamp_foreground",
+          "stamp_background",
+          "sequencer_gl_preview",
+          "use_sequencer_override_scene_strip",
+          "use_single_layer",
+          "use_multiview",
+          "views_format",
+          "use_simplify",
+          "simplify_subdivision",
+          "simplify_child_particles",
+          "simplify_subdivision_render",
+          "simplify_child_particles_render",
+          "simplify_volumes",
+          "use_simplify_normals",
+          "use_texture_cache",
+          "use_auto_generate_texture_cache",
+          "simplify_gpencil",
+          "simplify_gpencil_onplay",
+          "simplify_gpencil_antialiasing",
+          "simplify_gpencil_view_fill",
+          "simplify_gpencil_modifier",
+          "simplify_gpencil_shader_fx",
+          "simplify_gpencil_tint",
+          "use_persistent_data",
+          "line_thickness_mode",
+          "line_thickness",
+          "compositor_device",
+          "compositor_precision",
+          "compositor_denoise_device",
+          "compositor_denoise_preview_quality",
+          "compositor_denoise_final_quality"
+        ],
+        "skipped": {}
+      },
+      "eevee": {
+        "copied": [
+          "gi_diffuse_bounces",
+          "gi_cubemap_resolution",
+          "gi_visibility_resolution",
+          "gi_glossy_clamp",
+          "gi_irradiance_pool_size",
+          "taa_samples",
+          "taa_render_samples",
+          "use_taa_reprojection",
+          "ray_tracing_method",
+          "use_shadow_jitter_viewport",
+          "clamp_surface_direct",
+          "clamp_surface_indirect",
+          "clamp_volume_direct",
+          "clamp_volume_indirect",
+          "direct_light_intensity",
+          "indirect_light_intensity",
+          "volumetric_start",
+          "volumetric_end",
+          "volumetric_tile_size",
+          "volumetric_samples",
+          "volumetric_sample_distribution",
+          "volumetric_ray_depth",
+          "volumetric_light_clamp",
+          "use_volumetric_shadows",
+          "volumetric_shadow_samples",
+          "use_volume_custom_range",
+          "use_fast_gi",
+          "fast_gi_thickness_near",
+          "fast_gi_quality",
+          "fast_gi_step_count",
+          "fast_gi_ray_count",
+          "fast_gi_method",
+          "fast_gi_distance",
+          "fast_gi_bias",
+          "fast_gi_resolution",
+          "bokeh_max_size",
+          "bokeh_threshold",
+          "bokeh_neighbor_max",
+          "use_bokeh_jittered",
+          "bokeh_overblur",
+          "motion_blur_depth_scale",
+          "motion_blur_max",
+          "motion_blur_steps",
+          "use_shadows",
+          "shadow_pool_size",
+          "shadow_ray_count",
+          "shadow_step_count",
+          "light_threshold",
+          "use_overscan",
+          "overscan_size",
+          "use_raytracing",
+          "shadow_resolution_scale"
+        ],
+        "skipped": {}
+      },
+      "display": {
+        "copied": [
+          "display_device",
+          "emulation"
+        ],
+        "skipped": {}
+      },
+      "sequencer_colorspace": {
+        "copied": [
+          "name"
+        ],
+        "skipped": {}
+      },
+      "view": {
+        "copied": [
+          "view_transform",
+          "exposure",
+          "gamma",
+          "use_curve_mapping",
+          "use_white_balance",
+          "white_balance_temperature",
+          "white_balance_tint",
+          "white_balance_whitepoint"
+        ],
+        "skipped": {
+          "look": "TypeError('bpy_struct: item.attr = val: enum \"Medium High Contrast\" not found in (\\'None\\', \\'AgX - Punchy\\', \\'AgX - Greyscale\\', \\'AgX - Very High Contrast\\', \\'AgX - High Contrast\\', \\'AgX - Medium High Contrast\\', \\'AgX - Base Contrast\\', \\'AgX - Medium Low Contrast\\', \\'AgX - Low Contrast\\', \\'AgX - Very Low Contrast\\')')"
+        }
+      },
+      "view_layer": {
+        "copied": [
+          "samples",
+          "pass_alpha_threshold",
+          "active_aov_index",
+          "active_lightgroup_index",
+          "use_pass_cryptomatte_object",
+          "use_pass_cryptomatte_material",
+          "use_pass_cryptomatte_asset",
+          "pass_cryptomatte_depth",
+          "use_pass_cryptomatte_accurate",
+          "use_solid",
+          "use_sky",
+          "use_ao",
+          "use_strand",
+          "use_volumes",
+          "use_motion_blur",
+          "use_grease_pencil",
+          "use_pass_combined",
+          "use_pass_z",
+          "use_pass_vector",
+          "use_pass_position",
+          "use_pass_normal",
+          "use_pass_uv",
+          "use_pass_mist",
+          "use_pass_object_index",
+          "use_pass_material_index",
+          "use_pass_shadow",
+          "use_pass_ambient_occlusion",
+          "use_pass_emit",
+          "use_pass_environment",
+          "use_pass_diffuse_direct",
+          "use_pass_diffuse_indirect",
+          "use_pass_diffuse_color",
+          "use_pass_glossy_direct",
+          "use_pass_glossy_indirect",
+          "use_pass_glossy_color",
+          "use_pass_transmission_direct",
+          "use_pass_transmission_indirect",
+          "use_pass_transmission_color",
+          "use_pass_subsurface_direct",
+          "use_pass_subsurface_indirect",
+          "use_pass_subsurface_color",
+          "use",
+          "use_freestyle",
+          "use_pass_grease_pencil"
+        ],
+        "skipped": {}
+      },
+      "view_layer_eevee": {
+        "copied": [
+          "use_pass_volume_direct",
+          "use_pass_bloom",
+          "use_pass_transparent",
+          "ambient_occlusion_distance"
+        ],
+        "skipped": {}
+      }
+    }
+  },
+  "variables": {
+    "baselineA": "No authored behavior changed.",
+    "baselineB": "No authored behavior changed; repeatability control.",
+    "sunShadowsDisabled": {
+      "onlyChange": "Sun.data.use_shadow",
+      "from": true,
+      "to": false
+    },
+    "packedNoiseNeutralized": {
+      "onlyChange": "Packed noiseA-E image pixels replaced in memory with each image's own scene-linear mean; Sun shadow setting restored first.",
+      "images": [
+        {
+          "name": "noiseA.jpg",
+          "size": [
+            1000,
+            1000
+          ],
+          "pixelCount": 1000000,
+          "sceneLinearMeanRgba": [
+            0.44923416,
+            0.44923416,
+            0.44923416,
+            1.0
+          ],
+          "colorspace": "sRGB"
+        },
+        {
+          "name": "noiseB.jpg",
+          "size": [
+            1000,
+            1000
+          ],
+          "pixelCount": 1000000,
+          "sceneLinearMeanRgba": [
+            0.542823618,
+            0.542823618,
+            0.542823618,
+            1.0
+          ],
+          "colorspace": "sRGB"
+        },
+        {
+          "name": "noiseC.jpg",
+          "size": [
+            1000,
+            1000
+          ],
+          "pixelCount": 1000000,
+          "sceneLinearMeanRgba": [
+            0.542823618,
+            0.542823618,
+            0.542823618,
+            1.0
+          ],
+          "colorspace": "sRGB"
+        },
+        {
+          "name": "noiseD.jpg",
+          "size": [
+            1000,
+            1000
+          ],
+          "pixelCount": 1000000,
+          "sceneLinearMeanRgba": [
+            0.351635214,
+            0.351635214,
+            0.351635214,
+            1.0
+          ],
+          "colorspace": "sRGB"
+        },
+        {
+          "name": "noiseE.jpg",
+          "size": [
+            1000,
+            1000
+          ],
+          "pixelCount": 1000000,
+          "sceneLinearMeanRgba": [
+            0.44923416,
+            0.44923416,
+            0.44923416,
+            1.0
+          ],
+          "colorspace": "sRGB"
+        }
+      ]
+    }
+  },
+  "renders": {
+    "baselineA": {
+      "path": "experiments/splash-visual-fidelity-differential/output/source-controls/baseline-a.png",
+      "sha256": "b84fc9c55c9b49dfce08fbe33ff997d091ac6e47c4be81b5db8988bdecc8a41d",
+      "bytes": 1553380,
+      "elapsedSeconds": 57.121
+    },
+    "baselineB": {
+      "path": "experiments/splash-visual-fidelity-differential/output/source-controls/baseline-b.png",
+      "sha256": "df56f8a442cd40c148e4ef814812137ef478d33f12880469be4cefffada27476",
+      "bytes": 1553380,
+      "elapsedSeconds": 4.19
+    },
+    "sunShadowsDisabled": {
+      "path": "experiments/splash-visual-fidelity-differential/output/source-controls/sun-shadows-disabled.png",
+      "sha256": "61da47985dfc1bc769e1d3a1f29a184f39c302e469f5f49932fd98c6de691bb5",
+      "bytes": 1457758,
+      "elapsedSeconds": 0.704
+    },
+    "packedNoiseNeutralized": {
+      "path": "experiments/splash-visual-fidelity-differential/output/source-controls/packed-noise-neutralized.png",
+      "sha256": "d9b6b5b66dc5bfb903d67242631346156ad76d926580069fa2c91fc851864a2d",
+      "bytes": 1535172,
+      "elapsedSeconds": 3.641
+    }
+  }
+}

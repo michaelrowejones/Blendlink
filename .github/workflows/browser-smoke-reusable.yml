@@ -1,0 +1,77 @@
+name: Reusable application browser smoke
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: Directory in the caller repository containing package-lock.json
+        required: false
+        default: .
+        type: string
+      test_path:
+        description: Application-owned Playwright test file or directory
+        required: true
+        type: string
+      node_version:
+        description: Supported Node version used to run the application smoke
+        required: false
+        default: "24"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    name: ${{ matrix.browser }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - chromium
+          - firefox
+          - webkit
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+
+    steps:
+      - name: Check out the calling application
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node ${{ inputs.node_version }}
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: npm
+          cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
+
+      - name: Install locked application dependencies
+        run: npm ci
+
+      - name: Install the version-matched browser and OS dependencies
+        env:
+          BLENDLINK_BROWSER: ${{ matrix.browser }}
+        run: npx --no-install playwright install --with-deps "$BLENDLINK_BROWSER"
+
+      - name: Run the application-owned Blendlink smoke
+        env:
+          BLENDLINK_BROWSER: ${{ matrix.browser }}
+          BLENDLINK_TEST_PATH: ${{ inputs.test_path }}
+        run: npx --no-install playwright test "$BLENDLINK_TEST_PATH" --browser="$BLENDLINK_BROWSER" --workers=1
+
+      - name: Retain browser evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: blendlink-browser-${{ matrix.browser }}
+          path: |
+            ${{ inputs.working_directory }}/playwright-report
+            ${{ inputs.working_directory }}/test-results
+          if-no-files-found: ignore
+          retention-days: 14

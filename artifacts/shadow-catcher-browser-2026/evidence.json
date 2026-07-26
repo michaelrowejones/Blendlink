@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-23T14:19:33.978Z",
+  "url": "http://127.0.0.1:5173/",
+  "browser": "150.0.7871.129",
+  "threeVersion": "0.184.0",
+  "blendlinkVersion": "0.8.0",
+  "source": {
+    "threeRuntimeSha256": "e196978d64d9b42fc55b80fc258232b6c5c0b052cb4fbfcf57036b594a1230cb",
+    "shadowCatcherSha256": "fd3120ae391d20944903f116ef7a5fb96e68eea64ddb5ba56e09c58b70dd51d4",
+    "needleShadowCatcherSha256": "af0b0fea08e92cee701b618613975b6412eb7a0b80642312a25ce01bba4b740b"
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "cells": {
+    "mask": {
+      "width": 400,
+      "height": 300,
+      "transparent": 109513,
+      "partialAlpha": 2473,
+      "opaque": 8014,
+      "nonzeroRgb": 10481,
+      "center": [
+        202,
+        118,
+        74,
+        255
+      ],
+      "left": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "components": 1,
+      "requiresContinuousFrames": false,
+      "materialTypes": [
+        "ShadowMaterial"
+      ],
+      "layerMasksBefore": [
+        64
+      ],
+      "layerMasksInstalled": [
+        64
+      ]
+    },
+    "descendants": {
+      "width": 400,
+      "height": 300,
+      "transparent": 111834,
+      "partialAlpha": 2648,
+      "opaque": 5518,
+      "nonzeroRgb": 8161,
+      "center": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "left": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "components": 1,
+      "requiresContinuousFrames": false,
+      "materialTypes": [
+        "ShadowMaterial",
+        "ShadowMaterial"
+      ],
+      "layerMasksBefore": [
+        128,
+        1024
+      ],
+      "layerMasksInstalled": [
+        128,
+        1024
+      ]
+    },
+    "occluder": {
+      "width": 400,
+      "height": 300,
+      "transparent": 65850,
+      "partialAlpha": 0,
+      "opaque": 54150,
+      "nonzeroRgb": 54150,
+      "center": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "left": [
+        233,
+        95,
+        98,
+        255
+      ],
+      "components": 1,
+      "requiresContinuousFrames": false,
+      "materialTypes": [
+        "MeshStandardMaterial"
+      ],
+      "layerMasksBefore": [
+        4096
+      ],
+      "layerMasksInstalled": [
+        4096
+      ]
+    },
+    "additive": {
+      "width": 400,
+      "height": 300,
+      "transparent": 65400,
+      "partialAlpha": 1471,
+      "opaque": 53129,
+      "nonzeroRgb": 54600,
+      "center": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "left": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "components": 1,
+      "requiresContinuousFrames": false,
+      "materialTypes": [
+        "MeshStandardMaterial"
+      ],
+      "layerMasksBefore": [
+        32768
+      ],
+      "layerMasksInstalled": [
+        32768
+      ]
+    }
+  },
+  "disposed": {
+    "mask": {
+      "materialsRestored": true,
+      "generatedChildren": null
+    },
+    "descendants": {
+      "materialsRestored": true,
+      "generatedChildren": null
+    },
+    "occluder": {
+      "materialsRestored": true,
+      "generatedChildren": null
+    },
+    "additive": {
+      "materialsRestored": true,
+      "generatedChildren": null
+    }
+  },
+  "assertions": {
+    "maskPartialAlpha": true,
+    "descendantGroup": true,
+    "applicationLayersPreserved": true,
+    "occluderDepthWithoutColor": true,
+    "additiveVisibleAtDefaults": true,
+    "staticDemandPolicy": true,
+    "materialIdentityRestored": true
+  },
+  "limits": [
+    "Local production module build, not a freshly extracted npm tarball.",
+    "Chromium/ANGLE evidence only; Firefox, WebKit, mobile, WebGPU/TSL, and physical GPU timing remain pending.",
+    "Pinned Needle source identity is recorded, but this run does not execute Needle runtime pixels side by side."
+  ]
+}

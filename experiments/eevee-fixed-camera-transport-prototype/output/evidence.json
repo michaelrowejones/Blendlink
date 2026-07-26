@@ -1,0 +1,918 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-eevee-fixed-camera-transport-prototype",
+  "question": "Can a final Eevee frame projected through its authored camera onto exported geometry preserve the fixed-camera Splash appearance while keeping depth-tested scene geometry?",
+  "evidenceBoundary": "One static Splash frame, one exact 1200x600 authored perspective camera, Chrome/WebGL, and one unoptimized PNG. This does not validate moving cameras, animation, visibility changes, transparent layer ownership, other aspect ratios, WebGPU, compression, or production integration.",
+  "toolchain": {
+    "node": "v24.15.0",
+    "platform": "win32-x64",
+    "browser": "150.0.7871.182",
+    "playwright": {
+      "version": "1.60.0",
+      "packageJsonPath": "../MichaelRoweJonesSite/node_modules/playwright/package.json"
+    },
+    "three": {
+      "version": "0.184.0",
+      "packageSha256": "8308e43d6d6dd4c636c2dfe2e724da07dcd9fe4349bba6afb56f2c5ba6625391",
+      "shaderMaterialSha256": "a935827f12873ba7310744dd8ae659bcf772dea4bdddf0eac23ca88bc0859c6d",
+      "cameraSha256": "8a9cf79c111465425fc176d5f20d2f37a5640c2bdf4f58701db1f6e64e46bb01",
+      "gltfLoaderSha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2"
+    }
+  },
+  "inputs": {
+    "reference": {
+      "path": "artifacts/release-dogfood/blender-4-splash/blender-reference-selected-sky-0001.png",
+      "sha256": "650e2f0fc9f78bbd6aec6656d9d241b656a6acf16c4cb10eb12cb7c8e601f243"
+    },
+    "scene": {
+      "path": "artifacts/release-dogfood/blender-4-splash/public/models/blender40SplashSelectedSky/5f6064b69bd25549132b26410600b070f1e7ab8965df122e6cec2ae43e9c570a/blender40SplashSelectedSky.glb",
+      "sha256": "8023cc4cada546f0b68decd87b274118424c03a87d42d25001caaae1650cbbac"
+    },
+    "retainedBlendlink": {
+      "path": "artifacts/release-dogfood/blender-4-splash/browser-evidence-blender-4-splash-selected-sky.png",
+      "sha256": "853d883dac57506c45a23cbc06056a691e19a22199ec2387d35baa902ae55621"
+    },
+    "needleActual": {
+      "path": "artifacts/release-dogfood/blender-4-splash/needle-three-way-2026/browser-evidence-needle-blender-4-splash-selected-sky-authored-camera-clean-ui.png",
+      "sha256": "54e30ecaa0342611122288efbf6ffe9c7440709d6d613c67adf77d37fe0efcbc",
+      "boundary": "Actual Needle add-on/runtime pixels from the bounded mixed-host browser cell; not a coherent package-tree or official build-pipeline claim."
+    }
+  },
+  "captures": {
+    "projectedAuthored": {
+      "path": "experiments/eevee-fixed-camera-transport-prototype/output/projectedAuthored.png",
+      "sha256": "51696f4167968f266846e6772d47c7416cb250eac9fe9baed00d606ef500c35b",
+      "state": {
+        "kind": "blendlink-eevee-fixed-camera-transport-prototype",
+        "mode": "projected",
+        "view": "authored",
+        "surfaceSet": "all",
+        "depthProbe": false,
+        "viewport": {
+          "width": 1200,
+          "height": 600
+        },
+        "sceneUrl": "/assets/scene.glb",
+        "appearanceUrl": "/assets/eevee-reference.png",
+        "ready": true,
+        "interface": "geometry-preserving-fixed-camera-projector",
+        "authoredCamera": {
+          "name": "Camera",
+          "aspect": 2,
+          "fov": 33.61004,
+          "near": 0.1,
+          "far": 1000
+        },
+        "meshCount": 335,
+        "visibleMeshCount": 335,
+        "patchedMeshCount": 335,
+        "materialDepthContract": {
+          "depthTest": true,
+          "depthWrite": true,
+          "side": "double"
+        },
+        "centerRaycast": [
+          {
+            "object": "Cube008_1",
+            "distance": 36.563792
+          },
+          {
+            "object": "Cube008",
+            "distance": 36.583388
+          },
+          {
+            "object": "Cube008",
+            "distance": 39.387711
+          },
+          {
+            "object": "Cube008_1",
+            "distance": 39.405809
+          },
+          {
+            "object": "DP-SkyPaintGEO",
+            "distance": 619.504238
+          }
+        ],
+        "renderer": {
+          "calls": 324,
+          "triangles": 1045438,
+          "points": 0,
+          "lines": 0,
+          "compileMilliseconds": 14.8,
+          "firstRenderMilliseconds": 43.8,
+          "webgl2": true
+        }
+      },
+      "failures": []
+    },
+    "projectedBackdropOnly": {
+      "path": "experiments/eevee-fixed-camera-transport-prototype/output/projectedBackdropOnly.png",
+      "sha256": "e3418d80964678885bbd0474db16e19077fe434b6cc170e725ae6e85a5662a86",
+      "state": {
+        "kind": "blendlink-eevee-fixed-camera-transport-prototype",
+        "mode": "projected",
+        "view": "authored",
+        "surfaceSet": "backdrop-only",
+        "depthProbe": false,
+        "viewport": {
+          "width": 1200,
+          "height": 600
+        },
+        "sceneUrl": "/assets/scene.glb",
+        "appearanceUrl": "/assets/eevee-reference.png",
+        "ready": true,
+        "interface": "geometry-preserving-fixed-camera-projector",
+        "authoredCamera": {
+          "name": "Camera",
+          "aspect": 2,
+          "fov": 33.61004,
+          "near": 0.1,
+          "far": 1000
+        },
+        "meshCount": 335,
+        "visibleMeshCount": 1,
+        "patchedMeshCount": 1,
+        "materialDepthContract": {
+          "depthTest": true,
+          "depthWrite": true,
+          "side": "double"
+        },
+        "centerRaycast": [
+          {
+            "object": "DP-SkyPaintGEO",
+            "distance": 619.504238
+          }
+        ],
+        "renderer": {
+          "calls": 1,
+          "triangles": 42632,
+          "points": 0,
+          "lines": 0,
+          "compileMilliseconds": 19,
+          "firstRenderMilliseconds": 14.8,
+          "webgl2": true
+        }
+      },
+      "failures": []
+    },
+    "projectedOffset": {
+      "path": "experiments/eevee-fixed-camera-transport-prototype/output/projectedOffset.png",
+      "sha256": "551745c23f5d074244cc206083a41e6c328a51f2fcc59fe46a069d5725387a85",
+      "state": {
+        "kind": "blendlink-eevee-fixed-camera-transport-prototype",
+        "mode": "projected",
+        "view": "offset",
+        "surfaceSet": "all",
+        "depthProbe": false,
+        "viewport": {
+          "width": 1200,
+          "height": 600
+        },
+        "sceneUrl": "/assets/scene.glb",
+        "appearanceUrl": "/assets/eevee-reference.png",
+        "ready": true,
+        "interface": "geometry-preserving-fixed-camera-projector",
+        "authoredCamera": {
+          "name": "Camera",
+          "aspect": 2,
+          "fov": 33.61004,
+          "near": 0.1,
+          "far": 1000
+        },
+        "meshCount": 335,
+        "visibleMeshCount": 335,
+        "patchedMeshCount": 335,
+        "materialDepthContract": {
+          "depthTest": true,
+          "depthWrite": true,
+          "side": "double"
+        },
+        "centerRaycast": [
+          {
+            "object": "PencilGPMline008",
+            "distance": 18.080588
+          },
+          {
+            "object": "PencilGPMline008",
+            "distance": 18.236538
+          },
+          {
+            "object": "Cube008_1",
+            "distance": 36.190321
+          },
+          {
+            "object": "Cube008",
+            "distance": 36.219869
+          },
+          {
+            "object": "Cube008",
+            "distance": 40.118533
+          }
+        ],
+        "renderer": {
+          "calls": 321,
+          "triangles": 1032368,
+          "points": 0,
+          "lines": 0,
+          "compileMilliseconds": 16.6,
+          "firstRenderMilliseconds": 32.9,
+          "webgl2": true
+        }
+      },
+      "failures": []
+    },
+    "depthProbeAll": {
+      "path": "experiments/eevee-fixed-camera-transport-prototype/output/depthProbeAll.png",
+      "sha256": "51696f4167968f266846e6772d47c7416cb250eac9fe9baed00d606ef500c35b",
+      "state": {
+        "kind": "blendlink-eevee-fixed-camera-transport-prototype",
+        "mode": "projected",
+        "view": "authored",
+        "surfaceSet": "all",
+        "depthProbe": true,
+        "viewport": {
+          "width": 1200,
+          "height": 600
+        },
+        "sceneUrl": "/assets/scene.glb",
+        "appearanceUrl": "/assets/eevee-reference.png",
+        "ready": true,
+        "depthProbeContract": {
+          "distanceFromCamera": 50,
+          "expected": "occluded by the nearer exported scene"
+        },
+        "interface": "geometry-preserving-fixed-camera-projector",
+        "authoredCamera": {
+          "name": "Camera",
+          "aspect": 2,
+          "fov": 33.61004,
+          "near": 0.1,
+          "far": 1000
+        },
+        "meshCount": 335,
+        "visibleMeshCount": 335,
+        "patchedMeshCount": 335,
+        "materialDepthContract": {
+          "depthTest": true,
+          "depthWrite": true,
+          "side": "double"
+        },
+        "centerRaycast": [
+          {
+            "object": "Cube008_1",
+            "distance": 36.563792
+          },
+          {
+            "object": "Cube008",
+            "distance": 36.583388
+          },
+          {
+            "object": "Cube008",
+            "distance": 39.387711
+          },
+          {
+            "object": "Cube008_1",
+            "distance": 39.405809
+          },
+          {
+            "object": "DP-SkyPaintGEO",
+            "distance": 619.504238
+          }
+        ],
+        "renderer": {
+          "calls": 325,
+          "triangles": 1046398,
+          "points": 0,
+          "lines": 0,
+          "compileMilliseconds": 15.1,
+          "firstRenderMilliseconds": 38.9,
+          "webgl2": true
+        }
+      },
+      "failures": []
+    },
+    "depthProbeBackdropOnly": {
+      "path": "experiments/eevee-fixed-camera-transport-prototype/output/depthProbeBackdropOnly.png",
+      "sha256": "a35f4cdfea83e8796ddc3dec12108e72bf4a0d25e1699b9cecd9bd022a009340",
+      "state": {
+        "kind": "blendlink-eevee-fixed-camera-transport-prototype",
+        "mode": "projected",
+        "view": "authored",
+        "surfaceSet": "backdrop-only",
+        "depthProbe": true,
+        "viewport": {
+          "width": 1200,
+          "height": 600
+        },
+        "sceneUrl": "/assets/scene.glb",
+        "appearanceUrl": "/assets/eevee-reference.png",
+        "ready": true,
+        "depthProbeContract": {
+          "distanceFromCamera": 50,
+          "expected": "visible in front of the backdrop-only control"
+        },
+        "interface": "geometry-preserving-fixed-camera-projector",
+        "authoredCamera": {
+          "name": "Camera",
+          "aspect": 2,
+          "fov": 33.61004,
+          "near": 0.1,
+          "far": 1000
+        },
+        "meshCount": 335,
+        "visibleMeshCount": 1,
+        "patchedMeshCount": 1,
+        "materialDepthContract": {
+          "depthTest": true,
+          "depthWrite": true,
+          "side": "double"
+        },
+        "centerRaycast": [
+          {
+            "object": "DP-SkyPaintGEO",
+            "distance": 619.504238
+          }
+        ],
+        "renderer": {
+          "calls": 2,
+          "triangles": 43592,
+          "points": 0,
+          "lines": 0,
+          "compileMilliseconds": 18.7,
+          "firstRenderMilliseconds": 16.6,
+          "webgl2": true
+        }
+      },
+      "failures": []
+    },
+    "rawGlb": {
+      "path": "experiments/eevee-fixed-camera-transport-prototype/output/rawGlb.png",
+      "sha256": "6c06c91a7a08f32673d49d27f63beb8c4702b441c0ab984a0cc850207e3b3083",
+      "state": {
+        "kind": "blendlink-eevee-fixed-camera-transport-prototype",
+        "mode": "current",
+        "view": "authored",
+        "surfaceSet": "all",
+        "depthProbe": false,
+        "viewport": {
+          "width": 1200,
+          "height": 600
+        },
+        "sceneUrl": "/assets/scene.glb",
+        "appearanceUrl": "/assets/eevee-reference.png",
+        "ready": true,
+        "interface": "raw-gltf-control",
+        "authoredCamera": {
+          "name": "Camera",
+          "aspect": 2,
+          "fov": 33.61004,
+          "near": 0.1,
+          "far": 1000
+        },
+        "meshCount": 335,
+        "visibleMeshCount": 335,
+        "patchedMeshCount": 0,
+        "materialDepthContract": null,
+        "centerRaycast": [
+          {
+            "object": "Cube008",
+            "distance": 36.583388
+          },
+          {
+            "object": "Cube008",
+            "distance": 39.387711
+          },
+          {
+            "object": "Cube008_1",
+            "distance": 39.405809
+          },
+          {
+            "object": "DP-SkyPaintGEO",
+            "distance": 619.504238
+          }
+        ],
+        "renderer": {
+          "calls": 470,
+          "triangles": 1255563,
+          "points": 0,
+          "lines": 0,
+          "compileMilliseconds": 18.7,
+          "firstRenderMilliseconds": 44,
+          "webgl2": true
+        }
+      },
+      "failures": []
+    },
+    "plate": {
+      "path": "experiments/eevee-fixed-camera-transport-prototype/output/plate.png",
+      "sha256": "be8d2bf0c0cd551e42ce2afd0c3e37519f7175829668d425e0ea80b87c653692",
+      "state": {
+        "kind": "blendlink-eevee-fixed-camera-transport-prototype",
+        "mode": "plate",
+        "view": "authored",
+        "surfaceSet": "all",
+        "depthProbe": false,
+        "viewport": {
+          "width": 1200,
+          "height": 600
+        },
+        "sceneUrl": "/assets/scene.glb",
+        "appearanceUrl": "/assets/eevee-reference.png",
+        "ready": true,
+        "interface": "application-owned-image-plate"
+      },
+      "failures": []
+    }
+  },
+  "results": {
+    "retainedBlendlink": {
+      "wholeFrame": {
+        "meanAbsoluteError": 0.191306,
+        "rootMeanSquareError": 0.241231,
+        "changedChannelFractionOver8": 0.905775,
+        "pixelCount": 720000
+      },
+      "splashSemantic": {
+        "passed": false,
+        "symptoms": {
+          "lost-shadow-information": {
+            "reference": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "candidate": {
+              "broadShadowBandRms": 0.014825,
+              "lumaP10P90Range": 0.031538
+            },
+            "ratios": {
+              "broadShadowBand": 0.268233,
+              "lumaRange": 0.154057
+            },
+            "thresholds": {
+              "minimumBroadShadowBandRatio": 0.72,
+              "minimumLumaRangeRatio": 0.72
+            },
+            "passed": false
+          },
+          "noisy-or-incorrect-sky": {
+            "reference": {
+              "localRgbNoiseRms": 0.026243,
+              "intrinsicRgbSpreadP90": 0.032478
+            },
+            "candidate": {
+              "localRgbNoiseRms": 0.042795,
+              "medianRgbDistanceFromReference": 0.112319
+            },
+            "ratios": {
+              "localNoise": 1.630712,
+              "medianColorErrorInReferenceSpreads": 3.458311
+            },
+            "thresholds": {
+              "maximumNoiseRatio": 1.25,
+              "maximumMedianColorErrorInReferenceSpreads": 2
+            },
+            "passed": false
+          },
+          "missing-building-texture": {
+            "reference": {
+              "midFrequencyLumaRms": 0.027659,
+              "localColorDetailRms": 0.0393
+            },
+            "candidate": {
+              "midFrequencyLumaRms": 0.001189,
+              "localColorDetailRms": 0.001608
+            },
+            "ratios": {
+              "midFrequencyLuma": 0.04299,
+              "localColorDetail": 0.040908,
+              "referencePatternCorrelation": 0.045046,
+              "patternErrorInReferenceDetails": 0.999061
+            },
+            "thresholds": {
+              "minimumMidFrequencyLumaRatio": 0.7,
+              "minimumLocalColorDetailRatio": 0.7,
+              "minimumReferencePatternCorrelation": 0.65,
+              "maximumPatternErrorInReferenceDetails": 0.7
+            },
+            "passed": false
+          }
+        }
+      }
+    },
+    "needleActual": {
+      "wholeFrame": {
+        "meanAbsoluteError": 0.296973,
+        "rootMeanSquareError": 0.359514,
+        "changedChannelFractionOver8": 0.963217,
+        "pixelCount": 720000
+      },
+      "splashSemantic": {
+        "passed": false,
+        "symptoms": {
+          "lost-shadow-information": {
+            "reference": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "candidate": {
+              "broadShadowBandRms": 0.058934,
+              "lumaP10P90Range": 0.112633
+            },
+            "ratios": {
+              "broadShadowBand": 1.066283,
+              "lumaRange": 0.550198
+            },
+            "thresholds": {
+              "minimumBroadShadowBandRatio": 0.72,
+              "minimumLumaRangeRatio": 0.72
+            },
+            "passed": false
+          },
+          "noisy-or-incorrect-sky": {
+            "reference": {
+              "localRgbNoiseRms": 0.026243,
+              "intrinsicRgbSpreadP90": 0.032478
+            },
+            "candidate": {
+              "localRgbNoiseRms": 0.035993,
+              "medianRgbDistanceFromReference": 0.163613
+            },
+            "ratios": {
+              "localNoise": 1.371534,
+              "medianColorErrorInReferenceSpreads": 5.037634
+            },
+            "thresholds": {
+              "maximumNoiseRatio": 1.25,
+              "maximumMedianColorErrorInReferenceSpreads": 2
+            },
+            "passed": false
+          },
+          "missing-building-texture": {
+            "reference": {
+              "midFrequencyLumaRms": 0.027659,
+              "localColorDetailRms": 0.0393
+            },
+            "candidate": {
+              "midFrequencyLumaRms": 0.024323,
+              "localColorDetailRms": 0.036364
+            },
+            "ratios": {
+              "midFrequencyLuma": 0.879401,
+              "localColorDetail": 0.925291,
+              "referencePatternCorrelation": 0.595708,
+              "patternErrorInReferenceDetails": 0.85254
+            },
+            "thresholds": {
+              "minimumMidFrequencyLumaRatio": 0.7,
+              "minimumLocalColorDetailRatio": 0.7,
+              "minimumReferencePatternCorrelation": 0.65,
+              "maximumPatternErrorInReferenceDetails": 0.7
+            },
+            "passed": false
+          }
+        }
+      }
+    },
+    "rawGlb": {
+      "wholeFrame": {
+        "meanAbsoluteError": 0.191306,
+        "rootMeanSquareError": 0.24123,
+        "changedChannelFractionOver8": 0.905774,
+        "pixelCount": 720000
+      },
+      "splashSemantic": {
+        "passed": false,
+        "symptoms": {
+          "lost-shadow-information": {
+            "reference": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "candidate": {
+              "broadShadowBandRms": 0.014825,
+              "lumaP10P90Range": 0.031538
+            },
+            "ratios": {
+              "broadShadowBand": 0.268232,
+              "lumaRange": 0.154057
+            },
+            "thresholds": {
+              "minimumBroadShadowBandRatio": 0.72,
+              "minimumLumaRangeRatio": 0.72
+            },
+            "passed": false
+          },
+          "noisy-or-incorrect-sky": {
+            "reference": {
+              "localRgbNoiseRms": 0.026243,
+              "intrinsicRgbSpreadP90": 0.032478
+            },
+            "candidate": {
+              "localRgbNoiseRms": 0.042795,
+              "medianRgbDistanceFromReference": 0.112319
+            },
+            "ratios": {
+              "localNoise": 1.630715,
+              "medianColorErrorInReferenceSpreads": 3.458311
+            },
+            "thresholds": {
+              "maximumNoiseRatio": 1.25,
+              "maximumMedianColorErrorInReferenceSpreads": 2
+            },
+            "passed": false
+          },
+          "missing-building-texture": {
+            "reference": {
+              "midFrequencyLumaRms": 0.027659,
+              "localColorDetailRms": 0.0393
+            },
+            "candidate": {
+              "midFrequencyLumaRms": 0.001189,
+              "localColorDetailRms": 0.001608
+            },
+            "ratios": {
+              "midFrequencyLuma": 0.04299,
+              "localColorDetail": 0.040908,
+              "referencePatternCorrelation": 0.045046,
+              "patternErrorInReferenceDetails": 0.999061
+            },
+            "thresholds": {
+              "minimumMidFrequencyLumaRatio": 0.7,
+              "minimumLocalColorDetailRatio": 0.7,
+              "minimumReferencePatternCorrelation": 0.65,
+              "maximumPatternErrorInReferenceDetails": 0.7
+            },
+            "passed": false
+          }
+        }
+      }
+    },
+    "projectedAuthored": {
+      "wholeFrame": {
+        "meanAbsoluteError": 0.000001,
+        "rootMeanSquareError": 0.000079,
+        "changedChannelFractionOver8": 0,
+        "pixelCount": 720000
+      },
+      "splashSemantic": {
+        "passed": true,
+        "symptoms": {
+          "lost-shadow-information": {
+            "reference": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "candidate": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "ratios": {
+              "broadShadowBand": 0.999999,
+              "lumaRange": 1
+            },
+            "thresholds": {
+              "minimumBroadShadowBandRatio": 0.72,
+              "minimumLumaRangeRatio": 0.72
+            },
+            "passed": true
+          },
+          "noisy-or-incorrect-sky": {
+            "reference": {
+              "localRgbNoiseRms": 0.026243,
+              "intrinsicRgbSpreadP90": 0.032478
+            },
+            "candidate": {
+              "localRgbNoiseRms": 0.026242,
+              "medianRgbDistanceFromReference": 0
+            },
+            "ratios": {
+              "localNoise": 0.999973,
+              "medianColorErrorInReferenceSpreads": 0
+            },
+            "thresholds": {
+              "maximumNoiseRatio": 1.25,
+              "maximumMedianColorErrorInReferenceSpreads": 2
+            },
+            "passed": true
+          },
+          "missing-building-texture": {
+            "reference": {
+              "midFrequencyLumaRms": 0.027659,
+              "localColorDetailRms": 0.0393
+            },
+            "candidate": {
+              "midFrequencyLumaRms": 0.027661,
+              "localColorDetailRms": 0.039299
+            },
+            "ratios": {
+              "midFrequencyLuma": 1.000073,
+              "localColorDetail": 0.999975,
+              "referencePatternCorrelation": 1,
+              "patternErrorInReferenceDetails": 0.000408
+            },
+            "thresholds": {
+              "minimumMidFrequencyLumaRatio": 0.7,
+              "minimumLocalColorDetailRatio": 0.7,
+              "minimumReferencePatternCorrelation": 0.65,
+              "maximumPatternErrorInReferenceDetails": 0.7
+            },
+            "passed": true
+          }
+        }
+      }
+    },
+    "projectedBackdropOnly": {
+      "wholeFrame": {
+        "meanAbsoluteError": 0,
+        "rootMeanSquareError": 0.000037,
+        "changedChannelFractionOver8": 0,
+        "pixelCount": 720000
+      },
+      "splashSemantic": {
+        "passed": true,
+        "symptoms": {
+          "lost-shadow-information": {
+            "reference": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "candidate": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "ratios": {
+              "broadShadowBand": 1,
+              "lumaRange": 1
+            },
+            "thresholds": {
+              "minimumBroadShadowBandRatio": 0.72,
+              "minimumLumaRangeRatio": 0.72
+            },
+            "passed": true
+          },
+          "noisy-or-incorrect-sky": {
+            "reference": {
+              "localRgbNoiseRms": 0.026243,
+              "intrinsicRgbSpreadP90": 0.032478
+            },
+            "candidate": {
+              "localRgbNoiseRms": 0.026243,
+              "medianRgbDistanceFromReference": 0
+            },
+            "ratios": {
+              "localNoise": 1.000002,
+              "medianColorErrorInReferenceSpreads": 0
+            },
+            "thresholds": {
+              "maximumNoiseRatio": 1.25,
+              "maximumMedianColorErrorInReferenceSpreads": 2
+            },
+            "passed": true
+          },
+          "missing-building-texture": {
+            "reference": {
+              "midFrequencyLumaRms": 0.027659,
+              "localColorDetailRms": 0.0393
+            },
+            "candidate": {
+              "midFrequencyLumaRms": 0.027656,
+              "localColorDetailRms": 0.039298
+            },
+            "ratios": {
+              "midFrequencyLuma": 0.999899,
+              "localColorDetail": 0.999935,
+              "referencePatternCorrelation": 1,
+              "patternErrorInReferenceDetails": 0.000573
+            },
+            "thresholds": {
+              "minimumMidFrequencyLumaRatio": 0.7,
+              "minimumLocalColorDetailRatio": 0.7,
+              "minimumReferencePatternCorrelation": 0.65,
+              "maximumPatternErrorInReferenceDetails": 0.7
+            },
+            "passed": true
+          }
+        }
+      }
+    },
+    "plate": {
+      "wholeFrame": {
+        "meanAbsoluteError": 0,
+        "rootMeanSquareError": 0,
+        "changedChannelFractionOver8": 0,
+        "pixelCount": 720000
+      },
+      "splashSemantic": {
+        "passed": true,
+        "symptoms": {
+          "lost-shadow-information": {
+            "reference": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "candidate": {
+              "broadShadowBandRms": 0.05527,
+              "lumaP10P90Range": 0.204714
+            },
+            "ratios": {
+              "broadShadowBand": 1,
+              "lumaRange": 1
+            },
+            "thresholds": {
+              "minimumBroadShadowBandRatio": 0.72,
+              "minimumLumaRangeRatio": 0.72
+            },
+            "passed": true
+          },
+          "noisy-or-incorrect-sky": {
+            "reference": {
+              "localRgbNoiseRms": 0.026243,
+              "intrinsicRgbSpreadP90": 0.032478
+            },
+            "candidate": {
+              "localRgbNoiseRms": 0.026243,
+              "medianRgbDistanceFromReference": 0
+            },
+            "ratios": {
+              "localNoise": 1,
+              "medianColorErrorInReferenceSpreads": 0
+            },
+            "thresholds": {
+              "maximumNoiseRatio": 1.25,
+              "maximumMedianColorErrorInReferenceSpreads": 2
+            },
+            "passed": true
+          },
+          "missing-building-texture": {
+            "reference": {
+              "midFrequencyLumaRms": 0.027659,
+              "localColorDetailRms": 0.0393
+            },
+            "candidate": {
+              "midFrequencyLumaRms": 0.027659,
+              "localColorDetailRms": 0.0393
+            },
+            "ratios": {
+              "midFrequencyLuma": 1,
+              "localColorDetail": 1,
+              "referencePatternCorrelation": 1,
+              "patternErrorInReferenceDetails": 0
+            },
+            "thresholds": {
+              "minimumMidFrequencyLumaRatio": 0.7,
+              "minimumLocalColorDetailRatio": 0.7,
+              "minimumReferencePatternCorrelation": 0.65,
+              "maximumPatternErrorInReferenceDetails": 0.7
+            },
+            "passed": true
+          }
+        }
+      }
+    },
+    "surfaceSemanticControl": {
+      "backdropOnlyMatchesReference": true,
+      "meaning": "If one backdrop mesh reproduces the beauty frame, matching pixels do not prove per-surface material, object, or depth correctness."
+    },
+    "depthProxyControl": {
+      "referenceCenter": [
+        212,
+        214,
+        216
+      ],
+      "allGeometryCenter": [
+        212,
+        214,
+        216
+      ],
+      "backdropOnlyCenter": [
+        255,
+        0,
+        0
+      ],
+      "allGeometryDistanceFromReference": 0,
+      "backdropOnlyIsRed": true,
+      "passed": true,
+      "meaning": "A red sphere placed 50 units along the center ray is hidden by the complete exported geometry (nearest hit 36.56) but visible when only the 619.50-unit sky backdrop remains. This verifies a depth benefit independently from pixel matching."
+    },
+    "offsetDiagnostic": {
+      "differenceFromAuthoredProjection": {
+        "meanAbsoluteError": 0.180574,
+        "rootMeanSquareError": 0.261445,
+        "changedChannelFractionOver8": 0.769326,
+        "pixelCount": 720000
+      },
+      "evidenceBoundary": "Diagnostic only: no Eevee offset-camera reference exists. The projector is intentionally invalid once the website moves the camera."
+    }
+  },
+  "verdict": {
+    "projectedPass": true,
+    "platePass": true,
+    "passed": true,
+    "meaning": "The projector is promising as a depth-tested fixed-camera pixel proxy, but the backdrop-only control refuses any per-surface or object-completeness claim.",
+    "surfaceSemanticClaimRefused": true
+  },
+  "overview": {
+    "path": "experiments/eevee-fixed-camera-transport-prototype/output/overview.png",
+    "sha256": "bafb80a5506c766bd6eae3625d38adb0cc9204733ca4ebe5ac66842e1e93369f"
+  }
+}

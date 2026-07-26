@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Blendlink behavior browser audit</title>
+  <style>
+    html, body { margin: 0; background: #171717; color: #eee; font: 14px system-ui; }
+    main { width: 800px; margin: 20px auto; }
+    canvas { display: block; width: 800px; height: 600px; outline: 2px solid #555; }
+    pre { white-space: pre-wrap; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "/MichaelRoweJonesSite/node_modules/three/build/three.module.js",
+      "postprocessing": "/blendlink/node_modules/postprocessing/build/index.js",
+      "n8ao": "/blendlink/node_modules/n8ao/dist/index.js"
+    }
+  }
+  </script>
+</head>
+<body>
+<main>
+  <h1>Blendlink behavior browser audit</h1>
+  <canvas id="canvas" width="800" height="600"></canvas>
+  <pre id="status">loading</pre>
+</main>
+<script type="module">
+import * as THREE from 'three'
+import { installThreeComponents } from '/blendlink/packages/blendlink/dist/threeComponents.js'
+
+const canvas = document.querySelector('#canvas')
+const status = document.querySelector('#status')
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false })
+renderer.setSize(800, 600, false)
+renderer.setPixelRatio(1)
+renderer.setClearColor(0x171717)
+
+let serial = 0
+const active = []
+const component = (type, target, values = {}, id = `${type}-${++serial}`) => ({
+  id, type, schemaVersion: 1, enabled: true, target, values,
+})
+
+function fixture() {
+  const scene = new THREE.Scene()
+  const root = new THREE.Group()
+  root.name = 'Root'
+  scene.add(root)
+  const camera = new THREE.PerspectiveCamera(50, 800 / 600, 0.1, 100)
+  camera.position.set(0, 0, 5)
+  camera.lookAt(0, 0, 0)
+  scene.add(camera)
+  const target = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 1.5, 1.5),
+    new THREE.MeshBasicMaterial({ color: 0xff4f42 }),
+  )
+  target.name = 'Target'
+  target.userData.blendlink_object_id = 'target-id'
+  root.add(target)
+  const focus = new THREE.Object3D()
+  focus.name = 'Focus'
+  focus.userData.blendlink_object_id = 'focus-id'
+  focus.position.set(1.5, 0.5, -1)
+  root.add(focus)
+  const bindings = {
+    byId: { 'target-id': target, 'focus-id': focus },
+    byName: { Target: target, Focus: focus },
+  }
+  const options = { root, scene, camera, renderer, bindings }
+  root.updateMatrixWorld(true)
+  camera.updateMatrixWorld(true)
+  renderer.render(scene, camera)
+  return { ...options, target, focus }
+}
+
+const targetRef = { kind: 'object', objectId: 'target-id', objectName: 'Target' }
+
+async function disposeAll() {
+  while (active.length) {
+    try { active.pop().dispose() } catch {}
+  }
+}
+
+async function runCore() {
+  const report = {}
+
+  // Keep Visible: real meshes, shared source material, multi-material occluder,
+  // two blockers, camera movement, and overlapping installations.
+  {
+    const f = fixture()
+    f.target.position.set(0, 0, -1)
+    const shared = new THREE.MeshBasicMaterial({ color: 0x3399ff })
+    const second = new THREE.MeshBasicMaterial({ color: 0x66ff99 })
+    const blockerGeometry = new THREE.BoxGeometry(2, 2, 0.25)
+    blockerGeometry.clearGroups()
+    blockerGeometry.addGroup(0, blockerGeometry.index.count, 0)
+    const blockerA = new THREE.Mesh(blockerGeometry, [shared, second])
+    blockerA.position.z = 2.5
+    const blockerB = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 0.25), shared)
+    blockerB.position.z = 1
+    const sharedUser = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), shared)
+    sharedUser.position.x = 4
+    f.root.add(blockerA, blockerB, sharedUser)
+    f.root.updateMatrixWorld(true)
+    const record = component('blendlink.see-through', targetRef, {
+      minOpacity: 0.2, fadeDistance: 0, duration: 0,
+    })
+    const installed = await installThreeComponents({ ...f, components: [record] })
+    installed.update(1)
+    const multiClone = Array.isArray(blockerA.material) && blockerA.material !== [shared, second]
+    report.seeThrough = {
+      blockersCloned: blockerA.material !== shared && blockerB.material !== shared,
+      multiMaterialPreserved: Array.isArray(blockerA.material) && blockerA.material.length === 2,
+      sourceMaterialUntouched: shared.opacity === 1 && shared.transparent === false && sharedUser.material === shared,
+      blockerOpacity: Array.isArray(blockerA.material) ? blockerA.material.map(m => m.opacity) : [],
+    }
+    f.camera.position.set(5, 0, 5)
+    f.camera.lookAt(f.target.position)
+    f.camera.updateMatrixWorld(true)
+    installed.update(1)
+    report.seeThrough.cameraClearRestores = blockerA.material === record.__never
+      ? false
+      : Array.isArray(blockerA.material) && blockerA.material[0] === shared && blockerB.material === shared
+    installed.dispose()
+    report.seeThrough.disposeRestoresAuthored = Array.isArray(blockerA.material)
+      && blockerA.material[0] === shared && blockerA.material[1] === second && blockerB.material === shared
+
+    f.camera.position.set(0, 0, 5)
+    f.camera.lookAt(f.target.position)
+    f.camera.updateMatrixWorld(true)
+    const first = await installThreeComponents({ ...f, components: [record] })
+    first.update(1)
+    const firstInstalled = blockerA.material
+    const overlap = await installThreeComponents({ ...f, components: [record] })
+    overlap.update(1)
+    first.dispose()
+    overlap.dispose()
+    report.seeThrough.overlapRestoresAuthored = Array.isArray(blockerA.material)
+      && blockerA.material[0] === shared && blockerA.material[1] === second
+    report.seeThrough.overlapLeavesFirstGeneration = blockerA.material === firstInstalled
+  }
+
+  // Hide On Start: sequential and overlapping ownership.
+  {
+    const f = fixture()
+    const record = component('blendlink.hide-on-start', targetRef)
+    const first = await installThreeComponents({ ...f, components: [record] })
+    const hidden = f.target.visible === false
+    first.dispose()
+    const sequentialRestore = f.target.visible === true
+    const a = await installThreeComponents({ ...f, components: [record] })
+    const b = await installThreeComponents({ ...f, components: [record] })
+    a.dispose()
+    const firstDisposePreservesSecond = f.target.visible === false
+    b.dispose()
+    report.startHidden = { hidden, sequentialRestore, firstDisposePreservesSecond, overlapFinalRestore: f.target.visible === true }
+  }
+
+  // Look At: target reference, parent transform, missing reference, external
+  // mutation guard, and overlapping installation ownership.
+  {
+    const f = fixture()
+    const parent = new THREE.Group()
+    parent.rotation.y = 0.4
+    f.root.remove(f.target)
+    parent.add(f.target)
+    f.root.add(parent)
+    f.root.updateMatrixWorld(true)
+    const record = component('blendlink.look-at', targetRef, { targetId: 'focus-id', targetName: 'Focus', keepUp: true })
+    const original = f.target.quaternion.clone()
+    const installed = await installThreeComponents({ ...f, components: [record] })
+    installed.update(0.016)
+    const changed = !f.target.quaternion.equals(original)
+    const aimed = new THREE.Vector3(0, 0, 1).applyQuaternion(f.target.getWorldQuaternion(new THREE.Quaternion()))
+      .dot(f.focus.getWorldPosition(new THREE.Vector3()).sub(f.target.getWorldPosition(new THREE.Vector3())).normalize())
+    installed.dispose()
+    const restored = f.target.quaternion.equals(original)
+    const guarded = await installThreeComponents({ ...f, components: [record] })
+    guarded.update(0.016)
+    f.target.quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0.7)
+    const external = f.target.quaternion.clone()
+    guarded.dispose()
+    const externalPreserved = f.target.quaternion.equals(external)
+    let missing = ''
+    try {
+      await installThreeComponents({ ...f, components: [component('blendlink.look-at', targetRef, { targetId: 'missing-id', targetName: 'Gone' })] })
+    } catch (error) { missing = String(error) }
+    f.target.quaternion.copy(original)
+    const a = await installThreeComponents({ ...f, components: [record] })
+    const b = await installThreeComponents({ ...f, components: [record] })
+    a.update(0.016); b.update(0.016)
+    a.dispose()
+    const firstDisposePreservesSecond = !f.target.quaternion.equals(original)
+    b.dispose()
+    report.lookAt = { changed, worldAimDot: aimed, restored, externalPreserved, missingReferenceError: missing, firstDisposePreservesSecond }
+  }
+
+  // Animation: actual Three AnimationMixer, raycast click, speed/loop/replay,
+  // missing clip diagnostics, and disposal pose.
+  {
+    const f = fixture()
+    const animated = new THREE.Object3D()
+    animated.name = 'Animated'
+    f.root.add(animated)
+    const clip = new THREE.AnimationClip('Move', 1, [
+      new THREE.NumberKeyframeTrack('Animated.position[x]', [0, 1], [0, 2]),
+    ])
+    const record = component('blendlink.play-animation-on-click', targetRef, {
+      clip: 'Move', loop: false, speed: 2, clampWhenFinished: false,
+    })
+    const installed = await installThreeComponents({ ...f, components: [record], animations: [clip] })
+    active.push(installed)
+    window.__interaction = { kind: 'animation', f, installed, animated }
+    report.animation = { ready: true }
+    let missing = ''
+    try {
+      await installThreeComponents({ ...f, components: [component('blendlink.play-animation-on-click', targetRef, { clip: 'Missing' })], animations: [clip] })
+    } catch (error) { missing = String(error) }
+    report.animation.missingClipError = missing
+  }
+
+  return report
+}
+
+async function setupInteraction(kind, values = {}) {
+  await disposeAll()
+  const f = fixture()
+  const opened = []
+  let records
+  const extra = {}
+  if (kind === 'open-url') {
+    records = [component('blendlink.open-url', targetRef, { url: values.url ?? 'https://example.com/a', newTab: true })]
+    extra.openUrl = (url, target) => opened.push({ url, target })
+    if (values.occluded) {
+      const occluder = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 0.2), new THREE.MeshBasicMaterial())
+      occluder.position.z = 2
+      f.root.add(occluder)
+    }
+  } else if (kind === 'hover') {
+    records = [component('blendlink.hover', targetRef, { scale: 1.5, duration: 0 })]
+    if (values.occluded) {
+      const occluder = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 0.2), new THREE.MeshBasicMaterial())
+      occluder.position.z = 2
+      f.root.add(occluder)
+    }
+  } else if (kind === 'animation') {
+    const animated = new THREE.Object3D()
+    animated.name = 'Animated'
+    f.root.add(animated)
+    const clip = new THREE.AnimationClip('Move', 1, [
+      new THREE.NumberKeyframeTrack('Animated.position[x]', [0, 1], [0, 2]),
+    ])
+    records = [component('blendlink.play-animation-on-click', targetRef, { clip: 'Move', loop: values.loop ?? false, speed: values.speed ?? 1 })]
+    extra.animations = [clip]
+    window.__animated = animated
+  } else if (kind === 'audio') {
+    const context = new AudioContext()
+    THREE.AudioContext.setContext(context)
+    const buffer = context.createBuffer(1, context.sampleRate, context.sampleRate)
+    const sourceId = 'sound-source'
+    records = [
+      component('blendlink.audio-source', targetRef, {
+        url: '/tone.wav', autoplay: values.autoplay ?? false, loop: false,
+        volume: 0.5, spatial: values.spatial ?? true, minDistance: 2, maxDistance: 8,
+      }, sourceId),
+      component('blendlink.play-audio-on-click', targetRef, { sourceId, toggle: values.toggle ?? false }, 'sound-trigger'),
+    ]
+    extra.audioLoader = { loadAsync: async () => buffer }
+    window.__audioContext = context
+  } else throw new Error(`unknown interaction ${kind}`)
+  f.root.updateMatrixWorld(true)
+  f.camera.updateMatrixWorld(true)
+  renderer.render(f.scene, f.camera)
+  const installed = await installThreeComponents({ ...f, components: records, ...extra })
+  active.push(installed)
+  window.__interaction = { kind, f, installed, opened }
+  return inspectInteraction()
+}
+
+function inspectInteraction() {
+  const current = window.__interaction
+  if (!current) return null
+  const audio = current.f.target.children.find(child => child instanceof THREE.Audio)
+  return {
+    kind: current.kind,
+    opened: current.opened,
+    scale: current.f.target.scale.toArray(),
+    activeElement: document.activeElement?.tagName,
+    canvasTabIndex: canvas.getAttribute('tabindex'),
+    canvasRole: canvas.getAttribute('role'),
+    canvasLabel: canvas.getAttribute('aria-label'),
+    animatedX: window.__animated?.position.x,
+    audio: audio ? {
+      isPlaying: audio.isPlaying,
+      positional: audio instanceof THREE.PositionalAudio,
+      distanceModel: audio.getDistanceModel?.(),
+      refDistance: audio.getRefDistance?.(),
+      maxDistance: audio.getMaxDistance?.(),
+      contextState: audio.context.state,
+    } : null,
+  }
+}
+
+function update(seconds) {
+  window.__interaction?.installed.update(seconds)
+  return inspectInteraction()
+}
+
+async function runFailuresAndOwnership() {
+  const report = {}
+  // URL acceptance is tested at installation; the browser's own URL parser is
+  // recorded without opening an unsafe URL.
+  const candidates = ['javascript:alert(1)', 'data:text/html,x', ' javascript:alert(1)', '//example.net/path', '/local/path']
+  report.urls = []
+  for (const value of candidates) {
+    const f = fixture()
+    try {
+      const installed = await installThreeComponents({
+        ...f,
+        components: [component('blendlink.open-url', targetRef, { url: value, newTab: true })],
+        openUrl() {},
+      })
+      report.urls.push({ value, accepted: true, browserProtocol: new URL(value, location.href).protocol })
+      installed.dispose()
+    } catch (error) {
+      report.urls.push({ value, accepted: false, error: String(error), browserProtocol: new URL(value, location.href).protocol })
+    }
+  }
+
+  // Audio failure must roll back both the child and owned listener.
+  {
+    const f = fixture()
+    let error = ''
+    try {
+      await installThreeComponents({
+        ...f,
+        components: [component('blendlink.audio-source', targetRef, { url: '/missing.wav', spatial: true }, 'missing-source')],
+        audioLoader: { loadAsync: async () => { throw new Error('HTTP 404 fixture') } },
+      })
+    } catch (caught) { error = String(caught) }
+    report.audioFailure = {
+      error,
+      audioChildren: f.target.children.filter(child => child.isAudio).length,
+      listenerChildren: f.camera.children.filter(child => child.type === 'AudioListener').length,
+    }
+  }
+
+  // Missing trigger source is an installation failure.
+  {
+    const f = fixture()
+    let error = ''
+    try {
+      await installThreeComponents({
+        ...f,
+        components: [component('blendlink.play-audio-on-click', targetRef, { sourceId: 'gone' })],
+      })
+    } catch (caught) { error = String(caught) }
+    report.missingAudioSource = error
+  }
+
+  // Browser-native shared AudioListener ownership across overlapping installs.
+  {
+    const context = new AudioContext()
+    THREE.AudioContext.setContext(context)
+    const buffer = context.createBuffer(1, context.sampleRate, context.sampleRate)
+    const f = fixture()
+    const source = component('blendlink.audio-source', targetRef, {
+      url: '/tone.wav', autoplay: false, spatial: true, minDistance: 2, maxDistance: 8,
+    }, 'shared-source')
+    const options = { ...f, components: [source], audioLoader: { loadAsync: async () => buffer } }
+    const a = await installThreeComponents(options)
+    const listener = f.camera.userData.__blendlink_audio_listener
+    const b = await installThreeComponents(options)
+    const sameListener = listener === f.camera.userData.__blendlink_audio_listener
+    a.dispose()
+    const retainedAfterFirst = listener.parent === f.camera
+    b.dispose()
+    report.sharedAudioListener = {
+      sameListener,
+      retainedAfterFirst,
+      removedAfterLast: listener.parent === null,
+      audioChildrenAfterLast: f.target.children.filter(child => child.isAudio).length,
+    }
+  }
+  return report
+}
+
+window.audit = { runCore, setupInteraction, inspectInteraction, update, runFailuresAndOwnership, disposeAll }
+status.textContent = `ready · Three ${THREE.REVISION}`
+window.__AUDIT_READY = true
+</script>
+</body>
+</html>

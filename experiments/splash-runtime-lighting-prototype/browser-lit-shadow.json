@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "case": "splash-runtime-lit-shadow",
+  "url": "http://127.0.0.1:4191/?variant=lit-shadow",
+  "page": {
+    "status": 200
+  },
+  "canvas": {
+    "cssWidth": 1200,
+    "cssHeight": 600,
+    "width": 1200,
+    "height": 600,
+    "webgl": {
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "renderer": "WebKit WebGL",
+      "contextLost": false
+    }
+  },
+  "glb": [
+    {
+      "url": "http://127.0.0.1:4191/models/blender40SplashSelectedSky/5f6064b69bd25549132b26410600b070f1e7ab8965df122e6cec2ae43e9c570a/blender40SplashSelectedSky.glb?v=8023cc4cada546f0",
+      "status": 200,
+      "ok": true,
+      "contentType": "model/gltf-binary",
+      "bytes": 38878972,
+      "sha256": "8023cc4cada546f0b68decd87b274118424c03a87d42d25001caaae1650cbbac",
+      "hashSource": "verification-fetch",
+      "hashFetchStatus": 200,
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache"
+    }
+  ],
+  "screenshot": {
+    "file": "browser-lit-shadow.png",
+    "width": 1200,
+    "height": 600,
+    "effectivelyMonochrome": false,
+    "entropy": 6.399802044965327,
+    "rgbStandardDeviations": [
+      74.04279719049975,
+      76.62056437522493,
+      78.47500890606398
+    ]
+  },
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": [],
+    "http": [],
+    "ignoredConsole": [],
+    "ignoredHttp": []
+  },
+  "assertions": {
+    "pageHttpSuccess": true,
+    "exactlyOneGlbLoaded": true,
+    "glbHttpSuccess": true,
+    "glbBodyCaptured": true,
+    "canvasNonzero": true,
+    "webglAvailable": true,
+    "visiblyNonblank": true,
+    "noRelevantBrowserErrors": true
+  },
+  "passed": true
+}

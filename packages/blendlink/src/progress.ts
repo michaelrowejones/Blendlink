@@ -1,7 +1,7 @@
 /**
  * Machine-readable progress protocol.
  *
- * When BLENDLINK_PROGRESS=1 (set by the Blender addon's Sync Now runner, or
+ * When BLENDLINK_PROGRESS=1 (set by the Blender addon's website-build runner, or
  * any wrapping tool), stages print lines like
  *   ##blendlink {"fraction":0.42,"label":"baking day state"}
  * on stdout. Humans running the CLI directly never see them.

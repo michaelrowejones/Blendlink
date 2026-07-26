@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>Contact Shadows differential evidence</title>
+    <style>
+      :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      [hidden] { display: none !important; }
+      body { margin: 0; color: #eaf2ef; background: #0d1117; }
+      main { width: min(1240px, 100%); margin: 0 auto; padding: 26px; }
+      h1 { margin: 0 0 7px; font-size: 25px; }
+      p { margin: 0 0 20px; color: #9fb0aa; }
+      section {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      article {
+        padding: 13px;
+        border: 1px solid #2a3933;
+        border-radius: 13px;
+        background: #131a18;
+      }
+      h2 { margin: 0 0 9px; font-size: 15px; }
+      canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        background:
+          linear-gradient(45deg, #d9e3de 25%, transparent 25%) 0 0 / 24px 24px,
+          linear-gradient(-45deg, #d9e3de 25%, transparent 25%) 0 12px / 24px 24px,
+          linear-gradient(45deg, transparent 75%, #d9e3de 75%) 12px -12px / 24px 24px,
+          linear-gradient(-45deg, transparent 75%, #d9e3de 75%) -12px 0 / 24px 24px,
+          #6d8078;
+      }
+      canvas.raw { image-rendering: pixelated; aspect-ratio: 4 / 3; object-fit: contain; }
+      output {
+        display: block;
+        min-height: 34px;
+        margin-top: 8px;
+        color: #83e1c0;
+        font: 12px/1.45 ui-monospace, monospace;
+        white-space: pre-wrap;
+      }
+      @media (max-width: 760px) { section { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Contact Shadows differential evidence</h1>
+      <p>Actual pinned Needle Engine 5.1.7 and Blendlink run in separate, externally owned WebGL renderers.</p>
+      <section>
+        <article>
+          <h2>Needle — matched composite</h2>
+          <canvas id="needle-composite" width="400" height="300"></canvas>
+          <output id="needle-composite-output"></output>
+        </article>
+        <article>
+          <h2>Blendlink — matched composite</h2>
+          <canvas id="blendlink-composite" width="400" height="300"></canvas>
+          <output id="blendlink-composite-output"></output>
+        </article>
+        <article>
+          <h2>Needle — raw 512² mask</h2>
+          <canvas class="raw" id="needle-raw" width="512" height="512"></canvas>
+          <output id="needle-raw-output"></output>
+        </article>
+        <article>
+          <h2>Blendlink — raw 512² mask</h2>
+          <canvas class="raw" id="blendlink-raw" width="512" height="512"></canvas>
+          <output id="blendlink-raw-output"></output>
+        </article>
+      </section>
+      <section>
+        <article>
+          <h2>Needle — non-layer-0 camera</h2>
+          <canvas id="needle-layer" width="400" height="300"></canvas>
+          <output id="needle-layer-output"></output>
+        </article>
+        <article>
+          <h2>Blendlink — non-layer-0 camera</h2>
+          <canvas id="blendlink-layer" width="400" height="300"></canvas>
+          <output id="blendlink-layer-output"></output>
+        </article>
+        <article>
+          <h2>Needle — exclusion mask</h2>
+          <canvas class="raw" id="needle-exclusion" width="512" height="512"></canvas>
+          <output id="needle-exclusion-output"></output>
+        </article>
+        <article>
+          <h2>Blendlink — exclusion mask</h2>
+          <canvas class="raw" id="blendlink-exclusion" width="512" height="512"></canvas>
+          <output id="blendlink-exclusion-output"></output>
+        </article>
+      </section>
+      <div id="needle-context-host" hidden></div>
+      <canvas id="needle-exclusion-webgl" width="400" height="300" hidden></canvas>
+      <canvas id="blendlink-exclusion-webgl" width="400" height="300" hidden></canvas>
+    </main>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

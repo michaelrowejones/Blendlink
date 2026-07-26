@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>Blendlink R3F animation transport browser gate</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        background: #070b14;
+        color: #eef4ff;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; }
+      main { width: min(1160px, calc(100% - 40px)); margin: 0 auto; padding: 36px 0 48px; }
+      header { display: grid; gap: 10px; margin-bottom: 24px; }
+      h1, h2, p { margin: 0; }
+      h1 { font-size: clamp(28px, 4vw, 48px); letter-spacing: -0.04em; }
+      header p { color: #9eabc3; max-width: 760px; line-height: 1.55; }
+      #status {
+        display: inline-flex;
+        width: fit-content;
+        border: 1px solid #32415d;
+        border-radius: 999px;
+        padding: 7px 11px;
+        color: #b8c7e5;
+        background: #11192a;
+        font: 700 12px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+      #status.pass { border-color: #2f8e72; color: #7ce8c1; background: #0d241f; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+      article {
+        overflow: hidden;
+        border: 1px solid #26334b;
+        border-radius: 18px;
+        background: linear-gradient(160deg, #111929, #0c1220);
+        box-shadow: 0 18px 60px rgb(0 0 0 / 28%);
+      }
+      .copy { display: grid; gap: 8px; padding: 18px 20px; }
+      .copy p { color: #9eabc3; line-height: 1.45; font-size: 14px; }
+      .canvas-host { height: 330px; background: #090f1d; border-block: 1px solid #26334b; }
+      .canvas-host canvas { display: block; width: 100% !important; height: 100% !important; }
+      .disposed {
+        display: grid;
+        place-items: center;
+        height: 100%;
+        color: #6f7d96;
+        font: 700 13px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+      pre {
+        min-height: 142px;
+        margin: 0;
+        padding: 16px 20px;
+        white-space: pre-wrap;
+        color: #bcd0f4;
+        background: #090e19;
+        font: 12px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+      @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <span id="status">BOOTING REAL R3F CANVASES</span>
+        <h1>Animation transport × demand rendering</h1>
+        <p>
+          Throwaway production-path gate for application-owned controls over a
+          Blendlink scene. Cyan is an ordinary clip; coral is an authored,
+          bounded NLA sequence.
+        </p>
+      </header>
+      <div id="root"></div>
+    </main>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "blendlink-needle-splash-official-preview",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@needle-tools/engine": "5.1.4",
+    "three": "npm:@needle-tools/three@^0.169.19"
+  },
+  "devDependencies": {
+    "@needle-tools/helper": "2.0.0",
+    "@types/three": "0.169.0",
+    "@vitejs/plugin-basic-ssl": "2.2.0",
+    "typescript": "^5.0.4",
+    "vite": "8.0.3",
+    "vite-plugin-compression2": "2.5.2"
+  }
+}

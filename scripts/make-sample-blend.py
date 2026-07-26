@@ -4,8 +4,14 @@
 Run:  blender --background --factory-startup --python scripts/make-sample-blend.py -- packages/blendlink/assets/sample.blend
 """
 import sys
+from pathlib import Path
 
 import bpy
+
+sys.path.insert(0, str(
+    Path(__file__).resolve().parents[1] / "packages" / "blendlink" / "blender"
+))
+import bakelib  # noqa: E402
 
 out_path = sys.argv[sys.argv.index("--") + 1]
 
@@ -16,7 +22,7 @@ scene.render.fps = 24
 
 def material(name, color, roughness=0.7):
     mat = bpy.data.materials.new(name)
-    mat.use_nodes = True
+    bakelib.ensure_shader_node_tree(mat)
     bsdf = mat.node_tree.nodes.get("Principled BSDF")
     bsdf.inputs["Base Color"].default_value = (*color, 1.0)
     bsdf.inputs["Roughness"].default_value = roughness
@@ -81,7 +87,7 @@ scene.collection.objects.link(lamp)
 
 world = bpy.data.worlds.new("World")
 scene.world = world
-world.use_nodes = True
+bakelib.ensure_shader_node_tree(world)
 background = world.node_tree.nodes.get("Background")
 background.inputs["Color"].default_value = (0.45, 0.55, 0.65, 1.0)
 background.inputs["Strength"].default_value = 0.5

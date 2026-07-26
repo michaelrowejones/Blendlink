@@ -1,0 +1,56 @@
+{
+  "prototype": "selected-socket-materialization",
+  "blenderVersion": "5.2.0 LTS",
+  "selectedField": {
+    "material": "PROTOTYPE_ArtistMaterial",
+    "node": "Artist Intrinsic Color",
+    "socket": "Color",
+    "dependencies": [
+      "ShaderNodeTexChecker",
+      "ShaderNodeUVMap"
+    ],
+    "downstreamEeveeShaderToRgbPresent": true
+  },
+  "texture": {
+    "width": 256,
+    "height": 256,
+    "sha256": "39b85d1a3ee56c09fd64fff84bc63ad9f09bdfed8690c3404ff9b99db1127eb4",
+    "embeddedSha256": "39b85d1a3ee56c09fd64fff84bc63ad9f09bdfed8690c3404ff9b99db1127eb4",
+    "coveredFraction": 0.819091796875,
+    "coveredRgbMin": [
+      0.1725490242242813,
+      0.3137255012989044,
+      0.1725490242242813
+    ],
+    "coveredRgbMax": [
+      0.9647059440612793,
+      0.3803921937942505,
+      0.917647123336792
+    ],
+    "clippedFraction": 0.0
+  },
+  "gltf": {
+    "extensionsUsed": [
+      "KHR_materials_unlit"
+    ],
+    "materialExtensions": [
+      "KHR_materials_unlit"
+    ],
+    "imageMimeType": "image/png",
+    "alphaMode": "OPAQUE"
+  },
+  "checks": {
+    "selectedDependencyBoundary": true,
+    "sourceRestored": true,
+    "meaningfulTexture": true,
+    "stockGltf": true,
+    "noPrivateRuntimeContract": true
+  },
+  "scope": [
+    "one opaque static binding",
+    "top-level selected Color socket",
+    "authored UV map",
+    "fixed 256px experiment resolution",
+    "Cycles-compatible intrinsic dependency path"
+  ]
+}

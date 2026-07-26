@@ -5,3 +5,22 @@ dist/
 *.blend1
 __pycache__/
 packages/blender-addon/*.zip
+artifacts/release/
+artifacts/release-dogfood/
+.npm-cache/
+.claude/settings.local.json
+artifacts/dogfood-packages/
+artifacts/*.log
+artifacts/*.patch
+artifacts/**/*.log
+artifacts/**/*.patch
+artifacts/site-runtime/
+artifacts/verification-*/
+artifacts/**/*.pid
+artifacts/**/*.pid.txt
+
+# Machine-local agent context must never enter the public repository.
+AGENTS.md
+CONTEXT.md
+.claude/
+.codex/

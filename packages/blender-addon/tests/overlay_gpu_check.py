@@ -35,9 +35,10 @@ with offscreen.bind():
     overlay._ensure_batches()
     uniform = overlay._batches["shader_uniform"]
     flat = overlay._batches["shader_flat"]
+    screen = overlay._batches["shader_2d"]
     with gpu.matrix.push_pop():
         gpu.matrix.multiply_matrix(Matrix.Identity(4))
-        for shape in ("box", "sphere", "cross"):
+        for shape in ("box", "sphere", "cone", "cross"):
             uniform.bind()
             uniform.uniform_float("viewportSize", (64.0, 64.0))
             uniform.uniform_float("lineWidth", 2.0)
@@ -47,5 +48,12 @@ with offscreen.bind():
         flat.uniform_float("viewportSize", (64.0, 64.0))
         flat.uniform_float("lineWidth", 2.0)
         overlay._batches["axes"].draw(flat)
+        from gpu_extras.batch import batch_for_shader  # noqa: E402
+        screen.bind()
+        screen.uniform_float("color", (0.02, 0.04, 0.08, 0.7))
+        batch_for_shader(
+            screen, "TRIS",
+            {"pos": [(0.0, 0.0, 0.0), (64.0, 0.0, 0.0), (0.0, 64.0, 0.0)]},
+        ).draw(screen)
 offscreen.free()
 print("BLENDLINK_OVERLAY_GPU_OK")

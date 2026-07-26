@@ -1,0 +1,26 @@
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite --host",
+    "build:dev": "vite build",
+    "build:production": "vite build -- --production",
+    "gltf:transform": "npm run transform --prefix node_modules/@needle-tools/gltf-build-pipeline"
+  },
+  "dependencies": {
+    "@needle-tools/engine": "5.1.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@needle-tools/helper": "2.0.0",
+    "@vitejs/plugin-basic-ssl": "^1.0.1",
+    "@vitejs/plugin-react": "^1.3.0",
+    "ansi-styles": "^6.1.0",
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "typescript": "^5.0.4",
+    "vite": "<= 4.3.9",
+    "vite-plugin-compression": "^0.5.1"
+  }
+}

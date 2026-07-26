@@ -1,0 +1,1135 @@
+{
+  "scenes": [
+    {
+      "scene": "ellieUntouched",
+      "quality": "final",
+      "plan": null,
+      "inspection": {
+        "errors": [
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.buttons",
+            "usedBy": [
+              "GEO-ellie_jacket_buttons.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.denim",
+            "usedBy": [
+              "GEO-ellie_jacket.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.denim_inside",
+            "usedBy": [
+              "GEO-ellie_jacket.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.earrings",
+            "usedBy": [
+              "GEO-ellie_earrings.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.eyes",
+            "usedBy": [
+              "GEO-ellie_eye.L.001",
+              "GEO-ellie_eye.R.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix is not a portable stock glTF material node.",
+              "Math is not a portable stock glTF material node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.eyes_pupils",
+            "usedBy": [
+              "GEO-ellie_eye.L.001",
+              "GEO-ellie_eye.R.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Math is not a portable stock glTF material node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "Vector Transform is not a portable stock glTF material node.",
+              "Camera Data is not a portable stock glTF material node.",
+              "Geometry is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Map Range is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Tangent input is only recognized inside the stock exporter's specific anisotropy texture pattern; a direct tangent link may be simplified.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.fanny_pack_black",
+            "usedBy": [
+              "GEO-ellie_fannypack_strap_slide.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.fannypack_green",
+            "usedBy": [
+              "GEO-ellie_fannypack_main.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.fannypack_magenta",
+            "usedBy": [
+              "GEO-ellie_fannypack_main.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Hue/Saturation/Value is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.fannypack_purple",
+            "usedBy": [
+              "GEO-ellie_fannypack_main.001",
+              "GEO-ellie_fannypack_strap.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.fannypack_zipper",
+            "usedBy": [
+              "GEO-ellie_fannypack_zipper_pull.001",
+              "GEO-ellie_fannypack_zipper_stop.001",
+              "GEO-ellie_fannypack_zippers.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.gums",
+            "usedBy": [
+              "GEO-ellie_teeth_btm.001",
+              "GEO-ellie_teeth_top.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix is not a portable stock glTF material node.",
+              "Math is not a portable stock glTF material node.",
+              "Clamp is not a portable stock glTF material node.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Map Range is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.hair_particles",
+            "usedBy": [
+              "GEO-ellie_hair.scalp.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Curves Info is not a portable stock glTF material node.",
+              "Geometry is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Mix is not a portable stock glTF material node.",
+              "Principled Hair BSDF is not a portable stock glTF material node.",
+              "Diffuse BSDF is not a portable stock glTF material node.",
+              "Transparent BSDF is not a portable stock glTF material node.",
+              "Subsurface Radius is authored but is omitted by glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.handkerchief",
+            "usedBy": [
+              "GEO-ellie_handkerchief.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.head",
+            "usedBy": [
+              "GEO-ellie_head.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Radius is linked, but glTF has no equivalent input.",
+              "Subsurface Scale is linked, but glTF has no equivalent input.",
+              "Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Subsurface Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.head_lips",
+            "usedBy": [
+              "GEO-ellie_head.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Radius is linked, but glTF has no equivalent input.",
+              "Subsurface Scale is linked, but glTF has no equivalent input.",
+              "Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Subsurface Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.highlights",
+            "usedBy": [
+              "GEO-ellie_eye_highlights.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Light Path is not a portable stock glTF material node.",
+              "Transparent BSDF is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Add Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Diffuse BSDF is not a portable stock glTF material node.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.pins_blue",
+            "usedBy": [
+              "GEO-ellie_jacket_pin_1.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Object Info is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Coat IOR is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.pins_gold",
+            "usedBy": [
+              "GEO-ellie_jacket_pin_2.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Object Info is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Coat IOR is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.pins_green",
+            "usedBy": [
+              "GEO-ellie_jacket_pin_5.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Object Info is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Coat IOR is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.pins_light",
+            "usedBy": [
+              "GEO-ellie_jacket_pin_3.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Object Info is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Coat IOR is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.pins_magenta",
+            "usedBy": [
+              "GEO-ellie_jacket_pin_4.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Object Info is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Coat IOR is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.scrunchie",
+            "usedBy": [
+              "GEO-ellie_scrunchy.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Math is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Geometry is not a portable stock glTF material node.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.shoes_laces",
+            "usedBy": [
+              "GEO-ellie_boots.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.shoes_leather",
+            "usedBy": [
+              "GEO-ellie_boots.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.shoes_loop",
+            "usedBy": [
+              "GEO-ellie_boots.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.shoes_metal",
+            "usedBy": [
+              "GEO-ellie_boots.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.shoes_seam",
+            "usedBy": [
+              "GEO-ellie_boots.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Sheen Weight is linked, but glTF has no equivalent input.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.shoes_soles_side",
+            "usedBy": [
+              "GEO-ellie_boots.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Radius is linked, but glTF has no equivalent input.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Subsurface Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.shoes_soles_underneath",
+            "usedBy": [
+              "GEO-ellie_boots.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Radius is linked, but glTF has no equivalent input.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Subsurface Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.shorts",
+            "usedBy": [
+              "GEO-ellie_trousers.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "White Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.skin",
+            "usedBy": [
+              "GEO-ellie_body.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Radius is linked, but glTF has no equivalent input.",
+              "Subsurface Scale is linked, but glTF has no equivalent input.",
+              "Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Subsurface Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.socks",
+            "usedBy": [
+              "GEO-ellie_boots.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Gradient Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Layer Weight is not a portable stock glTF material node.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Radius is linked, but glTF has no equivalent input.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Subsurface Weight is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.teeth",
+            "usedBy": [
+              "GEO-ellie_teeth_btm.001",
+              "GEO-ellie_teeth_top.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Math is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Clamp is not a portable stock glTF material node.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.tongue",
+            "usedBy": [
+              "GEO-ellie_tongue.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Combine XYZ is not a portable stock glTF material node.",
+              "Subsurface Radius is linked, but glTF has no equivalent input.",
+              "Subsurface Weight is authored but is omitted by glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Sheen Weight is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.watch_glass",
+            "usedBy": [
+              "GEO-ellie_watch.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Light Path is not a portable stock glTF material node.",
+              "Layer Weight is not a portable stock glTF material node.",
+              "Transparent BSDF is not a portable stock glTF material node.",
+              "Anisotropic BSDF is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.watch_gold",
+            "usedBy": [
+              "GEO-ellie_watch.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.watch_metal",
+            "usedBy": [
+              "GEO-ellie_watch.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix is not a portable stock glTF material node.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Clamp is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Coat Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF.",
+              "Coat IOR is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.watch_red",
+            "usedBy": [
+              "GEO-ellie_watch.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.watch_rubber_guard",
+            "usedBy": [
+              "GEO-ellie_watch.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "ellie.watch_strap",
+            "usedBy": [
+              "GEO-ellie_watch.001"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Mix Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+              "Math is not a portable stock glTF material node.",
+              "Map Range is not a portable stock glTF material node.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Vector Math is not a portable stock glTF material node.",
+              "Mix is not a portable stock glTF material node.",
+              "Texture Coordinate Generated output is not serialized by stock glTF; author a UV map or bake the result.",
+              "Voronoi Texture contributes to the active surface but cannot be represented as editable glTF.",
+              "Attribute data in the active shader is not a portable editable glTF input; bake it or replace it with an authored UV/vertex-color workflow.",
+              "Clamp is not a portable stock glTF material node.",
+              "Bump shading has no direct glTF form; bake it to a normal map or use a Normal Map node.",
+              "RGB Curves is not a portable stock glTF material node.",
+              "Vector Rotate is not a portable stock glTF material node.",
+              "Separate XYZ is not a portable stock glTF material node.",
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "More than one Principled shader contributes to the surface; glTF stores one material model.",
+              "Normal is only portable through an Image Texture → Normal Map graph; this linked vector is not serialized faithfully by stock glTF.",
+              "Subsurface Scale is authored but is omitted by glTF."
+            ]
+          }
+        ],
+        "warnings": []
+      }
+    }
+  ]
+}

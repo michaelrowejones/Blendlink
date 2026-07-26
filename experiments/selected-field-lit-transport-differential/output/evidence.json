@@ -1,0 +1,390 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-24T19:56:32.857Z",
+  "verdict": {
+    "ordinarySelectedFields": "preserve-lit-surface-response",
+    "explicitUnlitSkyOrEmissive": "preserve-unlit-surface-response",
+    "reason": "The identical selected-field texture remains color-addressable in both carriers, but only stock PBR responds to the Sun and receives its shadow. Both opaque carriers still cast shadows when the website enables them."
+  },
+  "sourceIdentity": {
+    "blender": "5.2.0 LTS",
+    "blendlink": "0.8.0",
+    "blendlinkThree": "0.184.0",
+    "blendlinkMaterialCompilerSha256": "e3dd70ae90fe41ca2563b443c7718ea6922bcbb4b8de40d585ff6f4fa3fb7b90",
+    "needleIntegrationStatus": "mixed-source",
+    "needleAddon": {
+      "version": "1.4.2",
+      "exportPath": "C:/Users/micha/Documents/GitHub/MichaelRoweJonesSite/.cache/needle-spike/addon/Needle Engine Exporter for Blender/blender_export.py",
+      "exportSha256": "6272997cfb4f1d740ea33a7c2512983b9993dedf93c9c8240ca0ff7f82925d77"
+    },
+    "needleEngine": {
+      "version": "5.1.7",
+      "loaderPath": "C:/Users/micha/Documents/GitHub/blendlink/experiments/needle-spike/node_modules/@needle-tools/engine/src/engine/engine_loaders.gltf.ts",
+      "loaderSha256": "5fa4bf5a04b982d66b2f2975ed4b4f9e3cdbc21883df8fdcce9155c27ac28288"
+    },
+    "needleThree": {
+      "version": "0.169.19",
+      "gltfLoaderPath": "C:/Users/micha/Documents/GitHub/blendlink/experiments/needle-spike/node_modules/@needle-tools/engine/node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+      "gltfLoaderSha256": "4aba05147b1ccb01f581979ea44950b60a568e74a5db811df9f5573a2b3521b1"
+    }
+  },
+  "needleBehavior": {
+    "relation": "match-candidate",
+    "observation": "Needle add-on 1.4.2 calls Blender stock glTF export without a material surface rewrite. Needle Engine 5.1.7 creates its GLTFLoader from its bundled Three; that loader maps ordinary core metallic-roughness to MeshStandardMaterial and KHR_materials_unlit to MeshBasicMaterial.",
+    "limit": "This is exact per-package source evidence under integration=mixed-source, not a coherent Needle export-to-browser differential."
+  },
+  "blender": {
+    "prototype": "selected-field-lit-transport-differential",
+    "blenderVersion": "5.2.0 LTS",
+    "sourceEngine": "BLENDER_EEVEE",
+    "sourceFixture": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\source-fixture.blend",
+      "sha256": "3a34be97d2614f1fd4a9470948dbad58499c0198dc4dba38a96e703b23a453d8",
+      "render": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\source-eevee.png",
+      "renderSha256": "f5a92c0f174c31016c04ac412dfd62b45bed50b6730146f05f5b3cfcb71cfa10",
+      "surface": "Principled BSDF",
+      "selectedField": "PROTOTYPE_SelectedField.Color"
+    },
+    "materializedField": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\selected-field.png",
+      "sha256": "be0829465c4c452b83629fdb69b1d568bf411db35391635484f8c35e3fa3806b",
+      "size": [
+        256,
+        256
+      ],
+      "coveredFraction": 1,
+      "clippedFraction": 0
+    },
+    "variants": {
+      "lit": {
+        "render": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\published-lit-eevee.png",
+        "renderSha256": "d305a21552b431fa78a5e914524935913d3efbbd3214c591ac22943939e80dbf",
+        "glb": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\lit.glb",
+        "glbSha256": "9476f08ea3168e578e0fb5140ca907fd70d893d78ababb814e2086f455a592bf",
+        "texture": {
+          "material": "PROTOTYPE_SelectedLit",
+          "extensions": [],
+          "roughnessFactor": null,
+          "metallicFactor": 0,
+          "imageMime": "image/png",
+          "imageSha256": "be0829465c4c452b83629fdb69b1d568bf411db35391635484f8c35e3fa3806b",
+          "extensionsUsed": [
+            "KHR_lights_punctual"
+          ]
+        }
+      },
+      "unlit": {
+        "render": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\published-unlit-eevee.png",
+        "renderSha256": "14f6c2eb76ad882b871b24418b6e84224614d0e616d421485a03278fc1decf45",
+        "glb": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\unlit.glb",
+        "glbSha256": "9a036fe33361f31329a426fa57a8db70d73cdb8721c880d73eaf7a15673274b8",
+        "texture": {
+          "material": "PROTOTYPE_SelectedUnlit",
+          "extensions": [
+            "KHR_materials_unlit"
+          ],
+          "roughnessFactor": 0.9,
+          "metallicFactor": 0,
+          "imageMime": "image/png",
+          "imageSha256": "be0829465c4c452b83629fdb69b1d568bf411db35391635484f8c35e3fa3806b",
+          "extensionsUsed": [
+            "KHR_lights_punctual",
+            "KHR_materials_unlit"
+          ]
+        }
+      }
+    },
+    "checks": {
+      "sameMaterializedTextureBytes": true,
+      "onlyUnlitVariantDeclaresKhrUnlit": true,
+      "sourceFixturePreserved": true
+    }
+  },
+  "browser": {
+    "browserVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "unlit": {
+      "screenshot": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\browser-unlit.png",
+      "screenshotSha256": "8a0d211635773e428304e6560d9d007a14de3ce426c548f5aff7b4fb0ad93f45",
+      "evidence": {
+        "ready": true,
+        "variant": "unlit",
+        "material": {
+          "type": "MeshBasicMaterial",
+          "isMeshBasicMaterial": true,
+          "isMeshStandardMaterial": false,
+          "mapWidth": 256,
+          "mapHeight": 256,
+          "mapColorSpace": "srgb"
+        },
+        "receivedShadow": {
+          "changed": 0,
+          "meanAbsoluteRgb": 0
+        },
+        "castShadow": {
+          "changed": 5944,
+          "meanAbsoluteRgb": 2.3527
+        },
+        "directLightResponse": {
+          "changed": 0,
+          "meanAbsoluteRgb": 0
+        },
+        "renderer": {
+          "threeRevision": "184",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "renderer": "WebKit WebGL",
+          "canvas": [
+            800,
+            500
+          ]
+        },
+        "objects": {
+          "PROTOTYPE_Floor": {
+            "visible": true,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "bounds": [
+              [
+                -4,
+                0,
+                -2.5
+              ],
+              [
+                4,
+                0,
+                2.5
+              ]
+            ],
+            "material": "MeshStandardMaterial"
+          },
+          "PROTOTYPE_Occluder": {
+            "visible": true,
+            "position": [
+              -2.299999952316284,
+              0.7200000286102295,
+              0
+            ],
+            "bounds": [
+              [
+                -2.659999966621399,
+                0.04500001668930054,
+                -0.36000001430511475
+              ],
+              [
+                -1.9399999380111694,
+                1.3950000405311584,
+                0.36000001430511475
+              ]
+            ],
+            "material": "MeshStandardMaterial"
+          },
+          "PROTOTYPE_SelectedCaster": {
+            "visible": true,
+            "position": [
+              2,
+              0.6499999761581421,
+              -0.30000001192092896
+            ],
+            "bounds": [
+              [
+                1.475000023841858,
+                0.02499997615814209,
+                -0.824999988079071
+              ],
+              [
+                2.524999976158142,
+                1.274999976158142,
+                0.22499996423721313
+              ]
+            ],
+            "material": "MeshBasicMaterial"
+          },
+          "PROTOTYPE_SelectedReceiver": {
+            "visible": true,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "bounds": [
+              [
+                -3.8499999046325684,
+                0.02500000037252903,
+                -1.600000023841858
+              ],
+              [
+                -0.6499999761581421,
+                0.02500000037252903,
+                1.600000023841858
+              ]
+            ],
+            "material": "MeshBasicMaterial"
+          }
+        }
+      },
+      "pageErrors": [],
+      "consoleErrors": [],
+      "failedRequests": []
+    },
+    "lit": {
+      "screenshot": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\browser-lit.png",
+      "screenshotSha256": "08687c4f55ff1029a939062246f33abd669c149c9c84b463aa0ebaa4f94dd64a",
+      "evidence": {
+        "ready": true,
+        "variant": "lit",
+        "material": {
+          "type": "MeshStandardMaterial",
+          "isMeshBasicMaterial": false,
+          "isMeshStandardMaterial": true,
+          "mapWidth": 256,
+          "mapHeight": 256,
+          "mapColorSpace": "srgb"
+        },
+        "receivedShadow": {
+          "changed": 18249,
+          "meanAbsoluteRgb": 4.913596666666667
+        },
+        "castShadow": {
+          "changed": 5944,
+          "meanAbsoluteRgb": 2.3527
+        },
+        "directLightResponse": {
+          "changed": 148000,
+          "meanAbsoluteRgb": 40.982083333333335
+        },
+        "renderer": {
+          "threeRevision": "184",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "renderer": "WebKit WebGL",
+          "canvas": [
+            800,
+            500
+          ]
+        },
+        "objects": {
+          "PROTOTYPE_Floor": {
+            "visible": true,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "bounds": [
+              [
+                -4,
+                0,
+                -2.5
+              ],
+              [
+                4,
+                0,
+                2.5
+              ]
+            ],
+            "material": "MeshStandardMaterial"
+          },
+          "PROTOTYPE_Occluder": {
+            "visible": true,
+            "position": [
+              -2.299999952316284,
+              0.7200000286102295,
+              0
+            ],
+            "bounds": [
+              [
+                -2.659999966621399,
+                0.04500001668930054,
+                -0.36000001430511475
+              ],
+              [
+                -1.9399999380111694,
+                1.3950000405311584,
+                0.36000001430511475
+              ]
+            ],
+            "material": "MeshStandardMaterial"
+          },
+          "PROTOTYPE_SelectedCaster": {
+            "visible": true,
+            "position": [
+              2,
+              0.6499999761581421,
+              -0.30000001192092896
+            ],
+            "bounds": [
+              [
+                1.475000023841858,
+                0.02499997615814209,
+                -0.824999988079071
+              ],
+              [
+                2.524999976158142,
+                1.274999976158142,
+                0.22499996423721313
+              ]
+            ],
+            "material": "MeshStandardMaterial"
+          },
+          "PROTOTYPE_SelectedReceiver": {
+            "visible": true,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "bounds": [
+              [
+                -3.8499999046325684,
+                0.02500000037252903,
+                -1.600000023841858
+              ],
+              [
+                -0.6499999761581421,
+                0.02500000037252903,
+                1.600000023841858
+              ]
+            ],
+            "material": "MeshStandardMaterial"
+          }
+        }
+      },
+      "pageErrors": [],
+      "consoleErrors": [],
+      "failedRequests": []
+    }
+  },
+  "imageComparisons": {
+    "blenderSourceToPublishedLitRmse": 0.017422963115577436,
+    "blenderSourceToPublishedUnlitRmse": 0.11707392738196976,
+    "blenderSourceToBrowserLitRmse": 0.03269170199321417,
+    "blenderSourceToBrowserUnlitRmse": 0.11860415403497
+  },
+  "assertions": {
+    "identicalSelectedFieldTextureBytes": true,
+    "currentUnlitLoadsAsMeshBasic": true,
+    "candidateLitLoadsAsMeshStandard": true,
+    "unlitDoesNotReceiveOccluderShadow": true,
+    "litReceivesOccluderShadow": true,
+    "bothOpaqueVariantsCastShadow": true,
+    "unlitIgnoresDirectLight": true,
+    "litRespondsToDirectLight": true,
+    "blenderLitCarrierCloserToSourceEevee": true
+  },
+  "proposedInterface": {
+    "seam": "material compiler planning",
+    "internalDecision": "surfaceResponse: auto | lit | unlit",
+    "default": "Auto follows the active Surface graph: any selected-field path through a BSDF is lit; a direct Background/Emission-only path is unlit; mixed or unreachable paths block until explicitly resolved.",
+    "artistOverride": "One namespaced enum on the existing Blendlink Web Color marker, exposed only when Auto is ambiguous. No website configuration is required.",
+    "manifestImpact": "No schema reshape is required: retain the existing selected-field transport, widen existing gltfEvidence.unlit from literal true to a boolean, and use the generated material-rule extra to attest the choice. An optional additive surfaceResponse diagnostic may be recorded."
+  },
+  "limits": [
+    "The selected field is opaque, static, unit-range color on one UV set.",
+    "The fixture proves ordinary diffuse/PBR response, not arbitrary Principled extensions.",
+    "Chromium uses ANGLE/SwiftShader for deterministic pixels, not physical-GPU timing.",
+    "Three and Eevee use different realtime shading implementations; only the Blender source-versus-published Blender comparison is an equal-renderer image claim.",
+    "Cast/receive behavior also requires the application-owned renderer shadow map and mesh/light flags; material transport alone cannot enable them.",
+    "The prototype does not alter production code or claim the current automatic classifier is implemented."
+  ]
+}

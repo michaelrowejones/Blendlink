@@ -1,0 +1,399 @@
+{
+  "schemaVersion": 1,
+  "status": "verified",
+  "runDate": "2026-07-25T17:52:01.896Z",
+  "command": "node experiments/hybrid-material-gate-differential/run.mjs",
+  "environment": {
+    "node": "v24.15.0",
+    "platform": "win32",
+    "architecture": "x64",
+    "blenderExecutable": {
+      "absolutePath": "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe",
+      "path": "blender.exe",
+      "bytes": 112975320,
+      "sha256": "e27fbfea8564aa645d4463cb0949695fd85562b9de6df9561b06859a1074adf7"
+    },
+    "blender": {
+      "buildDate": "2026-07-14",
+      "buildHash": "fbe6228777e7",
+      "version": "5.2.0 LTS",
+      "versionCycle": "release",
+      "versionTuple": [
+        5,
+        2,
+        0
+      ]
+    },
+    "gltfExporter": {
+      "name": "glTF 2.0 format",
+      "version": "5.2.39"
+    },
+    "blendlink": {
+      "version": "0.8.0",
+      "distTree": {
+        "algorithm": "sha256(path + NUL + file sha256 + LF, listed order)",
+        "sha256": "199693d5258136a981a531a72b0c6b132becaa37058aef023131f454afdff47c",
+        "files": [
+          {
+            "path": "packages/blendlink/dist/cli.js",
+            "bytes": 40451,
+            "sha256": "7ef29e97fe17530611e63f3084d4ad1069f2bb6f3b21fe6abfe80ed262c6dbb7"
+          },
+          {
+            "path": "packages/blendlink/dist/config.js",
+            "bytes": 14463,
+            "sha256": "034d26a63e6ff6ff143d20328493aa3f186c8d783a7c948be752455e4265c759"
+          },
+          {
+            "path": "packages/blendlink/dist/invoke.js",
+            "bytes": 16665,
+            "sha256": "cfe0131dc7638673affd7a3099506fe5a0fc559b03a3ae65165acdb3af45d69a"
+          },
+          {
+            "path": "packages/blendlink/dist/planManifest.js",
+            "bytes": 3381,
+            "sha256": "9e753512aa2180a7cc43c97a64da45d679a785204824240285a0fa168ba0ef08"
+          },
+          {
+            "path": "packages/blendlink/dist/sync.js",
+            "bytes": 94977,
+            "sha256": "06d801507ed8431c3c4c22869d444268c1af96ffa90205c638c3f1d22cb11146"
+          },
+          {
+            "path": "packages/blendlink/dist/typegen.js",
+            "bytes": 53694,
+            "sha256": "fba9fd2a2af77c08ee0e114b575c6edc08d1c6bad3fb4fd6b5733149a59d1c2a"
+          },
+          {
+            "path": "packages/blendlink/dist/blender/bakelib.py",
+            "bytes": 304479,
+            "sha256": "e29ee44f3fba2da084f10482033445cd28f48675aae3a9dae9eb665d1519c522"
+          },
+          {
+            "path": "packages/blendlink/dist/blender/export_scene.py",
+            "bytes": 226878,
+            "sha256": "9ea88103fbafcfad431ad409ebb67305d4a31e30309ac7c64d444548a2050dd5"
+          },
+          {
+            "path": "packages/blendlink/dist/blender/material_compiler.py",
+            "bytes": 211412,
+            "sha256": "e23a532de6f805a1bbb56632bb5043d20eccdf8441febdef7897152dd3603c4f"
+          },
+          {
+            "path": "packages/blendlink/dist/blender/procedural.py",
+            "bytes": 88082,
+            "sha256": "811f103d3c7e64162366935fda1214c57ca46460853befaf62078a96f41f9b2e"
+          }
+        ]
+      },
+      "packageLock": {
+        "path": "package-lock.json",
+        "bytes": 92556,
+        "sha256": "aa2d006b5f2a5c5bd5a2c2de723aaa30d95e080974472551a135c3bb18d50244"
+      }
+    }
+  },
+  "fixture": {
+    "generator": {
+      "path": "experiments/hybrid-material-gate-differential/make_fixture.py",
+      "bytes": 7056,
+      "sha256": "fb180e367366ddd6745deae0ac071dc55cd503e6d9edaf854b79b032d1a96e9e"
+    },
+    "runner": {
+      "path": "experiments/hybrid-material-gate-differential/run.mjs",
+      "bytes": 17628,
+      "sha256": "344344c2c492977c8be7b2ff609bb2721aaaa38d7e368717fcf31d54a1d03dc4"
+    },
+    "config": {
+      "path": "output/work/blendlink.config.mjs",
+      "bytes": 196,
+      "sha256": "7b03e39c35619684f876d21eae50ad4a326074d1430d0d412a345c40a2901050"
+    },
+    "generation": {
+      "blender": {
+        "buildDate": "2026-07-14",
+        "buildHash": "fbe6228777e7",
+        "version": "5.2.0 LTS",
+        "versionCycle": "release",
+        "versionTuple": [
+          5,
+          2,
+          0
+        ]
+      },
+      "gltfExporter": {
+        "name": "glTF 2.0 format",
+        "version": "5.2.39"
+      },
+      "schemaVersion": 1,
+      "source": {
+        "frame": 1,
+        "materials": [
+          "Shared Painterly Surface",
+          "Lighting Painterly Surface"
+        ],
+        "objects": [
+          {
+            "atlas": "main",
+            "dynamic": false,
+            "id": "appearance-receiver",
+            "materials": [
+              "Shared Painterly Surface"
+            ],
+            "name": "Appearance Receiver"
+          },
+          {
+            "atlas": "main",
+            "dynamic": true,
+            "id": "dynamic-survivor",
+            "materials": [
+              "Shared Painterly Surface"
+            ],
+            "name": "Dynamic Survivor"
+          },
+          {
+            "atlas": "lighting",
+            "dynamic": false,
+            "id": "lighting-receiver",
+            "materials": [
+              "Lighting Painterly Surface"
+            ],
+            "name": "Lighting Receiver"
+          }
+        ],
+        "renderEngine": "CYCLES",
+        "scene": "Hybrid Material Gate Differential"
+      }
+    },
+    "source": {
+      "path": "output/work/fixture/hybrid-material-gate.blend",
+      "bytes": 587591,
+      "sha256": "52a67ec99480b86a38b4f8d7f98f34d22149c4cbb541a04146847d5de2e8c350",
+      "checkpoints": [
+        {
+          "label": "after-generation",
+          "sha256": "52a67ec99480b86a38b4f8d7f98f34d22149c4cbb541a04146847d5de2e8c350"
+        },
+        {
+          "label": "after-preview-plan",
+          "sha256": "52a67ec99480b86a38b4f8d7f98f34d22149c4cbb541a04146847d5de2e8c350"
+        },
+        {
+          "label": "after-final-plan",
+          "sha256": "52a67ec99480b86a38b4f8d7f98f34d22149c4cbb541a04146847d5de2e8c350"
+        },
+        {
+          "label": "after-final-force-compile",
+          "sha256": "52a67ec99480b86a38b4f8d7f98f34d22149c4cbb541a04146847d5de2e8c350"
+        }
+      ]
+    }
+  },
+  "needleBaseline": {
+    "auditDate": "2026-07-25",
+    "integration": "mixed-source",
+    "behavior": "Needle 1.4.2 selects separate object receivers, attaches one shared bake target, and invokes one native multi-object bake; object participation remains explicit.",
+    "relation": "Blendlink matches the per-object ownership principle and improves on the audited Needle path with an occurrence-aware material-fidelity publication refusal. No analogous Needle material-portability gate was found.",
+    "addonRoot": "C:/Users/micha/Documents/GitHub/MichaelRoweJonesSite/.cache/needle-spike/addon/Needle Engine Exporter for Blender",
+    "sources": {
+      "addonVersion": "1.4.2",
+      "lightmapping": {
+        "path": "lightmapping/lightmapping.py",
+        "bytes": 59884,
+        "sha256": "4e69f0934d9329b2d8480b097baa1d903aa31bed9337c7a2ae0630cbc900b4f1",
+        "baselineSha256": "4e69f0934d9329b2d8480b097baa1d903aa31bed9337c7a2ae0630cbc900b4f1"
+      },
+      "packing": {
+        "path": "lightmapping/lightmapping_pack.py",
+        "bytes": 19596,
+        "sha256": "242aad7a29c177ac566ad519425ec55cb0376805d02197a0519107a761801cd3",
+        "baselineSha256": "242aad7a29c177ac566ad519425ec55cb0376805d02197a0519107a761801cd3"
+      }
+    }
+  },
+  "plans": {
+    "preview": {
+      "command": "node packages/blendlink/dist/cli.js plan hybridMaterialGate --preview --json",
+      "exitCode": 1,
+      "durationMs": 1889,
+      "quality": "preview",
+      "ownership": {
+        "appearance": {
+          "name": "Appearance Receiver",
+          "atlas": "main",
+          "bakeOutput": "appearance",
+          "areaM2": 6,
+          "uvShare": 0.28711,
+          "pxPerMeter": 28,
+          "cameraDistance": 9.84,
+          "screenDensity": 275.5,
+          "autoWeight": 1,
+          "artistWeight": 1
+        },
+        "lighting": {
+          "name": "Lighting Receiver",
+          "atlas": "lighting",
+          "bakeOutput": "lighting",
+          "areaM2": 6,
+          "uvShare": 0.28711,
+          "pxPerMeter": 28,
+          "cameraDistance": 8.76,
+          "screenDensity": 245.4,
+          "autoWeight": 1,
+          "artistWeight": 1,
+          "lightmapUv": 1
+        },
+        "dynamic": {
+          "name": "Dynamic Survivor",
+          "reason": "explicitly marked Realtime"
+        }
+      },
+      "inspection": {
+        "errors": [
+          {
+            "code": "material.used-needs-bake",
+            "material": "Lighting Painterly Surface",
+            "usedBy": [
+              "Lighting Receiver"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "Shared Painterly Surface",
+            "usedBy": [
+              "Dynamic Survivor"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF."
+            ]
+          }
+        ],
+        "warnings": []
+      },
+      "stderr": ""
+    },
+    "final": {
+      "command": "node packages/blendlink/dist/cli.js plan hybridMaterialGate --json",
+      "exitCode": 1,
+      "durationMs": 1782,
+      "quality": "final",
+      "ownership": {
+        "appearance": {
+          "name": "Appearance Receiver",
+          "atlas": "main",
+          "bakeOutput": "appearance",
+          "areaM2": 6,
+          "uvShare": 0.28711,
+          "pxPerMeter": 28,
+          "cameraDistance": 9.84,
+          "screenDensity": 275.5,
+          "autoWeight": 1,
+          "artistWeight": 1
+        },
+        "lighting": {
+          "name": "Lighting Receiver",
+          "atlas": "lighting",
+          "bakeOutput": "lighting",
+          "areaM2": 6,
+          "uvShare": 0.28711,
+          "pxPerMeter": 28,
+          "cameraDistance": 8.76,
+          "screenDensity": 245.4,
+          "autoWeight": 1,
+          "artistWeight": 1,
+          "lightmapUv": 1
+        },
+        "dynamic": {
+          "name": "Dynamic Survivor",
+          "reason": "explicitly marked Realtime"
+        }
+      },
+      "inspection": {
+        "errors": [
+          {
+            "code": "material.used-needs-bake",
+            "material": "Lighting Painterly Surface",
+            "usedBy": [
+              "Lighting Receiver"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF."
+            ]
+          },
+          {
+            "code": "material.used-needs-bake",
+            "material": "Shared Painterly Surface",
+            "usedBy": [
+              "Dynamic Survivor"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Noise Texture contributes to the active surface but cannot be represented as editable glTF."
+            ]
+          }
+        ],
+        "warnings": []
+      },
+      "stderr": ""
+    }
+  },
+  "publicationTransaction": {
+    "command": "node packages/blendlink/dist/cli.js compile hybridMaterialGate --force",
+    "exitCode": 1,
+    "durationMs": 3693,
+    "stdout": "",
+    "stderr": "Blendlink Material Fidelity refused to publish hybridMaterialGate: 2 used materials would lose authored surface behavior.\n  - Lighting Painterly Surface (used by Lighting Receiver): The active shader graph cannot publish faithfully as editable glTF.\n      Color Ramp contributes to the active surface but cannot be represented as editable glTF.\n      Noise Texture contributes to the active surface but cannot be represented as editable glTF.\n  - Shared Painterly Surface (used by Dynamic Survivor): The active shader graph cannot publish faithfully as editable glTF.\n      Color Ramp contributes to the active surface but cannot be represented as editable glTF.\n      Noise Texture contributes to the active surface but cannot be represented as editable glTF.\nOpen Material Fidelity in Blender and choose an evidenced Website Material, portable glTF, or supported Appearance route. The staged export was discarded; the previous publication was not changed.",
+    "seeded": {
+      "glb": {
+        "path": "public/models/hybridMaterialGate.glb",
+        "bytes": 132,
+        "sha256": "bb150e0bff921618a55c2ee4d8a283fbde9be42e4963d102ff30fb0f21b41c76"
+      },
+      "manifest": {
+        "path": "src/generated/hybridMaterialGate.manifest.json",
+        "bytes": 540,
+        "sha256": "2148a547fa80147c1781b97d601bb040981bc4a40fbdd487e43247b0d32fcf44"
+      },
+      "module": {
+        "path": "src/generated/hybridMaterialGate.gen.ts",
+        "bytes": 138,
+        "sha256": "5bd0929bb0687911f6443b585bb8f31ac71f65089d224611ae35fd86ece98593"
+      }
+    },
+    "preserved": {
+      "glb": {
+        "path": "public/models/hybridMaterialGate.glb",
+        "bytes": 132,
+        "sha256": "bb150e0bff921618a55c2ee4d8a283fbde9be42e4963d102ff30fb0f21b41c76"
+      },
+      "manifest": {
+        "path": "src/generated/hybridMaterialGate.manifest.json",
+        "bytes": 540,
+        "sha256": "2148a547fa80147c1781b97d601bb040981bc4a40fbdd487e43247b0d32fcf44"
+      },
+      "module": {
+        "path": "src/generated/hybridMaterialGate.gen.ts",
+        "bytes": 138,
+        "sha256": "5bd0929bb0687911f6443b585bb8f31ac71f65089d224611ae35fd86ece98593"
+      }
+    },
+    "publicationFiles": [
+      "public/models/hybridMaterialGate.glb"
+    ],
+    "generatedFiles": [
+      "src/generated/hybridMaterialGate.gen.ts",
+      "src/generated/hybridMaterialGate.manifest.json"
+    ],
+    "residue": []
+  }
+}

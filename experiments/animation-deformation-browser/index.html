@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
+    <title>Blendlink animation deformation differential</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #070b14; color: #e6edf8; }
+      main { width: min(1160px, calc(100vw - 32px)); margin: 20px auto; }
+      h1 { font-size: 24px; margin: 0 0 6px; }
+      p { color: #a8b8d0; margin: 0 0 16px; }
+      .grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); gap: 16px; }
+      #stage { width: 100%; aspect-ratio: 4 / 3; border: 1px solid #27344c; border-radius: 12px; overflow: hidden; background: #10182a; }
+      canvas { display: block; width: 100%; height: 100%; }
+      #facts { border: 1px solid #27344c; border-radius: 12px; background: #0e1524; padding: 16px; }
+      .metric { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid #1d2a40; padding: 9px 0; }
+      .metric span:first-child { color: #a8b8d0; }
+      .metric strong { text-align: right; color: #7ee7bc; }
+      #status { margin-top: 14px; border-radius: 8px; padding: 10px; background: #19253a; color: #f5c96c; }
+      #status.pass { background: #123529; color: #8ff0c7; }
+      @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Animation + deformation differential</h1>
+      <p>Blender 5.2 evaluated dependency graph → Blendlink production installer → Three.js 0.184 in Chromium.</p>
+      <div class="grid">
+        <div id="stage"></div>
+        <section id="facts" aria-live="polite">
+          <div class="metric"><span>Object position</span><strong id="position-error">pending</strong></div>
+          <div class="metric"><span>Object quaternion</span><strong id="quaternion-error">pending</strong></div>
+          <div class="metric"><span>Morph influence</span><strong id="morph-error">pending</strong></div>
+          <div class="metric"><span>Skinned vertices</span><strong id="skin-error">pending</strong></div>
+          <div class="metric"><span>Animation clips</span><strong id="clips">pending</strong></div>
+          <div class="metric"><span>Rig</span><strong id="rig">pending</strong></div>
+          <div id="status">Loading production scene…</div>
+        </section>
+      </div>
+    </main>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

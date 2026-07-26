@@ -1,0 +1,740 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-25T05:10:18.196Z",
+  "classification": "prototype; no production Blendlink behavior changed",
+  "versions": {
+    "blender": "5.2.0 LTS",
+    "blenderGltfExporter": "5.2.39",
+    "three": "0.184.0",
+    "vite": "7.3.6",
+    "playwright": "1.60.0",
+    "browser": "150.0.7871.182",
+    "needleAddon": "1.4.2"
+  },
+  "sources": {
+    "needleBlenderExport": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\MichaelRoweJonesSite\\.cache\\needle-spike\\addon\\Needle Engine Exporter for Blender\\blender_export.py",
+      "bytes": 21037,
+      "mtimeNs": 1783359856000000000,
+      "sha256": "6272997cfb4f1d740ea33a7c2512983b9993dedf93c9c8240ca0ff7f82925d77"
+    },
+    "entry": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\__init__.py",
+      "bytes": 89287,
+      "mtimeNs": 1782351534000000000,
+      "sha256": "0cd8903bd1a72ef1edbd728bee70d24a3ecc93c9901db68927b00910bb38be70"
+    },
+    "exportTransaction": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\export.py",
+      "bytes": 26574,
+      "mtimeNs": 1782351534000000000,
+      "sha256": "28058857c3935162839da76d99aa8883e506cac066fb05cf2d611d96e66808bd"
+    },
+    "tree": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\tree.py",
+      "bytes": 51119,
+      "mtimeNs": 1780517424000000000,
+      "sha256": "a7cdaebf55836ce2cb466b7ab4f48a66490aacd2fc0cb45dcb0bcda8a18080f6"
+    },
+    "animationActions": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\animation\\action.py",
+      "bytes": 58762,
+      "mtimeNs": 1780517424000000000,
+      "sha256": "569eac24187b664e73af3688140521a272122c09a96084d04974f64a8ea9c6f9"
+    },
+    "animationUtilities": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\animation\\anim_utils.py",
+      "bytes": 14572,
+      "mtimeNs": 1780517424000000000,
+      "sha256": "79d7e7a3ddfe4ce4018d6b2ac21e9ee1710840954c8925e8d4005e0e231b6544"
+    },
+    "sampledCache": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\animation\\sampled\\sampling_cache.py",
+      "bytes": 43256,
+      "mtimeNs": 1782092814000000000,
+      "sha256": "9bbaca16da527310bcf9f54399618c36458c917ea83d32104d69adc1ec986142"
+    },
+    "generator": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\generate_fixture.py",
+      "bytes": 15965,
+      "mtimeNs": 1784954644636281000,
+      "sha256": "4365220f35c0cc6deee27b3734d5711b7642f05dead2a4186e7af6876a75ca38"
+    },
+    "exporterPrototype": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\export_variants.py",
+      "bytes": 11018,
+      "mtimeNs": 1784954811130013200,
+      "sha256": "3c79b9c25902aee2c3cb0262a78a84cb0ac4a74f85aa64d0fa80eab0040fb402"
+    },
+    "browserPrototype": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\main.ts",
+      "bytes": 17919,
+      "mtimeNs": 1784955644870287600,
+      "sha256": "941564339670c15bd239132aa43e52bc6ff0ea884234e71e5b6e7d98eb67142d"
+    },
+    "runner": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\run.mjs",
+      "bytes": 14791,
+      "mtimeNs": 1784956178419079700,
+      "sha256": "b09bcbe3399e4d5d7e16b336990bf290271c3c2ea1a3b91df7c3b53fef48ccdb"
+    },
+    "experimentReadme": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\README.md",
+      "bytes": 2751,
+      "mtimeNs": 1784955981177683700,
+      "sha256": "60c409623c4f145d5b359224873e2c4922ff8bd9bbfbe7168407f22b7a040cf2"
+    },
+    "researchRecord": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\docs\\research-authored-current-frame-transport-2026.md",
+      "bytes": 14091,
+      "mtimeNs": 1784956045604053800,
+      "sha256": "cd1db26357101548b640ea4c182e1777cbf6933b449078ee06a3a07870c2637b"
+    }
+  },
+  "sourceRestoration": {
+    "before": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\authored-frame-fixture.blend",
+      "bytes": 99809,
+      "mtimeNs": 1784956203875718000,
+      "sha256": "ee89d94874797adf7b79a05e1a79cd986d9acb10d6e51225374277e943026667"
+    },
+    "after": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\authored-frame-fixture.blend",
+      "bytes": 99809,
+      "mtimeNs": 1784956203875718000,
+      "sha256": "ee89d94874797adf7b79a05e1a79cd986d9acb10d6e51225374277e943026667"
+    },
+    "blenderReportBefore": {
+      "bytes": 99809,
+      "mtimeNs": 1784956203875718000,
+      "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/authored-frame-fixture.blend",
+      "sha256": "ee89d94874797adf7b79a05e1a79cd986d9acb10d6e51225374277e943026667"
+    },
+    "blenderReportAfter": {
+      "bytes": 99809,
+      "mtimeNs": 1784956203875718000,
+      "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/authored-frame-fixture.blend",
+      "sha256": "ee89d94874797adf7b79a05e1a79cd986d9acb10d6e51225374277e943026667"
+    },
+    "onePassFrameAfterOperator": 20,
+    "onePassFrameAfterTransaction": 10
+  },
+  "exporterDefaults": {
+    "export_animation_mode": "ACTIONS",
+    "export_bake_animation": false,
+    "export_current_frame": false,
+    "export_force_sampling": true,
+    "export_frame_step": 1,
+    "export_pointer_animation": false,
+    "export_rest_position_armature": true
+  },
+  "sourceInventory": {
+    "constraints": [
+      {
+        "name": "Follow MotionTarget",
+        "owner": "ConstrainedCube",
+        "target": "MotionTarget",
+        "type": "COPY_LOCATION"
+      },
+      {
+        "name": "Aim at ConstrainedCube",
+        "owner": "AuthoredCamera",
+        "target": "ConstrainedCube",
+        "type": "TRACK_TO"
+      }
+    ],
+    "proposedDiagnostics": [
+      {
+        "code": "animation.material-driver-not-portable",
+        "message": "DrivenCubeMaterial: driver \"nodes[\"Principled BSDF\"].inputs[\"Roughness\"].default_value\" cannot be transported by core glTF animation. Materialize a supported static value, opt into a verified animation-pointer adapter, or remove the driver before publish.",
+        "severity": "error"
+      }
+    ],
+    "transformDrivers": [
+      {
+        "dataPath": "location",
+        "owner": "DrivenCube"
+      }
+    ],
+    "unsupportedDrivers": [
+      {
+        "dataPath": "nodes[\"Principled BSDF\"].inputs[2].default_value",
+        "displayPath": "nodes[\"Principled BSDF\"].inputs[\"Roughness\"].default_value",
+        "owner": "DrivenCubeMaterial",
+        "reason": "core glTF animation cannot target material properties without KHR_animation_pointer"
+      }
+    ]
+  },
+  "glbs": {
+    "current-rest-actions": {
+      "identity": {
+        "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\current-rest-actions.glb",
+        "bytes": 12468,
+        "mtimeNs": 1784956216651091200,
+        "sha256": "e554e1489aea19f7a7463fb903ce9b93f8ec1c38d8c592268b7707cba256cce5"
+      },
+      "asset": {
+        "generator": "Khronos glTF Blender I/O v5.2.39",
+        "version": "2.0"
+      },
+      "animationNames": [
+        "CameraMotion",
+        "RigMotion",
+        "TargetMotion"
+      ],
+      "animationChannelCount": 6,
+      "extensionsUsed": []
+    },
+    "dynamic-scene": {
+      "identity": {
+        "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\dynamic-scene.glb",
+        "bytes": 13324,
+        "mtimeNs": 1784956216610830000,
+        "sha256": "e0f8855bb54f078125ad98da90378e34cefa86818ea981842f20c346d9a531dd"
+      },
+      "asset": {
+        "generator": "Khronos glTF Blender I/O v5.2.39",
+        "version": "2.0"
+      },
+      "animationNames": [
+        "AuthoredFrameTransport"
+      ],
+      "animationChannelCount": 8,
+      "extensionsUsed": []
+    },
+    "needle-floor": {
+      "identity": {
+        "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\needle-floor.glb",
+        "bytes": 12472,
+        "mtimeNs": 1784956216556779000,
+        "sha256": "d58251ed6ca1ab48147367fba492586e21c81442f59b732129a3e54e25e350f6"
+      },
+      "asset": {
+        "generator": "Khronos glTF Blender I/O v5.2.39",
+        "version": "2.0"
+      },
+      "animationNames": [
+        "CameraMotion",
+        "RigMotion",
+        "TargetMotion"
+      ],
+      "animationChannelCount": 6,
+      "extensionsUsed": []
+    },
+    "one-pass-actions-baked": {
+      "identity": {
+        "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\one-pass-actions-baked.glb",
+        "bytes": 13564,
+        "mtimeNs": 1784956216673088800,
+        "sha256": "c54b8a94b9c665e85a5ef3fe1c264fd78bd1476be87fedef15f2b579b4a454b1"
+      },
+      "asset": {
+        "generator": "Khronos glTF Blender I/O v5.2.39",
+        "version": "2.0"
+      },
+      "animationNames": [
+        "CameraMotion",
+        "RigMotion",
+        "ConstrainedCube",
+        "DrivenCube",
+        "TargetMotion"
+      ],
+      "animationChannelCount": 8,
+      "extensionsUsed": []
+    },
+    "one-pass-scene": {
+      "identity": {
+        "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\one-pass-scene.glb",
+        "bytes": 13376,
+        "mtimeNs": 1784956216582580000,
+        "sha256": "33d80b982e884f37b0205260059e280713743d907edf20684716a0d4fca3560f"
+      },
+      "asset": {
+        "generator": "Khronos glTF Blender I/O v5.2.39",
+        "version": "2.0"
+      },
+      "animationNames": [
+        "AuthoredFrameTransport"
+      ],
+      "animationChannelCount": 8,
+      "extensionsUsed": []
+    },
+    "static-current": {
+      "identity": {
+        "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\static-current.glb",
+        "bytes": 9500,
+        "mtimeNs": 1784956216629025800,
+        "sha256": "ccde074b7ac9ac374890a0542004bedcc0fff8a9470fc718b24ed438f6ecc2e6"
+      },
+      "asset": {
+        "generator": "Khronos glTF Blender I/O v5.2.39",
+        "version": "2.0"
+      },
+      "animationNames": [],
+      "animationChannelCount": 0,
+      "extensionsUsed": []
+    }
+  },
+  "browser": {
+    "url": "http://127.0.0.1:5173/",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "evidence": {
+      "threeRevision": "184",
+      "savedFrame": 10,
+      "needle": {
+        "initial": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.867110146007193e-7,
+          "skinnedPointHausdorff": 0,
+          "materialRoughness": 0,
+          "maximumPortable": 1.867110146007193e-7
+        },
+        "samples": [
+          {
+            "frame": 0,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 1.4136482746161737e-7,
+              "skinnedPointHausdorff": 0,
+              "materialRoughness": 0,
+              "maximumPortable": 1.4136482746161737e-7
+            }
+          },
+          {
+            "frame": 10,
+            "errors": {
+              "constrainedPosition": 2.154065949417734,
+              "drivenPosition": 1.7999999523162842,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 5.575503985246929e-8,
+              "skinnedPointHausdorff": 3.3858999771877e-7,
+              "materialRoughness": 0.4000000059604645,
+              "maximumPortable": 2.154065949417734
+            }
+          },
+          {
+            "frame": 20,
+            "errors": {
+              "constrainedPosition": 4,
+              "drivenPosition": 3.5999999046325684,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 8.815645848363069e-8,
+              "skinnedPointHausdorff": 3.720072750301147e-7,
+              "materialRoughness": 0.7499999701976776,
+              "maximumPortable": 4
+            }
+          }
+        ],
+        "maxima": {
+          "constrainedPosition": 4,
+          "drivenPosition": 3.5999999046325684,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4136482746161737e-7,
+          "skinnedPointHausdorff": 3.720072750301147e-7,
+          "materialRoughness": 0.7499999701976776,
+          "maximumPortable": 4
+        },
+        "clipNames": [
+          "CameraMotion",
+          "RigMotion",
+          "TargetMotion"
+        ],
+        "clipCount": 3,
+        "savedFramePortableError": 2.154065949417734
+      },
+      "designA": {
+        "initial": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4901161193847656e-8,
+          "skinnedPointHausdorff": 1.450955194304715e-7,
+          "materialRoughness": 0,
+          "maximumPortable": 1.450955194304715e-7
+        },
+        "samples": [
+          {
+            "frame": 0,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 1.4136482746161737e-7,
+              "skinnedPointHausdorff": 0,
+              "materialRoughness": 0.4000000059604645,
+              "maximumPortable": 1.4136482746161737e-7
+            }
+          },
+          {
+            "frame": 10,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 5.575503985246929e-8,
+              "skinnedPointHausdorff": 3.3858999771877e-7,
+              "materialRoughness": 0,
+              "maximumPortable": 3.3858999771877e-7
+            }
+          },
+          {
+            "frame": 20,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 8.815645848363069e-8,
+              "skinnedPointHausdorff": 3.720072750301147e-7,
+              "materialRoughness": 0.34999996423721313,
+              "maximumPortable": 3.720072750301147e-7
+            }
+          }
+        ],
+        "maxima": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4136482746161737e-7,
+          "skinnedPointHausdorff": 3.720072750301147e-7,
+          "materialRoughness": 0.4000000059604645,
+          "maximumPortable": 3.720072750301147e-7
+        },
+        "clipNames": [
+          "AuthoredFrameTransport"
+        ],
+        "clipCount": 1
+      },
+      "designB": {
+        "initial": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4901161193847656e-8,
+          "skinnedPointHausdorff": 1.450955194304715e-7,
+          "materialRoughness": 0.4000000059604645,
+          "maximumPortable": 1.450955194304715e-7
+        },
+        "samples": [
+          {
+            "frame": 0,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 1.4136482746161737e-7,
+              "skinnedPointHausdorff": 0,
+              "materialRoughness": 0,
+              "maximumPortable": 1.4136482746161737e-7
+            }
+          },
+          {
+            "frame": 10,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 5.575503985246929e-8,
+              "skinnedPointHausdorff": 3.3858999771877e-7,
+              "materialRoughness": 0.4000000059604645,
+              "maximumPortable": 3.3858999771877e-7
+            }
+          },
+          {
+            "frame": 20,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 8.815645848363069e-8,
+              "skinnedPointHausdorff": 3.720072750301147e-7,
+              "materialRoughness": 0.7499999701976776,
+              "maximumPortable": 3.720072750301147e-7
+            }
+          }
+        ],
+        "maxima": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4136482746161737e-7,
+          "skinnedPointHausdorff": 3.720072750301147e-7,
+          "materialRoughness": 0.7499999701976776,
+          "maximumPortable": 3.720072750301147e-7
+        },
+        "clipNames": [
+          "AuthoredFrameTransport"
+        ],
+        "clipCount": 1,
+        "extraArtifactBytes": 9500
+      },
+      "designC": {
+        "initial": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 5.575503985246929e-8,
+          "skinnedPointHausdorff": 3.3858999771877e-7,
+          "materialRoughness": 0.4000000059604645,
+          "maximumPortable": 3.3858999771877e-7
+        },
+        "samples": [
+          {
+            "frame": 0,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 1.4136482746161737e-7,
+              "skinnedPointHausdorff": 0,
+              "materialRoughness": 0,
+              "maximumPortable": 1.4136482746161737e-7
+            }
+          },
+          {
+            "frame": 10,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 5.575503985246929e-8,
+              "skinnedPointHausdorff": 3.3858999771877e-7,
+              "materialRoughness": 0.4000000059604645,
+              "maximumPortable": 3.3858999771877e-7
+            }
+          },
+          {
+            "frame": 20,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 8.815645848363069e-8,
+              "skinnedPointHausdorff": 3.720072750301147e-7,
+              "materialRoughness": 0.7499999701976776,
+              "maximumPortable": 3.720072750301147e-7
+            }
+          }
+        ],
+        "maxima": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4136482746161737e-7,
+          "skinnedPointHausdorff": 3.720072750301147e-7,
+          "materialRoughness": 0.7499999701976776,
+          "maximumPortable": 3.720072750301147e-7
+        },
+        "clipNames": [
+          "AuthoredFrameTransport"
+        ],
+        "clipCount": 1
+      },
+      "designD": {
+        "initial": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 3.942476676500724e-8,
+          "skinnedPointHausdorff": 3.3858999771877e-7,
+          "materialRoughness": 0,
+          "maximumPortable": 3.3858999771877e-7
+        },
+        "samples": [
+          {
+            "frame": 0,
+            "errors": {
+              "constrainedPosition": 2.154065949417734,
+              "drivenPosition": 1.7999999523162842,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 1.4136482746161737e-7,
+              "skinnedPointHausdorff": 0,
+              "materialRoughness": 0.4000000059604645,
+              "maximumPortable": 2.154065949417734
+            }
+          },
+          {
+            "frame": 10,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 5.575503985246929e-8,
+              "skinnedPointHausdorff": 3.3858999771877e-7,
+              "materialRoughness": 0,
+              "maximumPortable": 3.3858999771877e-7
+            }
+          },
+          {
+            "frame": 20,
+            "errors": {
+              "constrainedPosition": 2.154065949417734,
+              "drivenPosition": 1.7999999523162842,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 8.815645848363069e-8,
+              "skinnedPointHausdorff": 3.720072750301147e-7,
+              "materialRoughness": 0.34999996423721313,
+              "maximumPortable": 2.154065949417734
+            }
+          }
+        ],
+        "maxima": {
+          "constrainedPosition": 2.154065949417734,
+          "drivenPosition": 1.7999999523162842,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4136482746161737e-7,
+          "skinnedPointHausdorff": 3.720072750301147e-7,
+          "materialRoughness": 0.4000000059604645,
+          "maximumPortable": 2.154065949417734
+        },
+        "clipNames": [
+          "CameraMotion",
+          "RigMotion",
+          "TargetMotion"
+        ],
+        "clipCount": 3,
+        "presentationTrackCount": 36,
+        "presentationJsonBytes": 3363,
+        "restoredIdle": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 3.942476676500724e-8,
+          "skinnedPointHausdorff": 3.3858999771877e-7,
+          "materialRoughness": 0,
+          "maximumPortable": 3.3858999771877e-7
+        },
+        "developerClipPlaybackMaxima": {
+          "constrainedPosition": 2.154065949417734,
+          "drivenPosition": 1.7999999523162842,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4136482746161737e-7,
+          "skinnedPointHausdorff": 3.720072750301147e-7,
+          "materialRoughness": 0.4000000059604645,
+          "maximumPortable": 2.154065949417734
+        }
+      },
+      "actionsBakedDiagnostic": {
+        "initial": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4901161193847656e-8,
+          "skinnedPointHausdorff": 1.450955194304715e-7,
+          "materialRoughness": 0,
+          "maximumPortable": 1.450955194304715e-7
+        },
+        "samples": [
+          {
+            "frame": 0,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 1.4136482746161737e-7,
+              "skinnedPointHausdorff": 0,
+              "materialRoughness": 0.4000000059604645,
+              "maximumPortable": 1.4136482746161737e-7
+            }
+          },
+          {
+            "frame": 10,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 5.575503985246929e-8,
+              "skinnedPointHausdorff": 3.3858999771877e-7,
+              "materialRoughness": 0,
+              "maximumPortable": 3.3858999771877e-7
+            }
+          },
+          {
+            "frame": 20,
+            "errors": {
+              "constrainedPosition": 0,
+              "drivenPosition": 0,
+              "cameraPosition": 0,
+              "cameraForwardRadians": 8.815645848363069e-8,
+              "skinnedPointHausdorff": 3.720072750301147e-7,
+              "materialRoughness": 0.34999996423721313,
+              "maximumPortable": 3.720072750301147e-7
+            }
+          }
+        ],
+        "maxima": {
+          "constrainedPosition": 0,
+          "drivenPosition": 0,
+          "cameraPosition": 0,
+          "cameraForwardRadians": 1.4136482746161737e-7,
+          "skinnedPointHausdorff": 3.720072750301147e-7,
+          "materialRoughness": 0.4000000059604645,
+          "maximumPortable": 3.720072750301147e-7
+        },
+        "clipNames": [
+          "CameraMotion",
+          "RigMotion",
+          "ConstrainedCube",
+          "DrivenCube",
+          "TargetMotion"
+        ],
+        "clipCount": 5
+      },
+      "materialDriver": {
+        "gltfPointerPresent": false,
+        "referenceValues": [
+          0.15000000596046448,
+          0.550000011920929,
+          0.8999999761581421
+        ],
+        "designAObservedValues": [
+          0.550000011920929,
+          0.550000011920929,
+          0.550000011920929
+        ]
+      },
+      "pixels": {
+        "total": 400000,
+        "nonBackground": 244491,
+        "chromatic": 194148
+      }
+    }
+  },
+  "commands": {
+    "run": "node experiments/authored-frame-transport-prototype/run.mjs"
+  },
+  "artifacts": {
+    "blenderReference": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\blender-authored-frame.png",
+      "bytes": 419497,
+      "mtimeNs": 1784956214651622100,
+      "sha256": "2e57bd00a00bab62339f9a9735aaa2463ee3e969f038ed43fc4d6ea16808d11c"
+    },
+    "browserPage": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\browser-evidence.png",
+      "bytes": 53583,
+      "mtimeNs": 1784956218141842000,
+      "sha256": "1afae8dc2cbfca0d2b311d4480ffd2953f158d163c974dd04eefcfd2f72c9539"
+    },
+    "browserCanvas": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\browser-canvas.png",
+      "bytes": 10334,
+      "mtimeNs": 1784956218191450400,
+      "sha256": "3943de3ef52f41441ce69bffd9d45562c5215b1bf65acfb066a57fb417bb4252"
+    }
+  },
+  "generation": {
+    "status": 0,
+    "stdoutTail": "00:12.046  render           | Saved: 'C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\blender-authored-frame.png'\nExtensions: writing cache failed ([WinError 183] Cannot create a file when that file already exists: 'C:\\\\Users\\\\micha\\\\AppData\\\\Roaming\\\\Blender Foundation\\\\Blender\\\\5.2\\\\extensions\\\\.cache').\r\nInfo: Saved as \"authored-frame-fixture.blend\"\r\nBLENDLINK_AUTHORED_FRAME_FIXTURE_GENERATED savedFrame=10 sourceSha256=ee89d94874797adf7b79a05e1a79cd986d9acb10d6e51225374277e943026667 gltfExporter=5.2.39\r\nBlender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)\nUnable to delete file\nUnable to delete file\n\nBlender quit\n",
+    "stderrTail": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\generate_fixture.py:99: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\r\n  result.use_nodes = True\r\nC:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\generate_fixture.py:330: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0\r\n  scene.world.use_nodes = True\r\n"
+  },
+  "exporting": {
+    "status": 0,
+    "stdoutTail": "00:00.047  reports          | WARNING Unable to open 'C:\\Users\\micha\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\config\\userpref.blend': Permission denied\r\nBlender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)\r\n00:01.265  blend            | Read blend: \"C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\authored-frame-fixture.blend\"\nINFO Draco is available, use library at C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\bf_intern_draco_bridge.dll\r\nINFO MeshOptimizer is available, use library at C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\bf_intern_meshopt_bridge.dll\r\n01:10:16 | INFO: Starting glTF 2.0 export\r\n01:10:16 | INFO: Extracting primitive: SkinnedRibbonMesh\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.001\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.002\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube.003\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Finished glTF 2.0 export in 0.048769474029541016 s\r\n\r\n01:10:16 | INFO: Starting glTF 2.0 export\r\n01:10:16 | INFO: Extracting primitive: SkinnedRibbonMesh\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.001\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.002\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube.003\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Finished glTF 2.0 export in 0.019973278045654297 s\r\n\r\n01:10:16 | INFO: Starting glTF 2.0 export\r\n01:10:16 | INFO: Extracting primitive: SkinnedRibbonMesh\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.001\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.002\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube.003\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Finished glTF 2.0 export in 0.019933462142944336 s\r\n\r\n01:10:16 | INFO: Starting glTF 2.0 export\r\n01:10:16 | INFO: Extracting primitive: SkinnedRibbonMesh\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.001\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.002\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube.003\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Finished glTF 2.0 export in 0.010376930236816406 s\r\n\r\n01:10:16 | INFO: Starting glTF 2.0 export\r\n01:10:16 | INFO: Extracting primitive: SkinnedRibbonMesh\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.001\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.002\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube.003\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Finished glTF 2.0 export in 0.014262914657592773 s\r\n\r\n01:10:16 | INFO: Starting glTF 2.0 export\r\n01:10:16 | INFO: Extracting primitive: SkinnedRibbonMesh\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.001\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Extracting primitive: Cube.002\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube.003\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | WARNING: Unsupported light source AREA\r\n01:10:16 | INFO: Extracting primitive: Cube\r\n01:10:16 | INFO: Primitives created: 1\r\n01:10:16 | INFO: Finished glTF 2.0 export in 0.016330718994140625 s\r\n\r\nBLENDLINK_AUTHORED_FRAME_VARIANTS_EXPORTED variants=6 sourceRestored=True diagnostics=1\r\n\nBlender quit\n",
+    "stderrTail": ""
+  }
+}

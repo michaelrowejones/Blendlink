@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "unacknowledged": {
+    "command": "blendlink plan realtimeNeedsBake --json",
+    "exitCode": 1,
+    "scene": {
+      "scene": "realtimeNeedsBake",
+      "quality": "final",
+      "plan": null,
+      "inspection": {
+        "errors": [
+          {
+            "code": "material.used-needs-bake",
+            "material": "Autumn Shader to RGB",
+            "usedBy": [
+              "Realtime Needs Bake"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Shader to RGB is not a portable stock glTF material node.",
+              "Diffuse BSDF is not a portable stock glTF material node.",
+              "Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ."
+            ]
+          }
+        ],
+        "warnings": []
+      }
+    }
+  },
+  "acknowledgedJson": {
+    "command": "blendlink plan realtimeNeedsBakeAcknowledged --json",
+    "exitCode": 0,
+    "scene": {
+      "scene": "realtimeNeedsBakeAcknowledged",
+      "quality": "final",
+      "plan": null,
+      "inspection": {
+        "errors": [],
+        "warnings": [
+          {
+            "code": "material.used-needs-bake",
+            "material": "Autumn Shader to RGB",
+            "usedBy": [
+              "Realtime Needs Bake"
+            ],
+            "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+            "reasons": [
+              "Color Ramp contributes to the active surface but cannot be represented as editable glTF.",
+              "Shader to RGB is not a portable stock glTF material node.",
+              "Diffuse BSDF is not a portable stock glTF material node.",
+              "Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ."
+            ],
+            "acknowledgedBy": "src/materials/installAutumnMaterials.ts"
+          }
+        ]
+      }
+    }
+  },
+  "acknowledgedHuman": {
+    "command": "blendlink plan realtimeNeedsBakeAcknowledged",
+    "exitCode": 0,
+    "stderr": "realtime plan acknowledged - realtimeNeedsBakeAcknowledged: 1 used material still require the declared website-owned material adapter\n  ! Autumn Shader to RGB: The active shader graph cannot publish faithfully as editable glTF. (used by Realtime Needs Bake)\n      Color Ramp contributes to the active surface but cannot be represented as editable glTF.\n      Shader to RGB is not a portable stock glTF material node.\n      Diffuse BSDF is not a portable stock glTF material node.\n      Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ.\n  Accepted by applicationMaterialAdapter: src/materials/installAutumnMaterials.ts. Keep this adapter covered by the application browser gate."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "status": "ok",
+  "baked": [
+    "Ground"
+  ],
+  "bakedLights": [
+    "Sun",
+    "WarmLamp"
+  ],
+  "dynamic": [
+    "Crate",
+    "Crate-colonly"
+  ],
+  "lightmap": {
+    "name": "NEEDLE_lightmap_image",
+    "size": [
+      128,
+      128
+    ],
+    "packed": true
+  },
+  "groundUvLayers": [
+    "UVMap",
+    "NEEDLE_LightmapUV"
+  ],
+  "sceneGlbBytes": 36052
+}

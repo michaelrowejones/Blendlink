@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-25T06:16:02.783Z",
+  "command": "node ../../packages/blendlink/dist/cli.js plan --json",
+  "exitCode": 1,
+  "source": {
+    "path": "artifacts/release-dogfood/next-corpus/sources/ellie-animation-official/ellie_animation/ellie_animation.blend",
+    "sha256Before": "20e00af5488721c5bf5a10534e7f6a5cef667849c671773daf8348b7c1237b9e",
+    "sha256After": "20e00af5488721c5bf5a10534e7f6a5cef667849c671773daf8348b7c1237b9e",
+    "unchanged": true
+  },
+  "result": {
+    "scene": "ellieUntouched",
+    "quality": "final",
+    "planIsNull": true,
+    "totalErrors": 41,
+    "errorsByCode": [
+      {
+        "code": "material.used-needs-bake",
+        "count": 41
+      }
+    ],
+    "affectedMaterials": [
+      "ellie.buttons",
+      "ellie.denim",
+      "ellie.denim_inside",
+      "ellie.earrings",
+      "ellie.eyes",
+      "ellie.eyes_pupils",
+      "ellie.fanny_pack_black",
+      "ellie.fannypack_green",
+      "ellie.fannypack_magenta",
+      "ellie.fannypack_purple",
+      "ellie.fannypack_zipper",
+      "ellie.gums",
+      "ellie.hair_particles",
+      "ellie.handkerchief",
+      "ellie.head",
+      "ellie.head_lips",
+      "ellie.highlights",
+      "ellie.pins_blue",
+      "ellie.pins_gold",
+      "ellie.pins_green",
+      "ellie.pins_light",
+      "ellie.pins_magenta",
+      "ellie.scrunchie",
+      "ellie.shoes_laces",
+      "ellie.shoes_leather",
+      "ellie.shoes_loop",
+      "ellie.shoes_metal",
+      "ellie.shoes_seam",
+      "ellie.shoes_soles_side",
+      "ellie.shoes_soles_underneath",
+      "ellie.shorts",
+      "ellie.skin",
+      "ellie.socks",
+      "ellie.teeth",
+      "ellie.tongue",
+      "ellie.watch_glass",
+      "ellie.watch_gold",
+      "ellie.watch_metal",
+      "ellie.watch_red",
+      "ellie.watch_rubber_guard",
+      "ellie.watch_strap"
+    ],
+    "warningCount": 0,
+    "publicationFiles": []
+  }
+}

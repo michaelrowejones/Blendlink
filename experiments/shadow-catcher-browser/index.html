@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>Blendlink Shadow Catcher evidence</title>
+    <style>
+      :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: #eaf2ef;
+        background: #0d1117;
+      }
+      main { width: min(1120px, 100%); margin: 0 auto; padding: 28px; }
+      h1 { margin: 0 0 8px; font-size: 24px; }
+      p { margin: 0 0 22px; color: #9fb0aa; }
+      #cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+      article { padding: 14px; border: 1px solid #29352f; border-radius: 14px; background: #131a18; }
+      h2 { margin: 0 0 10px; font-size: 15px; font-weight: 650; }
+      .checker {
+        overflow: hidden;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        border-radius: 9px;
+        background-color: #d7e2dd;
+        background-image:
+          linear-gradient(45deg, #57736a 25%, transparent 25%),
+          linear-gradient(-45deg, #57736a 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #57736a 75%),
+          linear-gradient(-45deg, transparent 75%, #57736a 75%);
+        background-position: 0 0, 0 16px, 16px -16px, -16px 0;
+        background-size: 32px 32px;
+      }
+      canvas { display: block; width: 100%; height: 100%; }
+      output { display: block; min-height: 20px; margin-top: 9px; color: #83e1c0; font: 12px ui-monospace, monospace; }
+      @media (max-width: 760px) { #cells { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Shadow Catcher browser evidence</h1>
+      <p>Transparent WebGL canvases over an application-owned checkerboard.</p>
+      <section id="cells">
+        <article><h2>Shadow Mask</h2><div class="checker"><canvas id="mask"></canvas></div><output id="mask-output"></output></article>
+        <article><h2>Descendant Group</h2><div class="checker"><canvas id="descendants"></canvas></div><output id="descendants-output"></output></article>
+        <article><h2>Invisible Occluder</h2><div class="checker"><canvas id="occluder"></canvas></div><output id="occluder-output"></output></article>
+        <article><h2>Additive Direct Light</h2><div class="checker"><canvas id="additive"></canvas></div><output id="additive-output"></output></article>
+      </section>
+    </main>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

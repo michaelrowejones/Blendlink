@@ -1,0 +1,439 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-23T23:34:06.430Z",
+  "browser": "150.0.7871.129",
+  "url": "http://127.0.0.1:5173/",
+  "versions": {
+    "blender": {
+      "version": "5.2.0 LTS",
+      "buildHash": "fbe6228777e7",
+      "buildDate": "2026-07-14",
+      "binaryPath": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe"
+    },
+    "blenderGltfExporter": "5.2.39",
+    "blendlink": "0.8.0",
+    "three": "0.184.0",
+    "playwright": "1.60.0",
+    "vite": "7.3.6"
+  },
+  "sources": {
+    "generator": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\generate_fixture.py",
+      "sha256": "b8b55d7b2cec239755f08f8d41834721f5a6429638aaafd31a29dbc8cc36a291"
+    },
+    "browserFixture": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\main.ts",
+      "sha256": "b0814019da8b2aef00cc85ad5be0afab5bcdf26a9c87ddfa4d503ba12bd9ca07"
+    },
+    "browserPage": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\index.html",
+      "sha256": "6417c01a5714bd7949b7de5499f7531e01b8cfd1aaac1bb98f5e0f6b5a876d27"
+    },
+    "runner": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\run.mjs",
+      "sha256": "86d0e1b272530f8f131a1f2b14abde6bf301f65b4eb54e7047c2fff6c2967adf"
+    },
+    "researchReadme": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\README.md",
+      "sha256": "7b9bb783c997370d3d368c8ac63c282ed5cc308e6810e0454eeb97233c6883d7"
+    },
+    "blendlinkProductionRuntime": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\threeRuntime.js",
+      "sha256": "49991bbdd62762df051f426f04c32607bfe17c6d9dae8394604c051ab58deaeb"
+    },
+    "blendlinkRuntimeContract": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\runtime.js",
+      "sha256": "d517b60bb07f4336b32bf1ec63a53ef5024163b0f1e2b5afd712c8265cdfbbe8"
+    },
+    "blendlinkProductionExporter": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\blender\\export_scene.py",
+      "sha256": "2b128c88b7d7d4d3516e3e8e111a00829c763455e6a799bc2d96a0baa7c9f521"
+    },
+    "threeGltfLoader": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\three\\examples\\jsm\\loaders\\GLTFLoader.js",
+      "sha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2"
+    },
+    "threeAnimationMixer": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\three\\src\\animation\\AnimationMixer.js",
+      "sha256": "7b05af5507aa4edfe3d6b5debcda23c8f0d9b910928debff7fc50748954d533c"
+    },
+    "threeMesh": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\three\\src\\objects\\Mesh.js",
+      "sha256": "432460d6dc5d290ead0c4664475e71b04dbe8fa0c1c08ccd032bd65c6acc9864"
+    },
+    "threeSkinnedMesh": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\three\\src\\objects\\SkinnedMesh.js",
+      "sha256": "b01477c050eff4c32bb4ae6792cb2948e5908adc09bd13335104e68966f6690f"
+    },
+    "blenderGltfExporterEntry": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\__init__.py",
+      "sha256": "0cd8903bd1a72ef1edbd728bee70d24a3ecc93c9901db68927b00910bb38be70"
+    },
+    "blenderGltfAnimationAction": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\animation\\action.py",
+      "sha256": "569eac24187b664e73af3688140521a272122c09a96084d04974f64a8ea9c6f9"
+    },
+    "blenderGltfFcurveSampler": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\animation\\fcurves\\sampler.py",
+      "sha256": "59a36729dd60abd5e1fa09f7713818d809b8bfe6f1478bb3c9e1213d9f821796"
+    },
+    "blenderGltfArmatureSampler": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\animation\\sampled\\armature\\sampler.py",
+      "sha256": "0cdf60b64e256dc30d931430e901b0899f6a65cd76da8783dfc7ec9a411f75c1"
+    },
+    "blenderGltfShapeKeySampler": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\animation\\sampled\\shapekeys\\sampler.py",
+      "sha256": "270d5327590fc6790747b924438ac26da776713ac51aa5291849e25a192d6338"
+    },
+    "blenderGltfSkinGatherer": {
+      "path": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\blender\\exp\\skins.py",
+      "sha256": "d20dfc4b801997b60916d813bd191d0569e061af73c74806ca1adfda683d0eb5"
+    }
+  },
+  "artifacts": {
+    "blendSha256": "440e832d6539da2f09e0978498af0e114533d1aa2c5c9f50cf39af9d04fdf508",
+    "glbSha256": "4a1a84533c19c890a926fd8e593d22da6672537f07deb548f7293ef036e6c318",
+    "referenceSha256": "7ee4087e1258af61a64f41a01726ff843fbb75fa72702cdb2218396017f8fa98",
+    "blenderReferenceImageSha256": "349ea8fd1742f639b5d6db3523bad5f86a9f1cd195d6e7f49944573a41e4be37",
+    "browserScreenshotSha256": "af57f2a6a2b65dd79c96642459c03a5ffba6c6076f33eca5d0c8f1694b434c91",
+    "browserCanvasSha256": "0079eb7c15524d1e9ef1253b40d24d8984a835bcdc114cc53304d9b01c193688"
+  },
+  "glbStructure": {
+    "asset": {
+      "generator": "Khronos glTF Blender I/O v5.2.39",
+      "version": "2.0"
+    },
+    "nodeCount": 5,
+    "meshCount": 2,
+    "skinCount": 1,
+    "jointCount": 2,
+    "animationCount": 3,
+    "animationNames": [
+      "RigMotion",
+      "MorphMotion",
+      "TransformMotion"
+    ],
+    "animationChannelTargetPaths": [
+      "translation",
+      "rotation",
+      "scale",
+      "translation",
+      "rotation",
+      "scale",
+      "weights",
+      "translation",
+      "rotation"
+    ],
+    "morphTargetCounts": [
+      1,
+      0
+    ]
+  },
+  "exportResult": {
+    "blenderVersion": "5.2.0 LTS",
+    "droppedExporterKwargs": [],
+    "warnings": []
+  },
+  "generation": {
+    "status": 0,
+    "stdoutTail": "00:12.907  render           | Saved: 'C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\output\\blender-reference-frame13.png'\nExtensions: writing cache failed ([WinError 183] Cannot create a file when that file already exists: 'C:\\\\Users\\\\micha\\\\AppData\\\\Roaming\\\\Blender Foundation\\\\Blender\\\\5.2\\\\extensions\\\\.cache').\r\nInfo: Saved as \"animation-deformation-fixture.blend\"\r\nInfo: Saved as \"animation-deformation-fixture.blend\"\r\nBLENDLINK_ANIMATION_DEFORMATION_FIXTURE_GENERATED samples=9 vertices=6 blender=5.2.0 LTS gltfExporter=5.2.39\r\nBlender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)\nUnable to delete file\nUnable to delete file\n\nBlender quit\n",
+    "stderrTail": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\generate_fixture.py:345: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0\r\n  scene.world.use_nodes = True\r\nC:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\generate_fixture.py:96: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\r\n  result.use_nodes = True\r\n"
+  },
+  "exportRun": {
+    "status": 0,
+    "stdoutTail": "00:00.046  reports          | WARNING Unable to open 'C:\\Users\\micha\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\config\\userpref.blend': Permission denied\r\nBlender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)\r\n00:01.171  blend            | Read blend: \"C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\animation-deformation-browser\\output\\animation-deformation-fixture.blend\"\nINFO Draco is available, use library at C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\bf_intern_draco_bridge.dll\r\nINFO MeshOptimizer is available, use library at C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\bf_intern_meshopt_bridge.dll\r\n19:34:04 | INFO: Starting glTF 2.0 export\r\n19:34:04 | INFO: Extracting primitive: DeformationRibbonMesh\r\n19:34:04 | INFO: Primitives created: 1\r\n19:34:04 | INFO: Extracting primitive: Cube\r\n19:34:04 | INFO: Primitives created: 1\r\n19:34:04 | INFO: Finished glTF 2.0 export in 0.03963923454284668 s\r\n\r\nBLENDLINK_OK export\r\n\nBlender quit\n",
+    "stderrTail": ""
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "evidence": {
+    "threeRevision": "184",
+    "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "webglRenderer": "WebKit WebGL",
+    "blendlinkInstaller": "installThreeCompiledScene",
+    "clipNames": [
+      "RigMotion",
+      "MorphMotion",
+      "TransformMotion"
+    ],
+    "clipDurations": [
+      1.0416666269302368,
+      1.0416666269302368,
+      1.0416666269302368
+    ],
+    "animationTrackCount": 9,
+    "skinnedMesh": {
+      "isSkinnedMesh": true,
+      "boneCount": 2,
+      "boneNames": [
+        "Root",
+        "Tip"
+      ],
+      "morphTargetDictionary": {
+        "Bulge": 0
+      },
+      "geometryVertexCount": 6,
+      "getVertexPosition": true
+    },
+    "progress": [
+      {
+        "phase": "loading",
+        "item": "/output/animation-deformation-fixture.glb",
+        "itemsLoaded": 0,
+        "itemsTotal": 1
+      },
+      {
+        "phase": "loading",
+        "item": "/output/animation-deformation-fixture.glb",
+        "itemsLoaded": 1,
+        "itemsTotal": 2
+      },
+      {
+        "phase": "loading",
+        "item": "/output/animation-deformation-fixture.glb",
+        "itemsLoaded": 2,
+        "itemsTotal": 2
+      },
+      {
+        "phase": "preparing",
+        "itemsLoaded": 2,
+        "itemsTotal": 2
+      }
+    ],
+    "samples": [
+      {
+        "frame": 1,
+        "timeSeconds": 0.041666666666666664,
+        "transformPositionError": 0,
+        "transformQuaternionAngleRadians": 0,
+        "morphInfluenceError": 0,
+        "deformedPointHausdorff": 0,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707963267948966
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707963267948966
+          }
+        }
+      },
+      {
+        "frame": 4.5,
+        "timeSeconds": 0.1875,
+        "transformPositionError": 5.972094663188382e-8,
+        "transformQuaternionAngleRadians": 0.00000229071126587113,
+        "morphInfluenceError": 7.450580596923828e-9,
+        "deformedPointHausdorff": 8.903736041987003e-7,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707963267949112
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.570795770204795
+          }
+        }
+      },
+      {
+        "frame": 7,
+        "timeSeconds": 0.2916666666666667,
+        "transformPositionError": 1.6900822542294398e-8,
+        "transformQuaternionAngleRadians": 0.000005250793702322261,
+        "morphInfluenceError": 2.980230823235175e-8,
+        "deformedPointHausdorff": 6.999981453962142e-8,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707963274267196
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707962818078947
+          }
+        }
+      },
+      {
+        "frame": 10.5,
+        "timeSeconds": 0.4375,
+        "transformPositionError": 6.728765319357977e-8,
+        "transformQuaternionAngleRadians": 0.00001854875572584217,
+        "morphInfluenceError": 0,
+        "deformedPointHausdorff": 0.000002500863935497496,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707963267950498
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707942580780256
+          }
+        }
+      },
+      {
+        "frame": 13,
+        "timeSeconds": 0.5416666666666666,
+        "transformPositionError": 3.3801644452895215e-8,
+        "transformQuaternionAngleRadians": 0,
+        "morphInfluenceError": 5.96046164647035e-8,
+        "deformedPointHausdorff": 1.3689124380988268e-7,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707962434477276
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.570796374970245
+          }
+        }
+      },
+      {
+        "frame": 16.5,
+        "timeSeconds": 0.6875,
+        "transformPositionError": 3.003425057343598e-8,
+        "transformQuaternionAngleRadians": 0.000020675359814108688,
+        "morphInfluenceError": 2.9802322387695312e-8,
+        "deformedPointHausdorff": 0.000003415794084696604,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.570796326795046
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707993999110528
+          }
+        }
+      },
+      {
+        "frame": 19,
+        "timeSeconds": 0.7916666666666666,
+        "transformPositionError": 3.0871903293872925e-8,
+        "transformQuaternionAngleRadians": 0,
+        "morphInfluenceError": 3.576276419448021e-8,
+        "deformedPointHausdorff": 7.872208965566347e-8,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707964086725659
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.570796379067555
+          }
+        }
+      },
+      {
+        "frame": 22.5,
+        "timeSeconds": 0.9375,
+        "transformPositionError": 4.280032699210963e-8,
+        "transformQuaternionAngleRadians": 0.0007764617121151781,
+        "morphInfluenceError": 0,
+        "deformedPointHausdorff": 0.000011739242839064411,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707965062997942
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5708078954290916
+          }
+        }
+      },
+      {
+        "frame": 25,
+        "timeSeconds": 1.0416666666666667,
+        "transformPositionError": 0,
+        "transformQuaternionAngleRadians": 4.2146848510894035e-8,
+        "morphInfluenceError": 0,
+        "deformedPointHausdorff": 7.6084936842137e-8,
+        "browserDeformedUniquePoints": 6,
+        "browserGeometryVertices": 6,
+        "boneDiagnostics": {
+          "Root": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707963332235286
+          },
+          "Tip": {
+            "positionError": 0,
+            "quaternionAngleRadians": 1.5707964514404076
+          }
+        }
+      }
+    ],
+    "maxima": {
+      "transformPositionError": 6.728765319357977e-8,
+      "transformQuaternionAngleRadians": 0.0007764617121151781,
+      "morphInfluenceError": 5.96046164647035e-8,
+      "deformedPointHausdorff": 0.000011739242839064411
+    },
+    "keyMaxima": {
+      "transformPositionError": 3.3801644452895215e-8,
+      "transformQuaternionAngleRadians": 0.000005250793702322261,
+      "morphInfluenceError": 5.96046164647035e-8,
+      "deformedPointHausdorff": 1.3689124380988268e-7
+    },
+    "subframeMaxima": {
+      "transformPositionError": 6.728765319357977e-8,
+      "transformQuaternionAngleRadians": 0.0007764617121151781,
+      "morphInfluenceError": 2.9802322387695312e-8,
+      "deformedPointHausdorff": 0.000011739242839064411
+    },
+    "pixels": {
+      "total": 388800,
+      "nonBackground": 37407,
+      "chromatic": 37248,
+      "corner": [
+        16,
+        24,
+        42,
+        255
+      ]
+    },
+    "finalRequiresContinuousFrames": false
+  },
+  "assertions": {
+    "sameBlendOracleAndProductionExport": true,
+    "productionBlendlinkInstaller": true,
+    "nineFixedTimesIncludingFourSubframes": true,
+    "exactAuthoredKeysAndBoundedStockSubframeInterpolation": true,
+    "objectTranslationAndQuaternion": true,
+    "twoBoneSkin": true,
+    "animatedMorphInfluence": true,
+    "skinnedMeshGetVertexPosition": true,
+    "evaluatedWorldPointSetParity": true,
+    "browserRenderedNonblankArtifact": true,
+    "disposalCompleted": true
+  },
+  "limits": [
+    "Chromium/ANGLE WebGL evidence only; Firefox, WebKit, mobile GPUs, and WebGPU are not covered.",
+    "The fixture validates core glTF transform, joint, skin, and morph paths. It does not cover constraints, drivers, NLA strip blending, additive clips, root motion policy, topology-changing modifiers, VAT caches, or KHR_animation_pointer.",
+    "Nine comparison times include five authored keys and four fractional subframes, covering the stock exporter/Three linear interpolation path for this fixture. Bezier, constant, and cubic-spline interpolation remain outside it.",
+    "At fractional subframes, Blender component-curve quaternion evaluation and glTF LINEAR quaternion interpolation are not byte-identical. The gate preserves exact-key evidence separately and bounds the measured angular approximation to 1e-3 radians.",
+    "Vertex equality is a bidirectional world-space point-set Hausdorff metric because glTF triangulation and normal/UV seams may duplicate or reorder Blender vertices.",
+    "Bone world-transform diagnostics are recorded but not release-gated: glTF exporters may legally reorient joint nodes while preserving the skinned result. The deformed vertex result is the behavioral contract.",
+    "The browser loads local production dist files over a Vite HTTP server; this is not a packed-tarball, CDN/base-path, CSP, or deployed-site test.",
+    "Needle is not rendered in this fixture. Its coherent-stack same-scene comparison is a separate gate; this fixture establishes the Blendlink side and Blender oracle independently."
+  ]
+}

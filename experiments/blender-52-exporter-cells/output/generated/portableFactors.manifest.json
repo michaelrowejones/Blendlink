@@ -1,0 +1,372 @@
+{
+  "generator": "blendlink",
+  "schemaVersion": 3,
+  "hash": "ae8f231eb6294831",
+  "url": "/blender-52-exporter-cells/portableFactors/f021443c703f838858a77ed1927e37a05a275d342cb2ae2dcf36ca3a534d5506/portableFactors.glb",
+  "sourceBlend": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\blender-52-exporter-cells\\output\\fixtures\\portable-factors.blend",
+  "sourceHash": "ed225ee2b9e59d82",
+  "configSourceHash": "264df98b2fb6db70e1e72e2f2cec1af0cc1a765060269b82516883a94214ee77",
+  "nodes": [
+    {
+      "name": "AlphaBlend",
+      "kind": "Mesh"
+    },
+    {
+      "name": "Anisotropy",
+      "kind": "Mesh"
+    },
+    {
+      "name": "Camera",
+      "kind": "Camera"
+    },
+    {
+      "name": "Clearcoat",
+      "kind": "Mesh"
+    },
+    {
+      "name": "CorePrincipled",
+      "kind": "Mesh"
+    },
+    {
+      "name": "EmissiveStrength",
+      "kind": "Mesh"
+    },
+    {
+      "name": "Key",
+      "kind": "Light"
+    },
+    {
+      "name": "SheenFullWeight",
+      "kind": "Mesh"
+    },
+    {
+      "name": "Specular",
+      "kind": "Mesh"
+    },
+    {
+      "name": "TextureTransform",
+      "kind": "Mesh"
+    },
+    {
+      "name": "TransmissionVolume",
+      "kind": "Mesh"
+    },
+    {
+      "name": "Unlit",
+      "kind": "Mesh"
+    }
+  ],
+  "identities": {},
+  "materials": [
+    "Cell.AlphaBlend",
+    "Cell.Anisotropy",
+    "Cell.Clearcoat",
+    "Cell.CorePrincipled",
+    "Cell.EmissiveStrength",
+    "Cell.SheenFullWeight",
+    "Cell.Specular",
+    "Cell.TextureTransform",
+    "Cell.TransmissionVolume",
+    "Cell.Unlit"
+  ],
+  "clips": {},
+  "markers": {},
+  "curves": {},
+  "vocabulary": {
+    "colliders": [],
+    "lods": [],
+    "sockets": [],
+    "hotspots": [],
+    "audio": [],
+    "physics": [],
+    "warnings": []
+  },
+  "sceneDiagnostics": {
+    "lod": {
+      "chains": [],
+      "validChains": 0,
+      "drawCallsWithoutAdapter": 0,
+      "drawCallsWithAdapter": 0
+    },
+    "instances": {
+      "groups": [],
+      "gpuBatches": [],
+      "eligibleGroups": 0,
+      "estimatedDrawCallsCurrent": 0,
+      "estimatedDrawCallsIfEligibleBatched": 0,
+      "estimatedDrawCallsSaved": 0
+    },
+    "procedural": {
+      "objects": [],
+      "blockers": 0,
+      "topologyChanging": 0,
+      "cacheCandidates": 0
+    },
+    "materials": {
+      "records": [
+        {
+          "material": "Cell.AlphaBlend",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "AlphaBlend"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.Anisotropy",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "Anisotropy"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.Clearcoat",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "Clearcoat"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.CorePrincipled",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "CorePrincipled"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.EmissiveStrength",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "EmissiveStrength"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.SheenFullWeight",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "SheenFullWeight"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.Specular",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "Specular"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.TextureTransform",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "TextureTransform"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.TransmissionVolume",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "TransmissionVolume"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        },
+        {
+          "material": "Cell.Unlit",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "Unlit"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        }
+      ],
+      "exact": 10,
+      "approximated": 0,
+      "needsBake": 0,
+      "cyclesAppearanceBlocked": 0
+    }
+  },
+  "excluded": [],
+  "stats": {
+    "bytes": 19192,
+    "triangles": 120,
+    "meshes": 10,
+    "texturesBytes": 261,
+    "gpuTextureBytes": 20,
+    "animationBytes": 0,
+    "drawCallsEstimate": 10
+  },
+  "runtimeAssetGraph": {
+    "algorithm": "sha256",
+    "fingerprint": "f021443c703f838858a77ed1927e37a05a275d342cb2ae2dcf36ca3a534d5506",
+    "entries": [
+      {
+        "path": "portableFactors.glb",
+        "role": "scene",
+        "bytes": 19192,
+        "sha256": "ae8f231eb6294831e371aad9ec3477a3b18a0971264e5bd7772bd1d18b65c27d"
+      }
+    ]
+  },
+  "authoringPreview": {
+    "look": {
+      "toneMapping": "agx",
+      "exposure": 0,
+      "previewExposureOffsetStops": -0.28,
+      "sourceViewTransform": "AgX",
+      "exact": false
+    },
+    "shadows": {
+      "enabled": true
+    },
+    "worldBackgroundVisible": true,
+    "warnings": [
+      "Three.js AgX is not identical to Blender 5.x OCIO AgX; Preview Studio applies a measured -0.28-stop calibration. Verify the final website visually"
+    ]
+  },
+  "generatedModuleHash": "06e4c22e6fcd9fb3",
+  "runtimeAssetPublication": {
+    "algorithm": "sha256",
+    "bundlePath": "portableFactors/f021443c703f838858a77ed1927e37a05a275d342cb2ae2dcf36ca3a534d5506",
+    "scenePath": "portableFactors.glb",
+    "immutable": true
+  },
+  "blendBytesHash": "a3a34a2f223599f7",
+  "syncHint": "npx blendlink compile",
+  "lastSyncDurationMs": 1802
+}

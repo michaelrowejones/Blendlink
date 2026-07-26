@@ -59,7 +59,7 @@ rename the mesh, VS Code shows the red squiggle]
 from gltfjsx?* gltfjsx types one export snapshot and generates JSX you
 then own; this types the live `.blend` (including custom properties, which
 gltfjsx doesn't type) with a watch loop and no generated component code —
-and the type shapes are gltfjsx-compatible, so `useGLTF` casts work
+and the type shapes cover stable authored glTF nodes, so `useGLTF` casts work
 unchanged.
 
 ---

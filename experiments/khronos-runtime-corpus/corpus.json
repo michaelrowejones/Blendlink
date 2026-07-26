@@ -1,0 +1,608 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "repository": "https://github.com/KhronosGroup/glTF-Sample-Assets",
+    "revision": "2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf",
+    "rawBaseUrl": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/",
+    "modelsIndexUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/Models.md"
+  },
+  "runtime": {
+    "threeVersion": "0.184.0",
+    "gltfLoaderPath": "node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+    "gltfLoaderBytes": 114959,
+    "gltfLoaderSha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2",
+    "builtInExtensionsCovered": [
+      "KHR_materials_anisotropy",
+      "KHR_materials_clearcoat",
+      "KHR_materials_dispersion",
+      "KHR_materials_emissive_strength",
+      "KHR_materials_ior",
+      "KHR_materials_iridescence",
+      "KHR_materials_sheen",
+      "KHR_materials_specular",
+      "KHR_materials_transmission",
+      "KHR_materials_unlit",
+      "KHR_materials_volume",
+      "KHR_texture_transform"
+    ],
+    "externalPluginOnly": [
+      "KHR_animation_pointer",
+      "KHR_materials_variants"
+    ],
+    "knownUnsupportedInCoreLoader": [
+      "KHR_animation_pointer",
+      "KHR_materials_variants",
+      "KHR_node_visibility"
+    ]
+  },
+  "assets": [
+    {
+      "id": "simple-skin",
+      "model": "SimpleSkin",
+      "entry": "Models/SimpleSkin/glTF-Embedded/SimpleSkin.gltf",
+      "outcome": "load",
+      "role": "core skin, joints, weights, and bone animation",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Marco Hutter",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/SimpleSkin/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/SimpleSkin/glTF-Embedded/SimpleSkin.gltf",
+          "bytes": 3566,
+          "sha256": "7d0c3f48d0510d101269cb4fdd3ee035eaada0e04809a0899e0b4cfe8c38e68f"
+        }
+      ],
+      "expect": {
+        "animationsAtLeast": 1,
+        "skinsAtLeast": 1,
+        "animationPaths": ["rotation"],
+        "primitiveAttributes": ["JOINTS_0", "WEIGHTS_0"],
+        "browser": {
+          "skinnedMeshesAtLeast": 1,
+          "animationTracksAtLeast": 1
+        }
+      }
+    },
+    {
+      "id": "simple-morph",
+      "model": "SimpleMorph",
+      "entry": "Models/SimpleMorph/glTF-Embedded/SimpleMorph.gltf",
+      "outcome": "load",
+      "role": "core morph targets and animated weights",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Marco Hutter",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/SimpleMorph/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/SimpleMorph/glTF-Embedded/SimpleMorph.gltf",
+          "bytes": 3000,
+          "sha256": "0ff029b843d95d3f162a67c84e2d04c7fc76218e53a0cc8c85ca2323d5f82758"
+        }
+      ],
+      "expect": {
+        "animationsAtLeast": 1,
+        "morphTargetsAtLeast": 2,
+        "animationPaths": ["weights"],
+        "browser": {
+          "morphMeshesAtLeast": 1,
+          "animationTracksAtLeast": 1
+        }
+      }
+    },
+    {
+      "id": "interpolation",
+      "model": "InterpolationTest",
+      "entry": "Models/InterpolationTest/glTF-Binary/InterpolationTest.glb",
+      "outcome": "load",
+      "role": "core STEP, LINEAR, and CUBICSPLINE animation interpolation",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Khronos",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/InterpolationTest/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/InterpolationTest/glTF-Binary/InterpolationTest.glb",
+          "bytes": 7952,
+          "sha256": "a86eb331b4a083715e75fe19a1f747eac5692d5b9ff120f1eaa457c23ba72bca"
+        }
+      ],
+      "expect": {
+        "animationsAtLeast": 9,
+        "interpolations": ["STEP", "LINEAR", "CUBICSPLINE"],
+        "browser": {
+          "animationTracksAtLeast": 9,
+          "interpolations": ["Discrete", "Linear", "CubicSpline"]
+        }
+      }
+    },
+    {
+      "id": "negative-scale",
+      "model": "NegativeScaleTest",
+      "entry": "Models/NegativeScaleTest/glTF-Binary/NegativeScaleTest.glb",
+      "outcome": "load",
+      "role": "negative node scale and mirrored transform transport",
+      "license": {
+        "spdx": "CC-BY-4.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/NegativeScaleTest/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/NegativeScaleTest/glTF-Binary/NegativeScaleTest.glb",
+          "bytes": 62568,
+          "sha256": "ea8c41fd0630f03adcf7a5c06bf86d7b850fa510b6f07cc51eb1fccc205a50f2"
+        }
+      ],
+      "expect": {
+        "negativeScaleNodesAtLeast": 1,
+        "browser": {
+          "negativeDeterminantsAtLeast": 1
+        }
+      }
+    },
+    {
+      "id": "normal-tangent-mirror",
+      "model": "NormalTangentMirrorTest",
+      "entry": "Models/NormalTangentMirrorTest/glTF-Binary/NormalTangentMirrorTest.glb",
+      "outcome": "load",
+      "role": "supplied tangent vectors, normal mapping, and mirrored UV orientation",
+      "license": {
+        "spdx": "CC-BY-4.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/NormalTangentMirrorTest/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/NormalTangentMirrorTest/glTF-Binary/NormalTangentMirrorTest.glb",
+          "bytes": 1567084,
+          "sha256": "31ce5f3c873fc55531a17ccacf001e3d1d482a508695aa826fa79cc196e0ce78"
+        }
+      ],
+      "expect": {
+        "primitiveAttributes": ["TANGENT", "TEXCOORD_0"],
+        "browser": {
+          "tangentGeometriesAtLeast": 1,
+          "uvGeometriesAtLeast": 1
+        }
+      }
+    },
+    {
+      "id": "texture-coordinate",
+      "model": "TextureCoordinateTest",
+      "entry": "Models/TextureCoordinateTest/glTF-Binary/TextureCoordinateTest.glb",
+      "outcome": "load",
+      "role": "core UV orientation and texture-coordinate transport",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/TextureCoordinateTest/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/TextureCoordinateTest/glTF-Binary/TextureCoordinateTest.glb",
+          "bytes": 14232,
+          "sha256": "fe75a63a0423c9a682bf46c3045b6328ae9c55abefc9a50adf3ec1d6dc6ea3b9"
+        }
+      ],
+      "expect": {
+        "primitiveAttributes": ["TEXCOORD_0"],
+        "browser": {
+          "uvGeometriesAtLeast": 1
+        }
+      }
+    },
+    {
+      "id": "texture-transform",
+      "model": "TextureTransformTest",
+      "entry": "Models/TextureTransformTest/glTF/TextureTransformTest.gltf",
+      "outcome": "load",
+      "role": "multi-file closure plus KHR_texture_transform",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Microsoft",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/TextureTransformTest/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/TextureTransformTest/glTF/TextureTransformTest.gltf",
+          "bytes": 9179,
+          "sha256": "c22c8c6c96c0ea4bcbb9b47ea245a093c5ef59acc5fd425effa4c00da4cdf164"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/TextureTransformTest.bin",
+          "bytes": 136,
+          "sha256": "d0cdd23f2fa0996a0db99d4932fb9912a51a34e27c8bf832d072dc856ee9a7af"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/Arrow.png",
+          "bytes": 867,
+          "sha256": "5df5b251fed0ac306cf859a30b59a4953d152483a4bed2b84e5bba1c667a1e64"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/Correct.png",
+          "bytes": 2457,
+          "sha256": "3a14b12635ebbcee3ea427fbdb4d20da73e4740ec7a51683d700a2d6b4b7861a"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/Error.png",
+          "bytes": 2273,
+          "sha256": "8d1032ef535a5c379bf78f9f565d3180ee3fc2d1cfef6892dee6e567728b619c"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/NotSupported.png",
+          "bytes": 3291,
+          "sha256": "1fbdeca7e5c105d677a39578e4bab82b89c8aa9f406ee681ede05635ea0f8c74"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/UV.png",
+          "bytes": 12345,
+          "sha256": "ac37ff52fe06a4c8c35ad4e1e7e8da039dfa8afc9b629d40a44ca8b8cfe9d03d"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_texture_transform"],
+        "browser": {
+          "textureTransformsAtLeast": 1
+        }
+      }
+    },
+    {
+      "id": "material-anisotropy",
+      "model": "CompareAnisotropy",
+      "entry": "Models/CompareAnisotropy/glTF-Binary/CompareAnisotropy.glb",
+      "outcome": "load",
+      "role": "KHR_materials_anisotropy",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareAnisotropy/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareAnisotropy/glTF-Binary/CompareAnisotropy.glb",
+          "bytes": 1085084,
+          "sha256": "5b4d9c7e99f85054983697112bab468c344b8984feb7299702ea6c93ddab292e"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_anisotropy"],
+        "materialExtension": "KHR_materials_anisotropy",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "anisotropy"
+        }
+      }
+    },
+    {
+      "id": "material-clearcoat",
+      "model": "ClearCoatTest",
+      "entry": "Models/ClearCoatTest/glTF-Binary/ClearCoatTest.glb",
+      "outcome": "load",
+      "role": "KHR_materials_clearcoat",
+      "license": {
+        "spdx": "CC-BY-4.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/ClearCoatTest/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/ClearCoatTest/glTF-Binary/ClearCoatTest.glb",
+          "bytes": 258048,
+          "sha256": "c3a1cbe318cd043b937130af4eb83ec2ea0b03613387b1b7d769dfab4ac15948"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_clearcoat"],
+        "materialExtension": "KHR_materials_clearcoat",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "clearcoat"
+        }
+      }
+    },
+    {
+      "id": "material-dispersion",
+      "model": "CompareDispersion",
+      "entry": "Models/CompareDispersion/glTF-Binary/CompareDispersion.glb",
+      "outcome": "load",
+      "role": "KHR_materials_dispersion with its transmission/volume dependencies",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareDispersion/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareDispersion/glTF-Binary/CompareDispersion.glb",
+          "bytes": 60432,
+          "sha256": "1c3eff819615d7e6d06e605f728907006eb6c36ef2ead53cc328e65d38a215c4"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_dispersion"],
+        "materialExtension": "KHR_materials_dispersion",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "dispersion"
+        }
+      }
+    },
+    {
+      "id": "material-emissive-strength",
+      "model": "CompareEmissiveStrength",
+      "entry": "Models/CompareEmissiveStrength/glTF-Binary/CompareEmissiveStrength.glb",
+      "outcome": "load",
+      "role": "KHR_materials_emissive_strength",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareEmissiveStrength/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareEmissiveStrength/glTF-Binary/CompareEmissiveStrength.glb",
+          "bytes": 111796,
+          "sha256": "e40d8e1d98345ae16211814bab097307c8710f1ae4f9399fe14e01049f3e7bd8"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_emissive_strength"],
+        "materialExtension": "KHR_materials_emissive_strength",
+        "browser": {
+          "materialType": "MeshStandardMaterial",
+          "materialProperty": "emissiveIntensity"
+        }
+      }
+    },
+    {
+      "id": "material-ior",
+      "model": "CompareIor",
+      "entry": "Models/CompareIor/glTF-Binary/CompareIor.glb",
+      "outcome": "load",
+      "role": "KHR_materials_ior",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareIor/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareIor/glTF-Binary/CompareIor.glb",
+          "bytes": 213104,
+          "sha256": "3588b4b522d2a756809b337353c017a412b9e38793b60355fdc6eb162b360019"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_ior"],
+        "materialExtension": "KHR_materials_ior",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "ior"
+        }
+      }
+    },
+    {
+      "id": "material-iridescence",
+      "model": "CompareIridescence",
+      "entry": "Models/CompareIridescence/glTF-Binary/CompareIridescence.glb",
+      "outcome": "load",
+      "role": "KHR_materials_iridescence",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareIridescence/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareIridescence/glTF-Binary/CompareIridescence.glb",
+          "bytes": 214756,
+          "sha256": "abda6e8bcb13ad04534c90bc4ce9b21e80f2d8b74ac4d911800269f0009ff073"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_iridescence"],
+        "materialExtension": "KHR_materials_iridescence",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "iridescence"
+        }
+      }
+    },
+    {
+      "id": "material-sheen",
+      "model": "CompareSheen",
+      "entry": "Models/CompareSheen/glTF-Binary/CompareSheen.glb",
+      "outcome": "load",
+      "role": "KHR_materials_sheen",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareSheen/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareSheen/glTF-Binary/CompareSheen.glb",
+          "bytes": 883968,
+          "sha256": "70b6ab5ba8006aa71079b567783a81cfe778a11cca8abc44c45e5e0b1f4252cc"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_sheen"],
+        "materialExtension": "KHR_materials_sheen",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "sheen"
+        }
+      }
+    },
+    {
+      "id": "material-specular",
+      "model": "CompareSpecular",
+      "entry": "Models/CompareSpecular/glTF-Binary/CompareSpecular.glb",
+      "outcome": "load",
+      "role": "KHR_materials_specular",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareSpecular/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareSpecular/glTF-Binary/CompareSpecular.glb",
+          "bytes": 1408364,
+          "sha256": "57ea169e0b9b4a4ea1cb27980226974d0da25897445c9f29c3c817698dd923d8"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_specular"],
+        "materialExtension": "KHR_materials_specular",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "specularIntensity"
+        }
+      }
+    },
+    {
+      "id": "material-transmission",
+      "model": "CompareTransmission",
+      "entry": "Models/CompareTransmission/glTF-Binary/CompareTransmission.glb",
+      "outcome": "load",
+      "role": "KHR_materials_transmission",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareTransmission/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareTransmission/glTF-Binary/CompareTransmission.glb",
+          "bytes": 357024,
+          "sha256": "012a3ace61050f4aef77b416c56b3f8f313e1fa68c9040ce3d5037f67eea484f"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_transmission"],
+        "materialExtension": "KHR_materials_transmission",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "transmission"
+        }
+      }
+    },
+    {
+      "id": "material-volume",
+      "model": "CompareVolume",
+      "entry": "Models/CompareVolume/glTF-Binary/CompareVolume.glb",
+      "outcome": "load",
+      "role": "KHR_materials_volume with transmission",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareVolume/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CompareVolume/glTF-Binary/CompareVolume.glb",
+          "bytes": 399760,
+          "sha256": "cb88f5dd70c1c2700e2a28caa5b612f4b6e8c34183d6261c681727d8bafdf7d2"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_volume"],
+        "materialExtension": "KHR_materials_volume",
+        "browser": {
+          "materialType": "MeshPhysicalMaterial",
+          "materialProperty": "thickness"
+        }
+      }
+    },
+    {
+      "id": "material-unlit",
+      "model": "UnlitTest",
+      "entry": "Models/UnlitTest/glTF-Binary/UnlitTest.glb",
+      "outcome": "load",
+      "role": "required KHR_materials_unlit",
+      "license": {
+        "spdx": "CC-BY-4.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/UnlitTest/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/UnlitTest/glTF-Binary/UnlitTest.glb",
+          "bytes": 3992,
+          "sha256": "e07b68c6fd9fbf73d372c610a681b89d6b013bdd1a506e46a411df82210a2481"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_materials_unlit"],
+        "extensionsRequired": ["KHR_materials_unlit"],
+        "materialExtension": "KHR_materials_unlit",
+        "browser": {
+          "materialType": "MeshBasicMaterial"
+        }
+      }
+    },
+    {
+      "id": "required-node-visibility",
+      "model": "CubeVisibility",
+      "entry": "Models/CubeVisibility/glTF-Binary/CubeVisibility.glb",
+      "outcome": "reject-before-load",
+      "role": "required unsupported KHR_node_visibility plus a KHR_animation_pointer channel",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Khronos Group / Aaron Franke",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CubeVisibility/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/CubeVisibility/glTF-Binary/CubeVisibility.glb",
+          "bytes": 3284,
+          "sha256": "a4a2863c99bf6f2f008558c995ad176979f920bd235190970fb02e1142faac41"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_animation_pointer", "KHR_node_visibility"],
+        "extensionsRequired": ["KHR_node_visibility"],
+        "unsupportedRequired": ["KHR_node_visibility"],
+        "animationPointerChannelsAtLeast": 1,
+        "browserBypassProbe": {
+          "loadsOptimistically": true,
+          "animationTracks": 0
+        }
+      }
+    },
+    {
+      "id": "optional-animation-pointer-loss",
+      "model": "AnimatedColorsCube",
+      "entry": "Models/AnimatedColorsCube/glTF-Binary/AnimatedColorsCube.glb",
+      "outcome": "reject-semantic-loss",
+      "role": "optional KHR_animation_pointer material-color channel with core transform-channel fallback",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/AnimatedColorsCube/README.md"
+      },
+      "files": [
+        {
+          "path": "Models/AnimatedColorsCube/glTF-Binary/AnimatedColorsCube.glb",
+          "bytes": 15184,
+          "sha256": "995bb9db5bd011b64bc9fc2235c60e5455e2931e509db5e715b4d20afc5ba71e"
+        }
+      ],
+      "expect": {
+        "extensionsUsed": ["KHR_animation_pointer"],
+        "animationPointerChannelsAtLeast": 1,
+        "browserBypassProbe": {
+          "loadsOptimistically": true,
+          "animationTracks": 2
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-24T05:42:54.095Z",
+  "browser": "150.0.7871.129",
+  "renderer": "System Chromium with ANGLE SwiftShader flags",
+  "url": "http://127.0.0.1:5173/",
+  "versions": {
+    "blendlink": "0.8.0",
+    "react": "19.0.0",
+    "reactDom": "19.0.0",
+    "reactThreeFiber": "9.6.1",
+    "three": "0.184.0",
+    "playwright": "1.60.0",
+    "vite": "7.3.6"
+  },
+  "sources": {
+    "blendlinkR3fAdapter": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\reactThreeFiber.js",
+      "sha256": "9c13536da3a4d9e916b4f396f76073d3c09b58d0c0fb24ee46e541d5c19b98c8"
+    },
+    "blendlinkCameraControls": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\cameraControls.js",
+      "sha256": "54969b237e67dacbb3b220869aa3ddd26cbccb6a148dcf7cc7b5bab865eaaf33"
+    },
+    "blendlinkThreeRuntime": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\threeRuntime.js",
+      "sha256": "a1fdd2e7ee616c56767d8adca48636587039f40dfbc4265c7c687d8a227df321"
+    },
+    "r3fLoop": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\@react-three\\fiber\\dist\\events-b389eeca.esm.js",
+      "sha256": "dd92f7b70d669b7a0f3f4db35bcddd8f3aa9d10e2b2d76ddec63a7f041ef06d1"
+    },
+    "threeOrbitControls": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\three\\examples\\jsm\\controls\\OrbitControls.js",
+      "sha256": "faabb4e8dfd9235ee4a9fd7c9a3d75f90f1689dbd4944bd6fd32117dacec5f93"
+    }
+  },
+  "checkpoints": {
+    "initial": {
+      "ready": true,
+      "loaderCalls": 1,
+      "readyCount": 2,
+      "renders": 1,
+      "coloredPixels": 56115,
+      "requiresContinuousFrames": false,
+      "camera": [
+        0,
+        0.45000000000000046,
+        5.4
+      ],
+      "renderSamples": 1,
+      "errors": []
+    },
+    "initialSettled": {
+      "ready": true,
+      "loaderCalls": 1,
+      "readyCount": 2,
+      "renders": 1,
+      "coloredPixels": 56115,
+      "requiresContinuousFrames": false,
+      "camera": [
+        0,
+        0.45000000000000046,
+        5.4
+      ],
+      "renderSamples": 1,
+      "errors": []
+    },
+    "afterInput": {
+      "ready": true,
+      "loaderCalls": 1,
+      "readyCount": 2,
+      "renders": 18,
+      "coloredPixels": 16208,
+      "requiresContinuousFrames": true,
+      "camera": [
+        -5.038825424638201,
+        -1.8838413629476314,
+        0.6510607185718312
+      ],
+      "renderSamples": 18,
+      "errors": []
+    },
+    "settled": {
+      "ready": true,
+      "loaderCalls": 1,
+      "readyCount": 2,
+      "renders": 133,
+      "coloredPixels": 2234,
+      "requiresContinuousFrames": false,
+      "camera": [
+        0.5294150166288047,
+        -4.313152157281305,
+        -3.237118812819129
+      ],
+      "renderSamples": 133,
+      "errors": []
+    },
+    "settledLater": {
+      "ready": true,
+      "loaderCalls": 1,
+      "readyCount": 2,
+      "renders": 133,
+      "coloredPixels": 2234,
+      "requiresContinuousFrames": false,
+      "camera": [
+        0.5294150166288047,
+        -4.313152157281305,
+        -3.237118812819129
+      ],
+      "renderSamples": 133,
+      "errors": []
+    }
+  },
+  "cameraDelta": 9.877637375405099,
+  "inputBurstRenders": 17,
+  "dampingRenders": 132,
+  "pageErrors": [],
+  "consoleErrors": [],
+  "artifacts": {
+    "canvas": {
+      "path": "output/orbit-settled.png",
+      "sha256": "2a62dc16470320d091f775af4325eda5eb219d0aa957ba6da700c500ed2a1f37"
+    },
+    "fullPage": {
+      "path": "output/r3f-orbit-demand-browser.png",
+      "sha256": "4894a2cf6422e32db37155ea4f91fb83a87d4095387abc52008affc129a2e1f0"
+    }
+  },
+  "assertions": {
+    "productionR3fAndThreeAdapters": true,
+    "visibleInitialFrame": true,
+    "initialIdleRenderCountStable": true,
+    "nativeOrbitInputWakesDemandCanvas": true,
+    "threeUpdateKeepsDampingFramesAlive": true,
+    "cameraMateriallyMoved": true,
+    "settledOrbitStopsDemandFrames": true,
+    "noBrowserErrors": true
+  },
+  "limits": [
+    "Chromium with ANGLE SwiftShader only; no Firefox, WebKit, mobile, XR, WebGPU, or physical-GPU evidence.",
+    "One perspective camera and mouse-rotation path; touch, keyboard, orthographic, free-flight, LOD, and post-processing remain outside this gate.",
+    "The deterministic application-owned GLTFLoader fixture isolates control/render-loop behavior; it does not cover fetch, GLB parse, decoder, worker, CDN, or cache ownership.",
+    "Renderer.render counts are the public observable; the gate does not inspect or promise R3F private internal.frames state."
+  ]
+}

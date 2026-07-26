@@ -1,0 +1,700 @@
+name: Release candidate contract
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-candidate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  node-contract:
+    name: Portable Node contract
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  full-contract:
+    name: Full release gate / Blender 5.2.0 / KTX 4.4.2
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out the exact candidate revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Download and verify exact Blender 5.2.0
+        env:
+          BLENDER_SHA256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
+        run: |
+          archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
+          curl --fail --location --retry 3 \
+            "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz" \
+            --output "$archive"
+          echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/blender"
+          tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
+          "$RUNNER_TEMP/blender/blender" --version
+          echo "BLENDLINK_BLENDER=$RUNNER_TEMP/blender/blender" >> "$GITHUB_ENV"
+
+      - name: Download and verify exact Khronos KTX-Software 4.4.2
+        env:
+          KTX_SHA256: "a8781bad05f9624edbf910b7f258cd0a4ba7d3e63b49ecc0a0ab440bf6a0a245"
+        run: |
+          archive="$RUNNER_TEMP/KTX-Software-4.4.2-Linux-x86_64.tar.bz2"
+          curl --fail --location --retry 3 \
+            "https://github.com/KhronosGroup/KTX-Software/releases/download/v4.4.2/KTX-Software-4.4.2-Linux-x86_64.tar.bz2" \
+            --output "$archive"
+          echo "$KTX_SHA256  $archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/ktx"
+          tar -xjf "$archive" -C "$RUNNER_TEMP/ktx"
+          executable="$(find "$RUNNER_TEMP/ktx" -type f -path '*/bin/ktx' -print -quit)"
+          if [ -z "$executable" ]; then
+            echo "::error::Verified KTX-Software archive contains no bin/ktx executable."
+            exit 1
+          fi
+          chmod +x "$executable"
+          "$executable" --version
+          echo "BLENDLINK_KTX_PATH=$executable" >> "$GITHUB_ENV"
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run the complete portable release gate
+        run: npm run test:full
+
+      - name: Check patch whitespace
+        run: git diff --check
+
+  linux:
+    name: Linux x64 / Blender ${{ matrix.version }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: "4.2.0"
+            series: "4.2"
+            sha256: "4f4fd7646af01f6fee9d420408318381a6e52571268eb7cf9cd5033bd9e7a359"
+          - version: "5.2.0"
+            series: "5.2"
+            sha256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Download and verify exact Blender archive
+        env:
+          BLENDER_VERSION: ${{ matrix.version }}
+          BLENDER_SERIES: ${{ matrix.series }}
+          BLENDER_SHA256: ${{ matrix.sha256 }}
+        run: |
+          archive="$RUNNER_TEMP/blender-$BLENDER_VERSION-linux-x64.tar.xz"
+          curl --fail --location --retry 3 \
+            "https://download.blender.org/release/Blender$BLENDER_SERIES/blender-$BLENDER_VERSION-linux-x64.tar.xz" \
+            --output "$archive"
+          echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/blender"
+          tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
+          echo "BLENDLINK_BLENDER=$RUNNER_TEMP/blender/blender" >> "$GITHUB_ENV"
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run exact-version add-on and archive contract
+        run: npm run test:addon-headless
+
+      - name: Check patch whitespace
+        run: git diff --check
+
+  windows:
+    name: Windows x64 / Blender ${{ matrix.version }}
+    runs-on: windows-2025
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: "4.2.0"
+            series: "4.2"
+            sha256: "b6e72874f8cb5c4ed77f9b03d7f1fde851b9455a7ff02a1e1119c876318ebc65"
+          - version: "5.2.0"
+            series: "5.2"
+            sha256: "2d184b626c001692c362291911293b6a297179d618d95e9e9192c3a80318adc4"
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Download and verify exact Blender archive
+        shell: pwsh
+        env:
+          BLENDER_VERSION: ${{ matrix.version }}
+          BLENDER_SERIES: ${{ matrix.series }}
+          BLENDER_SHA256: ${{ matrix.sha256 }}
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP "blender-$env:BLENDER_VERSION-windows-x64.zip"
+          $url = "https://download.blender.org/release/Blender$env:BLENDER_SERIES/blender-$env:BLENDER_VERSION-windows-x64.zip"
+          Invoke-WebRequest -Uri $url -OutFile $archive
+          $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $env:BLENDER_SHA256) {
+            throw "Blender archive SHA-256 mismatch: expected $env:BLENDER_SHA256, got $actual"
+          }
+          $directory = Join-Path $env:RUNNER_TEMP "blender-$env:BLENDER_VERSION"
+          Expand-Archive -LiteralPath $archive -DestinationPath $directory
+          $executable = Get-ChildItem -LiteralPath $directory -Recurse -Filter blender.exe |
+            Select-Object -First 1 -ExpandProperty FullName
+          if (-not $executable) { throw "Downloaded Blender archive contains no blender.exe" }
+          "BLENDLINK_BLENDER=$executable" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run exact-version add-on and archive contract
+        run: npm run test:addon-headless
+
+      - name: Check patch whitespace
+        run: git diff --check
+
+  release-candidate:
+    name: Assemble and retain exact release candidate bytes
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs:
+      - node-contract
+      - full-contract
+      - linux
+      - windows
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    outputs:
+      version: ${{ steps.identity.outputs.version }}
+      artifact_id: ${{ steps.retain.outputs.artifact-id }}
+      artifact_digest: ${{ steps.retain.outputs.artifact-digest }}
+
+    steps:
+      - name: Check out the exact candidate revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Download and verify exact Blender 5.2.0
+        env:
+          BLENDER_SHA256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
+        run: |
+          archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
+          curl --fail --location --retry 3 \
+            "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz" \
+            --output "$archive"
+          echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/blender"
+          tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
+          "$RUNNER_TEMP/blender/blender" --version
+          echo "BLENDLINK_BLENDER=$RUNNER_TEMP/blender/blender" >> "$GITHUB_ENV"
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Verify tag and package identity
+        id: identity
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git rev-list -n 1 "$GITHUB_REF_NAME")" = "$GITHUB_SHA"
+          if [ "$GITHUB_REF_PROTECTED" != "true" ]; then
+            echo "::error::Release tag $GITHUB_REF_NAME is not protected by a repository ruleset."
+            exit 1
+          fi
+          version="$(node -p "require('./packages/blendlink/package.json').version")"
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package version $version."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Assemble and directly validate the retained npm and Blender bytes
+        run: npm run release:artifacts
+
+      - name: Verify retained manifest identity and checksums
+        env:
+          RELEASE_VERSION: ${{ steps.identity.outputs.version }}
+        run: |
+          release_directory="artifacts/release/$RELEASE_VERSION"
+          node scripts/verify-retained-release.mjs retained \
+            --directory "$release_directory" \
+            --version "$RELEASE_VERSION" \
+            --commit "$GITHUB_SHA" \
+            --repository "$GITHUB_REPOSITORY"
+
+      - name: Attest the exact candidate files
+        uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0
+        with:
+          subject-path: |
+            artifacts/release/${{ steps.identity.outputs.version }}/blendlink-${{ steps.identity.outputs.version }}.tgz
+            artifacts/release/${{ steps.identity.outputs.version }}/blendlink-addon-${{ steps.identity.outputs.version }}.zip
+            artifacts/release/${{ steps.identity.outputs.version }}/release-manifest.json
+            artifacts/release/${{ steps.identity.outputs.version }}/SHA256SUMS
+
+      - name: Retain the exact candidate bytes together
+        id: retain
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: blendlink-release-candidate-${{ github.ref_name }}
+          path: artifacts/release/${{ steps.identity.outputs.version }}
+          if-no-files-found: error
+          retention-days: 30
+          include-hidden-files: false
+
+  publish-npm:
+    name: Publish the exact retained npm tarball with trusted OIDC
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs: release-candidate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: npm-production
+      url: https://www.npmjs.com/package/blendlink/v/${{ needs.release-candidate.outputs.version }}
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      attestations: read
+
+    steps:
+      - name: Check out the exact candidate revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24 with the public npm registry
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false
+
+      - name: Install the reviewed trusted-publishing npm CLI
+        run: |
+          npm install --global npm@11.18.0 --ignore-scripts
+          test "$(npm --version)" = "11.18.0"
+
+      - name: Verify the retained artifact carrier identity
+        env:
+          ARTIFACT_ID: ${{ needs.release-candidate.outputs.artifact_id }}
+          ARTIFACT_DIGEST: ${{ needs.release-candidate.outputs.artifact_digest }}
+          RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          case "$ARTIFACT_ID" in
+            ''|*[!0-9]*) echo "::error::Candidate artifact ID is not numeric."; exit 1 ;;
+          esac
+          case "$ARTIFACT_DIGEST" in
+            sha256:*) expected_digest="${ARTIFACT_DIGEST#sha256:}" ;;
+            *) expected_digest="$ARTIFACT_DIGEST" ;;
+          esac
+          if ! [[ "$expected_digest" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "::error::Candidate artifact digest is not a full SHA-256."
+            exit 1
+          fi
+          artifact_metadata="$RUNNER_TEMP/release-candidate-artifact.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID" > "$artifact_metadata"
+          service_name="$(jq -r '.name // ""' "$artifact_metadata")"
+          service_sha="$(jq -r '.workflow_run.head_sha // ""' "$artifact_metadata")"
+          service_digest="$(jq -r '.digest // ""' "$artifact_metadata")"
+          service_digest="${service_digest#sha256:}"
+          expired="$(jq -r '.expired // true' "$artifact_metadata")"
+          if [ "$service_name" != "blendlink-release-candidate-$GITHUB_REF_NAME" ] || \
+             [ "$service_sha" != "$GITHUB_SHA" ] || [ "$service_digest" != "$expected_digest" ] || \
+             [ "$expired" != "false" ]; then
+            echo "::error::Artifact service metadata does not identify this exact tag commit and digest."
+            exit 1
+          fi
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git rev-list -n 1 "$GITHUB_REF_NAME")" = "$GITHUB_SHA"
+          test "$GITHUB_REF_NAME" = "v$RELEASE_VERSION"
+          remote_commit="$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_REF_NAME" --jq .sha)"
+          test "$remote_commit" = "$GITHUB_SHA"
+
+      - name: Download the candidate by immutable numeric artifact ID
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          artifact-ids: ${{ needs.release-candidate.outputs.artifact_id }}
+          path: artifacts/release/${{ needs.release-candidate.outputs.version }}
+          merge-multiple: true
+          digest-mismatch: error
+
+      - name: Revalidate the exact candidate and its build attestations
+        env:
+          RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_directory="artifacts/release/$RELEASE_VERSION"
+          node scripts/verify-retained-release.mjs retained \
+            --directory "$release_directory" \
+            --version "$RELEASE_VERSION" \
+            --commit "$GITHUB_SHA" \
+            --repository "$GITHUB_REPOSITORY"
+          for file in \
+            "$release_directory/blendlink-$RELEASE_VERSION.tgz" \
+            "$release_directory/blendlink-addon-$RELEASE_VERSION.zip" \
+            "$release_directory/release-manifest.json" \
+            "$release_directory/SHA256SUMS"
+          do
+            gh attestation verify "$file" \
+              --repo "$GITHUB_REPOSITORY" \
+              --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/blender-contract.yml" \
+              --source-digest "$GITHUB_SHA" \
+              --source-ref "$GITHUB_REF" \
+              --deny-self-hosted-runners
+          done
+
+      - name: Fail closed until trusted publishing is externally configured
+        env:
+          TRUSTED_PUBLISHING_CONFIRMED: ${{ vars.BLENDLINK_NPM_TRUSTED_PUBLISHING }}
+          REPOSITORY_VISIBILITY: ${{ github.event.repository.visibility }}
+        run: |
+          if [ "$TRUSTED_PUBLISHING_CONFIRMED" != "true" ]; then
+            echo "::error::Set environment variable BLENDLINK_NPM_TRUSTED_PUBLISHING=true only after npm binds blendlink to this repository, blender-contract.yml, npm-production, and npm publish."
+            exit 1
+          fi
+          if [ "$REPOSITORY_VISIBILITY" != "public" ]; then
+            echo "::error::npm provenance requires the Blendlink source repository to be public."
+            exit 1
+          fi
+          if [ -n "${NODE_AUTH_TOKEN:-}" ] || [ -n "${NPM_TOKEN:-}" ] || \
+             [ -n "${NPM_CONFIG_TOKEN:-}" ]; then
+            echo "::error::An npm write-token variable is set; the steady-state publisher must be OIDC-only."
+            exit 1
+          fi
+
+      - name: Publish only the retained tarball and verify public registry bytes
+        env:
+          RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
+        run: |
+          release_directory="artifacts/release/$RELEASE_VERSION"
+          retained_archive="$release_directory/blendlink-$RELEASE_VERSION.tgz"
+          metadata="$RUNNER_TEMP/npm-version.json"
+          registry_archive="$RUNNER_TEMP/blendlink-$RELEASE_VERSION.registry.tgz"
+          version_url="https://registry.npmjs.org/blendlink/$RELEASE_VERSION"
+          tarball_url="https://registry.npmjs.org/blendlink/-/blendlink-$RELEASE_VERSION.tgz"
+          if [[ "$RELEASE_VERSION" == *-* ]]; then
+            dist_tag="beta"
+          else
+            dist_tag="latest"
+          fi
+
+          status="$(curl --silent --show-error --location \
+            --output "$metadata" --write-out '%{http_code}' "$version_url")"
+          publish_status=0
+          if [ "$status" = "404" ]; then
+            set +e
+            npm publish "./$retained_archive" \
+              --registry=https://registry.npmjs.org/ \
+              --access=public \
+              --provenance \
+              --tag="$dist_tag"
+            publish_status=$?
+            set -e
+
+            registry_ready=false
+            for attempt in $(seq 1 20); do
+              status="$(curl --silent --show-error --location \
+                --output "$metadata" --write-out '%{http_code}' "$version_url")"
+              if [ "$status" = "200" ] && node --input-type=module -e "
+                import { readFileSync } from 'node:fs';
+                const value = JSON.parse(readFileSync(process.argv[1], 'utf8'));
+                process.exit(value.dist?.attestations?.provenance?.predicateType ===
+                  'https://slsa.dev/provenance/v1' &&
+                  value._npmUser?.trustedPublisher?.id === 'github' ? 0 : 1);
+              " "$metadata"; then
+                registry_ready=true
+                break
+              fi
+              if [ "$status" != "404" ] && [ "$status" != "200" ]; then
+                echo "::error::Registry returned unexpected HTTP $status while resolving the published version."
+                exit 1
+              fi
+              sleep 3
+            done
+            if [ "$registry_ready" != "true" ]; then
+              echo "::error::npm publish exited $publish_status and the trusted version did not become verifiable within 60 seconds."
+              exit 1
+            fi
+          elif [ "$status" != "200" ]; then
+            echo "::error::Registry returned unexpected preflight HTTP $status."
+            exit 1
+          fi
+
+          curl --fail --location --retry 3 "$tarball_url" --output "$registry_archive"
+          node scripts/verify-retained-release.mjs registry \
+            --directory "$release_directory" \
+            --version "$RELEASE_VERSION" \
+            --commit "$GITHUB_SHA" \
+            --repository "$GITHUB_REPOSITORY" \
+            --metadata "$metadata" \
+            --archive "$registry_archive"
+
+          packument="$RUNNER_TEMP/npm-packument.json"
+          curl --fail --location --retry 3 \
+            "https://registry.npmjs.org/blendlink" --output "$packument"
+          PACKUMENT="$packument" DIST_TAG="$dist_tag" RELEASE_VERSION="$RELEASE_VERSION" \
+            node --input-type=module -e "
+              import { readFileSync } from 'node:fs';
+              const value = JSON.parse(readFileSync(process.env.PACKUMENT, 'utf8'));
+              if (value['dist-tags']?.[process.env.DIST_TAG] !== process.env.RELEASE_VERSION) {
+                throw new Error('npm dist-tag does not resolve to the exact verified version');
+              }
+            "
+
+          signature_directory="$RUNNER_TEMP/npm-signature-verification"
+          mkdir "$signature_directory"
+          (
+            cd "$signature_directory"
+            npm init --yes >/dev/null
+            npm install --package-lock-only --ignore-scripts --no-audit --no-fund \
+              "blendlink@$RELEASE_VERSION"
+            EXPECTED_VERSION="$RELEASE_VERSION" EXPECTED_INTEGRITY="$(jq -r '.dist.integrity' "$metadata")" \
+              node --input-type=module -e "
+                import { readFileSync } from 'node:fs';
+                const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'));
+                const entry = lock.packages?.['node_modules/blendlink'];
+                if (entry?.version !== process.env.EXPECTED_VERSION ||
+                    entry?.resolved !== 'https://registry.npmjs.org/blendlink/-/blendlink-' +
+                      process.env.EXPECTED_VERSION + '.tgz' ||
+                    entry?.integrity !== process.env.EXPECTED_INTEGRITY) {
+                  throw new Error('Signature-verification lock does not identify the exact registry artifact');
+                }
+              "
+            npm audit signatures
+          )
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+
+  publish-github-release:
+    name: Publish the exact retained GitHub prerelease
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs:
+      - release-candidate
+      - publish-npm
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: github-release-production
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+    permissions:
+      actions: read
+      contents: write
+      attestations: read
+
+    steps:
+      - name: Check out the exact candidate revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Download the same candidate by immutable numeric artifact ID
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          artifact-ids: ${{ needs.release-candidate.outputs.artifact_id }}
+          path: artifacts/release/${{ needs.release-candidate.outputs.version }}
+          merge-multiple: true
+          digest-mismatch: error
+
+      - name: Revalidate the exact candidate, carrier, tag, and attestations
+        env:
+          ARTIFACT_ID: ${{ needs.release-candidate.outputs.artifact_id }}
+          ARTIFACT_DIGEST: ${{ needs.release-candidate.outputs.artifact_digest }}
+          RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          case "$ARTIFACT_ID" in
+            ''|*[!0-9]*) echo "::error::Candidate artifact ID is not numeric."; exit 1 ;;
+          esac
+          expected_digest="${ARTIFACT_DIGEST#sha256:}"
+          artifact_metadata="$RUNNER_TEMP/release-candidate-artifact.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID" > "$artifact_metadata"
+          service_digest="$(jq -r '.digest // ""' "$artifact_metadata")"
+          service_digest="${service_digest#sha256:}"
+          if ! [[ "$expected_digest" =~ ^[0-9a-f]{64}$ ]] || \
+             [ "$(jq -r '.workflow_run.head_sha // ""' "$artifact_metadata")" != "$GITHUB_SHA" ] || \
+             [ "$service_digest" != "$expected_digest" ] || \
+             [ "$(jq -r '.expired // true' "$artifact_metadata")" != "false" ]; then
+            echo "::error::Artifact service metadata differs from the candidate producer."
+            exit 1
+          fi
+          release_directory="artifacts/release/$RELEASE_VERSION"
+          node scripts/verify-retained-release.mjs retained \
+            --directory "$release_directory" \
+            --version "$RELEASE_VERSION" \
+            --commit "$GITHUB_SHA" \
+            --repository "$GITHUB_REPOSITORY"
+          remote_commit="$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_REF_NAME" --jq .sha)"
+          test "$remote_commit" = "$GITHUB_SHA"
+          for file in \
+            "$release_directory/blendlink-$RELEASE_VERSION.tgz" \
+            "$release_directory/blendlink-addon-$RELEASE_VERSION.zip" \
+            "$release_directory/release-manifest.json" \
+            "$release_directory/SHA256SUMS"
+          do
+            gh attestation verify "$file" \
+              --repo "$GITHUB_REPOSITORY" \
+              --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/blender-contract.yml" \
+              --source-digest "$GITHUB_SHA" \
+              --source-ref "$GITHUB_REF" \
+              --deny-self-hosted-runners
+          done
+
+      - name: Reverify the public npm artifact before releasing
+        env:
+          RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
+        run: |
+          release_directory="artifacts/release/$RELEASE_VERSION"
+          metadata="$RUNNER_TEMP/npm-version.json"
+          registry_archive="$RUNNER_TEMP/blendlink-$RELEASE_VERSION.registry.tgz"
+          curl --fail --location --retry 3 \
+            "https://registry.npmjs.org/blendlink/$RELEASE_VERSION" --output "$metadata"
+          curl --fail --location --retry 3 \
+            "https://registry.npmjs.org/blendlink/-/blendlink-$RELEASE_VERSION.tgz" \
+            --output "$registry_archive"
+          node scripts/verify-retained-release.mjs registry \
+            --directory "$release_directory" \
+            --version "$RELEASE_VERSION" \
+            --commit "$GITHUB_SHA" \
+            --repository "$GITHUB_REPOSITORY" \
+            --metadata "$metadata" \
+            --archive "$registry_archive"
+
+      - name: Create, verify, and publish the immutable GitHub prerelease
+        env:
+          IMMUTABLE_RELEASES_CONFIRMED: ${{ vars.BLENDLINK_IMMUTABLE_RELEASES }}
+          RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$IMMUTABLE_RELEASES_CONFIRMED" != "true" ]; then
+            echo "::error::Enable immutable releases, then set github-release-production variable BLENDLINK_IMMUTABLE_RELEASES=true."
+            exit 1
+          fi
+          release_directory="artifacts/release/$RELEASE_VERSION"
+          release_metadata="$RUNNER_TEMP/github-release.json"
+          release_error="$RUNNER_TEMP/github-release.error"
+          set +e
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" \
+            > "$release_metadata" 2> "$release_error"
+          release_status=$?
+          set -e
+          if [ "$release_status" -ne 0 ]; then
+            if ! grep -q "HTTP 404" "$release_error"; then
+              cat "$release_error" >&2
+              exit "$release_status"
+            fi
+            gh release create "$GITHUB_REF_NAME" \
+              "$release_directory/blendlink-$RELEASE_VERSION.tgz" \
+              "$release_directory/blendlink-addon-$RELEASE_VERSION.zip" \
+              "$release_directory/release-manifest.json" \
+              "$release_directory/SHA256SUMS" \
+              --verify-tag \
+              --target "$GITHUB_SHA" \
+              --title "Blendlink $RELEASE_VERSION public beta" \
+              --generate-notes \
+              --draft \
+              --prerelease \
+              --latest=false
+            gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" > "$release_metadata"
+          fi
+
+          current_state="$(jq -r 'if .draft then "draft" else "published" end' "$release_metadata")"
+          existing_downloads="$RUNNER_TEMP/existing-github-release-assets"
+          mkdir "$existing_downloads"
+          gh release download "$GITHUB_REF_NAME" --dir "$existing_downloads"
+          node scripts/verify-retained-release.mjs github \
+            --directory "$release_directory" \
+            --version "$RELEASE_VERSION" \
+            --commit "$GITHUB_SHA" \
+            --repository "$GITHUB_REPOSITORY" \
+            --metadata "$release_metadata" \
+            --downloads "$existing_downloads" \
+            --state "$current_state"
+
+          if [ "$current_state" = "draft" ]; then
+            gh release edit "$GITHUB_REF_NAME" \
+              --draft=false \
+              --prerelease \
+              --latest=false
+          fi
+
+          immutable=false
+          for attempt in $(seq 1 12); do
+            gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" > "$release_metadata"
+            if [ "$(jq -r '.draft' "$release_metadata")" = "false" ] && \
+               [ "$(jq -r '.immutable // false' "$release_metadata")" = "true" ]; then
+              immutable=true
+              break
+            fi
+            sleep 5
+          done
+          if [ "$immutable" != "true" ]; then
+            echo "::error::Published GitHub release did not become immutable. Preserve it and issue a corrective version; never replace assets."
+            exit 1
+          fi
+          published_downloads="$RUNNER_TEMP/published-github-release-assets"
+          mkdir "$published_downloads"
+          gh release download "$GITHUB_REF_NAME" --dir "$published_downloads"
+          node scripts/verify-retained-release.mjs github \
+            --directory "$release_directory" \
+            --version "$RELEASE_VERSION" \
+            --commit "$GITHUB_SHA" \
+            --repository "$GITHUB_REPOSITORY" \
+            --metadata "$release_metadata" \
+            --downloads "$published_downloads" \
+            --state published
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_REF_NAME" --jq .sha)" = "$GITHUB_SHA"

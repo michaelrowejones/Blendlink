@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-25",
+  "blendlink": {
+    "version": "0.8.0",
+    "distCliSha256": "c9ee7428199d964f5e1599fb913f4267772ab85aec76730c780086c3be2f47a9",
+    "distExporterSha256": "f5d75190016aa7798f4b2c3d5f9da85bc13145b905335d1f0c8957ea20239a47"
+  },
+  "source": {
+    "bytes": 7878056,
+    "sha256BeforeAndAfter": "c65a4203f136ed2dabb076a0f13a347818da1e14ff73c84bd0b08caffbb36ef4"
+  },
+  "runs": [
+    {
+      "id": "blender-5.2",
+      "workingDirectory": "experiments/blender-36-linked-bundle-audit/five-two",
+      "command": "node ../../../packages/blendlink/dist/cli.js plan --json",
+      "exitCode": 1,
+      "blender": "5.2.0 LTS",
+      "blenderBuildHash": "fbe6228777e7",
+      "headline": "Blender exited abnormally (code 11).",
+      "stderr": [
+        "Error   : EXCEPTION_ACCESS_VIOLATION",
+        "Address : 0x00007FF6B294D14D",
+        "Module  : blender.exe"
+      ],
+      "sentinelProduced": false,
+      "planProduced": false
+    },
+    {
+      "id": "blender-5.1",
+      "workingDirectory": "experiments/blender-36-linked-bundle-audit/five-one",
+      "command": "node ../../../packages/blendlink/dist/cli.js plan --json",
+      "exitCode": 1,
+      "blender": "5.1.2",
+      "blenderBuildHash": "ec6e62d40fa9",
+      "headline": "Blender exited abnormally (code 1).",
+      "diagnostic": "Blendlink cannot compile render-visible Curve 'GEO-electrical_wire.blue' (data 'NurbsPath.014', spline type POLY; source library 'annecy_banner.blend'): Blender returned no evaluated Mesh.",
+      "fidelityPolicy": "No raw-spline fallback; repair or exclude the Curve, make a local website-owned copy/Library Override, or convert a website-owned copy to Mesh.",
+      "autoexecEvidence": [
+        "scripts disabled; skipped seven registered text blocks",
+        "restricted access disallowed show_render",
+        "restricted access disallowed scene"
+      ],
+      "missingLinkedIds": [
+        "Material blue",
+        "NodeTree SH-shader_main"
+      ],
+      "sourceSha256After": "c65a4203f136ed2dabb076a0f13a347818da1e14ff73c84bd0b08caffbb36ef4",
+      "sentinelProduced": false,
+      "planProduced": false
+    }
+  ]
+}

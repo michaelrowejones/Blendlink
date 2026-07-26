@@ -1,0 +1,342 @@
+{
+  "capturedAt": "2026-07-21T15:32:00.074Z",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/150.0.0.0 Safari/537.36",
+  "versions": {
+    "three": "ready · Three 184"
+  },
+  "core": {
+    "seeThrough": {
+      "blockersCloned": true,
+      "multiMaterialPreserved": true,
+      "sourceMaterialUntouched": true,
+      "blockerOpacity": [
+        0.2,
+        0.2
+      ],
+      "cameraClearRestores": true,
+      "disposeRestoresAuthored": true,
+      "overlapRestoresAuthored": true,
+      "overlapLeavesFirstGeneration": false
+    },
+    "startHidden": {
+      "hidden": true,
+      "sequentialRestore": true,
+      "firstDisposePreservesSecond": true,
+      "overlapFinalRestore": true
+    },
+    "lookAt": {
+      "changed": true,
+      "worldAimDot": 1,
+      "restored": true,
+      "externalPreserved": true,
+      "missingReferenceError": "RuntimeComponentInstallError: Could not install component blendlink.look-at (blendlink.look-at-4) on object Target: Blendlink component blendlink.look-at-4 references focus object \"missing-id\", but it is not loaded.",
+      "firstDisposePreservesSecond": true
+    },
+    "animation": {
+      "ready": true,
+      "missingClipError": "RuntimeComponentInstallError: Could not install component blendlink.play-animation-on-click (blendlink.play-animation-on-click-6) on object Target: Blendlink click-animation component blendlink.play-animation-on-click-6 references clip \"Missing\", but the GLB contains: Move."
+    }
+  },
+  "audioAutoplayBeforeGesture": {
+    "kind": "audio",
+    "opened": [],
+    "scale": [
+      1,
+      1,
+      1
+    ],
+    "activeElement": "BODY",
+    "canvasTabIndex": null,
+    "canvasRole": null,
+    "canvasLabel": null,
+    "audio": {
+      "isPlaying": true,
+      "positional": true,
+      "distanceModel": "linear",
+      "refDistance": 2,
+      "maxDistance": 8,
+      "contextState": "running"
+    }
+  },
+  "audioTriggerBeforeGesture": {
+    "kind": "audio",
+    "opened": [],
+    "scale": [
+      1,
+      1,
+      1
+    ],
+    "activeElement": "BODY",
+    "canvasTabIndex": null,
+    "canvasRole": null,
+    "canvasLabel": null,
+    "audio": {
+      "isPlaying": false,
+      "positional": true,
+      "distanceModel": "linear",
+      "refDistance": 2,
+      "maxDistance": 8,
+      "contextState": "running"
+    }
+  },
+  "audioTriggerAfterGesture": {
+    "kind": "audio",
+    "opened": [],
+    "scale": [
+      1,
+      1,
+      1
+    ],
+    "activeElement": "BODY",
+    "canvasTabIndex": null,
+    "canvasRole": null,
+    "canvasLabel": null,
+    "audio": {
+      "isPlaying": true,
+      "positional": true,
+      "distanceModel": "linear",
+      "refDistance": 2,
+      "maxDistance": 8,
+      "contextState": "running"
+    }
+  },
+  "audioTriggerAfterSecondTap": {
+    "kind": "audio",
+    "opened": [],
+    "scale": [
+      1,
+      1,
+      1
+    ],
+    "activeElement": "BODY",
+    "canvasTabIndex": null,
+    "canvasRole": null,
+    "canvasLabel": null,
+    "audio": {
+      "isPlaying": false,
+      "positional": true,
+      "distanceModel": "linear",
+      "refDistance": 2,
+      "maxDistance": 8,
+      "contextState": "running"
+    }
+  },
+  "pointer": {
+    "openUrlMouse": {
+      "kind": "open-url",
+      "opened": [
+        {
+          "url": "https://example.com/a",
+          "target": "_blank"
+        }
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "activeElement": "BODY",
+      "canvasTabIndex": null,
+      "canvasRole": null,
+      "canvasLabel": null,
+      "audio": null
+    },
+    "openUrlTouch": {
+      "kind": "open-url",
+      "opened": [
+        {
+          "url": "https://example.com/a",
+          "target": "_blank"
+        }
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "activeElement": "BODY",
+      "canvasTabIndex": null,
+      "canvasRole": null,
+      "canvasLabel": null,
+      "audio": null
+    },
+    "openUrlKeyboard": {
+      "kind": "open-url",
+      "opened": [],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "activeElement": "BODY",
+      "canvasTabIndex": null,
+      "canvasRole": null,
+      "canvasLabel": null,
+      "audio": null
+    },
+    "openUrlBehindOccluder": {
+      "kind": "open-url",
+      "opened": [],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "activeElement": "BODY",
+      "canvasTabIndex": null,
+      "canvasRole": null,
+      "canvasLabel": null,
+      "audio": null
+    },
+    "hoverMouse": {
+      "kind": "hover",
+      "opened": [],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ],
+      "activeElement": "BODY",
+      "canvasTabIndex": null,
+      "canvasRole": null,
+      "canvasLabel": null,
+      "audio": null
+    },
+    "hoverMouseLeave": {
+      "kind": "hover",
+      "opened": [],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "activeElement": "BODY",
+      "canvasTabIndex": null,
+      "canvasRole": null,
+      "canvasLabel": null,
+      "audio": null
+    },
+    "hoverBehindOccluder": {
+      "kind": "hover",
+      "opened": [],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "activeElement": "BODY",
+      "canvasTabIndex": null,
+      "canvasRole": null,
+      "canvasLabel": null,
+      "audio": null
+    },
+    "hoverTouchTap": {
+      "kind": "hover",
+      "opened": [],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "activeElement": "BODY",
+      "canvasTabIndex": null,
+      "canvasRole": null,
+      "canvasLabel": null,
+      "audio": null
+    }
+  },
+  "animationAfterClick": {
+    "kind": "animation",
+    "opened": [],
+    "scale": [
+      1,
+      1,
+      1
+    ],
+    "activeElement": "BODY",
+    "canvasTabIndex": null,
+    "canvasRole": null,
+    "canvasLabel": null,
+    "animatedX": 1,
+    "audio": null
+  },
+  "animationAfterReplay": {
+    "kind": "animation",
+    "opened": [],
+    "scale": [
+      1,
+      1,
+      1
+    ],
+    "activeElement": "BODY",
+    "canvasTabIndex": null,
+    "canvasRole": null,
+    "canvasLabel": null,
+    "animatedX": 0.4,
+    "audio": null
+  },
+  "animationAfterDispose": {
+    "animatedX": 0
+  },
+  "animationLoopAfter125": {
+    "kind": "animation",
+    "opened": [],
+    "scale": [
+      1,
+      1,
+      1
+    ],
+    "activeElement": "BODY",
+    "canvasTabIndex": null,
+    "canvasRole": null,
+    "canvasLabel": null,
+    "animatedX": 0.5,
+    "audio": null
+  },
+  "failuresAndOwnership": {
+    "urls": [
+      {
+        "value": "javascript:alert(1)",
+        "accepted": false,
+        "error": "RuntimeComponentInstallError: Could not install component blendlink.open-url (blendlink.open-url-16) on object Target: Blendlink component blendlink.open-url.url uses unsupported javascript: URL. Allowed absolute schemes: http, https, mailto, tel; site-relative paths are also supported.",
+        "browserProtocol": "javascript:"
+      },
+      {
+        "value": "data:text/html,x",
+        "accepted": false,
+        "error": "RuntimeComponentInstallError: Could not install component blendlink.open-url (blendlink.open-url-17) on object Target: Blendlink component blendlink.open-url.url uses unsupported data: URL. Allowed absolute schemes: http, https, mailto, tel; site-relative paths are also supported.",
+        "browserProtocol": "data:"
+      },
+      {
+        "value": " javascript:alert(1)",
+        "accepted": false,
+        "error": "RuntimeComponentInstallError: Could not install component blendlink.open-url (blendlink.open-url-18) on object Target: Blendlink component blendlink.open-url.url uses unsupported javascript: URL. Allowed absolute schemes: http, https, mailto, tel; site-relative paths are also supported.",
+        "browserProtocol": "javascript:"
+      },
+      {
+        "value": "//example.net/path",
+        "accepted": true,
+        "browserProtocol": "http:"
+      },
+      {
+        "value": "/local/path",
+        "accepted": true,
+        "browserProtocol": "http:"
+      }
+    ],
+    "audioFailure": {
+      "error": "RuntimeComponentInstallError: Could not install component blendlink.audio-source (missing-source) on object Target: Blendlink audio source missing-source could not load \"/missing.wav\": HTTP 404 fixture.",
+      "audioChildren": 0,
+      "listenerChildren": 0
+    },
+    "missingAudioSource": "RuntimeComponentInstallError: Could not install component blendlink.play-audio-on-click (blendlink.play-audio-on-click-21) on object Target: Blendlink click-audio component blendlink.play-audio-on-click-21 cannot find audio source \"gone\". Put audio-source before it or set sourceId.",
+    "sharedAudioListener": {
+      "sameListener": true,
+      "retainedAfterFirst": true,
+      "removedAfterLast": true,
+      "audioChildrenAfterLast": 0
+    }
+  },
+  "console": [],
+  "pageFailures": []
+}

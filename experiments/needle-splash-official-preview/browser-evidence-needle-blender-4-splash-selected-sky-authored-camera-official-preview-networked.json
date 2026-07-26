@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "case": "needle-blender-4-splash-selected-sky-authored-camera-official-preview-networked",
+  "toolchain": {
+    "addon": "Needle Engine Exporter for Blender 1.4.2",
+    "runtime": "@needle-tools/engine 5.1.4",
+    "blender": "5.2.0 LTS",
+    "vite": "8.0.3",
+    "hostPackage": "blendlink-needle-splash-official-preview",
+    "browser": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "page": {
+    "url": "https://127.0.0.1:4187",
+    "status": 200
+  },
+  "runtime": {
+    "elementVersion": "5.1.4",
+    "loadingFinished": true,
+    "canvas": {
+      "cssWidth": 1200,
+      "cssHeight": 600,
+      "width": 1200,
+      "height": 600
+    },
+    "webgl": {
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "renderer": "WebKit WebGL",
+      "contextLost": false
+    },
+    "scene": {
+      "children": 2,
+      "roots": [
+        {
+          "name": "",
+          "type": "PerspectiveCamera",
+          "visible": true,
+          "children": 0
+        },
+        {
+          "name": "Splash-Gaku-Tada",
+          "type": "Group",
+          "visible": true,
+          "children": 139
+        }
+      ],
+      "meshes": 342,
+      "visibleMeshes": 340,
+      "texturedMaterials": 2,
+      "lightmappedMaterials": 0
+    },
+    "camera": {
+      "name": "Camera",
+      "type": "PerspectiveCamera",
+      "parent": "Splash-Gaku-Tada",
+      "position": [
+        29.6331787109375,
+        1.888200283050537,
+        5.010903358459474
+      ],
+      "quaternion": [
+        0.049347487994933374,
+        0.8422256076708743,
+        -0.07825171373430442,
+        0.5311285348290573
+      ],
+      "fov": 33.610040282689695,
+      "aspect": 2
+    }
+  },
+  "assets": {
+    "responses": [
+      {
+        "url": "https://127.0.0.1:4187/assets/scene.glb",
+        "status": 200,
+        "contentType": "model/gltf-binary"
+      },
+      {
+        "url": "https://127.0.0.1:4187/assets/forest.exr",
+        "status": 200,
+        "contentType": "image/aces"
+      }
+    ],
+    "glb": {
+      "bytes": 39759032,
+      "sha256": "ba66cf5c974bf5fb14740e42225de5030174e9ecbe2731d74b7ad0fb38660da9"
+    },
+    "environment": {
+      "file": "forest.exr",
+      "bytes": 552641,
+      "sha256": "bdf2298244affa0f85509380fd130ac6d4dfaa3c856df065998f7f4c1a93dc0d"
+    }
+  },
+  "screenshot": {
+    "file": "browser-evidence-needle-blender-4-splash-selected-sky-authored-camera-official-preview-networked.png",
+    "width": 1200,
+    "height": 600,
+    "entropy": 4.387505600228906,
+    "rgbStandardDeviations": [
+      49.73554700131491,
+      51.693742883842496,
+      55.799254618006984
+    ]
+  },
+  "browser": {
+    "errors": [],
+    "pageErrors": [],
+    "requestFailures": [],
+    "httpErrors": [],
+    "warnings": [
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere080' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere034' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere017' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere018' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere001' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere002' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere003' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere004' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere013' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere014' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere021' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere024' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere027' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere046' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere050' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere063' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere077' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere089' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere090' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere091' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[NEEDLE_components] Component 'MeshRenderer' on object 'Icosphere092' is not added to a mesh or failed to retrieve materials from glTF.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-webxr.DuZAKqj3.js"
+      },
+      {
+        "type": "warning",
+        "message": "[Needle Engine] You need a commercial license to hide the Needle Engine logo in production.",
+        "url": "https://127.0.0.1:4187/assets/needle-engine-ui.ByOynljh.js"
+      }
+    ]
+  },
+  "assertions": {
+    "pageHttpSuccess": true,
+    "loadingFinished": true,
+    "exportedCameraActive": true,
+    "loadedSceneRootVisible": true,
+    "canvasNonzero": true,
+    "webglAvailable": true,
+    "exactAssetGraphLoaded": true,
+    "visiblyNonblank": true,
+    "noRelevantBrowserErrors": true
+  },
+  "passed": true
+}

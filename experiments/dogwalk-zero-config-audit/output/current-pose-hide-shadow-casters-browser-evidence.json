@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "classification": "prototype authored-frame/current-pose stock glTF material-visibility control in Three r184; not shipped Blendlink behavior",
+  "browser": "150.0.7871.182",
+  "url": "http://127.0.0.1:5173/?glb=current-pose-with-animations-prototype.glb&shadows=off&shadowCasters=hide",
+  "result": {
+    "animations": 41,
+    "glb": "current-pose-with-animations-prototype.glb",
+    "camera": "CAM-Camera",
+    "cameraPosition": [
+      -0.8087886571884155,
+      4.04990816116333,
+      5.206191062927246
+    ],
+    "cameraWorldMatrixColumnMajor": [
+      0.9861364408315837,
+      2.8614133995574775e-7,
+      -0.1659364966352923,
+      0,
+      -0.09827761006817326,
+      0.8057476487085502,
+      -0.5840481571695537,
+      0,
+      0.13370277586858226,
+      0.5922590130456282,
+      0.7945771465444346,
+      0,
+      -0.8087886571884155,
+      4.04990816116333,
+      5.206191062927246,
+      1
+    ],
+    "cameraProjectionMatrixColumnMajor": [
+      1.3737387531311658,
+      0,
+      0,
+      0,
+      0,
+      2.7474775062623316,
+      0,
+      0,
+      0,
+      0,
+      -1.0001000049980147,
+      -1,
+      0,
+      0,
+      -0.020000999602922957,
+      0
+    ],
+    "cameraParameters": {
+      "fov": 39.99999883637168,
+      "aspect": 2,
+      "near": 0.009999999776482582,
+      "far": 200,
+      "filmGauge": 35,
+      "filmOffset": 0
+    },
+    "animationPlayback": {
+      "mixerCreated": false,
+      "actionsPlayed": 0
+    },
+    "families": {
+      "pinda": {
+        "matchingObjects": 18,
+        "meshes": 13,
+        "skinnedMeshes": 10,
+        "visibleMeshes": 13,
+        "inCameraFrustum": true,
+        "bounds": {
+          "min": [
+            0.6639451251744144,
+            -0.030244486035008795,
+            0.02000002117161076
+          ],
+          "max": [
+            1.2977391309565849,
+            0.841728300289929,
+            0.747274730350212
+          ],
+          "center": [
+            0.9808421280654996,
+            0.40574190712746006,
+            0.3836373757609114
+          ],
+          "size": [
+            0.6337940057821705,
+            0.8719727863249378,
+            0.7272747091786012
+          ]
+        },
+        "meshNames": [
+          "GEO-pinda-arm",
+          "GEO-pinda-eye",
+          "GEO-pinda-eyebrows",
+          "GEO-pinda-hair",
+          "GEO-pinda-hat",
+          "GEO-pinda-hat_pom_pom",
+          "GEO-pinda-head",
+          "GEO-pinda-leg",
+          "GEO-pinda-nose",
+          "GEO-pinda-scarf",
+          "GEO-pinda-shoe",
+          "GEO-pinda-thumb",
+          "GEO-pinda-torso"
+        ]
+      },
+      "chocomel": {
+        "matchingObjects": 20,
+        "meshes": 16,
+        "skinnedMeshes": 15,
+        "visibleMeshes": 16,
+        "inCameraFrustum": true,
+        "bounds": {
+          "min": [
+            -3.1280988382670674,
+            -0.15606540154854237,
+            0.5648744486926541
+          ],
+          "max": [
+            -1.4045796881558454,
+            0.6792635508704047,
+            1.9388995365465385
+          ],
+          "center": [
+            -2.2663392632114565,
+            0.26159907466093113,
+            1.2518869926195964
+          ],
+          "size": [
+            1.723519150111222,
+            0.8353289524189471,
+            1.3740250878538842
+          ]
+        },
+        "meshNames": [
+          "GEO-chocomel-ears",
+          "GEO-chocomel-eyes",
+          "GEO-chocomel-fur_cape",
+          "GEO-chocomel-fur_collar",
+          "GEO-chocomel-fur_skirt",
+          "GEO-chocomel-hair_top-L",
+          "GEO-chocomel-hair_top-R",
+          "GEO-chocomel-head",
+          "GEO-chocomel-jaw",
+          "GEO-chocomel-nose",
+          "GEO-chocomel-tail",
+          "GEO-chocomel-tongue",
+          "GEO-chocomel-under_side",
+          "GEO-chocomel-upper_mouth",
+          "GEO-chocomel_leg-front",
+          "GEO-chocomel_leg-rear"
+        ]
+      },
+      "snowman": {
+        "matchingObjects": 17,
+        "meshes": 16,
+        "skinnedMeshes": 2,
+        "visibleMeshes": 16,
+        "inCameraFrustum": true,
+        "bounds": {
+          "min": [
+            -4.759402751922607,
+            -0.11153083544911291,
+            -5.782222747802734
+          ],
+          "max": [
+            7.266302108764648,
+            1.4064406611578335,
+            3.0422897338867188
+          ],
+          "center": [
+            1.2534496784210205,
+            0.6474549128543603,
+            -1.3699665069580078
+          ],
+          "size": [
+            12.025704860687256,
+            1.5179714966069464,
+            8.824512481689453
+          ]
+        },
+        "meshNames": [
+          "GEO-paths-snowman",
+          "GEO-snowman-body001",
+          "GEO-snowman-eye_pebbleL001",
+          "GEO-snowman-eye_pebbleR001",
+          "GEO-snowman-pebble-button003",
+          "GEO-snowman-pebble-button004",
+          "GEO-snowman-pebble-button005",
+          "GEO-snowman-pebble-mouth006",
+          "GEO-snowman-pebble-mouth007",
+          "GEO-snowman-pebble-mouth008",
+          "GEO-snowman-pebble-mouth009",
+          "GEO-snowman-pebble-mouth010",
+          "GEO-snowman-pebble-mouth011",
+          "GEO-snowman-stick_armL001",
+          "GEO-snowman-stick_armR001",
+          "GEO-snowman-stick_arm_branch001"
+        ]
+      }
+    },
+    "lights": 2,
+    "meshes": 269,
+    "skinnedMeshes": 28,
+    "textures": 46,
+    "shadowCasterControl": {
+      "hidden": true,
+      "matchingMeshes": [
+        {
+          "name": "LGT-shadow_caster",
+          "materials": [
+            "shadow_caster"
+          ],
+          "visibleBeforeControl": true
+        },
+        {
+          "name": "LGT-shadow_caster001",
+          "materials": [
+            "shadow_caster"
+          ],
+          "visibleBeforeControl": true
+        },
+        {
+          "name": "LGT-shadow_caster002",
+          "materials": [
+            "shadow_caster"
+          ],
+          "visibleBeforeControl": true
+        }
+      ]
+    },
+    "textureControl": {
+      "maximizeAnisotropy": false,
+      "maxAnisotropy": 16,
+      "observedAnisotropy": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "pixels": {
+      "nonBackground": 500000,
+      "chromatic": 480439,
+      "nearBlack": 17816
+    },
+    "renderer": {
+      "shadowsEnabled": false,
+      "webgl2": true,
+      "vendor": "WebKit",
+      "renderer": "WebKit WebGL"
+    }
+  },
+  "artifacts": {
+    "glbSha256": "dd6f01c1ebdaa9243caaa45ac621bdd042b3783de7a4f26d4bb9f87eaba73161",
+    "screenshotSha256": "03098d3d998885d726e024d1b185874d455ddfa4eb7154b71898d87e4708ac49",
+    "sourceSha256": "7f8718cfd89baf59151cc4ba431eeab38b9ff260ffa0054d93293f228a70cc36"
+  },
+  "limitations": [
+    "Uses the exported camera node with its default/rest transform and no animation playback.",
+    "Disables all Three shadows as a diagnostic control.",
+    "Uses SwiftShader when system Chrome is available; it is not physical-GPU performance evidence."
+  ]
+}

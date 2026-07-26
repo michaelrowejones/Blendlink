@@ -1,0 +1,276 @@
+{
+  "blender": {
+    "buildHash": "fbe6228777e7",
+    "version": "5.2.0 LTS"
+  },
+  "classification": "prototype exporter differential; not shipped Blendlink behavior",
+  "exporterDefaults": {
+    "export_animation_mode": "ACTIONS",
+    "export_bake_animation": false,
+    "export_current_frame": false,
+    "export_force_sampling": true,
+    "export_frame_step": 1,
+    "export_pointer_animation": false,
+    "export_rest_position_armature": true
+  },
+  "needle": {
+    "behavior": "passes none of current-frame, armature-rest, animation-mode, force-sampling, bake-all, frame-step, or animation-pointer flags",
+    "blenderExportPath": "blender_export.py",
+    "blenderExportSha256": "6272997cfb4f1d740ea33a7c2512983b9993dedf93c9c8240ca0ff7f82925d77",
+    "version": "1.4.2"
+  },
+  "schemaVersion": 1,
+  "sourceAfter": {
+    "bytes": 99809,
+    "mtimeNs": 1784956203875717800,
+    "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/authored-frame-fixture.blend",
+    "sha256": "ee89d94874797adf7b79a05e1a79cd986d9acb10d6e51225374277e943026667"
+  },
+  "sourceBefore": {
+    "bytes": 99809,
+    "mtimeNs": 1784956203875717800,
+    "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/authored-frame-fixture.blend",
+    "sha256": "ee89d94874797adf7b79a05e1a79cd986d9acb10d6e51225374277e943026667"
+  },
+  "sourceInventory": {
+    "constraints": [
+      {
+        "name": "Follow MotionTarget",
+        "owner": "ConstrainedCube",
+        "target": "MotionTarget",
+        "type": "COPY_LOCATION"
+      },
+      {
+        "name": "Aim at ConstrainedCube",
+        "owner": "AuthoredCamera",
+        "target": "ConstrainedCube",
+        "type": "TRACK_TO"
+      }
+    ],
+    "proposedDiagnostics": [
+      {
+        "code": "animation.material-driver-not-portable",
+        "message": "DrivenCubeMaterial: driver \"nodes[\"Principled BSDF\"].inputs[\"Roughness\"].default_value\" cannot be transported by core glTF animation. Materialize a supported static value, opt into a verified animation-pointer adapter, or remove the driver before publish.",
+        "severity": "error"
+      }
+    ],
+    "transformDrivers": [
+      {
+        "dataPath": "location",
+        "owner": "DrivenCube"
+      }
+    ],
+    "unsupportedDrivers": [
+      {
+        "dataPath": "nodes[\"Principled BSDF\"].inputs[2].default_value",
+        "displayPath": "nodes[\"Principled BSDF\"].inputs[\"Roughness\"].default_value",
+        "owner": "DrivenCubeMaterial",
+        "reason": "core glTF animation cannot target material properties without KHR_animation_pointer"
+      }
+    ]
+  },
+  "variants": {
+    "current-rest-actions": {
+      "artifact": {
+        "bytes": 12468,
+        "mtimeNs": 1784956216651091200,
+        "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/current-rest-actions.glb",
+        "sha256": "e554e1489aea19f7a7463fb903ce9b93f8ec1c38d8c592268b7707cba256cce5"
+      },
+      "durationSeconds": 0.015067200060002506,
+      "frameAfterOperator": 20,
+      "frameAfterTransaction": 10,
+      "frameBefore": 10,
+      "requested": {
+        "check_existing": false,
+        "export_animation_mode": "ACTIONS",
+        "export_animations": true,
+        "export_apply": true,
+        "export_bake_animation": false,
+        "export_cameras": true,
+        "export_current_frame": true,
+        "export_force_sampling": true,
+        "export_format": "GLB",
+        "export_frame_range": true,
+        "export_frame_step": 1,
+        "export_image_format": "AUTO",
+        "export_import_convert_lighting_mode": "COMPAT",
+        "export_jpeg_quality": 100,
+        "export_lights": true,
+        "export_pointer_animation": false,
+        "export_rest_position_armature": true,
+        "filepath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\current-rest-actions.glb",
+        "gltf_export_id": "Needle Engine",
+        "use_active_scene": true,
+        "use_visible": false
+      },
+      "transactionRestoredFrame": true
+    },
+    "dynamic-scene": {
+      "artifact": {
+        "bytes": 13324,
+        "mtimeNs": 1784956216610830100,
+        "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/dynamic-scene.glb",
+        "sha256": "e0f8855bb54f078125ad98da90378e34cefa86818ea981842f20c346d9a531dd"
+      },
+      "durationSeconds": 0.021017499966546893,
+      "frameAfterOperator": 10,
+      "frameAfterTransaction": 10,
+      "frameBefore": 10,
+      "requested": {
+        "check_existing": false,
+        "export_anim_scene_split_object": false,
+        "export_animation_mode": "SCENE",
+        "export_animations": true,
+        "export_apply": true,
+        "export_cameras": true,
+        "export_current_frame": false,
+        "export_force_sampling": true,
+        "export_format": "GLB",
+        "export_frame_range": true,
+        "export_frame_step": 1,
+        "export_image_format": "AUTO",
+        "export_import_convert_lighting_mode": "COMPAT",
+        "export_jpeg_quality": 100,
+        "export_lights": true,
+        "export_pointer_animation": false,
+        "export_rest_position_armature": true,
+        "filepath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\dynamic-scene.glb",
+        "gltf_export_id": "Needle Engine",
+        "use_active_scene": true,
+        "use_visible": false
+      },
+      "transactionRestoredFrame": false
+    },
+    "needle-floor": {
+      "artifact": {
+        "bytes": 12472,
+        "mtimeNs": 1784956216556778900,
+        "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/needle-floor.glb",
+        "sha256": "d58251ed6ca1ab48147367fba492586e21c81442f59b732129a3e54e25e350f6"
+      },
+      "durationSeconds": 0.34792440000455827,
+      "frameAfterOperator": 10,
+      "frameAfterTransaction": 10,
+      "frameBefore": 10,
+      "requested": {
+        "check_existing": false,
+        "export_animations": true,
+        "export_apply": true,
+        "export_cameras": true,
+        "export_format": "GLB",
+        "export_image_format": "AUTO",
+        "export_import_convert_lighting_mode": "COMPAT",
+        "export_jpeg_quality": 100,
+        "export_lights": true,
+        "filepath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\needle-floor.glb",
+        "gltf_export_id": "Needle Engine",
+        "use_active_scene": true,
+        "use_visible": false
+      },
+      "transactionRestoredFrame": false
+    },
+    "one-pass-actions-baked": {
+      "artifact": {
+        "bytes": 13564,
+        "mtimeNs": 1784956216673088800,
+        "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/one-pass-actions-baked.glb",
+        "sha256": "c54b8a94b9c665e85a5ef3fe1c264fd78bd1476be87fedef15f2b579b4a454b1"
+      },
+      "durationSeconds": 0.017112899920903146,
+      "frameAfterOperator": 20,
+      "frameAfterTransaction": 10,
+      "frameBefore": 10,
+      "requested": {
+        "check_existing": false,
+        "export_animation_mode": "ACTIONS",
+        "export_animations": true,
+        "export_apply": true,
+        "export_bake_animation": true,
+        "export_cameras": true,
+        "export_current_frame": true,
+        "export_force_sampling": true,
+        "export_format": "GLB",
+        "export_frame_range": true,
+        "export_frame_step": 1,
+        "export_image_format": "AUTO",
+        "export_import_convert_lighting_mode": "COMPAT",
+        "export_jpeg_quality": 100,
+        "export_lights": true,
+        "export_pointer_animation": false,
+        "export_rest_position_armature": false,
+        "filepath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\one-pass-actions-baked.glb",
+        "gltf_export_id": "Needle Engine",
+        "use_active_scene": true,
+        "use_visible": false
+      },
+      "transactionRestoredFrame": true
+    },
+    "one-pass-scene": {
+      "artifact": {
+        "bytes": 13376,
+        "mtimeNs": 1784956216582580000,
+        "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/one-pass-scene.glb",
+        "sha256": "33d80b982e884f37b0205260059e280713743d907edf20684716a0d4fca3560f"
+      },
+      "durationSeconds": 0.020716699887998402,
+      "frameAfterOperator": 20,
+      "frameAfterTransaction": 10,
+      "frameBefore": 10,
+      "requested": {
+        "check_existing": false,
+        "export_anim_scene_split_object": false,
+        "export_animation_mode": "SCENE",
+        "export_animations": true,
+        "export_apply": true,
+        "export_cameras": true,
+        "export_current_frame": true,
+        "export_force_sampling": true,
+        "export_format": "GLB",
+        "export_frame_range": true,
+        "export_frame_step": 1,
+        "export_image_format": "AUTO",
+        "export_import_convert_lighting_mode": "COMPAT",
+        "export_jpeg_quality": 100,
+        "export_lights": true,
+        "export_pointer_animation": false,
+        "export_rest_position_armature": false,
+        "filepath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\one-pass-scene.glb",
+        "gltf_export_id": "Needle Engine",
+        "use_active_scene": true,
+        "use_visible": false
+      },
+      "transactionRestoredFrame": true
+    },
+    "static-current": {
+      "artifact": {
+        "bytes": 9500,
+        "mtimeNs": 1784956216629025800,
+        "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/authored-frame-transport-prototype/output/static-current.glb",
+        "sha256": "ccde074b7ac9ac374890a0542004bedcc0fff8a9470fc718b24ed438f6ecc2e6"
+      },
+      "durationSeconds": 0.011166499927639961,
+      "frameAfterOperator": 10,
+      "frameAfterTransaction": 10,
+      "frameBefore": 10,
+      "requested": {
+        "check_existing": false,
+        "export_animations": false,
+        "export_apply": true,
+        "export_cameras": true,
+        "export_current_frame": true,
+        "export_format": "GLB",
+        "export_image_format": "AUTO",
+        "export_import_convert_lighting_mode": "COMPAT",
+        "export_jpeg_quality": 100,
+        "export_lights": true,
+        "export_rest_position_armature": false,
+        "filepath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\authored-frame-transport-prototype\\output\\static-current.glb",
+        "gltf_export_id": "Needle Engine",
+        "use_active_scene": true,
+        "use_visible": false
+      },
+      "transactionRestoredFrame": false
+    }
+  }
+}

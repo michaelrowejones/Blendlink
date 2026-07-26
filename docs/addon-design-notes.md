@@ -20,13 +20,154 @@ reference for maintaining `packages/blender-addon`.
   import, unit-testable anywhere. Single source of truth per language; keep
   in sync by hand (the file headers say so).
 
+## UI ownership and interaction model (settled July 2026)
+
+The 3D View sidebar is a **compact, state-driven publishing workspace**, not a
+second home for every persistent setting. It answers three questions in order:
+
+1. What state is this scene in: not configured, needs attention, ready,
+   building, preview running, or failed?
+2. What is the single best next action?
+3. What changed, what blocks publishing, and where should the artist go to fix
+   it?
+
+Setup, browser preview, final build, cancel, and failure recovery therefore
+share one workflow surface. Do not repeat setup prompts or competing build
+buttons in separate panels. Once the scene is ready, **Preview Website** is
+the visually dominant action; **Check Atlas Fit** and **Build Final** are its
+visible secondary actions. Preview Website remains active and rebuilds after
+each Blender save; the status must say that this is save-driven rather than
+implying unsaved viewport synchronization. A failed update keeps the last good
+preview visible and exposes its log. The separate **Auto-build on Save** tool is
+for compilation without a browser session; logs and folders live under **More
+Tools** as explicit actions such as **Open Website Folder**. Long explanations
+belong in tooltips or an issue detail
+view, not as permanently wrapped sidebar prose.
+
+Persistent authoring data belongs to Blender's native Properties contexts:
+
+- **Scene:** website recipe, Website Camera and Responsive Frames, build
+  policy, atlas collection, bake profiles, states, scene Effects & Behaviors,
+  optimization defaults, and scene-wide checks.
+- **World:** environment lighting, visible background, grounding, and
+  environment-output settings.
+- **Object:** export inclusion, Automatic/Realtime/Baked intent, atlas
+  assignment and weight, runtime visibility, shadows, probes, and semantic
+  designation, plus object-targeted Web Behaviors.
+- **Material:** stock-glTF portability (**Exact glTF**, **Approximated**, or
+  **Needs Bake**), bake participation, texture semantics, compression policy,
+  and per-material exceptions. Compatibility analysis reads only the active
+  Surface branch, never rewrites the artist's graph, and must not imply that an
+  unsupported procedural graph has a hidden runtime translation.
+
+The publishing workspace may summarize these values and provide a focused
+route to the owning context, but it must not maintain a second stored copy.
+Effects & Behaviors is the deliberate exception to summary-only presentation:
+its contextual cards edit the same Scene-owned component collection shown in
+Scene and Object Properties. This is one canonical data model with multiple
+views, not competing project forms. Blender's selection and data-block model
+therefore remains useful while large scenes stay navigable as Blendlink grows.
+
+Pointer-authored behaviors use the existing cached consequence-overlay seam.
+Every enabled interaction target gets one small viewport marker, even when it
+is not selected; behaviors on the same object share that marker and its label.
+The label names the object, its behaviors, and any authored Accessible Label.
+It also states the real runtime picking priority: the nearest visible rendered
+hit wins (with an interactive descendant preferred over its ancestor). This is
+an observation of runtime policy, not a separate artist-authored priority field.
+Selected markers are emphasized, and each object-targeted component card offers
+an explicit **Select** action. Click actions with an empty Accessible Label are
+loud in the marker, component card, Web Checks, and publish preflight; disabled
+drafts remain visible as non-blocking authoring warnings. Overlay drawing reads
+only the cached guide snapshot and never scans components per frame.
+
+The current native Properties hierarchy is intentional. In Scene Properties,
+the artist encounters **Website Camera & Frames**, **Website Effects &
+Behaviors**, **Texture Atlases**, **Bake Quality**, **Lighting States**,
+**Animation**, **Realtime Shadows**, **Reflection Probes**, **Optimization**,
+then the less-frequent **Website Ownership** diagnostics. World Properties owns
+**Blendlink Web World** and **HDR Environment**; Object Properties owns
+**Blendlink Web Object**, **Semantic Designation**, and **Web Behaviors**;
+Material Properties owns **Blendlink Web Material**.
+Do not drift back to older labels such as Scene Rendering, Derived Assets,
+Geometry Fidelity, or Ownership & Diagnostics. The N-panel routes to these
+owners with **Scene & Atlases**, **World & Environment**, and
+**Selected Object** / **Edit N Selected** actions. Its supporting panels remain
+ordered **Web Checks**, **Effects & Behaviors**, **Baked Textures & UVs**, then
+**Geometry Conversion**: problems first, contextual behavior authoring second,
+published bake evidence third, and advanced conversion evidence last.
+
+Atlas authoring follows the same consequence-first rule. **Main (default)** is
+permanent, receives baked meshes without an override, and is the only default
+atlas term shown to artists; internal atlas IDs stay out of labels. Additional
+named atlases are created with **Add Atlas from Selection**. Their detail view
+exposes **Move Selection Here**, **Move Selection to Main**, **Select Assigned
+Meshes**, and the last cached capacity check: occupancy, **Minimum Detail**
+preservation, or the amount of capacity required. **Check Atlas Fit** refreshes
+that evidence without running a full Cycles bake. **Baked Textures & UVs** uses
+**Select Last-Build Members** for the separate, manifest-recorded membership;
+the two selection actions must never be described as interchangeable.
+
+The same cached plan also shows the active-set and per-atlas **RGBA8 mipmapped
+GPU estimate**. This is decoded/uploaded residency, never transfer size.
+Projection evidence is labeled **Worst screen detail** and names the object,
+responsive frame, atlas texels per CSS pixel, and DPR 2 device-pixel ratio.
+The published-evidence panel offers **Select Worst Object** and **Fix in Texture
+Atlases**; the latter only navigates to the artist-owned Scene settings. Draw
+code never recalculates density, guesses a fix, or mutates atlas membership.
+
+Lighting-state membership is collection-authored, not a comma-separated text
+convention. Each state lists its hidden collections, says **Full scene** when
+the list is empty, and provides a searchable **Add Hidden Collection** action,
+selection of a collection's objects, and per-row removal. The stored recipe is
+still the portable list contract, including collection names that contain
+commas.
+
+Layouts are responsive rather than merely usable at the developer's sidebar
+width. At narrow widths, use one-column rows, short action labels, compact
+status summaries, and icon actions with descriptive tooltips. At wider widths,
+label/control pairs and safe side-by-side actions may expand. The primary action
+must remain legible at ordinary narrow N-panel widths; implementation details
+and CLI commands never belong in its visible label.
+
+Selection summaries must be truthful. With multiple objects selected, show
+counts and `Mixed` for genuinely mixed values rather than presenting the active
+object as representative. Mesh batch controls derive their scope from all
+compatible `selected_editable_objects`, even when the active object is a light,
+camera, or Empty. Mesh routing edits distinguish changed, unchanged, and
+incompatible/skipped objects; every multi-edit reports its affected count.
+Object- or material-specific detail views appear only when their subject is
+unambiguous. If pinned Properties show an object outside the editable
+selection, explain the mismatch and offer **Select This Object** instead of
+silently editing a different owner.
+
+Checks use a compact list/detail pattern: an errors-first count summary; terse
+rows with severity, subject, and consequence; then the selected issue's reason,
+evidence, and remedies. Select, reveal, and safe fix actions sit on the relevant
+row or detail. Repeating a paragraph for every issue is not an acceptable
+diagnostics UI.
+
+Finally, `draw()` remains a pure presentation step. It may read a cached UI
+snapshot and cheap RNA values, but it must not scan the project, hydrate the
+legacy scene recipe, parse the manifest, inspect every mesh or material,
+calculate an atlas, load thumbnail files, or start work. Load/timer handlers
+hydrate saved recipe data and prepare cheap material previews; published-asset
+previews are prepared only after explicit selection. Depsgraph/msgbus handlers
+only invalidate state, and explicit operators refresh expensive results. Empty
+validation caches render as **Checking...**, never as a false success. A redraw
+should be cheap and deterministic regardless of scene size.
+
 ## Rules we follow (with reasons)
 
 **Operators** (HIG "adjust after execution" paradigm):
 - `{'REGISTER', 'UNDO'}` on everything that modifies data — the RNA source
   calls UNDO "mandatory if the operator modifies Blender data".
-- No dialogs; sensible defaults + F9 redo panel. Multi-object: act on all
-  `selected_editable_objects`, report counts via `self.report({'INFO'})`.
+- Prefer direct actions with sensible defaults and an F9 redo panel. Use a
+  small focused properties dialog only when a value must be chosen before the
+  action, as with **Lightmap Scale**; never show an empty confirmation dialog.
+  Multi-object actions operate on compatible `selected_editable_objects` and
+  report useful affected/already-set/skipped counts via
+  `self.report({'INFO'})`.
 - `poll()` + `poll_message_set()` so disabled buttons explain themselves.
 - Plumbing operators (`select_issue`, `fix_numbered`, refreshes) carry
   `'INTERNAL'` to stay out of F3 search.
@@ -75,11 +216,11 @@ registers the handlers; the offscreen test uses `gpu.init()` (5.2+).
   self-hosted `server-generate` repo JSON can give auto-updates outside the
   platform (Install-from-Disk installs never get updates).
 
-## Sync Now (added 0.3.0 — boundary refined, not broken)
+## Website builds (added 0.3.0 — boundary refined, not broken)
 
 The original rule was "the addon never syncs". The refined rule: the addon
 never *implements* sync — but it may *invoke* the project's own CLI on an
-explicit user click. Sync Now runs `npx blendlink sync` via
+explicit user click. Blendlink's build actions run `npx blendlink sync` via
 `subprocess.Popen` (never blocking the UI): a worker thread that touches no
 bpy forwards stdout into a `queue.Queue`, a `bpy.app.timers` pump drains it
 on the main thread — the exact thread pattern from the Blender docs. The

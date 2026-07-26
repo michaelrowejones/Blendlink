@@ -1,0 +1,378 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-23T15:25:19.865Z",
+  "url": "http://127.0.0.1:5173/",
+  "browser": "150.0.7871.129",
+  "source": {
+    "needleEngineVersion": "5.1.7",
+    "needleThreeVersion": "0.169.19",
+    "blendlinkVersion": "0.8.0",
+    "blendlinkThreeVersion": "0.184.0",
+    "needleContactShadowsSha256": "e4bd8398c59d47ad3bd2eef66625b03c14f260e678d27a332a8ad73d4c17733b",
+    "needleContactShadowsRuntimeSha256": "23857e9563de47c2d5cedf9635bbcf33fcad637bbf7b2c37c118ff31295189fd",
+    "blendlinkContactShadowsSha256": "71fca56fe97df0d0622c35b700269cd7a8ec8fd273b90ca8e0485c9cffd6c9e0"
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "evidence": {
+    "ready": true,
+    "errors": [],
+    "renderer": {
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/150.0.0.0 Safari/537.36",
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "glVendor": "WebKit",
+      "glRenderer": "WebKit WebGL",
+      "unmaskedVendor": "Google Inc. (Google)",
+      "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "dpr": 1,
+      "canvas": {
+        "width": 400,
+        "height": 300
+      }
+    },
+    "matched": {
+      "needle": {
+        "implementation": "needle",
+        "threeRevision": "169.19",
+        "externalContext": {
+          "constructor": "Context",
+          "isManagedExternally": true,
+          "rendererIdentity": true,
+          "sceneIdentity": true,
+          "cameraIdentity": true
+        },
+        "passEvents": [
+          {
+            "index": 7,
+            "scene": "Evidence Scene",
+            "camera": "ContactShadows Camera",
+            "target": "7192427a-bd71-4fb1-b397-a59cfc5955cc",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 12,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 0
+          },
+          {
+            "index": 8,
+            "scene": "Mesh",
+            "camera": "ContactShadows Camera",
+            "target": "fd644ca0-df21-4b77-8306-cd55c0e7032f",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 2,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 0.10000002384185791
+          },
+          {
+            "index": 9,
+            "scene": "Mesh",
+            "camera": "ContactShadows Camera",
+            "target": "7192427a-bd71-4fb1-b397-a59cfc5955cc",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 2,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 0
+          },
+          {
+            "index": 10,
+            "scene": "Mesh",
+            "camera": "ContactShadows Camera",
+            "target": "fd644ca0-df21-4b77-8306-cd55c0e7032f",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 2,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 0
+          },
+          {
+            "index": 11,
+            "scene": "Mesh",
+            "camera": "ContactShadows Camera",
+            "target": "7192427a-bd71-4fb1-b397-a59cfc5955cc",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 2,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 0.10000002384185791
+          }
+        ],
+        "passCount": 5,
+        "drawCalls": 5,
+        "target": {
+          "width": 512,
+          "height": 512,
+          "depthBuffer": true,
+          "stencilBuffer": false,
+          "generateMipmaps": false
+        },
+        "mask": {
+          "nonzeroAlpha": 30548,
+          "partialAlpha": 30548,
+          "opaqueAlpha": 0,
+          "alphaSum": 1323260,
+          "alphaMean": 5.0478363037109375,
+          "alphaMax": 124,
+          "regions": {
+            "left": 0,
+            "center": 1323260,
+            "right": 0
+          }
+        },
+        "composite": {
+          "shadowDarkenedPixels": 1225,
+          "maxDarkening": 40.92779999999999
+        },
+        "helperPlaneLayerMask": 4,
+        "cameraLayerMask": -1,
+        "memory": {
+          "before": {
+            "geometries": 1,
+            "textures": 0
+          },
+          "installed": {
+            "geometries": 2,
+            "textures": 2
+          }
+        },
+        "firstSetup": {
+          "passCount": 5,
+          "drawCalls": 5,
+          "mask": {
+            "nonzeroAlpha": 262144,
+            "partialAlpha": 262144,
+            "opaqueAlpha": 0,
+            "alphaSum": 25106656,
+            "alphaMean": 95.7742919921875,
+            "alphaMax": 119,
+            "regions": {
+              "left": 7911478,
+              "center": 9338310,
+              "right": 7856868
+            }
+          }
+        },
+        "scheduling": {
+          "needleDefaultFrames": 3,
+          "needleDefaultAuxiliaryRenders": [
+            5,
+            5,
+            5
+          ]
+        }
+      },
+      "blendlink": {
+        "implementation": "blendlink",
+        "threeRevision": "184",
+        "passEvents": [
+          {
+            "index": 1,
+            "scene": "Evidence Scene",
+            "camera": "Blendlink Contact Shadows Camera",
+            "target": "Blendlink Contact Shadows",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 12,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 2.299999952316284
+          },
+          {
+            "index": 2,
+            "scene": "Blendlink Contact Shadows Blur Plane",
+            "camera": "Blendlink Contact Shadows Camera",
+            "target": "Blendlink Contact Shadows Blur",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 2,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 1.600000023841858
+          },
+          {
+            "index": 3,
+            "scene": "Blendlink Contact Shadows Blur Plane",
+            "camera": "Blendlink Contact Shadows Camera",
+            "target": "Blendlink Contact Shadows",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 2,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 1.7999999523162842
+          },
+          {
+            "index": 4,
+            "scene": "Blendlink Contact Shadows Blur Plane",
+            "camera": "Blendlink Contact Shadows Camera",
+            "target": "Blendlink Contact Shadows Blur",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 2,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 0.20000004768371582
+          },
+          {
+            "index": 5,
+            "scene": "Blendlink Contact Shadows Blur Plane",
+            "camera": "Blendlink Contact Shadows Camera",
+            "target": "Blendlink Contact Shadows",
+            "width": 512,
+            "height": 512,
+            "calls": 1,
+            "triangles": 2,
+            "lines": 0,
+            "points": 0,
+            "cpuMs": 0
+          }
+        ],
+        "passCount": 5,
+        "drawCalls": 5,
+        "target": {
+          "width": 512,
+          "height": 512,
+          "depthBuffer": false,
+          "stencilBuffer": false,
+          "generateMipmaps": false
+        },
+        "mask": {
+          "nonzeroAlpha": 30548,
+          "partialAlpha": 30548,
+          "opaqueAlpha": 0,
+          "alphaSum": 1323260,
+          "alphaMean": 5.0478363037109375,
+          "alphaMax": 124,
+          "regions": {
+            "left": 0,
+            "center": 1323260,
+            "right": 0
+          }
+        },
+        "composite": {
+          "shadowDarkenedPixels": 1225,
+          "maxDarkening": 40.92779999999999
+        },
+        "helperPlaneLayerMask": -1,
+        "cameraLayerMask": -1,
+        "memory": {
+          "before": {
+            "geometries": 1,
+            "textures": 0
+          },
+          "installed": {
+            "geometries": 2,
+            "textures": 2
+          }
+        },
+        "scheduling": {
+          "firstFrameAuxiliaryRenders": 5,
+          "unchangedStaticFrames": 120,
+          "laterStaticAuxiliaryRenders": 0,
+          "continuousFrames": 3,
+          "continuousAuxiliaryRenders": [
+            5,
+            5,
+            5
+          ]
+        },
+        "webgl": {
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/150.0.0.0 Safari/537.36",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "glVendor": "WebKit",
+          "glRenderer": "WebKit WebGL",
+          "unmaskedVendor": "Google Inc. (Google)",
+          "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "dpr": 1,
+          "canvas": {
+            "width": 400,
+            "height": 300
+          }
+        }
+      },
+      "rawAlphaComparison": {
+        "mae": 0,
+        "rmse": 0,
+        "maximumError": 0,
+        "pearson": 1
+      }
+    },
+    "layers": {
+      "needle": {
+        "shadowDarkenedPixels": 0,
+        "helperPlaneLayerMask": 4,
+        "cameraLayerMask": 64
+      },
+      "blendlink": {
+        "shadowDarkenedPixels": 1225,
+        "helperPlaneLayerMask": 64,
+        "cameraLayerMask": 64
+      }
+    },
+    "exclusions": {
+      "needle": {
+        "nonzeroAlpha": 56028,
+        "partialAlpha": 56028,
+        "opaqueAlpha": 0,
+        "alphaSum": 2646308,
+        "alphaMean": 10.094863891601562,
+        "alphaMax": 124,
+        "regions": {
+          "left": 0,
+          "center": 1447938,
+          "right": 1198370
+        }
+      },
+      "blendlink": {
+        "nonzeroAlpha": 30548,
+        "partialAlpha": 30548,
+        "opaqueAlpha": 0,
+        "alphaSum": 1323260,
+        "alphaMean": 5.0478363037109375,
+        "alphaMax": 124,
+        "regions": {
+          "left": 0,
+          "center": 1323260,
+          "right": 0
+        }
+      }
+    }
+  },
+  "assertions": {
+    "actualNeedleExternalContext": true,
+    "fivePassTopologyBoth": true,
+    "needleDefaultFivePerFrame": true,
+    "rawMaskStructuralAgreement": true,
+    "blendlinkStaticFiveThenZero": true,
+    "blendlinkContinuousFivePerRefresh": true,
+    "blendlinkDepthlessTargets": true,
+    "blendlinkNonLayerZeroVisibility": true,
+    "blendlinkTransparentExclusion": true,
+    "blendlinkAllowOverrideFalseExclusion": true
+  },
+  "limits": [
+    "The fixture invokes the actual pinned ContactShadows class through its lifecycle in an actual externally owned Needle Context; it does not boot the complete Needle web component or generated glTF loader.",
+    "Needle Context construction imports decoder infrastructure even though this fixture loads no assets. The runner serves pinned local Three r169 Draco/Basis bytes and empty UI-font CSS in place of unrelated CDN requests so the comparison stays offline.",
+    "Needle uses its bundled Three fork 0.169.19 while Blendlink uses Three 0.184.0. This run is byte-identical, but the assertion threshold is structural so a different conforming GPU is not rejected for harmless numeric drift.",
+    "Chromium with ANGLE/SwiftShader is deterministic software-renderer evidence, not physical-GPU timing evidence.",
+    "Renderer info draw calls are observed GL submission counts, but this fixture does not use EXT_disjoint_timer_query_webgl2 and makes no GPU-speed claim.",
+    "The exclusion cells establish Blendlink behavior. They record Needle output without asserting that Needle excludes allowOverride=false materials.",
+    "The fixture executes local production build output, not a freshly extracted npm tarball."
+  ]
+}

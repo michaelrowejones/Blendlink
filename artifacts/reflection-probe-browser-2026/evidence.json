@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-23T22:04:57.390Z",
+  "url": "http://127.0.0.1:5173/",
+  "browser": "150.0.7871.129",
+  "playwrightVersion": "1.60.0",
+  "viteVersion": "7.3.6",
+  "threeVersion": "0.184.0",
+  "blendlinkVersion": "0.8.0",
+  "source": {
+    "threePackageJsonSha256": "8308e43d6d6dd4c636c2dfe2e724da07dcd9fe4349bba6afb56f2c5ba6625391",
+    "playwrightPackageJsonSha256": "8be9edc5642a8c761b677e7af8b9937f36c0443a91e14765877716d70034e5bf",
+    "reflectionProbesDistSha256": "2ea8474583bc1cdd287a557556aa5a95c69810e51e9f0f3f6d4b3c56addf2219",
+    "threeCubeCameraSha256": "72c9e37ef416758c23052c82c64e27fef7014b915b668e155e67ad16fee8723f",
+    "threePmremGeneratorSha256": "a697cac19d4b66cac1b106e6539b245e7cb90537d9486674245b3c71386ccc1d",
+    "threeWebGlRendererSha256": "f42d1f7e2dddf575a2f8528fe5a561078f87eadc09ed5e805c64461b068b29de",
+    "needleReflectionProbeSha256": "02505478fdf0cfbb5e756864d4016dd38fe5536c221955dc907f97b4e187d836"
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "evidence": {
+    "threeRevision": "184",
+    "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "webglRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "captureMilliseconds": 51.199999928474426,
+    "cubeTextureType": 1016,
+    "faceCenters": [
+      [
+        1,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        1,
+        0,
+        1
+      ]
+    ],
+    "success": {
+      "lifecycle": {
+        "cubeTargetsCreated": 1,
+        "cubeTargetsDisposed": 1,
+        "cubeCameraUpdates": 1,
+        "receiverVisibilityAtUpdate": [
+          false
+        ],
+        "generatorsCreated": 1,
+        "generatorsDisposed": 1,
+        "pmremTargetsCreated": 1,
+        "pmremTargetsDisposed": 0
+      },
+      "receiverVisibleAfterCapture": true,
+      "receiverRenderCallsDuringCapture": 0,
+      "receiverRenderCallsAfterPresentation": 2,
+      "originalMaterialCloned": true,
+      "pmremAssigned": true,
+      "report": {
+        "probesConfigured": 1,
+        "objectsAssigned": 1,
+        "runtimeCaptures": 1,
+        "publishedTextures": 0,
+        "capturePixels": 24576,
+        "unusedProbes": []
+      },
+      "texturesAfterCapture": 2,
+      "negativeControlPixels": {
+        "total": 345600,
+        "nonBackground": 3221,
+        "chromatic": 0,
+        "center": [
+          36,
+          36,
+          36,
+          255
+        ]
+      },
+      "pixels": {
+        "total": 345600,
+        "nonBackground": 20272,
+        "chromatic": 14434,
+        "center": [
+          39,
+          40,
+          41,
+          255
+        ]
+      }
+    },
+    "forcedFailure": {
+      "lifecycle": {
+        "cubeTargetsCreated": 1,
+        "cubeTargetsDisposed": 1,
+        "cubeCameraUpdates": 1,
+        "receiverVisibilityAtUpdate": [
+          false
+        ],
+        "generatorsCreated": 1,
+        "generatorsDisposed": 1,
+        "pmremTargetsCreated": 0,
+        "pmremTargetsDisposed": 0
+      },
+      "message": "intentional browser CubeCamera failure",
+      "receiverVisibleAfterFailure": true
+    }
+  },
+  "disposed": {
+    "materialIdentityRestored": true,
+    "pmremTargetsDisposed": 1,
+    "cubeTargetsDisposed": 1,
+    "generatorsDisposed": 1,
+    "texturesBeforeDispose": 2,
+    "texturesAfterDispose": 1,
+    "secondDisposeWasIdempotent": true
+  },
+  "assertions": {
+    "sixCardinalFaceCenters": true,
+    "receiverExcludedDuringRealCubeUpdate": true,
+    "receiverRestoredOnSuccessAndFailure": true,
+    "pmremVisibleAndAssigned": true,
+    "noEnvironmentNegativeControl": true,
+    "temporaryResourcesDisposed": true,
+    "ownedPmremDisposedWithHandle": true,
+    "materialIdentityRestored": true,
+    "compiledReportAccounting": true
+  },
+  "limits": [
+    "Chromium with WebGL2/ANGLE evidence only; Firefox, WebKit, mobile, WebGPU/TSL, and physical-GPU timing remain pending.",
+    "Cardinal orientation is asserted on the production cubemap immediately before PMREM conversion. The final PMREM is proven assigned and visibly chromatic, but this fixture does not decode CubeUV texels into six independent postfilter directions.",
+    "The failure path is a deterministic injected CubeCamera.update exception after real GPU objects are constructed; it is not a browser context-loss simulation.",
+    "The forced failure proves Blendlink receiver/resource cleanup, not Three CubeCamera internal renderer-target/XR restoration after a renderer.render exception.",
+    "renderer.info.memory.textures is recorded only as a coarse retained-resource sentinel; the exact ownership assertion comes from the returned PMREM render target disposal event.",
+    "This executes the local production dist module, not a freshly extracted npm tarball or deployed CDN artifact.",
+    "Pinned Needle source identity is recorded for the no-runtime-capture comparison, but Needle is not rendered side by side because its runtime has no analogous CubeCamera path."
+  ]
+}

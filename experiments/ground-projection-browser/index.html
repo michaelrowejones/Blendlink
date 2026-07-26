@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>Blendlink Ground Projection differential</title>
+    <style>
+      :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: #edf5f0;
+        background: #0b1110;
+      }
+      main { width: min(1180px, 100%); margin: 0 auto; padding: 26px; }
+      h1 { margin: 0 0 7px; font-size: 24px; }
+      p { margin: 0 0 22px; color: #9db1a8; }
+      section { margin-top: 20px; }
+      h2 { margin: 0 0 10px; font-size: 17px; }
+      .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .triple { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+      article {
+        padding: 12px;
+        border: 1px solid #2a3933;
+        border-radius: 12px;
+        background: #121a17;
+      }
+      h3 { margin: 0 0 8px; font-size: 14px; font-weight: 650; }
+      canvas {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        border-radius: 8px;
+        background: #030504;
+      }
+      output {
+        display: block;
+        min-height: 18px;
+        margin-top: 8px;
+        color: #83e1bd;
+        font: 11px ui-monospace, monospace;
+      }
+      @media (max-width: 900px) {
+        .pair, .triple { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Ground Projection browser differential</h1>
+      <p>Pinned Needle Engine 5.1.7 on the left; current Blendlink production installer on the right.</p>
+
+      <section id="common">
+        <h2>Shared contract — height 2, radius 18</h2>
+        <div class="pair">
+          <article><h3>Needle 5.1.7</h3><canvas id="needle-common"></canvas><output id="needle-common-output"></output></article>
+          <article><h3>Blendlink 0.8.0</h3><canvas id="blendlink-common"></canvas><output id="blendlink-common-output"></output></article>
+        </div>
+      </section>
+
+      <section id="rotated">
+        <h2>Rotation +90°, intensity 1</h2>
+        <div class="pair">
+          <article><h3>Needle 5.1.7</h3><canvas id="needle-rotated"></canvas><output id="needle-rotated-output"></output></article>
+          <article><h3>Blendlink 0.8.0</h3><canvas id="blendlink-rotated"></canvas><output id="blendlink-rotated-output"></output></article>
+        </div>
+      </section>
+
+      <section id="intensity">
+        <h2>Rotation 0°, intensity 0.65</h2>
+        <div class="pair">
+          <article><h3>Needle 5.1.7</h3><canvas id="needle-intensity"></canvas><output id="needle-intensity-output"></output></article>
+          <article><h3>Blendlink 0.8.0</h3><canvas id="blendlink-intensity"></canvas><output id="blendlink-intensity-output"></output></article>
+        </div>
+      </section>
+
+      <section id="autofit">
+        <h2>Off-origin subject — shared auto-fit contract</h2>
+        <div class="pair">
+          <article><h3>Needle autoFit=true</h3><canvas id="needle-autofit"></canvas><output id="needle-autofit-output"></output></article>
+          <article><h3>Blendlink compiled-root auto-fit</h3><canvas id="blendlink-autofit"></canvas><output id="blendlink-autofit-output"></output></article>
+        </div>
+      </section>
+      <section id="camera-safety">
+        <h2>Package camera far-plane safety — radius 100</h2>
+        <div class="triple">
+          <article><h3>Unsafe control (pre-fix far)</h3><canvas id="blendlink-camera-unsafe"></canvas><output id="blendlink-camera-unsafe-output"></output></article>
+          <article><h3>Blendlink automatic repair</h3><canvas id="blendlink-camera-repaired"></canvas><output id="blendlink-camera-repaired-output"></output></article>
+          <article><h3>Safe far=1000 reference</h3><canvas id="blendlink-camera-reference"></canvas><output id="blendlink-camera-reference-output"></output></article>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

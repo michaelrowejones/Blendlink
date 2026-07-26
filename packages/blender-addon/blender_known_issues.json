@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1,
+  "policy": "Add an entry only when a public primary source identifies a Blender-version-specific failure that affects Blendlink's supported export path. Every entry needs a bounded version range, an artist-facing action, and at least one evidence URL.",
+  "issues": []
+}

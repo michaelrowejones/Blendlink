@@ -1,0 +1,67 @@
+{
+  "prototype": "selected-field-lit-transport-differential",
+  "blenderVersion": "5.2.0 LTS",
+  "sourceEngine": "BLENDER_EEVEE",
+  "sourceFixture": {
+    "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\source-fixture.blend",
+    "sha256": "3a34be97d2614f1fd4a9470948dbad58499c0198dc4dba38a96e703b23a453d8",
+    "render": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\source-eevee.png",
+    "renderSha256": "f5a92c0f174c31016c04ac412dfd62b45bed50b6730146f05f5b3cfcb71cfa10",
+    "surface": "Principled BSDF",
+    "selectedField": "PROTOTYPE_SelectedField.Color"
+  },
+  "materializedField": {
+    "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\selected-field.png",
+    "sha256": "be0829465c4c452b83629fdb69b1d568bf411db35391635484f8c35e3fa3806b",
+    "size": [
+      256,
+      256
+    ],
+    "coveredFraction": 1.0,
+    "clippedFraction": 0.0
+  },
+  "variants": {
+    "lit": {
+      "render": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\published-lit-eevee.png",
+      "renderSha256": "d305a21552b431fa78a5e914524935913d3efbbd3214c591ac22943939e80dbf",
+      "glb": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\lit.glb",
+      "glbSha256": "9476f08ea3168e578e0fb5140ca907fd70d893d78ababb814e2086f455a592bf",
+      "texture": {
+        "material": "PROTOTYPE_SelectedLit",
+        "extensions": [],
+        "roughnessFactor": null,
+        "metallicFactor": 0,
+        "imageMime": "image/png",
+        "imageSha256": "be0829465c4c452b83629fdb69b1d568bf411db35391635484f8c35e3fa3806b",
+        "extensionsUsed": [
+          "KHR_lights_punctual"
+        ]
+      }
+    },
+    "unlit": {
+      "render": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\published-unlit-eevee.png",
+      "renderSha256": "14f6c2eb76ad882b871b24418b6e84224614d0e616d421485a03278fc1decf45",
+      "glb": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\selected-field-lit-transport-differential\\output\\unlit.glb",
+      "glbSha256": "9a036fe33361f31329a426fa57a8db70d73cdb8721c880d73eaf7a15673274b8",
+      "texture": {
+        "material": "PROTOTYPE_SelectedUnlit",
+        "extensions": [
+          "KHR_materials_unlit"
+        ],
+        "roughnessFactor": 0.9,
+        "metallicFactor": 0,
+        "imageMime": "image/png",
+        "imageSha256": "be0829465c4c452b83629fdb69b1d568bf411db35391635484f8c35e3fa3806b",
+        "extensionsUsed": [
+          "KHR_lights_punctual",
+          "KHR_materials_unlit"
+        ]
+      }
+    }
+  },
+  "checks": {
+    "sameMaterializedTextureBytes": true,
+    "onlyUnlitVariantDeclaresKhrUnlit": true,
+    "sourceFixturePreserved": true
+  }
+}

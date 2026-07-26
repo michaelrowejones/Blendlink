@@ -1,0 +1,35 @@
+{
+  "prototype": "eevee-uv-materializer",
+  "blenderVersion": "5.2.0 LTS",
+  "resolution": 256,
+  "eevee": {
+    "secondsA": 0.6216648999834433,
+    "secondsB": 0.07733570001437329,
+    "hashA": "7fdfd1abd3d02a8511efc68be6d22551cbd61f5ff8de335ee98b34bf111f2bb9",
+    "hashB": "731a39c112d6ec335e2502c57e5b37892af087f1114234c18b34439a0b313717",
+    "coveredFraction": 0.656463623046875
+  },
+  "cycles": {
+    "seconds": 0.007865399995353073,
+    "coveredFraction": 1.0
+  },
+  "shaderToRgb": {
+    "seconds": 0.08912079999572597,
+    "coveredFraction": 0.656463623046875
+  },
+  "comparison": {
+    "interiorRmse": 0.06004967821351684,
+    "flatRegionRmse": 0.0004109481615727208,
+    "flatComparedChannels": 91428,
+    "repeatRmse": 0.0,
+    "comparedChannels": 117978,
+    "scope": "portable emission material only; raster edges excluded"
+  },
+  "knownUnanswered": [
+    "mip-safe island margin",
+    "alpha decals and superimposed geometry",
+    "MikkTSpace normal detail and mirrored islands",
+    "world/object-coordinate dependency diagnostics",
+    "representative performance at 1K and 4K"
+  ]
+}

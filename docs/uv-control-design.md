@@ -12,9 +12,15 @@ natively supports pinned islands (`pin`, `pin_method`).
 
 ## The flow (as shipped)
 
-1. **Propose** — Preview Atlas UVs replays the manifest plan into
-   `BLENDLINK_ATLAS` layers. Now authored-aware: materialized meshes
-   contribute their authored islands and pins, exactly like the exporter.
+1. **Plan** — **Check Atlas Fit** runs the exporter's final-quality pack and
+   validation path without Cycles. **Load Published Atlas UVs** does not rerun
+   or replay that pack: it loads only the exact loop-ordered snapshot from the
+   last successful build after its distinct Float32 values were attested in the
+   decoded final post-Meshopt GLB. Topology or attestation mismatch refuses an
+   approximation and leaves saved-pixel inspection available. In **Texture
+   Atlases**, **Select Assigned Meshes** follows the live authoring assignment;
+   in **Baked Textures & UVs**, **Select Last-Build Members** follows the
+   manifest-recorded membership inspected by this flow.
 2. **Inspect** — Toggle Atlas Checker cycles OFF → DENSITY → UVGRID → OFF.
    Geometry-nodes modifier `BLENDLINK-checker-override`
    (`show_render=False`) does Set Material to a shared checker sampling
@@ -30,8 +36,11 @@ natively supports pinned islands (`pin`, `pin_method`).
 3. **Materialize** — persists the previewed pack as
    `BLENDLINK_ATLAS_AUTHORED`, the artist's editable layer. NEVER
    silently overwrites an existing authored layer (kept + reported;
-   explicit Overwrite in the redo panel). Pre-pins nothing: **pinning is
-   the artist's commit gesture** — "the artist may edit and pin".
+   explicit Overwrite in the redo panel). The selection is transactional:
+   UV-layer capacity and exact name ownership are preflighted, Blender-suffixed
+   allocations are refused, and any creation/write failure restores every mesh,
+   generic attribute, and active layer. Pre-pins nothing: **pinning is the
+   artist's commit gesture** — "the artist may edit and pin".
 4. **Commit** — the exporter honors it, opt-in by presence
    (SimpleBake-style): the authored layer's islands AND pin flags are
    staged into `BLENDLINK_ATLAS` instead of re-deriving from the first
@@ -39,8 +48,13 @@ natively supports pinned islands (`pin`, `pin_method`).
    and `pack_islands(pin=True, pin_method='LOCKED')` locks them in place;
    everything unpinned — authored or not — stays on the plan-driven
    density path and packs around them. The plan records the trail
-   (`objects[].authored` / `pinned`) and warns when pinned islands reach
-   outside the 0..1 square.
+   (`objects[].authored` / `pinned`). Before scaling or packing, finite/bounds
+   checks and true triangulated intersection tests block collapsed or
+   out-of-bounds pins, overlap between islands or objects, and folded/stacked
+   self-overlap. Exact
+   triangle distances also enforce the configured bake/mipmap gutter between
+   distinct locked islands and from the atlas edge; shared triangle boundaries
+   remain legal inside one valid island.
 
 ## Contract decisions the doc left open (now fixed)
 
@@ -59,6 +73,18 @@ natively supports pinned islands (`pin`, `pin_method`).
 - **`pin=True` with zero pins packs byte-identically to `pin=False`**
   (verified on 5.2), so unchanged inputs still pack identically and the
   bake cache stays valid.
+- **Pinned validation uses geometry, not bounding boxes**: UV polygons are
+  triangulated once. Collapsed triangles block immediately. A consistently
+  oriented, simple-boundary manifold disk proves the common dense island
+  injective with linear topology checks plus a balanced boundary-event tree;
+  complex islands fall back to a balanced per-island hierarchy.
+  Island bounds then enter a separate 2D hierarchy whose exact leaf
+  clips/distances decide every nearby candidate, so neither dense radial fans
+  nor many wide-but-vertically-separated islands degrade to a pair scan.
+  Positive intersection area blocks, and
+  exact boundary distance blocks distinct islands that cannot preserve the
+  configured padding; errors are deduplicated per island pair, and both plan
+  and final-bake entry points stop before Cycles.
 - **The checker must be stripped before any evaluation**:
   `show_render=False` does NOT keep a modifier out of freeze/glTF paths —
   both evaluate the VIEWPORT depsgraph (verified: the checker material
@@ -72,21 +98,24 @@ natively supports pinned islands (`pin`, `pin_method`).
 - NEVER silently overwrite an authored layer (Godot's top UV2 bug class).
 - Unchanged inputs → identical pack (the Lock Atlas lesson; the bake
   cache already depends on this).
-- Exporter-side changes land in bakelib/export_scene once; the addon
-  only REPLAYS plans. The addon mirrors the layer/modifier name constants
-  and the headless test imports bakelib to assert they match (the
-  vocabulary-conformance trick applied to the UV contract).
+- Exporter-side UV mechanics land in `bakelib.py` once; the addon imports that
+  canonical distributed module through `bakelib_loader`. The addon owns only
+  interaction and display, and the headless test asserts its imported constants
+  are the canonical ones.
+
+## Interaction completion
+
+- Bake-table search/sort, active-row consequences, authored/pinned plan flags,
+  and two-way row/scene selection are shipped. Msgbus gives scene-selection
+  reverse sync immediately; the shared timer has an O(1) fallback and rebuilds
+  only when a live-authoring or published-plan/status token advances. Failed
+  rebuilds stay pending, retry, and print the cause instead of leaving a stale
+  table silently. The refresh icon is now only an explicit recovery action.
 
 ## Also queued
 
-- Bake-table polish per the UI research: filter/sort in `filter_items`,
-  master-detail active-row box, msgbus reverse-sync (scene selection →
-  row), token-gated rebuild in handlers._tick instead of manual refresh.
-  The table could also surface the plan's new authored/pinned flags.
-- Recipe compile-check inside a real Vite+R3F example project; populate
-  examples/.
-- DX tail: TTY progress streaming, watch inputs/config, addon node-path
-  preference, no-manifest-writes on skipped syncs.
-- Overlap detection between locked islands materialized from different
-  previews (stale pins can claim the same region; bbox-union checks were
-  rejected as too noisy — needs real island-level geometry).
+- Real Vanilla and R3F consumer compile-checks now run against both the
+  workspace and packed npm artifact. A checked-in visual example remains an
+  optional documentation asset, not an unverified release dependency.
+- DX tail: TTY progress streaming, addon node-path preference, and
+  no-manifest-writes on skipped syncs.

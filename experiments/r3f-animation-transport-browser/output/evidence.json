@@ -1,0 +1,2121 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-23T23:34:45.910Z",
+  "browser": "150.0.7871.129",
+  "renderer": "System Chromium with ANGLE SwiftShader flags",
+  "url": "http://127.0.0.1:5173/",
+  "versions": {
+    "blendlink": "0.8.0",
+    "react": "19.0.0",
+    "reactDom": "19.0.0",
+    "reactThreeFiber": "9.6.1",
+    "three": "0.184.0",
+    "playwright": "1.60.0",
+    "vite": "7.3.6",
+    "typescript": "5.9.3"
+  },
+  "sources": {
+    "blendlinkR3fAdapter": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\reactThreeFiber.js",
+      "sha256": "3cc680015e3091109faa5ccdb2d2475f99d8b9874ffa913929f1503ab26bb3b3"
+    },
+    "blendlinkRuntime": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\runtime.js",
+      "sha256": "d517b60bb07f4336b32bf1ec63a53ef5024163b0f1e2b5afd712c8265cdfbbe8"
+    },
+    "blendlinkThreeRuntime": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\packages\\blendlink\\dist\\threeRuntime.js",
+      "sha256": "49991bbdd62762df051f426f04c32607bfe17c6d9dae8394604c051ab58deaeb"
+    },
+    "r3f": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\@react-three\\fiber\\dist\\events-b389eeca.esm.js",
+      "sha256": "dd92f7b70d669b7a0f3f4db35bcddd8f3aa9d10e2b2d76ddec63a7f041ef06d1"
+    },
+    "threeAnimationAction": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\three\\src\\animation\\AnimationAction.js",
+      "sha256": "87078b56dd975459769a79d9fdea0ce66913de4c58aeb52383ebf646db5a6670"
+    },
+    "threeAnimationMixer": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\three\\src\\animation\\AnimationMixer.js",
+      "sha256": "7b05af5507aa4edfe3d6b5debcda23c8f0d9b910928debff7fc50748954d533c"
+    },
+    "reactDom": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\node_modules\\react-dom\\cjs\\react-dom-client.development.js",
+      "sha256": "495d78cd55901829d595757f03fdf5916b045073f52f9385885a9da9187d3b31"
+    }
+  },
+  "artifacts": {
+    "manualSeek": {
+      "path": "output/manual-seek.png",
+      "sha256": "597a80d68b80b64e4718b890d7c56c08304bd0ef945f18a750a2731b058d2dbc"
+    },
+    "sequenceFinished": {
+      "path": "output/sequence-finished.png",
+      "sha256": "853f2dd9c8c0f321b41952a45232cf806c7019b1ff373f44818b9689e9c8e26e"
+    },
+    "fullPage": {
+      "path": "output/r3f-animation-transport-browser.png",
+      "sha256": "4e3be9a27684c9bca3110e440a97051d4518d1c6c6f091fcc9aba268ef12b7bd"
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "checkpoints": {
+    "manualInitial": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 1,
+      "notifications": 0,
+      "phase": "idle",
+      "time": 0,
+      "duration": 0,
+      "activeClips": [],
+      "requiresContinuousFrames": false,
+      "poseX": -1.35,
+      "restX": -1.35,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 1
+    },
+    "manualInitialQuiet": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 1,
+      "notifications": 0,
+      "phase": "idle",
+      "time": 0,
+      "duration": 0,
+      "activeClips": [],
+      "requiresContinuousFrames": false,
+      "poseX": -1.35,
+      "restX": -1.35,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 1
+    },
+    "manualWakeFrame": {
+      "render": 2,
+      "atMs": 2334.7000000476837,
+      "phase": "playing",
+      "animationTime": 0,
+      "poseX": -1.350000023841858,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": false
+    },
+    "manualPlaying": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 16,
+      "notifications": 16,
+      "phase": "playing",
+      "time": 0.09339999997615815,
+      "duration": 1,
+      "activeClips": [
+        "ManualMove"
+      ],
+      "requiresContinuousFrames": true,
+      "poseX": -1.097820019452572,
+      "restX": -1.35,
+      "pixelCentroidX": 164.06217543859648,
+      "coloredPixels": 7125,
+      "internalActionsPaused": false,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 16
+    },
+    "manualPaused": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 18,
+      "notifications": 18,
+      "phase": "paused",
+      "time": 0.09989999997615816,
+      "duration": 1,
+      "activeClips": [
+        "ManualMove"
+      ],
+      "requiresContinuousFrames": false,
+      "poseX": -1.0802700191426275,
+      "restX": -1.35,
+      "pixelCentroidX": 165.8468001680437,
+      "coloredPixels": 7141,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 18
+    },
+    "manualPausedLater": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 18,
+      "notifications": 18,
+      "phase": "paused",
+      "time": 0.09989999997615816,
+      "duration": 1,
+      "activeClips": [
+        "ManualMove"
+      ],
+      "requiresContinuousFrames": false,
+      "poseX": -1.0802700191426275,
+      "restX": -1.35,
+      "pixelCentroidX": 165.8468001680437,
+      "coloredPixels": 7141,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 18
+    },
+    "manualSeek": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 19,
+      "notifications": 19,
+      "phase": "paused",
+      "time": 0.85,
+      "duration": 1,
+      "activeClips": [
+        "ManualMove"
+      ],
+      "requiresContinuousFrames": false,
+      "poseX": 0.9450000166893004,
+      "restX": -1.35,
+      "pixelCentroidX": 372.86607554122526,
+      "coloredPixels": 8684,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 19
+    },
+    "manualResumed": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 24,
+      "notifications": 25,
+      "phase": "playing",
+      "time": 0.884399999976158,
+      "duration": 1,
+      "activeClips": [
+        "ManualMove"
+      ],
+      "requiresContinuousFrames": true,
+      "poseX": 1.037880018265247,
+      "restX": -1.35,
+      "pixelCentroidX": 382.32515127297637,
+      "coloredPixels": 8759,
+      "internalActionsPaused": false,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 24
+    },
+    "manualStopped": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 25,
+      "notifications": 26,
+      "phase": "idle",
+      "time": 0,
+      "duration": 0,
+      "activeClips": [],
+      "requiresContinuousFrames": false,
+      "poseX": -1.35,
+      "restX": -1.35,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 25
+    },
+    "sequenceReady": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 1,
+      "notifications": 1,
+      "phase": "playing",
+      "time": 0,
+      "duration": 0.9,
+      "activeClips": [
+        "NlaMove"
+      ],
+      "requiresContinuousFrames": true,
+      "poseX": -1.350000023841858,
+      "restX": -1.35,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 1
+    },
+    "sequenceFinished": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 129,
+      "notifications": 129,
+      "phase": "finished",
+      "time": 0.9,
+      "duration": 0.9,
+      "activeClips": [
+        "NlaMove"
+      ],
+      "requiresContinuousFrames": false,
+      "poseX": 1.350000023841858,
+      "restX": -1.35,
+      "pixelCentroidX": 415.3506040892193,
+      "coloredPixels": 8608,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 129
+    },
+    "sequenceSettled": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 129,
+      "notifications": 129,
+      "phase": "finished",
+      "time": 0.9,
+      "duration": 0.9,
+      "activeClips": [
+        "NlaMove"
+      ],
+      "requiresContinuousFrames": false,
+      "poseX": 1.350000023841858,
+      "restX": -1.35,
+      "pixelCentroidX": 415.3506040892193,
+      "coloredPixels": 8608,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 129
+    },
+    "manualBeforeDispose": {
+      "ready": true,
+      "mounted": true,
+      "unmounted": false,
+      "loaderCalls": 1,
+      "renders": 26,
+      "notifications": 26,
+      "phase": "idle",
+      "time": 0,
+      "duration": 0,
+      "activeClips": [],
+      "requiresContinuousFrames": false,
+      "poseX": -1.35,
+      "restX": -1.35,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 0,
+        "materialDisposed": 0
+      },
+      "renderSamples": 26
+    },
+    "manualDisposed": {
+      "ready": false,
+      "mounted": false,
+      "unmounted": true,
+      "loaderCalls": 1,
+      "renders": 26,
+      "notifications": 26,
+      "phase": "disposed",
+      "time": 0,
+      "duration": 0,
+      "activeClips": [],
+      "requiresContinuousFrames": false,
+      "poseX": -1.35,
+      "restX": -1.35,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 1,
+        "materialDisposed": 1
+      },
+      "renderSamples": 26
+    },
+    "manualDisposedLater": {
+      "ready": false,
+      "mounted": false,
+      "unmounted": true,
+      "loaderCalls": 1,
+      "renders": 26,
+      "notifications": 26,
+      "phase": "disposed",
+      "time": 0,
+      "duration": 0,
+      "activeClips": [],
+      "requiresContinuousFrames": false,
+      "poseX": -1.35,
+      "restX": -1.35,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 1,
+        "materialDisposed": 1
+      },
+      "renderSamples": 26
+    }
+  },
+  "browserEvidence": {
+    "ready": true,
+    "versions": {
+      "react": "19.0.0",
+      "reactDom": "19.0.0",
+      "reactThreeFiber": "9.6.1",
+      "three": "0.184.0"
+    },
+    "manual": {
+      "ready": false,
+      "mounted": false,
+      "unmounted": true,
+      "loaderCalls": 1,
+      "renders": 26,
+      "notifications": 26,
+      "phase": "disposed",
+      "time": 0,
+      "duration": 0,
+      "activeClips": [],
+      "requiresContinuousFrames": false,
+      "poseX": -1.35,
+      "restX": -1.35,
+      "pixelCentroidX": 136.49792932081724,
+      "coloredPixels": 7244,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 1,
+        "materialDisposed": 1
+      },
+      "renderSamples": [
+        {
+          "render": 1,
+          "atMs": 427.90000009536743,
+          "phase": "idle",
+          "animationTime": 0,
+          "poseX": -1.35,
+          "pixelCentroidX": 136.49792932081724,
+          "coloredPixels": 7244,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 2,
+          "atMs": 2334.7000000476837,
+          "phase": "playing",
+          "animationTime": 0,
+          "poseX": -1.350000023841858,
+          "pixelCentroidX": 136.49792932081724,
+          "coloredPixels": 7244,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 3,
+          "atMs": 2340,
+          "phase": "playing",
+          "animationTime": 0.002399999976158142,
+          "poseX": -1.3435200237917901,
+          "pixelCentroidX": 137.2073726356482,
+          "coloredPixels": 7243,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 4,
+          "atMs": 2347.7000000476837,
+          "phase": "playing",
+          "animationTime": 0.010200000047683715,
+          "poseX": -1.3224600232267378,
+          "pixelCentroidX": 139.5201824716616,
+          "coloredPixels": 7234,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 5,
+          "atMs": 2354.600000023842,
+          "phase": "playing",
+          "animationTime": 0.016200000047683717,
+          "poseX": -1.3062600229406356,
+          "pixelCentroidX": 141.32738342327383,
+          "coloredPixels": 7227,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 6,
+          "atMs": 2361,
+          "phase": "playing",
+          "animationTime": 0.022799999952316286,
+          "poseX": -1.2884400228834152,
+          "pixelCentroidX": 143.26590877582143,
+          "coloredPixels": 7213,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 7,
+          "atMs": 2367.600000023842,
+          "phase": "playing",
+          "animationTime": 0.030399999976158144,
+          "poseX": -1.267920022456646,
+          "pixelCentroidX": 145.514987510408,
+          "coloredPixels": 7206,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 8,
+          "atMs": 2374.3000000715256,
+          "phase": "playing",
+          "animationTime": 0.037000000000000005,
+          "poseX": -1.2501000220775604,
+          "pixelCentroidX": 147.47114448616327,
+          "coloredPixels": 7191,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 9,
+          "atMs": 2382.4000000953674,
+          "phase": "playing",
+          "animationTime": 0.04410000002384186,
+          "poseX": -1.230930021674633,
+          "pixelCentroidX": 149.58783407572383,
+          "coloredPixels": 7184,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 10,
+          "atMs": 2389.8000000715256,
+          "phase": "playing",
+          "animationTime": 0.05160000002384186,
+          "poseX": -1.210680021317005,
+          "pixelCentroidX": 151.7955400696864,
+          "coloredPixels": 7175,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 11,
+          "atMs": 2397.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.05939999997615814,
+          "poseX": -1.1896200210738181,
+          "pixelCentroidX": 154.10196954881968,
+          "coloredPixels": 7159,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 12,
+          "atMs": 2402.5,
+          "phase": "playing",
+          "animationTime": 0.06510000002384186,
+          "poseX": -1.1742300206732748,
+          "pixelCentroidX": 155.79312272854347,
+          "coloredPixels": 7154,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 13,
+          "atMs": 2409.4000000953674,
+          "phase": "playing",
+          "animationTime": 0.07189999997615815,
+          "poseX": -1.1558700204777717,
+          "pixelCentroidX": 157.80439652758332,
+          "coloredPixels": 7142,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 14,
+          "atMs": 2416.7000000476837,
+          "phase": "playing",
+          "animationTime": 0.07939999997615815,
+          "poseX": -1.135620020120144,
+          "pixelCentroidX": 160.00967470555244,
+          "coloredPixels": 7132,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 15,
+          "atMs": 2423.3000000715256,
+          "phase": "playing",
+          "animationTime": 0.0862999999523163,
+          "poseX": -1.1169900198554994,
+          "pixelCentroidX": 162.05479837009977,
+          "coloredPixels": 7117,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 16,
+          "atMs": 2430.3000000715256,
+          "phase": "playing",
+          "animationTime": 0.09339999997615815,
+          "poseX": -1.097820019452572,
+          "pixelCentroidX": 164.06217543859648,
+          "coloredPixels": 7125,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 17,
+          "atMs": 2437.3000000715256,
+          "phase": "playing",
+          "animationTime": 0.09989999997615816,
+          "poseX": -1.0802700191426275,
+          "pixelCentroidX": 165.8468001680437,
+          "coloredPixels": 7141,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 18,
+          "atMs": 2443.100000023842,
+          "phase": "paused",
+          "animationTime": 0.09989999997615816,
+          "poseX": -1.0802700191426275,
+          "pixelCentroidX": 165.8468001680437,
+          "coloredPixels": 7141,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 19,
+          "atMs": 3266.8000000715256,
+          "phase": "paused",
+          "animationTime": 0.85,
+          "poseX": 0.9450000166893004,
+          "pixelCentroidX": 372.86607554122526,
+          "coloredPixels": 8684,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 20,
+          "atMs": 3355.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.85,
+          "poseX": 0.9450000166893004,
+          "pixelCentroidX": 372.86607554122526,
+          "coloredPixels": 8684,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 21,
+          "atMs": 3365,
+          "phase": "playing",
+          "animationTime": 0.8634999999999999,
+          "poseX": 0.9814500173330306,
+          "pixelCentroidX": 376.579394217531,
+          "coloredPixels": 8716,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 22,
+          "atMs": 3372.3000000715256,
+          "phase": "playing",
+          "animationTime": 0.8726000000238417,
+          "poseX": 1.0060200178313252,
+          "pixelCentroidX": 379.0759276225378,
+          "coloredPixels": 8732,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 23,
+          "atMs": 3376.7000000476837,
+          "phase": "playing",
+          "animationTime": 0.8799999999999999,
+          "poseX": 1.0260000181198117,
+          "pixelCentroidX": 381.10356652949247,
+          "coloredPixels": 8748,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 24,
+          "atMs": 3381.600000023842,
+          "phase": "playing",
+          "animationTime": 0.884399999976158,
+          "poseX": 1.037880018265247,
+          "pixelCentroidX": 382.32515127297637,
+          "coloredPixels": 8759,
+          "internalActionsPaused": false
+        },
+        {
+          "render": 25,
+          "atMs": 3394.4000000953674,
+          "phase": "idle",
+          "animationTime": 0,
+          "poseX": -1.35,
+          "pixelCentroidX": 136.49792932081724,
+          "coloredPixels": 7244,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 26,
+          "atMs": 3671.3000000715256,
+          "phase": "idle",
+          "animationTime": 0,
+          "poseX": -1.35,
+          "pixelCentroidX": 136.49792932081724,
+          "coloredPixels": 7244,
+          "internalActionsPaused": true
+        }
+      ]
+    },
+    "sequence": {
+      "ready": false,
+      "mounted": false,
+      "unmounted": true,
+      "loaderCalls": 1,
+      "renders": 130,
+      "notifications": 129,
+      "phase": "disposed",
+      "time": 0.9,
+      "duration": 0.9,
+      "activeClips": [
+        "NlaMove"
+      ],
+      "requiresContinuousFrames": false,
+      "poseX": -1.35,
+      "restX": -1.35,
+      "pixelCentroidX": 415.3506040892193,
+      "coloredPixels": 8608,
+      "internalActionsPaused": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "webglRenderer": "WebKit WebGL",
+      "resources": {
+        "geometriesCreated": 1,
+        "materialsCreated": 1,
+        "geometryDisposed": 1,
+        "materialDisposed": 1
+      },
+      "renderSamples": [
+        {
+          "render": 1,
+          "atMs": 3752.3000000715256,
+          "phase": "playing",
+          "animationTime": 0,
+          "poseX": -1.350000023841858,
+          "pixelCentroidX": 136.49792932081724,
+          "coloredPixels": 7244,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 2,
+          "atMs": 3768.100000023842,
+          "phase": "playing",
+          "animationTime": 0.014099999904632569,
+          "poseX": -1.3077000222603479,
+          "pixelCentroidX": 141.13275072825635,
+          "coloredPixels": 7209,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 3,
+          "atMs": 3774,
+          "phase": "playing",
+          "animationTime": 0.029799999952316285,
+          "poseX": -1.260600020037757,
+          "pixelCentroidX": 146.3060002784352,
+          "coloredPixels": 7183,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 4,
+          "atMs": 3778.5,
+          "phase": "playing",
+          "animationTime": 0.03559999990463257,
+          "poseX": -1.2432000194125705,
+          "pixelCentroidX": 148.19562186279978,
+          "coloredPixels": 7172,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 5,
+          "atMs": 3783.7000000476837,
+          "phase": "playing",
+          "animationTime": 0.04089999997615815,
+          "poseX": -1.2273000184959835,
+          "pixelCentroidX": 149.96995948022914,
+          "coloredPixels": 7157,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 6,
+          "atMs": 3791,
+          "phase": "playing",
+          "animationTime": 0.048099999904632575,
+          "poseX": -1.2057000177568857,
+          "pixelCentroidX": 152.31778058007566,
+          "coloredPixels": 7137,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 7,
+          "atMs": 3798.600000023842,
+          "phase": "playing",
+          "animationTime": 0.05529999995231629,
+          "poseX": -1.1841000166601603,
+          "pixelCentroidX": 154.70401009534493,
+          "coloredPixels": 7132,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 8,
+          "atMs": 3804.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.062199999928474435,
+          "poseX": -1.1634000158177478,
+          "pixelCentroidX": 156.96290050590218,
+          "coloredPixels": 7116,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 9,
+          "atMs": 3811.7000000476837,
+          "phase": "playing",
+          "animationTime": 0.06869999992847443,
+          "poseX": -1.1439000149567922,
+          "pixelCentroidX": 159.07832089026624,
+          "coloredPixels": 7099,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 10,
+          "atMs": 3819.3000000715256,
+          "phase": "playing",
+          "animationTime": 0.07669999992847443,
+          "poseX": -1.119900013897154,
+          "pixelCentroidX": 161.7472449844589,
+          "coloredPixels": 7078,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 11,
+          "atMs": 3825.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.08319999992847443,
+          "poseX": -1.100400013036198,
+          "pixelCentroidX": 163.7423408160384,
+          "coloredPixels": 7083,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 12,
+          "atMs": 3833.100000023842,
+          "phase": "playing",
+          "animationTime": 0.09029999995231629,
+          "poseX": -1.0791000120242433,
+          "pixelCentroidX": 165.9684329199549,
+          "coloredPixels": 7096,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 13,
+          "atMs": 3839.5,
+          "phase": "playing",
+          "animationTime": 0.09679999995231629,
+          "poseX": -1.0596000111632873,
+          "pixelCentroidX": 167.95207982012366,
+          "coloredPixels": 7116,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 14,
+          "atMs": 3846.5,
+          "phase": "playing",
+          "animationTime": 0.10389999997615815,
+          "poseX": -1.0383000101513327,
+          "pixelCentroidX": 170.1401488554978,
+          "coloredPixels": 7121,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 15,
+          "atMs": 3853.600000023842,
+          "phase": "playing",
+          "animationTime": 0.11089999997615815,
+          "poseX": -1.0173000092241495,
+          "pixelCentroidX": 172.27906976744185,
+          "coloredPixels": 7138,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 16,
+          "atMs": 3859,
+          "phase": "playing",
+          "animationTime": 0.11750000000000001,
+          "poseX": -0.9975000082784224,
+          "pixelCentroidX": 174.24549140220887,
+          "coloredPixels": 7153,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 17,
+          "atMs": 3865.100000023842,
+          "phase": "playing",
+          "animationTime": 0.12459999990463258,
+          "poseX": -0.976200007624096,
+          "pixelCentroidX": 176.45318613750698,
+          "coloredPixels": 7156,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 18,
+          "atMs": 3876.2000000476837,
+          "phase": "playing",
+          "animationTime": 0.13219999992847445,
+          "poseX": -0.953400006545914,
+          "pixelCentroidX": 178.78626166922112,
+          "coloredPixels": 7177,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 19,
+          "atMs": 3880.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.13819999992847445,
+          "poseX": -0.9354000057511853,
+          "pixelCentroidX": 180.62701725097384,
+          "coloredPixels": 7188,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 20,
+          "atMs": 3888.5,
+          "phase": "playing",
+          "animationTime": 0.14579999995231632,
+          "poseX": -0.9126000046730036,
+          "pixelCentroidX": 182.97212205270458,
+          "coloredPixels": 7210,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 21,
+          "atMs": 3895.5,
+          "phase": "playing",
+          "animationTime": 0.1528999999761582,
+          "poseX": -0.891300003661049,
+          "pixelCentroidX": 185.14705474705474,
+          "coloredPixels": 7215,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 22,
+          "atMs": 3902.3000000715256,
+          "phase": "playing",
+          "animationTime": 0.15950000000000006,
+          "poseX": -0.8715000027153219,
+          "pixelCentroidX": 187.1361937716263,
+          "coloredPixels": 7225,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 23,
+          "atMs": 3908.8000000715256,
+          "phase": "playing",
+          "animationTime": 0.16600000000000006,
+          "poseX": -0.8520000018543659,
+          "pixelCentroidX": 189.11460922397129,
+          "coloredPixels": 7242,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 24,
+          "atMs": 3916.7000000476837,
+          "phase": "playing",
+          "animationTime": 0.1738999999761582,
+          "poseX": -0.8283000008794987,
+          "pixelCentroidX": 191.59644530173603,
+          "coloredPixels": 7258,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 25,
+          "atMs": 3924.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.1816999999284745,
+          "poseX": -0.8048999999894029,
+          "pixelCentroidX": 193.9305364511692,
+          "coloredPixels": 7270,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 26,
+          "atMs": 3929.8000000715256,
+          "phase": "playing",
+          "animationTime": 0.18700000000000006,
+          "poseX": -0.7889999990728159,
+          "pixelCentroidX": 195.5763898421414,
+          "coloredPixels": 7285,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 27,
+          "atMs": 3936.4000000953674,
+          "phase": "playing",
+          "animationTime": 0.19379999995231634,
+          "poseX": -0.7685999983151746,
+          "pixelCentroidX": 197.6838134430727,
+          "coloredPixels": 7290,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 28,
+          "atMs": 3944,
+          "phase": "playing",
+          "animationTime": 0.20129999995231634,
+          "poseX": -0.7460999973217637,
+          "pixelCentroidX": 199.9638702613932,
+          "coloredPixels": 7307,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 29,
+          "atMs": 3952.4000000953674,
+          "phase": "playing",
+          "animationTime": 0.2093999999761582,
+          "poseX": -0.7217999961773545,
+          "pixelCentroidX": 202.47226018037716,
+          "coloredPixels": 7318,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 30,
+          "atMs": 3958,
+          "phase": "playing",
+          "animationTime": 0.21539999997615822,
+          "poseX": -0.7037999953826257,
+          "pixelCentroidX": 204.30237315875613,
+          "coloredPixels": 7332,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 31,
+          "atMs": 3964.2000000476837,
+          "phase": "playing",
+          "animationTime": 0.22139999997615822,
+          "poseX": -0.6857999945878972,
+          "pixelCentroidX": 206.16587225929456,
+          "coloredPixels": 7343,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 32,
+          "atMs": 3972,
+          "phase": "playing",
+          "animationTime": 0.22889999997615823,
+          "poseX": -0.6632999935944865,
+          "pixelCentroidX": 208.4478544269419,
+          "coloredPixels": 7364,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 33,
+          "atMs": 3978.8000000715256,
+          "phase": "playing",
+          "animationTime": 0.23609999990463265,
+          "poseX": -0.6416999928553888,
+          "pixelCentroidX": 210.64201384176957,
+          "coloredPixels": 7369,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 34,
+          "atMs": 3984.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.24219999992847452,
+          "poseX": -0.623399991975889,
+          "pixelCentroidX": 212.46421295667525,
+          "coloredPixels": 7363,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 35,
+          "atMs": 3991.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.24919999992847452,
+          "poseX": -0.6023999910487059,
+          "pixelCentroidX": 214.6507164098405,
+          "coloredPixels": 7398,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 36,
+          "atMs": 3999.5,
+          "phase": "playing",
+          "animationTime": 0.25689999997615826,
+          "poseX": -0.5792999898857527,
+          "pixelCentroidX": 217.0990165701199,
+          "coloredPixels": 7423,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 37,
+          "atMs": 4006.2000000476837,
+          "phase": "playing",
+          "animationTime": 0.26339999997615826,
+          "poseX": -0.5597999890247967,
+          "pixelCentroidX": 219.0530854217192,
+          "coloredPixels": 7422,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 38,
+          "atMs": 4013.100000023842,
+          "phase": "playing",
+          "animationTime": 0.27039999997615827,
+          "poseX": -0.5387999880976133,
+          "pixelCentroidX": 221.1018206338503,
+          "coloredPixels": 7415,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 39,
+          "atMs": 4020.100000023842,
+          "phase": "playing",
+          "animationTime": 0.27750000000000014,
+          "poseX": -0.5174999870856589,
+          "pixelCentroidX": 223.3458232608112,
+          "coloredPixels": 7446,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 40,
+          "atMs": 4026.8000000715256,
+          "phase": "playing",
+          "animationTime": 0.2840999999046327,
+          "poseX": -0.4976999864975598,
+          "pixelCentroidX": 225.55100133511348,
+          "coloredPixels": 7490,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 41,
+          "atMs": 4034.8000000715256,
+          "phase": "playing",
+          "animationTime": 0.29169999992847456,
+          "poseX": -0.47489998541937783,
+          "pixelCentroidX": 227.7164279019949,
+          "coloredPixels": 7469,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 42,
+          "atMs": 4041.5,
+          "phase": "playing",
+          "animationTime": 0.29869999992847457,
+          "poseX": -0.4538999844921945,
+          "pixelCentroidX": 229.719951762026,
+          "coloredPixels": 7463,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 43,
+          "atMs": 4047.5,
+          "phase": "playing",
+          "animationTime": 0.3046999999284746,
+          "poseX": -0.4358999836974659,
+          "pixelCentroidX": 231.60523854069223,
+          "coloredPixels": 7483,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 44,
+          "atMs": 4054.9000000953674,
+          "phase": "playing",
+          "animationTime": 0.31179999995231644,
+          "poseX": -0.4145999826855115,
+          "pixelCentroidX": 233.97564546180462,
+          "coloredPixels": 7514,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 45,
+          "atMs": 4062.100000023842,
+          "phase": "playing",
+          "animationTime": 0.3193999999761583,
+          "poseX": -0.3917999816073296,
+          "pixelCentroidX": 236.25049833887044,
+          "coloredPixels": 7525,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 46,
+          "atMs": 4068.8000000715256,
+          "phase": "playing",
+          "animationTime": 0.3260000000000002,
+          "poseX": -0.3719999806616024,
+          "pixelCentroidX": 238.23115778279941,
+          "coloredPixels": 7523,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 47,
+          "atMs": 4075.600000023842,
+          "phase": "playing",
+          "animationTime": 0.33309999990463274,
+          "poseX": -0.350699980007276,
+          "pixelCentroidX": 240.38440111420613,
+          "coloredPixels": 7539,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 48,
+          "atMs": 4082.3000000715256,
+          "phase": "playing",
+          "animationTime": 0.33959999990463274,
+          "poseX": -0.33119997914631993,
+          "pixelCentroidX": 242.44485585823855,
+          "coloredPixels": 7562,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 49,
+          "atMs": 4089.2000000476837,
+          "phase": "playing",
+          "animationTime": 0.3466999999284746,
+          "poseX": -0.30989997813436543,
+          "pixelCentroidX": 244.6823095175323,
+          "coloredPixels": 7586,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 50,
+          "atMs": 4097.100000023842,
+          "phase": "playing",
+          "animationTime": 0.3541999999284746,
+          "poseX": -0.28739997714095455,
+          "pixelCentroidX": 246.90554089709764,
+          "coloredPixels": 7580,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 51,
+          "atMs": 4103.400000095367,
+          "phase": "playing",
+          "animationTime": 0.3606999999284746,
+          "poseX": -0.26789997627999873,
+          "pixelCentroidX": 248.91592105263157,
+          "coloredPixels": 7600,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 52,
+          "atMs": 4111,
+          "phase": "playing",
+          "animationTime": 0.36819999992847463,
+          "poseX": -0.24539997528658775,
+          "pixelCentroidX": 251.24418757388676,
+          "coloredPixels": 7613,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 53,
+          "atMs": 4119.600000023842,
+          "phase": "playing",
+          "animationTime": 0.3760999999046328,
+          "poseX": -0.22169997431172062,
+          "pixelCentroidX": 253.65296504778112,
+          "coloredPixels": 7639,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 54,
+          "atMs": 4124.400000095367,
+          "phase": "playing",
+          "animationTime": 0.3817999999523165,
+          "poseX": -0.2045999734136772,
+          "pixelCentroidX": 255.4319162851537,
+          "coloredPixels": 7645,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 55,
+          "atMs": 4131.5,
+          "phase": "playing",
+          "animationTime": 0.3888999999761584,
+          "poseX": -0.1832999724017228,
+          "pixelCentroidX": 257.62864236247225,
+          "coloredPixels": 7653,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 56,
+          "atMs": 4139,
+          "phase": "playing",
+          "animationTime": 0.3963999999761584,
+          "poseX": -0.16079997140831215,
+          "pixelCentroidX": 259.86675358539765,
+          "coloredPixels": 7670,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 57,
+          "atMs": 4144.600000023842,
+          "phase": "playing",
+          "animationTime": 0.4018999999761584,
+          "poseX": -0.14429997067981082,
+          "pixelCentroidX": 261.60315391633,
+          "coloredPixels": 7673,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 58,
+          "atMs": 4151.800000071526,
+          "phase": "playing",
+          "animationTime": 0.40900000000000025,
+          "poseX": -0.12299996966785631,
+          "pixelCentroidX": 263.746879875195,
+          "coloredPixels": 7692,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 59,
+          "atMs": 4159.300000071526,
+          "phase": "playing",
+          "animationTime": 0.41650000000000026,
+          "poseX": -0.10049996867444544,
+          "pixelCentroidX": 266.1052768053935,
+          "coloredPixels": 7713,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 60,
+          "atMs": 4166.800000071526,
+          "phase": "playing",
+          "animationTime": 0.4240999999046328,
+          "poseX": -0.07769996795389167,
+          "pixelCentroidX": 268.44491964748573,
+          "coloredPixels": 7716,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 61,
+          "atMs": 4174.5,
+          "phase": "playing",
+          "animationTime": 0.4316999999284747,
+          "poseX": -0.05489996687570986,
+          "pixelCentroidX": 270.7666365163458,
+          "coloredPixels": 7739,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 62,
+          "atMs": 4180.400000095367,
+          "phase": "playing",
+          "animationTime": 0.4371999999284747,
+          "poseX": -0.03839996614720853,
+          "pixelCentroidX": 272.4510715207849,
+          "coloredPixels": 7746,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 63,
+          "atMs": 4187.5,
+          "phase": "playing",
+          "animationTime": 0.4448999999761584,
+          "poseX": -0.015299964984255565,
+          "pixelCentroidX": 274.8657735411568,
+          "coloredPixels": 7763,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 64,
+          "atMs": 4194.200000047684,
+          "phase": "playing",
+          "animationTime": 0.4515000000000003,
+          "poseX": 0.004500035961471527,
+          "pixelCentroidX": 276.87171899125065,
+          "coloredPixels": 7772,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 65,
+          "atMs": 4201.400000095367,
+          "phase": "playing",
+          "animationTime": 0.4585000000000003,
+          "poseX": 0.025500036888654876,
+          "pixelCentroidX": 279.05987408454325,
+          "coloredPixels": 7783,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 66,
+          "atMs": 4208.300000071526,
+          "phase": "playing",
+          "animationTime": 0.46559999990463286,
+          "poseX": 0.046800037542981565,
+          "pixelCentroidX": 281.18120030777123,
+          "coloredPixels": 7798,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 67,
+          "atMs": 4214.5,
+          "phase": "playing",
+          "animationTime": 0.4716999999284747,
+          "poseX": 0.06510003842248113,
+          "pixelCentroidX": 283.06874039938555,
+          "coloredPixels": 7812,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 68,
+          "atMs": 4222.5,
+          "phase": "playing",
+          "animationTime": 0.47969999992847473,
+          "poseX": 0.08910003948211931,
+          "pixelCentroidX": 285.5662112118503,
+          "coloredPixels": 7831,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 69,
+          "atMs": 4229.200000047684,
+          "phase": "playing",
+          "animationTime": 0.4862999999523166,
+          "poseX": 0.10890004042784618,
+          "pixelCentroidX": 287.61587544665645,
+          "coloredPixels": 7836,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 70,
+          "atMs": 4236.100000023842,
+          "phase": "playing",
+          "animationTime": 0.4932999999523166,
+          "poseX": 0.12990004135502953,
+          "pixelCentroidX": 289.75385203107095,
+          "coloredPixels": 7853,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 71,
+          "atMs": 4242.100000023842,
+          "phase": "playing",
+          "animationTime": 0.49919999992847475,
+          "poseX": 0.14760004206498745,
+          "pixelCentroidX": 291.54805491990845,
+          "coloredPixels": 7866,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 72,
+          "atMs": 4249.800000071526,
+          "phase": "playing",
+          "animationTime": 0.5068999999761584,
+          "poseX": 0.17070004322793997,
+          "pixelCentroidX": 293.91210466150136,
+          "coloredPixels": 7873,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 73,
+          "atMs": 4256,
+          "phase": "playing",
+          "animationTime": 0.5131999999284748,
+          "poseX": 0.18960004391935414,
+          "pixelCentroidX": 295.841078890718,
+          "coloredPixels": 7897,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 74,
+          "atMs": 4263.100000023842,
+          "phase": "playing",
+          "animationTime": 0.5201999999284748,
+          "poseX": 0.21060004484653772,
+          "pixelCentroidX": 297.9778481012658,
+          "coloredPixels": 7900,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 75,
+          "atMs": 4271.400000095367,
+          "phase": "playing",
+          "animationTime": 0.5272999999523166,
+          "poseX": 0.2319000458584919,
+          "pixelCentroidX": 300.1436861359909,
+          "coloredPixels": 7927,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 76,
+          "atMs": 4277.600000023842,
+          "phase": "playing",
+          "animationTime": 0.5348999999761584,
+          "poseX": 0.2547000469366736,
+          "pixelCentroidX": 302.5153768590875,
+          "coloredPixels": 7934,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 77,
+          "atMs": 4284,
+          "phase": "playing",
+          "animationTime": 0.5410999999046329,
+          "poseX": 0.2733000475433167,
+          "pixelCentroidX": 304.41663520825466,
+          "coloredPixels": 7947,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 78,
+          "atMs": 4292.5,
+          "phase": "playing",
+          "animationTime": 0.5495000000000003,
+          "poseX": 0.2985000489420391,
+          "pixelCentroidX": 307.1204879889322,
+          "coloredPixels": 7951,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 79,
+          "atMs": 4297.800000071526,
+          "phase": "playing",
+          "animationTime": 0.5550999999046329,
+          "poseX": 0.3153000493976832,
+          "pixelCentroidX": 308.6936090225564,
+          "coloredPixels": 7980,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 80,
+          "atMs": 4304.900000095367,
+          "phase": "playing",
+          "animationTime": 0.5621999999284747,
+          "poseX": 0.3366000504096378,
+          "pixelCentroidX": 310.86244377811096,
+          "coloredPixels": 8004,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 81,
+          "atMs": 4312.5,
+          "phase": "playing",
+          "animationTime": 0.5697999999523166,
+          "poseX": 0.3594000514878195,
+          "pixelCentroidX": 313.32803106212424,
+          "coloredPixels": 7984,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 82,
+          "atMs": 4319.300000071526,
+          "phase": "playing",
+          "animationTime": 0.5762999999523165,
+          "poseX": 0.3789000523487755,
+          "pixelCentroidX": 315.27541843617286,
+          "coloredPixels": 8006,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 83,
+          "atMs": 4326.300000071526,
+          "phase": "playing",
+          "animationTime": 0.5832999999523165,
+          "poseX": 0.39990005327595884,
+          "pixelCentroidX": 317.47215647190734,
+          "coloredPixels": 8027,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 84,
+          "atMs": 4333.100000023842,
+          "phase": "playing",
+          "animationTime": 0.5903999999761583,
+          "poseX": 0.4212000542879129,
+          "pixelCentroidX": 319.83689538807647,
+          "coloredPixels": 8001,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 85,
+          "atMs": 4339.800000071526,
+          "phase": "playing",
+          "animationTime": 0.5970000000000002,
+          "poseX": 0.4410000552336402,
+          "pixelCentroidX": 321.6688610110545,
+          "coloredPixels": 8051,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 86,
+          "atMs": 4346.900000095367,
+          "phase": "playing",
+          "animationTime": 0.6040999999046328,
+          "poseX": 0.4623000558879669,
+          "pixelCentroidX": 324.083468294506,
+          "coloredPixels": 8027,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 87,
+          "atMs": 4354,
+          "phase": "playing",
+          "animationTime": 0.6110999999046328,
+          "poseX": 0.48330005681515026,
+          "pixelCentroidX": 326.17834949043004,
+          "coloredPixels": 8046,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 88,
+          "atMs": 4360.600000023842,
+          "phase": "playing",
+          "animationTime": 0.6176999999284747,
+          "poseX": 0.5031000577608773,
+          "pixelCentroidX": 328.1295516472628,
+          "coloredPixels": 8074,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 89,
+          "atMs": 4367.100000023842,
+          "phase": "playing",
+          "animationTime": 0.6242999999523166,
+          "poseX": 0.5229000587066044,
+          "pixelCentroidX": 330.02543523891836,
+          "coloredPixels": 8099,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 90,
+          "atMs": 4375.400000095367,
+          "phase": "playing",
+          "animationTime": 0.6317999999523165,
+          "poseX": 0.545400059700015,
+          "pixelCentroidX": 332.5840336134454,
+          "coloredPixels": 8092,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 91,
+          "atMs": 4382.400000095367,
+          "phase": "playing",
+          "animationTime": 0.6383999999761584,
+          "poseX": 0.5652000606457421,
+          "pixelCentroidX": 334.50886481162274,
+          "coloredPixels": 8122,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 92,
+          "atMs": 4390.5,
+          "phase": "playing",
+          "animationTime": 0.6470999999046328,
+          "poseX": 0.591300061583522,
+          "pixelCentroidX": 337.1170630056386,
+          "coloredPixels": 8158,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 93,
+          "atMs": 4396.400000095367,
+          "phase": "playing",
+          "animationTime": 0.6535000000000003,
+          "poseX": 0.6105000627173349,
+          "pixelCentroidX": 339.13463426607757,
+          "coloredPixels": 8148,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 94,
+          "atMs": 4402.400000095367,
+          "phase": "playing",
+          "animationTime": 0.6595000000000003,
+          "poseX": 0.6285000635120634,
+          "pixelCentroidX": 340.99950986398727,
+          "coloredPixels": 8161,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 95,
+          "atMs": 4409.800000071526,
+          "phase": "playing",
+          "animationTime": 0.6670000000000003,
+          "poseX": 0.6510000645054741,
+          "pixelCentroidX": 343.34659647404504,
+          "coloredPixels": 8168,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 96,
+          "atMs": 4416.900000095367,
+          "phase": "playing",
+          "animationTime": 0.6740000000000003,
+          "poseX": 0.6720000654326577,
+          "pixelCentroidX": 345.4671470444553,
+          "coloredPixels": 8188,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 97,
+          "atMs": 4423.900000095367,
+          "phase": "playing",
+          "animationTime": 0.6810999999046329,
+          "poseX": 0.6933000660869841,
+          "pixelCentroidX": 347.602534421835,
+          "coloredPixels": 8207,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 98,
+          "atMs": 4429.200000047684,
+          "phase": "playing",
+          "animationTime": 0.6876999999284747,
+          "poseX": 0.7131000670327112,
+          "pixelCentroidX": 349.67794959211005,
+          "coloredPixels": 8213,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 99,
+          "atMs": 4437.200000047684,
+          "phase": "playing",
+          "animationTime": 0.6943999999761584,
+          "poseX": 0.7332000680632094,
+          "pixelCentroidX": 351.6968039859035,
+          "coloredPixels": 8229,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 100,
+          "atMs": 4444.400000095367,
+          "phase": "playing",
+          "animationTime": 0.7015000000000002,
+          "poseX": 0.754500069075164,
+          "pixelCentroidX": 353.9164645974782,
+          "coloredPixels": 8248,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 101,
+          "atMs": 4450.5,
+          "phase": "playing",
+          "animationTime": 0.7075999999046328,
+          "poseX": 0.7728000695970358,
+          "pixelCentroidX": 355.8055421103582,
+          "coloredPixels": 8264,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 102,
+          "atMs": 4458.400000095367,
+          "phase": "playing",
+          "animationTime": 0.7151999999284747,
+          "poseX": 0.7956000706752175,
+          "pixelCentroidX": 358.1242896868577,
+          "coloredPixels": 8271,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 103,
+          "atMs": 4465,
+          "phase": "playing",
+          "animationTime": 0.7221999999284747,
+          "poseX": 0.816600071602401,
+          "pixelCentroidX": 360.33272990586534,
+          "coloredPixels": 8286,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 104,
+          "atMs": 4471.5,
+          "phase": "playing",
+          "animationTime": 0.7285000000000003,
+          "poseX": 0.8355000726514428,
+          "pixelCentroidX": 362.2064850530376,
+          "coloredPixels": 8296,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 105,
+          "atMs": 4479,
+          "phase": "playing",
+          "animationTime": 0.7360000000000002,
+          "poseX": 0.8580000736448531,
+          "pixelCentroidX": 364.6430376699964,
+          "coloredPixels": 8309,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 106,
+          "atMs": 4487.300000071526,
+          "phase": "playing",
+          "animationTime": 0.7442999999523165,
+          "poseX": 0.8829000746011767,
+          "pixelCentroidX": 367.07746817199137,
+          "coloredPixels": 8326,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 107,
+          "atMs": 4492.200000047684,
+          "phase": "playing",
+          "animationTime": 0.7491999999284746,
+          "poseX": 0.8976000751786795,
+          "pixelCentroidX": 368.65106791456685,
+          "coloredPixels": 8334,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 108,
+          "atMs": 4500.5,
+          "phase": "playing",
+          "animationTime": 0.7572999999523164,
+          "poseX": 0.9219000763230883,
+          "pixelCentroidX": 371.1643130684538,
+          "coloredPixels": 8356,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 109,
+          "atMs": 4507.900000095367,
+          "phase": "playing",
+          "animationTime": 0.7648999999761583,
+          "poseX": 0.9447000774012704,
+          "pixelCentroidX": 373.52793396339274,
+          "coloredPixels": 8359,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 110,
+          "atMs": 4513.400000095367,
+          "phase": "playing",
+          "animationTime": 0.7705000000000002,
+          "poseX": 0.9615000782145428,
+          "pixelCentroidX": 375.2803916885598,
+          "coloredPixels": 8374,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 111,
+          "atMs": 4520.5,
+          "phase": "playing",
+          "animationTime": 0.7775000000000002,
+          "poseX": 0.982500079141726,
+          "pixelCentroidX": 377.389570186927,
+          "coloredPixels": 8399,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 112,
+          "atMs": 4527,
+          "phase": "playing",
+          "animationTime": 0.7840999999046327,
+          "poseX": 1.0023000797298254,
+          "pixelCentroidX": 379.48438989513824,
+          "coloredPixels": 8392,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 113,
+          "atMs": 4534.5,
+          "phase": "playing",
+          "animationTime": 0.7915999999046327,
+          "poseX": 1.0248000807232356,
+          "pixelCentroidX": 381.6836359321229,
+          "coloredPixels": 8427,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 114,
+          "atMs": 4541.400000095367,
+          "phase": "playing",
+          "animationTime": 0.7985000000000001,
+          "poseX": 1.0455000819232763,
+          "pixelCentroidX": 383.9187648456057,
+          "coloredPixels": 8420,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 115,
+          "atMs": 4548.600000023842,
+          "phase": "playing",
+          "animationTime": 0.8055999999046327,
+          "poseX": 1.0668000825776027,
+          "pixelCentroidX": 386.09717126287137,
+          "coloredPixels": 8449,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 116,
+          "atMs": 4555.100000023842,
+          "phase": "playing",
+          "animationTime": 0.8121999999284746,
+          "poseX": 1.0866000835233298,
+          "pixelCentroidX": 388.0800425632537,
+          "coloredPixels": 8458,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 117,
+          "atMs": 4562,
+          "phase": "playing",
+          "animationTime": 0.8191999999284746,
+          "poseX": 1.107600084450513,
+          "pixelCentroidX": 390.3173871958422,
+          "coloredPixels": 8466,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 118,
+          "atMs": 4568.600000023842,
+          "phase": "playing",
+          "animationTime": 0.8257999999523165,
+          "poseX": 1.12740008539624,
+          "pixelCentroidX": 392.263975520772,
+          "coloredPixels": 8497,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 119,
+          "atMs": 4576.300000071526,
+          "phase": "playing",
+          "animationTime": 0.8332999999523164,
+          "poseX": 1.1499000863896507,
+          "pixelCentroidX": 394.659157919566,
+          "coloredPixels": 8479,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 120,
+          "atMs": 4584,
+          "phase": "playing",
+          "animationTime": 0.8410999999046327,
+          "poseX": 1.1733000872797468,
+          "pixelCentroidX": 397.0235721824792,
+          "coloredPixels": 8527,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 121,
+          "atMs": 4589.400000095367,
+          "phase": "playing",
+          "animationTime": 0.8465999999046326,
+          "poseX": 1.1898000880082482,
+          "pixelCentroidX": 398.73641591362514,
+          "coloredPixels": 8521,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 122,
+          "atMs": 4596.900000095367,
+          "phase": "playing",
+          "animationTime": 0.8542999999523163,
+          "poseX": 1.2129000891712005,
+          "pixelCentroidX": 401.20906535488405,
+          "coloredPixels": 8538,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 123,
+          "atMs": 4604.200000047684,
+          "phase": "playing",
+          "animationTime": 0.8612999999523163,
+          "poseX": 1.233900090098384,
+          "pixelCentroidX": 403.30297006548176,
+          "coloredPixels": 8552,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 124,
+          "atMs": 4610.600000023842,
+          "phase": "playing",
+          "animationTime": 0.8677999999523163,
+          "poseX": 1.2534000909593397,
+          "pixelCentroidX": 405.3811921770699,
+          "coloredPixels": 8539,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 125,
+          "atMs": 4617.700000047684,
+          "phase": "playing",
+          "animationTime": 0.8748999999761581,
+          "poseX": 1.2747000919712943,
+          "pixelCentroidX": 407.43334108887854,
+          "coloredPixels": 8596,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 126,
+          "atMs": 4624.900000095367,
+          "phase": "playing",
+          "animationTime": 0.8818999999761581,
+          "poseX": 1.2957000928984774,
+          "pixelCentroidX": 409.69913672421836,
+          "coloredPixels": 8572,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 127,
+          "atMs": 4631.300000071526,
+          "phase": "playing",
+          "animationTime": 0.8885,
+          "poseX": 1.3155000938442045,
+          "pixelCentroidX": 411.73479827926985,
+          "coloredPixels": 8601,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 128,
+          "atMs": 4638.600000023842,
+          "phase": "playing",
+          "animationTime": 0.8955,
+          "poseX": 1.336500094771388,
+          "pixelCentroidX": 413.85934780085876,
+          "coloredPixels": 8617,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 129,
+          "atMs": 4646.100000023842,
+          "phase": "finished",
+          "animationTime": 0.9,
+          "poseX": 1.350000023841858,
+          "pixelCentroidX": 415.3506040892193,
+          "coloredPixels": 8608,
+          "internalActionsPaused": true
+        },
+        {
+          "render": 130,
+          "atMs": 5382.300000071526,
+          "phase": "finished",
+          "animationTime": 0.9,
+          "poseX": 1.350000023841858,
+          "pixelCentroidX": 415.3506040892193,
+          "coloredPixels": 8608,
+          "internalActionsPaused": true
+        }
+      ]
+    },
+    "errors": []
+  },
+  "assertions": {
+    "productionR3fAdapterAndThreeInstaller": true,
+    "applicationCommandsUseReadyHandleAnimationOnly": true,
+    "manualInitialStaticVisibleBeforeInteraction": true,
+    "manualIdleRendersSettle": true,
+    "manualPlayKeepsDemandFramesAlive": true,
+    "manualPauseSettlesAndFreezesPose": true,
+    "manualSeekRequestsOneRenderAndMovesPixels": true,
+    "manualResumeReacquiresDemandFrames": true,
+    "manualStopRestoresStartPoseAndSettles": true,
+    "boundedNlaUsesPausedThreeActionsWhileDemandFramesContinue": true,
+    "boundedNlaFinishesAndSettles": true,
+    "staleAnimationTransportFailsAfterDisposal": true,
+    "fixtureGeometryAndMaterialDisposedExactlyOnce": true,
+    "noRendersAfterDisposal": true
+  },
+  "limits": [
+    "Experiment-only gate using an application-owned deterministic GLTFLoader result; it does not cover fetch, GLB parse, decoder, worker, or cache ownership.",
+    "Chromium with ANGLE SwiftShader only; no Firefox, WebKit, mobile, XR, WebGPU, or physical-GPU evidence.",
+    "The fixture exercises one ordinary transform clip and one single-strip bounded NLA sequence; multi-clip blending, additive strips, bones, morphs, audio, LOD, controls, and post-processing render ownership remain outside it.",
+    "Renderer.render counts are the public per-Canvas observable. The gate does not inspect or promise R3F private internal.frames state.",
+    "The sequence internal-action assertion uses the production onReady InstalledThreeCompiledScene diagnostic surface; application commands still use only R3FCompiledSceneHandle.animation.",
+    "Local Vite HTTP and production dist modules are exercised, not a packed tarball, CDN/base path, strict CSP, or deployed site."
+  ]
+}

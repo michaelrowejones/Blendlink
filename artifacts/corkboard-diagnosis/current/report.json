@@ -1,0 +1,56 @@
+{
+  "createdAt": "2026-07-21T19:55:02.322Z",
+  "dimensions": {
+    "width": 1600,
+    "height": 900
+  },
+  "renderer": "blendlink",
+  "bakeEvidence": "full",
+  "view": "final",
+  "paths": {
+    "referencePath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\corkboard-diagnosis\\current\\blender-reference.png",
+    "browserPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\corkboard-diagnosis\\current\\browser-high.png",
+    "diffPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\corkboard-diagnosis\\current\\difference-amplified.png",
+    "sideBySidePath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\corkboard-diagnosis\\current\\side-by-side.png",
+    "debug": {
+      "final": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\corkboard-diagnosis\\current\\browser-high.png"
+    }
+  },
+  "metrics": {
+    "meanAbsoluteError": 40.384,
+    "rootMeanSquareError": 51.055,
+    "pixelsOverThresholdPercent": 92.206,
+    "blender": {
+      "meanLuma": 112.523,
+      "lumaStandardDeviation": 45.767,
+      "meanChroma": 41.158,
+      "edgeEnergy": 1.668,
+      "shadowPercent": 8.677,
+      "highlightPercent": 4.984
+    },
+    "browser": {
+      "meanLuma": 140.883,
+      "lumaStandardDeviation": 47.279,
+      "meanChroma": 79.598,
+      "edgeEnergy": 2.051,
+      "shadowPercent": 6.121,
+      "highlightPercent": 6.392
+    }
+  },
+  "runtime": {
+    "renderQuality": "high",
+    "assetQuality": "high",
+    "debugView": null,
+    "renderer": "blendlink",
+    "reference": "blender",
+    "canvasCss": [
+      1600,
+      900
+    ],
+    "canvasBacking": [
+      1600,
+      900
+    ]
+  },
+  "errors": []
+}

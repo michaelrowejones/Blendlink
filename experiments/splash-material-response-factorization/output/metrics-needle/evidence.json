@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-splash-visual-fidelity-differential-prototype",
+  "scope": "Reference-relative, fixture-specific evidence for three reported Blender 4.0 Splash symptoms; not a universal visual-parity score.",
+  "reference": {
+    "path": "artifacts/release-dogfood/blender-4-splash/blender-reference-selected-sky-0001.png",
+    "sha256": "5a0fdd327fed3a718f3d0628a37e7dad6675c9ea6c98beddca799e8dc3ca770d"
+  },
+  "candidate": {
+    "path": "experiments/needle-splash-official-preview/browser-evidence-needle-blender-4-splash-selected-sky-authored-camera-official-preview-networked.png",
+    "sha256": "54e30ecaa0342611122288efbf6ffe9c7440709d6d613c67adf77d37fe0efcbc"
+  },
+  "viewport": {
+    "width": 1200,
+    "height": 600
+  },
+  "masks": {
+    "authoredViewport": {
+      "width": 1200,
+      "height": 600
+    },
+    "pixelCounts": {
+      "shadow": 27488,
+      "sky": 14540,
+      "building": 3618
+    },
+    "buildingReferenceSelection": {
+      "maximumStructuralGradient": 0.00302
+    }
+  },
+  "isolatedNegativeControls": {
+    "scope": "Each synthetic candidate starts from the exact Eevee reference and mutates only its named semantic region.",
+    "cases": {
+      "shadow-only-negative": {
+        "intendedFailure": "lost-shadow-information",
+        "actualFailures": [
+          "lost-shadow-information"
+        ],
+        "passed": true
+      },
+      "sky-only-negative": {
+        "intendedFailure": "noisy-or-incorrect-sky",
+        "actualFailures": [
+          "noisy-or-incorrect-sky"
+        ],
+        "passed": true
+      },
+      "building-only-negative": {
+        "intendedFailure": "missing-building-texture",
+        "actualFailures": [
+          "missing-building-texture"
+        ],
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "result": {
+    "passed": false,
+    "symptoms": {
+      "lost-shadow-information": {
+        "reference": {
+          "broadShadowBandRms": 0.05527,
+          "lumaP10P90Range": 0.204714
+        },
+        "candidate": {
+          "broadShadowBandRms": 0.058934,
+          "lumaP10P90Range": 0.112633
+        },
+        "ratios": {
+          "broadShadowBand": 1.066283,
+          "lumaRange": 0.550198
+        },
+        "thresholds": {
+          "minimumBroadShadowBandRatio": 0.72,
+          "minimumLumaRangeRatio": 0.72
+        },
+        "passed": false
+      },
+      "noisy-or-incorrect-sky": {
+        "reference": {
+          "localRgbNoiseRms": 0.026243,
+          "intrinsicRgbSpreadP90": 0.032478
+        },
+        "candidate": {
+          "localRgbNoiseRms": 0.035993,
+          "medianRgbDistanceFromReference": 0.163613
+        },
+        "ratios": {
+          "localNoise": 1.371534,
+          "medianColorErrorInReferenceSpreads": 5.037634
+        },
+        "thresholds": {
+          "maximumNoiseRatio": 1.25,
+          "maximumMedianColorErrorInReferenceSpreads": 2
+        },
+        "passed": false
+      },
+      "missing-building-texture": {
+        "reference": {
+          "midFrequencyLumaRms": 0.027659,
+          "localColorDetailRms": 0.0393
+        },
+        "candidate": {
+          "midFrequencyLumaRms": 0.024323,
+          "localColorDetailRms": 0.036364
+        },
+        "ratios": {
+          "midFrequencyLuma": 0.879401,
+          "localColorDetail": 0.925291,
+          "referencePatternCorrelation": 0.595708,
+          "patternErrorInReferenceDetails": 0.85254
+        },
+        "thresholds": {
+          "minimumMidFrequencyLumaRatio": 0.7,
+          "minimumLocalColorDetailRatio": 0.7,
+          "minimumReferencePatternCorrelation": 0.65,
+          "maximumPatternErrorInReferenceDetails": 0.7
+        },
+        "passed": false
+      }
+    }
+  },
+  "diagnostics": [
+    "experiments/splash-material-response-factorization/output/metrics-needle/diagnostic-shadow.png",
+    "experiments/splash-material-response-factorization/output/metrics-needle/diagnostic-sky.png",
+    "experiments/splash-material-response-factorization/output/metrics-needle/diagnostic-building.png"
+  ],
+  "passed": false
+}

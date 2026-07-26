@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>TrapX authored frame review</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #111;
+      }
+
+      canvas {
+        display: block;
+        width: 1080px;
+        height: 1080px;
+      }
+
+      video {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <video
+      id="source"
+      muted
+      playsinline
+      preload="auto"
+      src="/output/source-authored-frame00000-0000.mp4"
+    ></video>
+    <canvas id="review" width="1080" height="1080"></canvas>
+    <script type="module">
+      const video = document.querySelector('#source')
+      const canvas = document.querySelector('#review')
+      const context = canvas.getContext('2d', {
+        alpha: false,
+        colorSpace: 'srgb',
+      })
+
+      const loaded = new Promise((resolve, reject) => {
+        video.addEventListener('loadeddata', resolve, { once: true })
+        video.addEventListener(
+          'error',
+          () => reject(new Error(video.error?.message ?? `MediaError ${video.error?.code}`)),
+          { once: true },
+        )
+      })
+
+      await loaded
+      video.currentTime = 0
+      if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+        await new Promise((resolve) =>
+          video.addEventListener('seeked', resolve, { once: true }),
+        )
+      }
+      context.drawImage(video, 0, 0, canvas.width, canvas.height)
+      window.__trapxVideoEvidence = {
+        readyState: video.readyState,
+        duration: video.duration,
+        videoWidth: video.videoWidth,
+        videoHeight: video.videoHeight,
+        canvasWidth: canvas.width,
+        canvasHeight: canvas.height,
+        currentTime: video.currentTime,
+      }
+      window.__trapxVideoReady = true
+    </script>
+  </body>
+</html>

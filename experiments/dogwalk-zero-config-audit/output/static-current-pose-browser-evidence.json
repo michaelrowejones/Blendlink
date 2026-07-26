@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "classification": "prototype static authored-frame/current-pose stock glTF in Three r184; not shipped Blendlink behavior",
+  "browser": "150.0.7871.182",
+  "url": "http://127.0.0.1:5173/?glb=static-current-pose-prototype.glb",
+  "result": {
+    "animations": 0,
+    "glb": "static-current-pose-prototype.glb",
+    "camera": "CAM-Camera",
+    "cameraPosition": [
+      -0.8087886571884155,
+      4.04990816116333,
+      5.206191062927246
+    ],
+    "lights": 2,
+    "meshes": 269,
+    "skinnedMeshes": 28,
+    "textures": 46,
+    "pixels": {
+      "nonBackground": 500000,
+      "chromatic": 467513
+    },
+    "renderer": {
+      "webgl2": true,
+      "vendor": "WebKit",
+      "renderer": "WebKit WebGL"
+    }
+  },
+  "artifacts": {
+    "glbSha256": "ea21050278dd38a47d2ea6b9cae7c76bcea035ef0b8e2e121dff27deb08c7cfb",
+    "screenshotSha256": "ae82e5539c735c3c98fd019c14848eaff81c2d39cf19c2945564de3c2c39d1c3",
+    "sourceSha256": "7f8718cfd89baf59151cc4ba431eeab38b9ff260ffa0054d93293f228a70cc36"
+  },
+  "limitations": [
+    "Uses the exported camera node with its default/rest transform and no animation playback.",
+    "Enables Three AgX and shadows but does not recreate Blender compositor, depth of field, ambient occlusion, or world nodes.",
+    "Uses SwiftShader when system Chrome is available; it is not physical-GPU performance evidence."
+  ]
+}

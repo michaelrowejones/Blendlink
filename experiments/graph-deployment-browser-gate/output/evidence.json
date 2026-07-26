@@ -1,0 +1,1384 @@
+{
+  "capability": {
+    "evidenceState": "Verified local browser gate",
+    "id": "NDL-DEP-002",
+    "implementationState": "Shipped",
+    "relation": "No analogue"
+  },
+  "command": "node experiments/graph-deployment-browser-gate/run.mjs",
+  "graph": {
+    "algorithm": "sha256",
+    "fingerprint": "e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+    "entries": [
+      {
+        "path": "blendlink-basis/LICENSE",
+        "role": "basis-runtime",
+        "bytes": 11357,
+        "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1"
+      },
+      {
+        "path": "blendlink-basis/README.md",
+        "role": "basis-runtime",
+        "bytes": 44,
+        "sha256": "3a2b9976c6cde4827f5a8597889b754eb323eb1a67df0ef1a98d4d30acad1855"
+      },
+      {
+        "path": "blendlink-basis/basis_transcoder.js",
+        "role": "basis-runtime",
+        "bytes": 44,
+        "sha256": "79420ea76d11aac177b5ee49fc5cf5fa43ae09d9b1abb7acff95d134afe567a1"
+      },
+      {
+        "path": "blendlink-basis/basis_transcoder.wasm",
+        "role": "basis-runtime",
+        "bytes": 8,
+        "sha256": "93a44bbb96c751218e4c00d479e4c14358122a389acca16205b1e4d0dc5f9476"
+      },
+      {
+        "path": "scene.glb",
+        "role": "scene",
+        "bytes": 1408,
+        "sha256": "fe10727885c1bc785b30c569b24be934a9c45f4ce46cd7676d6508ddd822daf3"
+      },
+      {
+        "path": "textures/pixel.png",
+        "role": "companion",
+        "bytes": 74,
+        "sha256": "133fc13189b7b51b90dbd8b3164293075d9f716a9d638d83414efdde4a7c6c9d"
+      }
+    ]
+  },
+  "productionPublication": {
+    "immutablePolicies": {
+      "originRoot": {
+        "algorithm": "sha256",
+        "fingerprint": "e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+        "urlPrefix": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/",
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      "vite": {
+        "algorithm": "sha256",
+        "fingerprint": "e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+        "urlPrefix": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/",
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      "cdn": {
+        "algorithm": "sha256",
+        "fingerprint": "e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+        "urlPrefix": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/",
+        "cacheControl": "public, max-age=31536000, immutable"
+      }
+    },
+    "modules": {
+      "assetUrls": "dist/assetUrls.js",
+      "sceneAssetGraph": "dist/sceneAssetGraph.js",
+      "scenePublication": "dist/scenePublication.js"
+    },
+    "reused": false,
+    "runtimeAssetPublication": {
+      "algorithm": "sha256",
+      "bundlePath": "hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+      "scenePath": "scene.glb",
+      "immutable": true
+    },
+    "sceneUrl": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb"
+  },
+  "headerContract": {
+    "immutable": "public, max-age=31536000, immutable",
+    "mutableNamespace": "/models/hero/",
+    "rule": "Only a lower-case, full 64-hex graph directory in the scene namespace receives immutable."
+  },
+  "limitations": [
+    "Second-origin CDN is a local loopback host, not a deployed edge.",
+    "Basis closure is fetched but no KTX2 transcode or decoder worker runs.",
+    "External PNG is decoded by GLTFLoader but not uploaded by a WebGL renderer.",
+    "Vite production output is served by a minimal host adapter; Vite does not own response headers.",
+    "Next uses a production server build, not output export.",
+    "Anonymous exact-origin CORS only; no credentials, signed URLs, or custom request headers.",
+    "Production graph sealing and activation records are exercised from the packed package; this fixture does not execute the full Blender sync pipeline."
+  ],
+  "needleBaseline": {
+    "integration": "mixed-source",
+    "package": "@needle-tools/engine",
+    "version": "5.1.7"
+  },
+  "package": {
+    "archive": "blendlink-0.8.0.tgz",
+    "sha256": "03bb3fe4de7a90d87ae201e52ed9cd9f468397f8d70aa8dec78ecab5ddb52a00",
+    "version": "0.8.0"
+  },
+  "passedAt": "2026-07-24T09:02:23.646Z",
+  "schema": "blendlink-graph-deployment-browser-evidence-v1",
+  "status": "passed",
+  "toolchain": {
+    "chromium": "150.0.7871.129",
+    "next": "16.2.6",
+    "node": "v24.15.0",
+    "npm": "11.12.1",
+    "playwright": "1.60.0",
+    "react": "19.2.4",
+    "three": "0.184.0",
+    "vite": "7.3.6"
+  },
+  "builds": {
+    "blendlink": {
+      "label": "Blendlink package build",
+      "stderrTail": [
+        "npm notice",
+        "npm notice New major version of npm available! 11.12.1 -> 12.0.1",
+        "npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.1",
+        "npm notice To update run: npm install -g npm@12.0.1",
+        "npm notice"
+      ],
+      "stdoutTail": [
+        "> blendlink@0.8.0 prebuild",
+        "> node scripts/clean-dist.mjs",
+        "> blendlink@0.8.0 build",
+        "> tsc -p tsconfig.json && node scripts/copy-assets.mjs",
+        "assets copied"
+      ]
+    },
+    "next": {
+      "label": "packed Next 16.2.6 consumer production build",
+      "stderrTail": [],
+      "stdoutTail": [
+        "  We detected TypeScript in your project and reconfigured your tsconfig.json file for you.",
+        "  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:",
+        "  \t- include was updated to add '.next/dev/types/**/*.ts'",
+        "  Finished TypeScript in 1360ms ...",
+        "  Collecting page data using 4 workers ...",
+        "  Generating static pages using 4 workers (0/3) ...",
+        "✓ Generating static pages using 4 workers (3/3) in 291ms",
+        "  Finalizing page optimization ...",
+        "Route (app)",
+        "┌ ○ /",
+        "└ ○ /_not-found",
+        "○  (Static)  prerendered as static content"
+      ]
+    },
+    "vite": {
+      "label": "packed Vite consumer production build",
+      "stderrTail": [],
+      "stdoutTail": [
+        "\u001b[36mvite v7.3.6 \u001b[32mbuilding client environment for production...\u001b[36m\u001b[39m",
+        "transforming...",
+        "\u001b[32m✓\u001b[39m 11 modules transformed.",
+        "rendering chunks...",
+        "computing gzip size...",
+        "\u001b[2mdist/\u001b[22m\u001b[32mindex.html                \u001b[39m\u001b[1m\u001b[2m  1.32 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m │ gzip:  0.77 kB\u001b[22m",
+        "\u001b[2mdist/\u001b[22m\u001b[36massets/index-CwU89CCd.js  \u001b[39m\u001b[1m\u001b[2m234.60 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m │ gzip: 64.74 kB\u001b[22m",
+        "\u001b[32m✓ built in 479ms\u001b[39m"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "clientEvidence": {
+        "assetBaseUrl": "/portfolio/",
+        "basisResponses": [
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/octet-stream",
+            "status": 200,
+            "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "text/markdown; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "text/javascript; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/wasm",
+            "status": 200,
+            "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm"
+          }
+        ],
+        "declaredUrls": [
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+        ],
+        "fingerprint": "e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+        "host": "vite",
+        "mutableResponses": [
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "application/json; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52867/portfolio/models/hero/current.json"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52867/portfolio/models/hero/stable.txt"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt"
+          }
+        ],
+        "runtimeAssetPublication": {
+          "algorithm": "sha256",
+          "bundlePath": "hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+          "scenePath": "scene.glb",
+          "immutable": true
+        },
+        "resolvedByManager": [
+          {
+            "input": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene",
+            "output": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene"
+          },
+          {
+            "input": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png",
+            "output": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+          }
+        ],
+        "sceneUrl": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb",
+        "sceneChildren": 1,
+        "textureDecoded": true,
+        "transport": "same-origin"
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestedPage": "http://127.0.0.1:52867/portfolio/",
+      "responses": [
+        {
+          "headers": {
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "1408",
+            "content-type": "model/gltf-binary",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "74",
+            "content-type": "image/png",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "11357",
+            "content-type": "application/octet-stream",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "44",
+            "content-type": "text/markdown; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "44",
+            "content-type": "text/javascript; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "8",
+            "content-type": "application/wasm",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "1731",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/current.json"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "28",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/stable.txt"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "22",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt"
+        },
+        {
+          "headers": {
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "22",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52867/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt"
+        }
+      ]
+    },
+    {
+      "clientEvidence": {
+        "assetBaseUrl": "http://127.0.0.1:52868/cdn-root/",
+        "basisResponses": [
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/octet-stream",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "text/markdown; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "text/javascript; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/wasm",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm"
+          }
+        ],
+        "declaredUrls": [
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+        ],
+        "fingerprint": "e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+        "host": "vite",
+        "mutableResponses": [
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "application/json; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/current.json"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/stable.txt"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt"
+          }
+        ],
+        "runtimeAssetPublication": {
+          "algorithm": "sha256",
+          "bundlePath": "hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+          "scenePath": "scene.glb",
+          "immutable": true
+        },
+        "resolvedByManager": [
+          {
+            "input": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene",
+            "output": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene"
+          },
+          {
+            "input": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png",
+            "output": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+          }
+        ],
+        "sceneUrl": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb",
+        "sceneChildren": 1,
+        "textureDecoded": true,
+        "transport": "cdn"
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestedPage": "http://127.0.0.1:52867/portfolio/?cdn=http%3A%2F%2F127.0.0.1%3A52868%2Fcdn-root%2F",
+      "responses": [
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "1408",
+            "content-type": "model/gltf-binary",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "74",
+            "content-type": "image/png",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "11357",
+            "content-type": "application/octet-stream",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "44",
+            "content-type": "text/markdown; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "44",
+            "content-type": "text/javascript; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "8",
+            "content-type": "application/wasm",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "1731",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/current.json"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "28",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/stable.txt"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "22",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52867",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "22",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:21 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt"
+        }
+      ]
+    },
+    {
+      "clientEvidence": {
+        "assetBaseUrl": "/portfolio/",
+        "basisResponses": [
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/octet-stream",
+            "status": 200,
+            "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "text/markdown; charset=UTF-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/javascript; charset=UTF-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/wasm",
+            "status": 200,
+            "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm"
+          }
+        ],
+        "declaredUrls": [
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+        ],
+        "fingerprint": "e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+        "host": "next",
+        "mutableResponses": [
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "application/json; charset=UTF-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52869/portfolio/models/hero/current.json"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=UTF-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52869/portfolio/models/hero/stable.txt"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=UTF-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=UTF-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt"
+          }
+        ],
+        "runtimeAssetPublication": {
+          "algorithm": "sha256",
+          "bundlePath": "hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+          "scenePath": "scene.glb",
+          "immutable": true
+        },
+        "resolvedByManager": [
+          {
+            "input": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene",
+            "output": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene"
+          },
+          {
+            "input": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png",
+            "output": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+          }
+        ],
+        "sceneUrl": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb",
+        "sceneChildren": 1,
+        "textureDecoded": true,
+        "transport": "same-origin"
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestedPage": "http://127.0.0.1:52869/portfolio/",
+      "responses": [
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "model/gltf-binary",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"580-19f935c6eea\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "transfer-encoding": "chunked",
+            "vary": "Accept-Encoding",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "74",
+            "content-type": "image/png",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"4a-19f935c6eeb\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "11357",
+            "content-type": "application/octet-stream",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"2c5d-19f935c6eec\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "44",
+            "content-type": "text/markdown; charset=UTF-8",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"2c-19f935c6eec\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "vary": "Accept-Encoding",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "44",
+            "content-type": "application/javascript; charset=UTF-8",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"2c-19f935c6eeb\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "vary": "Accept-Encoding",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "8",
+            "content-type": "application/wasm",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"8-19f935c6eeb\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "vary": "Accept-Encoding",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"6c3-19f935c6f06\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "transfer-encoding": "chunked",
+            "vary": "Accept-Encoding"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/current.json"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "28",
+            "content-type": "text/plain; charset=UTF-8",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"1c-19f935c6f06\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "vary": "Accept-Encoding"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/stable.txt"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "22",
+            "content-type": "text/plain; charset=UTF-8",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"16-19f935c6f07\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "vary": "Accept-Encoding"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt"
+        },
+        {
+          "headers": {
+            "accept-ranges": "bytes",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "22",
+            "content-type": "text/plain; charset=UTF-8",
+            "date": "Fri, 24 Jul 2026 09:02:22 GMT",
+            "etag": "W/\"16-19f935c6f07\"",
+            "keep-alive": "timeout=5",
+            "last-modified": "Fri, 24 Jul 2026 09:02:16 GMT",
+            "vary": "Accept-Encoding"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52869/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt"
+        }
+      ]
+    },
+    {
+      "clientEvidence": {
+        "assetBaseUrl": "http://127.0.0.1:52868/cdn-root/",
+        "basisResponses": [
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/octet-stream",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "text/markdown; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "text/javascript; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js"
+          },
+          {
+            "cacheControl": "public, max-age=31536000, immutable",
+            "contentType": "application/wasm",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm"
+          }
+        ],
+        "declaredUrls": [
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm",
+          "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+        ],
+        "fingerprint": "e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+        "host": "next",
+        "mutableResponses": [
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "application/json; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/current.json"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/stable.txt"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt"
+          },
+          {
+            "cacheControl": "public, max-age=0",
+            "contentType": "text/plain; charset=utf-8",
+            "status": 200,
+            "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt"
+          }
+        ],
+        "runtimeAssetPublication": {
+          "algorithm": "sha256",
+          "bundlePath": "hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5",
+          "scenePath": "scene.glb",
+          "immutable": true
+        },
+        "resolvedByManager": [
+          {
+            "input": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene",
+            "output": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene"
+          },
+          {
+            "input": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png",
+            "output": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+          }
+        ],
+        "sceneUrl": "/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb",
+        "sceneChildren": 1,
+        "textureDecoded": true,
+        "transport": "cdn"
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestedPage": "http://127.0.0.1:52869/portfolio/?cdn=http%3A%2F%2F127.0.0.1%3A52868%2Fcdn-root%2F",
+      "responses": [
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "1408",
+            "content-type": "model/gltf-binary",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb?v=scene"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "74",
+            "content-type": "image/png",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "11357",
+            "content-type": "application/octet-stream",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "44",
+            "content-type": "text/markdown; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "44",
+            "content-type": "text/javascript; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=31536000, immutable",
+            "connection": "keep-alive",
+            "content-length": "8",
+            "content-type": "application/wasm",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "immutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "1731",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/current.json"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "28",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/stable.txt"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "22",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt"
+        },
+        {
+          "headers": {
+            "access-control-allow-origin": "http://127.0.0.1:52869",
+            "cache-control": "public, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "22",
+            "content-type": "text/plain; charset=utf-8",
+            "date": "Fri, 24 Jul 2026 09:02:23 GMT",
+            "keep-alive": "timeout=5",
+            "vary": "Origin",
+            "x-blendlink-graph-cache": "mutable"
+          },
+          "status": 200,
+          "url": "http://127.0.0.1:52868/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt"
+        }
+      ]
+    }
+  ],
+  "serverRequestLogs": {
+    "cdn": [
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/current.json",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/stable.txt",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/current.json",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/stable.txt",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52869",
+        "path": "/cdn-root/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt",
+        "status": 200
+      }
+    ],
+    "vite": [
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/portfolio/assets/index-CwU89CCd.js",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/scene.glb",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/textures/pixel.png",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/LICENSE",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/README.md",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.js",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=31536000, immutable",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea5/blendlink-basis/basis_transcoder.wasm",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/current.json",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/stable.txt",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85cea/lookalike.txt",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/models/hero/e5d5a9b29e0ce824eda737ab81fa6c2ff4896e58b7b3f54c1741f5fd7b85ceag/lookalike.txt",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": null,
+        "path": "/portfolio/",
+        "status": 200
+      },
+      {
+        "cacheControl": "public, max-age=0",
+        "method": "GET",
+        "origin": "http://127.0.0.1:52867",
+        "path": "/portfolio/assets/index-CwU89CCd.js",
+        "status": 200
+      }
+    ]
+  }
+}

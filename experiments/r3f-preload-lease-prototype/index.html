@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>Blendlink preload lease prototype</title>
+    <style>
+      :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+      body { margin: 0; background: #111827; color: #e5e7eb; }
+      main { max-width: 880px; margin: 0 auto; padding: 36px; }
+      h1 { margin: 0 0 12px; font-size: 28px; }
+      p { color: #9ca3af; }
+      pre {
+        min-height: 420px; padding: 20px; overflow: auto;
+        background: #030712; border: 1px solid #374151; border-radius: 12px;
+      }
+      .ready { color: #86efac; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Blendlink renderer-bound attempt lease</h1>
+      <p>React 19 Strict Mode and abandoned-Suspense differential.</p>
+      <div id="root"></div>
+      <pre id="evidence">Running…</pre>
+    </main>
+    <script type="module" src="/main.jsx"></script>
+  </body>
+</html>

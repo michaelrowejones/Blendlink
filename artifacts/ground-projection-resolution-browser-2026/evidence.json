@@ -1,0 +1,394 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-23T15:44:16.196Z",
+  "url": "http://127.0.0.1:5173/",
+  "browser": "150.0.7871.129",
+  "execution": {
+    "comparison": "Three 0.184.0 GroundedSkybox at explicit resolutions 64 and 128",
+    "renderer": "System Chromium with ANGLE SwiftShader flags",
+    "sameRendererContext": true,
+    "sameTextureInstance": true,
+    "sameCameraPerPair": true,
+    "gpuTimerQueriesUsed": false,
+    "gpuSpeedClaim": false
+  },
+  "versions": {
+    "three": "0.184.0",
+    "vite": "7.3.6"
+  },
+  "source": {
+    "currentGroundedSkybox": {
+      "path": "node_modules/three/examples/jsm/objects/GroundedSkybox.js",
+      "sha256": "14ad38d785bb998bba0dc9e74b5d8f93ea45753b24341be539755d8e567ee456"
+    },
+    "pinnedNeedleGroundedSkybox": {
+      "path": "experiments/needle-spike/node_modules/@needle-tools/engine/node_modules/three/examples/jsm/objects/GroundedSkybox.js",
+      "sha256": "2c15df3f78e136fe37ba3adcdba38ee0bf867cffc54b545f688d85778e8774c2"
+    },
+    "forestExr": {
+      "path": "experiments/needle-spike/assets/forest.exr",
+      "bytes": 552641,
+      "sha256": "bdf2298244affa0f85509380fd130ac6d4dfaa3c856df065998f7f4c1a93dc0d"
+    },
+    "fixtureMain": {
+      "path": "experiments/ground-projection-resolution-browser/main.ts",
+      "sha256": "511bee916c36b85bda51653a857e7e4d16c4125f5c06036fe9a86f87256d295f"
+    },
+    "fixtureRunner": {
+      "path": "experiments/ground-projection-resolution-browser/run.mjs",
+      "sha256": "50172579e89f0b1b1a85c905d5c81fae4c38852d120bc01788c754180d6f1d7c"
+    }
+  },
+  "safetyPolicy": {
+    "thresholds": {
+      "maximumRgbMae": 1,
+      "maximumRgbRmse": 6,
+      "maximumChangedPixelsOver8Fraction": 0.03
+    },
+    "observedWorstCase": {
+      "rgbMae": 2.226423469387755,
+      "rgbRmse": 6.458200898356865,
+      "changedPixelsOver8Fraction": 0.0761530612244898
+    },
+    "result": "failed",
+    "recommendation": "retain-resolution-128",
+    "interpretation": "Resolution 64 exceeded the declared photographic pixel-error budget, so this fixture does not support changing Blendlink to Needle resolution 64."
+  },
+  "settings": {
+    "viewport": [
+      560,
+      350
+    ],
+    "deviceScaleFactor": 1,
+    "captureHeight": 1.6,
+    "radius": 50,
+    "differenceAmplification": 12,
+    "toneMapping": "ACESFilmicToneMapping",
+    "toneMappingExposure": 1,
+    "outputColorSpace": "srgb",
+    "textureColorSpace": "srgb-linear",
+    "textureMapping": "EquirectangularReflectionMapping",
+    "textureDimensions": [
+      1024,
+      512
+    ]
+  },
+  "renderer": {
+    "webglVersion": 2,
+    "vendor": "Google Inc. (Google)",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "geometry": {
+    "resolution64Triangles": 16128,
+    "resolution128Triangles": 65024,
+    "triangleReduction": 48896,
+    "triangleReductionFraction": 0.7519685039370079
+  },
+  "views": {
+    "eye-level-horizon": {
+      "camera": {
+        "id": "eye-level-horizon",
+        "label": "Eye-level horizon",
+        "position": [
+          0,
+          1.6,
+          0.5
+        ],
+        "target": [
+          0,
+          1.6,
+          -10
+        ],
+        "fov": 58
+      },
+      "resolution64": {
+        "summary": {
+          "mean": [
+            115.86514795918367,
+            114.29975,
+            83.53407653061224,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 195999
+        },
+        "geometryTriangles": 16128
+      },
+      "resolution128": {
+        "summary": {
+          "mean": [
+            115.86933673469387,
+            114.31444387755101,
+            83.50036224489796,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 195999
+        },
+        "geometryTriangles": 65024
+      },
+      "differential": {
+        "rgbMae": 1.9468044217687075,
+        "rgbRmse": 5.155664443147957,
+        "rgbPsnr": 33.88511073851007,
+        "maxRgbError": 94,
+        "changedPixels": 121689,
+        "changedPixelsOver1": 64193,
+        "changedPixelsOver2": 46214,
+        "changedPixelsOver4": 28970,
+        "changedPixelsOver8": 14926,
+        "changedPixelsOver16": 5544,
+        "pixelCount": 196000
+      }
+    },
+    "low-forward": {
+      "camera": {
+        "id": "low-forward",
+        "label": "Low forward view",
+        "position": [
+          0,
+          0.25,
+          2.5
+        ],
+        "target": [
+          0,
+          0.12,
+          -8
+        ],
+        "fov": 58
+      },
+      "resolution64": {
+        "summary": {
+          "mean": [
+            108.45174489795919,
+            106.12792346938775,
+            81.15604591836734,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 195997
+        },
+        "geometryTriangles": 16128
+      },
+      "resolution128": {
+        "summary": {
+          "mean": [
+            108.5173112244898,
+            106.17429591836735,
+            81.12423469387755,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 195999
+        },
+        "geometryTriangles": 65024
+      },
+      "differential": {
+        "rgbMae": 1.2803486394557824,
+        "rgbRmse": 4.166119215736377,
+        "rgbPsnr": 35.736169741496525,
+        "maxRgbError": 108,
+        "changedPixels": 119897,
+        "changedPixelsOver1": 46784,
+        "changedPixelsOver2": 27450,
+        "changedPixelsOver4": 14124,
+        "changedPixelsOver8": 6746,
+        "changedPixelsOver16": 3051,
+        "pixelCount": 196000
+      }
+    },
+    "floor-grazing": {
+      "camera": {
+        "id": "floor-grazing",
+        "label": "Floor-grazing diagonal",
+        "position": [
+          5,
+          0.12,
+          4
+        ],
+        "target": [
+          -5,
+          0.05,
+          -8
+        ],
+        "fov": 62
+      },
+      "resolution64": {
+        "summary": {
+          "mean": [
+            90.92629591836734,
+            95.17957653061225,
+            75.3441581632653,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 195999
+        },
+        "geometryTriangles": 16128
+      },
+      "resolution128": {
+        "summary": {
+          "mean": [
+            91.08389795918367,
+            95.34957142857142,
+            75.57059693877551,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 196000
+        },
+        "geometryTriangles": 65024
+      },
+      "differential": {
+        "rgbMae": 2.226423469387755,
+        "rgbRmse": 6.458200898356865,
+        "rgbPsnr": 31.928572594713273,
+        "maxRgbError": 174,
+        "changedPixels": 138082,
+        "changedPixelsOver1": 81835,
+        "changedPixelsOver2": 56488,
+        "changedPixelsOver4": 23591,
+        "changedPixelsOver8": 11373,
+        "changedPixelsOver16": 4585,
+        "pixelCount": 196000
+      }
+    },
+    "floor-downward": {
+      "camera": {
+        "id": "floor-downward",
+        "label": "Near-floor downward view",
+        "position": [
+          0,
+          0.35,
+          3
+        ],
+        "target": [
+          0,
+          0,
+          -2
+        ],
+        "fov": 68
+      },
+      "resolution64": {
+        "summary": {
+          "mean": [
+            109.63735714285714,
+            106.71377040816327,
+            81.77460714285715,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 196000
+        },
+        "geometryTriangles": 16128
+      },
+      "resolution128": {
+        "summary": {
+          "mean": [
+            109.7066275510204,
+            106.77747959183674,
+            81.7601581632653,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 196000
+        },
+        "geometryTriangles": 65024
+      },
+      "differential": {
+        "rgbMae": 1.5366598639455782,
+        "rgbRmse": 4.5152651137689634,
+        "rgbPsnr": 35.03713850874853,
+        "maxRgbError": 126,
+        "changedPixels": 127040,
+        "changedPixelsOver1": 57834,
+        "changedPixelsOver2": 36586,
+        "changedPixelsOver4": 18966,
+        "changedPixelsOver8": 8334,
+        "changedPixelsOver16": 3124,
+        "pixelCount": 196000
+      }
+    },
+    "offset-horizon": {
+      "camera": {
+        "id": "offset-horizon",
+        "label": "Offset low horizon",
+        "position": [
+          8,
+          1,
+          6
+        ],
+        "target": [
+          -8,
+          0.8,
+          -10
+        ],
+        "fov": 64
+      },
+      "resolution64": {
+        "summary": {
+          "mean": [
+            100.36594387755102,
+            103.42908673469388,
+            80.31170918367347,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 195999
+        },
+        "geometryTriangles": 16128
+      },
+      "resolution128": {
+        "summary": {
+          "mean": [
+            100.36942346938775,
+            103.4398112244898,
+            80.26376020408163,
+            255
+          ],
+          "opaquePixels": 196000,
+          "nonBlackPixels": 195998
+        },
+        "geometryTriangles": 65024
+      },
+      "differential": {
+        "rgbMae": 2.0384625850340137,
+        "rgbRmse": 5.94080264395492,
+        "rgbPsnr": 32.653901105380356,
+        "maxRgbError": 142,
+        "changedPixels": 130751,
+        "changedPixelsOver1": 66045,
+        "changedPixelsOver2": 44563,
+        "changedPixelsOver4": 24666,
+        "changedPixelsOver8": 12048,
+        "changedPixelsOver16": 5422,
+        "pixelCount": 196000
+      }
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "disposed": {
+    "sky64Parented": false,
+    "sky128Parented": false
+  },
+  "assertions": {
+    "photographicExrFetchedAndRendered": true,
+    "fiveNearFloorAndHorizonViewsRendered": true,
+    "exactGeometryCountsObserved": true,
+    "resolution64ExceededDeclaredPixelErrorBudget": true,
+    "retainResolution128DecisionObserved": true,
+    "sameRendererTextureAndCameraPerPair": true,
+    "disposalObserved": true
+  },
+  "limits": [
+    "Chrome / ANGLE SwiftShader only. No physical-GPU, mobile, Firefox, WebKit, WebGPU, XR, or context-loss evidence.",
+    "No GPU timer queries were collected; triangle reduction is proven, but no GPU-time, frame-rate, power, memory-bandwidth, or battery-life improvement is claimed.",
+    "The differential covers one 1024x512 photographic forest EXR, one capture height, one radius, five near-floor/horizon cameras, and a 560x350 output. It is not universal image-quality proof.",
+    "Pixels were compared after ACES filmic tone mapping into an 8-bit sRGB render target. HDR-linear errors below or above that display transform are not measured.",
+    "Resolution 128 is the reference because it is the current Three 0.184.0 default and current Blendlink behavior; this does not establish it as ground truth for all projections.",
+    "The experiment isolates GroundedSkybox tessellation. It does not execute the Blendlink installer, Needle component, auto-fit, horizon blur, rotation, lighting, camera-far safety, or application post-processing.",
+    "The safety thresholds are an explicit regression budget (RGB MAE <= 1, RGB RMSE <= 6, and <= 3% of pixels with any RGB channel error > 8), not a psychophysical just-noticeable-difference study."
+  ]
+}

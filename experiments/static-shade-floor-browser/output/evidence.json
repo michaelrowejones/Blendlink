@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-25T05:49:24.924Z",
+  "glb": {
+    "path": "experiments/static-shade-floor-browser/output/static-shade-floor.glb",
+    "sha256": "6a7048154b3a2914451f93d6322c1c809f7523c8f6925a837bab31491fb755e3",
+    "bytes": 9704,
+    "sharedTextureIndex": 1,
+    "baseColorFactor": [
+      0.699999988079071,
+      0.699999988079071,
+      0.699999988079071,
+      1
+    ],
+    "emissiveFactor": [
+      0.35600000619888306,
+      0.4399999976158142,
+      0.593999981880188
+    ]
+  },
+  "browser": {
+    "ready": true,
+    "glbSha256": "6a7048154b3a2914451f93d6322c1c809f7523c8f6925a837bab31491fb755e3",
+    "glbBytes": 9704,
+    "material": {
+      "type": "MeshStandardMaterial",
+      "isMeshStandardMaterial": true,
+      "sharedMapIdentity": true,
+      "mapSize": [
+        256,
+        256
+      ],
+      "baseColorFactor": [
+        0.699999988079071,
+        0.699999988079071,
+        0.699999988079071
+      ],
+      "emissiveFactor": [
+        0.35600000619888306,
+        0.4399999976158142,
+        0.593999981880188
+      ],
+      "metallicFactor": 0,
+      "roughnessFactor": 0.5
+    },
+    "textureSharing": {
+      "materials": 1,
+      "alreadyShared": 0,
+      "normalized": 1
+    },
+    "lightOff": {
+      "count": 121032,
+      "meanLuma": 79.49758652920784
+    },
+    "lightOn": {
+      "count": 121032,
+      "meanLuma": 117.109785359322
+    },
+    "directResponse": {
+      "changed": 121032,
+      "meanAbsoluteRgb": 11.61932861328125
+    },
+    "renderer": {
+      "threeRevision": "184",
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "renderer": "WebKit WebGL",
+      "canvas": [
+        640,
+        640
+      ]
+    }
+  },
+  "screenshots": {
+    "lightOff": "output/light-off-static-floor.png",
+    "lightOn": "output/light-on-static-floor-plus-direct.png"
+  },
+  "assertions": {
+    "exactFetchedGlbBytes": true,
+    "finalJsonSharedTextureIndex": true,
+    "loadsAsMeshStandardMaterial": true,
+    "sharedThreeTextureIdentity": true,
+    "lightOffRetainsStaticEmissiveFloor": true,
+    "lightOnAddsDirectPbrResponse": true
+  },
+  "limit": "This proves the generated stock carrier and its truthful exact/approximate split. It does not claim that the broader Blender 4 Splash DPM.002 response matches the recognizer."
+}

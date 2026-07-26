@@ -1,0 +1,2306 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-25T21:29:15.971Z",
+  "source": {
+    "repository": "https://github.com/KhronosGroup/glTF-Sample-Assets",
+    "revision": "2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf",
+    "rawBaseUrl": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/",
+    "modelsIndexUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/Models.md"
+  },
+  "runtime": {
+    "threeVersion": "0.184.0",
+    "gltfLoaderPath": "node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+    "gltfLoaderBytes": 114959,
+    "gltfLoaderSha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2",
+    "blendlinkCompatibilityPath": "packages/blendlink/dist/gltfRuntimeCompatibility.js",
+    "blendlinkCompatibilitySha256": "d4a5374b1fc8f06244205bc2b364293bfc8611ddb783c2dd16bbedaddf78aee4",
+    "blendlinkCompatibilityProfile": "Blendlink Three r184 compiled runtime"
+  },
+  "acquisition": {
+    "mode": "offline-verify-only",
+    "assetCount": 20,
+    "fileCount": 26,
+    "totalBytes": 6703746
+  },
+  "structural": [
+    {
+      "id": "simple-skin",
+      "model": "SimpleSkin",
+      "outcome": "load",
+      "role": "core skin, joints, weights, and bone animation",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Marco Hutter",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/SimpleSkin/README.md"
+      },
+      "entry": "Models/SimpleSkin/glTF-Embedded/SimpleSkin.gltf",
+      "entrySha256": "7d0c3f48d0510d101269cb4fdd3ee035eaada0e04809a0899e0b4cfe8c38e68f",
+      "files": [
+        {
+          "path": "Models/SimpleSkin/glTF-Embedded/SimpleSkin.gltf",
+          "bytes": 3566,
+          "sha256": "7d0c3f48d0510d101269cb4fdd3ee035eaada0e04809a0899e0b4cfe8c38e68f"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": null,
+        "sceneCount": 1,
+        "nodeCount": 3,
+        "meshCount": 1,
+        "materialCount": 0,
+        "skinCount": 1,
+        "animationCount": 1,
+        "animationPaths": [
+          "rotation"
+        ],
+        "interpolations": [
+          "LINEAR"
+        ],
+        "primitiveAttributes": [
+          "POSITION",
+          "JOINTS_0",
+          "WEIGHTS_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "simple-morph",
+      "model": "SimpleMorph",
+      "outcome": "load",
+      "role": "core morph targets and animated weights",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Marco Hutter",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/SimpleMorph/README.md"
+      },
+      "entry": "Models/SimpleMorph/glTF-Embedded/SimpleMorph.gltf",
+      "entrySha256": "0ff029b843d95d3f162a67c84e2d04c7fc76218e53a0cc8c85ca2323d5f82758",
+      "files": [
+        {
+          "path": "Models/SimpleMorph/glTF-Embedded/SimpleMorph.gltf",
+          "bytes": 3000,
+          "sha256": "0ff029b843d95d3f162a67c84e2d04c7fc76218e53a0cc8c85ca2323d5f82758"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": null,
+        "sceneCount": 1,
+        "nodeCount": 1,
+        "meshCount": 1,
+        "materialCount": 0,
+        "skinCount": 0,
+        "animationCount": 1,
+        "animationPaths": [
+          "weights"
+        ],
+        "interpolations": [
+          "LINEAR"
+        ],
+        "primitiveAttributes": [
+          "POSITION"
+        ],
+        "maxMorphTargets": 2,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "interpolation",
+      "model": "InterpolationTest",
+      "outcome": "load",
+      "role": "core STEP, LINEAR, and CUBICSPLINE animation interpolation",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Khronos",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/InterpolationTest/README.md"
+      },
+      "entry": "Models/InterpolationTest/glTF-Binary/InterpolationTest.glb",
+      "entrySha256": "a86eb331b4a083715e75fe19a1f747eac5692d5b9ff120f1eaa457c23ba72bca",
+      "files": [
+        {
+          "path": "Models/InterpolationTest/glTF-Binary/InterpolationTest.glb",
+          "bytes": 7952,
+          "sha256": "a86eb331b4a083715e75fe19a1f747eac5692d5b9ff120f1eaa457c23ba72bca"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "glTF-Transform v3.4.5",
+        "sceneCount": 1,
+        "nodeCount": 10,
+        "meshCount": 2,
+        "materialCount": 2,
+        "skinCount": 0,
+        "animationCount": 9,
+        "animationPaths": [
+          "scale",
+          "rotation",
+          "translation"
+        ],
+        "interpolations": [
+          "STEP",
+          "LINEAR",
+          "CUBICSPLINE"
+        ],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "negative-scale",
+      "model": "NegativeScaleTest",
+      "outcome": "load",
+      "role": "negative node scale and mirrored transform transport",
+      "license": {
+        "spdx": "CC-BY-4.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/NegativeScaleTest/README.md"
+      },
+      "entry": "Models/NegativeScaleTest/glTF-Binary/NegativeScaleTest.glb",
+      "entrySha256": "ea8c41fd0630f03adcf7a5c06bf86d7b850fa510b6f07cc51eb1fccc205a50f2",
+      "files": [
+        {
+          "path": "Models/NegativeScaleTest/glTF-Binary/NegativeScaleTest.glb",
+          "bytes": 62568,
+          "sha256": "ea8c41fd0630f03adcf7a5c06bf86d7b850fa510b6f07cc51eb1fccc205a50f2"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Khronos glTF Blender I/O v3.3.32",
+        "sceneCount": 1,
+        "nodeCount": 14,
+        "meshCount": 8,
+        "materialCount": 6,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "POSITION",
+          "NORMAL",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 6,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "normal-tangent-mirror",
+      "model": "NormalTangentMirrorTest",
+      "outcome": "load",
+      "role": "supplied tangent vectors, normal mapping, and mirrored UV orientation",
+      "license": {
+        "spdx": "CC-BY-4.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/NormalTangentMirrorTest/README.md"
+      },
+      "entry": "Models/NormalTangentMirrorTest/glTF-Binary/NormalTangentMirrorTest.glb",
+      "entrySha256": "31ce5f3c873fc55531a17ccacf001e3d1d482a508695aa826fa79cc196e0ce78",
+      "files": [
+        {
+          "path": "Models/NormalTangentMirrorTest/glTF-Binary/NormalTangentMirrorTest.glb",
+          "bytes": 1567084,
+          "sha256": "31ce5f3c873fc55531a17ccacf001e3d1d482a508695aa826fa79cc196e0ce78"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Khronos Blender glTF 2.0 exporter",
+        "sceneCount": 1,
+        "nodeCount": 1,
+        "meshCount": 1,
+        "materialCount": 1,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TANGENT",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "texture-coordinate",
+      "model": "TextureCoordinateTest",
+      "outcome": "load",
+      "role": "core UV orientation and texture-coordinate transport",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/TextureCoordinateTest/README.md"
+      },
+      "entry": "Models/TextureCoordinateTest/glTF-Binary/TextureCoordinateTest.glb",
+      "entrySha256": "fe75a63a0423c9a682bf46c3045b6328ae9c55abefc9a50adf3ec1d6dc6ea3b9",
+      "files": [
+        {
+          "path": "Models/TextureCoordinateTest/glTF-Binary/TextureCoordinateTest.glb",
+          "bytes": 14232,
+          "sha256": "fe75a63a0423c9a682bf46c3045b6328ae9c55abefc9a50adf3ec1d6dc6ea3b9"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Khronos Blender glTF 2.0 exporter, plus hand-edits",
+        "sceneCount": 1,
+        "nodeCount": 5,
+        "meshCount": 5,
+        "materialCount": 5,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "texture-transform",
+      "model": "TextureTransformTest",
+      "outcome": "load",
+      "role": "multi-file closure plus KHR_texture_transform",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Microsoft",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/TextureTransformTest/README.md"
+      },
+      "entry": "Models/TextureTransformTest/glTF/TextureTransformTest.gltf",
+      "entrySha256": "c22c8c6c96c0ea4bcbb9b47ea245a093c5ef59acc5fd425effa4c00da4cdf164",
+      "files": [
+        {
+          "path": "Models/TextureTransformTest/glTF/TextureTransformTest.gltf",
+          "bytes": 9179,
+          "sha256": "c22c8c6c96c0ea4bcbb9b47ea245a093c5ef59acc5fd425effa4c00da4cdf164"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/TextureTransformTest.bin",
+          "bytes": 136,
+          "sha256": "d0cdd23f2fa0996a0db99d4932fb9912a51a34e27c8bf832d072dc856ee9a7af"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/Arrow.png",
+          "bytes": 867,
+          "sha256": "5df5b251fed0ac306cf859a30b59a4953d152483a4bed2b84e5bba1c667a1e64"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/Correct.png",
+          "bytes": 2457,
+          "sha256": "3a14b12635ebbcee3ea427fbdb4d20da73e4740ec7a51683d700a2d6b4b7861a"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/Error.png",
+          "bytes": 2273,
+          "sha256": "8d1032ef535a5c379bf78f9f565d3180ee3fc2d1cfef6892dee6e567728b619c"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/NotSupported.png",
+          "bytes": 3291,
+          "sha256": "1fbdeca7e5c105d677a39578e4bab82b89c8aa9f406ee681ede05635ea0f8c74"
+        },
+        {
+          "path": "Models/TextureTransformTest/glTF/UV.png",
+          "bytes": 12345,
+          "sha256": "ac37ff52fe06a4c8c35ad4e1e7e8da039dfa8afc9b629d40a44ca8b8cfe9d03d"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": null,
+        "sceneCount": 1,
+        "nodeCount": 12,
+        "meshCount": 9,
+        "materialCount": 9,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_texture_transform"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-anisotropy",
+      "model": "CompareAnisotropy",
+      "outcome": "load",
+      "role": "KHR_materials_anisotropy",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareAnisotropy/README.md"
+      },
+      "entry": "Models/CompareAnisotropy/glTF-Binary/CompareAnisotropy.glb",
+      "entrySha256": "5b4d9c7e99f85054983697112bab468c344b8984feb7299702ea6c93ddab292e",
+      "files": [
+        {
+          "path": "Models/CompareAnisotropy/glTF-Binary/CompareAnisotropy.glb",
+          "bytes": 1085084,
+          "sha256": "5b4d9c7e99f85054983697112bab468c344b8984feb7299702ea6c93ddab292e"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 6,
+        "meshCount": 4,
+        "materialCount": 4,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_texture_transform",
+          "KHR_materials_anisotropy"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-clearcoat",
+      "model": "ClearCoatTest",
+      "outcome": "load",
+      "role": "KHR_materials_clearcoat",
+      "license": {
+        "spdx": "CC-BY-4.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/ClearCoatTest/README.md"
+      },
+      "entry": "Models/ClearCoatTest/glTF-Binary/ClearCoatTest.glb",
+      "entrySha256": "c3a1cbe318cd043b937130af4eb83ec2ea0b03613387b1b7d769dfab4ac15948",
+      "files": [
+        {
+          "path": "Models/ClearCoatTest/glTF-Binary/ClearCoatTest.glb",
+          "bytes": 258048,
+          "sha256": "c3a1cbe318cd043b937130af4eb83ec2ea0b03613387b1b7d769dfab4ac15948"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "glTF-Transform v4.0.4",
+        "sceneCount": 1,
+        "nodeCount": 33,
+        "meshCount": 27,
+        "materialCount": 19,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "POSITION",
+          "NORMAL",
+          "TEXCOORD_0",
+          "TANGENT"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-dispersion",
+      "model": "CompareDispersion",
+      "outcome": "load",
+      "role": "KHR_materials_dispersion with its transmission/volume dependencies",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareDispersion/README.md"
+      },
+      "entry": "Models/CompareDispersion/glTF-Binary/CompareDispersion.glb",
+      "entrySha256": "1c3eff819615d7e6d06e605f728907006eb6c36ef2ead53cc328e65d38a215c4",
+      "files": [
+        {
+          "path": "Models/CompareDispersion/glTF-Binary/CompareDispersion.glb",
+          "bytes": 60432,
+          "sha256": "1c3eff819615d7e6d06e605f728907006eb6c36ef2ead53cc328e65d38a215c4"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 3,
+        "meshCount": 3,
+        "materialCount": 3,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_volume",
+          "KHR_materials_ior",
+          "KHR_materials_dispersion"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-emissive-strength",
+      "model": "CompareEmissiveStrength",
+      "outcome": "load",
+      "role": "KHR_materials_emissive_strength",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareEmissiveStrength/README.md"
+      },
+      "entry": "Models/CompareEmissiveStrength/glTF-Binary/CompareEmissiveStrength.glb",
+      "entrySha256": "e40d8e1d98345ae16211814bab097307c8710f1ae4f9399fe14e01049f3e7bd8",
+      "files": [
+        {
+          "path": "Models/CompareEmissiveStrength/glTF-Binary/CompareEmissiveStrength.glb",
+          "bytes": 111796,
+          "sha256": "e40d8e1d98345ae16211814bab097307c8710f1ae4f9399fe14e01049f3e7bd8"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 2,
+        "meshCount": 2,
+        "materialCount": 2,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_emissive_strength"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-ior",
+      "model": "CompareIor",
+      "outcome": "load",
+      "role": "KHR_materials_ior",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareIor/README.md"
+      },
+      "entry": "Models/CompareIor/glTF-Binary/CompareIor.glb",
+      "entrySha256": "3588b4b522d2a756809b337353c017a412b9e38793b60355fdc6eb162b360019",
+      "files": [
+        {
+          "path": "Models/CompareIor/glTF-Binary/CompareIor.glb",
+          "bytes": 213104,
+          "sha256": "3588b4b522d2a756809b337353c017a412b9e38793b60355fdc6eb162b360019"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 3,
+        "meshCount": 3,
+        "materialCount": 3,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_volume",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-iridescence",
+      "model": "CompareIridescence",
+      "outcome": "load",
+      "role": "KHR_materials_iridescence",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareIridescence/README.md"
+      },
+      "entry": "Models/CompareIridescence/glTF-Binary/CompareIridescence.glb",
+      "entrySha256": "abda6e8bcb13ad04534c90bc4ce9b21e80f2d8b74ac4d911800269f0009ff073",
+      "files": [
+        {
+          "path": "Models/CompareIridescence/glTF-Binary/CompareIridescence.glb",
+          "bytes": 214756,
+          "sha256": "abda6e8bcb13ad04534c90bc4ce9b21e80f2d8b74ac4d911800269f0009ff073"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 2,
+        "meshCount": 2,
+        "materialCount": 2,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_iridescence"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-sheen",
+      "model": "CompareSheen",
+      "outcome": "load",
+      "role": "KHR_materials_sheen",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareSheen/README.md"
+      },
+      "entry": "Models/CompareSheen/glTF-Binary/CompareSheen.glb",
+      "entrySha256": "70b6ab5ba8006aa71079b567783a81cfe778a11cca8abc44c45e5e0b1f4252cc",
+      "files": [
+        {
+          "path": "Models/CompareSheen/glTF-Binary/CompareSheen.glb",
+          "bytes": 883968,
+          "sha256": "70b6ab5ba8006aa71079b567783a81cfe778a11cca8abc44c45e5e0b1f4252cc"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 2,
+        "meshCount": 2,
+        "materialCount": 2,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_sheen"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-specular",
+      "model": "CompareSpecular",
+      "outcome": "load",
+      "role": "KHR_materials_specular",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareSpecular/README.md"
+      },
+      "entry": "Models/CompareSpecular/glTF-Binary/CompareSpecular.glb",
+      "entrySha256": "57ea169e0b9b4a4ea1cb27980226974d0da25897445c9f29c3c817698dd923d8",
+      "files": [
+        {
+          "path": "Models/CompareSpecular/glTF-Binary/CompareSpecular.glb",
+          "bytes": 1408364,
+          "sha256": "57ea169e0b9b4a4ea1cb27980226974d0da25897445c9f29c3c817698dd923d8"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 2,
+        "meshCount": 2,
+        "materialCount": 2,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-transmission",
+      "model": "CompareTransmission",
+      "outcome": "load",
+      "role": "KHR_materials_transmission",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareTransmission/README.md"
+      },
+      "entry": "Models/CompareTransmission/glTF-Binary/CompareTransmission.glb",
+      "entrySha256": "012a3ace61050f4aef77b416c56b3f8f313e1fa68c9040ce3d5037f67eea484f",
+      "files": [
+        {
+          "path": "Models/CompareTransmission/glTF-Binary/CompareTransmission.glb",
+          "bytes": 357024,
+          "sha256": "012a3ace61050f4aef77b416c56b3f8f313e1fa68c9040ce3d5037f67eea484f"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 7,
+        "meshCount": 5,
+        "materialCount": 4,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_transmission"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-volume",
+      "model": "CompareVolume",
+      "outcome": "load",
+      "role": "KHR_materials_volume with transmission",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Eric Chadwick and DGG; glTF logo is non-copyrightable",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CompareVolume/README.md"
+      },
+      "entry": "Models/CompareVolume/glTF-Binary/CompareVolume.glb",
+      "entrySha256": "cb88f5dd70c1c2700e2a28caa5b612f4b6e8c34183d6261c681727d8bafdf7d2",
+      "files": [
+        {
+          "path": "Models/CompareVolume/glTF-Binary/CompareVolume.glb",
+          "bytes": 399760,
+          "sha256": "cb88f5dd70c1c2700e2a28caa5b612f4b6e8c34183d6261c681727d8bafdf7d2"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Created by RapidCompact v6.8.1 | www.rapidcompact.com",
+        "sceneCount": 1,
+        "nodeCount": 7,
+        "meshCount": 5,
+        "materialCount": 4,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION",
+          "TEXCOORD_0"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_volume"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "material-unlit",
+      "model": "UnlitTest",
+      "outcome": "load",
+      "role": "required KHR_materials_unlit",
+      "license": {
+        "spdx": "CC-BY-4.0",
+        "attribution": "Analytical Graphics, Inc. / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/UnlitTest/README.md"
+      },
+      "entry": "Models/UnlitTest/glTF-Binary/UnlitTest.glb",
+      "entrySha256": "e07b68c6fd9fbf73d372c610a681b89d6b013bdd1a506e46a411df82210a2481",
+      "files": [
+        {
+          "path": "Models/UnlitTest/glTF-Binary/UnlitTest.glb",
+          "bytes": 3992,
+          "sha256": "e07b68c6fd9fbf73d372c610a681b89d6b013bdd1a506e46a411df82210a2481"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Khronos Blender glTF 2.0 I/O, with hand-edits",
+        "sceneCount": 1,
+        "nodeCount": 2,
+        "meshCount": 2,
+        "materialCount": 2,
+        "skinCount": 0,
+        "animationCount": 0,
+        "animationPaths": [],
+        "interpolations": [],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 0,
+        "extensionsUsed": [
+          "KHR_materials_unlit"
+        ],
+        "extensionsRequired": [
+          "KHR_materials_unlit"
+        ],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 0,
+          "compatible": true
+        }
+      }
+    },
+    {
+      "id": "required-node-visibility",
+      "model": "CubeVisibility",
+      "outcome": "reject-before-load",
+      "role": "required unsupported KHR_node_visibility plus a KHR_animation_pointer channel",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Khronos Group / Aaron Franke",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/CubeVisibility/README.md"
+      },
+      "entry": "Models/CubeVisibility/glTF-Binary/CubeVisibility.glb",
+      "entrySha256": "a4a2863c99bf6f2f008558c995ad176979f920bd235190970fb02e1142faac41",
+      "files": [
+        {
+          "path": "Models/CubeVisibility/glTF-Binary/CubeVisibility.glb",
+          "bytes": 3284,
+          "sha256": "a4a2863c99bf6f2f008558c995ad176979f920bd235190970fb02e1142faac41"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Godot Engine v4.6.dev.custom_build",
+        "sceneCount": 1,
+        "nodeCount": 6,
+        "meshCount": 3,
+        "materialCount": 3,
+        "skinCount": 0,
+        "animationCount": 1,
+        "animationPaths": [
+          "pointer"
+        ],
+        "interpolations": [
+          "STEP"
+        ],
+        "primitiveAttributes": [
+          "NORMAL",
+          "POSITION"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 1,
+        "extensionsUsed": [
+          "KHR_animation_pointer",
+          "KHR_node_visibility"
+        ],
+        "extensionsRequired": [
+          "KHR_node_visibility"
+        ],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [
+            "runtime.required-extension-unsupported",
+            "runtime.animation-pointer-unsupported"
+          ],
+          "unsupportedRequired": [
+            "KHR_node_visibility"
+          ],
+          "unsupportedAnimationPointerChannels": 1,
+          "compatible": false
+        }
+      }
+    },
+    {
+      "id": "optional-animation-pointer-loss",
+      "model": "AnimatedColorsCube",
+      "outcome": "reject-semantic-loss",
+      "role": "optional KHR_animation_pointer material-color channel with core transform-channel fallback",
+      "license": {
+        "spdx": "CC0-1.0",
+        "attribution": "Public / Ed Mackey",
+        "evidenceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf/Models/AnimatedColorsCube/README.md"
+      },
+      "entry": "Models/AnimatedColorsCube/glTF-Binary/AnimatedColorsCube.glb",
+      "entrySha256": "995bb9db5bd011b64bc9fc2235c60e5455e2931e509db5e715b4d20afc5ba71e",
+      "files": [
+        {
+          "path": "Models/AnimatedColorsCube/glTF-Binary/AnimatedColorsCube.glb",
+          "bytes": 15184,
+          "sha256": "995bb9db5bd011b64bc9fc2235c60e5455e2931e509db5e715b4d20afc5ba71e"
+        }
+      ],
+      "evidence": {
+        "assetVersion": "2.0",
+        "generator": "Khronos glTF Blender I/O v4.2.57",
+        "sceneCount": 1,
+        "nodeCount": 4,
+        "meshCount": 4,
+        "materialCount": 4,
+        "skinCount": 0,
+        "animationCount": 1,
+        "animationPaths": [
+          "translation",
+          "rotation",
+          "pointer"
+        ],
+        "interpolations": [
+          "LINEAR"
+        ],
+        "primitiveAttributes": [
+          "POSITION",
+          "NORMAL"
+        ],
+        "maxMorphTargets": 0,
+        "negativeScaleNodes": 0,
+        "animationPointerChannels": 1,
+        "extensionsUsed": [
+          "KHR_animation_pointer"
+        ],
+        "extensionsRequired": [],
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "issueCodes": [
+            "runtime.animation-pointer-unsupported"
+          ],
+          "unsupportedRequired": [],
+          "unsupportedAnimationPointerChannels": 1,
+          "compatible": false
+        }
+      }
+    }
+  ],
+  "browser": {
+    "browserVersion": "150.0.7871.182",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "THREE.GLTFLoader: Unknown extension \"KHR_node_visibility\"."
+    ],
+    "failedRequests": [],
+    "assets": [
+      {
+        "id": "simple-skin",
+        "outcome": "load",
+        "meshCount": 1,
+        "skinnedMeshCount": 1,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 0,
+        "negativeDeterminantCount": 0,
+        "animationCount": 1,
+        "animationTrackCount": 1,
+        "interpolations": [
+          "Linear"
+        ],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "simple-morph",
+        "outcome": "load",
+        "meshCount": 1,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 1,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 0,
+        "negativeDeterminantCount": 0,
+        "animationCount": 1,
+        "animationTrackCount": 1,
+        "interpolations": [
+          "Linear"
+        ],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "interpolation",
+        "outcome": "load",
+        "meshCount": 10,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 1,
+        "negativeDeterminantCount": 0,
+        "animationCount": 9,
+        "animationTrackCount": 9,
+        "interpolations": [
+          "CubicSpline",
+          "Discrete",
+          "Linear"
+        ],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1,
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "negative-scale",
+        "outcome": "load",
+        "meshCount": 11,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 4,
+        "negativeDeterminantCount": 6,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "normal-tangent-mirror",
+        "outcome": "load",
+        "meshCount": 1,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 1,
+        "uvGeometryCount": 1,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "texture-coordinate",
+        "outcome": "load",
+        "meshCount": 5,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 4,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "texture-transform",
+        "outcome": "load",
+        "meshCount": 12,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 12,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 6,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-anisotropy",
+        "outcome": "load",
+        "meshCount": 4,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 4,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0.5,
+            0.5
+          ],
+          "clearcoat": [
+            0,
+            0
+          ],
+          "dispersion": [
+            0,
+            0
+          ],
+          "emissiveIntensity": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "ior": [
+            1.5,
+            1.5
+          ],
+          "iridescence": [
+            0,
+            0
+          ],
+          "sheen": [
+            0,
+            0
+          ],
+          "specularIntensity": [
+            1,
+            1
+          ],
+          "transmission": [
+            0,
+            0
+          ],
+          "thickness": [
+            0,
+            0
+          ]
+        },
+        "nonIdentityTextureTransforms": 2,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-clearcoat",
+        "outcome": "load",
+        "meshCount": 27,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 27,
+        "uvGeometryCount": 27,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "clearcoat": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "dispersion": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "emissiveIntensity": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "ior": [
+            1.5,
+            1.5,
+            1.5,
+            1.5,
+            1.5,
+            1.5
+          ],
+          "iridescence": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "sheen": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "specularIntensity": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "transmission": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "thickness": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-dispersion",
+        "outcome": "load",
+        "meshCount": 3,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 3,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0,
+            0
+          ],
+          "clearcoat": [
+            0,
+            0
+          ],
+          "dispersion": [
+            0,
+            5
+          ],
+          "emissiveIntensity": [
+            1,
+            1,
+            1
+          ],
+          "ior": [
+            2.42,
+            2.42
+          ],
+          "iridescence": [
+            0,
+            0
+          ],
+          "sheen": [
+            0,
+            0
+          ],
+          "specularIntensity": [
+            1,
+            1
+          ],
+          "transmission": [
+            1,
+            1
+          ],
+          "thickness": [
+            0.5,
+            0.5
+          ]
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-emissive-strength",
+        "outcome": "load",
+        "meshCount": 2,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 2,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1,
+            3
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-ior",
+        "outcome": "load",
+        "meshCount": 3,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 3,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0,
+            0
+          ],
+          "clearcoat": [
+            0,
+            0
+          ],
+          "dispersion": [
+            0,
+            0
+          ],
+          "emissiveIntensity": [
+            1,
+            1,
+            1
+          ],
+          "ior": [
+            1.5,
+            2.42
+          ],
+          "iridescence": [
+            0,
+            0
+          ],
+          "sheen": [
+            0,
+            0
+          ],
+          "specularIntensity": [
+            1,
+            1
+          ],
+          "transmission": [
+            1,
+            1
+          ],
+          "thickness": [
+            0,
+            1
+          ]
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-iridescence",
+        "outcome": "load",
+        "meshCount": 2,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 2,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0
+          ],
+          "clearcoat": [
+            0
+          ],
+          "dispersion": [
+            0
+          ],
+          "emissiveIntensity": [
+            1,
+            1
+          ],
+          "ior": [
+            1.5
+          ],
+          "iridescence": [
+            1
+          ],
+          "sheen": [
+            0
+          ],
+          "specularIntensity": [
+            1
+          ],
+          "transmission": [
+            0
+          ],
+          "thickness": [
+            0
+          ]
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-sheen",
+        "outcome": "load",
+        "meshCount": 2,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 2,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0
+          ],
+          "clearcoat": [
+            0
+          ],
+          "dispersion": [
+            0
+          ],
+          "emissiveIntensity": [
+            1,
+            1
+          ],
+          "ior": [
+            1.5
+          ],
+          "iridescence": [
+            0
+          ],
+          "sheen": [
+            1
+          ],
+          "specularIntensity": [
+            1
+          ],
+          "transmission": [
+            0
+          ],
+          "thickness": [
+            0
+          ]
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-specular",
+        "outcome": "load",
+        "meshCount": 2,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 2,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0
+          ],
+          "clearcoat": [
+            0
+          ],
+          "dispersion": [
+            0
+          ],
+          "emissiveIntensity": [
+            1,
+            1
+          ],
+          "ior": [
+            1.5
+          ],
+          "iridescence": [
+            0
+          ],
+          "sheen": [
+            0
+          ],
+          "specularIntensity": [
+            1
+          ],
+          "transmission": [
+            0
+          ],
+          "thickness": [
+            0
+          ]
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-transmission",
+        "outcome": "load",
+        "meshCount": 5,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 5,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0
+          ],
+          "clearcoat": [
+            0
+          ],
+          "dispersion": [
+            0
+          ],
+          "emissiveIntensity": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "ior": [
+            1.5
+          ],
+          "iridescence": [
+            0
+          ],
+          "sheen": [
+            0
+          ],
+          "specularIntensity": [
+            1
+          ],
+          "transmission": [
+            1
+          ],
+          "thickness": [
+            0
+          ]
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-volume",
+        "outcome": "load",
+        "meshCount": 5,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 5,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshPhysicalMaterial",
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [
+            0,
+            0
+          ],
+          "clearcoat": [
+            0,
+            0
+          ],
+          "dispersion": [
+            0,
+            0
+          ],
+          "emissiveIntensity": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "ior": [
+            1.5,
+            1.5
+          ],
+          "iridescence": [
+            0,
+            0
+          ],
+          "sheen": [
+            0,
+            0
+          ],
+          "specularIntensity": [
+            1,
+            1
+          ],
+          "transmission": [
+            1,
+            1
+          ],
+          "thickness": [
+            0,
+            0.75
+          ]
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "material-unlit",
+        "outcome": "load",
+        "meshCount": 2,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 0,
+        "negativeDeterminantCount": 0,
+        "animationCount": 0,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshBasicMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": true,
+          "issueCodes": []
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": true,
+          "issueCodes": [],
+          "noOpPointerPluginStillRefused": null
+        }
+      },
+      {
+        "id": "required-node-visibility",
+        "outcome": "reject-before-load",
+        "meshCount": 5,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 0,
+        "negativeDeterminantCount": 0,
+        "animationCount": 1,
+        "animationTrackCount": 0,
+        "interpolations": [],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1,
+            1,
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": false,
+          "issueCodes": [
+            "runtime.required-extension-unsupported",
+            "runtime.animation-pointer-unsupported"
+          ]
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": false,
+          "issueCodes": [
+            "runtime.required-extension-unsupported",
+            "runtime.animation-pointer-unsupported"
+          ],
+          "noOpPointerPluginStillRefused": true
+        }
+      },
+      {
+        "id": "optional-animation-pointer-loss",
+        "outcome": "reject-semantic-loss",
+        "meshCount": 4,
+        "skinnedMeshCount": 0,
+        "morphMeshCount": 0,
+        "tangentGeometryCount": 0,
+        "uvGeometryCount": 0,
+        "negativeDeterminantCount": 0,
+        "animationCount": 1,
+        "animationTrackCount": 2,
+        "interpolations": [
+          "Linear"
+        ],
+        "materialTypes": [
+          "MeshStandardMaterial"
+        ],
+        "materialProperties": {
+          "anisotropy": [],
+          "clearcoat": [],
+          "dispersion": [],
+          "emissiveIntensity": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "ior": [],
+          "iridescence": [],
+          "sheen": [],
+          "specularIntensity": [],
+          "transmission": [],
+          "thickness": []
+        },
+        "nonIdentityTextureTransforms": 0,
+        "compatibility": {
+          "profile": "Blendlink Three r184 compiled runtime",
+          "compatible": false,
+          "issueCodes": [
+            "runtime.animation-pointer-unsupported"
+          ]
+        },
+        "loadedCompatibility": {
+          "profile": "configured Three r184 loaded parser",
+          "compatible": false,
+          "issueCodes": [
+            "runtime.animation-pointer-unsupported"
+          ],
+          "noOpPointerPluginStillRefused": true
+        }
+      }
+    ]
+  },
+  "assertions": {
+    "immutableUpstreamRevision": true,
+    "exactPerFileBytesAndSha256": true,
+    "perAssetLicenseEvidence": true,
+    "positiveRequiredExtensionsSupported": true,
+    "requiredUnsupportedExtensionRejectedBeforeLoad": true,
+    "optionalUnsupportedAnimationPointerLossRejectedSemantically": true,
+    "productionCompatibilityModuleUsedStructurally": true,
+    "productionCompatibilityModuleUsedInBrowser": true,
+    "loadedParserAdapterUsedInBrowser": true,
+    "noOpPluginNameRefusedInBrowser": true,
+    "rawThreeOptimisticBypassObserved": true,
+    "everyCoveredBuiltInMaterialExtensionLoadedInBrowser": true
+  },
+  "limits": [
+    "This starts after Blender export and does not validate Blender-to-glTF compilation.",
+    "Structural mode proves exact bytes and JSON contracts; browser mode proves Three r184 object/material construction, not Khronos Sample Viewer pixel equivalence.",
+    "EXT_materials_bump is present in Three r184 but has no official glTF-Sample-Assets cell at the pinned revision, so it remains an explicit corpus gap.",
+    "KHR_materials_variants and KHR_animation_pointer are external-plugin paths in Three r184, not built-in GLTFLoader support.",
+    "Decoder, Basis/KTX2, Meshopt, Draco, deployment, CSP, and CORS cells belong to separate runtime/deployment matrices."
+  ]
+}

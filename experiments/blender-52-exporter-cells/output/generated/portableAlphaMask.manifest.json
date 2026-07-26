@@ -1,0 +1,138 @@
+{
+  "generator": "blendlink",
+  "schemaVersion": 3,
+  "hash": "5c8c57460d18c09f",
+  "url": "/blender-52-exporter-cells/portableAlphaMask/3fdbd2dd412cb43e923b15659812f4e0ef4a4cd5819bfc50c413fcdbd130513d/portableAlphaMask.glb",
+  "sourceBlend": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\blender-52-exporter-cells\\output\\fixtures\\portable-alpha-mask.blend",
+  "sourceHash": "e5b40712478b894a",
+  "configSourceHash": "264df98b2fb6db70e1e72e2f2cec1af0cc1a765060269b82516883a94214ee77",
+  "nodes": [
+    {
+      "name": "AlphaMask",
+      "kind": "Mesh"
+    },
+    {
+      "name": "Camera",
+      "kind": "Camera"
+    },
+    {
+      "name": "Key",
+      "kind": "Light"
+    }
+  ],
+  "identities": {},
+  "materials": [
+    "Cell.AlphaMask"
+  ],
+  "clips": {},
+  "markers": {},
+  "curves": {},
+  "vocabulary": {
+    "colliders": [],
+    "lods": [],
+    "sockets": [],
+    "hotspots": [],
+    "audio": [],
+    "physics": [],
+    "warnings": []
+  },
+  "sceneDiagnostics": {
+    "lod": {
+      "chains": [],
+      "validChains": 0,
+      "drawCallsWithoutAdapter": 0,
+      "drawCallsWithAdapter": 0
+    },
+    "instances": {
+      "groups": [],
+      "gpuBatches": [],
+      "eligibleGroups": 0,
+      "estimatedDrawCallsCurrent": 0,
+      "estimatedDrawCallsIfEligibleBatched": 0,
+      "estimatedDrawCallsSaved": 0
+    },
+    "procedural": {
+      "objects": [],
+      "blockers": 0,
+      "topologyChanging": 0,
+      "cacheCandidates": 0
+    },
+    "materials": {
+      "records": [
+        {
+          "material": "Cell.AlphaMask",
+          "status": "exact",
+          "label": "Exact glTF",
+          "summary": "Supported Principled inputs publish through Blender's glTF exporter. Changes update in Live Preview when you save.",
+          "reasons": [],
+          "cyclesAppearance": {
+            "status": "compatible",
+            "blockers": []
+          },
+          "usedBy": [
+            "AlphaMask"
+          ],
+          "materialCompilation": {
+            "intent": "automatic",
+            "outcome": "preserved",
+            "fidelity": "full-surface",
+            "limitations": [],
+            "transport": "stock"
+          }
+        }
+      ],
+      "exact": 1,
+      "approximated": 0,
+      "needsBake": 0,
+      "cyclesAppearanceBlocked": 0
+    }
+  },
+  "excluded": [],
+  "stats": {
+    "bytes": 3232,
+    "triangles": 12,
+    "meshes": 1,
+    "texturesBytes": 261,
+    "gpuTextureBytes": 20,
+    "animationBytes": 0,
+    "drawCallsEstimate": 1
+  },
+  "runtimeAssetGraph": {
+    "algorithm": "sha256",
+    "fingerprint": "3fdbd2dd412cb43e923b15659812f4e0ef4a4cd5819bfc50c413fcdbd130513d",
+    "entries": [
+      {
+        "path": "portableAlphaMask.glb",
+        "role": "scene",
+        "bytes": 3232,
+        "sha256": "5c8c57460d18c09f56722f95a577f674fb65bc32852fb95b9fb2ccb2c03095ba"
+      }
+    ]
+  },
+  "authoringPreview": {
+    "look": {
+      "toneMapping": "agx",
+      "exposure": 0,
+      "previewExposureOffsetStops": -0.28,
+      "sourceViewTransform": "AgX",
+      "exact": false
+    },
+    "shadows": {
+      "enabled": true
+    },
+    "worldBackgroundVisible": true,
+    "warnings": [
+      "Three.js AgX is not identical to Blender 5.x OCIO AgX; Preview Studio applies a measured -0.28-stop calibration. Verify the final website visually"
+    ]
+  },
+  "generatedModuleHash": "418120cf7c091670",
+  "runtimeAssetPublication": {
+    "algorithm": "sha256",
+    "bundlePath": "portableAlphaMask/3fdbd2dd412cb43e923b15659812f4e0ef4a4cd5819bfc50c413fcdbd130513d",
+    "scenePath": "portableAlphaMask.glb",
+    "immutable": true
+  },
+  "blendBytesHash": "ae73a4d826cf0578",
+  "syncHint": "npx blendlink compile",
+  "lastSyncDurationMs": 1987
+}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blendlink missing companion browser gate</title>
+    <style>
+      html, body, #root { width: 100%; height: 100%; margin: 0; }
+      body { background: #07111f; color: #dff8ff; font: 16px/1.5 system-ui, sans-serif; }
+      main { display: grid; height: 100%; grid-template-rows: auto 1fr; }
+      header { padding: 1rem 1.25rem; border-bottom: 1px solid #24415c; }
+      h1 { margin: 0; font-size: 1.1rem; }
+      output { color: #72e7ff; }
+      canvas { display: block; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Missing companion must fail before Ready</h1>
+        <output id="status">loading</output>
+      </header>
+      <div id="root"></div>
+    </main>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

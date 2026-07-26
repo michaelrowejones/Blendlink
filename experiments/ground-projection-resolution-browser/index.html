@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>GroundedSkybox 64 vs 128 resolution</title>
+    <style>
+      :root {
+        color: #f3f6fb;
+        background: #0a0d12;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+
+      body {
+        box-sizing: border-box;
+        margin: 0;
+        min-width: 1180px;
+        padding: 24px;
+      }
+
+      header {
+        margin: 0 auto 24px;
+        max-width: 1740px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+
+      header p {
+        margin: 0;
+        color: #aab4c3;
+      }
+
+      #grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 560px));
+        gap: 18px;
+        margin: 0 auto;
+        max-width: 1740px;
+      }
+
+      .view-heading {
+        grid-column: 1 / -1;
+        margin-top: 12px;
+        padding-top: 18px;
+        border-top: 1px solid #28303d;
+      }
+
+      .view-heading h2 {
+        margin: 0 0 5px;
+        font-size: 18px;
+      }
+
+      .view-heading p {
+        margin: 0;
+        color: #96a3b6;
+        font: 13px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+
+      figure {
+        overflow: hidden;
+        margin: 0;
+        border: 1px solid #303949;
+        border-radius: 8px;
+        background: #111722;
+      }
+
+      canvas {
+        display: block;
+        width: 560px;
+        height: 350px;
+        background: #000;
+      }
+
+      figcaption {
+        min-height: 58px;
+        padding: 10px 12px;
+        color: #dce4f1;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .metric {
+        display: block;
+        color: #92a0b4;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+
+      #status {
+        margin: 24px auto 0;
+        max-width: 1740px;
+        color: #b5c0cf;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+
+      #render-host {
+        position: fixed;
+        left: -10000px;
+        top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Photographic GroundedSkybox: resolution 64 vs 128</h1>
+      <p>Same Three.js 0.184.0 implementation, forest EXR, renderer, and camera. Difference is amplified ×12.</p>
+    </header>
+    <main id="grid"></main>
+    <p id="status">Running deterministic Chromium differential…</p>
+    <canvas id="render-host" width="560" height="350"></canvas>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

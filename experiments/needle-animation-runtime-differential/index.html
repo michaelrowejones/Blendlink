@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>Needle animation runtime differential</title>
+    <style>
+      :root {
+        color: #edf3ff;
+        background: #09101e;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 10% 0%, #263b68 0, transparent 30rem),
+          #09101e;
+      }
+
+      main {
+        width: min(1120px, calc(100vw - 48px));
+        margin: 0 auto;
+        padding: 30px 0 42px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+
+      .lede {
+        max-width: 880px;
+        margin: 0 0 20px;
+        color: #aebbd2;
+      }
+
+      #status {
+        margin: 0 0 20px;
+        padding: 10px 14px;
+        border: 1px solid #52688f;
+        border-radius: 10px;
+        background: #151f34;
+        color: #c8d4e9;
+      }
+
+      #status.pass {
+        border-color: #35c890;
+        background: #102d28;
+        color: #a8f5d6;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 720px) minmax(250px, 1fr);
+        gap: 20px;
+        align-items: start;
+      }
+
+      #stage {
+        position: relative;
+        width: 720px;
+        height: 540px;
+        overflow: hidden;
+        border: 1px solid #45597e;
+        border-radius: 14px;
+        background: #10182a;
+        box-shadow: 0 20px 50px #02071180;
+      }
+
+      #stage needle-engine {
+        position: absolute;
+        inset: 0;
+        width: 720px;
+        height: 540px;
+      }
+
+      dl {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin: 0;
+      }
+
+      dl > div {
+        padding: 12px;
+        border: 1px solid #34476b;
+        border-radius: 10px;
+        background: #111b30;
+      }
+
+      dt {
+        margin-bottom: 5px;
+        color: #8fa4c8;
+        font-size: 12px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      dd {
+        margin: 0;
+        color: #f3f7ff;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Needle runtime animation differential</h1>
+      <p class="lede">
+        The exact add-on-selected Needle Engine 5.1.4 runtime loads and drives
+        the same Blendlink GLB used by the Blender deformation oracle.
+      </p>
+      <div id="status">Loading through Needle Engine…</div>
+      <div class="layout">
+        <div id="stage"></div>
+        <dl>
+          <div>
+            <dt>Transform position</dt>
+            <dd id="position-error">pending</dd>
+          </div>
+          <div>
+            <dt>Transform rotation</dt>
+            <dd id="quaternion-error">pending</dd>
+          </div>
+          <div>
+            <dt>Morph influence</dt>
+            <dd id="morph-error">pending</dd>
+          </div>
+          <div>
+            <dt>Skinned world points</dt>
+            <dd id="skin-error">pending</dd>
+          </div>
+          <div>
+            <dt>Needle component path</dt>
+            <dd id="component-path">pending</dd>
+          </div>
+          <div>
+            <dt>Three copies</dt>
+            <dd id="three-copies">pending</dd>
+          </div>
+        </dl>
+      </div>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

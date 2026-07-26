@@ -1,0 +1,754 @@
+{
+  "animation": {
+    "actionNames": [
+      "ANI-Cat.020_0050.v001",
+      "ANI-Cat.020_0050.v001.001",
+      "ANI-Dog.020_0050.v001",
+      "ANI-Dog.020_0050.v001.001",
+      "ANI-camera.020_0050.v001",
+      "ANI-camera.020_0050.v001",
+      "ANI-camera.020_0050.v001.001",
+      "ANI-cat.promo",
+      "ANI-dog.020_0050.v001",
+      "ANI-pilot_chair.020_0050.v001",
+      "ANI-pilot_chair.020_0050.v001.001",
+      "ANI-pilot_chair.020_0050.v001.002",
+      "ANI-rocket_interior.020_0050.v001",
+      "ANI-rocket_interior.020_0050.v001.001",
+      "ANI-rocket_interior.annecy",
+      "ANI-rocket_interior_pilot_chair.020_0050.v001",
+      "Dog_Body_Shapes",
+      "PR-switches.008Action",
+      "RIG-Cat_BotCenterLip_UpDown",
+      "RIG-Cat_Corners_Down",
+      "RIG-Cat_Corners_Down+Thin",
+      "RIG-Cat_Corners_Thin",
+      "RIG-Cat_Corners_Thin+Up",
+      "RIG-Cat_Corners_Up",
+      "RIG-Cat_Corners_Wide",
+      "RIG-Cat_DefaultPose",
+      "RIG-Cat_EyebrowsDown",
+      "RIG-Cat_MouthScale_X",
+      "RIG-Cat_MouthTriangle",
+      "RIG-Cat_TopCenterLip_UpDown",
+      "RIG-Cat_TriangleTopLip",
+      "RIG-Dog_BotCenterLip_UpDown",
+      "RIG-Dog_Corners_Down",
+      "RIG-Dog_Corners_Down+Thin",
+      "RIG-Dog_Corners_Thin+Up",
+      "RIG-Dog_Corners_Thin.001",
+      "RIG-Dog_Corners_Up",
+      "RIG-Dog_Corners_Wide.001",
+      "RIG-Dog_Eyebrows_Down",
+      "RIG-Dog_MouthScale_X",
+      "RIG-Dog_MouthSlide_LeftRight.001",
+      "RIG-Dog_TopCenterLip_UpDown",
+      "RIG-screwdriverAction",
+      "RIG-toolboxAction"
+    ],
+    "actionOwners": 8,
+    "actions": 44,
+    "armatures": 10,
+    "drivers": 5935,
+    "driversByOwnerKind": {
+      "materials": 0,
+      "nodeGroups": 20,
+      "objectData": 433,
+      "objects": 5482
+    }
+  },
+  "assets": {
+    "externalFileImages": 24,
+    "externalImages": [
+      {
+        "authoredPath": "//promo\\annecy_banner\\maps\\sky_splash.png",
+        "exists": true,
+        "name": "sky_splash.png",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/promo/annecy_banner/maps/sky_splash.png"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\plates_01\\plates_01.tif",
+        "exists": true,
+        "name": "plates_01",
+        "owningLibrary": "barn.blend.001",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/plates_01/plates_01.tif"
+      },
+      {
+        "authoredPath": "//..\\maps\\cat.base_color.tif",
+        "exists": true,
+        "name": "cat.base_color",
+        "owningLibrary": "cat.v001.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/char/cat/maps/cat.base_color.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\..\\maps\\patterns\\patches_01\\patches_01.tif",
+        "exists": true,
+        "name": "patches_01.tif.001",
+        "owningLibrary": "cat.v001.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/patches_01/patches_01.tif"
+      },
+      {
+        "authoredPath": "//..\\maps\\dog.base_color.tif",
+        "exists": true,
+        "name": "dog.base_color",
+        "owningLibrary": "dog.v001.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/char/dog/maps/dog.base_color.tif"
+      },
+      {
+        "authoredPath": "//..\\maps\\dog.base_color.tif",
+        "exists": true,
+        "name": "dog.base_color.001",
+        "owningLibrary": "dog.v001.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/char/dog/maps/dog.base_color.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\..\\maps\\patterns\\paper_01\\paper_01.tif",
+        "exists": true,
+        "name": "paper_01.tif",
+        "owningLibrary": "dog.v001.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/paper_01/paper_01.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\..\\maps\\patterns\\patches_01\\patches_01.tif",
+        "exists": true,
+        "name": "patches_01.tif",
+        "owningLibrary": "dog.v001.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/patches_01/patches_01.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\..\\maps\\patterns\\patches_01\\patches_01.tif",
+        "exists": true,
+        "name": "patches_01.tif.001",
+        "owningLibrary": "dog.v001.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/patches_01/patches_01.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\..\\maps\\patterns\\reflection_01\\reflection_01.tif",
+        "exists": true,
+        "name": "reflection_01.tif",
+        "owningLibrary": "dog.v001.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/reflection_01/reflection_01.tif"
+      },
+      {
+        "authoredPath": "//..\\maps\\patterns\\wood_01\\wood_01.tif",
+        "exists": true,
+        "name": "wood_01.tif",
+        "owningLibrary": "materials_generic.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/wood_01/wood_01.tif"
+      },
+      {
+        "authoredPath": "//..\\maps\\patterns\\wood_02\\wood_02.tif",
+        "exists": true,
+        "name": "wood_02.tif",
+        "owningLibrary": "materials_generic.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/wood_02/wood_02.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\plates_01\\plates_01.tif",
+        "exists": true,
+        "name": "plates_01",
+        "owningLibrary": "rocket_exterior.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/plates_01/plates_01.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\plates_01\\plates_01.tif",
+        "exists": true,
+        "name": "plates_01.001",
+        "owningLibrary": "rocket_exterior.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/plates_01/plates_01.tif"
+      },
+      {
+        "authoredPath": "//maps\\parachute_button.tif",
+        "exists": true,
+        "name": "parachute_button.tif",
+        "owningLibrary": "rocket_interior.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/sets/rocket_interior/maps/parachute_button.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\plates_01\\plates_01.tif",
+        "exists": true,
+        "name": "plates_01",
+        "owningLibrary": "rocket_interior.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/plates_01/plates_01.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\plates_01\\plates_01.tif",
+        "exists": true,
+        "name": "plates_01.001",
+        "owningLibrary": "rocket_interior.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/plates_01/plates_01.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\reflection_02\\reflection_02.tif",
+        "exists": true,
+        "name": "reflection_02.tif",
+        "owningLibrary": "rocket_interior.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/reflection_02/reflection_02.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\speckles_01\\speckles_01.tif",
+        "exists": true,
+        "name": "speckles_01.tif",
+        "owningLibrary": "rocket_interior.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/speckles_01/speckles_01.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\patches_01\\patches_01.tif",
+        "exists": true,
+        "name": "patches_01.tif",
+        "owningLibrary": "rocket_interior.pilot_chair.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/patches_01/patches_01.tif"
+      },
+      {
+        "authoredPath": "//..\\..\\maps\\patterns\\plates_01\\plates_01.tif",
+        "exists": true,
+        "name": "plates_01",
+        "owningLibrary": "rocket_interior.pilot_chair.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/plates_01/plates_01.tif"
+      },
+      {
+        "authoredPath": "//..\\maps\\patterns\\paper_01\\paper_01.tif",
+        "exists": true,
+        "name": "paper_01.tif",
+        "owningLibrary": "shading.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/paper_01/paper_01.tif"
+      },
+      {
+        "authoredPath": "//..\\maps\\patterns\\patches_01\\patches_01.tif",
+        "exists": true,
+        "name": "patches_01.tif",
+        "owningLibrary": "shading.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/patches_01/patches_01.tif"
+      },
+      {
+        "authoredPath": "//..\\maps\\patterns\\plates_01\\plates_01.tif",
+        "exists": true,
+        "name": "plates_01",
+        "owningLibrary": "shading.blend",
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/maps/patterns/plates_01/plates_01.tif"
+      }
+    ],
+    "images": 30,
+    "libraries": 30,
+    "linkedLibraries": [
+      {
+        "authoredPath": "//promo\\annecy_banner\\annecy_banner.blend",
+        "exists": true,
+        "name": "annecy_banner.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/promo/annecy_banner/annecy_banner.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\arm_umbrella\\arm_umbrella.blend",
+        "exists": true,
+        "name": "arm_umbrella.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/props/arm_umbrella/arm_umbrella.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\sets\\barn\\barn.blend",
+        "exists": true,
+        "name": "barn.blend.001",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/sets/barn/barn.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\Better_Curve_Deform.blend",
+        "exists": true,
+        "name": "Better_Curve_Deform.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/nodes/Better_Curve_Deform.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\cam\\camera_rig.blend",
+        "exists": true,
+        "name": "camera_rig.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/cam/camera_rig.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\char\\cat\\publish\\cat.v001.blend",
+        "exists": true,
+        "name": "cat.v001.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/char/cat/publish/cat.v001.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\CollisionAvoidance.blend",
+        "exists": true,
+        "name": "CollisionAvoidance.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/nodes/CollisionAvoidance.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\compositing.blend",
+        "exists": true,
+        "name": "compositing.blend.001",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/nodes/compositing.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\Curve_Deform_Iterative.blend",
+        "exists": true,
+        "name": "Curve_Deform_Iterative.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/nodes/Curve_Deform_Iterative.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\char\\dog\\dog.rigging.blend",
+        "exists": true,
+        "name": "dog.rigging.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/char/dog/dog.rigging.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\char\\dog\\publish\\dog.v001.blend",
+        "exists": true,
+        "name": "dog.v001.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/char/dog/publish/dog.v001.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\inflatable_ramp\\inflatable_ramp.blend",
+        "exists": true,
+        "name": "inflatable_ramp.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/props/inflatable_ramp/inflatable_ramp.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\scripts\\lighting_rig_setup.blend",
+        "exists": true,
+        "name": "lighting_rig_setup.blend.001",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/scripts/lighting_rig_setup.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\lgt\\lighting_rigs.blend",
+        "exists": true,
+        "name": "lighting_rigs.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/lgt/lighting_rigs.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\matlib\\materials_generic.blend",
+        "exists": true,
+        "name": "materials_generic.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/matlib/materials_generic.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\lgt\\outline_setup.blend",
+        "exists": true,
+        "name": "outline_setup.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/lgt/outline_setup.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\pencil\\pencil.blend",
+        "exists": true,
+        "name": "pencil.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/props/pencil/pencil.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\env\\power_cable\\power_cable.blend",
+        "exists": true,
+        "name": "power_cable.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/env/power_cable/power_cable.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\rigging_misc.blend",
+        "exists": true,
+        "name": "rigging_misc.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/nodes/rigging_misc.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\rocket_exterior\\rocket_exterior.blend",
+        "exists": true,
+        "name": "rocket_exterior.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/props/rocket_exterior/rocket_exterior.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\sets\\rocket_interior\\rocket_interior.blend",
+        "exists": true,
+        "name": "rocket_interior.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/sets/rocket_interior/rocket_interior.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\sets\\rocket_interior\\rocket_interior.pilot_chair.blend",
+        "exists": true,
+        "name": "rocket_interior.pilot_chair.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/sets/rocket_interior/rocket_interior.pilot_chair.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\screwdriver\\screwdriver.blend",
+        "exists": true,
+        "name": "screwdriver.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/props/screwdriver/screwdriver.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\shading.blend",
+        "exists": true,
+        "name": "shading.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/nodes/shading.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\lgt\\shadow_proxy_setup.blend",
+        "exists": true,
+        "name": "shadow_proxy_setup.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/lgt/shadow_proxy_setup.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\spanner\\spanner.blend",
+        "exists": true,
+        "name": "spanner.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/props/spanner/spanner.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\toolbox\\toolbox.blend",
+        "exists": true,
+        "name": "toolbox.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/props/toolbox/toolbox.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\utilities.blend",
+        "exists": true,
+        "name": "utilities.blend.001",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/nodes/utilities.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\UV_Deform.blend",
+        "exists": true,
+        "name": "UV_Deform.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/nodes/UV_Deform.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\lgt\\world.blend",
+        "exists": true,
+        "name": "world.blend",
+        "owningLibrary": null,
+        "resolvedPath": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/pro/lib/lgt/world.blend"
+      }
+    ],
+    "packedImages": 0,
+    "textBlocks": [
+      {
+        "characters": 1328,
+        "name": "020_0050.settings.json"
+      },
+      {
+        "characters": 562,
+        "name": "020_tryout.settings.json"
+      },
+      {
+        "characters": 8535,
+        "name": "lighting_overrider_execution.py"
+      },
+      {
+        "characters": 196,
+        "name": "README"
+      },
+      {
+        "characters": 66720,
+        "name": "cloudrig.py"
+      },
+      {
+        "characters": 66720,
+        "name": "cloudrig.py"
+      },
+      {
+        "characters": 4235,
+        "name": "lighting_rig_setup.py"
+      },
+      {
+        "characters": 66720,
+        "name": "cloudrig.py"
+      },
+      {
+        "characters": 66633,
+        "name": "cloudrig.py"
+      },
+      {
+        "characters": 66633,
+        "name": "cloudrig.py"
+      }
+    ]
+  },
+  "blender": "5.1.2",
+  "blendlinkRecipe": false,
+  "geometry": {
+    "geometryNodeModifiers": 1787,
+    "legacyParticleSystems": [],
+    "modifierTypes": {
+      "ARMATURE": 57,
+      "ARRAY": 1,
+      "BEVEL": 254,
+      "BOOLEAN": 3,
+      "CAST": 1,
+      "CORRECTIVE_SMOOTH": 39,
+      "CURVE": 1,
+      "EDGE_SPLIT": 2,
+      "HOOK": 663,
+      "LATTICE": 35,
+      "MASK": 18,
+      "MESH_DEFORM": 27,
+      "MIRROR": 43,
+      "NODES": 1787,
+      "SHRINKWRAP": 18,
+      "SIMPLE_DEFORM": 37,
+      "SKIN": 1,
+      "SOLIDIFY": 23,
+      "SUBSURF": 328,
+      "SURFACE_DEFORM": 16
+    },
+    "particleSystems": 0
+  },
+  "lighting": {
+    "byType": {
+      "AREA": 5,
+      "POINT": 1,
+      "SUN": 2
+    },
+    "worldVolumeLinked": false
+  },
+  "materials": {
+    "blendMethods": {
+      "BLENDED": 8,
+      "DITHERED": 263
+    },
+    "nodeTypes": {
+      "CompositorNodeAlphaOver": 4,
+      "CompositorNodeAntiAliasing": 1,
+      "CompositorNodeBlur": 1,
+      "CompositorNodeColorBalance": 1,
+      "CompositorNodeCombineColor": 1,
+      "CompositorNodeDilateErode": 2,
+      "CompositorNodeFilter": 1,
+      "CompositorNodeGroup": 4,
+      "CompositorNodeImage": 1,
+      "CompositorNodeMask": 3,
+      "CompositorNodePremulKey": 4,
+      "CompositorNodeRLayers": 2,
+      "CompositorNodeRelativeToPixel": 3,
+      "CompositorNodeScale": 1,
+      "CompositorNodeSeparateColor": 13,
+      "CompositorNodeSetAlpha": 13,
+      "CompositorNodeTranslate": 1,
+      "CompositorNodeViewer": 2,
+      "FunctionNodeAlignEulerToVector": 4,
+      "FunctionNodeBooleanMath": 117,
+      "FunctionNodeCombineColor": 1,
+      "FunctionNodeCompare": 92,
+      "FunctionNodeEulerToRotation": 3,
+      "FunctionNodeFloatToInt": 3,
+      "FunctionNodeInputInt": 2,
+      "FunctionNodeInputString": 1,
+      "FunctionNodeInputVector": 2,
+      "FunctionNodeRandomValue": 30,
+      "FunctionNodeRotateEuler": 1,
+      "FunctionNodeRotationToEuler": 2,
+      "FunctionNodeSeparateColor": 3,
+      "FunctionNodeStringLength": 1,
+      "GeometryNodeAccumulateField": 11,
+      "GeometryNodeAttributeDomainSize": 4,
+      "GeometryNodeAttributeStatistic": 6,
+      "GeometryNodeBlurAttribute": 27,
+      "GeometryNodeBoundBox": 3,
+      "GeometryNodeCaptureAttribute": 99,
+      "GeometryNodeCollectionInfo": 11,
+      "GeometryNodeConvexHull": 1,
+      "GeometryNodeCurveArc": 2,
+      "GeometryNodeCurveEndpointSelection": 4,
+      "GeometryNodeCurveLength": 1,
+      "GeometryNodeCurvePrimitiveCircle": 15,
+      "GeometryNodeCurveSetHandles": 1,
+      "GeometryNodeCurveSpiral": 1,
+      "GeometryNodeCurveSplineType": 9,
+      "GeometryNodeCurveToMesh": 37,
+      "GeometryNodeCurveToPoints": 16,
+      "GeometryNodeDeleteGeometry": 33,
+      "GeometryNodeEdgesToFaceGroups": 1,
+      "GeometryNodeExtrudeMesh": 60,
+      "GeometryNodeFaceOfCorner": 1,
+      "GeometryNodeFieldAtIndex": 8,
+      "GeometryNodeFieldOnDomain": 8,
+      "GeometryNodeFillCurve": 4,
+      "GeometryNodeFilletCurve": 7,
+      "GeometryNodeFlipFaces": 16,
+      "GeometryNodeGroup": 44,
+      "GeometryNodeInputCurveHandlePositions": 1,
+      "GeometryNodeInputCurveTilt": 1,
+      "GeometryNodeInputEdgeSmooth": 9,
+      "GeometryNodeInputID": 5,
+      "GeometryNodeInputIndex": 21,
+      "GeometryNodeInputMaterialIndex": 3,
+      "GeometryNodeInputMeshEdgeAngle": 17,
+      "GeometryNodeInputMeshEdgeNeighbors": 2,
+      "GeometryNodeInputMeshEdgeVertices": 3,
+      "GeometryNodeInputMeshIsland": 25,
+      "GeometryNodeInputMeshVertexNeighbors": 4,
+      "GeometryNodeInputNamedAttribute": 58,
+      "GeometryNodeInputNormal": 27,
+      "GeometryNodeInputPosition": 74,
+      "GeometryNodeInputRadius": 7,
+      "GeometryNodeInputShadeSmooth": 15,
+      "GeometryNodeInputSplineCyclic": 2,
+      "GeometryNodeInputTangent": 13,
+      "GeometryNodeInstanceOnPoints": 14,
+      "GeometryNodeIsViewport": 5,
+      "GeometryNodeJoinGeometry": 31,
+      "GeometryNodeMergeByDistance": 17,
+      "GeometryNodeMeshCircle": 3,
+      "GeometryNodeMeshCylinder": 1,
+      "GeometryNodeMeshGrid": 2,
+      "GeometryNodeMeshLine": 2,
+      "GeometryNodeMeshToCurve": 13,
+      "GeometryNodeMeshToVolume": 1,
+      "GeometryNodeMeshUVSphere": 1,
+      "GeometryNodeObjectInfo": 25,
+      "GeometryNodeOffsetPointInCurve": 6,
+      "GeometryNodePointsToVertices": 3,
+      "GeometryNodeProximity": 23,
+      "GeometryNodeRaycast": 12,
+      "GeometryNodeRealizeInstances": 14,
+      "GeometryNodeResampleCurve": 16,
+      "GeometryNodeRotateInstances": 7,
+      "GeometryNodeSampleCurve": 3,
+      "GeometryNodeSampleIndex": 37,
+      "GeometryNodeSampleNearest": 15,
+      "GeometryNodeSampleNearestSurface": 13,
+      "GeometryNodeSampleUVSurface": 4,
+      "GeometryNodeScaleElements": 20,
+      "GeometryNodeSelfObject": 1,
+      "GeometryNodeSeparateComponents": 2,
+      "GeometryNodeSeparateGeometry": 4,
+      "GeometryNodeSetCurveHandlePositions": 2,
+      "GeometryNodeSetCurveRadius": 4,
+      "GeometryNodeSetCurveTilt": 3,
+      "GeometryNodeSetMaterial": 15,
+      "GeometryNodeSetPointRadius": 6,
+      "GeometryNodeSetPosition": 94,
+      "GeometryNodeSetShadeSmooth": 28,
+      "GeometryNodeSetSplineResolution": 1,
+      "GeometryNodeSplineLength": 5,
+      "GeometryNodeSplineParameter": 9,
+      "GeometryNodeSplitEdges": 8,
+      "GeometryNodeStoreNamedAttribute": 67,
+      "GeometryNodeSubdivideMesh": 5,
+      "GeometryNodeSubdivisionSurface": 2,
+      "GeometryNodeSwitch": 109,
+      "GeometryNodeTransform": 24,
+      "GeometryNodeTranslateInstances": 3,
+      "GeometryNodeTrimCurve": 3,
+      "GeometryNodeViewer": 17,
+      "GeometryNodeVolumeToMesh": 1,
+      "NodeFrame": 145,
+      "NodeGroupInput": 503,
+      "NodeGroupOutput": 162,
+      "NodeReroute": 468,
+      "ShaderNodeAddShader": 1,
+      "ShaderNodeAmbientOcclusion": 4,
+      "ShaderNodeAttribute": 121,
+      "ShaderNodeBackground": 2,
+      "ShaderNodeBsdfAnisotropic": 1,
+      "ShaderNodeBsdfDiffuse": 36,
+      "ShaderNodeBsdfPrincipled": 14,
+      "ShaderNodeBsdfTranslucent": 1,
+      "ShaderNodeBsdfTransparent": 22,
+      "ShaderNodeBump": 4,
+      "ShaderNodeCameraData": 4,
+      "ShaderNodeClamp": 7,
+      "ShaderNodeCombineColor": 16,
+      "ShaderNodeCombineXYZ": 71,
+      "ShaderNodeEmission": 16,
+      "ShaderNodeFloatCurve": 9,
+      "ShaderNodeGroup": 375,
+      "ShaderNodeHueSaturation": 4,
+      "ShaderNodeLayerWeight": 4,
+      "ShaderNodeLightPath": 5,
+      "ShaderNodeMapRange": 52,
+      "ShaderNodeMath": 710,
+      "ShaderNodeMix": 224,
+      "ShaderNodeMixShader": 47,
+      "ShaderNodeNewGeometry": 49,
+      "ShaderNodeObjectInfo": 2,
+      "ShaderNodeOutputAOV": 11,
+      "ShaderNodeOutputMaterial": 275,
+      "ShaderNodeOutputWorld": 1,
+      "ShaderNodeRGB": 22,
+      "ShaderNodeRGBCurve": 3,
+      "ShaderNodeSeparateColor": 53,
+      "ShaderNodeSeparateXYZ": 48,
+      "ShaderNodeShaderToRGB": 4,
+      "ShaderNodeSubsurfaceScattering": 11,
+      "ShaderNodeTexCoord": 17,
+      "ShaderNodeTexGradient": 2,
+      "ShaderNodeTexImage": 49,
+      "ShaderNodeTexNoise": 56,
+      "ShaderNodeTexVoronoi": 13,
+      "ShaderNodeTexWhiteNoise": 26,
+      "ShaderNodeUVMap": 48,
+      "ShaderNodeValToRGB": 30,
+      "ShaderNodeValue": 34,
+      "ShaderNodeVectorMath": 613,
+      "ShaderNodeVectorRotate": 63,
+      "ShaderNodeVectorTransform": 80
+    },
+    "total": 271
+  },
+  "objects": {
+    "byType": {
+      "ARMATURE": 10,
+      "CAMERA": 3,
+      "CURVE": 193,
+      "EMPTY": 22,
+      "LATTICE": 14,
+      "LIGHT": 8,
+      "MESH": 662
+    },
+    "collectionInstances": 9,
+    "renderVisibleByType": {
+      "CURVE": 189,
+      "MESH": 641
+    },
+    "total": 912,
+    "withConstraints": 421,
+    "withShapeKeys": 66
+  },
+  "scene": {
+    "camera": "CAM-camera.local_splash",
+    "compositor": true,
+    "fps": 24.0,
+    "frameCurrent": 151,
+    "frameEnd": 150,
+    "frameStart": 150,
+    "look": "Medium High Contrast",
+    "name": "020_0050.lighting",
+    "renderEngine": "BLENDER_EEVEE",
+    "resolution": [
+      2000,
+      1000
+    ],
+    "resolutionPercentage": 100,
+    "viewTransform": "Filmic"
+  },
+  "schemaVersion": 1,
+  "source": {
+    "bytes": 7878056,
+    "path": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/blender-3.6-splash.blend",
+    "sha256": "c65a4203f136ed2dabb076a0f13a347818da1e14ff73c84bd0b08caffbb36ef4"
+  }
+}

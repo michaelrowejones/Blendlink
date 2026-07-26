@@ -1,25 +1,25 @@
 schema_version = "1.0.0"
 
 id = "blendlink"
-version = "0.7.0"
+version = "0.8.0"
 name = "Blendlink"
-tagline = "Author the blendlink web vocabulary and see sync status"
+tagline = "Publish artist-authored Blender scenes to Three.js"
 maintainer = "Michael Rowe Jones <michaelrowejones@gmail.com>"
 type = "add-on"
 
-website = "https://github.com/michaelcup/blendlink"
+website = "https://github.com/michaelrowejones/Blendlink"
 tags = ["Pipeline", "Development", "3D View"]
 
 blender_version_min = "4.2.0"
 
-# GPL-3.0-or-later is mandatory for extensions.blender.org uploads.
-# The npm/TypeScript side of blendlink is a separate program (MIT).
+# This standalone Blender Extension artifact is GPL-3.0-or-later. The separate
+# npm aggregate has an explicit MIT/GPL/Apache file-level map in LICENSES.md.
 license = ["SPDX:GPL-3.0-or-later"]
 copyright = ["2026 Michael Rowe Jones"]
 
 [permissions]
-files = "Read the blendlink manifest beside your project for sync status"
-clipboard = "Copy the project sync command so you can run it in a terminal"
+files = "Read manifests and write requested project captures"
+clipboard = "Copy preview, connect, publish, and website instructions"
 
 [build]
 paths_exclude_pattern = [

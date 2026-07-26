@@ -21,8 +21,12 @@
     { "name": "EyeSocket_L", "expect": { "kind": "none" } },
     { "name": "HOTSPOT_lod2", "expect": { "kind": "hotspot", "anchorName": "lod2" }, "$comment": "precedence: deliberate ALL-CAPS prefix outranks a suffix" },
     { "name": "SOCKET_Lid-col", "expect": { "kind": "socket", "anchorName": "Lid-col" }, "$comment": "prefix wins; the ambiguity is linted, not silently re-ranked" },
+    { "name": "HOTSPOT_Info-noimp", "expect": { "kind": "hotspot", "anchorName": "Info-noimp" }, "$comment": "anchor prefix suppresses the exporter noimp suffix filter" },
+    { "name": "SOCKET_Collider-colonly", "expect": { "kind": "socket", "anchorName": "Collider-colonly" }, "$comment": "anchor prefix suppresses the exporter collision-only suffix filter" },
     { "name": "Anything", "extras": { "blendlink_role": "convcol" }, "expect": { "kind": "collider", "shape": "convex", "proxyOnly": false } },
     { "name": "Crate-col", "extras": { "blendlink_role": "rigid" }, "expect": { "kind": "rigid" }, "$comment": "property beats name" },
+    { "name": "RefGrid-noimp", "extras": { "blendlink_role": "rigid" }, "expect": { "kind": "rigid" }, "$comment": "a recognized property suppresses the exporter noimp suffix filter" },
+    { "name": "Wall-colonly", "extras": { "blendlink_role": "rigid" }, "expect": { "kind": "rigid" }, "$comment": "a recognized property suppresses the exporter collision-only suffix filter" },
     { "name": "PlainMesh", "expect": { "kind": "none" } }
   ]
 }

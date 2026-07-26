@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-splash-visual-fidelity-differential-prototype",
+  "scope": "Reference-relative, fixture-specific evidence for three reported Blender 4.0 Splash symptoms; not a universal visual-parity score.",
+  "reference": {
+    "path": "artifacts/release-dogfood/blender-4-splash/blender-reference-selected-sky-0001.png",
+    "sha256": "5a0fdd327fed3a718f3d0628a37e7dad6675c9ea6c98beddca799e8dc3ca770d"
+  },
+  "candidate": {
+    "path": "experiments/splash-material-response-factorization/output/complete-intrinsic-pbr-static-floor.png",
+    "sha256": "26ba5dcf8d7f2f9bcee86858ad3e5d2946bd58be03d1b714d1020fe19342231a"
+  },
+  "viewport": {
+    "width": 1200,
+    "height": 600
+  },
+  "masks": {
+    "authoredViewport": {
+      "width": 1200,
+      "height": 600
+    },
+    "pixelCounts": {
+      "shadow": 27488,
+      "sky": 14540,
+      "building": 3618
+    },
+    "buildingReferenceSelection": {
+      "maximumStructuralGradient": 0.00302
+    }
+  },
+  "isolatedNegativeControls": {
+    "scope": "Each synthetic candidate starts from the exact Eevee reference and mutates only its named semantic region.",
+    "cases": {
+      "shadow-only-negative": {
+        "intendedFailure": "lost-shadow-information",
+        "actualFailures": [
+          "lost-shadow-information"
+        ],
+        "passed": true
+      },
+      "sky-only-negative": {
+        "intendedFailure": "noisy-or-incorrect-sky",
+        "actualFailures": [
+          "noisy-or-incorrect-sky"
+        ],
+        "passed": true
+      },
+      "building-only-negative": {
+        "intendedFailure": "missing-building-texture",
+        "actualFailures": [
+          "missing-building-texture"
+        ],
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "result": {
+    "passed": false,
+    "symptoms": {
+      "lost-shadow-information": {
+        "reference": {
+          "broadShadowBandRms": 0.05527,
+          "lumaP10P90Range": 0.204714
+        },
+        "candidate": {
+          "broadShadowBandRms": 0.048855,
+          "lumaP10P90Range": 0.187336
+        },
+        "ratios": {
+          "broadShadowBand": 0.883938,
+          "lumaRange": 0.91511
+        },
+        "thresholds": {
+          "minimumBroadShadowBandRatio": 0.72,
+          "minimumLumaRangeRatio": 0.72
+        },
+        "passed": true
+      },
+      "noisy-or-incorrect-sky": {
+        "reference": {
+          "localRgbNoiseRms": 0.026243,
+          "intrinsicRgbSpreadP90": 0.032478
+        },
+        "candidate": {
+          "localRgbNoiseRms": 0.035106,
+          "medianRgbDistanceFromReference": 0.024174
+        },
+        "ratios": {
+          "localNoise": 1.337717,
+          "medianColorErrorInReferenceSpreads": 0.744322
+        },
+        "thresholds": {
+          "maximumNoiseRatio": 1.25,
+          "maximumMedianColorErrorInReferenceSpreads": 2
+        },
+        "passed": false
+      },
+      "missing-building-texture": {
+        "reference": {
+          "midFrequencyLumaRms": 0.027659,
+          "localColorDetailRms": 0.0393
+        },
+        "candidate": {
+          "midFrequencyLumaRms": 0.023984,
+          "localColorDetailRms": 0.036204
+        },
+        "ratios": {
+          "midFrequencyLuma": 0.867152,
+          "localColorDetail": 0.921221,
+          "referencePatternCorrelation": 0.966754,
+          "patternErrorInReferenceDetails": 0.274496
+        },
+        "thresholds": {
+          "minimumMidFrequencyLumaRatio": 0.7,
+          "minimumLocalColorDetailRatio": 0.7,
+          "minimumReferencePatternCorrelation": 0.65,
+          "maximumPatternErrorInReferenceDetails": 0.7
+        },
+        "passed": true
+      }
+    }
+  },
+  "diagnostics": [
+    "experiments/splash-material-response-factorization/output/metrics-pbr-static-floor/diagnostic-shadow.png",
+    "experiments/splash-material-response-factorization/output/metrics-pbr-static-floor/diagnostic-sky.png",
+    "experiments/splash-material-response-factorization/output/metrics-pbr-static-floor/diagnostic-building.png"
+  ],
+  "passed": false
+}

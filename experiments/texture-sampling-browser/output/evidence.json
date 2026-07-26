@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-25T07:40:51.191Z",
+  "browser": "150.0.7871.182",
+  "evidence": {
+    "ready": true,
+    "threeRevision": "184",
+    "rendererMaxAnisotropy": 16,
+    "authored": {
+      "property": 1,
+      "native": 1
+    },
+    "balancedApplied": {
+      "report": {
+        "policy": 4,
+        "requestedAnisotropy": 4,
+        "appliedAnisotropy": 4,
+        "materialTextures": 1,
+        "eligibleTextures": 1,
+        "changedTextures": 1
+      },
+      "property": 4,
+      "native": 4
+    },
+    "qualityApplied": {
+      "report": {
+        "policy": "renderer-max",
+        "requestedAnisotropy": 16,
+        "appliedAnisotropy": 16,
+        "materialTextures": 1,
+        "eligibleTextures": 1,
+        "changedTextures": 1
+      },
+      "property": 16,
+      "native": 16
+    },
+    "balancedResumed": {
+      "property": 4,
+      "native": 4
+    },
+    "authoredRestored": {
+      "property": 1,
+      "native": 1
+    },
+    "renderer": {
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "vendor": "WebKit",
+      "renderer": "WebKit WebGL"
+    }
+  },
+  "assertions": {
+    "actualWebglSamplerStartsAuthored": true,
+    "numericFourMatchesNeedleWhenSupported": true,
+    "rendererMaximumReachesActualWebglSampler": true,
+    "sharedLeaseFallsBackToRemainingMaximum": true,
+    "lastLeaseRestoresAuthoredSampler": true
+  },
+  "sourceSha256": {
+    "packages/blendlink/src/threeTextureSampling.ts": "0b0dfce27fd4377173c1594d49e65f88f33fbddf0ba570dd1410a38dc17e30cf",
+    "experiments/texture-sampling-browser/main.ts": "aa80e8f67ea439cb2d363dcb3874d6254507e9ad89c2420a902f7568a7af76f4",
+    "experiments/texture-sampling-browser/run.mjs": "0fbc25853cbec36cd76cf891d81d808082240abf344b62c7b90c4d21116e23c7"
+  },
+  "limitations": [
+    "This validates Three r184 property-to-WebGL sampler transport and Blendlink lease behavior.",
+    "SwiftShader is not physical-GPU performance evidence.",
+    "DOGWALK is the separate scene-level visual differential; this fixture does not quantify image quality."
+  ]
+}

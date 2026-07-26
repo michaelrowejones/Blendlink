@@ -1,38 +1,105 @@
 {
-    "name":  "blendlink",
-    "version":  "0.3.0",
-    "description":  "Typed scene modules for any GLB - Blender sync first-class.",
-    "type":  "module",
-    "license":  "MIT",
-    "bin":  {
-                "blendlink":  "./dist/cli.js"
-            },
-    "main":  "./dist/index.js",
-    "types":  "./dist/index.d.ts",
-    "exports":  {
-                    ".":  {
-                              "types":  "./dist/index.d.ts",
-                              "default":  "./dist/index.js"
-                          }
-                },
-    "files":  [
-                  "dist",
-                  "blender",
-                  "assets"
-              ],
-    "scripts":  {
-                    "build":  "tsc -p tsconfig.json \u0026\u0026 node scripts/copy-assets.mjs",
-                    "test":  "vitest run --passWithNoTests"
-                },
-    "dependencies":  {
-                         "@gltf-transform/core":  "^4.2.1",
-                         "@gltf-transform/extensions":  "^4.2.1",
-                         "chokidar":  "^4.0.3",
-                         "meshoptimizer":  "^0.24.0"
-                     },
-    "devDependencies":  {
-                            "typescript":  "^5.9.2",
-                            "vitest":  "^3.2.4",
-                            "@types/node":  "^24.0.0"
-                        }
+    "name": "blendlink",
+    "version": "0.8.0",
+    "description": "Artist-first Blender to Three.js scene compiler.",
+    "type": "module",
+    "license": "SEE LICENSE IN LICENSES.md",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/michaelrowejones/Blendlink.git"
+    },
+    "engines": {
+        "node": "^22.12.0 || ^24.0.0"
+    },
+    "bin": {
+        "blendlink": "./dist/cli.js"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./three": {
+            "types": "./dist/threeRuntime.d.ts",
+            "default": "./dist/threeRuntime.js"
+        },
+        "./react-three-fiber": {
+            "types": "./dist/reactThreeFiber.d.ts",
+            "default": "./dist/reactThreeFiber.js"
+        },
+        "./react": {
+            "types": "./dist/react.d.ts",
+            "default": "./dist/react.js"
+        },
+        "./scene-presentation": {
+            "types": "./dist/scenePresentation.d.ts",
+            "default": "./dist/scenePresentation.js"
+        },
+        "./assets": {
+            "types": "./dist/assetUrls.d.ts",
+            "default": "./dist/assetUrls.js"
+        },
+        "./components": {
+            "types": "./dist/components.d.ts",
+            "default": "./dist/components.js"
+        },
+        "./browser-smoke": {
+            "types": "./dist/browserSmokeEvidence.d.ts",
+            "default": "./dist/browserSmokeEvidence.js"
+        }
+    },
+    "files": [
+        "dist",
+        "blender/*.py",
+        "assets",
+        "README.md",
+        "LICENSE",
+        "LICENSES.md"
+    ],
+    "scripts": {
+        "prebuild": "node scripts/clean-dist.mjs",
+        "build": "tsc -p tsconfig.json && node scripts/copy-assets.mjs",
+        "prepack": "node scripts/clean-package-artifacts.mjs",
+        "test": "node scripts/run-vitest.mjs"
+    },
+    "dependencies": {
+        "@gltf-transform/core": "^4.2.1",
+        "@gltf-transform/extensions": "^4.2.1",
+        "@gltf-transform/functions": "4.4.1",
+        "chokidar": "^4.0.3",
+        "meshoptimizer": "^1.2.0",
+        "n8ao": "1.10.2",
+        "postprocessing": "6.39.3",
+        "ndarray-pixels": "5.0.1",
+        "sharp": "0.34.5"
+    },
+    "devDependencies": {
+        "@types/node": "^24.0.0",
+        "@types/three": "0.184.0",
+        "three": "0.184.0",
+        "typescript": "^5.9.2",
+        "vitest": "^3.2.4"
+    },
+    "peerDependencies": {
+        "@types/three": ">=0.184.0 <0.185.0",
+        "@react-three/fiber": ">=9.0.0 <10.0.0",
+        "react": ">=19.0.0 <20.0.0",
+        "three": "0.184.0"
+    },
+    "peerDependenciesMeta": {
+        "@types/three": {
+            "optional": true
+        },
+        "@react-three/fiber": {
+            "optional": true
+        },
+        "react": {
+            "optional": true
+        },
+        "three": {
+            "optional": true
+        }
+    }
 }

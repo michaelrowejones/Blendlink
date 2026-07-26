@@ -1,0 +1,893 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-07-25",
+  "integration": {
+    "status": "mixed-source",
+    "reason": "The broad inventory remains mixed-source because it deliberately retains the historical Engine 5.1.7 spike alongside exact add-on 1.4.2, Engine 5.1.4, build-pipeline 3.0.0, and focused fixtures. The named splash-official-preview cell is coherent only for its uncompressed add-on export, official generated Preview host, and browser differential; it does not make the heterogeneous inventory or the authenticated production transform coherent.",
+    "endToEndEvidence": "named coherent Preview cell recorded separately; global authenticated-production integration pending",
+    "cleanTreeRoot": "coherentFixture"
+  },
+  "namedIntegrations": [
+    {
+      "id": "splash-official-preview",
+      "status": "coherent",
+      "scope": "Needle Blender add-on 1.4.2 uncompressed Splash export loaded by the official generated Preview host with Engine 5.1.4, Vite 8.0.3, and the authored camera in Chrome/WebGL2.",
+      "reason": "The fixture has its own exact package and lock files, passes npm ls --all, uses the official Needle Vite plugin/build-info path, loads the pinned GLB and EXR, and passes the named browser smoke assertions. The red Eevee-relative visual differential is evidence of appearance gaps, not an integration failure.",
+      "cleanTreeRoot": "officialPreview",
+      "endToEndEvidence": "official Preview build plus authored-camera browser smoke and Eevee-relative Splash visual differential, all pinned below",
+      "browserEvidenceFileId": "official-preview-browser-evidence",
+      "evidenceFileIds": [
+        "official-preview-package",
+        "official-preview-lock",
+        "official-preview-vite-config",
+        "official-preview-engine-package",
+        "official-preview-engine-bundle",
+        "official-preview-vite-package",
+        "official-preview-scene",
+        "official-preview-environment",
+        "official-preview-browser-evidence",
+        "official-preview-screenshot",
+        "official-preview-visual-evidence"
+      ],
+      "limitations": [
+        "The licensed @needle-tools/gltf-build-pipeline 3.0.0 production transform was not run and remains pending.",
+        "The fixture proves one 1200 by 600 authored-camera Preview render in Chrome/WebGL2, not production compression, cross-browser behavior, or a physical-GPU identity.",
+        "The clean package tree contains project @needle-tools/three 0.169.21 and Engine-nested @needle-tools/three 0.169.19; clean does not mean single-copy Three."
+      ]
+    }
+  ],
+  "roots": {
+    "addon": {
+      "environment": "BLENDLINK_NEEDLE_ADDON_ROOT",
+      "defaultAbsolute": "C:/Users/micha/Documents/GitHub/MichaelRoweJonesSite/.cache/needle-spike/addon/Needle Engine Exporter for Blender"
+    },
+    "addonCache": {
+      "environment": "BLENDLINK_NEEDLE_ADDON_CACHE",
+      "defaultAbsolute": "C:/Users/micha/Documents/GitHub/MichaelRoweJonesSite/.cache/needle-spike"
+    },
+    "spike": {
+      "relativeToRepository": "experiments/needle-spike"
+    },
+    "coherentFixture": {
+      "relativeToRepository": "experiments/needle-coherent-addon-1.4.2"
+    },
+    "officialPreview": {
+      "relativeToRepository": "experiments/needle-splash-official-preview"
+    }
+  },
+  "identities": [
+    {
+      "name": "Needle Blender add-on",
+      "version": "1.4.2",
+      "fileId": "addon-init"
+    },
+    {
+      "name": "@needle-tools/engine",
+      "version": "5.1.7",
+      "fileId": "engine-package"
+    },
+    {
+      "name": "@needle-tools/three",
+      "version": "0.169.19",
+      "fileId": "engine-three-package"
+    },
+    {
+      "name": "@needle-tools/gltf-progressive",
+      "version": "3.6.0-beta.2",
+      "fileId": "progressive-package"
+    },
+    {
+      "name": "@needle-tools/gltf-build-pipeline",
+      "version": "3.0.0",
+      "fileId": "pipeline3-package"
+    },
+    {
+      "name": "Splash official Preview @needle-tools/engine",
+      "version": "5.1.4",
+      "fileId": "official-preview-engine-package"
+    },
+    {
+      "name": "Splash official Preview engine-nested @needle-tools/three",
+      "version": "0.169.19",
+      "fileId": "official-preview-engine-three-package"
+    },
+    {
+      "name": "Splash official Preview @needle-tools/materialx",
+      "version": "1.7.1",
+      "fileId": "official-preview-materialx-package"
+    },
+    {
+      "name": "Splash official Preview Vite",
+      "version": "8.0.3",
+      "fileId": "official-preview-vite-package"
+    }
+  ],
+  "files": [
+    {
+      "id": "addon-acquisition-archive",
+      "root": "addonCache",
+      "path": "needle-blender-plugin-1.4.2.zip",
+      "sha256": "d947ab298f6c6e47591321ba462c8b21ada2229bc640262cad9998564a0e745a"
+    },
+    {
+      "id": "addon-init",
+      "root": "addon",
+      "path": "__init__.py",
+      "sha256": "980226a628182e9e0b1d443c0e294f799162c76e06c5f599dacc20c614a8c96e"
+    },
+    {
+      "id": "addon-lightmapping",
+      "root": "addon",
+      "path": "lightmapping/lightmapping.py",
+      "sha256": "4e69f0934d9329b2d8480b097baa1d903aa31bed9337c7a2ae0630cbc900b4f1"
+    },
+    {
+      "id": "addon-lightmapping-pack",
+      "root": "addon",
+      "path": "lightmapping/lightmapping_pack.py",
+      "sha256": "242aad7a29c177ac566ad519425ec55cb0376805d02197a0519107a761801cd3"
+    },
+    {
+      "id": "addon-lightmapping-common",
+      "root": "addon",
+      "path": "lightmapping/lightmapping_common.py",
+      "sha256": "9108d701addb1f1c4f13f05fc1df64b37c653e861623d2db69738f6363fa112a"
+    },
+    {
+      "id": "addon-lightmaps-extension",
+      "root": "addon",
+      "path": "extensions/NEEDLE_lightmaps.py",
+      "sha256": "3831dd545261fdd4fa5e5fca9ad98ae7912a0939ea2758bb737b74eae4376a77"
+    },
+    {
+      "id": "addon-animation-handler",
+      "root": "addon",
+      "path": "extensions/animationhandler.py",
+      "sha256": "24044aeaa630ba98ff00707b54d018f2a8d904cf8fd57dc0adcfecc41b5ddb89"
+    },
+    {
+      "id": "addon-timeline-serializer",
+      "root": "addon",
+      "path": "types/timeline/timeline_serializer.py",
+      "sha256": "abb192ec043192ef58cfce6621d6ca8c96b7e37f1071304a7884f87ac09eac06"
+    },
+    {
+      "id": "addon-animator",
+      "root": "addon",
+      "path": "types/animation/animator.py",
+      "sha256": "2f93a1f0727c7c148ca8cd9870e0956ee73dc6a6659e322e53f243e9fbadd936"
+    },
+    {
+      "id": "addon-animator-nodes",
+      "root": "addon",
+      "path": "types/animation/animator_nodes.py",
+      "sha256": "c8ca7f0607b8fd7bc1e3392924d46faef27871d5bd37de875a5b2d852eab089e"
+    },
+    {
+      "id": "addon-animator-transition",
+      "root": "addon",
+      "path": "types/animation/animator_transition.py",
+      "sha256": "a1986fc2db23d8251af407d981c27ac14b2c17f21a0adf2006476661cc1eb8c8"
+    },
+    {
+      "id": "addon-animator-conditions",
+      "root": "addon",
+      "path": "types/animation/animator_conditions.py",
+      "sha256": "6a59d48ae95d9d33d47ddf7148614f8114208e41112613844a5cb1dfcfed17b9"
+    },
+    {
+      "id": "addon-progressive-extension",
+      "root": "addon",
+      "path": "extensions/NEEDLE_progressive.py",
+      "sha256": "73e48c91a8f7e6992b81a33a7bdd18b24a790b2c7081a1d9a97c46cdf7f828c3"
+    },
+    {
+      "id": "addon-utils-blender",
+      "root": "addon",
+      "path": "utils_blender.py",
+      "sha256": "c4165224511b93f9f50a7ffc4018f3704be64babc9ee09a3cb23325d98e95f92"
+    },
+    {
+      "id": "addon-blender-export",
+      "root": "addon",
+      "path": "blender_export.py",
+      "sha256": "6272997cfb4f1d740ea33a7c2512983b9993dedf93c9c8240ca0ff7f82925d77"
+    },
+    {
+      "id": "addon-component-registry",
+      "root": "addon",
+      "path": "component_registry.py",
+      "sha256": "9430b1445e4ca26d46a0798212b3f00333bbe478191a56cac67bf1eb07632ffa"
+    },
+    {
+      "id": "addon-component-types",
+      "root": "addon",
+      "path": "component_types.py",
+      "sha256": "7a504b4c59dc7b54153e4cf2bec0573ed347c5ec701c28611cfb3941fc9d7133"
+    },
+    {
+      "id": "addon-components-extension",
+      "root": "addon",
+      "path": "extensions/NEEDLE_components.py",
+      "sha256": "e543cb43130fcb9672879dec44fcd9aebbc31bfa3764610fb40828116754e97a"
+    },
+    {
+      "id": "addon-project-panel",
+      "root": "addon",
+      "path": "panels_project.py",
+      "sha256": "b3cdc2981e48d5bd50fb3ecf255fc51c3e4035c687a84fbbd4276985514541d0"
+    },
+    {
+      "id": "addon-viewport-panel",
+      "root": "addon",
+      "path": "panels_viewport.py",
+      "sha256": "6f6f6804f8544d79281bf3d8fcab6ea9d62c98a22c2ef08472212a1b9711005d"
+    },
+    {
+      "id": "addon-web-operators",
+      "root": "addon",
+      "path": "operators_web.py",
+      "sha256": "6a07ce69c396a0dbfeafea841b475e06786c9d1e266e8f9f7223cdbf5ece1f91"
+    },
+    {
+      "id": "addon-web-project-utils",
+      "root": "addon",
+      "path": "utils_web_project.py",
+      "sha256": "a59ca4ffbf965460cc6eda0574066ef8c6631bab100506f80308787599e64437"
+    },
+    {
+      "id": "addon-scene-settings",
+      "root": "addon",
+      "path": "settings_scene.py",
+      "sha256": "6e02da2ab32558fb042f0000c863bc6631176458ceb06534d9afcd5061dfd063"
+    },
+    {
+      "id": "addon-external-process",
+      "root": "addon",
+      "path": "external_process.py",
+      "sha256": "a3698c2343f4207344f65155ebb35b274fafa29f875d3ce505ea0a7530fda0b9"
+    },
+    {
+      "id": "addon-npm-utils",
+      "root": "addon",
+      "path": "utils_npm.py",
+      "sha256": "23eb59a19af03ee5aad0985d764dfffac9b7c4d4167e2ef3654a7a76d364d8d3"
+    },
+    {
+      "id": "addon-system-requirements",
+      "root": "addon",
+      "path": "utils_system_requirements.py",
+      "sha256": "0e02677470292795f63e09c31b8a6918da1d80dd814675a8840e20588101b6ec"
+    },
+    {
+      "id": "addon-tools-utils",
+      "root": "addon",
+      "path": "utils_tools.py",
+      "sha256": "62583080cceaea7a88666b3e092db7737e6ef69e792702fc505e4ffac6302134"
+    },
+    {
+      "id": "addon-version-warnings",
+      "root": "addon",
+      "path": "utils_version_warnings.py",
+      "sha256": "36a1a352df24cc07c7983b9139b3246d593b49493086a77222612c5481812c87"
+    },
+    {
+      "id": "addon-debug-utils",
+      "root": "addon",
+      "path": "utils_debug.py",
+      "sha256": "899d7ba9832c57e956d7320b90056e49b2ba959dcfea8346ce5021ba7dc30c6a"
+    },
+    {
+      "id": "addon-component-utils",
+      "root": "addon",
+      "path": "component_utils.py",
+      "sha256": "9b42d25d4fd4cc62b55e1b067706229189158962e35430c44b3a85c604ddbbd5"
+    },
+    {
+      "id": "addon-general-utils",
+      "root": "addon",
+      "path": "utils.py",
+      "sha256": "bde57c1d21818a9e40645afdc3c51b7f58dde1f3ef72b5c4c4c9fd665adddc30"
+    },
+    {
+      "id": "addon-vite-template-package",
+      "root": "addon",
+      "path": "templates/vite/package.json",
+      "sha256": "6c4a4db9e052c5f27435df408bf8f2b6690686653811dd1dda1dc208daf0508b"
+    },
+    {
+      "id": "addon-vanilla-template",
+      "root": "addon",
+      "path": "templates/vanilla/index.html",
+      "sha256": "a7fd8540b65013b2ba19bd1ac914e439975ca54b2be71cec7dc8031610d371d9"
+    },
+    {
+      "id": "addon-postprocess-extension",
+      "root": "addon",
+      "path": "extensions/NEEDLE_components_postprocess.py",
+      "sha256": "90cdd4fbd883858816d36ea1605e75fd820c4bcac2e8d8c87e76a465eb1ce031"
+    },
+    {
+      "id": "addon-components-export-extension",
+      "root": "addon",
+      "path": "extensions/NEEDLE_components_export.py",
+      "sha256": "f6483da9ae55bbb142f4afc519a6db8c3147da370f481db02073ef13cc4610e6"
+    },
+    {
+      "id": "addon-skybox-utils",
+      "root": "addon",
+      "path": "extensions/skybox_utils.py",
+      "sha256": "cbeb3ccbe8cdd018514e5de874c0b3e555a0958c4a1e22a0eafe90396fc5e09c"
+    },
+    {
+      "id": "addon-reflection-probe-operator",
+      "root": "addon",
+      "path": "operators_reflectionprobe.py",
+      "sha256": "a085bdfedc88baac932a1e6da8ca5eddaedf5800173f9ff025db561c5e35b5a4"
+    },
+    {
+      "id": "addon-object-panel",
+      "root": "addon",
+      "path": "panels_object.py",
+      "sha256": "89dbb640ce3326915de768773e9ed7443a5f1778ed37b418437d757abff279ec"
+    },
+    {
+      "id": "addon-builtin-components",
+      "root": "addon",
+      "path": "data/builtin.component.json",
+      "sha256": "d32f28bc6beb4379dcce1b12e114c389f56e493e4e0820123c9a500dfb867382"
+    },
+    {
+      "id": "addon-component-metadata",
+      "root": "addon",
+      "path": "data/components.needle.json",
+      "sha256": "e531d19815efb0a4ffb13ea561309952cde565ae39e327c77e6b487674c566c3"
+    },
+    {
+      "id": "engine-package",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/package.json",
+      "sha256": "15632e6e97f72044defa51db8e703c3c1583c2316c58dd4de10c35c5e6ff4b06"
+    },
+    {
+      "id": "engine-three-package",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/three/package.json",
+      "sha256": "17bdbf08346fcbab12c79ca75847a0e90f26be57a0faac241a4a3564faa9e463"
+    },
+    {
+      "id": "progressive-package",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/package.json",
+      "sha256": "f8f4719e15f4c1fddff01a9cf3efa8cfc5276652093e53509f6582da005ed900"
+    },
+    {
+      "id": "progressive-runtime",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/gltf-progressive.js",
+      "sha256": "e830db8d2212985ccfe0d74f1821c66015867944c80bb20489f16dd5d3ad5c95"
+    },
+    {
+      "id": "progressive-readme",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/README.md",
+      "sha256": "306537020733e7d25546f035540f9a70597acd8d2a8ab571842127aea769de49"
+    },
+    {
+      "id": "progressive-extension-runtime",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/extension.js",
+      "sha256": "67df9318da7e85a1fdd8d71d2ceb1f0610e436ed25e0bb4f049ca26b69cfb1fc"
+    },
+    {
+      "id": "progressive-lods-manager",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/lods.manager.js",
+      "sha256": "7f2dd20751b647f9216b58bf2aca7bf1ffc67b2445282417f472ddd5bd5916d2"
+    },
+    {
+      "id": "progressive-lods-promise",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/lods.promise.js",
+      "sha256": "ab06eea380778bda711cde130eeca2eaa841becdfa195875aa72d1fc8fdb0609"
+    },
+    {
+      "id": "progressive-loaders",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/loaders.js",
+      "sha256": "cc49d4f269eea7328fe183d0f96f9deb2a43d6098d0655f96d3450e338f813d6"
+    },
+    {
+      "id": "progressive-index",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/index.js",
+      "sha256": "0c7be8572277df12f7289ef4aebbb32d06f4d738bb79610abea6428f466f9104"
+    },
+    {
+      "id": "progressive-utils-internal",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/utils.internal.js",
+      "sha256": "3b33db457f8cd1d7ea622e481a8554aaf32eed2d52aba1abd1f797cb288db483"
+    },
+    {
+      "id": "progressive-utils",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/utils.js",
+      "sha256": "ac31ce16bb16705f804bb38c69719e782840a944f6bf9d21ffbadfca042c1fc0"
+    },
+    {
+      "id": "progressive-worker-mainthread",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/worker/loader.mainthread.js",
+      "sha256": "2f8dd2c40705c51642ccfc836ecdc15e2df6df96fb69b05511a9a14720df1489"
+    },
+    {
+      "id": "progressive-worker",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/node_modules/@needle-tools/gltf-progressive/lib/worker/gltf-progressive.worker.js",
+      "sha256": "1fbd5d6ead633e8908ddb248ab51a62d4ab279cf5d0dd072fadf3d86615709b6"
+    },
+    {
+      "id": "pipeline-package",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/gltf-build-pipeline/package.json",
+      "sha256": "a8000057d8b93c479ccdcc9cc2f0c1aec76d62f097a8fb909127a56f99700f8d"
+    },
+    {
+      "id": "pipeline3-acquisition-archive",
+      "root": "addonCache",
+      "path": "needle-tools-gltf-build-pipeline-3.0.0.tgz",
+      "sha256": "e45acae0c743b72f196aeebb37d9a0b492e619339da08f7d4f9c1a0976371089"
+    },
+    {
+      "id": "pipeline3-package",
+      "root": "addonCache",
+      "path": "pipeline-3.0.0/package/package.json",
+      "sha256": "c5d25e13d4d17e3a8d7fa2695ca404a824d85fae36eb16a90ad5cd7cc3c0077e"
+    },
+    {
+      "id": "pipeline3-cli",
+      "root": "addonCache",
+      "path": "pipeline-3.0.0/package/dist/cli/index.js",
+      "sha256": "73afd7b8fdacf74717577e22bfb899ce080ca00bcc4ccdcf6dbfaad52bb144d1"
+    },
+    {
+      "id": "pipeline3-readme",
+      "root": "addonCache",
+      "path": "pipeline-3.0.0/package/README.md",
+      "sha256": "329be3b100f984f83f7a20b0b20418adc3da59ff1709beacd9365e9b3270b9f0"
+    },
+    {
+      "id": "pipeline3-changelog",
+      "root": "addonCache",
+      "path": "pipeline-3.0.0/package/CHANGELOG.md",
+      "sha256": "62d7f00ff478c5b93a71660893ca8ec5912825bfef8bb2ca4832e26bcc345801"
+    },
+    {
+      "id": "engine-web-component",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/webcomponents/needle-engine.ts",
+      "sha256": "66e71697676b0cc115139946e5987bd4b7b97a303671b9c0cad365081d0daa68"
+    },
+    {
+      "id": "engine-context",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_context.ts",
+      "sha256": "84a02111e67f81b67beb023455de175c8567933a04949889b51a0cb38cafb509"
+    },
+    {
+      "id": "engine-time",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_time.ts",
+      "sha256": "5f0c54b980930c98aa1eb207dd71f2ce57ed0496e034bccccb36813cafbb3963"
+    },
+    {
+      "id": "engine-play-animation-on-click",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/export/usdz/extensions/behavior/BehaviourComponents.ts",
+      "sha256": "4e990aa6887f922b0478aefce4cbc535631a0a7a9573de7b8b0c9a3d685161b1"
+    },
+    {
+      "id": "engine-loaders",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_loaders.ts",
+      "sha256": "3df0fbf23e1d36451cc7827fdbc26bb8c4a594d91dfd358526aca4b8ef6d9a73"
+    },
+    {
+      "id": "engine-gltf-loaders",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_loaders.gltf.ts",
+      "sha256": "5fa4bf5a04b982d66b2f2975ed4b4f9e3cdbc21883df8fdcce9155c27ac28288"
+    },
+    {
+      "id": "engine-addressables",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_addressables.ts",
+      "sha256": "0eb7f7b3535235b0a49ac436f6d2a35d7282ce9e05d0c045de57b206d9606d83"
+    },
+    {
+      "id": "engine-lightmaps-extension",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/extensions/NEEDLE_lightmaps.ts",
+      "sha256": "000794aa7421d6b3d73d76c546f0af68ffde784f7d2ee10c1308e1c4d89922e7"
+    },
+    {
+      "id": "engine-lightdata",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_lightdata.ts",
+      "sha256": "9ef66efa71b66a0a02dbdb2160cd0285c4cb409b589d7471f9a6380c5a7c2e59"
+    },
+    {
+      "id": "engine-renderer-lightmap",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/RendererLightmap.ts",
+      "sha256": "0c2b96f12d22dd000a0c92c185b1685cd48af72b8f5b8f8569f703be7e889bd7"
+    },
+    {
+      "id": "engine-components-extension",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/extensions/NEEDLE_components.ts",
+      "sha256": "295d820116bd9e019e3f7b02c83a0269611d24ea88a22c0675652d8347dad8d5"
+    },
+    {
+      "id": "engine-builtin-component-installation",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_gltf_builtin_components.ts",
+      "sha256": "44aa5d8ea4d98606ca8f6e26b5d8feeeb134d693e0b23c3dd72b0d07c51e4836"
+    },
+    {
+      "id": "engine-component-metadata",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/components.needle.json",
+      "sha256": "ac733436d61185ff7234bda04d2f2c762193b4c70731655231c08b9b3d041966"
+    },
+    {
+      "id": "engine-component-base",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/Component.ts",
+      "sha256": "6f5801d7ee26fd987ad05b48a2999eb52e7144cf01e8f2433288708cad1f54dc"
+    },
+    {
+      "id": "engine-light",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/Light.ts",
+      "sha256": "7ceb0827f6d49e94ea350b438cf7374bd23cf07473e13569355866b40820823e"
+    },
+    {
+      "id": "engine-camera",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/Camera.ts",
+      "sha256": "75e9531c33e936bfd16cdac6f65cddd4c6d1cfdd6d287ade25534e852a5a1946"
+    },
+    {
+      "id": "engine-orbit-controls",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/OrbitControls.ts",
+      "sha256": "82b4efa6f6206a32cf2a1c92f367e71b6d4346d6fb785e121d2501edb6a32171"
+    },
+    {
+      "id": "engine-contact-shadows",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/ContactShadows.ts",
+      "sha256": "e4bd8398c59d47ad3bd2eef66625b03c14f260e678d27a332a8ad73d4c17733b"
+    },
+    {
+      "id": "engine-shadow-catcher",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/ShadowCatcher.ts",
+      "sha256": "af0b0fea08e92cee701b618613975b6412eb7a0b80642312a25ce01bba4b740b"
+    },
+    {
+      "id": "engine-fog",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/Fog.ts",
+      "sha256": "600bb920e70dbaa45f24fee196823d1330ef30754886a165b81537bad8c6051d"
+    },
+    {
+      "id": "engine-reflection-probe",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/ReflectionProbe.ts",
+      "sha256": "02505478fdf0cfbb5e756864d4016dd38fe5536c221955dc907f97b4e187d836"
+    },
+    {
+      "id": "engine-renderer-component",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/Renderer.ts",
+      "sha256": "c77ede6eee371ccce367281e22c77aacfdce4fd9d57c23d3d67ca9fa6ec0e159"
+    },
+    {
+      "id": "engine-video-player",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/VideoPlayer.ts",
+      "sha256": "5307ddd7a03938d32ee46bf5fb13fa5bb7bd1666231f7b096d6111904711249a"
+    },
+    {
+      "id": "engine-skybox",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/Skybox.ts",
+      "sha256": "ef981296e6ceaeb792feb8c433df7cd48740bacf090f77ea693e42cda86876b5"
+    },
+    {
+      "id": "engine-ground-projection",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/GroundProjection.ts",
+      "sha256": "30abd50cd872c62d59d0b6e3cfaefb3f7701145f7820c4b6532197827e9e9627"
+    },
+    {
+      "id": "engine-camera-fit",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_camera.fit.ts",
+      "sha256": "bc77b6fc284dd471902e5760dcf797e3bff567f1de58d96e35e8bb53ffd1630b"
+    },
+    {
+      "id": "engine-lighting-settings-extension",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/extensions/NEEDLE_lighting_settings.ts",
+      "sha256": "b3aca7337fa4bfde8f9424483945f747e401fa4ba54135d7a9cbc352af609a1c"
+    },
+    {
+      "id": "engine-scene-lighting",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_scenelighting.ts",
+      "sha256": "8a01815980eee222f1b2cbf03f5c2ecec5b36e3a4ccaa858af5ee302939ff9b5"
+    },
+    {
+      "id": "engine-materialx-extension",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/extensions/NEEDLE_materialx.ts",
+      "sha256": "bb8f82a1372a877aafb261138f74a3e8bca541c530396d3856912844e5b58896"
+    },
+    {
+      "id": "engine-vite-copyfiles",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/plugins/vite/copyfiles.js",
+      "sha256": "a53513a43f69439b6f7b23cd78ebe74b3c9915142f0986095e6cb8e94b0a06c1"
+    },
+    {
+      "id": "engine-vite-config",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/plugins/vite/config.js",
+      "sha256": "d0207db1ce17a7a58b15cd14ef1de032744701491a6d5167bfe230a1e5871990"
+    },
+    {
+      "id": "engine-vite-reload",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/plugins/vite/reload.js",
+      "sha256": "b9e51536beeecd5fd53720390e9f58e4cb2f04ed7bc14a2d1fddf1737b255e08"
+    },
+    {
+      "id": "engine-next-plugin",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/plugins/next/next.js",
+      "sha256": "947cd6a36dd59e099af8b0e36833ad946d53c6df0c7f10dd1b2958579ab82459"
+    },
+    {
+      "id": "engine-buildinfo",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/plugins/common/buildinfo.js",
+      "sha256": "18218dc81a790741f20d94261835366287708756c0d60c689192a867947bda63"
+    },
+    {
+      "id": "engine-utils",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_utils.ts",
+      "sha256": "adb259462e2d859aaca599d2f191c6cdfaf3eb86d4fc92e6b181ca45ba77cb3c"
+    },
+    {
+      "id": "engine-animator",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/Animator.ts",
+      "sha256": "0a9b5961ed22f0f887f503c46cc09e5823b3dd3d3650ed28a0727f1fe1757e7d"
+    },
+    {
+      "id": "engine-animation-component",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/Animation.ts",
+      "sha256": "e2d49582ac429b8a40a48c9b1bca767dc38184c9cd6a38c762142b18ab8155f4"
+    },
+    {
+      "id": "engine-animator-controller",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/AnimatorController.ts",
+      "sha256": "c353b604e24898d4520fd888ca180e3aeaa275d9ce06f35d09b0907ad00a91a9"
+    },
+    {
+      "id": "engine-playable-director",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/timeline/PlayableDirector.ts",
+      "sha256": "fc653989c22dd0fb67a33cccda23172525b37e8f089ce3c74d82146324954854"
+    },
+    {
+      "id": "engine-timeline-models",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/timeline/TimelineModels.ts",
+      "sha256": "4364c157ef1fb740d3e6acc9f49475c60882d18f7c474119ad110c3efd69eb1c"
+    },
+    {
+      "id": "engine-timeline-tracks",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/timeline/TimelineTracks.ts",
+      "sha256": "8d5af1239372e2bdb172cde04cff5705209a92fadc21014e8fb34ed85f7f294c"
+    },
+    {
+      "id": "engine-lod-group",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine-components/LODGroup.ts",
+      "sha256": "15ecec557441b51fa4a8cf997a90fb83382dcdc958bb71ead12c7798fd3000ab"
+    },
+    {
+      "id": "engine-lods",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_lods.ts",
+      "sha256": "3c9e3131cfda7d228048ab7c124a746b5dd73fa7d88ae23de10eff9be19f30f3"
+    },
+    {
+      "id": "engine-animation-lifecycle",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_animation.ts",
+      "sha256": "ffefe5c590222a3de63098df4206840b74f230de9ecad0a48f643458c3d5cb65"
+    },
+    {
+      "id": "engine-progressive-extension",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/extensions/NEEDLE_progressive.ts",
+      "sha256": "6ab2807c7fbeab2c02b32958cf8170ae75534dd9ab20006e1d5a06d89505483f"
+    },
+    {
+      "id": "engine-extension-registration",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/extensions/extensions.ts",
+      "sha256": "d99b7661810e9efc74cf526377f49bcac004fa2a785a4433e65066a39e930d9a"
+    },
+    {
+      "id": "engine-create-objects",
+      "root": "spike",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_create_objects.ts",
+      "sha256": "50f550db8c99743df32be28fd40fbc8da2b49325849a61200f017be2cb4c3b62"
+    },
+    {
+      "id": "generated-vite-config",
+      "root": "spike",
+      "path": "vite.config.js",
+      "sha256": "e34507308cc0781dd917777c57e94e09abe8ae92871081e4888dc74a8c470554"
+    },
+    {
+      "id": "generated-app",
+      "root": "spike",
+      "path": "src/App.tsx",
+      "sha256": "7e94f5c02e0431900df7219f809433835b344cf5fb18fb34a2ffdd9df681c568"
+    },
+    {
+      "id": "spike-package-lock",
+      "root": "spike",
+      "path": "package-lock.json",
+      "sha256": "88e6ea94015fa4706a4708df899a0327e74aae0b1c1be1da86cda67dd1d37f38"
+    },
+    {
+      "id": "coherent-fixture-package",
+      "root": "coherentFixture",
+      "path": "package.json",
+      "sha256": "41753af69993e942ded85003cddd81f861cc0eb215b28fd42653a73aba89debc"
+    },
+    {
+      "id": "coherent-fixture-lock",
+      "root": "coherentFixture",
+      "path": "package-lock.json",
+      "sha256": "70b4564d2a569b78e0fd47c9f33e6d5ba87a747717b9c898790b451d5b7febd5"
+    },
+    {
+      "id": "official-preview-package",
+      "root": "officialPreview",
+      "path": "package.json",
+      "sha256": "c808e760808b96fc87b0ff8a2be6b346e844a204976c16aaf85fcedf80844ec2"
+    },
+    {
+      "id": "official-preview-lock",
+      "root": "officialPreview",
+      "path": "package-lock.json",
+      "sha256": "a3c5b7c3102414fdc1b7d1a07859816c38525c0e1b647ce0c90341558e40d322"
+    },
+    {
+      "id": "official-preview-vite-config",
+      "root": "officialPreview",
+      "path": "vite.config.js",
+      "sha256": "38831f1bb7f23b086c0f096f3dbd165b1f61e0eb8b9e1ebeb0b71af295e9e573"
+    },
+    {
+      "id": "official-preview-engine-package",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/engine/package.json",
+      "sha256": "522f0a5aa64c22fe76a5d7c6fd0f039fce396eb841324512862c0d704bcacb38"
+    },
+    {
+      "id": "official-preview-engine-bundle",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/engine/lib/needle-engine.js",
+      "sha256": "c6fefdeda5137b38a611c587bca9c93f9f56068ffdf88c0d2b2d3bd0a1bae261"
+    },
+    {
+      "id": "official-preview-engine-gltf-loaders",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/engine/src/engine/engine_loaders.gltf.ts",
+      "sha256": "5fa4bf5a04b982d66b2f2975ed4b4f9e3cdbc21883df8fdcce9155c27ac28288"
+    },
+    {
+      "id": "official-preview-engine-materialx",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/engine/src/engine/extensions/NEEDLE_materialx.ts",
+      "sha256": "bb8f82a1372a877aafb261138f74a3e8bca541c530396d3856912844e5b58896"
+    },
+    {
+      "id": "official-preview-engine-three-package",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/engine/node_modules/three/package.json",
+      "sha256": "17bdbf08346fcbab12c79ca75847a0e90f26be57a0faac241a4a3564faa9e463"
+    },
+    {
+      "id": "official-preview-engine-three-texture",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/engine/node_modules/three/src/textures/Texture.js",
+      "sha256": "0c28f5d27c574e1b2f4f27508bc82e37f78ca06db1278d84ff5dc15f4d1eb50d"
+    },
+    {
+      "id": "official-preview-engine-three-gltf-loader",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/engine/node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+      "sha256": "4aba05147b1ccb01f581979ea44950b60a568e74a5db811df9f5573a2b3521b1"
+    },
+    {
+      "id": "official-preview-materialx-package",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/materialx/package.json",
+      "sha256": "350b1511e8abc756154ea39b17471a56b2079b4396b1ca845f31c3dd184dcfdb"
+    },
+    {
+      "id": "official-preview-materialx-loader",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/materialx/src/loader/loader.three.js",
+      "sha256": "79e815bf0ba139aac5f5df5eb71cf14c330900dc5315d7341ab155c9120d55c3"
+    },
+    {
+      "id": "official-preview-materialx-helper",
+      "root": "officialPreview",
+      "path": "node_modules/@needle-tools/materialx/src/materialx.helper.js",
+      "sha256": "ad66ec035a4c39df3dcd8db5f766a7738e80456f784e7bdf14e7867f3ffd5e43"
+    },
+    {
+      "id": "official-preview-vite-package",
+      "root": "officialPreview",
+      "path": "node_modules/vite/package.json",
+      "sha256": "a6e1e3371949bbc440444b6503c4ab206386d1eca5cf51caecd28283aaa0631d"
+    },
+    {
+      "id": "official-preview-scene",
+      "root": "officialPreview",
+      "path": "assets/scene.glb",
+      "sha256": "ba66cf5c974bf5fb14740e42225de5030174e9ecbe2731d74b7ad0fb38660da9"
+    },
+    {
+      "id": "official-preview-environment",
+      "root": "officialPreview",
+      "path": "assets/forest.exr",
+      "sha256": "bdf2298244affa0f85509380fd130ac6d4dfaa3c856df065998f7f4c1a93dc0d"
+    },
+    {
+      "id": "official-preview-browser-evidence",
+      "root": "officialPreview",
+      "path": "browser-evidence-needle-blender-4-splash-selected-sky-authored-camera-official-preview-networked.json",
+      "sha256": "aa6045b86588b48ea0e8153c7c440fe03a3bf3bb191ba0ca840c18b3d8bba06c"
+    },
+    {
+      "id": "official-preview-screenshot",
+      "root": "officialPreview",
+      "path": "browser-evidence-needle-blender-4-splash-selected-sky-authored-camera-official-preview-networked.png",
+      "sha256": "54e30ecaa0342611122288efbf6ffe9c7440709d6d613c67adf77d37fe0efcbc"
+    },
+    {
+      "id": "official-preview-visual-evidence",
+      "root": "officialPreview",
+      "path": "visual-gates/evidence.json",
+      "sha256": "ac538adc31de0a7d4446c54890cdbaa2907793484c91f112f94b2f573f0d5e9d"
+    }
+  ]
+}

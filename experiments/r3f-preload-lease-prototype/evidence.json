@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-07-24T06:01:29.191Z",
+  "browser": "150.0.7871.129",
+  "url": "http://127.0.0.1:5173/",
+  "installedSources": {
+    "react": {
+      "version": "19.0.0",
+      "path": "node_modules/react/cjs/react.development.js",
+      "sha256": "0c81ce0e95e381e08b91123e1faa9c1093626ff6d2229c546e5a1d82c0549e91"
+    },
+    "reactDom": {
+      "version": "19.0.0",
+      "path": "node_modules/react-dom/cjs/react-dom-client.development.js",
+      "sha256": "495d78cd55901829d595757f03fdf5916b045073f52f9385885a9da9187d3b31"
+    },
+    "reactThreeFiber": {
+      "version": "9.6.1",
+      "path": "node_modules/@react-three/fiber/dist/events-b389eeca.esm.js",
+      "sha256": "dd92f7b70d669b7a0f3f4db35bcddd8f3aa9d10e2b2d76ddec63a7f041ef06d1"
+    },
+    "suspendReact": {
+      "version": "0.1.3",
+      "path": "node_modules/suspend-react/index.js",
+      "sha256": "12b503b08c451b0f378d547b960399517da189f3d565ac8d0c909714b4d4bb4e"
+    },
+    "three": {
+      "version": "0.184.0",
+      "path": "node_modules/three/src/loaders/LoadingManager.js",
+      "sha256": "d71a203b1ba2382e1d95d0993302a20a774cc38d0c323ecbe2892a76e3c6a772"
+    },
+    "needleAddressables": {
+      "version": "5.1.7",
+      "path": "experiments/needle-spike/node_modules/@needle-tools/engine/src/engine/engine_addressables.ts",
+      "sha256": "0eb7f7b3535235b0a49ac436f6d2a35d7282ce9e05d0c045de57b206d9606d83"
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "evidence": {
+    "ready": true,
+    "reactVersion": "19.0.0",
+    "unsafeRenderAcquisition": {
+      "starts": 1,
+      "cancels": 0,
+      "resolves": 1,
+      "disposes": 0,
+      "activations": 0,
+      "progress": [],
+      "activeEntries": 1,
+      "releaseObserved": false
+    },
+    "committedStrictLease": {
+      "starts": 1,
+      "cancels": 1,
+      "resolves": 1,
+      "disposes": 1,
+      "activations": 1,
+      "progress": [
+        "loading",
+        "loading",
+        "preparing",
+        "prepared"
+      ],
+      "effectSetups": 2,
+      "effectCleanups": 2,
+      "layoutActivations": 2,
+      "displayedReady": true,
+      "activeEntries": 0
+    },
+    "pendingRelease": {
+      "starts": 1,
+      "cancels": 1,
+      "resolves": 1,
+      "disposes": 1,
+      "activations": 0,
+      "progress": [],
+      "showedReady": false,
+      "activeEntries": 0
+    },
+    "exclusivityAndRetry": {
+      "exclusivityError": "A renderer-bound Blendlink preparation is exclusive to one logical owner. Use a distinct attempt key or wait for the current owner to release it.",
+      "firstAttempt": 1,
+      "retryAttempt": 2,
+      "starts": 2,
+      "cancels": 2,
+      "resolves": 2,
+      "disposes": 2,
+      "activations": 0,
+      "progress": [],
+      "activeEntries": 0
+    }
+  },
+  "assertions": {
+    "renderTimeAcquisitionHasNoDeterministicAbandonmentCleanup": true,
+    "committedOwnerSurvivesStrictEffectReplayWithOneAttempt": true,
+    "finalReleaseCancelsAndDisposesExactlyOnce": true,
+    "lateNonCooperativeResultCannotActivateAndIsDisposed": true,
+    "mutableCandidateIsExclusiveAcrossLogicalOwners": true,
+    "retryGetsMonotonicAttemptIdentity": true
+  },
+  "limits": [
+    "The candidate is a controlled asynchronous fake, not a GLB/KTX/HDR/EXR load or a WebGLRenderer-bound preparation.",
+    "The prototype validates React ownership and registry transitions only. Three LoadingManager, decoder-worker, renderer, context-loss, and GPU behavior remain covered by their own focused gates.",
+    "The one-microtask Strict Mode handoff is observed in React/ReactDOM 19.0.0 Chromium only and needs a production R3F regression before shipping.",
+    "The unsafe case intentionally leaves one entry alive to prove that Client React exposes no deterministic cleanup for a render that suspended before commit."
+  ]
+}

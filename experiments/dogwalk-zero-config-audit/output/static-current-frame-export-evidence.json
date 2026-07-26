@@ -1,0 +1,87 @@
+{
+  "blender": {
+    "buildHash": "fbe6228777e7",
+    "version": "5.2.0 LTS"
+  },
+  "classification": "prototype static authored-frame stock glTF; not shipped Blendlink behavior",
+  "exporter": {
+    "dropped": [],
+    "durationSeconds": 9.486004299949855,
+    "effective": {
+      "check_existing": false,
+      "export_animations": false,
+      "export_apply": true,
+      "export_cameras": true,
+      "export_current_frame": true,
+      "export_format": "GLB",
+      "export_image_format": "AUTO",
+      "export_import_convert_lighting_mode": "COMPAT",
+      "export_jpeg_quality": 100,
+      "export_lights": true,
+      "filepath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\dogwalk-zero-config-audit\\output\\static-current-frame-prototype.glb",
+      "gltf_export_id": "Needle Engine",
+      "use_active_scene": true,
+      "use_visible": false
+    },
+    "implicitDefaults": {
+      "export_animation_mode": "ACTIONS",
+      "export_current_frame": false,
+      "export_extras": false,
+      "export_gn_mesh": false,
+      "export_gpu_instances": false,
+      "export_hierarchy_full_collections": false,
+      "export_morph": true,
+      "export_skins": true
+    },
+    "requested": {
+      "check_existing": false,
+      "export_animations": false,
+      "export_apply": true,
+      "export_cameras": true,
+      "export_current_frame": true,
+      "export_format": "GLB",
+      "export_image_format": "AUTO",
+      "export_import_convert_lighting_mode": "COMPAT",
+      "export_jpeg_quality": 100,
+      "export_lights": true,
+      "filepath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\dogwalk-zero-config-audit\\output\\static-current-frame-prototype.glb",
+      "gltf_export_id": "Needle Engine",
+      "use_active_scene": true,
+      "use_visible": false
+    }
+  },
+  "glb": {
+    "bytes": 196548836,
+    "mtimeNs": 1784950817198146200,
+    "path": "C:/Users/micha/Documents/GitHub/blendlink/experiments/dogwalk-zero-config-audit/output/static-current-frame-prototype.glb",
+    "sha256": "f4579dfcf93aab4b903a22b89d21a659b6c491740f701bbf6a6dd75d91fa89f4"
+  },
+  "mode": "static-current-frame",
+  "needleSource": {
+    "path": "blender_export.py",
+    "settingsLines": "pinned source lines 374-416",
+    "sha256": "6272997cfb4f1d740ea33a7c2512983b9993dedf93c9c8240ca0ff7f82925d77",
+    "version": "1.4.2"
+  },
+  "scene": {
+    "frameCurrentAfterExport": 85,
+    "frameRange": [
+      85,
+      85
+    ],
+    "name": "Scene"
+  },
+  "schemaVersion": 1,
+  "sourceAfter": {
+    "bytes": 401947045,
+    "mtimeNs": 1784746667337407100,
+    "path": "C:/Users/micha/Downloads/blender-4.5-splash.blend",
+    "sha256": "7f8718cfd89baf59151cc4ba431eeab38b9ff260ffa0054d93293f228a70cc36"
+  },
+  "sourceBefore": {
+    "bytes": 401947045,
+    "mtimeNs": 1784746667337407100,
+    "path": "C:/Users/micha/Downloads/blender-4.5-splash.blend",
+    "sha256": "7f8718cfd89baf59151cc4ba431eeab38b9ff260ffa0054d93293f228a70cc36"
+  }
+}

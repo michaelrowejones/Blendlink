@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-splash-visual-fidelity-differential-prototype",
+  "scope": "Reference-relative, fixture-specific evidence for three reported Blender 4.0 Splash symptoms; not a universal visual-parity score.",
+  "reference": {
+    "path": "artifacts/release-dogfood/blender-4-splash/blender-reference-selected-sky-0001.png",
+    "sha256": "5a0fdd327fed3a718f3d0628a37e7dad6675c9ea6c98beddca799e8dc3ca770d"
+  },
+  "candidate": {
+    "path": "experiments/splash-sky-diagnosis/output/isolated-sky.png",
+    "sha256": "5352c2e9157688c0d38e2822ccd7e43d9cc4d4c54ca9c343b7874407ab1b4871"
+  },
+  "viewport": {
+    "width": 1200,
+    "height": 600
+  },
+  "masks": {
+    "authoredViewport": {
+      "width": 1200,
+      "height": 600
+    },
+    "pixelCounts": {
+      "shadow": 27488,
+      "sky": 14540,
+      "building": 3618
+    },
+    "buildingReferenceSelection": {
+      "maximumStructuralGradient": 0.00302
+    }
+  },
+  "isolatedNegativeControls": {
+    "scope": "Each synthetic candidate starts from the exact Eevee reference and mutates only its named semantic region.",
+    "cases": {
+      "shadow-only-negative": {
+        "intendedFailure": "lost-shadow-information",
+        "actualFailures": [
+          "lost-shadow-information"
+        ],
+        "passed": true
+      },
+      "sky-only-negative": {
+        "intendedFailure": "noisy-or-incorrect-sky",
+        "actualFailures": [
+          "noisy-or-incorrect-sky"
+        ],
+        "passed": true
+      },
+      "building-only-negative": {
+        "intendedFailure": "missing-building-texture",
+        "actualFailures": [
+          "missing-building-texture"
+        ],
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "result": {
+    "passed": false,
+    "symptoms": {
+      "lost-shadow-information": {
+        "reference": {
+          "broadShadowBandRms": 0.05527,
+          "lumaP10P90Range": 0.204714
+        },
+        "candidate": {
+          "broadShadowBandRms": 0.000207,
+          "lumaP10P90Range": 0.000533
+        },
+        "ratios": {
+          "broadShadowBand": 0.003748,
+          "lumaRange": 0.002601
+        },
+        "thresholds": {
+          "minimumBroadShadowBandRatio": 0.72,
+          "minimumLumaRangeRatio": 0.72
+        },
+        "passed": false
+      },
+      "noisy-or-incorrect-sky": {
+        "reference": {
+          "localRgbNoiseRms": 0.026243,
+          "intrinsicRgbSpreadP90": 0.032478
+        },
+        "candidate": {
+          "localRgbNoiseRms": 0.008346,
+          "medianRgbDistanceFromReference": 0.026501
+        },
+        "ratios": {
+          "localNoise": 0.318032,
+          "medianColorErrorInReferenceSpreads": 0.815959
+        },
+        "thresholds": {
+          "maximumNoiseRatio": 1.25,
+          "maximumMedianColorErrorInReferenceSpreads": 2
+        },
+        "passed": true
+      },
+      "missing-building-texture": {
+        "reference": {
+          "midFrequencyLumaRms": 0.027659,
+          "localColorDetailRms": 0.0393
+        },
+        "candidate": {
+          "midFrequencyLumaRms": 0.003544,
+          "localColorDetailRms": 0.008194
+        },
+        "ratios": {
+          "midFrequencyLuma": 0.12812,
+          "localColorDetail": 0.20851,
+          "referencePatternCorrelation": -0.009767,
+          "patternErrorInReferenceDetails": 1.009307
+        },
+        "thresholds": {
+          "minimumMidFrequencyLumaRatio": 0.7,
+          "minimumLocalColorDetailRatio": 0.7,
+          "minimumReferencePatternCorrelation": 0.65,
+          "maximumPatternErrorInReferenceDetails": 0.7
+        },
+        "passed": false
+      }
+    }
+  },
+  "diagnostics": [
+    "experiments/splash-sky-diagnosis/output/isolated-sky-gate/diagnostic-shadow.png",
+    "experiments/splash-sky-diagnosis/output/isolated-sky-gate/diagnostic-sky.png",
+    "experiments/splash-sky-diagnosis/output/isolated-sky-gate/diagnostic-building.png"
+  ],
+  "passed": false
+}

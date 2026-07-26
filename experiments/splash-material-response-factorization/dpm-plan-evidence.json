@@ -1,0 +1,89 @@
+{
+  "blender": "5.2.0 LTS",
+  "configurationCost": {
+    "artistSelectionIsNeverChangedAutomatically": true,
+    "bindingCount": 18,
+    "currentMaterializationBlockers": [
+      {
+        "code": "material.selected-field-binding-count",
+        "fix": "Make the selected material unique to one static object for now, or use a direct constant/image/vertex-color field. Shared native-object atlas support will be added only with per-binding context tests.",
+        "material": "DPM.002",
+        "objects": [
+          "Cube",
+          "Grid",
+          "Pencil.001.GPM.line.001",
+          "Pencil.001.GPM.line.002",
+          "Pencil.001.GPM.line.003",
+          "Pencil.001.GPM.line.004",
+          "Pencil.001.GPM.line.005",
+          "Pencil.001.GPM.line.046",
+          "Pencil.GPM.fill.011",
+          "Pencil.GPM.fill.013",
+          "Pencil.GPM.fill.044",
+          "Pencil.GPM.fill.054",
+          "Pencil.GPM.line.018",
+          "Pencil.GPM.line.019",
+          "Pencil.GPM.meshline.001",
+          "Pencil.GPM.meshline.002",
+          "Pencil.GPM.meshline.007",
+          "Sphere.001"
+        ],
+        "problem": "The first selected-field bake needs one object/material binding; \"DPM.002\" is used by 18 bindings."
+      }
+    ],
+    "markerLinksChanged": 1,
+    "markerNodesAdded": 0
+  },
+  "currentSelection": {
+    "issues": [
+      {
+        "code": "material.selected-field-surface-response-ambiguous",
+        "fix": "Select a complete intrinsic field and a supported response strategy, or explicitly choose Lit/Unlit when a stock-glTF approximation is intentional.",
+        "material": "DPM.002",
+        "objects": [
+          "Cube",
+          "Grid",
+          "Pencil.001.GPM.line.001",
+          "Pencil.001.GPM.line.002",
+          "Pencil.001.GPM.line.003",
+          "Pencil.001.GPM.line.004",
+          "Pencil.001.GPM.line.005",
+          "Pencil.001.GPM.line.046",
+          "Pencil.GPM.fill.011",
+          "Pencil.GPM.fill.013",
+          "Pencil.GPM.fill.044",
+          "Pencil.GPM.fill.054",
+          "Pencil.GPM.line.018",
+          "Pencil.GPM.line.019",
+          "Pencil.GPM.meshline.001",
+          "Pencil.GPM.meshline.002",
+          "Pencil.GPM.meshline.007",
+          "Sphere.001"
+        ],
+        "problem": "Blendlink cannot choose an automatic portable surface response for Website Color: the selected field converges with an Eevee-only BSDF-to-Shader-to-RGB response; the unique complete intrinsic candidate immediately before that response is \"Mix.001 -> Result (Color)\". Select that output as Website Color to preserve its pattern and masks; Blendlink will not change the artist-selected socket automatically."
+      }
+    ],
+    "kind": "vertexColor",
+    "node": "Color Attribute.001",
+    "outcome": "blocked",
+    "socket": "Color"
+  },
+  "kind": "blendlink-real-splash-dpm-plan-evidence",
+  "markerCount": 1,
+  "material": "DPM.002",
+  "materialFingerprint": "c12c8efdf1c11248bc886157eb6d26827856e2efc5fc13a2167e3bba11ab15f1",
+  "schemaVersion": 1,
+  "source": {
+    "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\blender-4-splash\\fixtures\\blender-4.0-splash-selected-sky.blend",
+    "sha256": "29f9d5d39c74068b48e30028b5ae7bf196b21e0f85945535636b4c3e164f6d4f"
+  },
+  "suggestedSelection": {
+    "automaticSurfaceResponse": null,
+    "classificationIssue": null,
+    "kind": "materialized",
+    "node": "Mix.001",
+    "recognizedStaticFloorFactorization": null,
+    "socket": "Result",
+    "surfaceResponseProblem": "the selected field converges with an Eevee-only BSDF-to-Shader-to-RGB response"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "blendlink-eevee-fixed-camera-transport-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "node run.mjs"
+  }
+}

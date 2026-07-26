@@ -1,0 +1,385 @@
+{
+  "blender": {
+    "autoexecEnabled": false,
+    "buildHash": "ec6e62d40fa9",
+    "version": "5.1.2"
+  },
+  "curves": {
+    "sidecarMeshAssumptionFailures": [
+      {
+        "data": "NurbsPath.014",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.blue",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "NurbsPath.025",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.blue.001",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "NurbsPath.026",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.brown.001",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "NurbsPath.012",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.red",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "NurbsPath.024",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.red.001",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      }
+    ],
+    "totalRenderVisibleDataObjects": 395,
+    "withoutEvaluatedMesh": [
+      {
+        "data": "NurbsPath.014",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.blue",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "NurbsPath.025",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.blue.001",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "NurbsPath.026",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.brown.001",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "NurbsPath.012",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.red",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "NurbsPath.024",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": true,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "GEO-electrical_wire.red.001",
+        "splineTypes": [
+          "POLY"
+        ],
+        "vertices": null
+      },
+      {
+        "data": "DATA_stroke_tube.extras",
+        "error": null,
+        "evaluatedMesh": false,
+        "hasNonBezierSpline": false,
+        "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend",
+        "object": "stroke_tube.extras",
+        "splineTypes": [
+          "BEZIER"
+        ],
+        "vertices": null
+      }
+    ]
+  },
+  "drivers": {
+    "fcurvesFlaggedInvalid": 0,
+    "fcurvesFlaggedInvalidEntries": [],
+    "total": 6640
+  },
+  "linkedLibraries": {
+    "entries": [
+      {
+        "authoredPath": "//promo\\annecy_banner\\annecy_banner.blend",
+        "exists": true,
+        "name": "annecy_banner.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\promo\\annecy_banner\\annecy_banner.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\arm_umbrella\\arm_umbrella.blend",
+        "exists": true,
+        "name": "arm_umbrella.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\props\\arm_umbrella\\arm_umbrella.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\sets\\barn\\barn.blend",
+        "exists": true,
+        "name": "barn.blend.001",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\sets\\barn\\barn.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\Better_Curve_Deform.blend",
+        "exists": true,
+        "name": "Better_Curve_Deform.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\Better_Curve_Deform.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\cam\\camera_rig.blend",
+        "exists": true,
+        "name": "camera_rig.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\cam\\camera_rig.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\char\\cat\\publish\\cat.v001.blend",
+        "exists": true,
+        "name": "cat.v001.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\char\\cat\\publish\\cat.v001.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\CollisionAvoidance.blend",
+        "exists": true,
+        "name": "CollisionAvoidance.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\CollisionAvoidance.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\compositing.blend",
+        "exists": true,
+        "name": "compositing.blend.001",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\compositing.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\Curve_Deform_Iterative.blend",
+        "exists": true,
+        "name": "Curve_Deform_Iterative.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\Curve_Deform_Iterative.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\char\\dog\\dog.rigging.blend",
+        "exists": true,
+        "name": "dog.rigging.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\char\\dog\\dog.rigging.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\char\\dog\\publish\\dog.v001.blend",
+        "exists": true,
+        "name": "dog.v001.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\char\\dog\\publish\\dog.v001.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\inflatable_ramp\\inflatable_ramp.blend",
+        "exists": true,
+        "name": "inflatable_ramp.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\props\\inflatable_ramp\\inflatable_ramp.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\scripts\\lighting_rig_setup.blend",
+        "exists": true,
+        "name": "lighting_rig_setup.blend.001",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\scripts\\lighting_rig_setup.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\lgt\\lighting_rigs.blend",
+        "exists": true,
+        "name": "lighting_rigs.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\lgt\\lighting_rigs.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\matlib\\materials_generic.blend",
+        "exists": true,
+        "name": "materials_generic.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\matlib\\materials_generic.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\lgt\\outline_setup.blend",
+        "exists": true,
+        "name": "outline_setup.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\lgt\\outline_setup.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\pencil\\pencil.blend",
+        "exists": true,
+        "name": "pencil.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\props\\pencil\\pencil.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\env\\power_cable\\power_cable.blend",
+        "exists": true,
+        "name": "power_cable.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\env\\power_cable\\power_cable.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\rigging_misc.blend",
+        "exists": true,
+        "name": "rigging_misc.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\rigging_misc.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\rocket_exterior\\rocket_exterior.blend",
+        "exists": true,
+        "name": "rocket_exterior.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\props\\rocket_exterior\\rocket_exterior.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\sets\\rocket_interior\\rocket_interior.blend",
+        "exists": true,
+        "name": "rocket_interior.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\sets\\rocket_interior\\rocket_interior.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\sets\\rocket_interior\\rocket_interior.pilot_chair.blend",
+        "exists": true,
+        "name": "rocket_interior.pilot_chair.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\sets\\rocket_interior\\rocket_interior.pilot_chair.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\screwdriver\\screwdriver.blend",
+        "exists": true,
+        "name": "screwdriver.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\props\\screwdriver\\screwdriver.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\shading.blend",
+        "exists": true,
+        "name": "shading.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\shading.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\lgt\\shadow_proxy_setup.blend",
+        "exists": true,
+        "name": "shadow_proxy_setup.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\lgt\\shadow_proxy_setup.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\spanner\\spanner.blend",
+        "exists": true,
+        "name": "spanner.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\props\\spanner\\spanner.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\props\\toolbox\\toolbox.blend",
+        "exists": true,
+        "name": "toolbox.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\props\\toolbox\\toolbox.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\utilities.blend",
+        "exists": true,
+        "name": "utilities.blend.001",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\utilities.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\nodes\\UV_Deform.blend",
+        "exists": true,
+        "name": "UV_Deform.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\UV_Deform.blend"
+      },
+      {
+        "authoredPath": "//pro\\lib\\lgt\\world.blend",
+        "exists": true,
+        "name": "world.blend",
+        "resolvedPath": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\lgt\\world.blend"
+      }
+    ],
+    "resolved": 30,
+    "total": 30
+  },
+  "missingIds": [
+    {
+      "kind": "materials",
+      "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\props\\inflatable_ramp\\inflatable_ramp.blend",
+      "name": "blue"
+    },
+    {
+      "kind": "node_groups",
+      "library": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\next-corpus\\sources\\blender-3.6-splash-official\\blender-3.6-splash\\pro\\lib\\nodes\\shading.blend",
+      "name": "SH-shader_main"
+    }
+  ],
+  "registeredScripts": [
+    {
+      "characters": 8535,
+      "name": "lighting_overrider_execution.py"
+    },
+    {
+      "characters": 66720,
+      "name": "cloudrig.py"
+    },
+    {
+      "characters": 66720,
+      "name": "cloudrig.py"
+    },
+    {
+      "characters": 4235,
+      "name": "lighting_rig_setup.py"
+    },
+    {
+      "characters": 66720,
+      "name": "cloudrig.py"
+    },
+    {
+      "characters": 66633,
+      "name": "cloudrig.py"
+    },
+    {
+      "characters": 66633,
+      "name": "cloudrig.py"
+    }
+  ],
+  "schemaVersion": 1,
+  "source": {
+    "bytes": 7878056,
+    "path": "C:/Users/micha/Documents/GitHub/blendlink/artifacts/release-dogfood/next-corpus/sources/blender-3.6-splash-official/blender-3.6-splash/blender-3.6-splash.blend",
+    "sha256": "c65a4203f136ed2dabb076a0f13a347818da1e14ff73c84bd0b08caffbb36ef4"
+  }
+}

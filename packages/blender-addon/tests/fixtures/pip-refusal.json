@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "fixture": "pip-material-animation-refusal",
+  "source": {
+    "title": "Pip - Shading Breakdown",
+    "creator": "Simon Thommes",
+    "publisher": "Blender Studio",
+    "url": "https://studio.blender.org/projects/api/assets/2618/?site_context=gallery",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "officialSha256": "B62B5A38350E80626DE5593CD1E1BA79664849DC55CDB9B20B396BC2A27A1C26",
+    "localBlender51ResaveSha256": "60AFB3EEB71131F9D7DF942901CC3A5311C64A12BEDC4EDF9BC1932386AB2B63"
+  },
+  "topology": {
+    "object": "Sphere",
+    "materials": [
+      "MAT-shell",
+      "MAT-shell_solid"
+    ],
+    "animatedNodeGroups": [
+      {
+        "name": "SH-Seed",
+        "path": "nodes[\"Value.001\"].outputs[0].default_value",
+        "expression": "frame"
+      },
+      {
+        "name": "UT-texture",
+        "path": "nodes[\"Value.001\"].outputs[0].default_value",
+        "expression": "frame"
+      }
+    ],
+    "invalidDriver": {
+      "object": "Empty",
+      "path": "rotation_euler",
+      "index": 2,
+      "expression": "frame/bpy.context.scene.frame_end*2*pi"
+    },
+    "eeveeOnlyNode": "ShaderNodeShaderToRGB"
+  }
+}

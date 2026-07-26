@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-07-25",
+  "toolchain": {
+    "blender": "5.2.0 LTS",
+    "blendlink": "0.8.0 dirty-worktree research audit",
+    "needleBaseline": "docs/needle-baseline.json",
+    "needlePreviewIntegration": "splash-official-preview"
+  },
+  "configurationLadder": {
+    "zero": "Only the immutable source path and generated scene name are supplied. No source mutation, material adapter, application patch, or scene-specific compiler option is allowed.",
+    "minimal": "Only namespaced Blender artist-intent markers plus application-owned post-processing or interactivity are allowed. Every marker is counted and explained.",
+    "researchOnly": "Any generated material rewrite, source derivative, application material adapter, or scene-specific runtime patch. It cannot support a zero/minimal-config claim."
+  },
+  "postExportRuntimeCorpora": [
+    {
+      "id": "khronos-runtime-core",
+      "upstream": "KhronosGroup/glTF-Sample-Assets",
+      "revision": "2bac6f8c57bf471df0d2a1e8a8ec023c7801dddf",
+      "cadence": "pull-request after explicit hash-checked acquisition",
+      "status": "verified structural and Chromium runtime corpus 2026-07-25",
+      "commands": [
+        "node experiments/khronos-runtime-corpus/run.mjs",
+        "node experiments/khronos-runtime-corpus/run.mjs --browser"
+      ],
+      "capabilities": {
+        "assets": 20,
+        "files": 26,
+        "bytes": 6703746,
+        "coreAnimation": true,
+        "skin": true,
+        "morph": true,
+        "interpolations": ["STEP", "LINEAR", "CUBICSPLINE"],
+        "negativeTransforms": true,
+        "suppliedTangents": true,
+        "uvAndTextureTransform": true,
+        "threeBuiltInMaterialExtensions": 11,
+        "loudUnsupportedCells": [
+          "KHR_node_visibility required animation",
+          "KHR_animation_pointer optional material-color channel"
+        ]
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "cube-diorama",
+      "localPath": "C:/Users/micha/Downloads/asset-demo-bundle-3.0-cube-diorama/cube_diorama/cube_diorama.blend",
+      "bytes": 11674153,
+      "sha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "provenance": {
+        "kind": "official Blender 3.0 asset demo bundle",
+        "url": "https://download.blender.org/demo/bundles/bundles-3.0/asset-demo-bundle-3.0-cube-diorama.zip",
+        "license": "CC0",
+        "evidence": "Embedded README says License: CC-0."
+      },
+      "sourceTruth": "Cycles",
+      "cadence": "nightly",
+      "role": "positive geometry, material, area-light, bake, and performance stress",
+      "status": "active dogfood",
+      "capabilities": {
+        "objects": 61,
+        "renderVisibleMeshes": 53,
+        "materials": 52,
+        "packedImages": 15,
+        "geometryNodeModifiers": 14,
+        "areaLights": 3,
+        "spotLights": 1,
+        "drivers": 7
+      }
+    },
+    {
+      "id": "blender-4.0-splash",
+      "localPath": "C:/Users/micha/Downloads/blender-4.0-splash.blend",
+      "bytes": 33844223,
+      "sha256": "fec31be671d68e2594d087865fb2a8bbbc2929c56e365085a8d4e6af260fb67f",
+      "provenance": {
+        "kind": "official Blender splash mirror",
+        "url": "https://download.blender.org/demo/splash/blender-4.0-splash.blend",
+        "license": "CC-BY-SA",
+        "evidence": "Embedded LICENSE credits Gaku Tada and states CC-BY-SA."
+      },
+      "sourceTruth": "Eevee",
+      "cadence": "nightly",
+      "role": "positive stylized-Eevee selected-field, alpha, object-completeness, world-volume, and distributed-geometry stress",
+      "status": "active dogfood",
+      "capabilities": {
+        "objects": 269,
+        "renderVisibleMeshes": 262,
+        "renderVisibleCurves": 5,
+        "materials": 68,
+        "images": 22,
+        "packedImages": 20,
+        "geometryNodeModifiers": 88,
+        "shaderToRgbNodes": 20,
+        "vertexColorNodes": 73,
+        "worldVolume": true,
+        "frameRange": [1, 210]
+      }
+    },
+    {
+      "id": "blender-3.6-splash",
+      "localPath": "C:/Users/micha/Downloads/blender-3.6-splash.zip",
+      "bytes": 256907103,
+      "sha256": "d3e31955432149483d70e5a61b0b03f56b037b467265556449d58a302c8f3b58",
+      "provenance": {
+        "kind": "Pet Projects production bundle from the official Blender 3.6 splash distribution",
+        "url": "https://download.blender.org/demo/splash/blender-3.6-splash.zip",
+        "license": "unresolved exact Creative Commons version; local-only",
+        "evidence": "Archive README identifies Blender Studio's Pet Projects production bundle; embedded README identifies Blender Foundation copyright and only '(CC)'. Neither notice states an exact license version."
+      },
+      "sourceTruth": "Eevee in the saved source; read-only structural evaluation verified in Blender 5.1.2. Blender 5.2.0 LTS crashes during library-override loading before inspection.",
+      "cadence": "release-manual",
+      "role": "linked-library, external-image, numbered-texture/UDIM, library-override, driver-security, evaluated-curve, and production-closure stress",
+      "status": "archive/extraction/closure verified; Blender 5.1 read-only audit found 2 missing linked IDs and 5 unevaluable sidecar Curves; the shipped generated 5.1/5.2 differential and untouched-bundle rerun now produce an artist-readable Curve blocker instead of AttributeError. Blender 5.2 loader crash reproduced; browser/visual parity pending",
+      "capabilities": {
+        "archiveEntries": 90,
+        "extractedFiles": 48,
+        "blendFiles": 31,
+        "externalTiffFiles": 14,
+        "entryBlendPath": "blender-3.6-splash/blender-3.6-splash.blend",
+        "entryBlendBytes": 7878056,
+        "entryBlendSha256": "c65a4203f136ed2dabb076a0f13a347818da1e14ff73c84bd0b08caffbb36ef4",
+        "blender51BuildHash": "ec6e62d40fa9",
+        "linkedLibraries": 30,
+        "resolvedLinkedLibraries": 30,
+        "externalImageReferences": 24,
+        "resolvedExternalImageReferences": 24,
+        "missingLinkedIds": [
+          "Material blue",
+          "NodeTree SH-shader_main"
+        ],
+        "registeredScripts": 7,
+        "actions": 44,
+        "drivers": 5935,
+        "geometryNodeModifiers": 1787,
+        "sidecarMeshAssumptionFailures": 5,
+        "sidecarCurveDiagnostic": "verified named refusal; no raw-point fallback",
+        "blender52BuildHash": "fbe6228777e7",
+        "blender52CrashSha256": "af6f94f363b45d510726d31585cfb140ce86162ea0e3f8a4e33191d7dfa406b6"
+      }
+    },
+    {
+      "id": "blender-2.91-splash",
+      "localPath": "C:/Users/micha/Downloads/blender-2.91-splash.blend",
+      "bytes": 69359275,
+      "sha256": "b60bd6d566d202cc9cd8c0bd260a45be0ab8c37fc24e0d2e9c909efa41e94655",
+      "provenance": {
+        "kind": "official Blender splash mirror",
+        "url": "https://download.blender.org/demo/splash/blender-2.91-splash.blend",
+        "license": "CC-BY-SA-3.0",
+        "evidence": "Embedded README credits Robin Tran and states CC-BY-SA 3.0."
+      },
+      "sourceTruth": "Eevee",
+      "cadence": "nightly",
+      "role": "verified zero-config negative for legacy path particles and unresolved realtime material planning; retained foliage, alpha, Shader-to-RGB, Geometry Nodes, and multi-camera research source",
+      "status": "expected refusal verified 2026-07-24: active export scope blocks 3 HAIR/PATH systems / 93000 parents; Preview not emitted",
+      "capabilities": {
+        "objects": 291,
+        "renderVisibleMeshes": 285,
+        "materials": 23,
+        "images": 3,
+        "packedImages": 1,
+        "geometryNodeModifiers": 2,
+        "particleSystems": 5,
+        "shaderToRgbNodes": 20,
+        "cameras": 4,
+        "actions": 7,
+        "frameRange": [1, 100]
+      }
+    },
+    {
+      "id": "blender-4.5-splash",
+      "localPath": "C:/Users/micha/Downloads/blender-4.5-splash.blend",
+      "bytes": 401947045,
+      "sha256": "7f8718cfd89baf59151cc4ba431eeab38b9ff260ffa0054d93293f228a70cc36",
+      "provenance": {
+        "kind": "official Blender splash mirror; DOGWALK production",
+        "url": "https://download.blender.org/demo/splash/blender-4.5-splash.blend",
+        "license": "Creative Commons family, exact variant pending",
+        "evidence": "The local file has no license text. Blender Studio says the entire DOGWALK project is Creative Commons; pin the exact license variant before redistributing source or derivatives."
+      },
+      "sourceTruth": "Eevee",
+      "cadence": "release-manual",
+      "role": "next packed-texture, collection-instance, curve, rig, driver, static-production-frame, and large-file stress",
+      "status": "verified zero-config expected refusal 2026-07-25: Final plan is null with 22 material.used-needs-bake errors; Final compile independently blocks driven camera-data animation before publication; source hash unchanged. Needle-equivalent stock, current-frame, and current-pose structural/browser controls retained as research evidence.",
+      "capabilities": {
+        "objects": 185,
+        "renderVisibleMeshes": 90,
+        "renderVisibleCurves": 7,
+        "collectionInstances": 39,
+        "armatures": 5,
+        "materials": 43,
+        "images": 73,
+        "packedImages": 70,
+        "geometryNodeModifiers": 9,
+        "actions": 52,
+        "drivers": 131,
+        "authoredFrame": 85
+      }
+    },
+    {
+      "id": "pip-shader",
+      "localPath": "C:/Users/micha/Downloads/pip_shader.blend",
+      "bytes": 1549391,
+      "sha256": "60afb3eeb71131f9d7df942901cc3a5311c64a12bedc4edf9bc1932386ab2b63",
+      "provenance": {
+        "kind": "Blender Studio asset, locally resaved in Blender 5.1",
+        "url": "https://studio.blender.org/training/procedural-shading/5f52635f6a8a7b3ac5015582/",
+        "license": "CC-BY-4.0",
+        "evidence": "Official asset page and retained fixture attribution."
+      },
+      "sourceTruth": "Eevee",
+      "cadence": "pull-request",
+      "role": "negative animated material, Shader-to-RGB, driver-security, and payload-collapse conformance",
+      "status": "verified refusal fixture"
+    },
+    {
+      "id": "blender-2.82-tram",
+      "localPath": "C:/Users/micha/Downloads/blender-282.blend",
+      "bytes": 6998679,
+      "sha256": "13f0705e9e05d98a70471c7ac73cdc4e42c9513cd7e2a482503f770cc631d458",
+      "provenance": {
+        "kind": "official Blender splash gallery",
+        "url": "https://download.blender.org/demo/splash/blender-282.blend",
+        "license": "CC-BY-SA-3.0",
+        "evidence": "Embedded Text credits Andry Rasoahaingo and states CC-BY-SA 3.0."
+      },
+      "sourceTruth": "Eevee",
+      "cadence": "nightly",
+      "role": "negative Grease Pencil renderable-loss conformance",
+      "status": "verified refusal fixture"
+    },
+    {
+      "id": "animal-fur",
+      "localPath": "artifacts/release-dogfood/next-corpus/sources/hair_nodes-animal_fur_examples.blend",
+      "bytes": 2731078,
+      "sha256": "c438a907b23504849a554f839c6e0dcc286b5ab68e18060f90ce5258de8b9437",
+      "provenance": {
+        "kind": "official Blender Geometry Nodes demo",
+        "url": "https://download.blender.org/demo/geometry-nodes/hair_nodes-animal_fur_examples.blend",
+        "license": "CC0",
+        "evidence": "Official Blender demo page."
+      },
+      "sourceTruth": "Blender evaluated geometry",
+      "cadence": "pull-request",
+      "role": "negative Hair Curves silent-loss conformance",
+      "status": "verified refusal fixture"
+    },
+    {
+      "id": "jiggly-pudding",
+      "localPath": "artifacts/release-dogfood/next-corpus/sources/jiggly_pudding.blend",
+      "bytes": 165253,
+      "sha256": "1338daffaf54d521fe851514be2ba10c2ec93769393e4dd2c79419a68cf9727d",
+      "provenance": {
+        "kind": "official Blender Geometry Nodes demo",
+        "url": "https://download.blender.org/demo/geometry-nodes/jiggly_pudding.blend",
+        "license": "CC0",
+        "evidence": "Official Blender demo page."
+      },
+      "sourceTruth": "Blender evaluated simulation",
+      "cadence": "pull-request",
+      "role": "negative Simulation Zone silent-freeze conformance",
+      "status": "verified refusal fixture"
+    },
+    {
+      "id": "trapx-painterly",
+      "localPath": "C:/Users/micha/Downloads/TrapX - Stylized Painting Shader.blend",
+      "bytes": 41863981,
+      "sha256": "d32731c7983e59546893bcc7fd4ef5c14532b0b2e782f63fa7ef9ed4faafb6ae",
+      "provenance": {
+        "kind": "former Gumroad attachment",
+        "url": null,
+        "license": "unknown",
+        "evidence": "Creator attribution exists, but no redistribution grant was recovered."
+      },
+      "sourceTruth": "Cycles",
+      "cadence": "private-manual",
+      "role": "private fixed-camera Fresnel, glass, transparency, and painterly material experiment",
+        "status": "verified zero-configuration expected refusal 2026-07-25: Final plan and compile both exit 1 with the same 14 material-loss reasons; source and prior stable/addressed GLBs, manifest, generated scene module, and baked recipe module remain byte-identical. The retained stock/Needle-equivalent browser floor loads but visibly loses authored glass, transparency, Fresnel closure algebra, and compositor appearance.",
+      "capabilities": {
+        "objects": 5,
+        "renderVisibleMeshes": 1,
+        "materials": 7,
+        "images": 47,
+        "packedImages": 45,
+        "provenUnusedMissingExternalImages": 2,
+        "sunLights": 2,
+        "compositorLensDistortionNodes": 2,
+        "compositorGlareNodes": 1,
+        "authoredFrame": 0,
+        "resolution": [1080, 1080]
+      }
+    },
+    {
+      "id": "ellie-animation",
+      "localPath": "artifacts/release-dogfood/next-corpus/sources/ellie-animation-official/ellie_animation/ellie_animation.blend",
+      "bytes": 25591121,
+      "sha256": "20e00af5488721c5bf5a10534e7f6a5cef667849c671773daf8348b7c1237b9e",
+      "provenance": {
+        "kind": "official Blender 3.0 asset demo bundle",
+        "url": "https://download.blender.org/demo/bundles/bundles-3.0/asset-demo-bundle-3.0-ellie-animation.zip",
+        "archiveBytes": 25491843,
+        "archiveSha256": "b0293d1f5b39b654236deaf8b7dd0f215be503db2afe9c98d96610a1a97700db",
+        "license": "CC-BY, exact version and attribution string pending",
+        "evidence": "Both embedded README Animation and README Pose Library text blocks state License: CC-BY. Pin the exact version and required attribution before redistributing derivatives."
+      },
+      "sourceTruth": "Eevee",
+      "cadence": "release-manual",
+      "role": "production rig, pose-library, driver, shape-key, dithered-material, and legacy particle-hair stress; no longer treated as a compact positive fixture",
+      "status": "verified zero-config expected refusal 2026-07-25: Final plan is null with 41 material.used-needs-bake errors across 41 used materials, source hash unchanged, and zero publication files",
+      "capabilities": {
+        "objects": 144,
+        "renderVisibleMeshes": 104,
+        "armatures": 1,
+        "actions": 58,
+        "drivers": 3226,
+        "objectsWithShapeKeys": 14,
+        "materials": 53,
+        "packedImages": 11,
+        "legacyHairPathSystems": 7,
+        "embeddedPythonScripts": 2,
+        "frameRange": [1, 330]
+      }
+    }
+  ],
+  "nextRuns": [
+    {
+      "order": 1,
+      "scene": "blender-2.91-splash",
+      "mode": "expected-refusal regression; Preview only after a verified legacy path transport exists",
+      "reason": "The 2026-07-24 run added general HAIR/PATH and realtime material-plan gates; retain it as a regression instead of scene-specific configuration."
+    },
+    {
+      "order": 2,
+      "scene": "blender-4.5-splash",
+      "mode": "retain the verified 22-material/property-animation refusal; rerun Final only after a general portable material and animation-dependency route can clear those independent gates",
+      "reason": "The untouched audit already separated frame-zero camera, armature rest pose, packed-image materials, and unsupported property animation. It must remain a compound production regression, not be made green with scene-specific configuration."
+    },
+    {
+      "order": 3,
+      "scene": "blender-3.6-splash",
+      "mode": "retain the verified 5.2 native-load crash and the repaired 5.1 named-Curve refusal; re-enter only after the two missing linked IDs have a general repair or explicit artist remedy",
+      "reason": "The isolated audit proves 30/30 library paths and 24/24 images resolve, seven registered scripts stay disabled, and five POLY curves receive the shipped no-raw-fallback diagnostic. Two linked IDs remain a separate production-data blocker. This is a compatibility/security/compiler lane, not yet visual-parity evidence."
+    },
+    {
+      "order": 4,
+      "scene": "ellie-animation",
+      "mode": "retain the verified 41-material zero-config refusal; rerun deeper rig/driver/hair gates only after a truthful material route can pass preflight",
+      "reason": "The untouched 2026-07-25 run refuses before publication, preserves the exact source hash, and emits no artifact. Ellie remains a production stress negative; generated Blender and Khronos rig cells provide independently diagnosable positive animation evidence."
+    },
+    {
+      "order": 5,
+      "scene": "trapx-painterly",
+      "mode": "retain the verified zero-configuration plan/compile refusal and stock browser floor; re-enter only through a general portable-optics or fixed-camera appearance capability",
+      "reason": "The private immutable source exposed and now verifies the transactional material gate. It adds Cycles-evaluable painterly Fresnel/glass/transparency without turning uncertain redistribution rights or a scene-specific adapter into public release evidence."
+    }
+  ]
+}

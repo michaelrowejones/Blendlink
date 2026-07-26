@@ -1,0 +1,19 @@
+{
+  "name": "blendlink-needle-coherent-addon-1-4-2-evidence",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Isolated dependency-tree evidence for the Needle Blender add-on 1.4.2 expectedPackageVersions contract.",
+  "scripts": {
+    "verify:tree": "npm ls --all"
+  },
+  "dependencies": {
+    "@needle-tools/engine": "5.1.4",
+    "three": "npm:@needle-tools/three@^0.169.19"
+  },
+  "devDependencies": {
+    "@needle-tools/gltf-build-pipeline": "3.0.0",
+    "@needle-tools/helper": "2.0.0",
+    "@needle-tools/needle-component-compiler": "version-3",
+    "@types/three": "0.169.0"
+  }
+}

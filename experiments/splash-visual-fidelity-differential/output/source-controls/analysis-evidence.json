@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-splash-retained-source-control-analysis",
+  "status": "prototype",
+  "scope": "One-variable, fixture-specific Eevee controls. Repeat A/B is the renderer/compositor noise floor.",
+  "images": {
+    "reference": {
+      "path": "artifacts/release-dogfood/blender-4-splash/blender-reference-selected-sky-0001.png",
+      "sha256": "650e2f0fc9f78bbd6aec6656d9d241b656a6acf16c4cb10eb12cb7c8e601f243"
+    },
+    "baselineA": {
+      "path": "experiments/splash-visual-fidelity-differential/output/source-controls/baseline-a.png",
+      "sha256": "b84fc9c55c9b49dfce08fbe33ff997d091ac6e47c4be81b5db8988bdecc8a41d"
+    },
+    "baselineB": {
+      "path": "experiments/splash-visual-fidelity-differential/output/source-controls/baseline-b.png",
+      "sha256": "df56f8a442cd40c148e4ef814812137ef478d33f12880469be4cefffada27476"
+    },
+    "sunShadowsDisabled": {
+      "path": "experiments/splash-visual-fidelity-differential/output/source-controls/sun-shadows-disabled.png",
+      "sha256": "61da47985dfc1bc769e1d3a1f29a184f39c302e469f5f49932fd98c6de691bb5"
+    },
+    "packedNoiseNeutralized": {
+      "path": "experiments/splash-visual-fidelity-differential/output/source-controls/packed-noise-neutralized.png",
+      "sha256": "d9b6b5b66dc5bfb903d67242631346156ad76d926580069fa2c91fc851864a2d"
+    }
+  },
+  "maskPixelCounts": {
+    "fullFrame": 720000,
+    "shadow": 27488,
+    "sky": 14540,
+    "building": 3618
+  },
+  "comparisons": {
+    "repeatNoiseFloor": {
+      "fullFrame": {
+        "selectedPixels": 720000,
+        "rgbMae": 0,
+        "rgbRmse": 0.000008,
+        "lumaAbsoluteMean": 0,
+        "rgbDistanceP95": 0,
+        "changedByAtLeastFourCodeValuesFraction": 0
+      },
+      "shadow": {
+        "selectedPixels": 27488,
+        "rgbMae": 0,
+        "rgbRmse": 0,
+        "lumaAbsoluteMean": 0,
+        "rgbDistanceP95": 0,
+        "changedByAtLeastFourCodeValuesFraction": 0
+      },
+      "sky": {
+        "selectedPixels": 14540,
+        "rgbMae": 0,
+        "rgbRmse": 0,
+        "lumaAbsoluteMean": 0,
+        "rgbDistanceP95": 0,
+        "changedByAtLeastFourCodeValuesFraction": 0
+      },
+      "building": {
+        "selectedPixels": 3618,
+        "rgbMae": 0,
+        "rgbRmse": 0,
+        "lumaAbsoluteMean": 0,
+        "rgbDistanceP95": 0,
+        "changedByAtLeastFourCodeValuesFraction": 0
+      }
+    },
+    "baselineToReference": {
+      "fullFrame": {
+        "selectedPixels": 720000,
+        "rgbMae": 0.046831,
+        "rgbRmse": 0.089083,
+        "lumaAbsoluteMean": 0.032509,
+        "rgbDistanceP95": 0.192463,
+        "changedByAtLeastFourCodeValuesFraction": 0.852961
+      },
+      "shadow": {
+        "selectedPixels": 27488,
+        "rgbMae": 0.028457,
+        "rgbRmse": 0.053627,
+        "lumaAbsoluteMean": 0.022118,
+        "rgbDistanceP95": 0.116222,
+        "changedByAtLeastFourCodeValuesFraction": 0.674513
+      },
+      "sky": {
+        "selectedPixels": 14540,
+        "rgbMae": 0.022234,
+        "rgbRmse": 0.040743,
+        "lumaAbsoluteMean": 0.02582,
+        "rgbDistanceP95": 0.047976,
+        "changedByAtLeastFourCodeValuesFraction": 0.978061
+      },
+      "building": {
+        "selectedPixels": 3618,
+        "rgbMae": 0.010523,
+        "rgbRmse": 0.039122,
+        "lumaAbsoluteMean": 0.005881,
+        "rgbDistanceP95": 0.079276,
+        "changedByAtLeastFourCodeValuesFraction": 0.231896
+      }
+    },
+    "sunShadowsDisabled": {
+      "fullFrame": {
+        "selectedPixels": 720000,
+        "rgbMae": 0.06147,
+        "rgbRmse": 0.118601,
+        "lumaAbsoluteMean": 0.063211,
+        "rgbDistanceP95": 0.277121,
+        "changedByAtLeastFourCodeValuesFraction": 0.546378
+      },
+      "shadow": {
+        "selectedPixels": 27488,
+        "rgbMae": 0.088412,
+        "rgbRmse": 0.139356,
+        "lumaAbsoluteMean": 0.087936,
+        "rgbDistanceP95": 0.265517,
+        "changedByAtLeastFourCodeValuesFraction": 0.593204
+      },
+      "sky": {
+        "selectedPixels": 14540,
+        "rgbMae": 0.004744,
+        "rgbRmse": 0.04209,
+        "lumaAbsoluteMean": 0.004856,
+        "rgbDistanceP95": 0,
+        "changedByAtLeastFourCodeValuesFraction": 0.027029
+      },
+      "building": {
+        "selectedPixels": 3618,
+        "rgbMae": 0.004962,
+        "rgbRmse": 0.02283,
+        "lumaAbsoluteMean": 0.005199,
+        "rgbDistanceP95": 0.061889,
+        "changedByAtLeastFourCodeValuesFraction": 0.10199
+      }
+    },
+    "packedNoiseNeutralized": {
+      "fullFrame": {
+        "selectedPixels": 720000,
+        "rgbMae": 0.009631,
+        "rgbRmse": 0.026378,
+        "lumaAbsoluteMean": 0.009859,
+        "rgbDistanceP95": 0.059084,
+        "changedByAtLeastFourCodeValuesFraction": 0.252964
+      },
+      "shadow": {
+        "selectedPixels": 27488,
+        "rgbMae": 0.009847,
+        "rgbRmse": 0.015801,
+        "lumaAbsoluteMean": 0.009493,
+        "rgbDistanceP95": 0.034337,
+        "changedByAtLeastFourCodeValuesFraction": 0.424258
+      },
+      "sky": {
+        "selectedPixels": 14540,
+        "rgbMae": 0.007045,
+        "rgbRmse": 0.023989,
+        "lumaAbsoluteMean": 0.007053,
+        "rgbDistanceP95": 0.059819,
+        "changedByAtLeastFourCodeValuesFraction": 0.132669
+      },
+      "building": {
+        "selectedPixels": 3618,
+        "rgbMae": 0.003683,
+        "rgbRmse": 0.007869,
+        "lumaAbsoluteMean": 0.003266,
+        "rgbDistanceP95": 0.019477,
+        "changedByAtLeastFourCodeValuesFraction": 0.18712
+      }
+    }
+  },
+  "effectToRepeatNoiseFloor": {
+    "sunShadowsDisabled": {
+      "fullFrame": {
+        "rgbMae": "Infinity",
+        "rgbRmse": 14825.125,
+        "lumaAbsoluteMean": "Infinity"
+      },
+      "shadow": {
+        "rgbMae": "Infinity",
+        "rgbRmse": "Infinity",
+        "lumaAbsoluteMean": "Infinity"
+      },
+      "sky": {
+        "rgbMae": "Infinity",
+        "rgbRmse": "Infinity",
+        "lumaAbsoluteMean": "Infinity"
+      },
+      "building": {
+        "rgbMae": "Infinity",
+        "rgbRmse": "Infinity",
+        "lumaAbsoluteMean": "Infinity"
+      }
+    },
+    "packedNoiseNeutralized": {
+      "fullFrame": {
+        "rgbMae": "Infinity",
+        "rgbRmse": 3297.25,
+        "lumaAbsoluteMean": "Infinity"
+      },
+      "shadow": {
+        "rgbMae": "Infinity",
+        "rgbRmse": "Infinity",
+        "lumaAbsoluteMean": "Infinity"
+      },
+      "sky": {
+        "rgbMae": "Infinity",
+        "rgbRmse": "Infinity",
+        "lumaAbsoluteMean": "Infinity"
+      },
+      "building": {
+        "rgbMae": "Infinity",
+        "rgbRmse": "Infinity",
+        "lumaAbsoluteMean": "Infinity"
+      }
+    }
+  },
+  "diagnostics": [
+    "source-control-overview.png",
+    "diagnostic-sun-shadow-control.png",
+    "diagnostic-packed-noise-control.png"
+  ]
+}

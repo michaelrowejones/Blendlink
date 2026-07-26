@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-splash-production-evidence-gate",
+  "scope": "Fixture-specific linkage and acceptance for selected-sky object recovery, lit carrier semantics, and reported visual symptoms; not a universal parity score.",
+  "identities": {
+    "manifest": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\blender-4-splash\\src\\generated\\blender40SplashSelectedSky.manifest.json",
+      "sha256": "bd40bd1fb604558afc921fb6a63bebc73f2759171af43d68ccc3bc317df1596e"
+    },
+    "matrix": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\blender-4-splash\\visual-reference-selected-sky.json",
+      "sha256": "d224861d1c849878440ee8243a91828d322cbdb8580708887c8433ca557dc411"
+    },
+    "source": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\blender-4-splash\\fixtures\\blender-4.0-splash-selected-sky.blend",
+      "sha256": "29f9d5d39c74068b48e30028b5ae7bf196b21e0f85945535636b4c3e164f6d4f"
+    },
+    "publishedScene": {
+      "path": "blender40SplashSelectedSky.glb",
+      "role": "scene",
+      "bytes": 42890492,
+      "sha256": "d2d1e73c257afbf9a352b3cdf692dec468a74f2de50ba02a1b86b15556324b05"
+    },
+    "browserScreenshot": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\blender-4-splash\\browser-evidence-blender-4-splash-selected-sky.png",
+      "sha256": "af2365bb2ea08ac391548b257e44b91c4957bf228db56f469a92a3f016c1ae1a"
+    },
+    "eeveeReference": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\blender-4-splash\\blender-reference-selected-sky-0001.png",
+      "sha256": "5a0fdd327fed3a718f3d0628a37e7dad6675c9ea6c98beddca799e8dc3ca770d",
+      "canonicalPixels": {
+        "width": 600,
+        "height": 300,
+        "channels": 4,
+        "sha256": "6405a4699a99abae8544715b6b02be2d1bb15160f0f2a5ecaf21992e35091b6e"
+      }
+    },
+    "needleReference": {
+      "path": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\artifacts\\release-dogfood\\blender-4-splash\\needle-three-way-2026\\browser-evidence-needle-blender-4-splash-selected-sky-authored-camera-clean-ui.png",
+      "sha256": "54e30ecaa0342611122288efbf6ffe9c7440709d6d613c67adf77d37fe0efcbc"
+    },
+    "previousBlendlink": {
+      "screenshotSha256": "853d883dac57506c45a23cbc06056a691e19a22199ec2387d35baa902ae55621",
+      "symptomRatios": {
+        "shadowBand": 0.268233,
+        "shadowRange": 0.154057,
+        "skyNoise": 1.630712,
+        "skyColorError": 3.458311,
+        "buildingLuma": 0.04299,
+        "buildingColor": 0.040908,
+        "buildingCorrelation": 0.045046,
+        "buildingPatternError": 0.999061
+      }
+    },
+    "opaqueAlphaPrototype": {
+      "screenshotSha256": "f98284c67a038987545837c58e5a4431ee2bb717c31e1be5c51608328bc10f1f",
+      "collapsedMeaningfulObjects": 4,
+      "collapsedFocusObjects": 0
+    },
+    "needleSymptomRatios": {
+      "shadowBand": 1.066283,
+      "shadowRange": 0.550198,
+      "skyNoise": 1.371534,
+      "skyColorError": 5.037634,
+      "buildingLuma": 0.879401,
+      "buildingColor": 0.925291,
+      "buildingCorrelation": 0.595708,
+      "buildingPatternError": 0.85254
+    }
+  },
+  "checks": {
+    "browser-smoke": {
+      "passed": true,
+      "detail": "passed"
+    },
+    "manifest-is-current-source": {
+      "passed": true,
+      "detail": "manifest=29f9d5d39c74068b source=29f9d5d39c74068b48e30028b5ae7bf196b21e0f85945535636b4c3e164f6d4f"
+    },
+    "visual-reference-is-current-source": {
+      "passed": true,
+      "detail": "matrix=29f9d5d39c74068b source=29f9d5d39c74068b"
+    },
+    "visual-matrix-used-browser-pixels": {
+      "passed": true,
+      "detail": "matrix=af2365bb2ea08ac3 browser=af2365bb2ea08ac3"
+    },
+    "browser-loaded-one-glb": {
+      "passed": true,
+      "detail": "loaded 1 GLBs"
+    },
+    "browser-glb-is-published-scene": {
+      "passed": true,
+      "detail": "browser=d2d1e73c257afbf9a352b3cdf692dec468a74f2de50ba02a1b86b15556324b05 manifest=d2d1e73c257afbf9a352b3cdf692dec468a74f2de50ba02a1b86b15556324b05"
+    },
+    "browser-url-is-manifest-url": {
+      "passed": true,
+      "detail": "browser=/models/blender40SplashSelectedSky/3727e808731b5ac1550e15f4f0f0d37a533996685d9cb256030e289f68851fd2/blender40SplashSelectedSky.glb manifest=/models/blender40SplashSelectedSky/3727e808731b5ac1550e15f4f0f0d37a533996685d9cb256030e289f68851fd2/blender40SplashSelectedSky.glb"
+    },
+    "object-audit-is-published-scene": {
+      "passed": true,
+      "detail": "object=d2d1e73c257afbf9a352b3cdf692dec468a74f2de50ba02a1b86b15556324b05 manifest=d2d1e73c257afbf9a352b3cdf692dec468a74f2de50ba02a1b86b15556324b05"
+    },
+    "object-audit-used-browser-pixels": {
+      "passed": true,
+      "detail": "object=af2365bb2ea08ac391548b257e44b91c4957bf228db56f469a92a3f016c1ae1a browser=af2365bb2ea08ac391548b257e44b91c4957bf228db56f469a92a3f016c1ae1a"
+    },
+    "fidelity-used-browser-pixels": {
+      "passed": true,
+      "detail": "fidelity=af2365bb2ea08ac391548b257e44b91c4957bf228db56f469a92a3f016c1ae1a browser=af2365bb2ea08ac391548b257e44b91c4957bf228db56f469a92a3f016c1ae1a"
+    },
+    "fidelity-used-eevee-reference": {
+      "passed": true,
+      "detail": "fidelity=5a0fdd327fed3a718f3d0628a37e7dad6675c9ea6c98beddca799e8dc3ca770d reference=5a0fdd327fed3a718f3d0628a37e7dad6675c9ea6c98beddca799e8dc3ca770d"
+    },
+    "retained-eevee-identity": {
+      "passed": true,
+      "detail": "canonicalPixels=6405a4699a99abae8544715b6b02be2d1bb15160f0f2a5ecaf21992e35091b6e expected=6405a4699a99abae8544715b6b02be2d1bb15160f0f2a5ecaf21992e35091b6e"
+    },
+    "retained-needle-identity": {
+      "passed": true,
+      "detail": "actual=54e30ecaa0342611122288efbf6ffe9c7440709d6d613c67adf77d37fe0efcbc expected=54e30ecaa0342611122288efbf6ffe9c7440709d6d613c67adf77d37fe0efcbc"
+    },
+    "direct-object-structure": {
+      "passed": true,
+      "detail": "missing=0"
+    },
+    "lamp-and-flowerpot-recovery": {
+      "passed": true,
+      "detail": "focus=9/9 collapsed=none"
+    },
+    "opaque-prototype-object-nonregression": {
+      "passed": false,
+      "detail": "collapsed=10; opaque-alpha prototype baseline=4"
+    },
+    "focus-material-artifact-semantics": {
+      "passed": true,
+      "detail": "found=5/5 incorrect=none"
+    },
+    "fidelity-negative-controls": {
+      "passed": true,
+      "detail": "passed=true"
+    },
+    "shadow-recovery": {
+      "passed": true,
+      "detail": "band=1.377687 range=1.174412"
+    },
+    "reported-symptom-nonregression": {
+      "passed": false,
+      "detail": "{\"shadow\":{\"broadShadowBand\":1.377687,\"lumaRange\":1.174412},\"sky\":{\"localNoise\":2.287613,\"medianColorErrorInReferenceSpreads\":3.475832},\"building\":{\"midFrequencyLuma\":1.273478,\"localColorDetail\":1.237892,\"referencePatternCorrelation\":0.751856,\"patternErrorInReferenceDetails\":0.841205}}"
+    }
+  },
+  "passed": false,
+  "failures": [
+    "opaque-prototype-object-nonregression: collapsed=10; opaque-alpha prototype baseline=4",
+    "reported-symptom-nonregression: {\"shadow\":{\"broadShadowBand\":1.377687,\"lumaRange\":1.174412},\"sky\":{\"localNoise\":2.287613,\"medianColorErrorInReferenceSpreads\":3.475832},\"building\":{\"midFrequencyLuma\":1.273478,\"localColorDetail\":1.237892,\"referencePatternCorrelation\":0.751856,\"patternErrorInReferenceDetails\":0.841205}}"
+  ]
+}

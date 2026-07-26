@@ -1,0 +1,94 @@
+{
+  "blender": {
+    "buildDate": "2026-07-14",
+    "buildHash": "fbe6228777e7",
+    "version": "5.2.0 LTS",
+    "versionTuple": [
+      5,
+      2,
+      0
+    ]
+  },
+  "fixtures": [
+    {
+      "blend": "fixtures/portable-factors.blend",
+      "materials": [
+        "Cell.AlphaBlend",
+        "Cell.Anisotropy",
+        "Cell.Clearcoat",
+        "Cell.CorePrincipled",
+        "Cell.EmissiveStrength",
+        "Cell.SheenFullWeight",
+        "Cell.Specular",
+        "Cell.TextureTransform",
+        "Cell.TransmissionVolume",
+        "Cell.Unlit"
+      ],
+      "name": "portable-factors",
+      "objects": [
+        "AlphaBlend",
+        "Anisotropy",
+        "Camera",
+        "Clearcoat",
+        "CorePrincipled",
+        "EmissiveStrength",
+        "Key",
+        "SheenFullWeight",
+        "Specular",
+        "TextureTransform",
+        "TransmissionVolume",
+        "Unlit"
+      ],
+      "stockGlb": "stock/portable-factors.glb"
+    },
+    {
+      "blend": "fixtures/portable-alpha-mask.blend",
+      "materials": [
+        "Cell.AlphaMask"
+      ],
+      "name": "portable-alpha-mask",
+      "objects": [
+        "AlphaMask",
+        "Camera",
+        "Key"
+      ],
+      "stockGlb": "stock/portable-alpha-mask.glb"
+    },
+    {
+      "blend": "fixtures/unsupported-procedural.blend",
+      "materials": [
+        "Cell.UnsupportedNoise"
+      ],
+      "name": "unsupported-procedural",
+      "objects": [
+        "Camera",
+        "Key",
+        "UnsupportedNoise"
+      ],
+      "stockGlb": "stock/unsupported-procedural.glb"
+    }
+  ],
+  "gltfExporter": {
+    "blInfo": {
+      "author": "Blender Foundation, Khronos Group",
+      "name": "glTF 2.0 format",
+      "support": "OFFICIAL"
+    },
+    "version": "5.2.39"
+  },
+  "needleEquivalentStockExportArgs": {
+    "check_existing": false,
+    "export_animations": true,
+    "export_apply": true,
+    "export_cameras": true,
+    "export_format": "GLB",
+    "export_image_format": "AUTO",
+    "export_import_convert_lighting_mode": "COMPAT",
+    "export_jpeg_quality": 100,
+    "export_lights": true,
+    "gltf_export_id": "Needle Engine",
+    "use_active_scene": true,
+    "use_visible": false
+  },
+  "schemaVersion": 1
+}

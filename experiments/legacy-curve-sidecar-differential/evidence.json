@@ -1,0 +1,26 @@
+{
+  "blenderVersion": "5.2.0 LTS",
+  "fixture": {
+    "curve": "BLENDLINK_LINKED_POLY_WIRE",
+    "splineType": "POLY",
+    "linkedCurveData": "legacy_curve_library.blend",
+    "emptyEvaluatedGeometryModifier": "GN-Hide"
+  },
+  "needleCoreFloor": {
+    "operatorResult": [
+      "FINISHED"
+    ],
+    "droppedUnsupportedKwargs": [],
+    "curveNodeCount": 1,
+    "curveNodeHasMesh": false
+  },
+  "blendlink": {
+    "directEvaluatedMeshIsNone": true,
+    "diagnostic": "Blendlink cannot compile render-visible Curve 'BLENDLINK_LINKED_POLY_WIRE' (data 'BLENDLINK_LINKED_POLY_WIRE', spline type POLY; source library '<TEMP>\\legacy_curve_library.blend'): Blender returned no evaluated Mesh. Blendlink will not substitute raw spline points because that would discard bevels, Geometry Nodes, modifiers, or other evaluated geometry and misrepresent the artist's scene. If this Curve is intentionally empty, disable it for renders. Otherwise, repair the modifier or linked data so it evaluates, make a local website-owned copy or Library Override, or convert a website-owned copy to Mesh, then retry. Blendlink did not modify the linked source.",
+    "temporaryMeshCleanupOnFailure": true
+  },
+  "source": {
+    "stateUnchanged": true,
+    "filesUnchanged": true
+  }
+}

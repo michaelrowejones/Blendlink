@@ -1,0 +1,54 @@
+{
+  "generatedAt": "2026-07-24T09:02:41.996Z",
+  "browserVersion": "150.0.7871.129",
+  "fixture": {
+    "glbBytes": 1412,
+    "glbSha256": "bdb4ffeabb2cf2865c8dfebd7dd083823cea563ad7d3056cf09baea1b12fec8d",
+    "missingCompanion": "/fixtures/missing-base-color.png"
+  },
+  "source": {
+    "reactThreeFiberSha256": "18b85df943994a46a158161df8aec75fd2f5383f8a8586dd2e796c94c74f939c",
+    "threeRuntimeSha256": "d8dba507e20446eea7588a83028a65140f6b32b6f90cd5e8523ddbd9b1d43120",
+    "threeVersion": "0.184.0"
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/fixtures/missing-companion.glb",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/fixtures/missing-base-color.png",
+      "status": 404
+    }
+  ],
+  "evidence": {
+    "settled": true,
+    "phases": [
+      "loading",
+      "loading",
+      "loading",
+      "loading",
+      "loading",
+      "failed"
+    ],
+    "readyCount": 0,
+    "failedCount": 1,
+    "failureName": "ThreeCompiledSceneDependencyError",
+    "failureMessage": "Blendlink refused to publish Ready because its private loader reported a failed scene dependency: \"/fixtures/missing-base-color.png\". Three's GLTF loader can otherwise recover with missing textures. Verify that publish included every companion file, that the deployment base path or CDN mapping is correct, and that the response permits CORS. Requests needing application headers or credentials must use an application-configured loader that enforces its own failures.",
+    "boundaryErrors": [
+      "Blendlink refused to publish Ready because its private loader reported a failed scene dependency: \"/fixtures/missing-base-color.png\". Three's GLTF loader can otherwise recover with missing textures. Verify that publish included every companion file, that the deployment base path or CDN mapping is correct, and that the response permits CORS. Requests needing application headers or credentials must use an application-configured loader that enforces its own failures."
+    ],
+    "committedFixtureNodes": 0
+  },
+  "pageErrors": [
+    "Blendlink refused to publish Ready because its private loader reported a failed scene dependency: \"/fixtures/missing-base-color.png\". Three's GLTF loader can otherwise recover with missing textures. Verify that publish included every companion file, that the deployment base path or CDN mapping is correct, and that the response permits CORS. Requests needing application headers or credentials must use an application-configured loader that enforces its own failures."
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "THREE.GLTFLoader: Couldn't load texture missing-base-color.png"
+  ],
+  "screenshot": "C:\\Users\\micha\\Documents\\GitHub\\blendlink\\experiments\\r3f-missing-companion-browser\\missing-companion-browser.png"
+}
