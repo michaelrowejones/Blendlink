@@ -118,7 +118,7 @@ the retained release manifest.
 
 Before the first public release, required checks must include:
 
-- Node exact `22.12.0`, latest Node 22, and latest Node 24;
+- Node exact `22.15.0`, latest Node 22, and latest Node 24;
 - exact Blender 4.2.0 and 5.2.0 archive validation/install/headless tests on
   Linux x64 and Windows x64;
 - a macOS arm64 prototype before claiming macOS Blender support, using hardware

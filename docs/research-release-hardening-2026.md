@@ -92,7 +92,7 @@ This note uses four evidence labels:
 | Area | Evidence today | Honest status |
 | --- | --- | --- |
 | npm package | `files` allowlist, exports, engines, exact Three r184 peer contract, mixed-license map, repository, and version are declared in [`packages/blendlink/package.json`](../packages/blendlink/package.json) and [`packages/blendlink/LICENSES.md`](../packages/blendlink/LICENSES.md). [`scripts/test-package.mjs`](../scripts/test-package.mjs) runs `npm pack --json`, checks required/forbidden paths and embedded license texts/notices, extracts the archive, checks npm/add-on version equality, and compiles Vanilla and R3F consumers from that exact tarball. The same workspace/exact-packed consumer gate evaluates the root through a resolver that refuses React/R3F, while `blendlink/react` still compiles. | **Implemented; locally verified.** No registry publish or install-from-registry evidence. |
-| Node support | The package declares `^22.12.0 || ^24.0.0`; the workflow defines exact 22.12, latest 22, and latest 24 jobs. | **Implemented contract / CI-proposed.** The matrix has not produced hosted results. |
+| Node support | The package declares `^22.15.0 || ^24.0.0`; the workflow defines exact 22.15, latest 22, and latest 24 jobs. | **Implemented correction / hosted re-run pending.** Run 30209329834 proved unit compatibility on 22.12 but failed packed-consumer evaluation because Node 22.12 lacks the required Zstandard export. |
 | Blender Extension | [`blender_manifest.toml`](../packages/blender-addon/blender_manifest.toml) declares schema 1.0.0, add-on version 0.8.0, Blender minimum 4.2.0, permissions, and GPL-3.0-or-later. [`scripts/test-addon-headless.mjs`](../scripts/test-addon-headless.mjs) runs headless suites, builds with Blender's extension command, installs into isolated `BLENDER_USER_RESOURCES`, enables it, and verifies package/operator/version. The workflow pins official Blender 4.2.0/5.2.0 Linux and Windows archives by SHA-256. | **Implemented locally / CI-proposed.** Only discoverable Windows Blender 5.2 has run locally; hosted endpoint jobs have not run. |
 | Real tools | [`scripts/test-real-toolchains.mjs`](../scripts/test-real-toolchains.mjs) requires a supported Blender and KTX-Software, and runs real texture/HDR round trips. The release workflow checksum-pins official Blender 5.2.0 and KTX-Software 4.4.2 archives for the full contract. | **Implemented; locally verified.** Hosted workflow evidence remains pending. |
 | Aggregate gate | Root [`package.json`](../package.json) defines `test:full`: build, unit, real tools, unpacked consumers, packed package, add-on headless/archive, and baked e2e. | **Implemented; locally verified.** No hosted runner evidence. |
@@ -110,19 +110,54 @@ on 2028-04-30. Node recommends production use of Active or Maintenance LTS
 lines. [Node release policy](https://nodejs.org/en/about/previous-releases),
 [Node Release Working Group schedule](https://github.com/nodejs/Release)
 
-The current engine expression is therefore sensible for a pre-1.0 release, but
-the test plan must cover the actual floor, not merely a floating major. Use:
+The original engine expression proved incomplete during the first hosted run.
+The test plan must cover the actual full-capability floor, not merely a floating major. Use:
 
-- `22.12.0`: compatibility-floor job;
+- `22.15.0`: compatibility-floor job;
 - `22`: newest Node 22 maintenance patch; and
 - `24`: newest Node 24 LTS patch.
 
-The user-facing support promise can remain “Node 22.12+ or Node 24.” The extra
+The user-facing support promise is therefore “Node 22.15+ or Node 24.” The extra
 latest-22 job catches changes in the maintained line without silently raising
 the floor. `actions/setup-node` accepts both exact and major version selectors,
 recommends declaring the version explicitly, and supports matrix use. It caches
 package-manager data, not `node_modules`; the lockfile should remain committed.
 [setup-node documentation](https://github.com/actions/setup-node/blob/main/README.md)
+
+#### Node 22.12 compatibility correction
+
+GitHub Actions run 30209329834 exposed that unit tests alone did not prove the
+original floor. The packed renderer-neutral root failed ESM instantiation on
+Node 22.12 because it imports `zstdDecompressSync`. Node's official
+documentation and release notes mark Zstandard support as added in Node
+22.15.0. Blendlink needs that API to inspect compressed `.blend` headers before
+invoking Blender and preserve the newer-file data-loss guard.
+[Node 22.15 Zstandard API](https://nodejs.org/download/release/v22.15.0/docs/api/zlib.html#zlibzstddecompresssyncbuffer-options),
+[Node 22.15 release notes](https://nodejs.org/en/blog/release/v22.15.0)
+
+Three credible designs were compared:
+
+1. **Raise the Node 22 floor to 22.15 (selected).** Every supported runtime can
+   inspect uncompressed, gzip, and Zstandard Blender files, and installation,
+   `doctor`, CI, and documentation state one honest requirement.
+2. **Use a namespace import and feature-detect Zstandard.** Root evaluation
+   would work on 22.12, but a supported runtime would fail only when an artist
+   selects Blender file compression. That late exception weakens the
+   version-safety promise.
+3. **Ship another Zstandard decoder.** This could retain 22.12 fully, but adds
+   package weight, native/WASM portability, and supply-chain surface solely to
+   preserve three obsolete Node 22 minors. No measured product benefit
+   justifies that dependency.
+
+The exact pinned Needle baseline has **No analogue**. Add-on 1.4.2 reads
+`bpy.data.filepath` through Blender rather than parsing raw `.blend` bytes;
+its normalized `blender_export.py` is SHA-256
+`6272997cfb4f1d740ea33a7c2512983b9993dedf93c9c8240ca0ff7f82925d77`.
+The only pinned Needle Zstandard hit is build-pipeline 3.0.0 passing `--zstd`
+to Basis/KTX texture encoding
+(SHA-256 `73afd7b8fdacf74717577e22bfb899ce080ca00bcc4ccdcf6dbfaad52bb144d1`);
+it is unrelated to Blender file inspection. `npm run verify:needle-baseline`
+passed 131 files and nine source identities on 2026-07-26.
 
 When Node 22 reaches EOL, removing it from `engines` is a breaking support
 decision for Blendlink users even if npm itself would still execute. Announce it
@@ -140,8 +175,8 @@ self-hosted GitHub runner for this flow. Trusted publishing automatically adds
 provenance for public packages built from public repositories.
 [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 
-That minimum affects the **publisher**, not Blendlink's Node 22.12 consumer
-floor. Use the newest Node 24 patch in the release job, update npm explicitly if
+That minimum is below Blendlink's corrected Node 22.15 consumer floor. Use the
+newest Node 24 patch in the release job, update npm explicitly if
 needed, disable package-manager caching, and grant only `contents: read` plus
 `id-token: write`. Protect the release environment and `v*` tags, and configure
 the exact workflow filename on npmjs.com. npm recommends disabling unused
@@ -240,7 +275,7 @@ contracts and makes expensive bake failures harder to diagnose. Use these jobs:
 
 | Job | Matrix | Gate | Rationale |
 | --- | --- | --- | --- |
-| `node-contract` | Ubuntu × `22.12.0`, `22`, `24` | build, unit, unpacked consumers, `npm pack`, packed consumers | Fast proof of the declared runtime floor and both supported LTS lines. |
+| `node-contract` | Ubuntu × `22.15.0`, `22`, `24` | build, unit, unpacked consumers, `npm pack`, packed consumers | Fast proof of the declared runtime floor and both supported LTS lines. |
 | `blender-core` | Linux x64, Windows x64, and macOS arm64 × exact Blender `4.2.0`, `5.2.0` | discovery/doctor, headless add-on suite, extension build/validate/install, representative export | Exercises the declared floor and current endpoint on the common architecture set without multiplying Node versions. Exact 4.2.0 matters because later 4.2 patches can add APIs. Use Node 24 for orchestration. |
 | `real-toolchains` | Ubuntu `5.2.0` primary; Windows `4.2.0` secondary | KTX texture/HDR, real export, packed consumers where relevant | Pins costly external tools to a small but meaningful cross-version set. |
 | `baked-e2e` | Ubuntu or Windows `5.2.0` canonical, CPU render | two-state baked appearance/lighting and image assertions | Standard hosted runners should not be treated as GPU farms. CPU evidence is slower but reproducible; GPU-specific claims require external runners. |
@@ -450,7 +485,7 @@ every candidate rather than treating its initial presence as sufficient:
   issues. GitHub describes that as a secure structured channel; it is separate
   from `SECURITY.md`.
   [GitHub private vulnerability reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository)
-- **`SUPPORT.md`:** distinguish “supported” from “tested”: Node 22.12+/24,
+- **`SUPPORT.md`:** distinguish “supported” from “tested”: Node 22.15+/24,
   Blender 4.2+ with CI endpoints listed, current Three/R3F peer ranges, OSes,
   browsers, KTX requirements, and best-effort areas. State how long the latest
   minor receives fixes and when old Blender/Node lines can be removed.

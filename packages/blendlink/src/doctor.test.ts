@@ -21,7 +21,7 @@ vi.mock('./knownIssues.js', () => ({
   matchingBlenderKnownIssues: vi.fn(() => []),
 }))
 
-import { doctor } from './doctor.js'
+import { doctor, supportedNodeVersion } from './doctor.js'
 import {
   BlenderNotFoundError,
   BlenderUnsupportedVersionError,
@@ -31,6 +31,17 @@ import { inspectBlenderAddon } from './addon.js'
 
 const mockedDiscoverBlender = vi.mocked(discoverBlender)
 const mockedInspectBlenderAddon = vi.mocked(inspectBlenderAddon)
+
+describe('doctor Node compatibility reporting', () => {
+  it('matches the exact Node floor required by the built-in Zstandard reader', () => {
+    expect(supportedNodeVersion('22.12.0')).toBe(false)
+    expect(supportedNodeVersion('22.14.0')).toBe(false)
+    expect(supportedNodeVersion('22.15.0')).toBe(true)
+    expect(supportedNodeVersion('22.99.0')).toBe(true)
+    expect(supportedNodeVersion('24.0.0')).toBe(true)
+    expect(supportedNodeVersion('26.0.0')).toBe(false)
+  })
+})
 
 describe('doctor Blender compatibility reporting', () => {
   beforeEach(() => {

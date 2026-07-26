@@ -860,7 +860,7 @@ preserving that intent from Blender through a portable, efficient handoff.
 ## Support and verification
 
 Focused local Windows gates exercise Blender 5.1.2 and 5.2 LTS with Node 24.
-Blender 4.2+ plus supported Node 22.12+ and Node 24 are the declared
+Blender 4.2+ plus supported Node 22.15+ and Node 24 are the declared
 compatibility floor; the same-commit release workflow defines exact 4.2/5.2
 Linux and Windows jobs, but those hosted results remain pending until the
 workflow runs. The generated Vite 7 starter uses the same Node floor; new

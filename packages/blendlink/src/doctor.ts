@@ -19,9 +19,9 @@ export interface DoctorLine {
 const hash16 = (path: string) =>
   createHash('sha256').update(readFileSync(path)).digest('hex').slice(0, 16)
 
-function supportedNodeVersion(version: string): boolean {
+export function supportedNodeVersion(version: string): boolean {
   const [major = 0, minor = 0] = version.split('.').map(Number)
-  return (major === 22 && minor >= 12) || major === 24
+  return (major === 22 && minor >= 15) || major === 24
 }
 
 function readManifest(path: string): SceneManifest | null {
@@ -44,7 +44,7 @@ export async function doctor(root: string): Promise<DoctorLine[]> {
 
   if (supportedNodeVersion(process.versions.node)) ok(`node ${process.version}`)
   else fail(
-    `node ${process.version} is outside Blendlink's tested Node 22.12+ / 24 release lines; ` +
+    `node ${process.version} is outside Blendlink's tested Node 22.15+ / 24 release lines; ` +
       'switch to a supported LTS runtime before publishing',
   )
   const ktx = findKtxTool()

@@ -8,7 +8,7 @@ contract from environments that have actually been exercised.
 
 | Surface | Supported contract | Evidence today |
 | --- | --- | --- |
-| Node.js | `22.12.0` or newer Node 22; Node 24 | Declared by the npm package. The new CI matrix covers exact 22.12, latest 22, and latest 24 once GitHub Actions runs. |
+| Node.js | `22.15.0` or newer Node 22; Node 24 | Declared by the npm package. The CI matrix covers exact 22.15, latest 22, and latest 24; 22.15 is the first Node 22 release with the Zstandard API required to inspect compressed `.blend` headers. |
 | Blender | 4.2.0 and newer | The extension manifest is the compatibility floor. Local verification currently covers the discoverable Windows Blender 5.2 installation, not every version or OS. |
 | Operating systems | Windows, Linux, and macOS are intended | Windows is locally exercised. Hosted Linux and macOS Blender evidence is not yet available. |
 | Three.js / `@types/three` | runtime exact `three@0.184.0`; declarations `>=0.184.0 <0.185.0` | Declared optional peer contract. Blendlink's compiled and loaded capability profiles were audited against the exact r184 runtime source. Declaration-only r184 patch releases do not change loader behavior; the dogfood site exercises `@types/three@0.184.1`. Other runtime releases are unsupported until separately profiled. |

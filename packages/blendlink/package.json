@@ -9,7 +9,7 @@
         "url": "git+https://github.com/michaelrowejones/Blendlink.git"
     },
     "engines": {
-        "node": "^22.12.0 || ^24.0.0"
+        "node": "^22.15.0 || ^24.0.0"
     },
     "bin": {
         "blendlink": "./dist/cli.js"

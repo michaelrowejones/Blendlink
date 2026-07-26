@@ -16,7 +16,7 @@ npx blendlink preview        # open + watch the connected website
 npx blendlink publish        # Final + verify + site build + verify
 ```
 
-Requires Node 22.12+ on the Node 22 line, or Node 24. The generated starter
+Requires Node 22.15+ on the Node 22 line, or Node 24. The generated starter
 uses Vite 7 and the same tested runtime floor.
 
 CLI commands do not import a renderer. The npm package also carries the lazy

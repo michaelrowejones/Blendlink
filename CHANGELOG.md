@@ -44,6 +44,11 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- The declared Node 22 floor is now 22.15, the first Node 22 release whose
+  built-in `node:zlib` can inspect Blender's Zstandard-compressed files. This
+  replaces the untruthful 22.12 declaration that allowed installation but
+  failed while evaluating the packed renderer-neutral package root.
+
 - Importing the renderer-neutral `blendlink` root no longer eagerly loads the
   optional React peer. React lifecycle helpers remain available from the
   explicit `blendlink/react` subpath, and packed/workspace consumer gates now
