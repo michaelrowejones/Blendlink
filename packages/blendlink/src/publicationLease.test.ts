@@ -75,6 +75,7 @@ function spawnLeaseChild(options: {
   reentrantToken?: string
 }): ChildRun {
   const child = spawn(process.execPath, [
+    '--experimental-strip-types',
     '--input-type=module',
     '--eval',
     childSource,
