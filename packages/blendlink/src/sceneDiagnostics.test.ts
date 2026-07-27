@@ -516,6 +516,74 @@ describe('scene diagnostics', () => {
     expect(toonBush?.channels?.channels[0]?.spaces).toEqual(['object'])
   })
 
+  it('carries per-channel TSL IR evidence through to the manifest report', () => {
+    const { document } = documentWithLods()
+    const tslIr = {
+      schemaVersion: 1 as const,
+      model: 'blendlink-tsl-ir-v1',
+      output: {
+        op: 'mix_color',
+        blendType: 'MIX',
+        factor: { op: 'uv' },
+        a: { op: 'const_vec3', value: [0.8, 0.2, 0.1] },
+        b: { op: 'const_vec3', value: [0.1, 0.2, 0.9] },
+      },
+    }
+    const report = compileSceneDiagnostics(document, vocabulary([]), {
+      procedural: [],
+      instances: [],
+      materials: [{
+        material: 'TSL Evidence',
+        status: 'needsBake',
+        label: 'Needs Bake',
+        summary: 'Opted into the per-channel Material bake.',
+        reasons: [],
+        usedBy: ['Prop'],
+        materialCompilation: {
+          intent: 'materialBake',
+          outcome: 'lowered',
+          fidelity: 'per-channel',
+          transport: 'channels',
+          limitations: [],
+          channels: {
+            model: 'principled-channel-plan-v1',
+            channels: [{
+              channel: 'Base Color',
+              route: 'bake',
+              uv: 'tile',
+              tslIr,
+              tslIrHash: 'abc123',
+              tslIrBytes: 321,
+            }, {
+              channel: 'Roughness',
+              route: 'refused',
+              reasons: ['view-dependent'],
+              tslIrRefusal: 'Fresnel with a linked Normal has no cell yet',
+            }],
+          },
+        },
+      }],
+      limits: { maxAuditFrames: 120, maxMorphCacheBytes: 64 * 1024 * 1024 },
+    })
+    const record = report.materials?.records.find(
+      (item) => item.material === 'TSL Evidence',
+    )
+    const channels = record?.materialCompilation?.channels?.channels
+    expect(channels?.[0]).toMatchObject({
+      channel: 'Base Color',
+      route: 'bake',
+      tslIrHash: 'abc123',
+      tslIrBytes: 321,
+    })
+    expect(channels?.[0]?.tslIr).toEqual(tslIr)
+    // Deep-copied, never aliased into the manifest report.
+    expect(channels?.[0]?.tslIr).not.toBe(tslIr)
+    expect(channels?.[1]).toMatchObject({
+      route: 'refused',
+      tslIrRefusal: 'Fresnel with a linked Normal has no cell yet',
+    })
+  })
+
   it('persists finished-GLB material compiler attestation without reshaping portability', () => {
     const { document, buffer } = documentWithLods()
     const position = document.createAccessor('compiled positions')

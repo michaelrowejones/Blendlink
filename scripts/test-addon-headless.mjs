@@ -32,6 +32,9 @@ const materialChannelBakeTest = join(
 const materialBakeTest = join(
   root, 'packages', 'blender-addon', 'tests', 'material_bake_check.py',
 )
+const materialTslIrTest = join(
+  root, 'packages', 'blender-addon', 'tests', 'material_tsl_ir_check.py',
+)
 const evaluatedGeometryTest = join(
   root, 'packages', 'blender-addon', 'tests', 'evaluated_geometry_check.py',
 )
@@ -151,6 +154,10 @@ runHeadlessSuite(
 runHeadlessSuite(
   'per-channel Material bake contract', materialBakeTest,
   'BLENDLINK_MATERIAL_BAKE_CHECK_PASSED',
+)
+runHeadlessSuite(
+  'per-channel TSL IR evidence contract', materialTslIrTest,
+  'BLENDLINK_MATERIAL_TSL_IR_CHECK_PASSED',
 )
 runHeadlessSuite(
   'budgeted evaluated-geometry realization contract', evaluatedGeometryTest,

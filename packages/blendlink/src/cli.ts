@@ -66,6 +66,7 @@ function formatChannelRoutes(
           pass?: string
           value?: number | number[] | null
           strength?: number | null
+          tslIr?: unknown
         }>
       }
     }
@@ -81,21 +82,23 @@ function formatChannelRoutes(
     return ''
   }
   return entries.map((entry) => {
+    // Attached TSL IR is evidence beside the carrier, not a route.
+    const tsl = entry.tslIr ? ' +tsl' : ''
     if (entry.route === 'factor') {
-      return `${entry.channel}: factor${formatValue(entry.value)}`
+      return `${entry.channel}: factor${formatValue(entry.value)}${tsl}`
     }
     if (entry.route === 'factor-over-carrier') {
-      return `${entry.channel}: factor over carrier${formatValue(entry.value)}`
+      return `${entry.channel}: factor over carrier${formatValue(entry.value)}${tsl}`
     }
     if (entry.route === 'bake') {
       const size = typeof entry.resolution === 'number'
         ? ` ${entry.resolution}`
         : ''
       const passLabel = entry.pass === 'NORMAL' ? ' normal-pass' : ''
-      return `${entry.channel}: baked${size} ${entry.uv ?? 'tile'}${passLabel}`
+      return `${entry.channel}: baked${size} ${entry.uv ?? 'tile'}${passLabel}${tsl}`
     }
-    if (entry.route === 'passthrough') return `${entry.channel}: passthrough`
-    return `${entry.channel}: refused`
+    if (entry.route === 'passthrough') return `${entry.channel}: passthrough${tsl}`
+    return `${entry.channel}: refused${tsl}`
   }).join(' | ')
 }
 

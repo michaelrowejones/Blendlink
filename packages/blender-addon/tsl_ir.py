@@ -103,6 +103,16 @@ def _noise_random_offset(seed, count):
     ]
 
 
+def _import_procedural():
+    """procedural in both loading modes: as an addon submodule (packaged)
+    or as a bare module (harness scripts insert the directory on path)."""
+    if __package__:
+        from . import procedural
+        return procedural
+    import procedural
+    return procedural
+
+
 class TslIrRefusal(Exception):
     """A channel graph contains something without a proven cell."""
 
@@ -171,7 +181,7 @@ def find_principled_root(tree):
     shader roots, or one reachable through multiple instance paths) instead
     of guessing.
     """
-    import procedural
+    procedural = _import_procedural()
 
     nodes = procedural.reachable_surface_nodes(tree)
     root = procedural._single_principled_surface_root(nodes)
@@ -330,7 +340,7 @@ def _leaf_channels(leaf):
     'radiance' is emission color x strength folded into one vec3 — mixes
     must lerp RADIANCE, not color and strength separately (lerping the
     parts is not linear in the light the closure emits)."""
-    import procedural
+    procedural = _import_procedural()
 
     kind = leaf["kind"]
     if kind == "principled":

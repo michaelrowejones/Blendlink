@@ -43,6 +43,12 @@ copyFileSync(
   join(root, '..', 'blender-addon', 'glblib.py'),
   join(root, 'dist', 'blender', 'glblib.py'),
 )
+// The node->TSL IR emitter rides the channel plan as additive evidence
+// (material_compiler imports it), so the packaged exporter needs it too.
+copyFileSync(
+  join(root, '..', 'blender-addon', 'tsl_ir.py'),
+  join(root, 'dist', 'blender', 'tsl_ir.py'),
+)
 // Realtime-light units, render visibility, and compatibility warnings also
 // share one canonical Blender-side policy between the addon and exporter.
 copyFileSync(

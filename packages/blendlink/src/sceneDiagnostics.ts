@@ -158,6 +158,19 @@ export interface MaterialChannelPlanEntry {
   value?: number | number[] | null
   strength?: number | null
   reasons?: string[]
+  /** MTLX-TSL-001 additive evidence: the channel's compiled node->TSL IR
+   * document (schemaVersion 1, model blendlink-tsl-ir-v1), attached only
+   * for materials opted into `blendlink_tsl_ir`. The route above never
+   * changes — the IR is what the future TSL runtime will build, while the
+   * factor/bake carrier keeps rendering today. */
+  tslIr?: { schemaVersion: 1; model: string; output: Record<string, unknown>; viewDependent?: boolean }
+  /** sha256 of the IR's canonical JSON — enters plan fingerprints so
+   * content is pinned without embedding megabyte payloads in hashes. */
+  tslIrHash?: string
+  tslIrBytes?: number
+  /** Named reason the emitter refused this channel (unproven node, byte
+   * budget, merged Emission record). */
+  tslIrRefusal?: string
 }
 
 export interface MaterialChannelPlanDiagnostic {
@@ -1692,6 +1705,36 @@ export function compileSceneDiagnostics(
                   ? { value: [...entry.value] }
                   : {}),
               })),
+            },
+          }
+        : {}),
+      ...(material.materialCompilation?.channels
+        ? {
+            materialCompilation: {
+              ...material.materialCompilation,
+              channels: {
+                ...material.materialCompilation.channels,
+                channels: material.materialCompilation.channels.channels.map(
+                  (entry) => ({
+                    ...entry,
+                    ...(entry.reasons ? { reasons: [...entry.reasons] } : {}),
+                    ...(entry.uvMaps ? { uvMaps: [...entry.uvMaps] } : {}),
+                    ...(Array.isArray(entry.value)
+                      ? { value: [...entry.value] }
+                      : {}),
+                    // The attached IR is carried intentionally, not
+                    // incidentally: a deep copy keeps the manifest report
+                    // independent of the sidecar object graph.
+                    ...(entry.tslIr
+                      ? {
+                          tslIr: JSON.parse(
+                            JSON.stringify(entry.tslIr),
+                          ) as typeof entry.tslIr,
+                        }
+                      : {}),
+                  }),
+                ),
+              },
             },
           }
         : {}),

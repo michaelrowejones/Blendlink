@@ -29,11 +29,12 @@ import bpy
 
 if __package__:
     from .bakelib_loader import bakelib
-    from . import glblib, procedural
+    from . import glblib, procedural, tsl_ir
 else:
     import bakelib
     import glblib
     import procedural
+    import tsl_ir
 
 
 PLAN_VERSION = 1
@@ -49,6 +50,8 @@ GENERATED_MATERIAL_PREFIX = "BLENDLINK_WEB."
 PRIVATE_COLOR_PREFIX = "_BLENDLINK_WEB_"
 STATIC_SHADE_FLOOR_MODEL = "selected-intrinsic-static-shade-floor-v1"
 MATERIAL_BAKE_PROPERTY = "blendlink_material_bake"
+TSL_IR_PROPERTY = "blendlink_tsl_ir"
+TSL_IR_BYTE_BUDGET = 262144
 CHANNEL_PLAN_MODEL = "principled-channel-plan-v1"
 PRIVATE_CHANNEL_PREFIX = "BLENDLINK_PRIVATE_CHANNEL."
 MATERIAL_BAKE_RULE = "blendlink.lit.material-bake"
@@ -256,7 +259,7 @@ class MaterialDecision:
                 self.surface_factorization.fingerprint_dict()
                 if self.surface_factorization is not None else None
             ),
-            "channelPlan": self.channel_plan,
+            "channelPlan": _channel_plan_fingerprint(self.channel_plan),
         }
 
     def as_dict(self) -> dict:
@@ -2594,6 +2597,97 @@ def set_material_bake(material, enabled: bool) -> None:
         del material[MATERIAL_BAKE_PROPERTY]
 
 
+def tsl_ir_requested(material) -> bool:
+    """Whether per-channel TSL IR evidence was requested for this material.
+
+    The IR rides the channel plan additively: every channel keeps its
+    existing carrier (factor/bake), and the attached document is evidence
+    for the future TSL runtime, not a route.
+    """
+    try:
+        return bool(material is not None and material.get(TSL_IR_PROPERTY))
+    except (AttributeError, TypeError):
+        return False
+
+
+def set_tsl_ir(material, enabled: bool) -> None:
+    if enabled:
+        material[TSL_IR_PROPERTY] = True
+    elif TSL_IR_PROPERTY in material.keys():
+        del material[TSL_IR_PROPERTY]
+
+
+def _attach_tsl_ir(tree, channels) -> None:
+    """Additive per-channel TSL IR for an opted-in material's channel plan.
+
+    Every channel record — bake, factor, and refused alike — gains either
+    {tslIr, tslIrHash, tslIrBytes} or {tslIrRefusal}.  Routes never
+    change.  The serialized size is budgeted per channel (embedded-pixel
+    image IR is bounded upstream at 128x128, but chains can stack), and
+    the hash is over the canonical JSON so consumers can attest content
+    without rehashing Blender-side floats.
+    """
+    import hashlib
+    import json as _json
+
+    try:
+        root, stack = tsl_ir.find_principled_root(tree)
+    except tsl_ir.TslIrRefusal as refusal:
+        for entry in channels:
+            entry["tslIrRefusal"] = str(refusal)
+        return
+    for entry in channels:
+        channel_name = entry.get("channel")
+        if channel_name == "Emission":
+            # The plan merges Emission Color + Strength into one record;
+            # per-socket radiance IR lands with the runtime consumer.
+            entry["tslIrRefusal"] = (
+                "merged Emission record; per-socket IR lands with the "
+                "runtime consumer"
+            )
+            continue
+        socket = procedural._node_input(root, channel_name)
+        if socket is None:
+            entry["tslIrRefusal"] = f"channel {channel_name!r} not found"
+            continue
+        try:
+            document = tsl_ir.emit_channel(socket, stack)
+        except tsl_ir.TslIrRefusal as refusal:
+            entry["tslIrRefusal"] = str(refusal)
+            continue
+        encoded = _json.dumps(
+            document, sort_keys=True, separators=(",", ":"),
+        )
+        if len(encoded) > TSL_IR_BYTE_BUDGET:
+            entry["tslIrRefusal"] = (
+                f"IR serializes to {len(encoded)} bytes, over the "
+                f"{TSL_IR_BYTE_BUDGET}-byte channel budget"
+            )
+            continue
+        entry["tslIr"] = document
+        entry["tslIrHash"] = hashlib.sha256(
+            encoded.encode("utf8"),
+        ).hexdigest()
+        entry["tslIrBytes"] = len(encoded)
+
+
+def _channel_plan_fingerprint(channel_plan):
+    """The channel plan with IR payloads stripped for hashing.
+
+    The tslIrHash stays (it pins the content); the IR body must never
+    enter plan fingerprints or generated-material variant identity —
+    megabyte payloads and float-repr drift would churn both.
+    """
+    if not channel_plan:
+        return channel_plan
+    stripped = dict(channel_plan)
+    stripped["channels"] = [
+        {key: value for key, value in entry.items() if key != "tslIr"}
+        for entry in channel_plan.get("channels", ())
+    ]
+    return stripped
+
+
 def _channel_probe_stats(main, probe) -> dict:
     """Numeric agreement between two float bake results.
 
@@ -3025,6 +3119,8 @@ def _plan_material_bake(
         binding.object_name for binding in planned_bindings
         if binding.distinct_material
     )
+    if tsl_ir_requested(material):
+        _attach_tsl_ir(tree, channels)
     channel_plan = {
         "model": CHANNEL_PLAN_MODEL,
         "channels": channels,
@@ -3247,7 +3343,7 @@ def _variant_key(decision: MaterialDecision, binding: MaterialBinding) -> str:
         "materializationPlan": binding.materialization_plan,
         "uvName": binding.uv_name,
         "uvIndex": binding.uv_index,
-        "channelPlan": decision.channel_plan,
+        "channelPlan": _channel_plan_fingerprint(decision.channel_plan),
         "distinctBinding": (
             binding.object_name if binding.distinct_material else None
         ),
