@@ -502,6 +502,57 @@ function build(expression: TslIrExpression): TslExpression {
           ? expression.lacunarity : 2.0,
       )
     }
+    case 'rgb_to_hsv':
+      return blenderRgbToHsv(build(child(expression, 'input')))
+    case 'hsv_to_rgb':
+      return blenderHsvToRgb(build(child(expression, 'input')))
+    case 'invert': {
+      const input = build(child(expression, 'input'))
+      return tslMix(
+        input, tslOneMinus(input), build(child(expression, 'factor')),
+      )
+    }
+    case 'gamma': {
+      // Cycles: only strictly positive components are raised; zero and
+      // negative pass through unchanged.
+      const input = build(child(expression, 'input'))
+      const gamma = build(child(expression, 'gamma'))
+      const channel = (c: TslExpression): TslExpression => tslSelect(
+        c.lessThanEqual(0.0), c, tslPow(tslMax(c, 1e-38), gamma),
+      )
+      return tslVec3(channel(input.x), channel(input.y), channel(input.z))
+    }
+    case 'bright_contrast': {
+      // a = 1 + contrast, b = brightness - contrast/2; max(a*c + b, 0).
+      const input = build(child(expression, 'input'))
+      const bright = build(child(expression, 'bright'))
+      const contrast = build(child(expression, 'contrast'))
+      return tslMax(
+        input.mul(contrast.add(1.0)).add(bright.sub(contrast.mul(0.5))),
+        tslFloat(0.0),
+      )
+    }
+    case 'rgb_to_bw':
+      // Rec.709 luminance, the Standard-config working space's Y row.
+      return tslDot(
+        build(child(expression, 'input')),
+        tslVec3(0.2126729, 0.7151522, 0.0721750),
+      )
+    case 'hue_sat': {
+      const input = build(child(expression, 'input'))
+      const hsv = blenderRgbToHsv(input)
+      const shifted = blenderHsvToRgb(tslVec3(
+        tslFract(hsv.x.add(build(child(expression, 'hue'))).add(0.5)),
+        tslClamp(
+          hsv.y.mul(build(child(expression, 'saturation'))), 0.0, 1.0,
+        ),
+        hsv.z.mul(build(child(expression, 'value'))),
+      ))
+      return tslMax(
+        tslMix(input, shifted, build(child(expression, 'factor'))),
+        tslFloat(0.0),
+      )
+    }
     case 'tex_checker': {
       // Cycles svm_checker: epsilon-nudged cell parity in all three axes.
       const p = build(child(expression, 'vector'))

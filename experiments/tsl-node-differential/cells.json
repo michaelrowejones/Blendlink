@@ -672,6 +672,27 @@
       "notes": "R = BANDS/X/SIN over UV, G = RINGS/SPHERICAL/SAW around the center, B = BANDS/DIAGONAL/TRI with distortion 1 detail 2 through the ported fractal (the raw [-1,1] fBM recovered as 2*fac - 1). Saw/tri discontinuities land off texel centers."
     },
     {
+      "id": "color-utilities",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "color utilities (Invert / Gamma / Bright-Contrast)",
+      "notes": "R = Invert with a swept factor; G = Gamma with the exponent swept 0.5..2.5 (positive components only — Cycles passes zero/negative through); B = Bright/Contrast crossing its zero clamp (a = 1+contrast, b = bright - contrast/2)."
+    },
+    {
+      "id": "color-hsv",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "color-space family (RGB->BW, Separate/Combine HSV)",
+      "notes": "R = RGB-to-BW (Rec.709 luminance) over a 2D gradient; G = Separate Color HSV saturation with a moving max channel; B = Combine Color HSV with the hue swept 0..1 — every hsv_to_rgb sextant crosses this row (the sextant switch is continuous, so boundaries carry no knife edges)."
+    },
+    {
+      "id": "hue-saturation",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Hue/Saturation/Value node (full rgb<->hsv round trip)",
+      "notes": "Hue shifted a full circle over v (fract(h + hue + 0.5) wraps), saturation scaled 1.3 into its clamp, value 0.9, factor 0.8 — the complete Cycles pipeline over the ported conversions."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",

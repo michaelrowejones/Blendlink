@@ -255,17 +255,22 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname in {"ShaderNodeSeparateColor", "ShaderNodeSeparateRGB"}:
-        if idname == "ShaderNodeSeparateColor" \
-                and getattr(node, "mode", "RGB") != "RGB":
-            _refuse(f"Separate Color mode {node.mode!r} has no cell yet")
+        mode = str(getattr(node, "mode", "RGB")) \
+            if idname == "ShaderNodeSeparateColor" else "RGB"
+        if mode not in {"RGB", "HSV"}:
+            _refuse(f"Separate Color mode {mode!r} has no cell yet")
+        # HSV mode relabels the outputs; identifiers stay Red/Green/Blue.
         channel = {
             "Red": "x", "Green": "y", "Blue": "z",
             "R": "x", "G": "y", "B": "z",
-        }[socket_name]
+        }[getattr(from_socket, "identifier", socket_name)]
+        inner = emit_input(node.inputs[0], stack=stack, as_vector=True)
+        if mode == "HSV":
+            inner = {"op": "rgb_to_hsv", "input": inner}
         return {
             "op": "separate",
             "channel": channel,
-            "input": emit_input(node.inputs[0], stack=stack, as_vector=True),
+            "input": inner,
         }
 
     if idname == "ShaderNodeCombineXYZ":
@@ -277,16 +282,66 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname in {"ShaderNodeCombineColor", "ShaderNodeCombineRGB"}:
-        if idname == "ShaderNodeCombineColor" \
-                and getattr(node, "mode", "RGB") != "RGB":
-            _refuse(f"Combine Color mode {node.mode!r} has no cell yet")
-        names = ("Red", "Green", "Blue") \
-            if idname == "ShaderNodeCombineColor" else ("R", "G", "B")
-        return {
+        mode = str(getattr(node, "mode", "RGB")) \
+            if idname == "ShaderNodeCombineColor" else "RGB"
+        if mode not in {"RGB", "HSV"}:
+            _refuse(f"Combine Color mode {mode!r} has no cell yet")
+        expression = {
             "op": "combine",
-            "x": emit_input(node.inputs[names[0]], stack=stack),
-            "y": emit_input(node.inputs[names[1]], stack=stack),
-            "z": emit_input(node.inputs[names[2]], stack=stack),
+            "x": emit_input(node.inputs[0], stack=stack),
+            "y": emit_input(node.inputs[1], stack=stack),
+            "z": emit_input(node.inputs[2], stack=stack),
+        }
+        if mode == "HSV":
+            expression = {"op": "hsv_to_rgb", "input": expression}
+        return expression
+
+    if idname == "ShaderNodeInvert":
+        return {
+            "op": "invert",
+            "factor": emit_input(node.inputs["Fac"], stack=stack),
+            "input": emit_input(
+                node.inputs["Color"], stack=stack, as_vector=True,
+            ),
+        }
+
+    if idname == "ShaderNodeGamma":
+        return {
+            "op": "gamma",
+            "input": emit_input(
+                node.inputs["Color"], stack=stack, as_vector=True,
+            ),
+            "gamma": emit_input(node.inputs["Gamma"], stack=stack),
+        }
+
+    if idname == "ShaderNodeBrightContrast":
+        return {
+            "op": "bright_contrast",
+            "input": emit_input(
+                node.inputs["Color"], stack=stack, as_vector=True,
+            ),
+            "bright": emit_input(node.inputs["Bright"], stack=stack),
+            "contrast": emit_input(node.inputs["Contrast"], stack=stack),
+        }
+
+    if idname == "ShaderNodeRGBToBW":
+        return {
+            "op": "rgb_to_bw",
+            "input": emit_input(
+                node.inputs["Color"], stack=stack, as_vector=True,
+            ),
+        }
+
+    if idname == "ShaderNodeHueSaturation":
+        return {
+            "op": "hue_sat",
+            "hue": emit_input(node.inputs["Hue"], stack=stack),
+            "saturation": emit_input(node.inputs["Saturation"], stack=stack),
+            "value": emit_input(node.inputs["Value"], stack=stack),
+            "factor": emit_input(node.inputs["Fac"], stack=stack),
+            "input": emit_input(
+                node.inputs["Color"], stack=stack, as_vector=True,
+            ),
         }
 
     if idname == "ShaderNodeMath":

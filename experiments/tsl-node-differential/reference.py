@@ -592,6 +592,107 @@ def build_tex_wave(tree, emission):
     tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
 
 
+def _rgb_input(tree, x_socket=None, y_socket=None, y_value=0.0, z_socket=None,
+               z_value=0.0):
+    combine = tree.nodes.new("ShaderNodeCombineXYZ")
+    if x_socket is not None:
+        tree.links.new(x_socket, combine.inputs["X"])
+    if y_socket is not None:
+        tree.links.new(y_socket, combine.inputs["Y"])
+    else:
+        combine.inputs["Y"].default_value = float(y_value)
+    if z_socket is not None:
+        tree.links.new(z_socket, combine.inputs["Z"])
+    else:
+        combine.inputs["Z"].default_value = float(z_value)
+    return combine.outputs["Vector"]
+
+
+def _rgb_channel(tree, color_socket, name):
+    separate = tree.nodes.new("ShaderNodeSeparateColor")
+    separate.mode = "RGB"
+    tree.links.new(color_socket, separate.inputs["Color"])
+    return separate.outputs[name]
+
+
+def build_color_utilities(tree, emission):
+    out = tree.nodes.new("ShaderNodeCombineColor")
+    out.mode = "RGB"
+    u = _uv_channel(tree, "u")
+    v = _uv_channel(tree, "v")
+
+    invert = tree.nodes.new("ShaderNodeInvert")
+    tree.links.new(_rgb_input(tree, u, y_value=0.6, z_value=0.3),
+                   invert.inputs["Color"])
+    tree.links.new(v, invert.inputs["Fac"])
+    tree.links.new(_rgb_channel(tree, invert.outputs["Color"], "Red"),
+                   out.inputs["Red"])
+
+    gamma = tree.nodes.new("ShaderNodeGamma")
+    tree.links.new(_rgb_input(tree, u, y_value=0.5, z_value=0.2),
+                   gamma.inputs["Color"])
+    tree.links.new(_affine(tree, v, 2.0, 0.5), gamma.inputs["Gamma"])
+    tree.links.new(_rgb_channel(tree, gamma.outputs["Color"], "Red"),
+                   out.inputs["Green"])
+
+    bright = tree.nodes.new("ShaderNodeBrightContrast")
+    tree.links.new(_rgb_input(tree, u, y_value=0.5, z_value=0.5),
+                   bright.inputs["Color"])
+    tree.links.new(_affine(tree, v, 0.2, -0.1), bright.inputs["Bright"])
+    bright.inputs["Contrast"].default_value = 0.4
+    tree.links.new(_rgb_channel(tree, bright.outputs["Color"], "Red"),
+                   out.inputs["Blue"])
+
+    tree.links.new(out.outputs["Color"], emission.inputs["Color"])
+
+
+def build_color_hsv(tree, emission):
+    out = tree.nodes.new("ShaderNodeCombineColor")
+    out.mode = "RGB"
+    u = _uv_channel(tree, "u")
+    v = _uv_channel(tree, "v")
+
+    to_bw = tree.nodes.new("ShaderNodeRGBToBW")
+    tree.links.new(_rgb_input(tree, u, y_socket=v, z_value=0.3),
+                   to_bw.inputs["Color"])
+    tree.links.new(to_bw.outputs["Val"], out.inputs["Red"])
+
+    separate_hsv = tree.nodes.new("ShaderNodeSeparateColor")
+    separate_hsv.mode = "HSV"
+    tree.links.new(
+        _rgb_input(tree, u, y_value=0.7,
+                   z_socket=_affine(tree, v, 0.5, 0.2)),
+        separate_hsv.inputs["Color"],
+    )
+    # outputs[1] is saturation; HSV mode relabels the socket names.
+    tree.links.new(separate_hsv.outputs[1], out.inputs["Green"])
+
+    combine_hsv = tree.nodes.new("ShaderNodeCombineColor")
+    combine_hsv.mode = "HSV"
+    tree.links.new(u, combine_hsv.inputs[0])
+    combine_hsv.inputs[1].default_value = 0.8
+    combine_hsv.inputs[2].default_value = 0.6
+    tree.links.new(
+        _rgb_channel(tree, combine_hsv.outputs["Color"], "Blue"),
+        out.inputs["Blue"],
+    )
+
+    tree.links.new(out.outputs["Color"], emission.inputs["Color"])
+
+
+def build_hue_saturation(tree, emission):
+    node = tree.nodes.new("ShaderNodeHueSaturation")
+    tree.links.new(
+        _rgb_input(tree, _uv_channel(tree, "u"), y_value=0.55, z_value=0.25),
+        node.inputs["Color"],
+    )
+    tree.links.new(_uv_channel(tree, "v"), node.inputs["Hue"])
+    node.inputs["Saturation"].default_value = 1.3
+    node.inputs["Value"].default_value = 0.9
+    node.inputs["Fac"].default_value = 0.8
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
 def build_rgb_curve(tree, emission):
     node = tree.nodes.new("ShaderNodeRGBCurve")
     mapping = node.mapping
@@ -844,6 +945,9 @@ BUILDERS = {
     "vertex-color": build_vertex_color,
     "group-passthrough": build_group_passthrough,
     "rgb-curve": build_rgb_curve,
+    "color-utilities": build_color_utilities,
+    "color-hsv": build_color_hsv,
+    "hue-saturation": build_hue_saturation,
     "tex-checker": build_tex_checker,
     "tex-gradient": build_tex_gradient,
     "tex-magic": build_tex_magic,
