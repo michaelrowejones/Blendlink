@@ -221,6 +221,12 @@ def main():
                 surface["refusals"].get(reason, 0) + 1
             )
             return
+        except RecursionError:
+            reason = "surface emission exceeded the recursion bound"
+            surface["refusals"][reason] = (
+                surface["refusals"].get(reason, 0) + 1
+            )
+            return
         surface["resolved"] += 1
         for channel_document in document["channels"].values():
             surface["channelsCompiled"] += 1

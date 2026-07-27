@@ -154,20 +154,37 @@ def _vector(value, length=3):
 def _socket_source(socket):
     if not socket.is_linked:
         return None
-    links = socket.links
+    # Blender treats a muted link exactly like no link (the socket's
+    # default value applies), so the walk must too — following a muted
+    # link would compile a branch Cycles never evaluates.
+    links = [
+        link for link in socket.links
+        if not getattr(link, "is_muted", False)
+    ]
+    if not links:
+        return None
     if len(links) != 1:
         _refuse(f"socket {socket.name!r} has {len(links)} links")
     return links[0].from_node, links[0].from_socket
 
 
 def _matching_socket(sockets, reference):
+    # Identifiers are unique per node interface; display names are not
+    # (Blender permits two group sockets both shown as "Shader"), so the
+    # identifier match must win before any name lookup.
+    identifier = getattr(reference, "identifier", None)
+    if identifier:
+        matched = next(
+            (item for item in sockets if item.identifier == identifier),
+            None,
+        )
+        if matched is not None:
+            return matched
     named = sockets.get(reference.name)
     if named is not None:
         return named
-    identifier = getattr(reference, "identifier", None)
     return next(
-        (item for item in sockets
-         if item.name == reference.name or item.identifier == identifier),
+        (item for item in sockets if item.name == reference.name),
         None,
     )
 
@@ -223,8 +240,15 @@ def _resolve_shader_link(socket, stack):
     reroutes and group walls with the same discipline as emit_output.
     Returns (node, from_socket, stack) or None when the chain ends
     unlinked."""
+    steps = 0
     source = _socket_source(socket)
     while source is not None:
+        steps += 1
+        if steps > 4096:
+            # Scripted trees can contain reroute link cycles (Blender
+            # marks them invalid but the data allows them); a bound turns
+            # the hang into a named refusal.
+            _refuse("shader link chain exceeds the traversal bound")
         node, from_socket = source
         idname = node.bl_idname
         if getattr(node, "mute", False):
@@ -512,14 +536,26 @@ def emit_surface(tree):
     is nonlinear under lighting), Transparent branches contribute only
     coverage, Diffuse/Glossy canonicalize onto the Principled channel
     vector, and emission always ships as radiance with strength 1."""
+    # Cycles renders the output targeted at CYCLES when one exists, then
+    # the ALL-target output — measured on 5.2 with an EEVEE/CYCLES output
+    # pair. Selecting by tree order compiled the branch Cycles never
+    # renders.
+    actives = [
+        node for node in tree.nodes
+        if node.bl_idname == "ShaderNodeOutputMaterial"
+        and getattr(node, "is_active_output", True)
+    ]
     output = next(
-        (node for node in tree.nodes
-         if node.bl_idname == "ShaderNodeOutputMaterial"
-         and getattr(node, "is_active_output", True)),
+        (node for node in actives
+         if str(getattr(node, "target", "ALL")) == "CYCLES"),
+        None,
+    ) or next(
+        (node for node in actives
+         if str(getattr(node, "target", "ALL")) == "ALL"),
         None,
     )
     if output is None:
-        _refuse("material has no active Material Output")
+        _refuse("material has no Cycles-visible active Material Output")
     resolved = _resolve_shader_link(output.inputs["Surface"], ())
     if resolved is None:
         _refuse("material output has no linked Surface")
@@ -626,6 +662,15 @@ def emit_output(node, from_socket, stack=()):
         if socket_name == "UV":
             return {"op": "uv"}
         if socket_name == "Object":
+            if getattr(node, "object", None) is not None:
+                _refuse(
+                    "Texture Coordinate with an Object override maps "
+                    "another object's space; no cell yet"
+                )
+            if bool(getattr(node, "from_instancer", False)):
+                _refuse(
+                    "Texture Coordinate from instancer has no cell yet"
+                )
             # Object coordinates = object-space shading position (measured
             # on the tile proxy: the raw quad coordinates) — three's
             # positionGeometry.
@@ -1016,11 +1061,17 @@ def emit_output(node, from_socket, stack=()):
         else:
             # Unlinked Vector on Image Texture means the active UV map.
             vector_expression = {"op": "uv"}
+        import math as _math
+        embedded = [float(value) for value in pixels]
+        if not all(_math.isfinite(value) for value in embedded):
+            # NaN/Inf pixels would serialize as non-standard JSON tokens
+            # downstream (allow_nan defaults on) and poison the document.
+            _refuse("image contains non-finite pixel values")
         return {
             "op": "tex_image",
             "width": width,
             "height": height,
-            "pixels": [float(value) for value in pixels],
+            "pixels": embedded,
             "interpolation": interpolation,
             "extension": extension,
             "output": "alpha" if image_output == "Alpha" else "color",
@@ -1050,8 +1101,14 @@ def emit_output(node, from_socket, stack=()):
         # (a floor/ceil/snap as the last step) are bit-identical across
         # engines and therefore honestly comparable.
         def _contains_uv(item):
+            # Every interpolated varying decorrelates raw bits across
+            # engines — vertex colors and view terms included, not just
+            # coordinate ops.
             if isinstance(item, dict):
-                if item.get("op") in {"uv", "generated", "object_coords"}:
+                if item.get("op") in {
+                    "uv", "generated", "object_coords",
+                    "vertex_color", "view_cos",
+                }:
                     return True
                 return any(_contains_uv(value) for value in item.values())
             if isinstance(item, list):

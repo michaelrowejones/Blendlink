@@ -2636,6 +2636,12 @@ def _attach_tsl_ir(tree, channels) -> None:
         for entry in channels:
             entry["tslIrRefusal"] = str(refusal)
         return
+    except RecursionError:
+        for entry in channels:
+            entry["tslIrRefusal"] = (
+                "surface resolution exceeded the recursion bound"
+            )
+        return
     for entry in channels:
         channel_name = entry.get("channel")
         if channel_name == "Emission":
@@ -2654,6 +2660,13 @@ def _attach_tsl_ir(tree, channels) -> None:
             document = tsl_ir.emit_channel(socket, stack)
         except tsl_ir.TslIrRefusal as refusal:
             entry["tslIrRefusal"] = str(refusal)
+            continue
+        except RecursionError:
+            # Deep pathological graphs must degrade to a named refusal,
+            # never a planner crash.
+            entry["tslIrRefusal"] = (
+                "IR emission exceeded the recursion bound"
+            )
             continue
         encoded = _json.dumps(
             document, sort_keys=True, separators=(",", ":"),
@@ -5862,8 +5875,18 @@ def with_compiled_materials(
                         "materialization": None,
                         "materializationEvidence": None,
                         "materialBake": {
+                            # TSL IR stays out of the glTF attestation
+                            # evidence by declared scope: the evidence
+                            # verifier has no channels/IR model, and the
+                            # per-channel bodies belong to the plan
+                            # record, not the GLB byte attestation.
                             "channels": [
-                                dict(item) for item in
+                                {
+                                    key: value
+                                    for key, value in item.items()
+                                    if not key.startswith("tslIr")
+                                }
+                                for item in
                                 (decision.channel_plan or {}).get(
                                     "channels", (),
                                 )

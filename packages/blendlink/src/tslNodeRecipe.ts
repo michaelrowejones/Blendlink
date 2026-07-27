@@ -472,7 +472,12 @@ function build(expression: TslIrExpression): TslExpression {
       // three exposes as the 'color' geometry attribute.
       return tslAttribute('color')
     case 'object_coords':
-      // Blender Object texture coordinates = object-space position.
+      // Blender Object texture coordinates = object-space position, in
+      // BLENDER'S Z-up basis. positionGeometry satisfies that contract
+      // only for Z-up geometry (the harness quad is; GLB-loaded meshes
+      // are Y-up-converted by the exporter, so the production runtime
+      // must supply a basis conversion alongside the geometry —
+      // Phase 4's application seam, same class as generatedTexspace).
       return tslPositionGeometry
     case 'generated': {
       // Blender Generated coordinates over the mesh texspace (measured:
