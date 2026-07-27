@@ -190,6 +190,27 @@ compiler gained, each family behind its own cells:
   lookup3 on raw float bits, and Voronoi F1 (2D/3D, Distance + Color) at
   3e-5 through Blender's own `hash_pcg3d_i`.
 
+The straggler batch (Noise Color, Voronoi SMOOTH_F1, Magic Fac) added
+four more measured lessons:
+
+- **Noise Color's offset seeds are dimension-dependent** (noisetex.h:
+  2D uses seeds 2/3 but 3D uses 3/4 because distortion consumes the low
+  seeds per dimension) — the wrong pair decorrelated both offset lanes
+  at 1e-1 while the shared Fac lane stayed at 4e-5, and a z≈150 probe
+  cell cleared the Perlin lineage before the seed fix.
+- **Tint has a parser recursion limit**: the 125-cell SMOOTH_F1
+  accumulator chain built as one nested mix(...) expression measured
+  "maximum parser recursive depth reached"; `.toVar()` per iteration
+  flattens the chains into sequential statements.
+- **A frequency bound is part of channel honesty**: sub-texel
+  sample-position differences (~3e-5 UV) multiply by texture scale —
+  ellie's scale-100 hair noise measured 1.8e-1 decorrelation through
+  its steep ramps while the new scale-16 cell passes at 1.7e-4, so the
+  emitter refuses Noise/Voronoi scales above 16 (and linked scales).
+- White Noise now requires a QUANTIZED coordinate root (floor/ceil/
+  snap) whenever UV feeds it — the raw-bit avalanche class, enforced
+  structurally.
+
 Two findings the hash batch measured, both worth remembering:
 
 1. **Blender 4.x+ Voronoi does not use the White Noise hash.** White

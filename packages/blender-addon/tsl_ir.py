@@ -62,6 +62,47 @@ _MIX_BLEND_TYPES = {
 _RAMP_INTERPOLATIONS = {"LINEAR", "CONSTANT"}
 
 
+def _jenkins_rot(x, k):
+    x &= 0xFFFFFFFF
+    return ((x << k) | (x >> (32 - k))) & 0xFFFFFFFF
+
+
+def _jenkins_final(a, b, c):
+    m = 0xFFFFFFFF
+    c = (c ^ b) & m; c = (c - _jenkins_rot(b, 14)) & m
+    a = (a ^ c) & m; a = (a - _jenkins_rot(c, 11)) & m
+    b = (b ^ a) & m; b = (b - _jenkins_rot(a, 25)) & m
+    c = (c ^ b) & m; c = (c - _jenkins_rot(b, 16)) & m
+    a = (a ^ c) & m; a = (a - _jenkins_rot(c, 4)) & m
+    b = (b ^ a) & m; b = (b - _jenkins_rot(a, 14)) & m
+    c = (c ^ b) & m; c = (c - _jenkins_rot(b, 24)) & m
+    return c
+
+
+def _float_bits(value):
+    import struct
+    return struct.unpack("<I", struct.pack("<f", float(value)))[0]
+
+
+def _hash_float2_to_float(x, y):
+    """Cycles hash_float2_to_float on constants (Jenkins on float bits)."""
+    seed = (0xDEADBEEF + (2 << 2) + 13) & 0xFFFFFFFF
+    c = _jenkins_final(
+        (seed + _float_bits(x)) & 0xFFFFFFFF,
+        (seed + _float_bits(y)) & 0xFFFFFFFF,
+        seed,
+    )
+    return c / 0xFFFFFFFF
+
+
+def _noise_random_offset(seed, count):
+    """noisetex.h random_floatN_offset for a constant seed."""
+    return [
+        100.0 + _hash_float2_to_float(seed, float(index)) * 100.0
+        for index in range(count)
+    ]
+
+
 class TslIrRefusal(Exception):
     """A channel graph contains something without a proven cell."""
 
@@ -500,7 +541,8 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeTexMagic":
-        if socket_name != "Color":
+        magic_output = getattr(from_socket, "identifier", socket_name)
+        if magic_output not in {"Color", "Fac"}:
             _refuse(f"Magic output {socket_name!r} has no cell yet")
         if not node.inputs["Vector"].is_linked:
             _refuse(
@@ -509,6 +551,8 @@ def emit_output(node, from_socket, stack=()):
         return {
             "op": "tex_magic",
             "depth": int(node.turbulence_depth),
+            # Fac is the color average.
+            "output": "fac" if magic_output == "Fac" else "color",
             "vector": emit_input(
                 node.inputs["Vector"], stack=stack, as_vector=True,
             ),
@@ -579,13 +623,39 @@ def emit_output(node, from_socket, stack=()):
                 "White Noise with implicit Generated coordinates has no "
                 "cell yet"
             )
+        vector_expression = emit_input(
+            node.inputs["Vector"], stack=stack, as_vector=True,
+        )
+        # The hash consumes RAW float bits, and interpolated coordinates
+        # differ between engines by hundreds of ulps (measured) — the
+        # avalanche decorrelates every texel. Only quantized coordinates
+        # (a floor/ceil/snap as the last step) are bit-identical across
+        # engines and therefore honestly comparable.
+        def _contains_uv(item):
+            if isinstance(item, dict):
+                if item.get("op") == "uv":
+                    return True
+                return any(_contains_uv(value) for value in item.values())
+            if isinstance(item, list):
+                return any(_contains_uv(value) for value in item)
+            return False
+        quantized_root = (
+            vector_expression.get("op") == "vector_math"
+            and vector_expression.get("operation") in {
+                "FLOOR", "CEIL", "SNAP",
+            }
+        )
+        if _contains_uv(vector_expression) and not quantized_root:
+            _refuse(
+                "White Noise over continuous coordinates decorrelates "
+                "across engines (raw-bit hash of interpolated floats); "
+                "only quantized (floor/ceil/snap) inputs are comparable"
+            )
         return {
             "op": "tex_white_noise",
             "dimensions": 2 if dimensions == "2D" else 3,
             "output": "color" if output_id == "Color" else "value",
-            "vector": emit_input(
-                node.inputs["Vector"], stack=stack, as_vector=True,
-            ),
+            "vector": vector_expression,
         }
 
     if idname == "ShaderNodeTexVoronoi":
@@ -595,8 +665,9 @@ def emit_output(node, from_socket, stack=()):
         dimensions = str(node.voronoi_dimensions)
         if dimensions not in {"2D", "3D"}:
             _refuse(f"Voronoi dimensions {dimensions!r} has no cell yet")
-        if str(node.feature) != "F1":
-            _refuse(f"Voronoi feature {node.feature!r} has no cell yet")
+        feature = str(node.feature)
+        if feature not in {"F1", "SMOOTH_F1"}:
+            _refuse(f"Voronoi feature {feature!r} has no cell yet")
         if str(node.distance) != "EUCLIDEAN":
             _refuse(f"Voronoi metric {node.distance!r} has no cell yet")
         if bool(getattr(node, "normalize", False)):
@@ -608,9 +679,19 @@ def emit_output(node, from_socket, stack=()):
             _refuse(
                 "Voronoi with implicit Generated coordinates has no cell yet"
             )
-        return {
+        voronoi_scale = node.inputs["Scale"]
+        if voronoi_scale.is_linked:
+            _refuse("Voronoi with a linked Scale has no bounded cell yet")
+        if abs(float(voronoi_scale.default_value)) > 16.0 + 1e-9:
+            _refuse(
+                f"Voronoi scale {float(voronoi_scale.default_value):g} "
+                "exceeds the proven range (<= 16); sample-position "
+                "differences decorrelate high-frequency patterns"
+            )
+        expression = {
             "op": "tex_voronoi",
             "dimensions": 2 if dimensions == "2D" else 3,
+            "feature": "f1",
             "output": "color" if output_id == "Color" else "distance",
             "vector": emit_input(
                 node.inputs["Vector"], stack=stack, as_vector=True,
@@ -618,6 +699,19 @@ def emit_output(node, from_socket, stack=()):
             "scale": emit_input(node.inputs["Scale"], stack=stack),
             "randomness": emit_input(node.inputs["Randomness"], stack=stack),
         }
+        if feature == "SMOOTH_F1":
+            smoothness_socket = node.inputs["Smoothness"]
+            if smoothness_socket.is_linked:
+                _refuse("Voronoi with a linked Smoothness has no cell yet")
+            # Cycles: params.smoothness = clamp(smoothness / 2, 0, 0.5),
+            # and smoothness == 0 falls back to plain F1.
+            smoothness = min(
+                max(float(smoothness_socket.default_value) / 2.0, 0.0), 0.5,
+            )
+            if smoothness != 0.0:
+                expression["feature"] = "smooth_f1"
+                expression["smoothness"] = smoothness
+        return expression
 
     if idname == "ShaderNodeRGBCurve":
         # Cycles itself bakes RGB Curves into a sampled table
@@ -693,8 +787,14 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeTexNoise":
         # Blender 5.2 displays the output as "Factor"; the identifier stays
         # "Fac" across versions.
-        if getattr(from_socket, "identifier", socket_name) != "Fac":
-            _refuse(f"Noise output {socket_name!r} has no cell yet (Fac only)")
+        noise_output = getattr(from_socket, "identifier", socket_name)
+        if noise_output not in {"Fac", "Color"}:
+            _refuse(f"Noise output {socket_name!r} has no cell yet")
+        noise_type = str(getattr(node, "noise_type", "FBM"))
+        if noise_type != "FBM":
+            _refuse(f"Noise type {noise_type!r} has no cell yet")
+        if not bool(getattr(node, "normalize", True)):
+            _refuse("Unnormalized noise has no cell yet")
         dimensions = str(getattr(node, "noise_dimensions", "3D"))
         if dimensions not in {"2D", "3D"}:
             _refuse(
@@ -728,10 +828,24 @@ def emit_output(node, from_socket, stack=()):
                 f"Noise detail {detail_value:g} exceeds the proven range "
                 "(<= 2); high-octave phase divergence measured"
             )
+        scale_socket = node.inputs["Scale"]
+        if scale_socket.is_linked:
+            _refuse("Noise with a linked Scale has no bounded cell yet")
+        if abs(float(scale_socket.default_value)) > 16.0 + 1e-9:
+            # Sub-texel sample-position differences between the two
+            # rasterizers (~3e-5 in UV) multiply by the scale; measured at
+            # scale 100 (ellie hair) the channel decorrelates to 1.8e-1
+            # while scale 16 stays inside tolerance. Material bake carries
+            # higher frequencies faithfully.
+            _refuse(
+                f"Noise scale {float(scale_socket.default_value):g} "
+                "exceeds the proven range (<= 16); sample-position "
+                "differences decorrelate high-frequency noise"
+            )
         lacunarity = node.inputs.get("Lacunarity")
-        return {
+        expression = {
             "op": "noise",
-            "output": "fac",
+            "output": "fac" if noise_output == "Fac" else "color",
             "dimensions": 2 if dimensions == "2D" else 3,
             "detail": float(node.inputs["Detail"].default_value),
             "roughness": float(node.inputs["Roughness"].default_value),
@@ -742,6 +856,19 @@ def emit_output(node, from_socket, stack=()):
             "scale": emit_input(node.inputs["Scale"], stack=stack),
             "input": emit_input(vector, stack=stack, as_vector=True),
         }
+        if noise_output == "Color":
+            # Cycles noise color lanes are the same fBM at constant
+            # hash-derived offsets (noisetex.h random_floatN_offset).
+            # The seeds are DIMENSION-DEPENDENT: distortion consumes the
+            # low seeds per dimension, so 2D color uses (2, 3) and 3D
+            # uses (3, 4) — measured: the wrong pair decorrelates both
+            # offset lanes at 1e-1 while Fac stays at 4e-5.
+            count = 2 if dimensions == "2D" else 3
+            seeds = (2.0, 3.0) if dimensions == "2D" else (3.0, 4.0)
+            expression["colorOffsets"] = [
+                _noise_random_offset(seed, count) for seed in seeds
+            ]
+        return expression
 
     if idname == "ShaderNodeFresnel":
         if node.inputs["Normal"].is_linked:

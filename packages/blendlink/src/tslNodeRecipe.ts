@@ -69,6 +69,7 @@ export interface TslExpression {
   bitXor(value: TslExprLike): TslExpression
   bitOr(value: TslExprLike): TslExpression
   bitAnd(value: TslExprLike): TslExpression
+  toVar(name?: string): TslExpression
   shiftLeft(value: TslExprLike): TslExpression
   shiftRight(value: TslExprLike): TslExpression
   x: TslExpression
@@ -494,17 +495,30 @@ function build(expression: TslIrExpression): TslExpression {
     case 'noise': {
       let position = build(child(expression, 'input'))
         .mul(build(child(expression, 'scale')))
-      if (expression.dimensions === 2) {
+      const dimensions = scalar(expression, 'dimensions')
+      if (dimensions === 2) {
         // Blender's 2D noise is a genuinely different Perlin dimension,
         // matched by mx_noise_float's vec2 overload (the noise-2d cell).
         position = tslVec2(position.x, position.y)
       }
-      return blenderNoiseFac(
-        position,
-        scalar(expression, 'detail'),
-        scalar(expression, 'roughness'),
-        typeof expression.lacunarity === 'number'
-          ? expression.lacunarity : 2.0,
+      const detail = scalar(expression, 'detail')
+      const roughness = scalar(expression, 'roughness')
+      const lacunarity = typeof expression.lacunarity === 'number'
+        ? expression.lacunarity : 2.0
+      const fac = blenderNoiseFac(position, detail, roughness, lacunarity)
+      if (expression.output !== 'color') return fac
+      // Color lanes are the same fBM at constant hash-derived offsets
+      // (the emitter precomputed noisetex.h's random offsets).
+      const offsets = expression.colorOffsets as number[][]
+      const shifted = (offset: number[]): TslExpression => (
+        dimensions === 2
+          ? position.add(tslVec2(offset[0], offset[1]))
+          : position.add(tslVec3(offset[0], offset[1], offset[2]))
+      )
+      return tslVec3(
+        fac,
+        blenderNoiseFac(shifted(offsets[0]), detail, roughness, lacunarity),
+        blenderNoiseFac(shifted(offsets[1]), detail, roughness, lacunarity),
       )
     }
     case 'rgb_to_hsv':
@@ -621,8 +635,15 @@ function build(expression: TslIrExpression): TslExpression {
       // depth; the final shrink by 2*distortion is skipped when the
       // distortion is zero (runtime branch, scalar condition).
       const depth = scalar(expression, 'depth')
-      const p = build(child(expression, 'vector'))
+      const scaled = build(child(expression, 'vector'))
         .mul(build(child(expression, 'scale')))
+      // Cycles wraps each component into [-2pi, 2pi) with C fmod before
+      // the cascade to keep large coordinates out of NaN territory.
+      const p = tslVec3(
+        blenderModulo(scaled.x, tslFloat(2 * Math.PI)),
+        blenderModulo(scaled.y, tslFloat(2 * Math.PI)),
+        blenderModulo(scaled.z, tslFloat(2 * Math.PI)),
+      )
       const distortion = build(child(expression, 'distortion'))
       let x = tslSin(p.x.add(p.y).add(p.z).mul(5.0))
       let y = tslCos(p.x.negate().add(p.y).sub(p.z).mul(5.0))
@@ -654,11 +675,15 @@ function build(expression: TslIrExpression): TslExpression {
       const shrink = (value: TslExpression): TslExpression => tslSelect(
         distortion.equal(0.0), value, value.div(guardedDivisor(divisor)),
       )
-      return tslVec3(
+      const color = tslVec3(
         tslFloat(0.5).sub(shrink(x)),
         tslFloat(0.5).sub(shrink(y)),
         tslFloat(0.5).sub(shrink(z)),
       )
+      if (expression.output === 'fac') {
+        return color.x.add(color.y).add(color.z).div(3.0)
+      }
+      return color
     }
     case 'tex_wave': {
       const p = build(child(expression, 'vector'))
@@ -733,6 +758,88 @@ function build(expression: TslIrExpression): TslExpression {
       const cellIntX = tslIntOf(cell.x)
       const cellIntY = tslIntOf(cell.y)
       const cellIntZ = tslIntOf(cell.z)
+      if (expression.feature === 'smooth_f1') {
+        // Cycles voronoi_smooth_f1: a running h-chain over the 5^d
+        // neighborhood — h is 1 on the first cell, then the smoothstep
+        // of the distance gap; each accumulator lerps by h and subtracts
+        // the polynomial correction. Smoothness is a nonzero emit-time
+        // constant (zero falls back to F1 in the emitter, like Cycles).
+        const smoothness = scalar(expression, 'smoothness')
+        const smoothstep01 = (value: TslExpression): TslExpression => {
+          const t = tslClamp(value, 0.0, 1.0)
+          return t.mul(t).mul(tslFloat(3.0).sub(t.mul(2.0)))
+        }
+        let smoothDistance = tslFloat(0.0)
+        let smoothR = tslFloat(0.0)
+        let smoothG = tslFloat(0.0)
+        let smoothB = tslFloat(0.0)
+        let first = true
+        const range = [-2, -1, 0, 1, 2]
+        const zRange = dimensions === 2 ? [0] : range
+        for (const k of zRange) {
+          for (const j of range) {
+            for (const i of range) {
+              const neighborX = cellIntX.add(tslIntOf(i))
+              const neighborY = cellIntY.add(tslIntOf(j))
+              const neighborZ = cellIntZ.add(tslIntOf(k))
+              let jitterR: TslExpression
+              let jitterG: TslExpression
+              let jitterB: TslExpression
+              let dx: TslExpression
+              let dy: TslExpression
+              let dz = tslFloat(0.0)
+              if (dimensions === 2) {
+                const [jitterX, jitterY] = hashInt2ToFloat2(
+                  neighborX, neighborY,
+                )
+                // 2D color still routes through the 3D hash with z = 0.
+                const [r, g, b] = hashInt3ToFloat3(
+                  neighborX, neighborY, tslIntOf(0),
+                )
+                jitterR = r; jitterG = g; jitterB = b
+                dx = jitterX.mul(randomness).add(i).sub(local.x)
+                dy = jitterY.mul(randomness).add(j).sub(local.y)
+              } else {
+                const [r, g, b] = hashInt3ToFloat3(
+                  neighborX, neighborY, neighborZ,
+                )
+                jitterR = r; jitterG = g; jitterB = b
+                dx = jitterR.mul(randomness).add(i).sub(local.x)
+                dy = jitterG.mul(randomness).add(j).sub(local.y)
+                dz = jitterB.mul(randomness).add(k).sub(local.z)
+              }
+              const distance = tslSqrt(
+                dx.mul(dx).add(dy.mul(dy)).add(dz.mul(dz)),
+              )
+              const h = first
+                ? tslFloat(1.0)
+                : smoothstep01(
+                  tslFloat(0.5).add(
+                    smoothDistance.sub(distance).mul(0.5 / smoothness),
+                  ),
+                ).toVar()
+              first = false
+              const correction = h.mul(tslOneMinus(h)).mul(smoothness)
+              // toVar flattens the accumulator chains into sequential
+              // statements — a 125-deep nested mix(...) tree measured
+              // "maximum parser recursive depth reached" in Tint.
+              smoothDistance = tslMix(smoothDistance, distance, h)
+                .sub(correction).toVar()
+              const colorCorrection = correction.div(1.0 + 3.0 * smoothness)
+              smoothR = tslMix(smoothR, jitterR, h)
+                .sub(colorCorrection).toVar()
+              smoothG = tslMix(smoothG, jitterG, h)
+                .sub(colorCorrection).toVar()
+              smoothB = tslMix(smoothB, jitterB, h)
+                .sub(colorCorrection).toVar()
+            }
+          }
+        }
+        if (expression.output === 'color') {
+          return tslVec3(smoothR, smoothG, smoothB)
+        }
+        return smoothDistance
+      }
       let minDistance = tslFloat(1e10)
       let winXExpr = tslIntOf(0)
       let winYExpr = tslIntOf(0)
@@ -764,11 +871,11 @@ function build(expression: TslIrExpression): TslExpression {
             const distance = tslSqrt(
               dx.mul(dx).add(dy.mul(dy)).add(dz.mul(dz)),
             )
-            const closer = distance.lessThan(minDistance)
-            minDistance = tslSelect(closer, distance, minDistance)
-            winXExpr = tslSelect(closer, neighborX, winXExpr)
-            winYExpr = tslSelect(closer, neighborY, winYExpr)
-            winZExpr = tslSelect(closer, neighborZ, winZExpr)
+            const closer = distance.lessThan(minDistance).toVar()
+            minDistance = tslSelect(closer, distance, minDistance).toVar()
+            winXExpr = tslSelect(closer, neighborX, winXExpr).toVar()
+            winYExpr = tslSelect(closer, neighborY, winYExpr).toVar()
+            winZExpr = tslSelect(closer, neighborZ, winZExpr).toVar()
           }
         }
       }

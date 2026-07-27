@@ -721,6 +721,48 @@
       "notes": "R = 3D F1 Distance (scale 4, randomness 1, x0.6), G = 3D Color's first lane, B = 2D F1 Distance. Cell coordinates are integer-valued floats, so the hash inputs are bit-identical across engines — the 0.28 mx_worley divergence closes by porting Blender's own hash, not by finding a shared lineage. F2/smooth/other metrics/fractal detail stay named refusals."
     },
     {
+      "id": "noise-z-probe",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "noise lineage (large-coordinate control)",
+      "notes": "The proven fBM on the z = 150.37 plane — the control that pins Perlin-lineage agreement in the coordinate range the noise color offsets (100..200) actually use, separating it from the offset computation."
+    },
+    {
+      "id": "noise-scale16",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "noise frequency bound (scale <= 16)",
+      "notes": "3D fBM at scale 16, detail 2 — the cell that earns the emitter's scale bound. Sub-texel sample-position differences (~3e-5 UV) multiply by frequency: scale 100 (ellie hair) measured 1.8e-1 mean decorrelation, so higher scales refuse and the Material bake carries them."
+    },
+    {
+      "id": "noise-color",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "corpus-measured node gap (Noise Color output x3)",
+      "notes": "3D Noise Color (scale 4, detail 2): the second and third lanes are the SAME proven fBM at constant hash-derived offsets (noisetex.h random_float3_offset, seeds 2 and 3 — the emitter precomputes them with a CPU Jenkins). Coordinates around 100..200 keep the shared-lineage agreement."
+    },
+    {
+      "id": "noise-color-2d",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "corpus-measured node gap (Noise Color output, 2D)",
+      "notes": "The vec2 twin of noise-color through random_float2_offset."
+    },
+    {
+      "id": "voronoi-smooth-f1",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "corpus-measured node gap (Voronoi SMOOTH_F1)",
+      "notes": "R = 3D SMOOTH_F1 Distance (smoothness 1 -> params 0.5, x0.6), G = its Color lane, B = 2D Distance. The 5^d h-chain with polynomial corrections, ported verbatim; smoothness folds at emit time and zero falls back to F1 exactly like Cycles."
+    },
+    {
+      "id": "tex-magic-fac",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "deterministic texture (Magic Fac)",
+      "notes": "Magic's Fac output is the color average; the mapping also carries the upstream fmod(p*scale, 2pi) wrap Cycles applies before the cascade."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",

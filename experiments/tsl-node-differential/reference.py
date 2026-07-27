@@ -795,6 +795,107 @@ def build_voronoi_f1(tree, emission):
     tree.links.new(out.outputs["Color"], emission.inputs["Color"])
 
 
+def build_noise_z_probe(tree, emission):
+    # TEMP: the same fBM the Fac cell proved, but on a z ~ 150 plane —
+    # isolates large-coordinate lineage agreement from the color-offset
+    # computation.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    scale = tree.nodes.new("ShaderNodeVectorMath")
+    scale.operation = "SCALE"
+    scale.inputs["Scale"].default_value = 4.0
+    tree.links.new(coord.outputs["UV"], scale.inputs[0])
+    offset = tree.nodes.new("ShaderNodeVectorMath")
+    offset.operation = "ADD"
+    offset.inputs[1].default_value = (0.0, 0.0, 150.37)
+    tree.links.new(scale.outputs["Vector"], offset.inputs[0])
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 1.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(offset.outputs["Vector"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_noise_scale16(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 16.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_noise_color(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 4.0
+    node.inputs["Detail"].default_value = 2.0
+    node.inputs["Roughness"].default_value = 0.5
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def build_noise_color_2d(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "2D"
+    node.inputs["Scale"].default_value = 4.0
+    node.inputs["Detail"].default_value = 1.0
+    node.inputs["Roughness"].default_value = 0.5
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def build_voronoi_smooth_f1(tree, emission):
+    out = tree.nodes.new("ShaderNodeCombineColor")
+    out.mode = "RGB"
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+
+    def voronoi(dimensions):
+        node = tree.nodes.new("ShaderNodeTexVoronoi")
+        node.voronoi_dimensions = dimensions
+        node.feature = "SMOOTH_F1"
+        node.distance = "EUCLIDEAN"
+        if hasattr(node, "normalize"):
+            node.normalize = False
+        node.inputs["Scale"].default_value = 4.0
+        node.inputs["Randomness"].default_value = 1.0
+        node.inputs["Smoothness"].default_value = 1.0
+        node.inputs["Detail"].default_value = 0.0
+        tree.links.new(uv, node.inputs["Vector"])
+        return node
+
+    three_d = voronoi("3D")
+    tree.links.new(
+        _affine(tree, three_d.outputs["Distance"], 0.6, 0.0),
+        out.inputs["Red"],
+    )
+    tree.links.new(
+        _rgb_channel(tree, three_d.outputs["Color"], "Red"),
+        out.inputs["Green"],
+    )
+    tree.links.new(
+        _affine(tree, voronoi("2D").outputs["Distance"], 0.6, 0.0),
+        out.inputs["Blue"],
+    )
+    tree.links.new(out.outputs["Color"], emission.inputs["Color"])
+
+
+def build_tex_magic_fac(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexMagic")
+    node.turbulence_depth = 2
+    node.inputs["Scale"].default_value = 3.0
+    node.inputs["Distortion"].default_value = 1.2
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    fac = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(fac, emission.inputs["Color"])
+
+
 def build_rgb_curve(tree, emission):
     node = tree.nodes.new("ShaderNodeRGBCurve")
     mapping = node.mapping
@@ -1049,6 +1150,12 @@ BUILDERS = {
     "rgb-curve": build_rgb_curve,
     "hash-probe": build_hash_probe,
     "voronoi-rand0-probe": build_voronoi_rand0_probe,
+    "noise-z-probe": build_noise_z_probe,
+    "noise-scale16": build_noise_scale16,
+    "noise-color": build_noise_color,
+    "noise-color-2d": build_noise_color_2d,
+    "voronoi-smooth-f1": build_voronoi_smooth_f1,
+    "tex-magic-fac": build_tex_magic_fac,
     "white-noise": build_white_noise,
     "voronoi-f1": build_voronoi_f1,
     "color-utilities": build_color_utilities,
