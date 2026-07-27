@@ -2671,6 +2671,51 @@ class BLENDLINK_OT_clear_web_material_source(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class BLENDLINK_OT_toggle_material_bake(bpy.types.Operator):
+    """Carry every Principled channel of this material as lit glTF.
+
+    Constants stay factors, tileable graphs bake one repeat-wrapped 0..1
+    tile on the authored UVs, and unique graphs bake a non-overlapping
+    unwrap; the plan names every channel's route before anything bakes.
+    """
+    bl_idname = "blendlink.toggle_material_bake"
+    bl_label = "Material Bake"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        material = _active_material(context)
+        if material is None:
+            cls.poll_message_set("Select a material first")
+            return False
+        if getattr(material, "library", None) is not None:
+            cls.poll_message_set(
+                "Make the linked material local or create a library override"
+            )
+            return False
+        if material_compiler.marker_nodes(material):
+            cls.poll_message_set(
+                "Clear the Blendlink Web Color selection first; Material "
+                "Bake carries every channel instead of one selected field"
+            )
+            return False
+        return True
+
+    def execute(self, context):
+        from . import handlers
+        material = _active_material(context)
+        enabled = not material_compiler.material_bake_requested(material)
+        material_compiler.set_material_bake(material, enabled)
+        validation.mark_dirty()
+        handlers.mark_bake_table_changed()
+        self.report(
+            {"INFO"},
+            f'Material Bake {"enabled" if enabled else "disabled"} for '
+            f'"{material.name}"',
+        )
+        return {"FINISHED"}
+
+
 class BLENDLINK_OT_select_atlas_objects(bpy.types.Operator):
     """Select every object the last website build assigned to this atlas"""
     bl_idname = "blendlink.select_atlas_objects"
@@ -4252,6 +4297,7 @@ classes = (
     BLENDLINK_OT_set_shading,
     BLENDLINK_OT_set_web_material_source,
     BLENDLINK_OT_clear_web_material_source,
+    BLENDLINK_OT_toggle_material_bake,
     BLENDLINK_OT_select_atlas_objects,
     BLENDLINK_OT_preview_atlas_uvs,
     BLENDLINK_OT_materialize_atlas_uvs,

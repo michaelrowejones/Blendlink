@@ -2478,8 +2478,51 @@ def _draw_material_compatibility(layout, result):
     _draw_wrapped(box, result.get("summary", ""))
     for reason in result.get("reasons", [])[:4]:
         _draw_wrapped(box, reason, icon="DOT")
+    compilation = result.get("materialCompilation") or {}
+    if compilation.get("intent") == "materialBake":
+        bake_box = box.box()
+        bake_box.alert = compilation.get("outcome") == "blocked"
+        bake_box.label(
+            text={
+                "lowered": "Material Bake ready to compile",
+                "blocked": "Material Bake needs attention",
+            }.get(compilation.get("outcome"), "Material Bake"),
+            icon={
+                "lowered": "CHECKMARK", "blocked": "ERROR",
+            }.get(compilation.get("outcome"), "TEXTURE"),
+        )
+        for entry in (compilation.get("channels") or {}).get("channels", ())[:8]:
+            route = entry.get("route")
+            if route == "factor":
+                detail = "stays a factor"
+            elif route == "factor-over-carrier":
+                detail = "factor over the alpha carrier"
+            elif route == "bake":
+                size = entry.get("resolution")
+                size_label = f" {size}px" if isinstance(size, int) else ""
+                detail = f'bakes{size_label} ({entry.get("uv", "tile")})'
+            elif route == "passthrough":
+                detail = "passes through untouched"
+            else:
+                detail = "refused"
+            _draw_wrapped(
+                bake_box,
+                f'{entry.get("channel", "?")}: {detail}',
+                icon="DOT" if route != "refused" else "ERROR",
+            )
+        bake_box.operator(
+            "blendlink.toggle_material_bake",
+            text="Disable Material Bake",
+            icon="X",
+        )
     if status == "needsBake":
         cycles_appearance = result.get("cyclesAppearance") or {}
+        if compilation.get("intent") != "materialBake":
+            box.operator(
+                "blendlink.toggle_material_bake",
+                text="Material Bake — keep it lit",
+                icon="TEXTURE",
+            )
         if cycles_appearance.get("status") == "blocked":
             for blocker in cycles_appearance.get("blockers", []):
                 _draw_wrapped(box, blocker, icon="ERROR")
@@ -2492,8 +2535,9 @@ def _draw_material_compatibility(layout, result):
         else:
             _draw_wrapped(
                 box,
-                "Use an Appearance bake, simplify the active shader branch, "
-                "or author a website runtime material.",
+                "Use a Material Bake to keep the surface lit, an Appearance "
+                "bake for a deliberately flattened look, simplify the active "
+                "shader branch, or author a website runtime material.",
                 icon="LIGHT",
             )
     elif status == "exact":
