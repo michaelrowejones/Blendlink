@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "size": 64,
+  "cells": {
+    "constant-linear": {
+      "path": "constant-linear.f32",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "rgbMax": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "uv-gradient": {
+      "path": "uv-gradient.f32",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007828124798834324,
+        0.007843732833862305,
+        0.0
+      ],
+      "rgbMax": [
+        0.9922031164169312,
+        0.9922187328338623,
+        0.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "math-compare": {
+      "path": "math-compare.f32",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rgbMax": [
+        1.0,
+        1.0,
+        0.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "mapping-rotate": {
+      "path": "mapping-rotate.f32",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.3793623447418213,
+        0.5036552548408508,
+        0.0
+      ],
+      "rgbMax": [
+        0.9286560416221619,
+        0.9628723859786987,
+        0.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "colorramp-linear": {
+      "path": "colorramp-linear.f32",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.10000000149011612,
+        0.20000000298023224,
+        0.10000000149011612
+      ],
+      "rgbMax": [
+        0.8999999761581421,
+        0.5,
+        0.800000011920929
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "noise-mx-divergence": {
+      "path": "noise-mx-divergence.f32",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.12229987978935242,
+        0.12229987978935242,
+        0.12229987978935242
+      ],
+      "rgbMax": [
+        0.795118510723114,
+        0.795118510723114,
+        0.795118510723114
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "size": 64,
+  "cells": [
+    {
+      "id": "constant-linear",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "colorspace calibration",
+      "notes": "Constant emission (0.25, 0.5, 0.75). Proves the linear float path end to end on both sides: any hidden sRGB encode, tone map, or view transform shifts every value."
+    },
+    {
+      "id": "uv-gradient",
+      "gate": true,
+      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "failureClass": "coordinate-space mismatch",
+      "notes": "Emission = (u, v, 0). Proves UV origin, orientation, and readback row order agree; the documented MaterialX/three 'upside down' UV trap inverts the green channel here."
+    },
+    {
+      "id": "math-compare",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "inverted logic nodes",
+      "notes": "R = GREATER_THAN(u, 0.5), G = LESS_THAN(v, 0.5). The documented mx_ifgreater/mx_ifequal inversion class: an inverted comparison flips half the texels, far outside tolerance. Texel centers never sit exactly on 0.5 at this size."
+    },
+    {
+      "id": "mapping-rotate",
+      "gate": true,
+      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "failureClass": "coordinate-space mismatch (rotate2d/place2d matrix math)",
+      "notes": "Blender Mapping (POINT): scale (2,1), Z rotation 30deg over UV, visualized as biased coordinates 0.25*p + 0.5 so the range stays bakeable. Wrong operation order or rotation sign produces gross error."
+    },
+    {
+      "id": "colorramp-linear",
+      "gate": true,
+      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "failureClass": "corpus-priority node (110 uses in the splash audit)",
+      "notes": "Two-stop LINEAR ColorRamp over u: position 0.2 -> (0.1, 0.2, 0.8), position 0.8 -> (0.9, 0.5, 0.1). Exact linear remap + mix; interpolation-mode sweeps come later."
+    },
+    {
+      "id": "noise-mx-divergence",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-3, "p99Abs": 5e-3, "maxAbs": 1e-2 },
+      "failureClass": "disagreeing noise implementations — measured NOT to apply to this pairing",
+      "notes": "Blender Noise Texture (scale 4, detail 0, 3D at z=0) versus three's mx_noise_float remapped 0.5+0.5x. Planned as the negative control for the published 'a slightly different hash produces a completely different pattern' class — but measured 2026-07-27 at meanAbs 4.1e-5 / maxAbs 1.2e-4 over a real 0.67-span field: the base Perlin octave SHARES an implementation lineage between Cycles and MaterialX. Now a gated regression. The bounded claim covers exactly this configuration; fractal detail octaves, roughness, lacunarity, distortion, 4D, and Voronoi remain unproven and need their own cells."
+    }
+  ]
+}

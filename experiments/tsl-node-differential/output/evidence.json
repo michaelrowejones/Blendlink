@@ -1,0 +1,85 @@
+{
+  "experiment": "tsl-node-differential",
+  "ledgerRow": "MTLX-TSL-001",
+  "command": "node experiments/tsl-node-differential/run.mjs",
+  "size": 64,
+  "webgpuBackendReal": true,
+  "referenceBackend": "optix",
+  "cells": {
+    "constant-linear": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "colorspace calibration"
+    },
+    "uv-gradient": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000015617224562447518,
+        "p99Abs": 0.00003123283386230469,
+        "maxAbs": 0.00003123283386230469
+      },
+      "failureClass": "coordinate-space mismatch"
+    },
+    "math-compare": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "inverted logic nodes"
+    },
+    "mapping-rotate": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000004500296199694276,
+        "p99Abs": 0.000010669231414794922,
+        "maxAbs": 0.000010728836059570312
+      },
+      "failureClass": "coordinate-space mismatch (rotate2d/place2d matrix math)"
+    },
+    "colorramp-linear": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000009277400143522149,
+        "p99Abs": 0.00002086162567138672,
+        "maxAbs": 0.000020891427993774414
+      },
+      "failureClass": "corpus-priority node (110 uses in the splash audit)"
+    },
+    "noise-mx-divergence": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00004135380731895566,
+        "p99Abs": 0.00010830163955688477,
+        "maxAbs": 0.0001208186149597168
+      },
+      "failureClass": "disagreeing noise implementations — measured NOT to apply to this pairing"
+    }
+  },
+  "pageErrorCount": 1,
+  "pageErrorSample": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "limits": [
+    "Hand-written TSL mappings stand in for the future compiler output; a cell proves the MAPPING, and the compiler must emit exactly that mapping.",
+    "One 64px tile per configuration; parameter sweeps per node are the next stage.",
+    "noise-mx-divergence is a recorded negative control, not a gate."
+  ]
+}
