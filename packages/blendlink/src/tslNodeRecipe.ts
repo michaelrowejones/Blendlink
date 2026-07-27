@@ -416,33 +416,34 @@ function build(expression: TslIrExpression): TslExpression {
       // evaluate() filled the LUT, and the shader interpolates between
       // exact texels manually — nearest sampling avoids depending on the
       // optional float32-filterable WebGPU feature.
-      const samples = scalar(expression, 'samples')
-      const values = numbers(expression, 'values')
-      if (values.length !== samples * 4) {
-        fail('IR ramp_lut values do not match its sample count')
-      }
-      const data = new Float32Array(values)
-      const lut = new DataTexture(data, samples, 1, RGBAFormat, FloatType)
-      lut.minFilter = NearestFilter
-      lut.magFilter = NearestFilter
-      lut.wrapS = ClampToEdgeWrapping
-      lut.wrapT = ClampToEdgeWrapping
-      lut.generateMipmaps = false
-      lut.needsUpdate = true
+      const { lut, samples } = buildLutTexture(expression)
       const factor = tslClamp(build(child(expression, 'input')), 0.0, 1.0)
-      const scaled = factor.mul(samples - 1)
-      const index = tslFloor(scaled)
-      const blend = scaled.sub(index)
-      const coordinate = (offset: number) => tslVec2(
-        index.add(offset + 0.5).div(samples), 0.5,
-      )
-      const low = tslTexture(lut, coordinate(0))
-      const high = tslTexture(lut, coordinate(1))
-      const mixed = tslMix(low, high, blend)
+      const mixed = sampleLut(lut, samples, factor)
       if (expression.channel === 'alpha') {
         return (mixed as unknown as { w: TslExpression }).w
       }
       return tslVec3(mixed.x, mixed.y, mixed.z)
+    }
+    case 'curve_rgb': {
+      // RGB Curves through the same sampled-LUT route Cycles itself uses:
+      // the emitter filled the table with channel(composite(x)) via
+      // Blender's own evaluator, and each channel samples it at its own
+      // value before the factor lerp back toward the input.
+      const { lut, samples } = buildLutTexture(expression)
+      const input = build(child(expression, 'input'))
+      const factor = build(child(expression, 'factor'))
+      const curveChannel = (
+        value: TslExpression,
+        pick: (sample: TslExpression) => TslExpression,
+      ): TslExpression => pick(
+        sampleLut(lut, samples, tslClamp(value, 0.0, 1.0)),
+      )
+      const curved = tslVec3(
+        curveChannel(input.x, sample => sample.x),
+        curveChannel(input.y, sample => sample.y),
+        curveChannel(input.z, sample => sample.z),
+      )
+      return tslMix(input, curved, factor)
     }
     case 'vertex_color':
       // The glTF path ships the active color attribute as COLOR_0, which
@@ -513,6 +514,41 @@ const tslDot = dot as unknown as (
   a: TslExprLike, b: TslExprLike,
 ) => TslExpression
 const tslLength = length as unknown as (value: TslExprLike) => TslExpression
+
+function buildLutTexture(
+  expression: TslIrExpression,
+): { lut: DataTexture, samples: number } {
+  const samples = scalar(expression, 'samples')
+  const values = numbers(expression, 'values')
+  if (values.length !== samples * 4) {
+    fail(`IR ${expression.op} values do not match its sample count`)
+  }
+  const data = new Float32Array(values)
+  const lut = new DataTexture(data, samples, 1, RGBAFormat, FloatType)
+  lut.minFilter = NearestFilter
+  lut.magFilter = NearestFilter
+  lut.wrapS = ClampToEdgeWrapping
+  lut.wrapT = ClampToEdgeWrapping
+  lut.generateMipmaps = false
+  lut.needsUpdate = true
+  return { lut, samples }
+}
+
+/** Manual two-texel lerp over a nearest-filtered LUT row; the factor must
+ * already be clamped to [0, 1]. */
+function sampleLut(
+  lut: DataTexture, samples: number, factor: TslExpression,
+): TslExpression {
+  const scaled = factor.mul(samples - 1)
+  const index = tslFloor(scaled)
+  const blend = scaled.sub(index)
+  const coordinate = (offset: number) => tslVec2(
+    index.add(offset + 0.5).div(samples), 0.5,
+  )
+  const low = tslTexture(lut, coordinate(0))
+  const high = tslTexture(lut, coordinate(1))
+  return tslMix(low, high, blend)
+}
 
 function buildVectorMath(expression: TslIrExpression): TslExpression {
   const operation = String(expression.operation)

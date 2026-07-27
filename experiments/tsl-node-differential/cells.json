@@ -637,6 +637,13 @@
       "notes": "The whole a*b + c vector feeds the channel directly, proving the implicit vector -> color conversion path as well."
     },
     {
+      "id": "rgb-curve",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "corpus-priority node (RGB Curves x11 across scenes)",
+      "notes": "RGB Curves via the sampled-LUT route Cycles itself uses: a bent composite C curve composed before distinct R/G/B channel curves (wrong order is gross error), per-channel input gradients, and the Fac lerp swept over v. Tolerance is the LUT-reconstruction class shared with the spline colorramps."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",

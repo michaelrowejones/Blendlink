@@ -490,6 +490,34 @@ def proxy_vertex_colors(proxy):
         layer.data[index].color = (u, v, 0.25, 1.0)
 
 
+def build_rgb_curve(tree, emission):
+    node = tree.nodes.new("ShaderNodeRGBCurve")
+    mapping = node.mapping
+    red, green, blue, composite = mapping.curves
+    # A bent composite curve plus distinct per-channel shapes: the C curve
+    # applies before each channel curve, so a wrong composition order is a
+    # gross error.
+    composite.points.new(0.5, 0.35)
+    red.points.new(0.25, 0.55)
+    green.points[1].location = (1.0, 0.8)
+    blue.points.new(0.7, 0.2)
+    mapping.update()
+    combine = tree.nodes.new("ShaderNodeCombineColor")
+    combine.mode = "RGB"
+    tree.links.new(_uv_channel(tree, "u"), combine.inputs["Red"])
+    tree.links.new(
+        _affine(tree, _uv_channel(tree, "u"), 0.5, 0.25),
+        combine.inputs["Green"],
+    )
+    tree.links.new(
+        _affine(tree, _uv_channel(tree, "u"), -0.8, 0.9),
+        combine.inputs["Blue"],
+    )
+    tree.links.new(combine.outputs["Color"], node.inputs["Color"])
+    tree.links.new(_uv_channel(tree, "v"), node.inputs["Fac"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
 def build_fresnel_dielectric(tree, emission):
     node = tree.nodes.new("ShaderNodeFresnel")
     node.inputs["IOR"].default_value = 1.45
@@ -713,6 +741,7 @@ BUILDERS = {
     "noise-2d": build_noise_2d,
     "vertex-color": build_vertex_color,
     "group-passthrough": build_group_passthrough,
+    "rgb-curve": build_rgb_curve,
     "fresnel-dielectric": build_fresnel_dielectric,
     "layer-weight": build_layer_weight,
     "map-range-linear": build_map_range_linear,

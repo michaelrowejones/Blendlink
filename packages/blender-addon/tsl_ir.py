@@ -395,6 +395,41 @@ def emit_output(node, from_socket, stack=()):
             "input": emit_input(node.inputs["Fac"], stack=stack),
         }
 
+    if idname == "ShaderNodeRGBCurve":
+        # Cycles itself bakes RGB Curves into a sampled table
+        # (curvemapping_color_to_array with the composite C curve applied
+        # before each channel curve) — the LUT route IS the faithful port.
+        if socket_name != "Color":
+            _refuse(f"RGB Curves output {socket_name!r} unsupported")
+        mapping = node.mapping
+        if not bool(getattr(mapping, "use_clip", True)):
+            _refuse("RGB Curves without clipping has no cell yet")
+        if (abs(float(mapping.clip_min_x)) > 1e-6
+                or abs(float(mapping.clip_max_x) - 1.0) > 1e-6):
+            _refuse("RGB Curves with a non-unit X range has no cell yet")
+        mapping.initialize()
+        curves = mapping.curves
+        samples = 257
+        values = []
+        for index in range(samples):
+            position = index / (samples - 1)
+            composite = mapping.evaluate(curves[3], position)
+            values.extend((
+                float(mapping.evaluate(curves[0], composite)),
+                float(mapping.evaluate(curves[1], composite)),
+                float(mapping.evaluate(curves[2], composite)),
+                1.0,
+            ))
+        return {
+            "op": "curve_rgb",
+            "samples": samples,
+            "values": values,
+            "factor": emit_input(node.inputs["Fac"], stack=stack),
+            "input": emit_input(
+                node.inputs["Color"], stack=stack, as_vector=True,
+            ),
+        }
+
     if idname in {"ShaderNodeMix", "ShaderNodeMixRGB"}:
         if idname == "ShaderNodeMix":
             if str(getattr(node, "data_type", "")) != "RGBA":
