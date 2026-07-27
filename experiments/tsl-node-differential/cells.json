@@ -714,6 +714,27 @@
       "notes": "Randomness-0 Voronoi F1 distance is pure lattice geometry — the control that separates a wrong hash from a wrong cell construction (it localized the 5.x signed-PCG finding)."
     },
     {
+      "id": "texco-object",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "coordinate space (Object -> positionGeometry)",
+      "notes": "Object texture coordinates are the object-space shading position (measured on the tile proxy: the raw quad coordinates), mapping to three's positionGeometry. Biased 0.25p + 0.5 into range. Unlocks the splash DPM class (x21)."
+    },
+    {
+      "id": "texco-generated",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "coordinate space (Generated -> texspace mapping)",
+      "notes": "Generated = (p - texspace_location) / (2 * texspace_size) + 0.5, measured on the proxy (which reports size (1,1,1); the degenerate z axis reads 0.5). The runtime contract supplies the mesh texspace via BuildTslOptions. Unlocks the ellie paint-stroke class (x27)."
+    },
+    {
+      "id": "attribute-fac",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "corpus-measured node gap (Attribute Fac output x3)",
+      "notes": "The Fac output of a color attribute is the component average (r+g+b)/3 — composed from the proven vertex_color and math ops over the corner-attribute proxy."
+    },
+    {
       "id": "white-noise",
       "gate": true,
       "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
@@ -735,6 +756,13 @@
       "notes": "The proven fBM on the z = 150.37 plane — the control that pins Perlin-lineage agreement in the coordinate range the noise color offsets (100..200) actually use, separating it from the offset computation."
     },
     {
+      "id": "noise-detail4",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "noise detail bound (detail <= 4 candidate)",
+      "notes": "3D fBM at scale 4, detail 4 — measuring whether the detail bound (set at <= 2 after the detail-6/scale-5 3.9e-2 divergence) can honestly extend to 4, the ellie paint-stroke class's setting (x28)."
+    },
+    {
       "id": "noise-scale16",
       "gate": true,
       "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
@@ -754,6 +782,27 @@
       "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
       "failureClass": "corpus-priority node (Image Texture, byte/sRGB path)",
       "notes": "An 8x8 BYTE sRGB image with zero-alpha texels, sampled Closest/EXTEND over uv*1.5 - 0.25. MEASURED against baked ground truth: Cycles associates alpha at load IN BYTE sRGB SPACE with integer floor division (rgb_byte*alpha_byte//255), THEN applies the exact IEC decode, and the Color output stays associated — zero alpha bakes black and nothing divides back. The emitter reproduces that byte-exact pipeline; the out-of-range sweep exercises the clamp."
+    },
+    {
+      "id": "noise-scale20",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "noise frequency bound (scale <= 20 candidate)",
+      "notes": "3D fBM at scale 20, detail 2 — the corpus needs 18.9-20 (ellie paint chain, splash bushes); measured to extend the frequency bound honestly."
+    },
+    {
+      "id": "voronoi-scale20",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "voronoi frequency bound (scale <= 20 candidate)",
+      "notes": "3D F1 Distance at scale 20 (x0.6): integer-cell hashing is immune to coordinate wiggle away from cell boundaries, so only the local distance shifts — measured to extend the bound to the ellie paint chain's setting."
+    },
+    {
+      "id": "voronoi-scale40",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "voronoi frequency bound (scale <= 40 candidate)",
+      "notes": "3D F1 Distance at scale 40 (x0.6) — the deepest voronoi in the ellie paint chain. Voronoi tolerates coordinate wiggle structurally (integer-cell hashing; only local distances shift), unlike fBM noise whose octave phases amplify, so its bound is measured separately."
     },
     {
       "id": "noise-color",

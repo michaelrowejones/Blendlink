@@ -30,6 +30,7 @@ import {
   mx_noise_float,
   normalize,
   normalWorld,
+  positionGeometry,
   positionWorld,
   pow,
   select,
@@ -183,6 +184,7 @@ const tslNormalize = normalize as unknown as (
 ) => TslExpression
 const tslCameraPosition = cameraPosition as unknown as TslExpression
 const tslPositionWorld = positionWorld as unknown as TslExpression
+const tslPositionGeometry = positionGeometry as unknown as TslExpression
 const tslNormalWorld = normalWorld as unknown as TslExpression
 
 export interface BuildTslOptions {
@@ -190,6 +192,14 @@ export interface BuildTslOptions {
    * a known camera contract, replacing the runtime camera builtins so the
    * dielectric formulas gate independently of screen-space rendering. */
   viewCos?: TslExpression
+  /** Blender texspace for Generated coordinates: generated =
+   * (position - location) / (2 * size) + 0.5 (measured on the tile
+   * proxy). The runtime supplies the mesh's texspace_location/size; the
+   * harness supplies the tile quad's ((0,0,0), (1,1,1)). */
+  generatedTexspace?: {
+    location: [number, number, number]
+    size: [number, number, number]
+  }
 }
 
 let activeOptions: BuildTslOptions = {}
@@ -461,6 +471,26 @@ function build(expression: TslIrExpression): TslExpression {
       // The glTF path ships the active color attribute as COLOR_0, which
       // three exposes as the 'color' geometry attribute.
       return tslAttribute('color')
+    case 'object_coords':
+      // Blender Object texture coordinates = object-space position.
+      return tslPositionGeometry
+    case 'generated': {
+      // Blender Generated coordinates over the mesh texspace (measured:
+      // (p - location) / (2 * size) + 0.5; a degenerate axis reads 0.5).
+      const texspace = activeOptions.generatedTexspace
+      if (!texspace) {
+        return fail(
+          'IR generated coordinates need BuildTslOptions.generatedTexspace',
+        )
+      }
+      const safe = texspace.size.map(
+        (component) => (component === 0 ? 1 : component),
+      )
+      return tslPositionGeometry
+        .sub(tslVec3(...texspace.location))
+        .div(tslVec3(safe[0] * 2, safe[1] * 2, safe[2] * 2))
+        .add(0.5)
+    }
     case 'view_cos': {
       // dot(N, V): the harness supplies an analytic override from its
       // known camera contract; production uses the runtime builtins.

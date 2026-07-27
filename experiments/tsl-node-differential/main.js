@@ -113,10 +113,15 @@ window.__tslDiffRun = async (cellId, pipeline, irPath, analyticCamera) => {
       if (JSON.stringify(document).includes('"vertex_color"')) {
         ensureQuadVertexColors()
       }
-      colorNode = buildTslColorNode(
-        document,
-        analyticCamera ? { viewCos: analyticViewCos() } : {},
-      )
+      colorNode = buildTslColorNode(document, {
+        ...(analyticCamera ? { viewCos: analyticViewCos() } : {}),
+        // The tile-proxy texspace contract, measured by the probe: the
+        // quad reports texspace location (0,0,0), size (1,1,1).
+        generatedTexspace: {
+          location: [0, 0, 0],
+          size: [1, 1, 1],
+        },
+      })
     }
     const material = new MeshBasicNodeMaterial()
     material.colorNode = colorNode

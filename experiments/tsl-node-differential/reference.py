@@ -829,6 +829,62 @@ def build_noise_z_probe(tree, emission):
     tree.links.new(factor, emission.inputs["Color"])
 
 
+def build_noise_detail4(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 4.0
+    node.inputs["Detail"].default_value = 4.0
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_noise_scale20(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 20.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_voronoi_scale20(tree, emission):
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+    node = tree.nodes.new("ShaderNodeTexVoronoi")
+    node.voronoi_dimensions = "3D"
+    node.feature = "F1"
+    node.distance = "EUCLIDEAN"
+    if hasattr(node, "normalize"):
+        node.normalize = False
+    node.inputs["Scale"].default_value = 20.0
+    node.inputs["Randomness"].default_value = 1.0
+    node.inputs["Detail"].default_value = 0.0
+    tree.links.new(uv, node.inputs["Vector"])
+    _emit_scalar(
+        tree, emission, _affine(tree, node.outputs["Distance"], 0.6, 0.0),
+    )
+
+
+def build_voronoi_scale40(tree, emission):
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+    node = tree.nodes.new("ShaderNodeTexVoronoi")
+    node.voronoi_dimensions = "3D"
+    node.feature = "F1"
+    node.distance = "EUCLIDEAN"
+    if hasattr(node, "normalize"):
+        node.normalize = False
+    node.inputs["Scale"].default_value = 40.0
+    node.inputs["Randomness"].default_value = 1.0
+    node.inputs["Detail"].default_value = 0.0
+    tree.links.new(uv, node.inputs["Vector"])
+    _emit_scalar(
+        tree, emission, _affine(tree, node.outputs["Distance"], 0.6, 0.0),
+    )
+
+
 def build_noise_scale16(tree, emission):
     coord = tree.nodes.new("ShaderNodeTexCoord")
     node = tree.nodes.new("ShaderNodeTexNoise")
@@ -969,6 +1025,32 @@ def build_tex_image_closest_srgb(tree, emission):
     node.extension = "EXTEND"
     tree.links.new(_scaled_uv(tree, 1.5, -0.25), node.inputs["Vector"])
     tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def build_texco_object(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    scale = tree.nodes.new("ShaderNodeVectorMath")
+    scale.operation = "SCALE"
+    scale.inputs["Scale"].default_value = 0.25
+    tree.links.new(coord.outputs["Object"], scale.inputs[0])
+    add = tree.nodes.new("ShaderNodeVectorMath")
+    add.operation = "ADD"
+    add.inputs[1].default_value = (0.5, 0.5, 0.5)
+    tree.links.new(scale.outputs["Vector"], add.inputs[0])
+    tree.links.new(add.outputs["Vector"], emission.inputs["Color"])
+
+
+def build_texco_generated(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    tree.links.new(coord.outputs["Generated"], emission.inputs["Color"])
+
+
+def build_attribute_fac(tree, emission):
+    node = tree.nodes.new("ShaderNodeAttribute")
+    node.attribute_type = "GEOMETRY"
+    node.attribute_name = "Col"
+    fac = next(s for s in node.outputs if s.identifier == "Fac")
+    _emit_scalar(tree, emission, fac)
 
 
 def build_rgb_curve(tree, emission):
@@ -1497,6 +1579,7 @@ SURFACE_CLOSURES = {
 
 CELL_PROXY_SETUP = {
     "vertex-color": proxy_vertex_colors,
+    "attribute-fac": proxy_vertex_colors,
 }
 
 
@@ -1525,10 +1608,17 @@ BUILDERS = {
     "vertex-color": build_vertex_color,
     "group-passthrough": build_group_passthrough,
     "rgb-curve": build_rgb_curve,
+    "texco-object": build_texco_object,
+    "texco-generated": build_texco_generated,
+    "attribute-fac": build_attribute_fac,
     "hash-probe": build_hash_probe,
     "voronoi-rand0-probe": build_voronoi_rand0_probe,
     "noise-z-probe": build_noise_z_probe,
+    "noise-detail4": build_noise_detail4,
     "noise-scale16": build_noise_scale16,
+    "noise-scale20": build_noise_scale20,
+    "voronoi-scale20": build_voronoi_scale20,
+    "voronoi-scale40": build_voronoi_scale40,
     "tex-image-linear": build_tex_image_linear,
     "tex-image-closest-srgb": build_tex_image_closest_srgb,
     "surface-mix-color": projection_mix_color,

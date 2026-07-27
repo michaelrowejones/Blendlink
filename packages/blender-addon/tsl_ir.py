@@ -537,6 +537,14 @@ def emit_surface(tree):
     }
 
 
+def _texture_vector(socket, stack):
+    """A texture node's Vector input: its link's expression, or Generated
+    coordinates when unlinked (Blender's implicit default)."""
+    if socket.is_linked:
+        return emit_input(socket, stack=stack, as_vector=True)
+    return {"op": "generated"}
+
+
 def emit_input(socket, stack=(), *, as_vector=False):
     """IR for one input socket: its link's expression or its constant."""
     source = _socket_source(socket)
@@ -605,12 +613,22 @@ def emit_output(node, from_socket, stack=()):
         )
 
     if idname == "ShaderNodeTexCoord":
-        if socket_name != "UV":
-            _refuse(
-                f"Texture Coordinate {socket_name!r} has no TSL cell yet; "
-                "only UV is proven"
-            )
-        return {"op": "uv"}
+        if socket_name == "UV":
+            return {"op": "uv"}
+        if socket_name == "Object":
+            # Object coordinates = object-space shading position (measured
+            # on the tile proxy: the raw quad coordinates) — three's
+            # positionGeometry.
+            return {"op": "object_coords"}
+        if socket_name == "Generated":
+            # Generated = (p - texspace_location) / (2 * texspace_size)
+            # + 0.5 (measured: the flat proxy reports size (1,1,1) and a
+            # degenerate axis reads 0.5). The runtime supplies the mesh's
+            # texspace through BuildTslOptions.
+            return {"op": "generated"}
+        _refuse(
+            f"Texture Coordinate {socket_name!r} has no TSL cell yet"
+        )
 
     if idname == "ShaderNodeUVMap":
         uv_map = str(getattr(node, "uv_map", "") or "")
@@ -830,15 +848,9 @@ def emit_output(node, from_socket, stack=()):
         checker_output = getattr(from_socket, "identifier", socket_name)
         if checker_output not in {"Color", "Fac"}:
             _refuse(f"Checker output {socket_name!r} unsupported")
-        if not node.inputs["Vector"].is_linked:
-            _refuse(
-                "Checker with implicit Generated coordinates has no cell yet"
-            )
         expression = {
             "op": "tex_checker",
-            "vector": emit_input(
-                node.inputs["Vector"], stack=stack, as_vector=True,
-            ),
+            "vector": _texture_vector(node.inputs["Vector"], stack),
             "color1": emit_input(
                 node.inputs["Color1"], stack=stack, as_vector=True,
             ),
@@ -856,10 +868,6 @@ def emit_output(node, from_socket, stack=()):
             "Color", "Fac",
         }:
             _refuse(f"Gradient output {socket_name!r} unsupported")
-        if not node.inputs["Vector"].is_linked:
-            _refuse(
-                "Gradient with implicit Generated coordinates has no cell yet"
-            )
         gradient_type = str(node.gradient_type)
         if gradient_type not in {
             "LINEAR", "QUADRATIC", "EASING", "DIAGONAL",
@@ -869,27 +877,19 @@ def emit_output(node, from_socket, stack=()):
         return {
             "op": "tex_gradient",
             "gradientType": gradient_type,
-            "vector": emit_input(
-                node.inputs["Vector"], stack=stack, as_vector=True,
-            ),
+            "vector": _texture_vector(node.inputs["Vector"], stack),
         }
 
     if idname == "ShaderNodeTexMagic":
         magic_output = getattr(from_socket, "identifier", socket_name)
         if magic_output not in {"Color", "Fac"}:
             _refuse(f"Magic output {socket_name!r} has no cell yet")
-        if not node.inputs["Vector"].is_linked:
-            _refuse(
-                "Magic with implicit Generated coordinates has no cell yet"
-            )
         return {
             "op": "tex_magic",
             "depth": int(node.turbulence_depth),
             # Fac is the color average.
             "output": "fac" if magic_output == "Fac" else "color",
-            "vector": emit_input(
-                node.inputs["Vector"], stack=stack, as_vector=True,
-            ),
+            "vector": _texture_vector(node.inputs["Vector"], stack),
             "scale": emit_input(node.inputs["Scale"], stack=stack),
             "distortion": emit_input(node.inputs["Distortion"], stack=stack),
         }
@@ -899,10 +899,6 @@ def emit_output(node, from_socket, stack=()):
             "Color", "Fac",
         }:
             _refuse(f"Wave output {socket_name!r} unsupported")
-        if not node.inputs["Vector"].is_linked:
-            _refuse(
-                "Wave with implicit Generated coordinates has no cell yet"
-            )
         # The fractal-loop shape must be known at emit time: the builder
         # unrolls octaves like the Noise mapping does.
         detail_socket = node.inputs["Detail"]
@@ -930,9 +926,7 @@ def emit_output(node, from_socket, stack=()):
             "bandsDirection": str(node.bands_direction),
             "ringsDirection": str(node.rings_direction),
             "profile": str(node.wave_profile),
-            "vector": emit_input(
-                node.inputs["Vector"], stack=stack, as_vector=True,
-            ),
+            "vector": _texture_vector(node.inputs["Vector"], stack),
             "scale": emit_input(node.inputs["Scale"], stack=stack),
             "distortion": distortion_value,
             "detail": detail_value,
@@ -1047,7 +1041,7 @@ def emit_output(node, from_socket, stack=()):
         # engines and therefore honestly comparable.
         def _contains_uv(item):
             if isinstance(item, dict):
-                if item.get("op") == "uv":
+                if item.get("op") in {"uv", "generated", "object_coords"}:
                     return True
                 return any(_contains_uv(value) for value in item.values())
             if isinstance(item, list):
@@ -1089,19 +1083,19 @@ def emit_output(node, from_socket, stack=()):
         detail_socket = node.inputs["Detail"]
         if detail_socket.is_linked or float(detail_socket.default_value) != 0:
             _refuse("Fractal Voronoi (detail > 0) has no cell yet")
-        if not node.inputs["Vector"].is_linked:
-            _refuse(
-                "Voronoi with implicit Generated coordinates has no cell yet"
-            )
         voronoi_scale = emit_input(node.inputs["Scale"], stack=stack)
         if voronoi_scale.get("op") != "const_float":
             _refuse(
                 "Voronoi with a non-constant Scale has no bounded cell yet"
             )
-        if abs(float(voronoi_scale["value"])) > 16.0 + 1e-9:
+        if abs(float(voronoi_scale["value"])) > 40.0 + 1e-9:
+            # Voronoi's bound is measured separately from noise: integer
+            # cell hashing tolerates coordinate wiggle structurally (only
+            # local distances shift), so scale 40 gates where fBM noise
+            # is bounded at 20.
             _refuse(
                 f"Voronoi scale {float(voronoi_scale['value']):g} "
-                "exceeds the proven range (<= 16); sample-position "
+                "exceeds the proven range (<= 40); sample-position "
                 "differences decorrelate high-frequency patterns"
             )
         expression = {
@@ -1109,9 +1103,7 @@ def emit_output(node, from_socket, stack=()):
             "dimensions": 2 if dimensions == "2D" else 3,
             "feature": "f1",
             "output": "color" if output_id == "Color" else "distance",
-            "vector": emit_input(
-                node.inputs["Vector"], stack=stack, as_vector=True,
-            ),
+            "vector": _texture_vector(node.inputs["Vector"], stack),
             "scale": voronoi_scale,
             "randomness": emit_input(node.inputs["Randomness"], stack=stack),
         }
@@ -1227,22 +1219,16 @@ def emit_output(node, from_socket, stack=()):
             if socket is not None and socket.is_linked:
                 _refuse(f"Noise with linked {name} has no cell yet")
         vector = node.inputs["Vector"]
-        if not vector.is_linked:
-            # Unlinked Vector defaults to Generated coordinates, which the
-            # TSL route cannot reproduce on arbitrary meshes.
-            _refuse(
-                "Noise with unlinked Vector samples Generated coordinates; "
-                "no TSL cell"
-            )
         detail_value = float(node.inputs["Detail"].default_value)
-        if detail_value > 2.0 + 1e-9:
-            # Detail 2 is the proven range. At high octave counts (measured
-            # at detail 6, scale 5: mean 3.9e-2) float phase differences in
-            # the shared base octave amplify past channel tolerance; the
-            # Material bake carries these channels faithfully instead.
+        if detail_value > 4.0 + 1e-9:
+            # Detail 4 is the proven range (the noise-detail4 cell; the
+            # original bound of 2 came from the detail-6/scale-5 3.9e-2
+            # phase-divergence measurement). Higher octave counts amplify
+            # float phase differences past channel tolerance; the
+            # Material bake carries those channels faithfully instead.
             _refuse(
                 f"Noise detail {detail_value:g} exceeds the proven range "
-                "(<= 2); high-octave phase divergence measured"
+                "(<= 4); high-octave phase divergence measured"
             )
         # Resolve the Scale expression FIRST: a linked scale that folds to
         # a constant through group walls (the splash corpus feeds noise
@@ -1250,7 +1236,7 @@ def emit_output(node, from_socket, stack=()):
         scale_expression = emit_input(node.inputs["Scale"], stack=stack)
         if scale_expression.get("op") != "const_float":
             _refuse("Noise with a non-constant Scale has no bounded cell yet")
-        if abs(float(scale_expression["value"])) > 16.0 + 1e-9:
+        if abs(float(scale_expression["value"])) > 20.0 + 1e-9:
             # Sub-texel sample-position differences between the two
             # rasterizers (~3e-5 in UV) multiply by the scale; measured at
             # scale 100 (ellie hair) the channel decorrelates to 1.8e-1
@@ -1258,7 +1244,7 @@ def emit_output(node, from_socket, stack=()):
             # higher frequencies faithfully.
             _refuse(
                 f"Noise scale {float(scale_expression['value']):g} "
-                "exceeds the proven range (<= 16); sample-position "
+                "exceeds the proven range (<= 20); sample-position "
                 "differences decorrelate high-frequency noise"
             )
         lacunarity = node.inputs.get("Lacunarity")
@@ -1273,7 +1259,7 @@ def emit_output(node, from_socket, stack=()):
                 if lacunarity is not None else 2.0
             ),
             "scale": scale_expression,
-            "input": emit_input(vector, stack=stack, as_vector=True),
+            "input": _texture_vector(vector, stack),
         }
         if noise_output == "Color":
             # Cycles noise color lanes are the same fBM at constant
@@ -1323,12 +1309,32 @@ def emit_output(node, from_socket, stack=()):
             _refuse(
                 f"Attribute type {node.attribute_type!r} has no cell yet"
             )
-        if socket_name != "Color":
-            _refuse(f"Attribute output {socket_name!r} has no cell yet")
-        return {
+        attribute_output = getattr(from_socket, "identifier", socket_name)
+        color = {
             "op": "vertex_color",
             "layer": str(getattr(node, "attribute_name", "") or ""),
         }
+        if attribute_output == "Color":
+            return color
+        if attribute_output == "Fac":
+            # Cycles: the Fac output of a color attribute is the average
+            # of its three components.
+            return {
+                "op": "math", "operation": "MULTIPLY",
+                "a": {
+                    "op": "math", "operation": "ADD",
+                    "a": {
+                        "op": "math", "operation": "ADD",
+                        "a": {"op": "separate", "channel": "x",
+                              "input": color},
+                        "b": {"op": "separate", "channel": "y",
+                              "input": color},
+                    },
+                    "b": {"op": "separate", "channel": "z", "input": color},
+                },
+                "b": {"op": "const_float", "value": 1.0 / 3.0},
+            }
+        _refuse(f"Attribute output {socket_name!r} has no cell yet")
 
     if idname == "ShaderNodeMapRange":
         if str(getattr(node, "data_type", "FLOAT")) != "FLOAT":
