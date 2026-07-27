@@ -612,6 +612,79 @@ def _mix_sweep_node(tree, separate_uv, entry):
     )
 
 
+def make_vector_sweep_builder(spec):
+    """A spec-driven Vector Math cell: each entry drives one node whose
+    vector inputs are per-component constants or affine maps of u/v; the
+    entry samples either the scalar Value output or one component of the
+    Vector output into its channel, with an optional post affine."""
+    def build(tree, emission):
+        coord = tree.nodes.new("ShaderNodeTexCoord")
+        separate_uv = tree.nodes.new("ShaderNodeSeparateXYZ")
+        tree.links.new(coord.outputs["UV"], separate_uv.inputs["Vector"])
+
+        def scalar_socket(item):
+            axis = separate_uv.outputs[
+                "X" if item.get("axis", "u") == "u" else "Y"
+            ]
+            scale = float(item.get("scale", 1.0))
+            offset = float(item.get("offset", 0.0))
+            if scale == 1.0 and offset == 0.0:
+                return axis
+            return _affine(tree, axis, scale, offset)
+
+        def vector_math_node(entry):
+            node = tree.nodes.new("ShaderNodeVectorMath")
+            node.operation = entry["operation"]
+            for index, key in enumerate(("a", "b", "c")):
+                if key not in entry:
+                    continue
+                combine_xyz = tree.nodes.new("ShaderNodeCombineXYZ")
+                for socket_name, item in zip(("X", "Y", "Z"), entry[key]):
+                    if isinstance(item, (int, float)):
+                        combine_xyz.inputs[socket_name].default_value = (
+                            float(item)
+                        )
+                    else:
+                        tree.links.new(
+                            scalar_socket(item),
+                            combine_xyz.inputs[socket_name],
+                        )
+                tree.links.new(
+                    combine_xyz.outputs["Vector"], node.inputs[index],
+                )
+            return node
+
+        entries = spec["entries"]
+        if len(entries) == 1 and entries[0].get("full"):
+            node = vector_math_node(entries[0])
+            tree.links.new(node.outputs["Vector"], emission.inputs["Color"])
+            return
+        combine = tree.nodes.new("ShaderNodeCombineColor")
+        combine.mode = "RGB"
+        for slot in ("Red", "Green", "Blue"):
+            combine.inputs[slot].default_value = 0.0
+        for entry, slot in zip(entries, ("Red", "Green", "Blue")):
+            node = vector_math_node(entry)
+            if entry.get("output", "Vector") == "Value":
+                scalar = node.outputs["Value"]
+            else:
+                separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+                tree.links.new(
+                    node.outputs["Vector"], separate.inputs["Vector"],
+                )
+                scalar = separate.outputs[entry.get("component", "X")]
+            post = entry.get("post")
+            if post:
+                scalar = _affine(
+                    tree, scalar,
+                    float(post.get("scale", 1.0)),
+                    float(post.get("offset", 0.0)),
+                )
+            tree.links.new(scalar, combine.inputs[slot])
+        tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+    return build
+
+
 CELL_PROXY_SETUP = {
     "vertex-color": proxy_vertex_colors,
 }
@@ -665,6 +738,8 @@ def main():
             builder = make_sweep_builder(cell["sweep"])
         if builder is None and "mixSweep" in cell:
             builder = make_mix_sweep_builder(cell["mixSweep"])
+        if builder is None and "vectorSweep" in cell:
+            builder = make_vector_sweep_builder(cell["vectorSweep"])
         if builder is None:
             raise SystemExit(f"reference builder missing for cell {cell_id!r}")
         material = emission_material(f"CELL {cell_id}", builder)

@@ -543,6 +543,100 @@
       "notes": "VALUE lerps A's V toward B's (ungated in Cycles); COLOR grafts B's hue AND saturation over A's value with the same saturation gate as HUE."
     },
     {
+      "id": "vecmath-arith",
+      "gate": true,
+      "vectorSweep": {"entries": [
+        {"operation": "SUBTRACT", "a": [{"axis": "u"}, {"axis": "v"}, 0.3], "b": [0.25, 0.5, 0.1], "component": "X", "post": {"scale": 0.5, "offset": 0.3}},
+        {"operation": "DIVIDE", "a": [0.3, 0.4, {"axis": "u", "scale": 0.5, "offset": 0.2}], "b": [1, 1, {"axis": "v", "scale": 0.5, "offset": 0.25}], "component": "Z", "post": {"scale": 0.25, "offset": 0.1}},
+        {"operation": "DIVIDE", "a": [0.3, 0.4, {"axis": "u", "scale": 0.5, "offset": 0.2}], "b": [1, 1, 0], "component": "Z", "post": {"scale": 1, "offset": 0.3}}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Vector Math sweep (arithmetic + safe divide)",
+      "notes": "Componentwise subtract, a swept safe divide, and a constant-zero divisor lane that must return 0 (the whole channel sits at the post offset)."
+    },
+    {
+      "id": "vecmath-products",
+      "gate": true,
+      "vectorSweep": {"entries": [
+        {"operation": "DOT_PRODUCT", "a": [{"axis": "u"}, {"axis": "v"}, 0.5], "b": [0.4, 0.3, 0.6], "output": "Value"},
+        {"operation": "CROSS_PRODUCT", "a": [{"axis": "u"}, {"axis": "v"}, 0.3], "b": [0.5, 0.2, 0.7], "component": "Y", "post": {"scale": 0.5, "offset": 0.5}},
+        {"operation": "MULTIPLY", "a": [{"axis": "u"}, {"axis": "v"}, 0.3], "b": [0.8, 1.2, 2.0], "component": "Y", "post": {"scale": 0.5, "offset": 0.05}}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Vector Math sweep (products)",
+      "notes": "Dot product through the scalar Value output (the emitter marks these scalar), a cross-product component, and the componentwise multiply the corpus uses (x4 in cube-diorama)."
+    },
+    {
+      "id": "vecmath-metrics",
+      "gate": true,
+      "vectorSweep": {"entries": [
+        {"operation": "LENGTH", "a": [{"axis": "u", "scale": 4, "offset": -2}, {"axis": "v", "scale": 2, "offset": -1}, 0.5], "output": "Value", "post": {"scale": 0.4}},
+        {"operation": "DISTANCE", "a": [{"axis": "u"}, {"axis": "v"}, 0], "b": [0.5, 0.5, 0.2], "output": "Value"},
+        {"operation": "NORMALIZE", "a": [{"axis": "u", "scale": 4, "offset": -2}, {"axis": "v", "scale": 2, "offset": -1}, 0.5], "component": "X", "post": {"scale": 0.4, "offset": 0.5}}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Vector Math sweep (metrics)",
+      "notes": "Length and distance through the Value output; normalize's X component with a constant z of 0.5 keeping the length bounded away from the safe_normalize zero branch."
+    },
+    {
+      "id": "vecmath-minmax-abs",
+      "gate": true,
+      "vectorSweep": {"entries": [
+        {"operation": "MINIMUM", "a": [{"axis": "u"}, 0, 0], "b": [{"axis": "v", "scale": -0.4, "offset": 0.6}, 0, 0], "component": "X"},
+        {"operation": "MAXIMUM", "a": [0, {"axis": "u", "scale": 0.7}, 0], "b": [0, {"axis": "v", "scale": 0.5, "offset": 0.15}, 0], "component": "Y"},
+        {"operation": "ABSOLUTE", "a": [0, 0, {"axis": "u", "scale": 3, "offset": -1.5}], "component": "Z", "post": {"scale": 0.6, "offset": 0.05}}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Vector Math sweep (min/max/abs)",
+      "notes": "Componentwise min against a falling ramp, max against a rising one (both kink mid-tile), and abs over a sign-crossing sweep."
+    },
+    {
+      "id": "vecmath-rounding",
+      "gate": true,
+      "vectorSweep": {"entries": [
+        {"operation": "FLOOR", "a": [{"axis": "u", "scale": 4, "offset": -2}, 0, 0], "component": "X", "post": {"scale": 0.2, "offset": 0.55}},
+        {"operation": "CEIL", "a": [0, {"axis": "v", "scale": 4, "offset": -2}, 0], "component": "Y", "post": {"scale": 0.2, "offset": 0.45}},
+        {"operation": "FRACTION", "a": [0, 0, {"axis": "u", "scale": 3, "offset": -1}], "component": "Z"}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Vector Math sweep (rounding family)",
+      "notes": "Floor, ceil, and fraction (x - floor(x)) over sign-crossing sweeps; dyadic texel centers never land on integer boundaries."
+    },
+    {
+      "id": "vecmath-modular",
+      "gate": true,
+      "vectorSweep": {"entries": [
+        {"operation": "MODULO", "a": [{"axis": "u", "scale": 8, "offset": -4}, 0, 0], "b": [1.5, 1, 1], "component": "X", "post": {"scale": 0.25, "offset": 0.5}},
+        {"operation": "SNAP", "a": [0, {"axis": "v", "scale": 4, "offset": -2}, 0], "b": [1, 0.35, 1], "component": "Y", "post": {"scale": 0.18, "offset": 0.55}},
+        {"operation": "WRAP", "a": [0, 0, {"axis": "u", "scale": 4, "offset": -2}], "b": [1, 1, 0.75], "c": [0, 0, 0.05], "component": "Z"}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Vector Math sweep (modular family)",
+      "notes": "The vector twins of the proven scalar modulo/snap/wrap semantics, built per channel because a vector-condition select collapses to one lane."
+    },
+    {
+      "id": "vecmath-trig",
+      "gate": true,
+      "vectorSweep": {"entries": [
+        {"operation": "SINE", "a": [{"axis": "u", "scale": 8}, 0, 0], "component": "X", "post": {"scale": 0.5, "offset": 0.5}},
+        {"operation": "COSINE", "a": [0, {"axis": "v", "scale": 8}, 0], "component": "Y", "post": {"scale": 0.5, "offset": 0.5}},
+        {"operation": "TANGENT", "a": [0, 0, {"axis": "u", "scale": 2.8, "offset": -1.4}], "component": "Z", "post": {"scale": 0.08, "offset": 0.5}}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Vector Math sweep (componentwise trig)",
+      "notes": "Componentwise sin/cos/tan; tan stays inside the poles at +-pi/2."
+    },
+    {
+      "id": "vecmath-muladd",
+      "gate": true,
+      "vectorSweep": {"entries": [
+        {"operation": "MULTIPLY_ADD", "full": true, "a": [{"axis": "u", "scale": 0.5}, {"axis": "v", "scale": 0.5, "offset": 0.1}, 0.3], "b": [0.8, 0.6, 0.5], "c": [0.1, 0.2, 0.05]}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Vector Math sweep (multiply-add, full vector)",
+      "notes": "The whole a*b + c vector feeds the channel directly, proving the implicit vector -> color conversion path as well."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",

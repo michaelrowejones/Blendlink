@@ -37,7 +37,20 @@ _MATH_UNARY = {
 }
 _MATH_TERNARY = {"MULTIPLY_ADD", "WRAP", "COMPARE", "SMOOTH_MIN", "SMOOTH_MAX"}
 
-_VECTOR_MATH_OPERATIONS = {"ADD", "SCALE"}
+_VECTOR_MATH_OPERATIONS = {
+    "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "MULTIPLY_ADD", "SCALE",
+    "CROSS_PRODUCT", "DOT_PRODUCT", "DISTANCE", "LENGTH", "NORMALIZE",
+    "ABSOLUTE", "MINIMUM", "MAXIMUM", "FLOOR", "CEIL", "FRACTION",
+    "MODULO", "WRAP", "SNAP", "SINE", "COSINE", "TANGENT",
+}
+# REFLECT / REFRACT / FACEFORWARD / PROJECT stay named refusals until a
+# geometric cell batch earns them.
+_VECTOR_MATH_UNARY = {
+    "NORMALIZE", "FLOOR", "CEIL", "FRACTION", "ABSOLUTE", "LENGTH",
+    "SINE", "COSINE", "TANGENT",
+}
+_VECTOR_MATH_TERNARY = {"MULTIPLY_ADD", "WRAP"}
+_VECTOR_MATH_VALUE_OUTPUT = {"DOT_PRODUCT", "DISTANCE", "LENGTH"}
 
 _MIX_BLEND_TYPES = {
     "MIX", "MULTIPLY", "ADD", "OVERLAY", "DIVIDE",
@@ -305,12 +318,19 @@ def emit_output(node, from_socket, stack=()):
                 "input": emit_input(node.inputs[0], stack=stack, as_vector=True),
                 "scale": emit_input(node.inputs["Scale"], stack=stack),
             }
-        return {
+        expression = {
             "op": "vector_math",
             "operation": operation,
             "a": emit_input(node.inputs[0], stack=stack, as_vector=True),
-            "b": emit_input(node.inputs[1], stack=stack, as_vector=True),
         }
+        if operation not in _VECTOR_MATH_UNARY:
+            expression["b"] = emit_input(node.inputs[1], stack=stack, as_vector=True)
+        if operation in _VECTOR_MATH_TERNARY:
+            expression["c"] = emit_input(node.inputs[2], stack=stack, as_vector=True)
+        if operation in _VECTOR_MATH_VALUE_OUTPUT:
+            # The node's scalar "Value" output is the linked one for these.
+            expression["scalar"] = True
+        return expression
 
     if idname == "ShaderNodeMapping":
         vector_type = str(getattr(node, "vector_type", "POINT"))

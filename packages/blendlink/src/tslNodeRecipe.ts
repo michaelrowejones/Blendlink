@@ -18,9 +18,12 @@ import {
   cameraPosition,
   clamp,
   cos,
+  cross,
+  dot,
   float,
   floor,
   fract,
+  length,
   mix,
   max,
   min,
@@ -366,12 +369,8 @@ function build(expression: TslIrExpression): TslExpression {
     case 'vector_scale':
       return build(child(expression, 'input'))
         .mul(build(child(expression, 'scale')))
-    case 'vector_math': {
-      const a = build(child(expression, 'a'))
-      const b = build(child(expression, 'b'))
-      if (expression.operation === 'ADD') return a.add(b)
-      return fail(`IR vector_math operation ${String(expression.operation)}`)
-    }
+    case 'vector_math':
+      return buildVectorMath(expression)
     case 'mapping':
       return buildMapping(expression)
     case 'color_ramp':
@@ -504,6 +503,88 @@ function build(expression: TslIrExpression): TslExpression {
     }
     default:
       return fail(`IR op ${expression.op} has no proven TSL mapping`)
+  }
+}
+
+const tslCross = cross as unknown as (
+  a: TslExprLike, b: TslExprLike,
+) => TslExpression
+const tslDot = dot as unknown as (
+  a: TslExprLike, b: TslExprLike,
+) => TslExpression
+const tslLength = length as unknown as (value: TslExprLike) => TslExpression
+
+function buildVectorMath(expression: TslIrExpression): TslExpression {
+  const operation = String(expression.operation)
+  const a = build(child(expression, 'a'))
+  const b = () => build(child(expression, 'b'))
+  // Anything with a per-component branch is built with scalar selects: a
+  // vector-condition select collapses to one lane (measured 2026-07-27).
+  const perChannel = (
+    fn: (aChannel: TslExpression, bChannel: TslExpression) => TslExpression,
+  ): TslExpression => {
+    const bv = b()
+    return tslVec3(fn(a.x, bv.x), fn(a.y, bv.y), fn(a.z, bv.z))
+  }
+  switch (operation) {
+    case 'ADD': return a.add(b())
+    case 'SUBTRACT': return a.sub(b())
+    case 'MULTIPLY': return a.mul(b())
+    case 'MULTIPLY_ADD':
+      return a.mul(b()).add(build(child(expression, 'c')))
+    case 'DIVIDE': return perChannel(blenderDivide)
+    case 'MODULO': return perChannel(blenderModulo)
+    case 'SNAP': return perChannel((aChannel, bChannel) => tslSelect(
+      bChannel.equal(0.0), tslFloat(0.0),
+      tslFloor(aChannel.div(guardedDivisor(bChannel))).mul(bChannel),
+    ))
+    case 'WRAP': {
+      const bv = b()
+      const cv = build(child(expression, 'c'))
+      const channel = (
+        value: TslExpression, maxValue: TslExpression,
+        minValue: TslExpression,
+      ): TslExpression => {
+        const range = maxValue.sub(minValue)
+        const wrapped = value.sub(range.mul(
+          tslFloor(value.sub(minValue).div(guardedDivisor(range))),
+        ))
+        return tslSelect(range.equal(0.0), minValue, wrapped)
+      }
+      return tslVec3(
+        channel(a.x, bv.x, cv.x),
+        channel(a.y, bv.y, cv.y),
+        channel(a.z, bv.z, cv.z),
+      )
+    }
+    case 'CROSS_PRODUCT': return tslCross(a, b())
+    case 'DOT_PRODUCT': return tslDot(a, b())
+    case 'DISTANCE': return tslLength(a.sub(b()))
+    case 'LENGTH': return tslLength(a)
+    case 'NORMALIZE': {
+      // Cycles safe_normalize: a zero-length vector stays zero.
+      const magnitude = tslLength(a)
+      return tslSelect(
+        magnitude.equal(0.0), tslVec3(0.0, 0.0, 0.0),
+        a.div(guardedDivisor(magnitude)),
+      )
+    }
+    case 'MINIMUM': return tslMin(a, b())
+    case 'MAXIMUM': return tslMax(a, b())
+    case 'ABSOLUTE': return tslAbs(a)
+    case 'FLOOR': return tslFloor(a)
+    case 'CEIL': return tslCeil(a)
+    case 'FRACTION': return tslFract(a)
+    case 'SINE': return tslSin(a)
+    case 'COSINE': return tslCos(a)
+    case 'TANGENT':
+      // tslTan's fallback divides through the scalar-shaped safe divide,
+      // so the vector op applies it per channel either way.
+      return tslVec3(tslTan(a.x), tslTan(a.y), tslTan(a.z))
+    default:
+      return fail(
+        `IR vector math operation ${operation} has no proven TSL mapping`,
+      )
   }
 }
 
