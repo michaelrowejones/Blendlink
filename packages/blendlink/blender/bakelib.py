@@ -1564,7 +1564,8 @@ def render_reflection_panorama_exr(
 
 def _save_render_with_private_scene(
         image, path: str, *, file_format: str, color_mode: str,
-        color_depth: str, dither_intensity: float = 0.0) -> None:
+        color_depth: str, dither_intensity: float = 0.0,
+        view_transform: str = "Standard") -> None:
     """Write one live image buffer without borrowing the artist's scene.
 
     Blender narrows ``scene.render.image_settings.file_format`` for some
@@ -1572,10 +1573,18 @@ def _save_render_with_private_scene(
     to FFMPEG rejects assigning PNG entirely. A throwaway scene gives bake
     output a stable format/color contract and makes preservation structural
     instead of relying on mutate/restore cleanup.
+
+    ``view_transform`` is ``Standard`` for color output the runtime samples
+    as sRGB, or ``Raw`` for data channels — ORM and tangent normals — whose
+    bytes must equal the linear values with no display encode.
     """
+    if view_transform not in {"Standard", "Raw"}:
+        raise ValueError(
+            f"unsupported bake save view transform {view_transform!r}"
+        )
     stage = bpy.data.scenes.new("BLENDLINK_IMAGE_SAVE_STAGE")
     try:
-        stage.view_settings.view_transform = "Standard"
+        stage.view_settings.view_transform = view_transform
         stage.view_settings.look = "None"
         stage.view_settings.exposure = 0.0
         stage.render.dither_intensity = float(dither_intensity)
@@ -1619,6 +1628,21 @@ def save_dithered(image, path: str) -> None:
         image, path,
         file_format="PNG", color_mode="RGB", color_depth="8",
         dither_intensity=1.0,
+    )
+
+
+def save_data_png(image, path: str) -> None:
+    """8-bit PNG whose bytes equal the linear buffer values (Raw view).
+
+    glTF samples ORM and normal textures linearly, so encoding them through
+    the Standard view would sRGB-bend every roughness, metallic, and normal
+    value.  Dither stays off: exact data values matter more than gradient
+    banding, and UASTC normal handling renormalizes downstream.
+    """
+    _save_render_with_private_scene(
+        image, path,
+        file_format="PNG", color_mode="RGB", color_depth="8",
+        view_transform="Raw",
     )
 
 
@@ -2064,6 +2088,7 @@ def publish_delivery_variants(
 def save_resolved(
     image, path: str, final_size: int, denoise: bool = False,
     albedo=None, normal=None, delivery_sizes=None, coverage=None,
+    data: bool = False,
 ) -> list[dict]:
     """Save at final_size and restore the reusable bake target's dimensions.
 
@@ -2123,7 +2148,13 @@ def save_resolved(
             source_pixels.reshape(-1, 4)[:, :3], covered,
         )
         del source_pixels
-        if denoise:
+        if data:
+            # Data channels never denoise: OIDN is trained on lit color and
+            # its edits would corrupt exact roughness/metallic/normal values.
+            if denoise:
+                raise ValueError("data-channel saves cannot be denoised")
+            save_data_png(target, path)
+        elif denoise:
             try:
                 save_denoised(target, path, albedo=guides["albedo"], normal=guides["normal"])
             except Exception as error:  # noqa: BLE001 — enhancement, never a gate
@@ -6450,6 +6481,40 @@ def configure_lighting_bake(scene, margin_px: int) -> None:
     bake.normal_space = "OBJECT"
 
 
+def configure_normal_bake(scene, margin_px: int) -> None:
+    """Canonical tangent-space NORMAL bake RNA for the Material bake.
+
+    glTF normal maps are tangent-space with +Y green (OpenGL), which is
+    Blender's POS_X/POS_Y/POS_Z swizzle.  The tangent basis follows the bake
+    UV layer, so the exporter must ship tangents computed against the same
+    layer.  Keep this beside the other configure functions: these RNA values
+    are both execution state and incremental-cache input.
+    """
+    bake = scene.render.bake
+    bake.use_clear = True
+    bake.margin = int(margin_px)
+    bake.margin_type = "EXTEND"
+    bake.use_selected_to_active = False
+    bake.use_cage = False
+    bake.cage_extrusion = 0.0
+    bake.max_ray_distance = 0.0
+    # Pass flags do not alter a NORMAL bake; deterministic values keep
+    # fingerprints independent of whichever bake ran previously.
+    bake.use_pass_direct = False
+    bake.use_pass_indirect = False
+    bake.use_pass_color = False
+    bake.use_pass_diffuse = False
+    bake.use_pass_glossy = False
+    bake.use_pass_transmission = False
+    bake.use_pass_emit = False
+    if hasattr(bake, "view_from"):
+        bake.view_from = "ABOVE_SURFACE"
+    bake.normal_space = "TANGENT"
+    bake.normal_r = "POS_X"
+    bake.normal_g = "POS_Y"
+    bake.normal_b = "POS_Z"
+
+
 def configure_emit_bake(scene, margin_px: int) -> None:
     """Canonical deterministic RNA for a selected intrinsic EMIT field."""
     bake = scene.render.bake
@@ -6688,6 +6753,504 @@ def bake_objects_to_image(
             layer_collection.hide_viewport = hide_viewport
         for collection, hide_viewport in reversed(collection_view_states):
             collection.hide_viewport = hide_viewport
+
+
+# --- MTL-BAKE-001: per-channel Material bake primitives ----------------------
+#
+# A Material bake captures a material's individual input channels — base
+# color, metallic, roughness, normal, emission, alpha — into images so the
+# result stays ordinary lit glTF pbrMetallicRoughness.  The compiler owns
+# graph semantics (which socket, which proxy material); these primitives own
+# bake mechanics: isolation, coverage proof, colorspace-correct saves, the
+# tangent NORMAL pass, ORM packing, and the disposable tile proxy.
+
+_ISOLATED_BAKE_CYCLES_NAMES = (
+    "samples", "use_denoising", "use_adaptive_sampling",
+    "adaptive_threshold", "seed", "use_animated_seed", "use_auto_tile",
+)
+_ISOLATED_BAKE_RNA_NAMES = (
+    "use_clear", "margin", "margin_type", "use_selected_to_active",
+    "use_cage", "cage_extrusion", "max_ray_distance",
+    "use_pass_direct", "use_pass_indirect", "use_pass_color",
+    "use_pass_diffuse", "use_pass_glossy", "use_pass_transmission",
+    "use_pass_emit", "view_from", "normal_space",
+    "normal_r", "normal_g", "normal_b",
+)
+
+
+def _snapshot_isolated_bake_rna(scene):
+    """Capture engine + Cycles + bake RNA around an isolated channel bake."""
+    render = scene.render
+    cycles = getattr(scene, "cycles", None)
+    if cycles is None:
+        raise RuntimeError("Cycles settings are unavailable in this Blender build")
+    bake = render.bake
+    return {
+        "engine": render.engine,
+        "cycles": {
+            name: getattr(cycles, name)
+            for name in _ISOLATED_BAKE_CYCLES_NAMES if hasattr(cycles, name)
+        },
+        "bake": {
+            name: getattr(bake, name)
+            for name in _ISOLATED_BAKE_RNA_NAMES if hasattr(bake, name)
+        },
+    }
+
+
+def _force_isolated_bake_determinism(scene):
+    """One sample, no denoise/adaptive/tiling, seed zero: an isolated channel
+    bake is a pure function of the graph, never of sampling luck."""
+    render = scene.render
+    cycles = scene.cycles
+    render.engine = "CYCLES"
+    cycles.samples = 1
+    if hasattr(cycles, "use_denoising"):
+        cycles.use_denoising = False
+    if hasattr(cycles, "use_adaptive_sampling"):
+        cycles.use_adaptive_sampling = False
+    if hasattr(cycles, "seed"):
+        cycles.seed = 0
+    if hasattr(cycles, "use_animated_seed"):
+        cycles.use_animated_seed = False
+    if hasattr(cycles, "use_auto_tile"):
+        cycles.use_auto_tile = False
+
+
+def _restore_isolated_bake_rna(scene, saved, cleanup_errors):
+    """Restore what ``_snapshot_isolated_bake_rna`` captured."""
+    render = scene.render
+    cycles = getattr(scene, "cycles", None)
+    bake = render.bake
+    for name, value in saved["bake"].items():
+        try:
+            setattr(bake, name, value)
+        except (AttributeError, RuntimeError, TypeError, ValueError) as error:
+            cleanup_errors.append(f"bake setting {name}: {error}")
+    for name, value in saved["cycles"].items():
+        try:
+            setattr(cycles, name, value)
+        except (AttributeError, RuntimeError, TypeError, ValueError) as error:
+            cleanup_errors.append(f"Cycles setting {name}: {error}")
+    try:
+        render.engine = saved["engine"]
+    except (AttributeError, RuntimeError, TypeError, ValueError) as error:
+        cleanup_errors.append(f"render engine: {error}")
+
+
+def _bake_isolated_field_pixels(
+        objs, *, size: int, margin_px: int, uv_layer: str,
+        label: str, log=print, bake_type: str = "EMIT",
+        configure=None) -> dict:
+    """Coverage-proved isolated bake to float pixels with exact restoration.
+
+    Callers own graph semantics and must install their private material
+    before entering.  This core owns Cycles/device/bake RNA, the separate
+    constant-white EMIT coverage pass Blender 5.2 requires, finite-value
+    validation, and cleanup.  It returns float RGB pixels plus the proved
+    coverage so composed channel packs (ORM) can bake several scalars and
+    save once.
+    """
+    objects = list(objs or ())
+    resolution = int(size)
+    margin = int(margin_px)
+    if resolution < 16 or resolution > 4096 or resolution & (resolution - 1):
+        raise ValueError(
+            f"{label}: texture size must be a power of two from 16..4096, "
+            f"got {size}"
+        )
+    if margin < 0:
+        raise ValueError(f"{label}: bake margin cannot be negative: {margin_px}")
+    if not objects:
+        raise RuntimeError(f"{label}: isolated bake needs one private receiver")
+
+    import numpy as np
+
+    scene = bpy.context.scene
+    saved = _snapshot_isolated_bake_rna(scene)
+    device_state = snapshot_cycles_compute_state(scene)
+    target = None
+    coverage_target = None
+    coverage_material = None
+    slots = []
+    device = {"deviceClass": "cpu", "backend": "cpu"}
+    result = None
+    primary_error = None
+    cleanup_errors = []
+    try:
+        _force_isolated_bake_determinism(scene)
+        configure_emit_bake(scene, margin)
+        device = configure_cycles_compute_device(
+            scene, log=log, restore_state=device_state, purpose=label,
+        )
+
+        coverage_target = bpy.data.images.new(
+            "BLENDLINK_CHANNEL_FIELD_COVERAGE",
+            width=resolution, height=resolution,
+            alpha=True, float_buffer=True,
+        )
+        coverage_target.generated_color = (0.0, 0.0, 0.0, 0.0)
+        coverage_material = bpy.data.materials.new(
+            "BLENDLINK_CHANNEL_FIELD_COVERAGE"
+        )
+        tree = ensure_shader_node_tree(coverage_material)
+        tree.nodes.clear()
+        output_node = tree.nodes.new("ShaderNodeOutputMaterial")
+        emission = tree.nodes.new("ShaderNodeEmission")
+        emission.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
+        emission.inputs["Strength"].default_value = 1.0
+        tree.links.new(
+            emission.outputs["Emission"], output_node.inputs["Surface"],
+        )
+        for obj in objects:
+            for slot in obj.material_slots:
+                slots.append((slot, slot.link, slot.material))
+                slot.link = "DATA"
+                slot.material = coverage_material
+        bake_objects_to_image(
+            objects, coverage_target, bake_type="EMIT",
+            margin_px=margin, uv_layer=uv_layer, log=log,
+        )
+        coverage = image_signal_coverage(coverage_target, f"{label} coverage")
+        for slot, link, material in reversed(slots):
+            slot.link = link
+            slot.material = material
+        slots.clear()
+
+        if bake_type != "EMIT":
+            if configure is None:
+                raise ValueError(
+                    f"{label}: non-EMIT bake {bake_type!r} needs its canonical "
+                    "configure function"
+                )
+            configure(scene, margin)
+        target = bpy.data.images.new(
+            "BLENDLINK_CHANNEL_FIELD_FLOAT",
+            width=resolution, height=resolution,
+            alpha=True, float_buffer=True,
+        )
+        target.generated_color = (0.0, 0.0, 0.0, 0.0)
+        bake_objects_to_image(
+            objects, target, bake_type=bake_type,
+            margin_px=margin, uv_layer=uv_layer, log=log,
+        )
+        pixels = np.empty(resolution * resolution * 4, dtype=np.float32)
+        target.pixels.foreach_get(pixels)
+        rgb = pixels.reshape(resolution, resolution, 4)[:, :, :3].copy()
+        covered = rgb[coverage]
+        if len(covered) == 0:
+            raise RuntimeError(
+                f"{label}: isolated bake produced no covered RGB samples"
+            )
+        if not np.isfinite(covered).all():
+            raise RuntimeError(
+                f"{label}: isolated bake contains NaN or infinite covered "
+                "RGB values"
+            )
+        result = {
+            "pixels": rgb,
+            "coverage": coverage,
+            "rgbMin": tuple(float(value) for value in covered.min(axis=0)),
+            "rgbMax": tuple(float(value) for value in covered.max(axis=0)),
+            "deviceClass": device["deviceClass"],
+            "backend": device["backend"],
+        }
+    except BaseException as error:
+        primary_error = error
+    finally:
+        for slot, link, material in reversed(slots):
+            try:
+                slot.link = link
+                slot.material = material
+            except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+                cleanup_errors.append(f"coverage material binding: {error}")
+        for image in (coverage_target, target):
+            if image is None:
+                continue
+            try:
+                if bpy.data.images.get(image.name) is image:
+                    bpy.data.images.remove(image)
+            except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+                cleanup_errors.append(f"temporary bake image: {error}")
+        if coverage_material is not None:
+            try:
+                if bpy.data.materials.get(coverage_material.name) is coverage_material:
+                    bpy.data.materials.remove(coverage_material, do_unlink=True)
+            except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+                cleanup_errors.append(f"coverage material: {error}")
+        try:
+            restore_cycles_compute_state(device_state)
+        except BaseException as error:
+            cleanup_errors.append(f"Cycles compute device: {error}")
+        _restore_isolated_bake_rna(scene, saved, cleanup_errors)
+    if cleanup_errors:
+        cleanup_error = RuntimeError(
+            f"{label}: isolated bake could not restore Blender state: "
+            + "; ".join(cleanup_errors)
+        )
+        if primary_error is not None:
+            raise cleanup_error from primary_error
+        raise cleanup_error
+    if primary_error is not None:
+        raise primary_error.with_traceback(primary_error.__traceback__)
+    if result is None:
+        raise RuntimeError(f"{label}: isolated bake produced no result")
+    return result
+
+
+def save_channel_png(
+        pixels, coverage, path: str, *, colorspace: str,
+        label: str = "material channel") -> dict:
+    """Save composed float channel pixels through the canonical private save.
+
+    ``colorspace`` is ``srgb`` for color the runtime decodes (base color,
+    emissive) or ``data`` for linearly sampled channels (ORM, tangent
+    normals) whose PNG bytes must equal the values.
+    """
+    import numpy as np
+
+    output = os.path.abspath(path)
+    directory = os.path.dirname(output)
+    if not directory or not os.path.isdir(directory):
+        raise FileNotFoundError(
+            f"{label}: channel output directory does not exist: {directory}"
+        )
+    if colorspace not in {"srgb", "data"}:
+        raise ValueError(f"{label}: unsupported channel colorspace {colorspace!r}")
+    rgb = np.asarray(pixels, dtype=np.float32)
+    if rgb.ndim != 3 or rgb.shape[2] != 3 or rgb.shape[0] != rgb.shape[1]:
+        raise ValueError(
+            f"{label}: channel pixels must be square (H, W, 3), got {rgb.shape!r}"
+        )
+    resolution = int(rgb.shape[0])
+    stage = bpy.data.images.new(
+        "BLENDLINK_CHANNEL_SAVE_STAGE",
+        width=resolution, height=resolution,
+        alpha=True, float_buffer=True,
+    )
+    try:
+        composed = np.empty((resolution, resolution, 4), dtype=np.float32)
+        composed[:, :, :3] = rgb
+        composed[:, :, 3] = 1.0
+        stage.pixels.foreach_set(composed.reshape(-1))
+        save_resolved(
+            stage, output, resolution,
+            denoise=False, delivery_sizes=[], coverage=coverage,
+            data=(colorspace == "data"),
+        )
+    finally:
+        if bpy.data.images.get(stage.name) is stage:
+            bpy.data.images.remove(stage)
+    if not os.path.isfile(output) or os.path.getsize(output) <= 0:
+        raise RuntimeError(f"{label}: channel save produced no PNG: {output}")
+    return {
+        "path": output,
+        "width": resolution,
+        "height": resolution,
+        "mime": "image/png",
+        "colorspace": colorspace,
+        "sha256": file_sha256(output, length=64),
+        "bytes": os.path.getsize(output),
+    }
+
+
+def bake_channel_field_pixels(
+        objs, *, size: int, margin_px: int, uv_layer: str = ATLAS_UV,
+        label: str = "material channel field", allow_hdr: bool = False,
+        log=print) -> dict:
+    """Bake one caller-installed private EMIT channel to float pixels.
+
+    The Material bake composes several scalar channels into one packed PNG,
+    so the float result and its proved coverage return to the caller instead
+    of saving here.  Values must stay 0..1; ``allow_hdr`` (emission) reports
+    the covered peak for ``KHR_materials_emissive_strength`` instead of
+    refusing it.
+    """
+    result = _bake_isolated_field_pixels(
+        objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
+        label=label, log=log,
+    )
+    minimum = result["rgbMin"]
+    maximum = result["rgbMax"]
+    if min(minimum) < -1.0e-6:
+        raise RuntimeError(
+            f"{label}: channel field contains negative values {minimum!r}"
+        )
+    peak = float(max(maximum))
+    if not allow_hdr and peak > 1.0 + 1.0e-6:
+        raise RuntimeError(
+            f"{label}: channel field range {minimum!r}..{maximum!r} cannot be "
+            "represented in an 8-bit glTF channel without clipping. Clamp or "
+            "map the channel to 0..1 in Blender"
+        )
+    result["peak"] = peak
+    return result
+
+
+def bake_channel_field_to_png(
+        objs, path: str, *, size: int, margin_px: int,
+        uv_layer: str = ATLAS_UV, colorspace: str = "srgb",
+        allow_hdr: bool = False, label: str = "material channel field",
+        log=print) -> dict:
+    """Bake and save one channel.  An HDR emissive field normalizes by its
+    covered peak and reports the multiplier the compiler carries as
+    ``KHR_materials_emissive_strength``; without it the values would clamp."""
+    result = bake_channel_field_pixels(
+        objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
+        label=label, allow_hdr=allow_hdr, log=log,
+    )
+    pixels = result["pixels"]
+    strength = 1.0
+    if allow_hdr and result["peak"] > 1.0 + 1.0e-6:
+        strength = float(result["peak"])
+        pixels = pixels / strength
+    saved = save_channel_png(
+        pixels, result["coverage"], path, colorspace=colorspace, label=label,
+    )
+    saved.update({
+        "coveredFraction":
+            float(result["coverage"].sum()) / float(result["coverage"].size),
+        "rgbMin": result["rgbMin"],
+        "rgbMax": result["rgbMax"],
+        "emissiveStrength": strength,
+        "deviceClass": result["deviceClass"],
+        "backend": result["backend"],
+    })
+    return saved
+
+
+def bake_tangent_normal_field_pixels(
+        objs, *, size: int, margin_px: int, uv_layer: str = ATLAS_UV,
+        label: str = "material normal channel", log=print) -> dict:
+    """Tangent-space +Y NORMAL bake to float pixels.
+
+    Unlike every other channel this pass evaluates the caller's installed
+    material directly — Cycles resolves the shader's normal input chain —
+    so the private proxy must keep only the Normal link and neutral
+    defaults elsewhere.  The tangent basis follows the bake UV layer; the
+    exporter must ship tangents computed against the same layer.
+    """
+    return _bake_isolated_field_pixels(
+        objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
+        label=label, log=log,
+        bake_type="NORMAL", configure=configure_normal_bake,
+    )
+
+
+def bake_tangent_normal_to_png(
+        objs, path: str, *, size: int, margin_px: int,
+        uv_layer: str = ATLAS_UV, label: str = "material normal channel",
+        log=print) -> dict:
+    """Bake and save one tangent-space normal channel as a raw data PNG."""
+    result = bake_tangent_normal_field_pixels(
+        objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
+        label=label, log=log,
+    )
+    saved = save_channel_png(
+        result["pixels"], result["coverage"], path,
+        colorspace="data", label=label,
+    )
+    saved.update({
+        "coveredFraction":
+            float(result["coverage"].sum()) / float(result["coverage"].size),
+        "rgbMin": result["rgbMin"],
+        "rgbMax": result["rgbMax"],
+        "deviceClass": result["deviceClass"],
+        "backend": result["backend"],
+    })
+    return saved
+
+
+def compose_channel_pack_pixels(
+        size: int, *, red=None, green=None, blue=None,
+        fill=(1.0, 1.0, 1.0)):
+    """Compose scalar channel planes into one packed RGB image.
+
+    glTF ORM order: R=occlusion, G=roughness, B=metallic.  A missing plane
+    takes its neutral fill so an absent occlusion bake stays a no-op white
+    channel instead of darkening the material.
+    """
+    import numpy as np
+
+    resolution = int(size)
+    packed = np.empty((resolution, resolution, 3), dtype=np.float32)
+    for index, plane in enumerate((red, green, blue)):
+        if plane is None:
+            packed[:, :, index] = float(fill[index])
+            continue
+        data = np.asarray(plane, dtype=np.float32)
+        if data.shape != (resolution, resolution):
+            raise ValueError(
+                f"channel pack plane {index} is {data.shape!r}, expected "
+                f"{(resolution, resolution)!r}"
+            )
+        packed[:, :, index] = data
+    return packed
+
+
+def uv_tile_proxy(
+        uv_names, *, window=(0.0, 0.0, 1.0, 1.0),
+        write_layer: str = "BLENDLINK_TILE_BAKE",
+        name: str = "BLENDLINK_TILE_PROXY"):
+    """Disposable unit quad whose named UV layers cover one UV-space window.
+
+    A Tileable channel depends only on the mesh's own UVs, so its 0..1 tile
+    bakes on this quad instead of the artist's mesh; baking a second integer
+    window and comparing float results is the numeric period-1 gate that
+    demotes a non-repeating graph to the Unique route.  Every referenced UV
+    map name receives the window; the write layer stays identity 0..1 and is
+    never active-render, or the graph would sample its own bake target
+    coordinates.
+    """
+    u0, v0, u1, v1 = (float(item) for item in window)
+    if not (u1 > u0 and v1 > v0):
+        raise ValueError(f"tile proxy window must be positive, got {window!r}")
+    names = [str(item) for item in uv_names if str(item)]
+    if not names:
+        names = ["BLENDLINK_TILE_SOURCE"]
+    if write_layer in names:
+        raise ValueError(
+            f"tile proxy write layer {write_layer!r} collides with a "
+            "referenced UV map name"
+        )
+    mesh = bpy.data.meshes.new(f"{name} Mesh")
+    mesh.from_pydata(
+        ((-1.0, -1.0, 0.0), (1.0, -1.0, 0.0), (1.0, 1.0, 0.0), (-1.0, 1.0, 0.0)),
+        (),
+        ((0, 1, 2, 3),),
+    )
+    mesh.update()
+    corners = ((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))
+    for uv_name in names:
+        mesh.uv_layers.new(name=uv_name)
+        # uv_layers.new invalidates held layer references; re-fetch by name.
+        layer = mesh.uv_layers[uv_name]
+        for loop_index, corner in enumerate(corners):
+            layer.data[loop_index].uv = (
+                u0 + corner[0] * (u1 - u0),
+                v0 + corner[1] * (v1 - v0),
+            )
+    mesh.uv_layers.new(name=write_layer)
+    write = mesh.uv_layers[write_layer]
+    for loop_index, corner in enumerate(corners):
+        write.data[loop_index].uv = corner
+    source = mesh.uv_layers[names[0]]
+    source.active_render = True
+    mesh.uv_layers.active = source
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    return obj
+
+
+def remove_uv_tile_proxy(obj):
+    """Remove a ``uv_tile_proxy`` object and its private mesh datablock."""
+    if obj is None:
+        return
+    mesh = getattr(obj, "data", None)
+    if bpy.data.objects.get(obj.name) is obj:
+        bpy.data.objects.remove(obj, do_unlink=True)
+    if mesh is not None and bpy.data.meshes.get(mesh.name) is mesh:
+        bpy.data.meshes.remove(mesh)
 
 
 def bake_emit_field_to_png(
