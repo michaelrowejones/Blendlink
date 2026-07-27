@@ -11,19 +11,16 @@
   "irCompiledViewDependent": 3,
   "refusals": {
     "Attribute type 'OBJECT' has no cell yet": 1,
-    "ShaderNodeTexImage has no proven TSL mapping": 8,
-    "Mix blend type 'COLOR' has no cell yet": 1,
+    "ShaderNodeTexImage has no proven TSL mapping": 14,
+    "Texture Coordinate 'Generated' has no TSL cell yet; only UV is proven": 5,
     "Attribute output 'Factor' has no cell yet": 1,
     "no root-level single Principled surface": 90,
-    "Vector Math operation 'LENGTH' has no cell yet": 1,
-    "ShaderNodeTexMagic has no proven TSL mapping": 1,
+    "ShaderNodeVectorRotate has no proven TSL mapping": 2,
     "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
-    "Vector Math operation 'MULTIPLY' has no cell yet": 2,
-    "Math operation 'SMOOTH_MAX' has no cell yet": 4,
-    "Noise detail 6 exceeds the proven range (<= 2); high-octave phase divergence measured": 2,
-    "ShaderNodeRGBCurve has no proven TSL mapping": 6,
-    "ShaderNodeTexVoronoi has no proven TSL mapping": 1,
-    "ShaderNodeObjectInfo has no proven TSL mapping": 1
+    "Attribute output 'Vector' has no cell yet": 1,
+    "Unnormalized noise has no cell yet": 2,
+    "Noise scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 2,
+    "Voronoi scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency patterns": 1
   },
   "sampled": [
     {

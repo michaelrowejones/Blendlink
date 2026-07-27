@@ -11,10 +11,11 @@
   "irCompiledViewDependent": 0,
   "refusals": {
     "no root-level single Principled surface": 204,
-    "ShaderNodeRGBCurve has no proven TSL mapping": 4,
-    "Attribute type 'OBJECT' has no cell yet": 1,
-    "Mix blend type 'SUBTRACT' has no cell yet": 2,
-    "Noise output 'Color' has no cell yet (Fac only)": 2
+    "Attribute type 'OBJECT' has no cell yet": 4,
+    "ShaderNodeVectorTransform has no proven TSL mapping": 1,
+    "Noise scale 100 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 1,
+    "ShaderNodeNormalMap has no proven TSL mapping": 1,
+    "Noise with linked Detail has no cell yet": 2
   },
   "sampled": [
     {

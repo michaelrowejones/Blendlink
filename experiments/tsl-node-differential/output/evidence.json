@@ -270,6 +270,644 @@
       },
       "failureClass": "corpus-measured node gap (Clamp)"
     },
+    "math-sqrt": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000010456773452460766,
+        "p99Abs": 0.00008829683065414429,
+        "maxAbs": 0.00008829683065414429
+      },
+      "failureClass": "Math-enum sweep (safe semantics)"
+    },
+    "math-inverse-sqrt": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00001379847526550293,
+        "p99Abs": 0.0005645155906677246,
+        "maxAbs": 0.0005645155906677246
+      },
+      "failureClass": "Math-enum sweep (safe semantics)"
+    },
+    "math-absolute": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00003123283386230469,
+        "p99Abs": 0.00003123283386230469,
+        "maxAbs": 0.00003123283386230469
+      },
+      "failureClass": "Math-enum sweep"
+    },
+    "math-exponent": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000014159566489979625,
+        "p99Abs": 0.000055909156799316406,
+        "maxAbs": 0.000055909156799316406
+      },
+      "failureClass": "Math-enum sweep (transcendental)"
+    },
+    "math-logarithm": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00000847965020511765,
+        "p99Abs": 0.00017341971397399902,
+        "maxAbs": 0.00030669569969177246
+      },
+      "failureClass": "Math-enum sweep (safe semantics)"
+    },
+    "math-ceil": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "Math-enum sweep (rounding family)"
+    },
+    "math-fract": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000046855362597852945,
+        "p99Abs": 0.00004690885543823242,
+        "maxAbs": 0.00004690885543823242
+      },
+      "failureClass": "Math-enum sweep (rounding family)"
+    },
+    "math-trunc": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "Math-enum sweep (rounding family)"
+    },
+    "math-round": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "Math-enum sweep (rounding family)"
+    },
+    "math-snap": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00000610266397416126,
+        "p99Abs": 0.000016883015632629395,
+        "maxAbs": 0.00002250075340270996
+      },
+      "failureClass": "Math-enum sweep (safe semantics)"
+    },
+    "math-wrap": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00005519320257008076,
+        "p99Abs": 0.00008130073547363281,
+        "maxAbs": 0.00009071826934814453
+      },
+      "failureClass": "Math-enum sweep (safe semantics)"
+    },
+    "math-compare-band": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "Math-enum sweep (comparison semantics)"
+    },
+    "math-smooth-min": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00001873973997135181,
+        "p99Abs": 0.000025004148483276367,
+        "maxAbs": 0.000025033950805664062
+      },
+      "failureClass": "Math-enum sweep (polynomial smooth blend)"
+    },
+    "math-smooth-max": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000018735714547801763,
+        "p99Abs": 0.000025033950805664062,
+        "maxAbs": 0.000025033950805664062
+      },
+      "failureClass": "Math-enum sweep (polynomial smooth blend)"
+    },
+    "math-sign": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "Math-enum sweep"
+    },
+    "math-tangent": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000014412726159207523,
+        "p99Abs": 0.00009562820196151733,
+        "maxAbs": 0.00009562820196151733
+      },
+      "failureClass": "Math-enum sweep (transcendental)"
+    },
+    "math-arcsine": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000010801981261465698,
+        "p99Abs": 0.00004234910011291504,
+        "maxAbs": 0.00004234910011291504
+      },
+      "failureClass": "Math-enum sweep (safe semantics)"
+    },
+    "math-arccosine": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000010799471056088805,
+        "p99Abs": 0.000042378902435302734,
+        "maxAbs": 0.000042378902435302734
+      },
+      "failureClass": "Math-enum sweep (safe semantics)"
+    },
+    "math-arctangent": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000012420467101037502,
+        "p99Abs": 0.00003737211227416992,
+        "maxAbs": 0.00003737211227416992
+      },
+      "failureClass": "Math-enum sweep (transcendental)"
+    },
+    "math-arctan2": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000011650085980363656,
+        "p99Abs": 0.00006502866744995117,
+        "maxAbs": 0.0004501938819885254
+      },
+      "failureClass": "Math-enum sweep (transcendental)"
+    },
+    "math-sinh": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000013592420145869255,
+        "p99Abs": 0.000027418136596679688,
+        "maxAbs": 0.000027418136596679688
+      },
+      "failureClass": "Math-enum sweep (transcendental)"
+    },
+    "math-cosh": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000017253216356039047,
+        "p99Abs": 0.0000438690185546875,
+        "maxAbs": 0.0000438690185546875
+      },
+      "failureClass": "Math-enum sweep (transcendental)"
+    },
+    "math-tanh": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000013945682439953089,
+        "p99Abs": 0.00004208087921142578,
+        "maxAbs": 0.00004208087921142578
+      },
+      "failureClass": "Math-enum sweep (transcendental)"
+    },
+    "math-radians": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000014725109394930769,
+        "p99Abs": 0.000014781951904296875,
+        "maxAbs": 0.000014781951904296875
+      },
+      "failureClass": "Math-enum sweep"
+    },
+    "math-degrees": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000013419579772744328,
+        "p99Abs": 0.000013478100299835205,
+        "maxAbs": 0.000013478100299835205
+      },
+      "failureClass": "Math-enum sweep"
+    },
+    "math-floored-modulo": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00003123283386230469,
+        "p99Abs": 0.00003123283386230469,
+        "maxAbs": 0.00003123283386230469
+      },
+      "failureClass": "Math-enum sweep (modulo sign convention)"
+    },
+    "mix-sub-screen-diff": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000010620242392178625,
+        "p99Abs": 0.000022530555725097656,
+        "maxAbs": 0.000022530555725097656
+      },
+      "failureClass": "Mix blend-mode sweep (arithmetic family)"
+    },
+    "mix-darken-lighten-exclusion": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000011558508655677239,
+        "p99Abs": 0.00002187490463256836,
+        "maxAbs": 0.00002187490463256836
+      },
+      "failureClass": "Mix blend-mode sweep (min/max family)"
+    },
+    "mix-dodge-burn-softlight": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000012080415520661822,
+        "p99Abs": 0.00011672079563140869,
+        "maxAbs": 0.00013314560055732727
+      },
+      "failureClass": "Mix blend-mode sweep (photographic family)"
+    },
+    "mix-linear-light": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000009372631514755389,
+        "p99Abs": 0.000012516975402832031,
+        "maxAbs": 0.000012516975402832031
+      },
+      "failureClass": "Mix blend-mode sweep (linear light)"
+    },
+    "mix-hue-sat": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0000031243277286800244,
+        "p99Abs": 0.000009417533874511719,
+        "maxAbs": 0.000009417533874511719
+      },
+      "failureClass": "Mix blend-mode sweep (HSV family, rgb<->hsv port)"
+    },
+    "mix-value-color": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000007544404070358723,
+        "p99Abs": 0.00002228468656539917,
+        "maxAbs": 0.00002228468656539917
+      },
+      "failureClass": "Mix blend-mode sweep (HSV family, rgb<->hsv port)"
+    },
+    "vecmath-arith": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000004340445836229871,
+        "p99Abs": 0.000021576881408691406,
+        "maxAbs": 0.00003451108932495117
+      },
+      "failureClass": "Vector Math sweep (arithmetic + safe divide)"
+    },
+    "vecmath-products": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000013273997562161336,
+        "p99Abs": 0.000018775463104248047,
+        "maxAbs": 0.000018775463104248047
+      },
+      "failureClass": "Vector Math sweep (products)"
+    },
+    "vecmath-metrics": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00001681346717911462,
+        "p99Abs": 0.000041544437408447266,
+        "maxAbs": 0.00004976987838745117
+      },
+      "failureClass": "Vector Math sweep (metrics)"
+    },
+    "vecmath-minmax-abs": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00001848931303053784,
+        "p99Abs": 0.000028133392333984375,
+        "maxAbs": 0.000028192996978759766
+      },
+      "failureClass": "Vector Math sweep (min/max/abs)"
+    },
+    "vecmath-rounding": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000015618454199284315,
+        "p99Abs": 0.00004690885543823242,
+        "maxAbs": 0.00004690885543823242
+      },
+      "failureClass": "Vector Math sweep (rounding family)"
+    },
+    "vecmath-modular": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00003124596939111749,
+        "p99Abs": 0.00006258487701416016,
+        "maxAbs": 0.00006258487701416016
+      },
+      "failureClass": "Vector Math sweep (modular family)"
+    },
+    "vecmath-trig": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000044648259063251317,
+        "p99Abs": 0.00012493133544921875,
+        "maxAbs": 0.00012499094009399414
+      },
+      "failureClass": "Vector Math sweep (componentwise trig)"
+    },
+    "vecmath-muladd": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000005206276910030283,
+        "p99Abs": 0.000009417533874511719,
+        "maxAbs": 0.000009417533874511719
+      },
+      "failureClass": "Vector Math sweep (multiply-add, full vector)"
+    },
+    "rgb-curve": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000014101295079171905,
+        "p99Abs": 0.00003695487976074219,
+        "maxAbs": 0.00004488229751586914
+      },
+      "failureClass": "corpus-priority node (RGB Curves x11 across scenes)"
+    },
+    "tex-checker": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "deterministic texture (Checker)"
+    },
+    "tex-gradient": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000014532355010032916,
+        "p99Abs": 0.000059545040130615234,
+        "maxAbs": 0.00047767162322998047
+      },
+      "failureClass": "deterministic texture (Gradient)"
+    },
+    "tex-magic": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00026856057714515674,
+        "p99Abs": 0.0008835792541503906,
+        "maxAbs": 0.001082301139831543
+      },
+      "failureClass": "deterministic texture (Magic trig cascade)"
+    },
+    "tex-wave": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00010658835866560652,
+        "p99Abs": 0.000163322314620018,
+        "maxAbs": 0.00016845576465129852
+      },
+      "failureClass": "deterministic texture (Wave, all three profiles)"
+    },
+    "color-utilities": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00001632601335018376,
+        "p99Abs": 0.00003929436206817627,
+        "maxAbs": 0.00005961209535598755
+      },
+      "failureClass": "color utilities (Invert / Gamma / Bright-Contrast)"
+    },
+    "color-hsv": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0000187364711337068,
+        "p99Abs": 0.00004500150680541992,
+        "maxAbs": 0.00004750490188598633
+      },
+      "failureClass": "color-space family (RGB->BW, Separate/Combine HSV)"
+    },
+    "hue-saturation": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000024376666734345537,
+        "p99Abs": 0.00012135505676269531,
+        "maxAbs": 0.00013816356658935547
+      },
+      "failureClass": "Hue/Saturation/Value node (full rgb<->hsv round trip)"
+    },
+    "hash-probe": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "hash family (constant-input Jenkins probe)"
+    },
+    "voronoi-rand0-probe": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0000886142724993988,
+        "p99Abs": 0.00013959407806396484,
+        "maxAbs": 0.00013965368270874023
+      },
+      "failureClass": "hash family (hash-free lattice control)"
+    },
+    "white-noise": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "hash family (Jenkins lookup3 port)"
+    },
+    "voronoi-f1": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000030411355699773896,
+        "p99Abs": 0.00008371472358703613,
+        "maxAbs": 0.00008383393287658691
+      },
+      "failureClass": "hash family (Voronoi F1 via the ported Jenkins hash)"
+    },
+    "noise-z-probe": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000038276659324765205,
+        "p99Abs": 0.00011938810348510742,
+        "maxAbs": 0.00016611814498901367
+      },
+      "failureClass": "noise lineage (large-coordinate control)"
+    },
+    "noise-scale16": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00017304253560723737,
+        "p99Abs": 0.0005365610122680664,
+        "maxAbs": 0.0007187128067016602
+      },
+      "failureClass": "noise frequency bound (scale <= 16)"
+    },
+    "noise-color": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00003951970332612594,
+        "p99Abs": 0.00011771917343139648,
+        "maxAbs": 0.00016260147094726562
+      },
+      "failureClass": "corpus-measured node gap (Noise Color output x3)"
+    },
+    "noise-color-2d": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00004943683719223676,
+        "p99Abs": 0.00015151500701904297,
+        "maxAbs": 0.0002002418041229248
+      },
+      "failureClass": "corpus-measured node gap (Noise Color output, 2D)"
+    },
+    "voronoi-smooth-f1": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000030213786828880984,
+        "p99Abs": 0.00011941790580749512,
+        "maxAbs": 0.0002505183219909668
+      },
+      "failureClass": "corpus-measured node gap (Voronoi SMOOTH_F1)"
+    },
+    "tex-magic-fac": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0001699843160167802,
+        "p99Abs": 0.0006088316440582275,
+        "maxAbs": 0.0006777048110961914
+      },
+      "failureClass": "deterministic texture (Magic Fac)"
+    },
     "fresnel-dielectric": {
       "ok": true,
       "gated": true,
@@ -330,19 +968,16 @@
         "irCompiledViewDependent": 3,
         "refusals": {
           "Attribute type 'OBJECT' has no cell yet": 1,
-          "ShaderNodeTexImage has no proven TSL mapping": 8,
-          "Mix blend type 'COLOR' has no cell yet": 1,
+          "ShaderNodeTexImage has no proven TSL mapping": 14,
+          "Texture Coordinate 'Generated' has no TSL cell yet; only UV is proven": 5,
           "Attribute output 'Factor' has no cell yet": 1,
           "no root-level single Principled surface": 90,
-          "Vector Math operation 'LENGTH' has no cell yet": 1,
-          "ShaderNodeTexMagic has no proven TSL mapping": 1,
+          "ShaderNodeVectorRotate has no proven TSL mapping": 2,
           "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
-          "Vector Math operation 'MULTIPLY' has no cell yet": 2,
-          "Math operation 'SMOOTH_MAX' has no cell yet": 4,
-          "Noise detail 6 exceeds the proven range (<= 2); high-octave phase divergence measured": 2,
-          "ShaderNodeRGBCurve has no proven TSL mapping": 6,
-          "ShaderNodeTexVoronoi has no proven TSL mapping": 1,
-          "ShaderNodeObjectInfo has no proven TSL mapping": 1
+          "Attribute output 'Vector' has no cell yet": 1,
+          "Unnormalized noise has no cell yet": 2,
+          "Noise scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 2,
+          "Voronoi scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency patterns": 1
         },
         "sampled": [
           {
@@ -428,10 +1063,11 @@
         "irCompiledViewDependent": 0,
         "refusals": {
           "no root-level single Principled surface": 204,
-          "ShaderNodeRGBCurve has no proven TSL mapping": 4,
-          "Attribute type 'OBJECT' has no cell yet": 1,
-          "Mix blend type 'SUBTRACT' has no cell yet": 2,
-          "Noise output 'Color' has no cell yet (Fac only)": 2
+          "Attribute type 'OBJECT' has no cell yet": 4,
+          "ShaderNodeVectorTransform has no proven TSL mapping": 1,
+          "Noise scale 100 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 1,
+          "ShaderNodeNormalMap has no proven TSL mapping": 1,
+          "Noise with linked Detail has no cell yet": 2
         },
         "sampled": [
           {
