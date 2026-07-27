@@ -6999,13 +6999,16 @@ def _bake_isolated_field_pixels(
 
 
 def save_channel_png(
-        pixels, coverage, path: str, *, colorspace: str,
+        pixels, coverage, path: str, *, colorspace: str, alpha=None,
         label: str = "material channel") -> dict:
     """Save composed float channel pixels through the canonical private save.
 
     ``colorspace`` is ``srgb`` for color the runtime decodes (base color,
     emissive) or ``data`` for linearly sampled channels (ORM, tangent
-    normals) whose PNG bytes must equal the values.
+    normals) whose PNG bytes must equal the values.  ``alpha`` is the baked
+    alpha plane riding a base-color carrier: it switches the file to RGBA and
+    flattens the uncovered background in-buffer (mean covered RGB, alpha 0),
+    because ``flatten_saved_background`` would force the whole file opaque.
     """
     import numpy as np
 
@@ -7023,24 +7026,68 @@ def save_channel_png(
             f"{label}: channel pixels must be square (H, W, 3), got {rgb.shape!r}"
         )
     resolution = int(rgb.shape[0])
-    stage = bpy.data.images.new(
-        "BLENDLINK_CHANNEL_SAVE_STAGE",
-        width=resolution, height=resolution,
-        alpha=True, float_buffer=True,
-    )
-    try:
+    if alpha is not None:
+        alpha_plane = np.asarray(alpha, dtype=np.float32)
+        if alpha_plane.shape != (resolution, resolution):
+            raise ValueError(
+                f"{label}: alpha plane is {alpha_plane.shape!r}, expected "
+                f"{(resolution, resolution)!r}"
+            )
+        covered = np.asarray(coverage, dtype=bool)
+        if covered.shape != (resolution, resolution):
+            raise ValueError(
+                f"{label}: coverage is {covered.shape!r}, expected "
+                f"{(resolution, resolution)!r}"
+            )
         composed = np.empty((resolution, resolution, 4), dtype=np.float32)
         composed[:, :, :3] = rgb
-        composed[:, :, 3] = 1.0
-        stage.pixels.foreach_set(composed.reshape(-1))
-        save_resolved(
-            stage, output, resolution,
-            denoise=False, delivery_sizes=[], coverage=coverage,
-            data=(colorspace == "data"),
+        composed[:, :, 3] = alpha_plane
+        covered_count = int(covered.sum())
+        if covered_count == 0:
+            raise RuntimeError(
+                f"{label}: an alpha-carrying channel save needs covered texels"
+            )
+        if covered_count < covered.size:
+            mean = np.round(
+                composed[:, :, :3][covered].mean(axis=0) * 255.0
+            ) / 255.0
+            composed[:, :, :3][~covered] = mean
+            composed[:, :, 3][~covered] = 0.0
+        stage = bpy.data.images.new(
+            "BLENDLINK_CHANNEL_SAVE_STAGE",
+            width=resolution, height=resolution,
+            alpha=True, float_buffer=True,
         )
-    finally:
-        if bpy.data.images.get(stage.name) is stage:
-            bpy.data.images.remove(stage)
+        try:
+            stage.pixels.foreach_set(composed.reshape(-1))
+            _save_render_with_private_scene(
+                stage, output,
+                file_format="PNG", color_mode="RGBA", color_depth="8",
+                dither_intensity=1.0 if colorspace == "srgb" else 0.0,
+                view_transform="Standard" if colorspace == "srgb" else "Raw",
+            )
+        finally:
+            if bpy.data.images.get(stage.name) is stage:
+                bpy.data.images.remove(stage)
+    else:
+        stage = bpy.data.images.new(
+            "BLENDLINK_CHANNEL_SAVE_STAGE",
+            width=resolution, height=resolution,
+            alpha=True, float_buffer=True,
+        )
+        try:
+            composed = np.empty((resolution, resolution, 4), dtype=np.float32)
+            composed[:, :, :3] = rgb
+            composed[:, :, 3] = 1.0
+            stage.pixels.foreach_set(composed.reshape(-1))
+            save_resolved(
+                stage, output, resolution,
+                denoise=False, delivery_sizes=[], coverage=coverage,
+                data=(colorspace == "data"),
+            )
+        finally:
+            if bpy.data.images.get(stage.name) is stage:
+                bpy.data.images.remove(stage)
     if not os.path.isfile(output) or os.path.getsize(output) <= 0:
         raise RuntimeError(f"{label}: channel save produced no PNG: {output}")
     return {
@@ -7049,6 +7096,7 @@ def save_channel_png(
         "height": resolution,
         "mime": "image/png",
         "colorspace": colorspace,
+        "hasAlpha": alpha is not None,
         "sha256": file_sha256(output, length=64),
         "bytes": os.path.getsize(output),
     }

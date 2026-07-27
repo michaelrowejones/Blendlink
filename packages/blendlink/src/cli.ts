@@ -51,6 +51,54 @@ const flagValue = (name: string) => {
     : undefined
 }
 
+/** One legible line per material: "Base Color: baked 512 tile | Metallic:
+ * factor 0.0 | …" — the MTL-BAKE-001 per-channel visibility that turns a
+ * wall of identical needsBake errors into individual decisions. */
+function formatChannelRoutes(
+  record?: {
+    materialCompilation?: {
+      channels?: {
+        channels: Array<{
+          channel: string
+          route: string
+          uv?: string
+          resolution?: number | string
+          pass?: string
+          value?: number | number[] | null
+          strength?: number | null
+        }>
+      }
+    }
+  },
+): string | null {
+  const entries = record?.materialCompilation?.channels?.channels
+  if (!entries || entries.length === 0) return null
+  const formatValue = (value: number | number[] | null | undefined) => {
+    if (typeof value === 'number') return ` ${Number(value.toFixed(3))}`
+    if (Array.isArray(value)) {
+      return ` (${value.slice(0, 3).map((item) => Number(item.toFixed(3))).join(', ')})`
+    }
+    return ''
+  }
+  return entries.map((entry) => {
+    if (entry.route === 'factor') {
+      return `${entry.channel}: factor${formatValue(entry.value)}`
+    }
+    if (entry.route === 'factor-over-carrier') {
+      return `${entry.channel}: factor over carrier${formatValue(entry.value)}`
+    }
+    if (entry.route === 'bake') {
+      const size = typeof entry.resolution === 'number'
+        ? ` ${entry.resolution}`
+        : ''
+      const passLabel = entry.pass === 'NORMAL' ? ' normal-pass' : ''
+      return `${entry.channel}: baked${size} ${entry.uv ?? 'tile'}${passLabel}`
+    }
+    if (entry.route === 'passthrough') return `${entry.channel}: passthrough`
+    return `${entry.channel}: refused`
+  }).join(' | ')
+}
+
 async function main(): Promise<number> {
   switch (command) {
     case 'recipe': {
@@ -526,19 +574,41 @@ async function main(): Promise<number> {
                 `${inspection.errors.length} used material${inspection.errors.length === 1 ? '' : 's'} ` +
                 'would lose authored surface behavior',
             )
+            const records = result.sidecar.diagnostics?.materials ?? []
             for (const issue of inspection.errors) {
               console.error(
                 `  x ${issue.material}: ${issue.summary} ` +
                 `(used by ${issue.usedBy.join(', ')})`,
               )
               for (const reason of issue.reasons) console.error(`      ${reason}`)
+              const record = records.find(
+                (item) => item.material === issue.material,
+              )
+              const routes = formatChannelRoutes(record)
+              if (routes) console.error(`      channels: ${routes}`)
             }
             console.error(
               '  Open Material Fidelity in Blender and choose an evidenced Website Material, ' +
-              'portable glTF, or supported Appearance route before treating this plan as parity.',
+              'the per-channel Material Bake, portable glTF, or a supported Appearance route ' +
+              'before treating this plan as parity.',
             )
           }
           continue
+        }
+        {
+          const records = result.sidecar.diagnostics?.materials ?? []
+          const materialBakes = records.filter(
+            (item) => item.materialCompilation?.intent === 'materialBake',
+          )
+          if (materialBakes.length > 0 && !asJson) {
+            console.log(`\nmaterial bake — ${scene.name}:`)
+            for (const record of materialBakes) {
+              const routes = formatChannelRoutes(record)
+              console.log(
+                `  · ${record.material}: ${routes ?? 'per-channel plan pending'}`,
+              )
+            }
+          }
         }
         if (inspection.warnings.length > 0) {
           if (asJson) {

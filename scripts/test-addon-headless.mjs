@@ -29,6 +29,9 @@ const channelRoutingTest = join(
 const materialChannelBakeTest = join(
   root, 'packages', 'blender-addon', 'tests', 'material_channel_bake_check.py',
 )
+const materialBakeTest = join(
+  root, 'packages', 'blender-addon', 'tests', 'material_bake_check.py',
+)
 const externalDependencyTest = join(
   root, 'packages', 'blender-addon', 'tests', 'external_dependency_check.py',
 )
@@ -141,6 +144,10 @@ runHeadlessSuite(
 runHeadlessSuite(
   'isolated channel-bake primitives contract', materialChannelBakeTest,
   'BLENDLINK_MATERIAL_CHANNEL_BAKE_CHECK_PASSED',
+)
+runHeadlessSuite(
+  'per-channel Material bake contract', materialBakeTest,
+  'BLENDLINK_MATERIAL_BAKE_CHECK_PASSED',
 )
 runHeadlessSuite(
   'external dependency reachability contract', externalDependencyTest,

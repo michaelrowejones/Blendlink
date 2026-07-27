@@ -48,6 +48,10 @@ ALPHA_INPUT = "Alpha"
 GENERATED_MATERIAL_PREFIX = "BLENDLINK_WEB."
 PRIVATE_COLOR_PREFIX = "_BLENDLINK_WEB_"
 STATIC_SHADE_FLOOR_MODEL = "selected-intrinsic-static-shade-floor-v1"
+MATERIAL_BAKE_PROPERTY = "blendlink_material_bake"
+CHANNEL_PLAN_MODEL = "principled-channel-plan-v1"
+PRIVATE_CHANNEL_PREFIX = "BLENDLINK_PRIVATE_CHANNEL."
+MATERIAL_BAKE_RULE = "blendlink.lit.material-bake"
 
 
 class MaterialCompileError(RuntimeError):
@@ -228,6 +232,7 @@ class MaterialDecision:
     limitations: tuple[str, ...] = ()
     issues: tuple[MaterialIssue, ...] = ()
     surface_factorization: SurfaceFactorization | None = None
+    channel_plan: dict | None = None
 
     def fingerprint_dict(self) -> dict:
         return {
@@ -246,6 +251,7 @@ class MaterialDecision:
                 self.surface_factorization.fingerprint_dict()
                 if self.surface_factorization is not None else None
             ),
+            "channelPlan": self.channel_plan,
         }
 
     def as_dict(self) -> dict:
@@ -280,6 +286,8 @@ class MaterialDecision:
             result["surfaceFactorization"] = (
                 self.surface_factorization.fingerprint_dict()
             )
+        if self.channel_plan is not None:
+            result["channels"] = self.channel_plan
         return result
 
 
@@ -2224,11 +2232,28 @@ def _plan_selected_material(
     object_names = tuple(sorted({obj.name for obj, _slot in raw_bindings}))
     markers = marker_nodes(material)
     if not markers:
+        if material_bake_requested(material):
+            return _plan_material_bake(
+                material, raw_bindings, binding_issues, purpose=purpose,
+            )
         return MaterialDecision(
             material.name, "automatic", "preserved", "stock", "full-surface", None,
             tuple(MaterialBinding(obj.name, slot) for obj, slot in raw_bindings),
         )
     issues = list(binding_issues)
+    if material_bake_requested(material):
+        issues.append(MaterialIssue(
+            "material.bake-conflicts-with-web-color", material.name,
+            "Material Bake and a Blendlink Web Color marker are both set.",
+            "Clear one intent: the Web Color marker lowers one selected field, "
+            "while Material Bake carries every Principled channel.",
+            object_names,
+        ))
+        return MaterialDecision(
+            material.name, "materialBake", "blocked", None, "per-channel", None,
+            tuple(MaterialBinding(obj.name, slot) for obj, slot in raw_bindings),
+            issues=tuple(issues),
+        )
     if len(markers) != 1:
         issues.append(MaterialIssue(
             "material.source-ambiguous", material.name,
@@ -2514,6 +2539,602 @@ def _plan_selected_material(
     )
 
 
+# --- MTL-BAKE-001: the per-channel Material bake -----------------------------
+#
+# A Material bake captures a needsBake material's individual Principled
+# inputs into images so the published material stays ordinary lit glTF
+# pbrMetallicRoughness — the remedy for `material.used-needs-bake` that does
+# not flatten the surface to an unlit Appearance atlas.  Routing is per
+# channel: constants stay factors, only unrecognised graphs bake, metallic
+# and roughness pack into one ORM image, baked alpha rides base colour's A,
+# and an HDR emissive field carries KHR_materials_emissive_strength.  The
+# artist opts in per material; every channel decision stays visible in the
+# plan.  Bake mechanics live in bakelib — this section orchestrates.
+
+_CHANNEL_REFUSED_ROUTINGS = {
+    "viewDependent": (
+        "changes with the viewer, so a baked channel would freeze one view"
+    ),
+    "sceneDependent": (
+        "captures scene lighting, which a Material bake input must never "
+        "include — the runtime would light it again"
+    ),
+    "unknown": "contains a node Blendlink has not classified for baking",
+}
+
+# Report order and per-channel bake colorspace.  glTF samples ORM and normal
+# textures linearly; base colour and emissive decode as sRGB.
+_CHANNEL_BAKE_KINDS = (
+    ("Base Color", "baseColor", "srgb"),
+    ("Metallic", "metallic", "data"),
+    ("Roughness", "roughness", "data"),
+    ("Alpha", "alpha", "data"),
+    ("Emission", "emission", "srgb"),
+    ("Normal", "normal", "data"),
+)
+
+
+def material_bake_requested(material) -> bool:
+    """Whether the artist opted this material into the per-channel bake."""
+    try:
+        return bool(material is not None and material.get(MATERIAL_BAKE_PROPERTY))
+    except (AttributeError, TypeError):
+        return False
+
+
+def set_material_bake(material, enabled: bool) -> None:
+    if enabled:
+        material[MATERIAL_BAKE_PROPERTY] = True
+    elif MATERIAL_BAKE_PROPERTY in material.keys():
+        del material[MATERIAL_BAKE_PROPERTY]
+
+
+def _channel_probe_stats(main, probe) -> dict:
+    """Numeric agreement between two float bake results.
+
+    Equal-resolution inputs compare texel-exact; a half-resolution probe is
+    box-downsampled first.  The stats are the recorded measurement; callers
+    own which of them gate.
+    """
+    import numpy as np
+
+    a = np.asarray(main, dtype=np.float32)
+    b = np.asarray(probe, dtype=np.float32)
+    if a.shape != b.shape:
+        factor = a.shape[0] // b.shape[0]
+        a = a.reshape(
+            b.shape[0], factor, b.shape[1], factor, a.shape[2],
+        ).mean(axis=(1, 3))
+    diff = np.abs(a - b)
+    return {
+        "meanAbs": float(diff.mean()),
+        "p99Abs": float(np.percentile(diff, 99.0)),
+        "maxAbs": float(diff.max()),
+    }
+
+
+def _principled_root_of(material):
+    tree = bakelib.active_shader_node_tree(material)
+    if tree is None:
+        return None, None
+    nodes = procedural.reachable_surface_nodes(tree)
+    root = procedural._single_principled_surface_root(nodes)
+    if root is None or root.id_data.as_pointer() != tree.as_pointer():
+        return tree, None
+    return tree, root
+
+
+def _authored_uv_tile_area(obj, uv_maps, uses_active) -> tuple[float, list]:
+    """UV-space triangle area of the channel's driving map, in tile units.
+
+    The sum approximates how many 0..1 tiles the surface spans (overlap
+    counts multiplicity, which is correct for density).  Also returns the
+    referenced layers missing from this mesh.
+    """
+    mesh = obj.data
+    missing = [name for name in uv_maps if mesh.uv_layers.get(name) is None]
+    layers = [mesh.uv_layers[name] for name in uv_maps if name not in missing]
+    if uses_active or not layers:
+        active = next(
+            (layer for layer in mesh.uv_layers if layer.active_render),
+            mesh.uv_layers[0] if len(mesh.uv_layers) else None,
+        )
+        if active is None:
+            missing.append("<active render UV map>")
+        elif all(layer.name != active.name for layer in layers):
+            layers.append(active)
+    area = 0.0
+    if layers:
+        mesh.calc_loop_triangles()
+        layer = layers[0]
+        data = layer.data
+        for triangle in mesh.loop_triangles:
+            loops = triangle.loops
+            (ax, ay) = data[loops[0]].uv
+            (bx, by) = data[loops[1]].uv
+            (cx, cy) = data[loops[2]].uv
+            area += abs(
+                (bx - ax) * (cy - ay) - (cx - ax) * (by - ay)
+            ) * 0.5
+    return area, missing
+
+
+def _authored_uv_bounds(obj, uv_maps, uses_active):
+    mesh = obj.data
+    layers = [
+        mesh.uv_layers[name] for name in uv_maps
+        if mesh.uv_layers.get(name) is not None
+    ]
+    if uses_active or not layers:
+        active = next(
+            (layer for layer in mesh.uv_layers if layer.active_render),
+            mesh.uv_layers[0] if len(mesh.uv_layers) else None,
+        )
+        if active is not None and all(
+                layer.name != active.name for layer in layers):
+            layers.append(active)
+    lo = [math.inf, math.inf]
+    hi = [-math.inf, -math.inf]
+    for layer in layers:
+        for item in layer.data:
+            u, v = item.uv
+            lo[0] = min(lo[0], u)
+            lo[1] = min(lo[1], v)
+            hi[0] = max(hi[0], u)
+            hi[1] = max(hi[1], v)
+    if lo[0] is math.inf:
+        return None
+    return (lo[0], lo[1], hi[0], hi[1])
+
+
+def _bounded_power_of_two(value: float, floor: int, ceiling: int) -> int:
+    result = floor
+    while result < ceiling and result < value:
+        result *= 2
+    return result
+
+
+def _plan_material_bake(
+    material, raw_bindings, binding_issues=(), *, purpose: str,
+) -> MaterialDecision:
+    """Route every Principled channel of one opted-in material."""
+    object_names = tuple(sorted({obj.name for obj, _slot in raw_bindings}))
+    issues = list(binding_issues)
+    tree, root = _principled_root_of(material)
+    routing = (
+        procedural.material_channel_routing(
+            tree, procedural.reachable_surface_nodes(tree),
+        )
+        if tree is not None else None
+    )
+    if root is None or routing is None or routing["surfaceRoot"] != "principled":
+        reason = (
+            routing["reason"] if routing and routing.get("reason")
+            else "The material has no single root-level Principled BSDF surface."
+        )
+        issues.append(MaterialIssue(
+            "material.bake-surface-unsupported", material.name, reason,
+            "Route the surface through one root-level Principled BSDF, or "
+            "use an Appearance bake for deliberately flattened output.",
+            object_names,
+        ))
+        return MaterialDecision(
+            material.name, "materialBake", "blocked", None, "per-channel", None,
+            tuple(MaterialBinding(obj.name, slot) for obj, slot in raw_bindings),
+            issues=tuple(issues),
+        )
+
+    routed = {entry["channel"]: entry for entry in routing["channels"]}
+    channels = []
+    needs_unique = False
+    needs_tile = False
+    tile_uv_maps = set()
+    tile_uses_active = False
+    limitations = []
+
+    def refuse(channel_name, entry, extra=None):
+        detail = _CHANNEL_REFUSED_ROUTINGS.get(
+            entry.get("routing"), "cannot be carried by a Material bake",
+        ) if extra is None else extra
+        reasons = list(entry.get("reasons") or ())
+        issues.append(MaterialIssue(
+            "material.channel-refused", material.name,
+            f"The {channel_name} channel {detail}."
+            + (f" ({'; '.join(reasons)})" if reasons else ""),
+            "Keep the object Realtime, simplify this channel, or use an "
+            "Appearance bake for deliberately flattened output.",
+            object_names,
+        ))
+        channels.append({
+            "channel": channel_name,
+            "route": "refused",
+            "reasons": reasons or [detail],
+        })
+
+    def route_bake(channel_name, entry, colorspace, pack=None,
+                   bake_pass="EMIT"):
+        nonlocal needs_unique, needs_tile, tile_uses_active
+        if entry.get("animated"):
+            refuse(
+                channel_name, entry,
+                extra=(
+                    "is animated or driven; a baked channel freezes its "
+                    "input, which would silently discard the animation"
+                ),
+            )
+            return None
+        routing_kind = entry.get("routing")
+        if routing_kind in _CHANNEL_REFUSED_ROUTINGS:
+            refuse(channel_name, entry)
+            return None
+        record = {
+            "channel": channel_name,
+            "route": "bake",
+            "colorspace": colorspace,
+            "pass": bake_pass,
+        }
+        if pack is not None:
+            record["pack"] = pack
+        if routing_kind == "unique":
+            needs_unique = True
+            record["uv"] = "unique"
+        else:
+            # tileable and uniform graphs bake one 0..1 tile.
+            needs_tile = True
+            record["uv"] = "tile"
+            record["uvMaps"] = sorted(entry.get("uvMaps") or ())
+            record["usesActiveUv"] = bool(
+                entry.get("usesActiveUv") or not (entry.get("uvMaps") or ())
+            )
+            tile_uv_maps.update(entry.get("uvMaps") or ())
+            if entry.get("usesActiveUv") or not (entry.get("uvMaps") or ()):
+                tile_uses_active = True
+        channels.append(record)
+        return record
+
+    # --- Base Color + Alpha (alpha rides base colour's A) ---
+    base_entry = routed.get("Base Color")
+    alpha_entry = routed.get("Alpha")
+    alpha_baked = False
+    alpha_factor = 1.0
+    if alpha_entry is not None and alpha_entry.get("route") != "refused":
+        if not alpha_entry["linked"]:
+            value = alpha_entry.get("value")
+            alpha_factor = float(value) if isinstance(value, (int, float)) else 1.0
+            channels.append({
+                "channel": "Alpha", "route": "factor", "value": alpha_factor,
+            })
+        else:
+            record = route_bake("Alpha", alpha_entry, "data")
+            alpha_baked = record is not None
+    if base_entry is not None:
+        if not base_entry["linked"] and not alpha_baked:
+            channels.append({
+                "channel": "Base Color", "route": "factor",
+                "value": base_entry.get("value"),
+            })
+        elif not base_entry["linked"] and alpha_baked:
+            # Baked alpha needs an RGBA carrier; a constant base colour
+            # becomes the factor over a white carrier.
+            channels.append({
+                "channel": "Base Color", "route": "factor-over-carrier",
+                "value": base_entry.get("value"),
+            })
+        else:
+            route_bake("Base Color", base_entry, "srgb")
+
+    # --- Metallic + Roughness (ORM pack) ---
+    for channel_name in ("Metallic", "Roughness"):
+        entry = routed.get(channel_name)
+        if entry is None:
+            continue
+        if not entry["linked"]:
+            channels.append({
+                "channel": channel_name, "route": "factor",
+                "value": entry.get("value"),
+            })
+        else:
+            route_bake(channel_name, entry, "data", pack="orm")
+
+    # --- Emission: colour and strength merge into one radiance field ---
+    emission_color = routed.get("Emission Color")
+    emission_strength = routed.get("Emission Strength")
+    if emission_color is not None and emission_strength is not None:
+        if not emission_color["linked"] and not emission_strength["linked"]:
+            channels.append({
+                "channel": "Emission", "route": "factor",
+                "value": emission_color.get("value"),
+                "strength": emission_strength.get("value"),
+            })
+        else:
+            merged = {
+                "channel": "Emission",
+                "linked": True,
+                "routing": "uniform",
+                "spaces": sorted(
+                    set(emission_color.get("spaces") or ())
+                    | set(emission_strength.get("spaces") or ())
+                ),
+                "uvMaps": sorted(
+                    set(emission_color.get("uvMaps") or ())
+                    | set(emission_strength.get("uvMaps") or ())
+                ),
+                "usesActiveUv": bool(
+                    emission_color.get("usesActiveUv")
+                    or emission_strength.get("usesActiveUv")
+                ),
+                "animated": bool(
+                    emission_color.get("animated")
+                    or emission_strength.get("animated")
+                ),
+                "reasons": list(dict.fromkeys(
+                    list(emission_color.get("reasons") or ())
+                    + list(emission_strength.get("reasons") or ())
+                )),
+            }
+            severity = {
+                "unknown": 6, "viewDependent": 5, "sceneDependent": 4,
+                "unique": 3, "tileable": 2, "uniform": 1, "constant": 0,
+            }
+            merged["routing"] = max(
+                (
+                    emission_color.get("routing", "uniform"),
+                    emission_strength.get("routing", "uniform"),
+                ),
+                key=lambda kind: severity.get(kind, 6),
+            )
+            route_bake("Emission", merged, "srgb")
+
+    # --- Normal (tangent-space NORMAL pass) ---
+    normal_entry = routed.get("Normal")
+    if normal_entry is not None and normal_entry["linked"]:
+        route_bake("Normal", normal_entry, "data", bake_pass="NORMAL")
+
+    # One material shares one UV strategy: the ORM pack and the base/alpha
+    # carrier each merge several channels into one image, so a mixed
+    # tile/unique material collapses conservatively to the Unique route.
+    if needs_unique and needs_tile:
+        for record in channels:
+            if record.get("route") == "bake" and record.get("uv") == "tile":
+                record["uv"] = "unique"
+                record.pop("uvMaps", None)
+                record.pop("usesActiveUv", None)
+        needs_tile = False
+        limitations.append(
+            "Tileable channels share this material's Unique unwrap because "
+            "another channel needs one; per-channel UV mixing is a later "
+            "optimization."
+        )
+
+    # --- Per-binding resolution and UV validation ---
+    planned_bindings = []
+    tile_resolution = None
+    wrap_gate_window = None
+    if not issues:
+        for obj, slot in raw_bindings:
+            if needs_unique:
+                break
+            missing = _authored_uv_tile_area(
+                obj, sorted(tile_uv_maps), tile_uses_active,
+            )[1] if needs_tile else []
+            if missing:
+                issues.append(MaterialIssue(
+                    "material.channel-uv-missing", material.name,
+                    f'Object "{obj.name}" is missing the UV maps this '
+                    f"material's channels sample: {', '.join(missing)}.",
+                    "Author the referenced UV maps on every bound mesh.",
+                    object_names,
+                ))
+        if needs_unique:
+            issues.extend(_materialized_binding_issues(material, raw_bindings))
+    if not issues:
+        for obj, slot in raw_bindings:
+            resolution_plan = None
+            source_hash = None
+            if needs_unique:
+                source_hash = _materialized_binding_hash(obj)
+                resolution_plan = bakelib.plan_material_texture_resolution(
+                    obj, slot, purpose=purpose,
+                )
+            if needs_tile:
+                plan = bakelib.plan_material_texture_resolution(
+                    obj, slot, purpose=purpose,
+                )
+                target_pixels = (
+                    plan.get("targetProjectedPixels")
+                    or plan.get("fallbackResolution", 1024) ** 2
+                )
+                tile_area, _missing = _authored_uv_tile_area(
+                    obj, sorted(tile_uv_maps), tile_uses_active,
+                )
+                per_tile = math.sqrt(
+                    max(float(target_pixels), 1.0)
+                    / max(float(tile_area), 1.0)
+                )
+                candidate = _bounded_power_of_two(per_tile, 64, 2048)
+                tile_resolution = max(tile_resolution or 0, candidate)
+                bounds = _authored_uv_bounds(
+                    obj, sorted(tile_uv_maps), tile_uses_active,
+                )
+                if bounds is not None and (
+                    bounds[0] < -1e-4 or bounds[1] < -1e-4
+                    or bounds[2] > 1.0 + 1e-4 or bounds[3] > 1.0 + 1e-4
+                ):
+                    lo_u = math.floor(bounds[2]) - 1
+                    lo_v = math.floor(bounds[3]) - 1
+                    if (lo_u, lo_v) != (0, 0):
+                        wrap_gate_window = (
+                            float(lo_u), float(lo_v),
+                            float(lo_u + 1), float(lo_v + 1),
+                        )
+                    else:
+                        wrap_gate_window = (1.0, 1.0, 2.0, 2.0)
+            planned_bindings.append(MaterialBinding(
+                obj.name, slot,
+                source_hash=source_hash,
+                materialization_plan=resolution_plan,
+                alpha_mode=(
+                    "BLEND" if (alpha_baked or alpha_factor < 1.0 - 1e-9)
+                    else "OPAQUE"
+                ),
+            ))
+    else:
+        planned_bindings = [
+            MaterialBinding(obj.name, slot) for obj, slot in raw_bindings
+        ]
+
+    for record in channels:
+        if record.get("route") == "bake":
+            if record.get("uv") == "tile":
+                record["resolution"] = tile_resolution or 64
+                record["wrapGate"] = wrap_gate_window is not None
+            else:
+                record["resolution"] = "per-binding"
+
+    if alpha_baked:
+        limitations.append(
+            "Baked alpha publishes as BLEND; MASK detection from baked "
+            "coverage is not implemented yet."
+        )
+    if any(record.get("pack") == "orm" for record in channels):
+        limitations.append(
+            "The ORM occlusion channel stays a neutral white fill; ambient "
+            "occlusion baking is a separate route."
+        )
+
+    channel_plan = {
+        "model": CHANNEL_PLAN_MODEL,
+        "channels": channels,
+        **({
+            "wrapGateWindow": list(wrap_gate_window),
+        } if wrap_gate_window is not None else {}),
+    }
+    blocked = bool(issues)
+    return MaterialDecision(
+        material.name, "materialBake",
+        "blocked" if blocked else "lowered",
+        None if blocked else "channels",
+        "per-channel",
+        None if blocked else "lit",
+        tuple(planned_bindings),
+        limitations=tuple(limitations),
+        issues=tuple(issues),
+        channel_plan=channel_plan,
+    )
+
+
+def _material_bake_channel_material(
+    decision: MaterialDecision, kind: str, created_materials: list,
+):
+    """Private per-channel proxy: the channel's field through an isolated
+    Emission sink, or a neutral Principled keeping only the Normal chain for
+    the NORMAL pass.  The artist's graph is copied, never mutated."""
+    source = bpy.data.materials.get(decision.material_name)
+    if source is None:
+        raise MaterialCompileError(
+            f'Material "{decision.material_name}" disappeared before its '
+            "channel bake."
+        )
+    try:
+        material = source.copy()
+    except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+        raise MaterialCompileError(
+            f'Cannot create a private channel material from '
+            f'"{decision.material_name}": {error}'
+        ) from error
+    created_materials.append(material)
+    material.name = f"{PRIVATE_CHANNEL_PREFIX}{kind}.{decision.material_name}"
+    material["blendlink_private_materialization"] = "cyclesEmit"
+    tree, root = _principled_root_of(material)
+    if tree is None or root is None:
+        raise MaterialCompileError(
+            f'Private channel copy of "{decision.material_name}" lost its '
+            "Principled root."
+        )
+
+    def channel_source(name):
+        socket = procedural._node_input(root, name)
+        if socket is None or not socket.is_linked:
+            return None, (
+                float(socket.default_value)
+                if socket is not None
+                and isinstance(socket.default_value, (int, float))
+                else tuple(socket.default_value)
+                if socket is not None else None
+            )
+        return socket.links[0].from_socket, None
+
+    sources = {}
+    if kind == "baseColor":
+        sources["color"], _ = channel_source("Base Color")
+    elif kind == "alpha":
+        sources["value"], _ = channel_source("Alpha")
+    elif kind == "metallic":
+        sources["value"], _ = channel_source("Metallic")
+    elif kind == "roughness":
+        sources["value"], _ = channel_source("Roughness")
+    elif kind == "emission":
+        sources["color"], sources["colorConstant"] = channel_source(
+            "Emission Color",
+        )
+        sources["strength"], sources["strengthConstant"] = channel_source(
+            "Emission Strength",
+        )
+    elif kind == "normal":
+        sources["normal"], _ = channel_source("Normal")
+    else:
+        raise MaterialCompileError(f"unsupported channel bake kind {kind!r}")
+
+    for output in [
+        item for item in tree.nodes
+        if item.bl_idname == "ShaderNodeOutputMaterial"
+    ]:
+        tree.nodes.remove(output)
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    output.name = "BLENDLINK_PRIVATE_CHANNEL_OUTPUT"
+    if hasattr(output, "is_active_output"):
+        output.is_active_output = True
+
+    if kind == "normal":
+        if sources["normal"] is None:
+            raise MaterialCompileError(
+                f'Channel bake for "{decision.material_name}" has no linked '
+                "Normal input."
+            )
+        sink = tree.nodes.new("ShaderNodeBsdfPrincipled")
+        sink.name = "BLENDLINK_PRIVATE_CHANNEL_NORMAL_SINK"
+        tree.links.new(sources["normal"], sink.inputs["Normal"])
+        tree.links.new(sink.outputs["BSDF"], output.inputs["Surface"])
+        return material
+
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.name = "BLENDLINK_PRIVATE_CHANNEL_EMIT"
+    emission.inputs["Strength"].default_value = 1.0
+    if kind == "emission":
+        if sources["color"] is not None:
+            tree.links.new(sources["color"], emission.inputs["Color"])
+        elif sources["colorConstant"] is not None:
+            emission.inputs["Color"].default_value = tuple(
+                sources["colorConstant"],
+            )
+        if sources["strength"] is not None:
+            tree.links.new(sources["strength"], emission.inputs["Strength"])
+        elif sources["strengthConstant"] is not None:
+            emission.inputs["Strength"].default_value = float(
+                sources["strengthConstant"],
+            )
+    else:
+        key = "color" if kind == "baseColor" else "value"
+        if sources[key] is None:
+            raise MaterialCompileError(
+                f'Channel bake for "{decision.material_name}" has no linked '
+                f"{kind} input."
+            )
+        tree.links.new(sources[key], emission.inputs["Color"])
+    tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+    return material
+
+
 def plan_materials(objects, *, purpose: str = "inspect") -> MaterialPlan:
     """Plan every used material binding in an already resolved export scope."""
     if purpose not in {"inspect", "preview", "final"}:
@@ -2593,6 +3214,7 @@ def _variant_key(decision: MaterialDecision, binding: MaterialBinding) -> str:
         "materializationPlan": binding.materialization_plan,
         "uvName": binding.uv_name,
         "uvIndex": binding.uv_index,
+        "channelPlan": decision.channel_plan,
     }, sort_keys=True, separators=(",", ":"))
 
 
@@ -3451,6 +4073,156 @@ def _buffer_view_payload(document: dict, binary: bytes, view_index: int) -> byte
     return binary[offset:offset + length]
 
 
+def _attest_material_bake_texture(
+    document: dict,
+    binary: bytes,
+    fact: dict,
+    texture_info,
+    image_fact: dict,
+    channel: str,
+) -> dict:
+    """One channel texture: embedded bytes, MIME, dimensions, sampler wrap."""
+    if not isinstance(texture_info, dict):
+        raise MaterialCompileError(
+            f'Material output mismatch for "{fact["source"]}": the baked '
+            f"{channel} channel did not emit its texture slot."
+        )
+    textures = document.get("textures") or []
+    texture_index = int(texture_info.get("index", -1))
+    if not (0 <= texture_index < len(textures)):
+        raise MaterialCompileError(
+            f'Material output mismatch for "{fact["source"]}": {channel} '
+            "texture is absent."
+        )
+    texture = textures[texture_index]
+    images = document.get("images") or []
+    image_index = int(texture.get("source", -1))
+    if not (0 <= image_index < len(images)):
+        raise MaterialCompileError(
+            f'Material output mismatch for "{fact["source"]}": {channel} '
+            "texture source image is absent."
+        )
+    image = images[image_index]
+    if image.get("uri") is not None or image.get("bufferView") is None:
+        raise MaterialCompileError(
+            f'Material output mismatch for "{fact["source"]}": the baked '
+            f"{channel} image is not embedded in the GLB."
+        )
+    payload = _buffer_view_payload(document, binary, int(image["bufferView"]))
+    actual_hash = hashlib.sha256(payload).hexdigest()
+    if image.get("mimeType") != image_fact["mime"] \
+            or actual_hash != image_fact["sha256"]:
+        raise MaterialCompileError(
+            f'Material output mismatch for "{fact["source"]}": baked '
+            f"{channel} image bytes or MIME changed (got "
+            f'{image.get("mimeType")!r}/{actual_hash}, expected '
+            f'{image_fact["mime"]!r}/{image_fact["sha256"]}).'
+        )
+    encoded = _encoded_image_info(payload)
+    if encoded != (
+        image_fact["mime"], image_fact["width"], image_fact["height"],
+    ):
+        raise MaterialCompileError(
+            f'Material output mismatch for "{fact["source"]}": baked '
+            f"{channel} image dimensions changed from "
+            f"{image_fact['width']}x{image_fact['height']}."
+        )
+    samplers = document.get("samplers") or []
+    sampler = {}
+    if texture.get("sampler") is not None:
+        sampler_index = int(texture["sampler"])
+        if 0 <= sampler_index < len(samplers):
+            sampler = samplers[sampler_index]
+    expected_wrap = 33071 if image_fact.get("uv") == "unique" else 10497
+    actual_wrap = (
+        int(sampler.get("wrapS", 10497)), int(sampler.get("wrapT", 10497)),
+    )
+    if actual_wrap != (expected_wrap, expected_wrap):
+        raise MaterialCompileError(
+            f'Material output mismatch for "{fact["source"]}": baked '
+            f"{channel} sampler wrap {actual_wrap!r} does not match the "
+            f'{image_fact.get("uv")} route.'
+        )
+    return {
+        "textureIndex": texture_index,
+        "imageSha256": actual_hash,
+        "imageMime": image.get("mimeType"),
+        "imageWidth": image_fact["width"],
+        "imageHeight": image_fact["height"],
+        "texCoord": int(texture_info.get("texCoord", 0)),
+        "wrap": expected_wrap,
+    }
+
+
+def _attest_material_bake_channels(
+    document: dict,
+    binary: bytes,
+    pbr: dict,
+    emitted: dict,
+    fact: dict,
+) -> dict:
+    """Per-channel texture attestation for one material-bake carrier."""
+    bake = fact.get("materialBake") or {}
+    planned = bake.get("images") or {}
+    channel_evidence = {}
+
+    slots = {
+        "baseColor": pbr.get("baseColorTexture"),
+        "orm": pbr.get("metallicRoughnessTexture"),
+        "normal": emitted.get("normalTexture"),
+        "emissive": emitted.get("emissiveTexture"),
+    }
+    for kind, texture_info in slots.items():
+        image_fact = planned.get(kind)
+        if image_fact is None:
+            if texture_info is not None:
+                raise MaterialCompileError(
+                    f'Material output mismatch for "{fact["source"]}": an '
+                    f"unplanned {kind} texture shipped."
+                )
+            continue
+        channel_evidence[kind] = _attest_material_bake_texture(
+            document, binary, fact, texture_info, image_fact, kind,
+        )
+    if emitted.get("occlusionTexture") is not None:
+        raise MaterialCompileError(
+            f'Material output mismatch for "{fact["source"]}": an unplanned '
+            "occlusion texture shipped."
+        )
+    emissive_fact = planned.get("emissive")
+    if emissive_fact is not None:
+        emitted_factor = tuple(emitted.get("emissiveFactor", (0.0, 0.0, 0.0)))
+        if not _close_vector(emitted_factor, (1.0, 1.0, 1.0), 1e-6):
+            raise MaterialCompileError(
+                f'Material output mismatch for "{fact["source"]}": baked '
+                f"emissive factor {emitted_factor!r} is not the identity."
+            )
+        strength = float(emissive_fact.get("strength", 1.0))
+        extensions = emitted.get("extensions") or {}
+        emitted_strength = float(
+            (extensions.get("KHR_materials_emissive_strength") or {}).get(
+                "emissiveStrength", 1.0,
+            ),
+        )
+        if abs(emitted_strength - strength) > 1e-4:
+            raise MaterialCompileError(
+                f'Material output mismatch for "{fact["source"]}": '
+                f"KHR_materials_emissive_strength {emitted_strength!r} does "
+                f"not match the normalized bake peak {strength!r}."
+            )
+        channel_evidence["emissive"]["emissiveStrength"] = emitted_strength
+    return {
+        "materialBake": {
+            "channels": bake.get("channels"),
+            "gates": bake.get("gates"),
+            "textures": channel_evidence,
+            **({
+                "uvEvidence": bake["uvEvidence"],
+            } if bake.get("uvEvidence") else {}),
+        },
+    }
+
+
 def _attest_image_transport(
     document: dict,
     binary: bytes,
@@ -4013,6 +4785,10 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
             image_evidence = _attest_image_transport(
                 document, binary, pbr, emitted, fact, primitive_entries, uvs_by_mesh,
             )
+        elif fact["transport"] == "channels":
+            image_evidence = _attest_material_bake_channels(
+                document, binary, pbr, emitted, fact,
+            )
         elif pbr.get("baseColorTexture") is not None:
             raise MaterialCompileError(
                 f'Material output mismatch for "{fact["source"]}": direct selected field '
@@ -4240,6 +5016,484 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
     return tuple(evidence)
 
 
+_CHANNEL_KIND_BY_NAME = {
+    "Base Color": "baseColor",
+    "Alpha": "alpha",
+    "Metallic": "metallic",
+    "Roughness": "roughness",
+    "Emission": "emission",
+    "Normal": "normal",
+}
+
+
+def _bake_material_channels(
+    decision: MaterialDecision,
+    binding: MaterialBinding,
+    obj,
+    temporary_directory: str,
+    created_materials: list,
+    created_images: list,
+    log=print,
+) -> dict:
+    """Execute every planned channel bake for one variant.
+
+    Gates per baked channel: an exact same-resolution determinism re-bake,
+    and — for tiling past 0..1 — the integer-window wrap probe that refuses
+    a graph that is not period-1 instead of publishing a wrong repeat.
+    """
+    plan = decision.channel_plan or {}
+    records = {
+        item["channel"]: item
+        for item in plan.get("channels", ())
+    }
+    token = hashlib.sha256(
+        _variant_key(decision, binding).encode("utf8")
+    ).hexdigest()[:12]
+    wrap_window = plan.get("wrapGateWindow")
+    uv_evidence = None
+    gates = {}
+
+    def ensure_unique_uv():
+        nonlocal uv_evidence
+        if uv_evidence is None:
+            if binding.materialization_plan is None:
+                raise MaterialCompileError(
+                    f'Material bake binding {binding.object_name}'
+                    f"[{binding.slot_index}] has no resolution plan."
+                )
+            uv_evidence = bakelib.prepare_material_texture_uv(
+                obj, binding.materialization_plan,
+            )
+            bpy.context.view_layer.update()
+        return uv_evidence
+
+    def bake_once(record, bake_material, resolution, *, allow_hdr):
+        label = (
+            f'{decision.material_name} {record["channel"]} channel'
+        )
+        if record.get("uv") == "unique":
+            evidence = ensure_unique_uv()
+            slot = obj.material_slots[binding.slot_index]
+            slot.link = "DATA"
+            slot.material = bake_material
+            receivers = [obj]
+            margin = int(evidence["margin"])
+            uv_layer = str(evidence["uvName"])
+            proxy = None
+        else:
+            proxy = bakelib.uv_tile_proxy(
+                record.get("uvMaps") or [],
+                window=(0.0, 0.0, 1.0, 1.0),
+            )
+            proxy.data.materials.append(bake_material)
+            receivers = [proxy]
+            margin = 0
+            uv_layer = "BLENDLINK_TILE_BAKE"
+        try:
+            def run(size, window=None):
+                targets = receivers
+                window_proxy = None
+                if window is not None:
+                    window_proxy = bakelib.uv_tile_proxy(
+                        record.get("uvMaps") or [],
+                        window=window,
+                    )
+                    window_proxy.data.materials.append(bake_material)
+                    targets = [window_proxy]
+                try:
+                    if record.get("pass") == "NORMAL":
+                        return bakelib.bake_tangent_normal_field_pixels(
+                            targets, size=size, margin_px=margin,
+                            uv_layer=uv_layer, label=label, log=log,
+                        )
+                    return bakelib.bake_channel_field_pixels(
+                        targets, size=size, margin_px=margin,
+                        uv_layer=uv_layer, label=label,
+                        allow_hdr=allow_hdr, log=log,
+                    )
+                finally:
+                    if window_proxy is not None:
+                        bakelib.remove_uv_tile_proxy(window_proxy)
+
+            main = run(resolution)
+            repeat = run(resolution)
+            determinism = _channel_probe_stats(
+                main["pixels"], repeat["pixels"],
+            )
+            if determinism["maxAbs"] > 1.0e-5:
+                raise MaterialCompileError(
+                    f"{label}: two identical bakes disagreed by "
+                    f"{determinism['maxAbs']:.6g}; the channel bake is not "
+                    "deterministic and cannot be attested."
+                )
+            channel_gates = {"determinism": determinism}
+            if record.get("uv") == "tile" and record.get("wrapGate") \
+                    and wrap_window and record.get("pass") != "NORMAL":
+                probe = run(resolution, window=tuple(wrap_window))
+                wrap = _channel_probe_stats(main["pixels"], probe["pixels"])
+                channel_gates["wrap"] = wrap
+                if wrap["meanAbs"] > 1.0e-3 or wrap["p99Abs"] > 0.02:
+                    raise MaterialCompileError(
+                        f"{label}: this UV-driven graph is not period-1 — "
+                        f"the {tuple(wrap_window)!r} UV window differs from "
+                        f"the 0..1 tile (mean {wrap['meanAbs']:.4g}, p99 "
+                        f"{wrap['p99Abs']:.4g}). One repeated tile would "
+                        "publish a wrong pattern. Make the channel repeat "
+                        "with period one (Blender's default Brick randomizes "
+                        "per-brick colors, for example), keep the object "
+                        "Realtime, or use an Appearance bake."
+                    )
+            gates[record["channel"]] = channel_gates
+            return main
+        finally:
+            if proxy is not None:
+                bakelib.remove_uv_tile_proxy(proxy)
+
+    def resolution_of(record):
+        if record.get("uv") == "unique":
+            return int(ensure_unique_uv()["resolution"])
+        return int(record["resolution"])
+
+    import numpy as np
+
+    images = {}
+
+    def load_image(saved, image_kind, colorspace):
+        try:
+            image = bpy.data.images.load(saved["path"], check_existing=False)
+        except (OSError, RuntimeError) as error:
+            raise MaterialCompileError(
+                f'Cannot load the baked {image_kind} channel PNG for '
+                f'"{decision.material_name}": {error}'
+            ) from error
+        created_images.append(image)
+        image.name = f"BLENDLINK_WEB_CHANNEL.{token}.{image_kind}"
+        image.colorspace_settings.name = (
+            "sRGB" if colorspace == "srgb" else "Non-Color"
+        )
+        image.alpha_mode = "STRAIGHT"
+        return image
+
+    base_record = records.get("Base Color")
+    alpha_record = records.get("Alpha")
+    alpha_baked = alpha_record is not None and alpha_record.get("route") == "bake"
+    base_baked = base_record is not None and base_record.get("route") == "bake"
+    carrier_record = (
+        base_record if base_baked
+        else alpha_record if alpha_baked else None
+    )
+    if base_baked or alpha_baked:
+        carrier_resolution = resolution_of(carrier_record)
+        if base_baked:
+            base_material = _material_bake_channel_material(
+                decision, "baseColor", created_materials,
+            )
+            base_result = bake_once(
+                base_record, base_material, carrier_resolution,
+                allow_hdr=False,
+            )
+            rgb = base_result["pixels"]
+            coverage = base_result["coverage"]
+        else:
+            constant = records["Base Color"].get("value") \
+                if records.get("Base Color") else None
+            fill = (
+                tuple(float(item) for item in constant[:3])
+                if isinstance(constant, (list, tuple)) else (1.0, 1.0, 1.0)
+            )
+            rgb = np.empty(
+                (carrier_resolution, carrier_resolution, 3), dtype=np.float32,
+            )
+            rgb[:, :, 0] = fill[0]
+            rgb[:, :, 1] = fill[1]
+            rgb[:, :, 2] = fill[2]
+            coverage = None
+        alpha_plane = None
+        if alpha_baked:
+            alpha_material = _material_bake_channel_material(
+                decision, "alpha", created_materials,
+            )
+            alpha_result = bake_once(
+                alpha_record, alpha_material, carrier_resolution,
+                allow_hdr=False,
+            )
+            alpha_plane = alpha_result["pixels"][:, :, 0]
+            if coverage is None:
+                coverage = alpha_result["coverage"]
+        if coverage is None:
+            raise MaterialCompileError(
+                f'Base colour carrier for "{decision.material_name}" has no '
+                "bake coverage."
+            )
+        saved = bakelib.save_channel_png(
+            rgb, coverage,
+            os.path.join(temporary_directory, f"channel-{token}-base.png"),
+            colorspace="srgb", alpha=alpha_plane,
+            label=f"{decision.material_name} base colour carrier",
+        )
+        images["baseColor"] = {
+            "saved": saved,
+            "image": load_image(saved, "baseColor", "srgb"),
+            "uv": carrier_record.get("uv"),
+            "uvMaps": carrier_record.get("uvMaps") or [],
+            "hasAlpha": alpha_plane is not None,
+        }
+
+    orm_records = [
+        records[name] for name in ("Metallic", "Roughness")
+        if name in records and records[name].get("route") == "bake"
+    ]
+    if orm_records:
+        orm_resolution = resolution_of(orm_records[0])
+        planes = {}
+        coverage = None
+        for record in orm_records:
+            kind = _CHANNEL_KIND_BY_NAME[record["channel"]]
+            bake_material = _material_bake_channel_material(
+                decision, kind, created_materials,
+            )
+            result = bake_once(
+                record, bake_material, orm_resolution, allow_hdr=False,
+            )
+            planes[record["channel"]] = result["pixels"][:, :, 0]
+            coverage = result["coverage"]
+        packed = bakelib.compose_channel_pack_pixels(
+            orm_resolution,
+            green=planes.get("Roughness"),
+            blue=planes.get("Metallic"),
+        )
+        saved = bakelib.save_channel_png(
+            packed, coverage,
+            os.path.join(temporary_directory, f"channel-{token}-orm.png"),
+            colorspace="data",
+            label=f"{decision.material_name} ORM pack",
+        )
+        images["orm"] = {
+            "saved": saved,
+            "image": load_image(saved, "orm", "data"),
+            "uv": orm_records[0].get("uv"),
+            "uvMaps": orm_records[0].get("uvMaps") or [],
+            "bakedChannels": sorted(planes),
+        }
+
+    emission_record = records.get("Emission")
+    if emission_record is not None and emission_record.get("route") == "bake":
+        emission_material = _material_bake_channel_material(
+            decision, "emission", created_materials,
+        )
+        resolution = resolution_of(emission_record)
+        result = bake_once(
+            emission_record, emission_material, resolution, allow_hdr=True,
+        )
+        pixels = result["pixels"]
+        strength = 1.0
+        peak = float(max(result["rgbMax"]))
+        if peak > 1.0 + 1.0e-6:
+            strength = peak
+            pixels = pixels / strength
+        saved = bakelib.save_channel_png(
+            pixels, result["coverage"],
+            os.path.join(temporary_directory, f"channel-{token}-emissive.png"),
+            colorspace="srgb",
+            label=f"{decision.material_name} emissive channel",
+        )
+        images["emissive"] = {
+            "saved": saved,
+            "image": load_image(saved, "emissive", "srgb"),
+            "uv": emission_record.get("uv"),
+            "uvMaps": emission_record.get("uvMaps") or [],
+            "strength": strength,
+        }
+
+    normal_record = records.get("Normal")
+    if normal_record is not None and normal_record.get("route") == "bake":
+        normal_material = _material_bake_channel_material(
+            decision, "normal", created_materials,
+        )
+        resolution = resolution_of(normal_record)
+        result = bake_once(
+            normal_record, normal_material, resolution, allow_hdr=False,
+        )
+        saved = bakelib.save_channel_png(
+            result["pixels"], result["coverage"],
+            os.path.join(temporary_directory, f"channel-{token}-normal.png"),
+            colorspace="data",
+            label=f"{decision.material_name} normal channel",
+        )
+        images["normal"] = {
+            "saved": saved,
+            "image": load_image(saved, "normal", "data"),
+            "uv": normal_record.get("uv"),
+            "uvMaps": normal_record.get("uvMaps") or [],
+        }
+
+    return {
+        "token": token,
+        "images": images,
+        "gates": gates,
+        "uvEvidence": uv_evidence,
+    }
+
+
+def _generated_material_bake(
+    decision: MaterialDecision,
+    binding: MaterialBinding,
+    created_materials: list,
+    products: dict,
+):
+    """Ordinary lit glTF pbrMetallicRoughness from the channel products,
+    wired in the stock exporter's recognized arrangements."""
+    variant = _variant_key(decision, binding)
+    token = hashlib.sha256(variant.encode("utf8")).hexdigest()[:10]
+    source_material = bpy.data.materials.get(decision.material_name)
+    if source_material is None:
+        raise MaterialCompileError(
+            f'Material plan for "{decision.material_name}" no longer resolves.'
+        )
+    plan_records = {
+        item["channel"]: item
+        for item in (decision.channel_plan or {}).get("channels", ())
+    }
+    generated = bpy.data.materials.new(
+        f"{GENERATED_MATERIAL_PREFIX}{token}.{decision.material_name}"
+    )
+    created_materials.append(generated)
+    tree = bakelib.ensure_shader_node_tree(generated)
+    generated["blendlink_source_material"] = decision.material_name
+    generated["blendlink_material_rule"] = MATERIAL_BAKE_RULE
+    generated["blendlink_material_variant"] = token
+    for setting in (
+        "diffuse_color", "use_backface_culling", "alpha_threshold",
+        "use_transparency_overlap", "surface_render_method", "blend_method",
+    ):
+        _copy_material_setting(source_material, generated, setting)
+    tree.nodes.clear()
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    principled = tree.nodes.new("ShaderNodeBsdfPrincipled")
+    tree.links.new(principled.outputs["BSDF"], output.inputs["Surface"])
+
+    def image_node(entry, name):
+        node = tree.nodes.new("ShaderNodeTexImage")
+        node.name = name
+        node.image = entry["image"]
+        node.interpolation = "Linear"
+        node.projection = "FLAT"
+        if entry.get("uv") == "unique":
+            node.extension = "EXTEND"
+            uv_name = products["uvEvidence"]["uvName"] \
+                if products.get("uvEvidence") else None
+        else:
+            node.extension = "REPEAT"
+            uv_maps = entry.get("uvMaps") or []
+            uv_name = uv_maps[0] if uv_maps else None
+        if uv_name:
+            uv_node = tree.nodes.new("ShaderNodeUVMap")
+            uv_node.uv_map = str(uv_name)
+            tree.links.new(uv_node.outputs["UV"], node.inputs["Vector"])
+        return node
+
+    images = products.get("images", {})
+    uses_alpha = False
+
+    base_entry = images.get("baseColor")
+    if base_entry is not None:
+        node = image_node(base_entry, "BLENDLINK_CHANNEL_BASE")
+        tree.links.new(node.outputs["Color"], principled.inputs["Base Color"])
+        if base_entry.get("hasAlpha"):
+            tree.links.new(node.outputs["Alpha"], principled.inputs["Alpha"])
+            uses_alpha = True
+    else:
+        base_record = plan_records.get("Base Color")
+        if base_record is not None and base_record.get("route") == "factor":
+            value = base_record.get("value")
+            if isinstance(value, (list, tuple)) and len(value) >= 3:
+                principled.inputs["Base Color"].default_value = (
+                    float(value[0]), float(value[1]), float(value[2]),
+                    float(value[3]) if len(value) > 3 else 1.0,
+                )
+    alpha_record = plan_records.get("Alpha")
+    if alpha_record is not None and alpha_record.get("route") == "factor":
+        alpha_value = float(alpha_record.get("value") or 1.0)
+        if alpha_value < 1.0 - 1e-9:
+            principled.inputs["Alpha"].default_value = alpha_value
+            uses_alpha = True
+
+    orm_entry = images.get("orm")
+    if orm_entry is not None:
+        node = image_node(orm_entry, "BLENDLINK_CHANNEL_ORM")
+        separate = tree.nodes.new("ShaderNodeSeparateColor")
+        separate.mode = "RGB"
+        tree.links.new(node.outputs["Color"], separate.inputs["Color"])
+        baked = set(orm_entry.get("bakedChannels") or ())
+        if "Roughness" in baked:
+            tree.links.new(
+                separate.outputs["Green"], principled.inputs["Roughness"],
+            )
+        if "Metallic" in baked:
+            tree.links.new(
+                separate.outputs["Blue"], principled.inputs["Metallic"],
+            )
+    for channel_name, input_name in (
+        ("Metallic", "Metallic"), ("Roughness", "Roughness"),
+    ):
+        record = plan_records.get(channel_name)
+        if record is not None and record.get("route") == "factor":
+            value = record.get("value")
+            if isinstance(value, (int, float)):
+                principled.inputs[input_name].default_value = float(value)
+
+    emissive_entry = images.get("emissive")
+    if emissive_entry is not None:
+        node = image_node(emissive_entry, "BLENDLINK_CHANNEL_EMISSIVE")
+        tree.links.new(
+            node.outputs["Color"], principled.inputs["Emission Color"],
+        )
+        principled.inputs["Emission Strength"].default_value = float(
+            emissive_entry.get("strength", 1.0),
+        )
+    else:
+        record = plan_records.get("Emission")
+        if record is not None and record.get("route") == "factor":
+            value = record.get("value")
+            if isinstance(value, (list, tuple)) and len(value) >= 3:
+                principled.inputs["Emission Color"].default_value = (
+                    float(value[0]), float(value[1]), float(value[2]),
+                    float(value[3]) if len(value) > 3 else 1.0,
+                )
+            strength = record.get("strength")
+            if isinstance(strength, (int, float)):
+                principled.inputs["Emission Strength"].default_value = float(
+                    strength,
+                )
+
+    normal_entry = images.get("normal")
+    if normal_entry is not None:
+        node = image_node(normal_entry, "BLENDLINK_CHANNEL_NORMAL")
+        normal_map = tree.nodes.new("ShaderNodeNormalMap")
+        normal_map.inputs["Strength"].default_value = 1.0
+        if normal_entry.get("uv") == "unique" and products.get("uvEvidence"):
+            normal_map.uv_map = str(products["uvEvidence"]["uvName"])
+        elif normal_entry.get("uvMaps"):
+            normal_map.uv_map = str(normal_entry["uvMaps"][0])
+        tree.links.new(node.outputs["Color"], normal_map.inputs["Color"])
+        tree.links.new(
+            normal_map.outputs["Normal"], principled.inputs["Normal"],
+        )
+
+    if uses_alpha:
+        if hasattr(generated, "surface_render_method"):
+            try:
+                generated.surface_render_method = "DITHERED"
+            except (TypeError, ValueError) as error:
+                raise MaterialCompileError(
+                    f'Cannot configure alpha blending for generated material '
+                    f'"{generated.name}": {error}'
+                ) from error
+        elif hasattr(generated, "blend_method"):
+            generated.blend_method = "BLEND"
+    return generated
+
+
 def with_compiled_materials(
     plan: MaterialPlan,
     output_glb: str,
@@ -4363,6 +5617,7 @@ def with_compiled_materials(
                     ) from error
                 swap["objects"].append(object_name)
 
+        material_bake_products = {}
         for entry in binding_entries:
             decision = entry["decision"]
             binding = entry["binding"]
@@ -4372,6 +5627,166 @@ def with_compiled_materials(
                     f'Material binding {binding.object_name}[{binding.slot_index}] disappeared during installation.'
                 )
             binding_key = (binding.object_name, binding.slot_index)
+            if decision.intent == "materialBake":
+                if temporary_directory is None:
+                    temporary_directory = tempfile.TemporaryDirectory(
+                        prefix="blendlink-material-bake-",
+                    )
+                variant = _variant_key(decision, binding)
+                if binding_key not in installed_binding_keys:
+                    installed_bindings.append(entry)
+                    installed_binding_keys.add(binding_key)
+                products = material_bake_products.get(variant)
+                if products is None:
+                    try:
+                        products = _bake_material_channels(
+                            decision, binding, obj,
+                            temporary_directory.name,
+                            created_materials, created_images,
+                        )
+                    except (OSError, RuntimeError, TypeError, ValueError) as error:
+                        raise MaterialCompileError(
+                            f'Material bake failed for '
+                            f'"{decision.material_name}" on '
+                            f'{binding.object_name}[{binding.slot_index}]: '
+                            f"{error}"
+                        ) from error
+                    material_bake_products[variant] = products
+                generated = generated_by_variant.get(variant)
+                if generated is None:
+                    generated = _generated_material_bake(
+                        decision, binding, created_materials, products,
+                    )
+                    generated_by_variant[variant] = generated
+                    plan_records = {
+                        item["channel"]: item
+                        for item in (decision.channel_plan or {}).get(
+                            "channels", (),
+                        )
+                    }
+                    base_record = plan_records.get("Base Color")
+                    alpha_record = plan_records.get("Alpha")
+                    alpha_factor = (
+                        float(alpha_record.get("value") or 1.0)
+                        if alpha_record is not None
+                        and alpha_record.get("route") == "factor" else 1.0
+                    )
+                    has_base_image = "baseColor" in products["images"]
+                    base_factor = (1.0, 1.0, 1.0)
+                    if not has_base_image and base_record is not None \
+                            and base_record.get("route") == "factor":
+                        value = base_record.get("value")
+                        if isinstance(value, (list, tuple)) and len(value) >= 3:
+                            base_factor = tuple(
+                                float(item) for item in value[:3]
+                            )
+                    metallic_factor = 1.0 if "orm" in products["images"] and \
+                        "Metallic" in (
+                            products["images"]["orm"].get("bakedChannels") or ()
+                        ) else 0.0
+                    roughness_factor = 1.0 if "orm" in products["images"] and \
+                        "Roughness" in (
+                            products["images"]["orm"].get("bakedChannels") or ()
+                        ) else 0.5
+                    for name, key in (
+                        ("Metallic", "metallic"), ("Roughness", "roughness"),
+                    ):
+                        record = plan_records.get(name)
+                        if record is not None \
+                                and record.get("route") == "factor" \
+                                and isinstance(
+                                    record.get("value"), (int, float),
+                                ):
+                            if name == "Metallic":
+                                metallic_factor = float(record["value"])
+                            else:
+                                roughness_factor = float(record["value"])
+                    generated_facts[generated.name] = {
+                        "source": decision.material_name,
+                        "rule": generated.get("blendlink_material_rule"),
+                        "variant": generated.get("blendlink_material_variant"),
+                        "transport": "channels",
+                        "surfaceResponse": "lit",
+                        "metallicFactor": metallic_factor,
+                        "roughnessFactor": roughness_factor,
+                        "usesAlpha": binding.alpha_mode != "OPAQUE",
+                        "alphaMode": binding.alpha_mode,
+                        "baseColorFactor": tuple(base_factor) + (
+                            alpha_factor if not products["images"].get(
+                                "baseColor", {},
+                            ).get("hasAlpha") else 1.0,
+                        ),
+                        "doubleSided": not bool(
+                            entry["source"].use_backface_culling,
+                        ),
+                        "carrierSemantic": None,
+                        "color0Type": None,
+                        "image": None,
+                        "texCoord": None,
+                        "surfaceFactorization": None,
+                        "emissiveImage": None,
+                        "emissiveTexCoord": None,
+                        "emissiveFactor": None,
+                        "materialization": None,
+                        "materializationEvidence": None,
+                        "materialBake": {
+                            "channels": [
+                                dict(item) for item in
+                                (decision.channel_plan or {}).get(
+                                    "channels", (),
+                                )
+                            ],
+                            "gates": products["gates"],
+                            "images": {
+                                kind: {
+                                    "sha256": item["saved"]["sha256"],
+                                    "mime": item["saved"]["mime"],
+                                    "width": item["saved"]["width"],
+                                    "height": item["saved"]["height"],
+                                    "colorspace": item["saved"]["colorspace"],
+                                    "hasAlpha": bool(
+                                        item["saved"].get("hasAlpha"),
+                                    ),
+                                    "uv": item.get("uv"),
+                                    **({
+                                        "strength": item["strength"],
+                                    } if "strength" in item else {}),
+                                }
+                                for kind, item in products["images"].items()
+                            },
+                            **({
+                                "uvEvidence": {
+                                    "uvName": products["uvEvidence"]["uvName"],
+                                    "resolution": products["uvEvidence"][
+                                        "resolution"
+                                    ],
+                                    "margin": products["uvEvidence"]["margin"],
+                                    "uvStrategy": products["uvEvidence"][
+                                        "uvStrategy"
+                                    ],
+                                    "densityMet": products["uvEvidence"][
+                                        "densityMet"
+                                    ],
+                                },
+                            } if products.get("uvEvidence") else {}),
+                        },
+                        "bindings": set(),
+                        "bindingRanges": {},
+                        "bindingUvs": {},
+                    }
+                fact = generated_facts[generated.name]
+                fact["bindings"].add(binding_key)
+                slot = obj.material_slots[binding.slot_index]
+                try:
+                    slot.link = "DATA"
+                    slot.material = generated
+                except (AttributeError, ReferenceError, RuntimeError,
+                        TypeError) as error:
+                    raise MaterialCompileError(
+                        f'Cannot install the private website material on '
+                        f'{binding.object_name}[{binding.slot_index}]: {error}'
+                    ) from error
+                continue
             materialization = None
             if decision.color is not None \
                     and decision.color.kind == "materialized":

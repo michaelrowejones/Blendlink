@@ -108,12 +108,14 @@ export interface MaterialPortabilityDiagnostic {
   }
   /** Explicit, material-local website field selection. `lowered` means the
    * Python compiler will replace only this export binding with an attested
-   * stock glTF material; it does not claim full-surface shader parity. */
+   * stock glTF material; it does not claim full-surface shader parity.
+   * `materialBake` intent (MTL-BAKE-001) carries every Principled channel
+   * per its own route instead of one selected field. */
   materialCompilation?: {
-    intent: 'automatic' | 'webColor'
+    intent: 'automatic' | 'webColor' | 'materialBake'
     outcome: 'preserved' | 'lowered' | 'blocked'
-    fidelity: 'full-surface' | 'selected-field'
-    transport?: 'stock' | 'factor' | 'vertexColor' | 'image'
+    fidelity: 'full-surface' | 'selected-field' | 'per-channel'
+    transport?: 'stock' | 'factor' | 'vertexColor' | 'image' | 'channels'
     surfaceResponse?: 'lit' | 'unlit'
     colorSource?: {
       node: string
@@ -131,10 +133,37 @@ export interface MaterialPortabilityDiagnostic {
       fix: string
       objects: string[]
     }>
+    /** MTL-BAKE-001 per-channel plan for `materialBake` intent: every
+     * Principled channel's resolved route, visible even when blocked. */
+    channels?: MaterialChannelPlanDiagnostic
   }
   /** MTL-UV-002 per-channel coordinate-space routing. Additive: absent for
    * pre-channel producers and for materials without an active surface. */
   channels?: MaterialChannelRoutingDiagnostic
+}
+
+/** One channel's resolved Material-bake route. `factor-over-carrier` is a
+ * constant base colour filled into the RGBA carrier a baked alpha needs. */
+export interface MaterialChannelPlanEntry {
+  channel: string
+  route: 'factor' | 'factor-over-carrier' | 'passthrough' | 'bake' | 'refused'
+  uv?: 'tile' | 'unique'
+  resolution?: number | 'per-binding'
+  colorspace?: 'srgb' | 'data'
+  pass?: 'EMIT' | 'NORMAL'
+  pack?: string
+  wrapGate?: boolean
+  uvMaps?: string[]
+  usesActiveUv?: boolean
+  value?: number | number[] | null
+  strength?: number | null
+  reasons?: string[]
+}
+
+export interface MaterialChannelPlanDiagnostic {
+  model: string
+  channels: MaterialChannelPlanEntry[]
+  wrapGateWindow?: number[]
 }
 
 /** One Principled input's coordinate-space routing. `tileable` is a

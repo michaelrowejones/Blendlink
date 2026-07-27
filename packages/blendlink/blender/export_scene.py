@@ -4963,12 +4963,15 @@ def plan_export_materials(
             "Website material compilation blocked:\n"
             + material_compiler.format_plan_errors(material_plan)
         )
-    if any(decision.transport == "image" for decision in material_plan.lowerings) \
-            and export_kwargs.get("export_image_format", "AUTO") != "AUTO":
+    if any(
+        decision.transport in {"image", "channels"}
+        for decision in material_plan.lowerings
+    ) and export_kwargs.get("export_image_format", "AUTO") != "AUTO":
         raise SystemExit(
             "Website material compilation blocked:\n  - Direct Image Texture Website "
-            "Color requires Blender's AUTO image format so the selected PNG/JPEG bytes "
-            "can be attested exactly. Remove the imageFormat override or clear the selection."
+            "Color and the per-channel Material bake require Blender's AUTO image "
+            "format so the attested PNG/JPEG bytes ship exactly. Remove the "
+            "imageFormat override or clear the selection."
         )
     return material_plan, export_objects
 
