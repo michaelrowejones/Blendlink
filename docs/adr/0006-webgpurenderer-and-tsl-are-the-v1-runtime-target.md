@@ -47,8 +47,11 @@ application's renderer construction — and Blendlink generates that integration
   replacement pipeline (three's TSL node post-processing, a ported library,
   or per-effect rewrites), each with pixel evidence against the current
   WebGL output, and the tuned effect-fusion semantics in
-  `ThreePostPipelineService` do not transfer. Phase planning beyond this
-  point is paused until the reshaped scope is agreed.
+  `ThreePostPipelineService` do not transfer. The reshaped replacement plan —
+  three's in-tree TSL display nodes cover 8 of the 11 effects; vignette,
+  tilt-shift, and kuwahara become small Blendlink-owned TSL nodes; N8AO→GTAO
+  is a named look change requiring side-by-side evidence — is recorded in
+  [research-wgpu-post-replacement-2026.md](../research-wgpu-post-replacement-2026.md).
 - The exact `three@0.184.0` pin is re-attested against a faster-moving surface
   than `WebGLRenderer` presented.
 - Every browser gate and visual baseline is re-established against the new
