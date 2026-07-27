@@ -132,6 +132,40 @@ export interface MaterialPortabilityDiagnostic {
       objects: string[]
     }>
   }
+  /** MTL-UV-002 per-channel coordinate-space routing. Additive: absent for
+   * pre-channel producers and for materials without an active surface. */
+  channels?: MaterialChannelRoutingDiagnostic
+}
+
+/** One Principled input's coordinate-space routing. `tileable` is a
+ * structural candidate — numeric channel fidelity at bake time may still
+ * demote a channel whose graph is not period-1 in UV space. */
+export interface MaterialChannelRoutingEntry {
+  channel: string
+  linked: boolean
+  routing:
+    | 'constant'
+    | 'uniform'
+    | 'tileable'
+    | 'unique'
+    | 'viewDependent'
+    | 'sceneDependent'
+    | 'unknown'
+  /** Present only for linked channels. */
+  spaces?: string[]
+  uvMaps?: string[]
+  usesActiveUv?: boolean
+  animated?: boolean
+  reasons?: string[]
+  /** Present only for `constant` routing. */
+  value?: number | number[] | null
+}
+
+export interface MaterialChannelRoutingDiagnostic {
+  model: string
+  surfaceRoot: 'principled' | 'unsupported'
+  reason?: string
+  channels: MaterialChannelRoutingEntry[]
 }
 
 export interface SurfaceFactorizationEvidence {
@@ -1587,6 +1621,22 @@ export function compileSceneDiagnostics(
             cyclesAppearance: {
               ...material.cyclesAppearance,
               blockers: [...material.cyclesAppearance.blockers],
+            },
+          }
+        : {}),
+      ...(material.channels
+        ? {
+            channels: {
+              ...material.channels,
+              channels: material.channels.channels.map((entry) => ({
+                ...entry,
+                ...(entry.spaces ? { spaces: [...entry.spaces] } : {}),
+                ...(entry.uvMaps ? { uvMaps: [...entry.uvMaps] } : {}),
+                ...(entry.reasons ? { reasons: [...entry.reasons] } : {}),
+                ...(Array.isArray(entry.value)
+                  ? { value: [...entry.value] }
+                  : {}),
+              })),
             },
           }
         : {}),

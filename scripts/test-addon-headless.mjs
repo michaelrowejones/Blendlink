@@ -23,6 +23,9 @@ const evaluatedMaterialBindingsTest = join(
 const planMaterialDiagnosticsTest = join(
   root, 'packages', 'blender-addon', 'tests', 'plan_material_diagnostics_check.py',
 )
+const channelRoutingTest = join(
+  root, 'packages', 'blender-addon', 'tests', 'channel_routing_check.py',
+)
 const externalDependencyTest = join(
   root, 'packages', 'blender-addon', 'tests', 'external_dependency_check.py',
 )
@@ -127,6 +130,10 @@ runHeadlessSuite(
 runHeadlessSuite(
   'plan-only material diagnostics contract', planMaterialDiagnosticsTest,
   'BLENDLINK_PLAN_MATERIAL_DIAGNOSTICS_CHECK_PASSED',
+)
+runHeadlessSuite(
+  'per-channel coordinate-space routing contract', channelRoutingTest,
+  'BLENDLINK_CHANNEL_ROUTING_CHECK_PASSED',
 )
 runHeadlessSuite(
   'external dependency reachability contract', externalDependencyTest,

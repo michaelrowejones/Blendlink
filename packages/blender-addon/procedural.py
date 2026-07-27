@@ -785,6 +785,437 @@ def _cycles_appearance_compatibility(nodes):
     }
 
 
+# --- MTL-UV-002: per-channel coordinate-space classification -----------------
+#
+# Portability is a property of a channel, not of a whole material.  These
+# helpers resolve which coordinate spaces feed each Principled input so the
+# Material bake can route every channel independently: a Tileable channel
+# bakes one 0..1 tile and keeps the artist's authored UVs — overlapping
+# islands and tiling past 0..1 stay correct — while a Unique channel needs a
+# non-overlapping unwrap.  The structural result is deliberately a candidate:
+# numeric channel fidelity at bake time may still demote a tileable channel
+# whose graph is not period-1 in UV space.
+
+CHANNEL_ROUTING_MODEL = "principled-channel-routing-v1"
+
+# Principled inputs the Material bake can carry into stock glTF, in report
+# order.  Occlusion has no Principled input; ORM occlusion is composed at
+# bake time.  Tangent has no bakeable carrier and stays with the existing
+# per-socket diagnostics.
+_CHANNEL_ROUTING_INPUTS = (
+    "Base Color", "Metallic", "Roughness", "Alpha",
+    "Emission Color", "Emission Strength", "Normal",
+)
+
+_TEXCOORD_OUTPUT_SPACES = {
+    "Generated": "generated",
+    "Normal": "normal",
+    "UV": "uv",
+    "Object": "object",
+    "Camera": "camera",
+    "Window": "window",
+    "Reflection": "reflection",
+}
+
+_GEOMETRY_OUTPUT_SPACES = {
+    "Position": "position",
+    "Normal": "normal",
+    "Tangent": "tangent",
+    "True Normal": "normal",
+    "Incoming": "incoming",
+    "Parametric": "parametric",
+    "Backfacing": "backfacing",
+    "Pointiness": "pointiness",
+    "Random Per Island": "island",
+}
+
+# Unlinked Vector inputs sample these implicit coordinates.
+_TEXTURE_DEFAULT_SPACES = {
+    "ShaderNodeTexImage": "uv",
+    "ShaderNodeTexBrick": "generated",
+    "ShaderNodeTexChecker": "generated",
+    "ShaderNodeTexGradient": "generated",
+    "ShaderNodeTexMagic": "generated",
+    "ShaderNodeTexNoise": "generated",
+    "ShaderNodeTexVoronoi": "generated",
+    "ShaderNodeTexWave": "generated",
+    "ShaderNodeTexWhiteNoise": "generated",
+    "ShaderNodeTexEnvironment": "reflection",
+}
+
+# A channel touching these spaces changes with the viewer; a baked channel
+# would freeze one view.
+_VIEW_DEPENDENT_SPACES = frozenset({
+    "camera", "window", "reflection", "incoming", "backfacing",
+})
+
+# Stable per surface point, but never reproducible by repeat-wrapping one
+# 0..1 UV tile.
+_UNIQUE_SPACES = frozenset({
+    "generated", "object", "position", "normal", "tangent", "parametric",
+    "pointiness", "island", "attribute", "objectValue",
+})
+
+# Value/color/vector plumbing that contributes no coordinate space of its
+# own.  ShaderNodeMapping transforms its input space instead of defining one.
+_CHANNEL_NEUTRAL_NODES = {
+    "ShaderNodeMath", "ShaderNodeVectorMath", "ShaderNodeMix",
+    "ShaderNodeMixRGB", "ShaderNodeValToRGB", "ShaderNodeRGB",
+    "ShaderNodeValue", "ShaderNodeSeparateColor", "ShaderNodeSeparateRGB",
+    "ShaderNodeSeparateXYZ", "ShaderNodeCombineColor", "ShaderNodeCombineRGB",
+    "ShaderNodeCombineXYZ", "ShaderNodeInvert", "ShaderNodeHueSaturation",
+    "ShaderNodeBrightContrast", "ShaderNodeGamma", "ShaderNodeClamp",
+    "ShaderNodeMapRange", "ShaderNodeRGBCurve", "ShaderNodeVectorCurve",
+    "ShaderNodeFloatCurve", "ShaderNodeMapping", "ShaderNodeVectorRotate",
+    "ShaderNodeBlackbody", "ShaderNodeWavelength", "ShaderNodeRGBToBW",
+    "ShaderNodeNormalMap", "ShaderNodeBump",
+}
+
+# Lighting/scene capture: baking these into a channel input would violate the
+# EMIT-only isolation contract — the runtime would light the result again.
+_CHANNEL_SCENE_NODES = {"ShaderNodeShaderToRGB", "ShaderNodeAmbientOcclusion"}
+
+# View-ray evaluation without a coordinate socket.
+_CHANNEL_VIEW_NODES = {
+    "ShaderNodeCameraData", "ShaderNodeFresnel", "ShaderNodeLayerWeight",
+    "ShaderNodeLightPath",
+}
+
+
+def _matching_socket(sockets, reference):
+    """Find the socket matching another socket's name, then identifier."""
+    named = sockets.get(reference.name)
+    if named is not None:
+        return named
+    identifier = getattr(reference, "identifier", None)
+    return next(
+        (item for item in sockets
+         if item.name == reference.name or item.identifier == identifier),
+        None,
+    )
+
+
+def _walk_channel_upstream(socket):
+    """Return (node, output_socket) pairs feeding one input socket.
+
+    The walk crosses node-group walls in both directions: it enters a group
+    instance through its matching active Group Output and leaves through the
+    instance input feeding a Group Input node.  Reroutes are transparent.
+    Muted nodes are kept — counting a muted texture is conservative, never
+    unsafe.  The walk must start from a socket in the material's root tree so
+    every Group Input has a known enclosing instance.
+    """
+    visited = []
+    seen = set()
+    stack = [
+        (link.from_node, link.from_socket, ())
+        for link in getattr(socket, "links", ())
+    ]
+    while stack:
+        node, from_socket, group_stack = stack.pop()
+        key = (
+            node.as_pointer(),
+            getattr(from_socket, "identifier", from_socket.name),
+            tuple(item.as_pointer() for item in group_stack),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        idname = node.bl_idname
+        if idname == "ShaderNodeGroup":
+            if node.node_tree is None:
+                continue
+            for group_output in node.node_tree.nodes:
+                if group_output.type != "GROUP_OUTPUT" or not getattr(
+                        group_output, "is_active_output", True):
+                    continue
+                target = _matching_socket(group_output.inputs, from_socket)
+                if target is None:
+                    continue
+                stack.extend(
+                    (link.from_node, link.from_socket, group_stack + (node,))
+                    for link in target.links
+                )
+            continue
+        if idname == "NodeGroupInput":
+            if not group_stack:
+                continue
+            instance = group_stack[-1]
+            outer = _matching_socket(instance.inputs, from_socket)
+            if outer is not None:
+                stack.extend(
+                    (link.from_node, link.from_socket, group_stack[:-1])
+                    for link in outer.links
+                )
+            continue
+        if idname == "NodeReroute":
+            stack.extend(
+                (link.from_node, link.from_socket, group_stack)
+                for link in node.inputs[0].links
+            )
+            continue
+        visited.append((node, from_socket))
+        stack.extend(
+            (link.from_node, link.from_socket, group_stack)
+            for input_socket in node.inputs
+            for link in input_socket.links
+        )
+    return visited
+
+
+def _channel_constant_value(socket):
+    default = getattr(socket, "default_value", None)
+    if default is None:
+        return None
+    try:
+        return [round(float(item), 6) for item in default]
+    except TypeError:
+        try:
+            return round(float(default), 6)
+        except (TypeError, ValueError):
+            return None
+
+
+def _classify_channel(name, socket):
+    """One JSON-safe routing record for one Principled input."""
+    if not socket.is_linked:
+        return {
+            "channel": name,
+            "linked": False,
+            "routing": "constant",
+            "value": _channel_constant_value(socket),
+        }
+
+    spaces = set()
+    uv_maps = set()
+    uses_active_uv = False
+    view_reasons = []
+    scene_reasons = []
+    unknown_reasons = []
+    unique_notes = []
+    animated_sources = set()
+
+    visited = _walk_channel_upstream(socket)
+    for node, from_socket in visited:
+        owner = getattr(node, "id_data", None)
+        if owner is not None and _animated_id(owner):
+            animated_sources.add(owner.name)
+        image = getattr(node, "image", None)
+        if image is not None:
+            if _animated_id(image) or getattr(image, "source", "") in {
+                    "MOVIE", "SEQUENCE"}:
+                animated_sources.add(image.name)
+
+        idname = node.bl_idname
+        label = _material_node_label(node)
+        if idname == "ShaderNodeTexCoord":
+            space = _TEXCOORD_OUTPUT_SPACES.get(from_socket.name)
+            if space == "uv":
+                spaces.add("uv")
+                uses_active_uv = True
+            elif space in {"generated", "object"} and getattr(
+                    node, "object", None) is not None:
+                spaces.add("object")
+                unique_notes.append(
+                    f"Texture Coordinate follows external object "
+                    f"{node.object.name!r}."
+                )
+            elif space is not None:
+                spaces.add(space)
+        elif idname == "ShaderNodeUVMap":
+            spaces.add("uv")
+            uv_name = str(getattr(node, "uv_map", "") or "")
+            if uv_name:
+                uv_maps.add(uv_name)
+            else:
+                uses_active_uv = True
+        elif idname == "ShaderNodeNewGeometry":
+            spaces.add(_GEOMETRY_OUTPUT_SPACES.get(from_socket.name, "position"))
+        elif idname in {"ShaderNodeVertexColor", "ShaderNodeAttribute"}:
+            spaces.add("attribute")
+        elif idname == "ShaderNodeObjectInfo":
+            spaces.add("objectValue")
+        elif idname == "ShaderNodeVectorTransform":
+            if "CAMERA" in {str(getattr(node, "convert_from", "")),
+                            str(getattr(node, "convert_to", ""))}:
+                spaces.add("camera")
+                view_reasons.append(f"{label} converts through camera space.")
+            else:
+                spaces.add("object")
+        elif idname == "ShaderNodeTangent":
+            if getattr(node, "direction_type", "") == "UV_MAP":
+                spaces.add("uv")
+                uv_name = str(getattr(node, "uv_map", "") or "")
+                if uv_name:
+                    uv_maps.add(uv_name)
+                else:
+                    uses_active_uv = True
+            else:
+                spaces.add("tangent")
+        elif idname in _CHANNEL_VIEW_NODES:
+            view_reasons.append(f"{label} evaluates per view ray.")
+        elif idname in _CHANNEL_SCENE_NODES:
+            scene_reasons.append(
+                f"{label} captures scene lighting; a Material bake input "
+                "must stay lighting-free."
+            )
+        elif idname in _TEXTURE_DEFAULT_SPACES:
+            vector = _node_input(node, "Vector")
+            if vector is None or not vector.is_linked:
+                default_space = _TEXTURE_DEFAULT_SPACES[idname]
+                spaces.add(default_space)
+                if default_space == "uv":
+                    uses_active_uv = True
+                elif default_space in _VIEW_DEPENDENT_SPACES:
+                    view_reasons.append(
+                        f"{label} samples the view direction by default."
+                    )
+            if idname == "ShaderNodeTexImage" and str(getattr(
+                    node, "projection", "FLAT")) != "FLAT":
+                spaces.add("position")
+                unique_notes.append(
+                    f"{label} uses {str(node.projection).title()} projection, "
+                    "which blends 3D coordinates."
+                )
+        elif idname == "ShaderNodeNormalMap":
+            spaces.add("uv")
+            uv_name = str(getattr(node, "uv_map", "") or "")
+            if uv_name:
+                uv_maps.add(uv_name)
+            else:
+                uses_active_uv = True
+        elif idname in _CHANNEL_NEUTRAL_NODES:
+            pass
+        elif any(getattr(item, "type", "") == "SHADER"
+                 for item in getattr(node, "outputs", ())):
+            # A shader closure is only reachable through Shader to RGB, which
+            # already carries the scene-dependence refusal for this channel.
+            pass
+        else:
+            unknown_reasons.append(
+                f"{label} is not classified for channel routing yet."
+            )
+
+    for space in sorted(spaces & _VIEW_DEPENDENT_SPACES):
+        view_reasons.append(f"{space} coordinates are view dependent.")
+    if len(uv_maps) > 1:
+        unique_notes.append(
+            "Multiple UV maps feed this channel; one glTF sampler carries "
+            "one UV set."
+        )
+
+    if unknown_reasons:
+        routing = "unknown"
+        reasons = unknown_reasons + view_reasons + scene_reasons
+    elif view_reasons:
+        routing = "viewDependent"
+        reasons = view_reasons
+    elif scene_reasons:
+        routing = "sceneDependent"
+        reasons = scene_reasons
+    elif (spaces & _UNIQUE_SPACES) or len(uv_maps) > 1 or unique_notes:
+        routing = "unique"
+        reasons = unique_notes
+    elif "uv" in spaces:
+        routing = "tileable"
+        reasons = []
+    else:
+        routing = "uniform"
+        reasons = []
+
+    return {
+        "channel": name,
+        "linked": True,
+        "routing": routing,
+        "spaces": sorted(spaces),
+        "uvMaps": sorted(uv_maps),
+        "usesActiveUv": uses_active_uv,
+        "animated": bool(animated_sources),
+        "reasons": list(dict.fromkeys(reasons)),
+    }
+
+
+def _single_principled_surface_root(nodes):
+    """The one Principled BSDF owning the surface, or None.
+
+    Groups, group inputs, and reroutes are structural.  Any other node with a
+    linked shader output — another BSDF, Emission, Mix/Add Shader, Holdout —
+    means the surface is not a single-Principled root, unless every one of
+    its shader links feeds Shader to RGB: that closure is a channel input,
+    not a surface competitor, and the scene-dependence refusal already rides
+    the Shader to RGB visit.
+    """
+    root = None
+    for node in nodes:
+        if node.bl_idname in {"ShaderNodeGroup", "NodeGroupInput",
+                              "NodeReroute"}:
+            continue
+        shader_links = [
+            link
+            for output in getattr(node, "outputs", ())
+            if getattr(output, "type", "") == "SHADER"
+            for link in output.links
+        ]
+        if not shader_links:
+            continue
+        if all(link.to_node.bl_idname == "ShaderNodeShaderToRGB"
+               for link in shader_links):
+            continue
+        if node.bl_idname != "ShaderNodeBsdfPrincipled" or root is not None:
+            return None
+        root = node
+    return root
+
+
+def material_channel_routing(tree, nodes):
+    """JSON-safe MTL-UV-002 coordinate-space routing for every channel.
+
+    ``routing`` per channel: ``constant`` (unlinked — stays a glTF factor),
+    ``uniform`` (linked but spatially constant), ``tileable`` (driven only by
+    the mesh's own UVs — candidate for a 0..1 tile bake with authored UVs
+    kept), ``unique`` (position/object/generated/attribute-driven — needs a
+    non-overlapping unwrap), ``viewDependent``/``sceneDependent`` (cannot be
+    a baked channel), or ``unknown`` (unclassified node; stays refused).
+
+    ``animated`` is tree-granular: a driver or action anywhere in a node tree
+    marks every channel touching that tree, which is conservative but never
+    unsafe — an animated input channel must refuse a bake that would freeze
+    it.
+    """
+    root = _single_principled_surface_root(nodes)
+    if root is None:
+        return {
+            "model": CHANNEL_ROUTING_MODEL,
+            "surfaceRoot": "unsupported",
+            "reason": (
+                "Channel routing needs exactly one Principled BSDF driving "
+                "the active Surface."
+            ),
+            "channels": [],
+        }
+    if root.id_data.as_pointer() != tree.as_pointer():
+        return {
+            "model": CHANNEL_ROUTING_MODEL,
+            "surfaceRoot": "unsupported",
+            "reason": (
+                "Channel routing supports a root-level Principled BSDF; "
+                "this one lives inside a node group."
+            ),
+            "channels": [],
+        }
+    channels = []
+    for name in _CHANNEL_ROUTING_INPUTS:
+        socket = _node_input(root, name)
+        if socket is None:
+            continue
+        channels.append(_classify_channel(name, socket))
+    return {
+        "model": CHANNEL_ROUTING_MODEL,
+        "surfaceRoot": "principled",
+        "channels": channels,
+    }
+
+
 def analyze_material(material):
     """Explain how faithfully Blender's stock glTF exporter can publish it.
 
@@ -925,6 +1356,7 @@ def analyze_material(material):
     # introduced by nested groups or multiple sockets using the same node.
     needs_bake = list(dict.fromkeys(needs_bake))
     approximated = list(dict.fromkeys(approximated))
+    channels = material_channel_routing(tree, nodes)
     if needs_bake:
         return {
             "material": material.name,
@@ -933,6 +1365,7 @@ def analyze_material(material):
             "summary": "The active shader graph cannot publish faithfully as editable glTF.",
             "reasons": needs_bake + approximated,
             "cyclesAppearance": cycles_appearance,
+            "channels": channels,
         }
     if approximated:
         return {
@@ -947,6 +1380,7 @@ def analyze_material(material):
             ),
             "reasons": approximated,
             "cyclesAppearance": cycles_appearance,
+            "channels": channels,
         }
     return {
         "material": material.name,
@@ -958,6 +1392,7 @@ def analyze_material(material):
         ),
         "reasons": [],
         "cyclesAppearance": cycles_appearance,
+        "channels": channels,
     }
 
 

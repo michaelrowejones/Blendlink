@@ -458,6 +458,25 @@ describe('scene diagnostics', () => {
           status: 'blocked',
           blockers: ['Shader to RGB is EEVEE-only and cannot be evaluated by Cycles Appearance baking.'],
         },
+        channels: {
+          model: 'principled-channel-routing-v1',
+          surfaceRoot: 'principled',
+          channels: [{
+            channel: 'Base Color',
+            linked: true,
+            routing: 'unique',
+            spaces: ['object'],
+            uvMaps: [],
+            usesActiveUv: false,
+            animated: false,
+            reasons: [],
+          }, {
+            channel: 'Roughness',
+            linked: false,
+            routing: 'constant',
+            value: 0.5,
+          }],
+        },
       }, {
         material: 'Portable Paint',
         status: 'exact',
@@ -479,8 +498,22 @@ describe('scene diagnostics', () => {
         material: 'Toon Bush',
         usedBy: ['Bush A', 'Bush B'],
         cyclesAppearance: { status: 'blocked' },
+        channels: {
+          model: 'principled-channel-routing-v1',
+          surfaceRoot: 'principled',
+          channels: [
+            { channel: 'Base Color', routing: 'unique', spaces: ['object'] },
+            { channel: 'Roughness', routing: 'constant', value: 0.5 },
+          ],
+        },
       }],
     })
+    // The additive channel record is deep-copied, never aliased into the
+    // manifest report.
+    const toonBush = report.materials?.records.find(
+      (record) => record.material === 'Toon Bush',
+    )
+    expect(toonBush?.channels?.channels[0]?.spaces).toEqual(['object'])
   })
 
   it('persists finished-GLB material compiler attestation without reshaping portability', () => {
