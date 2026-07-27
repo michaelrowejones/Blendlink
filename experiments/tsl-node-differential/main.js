@@ -62,7 +62,7 @@ async function init() {
 window.__tslDiffInit = init
 window.__tslDiffReady = () => state.ready
 
-window.__tslDiffRun = async (cellId, pipeline) => {
+window.__tslDiffRun = async (cellId, pipeline, irPath) => {
   if (state.error) return { ok: false, error: state.error }
   try {
     let colorNode
@@ -73,7 +73,9 @@ window.__tslDiffRun = async (cellId, pipeline) => {
       }
       colorNode = factory()
     } else {
-      const response = await fetch(`/output/reference/ir/${cellId}.json`)
+      const response = await fetch(
+        irPath ?? `/output/reference/ir/${cellId}.json`,
+      )
       if (!response.ok) {
         return {
           ok: false,

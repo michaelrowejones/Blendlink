@@ -18,6 +18,7 @@ import {
   cos,
   float,
   floor,
+  fract,
   mix,
   max,
   min,
@@ -64,6 +65,7 @@ const tslStep = step as unknown as (
   edge: TslExprLike, value: TslExprLike,
 ) => TslExpression
 const tslFloor = floor as unknown as (value: TslExprLike) => TslExpression
+const tslFract = fract as unknown as (value: TslExprLike) => TslExpression
 const tslAbs = abs as unknown as (value: TslExprLike) => TslExpression
 const tslSign = sign as unknown as (value: TslExprLike) => TslExpression
 const tslPow = pow as unknown as (
@@ -256,6 +258,32 @@ function build(expression: TslIrExpression): TslExpression {
       return buildColorRamp(child(expression, 'input'), 'alpha')
     case 'mix_color':
       return buildMixColor(expression)
+    case 'map_range': {
+      // Cycles LINEAR map range with safe divide; the clamp option clamps
+      // the result to the ordered target range.
+      const value = build(child(expression, 'value'))
+      const fromMin = build(child(expression, 'fromMin'))
+      const fromMax = build(child(expression, 'fromMax'))
+      const toMin = build(child(expression, 'toMin'))
+      const toMax = build(child(expression, 'toMax'))
+      const factor = blenderDivide(
+        value.sub(fromMin), fromMax.sub(fromMin),
+      )
+      const result = toMin.add(factor.mul(toMax.sub(toMin)))
+      if (expression.clamp === false) return result
+      return tslClamp(
+        result, tslMin(toMin, toMax), tslMax(toMin, toMax),
+      )
+    }
+    case 'clamp_minmax':
+      // Blender's Clamp node in Min Max mode: min(max(value, min), max).
+      return tslMin(
+        tslMax(
+          build(child(expression, 'value')),
+          build(child(expression, 'min')),
+        ),
+        build(child(expression, 'max')),
+      )
     case 'noise': {
       const position = build(child(expression, 'input'))
         .mul(build(child(expression, 'scale')))
@@ -294,6 +322,15 @@ function buildMath(expression: TslIrExpression): TslExpression {
     case 'FLOOR': return tslFloor(a)
     case 'SINE': return tslSin(a)
     case 'COSINE': return tslCos(a)
+    case 'PINGPONG': {
+      // Cycles: b != 0 ? |fract((a - b) / (2b)) * 2b - b| : 0.
+      const divisor = b()
+      const cycle = divisor.mul(2.0)
+      const bounced = tslAbs(
+        tslFract(a.sub(divisor).div(cycle)).mul(cycle).sub(divisor),
+      )
+      return tslSelect(divisor.equal(0.0), tslFloat(0.0), bounced)
+    }
     default:
       return fail(`IR math operation ${operation} has no proven TSL mapping`)
   }
@@ -383,6 +420,30 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
     case 'MIX': blended = tslMix(a, b, factor); break
     case 'MULTIPLY': blended = tslMix(a, a.mul(b), factor); break
     case 'ADD': blended = tslMix(a, a.add(b), factor); break
+    case 'OVERLAY': {
+      // Cycles folds the factor into the overlay formula per channel:
+      // a < 0.5 ? a * (1 - f + 2 f b) : 1 - (1 - f + 2 f (1 - b)) (1 - a).
+      // Built with scalar selects per channel — measured 2026-07-27: a
+      // vector-condition select collapses to one lane here, sending every
+      // channel down the first component's branch.
+      const inverseFactor = tslOneMinus(factor)
+      const channel = (
+        aChannel: TslExpression, bChannel: TslExpression,
+      ): TslExpression => {
+        const dark = aChannel.mul(
+          inverseFactor.add(factor.mul(2.0).mul(bChannel)),
+        )
+        const light = tslOneMinus(
+          inverseFactor.add(factor.mul(2.0).mul(tslOneMinus(bChannel)))
+            .mul(tslOneMinus(aChannel)),
+        )
+        return tslSelect(aChannel.lessThan(0.5), dark, light)
+      }
+      blended = tslVec3(
+        channel(a.x, b.x), channel(a.y, b.y), channel(a.z, b.z),
+      )
+      break
+    }
     default:
       return fail(`IR mix blend ${String(expression.blendType)}`)
   }

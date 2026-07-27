@@ -331,6 +331,82 @@ def build_mix_modes(tree, emission):
     tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
 
 
+def build_group_passthrough(tree, emission):
+    group_tree = bpy.data.node_groups.new(
+        "TSL Cell Group", "ShaderNodeTree",
+    )
+    group_tree.interface.new_socket(
+        "Vector", in_out="INPUT", socket_type="NodeSocketVector",
+    )
+    group_tree.interface.new_socket(
+        "Value", in_out="OUTPUT", socket_type="NodeSocketFloat",
+    )
+    group_input = group_tree.nodes.new("NodeGroupInput")
+    group_output = group_tree.nodes.new("NodeGroupOutput")
+    noise = group_tree.nodes.new("ShaderNodeTexNoise")
+    noise.inputs["Scale"].default_value = 4.0
+    if "Detail" in noise.inputs:
+        noise.inputs["Detail"].default_value = 0.0
+    group_tree.links.new(
+        group_input.outputs["Vector"], noise.inputs["Vector"],
+    )
+    group_tree.links.new(noise.outputs[0], group_output.inputs["Value"])
+    instance = tree.nodes.new("ShaderNodeGroup")
+    instance.node_tree = group_tree
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    tree.links.new(coord.outputs["UV"], instance.inputs["Vector"])
+    tree.links.new(instance.outputs["Value"], emission.inputs["Color"])
+
+
+def build_map_range_linear(tree, emission):
+    node = tree.nodes.new("ShaderNodeMapRange")
+    node.clamp = True
+    node.inputs["From Min"].default_value = 0.2
+    node.inputs["From Max"].default_value = 0.8
+    node.inputs["To Min"].default_value = 0.1
+    node.inputs["To Max"].default_value = 0.9
+    tree.links.new(_uv_channel(tree, "u"), node.inputs["Value"])
+    _emit_scalar(tree, emission, node.outputs["Result"])
+
+
+def build_mix_overlay(tree, emission):
+    node = tree.nodes.new("ShaderNodeMix")
+    node.data_type = "RGBA"
+    node.blend_type = "OVERLAY"
+    factor = next(
+        item for item in node.inputs if item.identifier == "Factor_Float"
+    )
+    a_input = next(
+        item for item in node.inputs if item.identifier == "A_Color"
+    )
+    b_input = next(
+        item for item in node.inputs if item.identifier == "B_Color"
+    )
+    a_input.default_value = (0.2, 0.8, 0.4, 1.0)
+    b_input.default_value = (0.9, 0.1, 0.6, 1.0)
+    tree.links.new(_uv_channel(tree, "v"), factor)
+    result = next(
+        item for item in node.outputs if item.identifier == "Result_Color"
+    )
+    tree.links.new(result, emission.inputs["Color"])
+
+
+def build_math_pingpong(tree, emission):
+    scaled = _affine(tree, _uv_channel(tree, "u"), 4.0, 0.0)
+    result = _math(tree, "PINGPONG", scaled, 0.75)
+    _emit_scalar(tree, emission, result)
+
+
+def build_clamp_node(tree, emission):
+    node = tree.nodes.new("ShaderNodeClamp")
+    node.clamp_type = "MINMAX"
+    node.inputs["Min"].default_value = 0.1
+    node.inputs["Max"].default_value = 0.9
+    value = _affine(tree, _uv_channel(tree, "u"), 2.0, -0.5)
+    tree.links.new(value, node.inputs["Value"])
+    _emit_scalar(tree, emission, node.outputs["Result"])
+
+
 BUILDERS = {
     "constant-linear": build_constant_linear,
     "uv-gradient": build_uv_gradient,
@@ -347,6 +423,11 @@ BUILDERS = {
     "voronoi-f1-divergence": build_voronoi_f1_divergence,
     "noise-mx-divergence": build_noise_mx_divergence,
     "mix-modes": build_mix_modes,
+    "group-passthrough": build_group_passthrough,
+    "map-range-linear": build_map_range_linear,
+    "mix-overlay": build_mix_overlay,
+    "math-pingpong": build_math_pingpong,
+    "clamp-node": build_clamp_node,
 }
 
 

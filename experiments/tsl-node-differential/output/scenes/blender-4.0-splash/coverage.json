@@ -1,0 +1,15 @@
+{
+  "sceneId": "blender-4.0-splash",
+  "materials": 68,
+  "principledRoots": 23,
+  "groupWrappedRoots": 0,
+  "channels": {
+    "linked": 0,
+    "constant": 138
+  },
+  "irCompiled": 0,
+  "refusals": {
+    "no root-level single Principled surface": 270
+  },
+  "sampled": []
+}

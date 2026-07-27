@@ -1,7 +1,7 @@
 {
   "experiment": "tsl-node-differential",
   "ledgerRow": "MTLX-TSL-001",
-  "command": "node experiments/tsl-node-differential/run.mjs",
+  "command": "node experiments/tsl-node-differential/run.mjs [--scenes]",
   "size": 64,
   "webgpuBackendReal": true,
   "referenceBackend": "optix",
@@ -149,6 +149,61 @@
       },
       "failureClass": "Mix node blend modes (MIX / MULTIPLY / ADD)"
     },
+    "group-passthrough": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00004135380731895566,
+        "p99Abs": 0.00010830163955688477,
+        "maxAbs": 0.0001208186149597168
+      },
+      "failureClass": "node-group wall crossing (the dominant scene refusal)"
+    },
+    "map-range-linear": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000012359778338577598,
+        "p99Abs": 0.00002086162567138672,
+        "maxAbs": 0.00002086162567138672
+      },
+      "failureClass": "corpus-measured node gap (Map Range x8 across scenes)"
+    },
+    "mix-overlay": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000004164641723036766,
+        "p99Abs": 0.000005066394805908203,
+        "maxAbs": 0.000005066394805908203
+      },
+      "failureClass": "corpus-measured node gap (Mix OVERLAY x4 across scenes)"
+    },
+    "math-pingpong": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00006246508564800024,
+        "p99Abs": 0.00006258487701416016,
+        "maxAbs": 0.00006258487701416016
+      },
+      "failureClass": "corpus-measured node gap (Math PINGPONG)"
+    },
+    "clamp-node": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00001268833875656128,
+        "p99Abs": 0.00003123283386230469,
+        "maxAbs": 0.00003123283386230469
+      },
+      "failureClass": "corpus-measured node gap (Clamp)"
+    },
     "voronoi-f1-divergence": {
       "ok": true,
       "gated": false,
@@ -172,13 +227,138 @@
       "failureClass": "disagreeing noise implementations — measured NOT to apply to this pairing"
     }
   },
+  "scenes": {
+    "cube-diorama": {
+      "coverage": {
+        "sceneId": "cube-diorama",
+        "materials": 52,
+        "principledRoots": 37,
+        "groupWrappedRoots": 16,
+        "channels": {
+          "linked": 35,
+          "constant": 187
+        },
+        "irCompiled": 2,
+        "refusals": {
+          "ShaderNodeAttribute has no proven TSL mapping": 2,
+          "Mix blend type 'DIVIDE' has no cell yet": 9,
+          "Mix blend type 'COLOR' has no cell yet": 1,
+          "no root-level single Principled surface": 90,
+          "ColorRamp interpolation 'B_SPLINE' has no cell yet": 4,
+          "ShaderNodeTexMagic has no proven TSL mapping": 1,
+          "Vector Math operation 'MULTIPLY' has no cell yet": 1,
+          "Map Range interpolation 'SMOOTHSTEP' has no cell yet": 4,
+          "Noise dimensions '2D' has no cell yet (3D only)": 4,
+          "ShaderNodeLayerWeight has no proven TSL mapping": 3,
+          "ShaderNodeTexImage has no proven TSL mapping": 1,
+          "Math operation 'SMOOTH_MAX' has no cell yet": 2,
+          "ShaderNodeTexVoronoi has no proven TSL mapping": 1
+        },
+        "sampled": [
+          {
+            "cell": "Clay--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "Metal--Base_Color",
+            "status": "baked"
+          }
+        ]
+      },
+      "differentials": {
+        "Clay--Base_Color": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Metal--Base_Color": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        }
+      }
+    },
+    "blender-4.0-splash": {
+      "coverage": {
+        "sceneId": "blender-4.0-splash",
+        "materials": 68,
+        "principledRoots": 23,
+        "groupWrappedRoots": 0,
+        "channels": {
+          "linked": 0,
+          "constant": 138
+        },
+        "irCompiled": 0,
+        "refusals": {
+          "no root-level single Principled surface": 270
+        },
+        "sampled": []
+      },
+      "differentials": {}
+    },
+    "trapx-painterly": {
+      "coverage": {
+        "sceneId": "trapx-painterly",
+        "materials": 7,
+        "principledRoots": 2,
+        "groupWrappedRoots": 0,
+        "channels": {
+          "linked": 0,
+          "constant": 12
+        },
+        "irCompiled": 0,
+        "refusals": {
+          "no root-level single Principled surface": 30
+        },
+        "sampled": []
+      },
+      "differentials": {}
+    },
+    "ellie-animation": {
+      "coverage": {
+        "sceneId": "ellie-animation",
+        "materials": 53,
+        "principledRoots": 19,
+        "groupWrappedRoots": 1,
+        "channels": {
+          "linked": 12,
+          "constant": 102
+        },
+        "irCompiled": 1,
+        "refusals": {
+          "no root-level single Principled surface": 204,
+          "ShaderNodeRGBCurve has no proven TSL mapping": 1,
+          "ColorRamp interpolation 'B_SPLINE' has no cell yet": 2,
+          "ShaderNodeAttribute has no proven TSL mapping": 2,
+          "ColorRamp interpolation 'CARDINAL' has no cell yet": 2,
+          "Map Range interpolation 'SMOOTHSTEP' has no cell yet": 4
+        },
+        "sampled": [
+          {
+            "cell": "ellie.pins_underside--Base_Color",
+            "status": "reference-skipped",
+            "reason": "Operator bpy.ops.object.select_all.poll() failed, context is incorrect"
+          }
+        ]
+      },
+      "differentials": {}
+    }
+  },
   "pageErrorCount": 1,
   "pageErrorSample": [
     "Failed to load resource: the server responded with a status of 404 (Not Found)"
   ],
   "limits": [
-    "Hand-written TSL mappings stand in for the future compiler output; a cell proves the MAPPING, and the compiler must emit exactly that mapping.",
-    "One 64px tile per configuration; parameter sweeps per node are the next stage.",
-    "noise-mx-divergence is a recorded negative control, not a gate."
+    "Cells drive the production IR pipeline (tsl_ir.py -> tslNodeRecipe.ts); only diagnostic cells without an IR route stay hand-written.",
+    "One 64px tile per configuration; scene sampling covers UV-driven compiled channels only (the tile proxy provides UV space).",
+    "Scene coverage refusals are the compiler to-do list, tallied by named reason."
   ]
 }

@@ -288,6 +288,116 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "group-passthrough": {
+      "path": "group-passthrough.f32",
+      "pipeline": "ir",
+      "ir": "ir/group-passthrough.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.12229987978935242,
+        0.12229987978935242,
+        0.12229987978935242
+      ],
+      "rgbMax": [
+        0.795118510723114,
+        0.795118510723114,
+        0.795118510723114
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "map-range-linear": {
+      "path": "map-range-linear.f32",
+      "pipeline": "ir",
+      "ir": "ir/map-range-linear.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.10000000149011612,
+        0.10000000149011612,
+        0.10000000149011612
+      ],
+      "rgbMax": [
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "mix-overlay": {
+      "path": "mix-overlay.f32",
+      "pipeline": "ir",
+      "ir": "ir/mix-overlay.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.20125499367713928,
+        0.6412450075149536,
+        0.4006275236606598
+      ],
+      "rgbMax": [
+        0.3587549924850464,
+        0.7987450361251831,
+        0.47937750816345215
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "math-pingpong": {
+      "path": "math-pingpong.f32",
+      "pipeline": "ir",
+      "ir": "ir/math-pingpong.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.031187474727630615,
+        0.031187474727630615,
+        0.031187474727630615
+      ],
+      "rgbMax": [
+        0.7188124656677246,
+        0.7188124656677246,
+        0.7188124656677246
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "clamp-node": {
+      "path": "clamp-node.f32",
+      "pipeline": "ir",
+      "ir": "ir/clamp-node.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.10000000149011612,
+        0.10000000149011612,
+        0.10000000149011612
+      ],
+      "rgbMax": [
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "voronoi-f1-divergence": {
       "path": "voronoi-f1-divergence.f32",
       "pipeline": "handwritten",

@@ -1,0 +1,15 @@
+{
+  "sceneId": "trapx-painterly",
+  "materials": 7,
+  "principledRoots": 2,
+  "groupWrappedRoots": 0,
+  "channels": {
+    "linked": 0,
+    "constant": 12
+  },
+  "irCompiled": 0,
+  "refusals": {
+    "no root-level single Principled surface": 30
+  },
+  "sampled": []
+}

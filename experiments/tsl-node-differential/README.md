@@ -78,6 +78,38 @@ Findings the harness itself produced:
 3. Cycles-on-OptiX and TSL-on-WebGPU agree to ~1e-5 on every proven cell —
    float rounding, not approximation.
 
+## The compiler pipeline and scene stage — 2026-07-27
+
+The harness now drives the production compiler end to end: `tsl_ir.py`
+(the addon-side emitter — group walls crossed in both directions via
+`find_principled_root`'s instance stack) emits JSON IR from the same
+graphs Cycles bakes, and the packaged `tslNodeRecipe.ts` builds it into
+TSL. Twenty cells, nineteen gated, all passing — including group
+crossing, Map Range, Mix OVERLAY (whose vector-condition `select`
+collapses to one lane; the mapping builds per-channel scalar selects),
+PINGPONG, Clamp, and the ported Cycles fractal loop that closed the
+4.6e-2 MaterialX fBM divergence.
+
+`node experiments/tsl-node-differential/run.mjs --scenes` measures the
+compiler against real corpus scenes (read-only, autoexec disabled):
+
+| Scene | Materials | Principled roots (grouped) | Linked channels | IR compiled | Differentials |
+| --- | --- | --- | --- | --- | --- |
+| cube-diorama | 52 | 37 (16) | 35 | 2 | **2/2 pass, mean 0.0** |
+| ellie-animation | 53 | 19 (1) | 12 | 1 | (unique-route channel, not tile-sampleable) |
+| blender-4.0-splash | 68 | 23 (0) | 0 | 0 | — |
+| trapx-painterly | 7 | 2 (0) | 0 | 0 | — |
+
+Real corpus materials (`Clay`, `Metal`) compile through the production
+pipeline and match Cycles byte-exactly. The refusal tallies in
+`output/evidence.json` are the compiler's measured to-do list — next
+named gaps: Mix DIVIDE (×9), Map Range SMOOTHSTEP (×8), ColorRamp
+B_SPLINE/CARDINAL (×8), Noise 2D (×4), Attribute/vertex color (×2).
+The dominant remaining class ("no root-level single Principled surface")
+in splash/trapx is the stylized Mix-Shader/Shader-to-RGB frontier —
+that is the view-dependent cell work (Fresnel, Layer Weight), not
+missing coverage nodes.
+
 ## Limits
 
 - Hand-written TSL mappings stand in for the future compiler's output: a

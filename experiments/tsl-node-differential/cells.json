@@ -94,6 +94,41 @@
       "notes": "Three RGBA Mix nodes with varying factors feed one channel each: R = MIX(u), G = MULTIPLY(v), B = ADD(u). Blender blends toward the operator result by the factor: mix(a, op(a, b), fac)."
     },
     {
+      "id": "group-passthrough",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-3, "p99Abs": 5e-3, "maxAbs": 1e-2 },
+      "failureClass": "node-group wall crossing (the dominant scene refusal)",
+      "notes": "Outer UV feeds a group instance whose inside runs Noise; the emitter must cross the group wall in both directions with the instance context. Scene coverage measured group-wrapped surfaces as the single largest refusal class."
+    },
+    {
+      "id": "map-range-linear",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "corpus-measured node gap (Map Range x8 across scenes)",
+      "notes": "LINEAR float Map Range 0.2..0.8 -> 0.1..0.9 with clamp: safe-divide factor, then result clamped to the ordered target range."
+    },
+    {
+      "id": "mix-overlay",
+      "gate": true,
+      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "failureClass": "corpus-measured node gap (Mix OVERLAY x4 across scenes)",
+      "notes": "Cycles folds the factor into the per-channel overlay formula (a < 0.5 branches) rather than lerping the result; the cell proves the folded form."
+    },
+    {
+      "id": "math-pingpong",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "corpus-measured node gap (Math PINGPONG)",
+      "notes": "PINGPONG(4u, 0.75): |fract((a-b)/(2b)) * 2b - b| with the b = 0 guard."
+    },
+    {
+      "id": "clamp-node",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "corpus-measured node gap (Clamp)",
+      "notes": "Clamp node in Min Max mode over 2u-0.5: min(max(value, 0.1), 0.9)."
+    },
+    {
       "id": "voronoi-f1-divergence",
       "gate": false,
       "pipeline": "handwritten",

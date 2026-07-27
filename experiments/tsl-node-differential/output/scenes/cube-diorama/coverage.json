@@ -1,0 +1,36 @@
+{
+  "sceneId": "cube-diorama",
+  "materials": 52,
+  "principledRoots": 37,
+  "groupWrappedRoots": 16,
+  "channels": {
+    "linked": 35,
+    "constant": 187
+  },
+  "irCompiled": 2,
+  "refusals": {
+    "ShaderNodeAttribute has no proven TSL mapping": 2,
+    "Mix blend type 'DIVIDE' has no cell yet": 9,
+    "Mix blend type 'COLOR' has no cell yet": 1,
+    "no root-level single Principled surface": 90,
+    "ColorRamp interpolation 'B_SPLINE' has no cell yet": 4,
+    "ShaderNodeTexMagic has no proven TSL mapping": 1,
+    "Vector Math operation 'MULTIPLY' has no cell yet": 1,
+    "Map Range interpolation 'SMOOTHSTEP' has no cell yet": 4,
+    "Noise dimensions '2D' has no cell yet (3D only)": 4,
+    "ShaderNodeLayerWeight has no proven TSL mapping": 3,
+    "ShaderNodeTexImage has no proven TSL mapping": 1,
+    "Math operation 'SMOOTH_MAX' has no cell yet": 2,
+    "ShaderNodeTexVoronoi has no proven TSL mapping": 1
+  },
+  "sampled": [
+    {
+      "cell": "Clay--Base_Color",
+      "status": "baked"
+    },
+    {
+      "cell": "Metal--Base_Color",
+      "status": "baked"
+    }
+  ]
+}

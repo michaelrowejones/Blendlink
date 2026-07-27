@@ -1,0 +1,26 @@
+{
+  "sceneId": "ellie-animation",
+  "materials": 53,
+  "principledRoots": 19,
+  "groupWrappedRoots": 1,
+  "channels": {
+    "linked": 12,
+    "constant": 102
+  },
+  "irCompiled": 1,
+  "refusals": {
+    "no root-level single Principled surface": 204,
+    "ShaderNodeRGBCurve has no proven TSL mapping": 1,
+    "ColorRamp interpolation 'B_SPLINE' has no cell yet": 2,
+    "ShaderNodeAttribute has no proven TSL mapping": 2,
+    "ColorRamp interpolation 'CARDINAL' has no cell yet": 2,
+    "Map Range interpolation 'SMOOTHSTEP' has no cell yet": 4
+  },
+  "sampled": [
+    {
+      "cell": "ellie.pins_underside--Base_Color",
+      "status": "reference-skipped",
+      "reason": "Operator bpy.ops.object.select_all.poll() failed, context is incorrect"
+    }
+  ]
+}

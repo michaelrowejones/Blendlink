@@ -197,20 +197,100 @@ try {
     }
   }
 
+  // --- Scene stage: the compiler against real corpus materials ----------
+  const sceneResults = {}
+  if (process.argv.includes('--scenes')) {
+    const inventory = JSON.parse(readFileSync(
+      join(repositoryRoot, 'docs', 'demo-corpus-inventory.json'), 'utf8',
+    ))
+    const sceneIds = [
+      'cube-diorama', 'blender-4.0-splash', 'trapx-painterly',
+      'ellie-animation',
+    ]
+    const sceneTolerance = { meanAbs: 1e-3, p99Abs: 5e-3, maxAbs: 1e-2 }
+    for (const sceneId of sceneIds) {
+      const entry = inventory.scenes.find((item) => item.id === sceneId)
+      const scenePath = entry
+        ? resolve(repositoryRoot, entry.localPath)
+        : null
+      if (!scenePath || !existsSync(scenePath)) {
+        sceneResults[sceneId] = { skipped: `source unavailable: ${scenePath}` }
+        continue
+      }
+      const sceneDir = join(outputDir, 'scenes', sceneId)
+      if (process.env.BLENDLINK_TSL_DIFF_REUSE !== '1'
+        || !existsSync(join(sceneDir, 'manifest.json'))) {
+        const stdout = execFileSync(blender, [
+          '--background', '--factory-startup', '--disable-autoexec',
+          '--python-exit-code', '1',
+          '--python', join(experimentDir, 'scene_coverage.py'),
+          '--', scenePath, sceneId, sceneDir, '12',
+        ], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 })
+        if (!stdout.includes(`TSL_SCENE_COVERAGE_DONE ${sceneId}`)
+          && !stdout.includes(`TSL_SCENE_SKIPPED ${sceneId}`)) {
+          throw new Error(
+            `scene coverage did not finish for ${sceneId}:\n${stdout.slice(-2000)}`,
+          )
+        }
+      }
+      const coverage = JSON.parse(
+        readFileSync(join(sceneDir, 'coverage.json'), 'utf8'),
+      )
+      const sceneManifest = JSON.parse(
+        readFileSync(join(sceneDir, 'manifest.json'), 'utf8'),
+      )
+      const differentials = {}
+      for (const [cellId, cellEntry] of Object.entries(sceneManifest.cells)) {
+        const rendered = await page.evaluate(
+          ({ id, irPath }) => window.__tslDiffRun(id, 'ir', irPath),
+          {
+            id: cellId,
+            irPath: `/output/scenes/${sceneId}/ir/${cellId}.json`,
+          },
+        )
+        if (!rendered.ok) {
+          differentials[cellId] = { ok: false, error: rendered.error }
+          failures.push(`${sceneId}/${cellId}: TSL render failed: ${rendered.error}`)
+          continue
+        }
+        const renderedPixels = new Float32Array(
+          Uint8Array.from(atob(rendered.base64), (c) => c.charCodeAt(0)).buffer,
+        )
+        const referencePixels = new Float32Array(
+          readFileSync(join(sceneDir, cellEntry.path)).buffer,
+        )
+        const measured = stats(referencePixels, renderedPixels)
+        const pass = measured.meanAbs <= sceneTolerance.meanAbs
+          && measured.p99Abs <= sceneTolerance.p99Abs
+          && measured.maxAbs <= sceneTolerance.maxAbs
+        if (!pass) {
+          failures.push(
+            `${sceneId}/${cellId}: mean ${measured.meanAbs.toExponential(3)} `
+            + `p99 ${measured.p99Abs.toExponential(3)} `
+            + `max ${measured.maxAbs.toExponential(3)}`,
+          )
+        }
+        differentials[cellId] = { ok: true, pass, measured }
+      }
+      sceneResults[sceneId] = { coverage, differentials }
+    }
+  }
+
   const evidence = {
     experiment: 'tsl-node-differential',
     ledgerRow: 'MTLX-TSL-001',
-    command: 'node experiments/tsl-node-differential/run.mjs',
+    command: 'node experiments/tsl-node-differential/run.mjs [--scenes]',
     size: SIZE,
     webgpuBackendReal: Boolean(environment.backend),
     referenceBackend: Object.values(reference.cells)[0]?.backend ?? null,
     cells: results,
+    ...(Object.keys(sceneResults).length > 0 ? { scenes: sceneResults } : {}),
     pageErrorCount: pageErrors.length,
     pageErrorSample: pageErrors.slice(0, 8),
     limits: [
-      'Hand-written TSL mappings stand in for the future compiler output; a cell proves the MAPPING, and the compiler must emit exactly that mapping.',
-      'One 64px tile per configuration; parameter sweeps per node are the next stage.',
-      'noise-mx-divergence is a recorded negative control, not a gate.',
+      'Cells drive the production IR pipeline (tsl_ir.py -> tslNodeRecipe.ts); only diagnostic cells without an IR route stay hand-written.',
+      'One 64px tile per configuration; scene sampling covers UV-driven compiled channels only (the tile proxy provides UV space).',
+      'Scene coverage refusals are the compiler to-do list, tallied by named reason.',
     ],
   }
   writeFileSync(

@@ -22,7 +22,7 @@ IR_MODEL = "blendlink-tsl-ir-v1"
 _MATH_OPERATIONS = {
     "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "MULTIPLY_ADD",
     "POWER", "MINIMUM", "MAXIMUM", "LESS_THAN", "GREATER_THAN",
-    "MODULO", "FLOOR", "SINE", "COSINE",
+    "MODULO", "FLOOR", "SINE", "COSINE", "PINGPONG",
 }
 _MATH_UNARY = {"FLOOR", "SINE", "COSINE"}
 _MATH_TERNARY = {"MULTIPLY_ADD"}
@@ -79,7 +79,60 @@ def _socket_source(socket):
     return links[0].from_node, links[0].from_socket
 
 
-def emit_input(socket, *, as_vector=False):
+def _matching_socket(sockets, reference):
+    named = sockets.get(reference.name)
+    if named is not None:
+        return named
+    identifier = getattr(reference, "identifier", None)
+    return next(
+        (item for item in sockets
+         if item.name == reference.name or item.identifier == identifier),
+        None,
+    )
+
+
+def find_principled_root(tree):
+    """(principled, group_stack) for the material's single Principled surface.
+
+    The stack is the chain of group-instance nodes enclosing the Principled,
+    outermost first — the context `emit_channel` needs to resolve channel
+    inputs fed through Group Input sockets.  Refuses ambiguity (several
+    shader roots, or one reachable through multiple instance paths) instead
+    of guessing.
+    """
+    import procedural
+
+    nodes = procedural.reachable_surface_nodes(tree)
+    root = procedural._single_principled_surface_root(nodes)
+    if root is None:
+        _refuse("no root-level single Principled surface")
+    if root.id_data.as_pointer() == tree.as_pointer():
+        return root, ()
+
+    paths = []
+
+    def locate(current, stack, seen):
+        pointer = current.as_pointer()
+        if pointer in seen:
+            return
+        seen = seen | {pointer}
+        for node in current.nodes:
+            if node.as_pointer() == root.as_pointer():
+                paths.append(stack)
+            nested = getattr(node, "node_tree", None)
+            if node.bl_idname == "ShaderNodeGroup" and nested is not None:
+                locate(nested, stack + (node,), seen)
+
+    locate(tree, (), frozenset())
+    if len(paths) != 1:
+        _refuse(
+            f"Principled surface reachable through {len(paths)} group "
+            "instance paths"
+        )
+    return root, paths[0]
+
+
+def emit_input(socket, stack=(), *, as_vector=False):
     """IR for one input socket: its link's expression or its constant."""
     source = _socket_source(socket)
     if source is None:
@@ -88,19 +141,63 @@ def emit_input(socket, *, as_vector=False):
             _refuse(f"socket {socket.name!r} has no usable constant")
         return _vector(value) if as_vector else _scalar(value)
     node, from_socket = source
-    return emit_output(node, from_socket)
+    return emit_output(node, from_socket, stack)
 
 
-def emit_output(node, from_socket):
-    """IR for one node output.  Refuses anything without a proven cell."""
+def emit_output(node, from_socket, stack=()):
+    """IR for one node output.  Refuses anything without a proven cell.
+
+    ``stack`` is the enclosing group-instance chain, outermost first; the
+    walk crosses group walls in both directions with it.
+    """
     idname = node.bl_idname
     socket_name = from_socket.name
+
+    if getattr(node, "mute", False):
+        _refuse(f"muted node {idname} has no proven passthrough mapping")
 
     if idname == "NodeReroute":
         inner = _socket_source(node.inputs[0])
         if inner is None:
             _refuse("reroute with no input")
-        return emit_output(*inner)
+        return emit_output(*inner, stack)
+
+    if idname == "ShaderNodeGroup":
+        if node.node_tree is None:
+            _refuse("group instance without a node tree")
+        group_output = next(
+            (item for item in node.node_tree.nodes
+             if item.type == "GROUP_OUTPUT"
+             and getattr(item, "is_active_output", True)),
+            None,
+        )
+        if group_output is None:
+            _refuse(f"group {node.node_tree.name!r} has no active output")
+        target = _matching_socket(group_output.inputs, from_socket)
+        if target is None:
+            _refuse(
+                f"group {node.node_tree.name!r} output "
+                f"{socket_name!r} not found"
+            )
+        return emit_input(
+            target, stack + (node,),
+            as_vector=target.type in {"RGBA", "VECTOR"},
+        )
+
+    if idname == "NodeGroupInput":
+        if not stack:
+            _refuse("Group Input outside any group instance context")
+        instance = stack[-1]
+        outer = _matching_socket(instance.inputs, from_socket)
+        if outer is None:
+            _refuse(
+                f"group instance {instance.name!r} is missing input "
+                f"{socket_name!r}"
+            )
+        return emit_input(
+            outer, stack[:-1],
+            as_vector=outer.type in {"RGBA", "VECTOR"},
+        )
 
     if idname == "ShaderNodeTexCoord":
         if socket_name != "UV":
@@ -124,7 +221,7 @@ def emit_output(node, from_socket):
         return {
             "op": "separate",
             "channel": {"X": "x", "Y": "y", "Z": "z"}[socket_name],
-            "input": emit_input(node.inputs["Vector"], as_vector=True),
+            "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
         }
 
     if idname in {"ShaderNodeSeparateColor", "ShaderNodeSeparateRGB"}:
@@ -138,15 +235,15 @@ def emit_output(node, from_socket):
         return {
             "op": "separate",
             "channel": channel,
-            "input": emit_input(node.inputs[0], as_vector=True),
+            "input": emit_input(node.inputs[0], stack=stack, as_vector=True),
         }
 
     if idname == "ShaderNodeCombineXYZ":
         return {
             "op": "combine",
-            "x": emit_input(node.inputs["X"]),
-            "y": emit_input(node.inputs["Y"]),
-            "z": emit_input(node.inputs["Z"]),
+            "x": emit_input(node.inputs["X"], stack=stack),
+            "y": emit_input(node.inputs["Y"], stack=stack),
+            "z": emit_input(node.inputs["Z"], stack=stack),
         }
 
     if idname in {"ShaderNodeCombineColor", "ShaderNodeCombineRGB"}:
@@ -157,9 +254,9 @@ def emit_output(node, from_socket):
             if idname == "ShaderNodeCombineColor" else ("R", "G", "B")
         return {
             "op": "combine",
-            "x": emit_input(node.inputs[names[0]]),
-            "y": emit_input(node.inputs[names[1]]),
-            "z": emit_input(node.inputs[names[2]]),
+            "x": emit_input(node.inputs[names[0]], stack=stack),
+            "y": emit_input(node.inputs[names[1]], stack=stack),
+            "z": emit_input(node.inputs[names[2]], stack=stack),
         }
 
     if idname == "ShaderNodeMath":
@@ -169,12 +266,12 @@ def emit_output(node, from_socket):
         expression = {
             "op": "math",
             "operation": operation,
-            "a": emit_input(node.inputs[0]),
+            "a": emit_input(node.inputs[0], stack=stack),
         }
         if operation not in _MATH_UNARY:
-            expression["b"] = emit_input(node.inputs[1])
+            expression["b"] = emit_input(node.inputs[1], stack=stack)
         if operation in _MATH_TERNARY:
-            expression["c"] = emit_input(node.inputs[2])
+            expression["c"] = emit_input(node.inputs[2], stack=stack)
         if getattr(node, "use_clamp", False):
             expression = {
                 "op": "clamp01", "input": expression,
@@ -188,14 +285,14 @@ def emit_output(node, from_socket):
         if operation == "SCALE":
             return {
                 "op": "vector_scale",
-                "input": emit_input(node.inputs[0], as_vector=True),
-                "scale": emit_input(node.inputs["Scale"]),
+                "input": emit_input(node.inputs[0], stack=stack, as_vector=True),
+                "scale": emit_input(node.inputs["Scale"], stack=stack),
             }
         return {
             "op": "vector_math",
             "operation": operation,
-            "a": emit_input(node.inputs[0], as_vector=True),
-            "b": emit_input(node.inputs[1], as_vector=True),
+            "a": emit_input(node.inputs[0], stack=stack, as_vector=True),
+            "b": emit_input(node.inputs[1], stack=stack, as_vector=True),
         }
 
     if idname == "ShaderNodeMapping":
@@ -211,7 +308,7 @@ def emit_output(node, from_socket):
         return {
             "op": "mapping",
             "vectorType": vector_type,
-            "input": emit_input(node.inputs["Vector"], as_vector=True),
+            "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
             "location": [
                 float(item) for item in node.inputs["Location"].default_value
             ],
@@ -242,7 +339,7 @@ def emit_output(node, from_socket):
                 }
                 for element in ramp.elements
             ],
-            "input": emit_input(node.inputs["Fac"]),
+            "input": emit_input(node.inputs["Fac"], stack=stack),
         }
         if socket_name == "Alpha":
             expression = {"op": "ramp_alpha", "input": expression}
@@ -272,16 +369,16 @@ def emit_output(node, from_socket):
             b_input = node.inputs["Color2"]
             clamp_factor = True
             clamp_result = bool(getattr(node, "use_clamp", False))
-        if blend not in {"MIX", "MULTIPLY", "ADD"}:
+        if blend not in {"MIX", "MULTIPLY", "ADD", "OVERLAY"}:
             _refuse(f"Mix blend type {blend!r} has no cell yet")
         return {
             "op": "mix_color",
             "blendType": blend,
             "clampFactor": clamp_factor,
             "clampResult": clamp_result,
-            "factor": emit_input(factor),
-            "a": emit_input(a_input, as_vector=True),
-            "b": emit_input(b_input, as_vector=True),
+            "factor": emit_input(factor, stack=stack),
+            "a": emit_input(a_input, stack=stack, as_vector=True),
+            "b": emit_input(b_input, stack=stack, as_vector=True),
         }
 
     if idname == "ShaderNodeTexNoise":
@@ -322,15 +419,48 @@ def emit_output(node, from_socket):
                 float(lacunarity.default_value)
                 if lacunarity is not None else 2.0
             ),
-            "scale": emit_input(node.inputs["Scale"]),
-            "input": emit_input(vector, as_vector=True),
+            "scale": emit_input(node.inputs["Scale"], stack=stack),
+            "input": emit_input(vector, stack=stack, as_vector=True),
+        }
+
+    if idname == "ShaderNodeMapRange":
+        if str(getattr(node, "data_type", "FLOAT")) != "FLOAT":
+            _refuse(f"Map Range data type {node.data_type!r} has no cell yet")
+        if str(getattr(node, "interpolation_type", "LINEAR")) != "LINEAR":
+            _refuse(
+                f"Map Range interpolation {node.interpolation_type!r} "
+                "has no cell yet"
+            )
+        return {
+            "op": "map_range",
+            "clamp": bool(getattr(node, "clamp", True)),
+            "value": emit_input(node.inputs["Value"], stack=stack),
+            "fromMin": emit_input(node.inputs["From Min"], stack=stack),
+            "fromMax": emit_input(node.inputs["From Max"], stack=stack),
+            "toMin": emit_input(node.inputs["To Min"], stack=stack),
+            "toMax": emit_input(node.inputs["To Max"], stack=stack),
+        }
+
+    if idname == "ShaderNodeClamp":
+        if str(getattr(node, "clamp_type", "MINMAX")) != "MINMAX":
+            _refuse(f"Clamp type {node.clamp_type!r} has no cell yet")
+        return {
+            "op": "clamp_minmax",
+            "value": emit_input(node.inputs["Value"], stack=stack),
+            "min": emit_input(node.inputs["Min"], stack=stack),
+            "max": emit_input(node.inputs["Max"], stack=stack),
         }
 
     _refuse(f"{idname} has no proven TSL mapping")
 
 
-def emit_channel(socket) -> dict:
-    """Complete IR document for one channel input socket."""
+def emit_channel(socket, stack=()) -> dict:
+    """Complete IR document for one channel input socket.
+
+    ``stack`` is the group-instance chain enclosing the socket's node
+    (from ``find_principled_root``), so channels fed through Group Input
+    sockets resolve against the right instance.
+    """
     source = _socket_source(socket)
     if source is None:
         value = _constant_value(socket)
@@ -339,7 +469,7 @@ def emit_channel(socket) -> dict:
         expression = _vector(value) if socket.type in {"RGBA", "VECTOR"} \
             else _scalar(value)
     else:
-        expression = emit_output(*source)
+        expression = emit_output(*source, stack)
     return {
         "schemaVersion": 1,
         "model": IR_MODEL,
