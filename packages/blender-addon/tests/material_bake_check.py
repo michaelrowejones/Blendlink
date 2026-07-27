@@ -177,6 +177,11 @@ def main():
     tile_principled.inputs["Metallic"].default_value = 0.0
     tile_obj.data.materials.append(tile_material)
     compiler.set_material_bake(tile_material, True)
+    # MTL-CONS-003 stage 1: a second binding of the same tileable material
+    # must share one generated material, one bake, one texture.
+    shared_obj = quad_object("Tile Sibling", fixtures, uv_scale=3.0)
+    shared_obj.location = (3.0, 0.0, 0.0)
+    shared_obj.data.materials.append(tile_material)
 
     # --- Unique route: world-space channels + HDR emissive + normal ------
     unique_obj = quad_object("Unique Target", fixtures)
@@ -239,7 +244,7 @@ def main():
 
     # --- Plan ------------------------------------------------------------
     plan = compiler.plan_materials(
-        (tile_obj, unique_obj, refused_obj), purpose="final",
+        (tile_obj, shared_obj, unique_obj, refused_obj), purpose="final",
     )
     decisions = {item.material_name: item for item in plan.decisions}
 
@@ -262,6 +267,22 @@ def main():
         tile_rough["route"] == "factor"
         and abs(tile_rough["value"] - 0.7) < 1e-6,
         f"constant Roughness must stay a factor: {tile_rough}",
+    )
+    consolidation = (tile_decision.channel_plan or {}).get("consolidation")
+    expect(
+        consolidation == {
+            "population": "tileable", "bindings": 2, "sharedMaterial": True,
+        },
+        f"two tileable bindings must plan one shared material: {consolidation}",
+    )
+    unique_consolidation = (
+        decisions["World Channels"].channel_plan or {}
+    ).get("consolidation")
+    expect(
+        unique_consolidation is not None
+        and unique_consolidation["population"] == "unique"
+        and unique_consolidation["sharedMaterial"] is False,
+        f"the Unique population must stay separate: {unique_consolidation}",
     )
 
     unique_decision = decisions["World Channels"]
@@ -302,7 +323,9 @@ def main():
 
     # --- Compile the two good materials through the real exporter --------
     compiler.set_material_bake(refused_material, False)
-    good_plan = compiler.plan_materials((tile_obj, unique_obj), purpose="final")
+    good_plan = compiler.plan_materials(
+        (tile_obj, shared_obj, unique_obj), purpose="final",
+    )
     expect(not good_plan.errors, f"good plan blocked: {good_plan.errors}")
 
     before = scene_snapshot()
@@ -311,12 +334,13 @@ def main():
         _value, compilation = compiler.with_compiled_materials(
             good_plan,
             str(out_path),
-            emit_selected([tile_obj, unique_obj]),
+            emit_selected([tile_obj, shared_obj, unique_obj]),
         )
         expect(out_path.is_file(), "material bake emitted no GLB")
         expect(
             len(compilation.generated_materials) == 2,
-            f"expected two generated materials: {compilation.generated_materials}",
+            f"two bindings of one tileable material must consolidate to one "
+            f"generated material: {compilation.generated_materials}",
         )
         evidence_by_source = {
             item["sourceMaterial"]: item for item in compilation.gltf_evidence
@@ -335,6 +359,12 @@ def main():
             in tile_evidence["materialBake"]["gates"]["Base Color"],
             f"tile gates missing: {tile_evidence['materialBake']['gates']}",
         )
+        expect(
+            sorted(tile_evidence["bindings"])
+            == ["Tile Sibling[0]", "Tile Target[0]"],
+            f"the shared tile material must attest both bindings: "
+            f"{tile_evidence['bindings']}",
+        )
         unique_textures = unique_evidence["materialBake"]["textures"]
         expect(
             set(unique_textures) == {"baseColor", "orm", "normal", "emissive"}
@@ -351,6 +381,20 @@ def main():
         )
 
         document, binary = read_glb_json(out_path)
+        tile_nodes = {
+            node.get("name"): node for node in document.get("nodes", ())
+            if node.get("name") in {"Tile Target", "Tile Sibling"}
+        }
+        tile_material_indices = {
+            primitive.get("material")
+            for node in tile_nodes.values()
+            for primitive in document["meshes"][node["mesh"]]["primitives"]
+        }
+        expect(
+            len(tile_nodes) == 2 and len(tile_material_indices) == 1,
+            f"both tile bindings must reference one glTF material: "
+            f"{tile_material_indices}",
+        )
         generated = [
             material for material in document.get("materials", ())
             if (material.get("extras") or {}).get("blendlink_material_rule")
@@ -391,6 +435,36 @@ def main():
         scene_snapshot() == before,
         "material bake compile did not restore the source scene exactly",
     )
+
+    # --- A Component-owning object can refuse consolidation --------------
+    shared_obj["blendlink_distinct_material"] = True
+    distinct_plan = compiler.plan_materials(
+        (tile_obj, shared_obj), purpose="final",
+    )
+    distinct_decision = next(
+        item for item in distinct_plan.decisions
+        if item.material_name == "Tiled Channels"
+    )
+    distinct_report = (distinct_decision.channel_plan or {})["consolidation"]
+    expect(
+        distinct_report["sharedMaterial"] is False
+        and distinct_report.get("distinctObjects") == ["Tile Sibling"],
+        f"the distinct opt-out must be named in the plan: {distinct_report}",
+    )
+    with tempfile.TemporaryDirectory(prefix="blendlink-distinct-") as directory:
+        out_path = Path(directory) / "distinct.glb"
+        _value, distinct_compilation = compiler.with_compiled_materials(
+            distinct_plan,
+            str(out_path),
+            emit_selected([tile_obj, shared_obj]),
+        )
+        expect(
+            len(distinct_compilation.generated_materials) == 2,
+            f"a distinct binding must keep its own generated material: "
+            f"{distinct_compilation.generated_materials}",
+        )
+    del shared_obj["blendlink_distinct_material"]
+
     leaked = [
         material.name for material in bpy.data.materials
         if material.name.startswith((

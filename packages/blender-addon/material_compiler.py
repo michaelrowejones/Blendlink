@@ -187,6 +187,10 @@ class MaterialBinding:
     uv_min: tuple[float, float] | None = None
     uv_max: tuple[float, float] | None = None
     uv_hash: str | None = None
+    # MTL-CONS-003: a Component or application adapter may need this object
+    # to keep its own material; the opt-out forces a distinct generated
+    # variant instead of joining the shared one.
+    distinct_material: bool = False
     # Used only inside the in-process GLB attestation transaction. The stable
     # plan fingerprint carries the digest above rather than a potentially
     # enormous JSON list of authored UV corners.
@@ -215,6 +219,7 @@ class MaterialBinding:
             "uvMin": list(self.uv_min) if self.uv_min is not None else None,
             "uvMax": list(self.uv_max) if self.uv_max is not None else None,
             "uvHash": self.uv_hash,
+            "distinctMaterial": self.distinct_material,
         }
 
 
@@ -2977,6 +2982,7 @@ def _plan_material_bake(
                     "BLEND" if (alpha_baked or alpha_factor < 1.0 - 1e-9)
                     else "OPAQUE"
                 ),
+                distinct_material=bool(obj.get("blendlink_distinct_material")),
             ))
     else:
         planned_bindings = [
@@ -3002,9 +3008,36 @@ def _plan_material_bake(
             "occlusion baking is a separate route."
         )
 
+    # MTL-CONS-003 stage 1: one generated material per variant.  Tileable
+    # and factor-only materials consolidate across every non-distinct
+    # binding; Unique materials stay per-binding until the shared-atlas
+    # pack lands.  Tileable materials are the separate population that can
+    # never join a cross-material shared atlas.
+    population = "factor"
+    if any(
+        record.get("route") == "bake" and record.get("uv") == "unique"
+        for record in channels
+    ):
+        population = "unique"
+    elif any(record.get("route") == "bake" for record in channels):
+        population = "tileable"
+    distinct_objects = sorted(
+        binding.object_name for binding in planned_bindings
+        if binding.distinct_material
+    )
     channel_plan = {
         "model": CHANNEL_PLAN_MODEL,
         "channels": channels,
+        "consolidation": {
+            "population": population,
+            "bindings": len(planned_bindings),
+            "sharedMaterial": (
+                population != "unique" and not distinct_objects
+            ),
+            **({
+                "distinctObjects": distinct_objects,
+            } if distinct_objects else {}),
+        },
         **({
             "wrapGateWindow": list(wrap_gate_window),
         } if wrap_gate_window is not None else {}),
@@ -3215,6 +3248,9 @@ def _variant_key(decision: MaterialDecision, binding: MaterialBinding) -> str:
         "uvName": binding.uv_name,
         "uvIndex": binding.uv_index,
         "channelPlan": decision.channel_plan,
+        "distinctBinding": (
+            binding.object_name if binding.distinct_material else None
+        ),
     }, sort_keys=True, separators=(",", ":"))
 
 

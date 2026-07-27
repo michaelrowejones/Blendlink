@@ -163,6 +163,17 @@ export interface MaterialChannelPlanEntry {
 export interface MaterialChannelPlanDiagnostic {
   model: string
   channels: MaterialChannelPlanEntry[]
+  /** MTL-CONS-003 stage 1: one generated material per variant. Tileable and
+   * factor-only materials consolidate across every non-distinct binding;
+   * the Unique population stays per-binding until the shared-atlas pack
+   * lands. `distinctObjects` lists per-object opt-outs
+   * (`blendlink_distinct_material`). */
+  consolidation?: {
+    population: 'factor' | 'tileable' | 'unique'
+    bindings: number
+    sharedMaterial: boolean
+    distinctObjects?: string[]
+  }
   wrapGateWindow?: number[]
 }
 
