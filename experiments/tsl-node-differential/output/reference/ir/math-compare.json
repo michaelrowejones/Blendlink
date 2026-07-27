@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "math",
+      "operation": "GREATER_THAN",
+      "a": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.5
+      }
+    },
+    "y": {
+      "op": "math",
+      "operation": "LESS_THAN",
+      "a": {
+        "op": "separate",
+        "channel": "y",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.5
+      }
+    },
+    "z": {
+      "op": "const_float",
+      "value": 0.0
+    }
+  }
+}

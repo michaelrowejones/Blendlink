@@ -23,8 +23,10 @@ import bpy
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 sys.path.insert(0, str(REPO / "packages" / "blendlink" / "blender"))
+sys.path.insert(0, str(REPO / "packages" / "blender-addon"))
 
 import bakelib  # noqa: E402
+import tsl_ir  # noqa: E402
 
 OUTPUT = HERE / "output" / "reference"
 CELLS = json.loads((HERE / "cells.json").read_text(encoding="utf8"))
@@ -279,6 +281,56 @@ def build_noise_mx_divergence(tree, emission):
     tree.links.new(noise.outputs["Fac"], emission.inputs["Color"])
 
 
+def build_mix_modes(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate_uv = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate_uv.inputs["Vector"])
+
+    def mix_node(blend_type, factor_socket):
+        node = tree.nodes.new("ShaderNodeMix")
+        node.data_type = "RGBA"
+        node.blend_type = blend_type
+        factor = next(
+            item for item in node.inputs
+            if item.identifier == "Factor_Float"
+        )
+        a_input = next(
+            item for item in node.inputs if item.identifier == "A_Color"
+        )
+        b_input = next(
+            item for item in node.inputs if item.identifier == "B_Color"
+        )
+        a_input.default_value = (0.2, 0.8, 0.4, 1.0)
+        b_input.default_value = (0.9, 0.1, 0.6, 1.0)
+        tree.links.new(factor_socket, factor)
+        return next(
+            item for item in node.outputs
+            if item.identifier == "Result_Color"
+        )
+
+    def channel_of(color_socket, channel):
+        separate = tree.nodes.new("ShaderNodeSeparateColor")
+        separate.mode = "RGB"
+        tree.links.new(color_socket, separate.inputs["Color"])
+        return separate.outputs[channel]
+
+    combine = tree.nodes.new("ShaderNodeCombineColor")
+    combine.mode = "RGB"
+    tree.links.new(
+        channel_of(mix_node("MIX", separate_uv.outputs["X"]), "Red"),
+        combine.inputs["Red"],
+    )
+    tree.links.new(
+        channel_of(mix_node("MULTIPLY", separate_uv.outputs["Y"]), "Green"),
+        combine.inputs["Green"],
+    )
+    tree.links.new(
+        channel_of(mix_node("ADD", separate_uv.outputs["X"]), "Blue"),
+        combine.inputs["Blue"],
+    )
+    tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+
+
 BUILDERS = {
     "constant-linear": build_constant_linear,
     "uv-gradient": build_uv_gradient,
@@ -294,6 +346,7 @@ BUILDERS = {
     "noise-fractal-detail": build_noise_fractal_detail,
     "voronoi-f1-divergence": build_voronoi_f1_divergence,
     "noise-mx-divergence": build_noise_mx_divergence,
+    "mix-modes": build_mix_modes,
 }
 
 
@@ -302,37 +355,58 @@ def main():
 
     bpy.ops.wm.read_factory_settings(use_empty=True)
     OUTPUT.mkdir(parents=True, exist_ok=True)
+    ir_output = OUTPUT / "ir"
+    ir_output.mkdir(parents=True, exist_ok=True)
     manifest = {"schemaVersion": 1, "size": SIZE, "cells": {}}
     for cell in CELLS["cells"]:
         cell_id = cell["id"]
+        pipeline = cell.get("pipeline", "ir")
         builder = BUILDERS.get(cell_id)
         if builder is None:
             raise SystemExit(f"reference builder missing for cell {cell_id!r}")
         material = emission_material(f"CELL {cell_id}", builder)
-        proxy = bakelib.uv_tile_proxy([], window=(0.0, 0.0, 1.0, 1.0))
+        ir_path = None
         try:
-            proxy.data.materials.append(material)
-            result = bakelib.bake_channel_field_pixels(
-                [proxy], size=SIZE, margin_px=0,
-                uv_layer="BLENDLINK_TILE_BAKE",
-                label=f"tsl differential {cell_id}",
-                allow_hdr=True,
-            )
+            if pipeline == "ir":
+                # The production emitter walks the SAME graph Cycles bakes;
+                # a refusal here is a harness bug, not a soft skip.
+                tree = material.node_tree
+                emission = next(
+                    node for node in tree.nodes
+                    if node.bl_idname == "ShaderNodeEmission"
+                )
+                document = tsl_ir.emit_channel(emission.inputs["Color"])
+                ir_path = ir_output / f"{cell_id}.json"
+                ir_path.write_text(
+                    json.dumps(document, indent=2) + "\n", encoding="utf8",
+                )
+            proxy = bakelib.uv_tile_proxy([], window=(0.0, 0.0, 1.0, 1.0))
+            try:
+                proxy.data.materials.append(material)
+                result = bakelib.bake_channel_field_pixels(
+                    [proxy], size=SIZE, margin_px=0,
+                    uv_layer="BLENDLINK_TILE_BAKE",
+                    label=f"tsl differential {cell_id}",
+                    allow_hdr=True,
+                )
+            finally:
+                bakelib.remove_uv_tile_proxy(proxy)
         finally:
-            bakelib.remove_uv_tile_proxy(proxy)
             bpy.data.materials.remove(material, do_unlink=True)
         pixels = np.asarray(result["pixels"], dtype=np.float32)
         path = OUTPUT / f"{cell_id}.f32"
         pixels.tofile(path)
         manifest["cells"][cell_id] = {
             "path": path.name,
+            "pipeline": pipeline,
+            **({"ir": f"ir/{cell_id}.json"} if ir_path is not None else {}),
             "shape": list(pixels.shape),
             "rgbMin": list(result["rgbMin"]),
             "rgbMax": list(result["rgbMax"]),
             "deviceClass": result["deviceClass"],
             "backend": result["backend"],
         }
-        print(f"tsl differential reference: {cell_id} baked")
+        print(f"tsl differential reference: {cell_id} baked ({pipeline})")
     (OUTPUT / "manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf8",
     )

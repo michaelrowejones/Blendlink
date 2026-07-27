@@ -61,11 +61,22 @@ async function importPlaywright() {
 const { createServer } = await import(pathToFileURL(join(
   repositoryRoot, 'node_modules', 'vite', 'dist', 'node', 'index.js',
 )).href)
+const recipeModule = join(
+  repositoryRoot, 'packages', 'blendlink', 'dist', 'tslNodeRecipe.js',
+)
+if (!existsSync(recipeModule)) {
+  throw new Error(
+    `built tslNodeRecipe module missing (${recipeModule}); run npm run build`,
+  )
+}
 const server = await createServer({
   configFile: false,
   root: experimentDir,
   logLevel: 'warn',
   optimizeDeps: { noDiscovery: true },
+  resolve: {
+    alias: { '@blendlink-tsl-recipe': recipeModule },
+  },
   server: {
     host: '127.0.0.1',
     port: 0,
@@ -133,18 +144,18 @@ try {
   if (environment.error) {
     throw new Error(`TSL harness init failed: ${environment.error}`)
   }
-  const jsCells = await page.evaluate(() => window.__tslDiffCellIds())
-  const manifestIds = cellsManifest.cells.map((cell) => cell.id)
-  for (const id of manifestIds) {
-    if (!jsCells.includes(id)) throw new Error(`TSL side missing cell ${id}`)
-    if (!reference.cells[id]) throw new Error(`reference missing cell ${id}`)
+  for (const cell of cellsManifest.cells) {
+    if (!reference.cells[cell.id]) {
+      throw new Error(`reference missing cell ${cell.id}`)
+    }
   }
 
   const results = {}
   const failures = []
   for (const cell of cellsManifest.cells) {
     const rendered = await page.evaluate(
-      (id) => window.__tslDiffRun(id), cell.id,
+      ({ id, pipeline }) => window.__tslDiffRun(id, pipeline),
+      { id: cell.id, pipeline: cell.pipeline ?? 'ir' },
     )
     if (!rendered.ok) {
       results[cell.id] = { ok: false, error: rendered.error }

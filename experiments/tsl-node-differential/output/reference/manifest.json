@@ -4,6 +4,8 @@
   "cells": {
     "constant-linear": {
       "path": "constant-linear.f32",
+      "pipeline": "ir",
+      "ir": "ir/constant-linear.json",
       "shape": [
         64,
         64,
@@ -24,6 +26,8 @@
     },
     "uv-gradient": {
       "path": "uv-gradient.f32",
+      "pipeline": "ir",
+      "ir": "ir/uv-gradient.json",
       "shape": [
         64,
         64,
@@ -44,6 +48,8 @@
     },
     "math-compare": {
       "path": "math-compare.f32",
+      "pipeline": "ir",
+      "ir": "ir/math-compare.json",
       "shape": [
         64,
         64,
@@ -64,6 +70,8 @@
     },
     "mapping-rotate": {
       "path": "mapping-rotate.f32",
+      "pipeline": "ir",
+      "ir": "ir/mapping-rotate.json",
       "shape": [
         64,
         64,
@@ -84,6 +92,8 @@
     },
     "colorramp-linear": {
       "path": "colorramp-linear.f32",
+      "pipeline": "ir",
+      "ir": "ir/colorramp-linear.json",
       "shape": [
         64,
         64,
@@ -104,6 +114,8 @@
     },
     "math-safe-divide": {
       "path": "math-safe-divide.f32",
+      "pipeline": "ir",
+      "ir": "ir/math-safe-divide.json",
       "shape": [
         64,
         64,
@@ -124,6 +136,8 @@
     },
     "math-modulo-sign": {
       "path": "math-modulo-sign.f32",
+      "pipeline": "ir",
+      "ir": "ir/math-modulo-sign.json",
       "shape": [
         64,
         64,
@@ -144,6 +158,8 @@
     },
     "math-power-negative-base": {
       "path": "math-power-negative-base.f32",
+      "pipeline": "ir",
+      "ir": "ir/math-power-negative-base.json",
       "shape": [
         64,
         64,
@@ -164,6 +180,8 @@
     },
     "math-trig": {
       "path": "math-trig.f32",
+      "pipeline": "ir",
+      "ir": "ir/math-trig.json",
       "shape": [
         64,
         64,
@@ -184,6 +202,8 @@
     },
     "colorramp-constant": {
       "path": "colorramp-constant.f32",
+      "pipeline": "ir",
+      "ir": "ir/colorramp-constant.json",
       "shape": [
         64,
         64,
@@ -204,6 +224,8 @@
     },
     "mapping-texture-mode": {
       "path": "mapping-texture-mode.f32",
+      "pipeline": "ir",
+      "ir": "ir/mapping-texture-mode.json",
       "shape": [
         64,
         64,
@@ -224,6 +246,8 @@
     },
     "noise-fractal-detail": {
       "path": "noise-fractal-detail.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-fractal-detail.json",
       "shape": [
         64,
         64,
@@ -242,8 +266,31 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "mix-modes": {
+      "path": "mix-modes.f32",
+      "pipeline": "ir",
+      "ir": "ir/mix-modes.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.205479696393013,
+        0.08560249954462051,
+        0.40469688177108765
+      ],
+      "rgbMax": [
+        0.8945421576499939,
+        0.7943525314331055,
+        0.9953218698501587
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "voronoi-f1-divergence": {
       "path": "voronoi-f1-divergence.f32",
+      "pipeline": "handwritten",
       "shape": [
         64,
         64,
@@ -264,6 +311,8 @@
     },
     "noise-mx-divergence": {
       "path": "noise-mx-divergence.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-mx-divergence.json",
       "shape": [
         64,
         64,

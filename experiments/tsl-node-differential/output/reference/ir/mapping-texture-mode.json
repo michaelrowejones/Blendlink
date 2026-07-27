@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "separate",
+      "channel": "x",
+      "input": {
+        "op": "vector_math",
+        "operation": "ADD",
+        "a": {
+          "op": "vector_scale",
+          "input": {
+            "op": "mapping",
+            "vectorType": "TEXTURE",
+            "input": {
+              "op": "uv"
+            },
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.5235987901687622
+            ],
+            "scale": [
+              2.0,
+              1.0,
+              1.0
+            ]
+          },
+          "scale": {
+            "op": "const_float",
+            "value": 0.25
+          }
+        },
+        "b": {
+          "op": "const_vec3",
+          "value": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        }
+      }
+    },
+    "y": {
+      "op": "separate",
+      "channel": "y",
+      "input": {
+        "op": "vector_math",
+        "operation": "ADD",
+        "a": {
+          "op": "vector_scale",
+          "input": {
+            "op": "mapping",
+            "vectorType": "TEXTURE",
+            "input": {
+              "op": "uv"
+            },
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.5235987901687622
+            ],
+            "scale": [
+              2.0,
+              1.0,
+              1.0
+            ]
+          },
+          "scale": {
+            "op": "const_float",
+            "value": 0.25
+          }
+        },
+        "b": {
+          "op": "const_vec3",
+          "value": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        }
+      }
+    },
+    "z": {
+      "op": "const_float",
+      "value": 0.0
+    }
+  }
+}

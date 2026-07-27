@@ -129,14 +129,25 @@
     },
     "noise-fractal-detail": {
       "ok": true,
-      "gated": false,
-      "pass": null,
+      "gated": true,
+      "pass": true,
       "measured": {
-        "meanAbs": 0.04548128940950846,
-        "p99Abs": 0.1446685492992401,
-        "maxAbs": 0.18966838717460632
+        "meanAbs": 0.00004058628110215068,
+        "p99Abs": 0.00011801719665527344,
+        "maxAbs": 0.0001551508903503418
       },
-      "failureClass": "disagreeing noise implementations (fractal octaves — diagnostic)"
+      "failureClass": "disagreeing noise implementations (fBM composition, now ported)"
+    },
+    "mix-modes": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000014263800646100814,
+        "p99Abs": 0.000022530555725097656,
+        "maxAbs": 0.000022530555725097656
+      },
+      "failureClass": "Mix node blend modes (MIX / MULTIPLY / ADD)"
     },
     "voronoi-f1-divergence": {
       "ok": true,

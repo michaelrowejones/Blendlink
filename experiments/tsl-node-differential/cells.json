@@ -81,17 +81,25 @@
     },
     {
       "id": "noise-fractal-detail",
-      "gate": false,
-      "tolerance": null,
-      "failureClass": "disagreeing noise implementations (fractal octaves — diagnostic)",
-      "notes": "Blender Noise detail 2, roughness 0.5 versus three's mx_fractal_noise_float(3 octaves, lacunarity 2, diminish 0.5). The base octave matched; whether Blender's fBM composition (octave count convention, normalization) matches MaterialX's is measured here, not assumed."
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-3, "p99Abs": 5e-3, "maxAbs": 1e-2 },
+      "failureClass": "disagreeing noise implementations (fBM composition, now ported)",
+      "notes": "Blender Noise detail 2, roughness 0.5 through the PORTED Cycles fractal loop (blenderNoiseFac: i <= floor(detail) octaves over the shared base octave, amplitude-sum normalization, fractional-detail blend). MaterialX's own fBM measured 4.6e-2 divergence; the port must close it."
+    },
+    {
+      "id": "mix-modes",
+      "gate": true,
+      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "failureClass": "Mix node blend modes (MIX / MULTIPLY / ADD)",
+      "notes": "Three RGBA Mix nodes with varying factors feed one channel each: R = MIX(u), G = MULTIPLY(v), B = ADD(u). Blender blends toward the operator result by the factor: mix(a, op(a, b), fac)."
     },
     {
       "id": "voronoi-f1-divergence",
       "gate": false,
+      "pipeline": "handwritten",
       "tolerance": null,
       "failureClass": "disagreeing noise implementations (Worley — diagnostic)",
-      "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. The published fidelity work needed a Blender-side PR to reconcile Worley hashes, so divergence is expected; the measurement decides."
+      "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. Measured 2026-07-27 at mean 0.28 / max 0.96 — a completely different cell hash, the published Worley finding reproduced. Stays refused by the IR emitter until a faithful Cycles hash port earns this cell; the Material bake carries Voronoi channels meanwhile."
     },
     {
       "id": "noise-mx-divergence",
