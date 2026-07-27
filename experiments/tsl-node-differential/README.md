@@ -110,6 +110,36 @@ in splash/trapx is the stylized Mix-Shader/Shader-to-RGB frontier —
 that is the view-dependent cell work (Fresnel, Layer Weight), not
 missing coverage nodes.
 
+## The coverage and view-dependent batches — 2026-07-27 (later)
+
+Twenty-eight cells, twenty-seven gated, all passing, now including:
+
+- **The view-dependent class**: Cycles bakes with
+  `view_from=ACTIVE_CAMERA` under a fixed camera contract, and the TSL
+  side evaluates the same optics with an analytic view cosine. The
+  dielectric Fresnel formula matches to **4.8e-7** and Layer Weight
+  (both outputs) to 8.5e-6 — the trapx frontier's foundation.
+- The corpus-measured node gaps: Mix DIVIDE (zero-divisor keeps A —
+  decided by the reference, not assumed), Map Range SMOOTHSTEP, B-Spline
+  and Cardinal ColorRamps via the sampled-LUT route (Blender's own
+  `evaluate()` fills 257 texels; the shader lerps between exact samples),
+  2D noise (the vec2 Perlin dimension also shares the mx lineage), and
+  vertex color against the COLOR_0 contract.
+- Two WGSL/TSL traps measured and encoded: **WGSL const-evaluates
+  literal divisions and rejects the shader** (every division routes
+  through a const-safe guarded divisor), and a vector-condition `select`
+  collapses to one lane (per-channel scalar selects).
+- A bounded honesty rule from a real material: Plaster's detail-6 noise
+  diverged at 3.9e-2 — high-octave float phase amplification, not a
+  wrong algorithm — so the emitter refuses Noise detail > 2 (the proven
+  range) and those channels keep the Material bake.
+
+Scene stage after the batch: cube-diorama and ellie-animation each pass
+**every** sampled differential (Clay/Metal byte-exact; ellie's
+`tongue` — a production B-spline ramp over a named UV map — at 5.5e-6),
+with view-dependent and attribute-driven channels tallied under their
+faithful transports instead of forced through the tile domain.
+
 ## Limits
 
 - Hand-written TSL mappings stand in for the future compiler's output: a

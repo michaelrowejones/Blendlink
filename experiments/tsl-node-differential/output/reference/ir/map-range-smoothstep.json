@@ -5,7 +5,7 @@
     "op": "combine",
     "x": {
       "op": "map_range",
-      "interpolation": "LINEAR",
+      "interpolation": "SMOOTHSTEP",
       "clamp": true,
       "value": {
         "op": "separate",
@@ -33,7 +33,7 @@
     },
     "y": {
       "op": "map_range",
-      "interpolation": "LINEAR",
+      "interpolation": "SMOOTHSTEP",
       "clamp": true,
       "value": {
         "op": "separate",
@@ -61,7 +61,7 @@
     },
     "z": {
       "op": "map_range",
-      "interpolation": "LINEAR",
+      "interpolation": "SMOOTHSTEP",
       "clamp": true,
       "value": {
         "op": "separate",

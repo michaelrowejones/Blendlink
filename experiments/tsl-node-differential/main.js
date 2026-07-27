@@ -7,8 +7,17 @@
 // calibration cell proves it.
 import * as THREE from 'three'
 import { WebGPURenderer, MeshBasicNodeMaterial } from 'three/webgpu'
-import { mx_worley_noise_float, uv, vec3 } from 'three/tsl'
+import { mx_worley_noise_float, normalize, uv, vec3 } from 'three/tsl'
 import { buildTslColorNode } from '@blendlink-tsl-recipe'
+
+// The view-dependent cell camera contract, mirrored from reference.py:
+// camera at (0, 0, 2) looking down -Z at the quad spanning [-1, 1]^2 at
+// z = 0. V = normalize(camera - worldPos); cos = V.z against normal +Z.
+function analyticViewCos() {
+  const wx = uv().x.mul(2.0).sub(1.0)
+  const wy = uv().y.mul(2.0).sub(1.0)
+  return normalize(vec3(wx.negate(), wy.negate(), 2.0)).z
+}
 
 const SIZE = 64
 
@@ -33,6 +42,9 @@ async function init() {
     renderer.setPixelRatio(1)
     renderer.setSize(SIZE, SIZE, false)
     renderer.toneMapping = THREE.NoToneMapping
+    // Magenta clear sentinel: a cell whose pipeline fails to build must
+    // read back as the sentinel, never as the previous cell's pixels.
+    renderer.setClearColor(new THREE.Color(1.0, 0.0, 1.0), 1.0)
     await renderer.init()
     const scene = new THREE.Scene()
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1)
@@ -62,7 +74,22 @@ async function init() {
 window.__tslDiffInit = init
 window.__tslDiffReady = () => state.ready
 
-window.__tslDiffRun = async (cellId, pipeline, irPath) => {
+function ensureQuadVertexColors() {
+  // Mirror the reference proxy's corner colors: linear in UV, so any
+  // triangulation interpolates it exactly.
+  const geometry = state.mesh.geometry
+  if (geometry.getAttribute('color')) return
+  const uvs = geometry.getAttribute('uv')
+  const colors = new Float32Array(uvs.count * 3)
+  for (let index = 0; index < uvs.count; index += 1) {
+    colors[index * 3] = uvs.getX(index)
+    colors[index * 3 + 1] = uvs.getY(index)
+    colors[index * 3 + 2] = 0.25
+  }
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+}
+
+window.__tslDiffRun = async (cellId, pipeline, irPath, analyticCamera) => {
   if (state.error) return { ok: false, error: state.error }
   try {
     let colorNode
@@ -82,7 +109,14 @@ window.__tslDiffRun = async (cellId, pipeline, irPath) => {
           error: `IR fetch failed for ${cellId}: ${response.status}`,
         }
       }
-      colorNode = buildTslColorNode(await response.json())
+      const document = await response.json()
+      if (JSON.stringify(document).includes('"vertex_color"')) {
+        ensureQuadVertexColors()
+      }
+      colorNode = buildTslColorNode(
+        document,
+        analyticCamera ? { viewCos: analyticViewCos() } : {},
+      )
     }
     const material = new MeshBasicNodeMaterial()
     material.colorNode = colorNode

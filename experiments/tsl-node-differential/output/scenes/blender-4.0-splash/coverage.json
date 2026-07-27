@@ -8,6 +8,7 @@
     "constant": 138
   },
   "irCompiled": 0,
+  "irCompiledViewDependent": 0,
   "refusals": {
     "no root-level single Principled surface": 270
   },

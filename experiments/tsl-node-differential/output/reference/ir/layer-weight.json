@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "layer_weight",
+      "output": "facing",
+      "blend": {
+        "op": "const_float",
+        "value": 0.30000001192092896
+      },
+      "cos": {
+        "op": "view_cos"
+      }
+    },
+    "y": {
+      "op": "layer_weight",
+      "output": "fresnel",
+      "blend": {
+        "op": "const_float",
+        "value": 0.30000001192092896
+      },
+      "cos": {
+        "op": "view_cos"
+      }
+    },
+    "z": {
+      "op": "const_float",
+      "value": 0.0
+    }
+  },
+  "viewDependent": true
+}

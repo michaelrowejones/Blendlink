@@ -407,6 +407,125 @@ def build_clamp_node(tree, emission):
     _emit_scalar(tree, emission, node.outputs["Result"])
 
 
+def build_mix_divide(tree, emission):
+    node = tree.nodes.new("ShaderNodeMix")
+    node.data_type = "RGBA"
+    node.blend_type = "DIVIDE"
+    factor = next(
+        item for item in node.inputs if item.identifier == "Factor_Float"
+    )
+    a_input = next(
+        item for item in node.inputs if item.identifier == "A_Color"
+    )
+    b_input = next(
+        item for item in node.inputs if item.identifier == "B_Color"
+    )
+    a_input.default_value = (0.3, 0.6, 0.8, 1.0)
+    # G divides by zero: the cell decides Blender's fallback semantics.
+    b_input.default_value = (0.5, 0.0, 2.0, 1.0)
+    tree.links.new(_uv_channel(tree, "u"), factor)
+    result = next(
+        item for item in node.outputs if item.identifier == "Result_Color"
+    )
+    tree.links.new(result, emission.inputs["Color"])
+
+
+def build_map_range_smoothstep(tree, emission):
+    node = tree.nodes.new("ShaderNodeMapRange")
+    node.interpolation_type = "SMOOTHSTEP"
+    node.clamp = True
+    node.inputs["From Min"].default_value = 0.2
+    node.inputs["From Max"].default_value = 0.8
+    node.inputs["To Min"].default_value = 0.1
+    node.inputs["To Max"].default_value = 0.9
+    tree.links.new(_uv_channel(tree, "u"), node.inputs["Value"])
+    _emit_scalar(tree, emission, node.outputs["Result"])
+
+
+def _spline_ramp(tree, emission, interpolation):
+    ramp = tree.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.interpolation = interpolation
+    ramp.color_ramp.elements[0].position = 0.1
+    ramp.color_ramp.elements[0].color = (0.05, 0.1, 0.8, 1.0)
+    ramp.color_ramp.elements[1].position = 0.45
+    ramp.color_ramp.elements[1].color = (0.2, 0.85, 0.3, 1.0)
+    element = ramp.color_ramp.elements.new(0.9)
+    element.color = (0.9, 0.4, 0.05, 1.0)
+    tree.links.new(_uv_channel(tree, "u"), ramp.inputs["Fac"])
+    tree.links.new(ramp.outputs["Color"], emission.inputs["Color"])
+
+
+def build_colorramp_bspline(tree, emission):
+    _spline_ramp(tree, emission, "B_SPLINE")
+
+
+def build_colorramp_cardinal(tree, emission):
+    _spline_ramp(tree, emission, "CARDINAL")
+
+
+def build_noise_2d(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    noise = tree.nodes.new("ShaderNodeTexNoise")
+    noise.noise_dimensions = "2D"
+    noise.inputs["Scale"].default_value = 4.0
+    if "Detail" in noise.inputs:
+        noise.inputs["Detail"].default_value = 0.0
+    tree.links.new(coord.outputs["UV"], noise.inputs["Vector"])
+    tree.links.new(noise.outputs[0], emission.inputs["Color"])
+
+
+def build_vertex_color(tree, emission):
+    node = tree.nodes.new("ShaderNodeVertexColor")
+    node.layer_name = "Col"
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def proxy_vertex_colors(proxy):
+    """Corner color attribute linear in UV: exact under any triangulation."""
+    mesh = proxy.data
+    layer = mesh.color_attributes.new("Col", "FLOAT_COLOR", "CORNER")
+    source = mesh.uv_layers["BLENDLINK_TILE_SOURCE"]
+    for index, item in enumerate(source.data):
+        u, v = item.uv
+        layer.data[index].color = (u, v, 0.25, 1.0)
+
+
+def build_fresnel_dielectric(tree, emission):
+    node = tree.nodes.new("ShaderNodeFresnel")
+    node.inputs["IOR"].default_value = 1.45
+    tree.links.new(node.outputs["Fac"], emission.inputs["Color"])
+
+
+def build_layer_weight(tree, emission):
+    node = tree.nodes.new("ShaderNodeLayerWeight")
+    node.inputs["Blend"].default_value = 0.3
+    combine = tree.nodes.new("ShaderNodeCombineColor")
+    combine.mode = "RGB"
+    tree.links.new(node.outputs["Facing"], combine.inputs["Red"])
+    tree.links.new(node.outputs["Fresnel"], combine.inputs["Green"])
+    combine.inputs["Blue"].default_value = 0.0
+    tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+
+
+def ensure_view_camera():
+    """The view-dependent cell camera contract: position (0, 0, 2) looking
+    down -Z at the unit-UV tile quad spanning [-1, 1]^2 at z = 0.  The TSL
+    side reproduces V analytically from the same numbers."""
+    camera = bpy.data.objects.get("TSL View Camera")
+    if camera is None:
+        data = bpy.data.cameras.new("TSL View Camera")
+        camera = bpy.data.objects.new("TSL View Camera", data)
+        bpy.context.scene.collection.objects.link(camera)
+        camera.location = (0.0, 0.0, 2.0)
+        camera.rotation_euler = (0.0, 0.0, 0.0)
+    bpy.context.scene.camera = camera
+
+
+CELL_PROXY_SETUP = {
+    "vertex-color": proxy_vertex_colors,
+}
+
+
 BUILDERS = {
     "constant-linear": build_constant_linear,
     "uv-gradient": build_uv_gradient,
@@ -423,7 +542,15 @@ BUILDERS = {
     "voronoi-f1-divergence": build_voronoi_f1_divergence,
     "noise-mx-divergence": build_noise_mx_divergence,
     "mix-modes": build_mix_modes,
+    "mix-divide": build_mix_divide,
+    "map-range-smoothstep": build_map_range_smoothstep,
+    "colorramp-bspline": build_colorramp_bspline,
+    "colorramp-cardinal": build_colorramp_cardinal,
+    "noise-2d": build_noise_2d,
+    "vertex-color": build_vertex_color,
     "group-passthrough": build_group_passthrough,
+    "fresnel-dielectric": build_fresnel_dielectric,
+    "layer-weight": build_layer_weight,
     "map-range-linear": build_map_range_linear,
     "mix-overlay": build_mix_overlay,
     "math-pingpong": build_math_pingpong,
@@ -461,14 +588,21 @@ def main():
                 ir_path.write_text(
                     json.dumps(document, indent=2) + "\n", encoding="utf8",
                 )
+            view_from = str(cell.get("viewFrom", "ABOVE_SURFACE"))
+            if view_from == "ACTIVE_CAMERA":
+                ensure_view_camera()
             proxy = bakelib.uv_tile_proxy([], window=(0.0, 0.0, 1.0, 1.0))
             try:
+                setup = CELL_PROXY_SETUP.get(cell_id)
+                if setup is not None:
+                    setup(proxy)
                 proxy.data.materials.append(material)
                 result = bakelib.bake_channel_field_pixels(
                     [proxy], size=SIZE, margin_px=0,
                     uv_layer="BLENDLINK_TILE_BAKE",
                     label=f"tsl differential {cell_id}",
                     allow_hdr=True,
+                    view_from=view_from,
                 )
             finally:
                 bakelib.remove_uv_tile_proxy(proxy)

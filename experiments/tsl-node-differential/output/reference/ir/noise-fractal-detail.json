@@ -4,6 +4,7 @@
   "output": {
     "op": "noise",
     "output": "fac",
+    "dimensions": 3,
     "detail": 2.0,
     "roughness": 0.5,
     "lacunarity": 2.0,

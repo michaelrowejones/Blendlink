@@ -6515,8 +6515,15 @@ def configure_normal_bake(scene, margin_px: int) -> None:
     bake.normal_b = "POS_Z"
 
 
-def configure_emit_bake(scene, margin_px: int) -> None:
-    """Canonical deterministic RNA for a selected intrinsic EMIT field."""
+def configure_emit_bake(
+        scene, margin_px: int, *, view_from: str = "ABOVE_SURFACE") -> None:
+    """Canonical deterministic RNA for a selected intrinsic EMIT field.
+
+    ``view_from="ACTIVE_CAMERA"`` casts the bake rays from the scene camera
+    so view-dependent inputs (Fresnel, Layer Weight) evaluate for one
+    authored view — the reference mechanism of the TSL view-dependent
+    differential cells.
+    """
     bake = scene.render.bake
     bake.use_clear = True
     bake.margin = int(margin_px)
@@ -6532,8 +6539,15 @@ def configure_emit_bake(scene, margin_px: int) -> None:
     bake.use_pass_glossy = False
     bake.use_pass_transmission = False
     bake.use_pass_emit = True
-    if hasattr(bake, "view_from"):
-        bake.view_from = "ABOVE_SURFACE"
+    if view_from not in {"ABOVE_SURFACE", "ACTIVE_CAMERA"}:
+        raise ValueError(f"unsupported Cycles bake view origin {view_from!r}")
+    if not hasattr(bake, "view_from"):
+        if view_from == "ACTIVE_CAMERA":
+            raise RuntimeError(
+                "this Blender build cannot bake from the active camera"
+            )
+    else:
+        bake.view_from = view_from
     bake.normal_space = "OBJECT"
 
 
@@ -6841,6 +6855,7 @@ def _restore_isolated_bake_rna(scene, saved, cleanup_errors):
 def _bake_isolated_field_pixels(
         objs, *, size: int, margin_px: int, uv_layer: str,
         label: str, log=print, bake_type: str = "EMIT",
+        view_from: str = "ABOVE_SURFACE",
         configure=None) -> dict:
     """Coverage-proved isolated bake to float pixels with exact restoration.
 
@@ -6879,7 +6894,7 @@ def _bake_isolated_field_pixels(
     cleanup_errors = []
     try:
         _force_isolated_bake_determinism(scene)
-        configure_emit_bake(scene, margin)
+        configure_emit_bake(scene, margin, view_from=view_from)
         device = configure_cycles_compute_device(
             scene, log=log, restore_state=device_state, purpose=label,
         )
@@ -7105,7 +7120,7 @@ def save_channel_png(
 def bake_channel_field_pixels(
         objs, *, size: int, margin_px: int, uv_layer: str = ATLAS_UV,
         label: str = "material channel field", allow_hdr: bool = False,
-        log=print) -> dict:
+        view_from: str = "ABOVE_SURFACE", log=print) -> dict:
     """Bake one caller-installed private EMIT channel to float pixels.
 
     The Material bake composes several scalar channels into one packed PNG,
@@ -7116,7 +7131,7 @@ def bake_channel_field_pixels(
     """
     result = _bake_isolated_field_pixels(
         objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
-        label=label, log=log,
+        label=label, log=log, view_from=view_from,
     )
     minimum = result["rgbMin"]
     maximum = result["rgbMax"]

@@ -153,10 +153,22 @@ try {
   const results = {}
   const failures = []
   for (const cell of cellsManifest.cells) {
+    const errorsBefore = pageErrors.length
     const rendered = await page.evaluate(
-      ({ id, pipeline }) => window.__tslDiffRun(id, pipeline),
-      { id: cell.id, pipeline: cell.pipeline ?? 'ir' },
+      ({ id, pipeline, analyticCamera }) =>
+        window.__tslDiffRun(id, pipeline, undefined, analyticCamera),
+      {
+        id: cell.id,
+        pipeline: cell.pipeline ?? 'ir',
+        analyticCamera: Boolean(cell.analyticCamera),
+      },
     )
+    if (pageErrors.length > errorsBefore) {
+      failures.push(
+        `${cell.id}: page errors during render: `
+        + pageErrors.slice(errorsBefore).join(' | ').slice(0, 400),
+      )
+    }
     if (!rendered.ok) {
       results[cell.id] = { ok: false, error: rendered.error }
       failures.push(`${cell.id}: TSL render failed: ${rendered.error}`)

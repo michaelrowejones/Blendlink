@@ -323,27 +323,40 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeValToRGB":
         ramp = node.color_ramp
         interpolation = str(ramp.interpolation)
-        if interpolation not in _RAMP_INTERPOLATIONS:
-            _refuse(
-                f"ColorRamp interpolation {interpolation!r} has no cell yet"
-            )
         if socket_name not in {"Color", "Alpha"}:
             _refuse(f"ColorRamp output {socket_name!r} unsupported")
-        expression = {
-            "op": "color_ramp",
-            "interpolation": interpolation,
-            "stops": [
-                {
-                    "position": float(element.position),
-                    "color": [float(item) for item in element.color],
-                }
-                for element in ramp.elements
-            ],
+        if interpolation in _RAMP_INTERPOLATIONS:
+            expression = {
+                "op": "color_ramp",
+                "interpolation": interpolation,
+                "stops": [
+                    {
+                        "position": float(element.position),
+                        "color": [float(item) for item in element.color],
+                    }
+                    for element in ramp.elements
+                ],
+                "input": emit_input(node.inputs["Fac"], stack=stack),
+            }
+            if socket_name == "Alpha":
+                expression = {"op": "ramp_alpha", "input": expression}
+            return expression
+        # B_SPLINE / CARDINAL / EASE: sample Blender's own evaluator into a
+        # LUT; the builder interpolates between exact texels.  257 samples
+        # bound the reconstruction error of any smooth colorband well below
+        # cell tolerance.
+        samples = 257
+        values = []
+        for index in range(samples):
+            color = ramp.evaluate(index / (samples - 1))
+            values.extend(float(item) for item in color)
+        return {
+            "op": "ramp_lut",
+            "channel": "alpha" if socket_name == "Alpha" else "rgb",
+            "samples": samples,
+            "values": values,
             "input": emit_input(node.inputs["Fac"], stack=stack),
         }
-        if socket_name == "Alpha":
-            expression = {"op": "ramp_alpha", "input": expression}
-        return expression
 
     if idname in {"ShaderNodeMix", "ShaderNodeMixRGB"}:
         if idname == "ShaderNodeMix":
@@ -369,7 +382,7 @@ def emit_output(node, from_socket, stack=()):
             b_input = node.inputs["Color2"]
             clamp_factor = True
             clamp_result = bool(getattr(node, "use_clamp", False))
-        if blend not in {"MIX", "MULTIPLY", "ADD", "OVERLAY"}:
+        if blend not in {"MIX", "MULTIPLY", "ADD", "OVERLAY", "DIVIDE"}:
             _refuse(f"Mix blend type {blend!r} has no cell yet")
         return {
             "op": "mix_color",
@@ -386,10 +399,10 @@ def emit_output(node, from_socket, stack=()):
         # "Fac" across versions.
         if getattr(from_socket, "identifier", socket_name) != "Fac":
             _refuse(f"Noise output {socket_name!r} has no cell yet (Fac only)")
-        if getattr(node, "noise_dimensions", "3D") != "3D":
+        dimensions = str(getattr(node, "noise_dimensions", "3D"))
+        if dimensions not in {"2D", "3D"}:
             _refuse(
-                f"Noise dimensions {node.noise_dimensions!r} has no cell "
-                "yet (3D only)"
+                f"Noise dimensions {dimensions!r} has no cell yet"
             )
         distortion = node.inputs.get("Distortion")
         if distortion is not None and (
@@ -409,10 +422,21 @@ def emit_output(node, from_socket, stack=()):
                 "Noise with unlinked Vector samples Generated coordinates; "
                 "no TSL cell"
             )
+        detail_value = float(node.inputs["Detail"].default_value)
+        if detail_value > 2.0 + 1e-9:
+            # Detail 2 is the proven range. At high octave counts (measured
+            # at detail 6, scale 5: mean 3.9e-2) float phase differences in
+            # the shared base octave amplify past channel tolerance; the
+            # Material bake carries these channels faithfully instead.
+            _refuse(
+                f"Noise detail {detail_value:g} exceeds the proven range "
+                "(<= 2); high-octave phase divergence measured"
+            )
         lacunarity = node.inputs.get("Lacunarity")
         return {
             "op": "noise",
             "output": "fac",
+            "dimensions": 2 if dimensions == "2D" else 3,
             "detail": float(node.inputs["Detail"].default_value),
             "roughness": float(node.inputs["Roughness"].default_value),
             "lacunarity": (
@@ -423,16 +447,58 @@ def emit_output(node, from_socket, stack=()):
             "input": emit_input(vector, stack=stack, as_vector=True),
         }
 
+    if idname == "ShaderNodeFresnel":
+        if node.inputs["Normal"].is_linked:
+            _refuse("Fresnel with a linked Normal has no cell yet")
+        return {
+            "op": "fresnel",
+            "ior": emit_input(node.inputs["IOR"], stack=stack),
+            "cos": {"op": "view_cos"},
+        }
+
+    if idname == "ShaderNodeLayerWeight":
+        if node.inputs["Normal"].is_linked:
+            _refuse("Layer Weight with a linked Normal has no cell yet")
+        if socket_name not in {"Fresnel", "Facing"}:
+            _refuse(f"Layer Weight output {socket_name!r} unsupported")
+        return {
+            "op": "layer_weight",
+            "output": "fresnel" if socket_name == "Fresnel" else "facing",
+            "blend": emit_input(node.inputs["Blend"], stack=stack),
+            "cos": {"op": "view_cos"},
+        }
+
+    if idname == "ShaderNodeVertexColor":
+        if socket_name != "Color":
+            _refuse(f"Vertex Color output {socket_name!r} has no cell yet")
+        return {
+            "op": "vertex_color",
+            "layer": str(getattr(node, "layer_name", "") or ""),
+        }
+
+    if idname == "ShaderNodeAttribute":
+        if str(getattr(node, "attribute_type", "GEOMETRY")) != "GEOMETRY":
+            _refuse(
+                f"Attribute type {node.attribute_type!r} has no cell yet"
+            )
+        if socket_name != "Color":
+            _refuse(f"Attribute output {socket_name!r} has no cell yet")
+        return {
+            "op": "vertex_color",
+            "layer": str(getattr(node, "attribute_name", "") or ""),
+        }
+
     if idname == "ShaderNodeMapRange":
         if str(getattr(node, "data_type", "FLOAT")) != "FLOAT":
             _refuse(f"Map Range data type {node.data_type!r} has no cell yet")
-        if str(getattr(node, "interpolation_type", "LINEAR")) != "LINEAR":
+        interpolation = str(getattr(node, "interpolation_type", "LINEAR"))
+        if interpolation not in {"LINEAR", "SMOOTHSTEP"}:
             _refuse(
-                f"Map Range interpolation {node.interpolation_type!r} "
-                "has no cell yet"
+                f"Map Range interpolation {interpolation!r} has no cell yet"
             )
         return {
             "op": "map_range",
+            "interpolation": interpolation,
             "clamp": bool(getattr(node, "clamp", True)),
             "value": emit_input(node.inputs["Value"], stack=stack),
             "fromMin": emit_input(node.inputs["From Min"], stack=stack),
@@ -470,8 +536,15 @@ def emit_channel(socket, stack=()) -> dict:
             else _scalar(value)
     else:
         expression = emit_output(*source, stack)
-    return {
+    document = {
         "schemaVersion": 1,
         "model": IR_MODEL,
         "output": expression,
     }
+    import json as _json
+
+    if '"view_cos"' in _json.dumps(expression):
+        # A view-dependent channel can never take the tile-bake routes; the
+        # TSL runtime is its only faithful transport.
+        document["viewDependent"] = True
+    return document

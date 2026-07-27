@@ -160,6 +160,16 @@ def remove_proxy(material):
             bpy.data.node_groups.remove(private)
 
 
+def _walk_ir(expression):
+    if isinstance(expression, dict):
+        yield expression
+        for value in expression.values():
+            yield from _walk_ir(value)
+    elif isinstance(expression, list):
+        for item in expression:
+            yield from _walk_ir(item)
+
+
 def main():
     import numpy as np
 
@@ -168,6 +178,13 @@ def main():
         print(f"TSL_SCENE_SKIPPED {scene_id} missing {scene_path}")
         return
     bpy.ops.wm.open_mainfile(filepath=str(scene_path), load_ui=False)
+    # Opened production files can sit in Edit/Pose mode, which fails the
+    # bake operator's selection polling.
+    if bpy.context.mode != "OBJECT":
+        try:
+            bpy.ops.object.mode_set(mode="OBJECT")
+        except RuntimeError as error:
+            print(f"scene {scene_id}: could not enter object mode: {error}")
 
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "ir").mkdir(exist_ok=True)
@@ -179,6 +196,7 @@ def main():
         "groupWrappedRoots": 0,
         "channels": {"linked": 0, "constant": 0},
         "irCompiled": 0,
+        "irCompiledViewDependent": 0,
         "refusals": {},
         "sampled": [],
     }
@@ -217,6 +235,20 @@ def main():
                 )
                 continue
             coverage["irCompiled"] += 1
+            encoded = json.dumps(document)
+            if document.get("viewDependent"):
+                # Faithfully transportable only by the TSL runtime; the flat
+                # tile bake cannot reference a view-dependent field.
+                coverage["irCompiledViewDependent"] += 1
+                continue
+            if '"vertex_color"' in encoded:
+                # Mesh-attribute data has no tile-domain representation; the
+                # vertex-color cell proves the formula against controlled
+                # attributes on both sides.
+                coverage["irCompiledAttributeDriven"] = (
+                    coverage.get("irCompiledAttributeDriven", 0) + 1
+                )
+                continue
             candidates.append((material.name, channel_name, document))
 
     manifest = {"schemaVersion": 1, "size": SIZE, "cells": {}}
@@ -225,9 +257,20 @@ def main():
         material = bpy.data.materials[material_name]
         proxy_material = None
         proxy = None
+        # Named UV maps referenced by the graph exist on the tile proxy as
+        # identity layers, so the reference samples them instead of a
+        # missing-layer zero fallback; on the identity tile they coincide
+        # with the uv(0) the TSL side samples.
+        uv_names = sorted({
+            item.get("uvMap")
+            for item in _walk_ir(document)
+            if item.get("op") == "uv" and item.get("uvMap")
+        })
         try:
             proxy_material = tap_channel_proxy(material, channel_name)
-            proxy = bakelib.uv_tile_proxy([], window=(0.0, 0.0, 1.0, 1.0))
+            proxy = bakelib.uv_tile_proxy(
+                uv_names, window=(0.0, 0.0, 1.0, 1.0),
+            )
             proxy.data.materials.append(proxy_material)
             result = bakelib.bake_channel_field_pixels(
                 [proxy], size=SIZE, margin_px=0,

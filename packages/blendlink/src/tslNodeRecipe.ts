@@ -14,6 +14,8 @@
  */
 import {
   abs,
+  attribute,
+  cameraPosition,
   clamp,
   cos,
   float,
@@ -23,15 +25,28 @@ import {
   max,
   min,
   mx_noise_float,
+  normalize,
+  normalWorld,
+  positionWorld,
   pow,
   select,
   sign,
   sin,
+  sqrt,
   step,
   oneMinus,
+  texture,
   uv,
+  vec2,
   vec3,
 } from 'three/tsl'
+import {
+  ClampToEdgeWrapping,
+  DataTexture,
+  FloatType,
+  NearestFilter,
+  RGBAFormat,
+} from 'three'
 
 /** The published TSL typings are per-node VarNode generics that do not
  * unify across expression kinds; this opaque structural view is the stable
@@ -86,6 +101,44 @@ const tslUv = uv as unknown as () => TslExpression
 const tslNoise = mx_noise_float as unknown as (
   position: TslExprLike,
 ) => TslExpression
+const tslVec2 = vec2 as unknown as (...values: TslExprLike[]) => TslExpression
+const tslAttribute = attribute as unknown as (name: string) => TslExpression
+const tslTexture = texture as unknown as (
+  map: DataTexture, coordinates: TslExpression,
+) => TslExpression
+const tslSqrt = sqrt as unknown as (value: TslExprLike) => TslExpression
+const tslNormalize = normalize as unknown as (
+  value: TslExpression,
+) => TslExpression
+const tslCameraPosition = cameraPosition as unknown as TslExpression
+const tslPositionWorld = positionWorld as unknown as TslExpression
+const tslNormalWorld = normalWorld as unknown as TslExpression
+
+export interface BuildTslOptions {
+  /** Harness override: an analytic view cosine (dot(N, V)) computed from
+   * a known camera contract, replacing the runtime camera builtins so the
+   * dielectric formulas gate independently of screen-space rendering. */
+  viewCos?: TslExpression
+}
+
+let activeOptions: BuildTslOptions = {}
+
+/** Cycles fresnel_dielectric_cos for the front face: c = |cos|,
+ * g2 = eta^2 - 1 + c^2; total internal reflection (g2 < 0) returns 1. */
+export function blenderFresnelDielectric(
+  cosine: TslExpression, eta: TslExpression,
+): TslExpression {
+  const c = tslAbs(cosine)
+  const gSquared = eta.mul(eta).sub(1.0).add(c.mul(c))
+  const g = tslSqrt(tslMax(gSquared, 1e-12))
+  const first = blenderDivide(g.sub(c), g.add(c))
+  const second = blenderDivide(
+    c.mul(g.add(c)).sub(1.0), c.mul(g.sub(c)).add(1.0),
+  )
+  const reflectance = tslFloat(0.5).mul(first).mul(first)
+    .mul(tslFloat(1.0).add(second.mul(second)))
+  return tslSelect(gSquared.lessThan(0.0), tslFloat(1.0), reflectance)
+}
 
 export interface TslIrDocument {
   schemaVersion: 1
@@ -97,11 +150,18 @@ export type TslIrExpression = Record<string, unknown> & { op: string }
 
 export class TslIrError extends Error {}
 
+/** A divisor that can never be a constant zero: WGSL const-evaluates
+ * literal divisions and rejects the whole shader on a division by zero,
+ * so the guard must sit on the divisor itself, not around the result. */
+function guardedDivisor(b: TslExpression): TslExpression {
+  return tslSelect(b.equal(0.0), tslFloat(1.0), b)
+}
+
 /** Cycles safe divide: b == 0 -> 0, never inf/NaN. */
 export function blenderDivide(
   a: TslExpression, b: TslExpression,
 ): TslExpression {
-  return tslSelect(b.equal(0.0), tslFloat(0.0), a.div(b))
+  return tslSelect(b.equal(0.0), tslFloat(0.0), a.div(guardedDivisor(b)))
 }
 
 /** C fmod (truncated, sign of the dividend) with the b == 0 guard. GLSL's
@@ -110,7 +170,7 @@ export function blenderDivide(
 export function blenderModulo(
   a: TslExpression, b: TslExpression,
 ): TslExpression {
-  const quotient = a.div(b)
+  const quotient = a.div(guardedDivisor(b))
   const truncated = tslSign(quotient).mul(tslFloor(tslAbs(quotient)))
   return tslSelect(b.equal(0.0), tslFloat(0.0), a.sub(b.mul(truncated)))
 }
@@ -259,16 +319,22 @@ function build(expression: TslIrExpression): TslExpression {
     case 'mix_color':
       return buildMixColor(expression)
     case 'map_range': {
-      // Cycles LINEAR map range with safe divide; the clamp option clamps
-      // the result to the ordered target range.
+      // Cycles map range with safe divide; SMOOTHSTEP applies the cubic
+      // ease to the clamped factor; the clamp option clamps the result to
+      // the ordered target range.
       const value = build(child(expression, 'value'))
       const fromMin = build(child(expression, 'fromMin'))
       const fromMax = build(child(expression, 'fromMax'))
       const toMin = build(child(expression, 'toMin'))
       const toMax = build(child(expression, 'toMax'))
-      const factor = blenderDivide(
+      let factor = blenderDivide(
         value.sub(fromMin), fromMax.sub(fromMin),
       )
+      if (expression.interpolation === 'SMOOTHSTEP') {
+        const clamped = tslClamp(factor, 0.0, 1.0)
+        factor = clamped.mul(clamped)
+          .mul(tslFloat(3.0).sub(clamped.mul(2.0)))
+      }
       const result = toMin.add(factor.mul(toMax.sub(toMin)))
       if (expression.clamp === false) return result
       return tslClamp(
@@ -284,9 +350,88 @@ function build(expression: TslIrExpression): TslExpression {
         ),
         build(child(expression, 'max')),
       )
+    case 'ramp_lut': {
+      // A sampled colorband (B_SPLINE / CARDINAL / EASE): Blender's own
+      // evaluate() filled the LUT, and the shader interpolates between
+      // exact texels manually — nearest sampling avoids depending on the
+      // optional float32-filterable WebGPU feature.
+      const samples = scalar(expression, 'samples')
+      const values = numbers(expression, 'values')
+      if (values.length !== samples * 4) {
+        fail('IR ramp_lut values do not match its sample count')
+      }
+      const data = new Float32Array(values)
+      const lut = new DataTexture(data, samples, 1, RGBAFormat, FloatType)
+      lut.minFilter = NearestFilter
+      lut.magFilter = NearestFilter
+      lut.wrapS = ClampToEdgeWrapping
+      lut.wrapT = ClampToEdgeWrapping
+      lut.generateMipmaps = false
+      lut.needsUpdate = true
+      const factor = tslClamp(build(child(expression, 'input')), 0.0, 1.0)
+      const scaled = factor.mul(samples - 1)
+      const index = tslFloor(scaled)
+      const blend = scaled.sub(index)
+      const coordinate = (offset: number) => tslVec2(
+        index.add(offset + 0.5).div(samples), 0.5,
+      )
+      const low = tslTexture(lut, coordinate(0))
+      const high = tslTexture(lut, coordinate(1))
+      const mixed = tslMix(low, high, blend)
+      if (expression.channel === 'alpha') {
+        return (mixed as unknown as { w: TslExpression }).w
+      }
+      return tslVec3(mixed.x, mixed.y, mixed.z)
+    }
+    case 'vertex_color':
+      // The glTF path ships the active color attribute as COLOR_0, which
+      // three exposes as the 'color' geometry attribute.
+      return tslAttribute('color')
+    case 'view_cos': {
+      // dot(N, V): the harness supplies an analytic override from its
+      // known camera contract; production uses the runtime builtins.
+      if (activeOptions.viewCos) return activeOptions.viewCos
+      const view = tslNormalize(
+        tslCameraPosition.sub(tslPositionWorld),
+      ) as unknown as { dot(v: TslExpression): TslExpression }
+      return (tslNormalWorld as unknown as {
+        dot(v: TslExpression): TslExpression
+      }).dot(view as unknown as TslExpression)
+    }
+    case 'fresnel': {
+      // Cycles Fresnel node, front face: eta = max(ior, 1e-5).
+      const eta = tslMax(build(child(expression, 'ior')), 1e-5)
+      return blenderFresnelDielectric(build(child(expression, 'cos')), eta)
+    }
+    case 'layer_weight': {
+      const cosine = build(child(expression, 'cos'))
+      const blend = build(child(expression, 'blend'))
+      if (expression.output === 'fresnel') {
+        // eta = 1 / max(1 - blend, 1e-5) on the front face.
+        const eta = blenderDivide(
+          tslFloat(1.0), tslMax(tslOneMinus(blend), 1e-5),
+        )
+        return blenderFresnelDielectric(cosine, eta)
+      }
+      // Facing: f = |cos|; blend != 0.5 warps the exponent
+      // (blend < 0.5 ? 2 blend : 0.5 / (1 - blend)); output 1 - f^e.
+      const facing = tslAbs(cosine)
+      const clamped = tslClamp(blend, 0.0, 1.0 - 1e-5)
+      const exponent = tslSelect(
+        clamped.lessThan(0.5),
+        clamped.mul(2.0),
+        blenderDivide(tslFloat(0.5), tslOneMinus(clamped)),
+      )
+      return tslOneMinus(tslPow(facing, exponent))
+    }
     case 'noise': {
-      const position = build(child(expression, 'input'))
+      let position = build(child(expression, 'input'))
         .mul(build(child(expression, 'scale')))
+      if (expression.dimensions === 2) {
+        // Blender's 2D noise is a genuinely different Perlin dimension,
+        // matched by mx_noise_float's vec2 overload (the noise-2d cell).
+        position = tslVec2(position.x, position.y)
+      }
       return blenderNoiseFac(
         position,
         scalar(expression, 'detail'),
@@ -420,6 +565,22 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
     case 'MIX': blended = tslMix(a, b, factor); break
     case 'MULTIPLY': blended = tslMix(a, a.mul(b), factor); break
     case 'ADD': blended = tslMix(a, a.add(b), factor); break
+    case 'DIVIDE': {
+      // Cycles per channel: b != 0 ? mix(a, a/b, f) : a — the zero-divisor
+      // channel keeps A untouched (verified by the mix-divide cell). The
+      // divisor goes through the const-safe guard: WGSL rejects a shader
+      // whose constant lane divides by literal zero.
+      const channel = (
+        aChannel: TslExpression, bChannel: TslExpression,
+      ): TslExpression => tslSelect(
+        bChannel.equal(0.0), aChannel,
+        tslMix(aChannel, aChannel.div(guardedDivisor(bChannel)), factor),
+      )
+      blended = tslVec3(
+        channel(a.x, b.x), channel(a.y, b.y), channel(a.z, b.z),
+      )
+      break
+    }
     case 'OVERLAY': {
       // Cycles folds the factor into the overlay formula per channel:
       // a < 0.5 ? a * (1 - f + 2 f b) : 1 - (1 - f + 2 f (1 - b)) (1 - a).
@@ -454,7 +615,9 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
 }
 
 /** Build one channel's TSL color expression from its IR document. */
-export function buildTslColorNode(document: TslIrDocument): TslExpression {
+export function buildTslColorNode(
+  document: TslIrDocument, options: BuildTslOptions = {},
+): TslExpression {
   if (document?.schemaVersion !== 1
     || document.model !== 'blendlink-tsl-ir-v1') {
     throw new TslIrError(
@@ -464,8 +627,13 @@ export function buildTslColorNode(document: TslIrDocument): TslExpression {
       })}`,
     )
   }
-  const built = build(document.output)
-  // A scalar channel broadcasts to RGB, matching Blender's implicit
-  // float -> color conversion.
-  return tslVec3(built)
+  activeOptions = options
+  try {
+    const built = build(document.output)
+    // A scalar channel broadcasts to RGB, matching Blender's implicit
+    // float -> color conversion.
+    return tslVec3(built)
+  } finally {
+    activeOptions = {}
+  }
 }

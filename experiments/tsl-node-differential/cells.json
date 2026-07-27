@@ -5,143 +5,311 @@
     {
       "id": "constant-linear",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "colorspace calibration",
       "notes": "Constant emission (0.25, 0.5, 0.75). Proves the linear float path end to end on both sides: any hidden sRGB encode, tone map, or view transform shifts every value."
     },
     {
       "id": "uv-gradient",
       "gate": true,
-      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "tolerance": {
+        "meanAbs": 0.005,
+        "p99Abs": 0.01,
+        "maxAbs": 0.03
+      },
       "failureClass": "coordinate-space mismatch",
       "notes": "Emission = (u, v, 0). Proves UV origin, orientation, and readback row order agree; the documented MaterialX/three 'upside down' UV trap inverts the green channel here."
     },
     {
       "id": "math-compare",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "inverted logic nodes",
       "notes": "R = GREATER_THAN(u, 0.5), G = LESS_THAN(v, 0.5). The documented mx_ifgreater/mx_ifequal inversion class: an inverted comparison flips half the texels, far outside tolerance. Texel centers never sit exactly on 0.5 at this size."
     },
     {
       "id": "mapping-rotate",
       "gate": true,
-      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "tolerance": {
+        "meanAbs": 0.005,
+        "p99Abs": 0.01,
+        "maxAbs": 0.03
+      },
       "failureClass": "coordinate-space mismatch (rotate2d/place2d matrix math)",
       "notes": "Blender Mapping (POINT): scale (2,1), Z rotation 30deg over UV, visualized as biased coordinates 0.25*p + 0.5 so the range stays bakeable. Wrong operation order or rotation sign produces gross error."
     },
     {
       "id": "colorramp-linear",
       "gate": true,
-      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "tolerance": {
+        "meanAbs": 0.005,
+        "p99Abs": 0.01,
+        "maxAbs": 0.03
+      },
       "failureClass": "corpus-priority node (110 uses in the splash audit)",
       "notes": "Two-stop LINEAR ColorRamp over u: position 0.2 -> (0.1, 0.2, 0.8), position 0.8 -> (0.9, 0.5, 0.1). Exact linear remap + mix; interpolation-mode sweeps come later."
     },
     {
       "id": "math-safe-divide",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "safe-math semantics (divide by zero)",
       "notes": "a = 4u-2 divided by a three-band divisor floor(3v)-1 in {-1, 0, 1}. Cycles' safe_divide returns 0 on the zero band; raw GPU division returns inf/NaN. The TSL mapping must carry Blender's guard, and this cell proves it. Output biased 0.25x+0.5 and clamped on both sides."
     },
     {
       "id": "math-modulo-sign",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "safe-math semantics (modulo sign convention)",
-      "notes": "MODULO(8u-4, 1.5). Blender uses C fmod (truncated, sign of the dividend); GLSL mod is floored (sign of the divisor) — fmod(-3.1, 1.5) = -0.1 versus 1.4. The TSL mapping must emit truncated modulo. Output biased 0.25x+0.5."
+      "notes": "MODULO(8u-4, 1.5). Blender uses C fmod (truncated, sign of the dividend); GLSL mod is floored (sign of the divisor) \u2014 fmod(-3.1, 1.5) = -0.1 versus 1.4. The TSL mapping must emit truncated modulo. Output biased 0.25x+0.5."
     },
     {
       "id": "math-power-negative-base",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "safe-math semantics (pow with negative base)",
       "notes": "POWER(4u-2, 2.0). GLSL pow with a negative base is undefined (NaN on most drivers); Blender's compatible pow gives pow(|x|, y) with the sign of an odd integer exponent. The TSL mapping must carry Blender's convention. Output scaled 0.2x and clamped."
     },
     {
       "id": "math-trig",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "transcendental precision cross-check",
-      "notes": "R = 0.5+0.5*sin(8u), G = 0.5+0.5*cos(8v). GPU sin/cos versus Cycles' — proves transcendental agreement stays inside channel tolerance."
+      "notes": "R = 0.5+0.5*sin(8u), G = 0.5+0.5*cos(8v). GPU sin/cos versus Cycles' \u2014 proves transcendental agreement stays inside channel tolerance."
     },
     {
       "id": "colorramp-constant",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "interpolation-mode sweep (ColorRamp CONSTANT)",
       "notes": "Three-stop CONSTANT ramp over u (stops at 0.0, 0.3, 0.6). Constant interpolation takes the left stop's color; texel centers never sit exactly on a stop at this size."
     },
     {
       "id": "mapping-texture-mode",
       "gate": true,
-      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "tolerance": {
+        "meanAbs": 0.005,
+        "p99Abs": 0.01,
+        "maxAbs": 0.03
+      },
       "failureClass": "coordinate-space mismatch (place2d inverse transform)",
-      "notes": "Blender Mapping TEXTURE mode with scale (2,1), Z rotation 30deg: the INVERSE of POINT — inverse-rotate first, then divide by scale. Wrong inversion order is the documented place2d class. Output biased 0.25x+0.5."
+      "notes": "Blender Mapping TEXTURE mode with scale (2,1), Z rotation 30deg: the INVERSE of POINT \u2014 inverse-rotate first, then divide by scale. Wrong inversion order is the documented place2d class. Output biased 0.25x+0.5."
     },
     {
       "id": "noise-fractal-detail",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-3, "p99Abs": 5e-3, "maxAbs": 1e-2 },
+      "tolerance": {
+        "meanAbs": 0.001,
+        "p99Abs": 0.005,
+        "maxAbs": 0.01
+      },
       "failureClass": "disagreeing noise implementations (fBM composition, now ported)",
       "notes": "Blender Noise detail 2, roughness 0.5 through the PORTED Cycles fractal loop (blenderNoiseFac: i <= floor(detail) octaves over the shared base octave, amplitude-sum normalization, fractional-detail blend). MaterialX's own fBM measured 4.6e-2 divergence; the port must close it."
     },
     {
       "id": "mix-modes",
       "gate": true,
-      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "tolerance": {
+        "meanAbs": 0.005,
+        "p99Abs": 0.01,
+        "maxAbs": 0.03
+      },
       "failureClass": "Mix node blend modes (MIX / MULTIPLY / ADD)",
       "notes": "Three RGBA Mix nodes with varying factors feed one channel each: R = MIX(u), G = MULTIPLY(v), B = ADD(u). Blender blends toward the operator result by the factor: mix(a, op(a, b), fac)."
     },
     {
+      "id": "mix-divide",
+      "gate": true,
+      "tolerance": {
+        "meanAbs": 0.005,
+        "p99Abs": 0.01,
+        "maxAbs": 0.03
+      },
+      "failureClass": "corpus-measured node gap (Mix DIVIDE x9) + zero-divisor semantics",
+      "notes": "RGBA Mix DIVIDE with B = (0.5, 0, 2): the green channel divides by zero, and the reference decides Blender's fallback empirically. The mapping keeps A untouched on the zero band."
+    },
+    {
+      "id": "map-range-smoothstep",
+      "gate": true,
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
+      "failureClass": "corpus-measured node gap (Map Range SMOOTHSTEP x8)",
+      "notes": "Smoothstep interpolation applies the cubic ease to the clamped safe-divide factor before the target remap."
+    },
+    {
+      "id": "colorramp-bspline",
+      "gate": true,
+      "tolerance": {
+        "meanAbs": 0.001,
+        "p99Abs": 0.005,
+        "maxAbs": 0.01
+      },
+      "failureClass": "corpus-measured node gap (ColorRamp B_SPLINE x6)",
+      "notes": "Three-stop B-Spline colorband via the sampled-LUT route: Blender's own evaluate() fills 257 texels and the shader lerps between exact samples \u2014 no reimplementation of the spline basis to drift."
+    },
+    {
+      "id": "colorramp-cardinal",
+      "gate": true,
+      "tolerance": {
+        "meanAbs": 0.001,
+        "p99Abs": 0.005,
+        "maxAbs": 0.01
+      },
+      "failureClass": "corpus-measured node gap (ColorRamp CARDINAL x2)",
+      "notes": "Cardinal interpolation through the same sampled-LUT route as B-Spline."
+    },
+    {
+      "id": "noise-2d",
+      "gate": true,
+      "tolerance": {
+        "meanAbs": 0.001,
+        "p99Abs": 0.005,
+        "maxAbs": 0.01
+      },
+      "failureClass": "corpus-measured node gap (2D noise x4)",
+      "notes": "Blender's 2D noise dimension against mx_noise_float's vec2 overload \u2014 a different Perlin dimension than 3D-at-z=0, measured rather than assumed to share the lineage."
+    },
+    {
+      "id": "vertex-color",
+      "gate": true,
+      "tolerance": {
+        "meanAbs": 0.005,
+        "p99Abs": 0.01,
+        "maxAbs": 0.03
+      },
+      "failureClass": "corpus-measured node gap (Attribute/Vertex Color x2)",
+      "notes": "A corner color attribute linear in UV (exact under any triangulation) sampled by Vertex Color, against three's 'color' geometry attribute \u2014 the COLOR_0 contract the glTF path ships."
+    },
+    {
       "id": "group-passthrough",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-3, "p99Abs": 5e-3, "maxAbs": 1e-2 },
+      "tolerance": {
+        "meanAbs": 0.001,
+        "p99Abs": 0.005,
+        "maxAbs": 0.01
+      },
       "failureClass": "node-group wall crossing (the dominant scene refusal)",
       "notes": "Outer UV feeds a group instance whose inside runs Noise; the emitter must cross the group wall in both directions with the instance context. Scene coverage measured group-wrapped surfaces as the single largest refusal class."
     },
     {
       "id": "map-range-linear",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "corpus-measured node gap (Map Range x8 across scenes)",
       "notes": "LINEAR float Map Range 0.2..0.8 -> 0.1..0.9 with clamp: safe-divide factor, then result clamped to the ordered target range."
     },
     {
       "id": "mix-overlay",
       "gate": true,
-      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "tolerance": {
+        "meanAbs": 0.005,
+        "p99Abs": 0.01,
+        "maxAbs": 0.03
+      },
       "failureClass": "corpus-measured node gap (Mix OVERLAY x4 across scenes)",
       "notes": "Cycles folds the factor into the per-channel overlay formula (a < 0.5 branches) rather than lerping the result; the cell proves the folded form."
     },
     {
       "id": "math-pingpong",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "corpus-measured node gap (Math PINGPONG)",
       "notes": "PINGPONG(4u, 0.75): |fract((a-b)/(2b)) * 2b - b| with the b = 0 guard."
     },
     {
       "id": "clamp-node",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "tolerance": {
+        "meanAbs": 0.0001,
+        "p99Abs": 0.001,
+        "maxAbs": 0.005
+      },
       "failureClass": "corpus-measured node gap (Clamp)",
       "notes": "Clamp node in Min Max mode over 2u-0.5: min(max(value, 0.1), 0.9)."
+    },
+    {
+      "id": "fresnel-dielectric",
+      "gate": true,
+      "viewFrom": "ACTIVE_CAMERA",
+      "analyticCamera": true,
+      "tolerance": {
+        "meanAbs": 0.001,
+        "p99Abs": 0.005,
+        "maxAbs": 0.01
+      },
+      "failureClass": "view-dependent optics (the trapx frontier)",
+      "notes": "Fresnel IOR 1.45 under the fixed camera contract: Cycles bakes with view_from=ACTIVE_CAMERA (rays from the camera at (0,0,2)), and the TSL side evaluates Cycles' fresnel_dielectric_cos with the analytic view cosine from the same contract. Gates the dielectric formula; the runtime view builtins are the production wiring of the same op."
+    },
+    {
+      "id": "layer-weight",
+      "gate": true,
+      "viewFrom": "ACTIVE_CAMERA",
+      "analyticCamera": true,
+      "tolerance": {
+        "meanAbs": 0.001,
+        "p99Abs": 0.005,
+        "maxAbs": 0.01
+      },
+      "failureClass": "view-dependent optics (the trapx frontier)",
+      "notes": "Layer Weight blend 0.3 under the fixed camera contract: R = Facing (exponent-warped 1-|cos|^e), G = Fresnel (eta = 1/(1-blend))."
     },
     {
       "id": "voronoi-f1-divergence",
       "gate": false,
       "pipeline": "handwritten",
       "tolerance": null,
-      "failureClass": "disagreeing noise implementations (Worley — diagnostic)",
-      "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. Measured 2026-07-27 at mean 0.28 / max 0.96 — a completely different cell hash, the published Worley finding reproduced. Stays refused by the IR emitter until a faithful Cycles hash port earns this cell; the Material bake carries Voronoi channels meanwhile."
+      "failureClass": "disagreeing noise implementations (Worley \u2014 diagnostic)",
+      "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. Measured 2026-07-27 at mean 0.28 / max 0.96 \u2014 a completely different cell hash, the published Worley finding reproduced. Stays refused by the IR emitter until a faithful Cycles hash port earns this cell; the Material bake carries Voronoi channels meanwhile."
     },
     {
       "id": "noise-mx-divergence",
       "gate": true,
-      "tolerance": { "meanAbs": 1e-3, "p99Abs": 5e-3, "maxAbs": 1e-2 },
-      "failureClass": "disagreeing noise implementations — measured NOT to apply to this pairing",
-      "notes": "Blender Noise Texture (scale 4, detail 0, 3D at z=0) versus three's mx_noise_float remapped 0.5+0.5x. Planned as the negative control for the published 'a slightly different hash produces a completely different pattern' class — but measured 2026-07-27 at meanAbs 4.1e-5 / maxAbs 1.2e-4 over a real 0.67-span field: the base Perlin octave SHARES an implementation lineage between Cycles and MaterialX. Now a gated regression. The bounded claim covers exactly this configuration; fractal detail octaves, roughness, lacunarity, distortion, 4D, and Voronoi remain unproven and need their own cells."
+      "tolerance": {
+        "meanAbs": 0.001,
+        "p99Abs": 0.005,
+        "maxAbs": 0.01
+      },
+      "failureClass": "disagreeing noise implementations \u2014 measured NOT to apply to this pairing",
+      "notes": "Blender Noise Texture (scale 4, detail 0, 3D at z=0) versus three's mx_noise_float remapped 0.5+0.5x. Planned as the negative control for the published 'a slightly different hash produces a completely different pattern' class \u2014 but measured 2026-07-27 at meanAbs 4.1e-5 / maxAbs 1.2e-4 over a real 0.67-span field: the base Perlin octave SHARES an implementation lineage between Cycles and MaterialX. Now a gated regression. The bounded claim covers exactly this configuration; fractal detail octaves, roughness, lacunarity, distortion, 4D, and Voronoi remain unproven and need their own cells."
     }
   ]
 }

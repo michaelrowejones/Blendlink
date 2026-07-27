@@ -7,21 +7,23 @@
     "linked": 35,
     "constant": 187
   },
-  "irCompiled": 2,
+  "irCompiled": 5,
+  "irCompiledViewDependent": 3,
   "refusals": {
-    "ShaderNodeAttribute has no proven TSL mapping": 2,
-    "Mix blend type 'DIVIDE' has no cell yet": 9,
+    "Attribute type 'OBJECT' has no cell yet": 1,
+    "ShaderNodeTexImage has no proven TSL mapping": 8,
     "Mix blend type 'COLOR' has no cell yet": 1,
+    "Attribute output 'Factor' has no cell yet": 1,
     "no root-level single Principled surface": 90,
-    "ColorRamp interpolation 'B_SPLINE' has no cell yet": 4,
+    "Vector Math operation 'LENGTH' has no cell yet": 1,
     "ShaderNodeTexMagic has no proven TSL mapping": 1,
-    "Vector Math operation 'MULTIPLY' has no cell yet": 1,
-    "Map Range interpolation 'SMOOTHSTEP' has no cell yet": 4,
-    "Noise dimensions '2D' has no cell yet (3D only)": 4,
-    "ShaderNodeLayerWeight has no proven TSL mapping": 3,
-    "ShaderNodeTexImage has no proven TSL mapping": 1,
-    "Math operation 'SMOOTH_MAX' has no cell yet": 2,
-    "ShaderNodeTexVoronoi has no proven TSL mapping": 1
+    "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
+    "Vector Math operation 'MULTIPLY' has no cell yet": 2,
+    "Math operation 'SMOOTH_MAX' has no cell yet": 4,
+    "Noise detail 6 exceeds the proven range (<= 2); high-octave phase divergence measured": 2,
+    "ShaderNodeRGBCurve has no proven TSL mapping": 6,
+    "ShaderNodeTexVoronoi has no proven TSL mapping": 1,
+    "ShaderNodeObjectInfo has no proven TSL mapping": 1
   },
   "sampled": [
     {

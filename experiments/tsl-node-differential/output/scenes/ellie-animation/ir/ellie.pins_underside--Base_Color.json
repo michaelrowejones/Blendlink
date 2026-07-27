@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "const_vec3",
+    "value": [
+      0.3618347644805908,
+      0.3007098436355591,
+      0.24267275631427765
+    ]
+  }
+}
