@@ -119,6 +119,156 @@ def build_colorramp_linear(tree, emission):
     tree.links.new(ramp.outputs["Color"], emission.inputs["Color"])
 
 
+def _uv_channel(tree, axis):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    return separate.outputs["X" if axis == "u" else "Y"]
+
+
+def _math(tree, operation, a, b=None):
+    node = tree.nodes.new("ShaderNodeMath")
+    node.operation = operation
+    if hasattr(a, "name"):
+        tree.links.new(a, node.inputs[0])
+    else:
+        node.inputs[0].default_value = float(a)
+    if b is not None:
+        if hasattr(b, "name"):
+            tree.links.new(b, node.inputs[1])
+        else:
+            node.inputs[1].default_value = float(b)
+    return node.outputs["Value"]
+
+
+def _affine(tree, socket, scale, offset):
+    node = tree.nodes.new("ShaderNodeMath")
+    node.operation = "MULTIPLY_ADD"
+    tree.links.new(socket, node.inputs[0])
+    node.inputs[1].default_value = float(scale)
+    node.inputs[2].default_value = float(offset)
+    return node.outputs["Value"]
+
+
+def _emit_scalar(tree, emission, socket):
+    combine = tree.nodes.new("ShaderNodeCombineColor")
+    combine.mode = "RGB"
+    tree.links.new(socket, combine.inputs["Red"])
+    tree.links.new(socket, combine.inputs["Green"])
+    tree.links.new(socket, combine.inputs["Blue"])
+    tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+
+
+def build_math_safe_divide(tree, emission):
+    a = _affine(tree, _uv_channel(tree, "u"), 4.0, -2.0)
+    bands = _math(
+        tree, "SUBTRACT",
+        _math(tree, "FLOOR", _affine(tree, _uv_channel(tree, "v"), 3.0, 0.0)),
+        1.0,
+    )
+    divided = _math(tree, "DIVIDE", a, bands)
+    biased = _affine(tree, divided, 0.25, 0.5)
+    clamped = _math(tree, "MINIMUM", _math(tree, "MAXIMUM", biased, 0.0), 1.0)
+    _emit_scalar(tree, emission, clamped)
+
+
+def build_math_modulo_sign(tree, emission):
+    a = _affine(tree, _uv_channel(tree, "u"), 8.0, -4.0)
+    result = _math(tree, "MODULO", a, 1.5)
+    biased = _affine(tree, result, 0.25, 0.5)
+    clamped = _math(tree, "MINIMUM", _math(tree, "MAXIMUM", biased, 0.0), 1.0)
+    _emit_scalar(tree, emission, clamped)
+
+
+def build_math_power_negative_base(tree, emission):
+    base = _affine(tree, _uv_channel(tree, "u"), 4.0, -2.0)
+    result = _math(tree, "POWER", base, 2.0)
+    scaled = _affine(tree, result, 0.2, 0.0)
+    clamped = _math(tree, "MINIMUM", _math(tree, "MAXIMUM", scaled, 0.0), 1.0)
+    _emit_scalar(tree, emission, clamped)
+
+
+def build_math_trig(tree, emission):
+    sine = _affine(
+        tree,
+        _math(tree, "SINE", _affine(tree, _uv_channel(tree, "u"), 8.0, 0.0)),
+        0.5, 0.5,
+    )
+    cosine = _affine(
+        tree,
+        _math(tree, "COSINE", _affine(tree, _uv_channel(tree, "v"), 8.0, 0.0)),
+        0.5, 0.5,
+    )
+    combine = tree.nodes.new("ShaderNodeCombineColor")
+    combine.mode = "RGB"
+    tree.links.new(sine, combine.inputs["Red"])
+    tree.links.new(cosine, combine.inputs["Green"])
+    combine.inputs["Blue"].default_value = 0.0
+    tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+
+
+def build_colorramp_constant(tree, emission):
+    ramp = tree.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.interpolation = "CONSTANT"
+    ramp.color_ramp.elements[0].position = 0.0
+    ramp.color_ramp.elements[0].color = (0.1, 0.1, 0.7, 1.0)
+    ramp.color_ramp.elements[1].position = 0.3
+    ramp.color_ramp.elements[1].color = (0.2, 0.7, 0.2, 1.0)
+    element = ramp.color_ramp.elements.new(0.6)
+    element.color = (0.8, 0.3, 0.1, 1.0)
+    tree.links.new(_uv_channel(tree, "u"), ramp.inputs["Fac"])
+    tree.links.new(ramp.outputs["Color"], emission.inputs["Color"])
+
+
+def build_mapping_texture_mode(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    mapping = tree.nodes.new("ShaderNodeMapping")
+    mapping.vector_type = "TEXTURE"
+    mapping.inputs["Scale"].default_value = (2.0, 1.0, 1.0)
+    mapping.inputs["Rotation"].default_value = (0.0, 0.0, math.radians(30.0))
+    tree.links.new(coord.outputs["UV"], mapping.inputs["Vector"])
+    scale = tree.nodes.new("ShaderNodeVectorMath")
+    scale.operation = "SCALE"
+    scale.inputs["Scale"].default_value = 0.25
+    tree.links.new(mapping.outputs["Vector"], scale.inputs[0])
+    offset = tree.nodes.new("ShaderNodeVectorMath")
+    offset.operation = "ADD"
+    offset.inputs[1].default_value = (0.5, 0.5, 0.5)
+    tree.links.new(scale.outputs["Vector"], offset.inputs[0])
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(offset.outputs["Vector"], separate.inputs["Vector"])
+    combine = tree.nodes.new("ShaderNodeCombineColor")
+    combine.mode = "RGB"
+    tree.links.new(separate.outputs["X"], combine.inputs["Red"])
+    tree.links.new(separate.outputs["Y"], combine.inputs["Green"])
+    combine.inputs["Blue"].default_value = 0.0
+    tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+
+
+def build_noise_fractal_detail(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    noise = tree.nodes.new("ShaderNodeTexNoise")
+    noise.inputs["Scale"].default_value = 4.0
+    if "Detail" in noise.inputs:
+        noise.inputs["Detail"].default_value = 2.0
+    if "Roughness" in noise.inputs:
+        noise.inputs["Roughness"].default_value = 0.5
+    tree.links.new(coord.outputs["UV"], noise.inputs["Vector"])
+    tree.links.new(noise.outputs["Fac"], emission.inputs["Color"])
+
+
+def build_voronoi_f1_divergence(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    voronoi = tree.nodes.new("ShaderNodeTexVoronoi")
+    voronoi.inputs["Scale"].default_value = 4.0
+    if hasattr(voronoi, "feature"):
+        voronoi.feature = "F1"
+    if hasattr(voronoi, "distance"):
+        voronoi.distance = "EUCLIDEAN"
+    tree.links.new(coord.outputs["UV"], voronoi.inputs["Vector"])
+    tree.links.new(voronoi.outputs["Distance"], emission.inputs["Color"])
+
+
 def build_noise_mx_divergence(tree, emission):
     coord = tree.nodes.new("ShaderNodeTexCoord")
     noise = tree.nodes.new("ShaderNodeTexNoise")
@@ -135,6 +285,14 @@ BUILDERS = {
     "math-compare": build_math_compare,
     "mapping-rotate": build_mapping_rotate,
     "colorramp-linear": build_colorramp_linear,
+    "math-safe-divide": build_math_safe_divide,
+    "math-modulo-sign": build_math_modulo_sign,
+    "math-power-negative-base": build_math_power_negative_base,
+    "math-trig": build_math_trig,
+    "colorramp-constant": build_colorramp_constant,
+    "mapping-texture-mode": build_mapping_texture_mode,
+    "noise-fractal-detail": build_noise_fractal_detail,
+    "voronoi-f1-divergence": build_voronoi_f1_divergence,
     "noise-mx-divergence": build_noise_mx_divergence,
 }
 

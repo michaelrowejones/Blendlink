@@ -61,6 +61,94 @@
       },
       "failureClass": "corpus-priority node (110 uses in the splash audit)"
     },
+    "math-safe-divide": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000010248273611068726,
+        "p99Abs": 0.000015616416931152344,
+        "maxAbs": 0.000015616416931152344
+      },
+      "failureClass": "safe-math semantics (divide by zero)"
+    },
+    "math-modulo-sign": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00003123283386230469,
+        "p99Abs": 0.00003123283386230469,
+        "maxAbs": 0.00003123283386230469
+      },
+      "failureClass": "safe-math semantics (modulo sign convention)"
+    },
+    "math-power-negative-base": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000024992867110995576,
+        "p99Abs": 0.00004929304122924805,
+        "maxAbs": 0.00004929304122924805
+      },
+      "failureClass": "safe-math semantics (pow with negative base)"
+    },
+    "math-trig": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00003984401701018214,
+        "p99Abs": 0.00012493133544921875,
+        "maxAbs": 0.00012499094009399414
+      },
+      "failureClass": "transcendental precision cross-check"
+    },
+    "colorramp-constant": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0,
+        "p99Abs": 0,
+        "maxAbs": 0
+      },
+      "failureClass": "interpolation-mode sweep (ColorRamp CONSTANT)"
+    },
+    "mapping-texture-mode": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000002815126208588481,
+        "p99Abs": 0.000004827976226806641,
+        "maxAbs": 0.000004827976226806641
+      },
+      "failureClass": "coordinate-space mismatch (place2d inverse transform)"
+    },
+    "noise-fractal-detail": {
+      "ok": true,
+      "gated": false,
+      "pass": null,
+      "measured": {
+        "meanAbs": 0.04548128940950846,
+        "p99Abs": 0.1446685492992401,
+        "maxAbs": 0.18966838717460632
+      },
+      "failureClass": "disagreeing noise implementations (fractal octaves — diagnostic)"
+    },
+    "voronoi-f1-divergence": {
+      "ok": true,
+      "gated": false,
+      "pass": null,
+      "measured": {
+        "meanAbs": 0.28233204090366826,
+        "p99Abs": 0.7963384799659252,
+        "maxAbs": 0.9600917210336775
+      },
+      "failureClass": "disagreeing noise implementations (Worley — diagnostic)"
+    },
     "noise-mx-divergence": {
       "ok": true,
       "gated": true,

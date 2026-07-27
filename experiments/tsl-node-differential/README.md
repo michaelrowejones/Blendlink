@@ -30,7 +30,7 @@ Evidence: `output/evidence.json`; both float fields are retained under
 ## Measured results — 2026-07-27
 
 Blender 5.2.0 (Cycles/OptiX reference) versus three 0.184.0 TSL on a native
-WebGPU backend, 64×64, six cells, six gated, all passing:
+WebGPU backend, 64×64, fourteen cells, twelve gated, all gates passing:
 
 | Cell | Failure class exercised | meanAbs | maxAbs |
 | --- | --- | --- | --- |
@@ -39,7 +39,27 @@ WebGPU backend, 64×64, six cells, six gated, all passing:
 | math-compare | inverted logic nodes | 0.0 | 0.0 |
 | mapping-rotate | rotate2d/place2d matrix order | 4.5e-6 | 1.1e-5 |
 | colorramp-linear | corpus-priority node (ColorRamp) | 9.3e-6 | 2.1e-5 |
-| noise-mx-divergence | disagreeing noise implementations | 4.1e-5 | 1.2e-4 |
+| math-safe-divide | safe divide (b=0 → 0, never inf) | 1.0e-5 | 1.6e-5 |
+| math-modulo-sign | truncated vs floored modulo | 3.1e-5 | 3.1e-5 |
+| math-power-negative-base | compatible pow vs undefined GLSL pow | 2.5e-5 | 4.9e-5 |
+| math-trig | transcendental precision | 4.0e-5 | 1.3e-4 |
+| colorramp-constant | CONSTANT interpolation | 0.0 | 0.0 |
+| mapping-texture-mode | place2d inverse transform | 2.8e-6 | 4.8e-6 |
+| noise-mx-divergence | base Perlin octave | 4.1e-5 | 1.2e-4 |
+| noise-fractal-detail | fBM composition (diagnostic) | **4.6e-2** | **1.9e-1** |
+| voronoi-f1-divergence | Worley hash (diagnostic) | **2.8e-1** | **9.6e-1** |
+
+The noise family verdict is now fully measured: the **base Perlin octave is
+shared** between Cycles and MaterialX (1.2e-4), Blender's **fBM
+composition is not** (octave blending/normalization differ, mean 4.6e-2),
+and **Voronoi is a completely different pattern** (different cell hash,
+mean 0.28) — the published Worley finding reproduced here. The compiler's
+noise roadmap follows directly: reuse the mx base octave, port Blender's
+fractal loop, port Blender's Voronoi hash, each behind its own gated cell.
+The Blender safe-math wrappers in `main.js` (`blenderDivide`,
+`blenderModulo`, `blenderPower`) are the exact functions the compiler must
+emit for Math nodes; their cells prove them against undefined GPU
+behavior.
 
 Findings the harness itself produced:
 

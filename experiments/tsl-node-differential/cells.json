@@ -38,6 +38,62 @@
       "notes": "Two-stop LINEAR ColorRamp over u: position 0.2 -> (0.1, 0.2, 0.8), position 0.8 -> (0.9, 0.5, 0.1). Exact linear remap + mix; interpolation-mode sweeps come later."
     },
     {
+      "id": "math-safe-divide",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "safe-math semantics (divide by zero)",
+      "notes": "a = 4u-2 divided by a three-band divisor floor(3v)-1 in {-1, 0, 1}. Cycles' safe_divide returns 0 on the zero band; raw GPU division returns inf/NaN. The TSL mapping must carry Blender's guard, and this cell proves it. Output biased 0.25x+0.5 and clamped on both sides."
+    },
+    {
+      "id": "math-modulo-sign",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "safe-math semantics (modulo sign convention)",
+      "notes": "MODULO(8u-4, 1.5). Blender uses C fmod (truncated, sign of the dividend); GLSL mod is floored (sign of the divisor) — fmod(-3.1, 1.5) = -0.1 versus 1.4. The TSL mapping must emit truncated modulo. Output biased 0.25x+0.5."
+    },
+    {
+      "id": "math-power-negative-base",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "safe-math semantics (pow with negative base)",
+      "notes": "POWER(4u-2, 2.0). GLSL pow with a negative base is undefined (NaN on most drivers); Blender's compatible pow gives pow(|x|, y) with the sign of an odd integer exponent. The TSL mapping must carry Blender's convention. Output scaled 0.2x and clamped."
+    },
+    {
+      "id": "math-trig",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "transcendental precision cross-check",
+      "notes": "R = 0.5+0.5*sin(8u), G = 0.5+0.5*cos(8v). GPU sin/cos versus Cycles' — proves transcendental agreement stays inside channel tolerance."
+    },
+    {
+      "id": "colorramp-constant",
+      "gate": true,
+      "tolerance": { "meanAbs": 1e-4, "p99Abs": 1e-3, "maxAbs": 5e-3 },
+      "failureClass": "interpolation-mode sweep (ColorRamp CONSTANT)",
+      "notes": "Three-stop CONSTANT ramp over u (stops at 0.0, 0.3, 0.6). Constant interpolation takes the left stop's color; texel centers never sit exactly on a stop at this size."
+    },
+    {
+      "id": "mapping-texture-mode",
+      "gate": true,
+      "tolerance": { "meanAbs": 5e-3, "p99Abs": 1e-2, "maxAbs": 3e-2 },
+      "failureClass": "coordinate-space mismatch (place2d inverse transform)",
+      "notes": "Blender Mapping TEXTURE mode with scale (2,1), Z rotation 30deg: the INVERSE of POINT — inverse-rotate first, then divide by scale. Wrong inversion order is the documented place2d class. Output biased 0.25x+0.5."
+    },
+    {
+      "id": "noise-fractal-detail",
+      "gate": false,
+      "tolerance": null,
+      "failureClass": "disagreeing noise implementations (fractal octaves — diagnostic)",
+      "notes": "Blender Noise detail 2, roughness 0.5 versus three's mx_fractal_noise_float(3 octaves, lacunarity 2, diminish 0.5). The base octave matched; whether Blender's fBM composition (octave count convention, normalization) matches MaterialX's is measured here, not assumed."
+    },
+    {
+      "id": "voronoi-f1-divergence",
+      "gate": false,
+      "tolerance": null,
+      "failureClass": "disagreeing noise implementations (Worley — diagnostic)",
+      "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. The published fidelity work needed a Blender-side PR to reconcile Worley hashes, so divergence is expected; the measurement decides."
+    },
+    {
       "id": "noise-mx-divergence",
       "gate": true,
       "tolerance": { "meanAbs": 1e-3, "p99Abs": 5e-3, "maxAbs": 1e-2 },
