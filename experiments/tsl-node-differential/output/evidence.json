@@ -1205,6 +1205,11 @@
           {
             "cell": "bluebell_center--Base_Color",
             "status": "baked"
+          },
+          {
+            "cell": "picture_frame_glass--Emission_Color.surface",
+            "status": "reference-skipped",
+            "reason": "surface tap v1: a lit-lit mix radiance needs a projection graph"
           }
         ],
         "irCompiledAttributeDriven": 1
@@ -1265,9 +1270,181 @@
             "ShaderNodeObjectInfo has no proven TSL mapping": 2
           }
         },
-        "sampled": []
+        "sampled": [
+          {
+            "cell": "LeafOutline--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "LeafOutline.001--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "LeafOutline.002--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "LeafOutline.003--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.001--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.002--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.003--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.004--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.005--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.006--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.007--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.008--Emission_Color.surface",
+            "status": "baked"
+          }
+        ],
+        "irCompiledAttributeDriven": 1
       },
-      "differentials": {}
+      "differentials": {
+        "LeafOutline--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "LeafOutline.001--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "LeafOutline.002--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "LeafOutline.003--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline.001--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline.002--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline.003--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline.004--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline.005--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline.006--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline.007--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Outline.008--Emission_Color.surface": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        }
+      }
     },
     "trapx-painterly": {
       "coverage": {

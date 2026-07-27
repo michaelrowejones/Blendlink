@@ -6,6 +6,7 @@
       "path": "ellie.pins_underside--Base_Color.f32",
       "material": "ellie.pins_underside",
       "channel": "Base Color",
+      "kind": "principled",
       "rgbMin": [
         0.3618347644805908,
         0.3007098436355591,
@@ -21,6 +22,7 @@
       "path": "ellie.tongue--Base_Color.f32",
       "material": "ellie.tongue",
       "channel": "Base Color",
+      "kind": "principled",
       "rgbMin": [
         0.06618554145097733,
         0.003410900942981243,

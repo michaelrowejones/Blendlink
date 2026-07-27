@@ -6,6 +6,7 @@
       "path": "Clay--Base_Color.f32",
       "material": "Clay",
       "channel": "Base Color",
+      "kind": "principled",
       "rgbMin": [
         0.2139747589826584,
         0.09663950651884079,
@@ -21,6 +22,7 @@
       "path": "Metal--Base_Color.f32",
       "material": "Metal",
       "channel": "Base Color",
+      "kind": "principled",
       "rgbMin": [
         0.17956286668777466,
         0.14662905037403107,
@@ -36,6 +38,7 @@
       "path": "bluebell_center--Base_Color.f32",
       "material": "bluebell_center",
       "channel": "Base Color",
+      "kind": "principled",
       "rgbMin": [
         0.03806197643280029,
         0.012263834476470947,

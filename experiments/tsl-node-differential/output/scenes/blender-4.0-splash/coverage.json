@@ -23,5 +23,59 @@
       "ShaderNodeObjectInfo has no proven TSL mapping": 2
     }
   },
-  "sampled": []
+  "sampled": [
+    {
+      "cell": "LeafOutline--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "LeafOutline.001--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "LeafOutline.002--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "LeafOutline.003--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.001--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.002--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.003--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.004--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.005--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.006--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.007--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.008--Emission_Color.surface",
+      "status": "baked"
+    }
+  ],
+  "irCompiledAttributeDriven": 1
 }

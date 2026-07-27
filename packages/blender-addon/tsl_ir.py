@@ -446,6 +446,35 @@ def _leaf_channels(leaf):
     _refuse(f"surface leaf {kind!r} has no channel projection")
 
 
+def resolve_surface(tree):
+    """The material's Cycles-visible surface expression.
+
+    Cycles renders the output targeted at CYCLES when one exists, then
+    the ALL-target output — measured on 5.2 with an EEVEE/CYCLES output
+    pair (selecting by tree order compiled the branch Cycles never
+    renders). Returns the parsed closure expression; refuses by name."""
+    actives = [
+        node for node in tree.nodes
+        if node.bl_idname == "ShaderNodeOutputMaterial"
+        and getattr(node, "is_active_output", True)
+    ]
+    output = next(
+        (node for node in actives
+         if str(getattr(node, "target", "ALL")) == "CYCLES"),
+        None,
+    ) or next(
+        (node for node in actives
+         if str(getattr(node, "target", "ALL")) == "ALL"),
+        None,
+    )
+    if output is None:
+        _refuse("material has no Cycles-visible active Material Output")
+    resolved = _resolve_shader_link(output.inputs["Surface"], ())
+    if resolved is None:
+        _refuse("material output has no linked Surface")
+    return _surface_expression(*resolved)
+
+
 def _lerp_scalar(a, b, factor):
     # a + (b - a) * factor, from proven ops only.
     return {
@@ -536,30 +565,7 @@ def emit_surface(tree):
     is nonlinear under lighting), Transparent branches contribute only
     coverage, Diffuse/Glossy canonicalize onto the Principled channel
     vector, and emission always ships as radiance with strength 1."""
-    # Cycles renders the output targeted at CYCLES when one exists, then
-    # the ALL-target output — measured on 5.2 with an EEVEE/CYCLES output
-    # pair. Selecting by tree order compiled the branch Cycles never
-    # renders.
-    actives = [
-        node for node in tree.nodes
-        if node.bl_idname == "ShaderNodeOutputMaterial"
-        and getattr(node, "is_active_output", True)
-    ]
-    output = next(
-        (node for node in actives
-         if str(getattr(node, "target", "ALL")) == "CYCLES"),
-        None,
-    ) or next(
-        (node for node in actives
-         if str(getattr(node, "target", "ALL")) == "ALL"),
-        None,
-    )
-    if output is None:
-        _refuse("material has no Cycles-visible active Material Output")
-    resolved = _resolve_shader_link(output.inputs["Surface"], ())
-    if resolved is None:
-        _refuse("material output has no linked Surface")
-    channels = _fold_surface(_surface_expression(*resolved))
+    channels = _fold_surface(resolve_surface(tree))
     if channels is None:
         channels = {
             "Base Color": _const_color(0.0, 0.0, 0.0),

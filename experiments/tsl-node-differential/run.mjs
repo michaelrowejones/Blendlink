@@ -236,7 +236,7 @@ try {
           '--background', '--factory-startup', '--disable-autoexec',
           '--python-exit-code', '1',
           '--python', join(experimentDir, 'scene_coverage.py'),
-          '--', scenePath, sceneId, sceneDir, '12',
+          '--', scenePath, sceneId, sceneDir, '999',
         ], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 })
         if (!stdout.includes(`TSL_SCENE_COVERAGE_DONE ${sceneId}`)
           && !stdout.includes(`TSL_SCENE_SKIPPED ${sceneId}`)) {

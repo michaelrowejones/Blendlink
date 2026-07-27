@@ -58,6 +58,45 @@ def _active_group_output(tree):
     )
 
 
+def _thread_tap(tree, inner_socket, private_stack):
+    """Thread a socket's value out through privatized group levels via a
+    ``TSL_TAP`` output per level; returns the root-level socket."""
+    for instance in reversed(private_stack):
+        inner_tree = instance.node_tree
+        inner_tree.interface.new_socket(
+            "TSL_TAP", in_out="OUTPUT", socket_type="NodeSocketColor",
+        )
+        group_output = _active_group_output(inner_tree)
+        if group_output is None:
+            group_output = inner_tree.nodes.new("NodeGroupOutput")
+        tap_input = group_output.inputs.get("TSL_TAP")
+        if tap_input is None:
+            raise RuntimeError("group output did not gain the tap socket")
+        inner_tree.links.new(inner_socket, tap_input)
+        tap_output = instance.outputs.get("TSL_TAP")
+        if tap_output is None:
+            raise RuntimeError("group instance did not expose the tap")
+        inner_socket = tap_output
+    return inner_socket
+
+
+def _emission_surface(tree, source_socket):
+    """Replace every Material Output with a fresh Emission surface fed by
+    the tapped socket."""
+    for output in [
+        item for item in tree.nodes
+        if item.bl_idname == "ShaderNodeOutputMaterial"
+    ]:
+        tree.nodes.remove(output)
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    if hasattr(output, "is_active_output"):
+        output.is_active_output = True
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.inputs["Strength"].default_value = 1.0
+    tree.links.new(source_socket, emission.inputs["Color"])
+    tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+
+
 def tap_channel_proxy(material, channel_name):
     """Private material copy whose surface emits one channel's value.
 
@@ -97,41 +136,77 @@ def tap_channel_proxy(material, channel_name):
     socket = procedural._node_input(root, channel_name)
     if socket is None or not socket.is_linked:
         raise RuntimeError("proxy channel is not linked")
-    source_socket = socket.links[0].from_socket
+    source_socket = _thread_tap(
+        tree, socket.links[0].from_socket, private_stack,
+    )
+    _emission_surface(tree, source_socket)
+    return copy
 
-    if private_stack:
-        # Thread the tapped value out through each privatized level.
-        inner_socket = source_socket
-        for instance in reversed(private_stack):
-            inner_tree = instance.node_tree
-            inner_tree.interface.new_socket(
-                "TSL_TAP", in_out="OUTPUT", socket_type="NodeSocketColor",
+
+def _privatize_groups(tree):
+    """Give every reachable group instance its own private tree copy so
+    any mutation of the proxy can never touch shared group trees."""
+    for node in tree.nodes:
+        nested = getattr(node, "node_tree", None)
+        if node.bl_idname == "ShaderNodeGroup" and nested is not None:
+            node.node_tree = nested.copy()
+            _privatize_groups(node.node_tree)
+
+
+def tap_surface_channel_proxy(material):
+    """Private proxy emitting a mixed surface's RADIANCE channel.
+
+    Handles the single-leaf classes (coerced color, Emission leaf) whose
+    Emission Color document is the only non-constant surface channel —
+    the dominant resolved population (the splash outline/paint class).
+    Multi-leaf mixes raise; the caller tallies them by name.
+    """
+    copy = material.copy()
+    copy.name = f"TSL_SURF_PROXY.{material.name}"
+    tree = bakelib.active_shader_node_tree(copy)
+    _privatize_groups(tree)
+    expression = tsl_ir.resolve_surface(tree)
+
+    def radiance_source(expr):
+        kind = expr.get("kind")
+        if kind == "coerced_color":
+            return expr["socket"], list(expr["stack"])
+        if kind == "emission":
+            node = expr["node"]
+            strength = node.inputs["Strength"]
+            if strength.is_linked or abs(
+                float(strength.default_value) - 1.0
+            ) > 1e-9:
+                raise RuntimeError(
+                    "surface tap v1 requires Emission strength 1"
+                )
+            color_socket = node.inputs["Color"]
+            if not color_socket.is_linked:
+                raise RuntimeError(
+                    "surface tap needs a linked Emission color"
+                )
+            return color_socket.links[0].from_socket, list(expr["stack"])
+        if kind == "mix":
+            # Transparent branches contribute only coverage: the radiance
+            # document IS the visible branch unchanged, so the tap
+            # recurses to it (the splash color-over-transparent class,
+            # nested or flat).
+            a, b = expr["a"], expr["b"]
+            if b.get("kind") == "transparent":
+                return radiance_source(a)
+            if a.get("kind") == "transparent":
+                return radiance_source(b)
+            raise RuntimeError(
+                "surface tap v1: a lit-lit mix radiance needs a "
+                "projection graph"
             )
-            group_output = _active_group_output(inner_tree)
-            if group_output is None:
-                group_output = inner_tree.nodes.new("NodeGroupOutput")
-            tap_input = group_output.inputs.get("TSL_TAP")
-            if tap_input is None:
-                raise RuntimeError("group output did not gain the tap socket")
-            inner_tree.links.new(inner_socket, tap_input)
-            tap_output = instance.outputs.get("TSL_TAP")
-            if tap_output is None:
-                raise RuntimeError("group instance did not expose the tap")
-            inner_socket = tap_output
-        source_socket = inner_socket
+        raise RuntimeError(
+            f"surface tap v1 has no radiance source for {kind!r}"
+        )
 
-    for output in [
-        item for item in tree.nodes
-        if item.bl_idname == "ShaderNodeOutputMaterial"
-    ]:
-        tree.nodes.remove(output)
-    output = tree.nodes.new("ShaderNodeOutputMaterial")
-    if hasattr(output, "is_active_output"):
-        output.is_active_output = True
-    emission = tree.nodes.new("ShaderNodeEmission")
-    emission.inputs["Strength"].default_value = 1.0
-    tree.links.new(source_socket, emission.inputs["Color"])
-    tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+    source_socket, stack = radiance_source(expression)
+    source_socket = _thread_tap(tree, source_socket, stack)
+    _emission_surface(tree, source_socket)
     return copy
 
 
@@ -211,7 +286,8 @@ def main():
     def tally_surface(tree):
         """The surface-expression fallback for non-Principled roots:
         emit_surface either compiles all six channels or refuses with
-        one named reason for the whole surface."""
+        one named reason for the whole surface.  Returns the surface
+        document on success so radiance channels can be sampled."""
         surface = coverage["surface"]
         try:
             document = tsl_ir.emit_surface(tree)
@@ -220,18 +296,19 @@ def main():
             surface["refusals"][reason] = (
                 surface["refusals"].get(reason, 0) + 1
             )
-            return
+            return None
         except RecursionError:
             reason = "surface emission exceeded the recursion bound"
             surface["refusals"][reason] = (
                 surface["refusals"].get(reason, 0) + 1
             )
-            return
+            return None
         surface["resolved"] += 1
         for channel_document in document["channels"].values():
             surface["channelsCompiled"] += 1
             if channel_document.get("viewDependent"):
                 surface["viewDependent"] += 1
+        return document
 
     for material in sorted(bpy.data.materials, key=lambda m: m.name):
         tree = bakelib.active_shader_node_tree(material)
@@ -246,7 +323,27 @@ def main():
                 coverage["refusals"].get(reason, 0) + len(CHANNELS)
             )
             if reason == "no root-level single Principled surface":
-                tally_surface(tree)
+                surface_document = tally_surface(tree)
+                if surface_document is not None:
+                    # The radiance channel is the one worth diffing on
+                    # single-leaf surfaces (every other channel of that
+                    # class is constant); the tap builder decides whether
+                    # this surface's shape is sampleable.
+                    radiance = surface_document["channels"]["Emission Color"]
+                    encoded_radiance = json.dumps(radiance)
+                    if radiance.get("viewDependent"):
+                        pass
+                    elif '"vertex_color"' in encoded_radiance:
+                        coverage["irCompiledAttributeDriven"] = (
+                            coverage.get("irCompiledAttributeDriven", 0) + 1
+                        )
+                    elif radiance.get("output", {}).get("op") not in {
+                        "const_vec3", "const_float",
+                    }:
+                        candidates.append((
+                            material.name, "Emission Color", radiance,
+                            "surface",
+                        ))
             continue
         coverage["principledRoots"] += 1
         if stack:
@@ -282,11 +379,15 @@ def main():
                     coverage.get("irCompiledAttributeDriven", 0) + 1
                 )
                 continue
-            candidates.append((material.name, channel_name, document))
+            candidates.append((
+                material.name, channel_name, document, "principled",
+            ))
 
     manifest = {"schemaVersion": 1, "size": SIZE, "cells": {}}
-    for material_name, channel_name, document in candidates[:sample_cap]:
+    for material_name, channel_name, document, kind in candidates[:sample_cap]:
         cell_id = f"{material_name}--{channel_name}".replace(" ", "_")
+        if kind == "surface":
+            cell_id += ".surface"
         material = bpy.data.materials[material_name]
         proxy_material = None
         proxy = None
@@ -300,7 +401,11 @@ def main():
             if item.get("op") == "uv" and item.get("uvMap")
         })
         try:
-            proxy_material = tap_channel_proxy(material, channel_name)
+            proxy_material = (
+                tap_surface_channel_proxy(material)
+                if kind == "surface"
+                else tap_channel_proxy(material, channel_name)
+            )
             proxy = bakelib.uv_tile_proxy(
                 uv_names, window=(0.0, 0.0, 1.0, 1.0),
             )
@@ -330,6 +435,7 @@ def main():
             "path": f"{cell_id}.f32",
             "material": material_name,
             "channel": channel_name,
+            "kind": kind,
             "rgbMin": list(result["rgbMin"]),
             "rgbMax": list(result["rgbMax"]),
         }

@@ -50,6 +50,11 @@
     {
       "cell": "bluebell_center--Base_Color",
       "status": "baked"
+    },
+    {
+      "cell": "picture_frame_glass--Emission_Color.surface",
+      "status": "reference-skipped",
+      "reason": "surface tap v1: a lit-lit mix radiance needs a projection graph"
     }
   ],
   "irCompiledAttributeDriven": 1

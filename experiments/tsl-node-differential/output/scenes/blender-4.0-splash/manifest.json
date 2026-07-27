@@ -1,5 +1,214 @@
 {
   "schemaVersion": 1,
   "size": 64,
-  "cells": {}
+  "cells": {
+    "LeafOutline--Emission_Color.surface": {
+      "path": "LeafOutline--Emission_Color.surface.f32",
+      "material": "LeafOutline",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ],
+      "rgbMax": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ]
+    },
+    "LeafOutline.001--Emission_Color.surface": {
+      "path": "LeafOutline.001--Emission_Color.surface.f32",
+      "material": "LeafOutline.001",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ],
+      "rgbMax": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ]
+    },
+    "LeafOutline.002--Emission_Color.surface": {
+      "path": "LeafOutline.002--Emission_Color.surface.f32",
+      "material": "LeafOutline.002",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ],
+      "rgbMax": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ]
+    },
+    "LeafOutline.003--Emission_Color.surface": {
+      "path": "LeafOutline.003--Emission_Color.surface.f32",
+      "material": "LeafOutline.003",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ],
+      "rgbMax": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ]
+    },
+    "Outline--Emission_Color.surface": {
+      "path": "Outline--Emission_Color.surface.f32",
+      "material": "Outline",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    },
+    "Outline.001--Emission_Color.surface": {
+      "path": "Outline.001--Emission_Color.surface.f32",
+      "material": "Outline.001",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    },
+    "Outline.002--Emission_Color.surface": {
+      "path": "Outline.002--Emission_Color.surface.f32",
+      "material": "Outline.002",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    },
+    "Outline.003--Emission_Color.surface": {
+      "path": "Outline.003--Emission_Color.surface.f32",
+      "material": "Outline.003",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    },
+    "Outline.004--Emission_Color.surface": {
+      "path": "Outline.004--Emission_Color.surface.f32",
+      "material": "Outline.004",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    },
+    "Outline.005--Emission_Color.surface": {
+      "path": "Outline.005--Emission_Color.surface.f32",
+      "material": "Outline.005",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    },
+    "Outline.006--Emission_Color.surface": {
+      "path": "Outline.006--Emission_Color.surface.f32",
+      "material": "Outline.006",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    },
+    "Outline.007--Emission_Color.surface": {
+      "path": "Outline.007--Emission_Color.surface.f32",
+      "material": "Outline.007",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    },
+    "Outline.008--Emission_Color.surface": {
+      "path": "Outline.008--Emission_Color.surface.f32",
+      "material": "Outline.008",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ],
+      "rgbMax": [
+        0.014933519996702671,
+        0.014933519996702671,
+        0.014933519996702671
+      ]
+    }
+  }
 }
