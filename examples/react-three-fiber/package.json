@@ -1,0 +1,23 @@
+{
+  "name": "blendlink-example-react-three-fiber",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --project tsconfig.json && vite build"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^9.6.1",
+    "blendlink": "^0.8.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "0.184.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.184.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.0.0"
+  }
+}
