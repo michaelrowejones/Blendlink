@@ -644,6 +644,34 @@
       "notes": "RGB Curves via the sampled-LUT route Cycles itself uses: a bent composite C curve composed before distinct R/G/B channel curves (wrong order is gross error), per-channel input gradients, and the Fac lerp swept over v. Tolerance is the LUT-reconstruction class shared with the spline colorramps."
     },
     {
+      "id": "tex-checker",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "deterministic texture (Checker)",
+      "notes": "Scale-4 checker over UV with two constant colors: epsilon-nudged floor parity in all three axes ((xi%2 == yi%2) == zi%2). Dyadic texel centers never land on cell boundaries."
+    },
+    {
+      "id": "tex-gradient",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "deterministic texture (Gradient)",
+      "notes": "R = LINEAR over u, G = QUADRATIC over 2u-1 (crosses the max(x,0) guard), B = RADIAL around the tile center (all four atan2 quadrants; the branch cut at v = 0.5 stays off texel centers). Cycles saturates the output."
+    },
+    {
+      "id": "tex-magic",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "deterministic texture (Magic trig cascade)",
+      "notes": "Depth 2 (default), scale 3, distortion 1.2: the fixed sin/cos cascade with the final 2*distortion shrink. Chained transcendentals share the trig tolerance class."
+    },
+    {
+      "id": "tex-wave",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "deterministic texture (Wave, all three profiles)",
+      "notes": "R = BANDS/X/SIN over UV, G = RINGS/SPHERICAL/SAW around the center, B = BANDS/DIAGONAL/TRI with distortion 1 detail 2 through the ported fractal (the raw [-1,1] fBM recovered as 2*fac - 1). Saw/tri discontinuities land off texel centers."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",

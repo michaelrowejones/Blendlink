@@ -490,6 +490,108 @@ def proxy_vertex_colors(proxy):
         layer.data[index].color = (u, v, 0.25, 1.0)
 
 
+def _combine_xyz(tree, x_socket=None, y_socket=None, z_value=0.0):
+    combine = tree.nodes.new("ShaderNodeCombineXYZ")
+    if x_socket is not None:
+        tree.links.new(x_socket, combine.inputs["X"])
+    if y_socket is not None:
+        tree.links.new(y_socket, combine.inputs["Y"])
+    combine.inputs["Z"].default_value = float(z_value)
+    return combine.outputs["Vector"]
+
+
+def build_tex_checker(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexChecker")
+    node.inputs["Scale"].default_value = 4.0
+    node.inputs["Color1"].default_value = (0.9, 0.2, 0.1, 1.0)
+    node.inputs["Color2"].default_value = (0.1, 0.3, 0.8, 1.0)
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def build_tex_gradient(tree, emission):
+    combine = tree.nodes.new("ShaderNodeCombineColor")
+    combine.mode = "RGB"
+
+    def gradient(gradient_type, vector_socket):
+        node = tree.nodes.new("ShaderNodeTexGradient")
+        node.gradient_type = gradient_type
+        tree.links.new(vector_socket, node.inputs["Vector"])
+        return node.outputs["Fac"]
+
+    tree.links.new(
+        gradient("LINEAR", _combine_xyz(tree, _uv_channel(tree, "u"))),
+        combine.inputs["Red"],
+    )
+    tree.links.new(
+        gradient("QUADRATIC", _combine_xyz(
+            tree, _affine(tree, _uv_channel(tree, "u"), 2.0, -1.0),
+        )),
+        combine.inputs["Green"],
+    )
+    tree.links.new(
+        gradient("RADIAL", _combine_xyz(
+            tree,
+            _affine(tree, _uv_channel(tree, "u"), 1.0, -0.5),
+            _affine(tree, _uv_channel(tree, "v"), 1.0, -0.5),
+        )),
+        combine.inputs["Blue"],
+    )
+    tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+
+
+def build_tex_magic(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexMagic")
+    node.turbulence_depth = 2
+    node.inputs["Scale"].default_value = 3.0
+    node.inputs["Distortion"].default_value = 1.2
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def build_tex_wave(tree, emission):
+    combine = tree.nodes.new("ShaderNodeCombineColor")
+    combine.mode = "RGB"
+
+    def wave(vector_socket, **settings):
+        node = tree.nodes.new("ShaderNodeTexWave")
+        node.wave_type = settings.get("wave_type", "BANDS")
+        node.bands_direction = settings.get("bands_direction", "X")
+        node.rings_direction = settings.get("rings_direction", "X")
+        node.wave_profile = settings.get("profile", "SIN")
+        node.inputs["Scale"].default_value = settings.get("scale", 1.0)
+        node.inputs["Distortion"].default_value = settings.get(
+            "distortion", 0.0,
+        )
+        node.inputs["Detail"].default_value = settings.get("detail", 2.0)
+        tree.links.new(vector_socket, node.inputs["Vector"])
+        return node.outputs["Fac"]
+
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+    centered = _combine_xyz(
+        tree,
+        _affine(tree, _uv_channel(tree, "u"), 1.0, -0.5),
+        _affine(tree, _uv_channel(tree, "v"), 1.0, -0.5),
+    )
+    tree.links.new(
+        wave(uv, wave_type="BANDS", bands_direction="X", profile="SIN"),
+        combine.inputs["Red"],
+    )
+    tree.links.new(
+        wave(centered, wave_type="RINGS", rings_direction="SPHERICAL",
+             profile="SAW"),
+        combine.inputs["Green"],
+    )
+    tree.links.new(
+        wave(uv, wave_type="BANDS", bands_direction="DIAGONAL",
+             profile="TRI", distortion=1.0, detail=2.0),
+        combine.inputs["Blue"],
+    )
+    tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+
+
 def build_rgb_curve(tree, emission):
     node = tree.nodes.new("ShaderNodeRGBCurve")
     mapping = node.mapping
@@ -742,6 +844,10 @@ BUILDERS = {
     "vertex-color": build_vertex_color,
     "group-passthrough": build_group_passthrough,
     "rgb-curve": build_rgb_curve,
+    "tex-checker": build_tex_checker,
+    "tex-gradient": build_tex_gradient,
+    "tex-magic": build_tex_magic,
+    "tex-wave": build_tex_wave,
     "fresnel-dielectric": build_fresnel_dielectric,
     "layer-weight": build_layer_weight,
     "map-range-linear": build_map_range_linear,

@@ -502,6 +502,152 @@ function build(expression: TslIrExpression): TslExpression {
           ? expression.lacunarity : 2.0,
       )
     }
+    case 'tex_checker': {
+      // Cycles svm_checker: epsilon-nudged cell parity in all three axes.
+      const p = build(child(expression, 'vector'))
+        .mul(build(child(expression, 'scale')))
+        .add(0.000001).mul(0.999999)
+      const parity = (value: TslExpression): TslExpression => {
+        const m = tslAbs(tslFloor(value))
+        return m.sub(tslFloor(m.mul(0.5)).mul(2.0))
+      }
+      const xyEqual = tslSelect(
+        parity(p.x).equal(parity(p.y)), tslFloat(1.0), tslFloat(0.0),
+      )
+      const check = xyEqual.equal(parity(p.z))
+      if (expression.output === 'fac') {
+        return tslSelect(check, tslFloat(1.0), tslFloat(0.0))
+      }
+      return tslSelect(
+        check,
+        build(child(expression, 'color1')),
+        build(child(expression, 'color2')),
+      )
+    }
+    case 'tex_gradient': {
+      const p = build(child(expression, 'vector'))
+      const gradientType = String(expression.gradientType)
+      let result: TslExpression
+      switch (gradientType) {
+        case 'LINEAR': result = p.x; break
+        case 'QUADRATIC': {
+          const r = tslMax(p.x, 0.0)
+          result = r.mul(r)
+          break
+        }
+        case 'EASING': {
+          // smoothstep of the clamped coordinate: 3r^2 - 2r^3.
+          const r = tslClamp(p.x, 0.0, 1.0)
+          const t = r.mul(r)
+          result = t.mul(3.0).sub(t.mul(r).mul(2.0))
+          break
+        }
+        case 'DIAGONAL': result = p.x.add(p.y).mul(0.5); break
+        case 'RADIAL':
+          result = tslAtan2(p.y, p.x).div(2 * Math.PI).add(0.5)
+          break
+        case 'QUADRATIC_SPHERE': {
+          const r = tslMax(tslOneMinus(tslLength(p)), 0.0)
+          result = r.mul(r)
+          break
+        }
+        case 'SPHERICAL':
+          result = tslMax(tslOneMinus(tslLength(p)), 0.0)
+          break
+        default:
+          return fail(`IR gradient type ${gradientType}`)
+      }
+      // Cycles saturates the gradient before both outputs.
+      return tslClamp(result, 0.0, 1.0)
+    }
+    case 'tex_magic': {
+      // Cycles svm_magic: the fixed trig cascade, unrolled to the node's
+      // depth; the final shrink by 2*distortion is skipped when the
+      // distortion is zero (runtime branch, scalar condition).
+      const depth = scalar(expression, 'depth')
+      const p = build(child(expression, 'vector'))
+        .mul(build(child(expression, 'scale')))
+      const distortion = build(child(expression, 'distortion'))
+      let x = tslSin(p.x.add(p.y).add(p.z).mul(5.0))
+      let y = tslCos(p.x.negate().add(p.y).sub(p.z).mul(5.0))
+      let z = tslCos(p.x.negate().sub(p.y).add(p.z).mul(5.0)).negate()
+      if (depth > 0) {
+        x = x.mul(distortion)
+        y = y.mul(distortion)
+        z = z.mul(distortion)
+        y = tslCos(x.sub(y).add(z)).negate().mul(distortion)
+      }
+      if (depth > 1) x = tslCos(x.sub(y).sub(z)).mul(distortion)
+      if (depth > 2) z = tslSin(x.negate().sub(y).sub(z)).mul(distortion)
+      if (depth > 3) {
+        x = tslCos(x.negate().add(y).sub(z)).negate().mul(distortion)
+      }
+      if (depth > 4) {
+        y = tslSin(x.negate().add(y).add(z)).negate().mul(distortion)
+      }
+      if (depth > 5) {
+        y = tslCos(x.negate().add(y).add(z)).negate().mul(distortion)
+      }
+      if (depth > 6) x = tslCos(x.add(y).add(z)).mul(distortion)
+      if (depth > 7) z = tslSin(x.add(y).sub(z)).mul(distortion)
+      if (depth > 8) {
+        x = tslCos(x.negate().sub(y).add(z)).negate().mul(distortion)
+      }
+      if (depth > 9) y = tslSin(x.sub(y).add(z)).negate().mul(distortion)
+      const divisor = distortion.mul(2.0)
+      const shrink = (value: TslExpression): TslExpression => tslSelect(
+        distortion.equal(0.0), value, value.div(guardedDivisor(divisor)),
+      )
+      return tslVec3(
+        tslFloat(0.5).sub(shrink(x)),
+        tslFloat(0.5).sub(shrink(y)),
+        tslFloat(0.5).sub(shrink(z)),
+      )
+    }
+    case 'tex_wave': {
+      const p = build(child(expression, 'vector'))
+        .mul(build(child(expression, 'scale')))
+        .add(0.000001).mul(0.999999)
+      const waveType = String(expression.waveType)
+      let n: TslExpression
+      if (waveType === 'BANDS') {
+        const direction = String(expression.bandsDirection)
+        if (direction === 'X') n = p.x.mul(20.0)
+        else if (direction === 'Y') n = p.y.mul(20.0)
+        else if (direction === 'Z') n = p.z.mul(20.0)
+        else n = p.x.add(p.y).add(p.z).mul(10.0)
+      } else {
+        const direction = String(expression.ringsDirection)
+        let axis = p
+        if (direction === 'X') axis = tslVec3(0.0, p.y, p.z)
+        else if (direction === 'Y') axis = tslVec3(p.x, 0.0, p.z)
+        else if (direction === 'Z') axis = tslVec3(p.x, p.y, 0.0)
+        n = tslLength(axis).mul(20.0)
+      }
+      n = n.add(build(child(expression, 'phase')))
+      const distortion = scalar(expression, 'distortion')
+      if (distortion !== 0) {
+        // The distortion term is the RAW fractal in [-1, 1]; blenderNoise-
+        // Fac returns the Fac remap, so 2f - 1 recovers it exactly.
+        const fac = blenderNoiseFac(
+          p.mul(build(child(expression, 'detailScale'))),
+          scalar(expression, 'detail'),
+          scalar(expression, 'detailRoughness'),
+          2.0,
+        )
+        n = n.add(fac.mul(2.0).sub(1.0).mul(distortion))
+      }
+      const profile = String(expression.profile)
+      if (profile === 'SIN') {
+        return tslFloat(0.5).add(tslSin(n.sub(Math.PI / 2)).mul(0.5))
+      }
+      const cycles = n.div(2 * Math.PI)
+      if (profile === 'SAW') return cycles.sub(tslFloor(cycles))
+      if (profile === 'TRI') {
+        return tslAbs(cycles.sub(tslFloor(cycles.add(0.5)))).mul(2.0)
+      }
+      return fail(`IR wave profile ${profile}`)
+    }
     default:
       return fail(`IR op ${expression.op} has no proven TSL mapping`)
   }

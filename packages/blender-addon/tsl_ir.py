@@ -395,6 +395,121 @@ def emit_output(node, from_socket, stack=()):
             "input": emit_input(node.inputs["Fac"], stack=stack),
         }
 
+    if idname == "ShaderNodeTexChecker":
+        # Blender 5.2 displays "Fac" as "Factor"; match the identifier.
+        checker_output = getattr(from_socket, "identifier", socket_name)
+        if checker_output not in {"Color", "Fac"}:
+            _refuse(f"Checker output {socket_name!r} unsupported")
+        if not node.inputs["Vector"].is_linked:
+            _refuse(
+                "Checker with implicit Generated coordinates has no cell yet"
+            )
+        expression = {
+            "op": "tex_checker",
+            "vector": emit_input(
+                node.inputs["Vector"], stack=stack, as_vector=True,
+            ),
+            "color1": emit_input(
+                node.inputs["Color1"], stack=stack, as_vector=True,
+            ),
+            "color2": emit_input(
+                node.inputs["Color2"], stack=stack, as_vector=True,
+            ),
+            "scale": emit_input(node.inputs["Scale"], stack=stack),
+        }
+        if checker_output == "Fac":
+            expression["output"] = "fac"
+        return expression
+
+    if idname == "ShaderNodeTexGradient":
+        if getattr(from_socket, "identifier", socket_name) not in {
+            "Color", "Fac",
+        }:
+            _refuse(f"Gradient output {socket_name!r} unsupported")
+        if not node.inputs["Vector"].is_linked:
+            _refuse(
+                "Gradient with implicit Generated coordinates has no cell yet"
+            )
+        gradient_type = str(node.gradient_type)
+        if gradient_type not in {
+            "LINEAR", "QUADRATIC", "EASING", "DIAGONAL",
+            "RADIAL", "SPHERICAL", "QUADRATIC_SPHERE",
+        }:
+            _refuse(f"Gradient type {gradient_type!r} has no cell yet")
+        return {
+            "op": "tex_gradient",
+            "gradientType": gradient_type,
+            "vector": emit_input(
+                node.inputs["Vector"], stack=stack, as_vector=True,
+            ),
+        }
+
+    if idname == "ShaderNodeTexMagic":
+        if socket_name != "Color":
+            _refuse(f"Magic output {socket_name!r} has no cell yet")
+        if not node.inputs["Vector"].is_linked:
+            _refuse(
+                "Magic with implicit Generated coordinates has no cell yet"
+            )
+        return {
+            "op": "tex_magic",
+            "depth": int(node.turbulence_depth),
+            "vector": emit_input(
+                node.inputs["Vector"], stack=stack, as_vector=True,
+            ),
+            "scale": emit_input(node.inputs["Scale"], stack=stack),
+            "distortion": emit_input(node.inputs["Distortion"], stack=stack),
+        }
+
+    if idname == "ShaderNodeTexWave":
+        if getattr(from_socket, "identifier", socket_name) not in {
+            "Color", "Fac",
+        }:
+            _refuse(f"Wave output {socket_name!r} unsupported")
+        if not node.inputs["Vector"].is_linked:
+            _refuse(
+                "Wave with implicit Generated coordinates has no cell yet"
+            )
+        # The fractal-loop shape must be known at emit time: the builder
+        # unrolls octaves like the Noise mapping does.
+        detail_socket = node.inputs["Detail"]
+        roughness_socket = node.inputs["Detail Roughness"]
+        if node.inputs["Distortion"].is_linked:
+            _refuse("Wave with a linked Distortion has no cell yet")
+        distortion_value = float(node.inputs["Distortion"].default_value)
+        detail_value = 0.0
+        roughness_value = 0.5
+        if distortion_value != 0.0:
+            if detail_socket.is_linked:
+                _refuse("Wave with a linked Detail has no cell yet")
+            if roughness_socket.is_linked:
+                _refuse("Wave with a linked Detail Roughness has no cell yet")
+            detail_value = float(detail_socket.default_value)
+            roughness_value = float(roughness_socket.default_value)
+            if detail_value > 2.0:
+                _refuse(
+                    f"Wave detail {detail_value:g} exceeds the proven "
+                    "range (<= 2); high-octave phase divergence measured"
+                )
+        return {
+            "op": "tex_wave",
+            "waveType": str(node.wave_type),
+            "bandsDirection": str(node.bands_direction),
+            "ringsDirection": str(node.rings_direction),
+            "profile": str(node.wave_profile),
+            "vector": emit_input(
+                node.inputs["Vector"], stack=stack, as_vector=True,
+            ),
+            "scale": emit_input(node.inputs["Scale"], stack=stack),
+            "distortion": distortion_value,
+            "detail": detail_value,
+            "detailRoughness": roughness_value,
+            "detailScale": emit_input(
+                node.inputs["Detail Scale"], stack=stack,
+            ),
+            "phase": emit_input(node.inputs["Phase Offset"], stack=stack),
+        }
+
     if idname == "ShaderNodeRGBCurve":
         # Cycles itself bakes RGB Curves into a sampled table
         # (curvemapping_color_to_array with the composite C curve applied
