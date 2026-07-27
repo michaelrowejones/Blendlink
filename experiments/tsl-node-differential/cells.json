@@ -735,6 +735,20 @@
       "notes": "3D fBM at scale 16, detail 2 — the cell that earns the emitter's scale bound. Sub-texel sample-position differences (~3e-5 UV) multiply by frequency: scale 100 (ellie hair) measured 1.8e-1 mean decorrelation, so higher scales refuse and the Material bake carries them."
     },
     {
+      "id": "tex-image-linear",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "corpus-priority node (Image Texture x14)",
+      "notes": "An 8x8 float Non-Color image sampled Linear/REPEAT over uv*2: manual bilinear at u*W - 0.5 with per-tap floored-modulo wrapping, no float32-filterable dependency. Pixels embed in the IR (bounded at 128x128; the texture transport carries larger images)."
+    },
+    {
+      "id": "tex-image-closest-srgb",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "corpus-priority node (Image Texture, byte/sRGB path)",
+      "notes": "An 8x8 BYTE sRGB image with zero-alpha texels, sampled Closest/EXTEND over uv*1.5 - 0.25. MEASURED against baked ground truth: Cycles associates alpha at load IN BYTE sRGB SPACE with integer floor division (rgb_byte*alpha_byte//255), THEN applies the exact IEC decode, and the Color output stays associated — zero alpha bakes black and nothing divides back. The emitter reproduces that byte-exact pipeline; the out-of-range sweep exercises the clamp."
+    },
+    {
       "id": "noise-color",
       "gate": true,
       "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},

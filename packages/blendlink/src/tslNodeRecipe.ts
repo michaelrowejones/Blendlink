@@ -729,6 +729,71 @@ function build(expression: TslIrExpression): TslExpression {
       }
       return fail(`IR wave profile ${profile}`)
     }
+    case 'tex_image': {
+      // Cycles-style manual sampling over an embedded RGBA float image:
+      // nearest-filtered texel reads (no float32-filterable dependency),
+      // bilinear taps at u*W - 0.5, and per-tap REPEAT (floored modulo)
+      // or EXTEND (clamp) index wrapping. Pixels arrive linearized (the
+      // emitter applies exact IEC sRGB decode for byte images). Rows are
+      // bottom-up on both sides (Blender pixels and DataTexture agree).
+      const width = scalar(expression, 'width')
+      const height = scalar(expression, 'height')
+      const values = numbers(expression, 'pixels')
+      if (values.length !== width * height * 4) {
+        fail('IR tex_image pixels do not match its dimensions')
+      }
+      const data = new Float32Array(values)
+      const map = new DataTexture(data, width, height, RGBAFormat, FloatType)
+      map.minFilter = NearestFilter
+      map.magFilter = NearestFilter
+      map.wrapS = ClampToEdgeWrapping
+      map.wrapT = ClampToEdgeWrapping
+      map.generateMipmaps = false
+      map.needsUpdate = true
+      const vector = build(child(expression, 'vector'))
+      const extension = String(expression.extension)
+      const wrapIndex = (
+        index: TslExpression, size: number,
+      ): TslExpression => (
+        extension === 'REPEAT'
+          ? index.sub(tslFloor(index.div(size)).mul(size))
+          : tslClamp(index, 0.0, size - 1)
+      )
+      const texel = (
+        ix: TslExpression, iy: TslExpression,
+      ): TslExpression => tslTexture(map, tslVec2(
+        wrapIndex(ix, width).add(0.5).div(width),
+        wrapIndex(iy, height).add(0.5).div(height),
+      ))
+      let sample: TslExpression
+      if (expression.interpolation === 'Closest') {
+        sample = texel(
+          tslFloor(vector.x.mul(width)),
+          tslFloor(vector.y.mul(height)),
+        )
+      } else {
+        const x = vector.x.mul(width).sub(0.5)
+        const y = vector.y.mul(height).sub(0.5)
+        const ix = tslFloor(x)
+        const iy = tslFloor(y)
+        const fx = x.sub(ix)
+        const fy = y.sub(iy)
+        const bottom = tslMix(
+          texel(ix, iy), texel(ix.add(1.0), iy), fx,
+        )
+        const top = tslMix(
+          texel(ix, iy.add(1.0)), texel(ix.add(1.0), iy.add(1.0)), fx,
+        )
+        sample = tslMix(bottom, top, fy)
+      }
+      if (expression.output === 'alpha') {
+        return (sample as unknown as { w: TslExpression }).w
+      }
+      // sRGB images arrive alpha-associated from the emitter (Cycles
+      // associates at load and never divides back — measured); nothing
+      // to do here beyond sampling.
+      return tslVec3(sample.x, sample.y, sample.z)
+    }
     case 'tex_white_noise': {
       const p = build(child(expression, 'vector'))
       const dimensions = scalar(expression, 'dimensions')

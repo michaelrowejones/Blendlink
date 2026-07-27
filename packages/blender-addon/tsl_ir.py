@@ -609,6 +609,86 @@ def emit_output(node, from_socket, stack=()):
             "phase": emit_input(node.inputs["Phase Offset"], stack=stack),
         }
 
+    if idname == "ShaderNodeTexImage":
+        image = node.image
+        if image is None:
+            _refuse("Image Texture without an image")
+        image_output = getattr(from_socket, "identifier", socket_name)
+        if image_output not in {"Color", "Alpha"}:
+            _refuse(f"Image Texture output {socket_name!r} unsupported")
+        interpolation = str(node.interpolation)
+        if interpolation not in {"Linear", "Closest"}:
+            _refuse(
+                f"Image interpolation {interpolation!r} has no cell yet"
+            )
+        extension = str(node.extension)
+        if extension not in {"REPEAT", "EXTEND"}:
+            _refuse(f"Image extension {extension!r} has no cell yet")
+        if str(node.projection) != "FLAT":
+            _refuse(f"Image projection {node.projection!r} has no cell yet")
+        if str(getattr(image, "alpha_mode", "STRAIGHT")) != "STRAIGHT":
+            _refuse(
+                f"Image alpha mode {image.alpha_mode!r} has no cell yet"
+            )
+        colorspace = str(image.colorspace_settings.name)
+        if colorspace not in {"sRGB", "Non-Color", "Raw", "Linear Rec.709"}:
+            _refuse(f"Image colorspace {colorspace!r} has no cell yet")
+        width, height = int(image.size[0]), int(image.size[1])
+        if width <= 0 or height <= 0:
+            _refuse("Image Texture with no pixel data")
+        if width * height > 128 * 128:
+            # The IR route embeds pixels (the harness's float oracle); the
+            # production texture-binding route carries larger images.
+            _refuse(
+                f"Image {width}x{height} exceeds the embedded-IR bound "
+                "(128x128); the texture transport carries it"
+            )
+        pixels = list(image.pixels)
+        if len(pixels) != width * height * 4:
+            _refuse("Image pixel buffer is not RGBA")
+        if colorspace == "sRGB" and bool(getattr(image, "is_float", False)):
+            _refuse(
+                "Float-buffer sRGB image has no cell yet "
+                "(association order unmeasured)"
+            )
+        if colorspace == "sRGB":
+            # Measured against baked ground truth: Cycles associates
+            # alpha at load IN BYTE sRGB SPACE with integer floor
+            # division (assoc = rgb_byte * alpha_byte // 255), THEN
+            # decodes with the exact IEC curve, and the Color output
+            # stays associated (zero alpha bakes black; nothing divides
+            # back). Data (Non-Color/Raw) images skip all of it.
+            def _srgb_to_linear(value):
+                if value <= 0.04045:
+                    return value / 12.92
+                return ((value + 0.055) / 1.055) ** 2.4
+            for index in range(0, len(pixels), 4):
+                alpha_byte = round(pixels[index + 3] * 255)
+                for channel in range(3):
+                    byte = round(pixels[index + channel] * 255)
+                    associated_byte = (byte * alpha_byte) // 255
+                    pixels[index + channel] = _srgb_to_linear(
+                        associated_byte / 255,
+                    )
+        vector_socket = node.inputs["Vector"]
+        if vector_socket.is_linked:
+            vector_expression = emit_input(
+                vector_socket, stack=stack, as_vector=True,
+            )
+        else:
+            # Unlinked Vector on Image Texture means the active UV map.
+            vector_expression = {"op": "uv"}
+        return {
+            "op": "tex_image",
+            "width": width,
+            "height": height,
+            "pixels": [float(value) for value in pixels],
+            "interpolation": interpolation,
+            "extension": extension,
+            "output": "alpha" if image_output == "Alpha" else "color",
+            "vector": vector_expression,
+        }
+
     if idname == "ShaderNodeTexWhiteNoise":
         output_id = getattr(from_socket, "identifier", socket_name)
         if output_id not in {"Value", "Color"}:

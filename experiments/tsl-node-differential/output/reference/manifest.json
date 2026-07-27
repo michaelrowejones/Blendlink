@@ -1718,6 +1718,50 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "tex-image-linear": {
+      "path": "tex-image-linear.f32",
+      "pipeline": "ir",
+      "ir": "ir/tex-image-linear.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.078125,
+        0.078125,
+        0.1071428582072258
+      ],
+      "rgbMax": [
+        0.921875,
+        0.921875,
+        0.8928571343421936
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "tex-image-closest-srgb": {
+      "path": "tex-image-closest-srgb.f32",
+      "pipeline": "ir",
+      "ir": "ir/tex-image-closest-srgb.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rgbMax": [
+        0.863157331943512,
+        0.863157331943512,
+        1.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "noise-color": {
       "path": "noise-color.f32",
       "pipeline": "ir",

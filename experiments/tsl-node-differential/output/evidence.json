@@ -864,6 +864,28 @@
       },
       "failureClass": "noise frequency bound (scale <= 16)"
     },
+    "tex-image-linear": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 4.016328603029251e-9,
+        "p99Abs": 5.960464477539063e-8,
+        "maxAbs": 5.960464477539063e-8
+      },
+      "failureClass": "corpus-priority node (Image Texture x14)"
+    },
+    "tex-image-closest-srgb": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 2.4299576277068507e-8,
+        "p99Abs": 1.4901161193847656e-7,
+        "maxAbs": 1.4901161193847656e-7
+      },
+      "failureClass": "corpus-priority node (Image Texture, byte/sRGB path)"
+    },
     "noise-color": {
       "ok": true,
       "gated": true,
@@ -968,13 +990,15 @@
         "irCompiledViewDependent": 3,
         "refusals": {
           "Attribute type 'OBJECT' has no cell yet": 1,
-          "ShaderNodeTexImage has no proven TSL mapping": 14,
+          "Image 1024x1024 exceeds the embedded-IR bound (128x128); the texture transport carries it": 3,
           "Texture Coordinate 'Generated' has no TSL cell yet; only UV is proven": 5,
           "Attribute output 'Factor' has no cell yet": 1,
           "no root-level single Principled surface": 90,
           "ShaderNodeVectorRotate has no proven TSL mapping": 2,
+          "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 10,
           "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
           "Attribute output 'Vector' has no cell yet": 1,
+          "Image interpolation 'Cubic' has no cell yet": 1,
           "Unnormalized noise has no cell yet": 2,
           "Noise scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 2,
           "Voronoi scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency patterns": 1

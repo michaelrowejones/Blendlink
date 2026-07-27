@@ -896,6 +896,69 @@ def build_tex_magic_fac(tree, emission):
     tree.links.new(fac, emission.inputs["Color"])
 
 
+def _test_image(name, *, float_buffer, colorspace):
+    existing = bpy.data.images.get(name)
+    if existing is not None:
+        bpy.data.images.remove(existing)
+    image = bpy.data.images.new(
+        name, 8, 8, alpha=True, float_buffer=float_buffer,
+    )
+    image.colorspace_settings.name = colorspace
+    pixels = []
+    for j in range(8):
+        for i in range(8):
+            pixels.extend((
+                (i + 0.5) / 8.0,
+                (j + 0.5) / 8.0,
+                ((i * 3 + j * 5) % 8) / 7.0,
+                ((i + j) % 4) / 3.0,
+            ))
+    image.pixels = pixels
+    # Byte images must be packed after pixel assignment or the renderer
+    # samples zeros (measured: the un-packed byte cell baked black while
+    # the float-buffer path propagated directly).
+    image.pack()
+    image.update()
+    return image
+
+
+def _scaled_uv(tree, scale, offset):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    scale_node = tree.nodes.new("ShaderNodeVectorMath")
+    scale_node.operation = "SCALE"
+    scale_node.inputs["Scale"].default_value = scale
+    tree.links.new(coord.outputs["UV"], scale_node.inputs[0])
+    if offset == 0.0:
+        return scale_node.outputs["Vector"]
+    add = tree.nodes.new("ShaderNodeVectorMath")
+    add.operation = "ADD"
+    add.inputs[1].default_value = (offset, offset, 0.0)
+    tree.links.new(scale_node.outputs["Vector"], add.inputs[0])
+    return add.outputs["Vector"]
+
+
+def build_tex_image_linear(tree, emission):
+    node = tree.nodes.new("ShaderNodeTexImage")
+    node.image = _test_image(
+        "TSL_IMG_FLOAT", float_buffer=True, colorspace="Non-Color",
+    )
+    node.interpolation = "Linear"
+    node.extension = "REPEAT"
+    tree.links.new(_scaled_uv(tree, 2.0, 0.0), node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def build_tex_image_closest_srgb(tree, emission):
+    node = tree.nodes.new("ShaderNodeTexImage")
+    node.image = _test_image(
+        "TSL_IMG_BYTE", float_buffer=False, colorspace="sRGB",
+    )
+    node.interpolation = "Closest"
+    node.extension = "EXTEND"
+    tree.links.new(_scaled_uv(tree, 1.5, -0.25), node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
 def build_rgb_curve(tree, emission):
     node = tree.nodes.new("ShaderNodeRGBCurve")
     mapping = node.mapping
@@ -1152,6 +1215,8 @@ BUILDERS = {
     "voronoi-rand0-probe": build_voronoi_rand0_probe,
     "noise-z-probe": build_noise_z_probe,
     "noise-scale16": build_noise_scale16,
+    "tex-image-linear": build_tex_image_linear,
+    "tex-image-closest-srgb": build_tex_image_closest_srgb,
     "noise-color": build_noise_color,
     "noise-color-2d": build_noise_color_2d,
     "voronoi-smooth-f1": build_voronoi_smooth_f1,

@@ -211,6 +211,20 @@ four more measured lessons:
   snap) whenever UV feeds it — the raw-bit avalanche class, enforced
   structurally.
 
+The Image Texture batch (the corpus's largest single-node class, ×14)
+landed at 1e-8 through embedded-pixel IR (bounded at 128×128; larger
+images stay named for the production texture transport): manual
+bilinear at u·W − 0.5 with per-tap REPEAT/EXTEND wrapping, Closest, and
+the byte/sRGB path. Its measured finding: **Cycles associates alpha at
+image load in byte sRGB space with integer floor division**
+(rgb·alpha_byte // 255), THEN applies the exact IEC decode, and the
+Color output stays associated — zero-alpha texels bake black and
+nothing divides back. Two wrong-but-plausible models (no association;
+associate-after-decode with un-associate) measured 1.9e-1 and 1.3e-1
+before the byte-space model matched to 2.4e-8. A second trap: byte
+images need `pack()` after pixel assignment or the renderer samples
+zeros.
+
 Two findings the hash batch measured, both worth remembering:
 
 1. **Blender 4.x+ Voronoi does not use the White Noise hash.** White
