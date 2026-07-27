@@ -693,6 +693,108 @@ def build_hue_saturation(tree, emission):
     tree.links.new(node.outputs["Color"], emission.inputs["Color"])
 
 
+def build_hash_probe(tree, emission):
+    # TEMP: constant-vector White Noise COLOR isolates the WGSL hash4
+    # (jenkinsMix) path: (hash3, hash4 w=1, hash4 w=2) of (2, 3, 0).
+    combine = tree.nodes.new("ShaderNodeCombineXYZ")
+    combine.inputs["X"].default_value = 2.0
+    combine.inputs["Y"].default_value = 3.0
+    combine.inputs["Z"].default_value = 0.0
+    node = tree.nodes.new("ShaderNodeTexWhiteNoise")
+    node.noise_dimensions = "3D"
+    tree.links.new(combine.outputs["Vector"], node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def build_voronoi_rand0_probe(tree, emission):
+    # TEMP: randomness-0 Voronoi has NO hash in its distances — a pure
+    # lattice-distance pyramid. Divergence here means the geometric
+    # construction is wrong, not the hash.
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+    node = tree.nodes.new("ShaderNodeTexVoronoi")
+    node.voronoi_dimensions = "3D"
+    node.feature = "F1"
+    node.distance = "EUCLIDEAN"
+    if hasattr(node, "normalize"):
+        node.normalize = False
+    node.inputs["Scale"].default_value = 4.0
+    node.inputs["Randomness"].default_value = 0.0
+    node.inputs["Detail"].default_value = 0.0
+    tree.links.new(uv, node.inputs["Vector"])
+    tree.links.new(node.outputs["Distance"], emission.inputs["Color"])
+
+
+def build_white_noise(tree, emission):
+    # The hash consumes RAW float bits, and interpolated UVs differ
+    # between engines by ~260 ulps (measured on the uv-gradient cell) —
+    # avalanche then decorrelates every texel. Quantizing to floor(uv*8)
+    # makes the hashed bits integer-valued and bit-identical, gating the
+    # Jenkins port itself through the production node.
+    out = tree.nodes.new("ShaderNodeCombineColor")
+    out.mode = "RGB"
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+    scale = tree.nodes.new("ShaderNodeVectorMath")
+    scale.operation = "SCALE"
+    scale.inputs["Scale"].default_value = 8.0
+    tree.links.new(uv, scale.inputs[0])
+    quantize = tree.nodes.new("ShaderNodeVectorMath")
+    quantize.operation = "FLOOR"
+    tree.links.new(scale.outputs["Vector"], quantize.inputs[0])
+    cells = quantize.outputs["Vector"]
+
+    def white_noise(dimensions):
+        node = tree.nodes.new("ShaderNodeTexWhiteNoise")
+        node.noise_dimensions = dimensions
+        tree.links.new(cells, node.inputs["Vector"])
+        return node
+
+    tree.links.new(
+        white_noise("3D").outputs["Value"], out.inputs["Red"],
+    )
+    tree.links.new(
+        white_noise("2D").outputs["Value"], out.inputs["Green"],
+    )
+    tree.links.new(
+        _rgb_channel(tree, white_noise("3D").outputs["Color"], "Green"),
+        out.inputs["Blue"],
+    )
+    tree.links.new(out.outputs["Color"], emission.inputs["Color"])
+
+
+def build_voronoi_f1(tree, emission):
+    out = tree.nodes.new("ShaderNodeCombineColor")
+    out.mode = "RGB"
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+
+    def voronoi(dimensions):
+        node = tree.nodes.new("ShaderNodeTexVoronoi")
+        node.voronoi_dimensions = dimensions
+        node.feature = "F1"
+        node.distance = "EUCLIDEAN"
+        if hasattr(node, "normalize"):
+            node.normalize = False
+        node.inputs["Scale"].default_value = 4.0
+        node.inputs["Randomness"].default_value = 1.0
+        node.inputs["Detail"].default_value = 0.0
+        tree.links.new(uv, node.inputs["Vector"])
+        return node
+
+    three_d = voronoi("3D")
+    tree.links.new(
+        _affine(tree, three_d.outputs["Distance"], 0.6, 0.0),
+        out.inputs["Red"],
+    )
+    tree.links.new(
+        _rgb_channel(tree, three_d.outputs["Color"], "Red"),
+        out.inputs["Green"],
+    )
+    tree.links.new(
+        _affine(tree, voronoi("2D").outputs["Distance"], 0.6, 0.0),
+        out.inputs["Blue"],
+    )
+    tree.links.new(out.outputs["Color"], emission.inputs["Color"])
+
+
 def build_rgb_curve(tree, emission):
     node = tree.nodes.new("ShaderNodeRGBCurve")
     mapping = node.mapping
@@ -945,6 +1047,10 @@ BUILDERS = {
     "vertex-color": build_vertex_color,
     "group-passthrough": build_group_passthrough,
     "rgb-curve": build_rgb_curve,
+    "hash-probe": build_hash_probe,
+    "voronoi-rand0-probe": build_voronoi_rand0_probe,
+    "white-noise": build_white_noise,
+    "voronoi-f1": build_voronoi_f1,
     "color-utilities": build_color_utilities,
     "color-hsv": build_color_hsv,
     "hue-saturation": build_hue_saturation,

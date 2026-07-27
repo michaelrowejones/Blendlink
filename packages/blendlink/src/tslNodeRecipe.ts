@@ -66,6 +66,11 @@ export interface TslExpression {
   equal(value: TslExprLike): TslExpression
   lessThan(value: TslExprLike): TslExpression
   lessThanEqual(value: TslExprLike): TslExpression
+  bitXor(value: TslExprLike): TslExpression
+  bitOr(value: TslExprLike): TslExpression
+  bitAnd(value: TslExprLike): TslExpression
+  shiftLeft(value: TslExprLike): TslExpression
+  shiftRight(value: TslExprLike): TslExpression
   x: TslExpression
   y: TslExpression
   z: TslExpression
@@ -699,6 +704,87 @@ function build(expression: TslIrExpression): TslExpression {
       }
       return fail(`IR wave profile ${profile}`)
     }
+    case 'tex_white_noise': {
+      const p = build(child(expression, 'vector'))
+      const dimensions = scalar(expression, 'dimensions')
+      if (expression.output === 'color') {
+        return dimensions === 2
+          ? hashFloat2ToFloat3(p.x, p.y)
+          : hashFloat3ToFloat3(p.x, p.y, p.z)
+      }
+      return dimensions === 2
+        ? hashFloat2ToFloat(p.x, p.y)
+        : hashFloat3ToFloat(p.x, p.y, p.z)
+    }
+    case 'tex_voronoi': {
+      // Blender 4.x+ voronoi_f1, Euclidean, single layer: jittered points
+      // in the 9 (2D) or 27 (3D) neighbor cells, jitter from the SIGNED
+      // integer PCG (hash_pcg3d_i / hash_pcg2d_i — measured: NOT White
+      // Noise's Jenkins), argmin tracked with scalar selects so the Color
+      // hash can rerun on the winning cell.
+      const dimensions = scalar(expression, 'dimensions')
+      const coord = build(child(expression, 'vector'))
+        .mul(build(child(expression, 'scale')))
+      const randomness = tslClamp(
+        build(child(expression, 'randomness')), 0.0, 1.0,
+      )
+      const cell = tslFloor(coord)
+      const local = coord.sub(cell)
+      const cellIntX = tslIntOf(cell.x)
+      const cellIntY = tslIntOf(cell.y)
+      const cellIntZ = tslIntOf(cell.z)
+      let minDistance = tslFloat(1e10)
+      let winXExpr = tslIntOf(0)
+      let winYExpr = tslIntOf(0)
+      let winZExpr = tslIntOf(0)
+      const zOffsets = dimensions === 2 ? [0] : [-1, 0, 1]
+      for (const k of zOffsets) {
+        for (const j of [-1, 0, 1]) {
+          for (const i of [-1, 0, 1]) {
+            const neighborX = cellIntX.add(tslIntOf(i))
+            const neighborY = cellIntY.add(tslIntOf(j))
+            const neighborZ = cellIntZ.add(tslIntOf(k))
+            let dx: TslExpression
+            let dy: TslExpression
+            let dz = tslFloat(0.0)
+            if (dimensions === 2) {
+              const [jitterX, jitterY] = hashInt2ToFloat2(
+                neighborX, neighborY,
+              )
+              dx = jitterX.mul(randomness).add(i).sub(local.x)
+              dy = jitterY.mul(randomness).add(j).sub(local.y)
+            } else {
+              const [jitterX, jitterY, jitterZ] = hashInt3ToFloat3(
+                neighborX, neighborY, neighborZ,
+              )
+              dx = jitterX.mul(randomness).add(i).sub(local.x)
+              dy = jitterY.mul(randomness).add(j).sub(local.y)
+              dz = jitterZ.mul(randomness).add(k).sub(local.z)
+            }
+            const distance = tslSqrt(
+              dx.mul(dx).add(dy.mul(dy)).add(dz.mul(dz)),
+            )
+            const closer = distance.lessThan(minDistance)
+            minDistance = tslSelect(closer, distance, minDistance)
+            winXExpr = tslSelect(closer, neighborX, winXExpr)
+            winYExpr = tslSelect(closer, neighborY, winYExpr)
+            winZExpr = tslSelect(closer, neighborZ, winZExpr)
+          }
+        }
+      }
+      if (expression.output === 'color') {
+        if (dimensions === 2) {
+          // hash_int2_to_float3 routes through the 3D hash with z = 0.
+          const [r, g, b] = hashInt3ToFloat3(
+            winXExpr, winYExpr, tslIntOf(0),
+          )
+          return tslVec3(r, g, b)
+        }
+        const [r, g, b] = hashInt3ToFloat3(winXExpr, winYExpr, winZExpr)
+        return tslVec3(r, g, b)
+      }
+      return minDistance
+    }
     default:
       return fail(`IR op ${expression.op} has no proven TSL mapping`)
   }
@@ -711,6 +797,212 @@ const tslDot = dot as unknown as (
   a: TslExprLike, b: TslExprLike,
 ) => TslExpression
 const tslLength = length as unknown as (value: TslExprLike) => TslExpression
+
+// --- Blender's Jenkins lookup3 hash, the basis of White Noise and
+// Voronoi.  Inputs are the RAW IEEE-754 bits of the float coordinates
+// (__float_as_uint), so engines agree exactly when the coordinate
+// computation is bit-identical — integer-valued cell floats always are.
+const tslUintOf = (
+  (TSLX as Record<string, unknown>).uint as (value: TslExprLike) => TslExpression
+)
+const tslBitcast = (
+  (TSLX as Record<string, unknown>).bitcast as (
+    value: TslExprLike, type: string,
+  ) => TslExpression
+)
+
+function uintRotate(value: TslExpression, bits: number): TslExpression {
+  return value.shiftLeft(tslUintOf(bits))
+    .bitOr(value.shiftRight(tslUintOf(32 - bits)))
+}
+
+function jenkinsFinal(
+  a0: TslExpression, b0: TslExpression, c0: TslExpression,
+): TslExpression {
+  let a = a0
+  let b = b0
+  let c = c0
+  c = c.bitXor(b).sub(uintRotate(b, 14))
+  a = a.bitXor(c).sub(uintRotate(c, 11))
+  b = b.bitXor(a).sub(uintRotate(a, 25))
+  c = c.bitXor(b).sub(uintRotate(b, 16))
+  a = a.bitXor(c).sub(uintRotate(c, 4))
+  b = b.bitXor(a).sub(uintRotate(a, 14))
+  c = c.bitXor(b).sub(uintRotate(b, 24))
+  return c
+}
+
+function jenkinsMix(
+  a0: TslExpression, b0: TslExpression, c0: TslExpression,
+): [TslExpression, TslExpression, TslExpression] {
+  let a = a0
+  let b = b0
+  let c = c0
+  a = a.sub(c); a = a.bitXor(uintRotate(c, 4)); c = c.add(b)
+  b = b.sub(a); b = b.bitXor(uintRotate(a, 6)); a = a.add(c)
+  c = c.sub(b); c = c.bitXor(uintRotate(b, 8)); b = b.add(a)
+  a = a.sub(c); a = a.bitXor(uintRotate(c, 16)); c = c.add(b)
+  b = b.sub(a); b = b.bitXor(uintRotate(a, 19)); a = a.add(c)
+  c = c.sub(b); c = c.bitXor(uintRotate(b, 4)); b = b.add(a)
+  return [a, b, c]
+}
+
+function floatBits(value: TslExpression): TslExpression {
+  return tslBitcast(value, 'uint')
+}
+
+function hashUint2(kx: TslExpression, ky: TslExpression): TslExpression {
+  const seed = 0xdeadbeef + (2 << 2) + 13
+  return jenkinsFinal(
+    tslUintOf(seed).add(kx), tslUintOf(seed).add(ky), tslUintOf(seed),
+  )
+}
+
+function hashUint3(
+  kx: TslExpression, ky: TslExpression, kz: TslExpression,
+): TslExpression {
+  const seed = 0xdeadbeef + (3 << 2) + 13
+  return jenkinsFinal(
+    tslUintOf(seed).add(kx),
+    tslUintOf(seed).add(ky),
+    tslUintOf(seed).add(kz),
+  )
+}
+
+function hashUint4(
+  kx: TslExpression, ky: TslExpression, kz: TslExpression, kw: TslExpression,
+): TslExpression {
+  const seed = 0xdeadbeef + (4 << 2) + 13
+  const [a, b, c] = jenkinsMix(
+    tslUintOf(seed).add(kx),
+    tslUintOf(seed).add(ky),
+    tslUintOf(seed).add(kz),
+  )
+  return jenkinsFinal(a.add(kw), b, c)
+}
+
+const uintToUnitFloat = (value: TslExpression): TslExpression =>
+  tslFloat(value).div(4294967295.0)
+
+function hashFloat2ToFloat(
+  x: TslExpression, y: TslExpression,
+): TslExpression {
+  return uintToUnitFloat(hashUint2(floatBits(x), floatBits(y)))
+}
+
+function hashFloat3ToFloat(
+  x: TslExpression, y: TslExpression, z: TslExpression,
+): TslExpression {
+  return uintToUnitFloat(hashUint3(floatBits(x), floatBits(y), floatBits(z)))
+}
+
+function hashFloat4ToFloat(
+  x: TslExpression, y: TslExpression, z: TslExpression, w: TslExpression,
+): TslExpression {
+  return uintToUnitFloat(
+    hashUint4(floatBits(x), floatBits(y), floatBits(z), floatBits(w)),
+  )
+}
+
+/** Cycles hash_float3_to_float3: the 4D hash with w = 1 and w = 2 fills
+ * the second and third lanes. */
+function hashFloat3ToFloat3(
+  x: TslExpression, y: TslExpression, z: TslExpression,
+): TslExpression {
+  const one = tslFloat(1.0)
+  const two = tslFloat(2.0)
+  return tslVec3(
+    hashFloat3ToFloat(x, y, z),
+    hashFloat4ToFloat(x, y, z, one),
+    hashFloat4ToFloat(x, y, z, two),
+  )
+}
+
+/** Cycles hash_float2_to_float2: 2D Voronoi's point jitter. */
+function hashFloat2ToFloat2(
+  x: TslExpression, y: TslExpression,
+): [TslExpression, TslExpression] {
+  return [
+    hashFloat2ToFloat(x, y),
+    hashFloat3ToFloat(x, y, tslFloat(1.0)),
+  ]
+}
+
+function hashFloat2ToFloat3(
+  x: TslExpression, y: TslExpression,
+): TslExpression {
+  return tslVec3(
+    hashFloat2ToFloat(x, y),
+    hashFloat3ToFloat(x, y, tslFloat(1.0)),
+    hashFloat3ToFloat(x, y, tslFloat(2.0)),
+  )
+}
+
+// --- Blender hash_pcg3d_i / hash_pcg2d_i: SIGNED 32-bit PCG on integer
+// cell coordinates — the 4.x+ Voronoi jitter hash, distinct from White
+// Noise's Jenkins-on-float-bits.  Verified against baked ground truth;
+// the arithmetic (sign-replicating) shift is load-bearing, and WGSL's
+// i32 >> is exactly that.  Shift amounts must be u32 in WGSL.
+const tslIntOf = (
+  (TSLX as Record<string, unknown>).int as (value: TslExprLike) => TslExpression
+)
+
+function pcg3dSigned(
+  x: TslExpression, y: TslExpression, z: TslExpression,
+): [TslExpression, TslExpression, TslExpression] {
+  const multiplier = tslIntOf(1664525)
+  const increment = tslIntOf(1013904223)
+  const shift = tslUintOf(16)
+  let vx = x.mul(multiplier).add(increment)
+  let vy = y.mul(multiplier).add(increment)
+  let vz = z.mul(multiplier).add(increment)
+  vx = vx.add(vy.mul(vz))
+  vy = vy.add(vz.mul(vx))
+  vz = vz.add(vx.mul(vy))
+  vx = vx.bitXor(vx.shiftRight(shift))
+  vy = vy.bitXor(vy.shiftRight(shift))
+  vz = vz.bitXor(vz.shiftRight(shift))
+  vx = vx.add(vy.mul(vz))
+  vy = vy.add(vz.mul(vx))
+  vz = vz.add(vx.mul(vy))
+  const mask = tslIntOf(0x7FFFFFFF)
+  return [vx.bitAnd(mask), vy.bitAnd(mask), vz.bitAnd(mask)]
+}
+
+function pcg2dSigned(
+  x: TslExpression, y: TslExpression,
+): [TslExpression, TslExpression] {
+  const multiplier = tslIntOf(1664525)
+  const increment = tslIntOf(1013904223)
+  const shift = tslUintOf(16)
+  let vx = x.mul(multiplier).add(increment)
+  let vy = y.mul(multiplier).add(increment)
+  vx = vx.add(vy.mul(multiplier))
+  vy = vy.add(vx.mul(multiplier))
+  vx = vx.bitXor(vx.shiftRight(shift))
+  vy = vy.bitXor(vy.shiftRight(shift))
+  vx = vx.add(vy.mul(multiplier))
+  vy = vy.add(vx.mul(multiplier))
+  const mask = tslIntOf(0x7FFFFFFF)
+  return [vx.bitAnd(mask), vy.bitAnd(mask)]
+}
+
+const signedHashUnit = (value: TslExpression): TslExpression =>
+  tslFloat(value).div(2147483647.0)
+
+function hashInt3ToFloat3(
+  x: TslExpression, y: TslExpression, z: TslExpression,
+): [TslExpression, TslExpression, TslExpression] {
+  const [hx, hy, hz] = pcg3dSigned(x, y, z)
+  return [signedHashUnit(hx), signedHashUnit(hy), signedHashUnit(hz)]
+}
+
+function hashInt2ToFloat2(
+  x: TslExpression, y: TslExpression,
+): [TslExpression, TslExpression] {
+  const [hx, hy] = pcg2dSigned(x, y)
+  return [signedHashUnit(hx), signedHashUnit(hy)]
+}
 
 function buildLutTexture(
   expression: TslIrExpression,

@@ -169,6 +169,47 @@ divisible by 5. The gated cell now uses a non-aligned 0.19/0.013 spec;
 the lesson (comparison cells must keep boundaries off representable
 coincidences) is recorded in the cell's notes.
 
+## The node-family batches — 2026-07-27 (continued)
+
+Eighty cells, seventy-nine gated, all passing. Beyond the Math sweep the
+compiler gained, each family behind its own cells:
+
+- **The complete Mix blend enum** (19 modes) with ported rgb↔hsv, and a
+  measured correction: Mix LIGHTEN is the symmetric interp toward
+  max(a,b) — the legacy compositor's asymmetric max(a, b·t) diverged at
+  0.155 and the reference decided.
+- **The Vector Math core enum** (23 ops) with per-channel safe semantics
+  and the scalar Value-output path.
+- **RGB Curves** via the sampled-LUT route Cycles itself uses.
+- **Color utilities**: Invert, Gamma, Bright/Contrast, RGB→BW,
+  Hue/Saturation, Separate/Combine HSV.
+- **Deterministic textures**: Checker (byte-exact), Gradient (all seven
+  types), Magic (trig cascade), Wave (all types/profiles + distortion
+  through the ported fractal).
+- **The hash family**: White Noise byte-exact through the ported Jenkins
+  lookup3 on raw float bits, and Voronoi F1 (2D/3D, Distance + Color) at
+  3e-5 through Blender's own `hash_pcg3d_i`.
+
+Two findings the hash batch measured, both worth remembering:
+
+1. **Blender 4.x+ Voronoi does not use the White Noise hash.** White
+   Noise still hashes float BITS with Jenkins lookup3 (verified 5/5
+   against baked ground truth), but Voronoi jitter moved to a SIGNED
+   integer PCG (`hash_pcg3d_i`: signed multiply-wrap, arithmetic
+   shift-right 16, one xorshift round, mask to 31 bits, /0x7FFFFFFF).
+   Porting "the" hash family as one thing produced total decorrelation
+   (mean 0.166); the probe chain (constant-input hash cell → hash-free
+   randomness-0 lattice cell → Position-output jitter extraction →
+   upstream source read) localized it. WGSL's i32 >> being arithmetic is
+   load-bearing, and shift amounts must be u32.
+2. **Continuous-coordinate White Noise cannot be texel-gated across
+   engines.** The uv-gradient cell measures interpolated UVs differing
+   by ~260 ulps between Cycles' bake rasterizer and WebGPU's — hash
+   avalanche turns that into full per-texel decorrelation on ANY two
+   backends. The gated cell quantizes to floor(uv·8) so the hashed bits
+   are integer-valued and identical; continuous inputs stay
+   same-distribution but numerically incomparable.
+
 ## Limits
 
 - Hand-written TSL mappings stand in for the future compiler's output: a

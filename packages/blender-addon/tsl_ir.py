@@ -565,6 +565,60 @@ def emit_output(node, from_socket, stack=()):
             "phase": emit_input(node.inputs["Phase Offset"], stack=stack),
         }
 
+    if idname == "ShaderNodeTexWhiteNoise":
+        output_id = getattr(from_socket, "identifier", socket_name)
+        if output_id not in {"Value", "Color"}:
+            _refuse(f"White Noise output {socket_name!r} unsupported")
+        dimensions = str(node.noise_dimensions)
+        if dimensions not in {"2D", "3D"}:
+            _refuse(
+                f"White Noise dimensions {dimensions!r} has no cell yet"
+            )
+        if not node.inputs["Vector"].is_linked:
+            _refuse(
+                "White Noise with implicit Generated coordinates has no "
+                "cell yet"
+            )
+        return {
+            "op": "tex_white_noise",
+            "dimensions": 2 if dimensions == "2D" else 3,
+            "output": "color" if output_id == "Color" else "value",
+            "vector": emit_input(
+                node.inputs["Vector"], stack=stack, as_vector=True,
+            ),
+        }
+
+    if idname == "ShaderNodeTexVoronoi":
+        output_id = getattr(from_socket, "identifier", socket_name)
+        if output_id not in {"Distance", "Color"}:
+            _refuse(f"Voronoi output {socket_name!r} has no cell yet")
+        dimensions = str(node.voronoi_dimensions)
+        if dimensions not in {"2D", "3D"}:
+            _refuse(f"Voronoi dimensions {dimensions!r} has no cell yet")
+        if str(node.feature) != "F1":
+            _refuse(f"Voronoi feature {node.feature!r} has no cell yet")
+        if str(node.distance) != "EUCLIDEAN":
+            _refuse(f"Voronoi metric {node.distance!r} has no cell yet")
+        if bool(getattr(node, "normalize", False)):
+            _refuse("Voronoi normalize has no cell yet")
+        detail_socket = node.inputs["Detail"]
+        if detail_socket.is_linked or float(detail_socket.default_value) != 0:
+            _refuse("Fractal Voronoi (detail > 0) has no cell yet")
+        if not node.inputs["Vector"].is_linked:
+            _refuse(
+                "Voronoi with implicit Generated coordinates has no cell yet"
+            )
+        return {
+            "op": "tex_voronoi",
+            "dimensions": 2 if dimensions == "2D" else 3,
+            "output": "color" if output_id == "Color" else "distance",
+            "vector": emit_input(
+                node.inputs["Vector"], stack=stack, as_vector=True,
+            ),
+            "scale": emit_input(node.inputs["Scale"], stack=stack),
+            "randomness": emit_input(node.inputs["Randomness"], stack=stack),
+        }
+
     if idname == "ShaderNodeRGBCurve":
         # Cycles itself bakes RGB Curves into a sampled table
         # (curvemapping_color_to_array with the composite C curve applied

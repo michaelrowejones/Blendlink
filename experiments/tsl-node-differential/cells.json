@@ -693,6 +693,34 @@
       "notes": "Hue shifted a full circle over v (fract(h + hue + 0.5) wraps), saturation scaled 1.3 into its clamp, value 0.9, factor 0.8 — the complete Cycles pipeline over the ported conversions."
     },
     {
+      "id": "hash-probe",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "hash family (constant-input Jenkins probe)",
+      "notes": "White Noise COLOR of the constant (2, 3, 0) — lanes (0.9638, 0.2377, 0.6632) pin the GPU hash3 AND hash4/jenkinsMix paths against CPU-verified ground truth, independent of any coordinate interpolation."
+    },
+    {
+      "id": "voronoi-rand0-probe",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "hash family (hash-free lattice control)",
+      "notes": "Randomness-0 Voronoi F1 distance is pure lattice geometry — the control that separates a wrong hash from a wrong cell construction (it localized the 5.x signed-PCG finding)."
+    },
+    {
+      "id": "white-noise",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "hash family (Jenkins lookup3 port)",
+      "notes": "R = 3D Value, G = 2D Value, B = 3D Color's second lane (the w=1 4D hash), all over floor(uv*8) blocks. Blender hashes RAW float bits (__float_as_uint) and interpolated UVs differ between engines by ~260 ulps (measured on the uv-gradient cell), so continuous-coordinate White Noise decorrelates per texel on ANY two backends — the quantized cell gates the Jenkins port itself; continuous inputs are same-distribution but not texel-comparable."
+    },
+    {
+      "id": "voronoi-f1",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "hash family (Voronoi F1 via the ported Jenkins hash)",
+      "notes": "R = 3D F1 Distance (scale 4, randomness 1, x0.6), G = 3D Color's first lane, B = 2D F1 Distance. Cell coordinates are integer-valued floats, so the hash inputs are bit-identical across engines — the 0.28 mx_worley divergence closes by porting Blender's own hash, not by finding a shared lineage. F2/smooth/other metrics/fractal detail stay named refusals."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",
@@ -724,7 +752,7 @@
       "pipeline": "handwritten",
       "tolerance": null,
       "failureClass": "disagreeing noise implementations (Worley \u2014 diagnostic)",
-      "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. Measured 2026-07-27 at mean 0.28 / max 0.96 \u2014 a completely different cell hash, the published Worley finding reproduced. Stays refused by the IR emitter until a faithful Cycles hash port earns this cell; the Material bake carries Voronoi channels meanwhile."
+      "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. Measured 2026-07-27 at mean 0.28 / max 0.96 \u2014 a completely different cell hash, the published Worley finding reproduced. RESOLVED the same day by porting Blender's own hash_pcg3d_i (see the gated voronoi-f1 cell); this cell stays as the negative control proving mx_worley is NOT that hash."
     },
     {
       "id": "noise-mx-divergence",
