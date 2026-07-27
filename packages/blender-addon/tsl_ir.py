@@ -203,6 +203,340 @@ def find_principled_root(tree):
     return root, paths[0]
 
 
+_SURFACE_MODEL = "blendlink-tsl-surface-v1"
+
+_GLOSSY_IDNAMES = {"ShaderNodeBsdfGlossy", "ShaderNodeBsdfAnisotropic"}
+
+
+def _resolve_shader_link(socket, stack):
+    """Follow a shader input's link to its producing node, crossing
+    reroutes and group walls with the same discipline as emit_output.
+    Returns (node, from_socket, stack) or None when the chain ends
+    unlinked."""
+    source = _socket_source(socket)
+    while source is not None:
+        node, from_socket = source
+        idname = node.bl_idname
+        if getattr(node, "mute", False):
+            _refuse(f"muted node {idname} has no proven passthrough mapping")
+        if idname == "NodeReroute":
+            source = _socket_source(node.inputs[0])
+            continue
+        if idname == "ShaderNodeGroup":
+            if node.node_tree is None:
+                _refuse("group instance without a node tree")
+            group_output = next(
+                (item for item in node.node_tree.nodes
+                 if item.type == "GROUP_OUTPUT"
+                 and getattr(item, "is_active_output", True)),
+                None,
+            )
+            if group_output is None:
+                _refuse(
+                    f"group {node.node_tree.name!r} has no active output"
+                )
+            target = _matching_socket(group_output.inputs, from_socket)
+            if target is None:
+                _refuse(
+                    f"group {node.node_tree.name!r} output "
+                    f"{from_socket.name!r} not found"
+                )
+            stack = stack + (node,)
+            source = _socket_source(target)
+            continue
+        if idname == "NodeGroupInput":
+            if not stack:
+                _refuse("Group Input outside any group instance context")
+            instance = stack[-1]
+            outer = _matching_socket(instance.inputs, from_socket)
+            if outer is None:
+                _refuse(
+                    f"group instance {instance.name!r} is missing input "
+                    f"{from_socket.name!r}"
+                )
+            stack = stack[:-1]
+            source = _socket_source(outer)
+            continue
+        return node, from_socket, stack
+    return None
+
+
+def _surface_expression(node, from_socket, stack):
+    """Parse the surface closure tree into leaves the channel projection
+    understands.  Every leaf carries its OWN group-instance stack."""
+    idname = node.bl_idname
+    if getattr(from_socket, "type", "") != "SHADER":
+        # Blender coerces a color/value output plugged into a shader
+        # socket into an emission of that color (measured corpus class:
+        # the splash outlines and sky paint).
+        return {
+            "kind": "coerced_color",
+            "node": node,
+            "socket": from_socket,
+            "stack": stack,
+        }
+    if idname == "ShaderNodeMixShader":
+        branches = []
+        for index in (1, 2):
+            resolved = _resolve_shader_link(node.inputs[index], stack)
+            if resolved is None:
+                _refuse(
+                    "Mix Shader with an unlinked branch has no measured "
+                    "semantics"
+                )
+            branches.append(_surface_expression(*resolved))
+        return {
+            "kind": "mix",
+            "fac_socket": node.inputs[0],
+            "fac_stack": stack,
+            "a": branches[0],
+            "b": branches[1],
+        }
+    if idname == "ShaderNodeBsdfPrincipled":
+        return {"kind": "principled", "node": node, "stack": stack}
+    if idname == "ShaderNodeEmission":
+        return {"kind": "emission", "node": node, "stack": stack}
+    if idname == "ShaderNodeBsdfTransparent":
+        color_socket = node.inputs["Color"]
+        if color_socket.is_linked:
+            _refuse("Transparent BSDF with a linked Color has no cell yet")
+        color = _constant_value(color_socket)
+        if not isinstance(color, list) or any(
+            abs(component - 1.0) > 1e-6 for component in color[:3]
+        ):
+            _refuse(
+                "Transparent BSDF with a non-white Color tints "
+                "transmission; no cell yet"
+            )
+        return {"kind": "transparent"}
+    if idname == "ShaderNodeBsdfDiffuse":
+        return {"kind": "diffuse", "node": node, "stack": stack}
+    if idname in _GLOSSY_IDNAMES:
+        return {"kind": "glossy", "node": node, "stack": stack}
+    _refuse(f"surface node {idname} has no surface-expression mapping")
+
+
+def _const_scalar(value):
+    return {"op": "const_float", "value": float(value)}
+
+
+def _const_color(r, g, b):
+    return {"op": "const_vec3", "value": [float(r), float(g), float(b)]}
+
+
+def _leaf_channels(leaf):
+    """The canonical channel vector for one closure leaf.
+
+    'radiance' is emission color x strength folded into one vec3 — mixes
+    must lerp RADIANCE, not color and strength separately (lerping the
+    parts is not linear in the light the closure emits)."""
+    import procedural
+
+    kind = leaf["kind"]
+    if kind == "principled":
+        node = leaf["node"]
+        stack = leaf["stack"]
+
+        def channel(name, *, as_vector=False):
+            socket = procedural._node_input(node, name)
+            if socket is None:
+                _refuse(f"Principled input {name!r} not found")
+            return emit_input(socket, stack, as_vector=as_vector)
+
+        return {
+            "Base Color": channel("Base Color", as_vector=True),
+            "Metallic": channel("Metallic"),
+            "Roughness": channel("Roughness"),
+            "Alpha": channel("Alpha"),
+            "radiance": {
+                "op": "vector_scale",
+                "input": channel("Emission Color", as_vector=True),
+                "scale": channel("Emission Strength"),
+            },
+        }
+    if kind == "diffuse":
+        # Canonicalization: diffuse -> rough dielectric.
+        return {
+            "Base Color": emit_input(
+                leaf["node"].inputs["Color"], leaf["stack"], as_vector=True,
+            ),
+            "Metallic": _const_scalar(0.0),
+            "Roughness": _const_scalar(1.0),
+            "Alpha": _const_scalar(1.0),
+            "radiance": _const_color(0.0, 0.0, 0.0),
+        }
+    if kind == "glossy":
+        # Canonicalization: glossy -> fully metallic.
+        return {
+            "Base Color": emit_input(
+                leaf["node"].inputs["Color"], leaf["stack"], as_vector=True,
+            ),
+            "Metallic": _const_scalar(1.0),
+            "Roughness": emit_input(
+                leaf["node"].inputs["Roughness"], leaf["stack"],
+            ),
+            "Alpha": _const_scalar(1.0),
+            "radiance": _const_color(0.0, 0.0, 0.0),
+        }
+    if kind == "emission":
+        return {
+            "Base Color": _const_color(0.0, 0.0, 0.0),
+            "Metallic": _const_scalar(0.0),
+            "Roughness": _const_scalar(1.0),
+            "Alpha": _const_scalar(1.0),
+            "radiance": {
+                "op": "vector_scale",
+                "input": emit_input(
+                    leaf["node"].inputs["Color"], leaf["stack"],
+                    as_vector=True,
+                ),
+                "scale": emit_input(
+                    leaf["node"].inputs["Strength"], leaf["stack"],
+                ),
+            },
+        }
+    if kind == "coerced_color":
+        expression = emit_output(leaf["node"], leaf["socket"], leaf["stack"])
+        if getattr(leaf["socket"], "type", "") == "VALUE":
+            expression = {
+                "op": "combine",
+                "x": expression, "y": expression, "z": expression,
+            }
+        return {
+            "Base Color": _const_color(0.0, 0.0, 0.0),
+            "Metallic": _const_scalar(0.0),
+            "Roughness": _const_scalar(1.0),
+            "Alpha": _const_scalar(1.0),
+            "radiance": expression,
+        }
+    _refuse(f"surface leaf {kind!r} has no channel projection")
+
+
+def _lerp_scalar(a, b, factor):
+    # a + (b - a) * factor, from proven ops only.
+    return {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {"op": "math", "operation": "SUBTRACT", "a": b, "b": a},
+        "b": factor,
+        "c": a,
+    }
+
+
+def _lerp_color(a, b, factor):
+    return {
+        "op": "mix_color",
+        "blendType": "MIX",
+        "clampFactor": True,
+        "clampResult": False,
+        "factor": factor,
+        "a": a,
+        "b": b,
+    }
+
+
+def _fold_surface(expression):
+    """Fold the closure tree into one channel vector.
+
+    Returns None for a fully transparent subtree.  Transparent branches
+    contribute ONLY coverage: the visible branch keeps its channels
+    unweighted and alpha multiplies by the visible weight — lerping
+    toward invented neutral values would corrupt every channel."""
+    kind = expression["kind"]
+    if kind == "transparent":
+        return None
+    if kind != "mix":
+        return _leaf_channels(expression)
+    factor = emit_input(expression["fac_socket"], expression["fac_stack"])
+    clamped = {"op": "clamp01", "input": factor}
+    a = _fold_surface(expression["a"])
+    b = _fold_surface(expression["b"])
+    if a is None and b is None:
+        return None
+    if b is None:
+        channels = dict(a)
+        visible = {
+            "op": "math", "operation": "SUBTRACT",
+            "a": _const_scalar(1.0), "b": clamped,
+        }
+        channels["Alpha"] = {
+            "op": "math", "operation": "MULTIPLY",
+            "a": a["Alpha"], "b": visible,
+        }
+        return channels
+    if a is None:
+        channels = dict(b)
+        channels["Alpha"] = {
+            "op": "math", "operation": "MULTIPLY",
+            "a": b["Alpha"], "b": clamped,
+        }
+        return channels
+    return {
+        "Base Color": _lerp_color(a["Base Color"], b["Base Color"], factor),
+        "Metallic": _lerp_scalar(a["Metallic"], b["Metallic"], clamped),
+        "Roughness": _lerp_scalar(a["Roughness"], b["Roughness"], clamped),
+        "Alpha": _lerp_scalar(a["Alpha"], b["Alpha"], clamped),
+        "radiance": _lerp_color(a["radiance"], b["radiance"], factor),
+    }
+
+
+def _channel_document(expression):
+    import json as _json
+
+    document = {
+        "schemaVersion": 1,
+        "model": IR_MODEL,
+        "output": expression,
+    }
+    if '"view_cos"' in _json.dumps(expression):
+        document["viewDependent"] = True
+    return document
+
+
+def emit_surface(tree):
+    """Per-channel IR documents for a mixed surface expression.
+
+    The documented projection model: a Mix Shader closure lerp becomes a
+    per-channel parameter lerp (exact for emission radiance and alpha
+    coverage; an approximation for Metallic/Roughness, whose closure mix
+    is nonlinear under lighting), Transparent branches contribute only
+    coverage, Diffuse/Glossy canonicalize onto the Principled channel
+    vector, and emission always ships as radiance with strength 1."""
+    output = next(
+        (node for node in tree.nodes
+         if node.bl_idname == "ShaderNodeOutputMaterial"
+         and getattr(node, "is_active_output", True)),
+        None,
+    )
+    if output is None:
+        _refuse("material has no active Material Output")
+    resolved = _resolve_shader_link(output.inputs["Surface"], ())
+    if resolved is None:
+        _refuse("material output has no linked Surface")
+    channels = _fold_surface(_surface_expression(*resolved))
+    if channels is None:
+        channels = {
+            "Base Color": _const_color(0.0, 0.0, 0.0),
+            "Metallic": _const_scalar(0.0),
+            "Roughness": _const_scalar(1.0),
+            "Alpha": _const_scalar(0.0),
+            "radiance": _const_color(0.0, 0.0, 0.0),
+        }
+    documents = {
+        "Base Color": _channel_document(channels["Base Color"]),
+        "Metallic": _channel_document(channels["Metallic"]),
+        "Roughness": _channel_document(channels["Roughness"]),
+        "Alpha": _channel_document(channels["Alpha"]),
+        "Emission Color": _channel_document(channels["radiance"]),
+        "Emission Strength": _channel_document(_const_scalar(1.0)),
+    }
+    return {
+        "schemaVersion": 1,
+        "model": _SURFACE_MODEL,
+        "channels": documents,
+    }
+
+
 def emit_input(socket, stack=(), *, as_vector=False):
     """IR for one input socket: its link's expression or its constant."""
     source = _socket_source(socket)
@@ -759,12 +1093,14 @@ def emit_output(node, from_socket, stack=()):
             _refuse(
                 "Voronoi with implicit Generated coordinates has no cell yet"
             )
-        voronoi_scale = node.inputs["Scale"]
-        if voronoi_scale.is_linked:
-            _refuse("Voronoi with a linked Scale has no bounded cell yet")
-        if abs(float(voronoi_scale.default_value)) > 16.0 + 1e-9:
+        voronoi_scale = emit_input(node.inputs["Scale"], stack=stack)
+        if voronoi_scale.get("op") != "const_float":
             _refuse(
-                f"Voronoi scale {float(voronoi_scale.default_value):g} "
+                "Voronoi with a non-constant Scale has no bounded cell yet"
+            )
+        if abs(float(voronoi_scale["value"])) > 16.0 + 1e-9:
+            _refuse(
+                f"Voronoi scale {float(voronoi_scale['value']):g} "
                 "exceeds the proven range (<= 16); sample-position "
                 "differences decorrelate high-frequency patterns"
             )
@@ -776,7 +1112,7 @@ def emit_output(node, from_socket, stack=()):
             "vector": emit_input(
                 node.inputs["Vector"], stack=stack, as_vector=True,
             ),
-            "scale": emit_input(node.inputs["Scale"], stack=stack),
+            "scale": voronoi_scale,
             "randomness": emit_input(node.inputs["Randomness"], stack=stack),
         }
         if feature == "SMOOTH_F1":
@@ -908,17 +1244,20 @@ def emit_output(node, from_socket, stack=()):
                 f"Noise detail {detail_value:g} exceeds the proven range "
                 "(<= 2); high-octave phase divergence measured"
             )
-        scale_socket = node.inputs["Scale"]
-        if scale_socket.is_linked:
-            _refuse("Noise with a linked Scale has no bounded cell yet")
-        if abs(float(scale_socket.default_value)) > 16.0 + 1e-9:
+        # Resolve the Scale expression FIRST: a linked scale that folds to
+        # a constant through group walls (the splash corpus feeds noise
+        # scales through group inputs) is boundable like any literal.
+        scale_expression = emit_input(node.inputs["Scale"], stack=stack)
+        if scale_expression.get("op") != "const_float":
+            _refuse("Noise with a non-constant Scale has no bounded cell yet")
+        if abs(float(scale_expression["value"])) > 16.0 + 1e-9:
             # Sub-texel sample-position differences between the two
             # rasterizers (~3e-5 in UV) multiply by the scale; measured at
             # scale 100 (ellie hair) the channel decorrelates to 1.8e-1
             # while scale 16 stays inside tolerance. Material bake carries
             # higher frequencies faithfully.
             _refuse(
-                f"Noise scale {float(scale_socket.default_value):g} "
+                f"Noise scale {float(scale_expression['value']):g} "
                 "exceeds the proven range (<= 16); sample-position "
                 "differences decorrelate high-frequency noise"
             )
@@ -933,7 +1272,7 @@ def emit_output(node, from_socket, stack=()):
                 float(lacunarity.default_value)
                 if lacunarity is not None else 2.0
             ),
-            "scale": emit_input(node.inputs["Scale"], stack=stack),
+            "scale": scale_expression,
             "input": emit_input(vector, stack=stack, as_vector=True),
         }
         if noise_output == "Color":
@@ -995,7 +1334,7 @@ def emit_output(node, from_socket, stack=()):
         if str(getattr(node, "data_type", "FLOAT")) != "FLOAT":
             _refuse(f"Map Range data type {node.data_type!r} has no cell yet")
         interpolation = str(getattr(node, "interpolation_type", "LINEAR"))
-        if interpolation not in {"LINEAR", "SMOOTHSTEP"}:
+        if interpolation not in {"LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"}:
             _refuse(
                 f"Map Range interpolation {interpolation!r} has no cell yet"
             )

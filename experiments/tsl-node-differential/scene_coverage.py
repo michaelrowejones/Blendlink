@@ -198,9 +198,34 @@ def main():
         "irCompiled": 0,
         "irCompiledViewDependent": 0,
         "refusals": {},
+        "surface": {
+            "resolved": 0,
+            "channelsCompiled": 0,
+            "viewDependent": 0,
+            "refusals": {},
+        },
         "sampled": [],
     }
     candidates = []
+
+    def tally_surface(tree):
+        """The surface-expression fallback for non-Principled roots:
+        emit_surface either compiles all six channels or refuses with
+        one named reason for the whole surface."""
+        surface = coverage["surface"]
+        try:
+            document = tsl_ir.emit_surface(tree)
+        except tsl_ir.TslIrRefusal as refusal:
+            reason = str(refusal)
+            surface["refusals"][reason] = (
+                surface["refusals"].get(reason, 0) + 1
+            )
+            return
+        surface["resolved"] += 1
+        for channel_document in document["channels"].values():
+            surface["channelsCompiled"] += 1
+            if channel_document.get("viewDependent"):
+                surface["viewDependent"] += 1
 
     for material in sorted(bpy.data.materials, key=lambda m: m.name):
         tree = bakelib.active_shader_node_tree(material)
@@ -214,6 +239,8 @@ def main():
             coverage["refusals"][reason] = (
                 coverage["refusals"].get(reason, 0) + len(CHANNELS)
             )
+            if reason == "no root-level single Principled surface":
+                tally_surface(tree)
             continue
         coverage["principledRoots"] += 1
         if stack:

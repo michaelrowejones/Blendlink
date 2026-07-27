@@ -168,6 +168,13 @@
       "notes": "Smoothstep interpolation applies the cubic ease to the clamped safe-divide factor before the target remap."
     },
     {
+      "id": "map-range-smootherstep",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "corpus-measured node gap (Map Range SMOOTHERSTEP x27 — the whole ellie denim class)",
+      "notes": "Quintic smootherstep t^3(t(6t-15)+10) applied to the clamped safe-divide factor — one interpolation enum blocks all 27 paint-stroke mix factors in ellie."
+    },
+    {
       "id": "colorramp-bspline",
       "gate": true,
       "tolerance": {
@@ -775,6 +782,72 @@
       "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
       "failureClass": "deterministic texture (Magic Fac)",
       "notes": "Magic's Fac output is the color average; the mapping also carries the upstream fmod(p*scale, 2pi) wrap Cycles applies before the cascade."
+    },
+    {
+      "id": "surface-mix-color",
+      "gate": true,
+      "surface": {"channel": "Base Color"},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "surface expression (Mix Shader color lerp)",
+      "notes": "Mix Shader of two Principleds (one constant base, one UV-driven) with the factor swept past [0,1] (1.5v-0.25): emit_surface must produce mix_color with a clamped factor. The reference bakes the hand-built projection; the IR comes from the real closure graph."
+    },
+    {
+      "id": "surface-mix-scalar",
+      "gate": true,
+      "surface": {"channel": "Roughness"},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "surface expression (scalar channel lerp)",
+      "notes": "Roughness 0.15 vs 0.85 lerped by a clamped out-of-range factor — the scalar-lerp composition (a + (b-a)*clamp01(fac)) from proven math ops. NOTE: parameter lerp is the documented projection model; the closure mix of BRDFs under lighting is nonlinear in these parameters and the EMIT oracle cannot measure that difference."
+    },
+    {
+      "id": "surface-transparent-alpha",
+      "gate": true,
+      "surface": {"channel": "Alpha"},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "surface expression (Transparent coverage)",
+      "notes": "Mix(Principled(alpha 0.9), Transparent, fac=u): the Transparent branch contributes ONLY coverage — alpha = 0.9*(1-fac) and every other channel passes the lit branch through unweighted (lerping toward invented neutrals would corrupt them). White Transparent only; tinted refuses."
+    },
+    {
+      "id": "surface-emission-radiance",
+      "gate": true,
+      "surface": {"channel": "Emission Color"},
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "surface expression (radiance lerp)",
+      "notes": "Mix(Emission(2.5x HDR), Principled(emission strength 2u)) over v: emission lerps as RADIANCE (color x strength folded first) — lerping color and strength separately is not linear in emitted light. Surface documents always ship radiance in Emission Color with Strength = 1."
+    },
+    {
+      "id": "surface-nested-mix",
+      "gate": true,
+      "surface": {"channel": "Base Color"},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "surface expression (nested Mix Shader)",
+      "notes": "Mix(Mix(P1, P2, u), P3, v): recursive per-channel folding — the ellie head/skin class (depth 4 in the corpus) exercised at depth 2."
+    },
+    {
+      "id": "surface-diffuse-glossy",
+      "gate": true,
+      "surface": {"channel": "Metallic"},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "surface expression (Diffuse/Glossy canonicalization)",
+      "notes": "Mix(Diffuse, Glossy, fac=u) Metallic channel: Diffuse canonicalizes to metallic 0 / roughness 1, Glossy to metallic 1, so the lerp reads back the clamped factor. The canonical channel embedding is a documented model decision."
+    },
+    {
+      "id": "surface-coerced-color",
+      "gate": true,
+      "surface": {"channel": "Emission Color"},
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "surface expression (implicit color->shader coercion)",
+      "notes": "A ColorRamp's Color output plugged straight into the Material Output Surface socket — Blender's implicit coercion treats it as emission of that color (the splash outline/sky class, 45/68 splash materials need this rule). Radiance = the color chain, strength 1."
+    },
+    {
+      "id": "surface-fresnel-mix",
+      "gate": true,
+      "surface": {"channel": "Base Color"},
+      "viewFrom": "ACTIVE_CAMERA",
+      "analyticCamera": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "surface expression (view-dependent factor)",
+      "notes": "Mix(P1, P2, fac=Fresnel IOR 1.45) under the fixed camera contract: the composed Base Color document is viewDependent and evaluates through the proven fresnel/view_cos ops — the layered-glass corpus class stays shader-side where it is exact."
     },
     {
       "id": "fresnel-dielectric",

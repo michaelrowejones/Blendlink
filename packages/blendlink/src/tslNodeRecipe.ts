@@ -401,6 +401,12 @@ function build(expression: TslIrExpression): TslExpression {
         const clamped = tslClamp(factor, 0.0, 1.0)
         factor = clamped.mul(clamped)
           .mul(tslFloat(3.0).sub(clamped.mul(2.0)))
+      } else if (expression.interpolation === 'SMOOTHERSTEP') {
+        // Quintic ease: t^3 (t (6t - 15) + 10).
+        const t = tslClamp(factor, 0.0, 1.0)
+        factor = t.mul(t).mul(t).mul(
+          t.mul(t.mul(6.0).sub(15.0)).add(10.0),
+        )
       }
       const result = toMin.add(factor.mul(toMax.sub(toMin)))
       if (expression.clamp === false) return result

@@ -442,6 +442,18 @@ def build_map_range_smoothstep(tree, emission):
     _emit_scalar(tree, emission, node.outputs["Result"])
 
 
+def build_map_range_smootherstep(tree, emission):
+    node = tree.nodes.new("ShaderNodeMapRange")
+    node.interpolation_type = "SMOOTHERSTEP"
+    node.clamp = True
+    node.inputs["From Min"].default_value = 0.2
+    node.inputs["From Max"].default_value = 0.8
+    node.inputs["To Min"].default_value = 0.1
+    node.inputs["To Max"].default_value = 0.9
+    tree.links.new(_uv_channel(tree, "u"), node.inputs["Value"])
+    _emit_scalar(tree, emission, node.outputs["Result"])
+
+
 def _spline_ramp(tree, emission, interpolation):
     ramp = tree.nodes.new("ShaderNodeValToRGB")
     ramp.color_ramp.interpolation = interpolation
@@ -1182,6 +1194,307 @@ def make_vector_sweep_builder(spec):
     return build
 
 
+# --- Surface-expression cells: the CLOSURE builder constructs a real
+# shader surface (Mix Shader over BSDF leaves) whose per-channel IR comes
+# from tsl_ir.emit_surface; the PROJECTION builder (registered in
+# BUILDERS) hand-builds the documented channel model under an Emission
+# surface as the Cycles oracle.  The cell gates that emit_surface's
+# algebra matches the projection numerically.
+
+def _principled(tree, base=None, base_socket=None, roughness=None,
+                alpha=None, emission=None, emission_strength=None,
+                emission_strength_socket=None):
+    node = tree.nodes.new("ShaderNodeBsdfPrincipled")
+    if base is not None:
+        node.inputs["Base Color"].default_value = tuple(base) + (1.0,)
+    if base_socket is not None:
+        tree.links.new(base_socket, node.inputs["Base Color"])
+    if roughness is not None:
+        node.inputs["Roughness"].default_value = roughness
+    if alpha is not None:
+        node.inputs["Alpha"].default_value = alpha
+    if emission is not None:
+        node.inputs["Emission Color"].default_value = tuple(emission) + (1.0,)
+    if emission_strength is not None:
+        node.inputs["Emission Strength"].default_value = emission_strength
+    if emission_strength_socket is not None:
+        tree.links.new(
+            emission_strength_socket, node.inputs["Emission Strength"],
+        )
+    return node
+
+
+def _mix_shader(tree, fac_socket, a_node, b_node,
+                a_output="BSDF", b_output="BSDF"):
+    mix = tree.nodes.new("ShaderNodeMixShader")
+    tree.links.new(fac_socket, mix.inputs[0])
+    tree.links.new(a_node.outputs[a_output], mix.inputs[1])
+    tree.links.new(b_node.outputs[b_output], mix.inputs[2])
+    return mix
+
+
+def _clamp01_math(tree, socket):
+    return _math(tree, "MINIMUM", _math(tree, "MAXIMUM", socket, 0.0), 1.0)
+
+
+def closure_mix_color(tree, output):
+    a = _principled(tree, base=(0.8, 0.2, 0.1))
+    b = _principled(tree)
+    tree.links.new(
+        _rgb_input(tree, _uv_channel(tree, "u"), y_value=0.7,
+                   z_socket=_uv_channel(tree, "v")),
+        b.inputs["Base Color"],
+    )
+    fac = _affine(tree, _uv_channel(tree, "v"), 1.5, -0.25)
+    mix = _mix_shader(tree, fac, a, b)
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
+
+
+def projection_mix_color(tree, emission):
+    node = tree.nodes.new("ShaderNodeMix")
+    node.data_type = "RGBA"
+    node.blend_type = "MIX"
+    node.clamp_factor = True
+    factor = next(
+        item for item in node.inputs if item.identifier == "Factor_Float"
+    )
+    a_input = next(
+        item for item in node.inputs if item.identifier == "A_Color"
+    )
+    b_input = next(
+        item for item in node.inputs if item.identifier == "B_Color"
+    )
+    a_input.default_value = (0.8, 0.2, 0.1, 1.0)
+    tree.links.new(
+        _rgb_input(tree, _uv_channel(tree, "u"), y_value=0.7,
+                   z_socket=_uv_channel(tree, "v")),
+        b_input,
+    )
+    tree.links.new(
+        _affine(tree, _uv_channel(tree, "v"), 1.5, -0.25), factor,
+    )
+    result = next(
+        item for item in node.outputs if item.identifier == "Result_Color"
+    )
+    tree.links.new(result, emission.inputs["Color"])
+
+
+def closure_mix_scalar(tree, output):
+    a = _principled(tree, base=(0.5, 0.5, 0.5), roughness=0.15)
+    b = _principled(tree, base=(0.5, 0.5, 0.5), roughness=0.85)
+    fac = _affine(tree, _uv_channel(tree, "u"), 1.4, -0.2)
+    mix = _mix_shader(tree, fac, a, b)
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
+
+
+def projection_mix_scalar(tree, emission):
+    fac = _clamp01_math(
+        tree, _affine(tree, _uv_channel(tree, "u"), 1.4, -0.2),
+    )
+    # 0.15 + (0.85 - 0.15) * fac
+    result = _affine(tree, fac, 0.7, 0.15)
+    _emit_scalar(tree, emission, result)
+
+
+def closure_transparent_alpha(tree, output):
+    lit = _principled(tree, base=(0.6, 0.4, 0.2), alpha=0.9)
+    transparent = tree.nodes.new("ShaderNodeBsdfTransparent")
+    fac = _uv_channel(tree, "u")
+    mix = _mix_shader(tree, fac, lit, transparent)
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
+
+
+def projection_transparent_alpha(tree, emission):
+    # alpha = 0.9 * (1 - u)
+    visible = _math(tree, "SUBTRACT", 1.0, _uv_channel(tree, "u"))
+    _emit_scalar(tree, emission, _affine(tree, visible, 0.9, 0.0))
+
+
+def closure_emission_radiance(tree, output):
+    glowing = tree.nodes.new("ShaderNodeEmission")
+    glowing.inputs["Color"].default_value = (0.9, 0.3, 0.1, 1.0)
+    glowing.inputs["Strength"].default_value = 2.5
+    lit = _principled(
+        tree, base=(0.2, 0.2, 0.2), emission=(0.1, 0.6, 0.9),
+        emission_strength_socket=_affine(tree, _uv_channel(tree, "u"), 2.0, 0.0),
+    )
+    fac = _uv_channel(tree, "v")
+    mix = _mix_shader(tree, fac, glowing, lit, a_output="Emission")
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
+
+
+def projection_emission_radiance(tree, emission):
+    # radiance lerp: mix((0.9,0.3,0.1)*2.5, (0.1,0.6,0.9)*(2u), v)
+    scale = tree.nodes.new("ShaderNodeVectorMath")
+    scale.operation = "SCALE"
+    scale.inputs[0].default_value = (0.1, 0.6, 0.9)
+    tree.links.new(
+        _affine(tree, _uv_channel(tree, "u"), 2.0, 0.0),
+        scale.inputs["Scale"],
+    )
+    node = tree.nodes.new("ShaderNodeMix")
+    node.data_type = "RGBA"
+    node.blend_type = "MIX"
+    node.clamp_factor = True
+    factor = next(
+        item for item in node.inputs if item.identifier == "Factor_Float"
+    )
+    a_input = next(
+        item for item in node.inputs if item.identifier == "A_Color"
+    )
+    b_input = next(
+        item for item in node.inputs if item.identifier == "B_Color"
+    )
+    a_input.default_value = (2.25, 0.75, 0.25, 1.0)
+    tree.links.new(scale.outputs["Vector"], b_input)
+    tree.links.new(_uv_channel(tree, "v"), factor)
+    result = next(
+        item for item in node.outputs if item.identifier == "Result_Color"
+    )
+    tree.links.new(result, emission.inputs["Color"])
+
+
+def closure_nested_mix(tree, output):
+    one = _principled(tree, base=(0.9, 0.1, 0.1))
+    two = _principled(tree, base=(0.1, 0.8, 0.2))
+    three = _principled(tree, base=(0.15, 0.25, 0.9))
+    inner = _mix_shader(tree, _uv_channel(tree, "u"), one, two)
+    outer = tree.nodes.new("ShaderNodeMixShader")
+    tree.links.new(_uv_channel(tree, "v"), outer.inputs[0])
+    tree.links.new(inner.outputs["Shader"], outer.inputs[1])
+    tree.links.new(three.outputs["BSDF"], outer.inputs[2])
+    tree.links.new(outer.outputs["Shader"], output.inputs["Surface"])
+
+
+def projection_nested_mix(tree, emission):
+    def color_mix(a_value, b_socket_or_value, fac_socket):
+        node = tree.nodes.new("ShaderNodeMix")
+        node.data_type = "RGBA"
+        node.blend_type = "MIX"
+        node.clamp_factor = True
+        factor = next(
+            item for item in node.inputs if item.identifier == "Factor_Float"
+        )
+        a_input = next(
+            item for item in node.inputs if item.identifier == "A_Color"
+        )
+        b_input = next(
+            item for item in node.inputs if item.identifier == "B_Color"
+        )
+        if isinstance(a_value, tuple):
+            a_input.default_value = a_value
+        else:
+            tree.links.new(a_value, a_input)
+        if isinstance(b_socket_or_value, tuple):
+            b_input.default_value = b_socket_or_value
+        else:
+            tree.links.new(b_socket_or_value, b_input)
+        tree.links.new(fac_socket, factor)
+        return next(
+            item for item in node.outputs
+            if item.identifier == "Result_Color"
+        )
+
+    inner = color_mix(
+        (0.9, 0.1, 0.1, 1.0), (0.1, 0.8, 0.2, 1.0), _uv_channel(tree, "u"),
+    )
+    outer = color_mix(
+        inner, (0.15, 0.25, 0.9, 1.0), _uv_channel(tree, "v"),
+    )
+    tree.links.new(outer, emission.inputs["Color"])
+
+
+def closure_diffuse_glossy(tree, output):
+    diffuse = tree.nodes.new("ShaderNodeBsdfDiffuse")
+    diffuse.inputs["Color"].default_value = (0.7, 0.5, 0.3, 1.0)
+    glossy_id = (
+        "ShaderNodeBsdfAnisotropic"
+        if hasattr(bpy.types, "ShaderNodeBsdfAnisotropic")
+        else "ShaderNodeBsdfGlossy"
+    )
+    glossy = tree.nodes.new(glossy_id)
+    glossy.inputs["Color"].default_value = (0.9, 0.9, 0.9, 1.0)
+    glossy.inputs["Roughness"].default_value = 0.3
+    mix = _mix_shader(
+        tree, _uv_channel(tree, "u"), diffuse, glossy,
+        a_output="BSDF", b_output="BSDF",
+    )
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
+
+
+def projection_diffuse_glossy(tree, emission):
+    # Metallic = lerp(0, 1, clamp(u)) = u on the tile.
+    _emit_scalar(tree, emission, _clamp01_math(tree, _uv_channel(tree, "u")))
+
+
+def closure_coerced_color(tree, output):
+    ramp = tree.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.interpolation = "LINEAR"
+    ramp.color_ramp.elements[0].position = 0.15
+    ramp.color_ramp.elements[0].color = (0.9, 0.2, 0.7, 1.0)
+    ramp.color_ramp.elements[1].position = 0.85
+    ramp.color_ramp.elements[1].color = (0.1, 0.8, 0.4, 1.0)
+    tree.links.new(_uv_channel(tree, "u"), ramp.inputs["Fac"])
+    tree.links.new(ramp.outputs["Color"], output.inputs["Surface"])
+
+
+def projection_coerced_color(tree, emission):
+    ramp = tree.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.interpolation = "LINEAR"
+    ramp.color_ramp.elements[0].position = 0.15
+    ramp.color_ramp.elements[0].color = (0.9, 0.2, 0.7, 1.0)
+    ramp.color_ramp.elements[1].position = 0.85
+    ramp.color_ramp.elements[1].color = (0.1, 0.8, 0.4, 1.0)
+    tree.links.new(_uv_channel(tree, "u"), ramp.inputs["Fac"])
+    tree.links.new(ramp.outputs["Color"], emission.inputs["Color"])
+
+
+def closure_fresnel_mix(tree, output):
+    a = _principled(tree, base=(0.9, 0.1, 0.1))
+    b = _principled(tree, base=(0.1, 0.2, 0.9))
+    fresnel = tree.nodes.new("ShaderNodeFresnel")
+    fresnel.inputs["IOR"].default_value = 1.45
+    mix = _mix_shader(tree, fresnel.outputs["Fac"], a, b)
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
+
+
+def projection_fresnel_mix(tree, emission):
+    fresnel = tree.nodes.new("ShaderNodeFresnel")
+    fresnel.inputs["IOR"].default_value = 1.45
+    node = tree.nodes.new("ShaderNodeMix")
+    node.data_type = "RGBA"
+    node.blend_type = "MIX"
+    node.clamp_factor = True
+    factor = next(
+        item for item in node.inputs if item.identifier == "Factor_Float"
+    )
+    a_input = next(
+        item for item in node.inputs if item.identifier == "A_Color"
+    )
+    b_input = next(
+        item for item in node.inputs if item.identifier == "B_Color"
+    )
+    a_input.default_value = (0.9, 0.1, 0.1, 1.0)
+    b_input.default_value = (0.1, 0.2, 0.9, 1.0)
+    tree.links.new(fresnel.outputs["Fac"], factor)
+    result = next(
+        item for item in node.outputs if item.identifier == "Result_Color"
+    )
+    tree.links.new(result, emission.inputs["Color"])
+
+
+SURFACE_CLOSURES = {
+    "surface-mix-color": closure_mix_color,
+    "surface-mix-scalar": closure_mix_scalar,
+    "surface-transparent-alpha": closure_transparent_alpha,
+    "surface-emission-radiance": closure_emission_radiance,
+    "surface-nested-mix": closure_nested_mix,
+    "surface-diffuse-glossy": closure_diffuse_glossy,
+    "surface-coerced-color": closure_coerced_color,
+    "surface-fresnel-mix": closure_fresnel_mix,
+}
+
+
 CELL_PROXY_SETUP = {
     "vertex-color": proxy_vertex_colors,
 }
@@ -1205,6 +1518,7 @@ BUILDERS = {
     "mix-modes": build_mix_modes,
     "mix-divide": build_mix_divide,
     "map-range-smoothstep": build_map_range_smoothstep,
+    "map-range-smootherstep": build_map_range_smootherstep,
     "colorramp-bspline": build_colorramp_bspline,
     "colorramp-cardinal": build_colorramp_cardinal,
     "noise-2d": build_noise_2d,
@@ -1217,6 +1531,14 @@ BUILDERS = {
     "noise-scale16": build_noise_scale16,
     "tex-image-linear": build_tex_image_linear,
     "tex-image-closest-srgb": build_tex_image_closest_srgb,
+    "surface-mix-color": projection_mix_color,
+    "surface-mix-scalar": projection_mix_scalar,
+    "surface-transparent-alpha": projection_transparent_alpha,
+    "surface-emission-radiance": projection_emission_radiance,
+    "surface-nested-mix": projection_nested_mix,
+    "surface-diffuse-glossy": projection_diffuse_glossy,
+    "surface-coerced-color": projection_coerced_color,
+    "surface-fresnel-mix": projection_fresnel_mix,
     "noise-color": build_noise_color,
     "noise-color-2d": build_noise_color_2d,
     "voronoi-smooth-f1": build_voronoi_smooth_f1,
@@ -1262,7 +1584,37 @@ def main():
         material = emission_material(f"CELL {cell_id}", builder)
         ir_path = None
         try:
-            if pipeline == "ir":
+            if "surface" in cell:
+                # Surface cells: the IR comes from emit_surface over a REAL
+                # closure graph; the baked material is the hand-built
+                # projection (the documented channel model) — the cell
+                # gates that the emitted algebra matches the projection.
+                closure_builder = SURFACE_CLOSURES[cell_id]
+                closure_material = bpy.data.materials.new(
+                    f"SURF {cell_id}",
+                )
+                try:
+                    closure_tree = bakelib.ensure_shader_node_tree(
+                        closure_material,
+                    )
+                    closure_tree.nodes.clear()
+                    closure_output = closure_tree.nodes.new(
+                        "ShaderNodeOutputMaterial",
+                    )
+                    closure_builder(closure_tree, closure_output)
+                    surface_document = tsl_ir.emit_surface(closure_tree)
+                    document = surface_document["channels"][
+                        cell["surface"]["channel"]
+                    ]
+                finally:
+                    bpy.data.materials.remove(
+                        closure_material, do_unlink=True,
+                    )
+                ir_path = ir_output / f"{cell_id}.json"
+                ir_path.write_text(
+                    json.dumps(document, indent=2) + "\n", encoding="utf8",
+                )
+            elif pipeline == "ir":
                 # The production emitter walks the SAME graph Cycles bakes;
                 # a refusal here is a harness bug, not a soft skip.
                 tree = material.node_tree
