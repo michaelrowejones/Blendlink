@@ -62,6 +62,7 @@ export interface TslExpression {
   negate(): TslExpression
   equal(value: TslExprLike): TslExpression
   lessThan(value: TslExprLike): TslExpression
+  lessThanEqual(value: TslExprLike): TslExpression
   x: TslExpression
   y: TslExpression
   z: TslExpression
@@ -703,6 +704,72 @@ function buildColorRamp(
   return accumulated
 }
 
+/** Cycles rgb_to_hsv: hue from the dominant-channel branch, s = delta/max,
+ * v = max; h wraps negative by +1 and collapses to 0 when s is 0.  The
+ * channel comparisons run on the same float values both engines computed,
+ * so the branch decisions agree except on exact ties (equal channels),
+ * where s = 0 hides the hue anyway. */
+function blenderRgbToHsv(rgb: TslExpression): TslExpression {
+  const r = rgb.x
+  const g = rgb.y
+  const b = rgb.z
+  const cmax = tslMax(r, tslMax(g, b))
+  const cmin = tslMin(r, tslMin(g, b))
+  const cdelta = cmax.sub(cmin)
+  const s = tslSelect(
+    cmax.equal(0.0), tslFloat(0.0), cdelta.div(guardedDivisor(cmax)),
+  )
+  const safeDelta = guardedDivisor(cdelta)
+  const cr = cmax.sub(r).div(safeDelta)
+  const cg = cmax.sub(g).div(safeDelta)
+  const cb = cmax.sub(b).div(safeDelta)
+  const raw = tslSelect(
+    r.equal(cmax), cb.sub(cg),
+    tslSelect(
+      g.equal(cmax), tslFloat(2.0).add(cr).sub(cb),
+      tslFloat(4.0).add(cg).sub(cr),
+    ),
+  ).div(6.0)
+  const wrapped = tslSelect(raw.lessThan(0.0), raw.add(1.0), raw)
+  const h = tslSelect(s.equal(0.0), tslFloat(0.0), wrapped)
+  return tslVec3(h, s, cmax)
+}
+
+/** Cycles hsv_to_rgb: the sextant switch (i = floor(6h), h == 1 wraps to
+ * 0 first) picked with scalar selects; s = 0 short-circuits to gray. */
+function blenderHsvToRgb(hsv: TslExpression): TslExpression {
+  const s = hsv.y
+  const v = hsv.z
+  const h = tslSelect(hsv.x.equal(1.0), tslFloat(0.0), hsv.x).mul(6.0)
+  const i = tslFloor(h)
+  const f = h.sub(i)
+  const p = v.mul(tslOneMinus(s))
+  const q = v.mul(tslOneMinus(s.mul(f)))
+  const t = v.mul(tslOneMinus(s.mul(tslOneMinus(f))))
+  const pick = (
+    c0: TslExpression, c1: TslExpression, c2: TslExpression,
+    c3: TslExpression, c4: TslExpression, c5: TslExpression,
+  ): TslExpression => tslSelect(
+    i.lessThan(1.0), c0,
+    tslSelect(
+      i.lessThan(2.0), c1,
+      tslSelect(
+        i.lessThan(3.0), c2,
+        tslSelect(
+          i.lessThan(4.0), c3,
+          tslSelect(i.lessThan(5.0), c4, c5),
+        ),
+      ),
+    ),
+  )
+  const gray = s.equal(0.0)
+  return tslVec3(
+    tslSelect(gray, v, pick(v, q, p, p, t, v)),
+    tslSelect(gray, v, pick(t, v, v, q, p, p)),
+    tslSelect(gray, v, pick(p, p, t, v, v, q)),
+  )
+}
+
 function buildMixColor(expression: TslIrExpression): TslExpression {
   let factor = build(child(expression, 'factor'))
   if (expression.clampFactor !== false) {
@@ -715,6 +782,117 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
     case 'MIX': blended = tslMix(a, b, factor); break
     case 'MULTIPLY': blended = tslMix(a, a.mul(b), factor); break
     case 'ADD': blended = tslMix(a, a.add(b), factor); break
+    case 'SUBTRACT': blended = tslMix(a, a.sub(b), factor); break
+    case 'DIFFERENCE': blended = tslMix(a, tslAbs(a.sub(b)), factor); break
+    case 'DARKEN': blended = tslMix(a, tslMin(a, b), factor); break
+    case 'LIGHTEN':
+      // Measured 2026-07-27: Cycles interps toward max(a, b) — the legacy
+      // compositor's asymmetric max(a, b*t) form diverged at 0.155.
+      blended = tslMix(a, tslMax(a, b), factor)
+      break
+    case 'SCREEN': {
+      // 1 - (tm + t * (1 - b)) * (1 - a).
+      const tm = tslOneMinus(factor)
+      blended = tslOneMinus(
+        tm.add(factor.mul(tslOneMinus(b))).mul(tslOneMinus(a)),
+      )
+      break
+    }
+    case 'EXCLUSION':
+      blended = tslMax(
+        tslMix(a, a.add(b).sub(a.mul(b).mul(2.0)), factor), tslFloat(0.0),
+      )
+      break
+    case 'SOFT_LIGHT': {
+      // tm*a + t*((1-a)*b*a + a*(1 - (1-b)*(1-a))).
+      const screen = tslOneMinus(tslOneMinus(b).mul(tslOneMinus(a)))
+      blended = tslOneMinus(factor).mul(a).add(
+        factor.mul(
+          tslOneMinus(a).mul(b).mul(a).add(a.mul(screen)),
+        ),
+      )
+      break
+    }
+    case 'LINEAR_LIGHT':
+      blended = a.add(factor.mul(b.mul(2.0).sub(1.0)))
+      break
+    case 'DODGE': {
+      // Per channel: a != 0 -> tmp = 1 - t*b; tmp <= 0 -> 1,
+      // else min(a / tmp, 1).
+      const channel = (
+        aChannel: TslExpression, bChannel: TslExpression,
+      ): TslExpression => {
+        const tmp = tslOneMinus(factor.mul(bChannel))
+        const dodged = tslSelect(
+          tmp.lessThanEqual(0.0), tslFloat(1.0),
+          tslMin(aChannel.div(guardedDivisor(tmp)), 1.0),
+        )
+        return tslSelect(aChannel.equal(0.0), aChannel, dodged)
+      }
+      blended = tslVec3(
+        channel(a.x, b.x), channel(a.y, b.y), channel(a.z, b.z),
+      )
+      break
+    }
+    case 'BURN': {
+      // Per channel: tmp = tm + t*b; tmp <= 0 -> 0,
+      // else clamp(1 - (1-a)/tmp, 0, 1).
+      const inverse = tslOneMinus(factor)
+      const channel = (
+        aChannel: TslExpression, bChannel: TslExpression,
+      ): TslExpression => {
+        const tmp = inverse.add(factor.mul(bChannel))
+        const burned = tslClamp(
+          tslOneMinus(tslOneMinus(aChannel).div(guardedDivisor(tmp))),
+          0.0, 1.0,
+        )
+        return tslSelect(tmp.lessThanEqual(0.0), tslFloat(0.0), burned)
+      }
+      blended = tslVec3(
+        channel(a.x, b.x), channel(a.y, b.y), channel(a.z, b.z),
+      )
+      break
+    }
+    case 'HUE': {
+      // B's hue grafted onto A's saturation/value, gated on B having any
+      // saturation at all, then lerped by the factor.
+      const hsvA = blenderRgbToHsv(a)
+      const hsvB = blenderRgbToHsv(b)
+      const grafted = blenderHsvToRgb(tslVec3(hsvB.x, hsvA.y, hsvA.z))
+      blended = tslSelect(
+        hsvB.y.equal(0.0), a, tslMix(a, grafted, factor),
+      )
+      break
+    }
+    case 'SATURATION': {
+      // A's saturation lerped toward B's, only when A has saturation.
+      const hsvA = blenderRgbToHsv(a)
+      const hsvB = blenderRgbToHsv(b)
+      const converted = blenderHsvToRgb(
+        tslVec3(hsvA.x, tslMix(hsvA.y, hsvB.y, factor), hsvA.z),
+      )
+      blended = tslSelect(hsvA.y.equal(0.0), a, converted)
+      break
+    }
+    case 'VALUE': {
+      // A's value lerped toward B's; no gate in Cycles for this one.
+      const hsvA = blenderRgbToHsv(a)
+      const hsvB = blenderRgbToHsv(b)
+      blended = blenderHsvToRgb(
+        tslVec3(hsvA.x, hsvA.y, tslMix(hsvA.z, hsvB.z, factor)),
+      )
+      break
+    }
+    case 'COLOR': {
+      // B's hue AND saturation over A's value, gated like HUE.
+      const hsvA = blenderRgbToHsv(a)
+      const hsvB = blenderRgbToHsv(b)
+      const grafted = blenderHsvToRgb(tslVec3(hsvB.x, hsvB.y, hsvA.z))
+      blended = tslSelect(
+        hsvB.y.equal(0.0), a, tslMix(a, grafted, factor),
+      )
+      break
+    }
     case 'DIVIDE': {
       // Cycles per channel: b != 0 ? mix(a, a/b, f) : a — the zero-divisor
       // channel keeps A untouched (verified by the mix-divide cell). The

@@ -39,6 +39,13 @@ _MATH_TERNARY = {"MULTIPLY_ADD", "WRAP", "COMPARE", "SMOOTH_MIN", "SMOOTH_MAX"}
 
 _VECTOR_MATH_OPERATIONS = {"ADD", "SCALE"}
 
+_MIX_BLEND_TYPES = {
+    "MIX", "MULTIPLY", "ADD", "OVERLAY", "DIVIDE",
+    "SUBTRACT", "DIFFERENCE", "DARKEN", "LIGHTEN", "SCREEN",
+    "EXCLUSION", "SOFT_LIGHT", "LINEAR_LIGHT", "DODGE", "BURN",
+    "HUE", "SATURATION", "VALUE", "COLOR",
+}
+
 _RAMP_INTERPOLATIONS = {"LINEAR", "CONSTANT"}
 
 
@@ -392,7 +399,7 @@ def emit_output(node, from_socket, stack=()):
             b_input = node.inputs["Color2"]
             clamp_factor = True
             clamp_result = bool(getattr(node, "use_clamp", False))
-        if blend not in {"MIX", "MULTIPLY", "ADD", "OVERLAY", "DIVIDE"}:
+        if blend not in _MIX_BLEND_TYPES:
             _refuse(f"Mix blend type {blend!r} has no cell yet")
         return {
             "op": "mix_color",

@@ -557,6 +557,61 @@ def make_sweep_builder(spec):
     return build
 
 
+def make_mix_sweep_builder(spec):
+    """A spec-driven Mix cell: each entry drives one Mix node (blend type,
+    factor axis, constant A/B colors) and contributes one channel of the
+    baked color, so up to three blend modes gate per cell with per-mode
+    failure attribution."""
+    def build(tree, emission):
+        coord = tree.nodes.new("ShaderNodeTexCoord")
+        separate_uv = tree.nodes.new("ShaderNodeSeparateXYZ")
+        tree.links.new(coord.outputs["UV"], separate_uv.inputs["Vector"])
+        if len(spec["entries"]) == 1 and spec["entries"][0].get("full"):
+            entry = spec["entries"][0]
+            result = _mix_sweep_node(tree, separate_uv, entry)
+            tree.links.new(result, emission.inputs["Color"])
+            return
+        combine = tree.nodes.new("ShaderNodeCombineColor")
+        combine.mode = "RGB"
+        for slot in ("Red", "Green", "Blue"):
+            combine.inputs[slot].default_value = 0.0
+        for entry, slot in zip(spec["entries"], ("Red", "Green", "Blue")):
+            result = _mix_sweep_node(tree, separate_uv, entry)
+            separate = tree.nodes.new("ShaderNodeSeparateColor")
+            separate.mode = "RGB"
+            tree.links.new(result, separate.inputs["Color"])
+            tree.links.new(
+                separate.outputs[entry.get("channel", slot)],
+                combine.inputs[slot],
+            )
+        tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
+    return build
+
+
+def _mix_sweep_node(tree, separate_uv, entry):
+    node = tree.nodes.new("ShaderNodeMix")
+    node.data_type = "RGBA"
+    node.blend_type = entry["blend"]
+    factor = next(
+        item for item in node.inputs if item.identifier == "Factor_Float"
+    )
+    a_input = next(
+        item for item in node.inputs if item.identifier == "A_Color"
+    )
+    b_input = next(
+        item for item in node.inputs if item.identifier == "B_Color"
+    )
+    a_input.default_value = tuple(entry.get("a", (0.2, 0.8, 0.4))) + (1.0,)
+    b_input.default_value = tuple(entry.get("b", (0.9, 0.1, 0.6))) + (1.0,)
+    axis = entry.get("axis", "u")
+    tree.links.new(
+        separate_uv.outputs["X" if axis == "u" else "Y"], factor,
+    )
+    return next(
+        item for item in node.outputs if item.identifier == "Result_Color"
+    )
+
+
 CELL_PROXY_SETUP = {
     "vertex-color": proxy_vertex_colors,
 }
@@ -608,6 +663,8 @@ def main():
         builder = BUILDERS.get(cell_id)
         if builder is None and "sweep" in cell:
             builder = make_sweep_builder(cell["sweep"])
+        if builder is None and "mixSweep" in cell:
+            builder = make_mix_sweep_builder(cell["mixSweep"])
         if builder is None:
             raise SystemExit(f"reference builder missing for cell {cell_id!r}")
         material = emission_material(f"CELL {cell_id}", builder)

@@ -475,6 +475,74 @@
       "notes": "The floored twin of math-modulo-sign: a - floor(a/b)*b keeps the divisor's sign, so the negative stretch lands in [0, 1.5) instead of (-1.5, 0]."
     },
     {
+      "id": "mix-sub-screen-diff",
+      "gate": true,
+      "mixSweep": {"entries": [
+        {"blend": "SUBTRACT", "axis": "u", "channel": "Green"},
+        {"blend": "SCREEN", "axis": "v", "channel": "Red"},
+        {"blend": "DIFFERENCE", "axis": "u", "channel": "Red"}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Mix blend-mode sweep (arithmetic family)",
+      "notes": "R = SUBTRACT.G (interp toward a-b), G = SCREEN.R (1 - (tm + t(1-b))(1-a)), B = DIFFERENCE.R (interp toward |a-b|). Channels chosen so every output stays in the bakeable range."
+    },
+    {
+      "id": "mix-darken-lighten-exclusion",
+      "gate": true,
+      "mixSweep": {"entries": [
+        {"blend": "DARKEN", "axis": "u", "channel": "Green"},
+        {"blend": "LIGHTEN", "axis": "v", "channel": "Red"},
+        {"blend": "EXCLUSION", "axis": "u", "channel": "Blue"}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Mix blend-mode sweep (min/max family)",
+      "notes": "DARKEN interps toward min(a,b); LIGHTEN interps toward max(a,b) — MEASURED: the legacy compositor's asymmetric max(a, b*t) form diverged mean 2.6e-2 / max 0.155 with the kink at t = a/b, so Cycles' Mix uses the symmetric interp; EXCLUSION is max(interp toward a+b-2ab, 0)."
+    },
+    {
+      "id": "mix-dodge-burn-softlight",
+      "gate": true,
+      "mixSweep": {"entries": [
+        {"blend": "DODGE", "axis": "u", "channel": "Blue", "b": [0.9, 0.1, 1.4]},
+        {"blend": "BURN", "axis": "v", "channel": "Green"},
+        {"blend": "SOFT_LIGHT", "axis": "u", "channel": "Red"}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Mix blend-mode sweep (photographic family)",
+      "notes": "DODGE with an HDR B channel (1.4) so t*b crosses 1 and the divisor-collapse -> 1 branch is exercised along with the min clamp; BURN's 1-(1-a)/tmp crosses its lower clamp as v -> 1; SOFT_LIGHT is the branchless screen-weighted form."
+    },
+    {
+      "id": "mix-linear-light",
+      "gate": true,
+      "mixSweep": {"entries": [
+        {"blend": "LINEAR_LIGHT", "axis": "u", "full": true}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Mix blend-mode sweep (linear light)",
+      "notes": "a + t*(2b - 1) across all three channels of one node; the default A/B constants keep every channel inside the bakeable range for the whole factor sweep."
+    },
+    {
+      "id": "mix-hue-sat",
+      "gate": true,
+      "mixSweep": {"entries": [
+        {"blend": "HUE", "axis": "u", "channel": "Red"},
+        {"blend": "SATURATION", "axis": "v", "channel": "Green"}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Mix blend-mode sweep (HSV family, rgb<->hsv port)",
+      "notes": "HUE grafts B's hue (0.896, sextant 5) onto A's S/V and lerps; SATURATION lerps A's saturation toward B's inside A's hue (0.389, sextant 2). Both run the ported Cycles rgb_to_hsv / hsv_to_rgb round trip on constants, so branch decisions are stable. The B-saturation-zero gate branch stays constant-A and is covered by construction."
+    },
+    {
+      "id": "mix-value-color",
+      "gate": true,
+      "mixSweep": {"entries": [
+        {"blend": "VALUE", "axis": "u", "channel": "Red"},
+        {"blend": "COLOR", "axis": "v", "channel": "Green"}
+      ]},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Mix blend-mode sweep (HSV family, rgb<->hsv port)",
+      "notes": "VALUE lerps A's V toward B's (ungated in Cycles); COLOR grafts B's hue AND saturation over A's value with the same saturation gate as HUE."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",
