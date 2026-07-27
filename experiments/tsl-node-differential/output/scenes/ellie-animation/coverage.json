@@ -13,9 +13,22 @@
     "no root-level single Principled surface": 204,
     "Attribute type 'OBJECT' has no cell yet": 4,
     "ShaderNodeVectorTransform has no proven TSL mapping": 1,
-    "Noise scale 100 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 1,
+    "Noise scale 100 exceeds the proven range (<= 20); sample-position differences decorrelate high-frequency noise": 1,
     "ShaderNodeNormalMap has no proven TSL mapping": 1,
     "Noise with linked Detail has no cell yet": 2
+  },
+  "surface": {
+    "resolved": 0,
+    "channelsCompiled": 0,
+    "viewDependent": 0,
+    "refusals": {
+      "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 28,
+      "ShaderNodeLightPath has no proven TSL mapping": 1,
+      "surface node ShaderNodeBsdfHairPrincipled has no surface-expression mapping": 1,
+      "Attribute type 'OBJECT' has no cell yet": 2,
+      "surface node ShaderNodeAddShader has no surface-expression mapping": 1,
+      "Transparent BSDF with a non-white Color tints transmission; no cell yet": 1
+    }
   },
   "sampled": [
     {

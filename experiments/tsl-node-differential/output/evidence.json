@@ -171,6 +171,17 @@
       },
       "failureClass": "corpus-measured node gap (Map Range SMOOTHSTEP x8)"
     },
+    "map-range-smootherstep": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000012512175089796074,
+        "p99Abs": 0.00003898143768310547,
+        "maxAbs": 0.00003898143768310547
+      },
+      "failureClass": "corpus-measured node gap (Map Range SMOOTHERSTEP x27 — the whole ellie denim class)"
+    },
     "colorramp-bspline": {
       "ok": true,
       "gated": true,
@@ -820,6 +831,39 @@
       },
       "failureClass": "hash family (hash-free lattice control)"
     },
+    "texco-object": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000007808208465576172,
+        "p99Abs": 0.000015616416931152344,
+        "maxAbs": 0.000015616416931152344
+      },
+      "failureClass": "coordinate space (Object -> positionGeometry)"
+    },
+    "texco-generated": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000015612257508716237,
+        "p99Abs": 0.00003123283386230469,
+        "maxAbs": 0.00003123283386230469
+      },
+      "failureClass": "coordinate space (Generated -> texspace mapping)"
+    },
+    "attribute-fac": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00001562428951729089,
+        "p99Abs": 0.000015676021575927734,
+        "maxAbs": 0.000015676021575927734
+      },
+      "failureClass": "corpus-measured node gap (Attribute Fac output x3)"
+    },
     "white-noise": {
       "ok": true,
       "gated": true,
@@ -853,6 +897,17 @@
       },
       "failureClass": "noise lineage (large-coordinate control)"
     },
+    "noise-detail4": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000048318790504708886,
+        "p99Abs": 0.0001538991928100586,
+        "maxAbs": 0.00019419193267822266
+      },
+      "failureClass": "noise detail bound (detail <= 4 candidate)"
+    },
     "noise-scale16": {
       "ok": true,
       "gated": true,
@@ -885,6 +940,39 @@
         "maxAbs": 1.4901161193847656e-7
       },
       "failureClass": "corpus-priority node (Image Texture, byte/sRGB path)"
+    },
+    "noise-scale20": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0002032992269960232,
+        "p99Abs": 0.0006329119205474854,
+        "maxAbs": 0.00094565749168396
+      },
+      "failureClass": "noise frequency bound (scale <= 20 candidate)"
+    },
+    "voronoi-scale20": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0002040913323071436,
+        "p99Abs": 0.0004146397113800049,
+        "maxAbs": 0.0004188418388366699
+      },
+      "failureClass": "voronoi frequency bound (scale <= 20 candidate)"
+    },
+    "voronoi-scale40": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0004111408698008745,
+        "p99Abs": 0.0008307695388793945,
+        "maxAbs": 0.000838935375213623
+      },
+      "failureClass": "voronoi frequency bound (scale <= 40 candidate)"
     },
     "noise-color": {
       "ok": true,
@@ -929,6 +1017,94 @@
         "maxAbs": 0.0006777048110961914
       },
       "failureClass": "deterministic texture (Magic Fac)"
+    },
+    "surface-mix-color": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000018159206774726044,
+        "p99Abs": 0.00006288290023803711,
+        "maxAbs": 0.00006437301635742188
+      },
+      "failureClass": "surface expression (Mix Shader color lerp)"
+    },
+    "surface-mix-scalar": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000010972253221552819,
+        "p99Abs": 0.00001531839370727539,
+        "maxAbs": 0.00001531839370727539
+      },
+      "failureClass": "surface expression (scalar channel lerp)"
+    },
+    "surface-transparent-alpha": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00001405570947099477,
+        "p99Abs": 0.000014066696166992188,
+        "maxAbs": 0.000014066696166992188
+      },
+      "failureClass": "surface expression (Transparent coverage)"
+    },
+    "surface-emission-radiance": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000036924479976126655,
+        "p99Abs": 0.00006961822509765625,
+        "maxAbs": 0.00007581710815429688
+      },
+      "failureClass": "surface expression (radiance lerp)"
+    },
+    "surface-nested-mix": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000015779503883095458,
+        "p99Abs": 0.00003159046173095703,
+        "maxAbs": 0.0000355839729309082
+      },
+      "failureClass": "surface expression (nested Mix Shader)"
+    },
+    "surface-diffuse-glossy": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000015618839825037867,
+        "p99Abs": 0.00001563131809234619,
+        "maxAbs": 0.00001563131809234619
+      },
+      "failureClass": "surface expression (Diffuse/Glossy canonicalization)"
+    },
+    "surface-coerced-color": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00000882272797753103,
+        "p99Abs": 0.000017940998077392578,
+        "maxAbs": 0.000017940998077392578
+      },
+      "failureClass": "surface expression (implicit color->shader coercion)"
+    },
+    "surface-fresnel-mix": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 4.879014644150933e-8,
+        "p99Abs": 2.980232238769531e-7,
+        "maxAbs": 4.172325134277344e-7
+      },
+      "failureClass": "surface expression (view-dependent factor)"
     },
     "fresnel-dielectric": {
       "ok": true,
@@ -986,22 +1162,36 @@
           "linked": 35,
           "constant": 187
         },
-        "irCompiled": 5,
+        "irCompiled": 7,
         "irCompiledViewDependent": 3,
         "refusals": {
           "Attribute type 'OBJECT' has no cell yet": 1,
           "Image 1024x1024 exceeds the embedded-IR bound (128x128); the texture transport carries it": 3,
-          "Texture Coordinate 'Generated' has no TSL cell yet; only UV is proven": 5,
-          "Attribute output 'Factor' has no cell yet": 1,
+          "Attribute output 'Vector' has no cell yet": 2,
           "no root-level single Principled surface": 90,
           "ShaderNodeVectorRotate has no proven TSL mapping": 2,
           "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 10,
           "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
-          "Attribute output 'Vector' has no cell yet": 1,
           "Image interpolation 'Cubic' has no cell yet": 1,
+          "Noise distortion has no cell yet": 2,
           "Unnormalized noise has no cell yet": 2,
-          "Noise scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 2,
-          "Voronoi scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency patterns": 1
+          "Noise scale 25 exceeds the proven range (<= 20); sample-position differences decorrelate high-frequency noise": 2,
+          "Noise scale 40 exceeds the proven range (<= 20); sample-position differences decorrelate high-frequency noise": 2
+        },
+        "surface": {
+          "resolved": 3,
+          "channelsCompiled": 18,
+          "viewDependent": 0,
+          "refusals": {
+            "material output has no linked Surface": 2,
+            "Noise distortion has no cell yet": 2,
+            "Image alpha mode 'NONE' has no cell yet": 1,
+            "surface node ShaderNodeAddShader has no surface-expression mapping": 3,
+            "Image 870x500 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+            "Image 362x512 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+            "Image 500x664 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+            "Image 1280x720 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1
+          }
         },
         "sampled": [
           {
@@ -1011,8 +1201,13 @@
           {
             "cell": "Metal--Base_Color",
             "status": "baked"
+          },
+          {
+            "cell": "bluebell_center--Base_Color",
+            "status": "baked"
           }
-        ]
+        ],
+        "irCompiledAttributeDriven": 1
       },
       "differentials": {
         "Clay--Base_Color": {
@@ -1032,6 +1227,15 @@
             "p99Abs": 0,
             "maxAbs": 0
           }
+        },
+        "bluebell_center--Base_Color": {
+          "ok": true,
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.00007663319532487851,
+            "p99Abs": 0.000543057918548584,
+            "maxAbs": 0.0010131597518920898
+          }
         }
       }
     },
@@ -1049,6 +1253,17 @@
         "irCompiledViewDependent": 0,
         "refusals": {
           "no root-level single Principled surface": 270
+        },
+        "surface": {
+          "resolved": 14,
+          "channelsCompiled": 84,
+          "viewDependent": 0,
+          "refusals": {
+            "ShaderNodeShaderToRGB has no proven TSL mapping": 18,
+            "Noise dimensions '4D' has no cell yet": 1,
+            "Image projection 'BOX' has no cell yet": 10,
+            "ShaderNodeObjectInfo has no proven TSL mapping": 2
+          }
         },
         "sampled": []
       },
@@ -1068,6 +1283,16 @@
         "irCompiledViewDependent": 0,
         "refusals": {
           "no root-level single Principled surface": 30
+        },
+        "surface": {
+          "resolved": 0,
+          "channelsCompiled": 0,
+          "viewDependent": 0,
+          "refusals": {
+            "Transparent BSDF with a linked Color has no cell yet": 2,
+            "surface node ShaderNodeBsdfGlass has no surface-expression mapping": 2,
+            "surface node ShaderNodeAddShader has no surface-expression mapping": 1
+          }
         },
         "sampled": []
       },
@@ -1089,9 +1314,22 @@
           "no root-level single Principled surface": 204,
           "Attribute type 'OBJECT' has no cell yet": 4,
           "ShaderNodeVectorTransform has no proven TSL mapping": 1,
-          "Noise scale 100 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 1,
+          "Noise scale 100 exceeds the proven range (<= 20); sample-position differences decorrelate high-frequency noise": 1,
           "ShaderNodeNormalMap has no proven TSL mapping": 1,
           "Noise with linked Detail has no cell yet": 2
+        },
+        "surface": {
+          "resolved": 0,
+          "channelsCompiled": 0,
+          "viewDependent": 0,
+          "refusals": {
+            "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 28,
+            "ShaderNodeLightPath has no proven TSL mapping": 1,
+            "surface node ShaderNodeBsdfHairPrincipled has no surface-expression mapping": 1,
+            "Attribute type 'OBJECT' has no cell yet": 2,
+            "surface node ShaderNodeAddShader has no surface-expression mapping": 1,
+            "Transparent BSDF with a non-white Color tints transmission; no cell yet": 1
+          }
         },
         "sampled": [
           {

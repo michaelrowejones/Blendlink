@@ -332,6 +332,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "map-range-smootherstep": {
+      "path": "map-range-smootherstep.f32",
+      "pipeline": "ir",
+      "ir": "ir/map-range-smootherstep.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.10000000149011612,
+        0.10000000149011612,
+        0.10000000149011612
+      ],
+      "rgbMax": [
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "colorramp-bspline": {
       "path": "colorramp-bspline.f32",
       "pipeline": "ir",
@@ -1630,6 +1652,72 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "texco-object": {
+      "path": "texco-object.f32",
+      "pipeline": "ir",
+      "ir": "ir/texco-object.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.2539140582084656,
+        0.25392186641693115,
+        0.5
+      ],
+      "rgbMax": [
+        0.7461015582084656,
+        0.7461093664169312,
+        0.5
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "texco-generated": {
+      "path": "texco-generated.f32",
+      "pipeline": "ir",
+      "ir": "ir/texco-generated.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007828124798834324,
+        0.007843732833862305,
+        0.5
+      ],
+      "rgbMax": [
+        0.9922031164169312,
+        0.9922187328338623,
+        0.5
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "attribute-fac": {
+      "path": "attribute-fac.f32",
+      "pipeline": "ir",
+      "ir": "ir/attribute-fac.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.08855728805065155,
+        0.08855728805065155,
+        0.08855728805065155
+      ],
+      "rgbMax": [
+        0.744807243347168,
+        0.744807243347168,
+        0.744807243347168
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "white-noise": {
       "path": "white-noise.f32",
       "pipeline": "ir",
@@ -1696,6 +1784,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "noise-detail4": {
+      "path": "noise-detail4.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-detail4.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.2619137763977051,
+        0.2619137763977051,
+        0.2619137763977051
+      ],
+      "rgbMax": [
+        0.6956011652946472,
+        0.6956011652946472,
+        0.6956011652946472
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "noise-scale16": {
       "path": "noise-scale16.f32",
       "pipeline": "ir",
@@ -1758,6 +1868,72 @@
         0.863157331943512,
         0.863157331943512,
         1.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "noise-scale20": {
+      "path": "noise-scale20.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-scale20.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.25163179636001587,
+        0.25163179636001587,
+        0.25163179636001587
+      ],
+      "rgbMax": [
+        0.7672817707061768,
+        0.7672817707061768,
+        0.7672817707061768
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "voronoi-scale20": {
+      "path": "voronoi-scale20.f32",
+      "pipeline": "ir",
+      "ir": "ir/voronoi-scale20.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.023391932249069214,
+        0.023391932249069214,
+        0.023391932249069214
+      ],
+      "rgbMax": [
+        0.5893570184707642,
+        0.5893570184707642,
+        0.5893570184707642
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "voronoi-scale40": {
+      "path": "voronoi-scale40.f32",
+      "pipeline": "ir",
+      "ir": "ir/voronoi-scale40.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.012707392685115337,
+        0.012707392685115337,
+        0.012707392685115337
+      ],
+      "rgbMax": [
+        0.6218587160110474,
+        0.6218587160110474,
+        0.6218587160110474
       ],
       "deviceClass": "gpu",
       "backend": "optix"
@@ -1846,6 +2022,182 @@
         0.9767043590545654,
         0.9767043590545654,
         0.9767043590545654
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "surface-mix-color": {
+      "path": "surface-mix-color.f32",
+      "pipeline": "ir",
+      "ir": "ir/surface-mix-color.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007828116416931152,
+        0.20000000298023224,
+        0.10000000149011612
+      ],
+      "rgbMax": [
+        0.9922031164169312,
+        0.699999988079071,
+        0.9922187328338623
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "surface-mix-scalar": {
+      "path": "surface-mix-scalar.f32",
+      "pipeline": "ir",
+      "ir": "ir/surface-mix-scalar.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.15000000596046448,
+        0.15000000596046448,
+        0.15000000596046448
+      ],
+      "rgbMax": [
+        0.8500000238418579,
+        0.8500000238418579,
+        0.8500000238418579
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "surface-transparent-alpha": {
+      "path": "surface-transparent-alpha.f32",
+      "pipeline": "ir",
+      "ir": "ir/surface-transparent-alpha.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007017195224761963,
+        0.007017195224761963,
+        0.007017195224761963
+      ],
+      "rgbMax": [
+        0.8929546475410461,
+        0.8929546475410461,
+        0.8929546475410461
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "surface-emission-radiance": {
+      "path": "surface-emission-radiance.f32",
+      "pipeline": "ir",
+      "ir": "ir/surface-emission-radiance.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.019061362370848656,
+        0.015156607143580914,
+        0.0159263014793396
+      ],
+      "rgbMax": [
+        2.233908176422119,
+        1.187214970588684,
+        1.7740137577056885
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "surface-nested-mix": {
+      "path": "surface-nested-mix.f32",
+      "pipeline": "ir",
+      "ir": "ir/surface-nested-mix.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.10658079385757446,
+        0.10661326348781586,
+        0.10705165565013885
+      ],
+      "rgbMax": [
+        0.8879038095474243,
+        0.7902709245681763,
+        0.8945470452308655
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "surface-diffuse-glossy": {
+      "path": "surface-diffuse-glossy.f32",
+      "pipeline": "ir",
+      "ir": "ir/surface-diffuse-glossy.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007828124798834324,
+        0.007828124798834324,
+        0.007828124798834324
+      ],
+      "rgbMax": [
+        0.9922031164169312,
+        0.9922031164169312,
+        0.9922031164169312
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "surface-coerced-color": {
+      "path": "surface-coerced-color.f32",
+      "pipeline": "ir",
+      "ir": "ir/surface-coerced-color.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.10000000149011612,
+        0.20000000298023224,
+        0.4000000059604645
+      ],
+      "rgbMax": [
+        0.8999999761581421,
+        0.800000011920929,
+        0.699999988079071
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "surface-fresnel-mix": {
+      "path": "surface-fresnel-mix.f32",
+      "pipeline": "ir",
+      "ir": "ir/surface-fresnel-mix.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.8707893490791321,
+        0.10337359458208084,
+        0.1269887536764145
+      ],
+      "rgbMax": [
+        0.8730112314224243,
+        0.10365132987499237,
+        0.12921060621738434
       ],
       "deviceClass": "gpu",
       "backend": "optix"

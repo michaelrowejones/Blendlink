@@ -7,22 +7,36 @@
     "linked": 35,
     "constant": 187
   },
-  "irCompiled": 5,
+  "irCompiled": 7,
   "irCompiledViewDependent": 3,
   "refusals": {
     "Attribute type 'OBJECT' has no cell yet": 1,
     "Image 1024x1024 exceeds the embedded-IR bound (128x128); the texture transport carries it": 3,
-    "Texture Coordinate 'Generated' has no TSL cell yet; only UV is proven": 5,
-    "Attribute output 'Factor' has no cell yet": 1,
+    "Attribute output 'Vector' has no cell yet": 2,
     "no root-level single Principled surface": 90,
     "ShaderNodeVectorRotate has no proven TSL mapping": 2,
     "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 10,
     "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
-    "Attribute output 'Vector' has no cell yet": 1,
     "Image interpolation 'Cubic' has no cell yet": 1,
+    "Noise distortion has no cell yet": 2,
     "Unnormalized noise has no cell yet": 2,
-    "Noise scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency noise": 2,
-    "Voronoi scale 40 exceeds the proven range (<= 16); sample-position differences decorrelate high-frequency patterns": 1
+    "Noise scale 25 exceeds the proven range (<= 20); sample-position differences decorrelate high-frequency noise": 2,
+    "Noise scale 40 exceeds the proven range (<= 20); sample-position differences decorrelate high-frequency noise": 2
+  },
+  "surface": {
+    "resolved": 3,
+    "channelsCompiled": 18,
+    "viewDependent": 0,
+    "refusals": {
+      "material output has no linked Surface": 2,
+      "Noise distortion has no cell yet": 2,
+      "Image alpha mode 'NONE' has no cell yet": 1,
+      "surface node ShaderNodeAddShader has no surface-expression mapping": 3,
+      "Image 870x500 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+      "Image 362x512 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+      "Image 500x664 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+      "Image 1280x720 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1
+    }
   },
   "sampled": [
     {
@@ -32,6 +46,11 @@
     {
       "cell": "Metal--Base_Color",
       "status": "baked"
+    },
+    {
+      "cell": "bluebell_center--Base_Color",
+      "status": "baked"
     }
-  ]
+  ],
+  "irCompiledAttributeDriven": 1
 }

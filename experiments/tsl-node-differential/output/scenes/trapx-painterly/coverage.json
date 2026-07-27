@@ -12,5 +12,15 @@
   "refusals": {
     "no root-level single Principled surface": 30
   },
+  "surface": {
+    "resolved": 0,
+    "channelsCompiled": 0,
+    "viewDependent": 0,
+    "refusals": {
+      "Transparent BSDF with a linked Color has no cell yet": 2,
+      "surface node ShaderNodeBsdfGlass has no surface-expression mapping": 2,
+      "surface node ShaderNodeAddShader has no surface-expression mapping": 1
+    }
+  },
   "sampled": []
 }

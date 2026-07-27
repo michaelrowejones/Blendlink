@@ -12,5 +12,16 @@
   "refusals": {
     "no root-level single Principled surface": 270
   },
+  "surface": {
+    "resolved": 14,
+    "channelsCompiled": 84,
+    "viewDependent": 0,
+    "refusals": {
+      "ShaderNodeShaderToRGB has no proven TSL mapping": 18,
+      "Noise dimensions '4D' has no cell yet": 1,
+      "Image projection 'BOX' has no cell yet": 10,
+      "ShaderNodeObjectInfo has no proven TSL mapping": 2
+    }
+  },
   "sampled": []
 }
