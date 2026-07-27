@@ -47,6 +47,9 @@ import {
   NearestFilter,
   RGBAFormat,
 } from 'three'
+// Optional/renamed exports resolve at runtime; missing ones get fallbacks
+// built from proven primitives instead of hard import errors.
+import * as TSLX from 'three/tsl'
 
 /** The published TSL typings are per-node VarNode generics that do not
  * unify across expression kinds; this opaque structural view is the stable
@@ -107,6 +110,64 @@ const tslTexture = texture as unknown as (
   map: DataTexture, coordinates: TslExpression,
 ) => TslExpression
 const tslSqrt = sqrt as unknown as (value: TslExprLike) => TslExpression
+type UnaryTsl = (value: TslExprLike) => TslExpression
+type BinaryTsl = (a: TslExprLike, b: TslExprLike) => TslExpression
+const optionalTsl = (name: string): UnaryTsl | undefined => (
+  (TSLX as Record<string, unknown>)[name] as UnaryTsl | undefined
+)
+const optionalBinaryTsl = (name: string): BinaryTsl | undefined => (
+  (TSLX as Record<string, unknown>)[name] as BinaryTsl | undefined
+)
+const tslExp = optionalTsl('exp')!
+const tslLog = optionalTsl('log')!
+const tslCeil = optionalTsl('ceil')!
+const tslAsin = optionalTsl('asin')!
+const tslAcos = optionalTsl('acos')!
+const tslAtan = optionalTsl('atan')!
+const tslInverseSqrtMaybe = optionalTsl('inverseSqrt')
+const tslTruncMaybe = optionalTsl('trunc')
+const tslTanMaybe = optionalTsl('tan')
+const tslAtan2Maybe = optionalBinaryTsl('atan2')
+
+function tslTrunc(value: TslExpression): TslExpression {
+  if (tslTruncMaybe) return tslTruncMaybe(value)
+  return tslSign(value).mul(tslFloor(tslAbs(value)))
+}
+
+/** Blender roundf: half away from zero — WGSL's round is half-to-even. */
+function blenderRound(value: TslExpression): TslExpression {
+  return tslSign(value).mul(tslFloor(tslAbs(value).add(0.5)))
+}
+
+function tslTan(value: TslExpression): TslExpression {
+  if (tslTanMaybe) return tslTanMaybe(value)
+  return blenderDivide(tslSin(value), tslCos(value))
+}
+
+function tslAtan2(y: TslExpression, x: TslExpression): TslExpression {
+  if (tslAtan2Maybe) return tslAtan2Maybe(y, x)
+  // three r16x folded atan2 into a two-argument atan overload.
+  return (tslAtan as unknown as BinaryTsl)(y, x)
+}
+
+function tslSinh(value: TslExpression): TslExpression {
+  const maybe = optionalTsl('sinh')
+  if (maybe) return maybe(value)
+  return tslExp(value).sub(tslExp(value.negate())).mul(0.5)
+}
+
+function tslCosh(value: TslExpression): TslExpression {
+  const maybe = optionalTsl('cosh')
+  if (maybe) return maybe(value)
+  return tslExp(value).add(tslExp(value.negate())).mul(0.5)
+}
+
+function tslTanh(value: TslExpression): TslExpression {
+  const maybe = optionalTsl('tanh')
+  if (maybe) return maybe(value)
+  const e2 = tslExp(value.mul(2.0))
+  return blenderDivide(e2.sub(1.0), e2.add(1.0))
+}
 const tslNormalize = normalize as unknown as (
   value: TslExpression,
 ) => TslExpression
@@ -464,18 +525,107 @@ function buildMath(expression: TslIrExpression): TslExpression {
     case 'GREATER_THAN': return tslStep(b(), a)
     case 'LESS_THAN': return tslOneMinus(tslStep(b(), a))
     case 'MODULO': return blenderModulo(a, b())
+    case 'FLOORED_MODULO': {
+      // Cycles: b != 0 ? a - floor(a / b) * b : 0 (GLSL-style mod).
+      const divisor = b()
+      return tslSelect(
+        divisor.equal(0.0), tslFloat(0.0),
+        a.sub(tslFloor(a.div(guardedDivisor(divisor))).mul(divisor)),
+      )
+    }
     case 'FLOOR': return tslFloor(a)
     case 'SINE': return tslSin(a)
     case 'COSINE': return tslCos(a)
     case 'PINGPONG': {
       // Cycles: b != 0 ? |fract((a - b) / (2b)) * 2b - b| : 0.
       const divisor = b()
-      const cycle = divisor.mul(2.0)
+      const cycle = guardedDivisor(divisor.mul(2.0))
       const bounced = tslAbs(
-        tslFract(a.sub(divisor).div(cycle)).mul(cycle).sub(divisor),
+        tslFract(a.sub(divisor).div(cycle)).mul(divisor.mul(2.0)).sub(divisor),
       )
       return tslSelect(divisor.equal(0.0), tslFloat(0.0), bounced)
     }
+    // --- the full-enum sweep, each op with Cycles' safe semantics ---
+    case 'SQRT':
+      return tslSelect(
+        a.lessThan(0.0), tslFloat(0.0), tslSqrt(tslMax(a, 0.0)),
+      )
+    case 'INVERSE_SQRT': {
+      const inverse = tslInverseSqrtMaybe
+        ? tslInverseSqrtMaybe(tslMax(a, 1e-38))
+        : blenderDivide(tslFloat(1.0), tslSqrt(tslMax(a, 1e-38)))
+      return tslSelect(a.lessThan(1e-38), tslFloat(0.0), inverse)
+    }
+    case 'ABSOLUTE': return tslAbs(a)
+    case 'EXPONENT': return tslExp(a)
+    case 'LOGARITHM': {
+      // safe_log: a > 0 and base > 0, log(a)/log(base), else 0 (a base of
+      // one divides by zero and also yields 0 through the safe divide).
+      const base = b()
+      const value = blenderDivide(
+        tslLog(tslMax(a, 1e-38)), tslLog(tslMax(base, 1e-38)),
+      )
+      return tslSelect(
+        a.lessThan(1e-38), tslFloat(0.0),
+        tslSelect(base.lessThan(1e-38), tslFloat(0.0), value),
+      )
+    }
+    case 'CEIL': return tslCeil(a)
+    case 'FRACT': return tslFract(a)
+    case 'TRUNC': return tslTrunc(a)
+    case 'ROUND': return blenderRound(a)
+    case 'SNAP': {
+      const divisor = b()
+      return tslSelect(
+        divisor.equal(0.0), tslFloat(0.0),
+        tslFloor(a.div(guardedDivisor(divisor))).mul(divisor),
+      )
+    }
+    case 'WRAP': {
+      // wrapf(value, max, min): range = max - min;
+      // range != 0 ? value - range * floor((value - min) / range) : min.
+      const maxValue = b()
+      const minValue = build(child(expression, 'c'))
+      const range = maxValue.sub(minValue)
+      const wrapped = a.sub(
+        range.mul(tslFloor(a.sub(minValue).div(guardedDivisor(range)))),
+      )
+      return tslSelect(range.equal(0.0), minValue, wrapped)
+    }
+    case 'COMPARE':
+      // Cycles: |a - b| <= max(epsilon, 1e-5) ? 1 : 0 — step(edge, x) is
+      // x >= edge, exactly the inclusive comparison with args swapped.
+      return tslStep(
+        tslAbs(a.sub(b())),
+        tslMax(build(child(expression, 'c')), 1e-5),
+      )
+    case 'SMOOTH_MIN':
+    case 'SMOOTH_MAX': {
+      // smoothminf(a, b, k): k != 0 ->
+      //   h = max(k - |a - b|, 0) / k; min(a, b) - h^3 k / 6.
+      const sign = operation === 'SMOOTH_MAX' ? -1 : 1
+      const first = a.mul(sign)
+      const second = b().mul(sign)
+      const smoothing = build(child(expression, 'c'))
+      const h = tslMax(smoothing.sub(tslAbs(first.sub(second))), 0.0)
+        .div(guardedDivisor(smoothing))
+      const smoothed = tslMin(first, second)
+        .sub(h.mul(h).mul(h).mul(smoothing).mul(1.0 / 6.0))
+      return tslSelect(
+        smoothing.equal(0.0), tslMin(first, second), smoothed,
+      ).mul(sign)
+    }
+    case 'SIGN': return tslSign(a)
+    case 'TANGENT': return tslTan(a)
+    case 'ARCSINE': return tslAsin(tslClamp(a, -1.0, 1.0))
+    case 'ARCCOSINE': return tslAcos(tslClamp(a, -1.0, 1.0))
+    case 'ARCTANGENT': return tslAtan(a)
+    case 'ARCTAN2': return tslAtan2(a, b())
+    case 'SINH': return tslSinh(a)
+    case 'COSH': return tslCosh(a)
+    case 'TANH': return tslTanh(a)
+    case 'RADIANS': return a.mul(Math.PI / 180)
+    case 'DEGREES': return a.mul(180 / Math.PI)
     default:
       return fail(`IR math operation ${operation} has no proven TSL mapping`)
   }

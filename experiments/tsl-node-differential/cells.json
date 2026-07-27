@@ -267,6 +267,214 @@
       "notes": "Clamp node in Min Max mode over 2u-0.5: min(max(value, 0.1), 0.9)."
     },
     {
+      "id": "math-sqrt",
+      "gate": true,
+      "sweep": {"operation": "SQRT", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (safe semantics)",
+      "notes": "safe_sqrt over 4u-2: the left half exercises the negative-input -> 0 guard; raw GPU sqrt returns NaN there."
+    },
+    {
+      "id": "math-inverse-sqrt",
+      "gate": true,
+      "sweep": {"operation": "INVERSE_SQRT", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.1}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (safe semantics)",
+      "notes": "inversesqrt(a) for a > 0, else 0. The nearest positive texel value (1/32) bounds the pole; dyadic texel inputs are float-exact on both engines."
+    },
+    {
+      "id": "math-absolute",
+      "gate": true,
+      "sweep": {"operation": "ABSOLUTE", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep",
+      "notes": "|4u-2| * 0.5."
+    },
+    {
+      "id": "math-exponent",
+      "gate": true,
+      "sweep": {"operation": "EXPONENT", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.125}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (transcendental)",
+      "notes": "exp over (-2, 2), scaled 0.125 into range."
+    },
+    {
+      "id": "math-logarithm",
+      "gate": true,
+      "sweep": {"operation": "LOGARITHM", "a": {"axis": "u", "scale": 4, "offset": -2}, "b": {"axis": "v", "scale": 2, "offset": 2}, "post": {"scale": 0.1, "offset": 0.6}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (safe semantics)",
+      "notes": "safe_log: a <= 0 -> 0 (the left half), else log(a)/log(base) with base swept 2..4. The base ~= 1 divisor-zero branch is covered by the safe-divide cell."
+    },
+    {
+      "id": "math-ceil",
+      "gate": true,
+      "sweep": {"operation": "CEIL", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.25, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (rounding family)",
+      "notes": "ceil over (-2, 2); dyadic texel centers never land on integer boundaries."
+    },
+    {
+      "id": "math-fract",
+      "gate": true,
+      "sweep": {"operation": "FRACT", "a": {"axis": "u", "scale": 3, "offset": -1}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (rounding family)",
+      "notes": "fract over (-1, 2): the negative stretch proves x - floor(x), not truncation."
+    },
+    {
+      "id": "math-trunc",
+      "gate": true,
+      "sweep": {"operation": "TRUNC", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.25, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (rounding family)",
+      "notes": "trunc over (-2, 2): rounds toward zero, so the negative side differs from floor by one."
+    },
+    {
+      "id": "math-round",
+      "gate": true,
+      "sweep": {"operation": "ROUND", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.2, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (rounding family)",
+      "notes": "Blender rounds half away from zero; WGSL's native round is half-to-even, so the mapping uses sign(x)*floor(|x|+0.5). Texel centers never sit on half-integers at this size."
+    },
+    {
+      "id": "math-snap",
+      "gate": true,
+      "sweep": {"operation": "SNAP", "a": {"axis": "u", "scale": 4, "offset": -2}, "b": {"axis": "v", "scale": 0.5, "offset": 0.26}, "post": {"scale": 0.18, "offset": 0.55}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (safe semantics)",
+      "notes": "floor(safe_divide(a, b)) * b with the increment swept 0.26..0.76; the non-dyadic offset keeps step boundaries off exact float values."
+    },
+    {
+      "id": "math-wrap",
+      "gate": true,
+      "sweep": {"operation": "WRAP", "a": {"axis": "u", "scale": 4, "offset": -2}, "b": 0.8, "c": {"axis": "v", "scale": 0.3, "offset": 0.01}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (safe semantics)",
+      "notes": "wrapf(value, max, min): range = max - min, value - range*floor((value-min)/range). Min swept 0.01..0.31 under a fixed max of 0.8; output lands in [min, max)."
+    },
+    {
+      "id": "math-compare-band",
+      "gate": true,
+      "sweep": {"operation": "COMPARE", "a": {"axis": "u"}, "b": 0.5, "c": {"axis": "v", "scale": 0.19, "offset": 0.013}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (comparison semantics)",
+      "notes": "Cycles: |a - b| <= max(epsilon, 1e-5) ? 1 : 0 — the epsilon floor is part of the semantics. A wedge that widens with v. Measured: a slope of exactly 0.2 puts 13 texel rows (2j+1 divisible by 5, where 0.2*5/128 = 1/128) on exact float knife edges that interpolation ulps flip per engine; the 0.19/0.013 spec keeps every boundary off representable coincidences."
+    },
+    {
+      "id": "math-smooth-min",
+      "gate": true,
+      "sweep": {"operation": "SMOOTH_MIN", "a": {"axis": "u", "scale": 2, "offset": -1}, "b": {"axis": "v", "scale": 2, "offset": -1}, "c": 0.5, "post": {"scale": 0.4, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (polynomial smooth blend)",
+      "notes": "smoothminf: h = max(k - |a-b|, 0)/k; min(a,b) - h^3*k/6 with k = 0.5."
+    },
+    {
+      "id": "math-smooth-max",
+      "gate": true,
+      "sweep": {"operation": "SMOOTH_MAX", "a": {"axis": "u", "scale": 2, "offset": -1}, "b": {"axis": "v", "scale": 2, "offset": -1}, "c": 0.5, "post": {"scale": 0.4, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (polynomial smooth blend)",
+      "notes": "-smoothminf(-a, -b, k) with k = 0.5."
+    },
+    {
+      "id": "math-sign",
+      "gate": true,
+      "sweep": {"operation": "SIGN", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.4, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep",
+      "notes": "sign over (-2, 2); texel centers never hit exactly zero."
+    },
+    {
+      "id": "math-tangent",
+      "gate": true,
+      "sweep": {"operation": "TANGENT", "a": {"axis": "u", "scale": 2.8, "offset": -1.4}, "post": {"scale": 0.08, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (transcendental)",
+      "notes": "tan over (-1.4, 1.4), inside the poles at +-pi/2; |tan| <= 5.8 scaled 0.08 into range."
+    },
+    {
+      "id": "math-arcsine",
+      "gate": true,
+      "sweep": {"operation": "ARCSINE", "a": {"axis": "u", "scale": 3, "offset": -1.5}, "post": {"scale": 0.25, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (safe semantics)",
+      "notes": "Input swept (-1.5, 1.5): Cycles clamps to [-1, 1] before asin, so the overshoot proves the domain clamp instead of NaN."
+    },
+    {
+      "id": "math-arccosine",
+      "gate": true,
+      "sweep": {"operation": "ARCCOSINE", "a": {"axis": "u", "scale": 3, "offset": -1.5}, "post": {"scale": 0.25}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (safe semantics)",
+      "notes": "Same clamped domain as arcsine; acos lands in [0, pi], scaled 0.25."
+    },
+    {
+      "id": "math-arctangent",
+      "gate": true,
+      "sweep": {"operation": "ARCTANGENT", "a": {"axis": "u", "scale": 8, "offset": -4}, "post": {"scale": 0.3, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (transcendental)",
+      "notes": "atan over (-4, 4)."
+    },
+    {
+      "id": "math-arctan2",
+      "gate": true,
+      "sweep": {"operation": "ARCTAN2", "a": {"axis": "u", "scale": 2, "offset": -1}, "b": {"axis": "v", "scale": 2, "offset": -1}, "post": {"scale": 0.15, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (transcendental)",
+      "notes": "atan2(y = 2u-1, x = 2v-1) covers all four quadrants; y never hits exactly zero at texel centers, so the branch cut stays off the grid."
+    },
+    {
+      "id": "math-sinh",
+      "gate": true,
+      "sweep": {"operation": "SINH", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.12, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (transcendental)",
+      "notes": "sinh over (-2, 2)."
+    },
+    {
+      "id": "math-cosh",
+      "gate": true,
+      "sweep": {"operation": "COSH", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.2}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (transcendental)",
+      "notes": "cosh over (-2, 2)."
+    },
+    {
+      "id": "math-tanh",
+      "gate": true,
+      "sweep": {"operation": "TANH", "a": {"axis": "u", "scale": 6, "offset": -3}, "post": {"scale": 0.45, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (transcendental)",
+      "notes": "tanh over (-3, 3)."
+    },
+    {
+      "id": "math-radians",
+      "gate": true,
+      "sweep": {"operation": "RADIANS", "a": {"axis": "u", "scale": 360, "offset": -180}, "post": {"scale": 0.15, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep",
+      "notes": "degrees -> radians over (-180, 180)."
+    },
+    {
+      "id": "math-degrees",
+      "gate": true,
+      "sweep": {"operation": "DEGREES", "a": {"axis": "u", "scale": 6, "offset": -3}, "post": {"scale": 0.0025, "offset": 0.5}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep",
+      "notes": "radians -> degrees over (-3, 3), scaled 1/400 into range."
+    },
+    {
+      "id": "math-floored-modulo",
+      "gate": true,
+      "sweep": {"operation": "FLOORED_MODULO", "a": {"axis": "u", "scale": 8, "offset": -4}, "b": 1.5, "post": {"scale": 0.25, "offset": 0.1}},
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "Math-enum sweep (modulo sign convention)",
+      "notes": "The floored twin of math-modulo-sign: a - floor(a/b)*b keeps the divisor's sign, so the negative stretch lands in [0, 1.5) instead of (-1.5, 0]."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",

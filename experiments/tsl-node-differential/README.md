@@ -140,6 +140,35 @@ Scene stage after the batch: cube-diorama and ellie-animation each pass
 with view-dependent and attribute-driven channels tallied under their
 faithful transports instead of forced through the tile domain.
 
+## The full Math-enum sweep — 2026-07-27 (later still)
+
+Fifty-four cells, fifty-three gated, all passing. Twenty-six spec-driven
+sweep cells (declared as `"sweep"` objects in `cells.json`, built by one
+generic reference builder — the IR pipeline needs no per-cell TSL code)
+cover the entire remaining Blender Math enum with Cycles' safe
+semantics: SQRT, INVERSE_SQRT, ABSOLUTE, EXPONENT, LOGARITHM, CEIL,
+FRACT, TRUNC, ROUND, SNAP, WRAP, COMPARE, SMOOTH_MIN, SMOOTH_MAX, SIGN,
+TANGENT, ARCSINE, ARCCOSINE, ARCTANGENT, ARCTAN2, SINH, COSH, TANH,
+RADIANS, DEGREES, and FLOORED_MODULO. Every input domain crosses the
+op's guard branch (negative sqrt/log inputs, the arcsine domain clamp
+beyond ±1, all four atan2 quadrants, the snap/wrap zero-range guards).
+
+Measured: every cell sits at float-rounding noise — means 1e-5 class,
+maxima under 5.6e-4 (the inverse-sqrt pole texel) — and the discrete
+cells (CEIL, TRUNC, ROUND, SIGN, COMPARE) are byte-exact. Two semantics
+the mapping must carry: Blender rounds half away from zero while WGSL's
+native `round` is half-to-even (the mapping uses sign·floor(|x|+0.5)),
+and COMPARE's epsilon has a 1e-5 floor inside Cycles.
+
+One cell-design finding the harness produced: the first compare sweep
+used a factor slope of exactly 0.2, which put 13 texel rows on exact
+float knife edges (0.2·5/128 = 1/128 coincides with a representable
+|u−0.5| boundary), and interpolation ulps flipped those decisions
+per-engine — mean 3.174e-3 = 13/4096, precisely the rows where 2j+1 is
+divisible by 5. The gated cell now uses a non-aligned 0.19/0.013 spec;
+the lesson (comparison cells must keep boundaries off representable
+coincidences) is recorded in the cell's notes.
+
 ## Limits
 
 - Hand-written TSL mappings stand in for the future compiler's output: a

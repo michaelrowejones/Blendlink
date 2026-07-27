@@ -521,6 +521,42 @@ def ensure_view_camera():
     bpy.context.scene.camera = camera
 
 
+def make_sweep_builder(spec):
+    """A spec-driven Math cell: each input is a constant or an affine map
+    of u/v, the swept operation runs once, and a post affine folds the
+    result into the bakeable range.  The IR pipeline needs no per-cell TSL
+    code — the production emitter walks this same graph."""
+    def build(tree, emission):
+        node = tree.nodes.new("ShaderNodeMath")
+        node.operation = str(spec["operation"])
+        for index, key in enumerate(("a", "b", "c")):
+            if key not in spec:
+                continue
+            item = spec[key]
+            if isinstance(item, (int, float)):
+                node.inputs[index].default_value = float(item)
+                continue
+            source = _uv_channel(tree, item.get("axis", "u"))
+            scale = float(item.get("scale", 1.0))
+            offset = float(item.get("offset", 0.0))
+            if scale != 1.0 or offset != 0.0:
+                source = _affine(tree, source, scale, offset)
+            tree.links.new(source, node.inputs[index])
+        result = node.outputs["Value"]
+        post = spec.get("post")
+        if post:
+            result = _affine(
+                tree, result,
+                float(post.get("scale", 1.0)), float(post.get("offset", 0.0)),
+            )
+        if spec.get("clamp"):
+            result = _math(
+                tree, "MINIMUM", _math(tree, "MAXIMUM", result, 0.0), 1.0,
+            )
+        _emit_scalar(tree, emission, result)
+    return build
+
+
 CELL_PROXY_SETUP = {
     "vertex-color": proxy_vertex_colors,
 }
@@ -570,6 +606,8 @@ def main():
         cell_id = cell["id"]
         pipeline = cell.get("pipeline", "ir")
         builder = BUILDERS.get(cell_id)
+        if builder is None and "sweep" in cell:
+            builder = make_sweep_builder(cell["sweep"])
         if builder is None:
             raise SystemExit(f"reference builder missing for cell {cell_id!r}")
         material = emission_material(f"CELL {cell_id}", builder)
