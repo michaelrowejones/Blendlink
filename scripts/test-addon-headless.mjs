@@ -32,6 +32,9 @@ const materialChannelBakeTest = join(
 const materialBakeTest = join(
   root, 'packages', 'blender-addon', 'tests', 'material_bake_check.py',
 )
+const evaluatedGeometryTest = join(
+  root, 'packages', 'blender-addon', 'tests', 'evaluated_geometry_check.py',
+)
 const externalDependencyTest = join(
   root, 'packages', 'blender-addon', 'tests', 'external_dependency_check.py',
 )
@@ -148,6 +151,10 @@ runHeadlessSuite(
 runHeadlessSuite(
   'per-channel Material bake contract', materialBakeTest,
   'BLENDLINK_MATERIAL_BAKE_CHECK_PASSED',
+)
+runHeadlessSuite(
+  'budgeted evaluated-geometry realization contract', evaluatedGeometryTest,
+  'BLENDLINK_EVALUATED_GEOMETRY_CHECK_PASSED',
 )
 runHeadlessSuite(
   'external dependency reachability contract', externalDependencyTest,

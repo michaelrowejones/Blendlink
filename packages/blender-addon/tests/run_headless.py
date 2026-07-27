@@ -245,6 +245,7 @@ def run_unsupported_renderable_export_test(exporter):
             "storedFrames": 1,
             "nonemptyFrames": 1,
             "storedStrokes": 2,
+            "storedPoints": 0,
         }],
         "legacy Blender Grease Pencil frame inspection drifted",
     )
@@ -275,14 +276,28 @@ def run_unsupported_renderable_export_test(exporter):
             "particleType": "HAIR",
             "renderType": "PATH",
             "particleCount": 8,
+            "hairSteps": int(particle_settings.hair_step),
+            "childType": "NONE",
         }], f"legacy PATH particle evidence was incomplete: {particle_issues}")
+        # GEO-EVAL-001: a childless in-budget PATH system realizes instead of
+        # refusing; the gate stays silent and the plan names the route.
+        exporter.enforce_supported_renderable_transport([particle_host])
+        small_plan = exporter.realizable_renderable_plan([particle_host])
+        expect(
+            [item["kind"] for item in small_plan["realize"]]
+            == ["particleStrands"]
+            and not small_plan["refuse"],
+            f"in-budget PATH particles must plan realization: {small_plan}",
+        )
+
+        particle_settings.count = 50_000
         try:
             exporter.enforce_supported_renderable_transport([particle_host])
         except SystemExit as error:
             particle_refusal = str(error)
         else:
             raise AssertionError(
-                "render-visible legacy HAIR/PATH particles silently passed export planning"
+                "over-budget legacy HAIR/PATH particles silently passed export planning"
             )
         expect(
             "Unsupported renderable geometry blocked" in particle_refusal
@@ -291,9 +306,27 @@ def run_unsupported_renderable_export_test(exporter):
             and "legacy HAIR/PATH" in particle_refusal
             and "stock glTF" in particle_refusal
             and "ordinary mesh or card" in particle_refusal
-            and "dedicated particle adapter" in particle_refusal,
+            and "dedicated particle adapter" in particle_refusal
+            and "realization budget" in particle_refusal,
             f"legacy PATH particle refusal lost its artist remedy: {particle_refusal}",
         )
+
+        particle_settings.count = 8
+        particle_settings.child_type = "SIMPLE"
+        try:
+            exporter.enforce_supported_renderable_transport([particle_host])
+        except SystemExit as error:
+            children_refusal = str(error)
+        else:
+            raise AssertionError(
+                "children-configured HAIR/PATH particles silently passed export planning"
+            )
+        expect(
+            "children" in children_refusal,
+            f"children refusal must be named: {children_refusal}",
+        )
+        particle_settings.child_type = "NONE"
+        particle_settings.count = 8
 
         with tempfile.TemporaryDirectory(prefix="blendlink-particle-path-") as tmp:
             output = str(Path(tmp) / "unsupported.glb")
@@ -361,23 +394,18 @@ def run_unsupported_renderable_export_test(exporter):
                 "evaluatedCurves": 1,
                 "evaluatedPoints": 3,
             }], f"Hair Curves transport evidence was incomplete: {hair_issues}")
-            try:
-                exporter.enforce_supported_renderable_transport(
-                    [empty_hair_object, hair_object],
-                )
-            except SystemExit as error:
-                hair_refusal = str(error)
-            else:
-                raise AssertionError("nonempty Hair Curves silently passed export planning")
+            # GEO-EVAL-001: in-budget Hair Curves realize instead of refusing.
+            exporter.enforce_supported_renderable_transport(
+                [empty_hair_object, hair_object],
+            )
+            hair_plan = exporter.realizable_renderable_plan(
+                [empty_hair_object, hair_object],
+            )
             expect(
-                "Unsupported renderable geometry blocked" in hair_refusal
-                and hair_object.name in hair_refusal
-                and "emits no renderable mesh" in hair_refusal
-                and "blendlink_role='noimp'" in hair_refusal
-                and "dedicated Hair Curves adapter" in hair_refusal
-                and "radii" in hair_refusal
-                and "Geometry Nodes" in hair_refusal,
-                f"Hair Curves refusal lost its artist remedy: {hair_refusal}",
+                [item["kind"] for item in hair_plan["realize"]]
+                == ["hairCurves"]
+                and not hair_plan["refuse"],
+                f"in-budget Hair Curves must plan realization: {hair_plan}",
             )
 
             select_only(hair_object)
@@ -386,21 +414,19 @@ def run_unsupported_renderable_export_test(exporter):
                 kwargs, _dropped = exporter.gltf_export_contract(output, {
                     "exporterOverrides": {"use_selection": True},
                 })
-                try:
-                    exporter.plan_export_materials(
-                        {"draft": False, "mode": "standard"},
-                        {"diagnostics": {}},
-                        kwargs,
-                    )
-                except SystemExit as error:
-                    expect(
-                        str(error) == hair_refusal,
-                        "plan/export scope did not use the canonical Hair Curves refusal",
-                    )
-                else:
-                    raise AssertionError(
-                        "Final material/export planning skipped the Hair Curves gate"
-                    )
+                hair_sidecar = {"diagnostics": {}}
+                exporter.plan_export_materials(
+                    {"draft": False, "mode": "standard"},
+                    hair_sidecar,
+                    kwargs,
+                )
+                expect(
+                    [
+                        item["kind"] for item in hair_sidecar["diagnostics"]
+                        .get("realizedGeometry", {}).get("realize", [])
+                    ] == ["hairCurves"],
+                    "planning did not report the Hair Curves realization route",
+                )
                 result = bpy.ops.export_scene.gltf(**kwargs)
                 expect("FINISHED" in result, f"stock Hair Curves probe failed: {result}")
                 document, _chunks, _json_index = exporter._read_glb_document(
@@ -476,24 +502,22 @@ def run_unsupported_renderable_export_test(exporter):
                 "storedFrames": 1,
                 "nonemptyFrames": 1,
                 "storedStrokes": 2,
+                "storedPoints": 5,
             }],
             f"Grease Pencil transport evidence was incomplete: {issues}",
         )
-        try:
-            exporter.enforce_supported_renderable_transport(
-                [empty_object, drawing_object],
-            )
-        except SystemExit as error:
-            refusal = str(error)
-        else:
-            raise AssertionError("nonempty Grease Pencil silently passed export planning")
+        # GEO-EVAL-001: in-budget Grease Pencil realizes instead of refusing.
+        exporter.enforce_supported_renderable_transport(
+            [empty_object, drawing_object],
+        )
+        drawing_plan = exporter.realizable_renderable_plan(
+            [empty_object, drawing_object],
+        )
         expect(
-            "Unsupported renderable geometry blocked" in refusal
-            and drawing_object.name in refusal
-            and "emits no renderable mesh" in refusal
-            and "blendlink_role='noimp'" in refusal
-            and "dedicated Grease Pencil adapter" in refusal,
-            f"Grease Pencil refusal lost its artist remedy: {refusal}",
+            [item["kind"] for item in drawing_plan["realize"]]
+            == ["greasePencil"]
+            and not drawing_plan["refuse"],
+            f"in-budget Grease Pencil must plan realization: {drawing_plan}",
         )
 
         select_only(drawing_object)
@@ -502,21 +526,19 @@ def run_unsupported_renderable_export_test(exporter):
             kwargs, _dropped = exporter.gltf_export_contract(output, {
                 "exporterOverrides": {"use_selection": True},
             })
-            try:
-                exporter.plan_export_materials(
-                    {"draft": False, "mode": "standard"},
-                    {"diagnostics": {}},
-                    kwargs,
-                )
-            except SystemExit as error:
-                expect(
-                    str(error) == refusal,
-                    "plan/export scope did not use the canonical Grease Pencil refusal",
-                )
-            else:
-                raise AssertionError(
-                    "Final material/export planning skipped the Grease Pencil gate"
-                )
+            drawing_sidecar = {"diagnostics": {}}
+            exporter.plan_export_materials(
+                {"draft": False, "mode": "standard"},
+                drawing_sidecar,
+                kwargs,
+            )
+            expect(
+                [
+                    item["kind"] for item in drawing_sidecar["diagnostics"]
+                    .get("realizedGeometry", {}).get("realize", [])
+                ] == ["greasePencil"],
+                "planning did not report the Grease Pencil realization route",
+            )
             result = bpy.ops.export_scene.gltf(**kwargs)
             expect("FINISHED" in result, f"stock Grease Pencil probe failed: {result}")
             document, _chunks, _json_index = exporter._read_glb_document(

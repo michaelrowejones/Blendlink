@@ -3954,6 +3954,7 @@ def _grease_pencil_stroke_evidence(obj) -> dict:
     stored_frames = 0
     nonempty_frames = 0
     stored_strokes = 0
+    stored_points = 0
     for layer in layers:
         for frame in getattr(layer, "frames", ()):
             stored_frames += 1
@@ -3969,12 +3970,16 @@ def _grease_pencil_stroke_evidence(obj) -> dict:
                 )
             count = len(strokes)
             stored_strokes += count
+            stored_points += sum(
+                len(getattr(stroke, "points", ())) for stroke in strokes
+            )
             if count:
                 nonempty_frames += 1
     return {
         "storedFrames": stored_frames,
         "nonemptyFrames": nonempty_frames,
         "storedStrokes": stored_strokes,
+        "storedPoints": stored_points,
     }
 
 
@@ -4042,6 +4047,8 @@ def unsupported_renderable_issues(objects) -> list[dict]:
                 "particleType": settings.type,
                 "renderType": settings.render_type,
                 "particleCount": int(settings.count),
+                "hairSteps": int(getattr(settings, "hair_step", 5)),
+                "childType": str(getattr(settings, "child_type", "NONE")),
             })
         if object_type in {"GREASEPENCIL", "GPENCIL"}:
             evidence = _grease_pencil_stroke_evidence(obj)
@@ -4070,9 +4077,77 @@ def unsupported_renderable_issues(objects) -> list[dict]:
     return issues
 
 
+def realizable_renderable_plan(objects) -> dict:
+    """Split unsupported renderables into budgeted realizations and refusals.
+
+    GEO-EVAL-001: Grease Pencil, Hair Curves, and childless legacy HAIR/PATH
+    particle parents realize to ordinary meshes through the depsgraph when
+    their deterministic triangle estimate fits ``MAX_REALIZED_TRIANGLES``.
+    Everything else keeps the loud refusal — evaluated strand counts are
+    unbounded by nature, and an over-budget scene must name its numbers
+    instead of publishing a payload surprise.  This runs for plan-only and
+    real exports alike and must never mutate the scene.
+    """
+    realize = []
+    refuse = []
+    for issue in unsupported_renderable_issues(objects):
+        code = issue["code"]
+        if code == "geometry.hair-curves-unsupported":
+            triangles = bakelib.estimate_realized_strand_triangles(
+                issue["evaluatedCurves"], issue["evaluatedPoints"],
+            )
+            entry = {**issue, "kind": "hairCurves",
+                     "estimatedTriangles": triangles}
+            if triangles <= bakelib.MAX_REALIZED_TRIANGLES:
+                realize.append(entry)
+            else:
+                refuse.append(entry)
+            continue
+        if code == "geometry.grease-pencil-unsupported":
+            triangles = bakelib.estimate_realized_strand_triangles(
+                issue["storedStrokes"], issue["storedPoints"],
+            )
+            entry = {**issue, "kind": "greasePencil",
+                     "estimatedTriangles": triangles}
+            if triangles <= bakelib.MAX_REALIZED_TRIANGLES:
+                realize.append(entry)
+            else:
+                refuse.append(entry)
+            continue
+        if code == "geometry.legacy-particle-path-unsupported":
+            keys_per_parent = issue["hairSteps"] + 1
+            triangles = bakelib.estimate_realized_strand_triangles(
+                issue["particleCount"],
+                issue["particleCount"] * keys_per_parent,
+            )
+            entry = {**issue, "kind": "particleStrands",
+                     "estimatedTriangles": triangles}
+            if issue["childType"] != "NONE":
+                entry["refusalReason"] = "children"
+                refuse.append(entry)
+            elif triangles > bakelib.MAX_REALIZED_TRIANGLES:
+                entry["refusalReason"] = "budget"
+                refuse.append(entry)
+            else:
+                realize.append(entry)
+            continue
+        refuse.append(dict(issue))
+    return {
+        "budgetTriangles": bakelib.MAX_REALIZED_TRIANGLES,
+        "profileSides": bakelib.REALIZED_PROFILE_SIDES,
+        "realize": realize,
+        "refuse": refuse,
+    }
+
+
 def enforce_supported_renderable_transport(objects) -> None:
-    """Refuse a healthy-looking GLB that silently lost authored artwork."""
-    issues = unsupported_renderable_issues(objects)
+    """Refuse a healthy-looking GLB that silently lost authored artwork.
+
+    Renderables the realization route carries within budget are not
+    refused; ``realize_unsupported_renderables`` emits them as ordinary
+    meshes before the stock exporter runs.
+    """
+    issues = realizable_renderable_plan(objects)["refuse"]
     if not issues:
         return
     grease_pencil = [
@@ -4147,7 +4222,149 @@ def enforce_supported_renderable_transport(objects) -> None:
             "dedicated Hair Curves adapter can prove evaluated strands, radii, "
             "materials, Geometry Nodes, and animation."
         )
+    budgeted = [item for item in issues if item.get("estimatedTriangles")]
+    if budgeted:
+        examples = "; ".join(
+            f"{item['object']!r}"
+            + (f"/{item['system']!r}" if item.get("system") else "")
+            + f" estimates {item['estimatedTriangles']} triangle(s)"
+            + (
+                " and configures particle children, which realization does "
+                "not carry yet"
+                if item.get("refusalReason") == "children" else ""
+            )
+            for item in budgeted[:8]
+        )
+        details.append(
+            f"  - Evaluated-geometry realization budget: "
+            f"{bakelib.MAX_REALIZED_TRIANGLES} triangles per object "
+            f"({bakelib.REALIZED_PROFILE_SIDES}-side strand profile). "
+            f"{examples}. Reduce strand/point/particle counts or split the "
+            "object to enter the realization route."
+        )
     raise SystemExit("Unsupported renderable geometry blocked:\n" + "\n".join(details))
+
+
+def realize_unsupported_renderables(scene, *, view_layer, export_kwargs, log=print):
+    """Emit budgeted unsupported renderables as ordinary meshes for one export.
+
+    Grease Pencil and Hair Curves objects are replaced by a same-named mesh
+    carrier (the source is renamed aside and render-hidden so bindings stay
+    rename-stable); childless legacy HAIR/PATH particle systems add one new
+    ``emitter.system`` strand mesh beside their surviving emitter.  Sources
+    are read, never written beyond name/visibility; ``restore`` reverses
+    everything after the exporter runs, success or failure.
+    """
+    objects = diagnostic_export_objects(
+        scene, view_layer=view_layer, export_kwargs=export_kwargs,
+    )
+    plan = realizable_renderable_plan(objects)
+    if not plan["realize"]:
+        return None
+    changed = {"hosts": [], "renamed": [], "hidden": []}
+    try:
+        for entry in plan["realize"]:
+            source = scene.objects.get(entry["object"])
+            if source is None:
+                raise RuntimeError(
+                    f"realizable object {entry['object']!r} disappeared "
+                    "before realization"
+                )
+            label = (
+                f"{entry['object']}/{entry['system']}"
+                if entry.get("system") else entry["object"]
+            )
+            if entry["kind"] == "particleStrands":
+                strand_curves = None
+                strand_source = None
+                try:
+                    strand_curves = bakelib.build_particle_strand_curves(
+                        source, entry["system"], label=label,
+                    )
+                    strand_source = bpy.data.objects.new(
+                        f"BLENDLINK_REALIZE_SOURCE.{label}", strand_curves,
+                    )
+                    scene.collection.objects.link(strand_source)
+                    bpy.context.view_layer.update()
+                    mesh = bakelib.realize_object_to_mesh_data(
+                        strand_source, kind="strands", label=label, log=log,
+                    )
+                finally:
+                    if strand_source is not None and bpy.data.objects.get(
+                            strand_source.name) is strand_source:
+                        bpy.data.objects.remove(strand_source, do_unlink=True)
+                    bakelib.remove_particle_strand_curves(strand_curves)
+                host = bpy.data.objects.new(
+                    f"{entry['object']}.{entry['system']}", mesh,
+                )
+                host.matrix_world = source.matrix_world.copy()
+                scene.collection.objects.link(host)
+                changed["hosts"].append(host)
+                entry["realizedNode"] = host.name
+                entry["realizedTriangles"] = sum(
+                    len(polygon.vertices) - 2 for polygon in mesh.polygons
+                )
+                continue
+            kind = (
+                "greasePencil" if entry["kind"] == "greasePencil"
+                else "strands"
+            )
+            mesh = bakelib.realize_object_to_mesh_data(
+                source, kind=kind, label=label, log=log,
+            )
+            original_name = source.name
+            source.name = f"{original_name}.blendlink-realized-source"
+            changed["renamed"].append((source, original_name))
+            if not source.hide_render:
+                source.hide_render = True
+                changed["hidden"].append(source)
+            host = bpy.data.objects.new(original_name, mesh)
+            host.matrix_world = source.matrix_world.copy()
+            for key in source.keys():
+                if str(key).startswith("blendlink_"):
+                    host[key] = source[key]
+            scene.collection.objects.link(host)
+            changed["hosts"].append(host)
+            entry["realizedNode"] = host.name
+            entry["realizedTriangles"] = sum(
+                len(polygon.vertices) - 2 for polygon in mesh.polygons
+            )
+        bpy.context.view_layer.update()
+        changed["plan"] = plan
+        return changed
+    except BaseException:
+        restore_realized_renderables(changed)
+        raise
+
+
+def restore_realized_renderables(changed) -> None:
+    """Reverse ``realize_unsupported_renderables`` exactly, collecting errors."""
+    if not changed:
+        return
+    errors = []
+    for host in changed.get("hosts", ()):
+        try:
+            mesh = getattr(host, "data", None)
+            if bpy.data.objects.get(host.name) is host:
+                bpy.data.objects.remove(host, do_unlink=True)
+            if mesh is not None and bpy.data.meshes.get(mesh.name) is mesh:
+                bpy.data.meshes.remove(mesh)
+        except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+            errors.append(f"realized host: {error}")
+    for source in changed.get("hidden", ()):
+        try:
+            source.hide_render = False
+        except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+            errors.append(f"realized source visibility: {error}")
+    for source, original_name in changed.get("renamed", ()):
+        try:
+            source.name = original_name
+        except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+            errors.append(f"realized source name: {error}")
+    if errors:
+        raise RuntimeError(
+            "realized-geometry restoration failed: " + "; ".join(errors)
+        )
 
 
 def noimp_objects() -> set:
@@ -4912,6 +5129,9 @@ def plan_export_materials(
         export_kwargs=export_kwargs,
     )
     enforce_supported_renderable_transport(export_objects)
+    realization_plan = realizable_renderable_plan(export_objects)
+    if realization_plan["realize"]:
+        sidecar["diagnostics"]["realizedGeometry"] = realization_plan
     purpose = "preview" if settings.get("draft") else "final"
     compile_objects = export_objects
     if settings.get("mode") == "baked":
@@ -5120,8 +5340,15 @@ def main() -> None:
         bpy.context.scene,
     )
     render_visibility_restore = None
+    realized_restore = None
     material_compilation = None
     try:
+        realized_restore = realize_unsupported_renderables(
+            bpy.context.scene, view_layer=bpy.context.view_layer,
+            export_kwargs=kwargs,
+        )
+        if realized_restore is not None:
+            sidecar["diagnostics"]["realizedGeometry"] = realized_restore["plan"]
         render_visibility_restore = enforce_export_render_visibility(
             bpy.context.scene, view_layer=bpy.context.view_layer,
             export_kwargs=kwargs,
@@ -5144,8 +5371,12 @@ def main() -> None:
         try:
             nla_sequence.restore_action_export(sequence_export_restore)
         finally:
-            if render_visibility_restore is not None:
-                restore_export_render_visibility(render_visibility_restore)
+            try:
+                if render_visibility_restore is not None:
+                    restore_export_render_visibility(render_visibility_restore)
+            finally:
+                if realized_restore is not None:
+                    restore_realized_renderables(realized_restore)
     if material_compilation is not None:
         sidecar["diagnostics"]["materialCompilation"] = material_compilation.as_dict()
     (

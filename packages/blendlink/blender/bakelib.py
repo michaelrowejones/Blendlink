@@ -7301,6 +7301,185 @@ def remove_uv_tile_proxy(obj):
         bpy.data.meshes.remove(mesh)
 
 
+# --- GEO-EVAL-001: evaluated-geometry realization primitives -----------------
+#
+# glTF has no strand, stroke, or particle primitive.  These primitives ask
+# the depsgraph for the evaluated result and capture it as an ordinary Mesh
+# datablock — through a disposable MESH host with an Object Info pull, so
+# the artist's CURVES/Grease Pencil object is never mutated.  The exporter
+# orchestrates naming, visibility, and restoration; budgets are deterministic
+# functions of evaluated counts, never wall-clock.
+
+# One realized strand segment extrudes the profile ring: two triangles per
+# profile side.  Four sides is the smallest closed tube.
+REALIZED_PROFILE_SIDES = 4
+# Per-object ceiling, aligned with the mid-tier runtime triangle budget.
+# Identical .blend files must not take different routes on faster machines.
+MAX_REALIZED_TRIANGLES = 500_000
+
+_REALIZE_KINDS = {"strands", "greasePencil"}
+
+
+def estimate_realized_strand_triangles(
+        curve_count: int, point_count: int,
+        profile_sides: int = REALIZED_PROFILE_SIDES) -> int:
+    """Deterministic triangle estimate for strand realization."""
+    segments = max(int(point_count) - int(curve_count), 0)
+    return segments * int(profile_sides) * 2
+
+
+def _realize_geometry_node_group(source, kind: str, profile_sides: int):
+    """Disposable GN tree: Object Info pull -> (GP to curves ->) tube mesh.
+
+    The Curve to Mesh ``Scale`` input is wired to the ``radius`` attribute
+    explicitly — Blender no longer applies curve radius implicitly — so hair
+    and stroke widths survive realization.
+    """
+    tree = bpy.data.node_groups.new(
+        f"BLENDLINK_REALIZE_{kind.upper()}", "GeometryNodeTree",
+    )
+    tree.interface.new_socket(
+        "Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry",
+    )
+    group_out = tree.nodes.new("NodeGroupOutput")
+    info = tree.nodes.new("GeometryNodeObjectInfo")
+    info.inputs["Object"].default_value = source
+    as_instance = next(
+        (item for item in info.inputs if item.name == "As Instance"), None,
+    )
+    if as_instance is not None:
+        as_instance.default_value = False
+    circle = tree.nodes.new("GeometryNodeCurvePrimitiveCircle")
+    circle.inputs["Resolution"].default_value = int(profile_sides)
+    circle.inputs["Radius"].default_value = 1.0
+    radius = tree.nodes.new("GeometryNodeInputNamedAttribute")
+    radius.data_type = "FLOAT"
+    radius.inputs["Name"].default_value = "radius"
+    to_mesh = tree.nodes.new("GeometryNodeCurveToMesh")
+    geometry = info.outputs["Geometry"]
+    if kind == "greasePencil":
+        convert = tree.nodes.new("GeometryNodeGreasePencilToCurves")
+        realize = tree.nodes.new("GeometryNodeRealizeInstances")
+        tree.links.new(geometry, convert.inputs[0])
+        tree.links.new(convert.outputs[0], realize.inputs[0])
+        geometry = realize.outputs[0]
+    tree.links.new(geometry, to_mesh.inputs["Curve"])
+    tree.links.new(circle.outputs["Curve"], to_mesh.inputs["Profile Curve"])
+    tree.links.new(radius.outputs["Attribute"], to_mesh.inputs["Scale"])
+    tree.links.new(to_mesh.outputs["Mesh"], group_out.inputs["Geometry"])
+    return tree
+
+
+def realize_object_to_mesh_data(
+        source, *, kind: str, label: str,
+        profile_sides: int = REALIZED_PROFILE_SIDES, log=print):
+    """Capture one object's evaluated strand/stroke geometry as a Mesh.
+
+    Returns a caller-owned Mesh datablock in the source's local space.  The
+    source object is read, never written; every disposable host, modifier,
+    and node group is removed on success and failure alike.
+    """
+    if kind not in _REALIZE_KINDS:
+        raise ValueError(f"{label}: unsupported realization kind {kind!r}")
+    tree = None
+    host = None
+    host_mesh = None
+    realized = None
+    try:
+        tree = _realize_geometry_node_group(source, kind, profile_sides)
+        host_mesh = bpy.data.meshes.new(f"BLENDLINK_REALIZE_HOST.{source.name}")
+        host = bpy.data.objects.new(
+            f"BLENDLINK_REALIZE_HOST.{source.name}", host_mesh,
+        )
+        bpy.context.scene.collection.objects.link(host)
+        modifier = host.modifiers.new("BLENDLINK_REALIZE", "NODES")
+        modifier.node_group = tree
+        bpy.context.view_layer.update()
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        evaluated = host.evaluated_get(depsgraph)
+        realized = bpy.data.meshes.new_from_object(
+            evaluated, preserve_all_data_layers=True, depsgraph=depsgraph,
+        )
+        if len(realized.polygons) == 0:
+            raise RuntimeError(
+                f"{label}: evaluated realization produced no renderable "
+                "polygons"
+            )
+        realized.name = f"{source.name} Realized"
+        log(
+            f"blendlink realize: {label} -> "
+            f"{len(realized.vertices)} vertices, "
+            f"{len(realized.polygons)} polygons"
+        )
+        return realized
+    except BaseException:
+        if realized is not None and bpy.data.meshes.get(realized.name) is realized:
+            bpy.data.meshes.remove(realized)
+        raise
+    finally:
+        if host is not None and bpy.data.objects.get(host.name) is host:
+            bpy.data.objects.remove(host, do_unlink=True)
+        if host_mesh is not None and bpy.data.meshes.get(host_mesh.name) is host_mesh:
+            bpy.data.meshes.remove(host_mesh)
+        if tree is not None and tree.name in bpy.data.node_groups:
+            bpy.data.node_groups.remove(tree)
+
+
+def build_particle_strand_curves(emitter, system_name: str, *, label: str):
+    """Temporary Curves datablock from evaluated legacy HAIR/PATH parents.
+
+    Positions come from the evaluated system's ``hair_keys`` in emitter
+    local space, with a linear root-to-tip radius taper from the particle
+    settings.  The caller owns the returned datablock and wraps it in a
+    disposable source object for ``realize_object_to_mesh_data``.
+    """
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    evaluated = emitter.evaluated_get(depsgraph)
+    ev_system = next(
+        (item for item in evaluated.particle_systems
+         if item.name == system_name),
+        None,
+    )
+    if ev_system is None:
+        raise RuntimeError(
+            f"{label}: evaluated particle system {system_name!r} disappeared"
+        )
+    particles = [
+        particle for particle in ev_system.particles
+        if len(particle.hair_keys) >= 2
+    ]
+    if not particles:
+        raise RuntimeError(
+            f"{label}: evaluated particle system {system_name!r} has no "
+            "hair keys to realize"
+        )
+    settings = ev_system.settings
+    scale = float(getattr(settings, "radius_scale", 0.01))
+    root = float(getattr(settings, "root_radius", 1.0)) * scale * 0.5
+    tip = float(getattr(settings, "tip_radius", 0.0)) * scale * 0.5
+    if root <= 0.0:
+        root = 0.005
+    curves = bpy.data.hair_curves.new(f"BLENDLINK_REALIZE_STRANDS.{label}")
+    curves.add_curves([len(particle.hair_keys) for particle in particles])
+    index = 0
+    for particle in particles:
+        keys = particle.hair_keys
+        last = len(keys) - 1
+        for key_index, key in enumerate(keys):
+            point = curves.points[index]
+            point.position = tuple(key.co)
+            fraction = key_index / last if last else 0.0
+            point.radius = root + (tip - root) * fraction
+            index += 1
+    return curves
+
+
+def remove_particle_strand_curves(curves):
+    """Remove a ``build_particle_strand_curves`` datablock."""
+    if curves is not None and bpy.data.hair_curves.get(curves.name) is curves:
+        bpy.data.hair_curves.remove(curves)
+
+
 def bake_emit_field_to_png(
         objs, path: str, *, size: int, margin_px: int,
         uv_layer: str = ATLAS_UV, label: str = "selected material field",

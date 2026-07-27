@@ -403,6 +403,21 @@ export interface BlenderSceneDiagnostics {
   instances: InstanceSourceDiagnostic[]
   materials?: MaterialPortabilityDiagnostic[]
   materialCompilation?: MaterialCompilationEvidence
+  /** GEO-EVAL-001: budgeted evaluated-geometry realizations (Grease Pencil,
+   * Hair Curves, childless legacy HAIR/PATH particle parents) and the
+   * refusals that exceeded the deterministic triangle budget. */
+  realizedGeometry?: {
+    budgetTriangles: number
+    profileSides: number
+    realize: Array<Record<string, unknown> & {
+      object: string
+      kind: 'hairCurves' | 'greasePencil' | 'particleStrands'
+      estimatedTriangles: number
+      realizedNode?: string
+      realizedTriangles?: number
+    }>
+    refuse: Array<Record<string, unknown> & { object: string }>
+  }
   limits: { maxAuditFrames: number; maxMorphCacheBytes: number }
 }
 
