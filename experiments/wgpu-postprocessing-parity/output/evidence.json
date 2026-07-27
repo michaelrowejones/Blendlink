@@ -1,0 +1,356 @@
+{
+  "experiment": "wgpu-postprocessing-parity",
+  "ledgerRow": "WGPU-PP-001",
+  "command": "node experiments/wgpu-postprocessing-parity/run.mjs",
+  "executablePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "environment": {
+    "threeRevision": "184",
+    "webgpuAvailable": true,
+    "adapter": {
+      "vendor": "nvidia",
+      "architecture": "blackwell",
+      "device": "",
+      "description": ""
+    },
+    "backends": {
+      "webgl": {
+        "constructed": true,
+        "isWebGPUBackend": false
+      },
+      "webgpu": {
+        "constructed": true,
+        "isWebGPUBackend": true
+      }
+    }
+  },
+  "results": {
+    "webgl": {
+      "plain": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.00490360791383,
+          "nonBackgroundPixels": 146213,
+          "sha256": "d7bd96b64a7743e65bcfc368aefab4b63b9e0e17f74666a46bfda11e825ce70e"
+        }
+      },
+      "effects": {
+        "render-pass-only": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 78.00490360791383,
+            "nonBackgroundPixels": 146213,
+            "sha256": "d7bd96b64a7743e65bcfc368aefab4b63b9e0e17f74666a46bfda11e825ce70e"
+          }
+        },
+        "tone-mapping": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 83.58639900720101,
+            "nonBackgroundPixels": 145514,
+            "sha256": "2ea1b5b34fd2a5111c7076dee0802a37a180628792e1d32cc12916b0744a8bd4"
+          }
+        },
+        "bloom": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 78.02384870604135,
+            "nonBackgroundPixels": 146213,
+            "sha256": "ba0495db93154b0e5800d86afa807f0d5476329cab64a11dc22aec81212805d0"
+          }
+        },
+        "selective-bloom": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 78.02384870604135,
+            "nonBackgroundPixels": 146213,
+            "sha256": "ba0495db93154b0e5800d86afa807f0d5476329cab64a11dc22aec81212805d0"
+          }
+        },
+        "vignette": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 70.38299139275814,
+            "nonBackgroundPixels": 145121,
+            "sha256": "b0b8ceb37e71f5b3f42762c4390dfd7d48c8abd0a5a9bfb0b1cc75e722e91e48"
+          }
+        },
+        "chromatic-aberration": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 78.04133694931649,
+            "nonBackgroundPixels": 146492,
+            "sha256": "0cfbb0f6d17631684b01b9b9515697448b43a58739e727a4f331a4eaadcf2d7e"
+          }
+        },
+        "pixelation": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 78.13945107420442,
+            "nonBackgroundPixels": 146232,
+            "sha256": "79da957bacd2cf57f68ceca0eb830a4eefc9f9eef7f57170f6e16a541dcd900b"
+          }
+        },
+        "tilt-shift": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 79.1150998467171,
+            "nonBackgroundPixels": 146776,
+            "sha256": "3726b519fe38331926009cf086446d395b3a41be9bae89eae92f250d598a5cee"
+          }
+        },
+        "outline": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 79.27631657847742,
+            "nonBackgroundPixels": 146213,
+            "sha256": "ce38fc0068c185b18817981f039e63f6e4ec132b4fea3d61838e34e03ae5d721"
+          }
+        },
+        "lut3d": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 78.02384870604135,
+            "nonBackgroundPixels": 146213,
+            "sha256": "ba0495db93154b0e5800d86afa807f0d5476329cab64a11dc22aec81212805d0"
+          }
+        },
+        "depth-of-field": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 79.89035762799826,
+            "nonBackgroundPixels": 147017,
+            "sha256": "a176836ba360432170a22cc5872cfc1c9288caaab3b3952ea9ffa92402f03acd"
+          }
+        },
+        "custom-effect": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 241.41794582907974,
+            "nonBackgroundPixels": 147435,
+            "sha256": "20c990fd326979919fb9c13f6570307cc8ccdb9127d8f829e4d53a8d34a152c0"
+          }
+        },
+        "n8ao": {
+          "ok": true,
+          "pixels": {
+            "meanLuma": 63.442106551108395,
+            "nonBackgroundPixels": 144150,
+            "sha256": "a0ba2461c30aa77f95a5621121529a515a2acf941df03e0a135c55ff61bbecd0"
+          }
+        }
+      }
+    },
+    "webgpu": {
+      "plain": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 77.99255667467231,
+          "nonBackgroundPixels": 146213,
+          "sha256": "dca9c10eb7ab792fd09c70fc8a60be778f4185e647467cfb53278729e7261599"
+        }
+      },
+      "effects": {
+        "render-pass-only": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "tone-mapping": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "bloom": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "selective-bloom": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "vignette": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "chromatic-aberration": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "pixelation": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "tilt-shift": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "outline": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "lut3d": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "depth-of-field": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "custom-effect": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        },
+        "n8ao": {
+          "ok": false,
+          "phase": "construct-composer",
+          "error": "TypeError: renderer.getContext(...).getContextAttributes is not a function"
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "render-pass-only": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "tone-mapping": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "bloom": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "selective-bloom": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "vignette": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "chromatic-aberration": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "pixelation": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "tilt-shift": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "outline": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "lut3d": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "depth-of-field": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "custom-effect": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    },
+    "n8ao": {
+      "bothRendered": false,
+      "webglOk": true,
+      "webgpuOk": false,
+      "webgpuFailurePhase": "construct-composer",
+      "webgpuError": "TypeError: renderer.getContext(...).getContextAttributes is not a function",
+      "webglError": null
+    }
+  },
+  "summary": {
+    "pins": {
+      "three": "0.184.0",
+      "postprocessing": "6.39.3",
+      "n8ao": "1.10.2"
+    },
+    "webgpuBackendReal": true,
+    "webgpuPlainSceneRenders": true,
+    "question1RunsAtAll": {
+      "effectsAttempted": 13,
+      "effectsRunning": 0,
+      "failurePhases": [
+        "construct-composer"
+      ]
+    },
+    "question2IdenticalPixels": {
+      "comparablePairs": 0,
+      "identicalPairs": 0
+    }
+  },
+  "pageErrorCount": 1,
+  "pageErrorSample": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "limits": [
+    "One deterministic scene per backend; production Blendlink scenes are broader.",
+    "Same-machine same-run pixel comparison; cross-device identity is not claimed.",
+    "A WebGL2-fallback WebGPURenderer (webgpuBackendReal=false) measures the fallback path, not native WebGPU."
+  ]
+}

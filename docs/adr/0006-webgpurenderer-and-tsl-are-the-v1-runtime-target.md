@@ -36,9 +36,19 @@ application's renderer construction — and Blendlink generates that integration
   become node graphs, which is a simplification rather than a loss.
 - The legacy `EffectComposer` path is unavailable. The pinned
   `postprocessing@6.39.3` and `n8ao@1.10.2` dependencies back 11 of the 21
-  shipped Components, and their behaviour under `WebGPURenderer` is **not yet
-  verified**. That verification is the first milestone of this migration and can
-  still reshape its plan.
+  shipped Components. **Measured 2026-07-27 (WGPU-PP-001,
+  `experiments/wgpu-postprocessing-parity`): they do not run against
+  `WebGPURenderer` at all.** On a native WebGPU backend the `WebGLRenderer`
+  control runs 13/13 effect configurations while 0/13 construct against
+  `WebGPURenderer` — every one fails inside `EffectComposer`'s constructor
+  (`renderer.getContext(...).getContextAttributes is not a function`), so
+  pixel identity has zero comparable pairs. The migration therefore cannot
+  carry these libraries: the eleven post-processing Components need a
+  replacement pipeline (three's TSL node post-processing, a ported library,
+  or per-effect rewrites), each with pixel evidence against the current
+  WebGL output, and the tuned effect-fusion semantics in
+  `ThreePostPipelineService` do not transfer. Phase planning beyond this
+  point is paused until the reshaped scope is agreed.
 - The exact `three@0.184.0` pin is re-attested against a faster-moving surface
   than `WebGLRenderer` presented.
 - Every browser gate and visual baseline is re-established against the new

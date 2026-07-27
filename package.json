@@ -29,6 +29,7 @@
     "test:fixed-camera-surface-browser": "npm run build --workspace blendlink && node experiments/fixed-camera-surface-browser/run.mjs",
     "test:static-shade-floor-browser": "node experiments/static-shade-floor-browser/run.mjs",
     "test:graph-deployment-browser": "node experiments/graph-deployment-browser-gate/run.mjs",
+    "test:wgpu-postprocessing-parity": "node experiments/wgpu-postprocessing-parity/run.mjs",
     "test:full": "npm run build && npm run test:unit && node scripts/test-real-toolchains.mjs && node scripts/test-consumer-builds.mjs && node scripts/test-package.mjs && node scripts/test-dogfood-package-identity.mjs && node scripts/test-addon-headless.mjs && node scripts/test-baked-e2e.mjs",
     "release:artifacts": "npm run audit:production && npm run build && node scripts/build-release-artifacts.mjs",
     "prototype:eevee-materializer": "node experiments/eevee-uv-materializer-prototype/run.mjs",
