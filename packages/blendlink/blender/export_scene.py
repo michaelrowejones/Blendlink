@@ -794,6 +794,51 @@ def publish_environment(recipe: dict | None, out_path: str) -> dict | None:
     }
 
 
+def publish_material_programs(material_plan, out_path: str) -> dict | None:
+    """Publish the per-channel TSL IR programs beside the GLB.
+
+    This sidecar is the Phase 4 material runtime's program transport: IR
+    bodies never inline into the generated module (the per-channel 256 KB
+    budget exists precisely because they can be large), and tslIrHash pins
+    content end to end. No lowered material with IR means no file.
+    """
+    if material_plan is None:
+        return None
+    materials = {}
+    for decision in getattr(material_plan, "lowerings", ()) or ():
+        channels = {}
+        for item in (decision.channel_plan or {}).get("channels", ()):
+            ir = item.get("tslIr")
+            if not ir:
+                continue
+            channels[str(item.get("channel"))] = {
+                "tslIr": ir,
+                "tslIrHash": item.get("tslIrHash"),
+                "tslIrBytes": item.get("tslIrBytes"),
+            }
+        if channels:
+            materials[decision.material_name] = {"channels": channels}
+    if not materials:
+        return None
+    document = {
+        "schemaVersion": 1,
+        "model": "blendlink-material-programs-v1",
+        "materials": materials,
+    }
+    published_path = f"{out_path}.materials.json"
+    payload = json.dumps(
+        document, sort_keys=True, separators=(",", ":"),
+    ).encode("utf8")
+    with open(published_path, "wb") as handle:
+        handle.write(payload)
+    return {
+        "path": published_path,
+        "bytes": len(payload),
+        "hash": hashlib.sha256(payload).hexdigest()[:16],
+        "materials": len(materials),
+    }
+
+
 def publish_reflection_probe_assets(recipe: dict | None, out_path: str) -> dict:
     """Publish exact authored/baked equirectangular bytes beside the GLB.
 
@@ -5379,6 +5424,9 @@ def main() -> None:
                     restore_realized_renderables(realized_restore)
     if material_compilation is not None:
         sidecar["diagnostics"]["materialCompilation"] = material_compilation.as_dict()
+    material_programs_asset = publish_material_programs(
+        material_plan if material_plan.lowerings else None, out_path,
+    )
     (
         light_contract,
         published_light_objects,
@@ -5477,6 +5525,7 @@ def main() -> None:
         "recipe": recipe,
         "presentation": recipe.get("presentation") if recipe else None,
         "environment": environment_asset,
+        "materialPrograms": material_programs_asset,
         "reflectionProbeAssets": reflection_probe_assets,
         "lightContract": light_contract,
         "materialDefaults": material_defaults,
