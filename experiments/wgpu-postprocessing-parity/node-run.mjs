@@ -257,6 +257,28 @@ try {
     console.log('runtime-diorama cells skipped: showcase publication not present')
   }
 
+  // Track C proof: per-object uniform values through one shared node
+  // material (lifts the per-mesh fork for generated/object_coords).
+  const objectUniform = {}
+  for (const backendId of ['native', 'fallback']) {
+    objectUniform[backendId] = await page.evaluate(
+      (backend) => window.__wgpuObjectUniformProbe(backend), backendId,
+    )
+    const probe = objectUniform[backendId]
+    if (!probe?.ok) {
+      failures.push(
+        `${backendId}/object-uniform: ${probe?.phase ?? 'missing'} — ${probe?.error ?? 'no result'}`,
+      )
+    } else if (
+      Math.abs(probe.leftRed - 0.25) > 0.02 || Math.abs(probe.rightRed - 0.75) > 0.02
+    ) {
+      failures.push(
+        `${backendId}/object-uniform: per-object values not delivered `
+        + `(left=${probe.leftRed.toFixed(3)}, right=${probe.rightRed.toFixed(3)})`,
+      )
+    }
+  }
+
   const crossBackend = {}
   for (const effectId of ids.node) {
     const native = node.native[effectId]
@@ -317,6 +339,7 @@ try {
     node,
     service,
     runtime,
+    objectUniform,
     crossBackend,
     lookContinuity,
     summary,

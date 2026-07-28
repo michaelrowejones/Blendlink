@@ -14,7 +14,8 @@
 // canvas capture is bottom-up; only orientation-independent stats (mean
 // luma, non-background count) are compared across the two capture paths.
 import * as THREE from 'three'
-import { RenderPipeline, WebGPURenderer } from 'three/webgpu'
+import { MeshBasicNodeMaterial, RenderPipeline, WebGPURenderer } from 'three/webgpu'
+import { uniform, vec4 as tslVec4 } from 'three/tsl'
 import {
   directionToColor,
   emissive,
@@ -846,3 +847,58 @@ window.__wgpuNodeIds = () => {
 }
 
 window.__wgpuNodeReady = () => state.ready
+
+// Track C proof cell: does uniform().onObjectUpdate deliver PER-OBJECT
+// values through one shared node material on three 0.184?  Two quads share
+// one MeshBasicNodeMaterial whose red channel reads the rendering object's
+// userData; distinct halves prove the contract and lift the per-mesh
+// material fork for generated/object_coords populations.
+window.__wgpuObjectUniformProbe = async (backendId) => {
+  const entry = state.node[backendId]
+  if (!entry) return { ok: false, phase: 'construct-renderer' }
+  const { renderer } = entry
+  let phase = 'construct'
+  let target = null
+  const scene = new THREE.Scene()
+  try {
+    const perObject = uniform(0)
+    perObject.onObjectUpdate(({ object }) => object.userData.blendlinkProbeValue ?? 0)
+    const material = new MeshBasicNodeMaterial()
+    material.colorNode = tslVec4(perObject, 0, 0, 1)
+    const geometry = new THREE.PlaneGeometry(1, 2)
+    const left = new THREE.Mesh(geometry, material)
+    left.position.x = -0.5
+    left.userData.blendlinkProbeValue = 0.25
+    const right = new THREE.Mesh(geometry, material)
+    right.position.x = 0.5
+    right.userData.blendlinkProbeValue = 0.75
+    scene.add(left, right)
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
+    camera.position.z = 2
+    phase = 'render'
+    target = new THREE.RenderTarget(SIZE, SIZE, { type: THREE.UnsignedByteType })
+    renderer.setRenderTarget(target)
+    renderer.render(scene, camera)
+    renderer.setRenderTarget(null)
+    phase = 'readback'
+    const data = await renderer.readRenderTargetPixelsAsync(target, 0, 0, SIZE, SIZE)
+    const mid = Math.floor(SIZE / 2)
+    const sample = (x) => data[(mid * SIZE + x) * 4] / 255
+    const leftRed = sample(Math.floor(SIZE * 0.25))
+    const rightRed = sample(Math.floor(SIZE * 0.75))
+    return { ok: true, leftRed, rightRed }
+  } catch (error) {
+    return {
+      ok: false,
+      phase,
+      error: `${error?.name ?? 'Error'}: ${error?.message ?? error}`,
+    }
+  } finally {
+    try {
+      renderer.setRenderTarget(null)
+      target?.dispose()
+    } catch {
+      // The recorded failure above is the evidence.
+    }
+  }
+}

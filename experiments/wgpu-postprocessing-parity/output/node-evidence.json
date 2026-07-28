@@ -701,6 +701,18 @@
       "skipped": []
     }
   },
+  "objectUniform": {
+    "native": {
+      "ok": true,
+      "leftRed": 0.25098039215686274,
+      "rightRed": 0.7490196078431373
+    },
+    "fallback": {
+      "ok": true,
+      "leftRed": 0.25098039215686274,
+      "rightRed": 0.7490196078431373
+    }
+  },
   "crossBackend": {
     "render-pass-only": {
       "meanLumaDelta": 0.000048353273513157546,
