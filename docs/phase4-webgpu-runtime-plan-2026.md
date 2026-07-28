@@ -277,6 +277,32 @@ The consumer for `blendlink_tsl_ir`, designed against the census:
   (ADR 0006) plus contact shadows' blur ShaderMaterials (MaxEquation
   blending re-verified on WebGPU).
 
+## Ellie acceptance map (measured 2026-07-28, read-only plan probe)
+
+With every material marked in-memory: 121 meshes, 53 marked, 50
+materialBake decisions form, 60 channels already emit IR — but **44
+plan errors** and **zero texture_ref emissions**, because the blockers
+sit in front of the transport:
+
+1. **Deforming-object bake constraints** (the fundamental one): the
+   first-materialization gate refuses `Armature`/`Subdivision`
+   modifiers and "animated or driven object data" on every character
+   mesh. Channel bakes are UV-space and deformation-independent in
+   principle — accepting REST-pose evaluated bakes for armature
+   populations is an MTL-BAKE constraint-model evolution, not a
+   transport change.
+2. **Mix-Shader surface roots**: her paint materials refuse at
+   "exactly one Principled BSDF" — the bake planner needs the
+   emit_surface frontier the IR evidence already crossed.
+3. Multi-binding (eyes/gums/teeth), multi-slot (watch, 6 slots), and
+   view-dependent pupils — per-binding constraints that curation or
+   MTL-CONS work addresses.
+4. Small ports: Bump, NormalMap, VectorTransform, Attribute OBJECT,
+   Noise linked-Detail (each cell-sized).
+
+The texture_ref transport (a551a18) is necessary but not sufficient;
+items 1–2 are compiler-model decisions worth explicit prioritization.
+
 ## Sequencing
 
 0. Track 0 harness (per-effect fixtures + WebGL2-fallback measurement).
