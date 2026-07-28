@@ -121,6 +121,18 @@ def _refuse(reason: str):
     raise TslIrRefusal(reason)
 
 
+# Production opt-in (Phase 4 Track C): over-budget images emit texture_ref
+# ops resolved against published image assets instead of refusing. The
+# differential harness never sets this — its cells keep the byte-exact
+# embedded-pixel contract.
+_allow_texture_refs = False
+
+
+def set_texture_ref_emission(enabled: bool) -> None:
+    global _allow_texture_refs
+    _allow_texture_refs = bool(enabled)
+
+
 def _constant_value(socket):
     value = getattr(socket, "default_value", None)
     if value is None:
@@ -1072,12 +1084,52 @@ def emit_output(node, from_socket, stack=()):
         if width <= 0 or height <= 0:
             _refuse("Image Texture with no pixel data")
         if width * height > 128 * 128:
-            # The IR route embeds pixels (the harness's float oracle); the
-            # production texture-binding route carries larger images.
-            _refuse(
-                f"Image {width}x{height} exceeds the embedded-IR bound "
-                "(128x128); the texture transport carries it"
-            )
+            if not _allow_texture_refs:
+                # The IR route embeds pixels (the harness's float oracle);
+                # the production texture-binding route carries larger images.
+                _refuse(
+                    f"Image {width}x{height} exceeds the embedded-IR bound "
+                    "(128x128); the texture transport carries it"
+                )
+            if projection == "BOX":
+                _refuse(
+                    "Image BOX projection with the texture transport has "
+                    "no cell yet (embedded sharp box only)"
+                )
+            if bool(getattr(image, "is_float", False)):
+                _refuse(
+                    "Float-buffer image with the texture transport has no "
+                    "cell yet (browser decode of float formats unproven)"
+                )
+            if node.inputs["Vector"].is_linked:
+                reference_vector = emit_input(
+                    node.inputs["Vector"], stack=stack, as_vector=True,
+                )
+            else:
+                reference_vector = {"op": "uv"}
+            # Hardware sampling against the published source bytes; the
+            # sRGB decode and alpha association follow the browser's image
+            # pipeline (named fidelity note vs the byte-exact embedded
+            # oracle). The ref carries the sampling contract so the
+            # runtime configures one texture per distinct triple.
+            return {
+                "op": "texture_ref",
+                "ref": {
+                    "image": str(image.name),
+                    "interpolation": interpolation,
+                    "extension": extension,
+                },
+                "image": {
+                    "name": str(image.name),
+                    "width": width,
+                    "height": height,
+                    "colorSpace": colorspace,
+                },
+                "interpolation": interpolation,
+                "extension": extension,
+                "output": "alpha" if image_output == "Alpha" else "color",
+                "vector": reference_vector,
+            }
         pixels = list(image.pixels)
         if len(pixels) != width * height * 4:
             _refuse("Image pixel buffer is not RGBA")

@@ -142,6 +142,86 @@ describe('installTslMaterials', () => {
     installed.dispose()
   })
 
+  it('resolves texture_ref programs through the injected image decoder', async () => {
+    const material = new THREE.MeshStandardMaterial()
+    material.userData.blendlink_source_material = 'Paint'
+    const { root, mesh } = sceneWith(material)
+    const data = new Uint8Array(4 * 4 * 4).fill(255)
+    const texture = new THREE.DataTexture(data, 4, 4)
+    const loadProgramTexture = vi.fn(async () => texture)
+    const installed = await installTslMaterials({
+      root,
+      descriptor: { materialPrograms: pointer },
+      loadPrograms: async () => ({
+        ...programs({
+          Paint: {
+            channels: {
+              'Base Color': {
+                tslIr: {
+                  ...UV_X_DOCUMENT,
+                  output: {
+                    op: 'texture_ref',
+                    ref: { image: 'stroke', interpolation: 'Linear', extension: 'REPEAT' },
+                    image: { name: 'stroke', width: 2048, height: 2048, colorSpace: 'sRGB' },
+                    interpolation: 'Linear',
+                    extension: 'REPEAT',
+                    output: 'color',
+                    vector: { op: 'uv' },
+                  },
+                },
+              },
+            },
+          },
+        }),
+        images: {
+          stroke: {
+            file: 'x.tex.stroke.png', bytes: 1, hash: 'y', mime: 'image/png',
+            width: 2048, height: 2048, colorSpace: 'sRGB',
+          },
+        },
+      }),
+      loadProgramTexture,
+    })
+    expect(loadProgramTexture).toHaveBeenCalledOnce()
+    expect(installed.applied).toBe(1)
+    expect(installed.skipped).toEqual([])
+    expect((mesh.material as unknown as { colorNode: unknown }).colorNode).toBeTruthy()
+    installed.dispose()
+  })
+
+  it('skips texture_ref channels by name when the image is unpublished', async () => {
+    const material = new THREE.MeshStandardMaterial()
+    material.userData.blendlink_source_material = 'Paint'
+    const { root, mesh } = sceneWith(material)
+    const installed = await installTslMaterials({
+      root,
+      descriptor: { materialPrograms: pointer },
+      loadPrograms: async () => programs({
+        Paint: {
+          channels: {
+            'Base Color': {
+              tslIr: {
+                ...UV_X_DOCUMENT,
+                output: {
+                  op: 'texture_ref',
+                  ref: { image: 'stroke' },
+                  image: { name: 'stroke', width: 2048, height: 2048, colorSpace: 'sRGB' },
+                  output: 'color',
+                  vector: { op: 'uv' },
+                },
+              },
+            },
+          },
+        },
+      }),
+    })
+    expect(installed.applied).toBe(0)
+    expect(mesh.material).toBe(material)
+    expect(installed.skipped.some((item) =>
+      /BuildTslOptions\.textures/.test(item.reason))).toBe(true)
+    installed.dispose()
+  })
+
   it('keeps clones connected through trackMaterialClone and releases on dispose', async () => {
     const material = new THREE.MeshStandardMaterial()
     material.userData.blendlink_source_material = 'Paint'

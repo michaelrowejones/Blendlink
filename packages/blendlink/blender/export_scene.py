@@ -794,13 +794,85 @@ def publish_environment(recipe: dict | None, out_path: str) -> dict | None:
     }
 
 
+def _collect_program_image_names(value, names) -> None:
+    if isinstance(value, dict):
+        if value.get("op") == "texture_ref":
+            image = value.get("image") or {}
+            names.add(str(image.get("name")))
+        for item in value.values():
+            _collect_program_image_names(item, names)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            _collect_program_image_names(item, names)
+
+
+_PROGRAM_IMAGE_MIME = {
+    "PNG": ("image/png", ".png"),
+    "JPEG": ("image/jpeg", ".jpg"),
+    "WEBP": ("image/webp", ".webp"),
+}
+
+
+def _publish_program_image(name: str, out_path: str) -> dict:
+    """Publish one texture_ref source image beside the GLB, exact bytes."""
+    image = bpy.data.images.get(name)
+    if image is None:
+        raise SystemExit(
+            f"TSL program image {name!r} no longer exists in the file"
+        )
+    file_format = str(getattr(image, "file_format", "") or "")
+    if file_format not in _PROGRAM_IMAGE_MIME:
+        raise SystemExit(
+            f"TSL program image {name!r} uses format {file_format!r}; the "
+            "texture transport publishes PNG/JPEG/WebP source bytes only"
+        )
+    mime, extension = _PROGRAM_IMAGE_MIME[file_format]
+    published_path = (
+        f"{out_path}.tex.{artifact_filename_token(name)}{extension}"
+    )
+    packed_payloads = bakelib.packed_image_payloads(image)
+    if packed_payloads:
+        if len(packed_payloads) != 1:
+            raise SystemExit(
+                f"packed TSL program image {name!r} has multiple sources"
+            )
+        payload = packed_payloads[0][1]
+        if not payload:
+            raise SystemExit(
+                f"packed TSL program image {name!r} contains no bytes"
+            )
+        with open(published_path, "wb") as handle:
+            handle.write(payload)
+    else:
+        raw_path = bpy.path.abspath(image.filepath) if image.filepath else ""
+        if not raw_path or not os.path.isfile(raw_path):
+            raise SystemExit(
+                f"TSL program image {name!r} points to missing file "
+                f"{raw_path!r}; relink it or pack it into the .blend"
+            )
+        shutil.copyfile(raw_path, published_path)
+    return {
+        "path": published_path,
+        "file": os.path.basename(published_path),
+        "bytes": os.path.getsize(published_path),
+        "hash": bakelib.file_sha256(published_path)[:16],
+        "mime": mime,
+        "width": int(image.size[0]),
+        "height": int(image.size[1]),
+        "colorSpace": str(image.colorspace_settings.name),
+    }
+
+
 def publish_material_programs(material_plan, out_path: str) -> dict | None:
     """Publish the per-channel TSL IR programs beside the GLB.
 
     This sidecar is the Phase 4 material runtime's program transport: IR
     bodies never inline into the generated module (the per-channel 256 KB
     budget exists precisely because they can be large), and tslIrHash pins
-    content end to end. No lowered material with IR means no file.
+    content end to end. texture_ref source images publish as hash-pinned
+    exact-byte assets beside the GLB, listed in the document's images map
+    (runtime resolves the basenames against the sidecar URL). No lowered
+    material with IR means no file.
     """
     if material_plan is None:
         return None
@@ -820,10 +892,20 @@ def publish_material_programs(material_plan, out_path: str) -> dict | None:
             materials[decision.material_name] = {"channels": channels}
     if not materials:
         return None
+    image_names = set()
+    for entry in materials.values():
+        _collect_program_image_names(entry["channels"], image_names)
+    images = {}
+    texture_paths = []
+    for name in sorted(image_names):
+        published = _publish_program_image(name, out_path)
+        texture_paths.append(published.pop("path"))
+        images[name] = published
     document = {
         "schemaVersion": 1,
         "model": "blendlink-material-programs-v1",
         "materials": materials,
+        **({"images": images} if images else {}),
     }
     published_path = f"{out_path}.materials.json"
     payload = json.dumps(
@@ -836,6 +918,7 @@ def publish_material_programs(material_plan, out_path: str) -> dict | None:
         "bytes": len(payload),
         "hash": hashlib.sha256(payload).hexdigest()[:16],
         "materials": len(materials),
+        **({"texturePaths": texture_paths} if texture_paths else {}),
     }
 
 

@@ -29,10 +29,23 @@ export interface MaterialProgramChannel {
   tslIrBytes?: number
 }
 
+export interface MaterialProgramImage {
+  /** Basename beside the sidecar; resolved against the sidecar URL. */
+  file: string
+  bytes: number
+  hash: string
+  mime: string
+  width: number
+  height: number
+  colorSpace: string
+}
+
 export interface MaterialProgramsDocument {
   schemaVersion: 1
   model: 'blendlink-material-programs-v1'
   materials: Record<string, { channels: Record<string, MaterialProgramChannel> }>
+  /** texture_ref source images published beside the sidecar. */
+  images?: Record<string, MaterialProgramImage>
 }
 
 /** The mesh extras stamped by the exporter (blendlink_tsl_runtime). */
@@ -63,6 +76,14 @@ export interface InstallTslMaterialsOptions {
     source: THREE.Material,
     clone: THREE.Material,
   ) => (transferred: boolean) => void
+  /** Override texture_ref image decoding (tests, custom decoders). The
+   * default fetches the published bytes (count + hash verified) and
+   * decodes through createImageBitmap with glTF orientation. */
+  loadProgramTexture?: (
+    name: string,
+    entry: MaterialProgramImage,
+    url: string,
+  ) => Promise<THREE.Texture>
 }
 
 export interface TslMaterialSkip {
@@ -132,6 +153,110 @@ async function fetchPrograms(pointer: {
   return document
 }
 
+async function defaultProgramTexture(
+  entry: MaterialProgramImage,
+  url: string,
+): Promise<THREE.Texture> {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Blendlink program image fetch failed (${response.status}) for ${url}`)
+  }
+  const payload = new Uint8Array(await response.arrayBuffer())
+  if (payload.byteLength !== entry.bytes) {
+    throw new Error(
+      `Blendlink program image at ${url} is ${payload.byteLength} bytes; the sidecar pins ` +
+        `${entry.bytes}. Re-run blendlink sync and republish together.`,
+    )
+  }
+  const digest = await crypto.subtle.digest(
+    'SHA-256', payload.buffer.slice(payload.byteOffset, payload.byteOffset + payload.byteLength),
+  )
+  const hash = [...new Uint8Array(digest)]
+    .map((item) => item.toString(16).padStart(2, '0')).join('').slice(0, 16)
+  if (hash !== entry.hash) {
+    throw new Error(
+      `Blendlink program image at ${url} hash ${hash}; the sidecar pins ${entry.hash}.`,
+    )
+  }
+  const bitmap = await createImageBitmap(
+    new Blob([payload], { type: entry.mime }),
+    { premultiplyAlpha: 'none', colorSpaceConversion: 'none' },
+  )
+  const texture = new THREE.Texture(bitmap as unknown as HTMLImageElement)
+  // glTF orientation: exported TEXCOORDs are already V-flipped from
+  // Blender space, matching standard top-down image rows.
+  texture.flipY = false
+  texture.colorSpace = entry.colorSpace === 'sRGB'
+    ? THREE.SRGBColorSpace
+    : THREE.NoColorSpace
+  texture.needsUpdate = true
+  return texture
+}
+
+interface ProgramTextureSet {
+  resolver: NonNullable<BuildTslOptions['textures']>
+  dispose(): void
+}
+
+async function loadProgramTextures(
+  document: MaterialProgramsDocument,
+  programsUrl: string,
+  options: InstallTslMaterialsOptions,
+): Promise<ProgramTextureSet | null> {
+  const entries = Object.entries(document.images ?? {})
+  if (entries.length === 0) return null
+  const base = new URL(
+    programsUrl,
+    typeof globalThis.location?.href === 'string'
+      ? globalThis.location.href
+      : 'http://blendlink.local/',
+  )
+  const decoded = new Map<string, THREE.Texture>()
+  for (const [name, entry] of entries) {
+    const url = new URL(entry.file, base).toString()
+    decoded.set(
+      name,
+      options.loadProgramTexture
+        ? await options.loadProgramTexture(name, entry, url)
+        : await defaultProgramTexture(entry, url),
+    )
+  }
+  const configured = new Map<string, THREE.Texture>()
+  return {
+    resolver(ref) {
+      const name = String((ref as { image?: unknown }).image ?? '')
+      const source = decoded.get(name)
+      if (!source) return null
+      const interpolation = String((ref as { interpolation?: unknown }).interpolation ?? 'Linear')
+      const extension = String((ref as { extension?: unknown }).extension ?? 'REPEAT')
+      const key = `${name}|${interpolation}|${extension}`
+      let texture = configured.get(key)
+      if (!texture) {
+        texture = source.clone()
+        const filter = interpolation === 'Closest'
+          ? THREE.NearestFilter
+          : THREE.LinearFilter
+        texture.magFilter = filter
+        texture.minFilter = filter
+        texture.generateMipmaps = false
+        texture.wrapS = extension === 'EXTEND'
+          ? THREE.ClampToEdgeWrapping
+          : THREE.RepeatWrapping
+        texture.wrapT = texture.wrapS
+        texture.needsUpdate = true
+        configured.set(key, texture)
+      }
+      return texture
+    },
+    dispose() {
+      for (const texture of configured.values()) texture.dispose()
+      for (const texture of decoded.values()) texture.dispose()
+      configured.clear()
+      decoded.clear()
+    },
+  }
+}
+
 function meshRuntimeExtras(object: THREE.Object3D): TslRuntimeMeshExtras | null {
   const extras = object.userData?.blendlink_tsl_runtime
   return extras && typeof extras === 'object'
@@ -143,8 +268,10 @@ function buildOptionsFor(
   extras: TslRuntimeMeshExtras | null,
   resources: BuildTslOptions['resources'],
   materialName: string,
+  textures?: BuildTslOptions['textures'],
 ): BuildTslOptions {
   const options: BuildTslOptions = { resources }
+  if (textures) options.textures = textures
   if (extras?.uvChannels) {
     const uvChannels = extras.uvChannels
     options.uvChannel = (uvMap) => {
@@ -200,6 +327,7 @@ export async function installTslMaterials(
   const programs = options.loadPrograms
     ? await options.loadPrograms()
     : await fetchPrograms(pointer)
+  const programTextures = await loadProgramTextures(programs, pointer.url, options)
 
   const skipped: TslMaterialSkip[] = []
   interface InstalledSwap {
@@ -236,6 +364,7 @@ export async function installTslMaterials(
       variant.resources.dispose()
     }
     variants.clear()
+    programTextures?.dispose()
   }
 
   try {
@@ -270,7 +399,9 @@ export async function installTslMaterials(
           clone.copy(material as unknown as MeshStandardNodeMaterial)
           clone.name = material.name
           clone.userData = { ...material.userData }
-          const buildOptions = buildOptionsFor(extras, resources, source)
+          const buildOptions = buildOptionsFor(
+            extras, resources, source, programTextures?.resolver,
+          )
           let builtAny = false
           for (const [channel, entry] of channels) {
             const mapping = CHANNEL_NODES[channel]

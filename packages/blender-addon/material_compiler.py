@@ -2630,6 +2630,28 @@ def _attach_tsl_ir(tree, channels) -> None:
     import hashlib
     import json as _json
 
+    # Production emission carries over-budget images as texture_ref ops
+    # against published assets; the harness contract stays embedded-only.
+    tsl_ir.set_texture_ref_emission(True)
+    try:
+        _attach_tsl_ir_documents(tree, channels, hashlib, _json)
+    finally:
+        tsl_ir.set_texture_ref_emission(False)
+
+
+def _collect_texture_ref_images(value, names) -> None:
+    if isinstance(value, dict):
+        if value.get("op") == "texture_ref":
+            image = value.get("image") or {}
+            names.add(str(image.get("name")))
+        for item in value.values():
+            _collect_texture_ref_images(item, names)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            _collect_texture_ref_images(item, names)
+
+
+def _attach_tsl_ir_documents(tree, channels, hashlib, _json) -> None:
     try:
         root, stack = tsl_ir.find_principled_root(tree)
     except tsl_ir.TslIrRefusal as refusal:
@@ -2675,6 +2697,14 @@ def _attach_tsl_ir(tree, channels) -> None:
             entry["tslIrRefusal"] = (
                 f"IR serializes to {len(encoded)} bytes, over the "
                 f"{TSL_IR_BYTE_BUDGET}-byte channel budget"
+            )
+            continue
+        referenced_images = set()
+        _collect_texture_ref_images(document, referenced_images)
+        if len(referenced_images) > 1:
+            entry["tslIrRefusal"] = (
+                f"channel references {len(referenced_images)} large "
+                "images; the texture transport carries one per channel"
             )
             continue
         entry["tslIr"] = document

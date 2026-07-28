@@ -889,9 +889,18 @@ function build(expression: TslIrExpression): TslExpression {
         )
       }
       const vector = build(child(expression, 'vector'))
-      return tslTexture(
+      const sampled: TslExpression = tslTexture(
         map as never, tslVec2(vector.x, vector.y),
       )
+      const lanes = sampled as unknown as {
+        a: TslExpression
+        r: TslExpression
+        g: TslExpression
+        b: TslExpression
+      }
+      return expression.output === 'alpha'
+        ? lanes.a
+        : tslVec3(lanes.r, lanes.g, lanes.b)
     }
     case 'tex_image': {
       // Cycles-style manual sampling over an embedded RGBA float image:
