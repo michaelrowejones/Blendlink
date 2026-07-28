@@ -245,6 +245,34 @@ Two findings the hash batch measured, both worth remembering:
    are integer-valued and identical; continuous inputs stay
    same-distribution but numerically incomparable.
 
+## Captured lighting — the EEVEE oracle (2026-07-27, latest)
+
+Shader to RGB cannot be evaluated by Cycles at all, so the harness
+gained a second oracle: EEVEE orthographic renders of the unit tile
+under a fixed-light contract (one sun with declared rotation/strength,
+no world, 1 sample, Raw view transform, float EXR readback). Measured:
+EEVEE's diffuse capture is exactly albedo × S·cos(θ)/π — gated through
+two contract points (straight-on and 60°) plus the full splash chain
+shape (capture → Separate → ColorRamp → coerced surface) at 1.5e-4.
+The `shader_to_rgb_diffuse` op consumes
+`BuildTslOptions.diffuseIrradiance` (harness: the analytic contract;
+production: real lighting — Phase 4's application seam, like viewCos).
+Flat-tile bound: N cannot vary per texel, so the cosine is gated across
+cells, not across the image.
+
+Sharp BOX projection (blend 0) is ported with the measured
+sign-dependent per-plane flips at 2.1e-8; the flat tile gates the +Z
+branch, the other planes carry the same ported formula as a named
+bound, and blend > 0 refuses (the splash BOX population turns out to
+use blend > 0 — now precisely named).
+
+**Glass BSDF disposition**: Glass stays a named surface refusal by
+decision, not omission. The six-channel model has no transmission
+channel; canonicalizing Glass onto alpha would fabricate an appearance
+Cycles does not render. The honest path is a transmission channel +
+KHR_materials_transmission on the receiver — a contract change that
+belongs with Phase 4's material application, not a lossy hack here.
+
 ## Limits
 
 - Hand-written TSL mappings stand in for the future compiler's output: a

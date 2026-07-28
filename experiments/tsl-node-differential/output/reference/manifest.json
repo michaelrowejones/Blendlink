@@ -1938,6 +1938,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "tex-image-box": {
+      "path": "tex-image-box.f32",
+      "pipeline": "ir",
+      "ir": "ir/tex-image-box.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.078125,
+        0.078125,
+        0.1071428582072258
+      ],
+      "rgbMax": [
+        0.921875,
+        0.921875,
+        0.8928571343421936
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "noise-color": {
       "path": "noise-color.f32",
       "pipeline": "ir",
@@ -2201,6 +2223,72 @@
       ],
       "deviceClass": "gpu",
       "backend": "optix"
+    },
+    "shader-to-rgb-flat": {
+      "path": "shader-to-rgb-flat.f32",
+      "pipeline": "ir",
+      "ir": "ir/shader-to-rgb-flat.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007457733154296875,
+        0.66796875,
+        0.007457733154296875
+      ],
+      "rgbMax": [
+        0.947265625,
+        0.66796875,
+        0.947265625
+      ],
+      "deviceClass": "eevee",
+      "backend": "BLENDER_EEVEE"
+    },
+    "shader-to-rgb-tilted": {
+      "path": "shader-to-rgb-tilted.f32",
+      "pipeline": "ir",
+      "ir": "ir/shader-to-rgb-tilted.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.0037288665771484375,
+        0.334228515625,
+        0.0037288665771484375
+      ],
+      "rgbMax": [
+        0.4736328125,
+        0.334228515625,
+        0.4736328125
+      ],
+      "deviceClass": "eevee",
+      "backend": "BLENDER_EEVEE"
+    },
+    "shader-to-rgb-ramped": {
+      "path": "shader-to-rgb-ramped.f32",
+      "pipeline": "ir",
+      "ir": "ir/shader-to-rgb-ramped.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.04998779296875,
+        0.0999755859375,
+        0.0999755859375
+      ],
+      "rgbMax": [
+        0.89990234375,
+        0.599609375,
+        0.599609375
+      ],
+      "deviceClass": "eevee",
+      "backend": "BLENDER_EEVEE"
     },
     "fresnel-dielectric": {
       "path": "fresnel-dielectric.f32",

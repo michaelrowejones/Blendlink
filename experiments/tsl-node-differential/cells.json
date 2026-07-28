@@ -805,6 +805,13 @@
       "notes": "3D F1 Distance at scale 40 (x0.6) — the deepest voronoi in the ellie paint chain. Voronoi tolerates coordinate wiggle structurally (integer-cell hashing; only local distances shift), unlike fBM noise whose octave phases amplify, so its bound is measured separately."
     },
     {
+      "id": "tex-image-box",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
+      "failureClass": "corpus-measured node gap (Image BOX projection x10)",
+      "notes": "Sharp box mapping (blend 0) over Object coordinates: the +Z tile normal selects the z-plane with the measured flip (Nz>0 -> u = 1-y, v = x), and the out-of-range sweep exercises REPEAT. The flat tile gates only the +Z branch; the other planes carry the same ported Cycles formula (sign flips included) as a named bound. Blend > 0 refuses."
+    },
+    {
       "id": "noise-color",
       "gate": true,
       "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},

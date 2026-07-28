@@ -70,6 +70,8 @@ export interface TslExpression {
   bitXor(value: TslExprLike): TslExpression
   bitOr(value: TslExprLike): TslExpression
   bitAnd(value: TslExprLike): TslExpression
+  greaterThan(value: TslExprLike): TslExpression
+  and(value: TslExprLike): TslExpression
   toVar(name?: string): TslExpression
   shiftLeft(value: TslExprLike): TslExpression
   shiftRight(value: TslExprLike): TslExpression
@@ -185,6 +187,9 @@ const tslNormalize = normalize as unknown as (
 const tslCameraPosition = cameraPosition as unknown as TslExpression
 const tslPositionWorld = positionWorld as unknown as TslExpression
 const tslPositionGeometry = positionGeometry as unknown as TslExpression
+const tslNormalLocal = (
+  (TSLX as Record<string, unknown>).normalLocal as unknown as TslExpression
+)
 const tslNormalWorld = normalWorld as unknown as TslExpression
 
 export interface BuildTslOptions {
@@ -810,6 +815,36 @@ function build(expression: TslIrExpression): TslExpression {
       map.generateMipmaps = false
       map.needsUpdate = true
       const vector = build(child(expression, 'vector'))
+      let coordU = vector.x
+      let coordV = vector.y
+      if (expression.projection === 'box') {
+        // Cycles sharp box mapping (blend 0): the dominant |N| axis in
+        // OBJECT space picks the plane, with the measured sign-dependent
+        // flips: x-plane (Nx<0 ? 1-y : y, z); y-plane (Ny>0 ? 1-x : x,
+        // z); z-plane (Nz>0 ? 1-y : y, x). The flat harness tile gates
+        // the +Z branch exactly; the other branches carry the same
+        // ported formula (named bound in the cell notes).
+        const n = tslNormalLocal
+        const ax = tslAbs(n.x)
+        const ay = tslAbs(n.y)
+        const az = tslAbs(n.z)
+        const xDominant = ax.greaterThan(ay).and(ax.greaterThan(az))
+        const yDominant = ay.greaterThan(ax).and(ay.greaterThan(az))
+        const flip = (
+          condition: TslExpression, value: TslExpression,
+        ): TslExpression => tslSelect(
+          condition, tslOneMinus(value), value,
+        )
+        const xPlaneU = flip(n.x.lessThan(0.0), vector.y)
+        const yPlaneU = flip(n.y.greaterThan(0.0), vector.x)
+        const zPlaneU = flip(n.z.greaterThan(0.0), vector.y)
+        coordU = tslSelect(
+          xDominant, xPlaneU, tslSelect(yDominant, yPlaneU, zPlaneU),
+        )
+        coordV = tslSelect(
+          xDominant, vector.z, tslSelect(yDominant, vector.z, vector.x),
+        )
+      }
       const extension = String(expression.extension)
       const wrapIndex = (
         index: TslExpression, size: number,
@@ -827,12 +862,12 @@ function build(expression: TslIrExpression): TslExpression {
       let sample: TslExpression
       if (expression.interpolation === 'Closest') {
         sample = texel(
-          tslFloor(vector.x.mul(width)),
-          tslFloor(vector.y.mul(height)),
+          tslFloor(coordU.mul(width)),
+          tslFloor(coordV.mul(height)),
         )
       } else {
-        const x = vector.x.mul(width).sub(0.5)
-        const y = vector.y.mul(height).sub(0.5)
+        const x = coordU.mul(width).sub(0.5)
+        const y = coordV.mul(height).sub(0.5)
         const ix = tslFloor(x)
         const iy = tslFloor(y)
         const fx = x.sub(ix)

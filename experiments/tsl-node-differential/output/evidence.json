@@ -974,6 +974,17 @@
       },
       "failureClass": "voronoi frequency bound (scale <= 40 candidate)"
     },
+    "tex-image-box": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 2.1012965589761734e-8,
+        "p99Abs": 2.384185791015625e-7,
+        "maxAbs": 2.980232238769531e-7
+      },
+      "failureClass": "corpus-measured node gap (Image BOX projection x10)"
+    },
     "noise-color": {
       "ok": true,
       "gated": true,
@@ -1105,6 +1116,39 @@
         "maxAbs": 4.172325134277344e-7
       },
       "failureClass": "surface expression (view-dependent factor)"
+    },
+    "shader-to-rgb-flat": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0002657566365087405,
+        "p99Abs": 0.00048226118087768555,
+        "maxAbs": 0.00048226118087768555
+      },
+      "failureClass": "captured lighting (Shader to RGB, EEVEE oracle)"
+    },
+    "shader-to-rgb-tilted": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00005350479962847506,
+        "p99Abs": 0.0002333223819732666,
+        "maxAbs": 0.0002333223819732666
+      },
+      "failureClass": "captured lighting (cosine law under the light contract)"
+    },
+    "shader-to-rgb-ramped": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00014563958393409848,
+        "p99Abs": 0.0004730820655822754,
+        "maxAbs": 0.00048482418060302734
+      },
+      "failureClass": "captured lighting (the full splash chain shape)"
     },
     "fresnel-dielectric": {
       "ok": true,
@@ -1264,187 +1308,17 @@
           "channelsCompiled": 84,
           "viewDependent": 0,
           "refusals": {
-            "ShaderNodeShaderToRGB has no proven TSL mapping": 18,
+            "ShaderNodeAmbientOcclusion has no proven TSL mapping": 17,
             "Noise dimensions '4D' has no cell yet": 1,
-            "Image projection 'BOX' has no cell yet": 10,
+            "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
+            "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1,
             "ShaderNodeObjectInfo has no proven TSL mapping": 2
           }
         },
-        "sampled": [
-          {
-            "cell": "LeafOutline--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "LeafOutline.001--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "LeafOutline.002--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "LeafOutline.003--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline.001--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline.002--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline.003--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline.004--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline.005--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline.006--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline.007--Emission_Color.surface",
-            "status": "baked"
-          },
-          {
-            "cell": "Outline.008--Emission_Color.surface",
-            "status": "baked"
-          }
-        ],
+        "sampled": [],
         "irCompiledAttributeDriven": 1
       },
-      "differentials": {
-        "LeafOutline--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "LeafOutline.001--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "LeafOutline.002--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "LeafOutline.003--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline.001--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline.002--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline.003--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline.004--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline.005--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline.006--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline.007--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        },
-        "Outline.008--Emission_Color.surface": {
-          "ok": true,
-          "pass": true,
-          "measured": {
-            "meanAbs": 0,
-            "p99Abs": 0,
-            "maxAbs": 0
-          }
-        }
-      }
+      "differentials": {}
     },
     "trapx-painterly": {
       "coverage": {

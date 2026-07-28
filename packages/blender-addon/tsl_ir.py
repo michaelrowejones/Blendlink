@@ -1051,8 +1051,16 @@ def emit_output(node, from_socket, stack=()):
         extension = str(node.extension)
         if extension not in {"REPEAT", "EXTEND"}:
             _refuse(f"Image extension {extension!r} has no cell yet")
-        if str(node.projection) != "FLAT":
-            _refuse(f"Image projection {node.projection!r} has no cell yet")
+        projection = str(node.projection)
+        if projection not in {"FLAT", "BOX"}:
+            _refuse(f"Image projection {projection!r} has no cell yet")
+        if projection == "BOX" and abs(
+            float(getattr(node, "projection_blend", 0.0)),
+        ) > 1e-9:
+            _refuse(
+                "Image BOX projection with blend > 0 has no cell yet "
+                "(sharp box only)"
+            )
         if str(getattr(image, "alpha_mode", "STRAIGHT")) != "STRAIGHT":
             _refuse(
                 f"Image alpha mode {image.alpha_mode!r} has no cell yet"
@@ -1119,6 +1127,7 @@ def emit_output(node, from_socket, stack=()):
             "interpolation": interpolation,
             "extension": extension,
             "output": "alpha" if image_output == "Alpha" else "color",
+            **({"projection": "box"} if projection == "BOX" else {}),
             "vector": vector_expression,
         }
 

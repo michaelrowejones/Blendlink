@@ -1016,6 +1016,20 @@ def build_tex_image_linear(tree, emission):
     tree.links.new(node.outputs["Color"], emission.inputs["Color"])
 
 
+def build_tex_image_box(tree, emission):
+    node = tree.nodes.new("ShaderNodeTexImage")
+    node.image = _test_image(
+        "TSL_IMG_BOX", float_buffer=True, colorspace="Non-Color",
+    )
+    node.interpolation = "Linear"
+    node.extension = "REPEAT"
+    node.projection = "BOX"
+    node.projection_blend = 0.0
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    tree.links.new(coord.outputs["Object"], node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
 def build_tex_image_closest_srgb(tree, emission):
     node = tree.nodes.new("ShaderNodeTexImage")
     node.image = _test_image(
@@ -1763,6 +1777,7 @@ BUILDERS = {
     "voronoi-scale40": build_voronoi_scale40,
     "tex-image-linear": build_tex_image_linear,
     "tex-image-closest-srgb": build_tex_image_closest_srgb,
+    "tex-image-box": build_tex_image_box,
     "surface-mix-color": projection_mix_color,
     "surface-mix-scalar": projection_mix_scalar,
     "surface-transparent-alpha": projection_transparent_alpha,
