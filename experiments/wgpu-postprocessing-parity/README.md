@@ -68,3 +68,72 @@ not merely false; there is nothing to compare.
 - Limits: one scene, one machine, same-run comparison; a WebGL2-fallback
   `WebGPURenderer` would measure the fallback path, and the harness records
   which backend actually ran (`webgpuBackendReal`).
+
+---
+
+# WGPU-NODE-001 — the replacement pipeline, per effect (Phase 4 Track 0)
+
+The positive counterpart: the same deterministic scene rendered through the
+node-based pipeline (`RenderPipeline` + three's in-tree TSL display nodes +
+`n8ao-webgpu@0.1.0`), one cell per production effect configuration, on BOTH
+`WebGPURenderer` backends — native WebGPU and the WebGL2 fallback
+(`forceWebGL: true`) — beside the pinned pmndrs WebGL stack as the
+look-continuity control.
+
+## Reproduce
+
+```bash
+npm run test:wgpu-node-postprocessing
+```
+
+The sentinel `BLENDLINK_WGPU_NODE_MEASURED` means the measurement completed;
+a non-zero exit is the gate (any cell failing to construct/render on either
+backend, non-finite pixels, black frames, or an expected-active effect whose
+pixels match the no-effect baseline). Evidence: `output/node-evidence.json`.
+
+## Measured result — 2026-07-27
+
+**Native 14/14 · WebGL2 fallback 14/14 · control 13/13 · 0 gate failures.**
+Cells: render-pass-only, tone-mapping, bloom, selective-bloom (emissive
+MRT), chromatic-aberration, pixelation, outline, lut3d (neutral 32³),
+depth-of-field, custom TSL probe, n8ao, traa, fxaa, smaa. Named non-cells
+(`pendingTrackB`): vignette, tilt-shift, kuwahara — they wait on the
+Blendlink-owned display nodes and the run enforces the list stays honest.
+
+Cross-backend (native vs fallback, same algorithm, mean-luma delta):
+≤ 0.29 on every cell except `n8ao` (7.9–11.8 across runs — its temporal
+blue-noise accumulation is not converged at 3 warm-up frames; a tighter
+per-effect threshold needs convergence or accumulation pinned).
+
+Look continuity vs the pmndrs control (mean-luma delta, context not gate):
+
+| Cell | Delta | Reading |
+| --- | --- | --- |
+| render-pass-only | 0.01 | base image parity — readback verified |
+| custom TSL probe | 0.00 | custom Blendlink nodes are viable |
+| chromatic-aberration / outline / lut3d / pixelation | ≤ 0.49 | direct continuity |
+| tone-mapping | 5.2 | different operator by design (pmndrs effect vs `renderOutput`) |
+| depth-of-field | 13.6 | unit conventions differ (normalized CoC vs view-Z) — Track B maps parameters |
+| selective-bloom / bloom | 26 / 93 | pmndrs luminance threshold 0.9 vs node threshold 0 — Track B maps parameters |
+| n8ao | 68.4 | `n8ao-webgpu` defaults ≠ old `N8AOPostPass` defaults — Track B maps the authored AO config and re-measures |
+
+Measured traps encoded in the instrument:
+
+- WebGPU canvases may present-and-clear before a `drawImage` capture; node
+  cells read back through an explicit `RenderTarget` +
+  `readRenderTargetPixelsAsync` (the proven tsl-node-differential pattern).
+- The readback target must keep the default (no) color space:
+  `renderOutput` already encodes sRGB in-shader, and an `SRGBColorSpace`
+  target hardware-encodes AGAIN on write (measured: baseline luma 144 vs
+  the control's 79 — double-encode wash-out).
+- Upstream r184 bug: `chromaticAberration()`'s default `center = null` is
+  documented as "screen center" but `setup()` forwards the null into a
+  declared `vec2` parameter — output renders black. Pass
+  `vec2(0.5, 0.5)` explicitly.
+- `n8ao-webgpu@0.1.0` peers `three@^0.182.0`, which excludes the pinned
+  `0.184.0` (0.x caret semantics); the root `package.json` carries an
+  `overrides` entry pinning its peer to our three. Its real drift surface
+  is `NodeMaterial`/`QuadMesh`/`RendererUtils`/`TempNode` plus ~40 TSL
+  helpers (verified: it does NOT import the deprecated `PostProcessing`
+  alias) — re-measure on any three move, and vendor the pass (CC0-1.0) the
+  moment it lags.

@@ -60,20 +60,31 @@ evidence without a big-bang cutover.
 
 ## Track 0 — evidence first (prerequisite for everything)
 
-No committed CI gate renders browser pixels today: unit tests mock the
-renderer, the baked e2e verifies Blender output, and the examples gate
-only compiles. Until fixtures exist, the port could regress all 11
-effects with every suite green.
+STATUS: **MEASURED GREEN 2026-07-27** (WGPU-NODE-001,
+`npm run test:wgpu-node-postprocessing`, evidence in
+`experiments/wgpu-postprocessing-parity/output/node-evidence.json`).
+Node pipeline 14/14 on native WebGPU, 14/14 on the WebGL2 fallback
+(`forceWebGL`), pmndrs control 13/13, zero gate failures. Base-image
+parity with the control is 0.01 mean luma; the custom-TSL probe is
+0.00. Named residue for Track B: parameter-space mapping for bloom
+(pmndrs luminance threshold 0.9 vs node 0), depth-of-field (normalized
+CoC vs view-Z units), and n8ao (`n8ao-webgpu` defaults vs old
+`N8AOPostPass` — delta 68 luma until the authored AO config maps);
+n8ao temporal accumulation needs convergence before a tight
+cross-backend threshold; upstream r184 `chromaticAberration`
+null-center bug (pass `vec2(0.5, 0.5)`); vignette/tilt-shift/kuwahara
+rows stay `pendingTrackB` until the Blendlink-owned nodes exist.
 
-1. Extend `experiments/wgpu-postprocessing-parity` into the per-effect
-   fixture harness: it already renders the WebGL control for all 13
-   configurations and hashes pixels; reuse
-   `experiments/tsl-node-differential/main.js`'s proven
-   init/renderAsync/readRenderTargetPixelsAsync pattern for the WebGPU
-   side.
-2. Measure the WebGL2 fallback backend explicitly (`forceWebGL: true`)
-   — the "no device-support reduction" premise depends on it.
-3. Promote the harness into a registered browser-pixel CI gate.
+1. ~~Extend `experiments/wgpu-postprocessing-parity` into the
+   per-effect fixture harness~~ — done (`node-main.js`/`node-run.mjs`;
+   RenderTarget + `readRenderTargetPixelsAsync` readback, default-
+   color-space target to avoid double sRGB encode).
+2. ~~Measure the WebGL2 fallback backend explicitly~~ — done: 14/14,
+   cross-backend mean-luma delta ≤ 0.29 everywhere except n8ao.
+3. ~~Promote the harness into a registered browser-pixel CI gate~~ —
+   registered as `test:wgpu-node-postprocessing` (non-zero exit on any
+   construct/render/black-frame/inactive-effect failure), the same
+   registered-gate class as the other browser evidence commands.
 
 ## Track A — renderer core (mechanical first, behavior second)
 

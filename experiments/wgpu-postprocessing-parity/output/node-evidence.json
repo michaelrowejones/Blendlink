@@ -1,0 +1,551 @@
+{
+  "experiment": "wgpu-postprocessing-parity (node pipeline)",
+  "ledgerRow": "WGPU-NODE-001",
+  "command": "node experiments/wgpu-postprocessing-parity/node-run.mjs",
+  "executablePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "environment": {
+    "threeRevision": "184",
+    "webgpuAvailable": true,
+    "adapter": {
+      "vendor": "nvidia",
+      "architecture": "blackwell",
+      "device": "",
+      "description": ""
+    },
+    "backends": {
+      "control": {
+        "constructed": true
+      },
+      "native": {
+        "constructed": true,
+        "isWebGPUBackend": true
+      },
+      "fallback": {
+        "constructed": true,
+        "isWebGPUBackend": false
+      }
+    }
+  },
+  "control": {
+    "render-pass-only": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 78.72206961674675,
+        "nonBackgroundPixels": 146213,
+        "nonFinitePixels": 0,
+        "sha256": "c33650015e2f1a77e0fc3f7e36934082c4e0f348ab9e2a539d3bfcb4f8b07ed6"
+      }
+    },
+    "tone-mapping": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 83.864436164049,
+        "nonBackgroundPixels": 145514,
+        "nonFinitePixels": 0,
+        "sha256": "3fb00494d0b35ff441d16d717b1f455e8b5b0157c2f11043ddd7dc2cbd646384"
+      }
+    },
+    "bloom": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 78.74101471487404,
+        "nonBackgroundPixels": 146213,
+        "nonFinitePixels": 0,
+        "sha256": "d2dbee8b25d6d56041cd6d76a8fd3b210d76d42f2ffe4c53081e787e1ac95cd2"
+      }
+    },
+    "selective-bloom": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 78.74101471487404,
+        "nonBackgroundPixels": 146213,
+        "nonFinitePixels": 0,
+        "sha256": "d2dbee8b25d6d56041cd6d76a8fd3b210d76d42f2ffe4c53081e787e1ac95cd2"
+      }
+    },
+    "vignette": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 71.09821509474175,
+        "nonBackgroundPixels": 145121,
+        "nonFinitePixels": 0,
+        "sha256": "3d12c8e1be79f7816b10e10853106222b92327d41f13edf67e75107d7ebd72e4"
+      }
+    },
+    "chromatic-aberration": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 78.76002964814522,
+        "nonBackgroundPixels": 146492,
+        "nonFinitePixels": 0,
+        "sha256": "86116320fcac61914ee60131a53b717350537a47b0150d9edc2610022bf9a1d7"
+      }
+    },
+    "pixelation": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 78.86740102536629,
+        "nonBackgroundPixels": 146232,
+        "nonFinitePixels": 0,
+        "sha256": "56e3d3f903d784927950230d49dbdedd39e402b7a5163ecf5e3813f51813986f"
+      }
+    },
+    "tilt-shift": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 79.95174949541713,
+        "nonBackgroundPixels": 146776,
+        "nonFinitePixels": 0,
+        "sha256": "10972ca54961f3d9395e913ec19bf21adc17e6a0ec4e1690258858cd5655b6e8"
+      }
+    },
+    "outline": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 79.99348258731004,
+        "nonBackgroundPixels": 146213,
+        "nonFinitePixels": 0,
+        "sha256": "f5ff1bce5a4722139f13f4ab6f301196ec1c3c39bf0f902355a04072ef84a446"
+      }
+    },
+    "lut3d": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 78.74101471487404,
+        "nonBackgroundPixels": 146213,
+        "nonFinitePixels": 0,
+        "sha256": "d2dbee8b25d6d56041cd6d76a8fd3b210d76d42f2ffe4c53081e787e1ac95cd2"
+      }
+    },
+    "depth-of-field": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 80.72002084277678,
+        "nonBackgroundPixels": 147017,
+        "nonFinitePixels": 0,
+        "sha256": "3d1dfa1c3658c9fda3f04f795bb4667fde2740291ac5dd77d0178a5059b2db83"
+      }
+    },
+    "custom-effect": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 238.61455418410333,
+        "nonBackgroundPixels": 147435,
+        "nonFinitePixels": 0,
+        "sha256": "97cbf42fdf276b4d56d14bf1340dfef5fe0037a6e10fd8d767d21103a3ad60fe"
+      }
+    },
+    "n8ao": {
+      "ok": true,
+      "pixels": {
+        "meanLuma": 63.87251338569229,
+        "nonBackgroundPixels": 144150,
+        "nonFinitePixels": 0,
+        "sha256": "a733302d0229fcf9b89fb639b7f9b9a69b69cecb28425512f209c79dba1403a3"
+      }
+    }
+  },
+  "node": {
+    "native": {
+      "render-pass-only": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.70972268350528,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "80cd8837504be9b19faa7651574be4e2de148c7e96c05a105eed1d4287684c9b"
+        }
+      },
+      "tone-mapping": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.70972268350528,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "80cd8837504be9b19faa7651574be4e2de148c7e96c05a105eed1d4287684c9b"
+        }
+      },
+      "bloom": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 172.11354142649586,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "a078580a0f0a516a34bdf983c3b0cbe065d076b224278abec690ba8bc2ed8f15"
+        }
+      },
+      "selective-bloom": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 104.72977177065616,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "c3433790abb9316bb3f72d84bb810804a93f14e773a399739b3d1e1362621c69"
+        }
+      },
+      "chromatic-aberration": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.7208617175338,
+          "nonBackgroundPixels": 146394,
+          "nonFinitePixels": 0,
+          "sha256": "e3b9657d18d06c8975547e745f06584098a8744e6ff4e4f08c4ab0fb615e7be6"
+        }
+      },
+      "pixelation": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 79.3526764649702,
+          "nonBackgroundPixels": 146196,
+          "nonFinitePixels": 0,
+          "sha256": "4245b36fe785a750330f7169dd63e7e7ec75fe9e46d56fec8bbafc85ac741184"
+        }
+      },
+      "outline": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 80.28832607432898,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "06093315b14ee955006f6e65604dd70eace73297bb6d4b0144f9647c7c400288"
+        }
+      },
+      "lut3d": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.38790133884261,
+          "nonBackgroundPixels": 146200,
+          "nonFinitePixels": 0,
+          "sha256": "6c1c1a8f6cb23ad24ac24b2eb7e99aedb8410f66bee87242148bf6cd8866fbf2"
+        }
+      },
+      "depth-of-field": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 94.3019999997452,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "a85c2ce95893daf5f59ba3ed43504f27b28be014ee270c4914a5be4d1c13fdbb"
+        }
+      },
+      "custom-effect": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 238.61028174756444,
+          "nonBackgroundPixels": 147435,
+          "nonFinitePixels": 0,
+          "sha256": "8a35926a4b0064414142b0a37020d6ca7eadd57e418db6df36b1b77b40a58e3a"
+        }
+      },
+      "n8ao": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 132.2526249920784,
+          "nonBackgroundPixels": 146197,
+          "nonFinitePixels": 0,
+          "sha256": "d7a9eee4de410033c47b2afc9dba965ce9d7996cccdb19880898e72b757d5cbf"
+        }
+      },
+      "traa": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 106.01720000018588,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "349bf9dcbadf9324f086574ff87e2a77adcd2970239f8a8be232a42d4adca644"
+        }
+      },
+      "fxaa": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.76068791109766,
+          "nonBackgroundPixels": 146321,
+          "nonFinitePixels": 0,
+          "sha256": "d1548e54540441a3b8cb53e50169d589ba88684f316a0109cf037d0a2aaa38c2"
+        }
+      },
+      "smaa": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.70968556192324,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "fedd70d402eadc1fe6ce69064468fa970df396617c6c0156e661502287e3820e"
+        }
+      }
+    },
+    "fallback": {
+      "render-pass-only": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.70967433023176,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "6219003f007029aa9ea63ea2a34ea0f309078d3809ec5d476c806d3b3344d199"
+        }
+      },
+      "tone-mapping": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.70967433023176,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "6219003f007029aa9ea63ea2a34ea0f309078d3809ec5d476c806d3b3344d199"
+        }
+      },
+      "bloom": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 172.1134130588565,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "7459f11c3d90866251a232cbba09de02cd1f4c844f65cff6b0a5d1bf9451c525"
+        }
+      },
+      "selective-bloom": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 104.72974473333453,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "a811a7d2d43e011e9bb45b67cd99fcf11d7814c8d9945b771b417280164f1f44"
+        }
+      },
+      "chromatic-aberration": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.72083703095964,
+          "nonBackgroundPixels": 146394,
+          "nonFinitePixels": 0,
+          "sha256": "c9baf05aa5af7567ce1d9c7f834d87f9fd1ed6eddaf12dbc8af22a9991742e52"
+        }
+      },
+      "pixelation": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 79.2259784670528,
+          "nonBackgroundPixels": 146196,
+          "nonFinitePixels": 0,
+          "sha256": "1cf3a2314872875354c99880db073892935f0773cbf0a3913e8177261001cfa4"
+        }
+      },
+      "outline": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 80.28827772107674,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "1dbd1c67c573298f95bbf42cd75f4c6f2d6b1c5d5bf7e229b03a868e5640bf56"
+        }
+      },
+      "lut3d": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.38782136529422,
+          "nonBackgroundPixels": 146200,
+          "nonFinitePixels": 0,
+          "sha256": "5dd2eac076508de63eafd277d2d9ee021cc14a8d38b9b5e84544c8a98f8c1ac9"
+        }
+      },
+      "depth-of-field": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 94.3019999997452,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "a85c2ce95893daf5f59ba3ed43504f27b28be014ee270c4914a5be4d1c13fdbb"
+        }
+      },
+      "custom-effect": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 238.6102846311129,
+          "nonBackgroundPixels": 147435,
+          "nonFinitePixels": 0,
+          "sha256": "f465351edbbf8e8337b32573bfcef7910783731d26aed6371a73332ebbdad7fd"
+        }
+      },
+      "n8ao": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 144.09097827719683,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "fb9e46bc0cbcdf8c7dbdd68159e24322e91e510b2445638897328a028be12a5c"
+        }
+      },
+      "traa": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 106.01720000018588,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "349bf9dcbadf9324f086574ff87e2a77adcd2970239f8a8be232a42d4adca644"
+        }
+      },
+      "fxaa": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.76058784883702,
+          "nonBackgroundPixels": 146321,
+          "nonFinitePixels": 0,
+          "sha256": "59440386f62ee654d455118c8a731de6195017959eb7ecb8cb302870d1d1594a"
+        }
+      },
+      "smaa": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.70963720864974,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "57354f937cb890e35b06983fc21c057e7c4bf0a19c427b84f9801b9ef240402d"
+        }
+      }
+    }
+  },
+  "crossBackend": {
+    "render-pass-only": {
+      "meanLumaDelta": 0.000048353273513157546,
+      "identicalSha": false
+    },
+    "tone-mapping": {
+      "meanLumaDelta": 0.000048353273513157546,
+      "identicalSha": false
+    },
+    "bloom": {
+      "meanLumaDelta": 0.00012836763934842566,
+      "identicalSha": false
+    },
+    "selective-bloom": {
+      "meanLumaDelta": 0.00002703732162956385,
+      "identicalSha": false
+    },
+    "chromatic-aberration": {
+      "meanLumaDelta": 0.00002468657415022335,
+      "identicalSha": false
+    },
+    "pixelation": {
+      "meanLumaDelta": 0.12669799791740388,
+      "identicalSha": false
+    },
+    "outline": {
+      "meanLumaDelta": 0.00004835325223950804,
+      "identicalSha": false
+    },
+    "lut3d": {
+      "meanLumaDelta": 0.00007997354839517357,
+      "identicalSha": false
+    },
+    "depth-of-field": {
+      "meanLumaDelta": 0,
+      "identicalSha": true
+    },
+    "custom-effect": {
+      "meanLumaDelta": 0.000002883548461340979,
+      "identicalSha": false
+    },
+    "n8ao": {
+      "meanLumaDelta": 11.838353285118416,
+      "identicalSha": false
+    },
+    "traa": {
+      "meanLumaDelta": 0,
+      "identicalSha": true
+    },
+    "fxaa": {
+      "meanLumaDelta": 0.00010006226064263046,
+      "identicalSha": false
+    },
+    "smaa": {
+      "meanLumaDelta": 0.00004835327349894669,
+      "identicalSha": false
+    }
+  },
+  "lookContinuity": {
+    "render-pass-only": {
+      "controlMeanLuma": 78.72206961674675,
+      "nativeMeanLuma": 78.70972268350528,
+      "meanLumaDelta": 0.01234693324147429
+    },
+    "tone-mapping": {
+      "controlMeanLuma": 83.864436164049,
+      "nativeMeanLuma": 78.70972268350528,
+      "meanLumaDelta": 5.15471348054372
+    },
+    "bloom": {
+      "controlMeanLuma": 78.74101471487404,
+      "nativeMeanLuma": 172.11354142649586,
+      "meanLumaDelta": 93.37252671162182
+    },
+    "selective-bloom": {
+      "controlMeanLuma": 78.74101471487404,
+      "nativeMeanLuma": 104.72977177065616,
+      "meanLumaDelta": 25.988757055782116
+    },
+    "chromatic-aberration": {
+      "controlMeanLuma": 78.76002964814522,
+      "nativeMeanLuma": 78.7208617175338,
+      "meanLumaDelta": 0.03916793061142698
+    },
+    "pixelation": {
+      "controlMeanLuma": 78.86740102536629,
+      "nativeMeanLuma": 79.3526764649702,
+      "meanLumaDelta": 0.4852754396039103
+    },
+    "outline": {
+      "controlMeanLuma": 79.99348258731004,
+      "nativeMeanLuma": 80.28832607432898,
+      "meanLumaDelta": 0.29484348701893737
+    },
+    "lut3d": {
+      "controlMeanLuma": 78.74101471487404,
+      "nativeMeanLuma": 78.38790133884261,
+      "meanLumaDelta": 0.35311337603143045
+    },
+    "depth-of-field": {
+      "controlMeanLuma": 80.72002084277678,
+      "nativeMeanLuma": 94.3019999997452,
+      "meanLumaDelta": 13.58197915696843
+    },
+    "custom-effect": {
+      "controlMeanLuma": 238.61455418410333,
+      "nativeMeanLuma": 238.61028174756444,
+      "meanLumaDelta": 0.0042724365388835395
+    },
+    "n8ao": {
+      "controlMeanLuma": 63.87251338569229,
+      "nativeMeanLuma": 132.2526249920784,
+      "meanLumaDelta": 68.38011160638612
+    }
+  },
+  "summary": {
+    "pins": {
+      "three": "0.184.0",
+      "n8ao-webgpu": "0.1.0",
+      "postprocessing": "6.39.3",
+      "n8ao": "1.10.2"
+    },
+    "nativeBackendReal": true,
+    "fallbackBackendIsWebGL": true,
+    "nodeCellsAttempted": 14,
+    "nodeCellsPassingNative": 14,
+    "nodeCellsPassingFallback": 14,
+    "controlCellsPassing": 13,
+    "pendingTrackB": [
+      "vignette",
+      "tilt-shift",
+      "kuwahara"
+    ],
+    "failures": []
+  },
+  "pageErrorCount": 1,
+  "pageErrorSample": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "limits": [
+    "One deterministic scene; production Blendlink scenes are broader.",
+    "Node cells read back through an explicit RenderTarget (rows top-down); the WebGL control captures its canvas (rows bottom-up) — only orientation-independent stats compare across the two.",
+    "Look continuity is mean-luma context, not pixel identity: the node pipeline intentionally replaces the pmndrs algorithms.",
+    "vignette/tilt-shift/kuwahara have no node cells until Track B writes the Blendlink-owned display nodes."
+  ]
+}
