@@ -4557,6 +4557,161 @@ def _attest_image_transport(
     }
 
 
+def _ir_runtime_needs(value, needs) -> None:
+    """Walk one channel's TSL IR collecting what the Phase 4 material
+    runtime must resolve per mesh: named UV maps, named vertex-color
+    layers, Generated texspace, and object-space coordinates."""
+    if isinstance(value, dict):
+        op = value.get("op")
+        if op == "uv" and value.get("uvMap"):
+            needs["uvMaps"].add(str(value["uvMap"]))
+        if op == "vertex_color" and value.get("layer"):
+            needs["colorLayers"].add(str(value["layer"]))
+        if op in ("generated", "object_coords"):
+            needs["objectSpace"] = True
+        if op == "generated":
+            needs["texspace"] = True
+        for item in value.values():
+            _ir_runtime_needs(item, needs)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            _ir_runtime_needs(item, needs)
+
+
+def _tsl_runtime_mesh_entry(decision, obj):
+    """Mesh-level application data for the TSL IR route, or None when the
+    material's channel IR needs none of it.
+
+    The UV layer order equals the exported TEXCOORD order (the same
+    convention _uv_descriptor attests for image transport). Vertex-color
+    sampling is only honest when the referenced layer IS the exported
+    COLOR_0 (the active color attribute) — anything else refuses by name
+    instead of silently sampling the wrong layer. Auto texspace is read
+    from the mesh as last computed; the Track C GLB differential cell is
+    the ground-truth gate for staleness.
+    """
+    needs = {
+        "uvMaps": set(), "colorLayers": set(),
+        "texspace": False, "objectSpace": False,
+    }
+    for item in (decision.channel_plan or {}).get("channels", ()):
+        ir = item.get("tslIr")
+        if ir:
+            _ir_runtime_needs(ir, needs)
+    if not needs["uvMaps"] and not needs["colorLayers"] \
+            and not needs["texspace"] and not needs["objectSpace"]:
+        return None
+    mesh = getattr(obj, "data", None)
+    if mesh is None:
+        raise MaterialCompileError(
+            f'TSL IR runtime data for "{decision.material_name}" needs mesh '
+            f'data on "{getattr(obj, "name", "?")}", which has none.'
+        )
+    entry = {"schemaVersion": 1}
+    if needs["uvMaps"]:
+        layers = getattr(mesh, "uv_layers", None)
+        uv_channels = {}
+        for name in sorted(needs["uvMaps"]):
+            index = int(layers.find(name)) if layers is not None else -1
+            if index < 0:
+                raise MaterialCompileError(
+                    f'TSL IR for "{decision.material_name}" references UV map '
+                    f'{name!r}, which is absent on mesh "{mesh.name}".'
+                )
+            uv_channels[name] = index
+        entry["uvChannels"] = uv_channels
+    if needs["colorLayers"]:
+        attributes = getattr(mesh, "color_attributes", None)
+        active = getattr(attributes, "active_color", None) \
+            if attributes is not None else None
+        active_name = getattr(active, "name", None)
+        for layer in sorted(needs["colorLayers"]):
+            if layer != active_name:
+                raise MaterialCompileError(
+                    f'TSL IR for "{decision.material_name}" samples '
+                    f'vertex-color layer {layer!r}, but the exported COLOR_0 '
+                    f'on mesh "{mesh.name}" is {active_name!r}. Make '
+                    f'{layer!r} the active color attribute or remove the '
+                    "dependency."
+                )
+        entry["colorLayers"] = {
+            layer: "color" for layer in sorted(needs["colorLayers"])
+        }
+    if needs["texspace"]:
+        entry["texspace"] = {
+            "location": [float(c) for c in mesh.texspace_location],
+            "size": [float(c) for c in mesh.texspace_size],
+        }
+    if needs["objectSpace"]:
+        entry["objectSpace"] = "gltf-y-up"
+    return entry
+
+
+def _stamp_tsl_runtime_extras(path: str, generated_facts: dict) -> None:
+    """Stamp mesh-level TSL runtime extras onto every exported mesh whose
+    material's channel IR needs them (uvName->TEXCOORD map, COLOR_0
+    layer map, Generated texspace, geometry basis). Mesh extras ride the
+    same GLB the runtime loads — no sidecar threading, and identity stays
+    extras-based like the generated-material ownership keys."""
+    staged = {
+        name: fact for name, fact in generated_facts.items()
+        if fact.get("tslRuntimeMeshes")
+    }
+    if not staged:
+        return
+    try:
+        document, chunks, json_index = glblib.read_document(
+            path, "stamp TSL runtime extras in",
+        )
+    except (OSError, ValueError) as error:
+        raise MaterialCompileError(str(error)) from error
+    nodes = document.get("nodes") or []
+    meshes = document.get("meshes") or []
+    changed = False
+    for _generated_name, fact in sorted(staged.items()):
+        for object_name, entry in sorted(fact["tslRuntimeMeshes"].items()):
+            mesh_indices = {
+                int(node["mesh"]) for node in nodes
+                if node.get("name") == object_name and "mesh" in node
+            }
+            if not mesh_indices:
+                raise MaterialCompileError(
+                    f'Material output mismatch for "{fact["source"]}": '
+                    f"binding {object_name} resolved to no glTF mesh node "
+                    "for TSL runtime extras."
+                )
+            for mesh_index in sorted(mesh_indices):
+                if not (0 <= mesh_index < len(meshes)):
+                    raise MaterialCompileError(
+                        f'Material output mismatch for "{fact["source"]}": '
+                        f"glTF node {object_name} references missing mesh "
+                        f"{mesh_index}."
+                    )
+                extras = meshes[mesh_index].setdefault("extras", {})
+                existing = extras.get("blendlink_tsl_runtime")
+                if existing is not None and existing != entry:
+                    raise MaterialCompileError(
+                        f'TSL runtime extras conflict on mesh {mesh_index} '
+                        f'("{fact["source"]}" via {object_name}): two '
+                        "bindings demand different uv/texspace contracts "
+                        "for one shared mesh. Give the objects separate "
+                        "mesh data."
+                    )
+                extras["blendlink_tsl_runtime"] = entry
+                changed = True
+    if not changed:
+        return
+    try:
+        glblib.write_document(
+            path, document, chunks, json_index, "tsl-runtime-extras",
+        )
+    except OSError as error:
+        raise MaterialCompileError(
+            f"Cannot atomically stamp TSL runtime extras into {path!r}: "
+            f"{error}"
+        ) from error
+
+
 def _rewrite_private_color_carriers(
     path: str,
     generated_facts: dict,
@@ -5931,6 +6086,11 @@ def with_compiled_materials(
                     }
                 fact = generated_facts[generated.name]
                 fact["bindings"].add(binding_key)
+                runtime_entry = _tsl_runtime_mesh_entry(decision, obj)
+                if runtime_entry is not None:
+                    fact.setdefault("tslRuntimeMeshes", {})[
+                        binding.object_name
+                    ] = runtime_entry
                 slot = obj.material_slots[binding.slot_index]
                 try:
                     slot.link = "DATA"
@@ -6355,6 +6515,9 @@ def with_compiled_materials(
             staged_glb, generated_facts, preserve_custom_attributes,
         )
         _rewrite_factorized_shared_textures(staged_glb, generated_facts)
+        # Runtime extras go in BEFORE attestation so the evidence hashes the
+        # bytes the runtime will actually load.
+        _stamp_tsl_runtime_extras(staged_glb, generated_facts)
         gltf_evidence = _attest_generated_materials(staged_glb, generated_facts)
         compilation = MaterialCompilation(
             plan.source_fingerprint,
