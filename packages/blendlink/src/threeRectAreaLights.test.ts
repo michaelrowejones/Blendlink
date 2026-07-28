@@ -75,6 +75,17 @@ describe('Three Rect Area light runtime', () => {
     installed.dispose()
   })
 
+  it('refuses authored lights on WebGPURenderer with the named LTC-ownership reason', async () => {
+    const { runtime, load } = runtimeFixture()
+    const root = new THREE.Group()
+    root.add(marker())
+    await expect(runtime.install(
+      root,
+      { isWebGPURenderer: true } as unknown as THREE.WebGLRenderer,
+    )).rejects.toThrow(/WebGPURenderer.*setLTC/s)
+    expect(load).not.toHaveBeenCalled()
+  })
+
   it('installs authored power lights, uploads only the selected LTC pair, and preserves Basic materials', async () => {
     const { runtime, textures, load } = runtimeFixture()
     const root = new THREE.Group()

@@ -440,6 +440,20 @@ function createRuntime(
         )
       }
 
+      if ((renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer) {
+        // The node system takes LTC data through the static, write-only
+        // RectAreaLightNode.setLTC(); three exposes no way to inspect or
+        // co-own that state, so Blendlink's LTC ownership machine cannot
+        // protect it yet. Named refusal instead of the misleading
+        // duplicate-peer diagnosis below.
+        throw new Error(
+          'Blendlink authored Rect Area lights do not support WebGPURenderer yet: three\'s node ' +
+            'renderer initializes LTC through the write-only RectAreaLightNode.setLTC(), which ' +
+            'Blendlink cannot own without clobbering application state. Initialize ' +
+            'RectAreaLightTexturesLib and RectAreaLightNode.setLTC() in the application, keep these ' +
+            'lights bake-only, or stay on WebGLRenderer for this scene.',
+        )
+      }
       if (!(renderer instanceof peer.WebGLRenderer)) {
         throw new Error(
           'Blendlink Rect Area lights require the renderer and Blendlink runtime to share one evaluated Three peer. ' +

@@ -897,6 +897,26 @@ function authoringPreviewShadowRoot(
   }
 }
 
+interface PmremGeneratorLike {
+  compileEquirectangularShader(): unknown
+  fromEquirectangular(texture: THREE.Texture): { texture: THREE.Texture; dispose(): void }
+  dispose(): void
+}
+
+/** Both renderer families expose the same PMREM API; the WebGPU class loads
+ * lazily so WebGL-only applications never bundle three/webgpu. */
+async function createPmremGenerator(
+  renderer: THREE.WebGLRenderer,
+): Promise<PmremGeneratorLike> {
+  if ((renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer) {
+    const { PMREMGenerator } = await import('three/webgpu')
+    return new PMREMGenerator(
+      renderer as never,
+    ) as unknown as PmremGeneratorLike
+  }
+  return new THREE.PMREMGenerator(renderer) as unknown as PmremGeneratorLike
+}
+
 function createThreePublishedReflectionLoader(
   renderer: THREE.WebGLRenderer,
   manager: THREE.LoadingManager,
@@ -909,8 +929,8 @@ function createThreePublishedReflectionLoader(
     context: ReflectionProbeRuntimeContext<ReflectionProbeObjectLike>,
   ): Promise<ReflectionProbeTextureResource> => {
     let source: THREE.Texture | null = null
-    let target: THREE.WebGLRenderTarget | null = null
-    const generator = new THREE.PMREMGenerator(renderer)
+    let target: { texture: THREE.Texture; dispose(): void } | null = null
+    const generator = await createPmremGenerator(renderer)
     try {
       source = asset.format === 'hdr'
         ? await hdrLoader.loadAsync(asset.url)
@@ -929,7 +949,9 @@ function createThreePublishedReflectionLoader(
       source.colorSpace = asset.colorSpace === 'srgb'
         ? THREE.SRGBColorSpace
         : THREE.LinearSRGBColorSpace
-      generator.compileEquirectangularShader()
+      // The WebGPU generator's compile is async; awaiting is a no-op for the
+      // synchronous WebGL generator.
+      await generator.compileEquirectangularShader()
       target = generator.fromEquirectangular(source)
       if (!target.texture) {
         throw new Error(`Reflection probe "${context.definition.name}" produced no PMREM texture.`)
@@ -2826,8 +2848,9 @@ function createOwnedKtx2Loader(
     try { loader.dispose() } catch (disposeError) { cleanupError = disposeError }
     throw new Error(
       `Blendlink could not configure Three's KTX2Loader for "${transcoderPath}". ` +
-        'Use a WebGLRenderer with compressed-texture capability detection, or pass an ' +
-        `application-configured ktx2Loader. ${errorMessage(error)}` +
+        'detectSupport(renderer) needs a renderer with compressed-texture capability ' +
+        'detection — for WebGPURenderer that means after `await renderer.init()` — or ' +
+        `pass an application-configured ktx2Loader. ${errorMessage(error)}` +
         (cleanupError ? ` Loader cleanup also failed: ${errorMessage(cleanupError)}` : ''),
     )
   }
