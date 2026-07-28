@@ -191,6 +191,51 @@ function asError(reason: unknown): Error {
   return reason instanceof Error ? reason : new Error(String(reason))
 }
 
+interface RendererLossSubscription {
+  /** Only classic WebGLRenderer offers a synchronous probe; the WebGPU
+   * family reports an already-lost device through the hook shortly after
+   * subscription instead. */
+  alreadyLost: boolean
+  unsubscribe(): void
+}
+
+/** Both WebGPURenderer backends — native (GPUDevice.lost) and the WebGL2
+ * fallback (webglcontextlost) — route loss into the renderer's single public
+ * onDeviceLost hook, so the WebGPU family chains that callback. Classic
+ * WebGLRenderer keeps the DOM event plus its synchronous probe. */
+function subscribeRendererLoss(
+  renderer: THREE.WebGLRenderer,
+  onLost: () => void,
+): RendererLossSubscription {
+  const identity = renderer as THREE.WebGLRenderer & {
+    isWebGPURenderer?: boolean
+    onDeviceLost?: (info: unknown) => void
+  }
+  if (identity.isWebGPURenderer) {
+    const previous = identity.onDeviceLost
+    const chained = (info: unknown) => {
+      previous?.call(renderer, info)
+      onLost()
+    }
+    identity.onDeviceLost = chained
+    return {
+      alreadyLost: false,
+      unsubscribe() {
+        // Restore only while the slot is still ours; an application that
+        // replaced the hook after mount owns it now.
+        if (identity.onDeviceLost === chained) identity.onDeviceLost = previous
+      },
+    }
+  }
+  renderer.domElement.addEventListener('webglcontextlost', onLost)
+  return {
+    alreadyLost: renderer.getContext().isContextLost(),
+    unsubscribe() {
+      renderer.domElement.removeEventListener('webglcontextlost', onLost)
+    },
+  }
+}
+
 /**
  * Create the complete React Three Fiber adapter for one compiled scene.
  *
@@ -402,17 +447,18 @@ export function createR3FCompiledScene<
       const contextLost = () => {
         if (cancelled) return
         const contextError = new Error(
-          'The Blendlink WebGL context was lost. Remount the application-owned Canvas, then retry the scene.',
+          'The Blendlink rendering device was lost (WebGL context or WebGPU device). ' +
+            'Remount the application-owned Canvas, then retry the scene.',
         )
         task?.cancel()
         publishState({ phase: 'failed', attempt, error: contextError, recoverable: true })
         failPresentation(contextError)
         setError(contextError)
       }
-      renderer.domElement.addEventListener('webglcontextlost', contextLost)
-      if (renderer.getContext().isContextLost()) {
+      const lossSubscription = subscribeRendererLoss(renderer, contextLost)
+      if (lossSubscription.alreadyLost) {
         contextLost()
-        renderer.domElement.removeEventListener('webglcontextlost', contextLost)
+        lossSubscription.unsubscribe()
         if (slot.mountedOwner === owner) slot.mountedOwner = null
         presentation.cancelled = true
         if (presentationRef.current === presentation) presentationRef.current = null
@@ -518,7 +564,7 @@ export function createR3FCompiledScene<
 
       return () => {
         cancelled = true
-        renderer.domElement.removeEventListener('webglcontextlost', contextLost)
+        lossSubscription.unsubscribe()
         presentation.cancelled = true
         if (presentationRef.current === presentation) presentationRef.current = null
         task?.cancel()
