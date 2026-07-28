@@ -113,7 +113,7 @@ const tslCos = cos as unknown as (value: TslExprLike) => TslExpression
 const tslOneMinus = oneMinus as unknown as (
   value: TslExprLike,
 ) => TslExpression
-const tslUv = uv as unknown as () => TslExpression
+const tslUv = uv as unknown as (index?: number) => TslExpression
 const tslNoise = mx_noise_float as unknown as (
   position: TslExprLike,
 ) => TslExpression
@@ -187,6 +187,20 @@ const tslNormalize = normalize as unknown as (
 const tslCameraPosition = cameraPosition as unknown as TslExpression
 const tslPositionWorld = positionWorld as unknown as TslExpression
 const tslPositionGeometry = positionGeometry as unknown as TslExpression
+
+/** Object-space position in BLENDER'S Z-up basis. The exporter converts
+ * Blender (x, y, z) to glTF (x, z, -y); the inverse swizzle recovers
+ * Blender coordinates from GLB-loaded geometry: blender = (x, -z, y). */
+function blenderObjectPosition(): TslExpression {
+  if (activeOptions.objectSpace?.basis === 'gltf-y-up') {
+    return tslVec3(
+      tslPositionGeometry.x,
+      tslPositionGeometry.z.negate(),
+      tslPositionGeometry.y,
+    )
+  }
+  return tslPositionGeometry
+}
 const tslNormalLocal = (
   (TSLX as Record<string, unknown>).normalLocal as unknown as TslExpression
 )
@@ -211,6 +225,45 @@ export interface BuildTslOptions {
    * production runtime wires the scene's lighting here — Phase 4's
    * application seam, like viewCos. */
   diffuseIrradiance?: TslExpression
+  /** Geometry basis for object_coords/generated. The default
+   * 'blender-z-up' keeps the harness contract (its quads are authored in
+   * Blender's basis). 'gltf-y-up' converts GLB-loaded geometry back into
+   * Blender space with the exporter-inverse swizzle (x, -z, y) before the
+   * coordinate formulas apply. Skinned/instanced meshes are out of this
+   * contract until a cell earns them. */
+  objectSpace?: { basis: 'blender-z-up' | 'gltf-y-up' }
+  /** Resolve a Blender UV map name to its exported TEXCOORD index. Without
+   * a resolver, named maps keep the measurement contract (the harness
+   * materializes named maps as identity proxies on uv slot 0). */
+  uvChannel?: (uvMap: string) => number
+  /** Resolve a Blender color-layer name to the exported three attribute
+   * name. Without a resolver, COLOR_0's 'color' attribute applies. */
+  colorAttribute?: (layer: string) => string
+  /** Resolve a texture_ref IR op to a loaded three texture (the runtime
+   * steals the decoded texture from the generated material's GLB slot).
+   * texture_ref documents refuse to build without this resolver. */
+  textures?: (ref: Record<string, unknown>) => unknown
+  /** Collects every DataTexture the build allocates (ramp/curve LUTs,
+   * embedded tex_image pixels) so the applying runtime can dispose them
+   * with the material. Create with createTslBuildResources(). */
+  resources?: TslBuildResources
+}
+
+export interface TslBuildResources {
+  readonly textures: unknown[]
+  dispose(): void
+}
+
+/** One handle per applied material: pass as BuildTslOptions.resources for
+ * every channel build of that material, dispose when the material leaves. */
+export function createTslBuildResources(): TslBuildResources {
+  const textures: Array<{ dispose(): void }> = []
+  return {
+    textures,
+    dispose() {
+      for (const entry of textures.splice(0)) entry.dispose()
+    },
+  }
 }
 
 let activeOptions: BuildTslOptions = {}
@@ -370,9 +423,19 @@ function build(expression: TslIrExpression): TslExpression {
     case 'uv': {
       // Blender's TexCoord.UV is a 3D vector with z = 0; a bare 2D uv()
       // would route vector consumers (noise) into their 2D overloads and
-      // diverge. A named uvMap resolves to TEXCOORD selection at the
-      // material integration layer; the expression samples uv(0).
-      const coordinates = tslUv()
+      // diverge. A named uvMap resolves through the runtime's
+      // uvName->TEXCOORD map; without a resolver the measurement contract
+      // holds (named maps are materialized as identity proxies on slot 0).
+      const uvMap = expression.uvMap
+      const channel = typeof uvMap === 'string' && uvMap && activeOptions.uvChannel
+        ? activeOptions.uvChannel(uvMap)
+        : 0
+      if (!Number.isInteger(channel) || channel < 0) {
+        return fail(
+          `BuildTslOptions.uvChannel resolved ${JSON.stringify(uvMap)} to invalid index ${channel}`,
+        )
+      }
+      const coordinates = tslUv(channel)
       return tslVec3(coordinates.x, coordinates.y, 0.0)
     }
     case 'separate': {
@@ -478,10 +541,21 @@ function build(expression: TslIrExpression): TslExpression {
       )
       return tslMix(input, curved, factor)
     }
-    case 'vertex_color':
+    case 'vertex_color': {
       // The glTF path ships the active color attribute as COLOR_0, which
-      // three exposes as the 'color' geometry attribute.
-      return tslAttribute('color')
+      // three exposes as the 'color' geometry attribute; a named layer
+      // resolves through the runtime's attribute map when supplied.
+      const layer = expression.layer
+      const attributeName = typeof layer === 'string' && layer && activeOptions.colorAttribute
+        ? activeOptions.colorAttribute(layer)
+        : 'color'
+      if (typeof attributeName !== 'string' || attributeName.length === 0) {
+        return fail(
+          `BuildTslOptions.colorAttribute resolved ${JSON.stringify(layer)} to an empty name`,
+        )
+      }
+      return tslAttribute(attributeName)
+    }
     case 'shader_to_rgb_diffuse': {
       // EEVEE's Shader to RGB over a Diffuse BSDF: albedo times the
       // diffuse irradiance. The harness supplies the light-contract
@@ -496,15 +570,15 @@ function build(expression: TslIrExpression): TslExpression {
     }
     case 'object_coords':
       // Blender Object texture coordinates = object-space position, in
-      // BLENDER'S Z-up basis. positionGeometry satisfies that contract
-      // only for Z-up geometry (the harness quad is; GLB-loaded meshes
-      // are Y-up-converted by the exporter, so the production runtime
-      // must supply a basis conversion alongside the geometry —
-      // Phase 4's application seam, same class as generatedTexspace).
-      return tslPositionGeometry
+      // BLENDER'S Z-up basis. blenderObjectPosition() supplies that
+      // contract for both authored-Z-up harness geometry and GLB-loaded
+      // Y-up geometry (via BuildTslOptions.objectSpace).
+      return blenderObjectPosition()
     case 'generated': {
       // Blender Generated coordinates over the mesh texspace (measured:
       // (p - location) / (2 * size) + 0.5; a degenerate axis reads 0.5).
+      // The texspace is Blender-space, so the basis conversion applies to
+      // the position before the formula.
       const texspace = activeOptions.generatedTexspace
       if (!texspace) {
         return fail(
@@ -514,7 +588,7 @@ function build(expression: TslIrExpression): TslExpression {
       const safe = texspace.size.map(
         (component) => (component === 0 ? 1 : component),
       )
-      return tslPositionGeometry
+      return blenderObjectPosition()
         .sub(tslVec3(...texspace.location))
         .div(tslVec3(safe[0] * 2, safe[1] * 2, safe[2] * 2))
         .add(0.5)
@@ -793,6 +867,32 @@ function build(expression: TslIrExpression): TslExpression {
       }
       return fail(`IR wave profile ${profile}`)
     }
+    case 'texture_ref': {
+      // Large-image transport (Phase 4 Track C): the image ships through
+      // the generated material's GLB texture slot and the runtime resolver
+      // hands back the decoded three texture. Hardware sampling applies —
+      // the named fidelity notes (KTX2 lossiness, filtering vs the
+      // byte-exact manual-bilinear oracle at texel edges, byte-space alpha
+      // pre-association at publish) live with the exporter cell.
+      const resolver = activeOptions.textures
+      if (!resolver) {
+        return fail('IR texture_ref needs BuildTslOptions.textures')
+      }
+      const ref = expression.ref
+      if (!ref || typeof ref !== 'object') {
+        return fail('IR texture_ref needs a ref object')
+      }
+      const map = resolver(ref as Record<string, unknown>)
+      if (!map) {
+        return fail(
+          `BuildTslOptions.textures resolved no texture for ${JSON.stringify(ref)}`,
+        )
+      }
+      const vector = build(child(expression, 'vector'))
+      return tslTexture(
+        map as never, tslVec2(vector.x, vector.y),
+      )
+    }
     case 'tex_image': {
       // Cycles-style manual sampling over an embedded RGBA float image:
       // nearest-filtered texel reads (no float32-filterable dependency),
@@ -814,6 +914,7 @@ function build(expression: TslIrExpression): TslExpression {
       map.wrapT = ClampToEdgeWrapping
       map.generateMipmaps = false
       map.needsUpdate = true
+      activeOptions.resources?.textures.push(map)
       const vector = build(child(expression, 'vector'))
       let coordU = vector.x
       let coordV = vector.y
@@ -1286,6 +1387,7 @@ function buildLutTexture(
   lut.wrapT = ClampToEdgeWrapping
   lut.generateMipmaps = false
   lut.needsUpdate = true
+  activeOptions.resources?.textures.push(lut)
   return { lut, samples }
 }
 
@@ -1814,10 +1916,7 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
   return blended
 }
 
-/** Build one channel's TSL color expression from its IR document. */
-export function buildTslColorNode(
-  document: TslIrDocument, options: BuildTslOptions = {},
-): TslExpression {
+function assertTslIrDocument(document: TslIrDocument): void {
   if (document?.schemaVersion !== 1
     || document.model !== 'blendlink-tsl-ir-v1') {
     throw new TslIrError(
@@ -1827,12 +1926,34 @@ export function buildTslColorNode(
       })}`,
     )
   }
+}
+
+/** Build one channel's TSL color expression from its IR document. */
+export function buildTslColorNode(
+  document: TslIrDocument, options: BuildTslOptions = {},
+): TslExpression {
+  assertTslIrDocument(document)
   activeOptions = options
   try {
     const built = build(document.output)
     // A scalar channel broadcasts to RGB, matching Blender's implicit
     // float -> color conversion.
     return tslVec3(built)
+  } finally {
+    activeOptions = {}
+  }
+}
+
+/** Build a scalar channel (roughness/metalness/alpha) without the RGB
+ * broadcast. The document must be scalar-typed IR (float-socket output);
+ * color-typed documents belong on buildTslColorNode. */
+export function buildTslScalarNode(
+  document: TslIrDocument, options: BuildTslOptions = {},
+): TslExpression {
+  assertTslIrDocument(document)
+  activeOptions = options
+  try {
+    return build(document.output)
   } finally {
     activeOptions = {}
   }

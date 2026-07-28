@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import {
   buildTslColorNode,
+  buildTslScalarNode,
+  createTslBuildResources,
   TslIrError,
   type TslIrDocument,
 } from './tslNodeRecipe.js'
@@ -59,6 +61,70 @@ describe('buildTslColorNode', () => {
       operation: 'DIVIDE',
       a: { op: 'const_float', value: 1 },
       b: { op: 'separate', channel: 'x', input: { op: 'uv' } },
+    }))).toBeTruthy()
+  })
+
+  it('builds object coordinates in either geometry basis', () => {
+    const objectDocument = documentOf({ op: 'object_coords' })
+    expect(buildTslColorNode(objectDocument)).toBeTruthy()
+    expect(buildTslColorNode(objectDocument, {
+      objectSpace: { basis: 'gltf-y-up' },
+    })).toBeTruthy()
+    expect(buildTslColorNode(documentOf({ op: 'generated' }), {
+      objectSpace: { basis: 'gltf-y-up' },
+      generatedTexspace: { location: [0, 0, 0], size: [1, 1, 1] },
+    })).toBeTruthy()
+  })
+
+  it('resolves named UV maps and color layers through the runtime resolvers', () => {
+    const uvChannel = vi.fn(() => 1)
+    expect(buildTslColorNode(
+      documentOf({ op: 'uv', uvMap: 'Detail' }), { uvChannel },
+    )).toBeTruthy()
+    expect(uvChannel).toHaveBeenCalledWith('Detail')
+    expect(() => buildTslColorNode(
+      documentOf({ op: 'uv', uvMap: 'Detail' }), { uvChannel: () => -1 },
+    )).toThrow(/invalid index/)
+
+    const colorAttribute = vi.fn(() => 'color_1')
+    expect(buildTslColorNode(
+      documentOf({ op: 'vertex_color', layer: 'Paint' }), { colorAttribute },
+    )).toBeTruthy()
+    expect(colorAttribute).toHaveBeenCalledWith('Paint')
+  })
+
+  it('refuses texture_ref without a resolver and resolves through one', () => {
+    const reference = documentOf({
+      op: 'texture_ref',
+      ref: { slot: 3 },
+      vector: { op: 'uv' },
+    })
+    expect(() => buildTslColorNode(reference))
+      .toThrow(/BuildTslOptions\.textures/)
+    expect(() => buildTslColorNode(reference, { textures: () => null }))
+      .toThrow(/resolved no texture/)
+  })
+
+  it('collects build-allocated textures into a disposable resource handle', () => {
+    const resources = createTslBuildResources()
+    buildTslColorNode(documentOf({
+      op: 'ramp_lut',
+      samples: 4,
+      values: [0, 0, 0, 1, 0.3, 0.3, 0.3, 1, 0.6, 0.6, 0.6, 1, 1, 1, 1, 1],
+      input: { op: 'separate', channel: 'x', input: { op: 'uv' } },
+    }), { resources })
+    expect(resources.textures.length).toBe(1)
+    const disposed = vi.fn()
+    ;(resources.textures[0] as { dispose: () => void }).dispose = disposed
+    resources.dispose()
+    expect(disposed).toHaveBeenCalledOnce()
+    expect(resources.textures.length).toBe(0)
+  })
+
+  it('builds scalar documents without the RGB broadcast', () => {
+    expect(buildTslScalarNode(documentOf({
+      op: 'clamp01',
+      input: { op: 'separate', channel: 'x', input: { op: 'uv' } },
     }))).toBeTruthy()
   })
 
