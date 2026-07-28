@@ -274,6 +274,12 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
    * framework adapters already own renderer sizing while Blendlink still
    * updates its authored camera and post-processing targets. */
   resizeRenderer?: boolean
+  /** Override the material-programs transport (tests, custom hosting).
+   * The default fetches descriptor.materialPrograms.url with byte-count
+   * and hash verification; programs apply only on the WebGPU family. */
+  loadMaterialPrograms?: () => Promise<
+    import('./tslMaterialRuntime.js').MaterialProgramsDocument
+  >
   /** Authored probes capture automatically by default. Supply textures or a
    * custom capture/assignment adapter to replace that standard WebGL route. */
   reflectionProbes?: ApplyReflectionProbesOptions<ReflectionProbeObjectLike>
@@ -401,6 +407,13 @@ export interface InstalledThreeCompiledScene {
   rectAreaLights: ThreeRectAreaLightReport
   /** Inspectable sampling decision for imported material textures. */
   textureSampling: ThreeTextureSamplingReport
+  /** Phase 4 TSL program application report; null off the WebGPU family
+   * or when the scene ships no materialPrograms pointer. */
+  tslMaterials: {
+    materials: number
+    applied: number
+    skipped: readonly { material: string; channel?: string; reason: string }[]
+  } | null
   lods: CompiledSceneLods | null
   instances: CompiledSceneInstances | null
   components: InstalledThreeComponents
@@ -2101,6 +2114,28 @@ async function installLoadedThreeCompiledSceneNow(
     )
     register(() => textureSampling?.dispose())
 
+    // Phase 4 Track C: a shipped materialPrograms pointer is the artist's
+    // compile-time opt-in, so the programs apply automatically on the
+    // WebGPU renderer family. The WebGL family has no node materials to
+    // apply them with — its shipped carriers already render faithfully.
+    let tslMaterials:
+      | import('./tslMaterialRuntime.js').InstalledTslMaterials
+      | null = null
+    if (
+      descriptor.materialPrograms
+      && (renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer
+    ) {
+      const { installTslMaterials } = await import('./tslMaterialRuntime.js')
+      tslMaterials = await installTslMaterials({
+        root,
+        descriptor: descriptor as Parameters<typeof installTslMaterials>[0]['descriptor'],
+        ...(options.loadMaterialPrograms
+          ? { loadPrograms: options.loadMaterialPrograms }
+          : {}),
+      })
+      register(() => tslMaterials?.dispose())
+    }
+
     const hasBakedAssets = Object.keys(descriptor.states ?? {}).length > 0
       || Object.keys(descriptor.lightGroups ?? {}).length > 0
     if (hasBakedAssets && !options.createBakedScene) {
@@ -2603,6 +2638,13 @@ async function installLoadedThreeCompiledSceneNow(
       reflectionProbes,
       rectAreaLights: rectAreaLights.report,
       textureSampling: textureSampling.report,
+      tslMaterials: tslMaterials
+        ? {
+            materials: tslMaterials.materials,
+            applied: tslMaterials.applied,
+            skipped: tslMaterials.skipped,
+          }
+        : null,
       lods,
       instances,
       components,

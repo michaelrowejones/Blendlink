@@ -1337,7 +1337,61 @@ describe('official Three scene installation seam', () => {
       loader: loader(new THREE.Group()) as unknown as import('three/addons/loaders/GLTFLoader.js').GLTFLoader,
     })
     expect(installed.root).toBeInstanceOf(THREE.Object3D)
+    expect(installed.tslMaterials).toBeNull()
     installed.dispose()
+  })
+
+  it('applies shipped material programs automatically on the WebGPU family', async () => {
+    const webgpu = renderer() as ReturnType<typeof renderer> & {
+      isWebGPURenderer?: boolean
+      alpha?: boolean
+      getContextAttributes?: () => { alpha?: boolean }
+    }
+    delete (webgpu as { isWebGLRenderer?: boolean }).isWebGLRenderer
+    delete webgpu.getContextAttributes
+    webgpu.isWebGPURenderer = true
+    webgpu.alpha = true
+
+    const material = new THREE.MeshStandardMaterial()
+    material.userData.blendlink_source_material = 'Paint'
+    const root = new THREE.Group()
+    root.add(new THREE.Mesh(new THREE.BoxGeometry(), material))
+
+    const installed = await installThreeCompiledScene({
+      descriptor: {
+        ...descriptor(),
+        materialPrograms: {
+          url: '/models/x.materials.json', bytes: 1, hash: 'x', materials: 1,
+        },
+      } as unknown as ReturnType<typeof descriptor>,
+      renderer: webgpu as unknown as THREE.WebGLRenderer,
+      scene: new THREE.Scene(),
+      loader: loader(root) as unknown as import('three/addons/loaders/GLTFLoader.js').GLTFLoader,
+      loadMaterialPrograms: async () => ({
+        schemaVersion: 1,
+        model: 'blendlink-material-programs-v1',
+        materials: {
+          Paint: {
+            channels: {
+              'Base Color': {
+                tslIr: {
+                  schemaVersion: 1,
+                  model: 'blendlink-tsl-ir-v1',
+                  output: { op: 'separate', channel: 'x', input: { op: 'uv' } },
+                },
+              },
+            },
+          },
+        },
+      }),
+    })
+    expect(installed.tslMaterials).toEqual({
+      materials: 1, applied: 1, skipped: [],
+    })
+    installed.dispose()
+    // Disposal restores the loaded material on the mesh.
+    const mesh = root.children[0] as THREE.Mesh
+    expect(mesh.material).toBe(material)
   })
 
   it('rejects renderer-like objects without a Three renderer identity', async () => {
