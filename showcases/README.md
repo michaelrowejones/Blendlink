@@ -10,8 +10,15 @@ the generated typed runtime.
 The classic Blender "cube diorama" atelier. `mark_fidelity.py` applies
 the fidelity decisions headlessly on the copied scene:
 
-- 15 Principled-rooted materials → per-channel Material bake
-  (+ `blendlink_tsl_ir` evidence riding the plan).
+- 6 Principled-rooted materials → per-channel Material bake with
+  `blendlink_tsl_ir` programs, published as the
+  `cubeDiorama.materials.json` sidecar the descriptor points at. Their
+  host objects (Bird Cage, Computer, Ground Plate) are Realtime:
+  Appearance baking owns the COMPLETE surface of every static mesh, so
+  per-material routes only exist on objects the atlas does not claim —
+  a host goes Realtime only when every slot is bake-marked or portable
+  live PBR, and marked materials without an eligible host demote back
+  to the atlas by name (Plant.Dirt, Plant.Pot, curtains.bar).
 - Everything else → the Appearance atlas (1024², density 24, Cycles
   16-sample denoised), including the furniture frozen into the still
   diorama.

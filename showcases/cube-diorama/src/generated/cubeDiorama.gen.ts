@@ -2,8 +2,8 @@
 import type * as THREE from 'three'
 
 export const cubeDiorama = {
-  url: "/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.glb?v=fe537caf635c2f6b",
-  hash: "fe537caf635c2f6b",
+  url: "/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.glb?v=02d4c125982bc42e",
+  hash: "02d4c125982bc42e",
   nodes: {
   "Art_Supplies_-_Brushes": "Art_Supplies_-_Brushes",
   "Art_Supplies_-_Palette": "Art_Supplies_-_Palette",
@@ -49,11 +49,91 @@ export const cubeDiorama = {
   },
   /** Generated node key -> stable glTF extra used by runtime binders. */
   nodeIds: {
-
+  "Art_Supplies_-_Brushes": "8fd4d5f7-c69d-46cc-b939-a40b6bfef56f",
+  "Art_Supplies_-_Palette": "f8864b50-0244-4833-a424-1a7423882e91",
+  Beam2: "bce602eb-1b26-4b69-ab9b-9e6a7d0a3b47",
+  Beam2001: "4f664f1a-86fd-48b3-8b3c-2b06eab800bf",
+  Beam3: "7560aa65-979c-453a-8a3e-1629d6346d5d",
+  Beam4: "997ef1f1-85e8-4c05-8431-c3363f947f9e",
+  Beam5: "c2ba65a1-45a0-435b-b139-3ae1d8ed866f",
+  Bench: "5ea591f5-892d-4acc-8126-08cc6df321b9",
+  Bird_Cage: "1700e9e4-82a1-41e1-94d9-efde108787a2",
+  Bounce_Light: "1981aeab-daf7-482f-87bf-5a72b9e41165",
+  Camera: "d79866bf-8b94-4e45-806a-dee4e83e1254",
+  Computer: "68afec9f-693a-474e-ae5e-bbb62da34c2d",
+  Cube: "69ad93d2-9e68-46d6-be9e-d2c660427d3a",
+  Cube002: "cb259f95-89ec-4c3d-9698-7764244634c9",
+  Curtains: "afd83d15-a8c6-4807-92c9-482e938419b1",
+  Desk: "2e317869-f54f-4741-bf05-6d91e8941465",
+  Dresser: "257637a3-cf75-4c2e-a38f-2e78519db6aa",
+  Easel: "61071864-cf3f-485c-a94b-2ca19e4f34d8",
+  Cube001: "9169fddd-ecb5-4b76-9b32-2cca6dd29d6f",
+  Cube003: "0fef11d0-f285-4bd6-bdd4-1433b8a0eceb",
+  Cube004: "7976d2e7-45f1-4194-ae00-721d6dcdcc40",
+  Cube005: "6080b954-793b-4bbf-98e6-9c0a90456d4c",
+  Cube006: "7b2b364c-7cf2-4606-b16b-f6ff145e3867",
+  Cube007: "36431537-ef3f-47ea-8771-b193c34c3a86",
+  Cube008: "a3f22f1f-8506-4d22-98dc-8ab88a023edc",
+  Empty: "65a2d37f-5d50-491d-b79f-951f26829470",
+  Fill_Light: "86e9ce01-0b18-4869-b1c8-2e4be25a4b5e",
+  Fill_Light001: "e7032a1c-1bf7-479e-be2b-0c32047ccd3a",
+  Floor: "7981475b-b892-46ec-ad3b-32158653462e",
+  Ground_Plate: "b36c5345-7dee-4853-8106-d41b1cb70af3",
+  IrradianceVolume: "ae2ec1d3-04b8-42c1-8eff-a4df89f63b44",
+  Mirror: "373a7794-ba87-459f-9a83-c4f37ef56a70",
+  "Potted_Plant_-_Bracken": "5a7b77f6-1695-4221-8c45-f909faf1bb14",
+  Rug: "75d52a61-979e-44a7-8dfb-f70d1fe9e839",
+  Shelf: "f5f82a21-a343-423f-a47f-59bc01b59dac",
+  Sidetable: "23bad141-d646-49e7-8d9b-b54989dcfaf0",
+  Spot_Outside: "c6ac10fc-6639-46c6-86ff-8841c5a726c8",
+  Wall1: "e35fdcd9-59ec-4838-aa2b-092baa3e3c6f",
+  Wall2: "124f0ed9-6cf1-4913-af6d-e4513bd980f8",
+  Window_Board: "0223eb72-8c0b-4a00-826c-2cc87f2debce",
+  Wooden_Chair: "6f6ed27c-434a-423c-820c-0c0af7de65de",
   },
   /** Stable IDs survive Blender renames and hierarchy changes. */
   objectsById: {
-
+  "8fd4d5f7-c69d-46cc-b939-a40b6bfef56f": "Art_Supplies_-_Brushes",
+  "f8864b50-0244-4833-a424-1a7423882e91": "Art_Supplies_-_Palette",
+  "bce602eb-1b26-4b69-ab9b-9e6a7d0a3b47": "Beam2",
+  "4f664f1a-86fd-48b3-8b3c-2b06eab800bf": "Beam2001",
+  "7560aa65-979c-453a-8a3e-1629d6346d5d": "Beam3",
+  "997ef1f1-85e8-4c05-8431-c3363f947f9e": "Beam4",
+  "c2ba65a1-45a0-435b-b139-3ae1d8ed866f": "Beam5",
+  "5ea591f5-892d-4acc-8126-08cc6df321b9": "Bench",
+  "1700e9e4-82a1-41e1-94d9-efde108787a2": "Bird_Cage",
+  "1981aeab-daf7-482f-87bf-5a72b9e41165": "Bounce_Light",
+  "d79866bf-8b94-4e45-806a-dee4e83e1254": "Camera",
+  "68afec9f-693a-474e-ae5e-bbb62da34c2d": "Computer",
+  "69ad93d2-9e68-46d6-be9e-d2c660427d3a": "Cube",
+  "cb259f95-89ec-4c3d-9698-7764244634c9": "Cube002",
+  "afd83d15-a8c6-4807-92c9-482e938419b1": "Curtains",
+  "2e317869-f54f-4741-bf05-6d91e8941465": "Desk",
+  "257637a3-cf75-4c2e-a38f-2e78519db6aa": "Dresser",
+  "61071864-cf3f-485c-a94b-2ca19e4f34d8": "Easel",
+  "9169fddd-ecb5-4b76-9b32-2cca6dd29d6f": "Cube001",
+  "0fef11d0-f285-4bd6-bdd4-1433b8a0eceb": "Cube003",
+  "7976d2e7-45f1-4194-ae00-721d6dcdcc40": "Cube004",
+  "6080b954-793b-4bbf-98e6-9c0a90456d4c": "Cube005",
+  "7b2b364c-7cf2-4606-b16b-f6ff145e3867": "Cube006",
+  "36431537-ef3f-47ea-8771-b193c34c3a86": "Cube007",
+  "a3f22f1f-8506-4d22-98dc-8ab88a023edc": "Cube008",
+  "65a2d37f-5d50-491d-b79f-951f26829470": "Empty",
+  "86e9ce01-0b18-4869-b1c8-2e4be25a4b5e": "Fill_Light",
+  "e7032a1c-1bf7-479e-be2b-0c32047ccd3a": "Fill_Light001",
+  "7981475b-b892-46ec-ad3b-32158653462e": "Floor",
+  "b36c5345-7dee-4853-8106-d41b1cb70af3": "Ground_Plate",
+  "ae2ec1d3-04b8-42c1-8eff-a4df89f63b44": "IrradianceVolume",
+  "373a7794-ba87-459f-9a83-c4f37ef56a70": "Mirror",
+  "5a7b77f6-1695-4221-8c45-f909faf1bb14": "Potted_Plant_-_Bracken",
+  "75d52a61-979e-44a7-8dfb-f70d1fe9e839": "Rug",
+  "f5f82a21-a343-423f-a47f-59bc01b59dac": "Shelf",
+  "23bad141-d646-49e7-8d9b-b54989dcfaf0": "Sidetable",
+  "c6ac10fc-6639-46c6-86ff-8841c5a726c8": "Spot_Outside",
+  "e35fdcd9-59ec-4838-aa2b-092baa3e3c6f": "Wall1",
+  "124f0ed9-6cf1-4913-af6d-e4513bd980f8": "Wall2",
+  "0223eb72-8c0b-4a00-826c-2cc87f2debce": "Window_Board",
+  "6f6ed27c-434a-423c-820c-0c0af7de65de": "Wooden_Chair",
   },
   /** Scene-owned web camera and responsive composition contract. */
   camera: null,
@@ -64,7 +144,7 @@ export const cubeDiorama = {
   /** Portable renderer look; application values remain explicitly application-owned. */
   look: {"toneMapping":"application","exposure":0,"background":"application"} as const,
   /** Portable scene fog; application mode leaves the website untouched. */
-  fog: {"mode":"application","color":[0.05,0.05,0.05],"near":10,"far":100,"density":0.02} as const,
+  fog: {"mode":"application","color":[0.05000000074505806,0.05000000074505806,0.05000000074505806],"near":10,"far":100,"density":0.019999999552965164} as const,
   /** Scene-wide realtime shadow policy resolved from the artist preset. */
   shadows: {"preset":"application","filter":"pcf","mapSize":1024,"maxDistance":50,"bias":-0.0005,"normalBias":0.02,"radius":1,"autoUpdate":true} as const,
   /** Blender viewport evidence; ignored unless an authoring preview opts in. */
@@ -72,6 +152,9 @@ export const cubeDiorama = {
   /** Image-based lighting/background intent and its published source asset. */
   environment: {"source":"application","lighting":"application","background":"application","lightingIntensity":1,"lightingRotation":0,"backgroundIntensity":1,"backgroundRotation":0,"backgroundBlur":0,"groundHeight":2,"groundRadius":100} as const,
   environmentAsset: null,
+  /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
+   * transport): fetch by url, pin by hash. IR bodies never inline here. */
+  materialPrograms: {"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.materials.json?v=cb1c089b430eb600","bytes":5643,"hash":"cb1c089b430eb600","materials":6} as const,
   /** Named local reflection captures. Influence is metadata for capture or a
    * custom parallax adapter; renderer assignment is always explicit. */
   reflectionProbes: [] as const,
@@ -85,7 +168,7 @@ export const cubeDiorama = {
 
   },
   /** Deterministic post-export transforms applied to this exact GLB. */
-  optimization: {"geometry":"meshopt","inputBytes":65757088,"outputBytes":11235068,"savedBytes":54522020,"ratio":0.17085714014586534,"maxBoundsError":0,"boundsTolerance":0.0005174985632192616,"passes":{"animationKeyframesRemoved":0,"weldedVertices":0,"deduplicated":{"accessors":14,"materials":0,"textures":0},"pruned":{"accessors":266,"materials":0,"textures":0,"buffers":0},"skipped":["Material de-duplication was skipped because at least one material has authored extras.","POSITION quantization was skipped because mesh node \"Art Supplies - Brushes\" has authored metadata or another transform-sensitive attachment; quantizing it would replace an authored attachment or insert a correction child."]}} as const,
+  optimization: {"geometry":"meshopt","inputBytes":65436280,"outputBytes":11606476,"savedBytes":53829804,"ratio":0.1773706573784451,"maxBoundsError":0,"boundsTolerance":0.0005174985632192616,"passes":{"animationKeyframesRemoved":0,"weldedVertices":9,"deduplicated":{"accessors":14,"materials":0,"textures":0},"pruned":{"accessors":265,"materials":0,"textures":0,"buffers":0},"skipped":["Material de-duplication was skipped because at least one material has authored extras.","POSITION quantization was skipped because mesh node \"Art Supplies - Brushes\" has authored metadata or another transform-sensitive attachment; quantizing it would replace an authored attachment or insert a correction child."]}} as const,
   /** Versioned browser inputs for optional LOD and instancing adapters. Full
    * procedural/material/camera evidence stays in the generated manifest. */
   runtimeDiagnostics: {"schemaVersion":1,"lodChains":[],"instanceGroups":[]} as const,
@@ -93,18 +176,18 @@ export const cubeDiorama = {
   textureCompression: null,
   /** Exact baked-atlas delivery alternatives. Keys are canonical source URLs;
    * variants retain their own immutable content hashes. */
-  textureVariants: {"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.png":[{"url":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.256.webp?v=e5be69535813ad5d","format":"webp","width":256,"height":256,"bytes":44930,"hash":"e5be69535813ad5d","lossless":true},{"url":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.256.png?v=e0860f1dd8fee010","format":"png","width":256,"height":256,"bytes":71151,"hash":"e0860f1dd8fee010","lossless":true},{"url":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.512.webp?v=f6e3f52ebb299484","format":"webp","width":512,"height":512,"bytes":123856,"hash":"f6e3f52ebb299484","lossless":true},{"url":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.512.png?v=f29609797be10c05","format":"png","width":512,"height":512,"bytes":215106,"hash":"f29609797be10c05","lossless":true},{"url":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.webp?v=b62a015b193bf577","format":"webp","width":1024,"height":1024,"bytes":369660,"hash":"b62a015b193bf577","lossless":true}]} as const,
+  textureVariants: {"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.png":[{"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.256.webp?v=2fe9b72f8d6125cb","format":"webp","width":256,"height":256,"bytes":46984,"hash":"2fe9b72f8d6125cb","lossless":true},{"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.256.png?v=b2aafbad3f06fd81","format":"png","width":256,"height":256,"bytes":73567,"hash":"b2aafbad3f06fd81","lossless":true},{"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.512.webp?v=d3b301b7b3768004","format":"webp","width":512,"height":512,"bytes":132596,"hash":"d3b301b7b3768004","lossless":true},{"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.512.png?v=66c2157bf41164b7","format":"png","width":512,"height":512,"bytes":225998,"hash":"66c2157bf41164b7","lossless":true},{"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.webp?v=786a30f093df852c","format":"webp","width":1024,"height":1024,"bytes":399840,"hash":"786a30f093df852c","lossless":true}]} as const,
   /** Compiler evidence for the selected atlas delivery transforms. */
-  atlasDelivery: {"format":"lossless-webp","encoder":"sharp","inputBytes":1154166,"outputBytes":662302,"savedBytes":491864,"ratio":0.5738359993276531,"entries":[{"name":"cubeDiorama.default-37a8eec1.png","source":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.png","sourceBytes":652803,"variant":{"url":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.webp","format":"webp","width":1024,"height":1024,"bytes":369660,"hash":"b62a015b193bf577","lossless":true},"savedBytes":283143,"ratio":0.5662657800285844,"embedded":false},{"name":"cubeDiorama.default-37a8eec1.256.png","source":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.256.png","sourceBytes":71151,"variant":{"url":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.256.webp","format":"webp","width":256,"height":256,"bytes":44930,"hash":"e5be69535813ad5d","lossless":true},"savedBytes":26221,"ratio":0.6314739076049528,"embedded":false},{"name":"cubeDiorama.default-37a8eec1.512.png","source":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.512.png","sourceBytes":215106,"variant":{"url":"/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.512.webp","format":"webp","width":512,"height":512,"bytes":123856,"hash":"f6e3f52ebb299484","lossless":true},"savedBytes":91250,"ratio":0.5757905404777179,"embedded":false},{"name":"out.glb.state.default-37a8eec1.512","source":"out.glb.state.default-37a8eec1.512","sourceBytes":215106,"variant":{"url":".webp","format":"webp","width":512,"height":512,"bytes":123856,"hash":"f6e3f52ebb299484","lossless":true},"savedBytes":91250,"ratio":0.5757905404777179,"embedded":true}],"skipped":[]} as const,
+  atlasDelivery: {"format":"lossless-webp","encoder":"sharp","inputBytes":1226836,"outputBytes":712016,"savedBytes":514820,"ratio":0.5803677101095827,"entries":[{"name":"cubeDiorama.default-37a8eec1.png","source":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.png","sourceBytes":701273,"variant":{"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.webp","format":"webp","width":1024,"height":1024,"bytes":399840,"hash":"786a30f093df852c","lossless":true},"savedBytes":301433,"ratio":0.5701631176446262,"embedded":false},{"name":"cubeDiorama.default-37a8eec1.256.png","source":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.256.png","sourceBytes":73567,"variant":{"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.256.webp","format":"webp","width":256,"height":256,"bytes":46984,"hash":"2fe9b72f8d6125cb","lossless":true},"savedBytes":26583,"ratio":0.6386559190941591,"embedded":false},{"name":"cubeDiorama.default-37a8eec1.512.png","source":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.512.png","sourceBytes":225998,"variant":{"url":"/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.512.webp","format":"webp","width":512,"height":512,"bytes":132596,"hash":"d3b301b7b3768004","lossless":true},"savedBytes":93402,"ratio":0.5867131567535996,"embedded":false},{"name":"out.glb.state.default-37a8eec1.512","source":"out.glb.state.default-37a8eec1.512","sourceBytes":225998,"variant":{"url":".webp","format":"webp","width":512,"height":512,"bytes":132596,"hash":"d3b301b7b3768004","lossless":true},"savedBytes":93402,"ratio":0.5867131567535996,"embedded":true}],"skipped":[]} as const,
   /** Required by the GLB itself, including externally authored KTX2 assets. */
   requiresKtx2: false,
   /** Required by the GLB itself, including externally authored Meshopt assets. */
   requiresMeshopt: true,
   /** Exact compiler-owned request graph; immutable caching still requires a
    * graph-addressed publication directory. */
-  runtimeAssetGraph: {"algorithm":"sha256","fingerprint":"f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20","entries":[{"path":"cubeDiorama.default-37a8eec1.256.png","role":"companion","bytes":71151,"sha256":"e0860f1dd8fee010ba4d223015df308cf7101041fc1dce4628e5d23498155a6f"},{"path":"cubeDiorama.default-37a8eec1.256.webp","role":"companion","bytes":44930,"sha256":"e5be69535813ad5d624e58f4f5de42c76a52f6f2692029e43551b55c8913516b"},{"path":"cubeDiorama.default-37a8eec1.512.png","role":"companion","bytes":215106,"sha256":"f29609797be10c05fd4e15f9eae8c86b5bda246172b36fb44f40915190073a74"},{"path":"cubeDiorama.default-37a8eec1.512.webp","role":"companion","bytes":123856,"sha256":"f6e3f52ebb299484f3845f4b3d1c0d450e4a2f64317a66fcbf1afa143477b14e"},{"path":"cubeDiorama.default-37a8eec1.png","role":"companion","bytes":652803,"sha256":"806058a3405212c8e93654c29f24045170295eda9689744d1e6ed3642cb92ad5"},{"path":"cubeDiorama.default-37a8eec1.webp","role":"companion","bytes":369660,"sha256":"b62a015b193bf577e95c102ce0792953ef236c79ee51b4a9cc8a395223e695ca"},{"path":"cubeDiorama.glb","role":"scene","bytes":11235068,"sha256":"fe537caf635c2f6b76c914f459f1a1964fbcea4be812856db92f618594432747"}]} as const,
+  runtimeAssetGraph: {"algorithm":"sha256","fingerprint":"840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3","entries":[{"path":"cubeDiorama.default-37a8eec1.256.png","role":"companion","bytes":73567,"sha256":"b2aafbad3f06fd81008d71ed89722867795db5d45c0cbf89fb4b7a90f2176494"},{"path":"cubeDiorama.default-37a8eec1.256.webp","role":"companion","bytes":46984,"sha256":"2fe9b72f8d6125cb6cf17ac2f3ceb6b64bf511230254ced0d28f8583388238ee"},{"path":"cubeDiorama.default-37a8eec1.512.png","role":"companion","bytes":225998,"sha256":"66c2157bf41164b7624acf076d0abad3ef790c893b0d2fbb4c32683ce7515343"},{"path":"cubeDiorama.default-37a8eec1.512.webp","role":"companion","bytes":132596,"sha256":"d3b301b7b376800457d9bf3e4371aa862c174b4409c071a2c6539e75a75b08fc"},{"path":"cubeDiorama.default-37a8eec1.png","role":"companion","bytes":701273,"sha256":"a5680f5caa87b4728542ea008455a961d4837ea51ef896d11cd600c894cd7aad"},{"path":"cubeDiorama.default-37a8eec1.webp","role":"companion","bytes":399840,"sha256":"786a30f093df852c0f140906ba42a0ac6acbcc766b4bc875f0f7f18c4584fb03"},{"path":"cubeDiorama.glb","role":"scene","bytes":11606476,"sha256":"02d4c125982bc42e9dd59f10389cc9fbc87c4b758d9911b06551988f3a88a351"},{"path":"cubeDiorama.materials.json","role":"companion","bytes":5643,"sha256":"cb1c089b430eb60003efe89b3479172e551f02b09c78fe781b47b6f065ec270e"}]} as const,
   /** Exact uncompressed Meshopt buffer-view bytes used for decode scheduling. */
-  meshoptDecodedBytes: 60601352,
+  meshoptDecodedBytes: 60300912,
   /** Per-image maximum-size transforms applied before compression. */
   textureTransforms: [] as const,
   materials: {
@@ -114,11 +197,11 @@ export const cubeDiorama = {
   "Brush.BLENDLINK_BAKED.main": "Brush.BLENDLINK_BAKED.main",
   "Wood 4.BLENDLINK_BAKED.main": "Wood 4.BLENDLINK_BAKED.main",
   "Wood 6.BLENDLINK_BAKED.main": "Wood 6.BLENDLINK_BAKED.main",
-  "bird_cage.BLENDLINK_BAKED.main": "bird_cage.BLENDLINK_BAKED.main",
-  "computer.primary.BLENDLINK_BAKED.main": "computer.primary.BLENDLINK_BAKED.main",
-  "computer.secondary.BLENDLINK_BAKED.main": "computer.secondary.BLENDLINK_BAKED.main",
-  "computer.screen.BLENDLINK_BAKED.main": "computer.screen.BLENDLINK_BAKED.main",
-  "computer.logo.BLENDLINK_BAKED.main": "computer.logo.BLENDLINK_BAKED.main",
+  "BLENDLINK_WEB.13b749b796.bird_cage": "BLENDLINK_WEB.13b749b796.bird_cage",
+  "BLENDLINK_WEB.b10567868b.computer.primary": "BLENDLINK_WEB.b10567868b.computer.primary",
+  "BLENDLINK_WEB.88d0c180cf.computer.secondary": "BLENDLINK_WEB.88d0c180cf.computer.secondary",
+  "BLENDLINK_WEB.9762c8fe1e.computer.screen": "BLENDLINK_WEB.9762c8fe1e.computer.screen",
+  "BLENDLINK_WEB.64488b144b.computer.logo": "BLENDLINK_WEB.64488b144b.computer.logo",
   "curtains.BLENDLINK_BAKED.main": "curtains.BLENDLINK_BAKED.main",
   "curtains.bar.BLENDLINK_BAKED.main": "curtains.bar.BLENDLINK_BAKED.main",
   "Wood 2.BLENDLINK_BAKED.main": "Wood 2.BLENDLINK_BAKED.main",
@@ -127,7 +210,7 @@ export const cubeDiorama = {
   "Easel.Canvas.BLENDLINK_BAKED.main": "Easel.Canvas.BLENDLINK_BAKED.main",
   "Wooden Bars.BLENDLINK_BAKED.main": "Wooden Bars.BLENDLINK_BAKED.main",
   "Boards - Basketweave.BLENDLINK_BAKED.main": "Boards - Basketweave.BLENDLINK_BAKED.main",
-  "Material.003.BLENDLINK_BAKED.main": "Material.003.BLENDLINK_BAKED.main",
+  "BLENDLINK_WEB.9953e77723.Material.003": "BLENDLINK_WEB.9953e77723.Material.003",
   "mirror.BLENDLINK_BAKED.main": "mirror.BLENDLINK_BAKED.main",
   "Plant.Pot.BLENDLINK_BAKED.main": "Plant.Pot.BLENDLINK_BAKED.main",
   "Plant.Dirt.BLENDLINK_BAKED.main": "Plant.Dirt.BLENDLINK_BAKED.main",
@@ -159,12 +242,12 @@ export const cubeDiorama = {
   },
   /** Baked state texture URLs, routed as Appearance maps or Lighting light maps. */
   states: {
-  default: "/models/cubeDiorama/f18a1ab77f9f2eb3fff80e2e8cdd98af0c392cd86b698420cc41cad1caf5bb20/cubeDiorama.default-37a8eec1.png?v=806058a3405212c8",
+  default: "/models/cubeDiorama/840c5e60d5b9b56d6abb5e4f27bcf3a668dbd6db08130206410fbe7f603c1fa3/cubeDiorama.default-37a8eec1.png?v=a5680f5caa87b472",
   },
   /** Per-atlas composition route. Missing metadata is legacy appearance. */
   bakeOutputs: {"main":"appearance"} as const,
   /** Per-state decode scale for normalized baked atlases. */
-  stateScales: {"default":{"main":3.89677095413208}} as const,
+  stateScales: {"default":{"main":4.308779239654541}} as const,
   defaultState: "default" as const,
   /** Objects and lights hidden by each full Blender collection state. */
   stateVisibility: {"default":{"hiddenObjectIds":[],"hiddenObjectNames":[]}} as const,
@@ -178,44 +261,47 @@ export const cubeDiorama = {
   physics: [] as const,
   /** Blender custom properties (glTF extras), typed as literals. */
   extras: {
-  "Art_Supplies_-_Brushes": {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  "Art_Supplies_-_Palette": {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Beam2: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Beam2001: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Beam3: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Beam4: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Beam5: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Bench: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Bird_Cage: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Bounce_Light: {"blendlink_rect_area_light":{"schemaVersion":1,"color":[1,0.8328028321266174,0.6855429410934448],"size":[0.49000000953674316,0.49000000953674316],"power":3.9269907474517822}},
-  Computer: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube002: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Curtains: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Desk: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Dresser: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Easel: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube001: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube003: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube004: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube005: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube006: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube007: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Cube008: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Empty: {"id_keys":{}},
-  Fill_Light: {"blendlink_rect_area_light":{"schemaVersion":1,"color":[1,0.8328028321266174,0.6855429410934448],"size":[0.49000000953674316,0.49000000953674316],"power":3.9269907474517822}},
-  Fill_Light001: {"blendlink_rect_area_light":{"schemaVersion":1,"color":[1,0.8328028321266174,0.6855429410934448],"size":[0.49000000953674316,0.49000000953674316],"power":3.1415927410125732}},
-  Floor: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Ground_Plate: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Mirror: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  "Potted_Plant_-_Bracken": {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Rug: {"Color 1":[0.027000000700354576,0.017000000923871994,0.012000000104308128,1],"Color 2":[0.23414799571037292,0.13699999451637268,0.07199999690055847,1],"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Shelf: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Sidetable: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Wall1: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Wall2: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Window_Board: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
-  Wooden_Chair: {"blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  "Art_Supplies_-_Brushes": {"blendlink_id":"8fd4d5f7-c69d-46cc-b939-a40b6bfef56f","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  "Art_Supplies_-_Palette": {"blendlink_id":"f8864b50-0244-4833-a424-1a7423882e91","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Beam2: {"blendlink_id":"bce602eb-1b26-4b69-ab9b-9e6a7d0a3b47","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Beam2001: {"blendlink_id":"4f664f1a-86fd-48b3-8b3c-2b06eab800bf","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Beam3: {"blendlink_id":"7560aa65-979c-453a-8a3e-1629d6346d5d","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Beam4: {"blendlink_id":"997ef1f1-85e8-4c05-8431-c3363f947f9e","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Beam5: {"blendlink_id":"c2ba65a1-45a0-435b-b139-3ae1d8ed866f","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Bench: {"blendlink_id":"5ea591f5-892d-4acc-8126-08cc6df321b9","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Bird_Cage: {"blendlink_id":"1700e9e4-82a1-41e1-94d9-efde108787a2","blendlink_dynamic":true},
+  Bounce_Light: {"blendlink_id":"1981aeab-daf7-482f-87bf-5a72b9e41165","blendlink_rect_area_light":{"schemaVersion":1,"color":[1,0.8328028321266174,0.6855429410934448],"size":[0.49000000953674316,0.49000000953674316],"power":3.9269907474517822}},
+  Camera: {"blendlink_id":"d79866bf-8b94-4e45-806a-dee4e83e1254"},
+  Computer: {"blendlink_id":"68afec9f-693a-474e-ae5e-bbb62da34c2d","blendlink_dynamic":true},
+  Cube: {"blendlink_id":"69ad93d2-9e68-46d6-be9e-d2c660427d3a","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Cube002: {"blendlink_id":"cb259f95-89ec-4c3d-9698-7764244634c9","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Curtains: {"blendlink_id":"afd83d15-a8c6-4807-92c9-482e938419b1","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Desk: {"blendlink_id":"2e317869-f54f-4741-bf05-6d91e8941465","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Dresser: {"blendlink_id":"257637a3-cf75-4c2e-a38f-2e78519db6aa","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Easel: {"blendlink_id":"61071864-cf3f-485c-a94b-2ca19e4f34d8","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Cube001: {"blendlink_id":"9169fddd-ecb5-4b76-9b32-2cca6dd29d6f","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Cube003: {"blendlink_id":"0fef11d0-f285-4bd6-bdd4-1433b8a0eceb","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Cube004: {"blendlink_id":"7976d2e7-45f1-4194-ae00-721d6dcdcc40","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Cube005: {"blendlink_id":"6080b954-793b-4bbf-98e6-9c0a90456d4c","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Cube006: {"blendlink_id":"7b2b364c-7cf2-4606-b16b-f6ff145e3867","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Cube007: {"blendlink_id":"36431537-ef3f-47ea-8771-b193c34c3a86","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Cube008: {"blendlink_id":"a3f22f1f-8506-4d22-98dc-8ab88a023edc","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Empty: {"id_keys":{},"blendlink_id":"65a2d37f-5d50-491d-b79f-951f26829470"},
+  Fill_Light: {"blendlink_id":"86e9ce01-0b18-4869-b1c8-2e4be25a4b5e","blendlink_rect_area_light":{"schemaVersion":1,"color":[1,0.8328028321266174,0.6855429410934448],"size":[0.49000000953674316,0.49000000953674316],"power":3.9269907474517822}},
+  Fill_Light001: {"blendlink_id":"e7032a1c-1bf7-479e-be2b-0c32047ccd3a","blendlink_rect_area_light":{"schemaVersion":1,"color":[1,0.8328028321266174,0.6855429410934448],"size":[0.49000000953674316,0.49000000953674316],"power":3.1415927410125732}},
+  Floor: {"blendlink_id":"7981475b-b892-46ec-ad3b-32158653462e","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Ground_Plate: {"blendlink_id":"b36c5345-7dee-4853-8106-d41b1cb70af3","blendlink_dynamic":true},
+  IrradianceVolume: {"blendlink_id":"ae2ec1d3-04b8-42c1-8eff-a4df89f63b44"},
+  Mirror: {"blendlink_id":"373a7794-ba87-459f-9a83-c4f37ef56a70","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  "Potted_Plant_-_Bracken": {"blendlink_id":"5a7b77f6-1695-4221-8c45-f909faf1bb14","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Rug: {"Color 1":[0.027000000700354576,0.017000000923871994,0.012000000104308128,1],"Color 2":[0.23414799571037292,0.13699999451637268,0.07199999690055847,1],"blendlink_id":"75d52a61-979e-44a7-8dfb-f70d1fe9e839","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Shelf: {"blendlink_id":"f5f82a21-a343-423f-a47f-59bc01b59dac","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Sidetable: {"blendlink_id":"23bad141-d646-49e7-8d9b-b54989dcfaf0","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Spot_Outside: {"blendlink_id":"c6ac10fc-6639-46c6-86ff-8841c5a726c8"},
+  Wall1: {"blendlink_id":"e35fdcd9-59ec-4838-aa2b-092baa3e3c6f","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Wall2: {"blendlink_id":"124f0ed9-6cf1-4913-af6d-e4513bd980f8","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Window_Board: {"blendlink_id":"0223eb72-8c0b-4a00-826c-2cc87f2debce","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
+  Wooden_Chair: {"blendlink_id":"6f6ed27c-434a-423c-820c-0c0af7de65de","blendlink_atlas":"main","blendlink_bake_output":"appearance"},
   },
 } as const
 
@@ -285,11 +371,11 @@ export interface CubeDioramaGLTF {
     "Brush.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
     "Wood 4.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
     "Wood 6.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
-    "bird_cage.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
-    "computer.primary.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
-    "computer.secondary.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
-    "computer.screen.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
-    "computer.logo.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
+    "BLENDLINK_WEB.13b749b796.bird_cage": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.b10567868b.computer.primary": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.88d0c180cf.computer.secondary": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.9762c8fe1e.computer.screen": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.64488b144b.computer.logo": THREE.MeshStandardMaterial
     "curtains.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
     "curtains.bar.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
     "Wood 2.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
@@ -298,7 +384,7 @@ export interface CubeDioramaGLTF {
     "Easel.Canvas.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
     "Wooden Bars.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
     "Boards - Basketweave.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
-    "Material.003.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
+    "BLENDLINK_WEB.9953e77723.Material.003": THREE.MeshStandardMaterial
     "mirror.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
     "Plant.Pot.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
     "Plant.Dirt.BLENDLINK_BAKED.main": THREE.MeshBasicMaterial
