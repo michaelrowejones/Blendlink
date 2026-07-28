@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "tex_white_noise",
+    "dimensions": 3,
+    "output": "color",
+    "vector": {
+      "op": "combine",
+      "x": {
+        "op": "const_float",
+        "value": 2.0
+      },
+      "y": {
+        "op": "const_float",
+        "value": 3.0
+      },
+      "z": {
+        "op": "const_float",
+        "value": 0.0
+      }
+    }
+  }
+}

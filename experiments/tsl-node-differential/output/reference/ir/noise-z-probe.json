@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "noise",
+    "output": "fac",
+    "dimensions": 3,
+    "detail": 2.0,
+    "roughness": 0.5,
+    "lacunarity": 2.0,
+    "scale": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "input": {
+      "op": "vector_math",
+      "operation": "ADD",
+      "a": {
+        "op": "vector_scale",
+        "input": {
+          "op": "uv"
+        },
+        "scale": {
+          "op": "const_float",
+          "value": 4.0
+        }
+      },
+      "b": {
+        "op": "const_vec3",
+        "value": [
+          0.0,
+          0.0,
+          150.3699951171875
+        ]
+      }
+    }
+  }
+}

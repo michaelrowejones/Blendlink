@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "hue_sat",
+    "hue": {
+      "op": "separate",
+      "channel": "y",
+      "input": {
+        "op": "uv"
+      }
+    },
+    "saturation": {
+      "op": "const_float",
+      "value": 1.2999999523162842
+    },
+    "value": {
+      "op": "const_float",
+      "value": 0.8999999761581421
+    },
+    "factor": {
+      "op": "const_float",
+      "value": 0.800000011920929
+    },
+    "input": {
+      "op": "combine",
+      "x": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "y": {
+        "op": "const_float",
+        "value": 0.550000011920929
+      },
+      "z": {
+        "op": "const_float",
+        "value": 0.25
+      }
+    }
+  }
+}

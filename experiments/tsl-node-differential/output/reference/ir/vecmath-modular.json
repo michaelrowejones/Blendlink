@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "math",
+      "operation": "MULTIPLY_ADD",
+      "a": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "vector_math",
+          "operation": "MODULO",
+          "a": {
+            "op": "combine",
+            "x": {
+              "op": "math",
+              "operation": "MULTIPLY_ADD",
+              "a": {
+                "op": "separate",
+                "channel": "x",
+                "input": {
+                  "op": "uv"
+                }
+              },
+              "b": {
+                "op": "const_float",
+                "value": 8.0
+              },
+              "c": {
+                "op": "const_float",
+                "value": -4.0
+              }
+            },
+            "y": {
+              "op": "const_float",
+              "value": 0.0
+            },
+            "z": {
+              "op": "const_float",
+              "value": 0.0
+            }
+          },
+          "b": {
+            "op": "combine",
+            "x": {
+              "op": "const_float",
+              "value": 1.5
+            },
+            "y": {
+              "op": "const_float",
+              "value": 1.0
+            },
+            "z": {
+              "op": "const_float",
+              "value": 1.0
+            }
+          }
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.25
+      },
+      "c": {
+        "op": "const_float",
+        "value": 0.5
+      }
+    },
+    "y": {
+      "op": "math",
+      "operation": "MULTIPLY_ADD",
+      "a": {
+        "op": "separate",
+        "channel": "y",
+        "input": {
+          "op": "vector_math",
+          "operation": "SNAP",
+          "a": {
+            "op": "combine",
+            "x": {
+              "op": "const_float",
+              "value": 0.0
+            },
+            "y": {
+              "op": "math",
+              "operation": "MULTIPLY_ADD",
+              "a": {
+                "op": "separate",
+                "channel": "y",
+                "input": {
+                  "op": "uv"
+                }
+              },
+              "b": {
+                "op": "const_float",
+                "value": 4.0
+              },
+              "c": {
+                "op": "const_float",
+                "value": -2.0
+              }
+            },
+            "z": {
+              "op": "const_float",
+              "value": 0.0
+            }
+          },
+          "b": {
+            "op": "combine",
+            "x": {
+              "op": "const_float",
+              "value": 1.0
+            },
+            "y": {
+              "op": "const_float",
+              "value": 0.3499999940395355
+            },
+            "z": {
+              "op": "const_float",
+              "value": 1.0
+            }
+          }
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.18000000715255737
+      },
+      "c": {
+        "op": "const_float",
+        "value": 0.550000011920929
+      }
+    },
+    "z": {
+      "op": "separate",
+      "channel": "z",
+      "input": {
+        "op": "vector_math",
+        "operation": "WRAP",
+        "a": {
+          "op": "combine",
+          "x": {
+            "op": "const_float",
+            "value": 0.0
+          },
+          "y": {
+            "op": "const_float",
+            "value": 0.0
+          },
+          "z": {
+            "op": "math",
+            "operation": "MULTIPLY_ADD",
+            "a": {
+              "op": "separate",
+              "channel": "x",
+              "input": {
+                "op": "uv"
+              }
+            },
+            "b": {
+              "op": "const_float",
+              "value": 4.0
+            },
+            "c": {
+              "op": "const_float",
+              "value": -2.0
+            }
+          }
+        },
+        "b": {
+          "op": "combine",
+          "x": {
+            "op": "const_float",
+            "value": 1.0
+          },
+          "y": {
+            "op": "const_float",
+            "value": 1.0
+          },
+          "z": {
+            "op": "const_float",
+            "value": 0.75
+          }
+        },
+        "c": {
+          "op": "combine",
+          "x": {
+            "op": "const_float",
+            "value": 0.0
+          },
+          "y": {
+            "op": "const_float",
+            "value": 0.0
+          },
+          "z": {
+            "op": "const_float",
+            "value": 0.05000000074505806
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "vector_math",
+    "operation": "MULTIPLY_ADD",
+    "a": {
+      "op": "combine",
+      "x": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.5
+        },
+        "c": {
+          "op": "const_float",
+          "value": 0.0
+        }
+      },
+      "y": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.5
+        },
+        "c": {
+          "op": "const_float",
+          "value": 0.10000000149011612
+        }
+      },
+      "z": {
+        "op": "const_float",
+        "value": 0.30000001192092896
+      }
+    },
+    "b": {
+      "op": "combine",
+      "x": {
+        "op": "const_float",
+        "value": 0.800000011920929
+      },
+      "y": {
+        "op": "const_float",
+        "value": 0.6000000238418579
+      },
+      "z": {
+        "op": "const_float",
+        "value": 0.5
+      }
+    },
+    "c": {
+      "op": "combine",
+      "x": {
+        "op": "const_float",
+        "value": 0.10000000149011612
+      },
+      "y": {
+        "op": "const_float",
+        "value": 0.20000000298023224
+      },
+      "z": {
+        "op": "const_float",
+        "value": 0.05000000074505806
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "hue_sat",
+    "hue": {
+      "op": "const_float",
+      "value": 0.5
+    },
+    "saturation": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "value": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "factor": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "input": {
+      "op": "const_vec3",
+      "value": [
+        0.014999999664723873,
+        0.014999999664723873,
+        0.014999999664723873
+      ]
+    }
+  }
+}

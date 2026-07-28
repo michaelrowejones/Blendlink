@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "math",
+      "operation": "WRAP",
+      "a": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 4.0
+        },
+        "c": {
+          "op": "const_float",
+          "value": -2.0
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.800000011920929
+      },
+      "c": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.30000001192092896
+        },
+        "c": {
+          "op": "const_float",
+          "value": 0.009999999776482582
+        }
+      }
+    },
+    "y": {
+      "op": "math",
+      "operation": "WRAP",
+      "a": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 4.0
+        },
+        "c": {
+          "op": "const_float",
+          "value": -2.0
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.800000011920929
+      },
+      "c": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.30000001192092896
+        },
+        "c": {
+          "op": "const_float",
+          "value": 0.009999999776482582
+        }
+      }
+    },
+    "z": {
+      "op": "math",
+      "operation": "WRAP",
+      "a": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 4.0
+        },
+        "c": {
+          "op": "const_float",
+          "value": -2.0
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.800000011920929
+      },
+      "c": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.30000001192092896
+        },
+        "c": {
+          "op": "const_float",
+          "value": 0.009999999776482582
+        }
+      }
+    }
+  }
+}

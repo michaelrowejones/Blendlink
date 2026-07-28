@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "math",
+      "operation": "MULTIPLY_ADD",
+      "a": {
+        "op": "vector_math",
+        "operation": "LENGTH",
+        "a": {
+          "op": "combine",
+          "x": {
+            "op": "math",
+            "operation": "MULTIPLY_ADD",
+            "a": {
+              "op": "separate",
+              "channel": "x",
+              "input": {
+                "op": "uv"
+              }
+            },
+            "b": {
+              "op": "const_float",
+              "value": 4.0
+            },
+            "c": {
+              "op": "const_float",
+              "value": -2.0
+            }
+          },
+          "y": {
+            "op": "math",
+            "operation": "MULTIPLY_ADD",
+            "a": {
+              "op": "separate",
+              "channel": "y",
+              "input": {
+                "op": "uv"
+              }
+            },
+            "b": {
+              "op": "const_float",
+              "value": 2.0
+            },
+            "c": {
+              "op": "const_float",
+              "value": -1.0
+            }
+          },
+          "z": {
+            "op": "const_float",
+            "value": 0.5
+          }
+        },
+        "scalar": true
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.4000000059604645
+      },
+      "c": {
+        "op": "const_float",
+        "value": 0.0
+      }
+    },
+    "y": {
+      "op": "vector_math",
+      "operation": "DISTANCE",
+      "a": {
+        "op": "combine",
+        "x": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "y": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "z": {
+          "op": "const_float",
+          "value": 0.0
+        }
+      },
+      "b": {
+        "op": "combine",
+        "x": {
+          "op": "const_float",
+          "value": 0.5
+        },
+        "y": {
+          "op": "const_float",
+          "value": 0.5
+        },
+        "z": {
+          "op": "const_float",
+          "value": 0.20000000298023224
+        }
+      },
+      "scalar": true
+    },
+    "z": {
+      "op": "math",
+      "operation": "MULTIPLY_ADD",
+      "a": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "vector_math",
+          "operation": "NORMALIZE",
+          "a": {
+            "op": "combine",
+            "x": {
+              "op": "math",
+              "operation": "MULTIPLY_ADD",
+              "a": {
+                "op": "separate",
+                "channel": "x",
+                "input": {
+                  "op": "uv"
+                }
+              },
+              "b": {
+                "op": "const_float",
+                "value": 4.0
+              },
+              "c": {
+                "op": "const_float",
+                "value": -2.0
+              }
+            },
+            "y": {
+              "op": "math",
+              "operation": "MULTIPLY_ADD",
+              "a": {
+                "op": "separate",
+                "channel": "y",
+                "input": {
+                  "op": "uv"
+                }
+              },
+              "b": {
+                "op": "const_float",
+                "value": 2.0
+              },
+              "c": {
+                "op": "const_float",
+                "value": -1.0
+              }
+            },
+            "z": {
+              "op": "const_float",
+              "value": 0.5
+            }
+          }
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.4000000059604645
+      },
+      "c": {
+        "op": "const_float",
+        "value": 0.5
+      }
+    }
+  }
+}

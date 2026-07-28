@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "math",
+      "operation": "COMPARE",
+      "a": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.5
+      },
+      "c": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.1899999976158142
+        },
+        "c": {
+          "op": "const_float",
+          "value": 0.013000000268220901
+        }
+      }
+    },
+    "y": {
+      "op": "math",
+      "operation": "COMPARE",
+      "a": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.5
+      },
+      "c": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.1899999976158142
+        },
+        "c": {
+          "op": "const_float",
+          "value": 0.013000000268220901
+        }
+      }
+    },
+    "z": {
+      "op": "math",
+      "operation": "COMPARE",
+      "a": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 0.5
+      },
+      "c": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.1899999976158142
+        },
+        "c": {
+          "op": "const_float",
+          "value": 0.013000000268220901
+        }
+      }
+    }
+  }
+}

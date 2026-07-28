@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "mix_color",
+    "blendType": "MIX",
+    "clampFactor": true,
+    "clampResult": false,
+    "factor": {
+      "op": "math",
+      "operation": "MULTIPLY_ADD",
+      "a": {
+        "op": "separate",
+        "channel": "y",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 1.5
+      },
+      "c": {
+        "op": "const_float",
+        "value": -0.25
+      }
+    },
+    "a": {
+      "op": "const_vec3",
+      "value": [
+        0.800000011920929,
+        0.20000000298023224,
+        0.10000000149011612
+      ]
+    },
+    "b": {
+      "op": "combine",
+      "x": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "y": {
+        "op": "const_float",
+        "value": 0.699999988079071
+      },
+      "z": {
+        "op": "separate",
+        "channel": "y",
+        "input": {
+          "op": "uv"
+        }
+      }
+    }
+  }
+}

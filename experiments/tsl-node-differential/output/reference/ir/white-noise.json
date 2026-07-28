@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "tex_white_noise",
+      "dimensions": 3,
+      "output": "value",
+      "vector": {
+        "op": "vector_math",
+        "operation": "FLOOR",
+        "a": {
+          "op": "vector_scale",
+          "input": {
+            "op": "uv"
+          },
+          "scale": {
+            "op": "const_float",
+            "value": 8.0
+          }
+        }
+      }
+    },
+    "y": {
+      "op": "tex_white_noise",
+      "dimensions": 2,
+      "output": "value",
+      "vector": {
+        "op": "vector_math",
+        "operation": "FLOOR",
+        "a": {
+          "op": "vector_scale",
+          "input": {
+            "op": "uv"
+          },
+          "scale": {
+            "op": "const_float",
+            "value": 8.0
+          }
+        }
+      }
+    },
+    "z": {
+      "op": "separate",
+      "channel": "y",
+      "input": {
+        "op": "tex_white_noise",
+        "dimensions": 3,
+        "output": "color",
+        "vector": {
+          "op": "vector_math",
+          "operation": "FLOOR",
+          "a": {
+            "op": "vector_scale",
+            "input": {
+              "op": "uv"
+            },
+            "scale": {
+              "op": "const_float",
+              "value": 8.0
+            }
+          }
+        }
+      }
+    }
+  }
+}

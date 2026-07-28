@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "map_range",
+      "interpolation": "SMOOTHERSTEP",
+      "clamp": true,
+      "value": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "fromMin": {
+        "op": "const_float",
+        "value": 0.20000000298023224
+      },
+      "fromMax": {
+        "op": "const_float",
+        "value": 0.800000011920929
+      },
+      "toMin": {
+        "op": "const_float",
+        "value": 0.10000000149011612
+      },
+      "toMax": {
+        "op": "const_float",
+        "value": 0.8999999761581421
+      }
+    },
+    "y": {
+      "op": "map_range",
+      "interpolation": "SMOOTHERSTEP",
+      "clamp": true,
+      "value": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "fromMin": {
+        "op": "const_float",
+        "value": 0.20000000298023224
+      },
+      "fromMax": {
+        "op": "const_float",
+        "value": 0.800000011920929
+      },
+      "toMin": {
+        "op": "const_float",
+        "value": 0.10000000149011612
+      },
+      "toMax": {
+        "op": "const_float",
+        "value": 0.8999999761581421
+      }
+    },
+    "z": {
+      "op": "map_range",
+      "interpolation": "SMOOTHERSTEP",
+      "clamp": true,
+      "value": {
+        "op": "separate",
+        "channel": "x",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "fromMin": {
+        "op": "const_float",
+        "value": 0.20000000298023224
+      },
+      "fromMax": {
+        "op": "const_float",
+        "value": 0.800000011920929
+      },
+      "toMin": {
+        "op": "const_float",
+        "value": 0.10000000149011612
+      },
+      "toMax": {
+        "op": "const_float",
+        "value": 0.8999999761581421
+      }
+    }
+  }
+}

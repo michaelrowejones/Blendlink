@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "vector_math",
+    "operation": "ADD",
+    "a": {
+      "op": "vector_scale",
+      "input": {
+        "op": "object_coords"
+      },
+      "scale": {
+        "op": "const_float",
+        "value": 0.25
+      }
+    },
+    "b": {
+      "op": "const_vec3",
+      "value": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  }
+}

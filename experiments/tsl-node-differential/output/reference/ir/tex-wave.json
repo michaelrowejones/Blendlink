@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "tex_wave",
+      "waveType": "BANDS",
+      "bandsDirection": "X",
+      "ringsDirection": "X",
+      "profile": "SIN",
+      "vector": {
+        "op": "uv"
+      },
+      "scale": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "distortion": 0.0,
+      "detail": 0.0,
+      "detailRoughness": 0.5,
+      "detailScale": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "phase": {
+        "op": "const_float",
+        "value": 0.0
+      }
+    },
+    "y": {
+      "op": "tex_wave",
+      "waveType": "RINGS",
+      "bandsDirection": "X",
+      "ringsDirection": "SPHERICAL",
+      "profile": "SAW",
+      "vector": {
+        "op": "combine",
+        "x": {
+          "op": "math",
+          "operation": "MULTIPLY_ADD",
+          "a": {
+            "op": "separate",
+            "channel": "x",
+            "input": {
+              "op": "uv"
+            }
+          },
+          "b": {
+            "op": "const_float",
+            "value": 1.0
+          },
+          "c": {
+            "op": "const_float",
+            "value": -0.5
+          }
+        },
+        "y": {
+          "op": "math",
+          "operation": "MULTIPLY_ADD",
+          "a": {
+            "op": "separate",
+            "channel": "y",
+            "input": {
+              "op": "uv"
+            }
+          },
+          "b": {
+            "op": "const_float",
+            "value": 1.0
+          },
+          "c": {
+            "op": "const_float",
+            "value": -0.5
+          }
+        },
+        "z": {
+          "op": "const_float",
+          "value": 0.0
+        }
+      },
+      "scale": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "distortion": 0.0,
+      "detail": 0.0,
+      "detailRoughness": 0.5,
+      "detailScale": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "phase": {
+        "op": "const_float",
+        "value": 0.0
+      }
+    },
+    "z": {
+      "op": "tex_wave",
+      "waveType": "BANDS",
+      "bandsDirection": "DIAGONAL",
+      "ringsDirection": "X",
+      "profile": "TRI",
+      "vector": {
+        "op": "uv"
+      },
+      "scale": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "distortion": 1.0,
+      "detail": 2.0,
+      "detailRoughness": 0.5,
+      "detailScale": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "phase": {
+        "op": "const_float",
+        "value": 0.0
+      }
+    }
+  }
+}

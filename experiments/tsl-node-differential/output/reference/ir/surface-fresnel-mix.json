@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "mix_color",
+    "blendType": "MIX",
+    "clampFactor": true,
+    "clampResult": false,
+    "factor": {
+      "op": "fresnel",
+      "ior": {
+        "op": "const_float",
+        "value": 1.4500000476837158
+      },
+      "cos": {
+        "op": "view_cos"
+      }
+    },
+    "a": {
+      "op": "const_vec3",
+      "value": [
+        0.8999999761581421,
+        0.10000000149011612,
+        0.10000000149011612
+      ]
+    },
+    "b": {
+      "op": "const_vec3",
+      "value": [
+        0.10000000149011612,
+        0.20000000298023224,
+        0.8999999761581421
+      ]
+    }
+  },
+  "viewDependent": true
+}

@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "tex_gradient",
+      "gradientType": "LINEAR",
+      "vector": {
+        "op": "combine",
+        "x": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "y": {
+          "op": "const_float",
+          "value": 0.0
+        },
+        "z": {
+          "op": "const_float",
+          "value": 0.0
+        }
+      }
+    },
+    "y": {
+      "op": "tex_gradient",
+      "gradientType": "QUADRATIC",
+      "vector": {
+        "op": "combine",
+        "x": {
+          "op": "math",
+          "operation": "MULTIPLY_ADD",
+          "a": {
+            "op": "separate",
+            "channel": "x",
+            "input": {
+              "op": "uv"
+            }
+          },
+          "b": {
+            "op": "const_float",
+            "value": 2.0
+          },
+          "c": {
+            "op": "const_float",
+            "value": -1.0
+          }
+        },
+        "y": {
+          "op": "const_float",
+          "value": 0.0
+        },
+        "z": {
+          "op": "const_float",
+          "value": 0.0
+        }
+      }
+    },
+    "z": {
+      "op": "tex_gradient",
+      "gradientType": "RADIAL",
+      "vector": {
+        "op": "combine",
+        "x": {
+          "op": "math",
+          "operation": "MULTIPLY_ADD",
+          "a": {
+            "op": "separate",
+            "channel": "x",
+            "input": {
+              "op": "uv"
+            }
+          },
+          "b": {
+            "op": "const_float",
+            "value": 1.0
+          },
+          "c": {
+            "op": "const_float",
+            "value": -0.5
+          }
+        },
+        "y": {
+          "op": "math",
+          "operation": "MULTIPLY_ADD",
+          "a": {
+            "op": "separate",
+            "channel": "y",
+            "input": {
+              "op": "uv"
+            }
+          },
+          "b": {
+            "op": "const_float",
+            "value": 1.0
+          },
+          "c": {
+            "op": "const_float",
+            "value": -0.5
+          }
+        },
+        "z": {
+          "op": "const_float",
+          "value": 0.0
+        }
+      }
+    }
+  }
+}

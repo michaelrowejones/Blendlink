@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "combine",
+    "x": {
+      "op": "math",
+      "operation": "FRACT",
+      "a": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 3.0
+        },
+        "c": {
+          "op": "const_float",
+          "value": -1.0
+        }
+      }
+    },
+    "y": {
+      "op": "math",
+      "operation": "FRACT",
+      "a": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 3.0
+        },
+        "c": {
+          "op": "const_float",
+          "value": -1.0
+        }
+      }
+    },
+    "z": {
+      "op": "math",
+      "operation": "FRACT",
+      "a": {
+        "op": "math",
+        "operation": "MULTIPLY_ADD",
+        "a": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 3.0
+        },
+        "c": {
+          "op": "const_float",
+          "value": -1.0
+        }
+      }
+    }
+  }
+}
