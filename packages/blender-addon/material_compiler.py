@@ -5479,6 +5479,294 @@ _CHANNEL_KIND_BY_NAME = {
 }
 
 
+def _privatize_surface_groups(tree) -> None:
+    """Give every reachable group instance a private tree copy so tap
+    surgery can never touch shared group trees (harness-measured
+    pattern, scene_coverage._privatize_groups)."""
+    for node in tree.nodes:
+        nested = getattr(node, "node_tree", None)
+        if node.bl_idname == "ShaderNodeGroup" and nested is not None:
+            node.node_tree = nested.copy()
+            _privatize_surface_groups(node.node_tree)
+
+
+class _SurfaceTapBuilder:
+    """Node-surgery helpers for the surface projection tap: thread inner
+    sockets out through privatized group walls and compose the folded
+    channel graph at the root."""
+
+    def __init__(self, tree):
+        self.tree = tree
+        self.counter = 0
+
+    def thread(self, socket, stack):
+        for instance in reversed(list(stack)):
+            inner_tree = instance.node_tree
+            name = f"TSL_TAP.{self.counter}"
+            self.counter += 1
+            inner_tree.interface.new_socket(
+                name, in_out="OUTPUT", socket_type="NodeSocketColor",
+            )
+            group_output = next(
+                (item for item in inner_tree.nodes
+                 if item.type == "GROUP_OUTPUT"
+                 and getattr(item, "is_active_output", True)),
+                None,
+            )
+            if group_output is None:
+                group_output = inner_tree.nodes.new("NodeGroupOutput")
+            tap_input = group_output.inputs.get(name)
+            if tap_input is None:
+                raise MaterialCompileError(
+                    "surface tap: the group output did not gain its socket"
+                )
+            inner_tree.links.new(socket, tap_input)
+            socket = instance.outputs.get(name)
+            if socket is None:
+                raise MaterialCompileError(
+                    "surface tap: the instance did not expose the tap"
+                )
+        return socket
+
+    def input_or_thread(self, socket, stack):
+        if socket.is_linked:
+            return self.thread(socket.links[0].from_socket, stack)
+        return None
+
+    def constant_color(self, rgb):
+        node = self.tree.nodes.new("ShaderNodeRGB")
+        node.outputs[0].default_value = (
+            float(rgb[0]), float(rgb[1]), float(rgb[2]), 1.0,
+        )
+        return node.outputs[0]
+
+    def constant_value(self, value):
+        node = self.tree.nodes.new("ShaderNodeValue")
+        node.outputs[0].default_value = float(value)
+        return node.outputs[0]
+
+    def channel_socket(self, node, name, stack, *, color):
+        socket = procedural._node_input(node, name)
+        if socket is None:
+            raise MaterialCompileError(
+                f"surface tap: Principled input {name!r} not found"
+            )
+        threaded = self.input_or_thread(socket, stack)
+        if threaded is not None:
+            return threaded
+        value = socket.default_value
+        if color:
+            return self.constant_color(tuple(value)[:3])
+        return self.constant_value(float(value))
+
+    def clamp01(self, source):
+        node = self.tree.nodes.new("ShaderNodeClamp")
+        node.inputs["Min"].default_value = 0.0
+        node.inputs["Max"].default_value = 1.0
+        self.tree.links.new(source, node.inputs["Value"])
+        return node.outputs["Result"]
+
+    def math(self, operation, a_source, b_source=None, b_value=None):
+        node = self.tree.nodes.new("ShaderNodeMath")
+        node.operation = operation
+        self.tree.links.new(a_source, node.inputs[0])
+        if b_source is not None:
+            self.tree.links.new(b_source, node.inputs[1])
+        elif b_value is not None:
+            node.inputs[1].default_value = float(b_value)
+        return node.outputs["Value"]
+
+    def one_minus(self, source):
+        node = self.tree.nodes.new("ShaderNodeMath")
+        node.operation = "SUBTRACT"
+        node.inputs[0].default_value = 1.0
+        self.tree.links.new(source, node.inputs[1])
+        return node.outputs["Value"]
+
+    def scale_color(self, color_source, scale_source):
+        node = self.tree.nodes.new("ShaderNodeVectorMath")
+        node.operation = "SCALE"
+        self.tree.links.new(color_source, node.inputs[0])
+        self.tree.links.new(scale_source, node.inputs["Scale"])
+        return node.outputs["Vector"]
+
+    def lerp(self, fac_source, a_source, b_source, *, color):
+        node = self.tree.nodes.new("ShaderNodeMix")
+        node.data_type = "RGBA" if color else "FLOAT"
+        node.clamp_factor = True
+        factor_input = next(
+            item for item in node.inputs
+            if item.name == "Factor" and item.enabled
+        )
+        self.tree.links.new(fac_source, factor_input)
+        wanted = "RGBA" if color else "VALUE"
+        a_input = next(
+            item for item in node.inputs
+            if item.name == "A" and item.type == wanted
+        )
+        b_input = next(
+            item for item in node.inputs
+            if item.name == "B" and item.type == wanted
+        )
+        self.tree.links.new(a_source, a_input)
+        self.tree.links.new(b_source, b_input)
+        return next(
+            item for item in node.outputs
+            if item.name == "Result" and item.type == wanted
+        )
+
+
+_SURFACE_TAP_CHANNELS = {
+    "Base Color": True,   # name -> is color channel
+    "Metallic": False,
+    "Roughness": False,
+    "Alpha": False,
+    "Emission": True,     # the folded radiance vector
+}
+
+
+def _surface_channel_source(builder, expression, channel_name):
+    """Root-level socket computing one folded surface channel — the node
+    mirror of tsl_ir._fold_surface/_leaf_channels (the projection model
+    the harness measured byte-exact on the splash corpus), extended to
+    lit-lit mixes as a per-channel parameter lerp."""
+    kind = expression.get("kind")
+    color = _SURFACE_TAP_CHANNELS[channel_name]
+    if kind == "mix":
+        a_expr, b_expr = expression["a"], expression["b"]
+        a_transparent = a_expr.get("kind") == "transparent"
+        b_transparent = b_expr.get("kind") == "transparent"
+        if a_transparent and b_transparent:
+            return None
+        fac_socket = expression["fac_socket"]
+        fac = builder.input_or_thread(fac_socket, expression["fac_stack"])
+        if fac is None:
+            fac = builder.constant_value(fac_socket.default_value)
+        if b_transparent or a_transparent:
+            lit = a_expr if b_transparent else b_expr
+            base = _surface_channel_source(builder, lit, channel_name)
+            if channel_name != "Alpha" or base is None:
+                return base
+            coverage = builder.clamp01(fac)
+            if b_transparent:
+                coverage = builder.one_minus(coverage)
+            return builder.math("MULTIPLY", base, b_source=coverage)
+        a_source = _surface_channel_source(builder, a_expr, channel_name)
+        b_source = _surface_channel_source(builder, b_expr, channel_name)
+        if a_source is None or b_source is None:
+            raise MaterialCompileError(
+                "surface tap: a nested fully-transparent branch reached a "
+                "channel lerp"
+            )
+        return builder.lerp(fac, a_source, b_source, color=color)
+    if kind == "principled":
+        node, stack = expression["node"], expression["stack"]
+        if channel_name == "Emission":
+            return builder.scale_color(
+                builder.channel_socket(
+                    node, "Emission Color", stack, color=True,
+                ),
+                builder.channel_socket(
+                    node, "Emission Strength", stack, color=False,
+                ),
+            )
+        return builder.channel_socket(node, channel_name, stack, color=color)
+    if kind == "diffuse":
+        if channel_name == "Base Color":
+            socket = expression["node"].inputs["Color"]
+            threaded = builder.input_or_thread(socket, expression["stack"])
+            return threaded if threaded is not None else \
+                builder.constant_color(tuple(socket.default_value)[:3])
+        constants = {
+            "Metallic": 0.0, "Roughness": 1.0, "Alpha": 1.0,
+        }
+        if channel_name == "Emission":
+            return builder.constant_color((0.0, 0.0, 0.0))
+        return builder.constant_value(constants[channel_name])
+    if kind == "glossy":
+        if channel_name == "Base Color":
+            socket = expression["node"].inputs["Color"]
+            threaded = builder.input_or_thread(socket, expression["stack"])
+            return threaded if threaded is not None else \
+                builder.constant_color(tuple(socket.default_value)[:3])
+        if channel_name == "Roughness":
+            socket = expression["node"].inputs["Roughness"]
+            threaded = builder.input_or_thread(socket, expression["stack"])
+            return threaded if threaded is not None else \
+                builder.constant_value(float(socket.default_value))
+        if channel_name == "Metallic":
+            return builder.constant_value(1.0)
+        if channel_name == "Alpha":
+            return builder.constant_value(1.0)
+        return builder.constant_color((0.0, 0.0, 0.0))
+    if kind == "emission":
+        if channel_name == "Emission":
+            node = expression["node"]
+            color_socket = node.inputs["Color"]
+            strength_socket = node.inputs["Strength"]
+            color_source = builder.input_or_thread(
+                color_socket, expression["stack"],
+            ) or builder.constant_color(tuple(color_socket.default_value)[:3])
+            strength_source = builder.input_or_thread(
+                strength_socket, expression["stack"],
+            ) or builder.constant_value(float(strength_socket.default_value))
+            return builder.scale_color(color_source, strength_source)
+        constants = {"Metallic": 0.0, "Roughness": 1.0, "Alpha": 1.0}
+        if channel_name == "Base Color":
+            return builder.constant_color((0.0, 0.0, 0.0))
+        return builder.constant_value(constants[channel_name])
+    if kind == "coerced_color":
+        if channel_name == "Emission":
+            return builder.thread(expression["socket"], expression["stack"])
+        constants = {"Metallic": 0.0, "Roughness": 1.0, "Alpha": 1.0}
+        if channel_name == "Base Color":
+            return builder.constant_color((0.0, 0.0, 0.0))
+        return builder.constant_value(constants[channel_name])
+    if kind == "transparent":
+        return None
+    raise MaterialCompileError(
+        f"surface tap: leaf {kind!r} has no channel projection"
+    )
+
+
+def _surface_channel_bake_material(
+    material, channel_name: str, created_materials: list,
+):
+    """A private proxy whose surface EMITS one folded surface channel.
+
+    The production port of the harness tap (measured byte-exact on the
+    splash corpus for radiance), extended to the lit-lit projection
+    class the ellie paint set measures as: per-channel parameter lerps
+    over the closure tree, built as real nodes and threaded out of
+    privatized groups."""
+    copy = material.copy()
+    copy.name = f"BLENDLINK_WEB_SURFACE.{material.name}.{channel_name}"
+    created_materials.append(copy)
+    tree = bakelib.active_shader_node_tree(copy)
+    _privatize_surface_groups(tree)
+    expression = tsl_ir.resolve_surface(tree)
+    builder = _SurfaceTapBuilder(tree)
+    source = _surface_channel_source(builder, expression, channel_name)
+    if source is None:
+        raise MaterialCompileError(
+            f'Surface channel {channel_name!r} of "{material.name}" folds '
+            "to nothing (fully transparent surface)."
+        )
+    for output in [
+        item for item in tree.nodes
+        if item.bl_idname == "ShaderNodeOutputMaterial"
+    ]:
+        tree.nodes.remove(output)
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    if hasattr(output, "is_active_output"):
+        output.is_active_output = True
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.inputs["Strength"].default_value = 1.0
+    tree.links.new(source, emission.inputs["Color"])
+    tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+    return copy
+
+
 def _split_slot_receiver(obj, slot_index: int):
     """A disposable single-slot receiver holding ONLY the slot's faces.
 
