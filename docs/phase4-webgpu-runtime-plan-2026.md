@@ -128,13 +128,19 @@ except the deliberately deferred templates sub-task below.
 `PostPipelineService` interface. What the census corrected in the old
 plan:
 
-- **Five Blendlink-owned TSL nodes, not three**: vignette, tilt-shift,
-  kuwahara — PLUS radial chromatic aberration (the shipped default is
-  a custom radial GLSL effect with center/aspect math;
-  ChromaticAberrationNode covers only the directional mode) and
-  geometry-aware pixelation (the shipped variant consumes a shared
-  normals pass with 0.82 edge darkening; PixelationPassNode is a
-  self-rendering pass).
+- **Five Blendlink-owned TSL nodes, not three** — SHIPPED 2026-07-27
+  as `blendlink/three/tsl-effects` (tslPostEffects.ts), all measured
+  19/19 in WGPU-NODE-001 on both backends (cross-backend ≤ 0.015 mean
+  luma; vignette/tilt-shift within 2 luma of the pmndrs control):
+  vignette, tilt-shift, kuwahara — PLUS radial chromatic aberration
+  (the shipped default is a custom radial GLSL effect with
+  center/aspect math; ChromaticAberrationNode covers only the
+  directional mode) and geometry-aware pixelation (the shipped variant
+  consumes a shared normals pass with 0.82 edge darkening;
+  PixelationPassNode is a self-rendering pass). Remaining Track B
+  work: the RenderPipeline-backed PostPipelineService itself plus the
+  authored-parameter mappings (bloom threshold, DoF units, n8ao
+  config) and the AA/reporting re-spec.
 - **Direct mappings** (6): Bloom→BloomNode, directional
   CA→ChromaticAberrationNode, CAS→SharpenNode, Outline→OutlineNode,
   LUT→Lut3DNode (loaders stay), DoF→DepthOfFieldNode.

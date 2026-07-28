@@ -109,6 +109,8 @@ page.on('console', (message) => {
 const ACTIVE_EXPECTED = new Set([
   'bloom', 'selective-bloom', 'chromatic-aberration', 'pixelation',
   'outline', 'depth-of-field', 'custom-effect', 'n8ao',
+  'vignette', 'tilt-shift', 'kuwahara', 'radial-chromatic-aberration',
+  'geometry-pixelation',
 ])
 
 let exitCode = 0

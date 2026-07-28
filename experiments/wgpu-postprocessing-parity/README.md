@@ -100,6 +100,19 @@ depth-of-field, custom TSL probe, n8ao, traa, fxaa, smaa. Named non-cells
 (`pendingTrackB`): vignette, tilt-shift, kuwahara — they wait on the
 Blendlink-owned display nodes and the run enforces the list stays honest.
 
+**Update (same day): 19/19 · 19/19 · 0 failures.** The five
+Blendlink-owned display nodes shipped in `blendlink/three/tsl-effects`
+(`packages/blendlink/src/tslPostEffects.ts`) and the `pendingTrackB` list
+is now empty: vignette, tilt-shift, kuwahara (anisotropic,
+structure-tensor, 4×16-sample TSL Loop), radial-chromatic-aberration
+(center/aspect math), and geometry-pixelation (MRT `directionToColor`
+normals + view-Z reconstruction, shipped 0.82 edge darkening). Each
+mirrors the shipped GLSL from `threeComponents.ts`. Measured:
+cross-backend mean-luma delta ≤ 0.015 on all five (deterministic ports);
+vignette 1.87 / tilt-shift 0.87 mean luma vs the pmndrs control even
+though the control algorithms differ (eskil vignette, kernel-blur
+tilt-shift).
+
 Cross-backend (native vs fallback, same algorithm, mean-luma delta):
 ≤ 0.29 on every cell except `n8ao` (7.9–11.8 across runs — its temporal
 blue-noise accumulation is not converged at 3 warm-up frames; a tighter

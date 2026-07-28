@@ -25,6 +25,10 @@
             "types": "./dist/threeRuntime.d.ts",
             "default": "./dist/threeRuntime.js"
         },
+        "./three/tsl-effects": {
+            "types": "./dist/tslPostEffects.d.ts",
+            "default": "./dist/tslPostEffects.js"
+        },
         "./react-three-fiber": {
             "types": "./dist/reactThreeFiber.d.ts",
             "default": "./dist/reactThreeFiber.js"

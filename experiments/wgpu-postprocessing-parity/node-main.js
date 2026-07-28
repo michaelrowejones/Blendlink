@@ -16,8 +16,10 @@
 import * as THREE from 'three'
 import { RenderPipeline, WebGPURenderer } from 'three/webgpu'
 import {
+  directionToColor,
   emissive,
   mrt,
+  normalView,
   output,
   pass,
   renderOutput,
@@ -27,6 +29,13 @@ import {
   vec4,
   velocity,
 } from 'three/tsl'
+import {
+  blendlinkAnisotropicKuwahara,
+  blendlinkGeometryAwarePixelation,
+  blendlinkRadialChromaticAberration,
+  blendlinkTiltShift,
+  blendlinkVignette,
+} from 'blendlink/three/tsl-effects'
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
 import { chromaticAberration } from 'three/addons/tsl/display/ChromaticAberrationNode.js'
 import { pixelationPass } from 'three/addons/tsl/display/PixelationPassNode.js'
@@ -297,13 +306,64 @@ function nodeCells(context) {
         outputColorTransform: false,
       }
     },
+    // The five Blendlink-owned nodes (blendlink/three/tsl-effects), each
+    // mirroring the shipped GLSL math from threeComponents.ts.
+    vignette: () => {
+      const scenePass = pass(scene, camera)
+      return {
+        outputNode: blendlinkVignette(scenePass.getTextureNode(), {
+          intensity: 0.6, softness: 0.55,
+        }),
+      }
+    },
+    'tilt-shift': () => {
+      const scenePass = pass(scene, camera)
+      return {
+        outputNode: blendlinkTiltShift(scenePass.getTextureNode(), {
+          feather: 0.25, strength: 0.7,
+        }),
+      }
+    },
+    kuwahara: () => {
+      const scenePass = pass(scene, camera)
+      return {
+        outputNode: blendlinkAnisotropicKuwahara(scenePass.getTextureNode(), {
+          brushScale: 4, strength: 0.75,
+        }),
+      }
+    },
+    'radial-chromatic-aberration': () => {
+      const scenePass = pass(scene, camera)
+      return {
+        outputNode: blendlinkRadialChromaticAberration(
+          scenePass.getTextureNode(), { amount: 0.004 },
+        ),
+      }
+    },
+    'geometry-pixelation': () => {
+      const scenePass = pass(scene, camera)
+      scenePass.setMRT(mrt({
+        output,
+        normal: directionToColor(normalView),
+      }))
+      return {
+        outputNode: blendlinkGeometryAwarePixelation({
+          color: scenePass.getTextureNode(),
+          depth: scenePass.getTextureNode('depth'),
+          normal: scenePass.getTextureNode('normal'),
+          camera,
+        }, {
+          pixelSize: 6, depthEdgeStrength: 1, normalEdgeStrength: 1,
+        }),
+      }
+    },
   }
 }
 
-// The three Blendlink-owned display nodes that do not exist yet (Track B
-// writes them).  Named rows, never silent gaps: the run fails if a pending
-// id ever gains a cell without leaving this list.
-const PENDING_TRACK_B = ['vignette', 'tilt-shift', 'kuwahara']
+// Formerly the pendingTrackB list: every Blendlink-owned display node now
+// has a measured cell above.  The empty list stays so the run.mjs honesty
+// check (a pending id must never also have a cell) keeps its seam.
+const PENDING_TRACK_B = []
 
 async function statsFromRgba(data) {
   let sum = 0

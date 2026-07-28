@@ -272,6 +272,51 @@
           "nonFinitePixels": 0,
           "sha256": "fedd70d402eadc1fe6ce69064468fa970df396617c6c0156e661502287e3820e"
         }
+      },
+      "vignette": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 72.96985510666522,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "e24f7e6e5ed42e5e731044f6e7e56c472dcaf7cf3cd2751ced1c7e30258b0f86"
+        }
+      },
+      "tilt-shift": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 79.0825872599496,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "6f8673304d120195100833c682e5b175c0752691baffa589dcb074e62f9a1606"
+        }
+      },
+      "kuwahara": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.73959880382463,
+          "nonBackgroundPixels": 146371,
+          "nonFinitePixels": 0,
+          "sha256": "7256b53c37536d082fb15b59125cbf8ca7817c164b5c5c1f1ecf9e977a3b780c"
+        }
+      },
+      "radial-chromatic-aberration": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.74792898097905,
+          "nonBackgroundPixels": 146324,
+          "nonFinitePixels": 0,
+          "sha256": "a3843346eec6f12bbb45f7280eee04f7be68eb6705d5d6ba92fd08a6ef022bfa"
+        }
+      },
+      "geometry-pixelation": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 73.59138754891495,
+          "nonBackgroundPixels": 146052,
+          "nonFinitePixels": 0,
+          "sha256": "54479760274780ac34864c08685a68c8528f97994c130656c8d3194802c3369e"
+        }
       }
     },
     "fallback": {
@@ -400,6 +445,51 @@
           "nonFinitePixels": 0,
           "sha256": "57354f937cb890e35b06983fc21c057e7c4bf0a19c427b84f9801b9ef240402d"
         }
+      },
+      "vignette": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 72.96982320845486,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "eda81d6c4fdd234f7e192aa2a2409f287eee6c57de084898782d1e08c8fc4194"
+        }
+      },
+      "tilt-shift": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 79.08254132782626,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "acd996137617a5356c33aa1cc3ec044e036ed3f42b29ad210f2e7d874381df92"
+        }
+      },
+      "kuwahara": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.73885025389914,
+          "nonBackgroundPixels": 146371,
+          "nonFinitePixels": 0,
+          "sha256": "10f8f910b80b105bc68b4c79275965e07df23038eb2ae221056b9fa3325c260f"
+        }
+      },
+      "radial-chromatic-aberration": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.74786528481677,
+          "nonBackgroundPixels": 146324,
+          "nonFinitePixels": 0,
+          "sha256": "202ac00e082e32739b29c6f56af5be0d0cb9f07d7ae069539ec6614d7e2a019f"
+        }
+      },
+      "geometry-pixelation": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 73.60559643571769,
+          "nonBackgroundPixels": 146052,
+          "nonFinitePixels": 0,
+          "sha256": "07c04da4e8d8888f158e0bf38af6f466771ce79870691bc53667b7a00b4a3a7d"
+        }
       }
     }
   },
@@ -459,6 +549,26 @@
     "smaa": {
       "meanLumaDelta": 0.00004835327349894669,
       "identicalSha": false
+    },
+    "vignette": {
+      "meanLumaDelta": 0.000031898210366421154,
+      "identicalSha": false
+    },
+    "tilt-shift": {
+      "meanLumaDelta": 0.000045932123342140585,
+      "identicalSha": false
+    },
+    "kuwahara": {
+      "meanLumaDelta": 0.0007485499254897832,
+      "identicalSha": false
+    },
+    "radial-chromatic-aberration": {
+      "meanLumaDelta": 0.00006369616228596442,
+      "identicalSha": false
+    },
+    "geometry-pixelation": {
+      "meanLumaDelta": 0.014208886802734355,
+      "identicalSha": false
     }
   },
   "lookContinuity": {
@@ -516,6 +626,16 @@
       "controlMeanLuma": 63.87251338569229,
       "nativeMeanLuma": 132.2526249920784,
       "meanLumaDelta": 68.38011160638612
+    },
+    "vignette": {
+      "controlMeanLuma": 71.09821509474175,
+      "nativeMeanLuma": 72.96985510666522,
+      "meanLumaDelta": 1.8716400119234748
+    },
+    "tilt-shift": {
+      "controlMeanLuma": 79.95174949541713,
+      "nativeMeanLuma": 79.0825872599496,
+      "meanLumaDelta": 0.8691622354675275
     }
   },
   "summary": {
@@ -527,15 +647,11 @@
     },
     "nativeBackendReal": true,
     "fallbackBackendIsWebGL": true,
-    "nodeCellsAttempted": 14,
-    "nodeCellsPassingNative": 14,
-    "nodeCellsPassingFallback": 14,
+    "nodeCellsAttempted": 19,
+    "nodeCellsPassingNative": 19,
+    "nodeCellsPassingFallback": 19,
     "controlCellsPassing": 13,
-    "pendingTrackB": [
-      "vignette",
-      "tilt-shift",
-      "kuwahara"
-    ],
+    "pendingTrackB": [],
     "failures": []
   },
   "pageErrorCount": 1,
