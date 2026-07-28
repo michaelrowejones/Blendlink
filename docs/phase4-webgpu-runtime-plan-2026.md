@@ -248,6 +248,28 @@ The consumer for `blendlink_tsl_ir`, designed against the census:
   Named fidelity notes: KTX2 lossiness, hardware filtering vs the
   byte-exact manual-bilinear oracle at texel edges, and the measured
   byte-space alpha association (pre-associate at publish).
+  DESIGN RESOLUTION 2026-07-28 (implementation not started): the
+  slot-stealing wording above hides a product fork. (a) Displacing the
+  baked carrier in the material's standard slot makes plain-GLB
+  viewers render raw source textures — a user-visible change that
+  breaks "routes never change" literally; rejected. (b) Injecting
+  UNREFERENCED glTF texture entries keeps plain viewers byte-visual
+  identical and the runtime steals them via
+  parser.getDependency('texture', i), but needs binary-chunk surgery
+  (buffer regeneration) that glblib does not do today. (c) Publishing
+  source images as separate hash-pinned assets beside the GLB —
+  referenced from the programs document as
+  images{sha256 → {url, bytes, hash, mime, width, height,
+  colorSpace}} with ref = {image: sha256} in the IR — reuses the
+  entire established publication/integrity/asset-closure machinery
+  (the materialPrograms pattern exactly) at the cost of extra HTTP
+  fetches. RECOMMENDED: (c) for v1 (smallest honest step; the runtime
+  resolver fetches + decodes with IR-declared sampling and colorSpace,
+  and orientation must match the embedded tex_image bottom-up rows —
+  gate with a differential cell), revisit (b) when glblib grows binary
+  appends. Emission stays opt-in per emit call so the harness contract
+  is untouched; a channel with MORE than one over-budget image still
+  refuses by name.
 - **Per-object values**: prove `uniform().onObjectUpdate` with a gated
   cell on 0.184; until then, fork node materials per mesh containing
   generated/object_coords (consistent with MTL-CONS-003 populations).
