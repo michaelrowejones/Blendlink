@@ -123,6 +123,18 @@ except the deliberately deferred templates sub-task below.
 
 ## Track B — post pipeline (RenderPipeline behind the same interface)
 
+STATUS: **LANDED 2026-07-28** (763865e owned nodes, 8a8b57b service,
+7f06970 browser-truth cells + measured TRAA-first contract, 9fdc1ff all
+eleven effect types incl. production DoF semantics and color grading).
+`ThreeWebgpuPostPipelineService` renders 10/10 service cells beside
+19/19 per-effect cells on both WebGPU backends. Named residue: bloom
+threshold operates on HDR pre-tonemap values (pmndrs luminance 0.9
+convention differs — needs a look sign-off pass on a real scene),
+Lut3DNode is trilinear (no tetrahedral interpolation), n8ao
+beautyTexture references the raw scene target while beautyNode is the
+TRAA-resolved chain (size/format reference only — watch), and the
+kuwahara quality knobs rebuild at finalize rather than live-update.
+
 `ThreePostPipelineService` is reimplemented on
 `THREE.RenderPipeline` + TSL effect nodes behind the unchanged
 `PostPipelineService` interface. What the census corrected in the old
