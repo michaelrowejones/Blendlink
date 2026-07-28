@@ -91,10 +91,27 @@ describe('ThreeWebgpuPostPipelineService', () => {
     service.dispose()
   })
 
-  it('names the color-grading gap instead of degrading silently', async () => {
+  it('registers color grading through the application LUT resolver', async () => {
+    const size = 4
+    const data = new Uint8Array(size * size * size * 4).fill(255)
+    const lut = new THREE.Data3DTexture(data, size, size, size)
+    const baseOptions = options()
+    ;(baseOptions as { loadLut?: (url: string) => Promise<THREE.Data3DTexture> })
+      .loadLut = async () => lut
+    const service = await ThreeWebgpuPostPipelineService.create(baseOptions)
+    await service.addEffect(descriptor('grade-1', 'blendlink.color-grading', {
+      lutUrl: 'https://example.test/neutral.cube', intensity: 0.8,
+    }, 'post-ldr'))
+    service.finalize()
+    expect(service.resolvedOrder).toContain('grade-1')
+    service.dispose()
+  })
+
+  it('rejects LUT URLs with unsupported protocols', async () => {
     const service = await ThreeWebgpuPostPipelineService.create(options())
-    await expect(service.addEffect(descriptor('grade-1', 'blendlink.color-grading')))
-      .rejects.toThrow(/not implemented on the WebGPU post pipeline/)
+    await expect(service.addEffect(descriptor('grade-1', 'blendlink.color-grading', {
+      lutUrl: 'file:///C:/luts/grade.cube',
+    }))).rejects.toThrow(/unsupported protocol file/)
     service.dispose()
   })
 

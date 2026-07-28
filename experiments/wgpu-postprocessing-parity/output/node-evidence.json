@@ -559,6 +559,23 @@
         ],
         "postEdgeAntialiasing": false,
         "antialiasingSamples": 0
+      },
+      "service-dof-grading": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 254.99999999999994,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "8511e3be8ee3ff2bd97eea65b831f9f234e12bc03affef349040971bf28e4600"
+        },
+        "resolvedOrder": [
+          "scene-color",
+          "temporal-antialiasing",
+          "dof-1",
+          "grade-1"
+        ],
+        "postEdgeAntialiasing": true,
+        "antialiasingSamples": 0
       }
     },
     "fallback": {
@@ -625,6 +642,23 @@
           "pixelation-1"
         ],
         "postEdgeAntialiasing": false,
+        "antialiasingSamples": 0
+      },
+      "service-dof-grading": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 254.99999999999994,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "8511e3be8ee3ff2bd97eea65b831f9f234e12bc03affef349040971bf28e4600"
+        },
+        "resolvedOrder": [
+          "scene-color",
+          "temporal-antialiasing",
+          "dof-1",
+          "grade-1"
+        ],
+        "postEdgeAntialiasing": true,
         "antialiasingSamples": 0
       }
     }
@@ -786,9 +820,9 @@
     "nodeCellsAttempted": 19,
     "nodeCellsPassingNative": 19,
     "nodeCellsPassingFallback": 19,
-    "serviceCellsAttempted": 4,
-    "serviceCellsPassingNative": 4,
-    "serviceCellsPassingFallback": 4,
+    "serviceCellsAttempted": 5,
+    "serviceCellsPassingNative": 5,
+    "serviceCellsPassingFallback": 5,
     "controlCellsPassing": 13,
     "pendingTrackB": [],
     "failures": []

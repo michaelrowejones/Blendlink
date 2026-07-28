@@ -33,6 +33,8 @@ import {
   output,
   pass,
   renderOutput,
+  texture3D,
+  uniform,
   uv,
   vec2,
   vec3,
@@ -43,6 +45,7 @@ import { bloom } from 'three/addons/tsl/display/BloomNode.js'
 import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js'
 import { outline } from 'three/addons/tsl/display/OutlineNode.js'
 import { fxaa } from 'three/addons/tsl/display/FXAANode.js'
+import { lut3D } from 'three/addons/tsl/display/Lut3DNode.js'
 import { pixelationPass } from 'three/addons/tsl/display/PixelationPassNode.js'
 import { sharpen } from 'three/addons/tsl/display/SharpenNode.js'
 import { traa } from 'three/addons/tsl/display/TRAANode.js'
@@ -87,6 +90,7 @@ interface WebgpuRegistration {
   phase: PostEffectDescriptor['phase']
   build(context: ChainContext): void
   rebind?(scene: THREE.Scene, camera: THREE.Camera): void
+  update?(deltaSeconds: number): void
   setQuality?(quality: RuntimeQuality): void
   dispose?(): void
   generatesHardPostEdges?: boolean
@@ -163,12 +167,15 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
     if (this.registrations.has(effect.id)) {
       throw new Error(`Blendlink post effect ID ${effect.id} is registered more than once.`)
     }
-    const registration = this.createRegistration(effect)
+    const registration = await this.createRegistration(effect)
     registration.generatesHardPostEdges = effect.type === 'blendlink.ambient-occlusion'
       || effect.type === 'blendlink.outline'
     registration.intentionalPixelation = effect.type === 'blendlink.pixelation'
     this.registrations.set(effect.id, registration)
     return {
+      update: registration.update
+        ? (deltaSeconds) => registration.update?.(deltaSeconds)
+        : undefined,
       setQuality: registration.setQuality
         ? (quality) => registration.setQuality?.(quality)
         : undefined,
@@ -348,6 +355,42 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
     return mrt({ output, ...targets })
   }
 
+  private async loadColorGradingLut(
+    descriptor: Readonly<PostEffectDescriptor>,
+  ): Promise<THREE.Data3DTexture> {
+    const url = descriptor.values.lutUrl
+    if (typeof url !== 'string' || url.length === 0) {
+      throw new Error(`Blendlink Color Grading ${descriptor.id} needs a LUT URL.`)
+    }
+    const protocol = /^([a-z][a-z0-9+.-]*):/i.exec(url)?.[1]?.toLowerCase()
+    if (protocol && !['http', 'https', 'blob', 'data'].includes(protocol)) {
+      throw new Error(
+        `Blendlink Color Grading ${descriptor.id} LUT URL uses unsupported protocol ${protocol}.`,
+      )
+    }
+    if (this.options.loadLut) {
+      const texture = await this.options.loadLut(url)
+      if (!(texture instanceof THREE.Data3DTexture)) {
+        throw new Error(
+          `Blendlink Color Grading ${descriptor.id} LUT resolver did not return a Data3DTexture.`,
+        )
+      }
+      return texture
+    }
+    const extension = /\.([a-z0-9]+)(?:[?#].*)?$/i.exec(url)?.[1]?.toLowerCase()
+    if (extension === 'cube') {
+      const { LUTCubeLoader } = await import('three/addons/loaders/LUTCubeLoader.js')
+      return (await new LUTCubeLoader(this.options.loadingManager).loadAsync(url)).texture3D
+    }
+    if (extension === '3dl') {
+      const { LUT3dlLoader } = await import('three/addons/loaders/LUT3dlLoader.js')
+      return (await new LUT3dlLoader(this.options.loadingManager).loadAsync(url)).texture3D
+    }
+    throw new Error(
+      `Blendlink Color Grading ${descriptor.id} needs a .cube or .3dl LUT URL; got ${JSON.stringify(url)}.`,
+    )
+  }
+
   private applyEdgeAntialiasingQuality(quality: RuntimeQuality): void {
     if (!this.edgeAntialiasingActive) {
       this.edgeAntialiasingPresetState = 'off'
@@ -359,9 +402,9 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       ? 'low' : quality === 'high' ? 'high' : 'medium'
   }
 
-  private createRegistration(
+  private async createRegistration(
     descriptor: Readonly<PostEffectDescriptor>,
-  ): WebgpuRegistration {
+  ): Promise<WebgpuRegistration> {
     const values = descriptor.values
     const base = { id: descriptor.id, phase: descriptor.phase, disposed: false }
     switch (descriptor.type) {
@@ -572,6 +615,10 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
           : clampNumber(finite(values.strength, 3), 0, 100)
         const visible = colorTriple(values.visibleColor)
         const hidden = colorTriple(values.hiddenColor)
+        // xRay=false: occluded silhouettes stay invisible, matching the
+        // WebGL service; the hidden-edge output only contributes when the
+        // artist opted into x-ray.
+        const xRay = values.xRay === true
         let outlineNode: TslEffectNode = null
         return {
           ...base,
@@ -587,12 +634,15 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
               edgeGlow: float(0),
             })
             const { visibleEdge, hiddenEdge } = outlineNode
+            const hiddenContribution = xRay
+              ? (hiddenEdge as TslEffectNode)
+              : float(0)
             const edgeColor = (visibleEdge as TslEffectNode)
               .mul(vec3(...visible))
-              .add((hiddenEdge as TslEffectNode).mul(vec3(...hidden)))
+              .add(hiddenContribution.mul(vec3(...hidden)))
               .mul(edgeStrength)
             const coverage = tslClamp(
-              tslMax(visibleEdge, hiddenEdge).mul(edgeStrength), 0, 1,
+              tslMax(visibleEdge, hiddenContribution).mul(edgeStrength), 0, 1,
             )
             // ALPHA-blend analogue of the WebGL pipeline: authored dark
             // outlines stay visible instead of SCREEN's black identity.
@@ -611,36 +661,74 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
         }
       }
       case 'blendlink.depth-of-field': {
-        const camera = this.options.camera as THREE.PerspectiveCamera
-        // pmndrs expresses focus in normalized [0..1] near→far units; the
-        // in-tree DoF node compares view-Z distances. Convert at the seam.
-        const range = () => Math.max(camera.far - camera.near, 0.0001)
-        const focusDistance = camera.near
-          + range() * clampNumber(finite(values.focusDistance, 0.02), 0, 1)
-        const focalLength = Math.max(
-          range() * clampNumber(finite(values.focalLength, 0.05), 0, 1),
-          0.0001,
+        // Production semantics: world-space focusDistance/focusRange and a
+        // blurStrength scale, plus an object-focus mode that tracks its
+        // target every frame (the WebGL service does the same).
+        const mode = stringValue(values.focusMode, 'distance')
+        if (mode !== 'distance' && mode !== 'object') {
+          throw new Error(
+            `Blendlink Depth of Field ${descriptor.id} uses unsupported focus mode ${mode}.`,
+          )
+        }
+        const focusRange = clampNumber(finite(values.focusRange, 2), 0.0001, 1_000_000)
+        const blurStrength = clampNumber(finite(values.blurStrength, 1), 0, 20)
+        const focusDistance = uniform(
+          clampNumber(finite(values.focusDistance, 3), 0, 1_000_000),
         )
-        const bokehScale = clampNumber(finite(values.bokehScale, 2), 0, 16)
+        let update: ((deltaSeconds: number) => void) | undefined
+        if (mode === 'object') {
+          const focusObject = descriptor.resources?.focusObject
+          if (!(focusObject instanceof THREE.Object3D)) {
+            throw new Error(
+              `Blendlink Depth of Field ${descriptor.id} could not resolve its object focus target.`,
+            )
+          }
+          const target = new THREE.Vector3()
+          const cameraPosition = new THREE.Vector3()
+          update = () => {
+            focusObject.getWorldPosition(target)
+            this.options.camera.getWorldPosition(cameraPosition)
+            focusDistance.value = cameraPosition.distanceTo(target)
+          }
+          update(0)
+        }
         return {
           ...base,
+          ...(update ? { update } : {}),
           build: (context) => {
             context.color = dof(
               context.color,
               context.scenePass.getViewZNode(),
-              float(focusDistance),
-              float(focalLength),
-              float(bokehScale),
+              focusDistance,
+              float(focusRange),
+              float(blurStrength),
             )
           },
         }
       }
-      case 'blendlink.color-grading':
-        throw new Error(
-          `Blendlink Color Grading (${descriptor.id}) is not implemented on the WebGPU post ` +
-            'pipeline yet: the LUT asset loaders land with the Track B parameter-mapping pass. ' +
-            'Use the WebGL renderer for this scene or disable the component.',
-        )
+      case 'blendlink.color-grading': {
+        // Same LUT sourcing as the WebGL service (application loadLut
+        // override, else the .cube/.3dl addon loaders — both produce a
+        // renderer-agnostic Data3DTexture). The in-tree Lut3DNode's
+        // intensity is the same mix the pmndrs NORMAL blend opacity gave.
+        // Named look note: Lut3DNode has no tetrahedral interpolation;
+        // hardware trilinear filtering applies instead.
+        const texture = await this.loadColorGradingLut(descriptor)
+        const intensity = clampNumber(finite(values.intensity, 1), 0, 1)
+        const ownsTexture = this.options.loadLut === undefined
+        return {
+          ...base,
+          build: (context) => {
+            context.color = lut3D(
+              context.color,
+              texture3D(texture),
+              texture.image.width,
+              float(intensity),
+            )
+          },
+          ...(ownsTexture ? { dispose: () => texture.dispose() } : {}),
+        }
+      }
       default:
         throw new Error(
           `The WebGPU post-pipeline does not implement semantic effect ${descriptor.type} (${descriptor.id}).`,

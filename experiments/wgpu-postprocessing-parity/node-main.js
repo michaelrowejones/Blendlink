@@ -419,6 +419,36 @@ const SERVICE_CELLS = {
     // Intentional pixelation suppresses the TRAA default.
     expectedOrder: ['scene-color', 'pixelation-1'],
   },
+  'service-dof-grading': {
+    components: [
+      {
+        id: 'dof-1', type: 'blendlink.depth-of-field', phase: 'post-hdr',
+        values: {
+          focusMode: 'distance', focusDistance: 4.2, focusRange: 1, blurStrength: 3,
+        },
+      },
+      {
+        id: 'grade-1', type: 'blendlink.color-grading', phase: 'post-ldr',
+        // The page supplies loadLut (an inverting 32-cube), so the URL is
+        // identity only.
+        values: { lutUrl: 'https://fixtures.invalid/invert.cube', intensity: 1 },
+      },
+    ],
+    loadLut: true,
+    expectedOrder: ['scene-color', 'temporal-antialiasing', 'dof-1', 'grade-1'],
+  },
+}
+
+function invertedLut(size) {
+  const lut = neutralLut(size)
+  const data = lut.image.data
+  for (let index = 0; index < data.length; index += 4) {
+    data[index] = 255 - data[index]
+    data[index + 1] = 255 - data[index + 1]
+    data[index + 2] = 255 - data[index + 2]
+  }
+  lut.needsUpdate = true
+  return lut
 }
 
 window.__wgpuServiceCell = async (backendId, cellId) => {
@@ -441,6 +471,7 @@ window.__wgpuServiceCell = async (backendId, cellId) => {
       components: config.components.map((component) => ({
         id: component.id, type: component.type, enabled: true, values: component.values,
       })),
+      ...(config.loadLut ? { loadLut: async () => invertedLut(32) } : {}),
     }
     service = await ThreeWebgpuPostPipelineService.create(options)
     phase = 'add-effects'
