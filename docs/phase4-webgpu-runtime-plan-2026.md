@@ -178,6 +178,18 @@ plan:
 
 ## Track C — materials: applying the shipped IR
 
+STATUS 2026-07-28: five parts LANDED — the BuildTslOptions application
+surface (07c02b3: objectSpace basis swizzle, uvChannel/colorAttribute
+resolvers, texture_ref builder op, resource disposal, scalar entry),
+the mesh-level `blendlink_tsl_runtime` extras with the vertex-color
+refuse-by-name check (9bea52a), the materials.json programs sidecar
+publication (baa3181), its full descriptor threading with integrity
+verification (9b6a921), and `installTslMaterials` on
+`blendlink/three/tsl-materials` (77085d9). Remaining: texture_ref
+EMISSION (the route-level source-image-to-GLB-slot wiring), the GLB
+differential cell (browser ground truth), the onObjectUpdate cell, the
+onBeforeCompile/contact-shadow node conversions, and installer wiring.
+
 The consumer for `blendlink_tsl_ir`, designed against the census:
 
 - **Seam**: new `packages/blendlink/src/tslMaterialRuntime.ts`, shaped
