@@ -22,6 +22,12 @@ the fidelity decisions headlessly on the copied scene:
   + subdivision), the books (degenerate polygon defeats planar atlas
   rescue), the ladder (displace modifier).
 
+The entry point opts into viewer navigation (orbit + zoom around the
+authored framing) and shows a performance readout (fps, frame ms, draw
+calls, triangles). New scaffolds carry the same navigation as an
+`ORBIT_PREVIEW` flag, off by default — interactivity stays a
+per-application choice, never a Blendlink default.
+
 Result: 41 nodes, 2.31M triangles, ~11 MB delivered. Run it:
 
 ```bash

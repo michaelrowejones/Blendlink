@@ -244,6 +244,30 @@ const installed = await install${integrationName}({
   renderer,
   scene: world,
 })
+
+// Optional viewer navigation: set to true to orbit and zoom around the
+// authored framing (drag / scroll / touch). The artist-authored view stays
+// the opening frame; nothing loads while this is false.
+const ORBIT_PREVIEW = false as boolean
+let updateViewer: (() => void) | null = null
+if (ORBIT_PREVIEW) {
+  const { OrbitControls } = await import('three/addons/controls/OrbitControls.js')
+  const controls = new OrbitControls(installed.camera, canvas)
+  const sphere = new THREE.Box3().setFromObject(installed.root).getBoundingSphere(new THREE.Sphere())
+  // Pivot on the authored view ray at the scene-center depth so update()
+  // preserves the authored rotation while orbiting revolves around the scene.
+  const viewDirection = installed.camera.getWorldDirection(new THREE.Vector3())
+  const focusDistance = Math.max(
+    sphere.radius * 0.05,
+    sphere.center.clone().sub(installed.camera.position).dot(viewDirection),
+  )
+  controls.target.copy(installed.camera.position).addScaledVector(viewDirection, focusDistance)
+  controls.minDistance = sphere.radius * 0.05
+  controls.maxDistance = sphere.radius * 8
+  controls.enableDamping = true
+  controls.update()
+  updateViewer = () => controls.update()
+}
 let lastWidth = 0
 let lastHeight = 0
 let previousTime = performance.now()
@@ -259,6 +283,7 @@ function frame(now: number) {
   const deltaSeconds = Math.max(0, (now - previousTime) / 1000)
   previousTime = now
   installed.update(deltaSeconds)
+  updateViewer?.()
   installed.render(deltaSeconds)
   requestAnimationFrame(frame)
 }
