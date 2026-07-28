@@ -1411,8 +1411,45 @@ def _binding_map(objects) -> dict:
     return bindings
 
 
-def _materialized_binding_hash(obj) -> str:
+_DEFORMING_MODIFIERS = frozenset({"ARMATURE", "SUBSURF"})
+
+
+def _deforming_receiver(obj) -> bool:
+    """A binding the deforming-receiver relaxation applies to: its
+    modifiers are all pose/topology-refinement (Armature/Subdivision) and
+    its UV-space channel bakes stay valid across poses."""
+    modifiers = list(getattr(obj, "modifiers", ()) or ())
+    if any(modifier.type not in _DEFORMING_MODIFIERS for modifier in modifiers):
+        return False
+    if modifiers:
+        return True
+    return bool(
+        procedural._animated_id(obj)
+        or procedural._animated_id(getattr(obj, "data", None))
+    )
+
+
+def _materialized_binding_hash(obj, *, rest_basis: bool = False) -> str:
     digest = hashlib.sha256()
+    if rest_basis:
+        # Deforming receivers: the evaluated depsgraph contributor is
+        # pose/frame-dependent, so variant identity fingerprints the BASE
+        # datablock the private bake copy derives from — the UV layout and
+        # topology the UV-space channel bake actually depends on.
+        mesh = obj.data
+        digest.update(str(mesh.name).encode("utf8"))
+        digest.update(str(len(mesh.vertices)).encode("utf8"))
+        digest.update(str(len(mesh.polygons)).encode("utf8"))
+        digest.update(str(len(mesh.loops)).encode("utf8"))
+        for modifier in obj.modifiers:
+            digest.update(f"{modifier.type}:{modifier.name}".encode("utf8"))
+        from array import array
+        for layer in mesh.uv_layers:
+            digest.update(str(layer.name).encode("utf8"))
+            buffer = array("f", bytes(8 * len(mesh.loops)))
+            layer.data.foreach_get("uv", buffer)
+            digest.update(buffer.tobytes())
+        return digest.hexdigest()
     depsgraph = bpy.context.evaluated_depsgraph_get()
     bakelib._fingerprint_object_contributor(
         digest,
@@ -1424,7 +1461,17 @@ def _materialized_binding_hash(obj) -> str:
     return digest.hexdigest()
 
 
-def _materialized_binding_issues(material, raw_bindings) -> list[MaterialIssue]:
+def _materialized_binding_issues(
+    material, raw_bindings, *, deforming_receivers: bool = False,
+) -> list[MaterialIssue]:
+    """Shared per-binding constraints for baked receivers.
+
+    deforming_receivers is the per-channel Material bake's relaxation
+    (user-approved 2026-07-28): UV-space channel bakes are valid across
+    poses, so Armature/Subdivision modifiers, animated transforms, and rig
+    constraints stop refusing THERE — variant identity switches to the
+    rest-basis fingerprint. The selected-field materialization route keeps
+    every constraint: it mutates and freezes the receiver."""
     object_names = tuple(sorted({
         obj.name for obj, _slot in raw_bindings
     }))
@@ -1449,9 +1496,20 @@ def _materialized_binding_issues(material, raw_bindings) -> list[MaterialIssue]:
             "use a direct portable field.",
             (obj.name,),
         ))
-    if len(obj.data.polygons) == 0 or any(
+    polygons = getattr(obj.data, "polygons", None)
+    if polygons is None:
+        # Non-mesh receivers (Curve/Text) previously crashed here instead
+        # of refusing by name.
+        issues.append(MaterialIssue(
+            "material.selected-field-binding-type", material.name,
+            f'Object "{obj.name}" is not a mesh receiver.',
+            "Convert the receiver to a mesh or use a direct portable field.",
+            (obj.name,),
+        ))
+        return issues
+    if len(polygons) == 0 or any(
         int(polygon.material_index) != slot_index
-        for polygon in obj.data.polygons
+        for polygon in polygons
     ):
         issues.append(MaterialIssue(
             "material.selected-field-face-ownership", material.name,
@@ -1460,7 +1518,10 @@ def _materialized_binding_issues(material, raw_bindings) -> list[MaterialIssue]:
             "route. Blendlink will not bake unrelated slots into the same texture.",
             (obj.name,),
         ))
-    modifiers = [modifier.name for modifier in obj.modifiers]
+    modifiers = [
+        modifier.name for modifier in obj.modifiers
+        if not (deforming_receivers and modifier.type in _DEFORMING_MODIFIERS)
+    ]
     if modifiers:
         issues.append(MaterialIssue(
             "material.selected-field-modifiers-unsupported", material.name,
@@ -1486,6 +1547,10 @@ def _materialized_binding_issues(material, raw_bindings) -> list[MaterialIssue]:
         )
         if procedural._animated_id(value)
     ]
+    if deforming_receivers:
+        # Object-level animation is pose — UV-space bakes hold. Animated
+        # MESH data can drive the UV layout itself, so it stays refused.
+        animated = [label for label in animated if label != "object"]
     if animated:
         issues.append(MaterialIssue(
             "material.selected-field-binding-animated", material.name,
@@ -1496,7 +1561,9 @@ def _materialized_binding_issues(material, raw_bindings) -> list[MaterialIssue]:
             "intentional static receiver.",
             (obj.name,),
         ))
-    if len(obj.constraints) > 0 or getattr(obj, "instance_type", "NONE") != "NONE":
+    if (
+        len(obj.constraints) > 0 and not deforming_receivers
+    ) or getattr(obj, "instance_type", "NONE") != "NONE":
         issues.append(MaterialIssue(
             "material.selected-field-context-unsupported", material.name,
             f'Object "{obj.name}" uses constraints or instancing that can change '
@@ -3068,13 +3135,17 @@ def _plan_material_bake(
                     object_names,
                 ))
         if needs_unique:
-            issues.extend(_materialized_binding_issues(material, raw_bindings))
+            issues.extend(_materialized_binding_issues(
+                material, raw_bindings, deforming_receivers=True,
+            ))
     if not issues:
         for obj, slot in raw_bindings:
             resolution_plan = None
             source_hash = None
             if needs_unique:
-                source_hash = _materialized_binding_hash(obj)
+                source_hash = _materialized_binding_hash(
+                    obj, rest_basis=_deforming_receiver(obj),
+                )
                 resolution_plan = bakelib.plan_material_texture_resolution(
                     obj, slot, purpose=purpose,
                 )
