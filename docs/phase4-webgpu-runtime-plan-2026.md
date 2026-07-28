@@ -88,28 +88,38 @@ rows stay `pendingTrackB` until the Blendlink-owned nodes exist.
 
 ## Track A — renderer core (mechanical first, behavior second)
 
-Retype-first commit: `assertWebGLRenderer`
-(threeRuntime.ts:2918-2925, called at 1417/1623/2015) becomes a
-structural renderer acceptance including WebGPURenderer, and
-threeRuntime.test.ts:1323's rejection assertion inverts in the same
-commit. Then the behavior seams, each a named sub-task (none were in
-the old plan doc):
+STATUS: **LANDED 2026-07-27** (commits 4b41f47, 05314da, 2354a04)
+except the deliberately deferred templates sub-task below.
 
-- KTX2 wiring: `detectSupport(renderer)` after `await renderer.init()`
-  (createOwnedKtx2Loader, threeRuntime.ts:2806-2827; fix the error
-  copy at 2822).
-- PMREM probe capture (threeRuntime.ts:913) on the WebGPU path.
-- RectAreaLight LTC init (threeRectAreaLights.ts LTC state machine
-  328-383 + `instanceof WebGLRenderer` peer check 443-446).
-- R3F: replace the `webglcontextlost` listener
-  (reactThreeFiber.ts:412-421) with device-lost handling; document the
-  Canvas gl-factory WebGPU pattern for consumers.
-- `RendererLookLike` transparency guard: `getContextAttributes?.()` is
-  absent on WebGPURenderer so the alpha check silently passes — make
-  the absence explicit.
-- Templates/scaffolds (preview.ts, previewStudioHost.ts,
-  projectSetup.ts) emit WebGPURenderer construction including
-  `await renderer.init()`.
+- ~~Retype-first commit~~ — `assertCompiledSceneRenderer` accepts
+  either Three renderer identity; flag-less renderer-likes still
+  reject; the rejection test inverted into a full-path WebGPU install
+  acceptance test.
+- ~~KTX2 wiring~~ — r184 `detectSupport()` natively branches on
+  `isWebGPURenderer` (initialized renderer required); only the error
+  copy needed fixing.
+- ~~PMREM probe capture~~ — `createPmremGenerator()` picks the
+  generator by renderer family; `three/webgpu` loads lazily so
+  WebGL-only bundles pay nothing; the async WebGPU shader compile is
+  awaited (no-op await on WebGL).
+- ~~RectAreaLight LTC init~~ — resolved as a NAMED REFUSAL on
+  WebGPURenderer (test-locked): the node system takes LTC through the
+  write-only static `RectAreaLightNode.setLTC()` with no
+  introspection, so Blendlink's partial/complete/absent ownership
+  machine cannot protect shared state there. Revisit only if three
+  grows a getter.
+- ~~R3F device-lost~~ — `subscribeRendererLoss()`: the WebGPU family
+  chains the renderer's public `onDeviceLost` hook (both its backends
+  route loss there); classic WebGLRenderer keeps `webglcontextlost` +
+  the synchronous probe.
+- ~~Transparency guard~~ — the look layer reads WebGPURenderer's
+  public `alpha` flag when `getContextAttributes` is absent; the
+  silent pass is gone.
+- Templates/scaffolds emitting WebGPURenderer construction (+ the
+  Canvas gl-factory consumer docs): DEFERRED to the examples-migration
+  step (sequencing step 4) — scaffolding WebGPU renderers while the
+  production post pipeline is still the pmndrs WebGL stack would ship
+  a mismatch. Track B unblocks it.
 
 ## Track B — post pipeline (RenderPipeline behind the same interface)
 
