@@ -1,0 +1,23 @@
+{
+  "name": "cube-diorama",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "blendlink:connect": "blendlink connect",
+    "blendlink:preview": "blendlink preview",
+    "blendlink:publish": "blendlink publish",
+    "blendlink:check": "blendlink verify"
+  },
+  "dependencies": {
+    "blendlink": "^0.8.0",
+    "three": "0.184.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.0.0"
+  }
+}
