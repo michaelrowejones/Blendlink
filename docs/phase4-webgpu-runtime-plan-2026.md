@@ -203,6 +203,23 @@ The consumer for `blendlink_tsl_ir`, designed against the census:
   `_uv_descriptor` — it just isn't published); verify the vertex-color
   layer is the exported COLOR_0 or refuse by name (a real gap today —
   silent uv(0)/COLOR_0 sampling for named layers must fail loudly).
+  SEAM MAP (2026-07-28, for implementation): the ownership-extras
+  pattern is Blender custom properties on the generated material
+  (material_compiler.py:3558 `generated["blendlink_source_material"]`)
+  flowing to glTF extras via the stock exporter, then re-verified
+  post-export against the document dict (4825-4836). The exported
+  document is patched/verified in the `_resolve_generated_material`
+  phase (4181+) — mesh-level `blendlink_texspace` extras can be
+  stamped there from `mesh.texspace_location/size` for bindings whose
+  channel IR contains a `generated` op, keeping user mesh data
+  untouched. `_uv_descriptor` (1237) already resolves layer name AND
+  index per binding; its result currently rides only the private
+  `materialization` dict (6035-6041 `uvDescriptor`) — publication
+  means copying `{name, index}` into the per-binding channel-plan
+  records that reach sceneDiagnostics (the `tslIr*` threading pattern
+  from _attach_tsl_ir). The BuildTslOptions consumer side
+  (uvChannel/colorAttribute/textures/objectSpace/resources +
+  buildTslScalarNode) landed in 07c02b3 and is ready for these.
 - **BuildTslOptions growth** (harness defaults stay byte-identical):
   `objectSpace: {basis: 'blender-z-up' | 'gltf-y-up'}` (the measured
   swizzle vec3(x, −z, y), to be proven by a cell against a real
