@@ -1098,6 +1098,97 @@ def build_layer_weight(tree, emission):
     tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
 
 
+def render_eevee_reference(material, light_contract):
+    """EEVEE ortho render of the unit tile — the oracle for captured
+    lighting (Shader to RGB), which Cycles cannot evaluate.
+
+    Contract: quad [-1, 1]^2 at z = 0 with identity UVs, orthographic
+    camera at (0, 0, 2) framing exactly the quad, ONE sun with the
+    declared rotation/strength, no world light, 1 sample, Raw view
+    transform, float EXR readback. Rows come back bottom-up like the
+    bake references."""
+    import tempfile
+
+    import numpy as np
+
+    scene = bpy.context.scene
+    mesh = bpy.data.meshes.new("TSL EEVEE Tile")
+    mesh.from_pydata(
+        ((-1, -1, 0), (1, -1, 0), (1, 1, 0), (-1, 1, 0)),
+        (),
+        ((0, 1, 2, 3),),
+    )
+    mesh.update()
+    layer = mesh.uv_layers.new(name="TSL_EEVEE_UV")
+    for loop_index, corner in enumerate(
+        ((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)),
+    ):
+        layer.data[loop_index].uv = corner
+    quad = bpy.data.objects.new("TSL EEVEE Tile", mesh)
+    scene.collection.objects.link(quad)
+    quad.data.materials.append(material)
+
+    camera_data = bpy.data.cameras.new("TSL EEVEE Camera")
+    camera_data.type = "ORTHO"
+    camera_data.ortho_scale = 2.0
+    camera = bpy.data.objects.new("TSL EEVEE Camera", camera_data)
+    camera.location = (0.0, 0.0, 2.0)
+    scene.collection.objects.link(camera)
+
+    light_data = bpy.data.lights.new("TSL EEVEE Sun", "SUN")
+    light_data.energy = float(light_contract.get("strength", 1.0))
+    light_data.angle = 0.0
+    light = bpy.data.objects.new("TSL EEVEE Sun", light_data)
+    light.rotation_euler = tuple(light_contract.get("rotation", (0, 0, 0)))
+    scene.collection.objects.link(light)
+
+    previous_camera = scene.camera
+    previous_engine = scene.render.engine
+    output_path = Path(tempfile.mkdtemp()) / "tsl_eevee_reference.exr"
+    try:
+        scene.camera = camera
+        scene.render.engine = "BLENDER_EEVEE"
+        scene.eevee.taa_render_samples = 1
+        scene.render.resolution_x = SIZE
+        scene.render.resolution_y = SIZE
+        scene.render.resolution_percentage = 100
+        scene.render.film_transparent = False
+        scene.view_settings.view_transform = "Raw"
+        scene.view_settings.look = "None"
+        scene.render.image_settings.file_format = "OPEN_EXR"
+        scene.render.image_settings.color_depth = "32"
+        scene.render.image_settings.exr_codec = "NONE"
+        scene.render.image_settings.color_mode = "RGB"
+        scene.render.filepath = str(output_path)
+        if scene.world is not None:
+            scene.world = None
+        bpy.ops.render.render(write_still=True)
+        image = bpy.data.images.load(str(output_path))
+        try:
+            pixels = np.asarray(image.pixels[:], dtype=np.float32)
+            channels = len(image.pixels) // (SIZE * SIZE)
+            grid = pixels.reshape(SIZE, SIZE, channels)[:, :, :3]
+        finally:
+            bpy.data.images.remove(image)
+        return {
+            "pixels": grid,
+            "rgbMin": [float(grid[..., c].min()) for c in range(3)],
+            "rgbMax": [float(grid[..., c].max()) for c in range(3)],
+            "deviceClass": "eevee",
+            "backend": "BLENDER_EEVEE",
+        }
+    finally:
+        scene.camera = previous_camera
+        scene.render.engine = previous_engine
+        for obj in (quad, light, camera):
+            bpy.data.objects.remove(obj, do_unlink=True)
+        bpy.data.meshes.remove(mesh)
+        bpy.data.lights.remove(light_data)
+        bpy.data.cameras.remove(camera_data)
+        if output_path.exists():
+            output_path.unlink()
+
+
 def ensure_view_camera():
     """The view-dependent cell camera contract: position (0, 0, 2) looking
     down -Z at the unit-UV tile quad spanning [-1, 1]^2 at z = 0.  The TSL
@@ -1565,7 +1656,58 @@ def projection_fresnel_mix(tree, emission):
     tree.links.new(result, emission.inputs["Color"])
 
 
+def _shader_to_rgb_capture(tree, color_socket=None, color_value=None):
+    diffuse = tree.nodes.new("ShaderNodeBsdfDiffuse")
+    if color_socket is not None:
+        tree.links.new(color_socket, diffuse.inputs["Color"])
+    if color_value is not None:
+        diffuse.inputs["Color"].default_value = tuple(color_value) + (1.0,)
+    capture = tree.nodes.new("ShaderNodeShaderToRGB")
+    tree.links.new(diffuse.outputs["BSDF"], capture.inputs["Shader"])
+    return capture.outputs["Color"]
+
+
+def closure_shader_to_rgb_flat(tree, output):
+    captured = _shader_to_rgb_capture(
+        tree,
+        color_socket=_rgb_input(
+            tree, _uv_channel(tree, "u"), y_value=0.7,
+            z_socket=_uv_channel(tree, "v"),
+        ),
+    )
+    tree.links.new(captured, output.inputs["Surface"])
+
+
+def closure_shader_to_rgb_tilted(tree, output):
+    closure_shader_to_rgb_flat(tree, output)
+
+
+def closure_shader_to_rgb_ramped(tree, output):
+    captured = _shader_to_rgb_capture(
+        tree,
+        color_socket=_rgb_input(
+            tree, _uv_channel(tree, "u"),
+            y_socket=_uv_channel(tree, "u"),
+            z_socket=_uv_channel(tree, "u"),
+        ),
+    )
+    separate = tree.nodes.new("ShaderNodeSeparateColor")
+    separate.mode = "RGB"
+    tree.links.new(captured, separate.inputs["Color"])
+    ramp = tree.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.interpolation = "LINEAR"
+    ramp.color_ramp.elements[0].position = 0.1
+    ramp.color_ramp.elements[0].color = (0.05, 0.1, 0.6, 1.0)
+    ramp.color_ramp.elements[1].position = 0.7
+    ramp.color_ramp.elements[1].color = (0.9, 0.6, 0.1, 1.0)
+    tree.links.new(separate.outputs[0], ramp.inputs["Fac"])
+    tree.links.new(ramp.outputs["Color"], output.inputs["Surface"])
+
+
 SURFACE_CLOSURES = {
+    "shader-to-rgb-flat": closure_shader_to_rgb_flat,
+    "shader-to-rgb-tilted": closure_shader_to_rgb_tilted,
+    "shader-to-rgb-ramped": closure_shader_to_rgb_ramped,
     "surface-mix-color": closure_mix_color,
     "surface-mix-scalar": closure_mix_scalar,
     "surface-transparent-alpha": closure_transparent_alpha,
@@ -1669,8 +1811,53 @@ def main():
             builder = make_mix_sweep_builder(cell["mixSweep"])
         if builder is None and "vectorSweep" in cell:
             builder = make_vector_sweep_builder(cell["vectorSweep"])
-        if builder is None:
+        if builder is None and "eeveeLight" not in cell:
             raise SystemExit(f"reference builder missing for cell {cell_id!r}")
+        if "eeveeLight" in cell:
+            # EEVEE-oracle cells (captured lighting): the closure graph
+            # provides BOTH the IR (emit_surface) and the reference (an
+            # EEVEE ortho render under the fixed-light contract) —
+            # Cycles cannot evaluate Shader to RGB at all.
+            closure_builder = SURFACE_CLOSURES[cell_id]
+            closure_material = bpy.data.materials.new(f"CELL {cell_id}")
+            try:
+                closure_tree = bakelib.ensure_shader_node_tree(
+                    closure_material,
+                )
+                closure_tree.nodes.clear()
+                closure_output = closure_tree.nodes.new(
+                    "ShaderNodeOutputMaterial",
+                )
+                closure_builder(closure_tree, closure_output)
+                surface_document = tsl_ir.emit_surface(closure_tree)
+                document = surface_document["channels"][
+                    cell["surface"]["channel"]
+                ]
+                ir_path = ir_output / f"{cell_id}.json"
+                ir_path.write_text(
+                    json.dumps(document, indent=2) + "\n", encoding="utf8",
+                )
+                result = render_eevee_reference(
+                    closure_material, cell["eeveeLight"],
+                )
+            finally:
+                bpy.data.materials.remove(closure_material, do_unlink=True)
+            pixels = np.asarray(result["pixels"], dtype=np.float32)
+            path = OUTPUT / f"{cell_id}.f32"
+            pixels.tofile(path)
+            manifest["cells"][cell_id] = {
+                "path": path.name,
+                "pipeline": "ir",
+                "ir": f"ir/{cell_id}.json",
+                "shape": list(pixels.shape),
+                "rgbMin": list(result["rgbMin"]),
+                "rgbMax": list(result["rgbMax"]),
+                "deviceClass": result["deviceClass"],
+                "backend": result["backend"],
+            }
+            print(f"tsl differential reference: {cell_id} rendered (eevee)")
+            continue
+
         material = emission_material(f"CELL {cell_id}", builder)
         ir_path = None
         try:

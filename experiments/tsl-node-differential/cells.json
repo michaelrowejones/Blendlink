@@ -899,6 +899,36 @@
       "notes": "Mix(P1, P2, fac=Fresnel IOR 1.45) under the fixed camera contract: the composed Base Color document is viewDependent and evaluates through the proven fresnel/view_cos ops — the layered-glass corpus class stays shader-side where it is exact."
     },
     {
+      "id": "shader-to-rgb-flat",
+      "gate": true,
+      "surface": {"channel": "Emission Color"},
+      "eeveeLight": {"strength": 3.0, "rotation": [0, 0, 0]},
+      "analyticLight": {"irradiance": [0.95493, 0.95493, 0.95493]},
+      "tolerance": {"meanAbs": 0.002, "p99Abs": 0.008, "maxAbs": 0.02},
+      "failureClass": "captured lighting (Shader to RGB, EEVEE oracle)",
+      "notes": "Shader to RGB over a Diffuse BSDF with a UV-gradient albedo, coerced into the surface — the splash painterly pattern. Reference: an EEVEE ortho render under the fixed-light contract (sun straight on, strength 3, no world); TSL: albedo x diffuseIrradiance with the analytic contract value S/pi. The cell MEASURES EEVEE's diffuse response constant."
+    },
+    {
+      "id": "shader-to-rgb-tilted",
+      "gate": true,
+      "surface": {"channel": "Emission Color"},
+      "eeveeLight": {"strength": 3.0, "rotation": [1.0471975511965976, 0, 0]},
+      "analyticLight": {"irradiance": [0.477465, 0.477465, 0.477465]},
+      "tolerance": {"meanAbs": 0.002, "p99Abs": 0.008, "maxAbs": 0.02},
+      "failureClass": "captured lighting (cosine law under the light contract)",
+      "notes": "Same capture with the sun tilted 60 degrees: the plateau must halve (S cos(theta) / pi), gating the Lambert cosine through a second point. The flat tile cannot vary N — the cosine is gated across cells, not across texels; production normals are Phase 4's application seam."
+    },
+    {
+      "id": "shader-to-rgb-ramped",
+      "gate": true,
+      "surface": {"channel": "Emission Color"},
+      "eeveeLight": {"strength": 3.0, "rotation": [0, 0, 0]},
+      "analyticLight": {"irradiance": [0.95493, 0.95493, 0.95493]},
+      "tolerance": {"meanAbs": 0.002, "p99Abs": 0.008, "maxAbs": 0.02},
+      "failureClass": "captured lighting (the full splash chain shape)",
+      "notes": "Shader to RGB -> Separate -> ColorRamp -> surface: the captured value quantized by a ramp, exactly the painterly composition. The ramp amplifies any capture-constant error, making this the sensitive gate."
+    },
+    {
       "id": "fresnel-dielectric",
       "gate": true,
       "viewFrom": "ACTIVE_CAMERA",

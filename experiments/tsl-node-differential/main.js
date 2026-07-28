@@ -89,7 +89,9 @@ function ensureQuadVertexColors() {
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
 }
 
-window.__tslDiffRun = async (cellId, pipeline, irPath, analyticCamera) => {
+window.__tslDiffRun = async (
+  cellId, pipeline, irPath, analyticCamera, analyticLight,
+) => {
   if (state.error) return { ok: false, error: state.error }
   try {
     let colorNode
@@ -115,6 +117,18 @@ window.__tslDiffRun = async (cellId, pipeline, irPath, analyticCamera) => {
       }
       colorNode = buildTslColorNode(document, {
         ...(analyticCamera ? { viewCos: analyticViewCos() } : {}),
+        // The light-contract override: a sun of the cell's declared
+        // effective irradiance (the EEVEE reference measures the same
+        // contract; the cell decides the scaling constant).
+        ...(analyticLight
+          ? {
+              diffuseIrradiance: vec3(
+                analyticLight.irradiance[0],
+                analyticLight.irradiance[1],
+                analyticLight.irradiance[2],
+              ),
+            }
+          : {}),
         // The tile-proxy texspace contract, measured by the probe: the
         // quad reports texspace location (0,0,0), size (1,1,1).
         generatedTexspace: {

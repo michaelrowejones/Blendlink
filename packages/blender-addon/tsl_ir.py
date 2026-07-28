@@ -551,8 +551,11 @@ def _channel_document(expression):
         "model": IR_MODEL,
         "output": expression,
     }
-    if '"view_cos"' in _json.dumps(expression):
+    encoded = _json.dumps(expression)
+    if '"view_cos"' in encoded:
         document["viewDependent"] = True
+    if '"shader_to_rgb_diffuse"' in encoded:
+        document["lightDependent"] = True
     return document
 
 
@@ -902,6 +905,41 @@ def emit_output(node, from_socket, stack=()):
             "samples": samples,
             "values": values,
             "input": emit_input(node.inputs["Fac"], stack=stack),
+        }
+
+    if idname == "ShaderNodeShaderToRGB":
+        # EEVEE-only closure capture. The compilable class is a Diffuse
+        # BSDF input: the captured value is albedo x diffuse irradiance,
+        # gated by EEVEE-render cells under the fixed-light contract
+        # (Cycles cannot evaluate this node at all).
+        if getattr(from_socket, "identifier", socket_name) != "Color":
+            _refuse(
+                f"Shader to RGB output {socket_name!r} has no cell yet"
+            )
+        resolved = _resolve_shader_link(node.inputs["Shader"], stack)
+        if resolved is None:
+            _refuse("Shader to RGB with an unlinked Shader input")
+        source_node, _source_socket, source_stack = resolved
+        if source_node.bl_idname != "ShaderNodeBsdfDiffuse":
+            _refuse(
+                f"Shader to RGB over {source_node.bl_idname} has no cell "
+                "yet (Diffuse only)"
+            )
+        roughness = source_node.inputs["Roughness"]
+        if roughness.is_linked or abs(float(roughness.default_value)) > 1e-9:
+            _refuse(
+                "Shader to RGB over Oren-Nayar Diffuse (roughness > 0) "
+                "has no cell yet"
+            )
+        if source_node.inputs["Normal"].is_linked:
+            _refuse(
+                "Shader to RGB over a custom-normal Diffuse has no cell yet"
+            )
+        return {
+            "op": "shader_to_rgb_diffuse",
+            "color": emit_input(
+                source_node.inputs["Color"], source_stack, as_vector=True,
+            ),
         }
 
     if idname == "ShaderNodeTexChecker":
@@ -1464,8 +1502,13 @@ def emit_channel(socket, stack=()) -> dict:
     }
     import json as _json
 
-    if '"view_cos"' in _json.dumps(expression):
+    encoded = _json.dumps(expression)
+    if '"view_cos"' in encoded:
         # A view-dependent channel can never take the tile-bake routes; the
         # TSL runtime is its only faithful transport.
         document["viewDependent"] = True
+    if '"shader_to_rgb_diffuse"' in encoded:
+        # Captured lighting: only the TSL runtime (or an EEVEE-render
+        # oracle under the light contract) can evaluate it.
+        document["lightDependent"] = True
     return document

@@ -200,6 +200,12 @@ export interface BuildTslOptions {
     location: [number, number, number]
     size: [number, number, number]
   }
+  /** Light-contract override for shader_to_rgb_diffuse: the effective
+   * diffuse irradiance (light color x strength x cos(theta) / pi under
+   * the fixed-sun contract the EEVEE reference renders with). The
+   * production runtime wires the scene's lighting here — Phase 4's
+   * application seam, like viewCos. */
+  diffuseIrradiance?: TslExpression
 }
 
 let activeOptions: BuildTslOptions = {}
@@ -471,6 +477,18 @@ function build(expression: TslIrExpression): TslExpression {
       // The glTF path ships the active color attribute as COLOR_0, which
       // three exposes as the 'color' geometry attribute.
       return tslAttribute('color')
+    case 'shader_to_rgb_diffuse': {
+      // EEVEE's Shader to RGB over a Diffuse BSDF: albedo times the
+      // diffuse irradiance. The harness supplies the light-contract
+      // value; production wires real lighting (Phase 4).
+      if (!activeOptions.diffuseIrradiance) {
+        return fail(
+          'IR shader_to_rgb_diffuse needs BuildTslOptions.diffuseIrradiance',
+        )
+      }
+      return build(child(expression, 'color'))
+        .mul(activeOptions.diffuseIrradiance)
+    }
     case 'object_coords':
       // Blender Object texture coordinates = object-space position, in
       // BLENDER'S Z-up basis. positionGeometry satisfies that contract
