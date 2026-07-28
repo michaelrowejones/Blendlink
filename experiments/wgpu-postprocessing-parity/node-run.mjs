@@ -216,6 +216,47 @@ try {
     }
   }
 
+  // Track C ground truth: the built tslMaterialRuntime over the real
+  // compiled cube-diorama publication.
+  const showcaseModels = join(
+    repositoryRoot, 'showcases', 'cube-diorama', 'public', 'models',
+  )
+  const fsUrl = (path) => `/@fs/${path.replace(/\\/g, '/')}`
+  const runtimeConfig = {
+    glbUrl: fsUrl(join(showcaseModels, 'cubeDiorama.glb')),
+    programsUrl: fsUrl(join(showcaseModels, 'cubeDiorama.materials.json')),
+  }
+  const runtime = {}
+  const runtimeAvailable = existsSync(join(showcaseModels, 'cubeDiorama.materials.json'))
+  if (runtimeAvailable) {
+    for (const backendId of ['native', 'fallback']) {
+      runtime[backendId] = await page.evaluate(
+        ({ backend, config }) => window.__wgpuRuntimeCell(backend, config),
+        { backend: backendId, config: runtimeConfig },
+      )
+      const cell = runtime[backendId]
+      if (!cell?.ok) {
+        failures.push(
+          `${backendId}/runtime-diorama: ${cell?.phase ?? 'missing'} — ${cell?.error ?? 'no result'}`,
+        )
+        continue
+      }
+      if (cell.applied < 1) {
+        failures.push(`${backendId}/runtime-diorama: no material application (matched ${cell.materials})`)
+      }
+      if (cell.after.nonBackgroundPixels === 0) {
+        failures.push(`${backendId}/runtime-diorama: rendered fully black after install`)
+      }
+      if (cell.after.sha256 === cell.before.sha256) {
+        failures.push(
+          `${backendId}/runtime-diorama: pixels identical before/after install — programs changed nothing`,
+        )
+      }
+    }
+  } else {
+    console.log('runtime-diorama cells skipped: showcase publication not present')
+  }
+
   const crossBackend = {}
   for (const effectId of ids.node) {
     const native = node.native[effectId]
@@ -275,6 +316,7 @@ try {
     control,
     node,
     service,
+    runtime,
     crossBackend,
     lookContinuity,
     summary,
@@ -302,6 +344,7 @@ try {
     + `native=${summary.nodeCellsPassingNative}/${summary.nodeCellsAttempted} `
     + `fallback=${summary.nodeCellsPassingFallback}/${summary.nodeCellsAttempted} `
     + `service=${summary.serviceCellsPassingNative}+${summary.serviceCellsPassingFallback}/${serviceIds.length * 2} `
+    + `runtime=${['native', 'fallback'].filter((id) => runtime[id]?.ok).length}/${runtimeAvailable ? 2 : 0} `
     + `control=${summary.controlCellsPassing}/${ids.control.length} `
     + `pendingTrackB=${ids.pendingTrackB.length} `
     + `failures=${failures.length}`,

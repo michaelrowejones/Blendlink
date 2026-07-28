@@ -527,6 +527,97 @@ window.__wgpuServiceCell = async (backendId, cellId) => {
 
 window.__wgpuServiceCellIds = () => Object.keys(SERVICE_CELLS)
 
+// Track C ground truth: the BUILT tslMaterialRuntime applied to the real
+// compiled cube-diorama GLB + published programs sidecar.  The gate is
+// end-to-end: extras identity resolves on GLTFLoader output, the programs
+// fetch + hash-verify over real HTTP, the node materials compile and
+// render on this backend, and the swap visibly changes pixels.
+window.__wgpuRuntimeCell = async (backendId, config) => {
+  const entry = state.node[backendId]
+  if (!entry) return { ok: false, phase: 'construct-renderer' }
+  const { renderer } = entry
+  let phase = 'load-glb'
+  let installed = null
+  let target = null
+  const scene = new THREE.Scene()
+  scene.background = new THREE.Color(0x202830)
+  try {
+    const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js')
+    const { MeshoptDecoder } = await import('three/addons/libs/meshopt_decoder.module.js')
+    const loader = new GLTFLoader()
+    loader.setMeshoptDecoder(MeshoptDecoder)
+    const gltf = await loader.loadAsync(config.glbUrl)
+    scene.add(gltf.scene)
+    const key = new THREE.DirectionalLight(0xffffff, 2.4)
+    key.position.set(3, 5, 2)
+    scene.add(key, new THREE.AmbientLight(0x404050, 1.2))
+    const sphere = new THREE.Box3().setFromObject(gltf.scene)
+      .getBoundingSphere(new THREE.Sphere())
+    const camera = new THREE.PerspectiveCamera(45, 1, sphere.radius / 100, sphere.radius * 10)
+    camera.position.copy(sphere.center)
+      .add(new THREE.Vector3(1, 0.8, 1).normalize().multiplyScalar(sphere.radius * 2.2))
+    camera.lookAt(sphere.center)
+
+    target = new THREE.RenderTarget(SIZE, SIZE, { type: THREE.UnsignedByteType })
+    const capture = async () => {
+      renderer.setRenderTarget(target)
+      renderer.render(scene, camera)
+      renderer.setRenderTarget(null)
+      const data = await renderer.readRenderTargetPixelsAsync(target, 0, 0, SIZE, SIZE)
+      return statsFromRgba(data)
+    }
+    phase = 'render-before'
+    const before = await capture()
+    phase = 'fetch-programs'
+    const response = await fetch(config.programsUrl)
+    if (!response.ok) throw new Error(`programs fetch ${response.status}`)
+    const payload = new Uint8Array(await response.arrayBuffer())
+    const digest = await crypto.subtle.digest(
+      'SHA-256',
+      payload.buffer.slice(payload.byteOffset, payload.byteOffset + payload.byteLength),
+    )
+    const hash = [...new Uint8Array(digest)]
+      .map((item) => item.toString(16).padStart(2, '0')).join('').slice(0, 16)
+    phase = 'install'
+    const { installTslMaterials } = await import('@blendlink-dist/tslMaterialRuntime.js')
+    installed = await installTslMaterials({
+      root: gltf.scene,
+      descriptor: {
+        materialPrograms: {
+          url: config.programsUrl,
+          bytes: payload.byteLength,
+          hash,
+          materials: 0,
+        },
+      },
+    })
+    phase = 'render-after'
+    const after = await capture()
+    return {
+      ok: true,
+      before,
+      after,
+      materials: installed.materials,
+      applied: installed.applied,
+      skipped: installed.skipped,
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      phase,
+      error: `${error?.name ?? 'Error'}: ${error?.message ?? error}`,
+    }
+  } finally {
+    try {
+      renderer.setRenderTarget(null)
+      installed?.dispose()
+      target?.dispose()
+    } catch {
+      // The recorded failure above is the evidence.
+    }
+  }
+}
+
 async function statsFromRgba(data) {
   let sum = 0
   let nonBackground = 0
