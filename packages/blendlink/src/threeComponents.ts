@@ -260,7 +260,7 @@ export async function installThreeComponents(
 
   const needsPost = enabled.some((component) =>
     componentDefinition(component.type)?.requires.includes('post-pipeline') === true)
-  let pipeline: ThreePostPipelineService | null = null
+  let pipeline: BlendlinkPostPipeline | null = null
   let lifecycle: InstalledRuntimeComponents | null = null
   const ownedInteractions = createThreeInteractionServices({
     root: options.root,
@@ -286,7 +286,15 @@ export async function installThreeComponents(
 
   try {
     if (needsPost) {
-      pipeline = await ThreePostPipelineService.create(options)
+      // Renderer-family branch: the WebGPU service loads lazily so the
+      // pmndrs WebGL path never bundles three/webgpu (and vice versa).
+      const rendererIdentity = options.renderer as THREE.WebGLRenderer & {
+        isWebGPURenderer?: boolean
+      }
+      pipeline = rendererIdentity.isWebGPURenderer
+        ? await (await import('./threeWebgpuPostPipeline.js'))
+          .ThreeWebgpuPostPipelineService.create(options)
+        : await ThreePostPipelineService.create(options)
     }
     const services: RuntimeComponentServices<THREE.Object3D | THREE.Scene> = {
       ...(pipeline ? { postPipeline: pipeline } : {}),
@@ -554,6 +562,22 @@ interface SharedPostRendererState {
 }
 
 const POST_RENDERER_STATE = new WeakMap<THREE.WebGLRenderer, SharedPostRendererState>()
+
+/** The full pipeline surface installThreeComponents drives, satisfied by
+ * both the pmndrs WebGL service below and the RenderPipeline-backed WebGPU
+ * service (threeWebgpuPostPipeline.ts). Keep additions mirrored. */
+export interface BlendlinkPostPipeline extends PostPipelineService {
+  readonly resolvedOrder: string[]
+  readonly multisampling: number
+  readonly postEdgeAntialiasing: boolean
+  readonly postEdgeAntialiasingPreset: PostEdgeAntialiasingPreset
+  finalize(): void
+  activate(scene: THREE.Scene, camera: THREE.Camera): void
+  setSize(width: number, height: number): void
+  setQuality(quality: RuntimeQuality): void
+  render(deltaSeconds?: number): void
+  dispose(): void
+}
 
 class ThreePostPipelineService implements PostPipelineService {
   readonly resolvedOrder: string[] = ['scene-color']
@@ -2589,7 +2613,7 @@ function inertComponents(
 
 function disposeRuntimeAndOwned(
   lifecycle: InstalledRuntimeComponents | null,
-  composer: ThreePostPipelineService | null,
+  composer: BlendlinkPostPipeline | null,
   audioListenerState: AudioListenerState,
   audio: ThreeAudioCoordinator,
   interactions: InstalledThreeInteractionServices,
