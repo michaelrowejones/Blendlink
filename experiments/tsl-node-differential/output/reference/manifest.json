@@ -1718,6 +1718,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "attribute-object": {
+      "path": "attribute-object.f32",
+      "pipeline": "ir",
+      "ir": "ir/attribute-object.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.006262499839067459,
+        0.0027453063521534204,
+        0.0
+      ],
+      "rgbMax": [
+        0.7937625050544739,
+        0.3472765386104584,
+        0.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "white-noise": {
       "path": "white-noise.f32",
       "pipeline": "ir",

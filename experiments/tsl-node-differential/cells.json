@@ -735,6 +735,14 @@
       "notes": "The Fac output of a color attribute is the component average (r+g+b)/3 — composed from the proven vertex_color and math ops over the corner-attribute proxy."
     },
     {
+      "id": "attribute-object",
+      "gate": true,
+      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
+      "failureClass": "per-object attribute (the ellie paint-set frontier x30)",
+      "objectAttributes": {"blendlink_probe": [0.8, 0.35, 0.1]},
+      "notes": "Attribute OBJECT reads an object custom property; the cell multiplies the per-object color by the UV gradient so the diff carries both. The runtime supplies the value through a per-object uniform (proven onObjectUpdate contract); the harness resolves the fixture constant via BuildTslOptions.objectAttribute."
+    },
+    {
       "id": "white-noise",
       "gate": true,
       "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},

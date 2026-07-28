@@ -121,6 +121,22 @@ describe('buildTslColorNode', () => {
     expect(resources.textures.length).toBe(0)
   })
 
+  it('resolves per-object attributes through the resolver and refuses without it', () => {
+    const objectDocument = documentOf({
+      op: 'attribute_object', name: 'tint', output: 'color',
+    })
+    expect(() => buildTslColorNode(objectDocument))
+      .toThrow(/BuildTslOptions\.objectAttribute/)
+    const objectAttribute = vi.fn(() => buildTslColorNode(documentOf({
+      op: 'const_vec3', value: [0.8, 0.35, 0.1],
+    })))
+    expect(buildTslColorNode(objectDocument, { objectAttribute })).toBeTruthy()
+    expect(objectAttribute).toHaveBeenCalledWith('tint')
+    expect(buildTslScalarNode(documentOf({
+      op: 'attribute_object', name: 'tint', output: 'fac',
+    }), { objectAttribute })).toBeTruthy()
+  })
+
   it('builds scalar documents without the RGB broadcast', () => {
     expect(buildTslScalarNode(documentOf({
       op: 'clamp01',

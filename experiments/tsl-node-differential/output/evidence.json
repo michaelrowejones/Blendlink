@@ -864,6 +864,17 @@
       },
       "failureClass": "corpus-measured node gap (Attribute Fac output x3)"
     },
+    "attribute-object": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00000780900230286837,
+        "p99Abs": 0.000012516975402832031,
+        "maxAbs": 0.000012516975402832031
+      },
+      "failureClass": "per-object attribute (the ellie paint-set frontier x30)"
+    },
     "white-noise": {
       "ok": true,
       "gated": true,

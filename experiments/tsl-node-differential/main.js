@@ -90,7 +90,7 @@ function ensureQuadVertexColors() {
 }
 
 window.__tslDiffRun = async (
-  cellId, pipeline, irPath, analyticCamera, analyticLight,
+  cellId, pipeline, irPath, analyticCamera, analyticLight, objectAttributes,
 ) => {
   if (state.error) return { ok: false, error: state.error }
   try {
@@ -135,6 +135,17 @@ window.__tslDiffRun = async (
           location: [0, 0, 0],
           size: [1, 1, 1],
         },
+        // Per-object attribute fixture values (the runtime supplies a
+        // per-object uniform instead; the cell pins the semantics).
+        ...(objectAttributes
+          ? {
+              objectAttribute: (name) => {
+                const value = objectAttributes[name]
+                if (!value) return null
+                return vec3(value[0], value[1], value[2])
+              },
+            }
+          : {}),
       })
     }
     const material = new MeshBasicNodeMaterial()

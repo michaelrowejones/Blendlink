@@ -243,6 +243,11 @@ export interface BuildTslOptions {
    * steals the decoded texture from the generated material's GLB slot).
    * texture_ref documents refuse to build without this resolver. */
   textures?: (ref: Record<string, unknown>) => unknown
+  /** Resolve an attribute_object IR op (a per-object custom property —
+   * the shared-material per-object-tint pattern) to a vec3 expression.
+   * The runtime supplies a per-object uniform reading exported extras;
+   * the harness supplies the fixture constant. Refuses without it. */
+  objectAttribute?: (name: string) => TslExpression
   /** Collects every DataTexture the build allocates (ramp/curve LUTs,
    * embedded tex_image pixels) so the applying runtime can dispose them
    * with the material. Create with createTslBuildResources(). */
@@ -540,6 +545,33 @@ function build(expression: TslIrExpression): TslExpression {
         curveChannel(input.z, sample => sample.z),
       )
       return tslMix(input, curved, factor)
+    }
+    case 'attribute_object': {
+      // A per-object custom property. Cycles reads obj["name"]; the
+      // resolver supplies the per-object vec3 (runtime: a uniform with
+      // onObjectUpdate over exported extras; harness: the fixture value).
+      const resolver = activeOptions.objectAttribute
+      if (!resolver) {
+        return fail('IR attribute_object needs BuildTslOptions.objectAttribute')
+      }
+      const name = expression.name
+      if (typeof name !== 'string' || name.length === 0) {
+        return fail('IR attribute_object needs a property name')
+      }
+      const value = resolver(name)
+      if (!value) {
+        return fail(
+          `BuildTslOptions.objectAttribute resolved nothing for ${JSON.stringify(name)}`,
+        )
+      }
+      if (expression.output === 'fac') {
+        // Cycles: Fac of an object attribute is the component average.
+        const lanes = value as unknown as {
+          x: TslExpression; y: TslExpression; z: TslExpression
+        }
+        return lanes.x.add(lanes.y).add(lanes.z).mul(1.0 / 3.0)
+      }
+      return value
     }
     case 'vertex_color': {
       // The glTF path ships the active color attribute as COLOR_0, which

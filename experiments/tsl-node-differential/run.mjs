@@ -155,15 +155,17 @@ try {
   for (const cell of cellsManifest.cells) {
     const errorsBefore = pageErrors.length
     const rendered = await page.evaluate(
-      ({ id, pipeline, analyticCamera, analyticLight }) =>
+      ({ id, pipeline, analyticCamera, analyticLight, objectAttributes }) =>
         window.__tslDiffRun(
           id, pipeline, undefined, analyticCamera, analyticLight,
+          objectAttributes,
         ),
       {
         id: cell.id,
         pipeline: cell.pipeline ?? 'ir',
         analyticCamera: Boolean(cell.analyticCamera),
         analyticLight: cell.analyticLight ?? null,
+        objectAttributes: cell.objectAttributes ?? null,
       },
     )
     if (pageErrors.length > errorsBefore) {

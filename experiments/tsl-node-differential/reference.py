@@ -1067,6 +1067,25 @@ def build_attribute_fac(tree, emission):
     _emit_scalar(tree, emission, fac)
 
 
+def build_attribute_object(tree, emission):
+    """Per-object custom property (the shared-material per-object-tint
+    pattern): the object's color property scales a UV gradient so the
+    diff carries both the property value and its spatial application."""
+    node = tree.nodes.new("ShaderNodeAttribute")
+    node.attribute_type = "OBJECT"
+    node.attribute_name = "blendlink_probe"
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    multiply = tree.nodes.new("ShaderNodeVectorMath")
+    multiply.operation = "MULTIPLY"
+    tree.links.new(node.outputs["Color"], multiply.inputs[0])
+    tree.links.new(coord.outputs["UV"], multiply.inputs[1])
+    tree.links.new(multiply.outputs["Vector"], emission.inputs["Color"])
+
+
+def proxy_object_attribute(proxy):
+    proxy["blendlink_probe"] = [0.8, 0.35, 0.1]
+
+
 def build_rgb_curve(tree, emission):
     node = tree.nodes.new("ShaderNodeRGBCurve")
     mapping = node.mapping
@@ -1736,6 +1755,7 @@ SURFACE_CLOSURES = {
 CELL_PROXY_SETUP = {
     "vertex-color": proxy_vertex_colors,
     "attribute-fac": proxy_vertex_colors,
+    "attribute-object": proxy_object_attribute,
 }
 
 
@@ -1767,6 +1787,7 @@ BUILDERS = {
     "texco-object": build_texco_object,
     "texco-generated": build_texco_generated,
     "attribute-fac": build_attribute_fac,
+    "attribute-object": build_attribute_object,
     "hash-probe": build_hash_probe,
     "voronoi-rand0-probe": build_voronoi_rand0_probe,
     "noise-z-probe": build_noise_z_probe,

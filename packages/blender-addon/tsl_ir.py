@@ -1477,7 +1477,26 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeAttribute":
-        if str(getattr(node, "attribute_type", "GEOMETRY")) != "GEOMETRY":
+        attribute_type = str(getattr(node, "attribute_type", "GEOMETRY"))
+        if attribute_type == "OBJECT":
+            # A per-object custom property (the shared-material,
+            # per-object-tint pattern). The value resolves per object:
+            # bake receivers carry the property, and the runtime reads
+            # the exported extras through a per-object uniform.
+            attribute_output = getattr(from_socket, "identifier", socket_name)
+            if attribute_output not in {"Color", "Vector", "Fac"}:
+                _refuse(
+                    f"Attribute OBJECT output {socket_name!r} has no cell yet"
+                )
+            name = str(getattr(node, "attribute_name", "") or "")
+            if not name:
+                _refuse("Attribute OBJECT without a property name")
+            return {
+                "op": "attribute_object",
+                "name": name,
+                "output": attribute_output.lower(),
+            }
+        if attribute_type != "GEOMETRY":
             _refuse(
                 f"Attribute type {node.attribute_type!r} has no cell yet"
             )
