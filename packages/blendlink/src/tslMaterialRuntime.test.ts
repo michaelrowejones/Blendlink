@@ -222,6 +222,59 @@ describe('installTslMaterials', () => {
     installed.dispose()
   })
 
+  it('applies attribute_object programs through per-object uniforms', async () => {
+    const material = new THREE.MeshStandardMaterial()
+    material.userData.blendlink_source_material = 'Paint'
+    const { root, mesh } = sceneWith(material)
+    mesh.userData.tint = [0.8, 0.35, 0.1]
+    const installed = await installTslMaterials({
+      root,
+      descriptor: { materialPrograms: pointer },
+      loadPrograms: async () => programs({
+        Paint: {
+          channels: {
+            'Base Color': {
+              tslIr: {
+                ...UV_X_DOCUMENT,
+                output: { op: 'attribute_object', name: 'tint', output: 'color' },
+              },
+            },
+          },
+        },
+      }),
+    })
+    expect(installed.applied).toBe(1)
+    expect(installed.skipped).toEqual([])
+    installed.dispose()
+  })
+
+  it('skips meshes that ship no per-object attribute by name', async () => {
+    const material = new THREE.MeshStandardMaterial()
+    material.userData.blendlink_source_material = 'Paint'
+    const { root, mesh } = sceneWith(material)
+    const installed = await installTslMaterials({
+      root,
+      descriptor: { materialPrograms: pointer },
+      loadPrograms: async () => programs({
+        Paint: {
+          channels: {
+            'Base Color': {
+              tslIr: {
+                ...UV_X_DOCUMENT,
+                output: { op: 'attribute_object', name: 'tint', output: 'color' },
+              },
+            },
+          },
+        },
+      }),
+    })
+    expect(installed.applied).toBe(0)
+    expect(mesh.material).toBe(material)
+    expect(installed.skipped.some((item) =>
+      /per-object attribute tint/.test(item.reason))).toBe(true)
+    installed.dispose()
+  })
+
   it('keeps clones connected through trackMaterialClone and releases on dispose', async () => {
     const material = new THREE.MeshStandardMaterial()
     material.userData.blendlink_source_material = 'Paint'

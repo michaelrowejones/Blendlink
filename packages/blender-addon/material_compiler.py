@@ -2920,6 +2920,21 @@ def _bounded_power_of_two(value: float, floor: int, ceiling: int) -> int:
     return result
 
 
+def _object_attribute_names(tree) -> tuple[str, ...]:
+    """Names of per-object Attribute OBJECT properties the surface samples
+    (the shared-material per-object-tint pattern)."""
+    if tree is None:
+        return ()
+    names = set()
+    for node in procedural.reachable_surface_nodes(tree):
+        if getattr(node, "bl_idname", "") == "ShaderNodeAttribute" \
+                and str(getattr(node, "attribute_type", "")) == "OBJECT":
+            name = str(getattr(node, "attribute_name", "") or "")
+            if name:
+                names.add(name)
+    return tuple(sorted(names))
+
+
 def _plan_material_bake(
     material, raw_bindings, binding_issues=(), *, purpose: str,
 ) -> MaterialDecision:
@@ -3116,6 +3131,14 @@ def _plan_material_bake(
     if normal_entry is not None and normal_entry["linked"]:
         route_bake("Normal", normal_entry, "data", bake_pass="NORMAL")
 
+    # Per-object attributes make every baked field object-dependent: tile
+    # bakes evaluate on a shared proxy carrying no per-object properties,
+    # so these materials bake per binding on the Unique route, and the
+    # property values fold into variant identity below.
+    object_attribute_names = _object_attribute_names(tree)
+    if object_attribute_names and needs_tile:
+        needs_unique = True
+
     # One material shares one UV strategy: the ORM pack and the base/alpha
     # carrier each merge several channels into one image, so a mixed
     # tile/unique material collapses conservatively to the Unique route.
@@ -3165,6 +3188,16 @@ def _plan_material_bake(
                 source_hash = _materialized_binding_hash(
                     obj, rest_basis=_deforming_receiver(obj),
                 )
+                if object_attribute_names:
+                    # Bindings with different per-object attribute values
+                    # must never share a bake variant.
+                    extra = hashlib.sha256()
+                    extra.update(source_hash.encode("utf8"))
+                    for name in object_attribute_names:
+                        extra.update(
+                            f"{name}={obj.get(name)!r}".encode("utf8"),
+                        )
+                    source_hash = extra.hexdigest()
                 resolution_plan = bakelib.plan_material_texture_resolution(
                     obj, slot, purpose=purpose,
                 )
@@ -5479,6 +5512,10 @@ def _split_slot_receiver(obj, slot_index: int):
         f"BLENDLINK_SLOT_RECEIVER.{obj.name}.{slot_index}", mesh,
     )
     receiver.matrix_world = obj.matrix_world.copy()
+    # Per-object attributes (Attribute OBJECT) evaluate against the
+    # RECEIVER during the bake; carry the source object's properties.
+    for key in obj.keys():
+        receiver[key] = obj[key]
     bpy.context.scene.collection.objects.link(receiver)
     return receiver
 

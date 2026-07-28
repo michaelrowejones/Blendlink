@@ -14,6 +14,7 @@
  */
 import * as THREE from 'three'
 import { MeshStandardNodeMaterial } from 'three/webgpu'
+import { uniform } from 'three/tsl'
 import {
   buildTslColorNode,
   buildTslScalarNode,
@@ -257,6 +258,49 @@ async function loadProgramTextures(
   }
 }
 
+function collectObjectAttributeNames(value: unknown, names: Set<string>): void {
+  if (Array.isArray(value)) {
+    for (const item of value) collectObjectAttributeNames(item, names)
+    return
+  }
+  if (value && typeof value === 'object') {
+    const record = value as Record<string, unknown>
+    if (record.op === 'attribute_object' && typeof record.name === 'string') {
+      names.add(record.name)
+    }
+    for (const item of Object.values(record)) {
+      collectObjectAttributeNames(item, names)
+    }
+  }
+}
+
+/** One shared resolver: every attribute_object op becomes a per-object
+ * uniform reading the exported node extras through onObjectUpdate (the
+ * harness-proven per-object delivery contract). Missing values read
+ * black; the per-mesh presence check skips by name before that. */
+function objectAttributeResolver(): NonNullable<BuildTslOptions['objectAttribute']> {
+  return (name) => {
+    const value = uniform(new THREE.Vector3())
+    ;(value as unknown as {
+      onObjectUpdate(
+        callback: (frame: { object: THREE.Object3D }) => unknown,
+      ): unknown
+    }).onObjectUpdate(({ object }) => {
+      const raw = object.userData?.[name]
+      if (Array.isArray(raw)) {
+        return new THREE.Vector3(
+          Number(raw[0]) || 0, Number(raw[1]) || 0, Number(raw[2]) || 0,
+        )
+      }
+      if (typeof raw === 'number') return new THREE.Vector3(raw, raw, raw)
+      return new THREE.Vector3()
+    })
+    return value as unknown as ReturnType<
+      NonNullable<BuildTslOptions['objectAttribute']>
+    >
+  }
+}
+
 function meshRuntimeExtras(object: THREE.Object3D): TslRuntimeMeshExtras | null {
   const extras = object.userData?.blendlink_tsl_runtime
   return extras && typeof extras === 'object'
@@ -269,9 +313,11 @@ function buildOptionsFor(
   resources: BuildTslOptions['resources'],
   materialName: string,
   textures?: BuildTslOptions['textures'],
+  objectAttribute?: BuildTslOptions['objectAttribute'],
 ): BuildTslOptions {
   const options: BuildTslOptions = { resources }
   if (textures) options.textures = textures
+  if (objectAttribute) options.objectAttribute = objectAttribute
   if (extras?.uvChannels) {
     const uvChannels = extras.uvChannels
     options.uvChannel = (uvMap) => {
@@ -328,6 +374,15 @@ export async function installTslMaterials(
     ? await options.loadPrograms()
     : await fetchPrograms(pointer)
   const programTextures = await loadProgramTextures(programs, pointer.url, options)
+  const objectAttribute = objectAttributeResolver()
+  // Per-material attribute needs, computed once: applied meshes must ship
+  // the property in their exported extras or skip by name.
+  const attributeNames = new Map<string, string[]>()
+  for (const [source, program] of Object.entries(programs.materials)) {
+    const names = new Set<string>()
+    collectObjectAttributeNames(program.channels, names)
+    if (names.size > 0) attributeNames.set(source, [...names].sort())
+  }
 
   const skipped: TslMaterialSkip[] = []
   interface InstalledSwap {
@@ -389,7 +444,21 @@ export async function installTslMaterials(
           })
           return
         }
-        const variantKey = `${source} ${JSON.stringify(extras ?? null)}`
+        const needed = attributeNames.get(source)
+        if (needed) {
+          const missing = needed.filter(
+            (name) => !(name in (mesh.userData ?? {})),
+          )
+          if (missing.length > 0) {
+            skipped.push({
+              material: source,
+              reason: `mesh "${mesh.name}" ships no per-object attribute `
+                + `${missing.join(', ')}; its carrier stays`,
+            })
+            return
+          }
+        }
+        const variantKey = `${source} ${JSON.stringify(extras ?? null)}`
         let variant = variants.get(variantKey)
         if (!variant) {
           const resources = createTslBuildResources()
@@ -401,6 +470,7 @@ export async function installTslMaterials(
           clone.userData = { ...material.userData }
           const buildOptions = buildOptionsFor(
             extras, resources, source, programTextures?.resolver,
+            objectAttribute,
           )
           let builtAny = false
           for (const [channel, entry] of channels) {
