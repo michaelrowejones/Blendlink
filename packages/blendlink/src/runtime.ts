@@ -356,6 +356,10 @@ export interface RendererLookLike {
    * restored without guessing. */
   getClearAlpha?(): number
   getContextAttributes?(): { alpha?: boolean } | null
+  /** WebGPURenderer's surface-transparency choice: it has no
+   * getContextAttributes(), so the transparency guard reads this public
+   * constructor-mirrored flag instead. */
+  alpha?: boolean
 }
 
 export interface SceneLookLike {
@@ -1138,7 +1142,12 @@ function installCompiledSceneLook(
           'does not expose both setClearAlpha() and getClearAlpha() for lifecycle-safe restoration.',
       )
     }
-    if (renderer.getContextAttributes?.()?.alpha === false) {
+    const attributesAlpha = renderer.getContextAttributes
+      ? renderer.getContextAttributes()?.alpha
+      // WebGPURenderer has no getContextAttributes(); it reports the same
+      // choice through its public alpha property (constructor default true).
+      : renderer.alpha
+    if (attributesAlpha === false) {
       throw new Error(
         'This Blendlink scene requests a transparent page background. Construct the Three renderer ' +
           'with { alpha: true } before applying the scene look.',

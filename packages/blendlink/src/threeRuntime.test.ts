@@ -1317,13 +1317,36 @@ describe('official Three scene installation seam', () => {
     installed.dispose()
   })
 
-  it('rejects WebGPU and renderer-like objects before loading scene assets', async () => {
-    await expect(installThreeCompiledScene({
+  it('accepts a WebGPU renderer through the structural acceptance', async () => {
+    // The WebGPU renderer surface: no getContextAttributes(), transparency
+    // reported through the public alpha flag instead.
+    const webgpu = renderer() as ReturnType<typeof renderer> & {
+      isWebGPURenderer?: boolean
+      alpha?: boolean
+      getContextAttributes?: () => { alpha?: boolean }
+    }
+    delete (webgpu as { isWebGLRenderer?: boolean }).isWebGLRenderer
+    delete webgpu.getContextAttributes
+    webgpu.isWebGPURenderer = true
+    webgpu.alpha = true
+
+    const installed = await installThreeCompiledScene({
       descriptor: descriptor(),
-      renderer: { isWebGPURenderer: true } as unknown as THREE.WebGLRenderer,
+      renderer: webgpu as unknown as THREE.WebGLRenderer,
       scene: new THREE.Scene(),
       loader: loader(new THREE.Group()) as unknown as import('three/addons/loaders/GLTFLoader.js').GLTFLoader,
-    })).rejects.toThrow(/requires Three WebGLRenderer.*WebGPURenderer/s)
+    })
+    expect(installed.root).toBeInstanceOf(THREE.Object3D)
+    installed.dispose()
+  })
+
+  it('rejects renderer-like objects without a Three renderer identity', async () => {
+    await expect(installThreeCompiledScene({
+      descriptor: descriptor(),
+      renderer: { render() {} } as unknown as THREE.WebGLRenderer,
+      scene: new THREE.Scene(),
+      loader: loader(new THREE.Group()) as unknown as import('three/addons/loaders/GLTFLoader.js').GLTFLoader,
+    })).rejects.toThrow(/requires a Three renderer.*WebGPURenderer/s)
   })
 
   it('preserves application-owned KTX2 and Meshopt decoders on a supplied GLTFLoader', async () => {

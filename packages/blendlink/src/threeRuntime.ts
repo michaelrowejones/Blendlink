@@ -1160,13 +1160,20 @@ function installDetachedLookPreview(
   resolvedPreview: Pick<ResolvedAuthoringPreview, 'useLinearToneMapping'>,
 ): CompiledSceneLook {
   let clearAlpha = renderer.getClearAlpha()
+  // WebGPURenderer has no getContextAttributes(); omit the member entirely
+  // and forward its public alpha flag so the look layer verifies surface
+  // transparency through the branch that matches this renderer family.
+  const rendererAlpha = (renderer as THREE.WebGLRenderer & { alpha?: boolean }).alpha
+  const contextAttributes = typeof renderer.getContextAttributes === 'function'
+    ? { getContextAttributes: () => renderer.getContextAttributes() }
+    : typeof rendererAlpha === 'boolean' ? { alpha: rendererAlpha } : {}
   return applyCompiledSceneLook(
     {
       toneMapping: renderer.toneMapping,
       toneMappingExposure: renderer.toneMappingExposure,
       setClearAlpha(value) { clearAlpha = value },
       getClearAlpha() { return clearAlpha },
-      getContextAttributes: () => renderer.getContextAttributes(),
+      ...contextAttributes,
     },
     scene,
     descriptor,
@@ -1414,7 +1421,7 @@ export async function installThreeCompiledScene(
 async function prepareThreeCompiledSceneAttempt(
   options: InstallThreeCompiledSceneOptions,
 ): Promise<PreparedThreeCompiledScene> {
-  assertWebGLRenderer(options.renderer)
+  assertCompiledSceneRenderer(options.renderer)
   throwIfInstallationAborted(options.signal)
   if (options.loadingManager && options.loader
       && options.loader.manager !== options.loadingManager) {
@@ -1620,7 +1627,7 @@ export async function prepareLoadedThreeCompiledScene(
   loaded: LoadedWithBindings,
   options: InstallThreeCompiledSceneOptions,
 ): Promise<PreparedThreeCompiledScene> {
-  assertWebGLRenderer(options.renderer)
+  assertCompiledSceneRenderer(options.renderer)
   throwIfInstallationAborted(options.signal)
   const runtimeCompatibility = loadedThreeRuntimeProfile(
     loaded.parser,
@@ -2012,7 +2019,7 @@ async function installLoadedThreeCompiledSceneNow(
   options: InstallThreeCompiledSceneOptions,
   mode: LoadedThreeCompiledSceneInstallationMode = {},
 ): Promise<InstalledThreeCompiledScene> {
-  assertWebGLRenderer(options.renderer)
+  assertCompiledSceneRenderer(options.renderer)
   throwIfInstallationAborted(options.signal)
   const resolvedPreview = resolveAuthoringPreview(
     options.descriptor,
@@ -2915,11 +2922,17 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
-function assertWebGLRenderer(renderer: THREE.WebGLRenderer): void {
-  if (!(renderer as THREE.WebGLRenderer & { isWebGLRenderer?: boolean }).isWebGLRenderer) {
+function assertCompiledSceneRenderer(renderer: THREE.WebGLRenderer): void {
+  const identity = renderer as THREE.WebGLRenderer & {
+    isWebGLRenderer?: boolean
+    isWebGPURenderer?: boolean
+  }
+  if (!identity.isWebGLRenderer && !identity.isWebGPURenderer) {
     throw new Error(
-      'Blendlink\'s standard scene installer requires Three WebGLRenderer. ' +
-        'WebGPURenderer needs an application-owned adapter for environment, shadows, probes, and lifecycle.',
+      'Blendlink\'s standard scene installer requires a Three renderer ' +
+        '(WebGLRenderer, or an initialized WebGPURenderer). Renderer-like ' +
+        'adapters need the full renderer surface: environment, shadows, ' +
+        'probes, and lifecycle.',
     )
   }
 }
