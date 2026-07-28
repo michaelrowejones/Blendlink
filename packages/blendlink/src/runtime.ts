@@ -183,6 +183,15 @@ export interface CompiledSceneDescriptor {
       }
     }
   }> | null
+  /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
+   * transport): fetch by url, pin content by hash. Absent when no compiled
+   * material carries IR. */
+  materialPrograms?: DeepReadonly<{
+    url: string
+    bytes: number
+    hash: string
+    materials: number
+  }> | null
   /** Named local-reflection captures. Mesh assignments remain portable glTF
    * extras (`blendlink_reflection_probe` = probe objectId). */
   reflectionProbes?: readonly DeepReadonly<ReflectionProbeRecipe>[] | null

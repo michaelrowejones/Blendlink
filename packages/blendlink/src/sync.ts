@@ -218,6 +218,7 @@ function addressedTypegenAssetFields(
     atlasDelivery?: SceneManifest['atlasDelivery']
     textureVariants?: SceneManifest['textureVariants']
     environment?: SceneManifest['environment']
+    materialPrograms?: SceneManifest['materialPrograms']
     reflectionProbeAssets?: SceneManifest['reflectionProbeAssets']
     states?: SceneManifest['states']
     lightGroups?: SceneManifest['lightGroups']
@@ -265,6 +266,9 @@ function addressedTypegenAssetFields(
           : {}),
       }
     : undefined
+  const materialPrograms = fields.materialPrograms
+    ? { ...fields.materialPrograms, url: address(fields.materialPrograms.url) }
+    : undefined
   const reflectionProbeAssets = fields.reflectionProbeAssets
     ? Object.fromEntries(Object.entries(fields.reflectionProbeAssets).map(
         ([id, asset]) => [id, { ...asset, url: address(asset.url) }],
@@ -311,6 +315,7 @@ function addressedTypegenAssetFields(
     ...(atlasDelivery ? { atlasDelivery } : {}),
     ...(textureVariants ? { textureVariants } : {}),
     ...(environment ? { environment } : {}),
+    ...(materialPrograms ? { materialPrograms } : {}),
     ...(reflectionProbeAssets ? { reflectionProbeAssets } : {}),
     ...(states ? { states } : {}),
     ...(lightGroups ? { lightGroups } : {}),
@@ -1387,6 +1392,14 @@ async function syncSceneWithPublicationLease(
           : {}),
       }
     : undefined
+  const materialPrograms = exported.materialPrograms
+    ? {
+        url: toUrl(exported.materialPrograms.path),
+        bytes: exported.materialPrograms.bytes,
+        hash: exported.materialPrograms.hash,
+        materials: exported.materialPrograms.materials,
+      }
+    : undefined
   const reflectionProbeAssets: NonNullable<SceneManifest['reflectionProbeAssets']> =
     Object.fromEntries(Object.entries(exported.reflectionProbeAssets ?? {}).map(([id, asset]) => {
       const { path, ...published } = asset
@@ -1462,6 +1475,7 @@ async function syncSceneWithPublicationLease(
     ...(exported.bakeArtifactHashes ? { bakeArtifactHashes: exported.bakeArtifactHashes } : {}),
     ...(exported.incrementalBake ? { incrementalBake: exported.incrementalBake } : {}),
     ...(environment ? { environment } : {}),
+    ...(materialPrograms ? { materialPrograms } : {}),
     ...(Object.keys(reflectionProbeAssets).length > 0
       ? { reflectionProbeAssets }
       : {}),
@@ -1512,6 +1526,7 @@ async function syncSceneWithPublicationLease(
       ...(atlasDelivery ? { atlasDelivery } : {}),
       ...(Object.keys(textureVariants).length > 0 ? { textureVariants } : {}),
       ...(environment ? { environment } : {}),
+      ...(materialPrograms ? { materialPrograms } : {}),
       ...(Object.keys(reflectionProbeAssets).length > 0
         ? { reflectionProbeAssets }
         : {}),
@@ -2004,6 +2019,42 @@ async function verifyScenesWithPublicationLease(
           })
           continue
         }
+      }
+    }
+    if (manifest.materialPrograms) {
+      const programsPath = publishedAssetPath(
+        scene,
+        manifest.materialPrograms.url,
+        manifest,
+      )
+      if (!programsPath) {
+        issues.push({
+          scene: scene.name,
+          problem: `material programs URL is outside the scene publication directory: ${manifest.materialPrograms.url}`,
+          fix: 'Run `blendlink sync`; compiler-owned asset URLs must stay relative to the generated GLB.',
+        })
+        continue
+      }
+      if (!existsSync(programsPath)) {
+        issues.push({
+          scene: scene.name,
+          problem: `material programs sidecar is missing from ${programsPath}`,
+          fix: 'Run `blendlink sync` and commit the generated materials.json asset.',
+        })
+        continue
+      }
+      const programsBytes = readFileSync(programsPath)
+      const programsHash = createHash('sha256').update(programsBytes).digest('hex').slice(0, 16)
+      if (
+        programsBytes.byteLength !== manifest.materialPrograms.bytes ||
+        programsHash !== manifest.materialPrograms.hash
+      ) {
+        issues.push({
+          scene: scene.name,
+          problem: 'material programs sidecar bytes do not match the manifest',
+          fix: 'Run `blendlink sync` and commit source + artifacts together.',
+        })
+        continue
       }
     }
     let reflectionProbeFailure: string | undefined

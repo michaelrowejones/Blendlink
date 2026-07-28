@@ -349,6 +349,14 @@ export interface SceneManifest {
     source: 'packed' | 'linked'
     optimized?: Omit<EnvironmentCompressionAsset, 'path'> & { url: string }
   }
+  /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
+   * transport). Absent when no compiled material carries IR. */
+  materialPrograms?: {
+    url: string
+    bytes: number
+    hash: string
+    materials: number
+  }
   /** Exact equirectangular sources for baked/custom local reflection probes.
    * Runtime capture probes intentionally have no entry. */
   reflectionProbeAssets?: Record<string, {
@@ -744,6 +752,7 @@ export async function generateSceneModule(options: {
   bakeArtifactHashes?: SceneManifest['bakeArtifactHashes']
   incrementalBake?: SceneManifest['incrementalBake']
   environment?: SceneManifest['environment']
+  materialPrograms?: SceneManifest['materialPrograms']
   reflectionProbeAssets?: SceneManifest['reflectionProbeAssets']
   recipe?: SceneRecipe
   optimization?: OptimizationReport
@@ -1124,6 +1133,9 @@ export async function generateSceneModule(options: {
     ...(options.incrementalBake ? { incrementalBake: options.incrementalBake } : {}),
     ...(bakePlan ? { bakePlan } : {}),
     ...(options.environment ? { environment: options.environment } : {}),
+    ...(options.materialPrograms
+      ? { materialPrograms: options.materialPrograms }
+      : {}),
     ...(options.reflectionProbeAssets
       ? { reflectionProbeAssets: options.reflectionProbeAssets }
       : {}),
@@ -1348,6 +1360,16 @@ ${identityEntries}
               },
             }
           : {}),
+      }
+    : null)},
+  /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
+   * transport): fetch by url, pin by hash. IR bodies never inline here. */
+  materialPrograms: ${constJson(manifest.materialPrograms
+    ? {
+        ...manifest.materialPrograms,
+        url: versionedAssetUrl(
+          manifest.materialPrograms.url, manifest.materialPrograms.hash,
+        ),
       }
     : null)},
   /** Named local reflection captures. Influence is metadata for capture or a

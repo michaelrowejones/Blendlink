@@ -404,6 +404,14 @@ export interface ExportResult {
   recipe?: SceneRecipe | null
   presentation?: PresentationMode | null
   /** Raw HDR/EXR copied byte-for-byte from Blender and relocated beside the GLB. */
+  /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
+   * transport); absent when no lowered material carries IR. */
+  materialPrograms?: {
+    path: string
+    bytes: number
+    hash: string
+    materials: number
+  } | null
   environment?: {
     path: string
     sourceName: string
@@ -767,6 +775,9 @@ export async function exportBlend(options: {
           return { ...result.environment!, path: finalPath }
         })()
       : null
+    const materialPrograms = result.materialPrograms
+      ? { ...result.materialPrograms, path: relocate(result.materialPrograms.path) }
+      : null
     const reflectionProbeAssets = Object.fromEntries(
       Object.entries(result.reflectionProbeAssets ?? {}).map(([id, asset]) => [
         id,
@@ -786,6 +797,7 @@ export async function exportBlend(options: {
       bakeArtifactHashes: result.baked?.artifacts,
       incrementalBake: result.baked?.incremental,
       environment,
+      materialPrograms,
       reflectionProbeAssets,
       glbPath: options.outPath,
       durationMs: Date.now() - started,
