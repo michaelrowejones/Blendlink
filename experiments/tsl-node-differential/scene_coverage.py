@@ -331,15 +331,24 @@ def main():
                     # this surface's shape is sampleable.
                     radiance = surface_document["channels"]["Emission Color"]
                     encoded_radiance = json.dumps(radiance)
+                    varying = any(
+                        f'"{op}"' in encoded_radiance
+                        for op in (
+                            "uv", "generated", "object_coords",
+                            "tex_image", "tex_checker", "tex_gradient",
+                            "tex_magic", "tex_wave", "tex_voronoi",
+                            "tex_white_noise", "noise",
+                        )
+                    )
                     if radiance.get("viewDependent"):
                         pass
                     elif '"vertex_color"' in encoded_radiance:
                         coverage["irCompiledAttributeDriven"] = (
                             coverage.get("irCompiledAttributeDriven", 0) + 1
                         )
-                    elif radiance.get("output", {}).get("op") not in {
-                        "const_vec3", "const_float",
-                    }:
+                    elif varying:
+                        # Constant-valued radiance (e.g. an all-black
+                        # closure tree) has nothing to measure on a tile.
                         candidates.append((
                             material.name, "Emission Color", radiance,
                             "surface",
