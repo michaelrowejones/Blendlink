@@ -1462,7 +1462,9 @@ def _materialized_binding_hash(obj, *, rest_basis: bool = False) -> str:
 
 
 def _materialized_binding_issues(
-    material, raw_bindings, *, deforming_receivers: bool = False,
+    material, raw_bindings, *,
+    deforming_receivers: bool = False,
+    slot_scoped: bool = False,
 ) -> list[MaterialIssue]:
     """Shared per-binding constraints for baked receivers.
 
@@ -1487,7 +1489,10 @@ def _materialized_binding_issues(
         )]
     obj, slot_index = raw_bindings[0]
     issues = []
-    if len(obj.material_slots) != 1 or slot_index != 0:
+    if not slot_scoped and (len(obj.material_slots) != 1 or slot_index != 0):
+        # The per-channel Material bake is slot-scoped (split-receiver
+        # bakes, user-approved 2026-07-28); the selected-field
+        # materialization route still requires whole-mesh ownership.
         issues.append(MaterialIssue(
             "material.selected-field-slot-ownership", material.name,
             f'Object "{obj.name}" has {len(obj.material_slots)} material slots; '
@@ -1507,7 +1512,19 @@ def _materialized_binding_issues(
             (obj.name,),
         ))
         return issues
-    if len(polygons) == 0 or any(
+    if slot_scoped:
+        # Slot-scoped bakes need the slot to own at least one face; other
+        # slots' faces bake through their own materials.
+        if not any(
+            int(polygon.material_index) == slot_index for polygon in polygons
+        ):
+            issues.append(MaterialIssue(
+                "material.selected-field-face-ownership", material.name,
+                f'Object "{obj.name}" gives slot {slot_index} no faces to bake.',
+                "Assign faces to the material slot or remove the unused slot.",
+                (obj.name,),
+            ))
+    elif len(polygons) == 0 or any(
         int(polygon.material_index) != slot_index
         for polygon in polygons
     ):
@@ -3136,7 +3153,9 @@ def _plan_material_bake(
                 ))
         if needs_unique:
             issues.extend(_materialized_binding_issues(
-                material, raw_bindings, deforming_receivers=True,
+                material, raw_bindings,
+                deforming_receivers=True,
+                slot_scoped=True,
             ))
     if not issues:
         for obj, slot in raw_bindings:
@@ -5427,6 +5446,94 @@ _CHANNEL_KIND_BY_NAME = {
 }
 
 
+def _split_slot_receiver(obj, slot_index: int):
+    """A disposable single-slot receiver holding ONLY the slot's faces.
+
+    Multi-slot meshes bake per slot (user-approved 2026-07-28): the split
+    runs the unchanged single-slot pack/proof/bake pipeline, and the packed
+    layer writes back onto the original private mesh's slot loops
+    afterward. Per-slot packs may overlap in UV space — each glTF
+    primitive samples its own material's texture. bmesh face deletion
+    preserves the relative order of the remaining faces and their loops,
+    which the sequential writeback depends on (and re-checks by count)."""
+    import bmesh
+    mesh = obj.data.copy()
+    mesh.name = f"BLENDLINK_SLOT_SPLIT.{obj.data.name}.{slot_index}"
+    bm = bmesh.new()
+    try:
+        bm.from_mesh(mesh)
+        bm.faces.ensure_lookup_table()
+        doomed = [
+            face for face in bm.faces
+            if int(face.material_index) != int(slot_index)
+        ]
+        bmesh.ops.delete(bm, geom=doomed, context="FACES")
+        bm.to_mesh(mesh)
+    finally:
+        bm.free()
+    mesh.materials.clear()
+    mesh.materials.append(obj.material_slots[slot_index].material)
+    for polygon in mesh.polygons:
+        polygon.material_index = 0
+    receiver = bpy.data.objects.new(
+        f"BLENDLINK_SLOT_RECEIVER.{obj.name}.{slot_index}", mesh,
+    )
+    receiver.matrix_world = obj.matrix_world.copy()
+    bpy.context.scene.collection.objects.link(receiver)
+    return receiver
+
+
+def _writeback_split_uv(obj, slot_index: int, receiver, uv_name: str) -> None:
+    """Copy the packed atlas layer from the split receiver back onto the
+    original private mesh's slot loops. The layer is shared across slots
+    (disjoint loop sets); loops of never-baked slots stay zeroed."""
+    source_layer = receiver.data.uv_layers.get(uv_name)
+    if source_layer is None:
+        raise MaterialCompileError(
+            f'Split receiver for "{obj.name}"[{slot_index}] lost its packed '
+            f"UV layer {uv_name!r}."
+        )
+    target_layer = obj.data.uv_layers.get(uv_name)
+    if target_layer is None:
+        target_layer = obj.data.uv_layers.new(name=uv_name, do_init=False)
+        if target_layer is None or target_layer.name != uv_name:
+            raise MaterialCompileError(
+                f'Cannot create the packed UV layer {uv_name!r} on '
+                f'"{obj.name}" (name collision or layer limit).'
+            )
+        from array import array
+        zeros = array("f", bytes(8 * len(obj.data.loops)))
+        target_layer.data.foreach_set("uv", zeros)
+    source_data = source_layer.data
+    source_index = 0
+    for polygon in obj.data.polygons:
+        if int(polygon.material_index) != int(slot_index):
+            continue
+        for loop_index in range(
+            polygon.loop_start, polygon.loop_start + polygon.loop_total,
+        ):
+            if source_index >= len(source_data):
+                raise MaterialCompileError(
+                    f'Split writeback for "{obj.name}"[{slot_index}] ran out '
+                    "of packed loops; the split changed face order."
+                )
+            target_layer.data[loop_index].uv = source_data[source_index].uv
+            source_index += 1
+    if source_index != len(source_data):
+        raise MaterialCompileError(
+            f'Split writeback for "{obj.name}"[{slot_index}] used '
+            f"{source_index} of {len(source_data)} packed loops; the split "
+            "and source disagree."
+        )
+
+
+def _remove_split_receiver(receiver) -> None:
+    mesh = receiver.data
+    bpy.data.objects.remove(receiver, do_unlink=True)
+    if mesh is not None and mesh.users == 0:
+        bpy.data.meshes.remove(mesh)
+
+
 def _bake_material_channels(
     decision: MaterialDecision,
     binding: MaterialBinding,
@@ -5434,6 +5541,35 @@ def _bake_material_channels(
     temporary_directory: str,
     created_materials: list,
     created_images: list,
+    log=print,
+) -> dict:
+    """Split-receiver wrapper: multi-slot bindings bake on a disposable
+    single-slot split, and the packed layer writes back on success."""
+    split_state = {"receiver": None}
+    try:
+        products = _bake_material_channels_inner(
+            decision, binding, obj, temporary_directory,
+            created_materials, created_images, split_state, log=log,
+        )
+        if split_state["receiver"] is not None:
+            _writeback_split_uv(
+                obj, binding.slot_index, split_state["receiver"],
+                str(products["uvEvidence"]["uvName"]),
+            )
+        return products
+    finally:
+        if split_state["receiver"] is not None:
+            _remove_split_receiver(split_state["receiver"])
+
+
+def _bake_material_channels_inner(
+    decision: MaterialDecision,
+    binding: MaterialBinding,
+    obj,
+    temporary_directory: str,
+    created_materials: list,
+    created_images: list,
+    split_state: dict,
     log=print,
 ) -> dict:
     """Execute every planned channel bake for one variant.
@@ -5462,8 +5598,18 @@ def _bake_material_channels(
                     f'Material bake binding {binding.object_name}'
                     f"[{binding.slot_index}] has no resolution plan."
                 )
+            receiver = obj
+            needs_split = len(obj.material_slots) != 1 or any(
+                int(polygon.material_index) != binding.slot_index
+                for polygon in obj.data.polygons
+            )
+            if needs_split:
+                split_state["receiver"] = _split_slot_receiver(
+                    obj, binding.slot_index,
+                )
+                receiver = split_state["receiver"]
             uv_evidence = bakelib.prepare_material_texture_uv(
-                obj, binding.materialization_plan,
+                receiver, binding.materialization_plan,
             )
             bpy.context.view_layer.update()
         return uv_evidence
@@ -5474,10 +5620,14 @@ def _bake_material_channels(
         )
         if record.get("uv") == "unique":
             evidence = ensure_unique_uv()
-            slot = obj.material_slots[binding.slot_index]
+            receiver = split_state["receiver"] or obj
+            slot = receiver.material_slots[
+                0 if split_state["receiver"] is not None
+                else binding.slot_index
+            ]
             slot.link = "DATA"
             slot.material = bake_material
-            receivers = [obj]
+            receivers = [receiver]
             margin = int(evidence["margin"])
             uv_layer = str(evidence["uvName"])
             proxy = None
