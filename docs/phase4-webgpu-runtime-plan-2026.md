@@ -117,13 +117,11 @@ plan:
 - **Direct mappings** (6): Bloom→BloomNode, directional
   CA→ChromaticAberrationNode, CAS→SharpenNode, Outline→OutlineNode,
   LUT→Lut3DNode (loaders stay), DoF→DepthOfFieldNode.
-- **AO is a named product decision**: N8AO→GTAONode changes appearance
-  on every scene using `blendlink.ambient-occlusion`. The
-  author-endorsed `n8ao-webgpu` port exists as the continuity
-  alternative. DECISION REQUIRED before Track B lands: accept the GTAO
-  look (with side-by-side fixture evidence) or adopt n8ao-webgpu.
-  Recommendation: GTAO, staying in-tree — but it is an appearance
-  change and must be signed off, never silent.
+- **AO is a named product decision**: N8AO→GTAONode would change
+  appearance on every scene using `blendlink.ambient-occlusion`.
+  DECIDED 2026-07-27: keep the N8AO look via `n8ao-webgpu` (see the
+  signed-off decisions below); appearance continuity wins over
+  in-tree-ness because CC0 licensing makes the dependency vendorable.
 - **Anti-aliasing policy is net-new** (unaddressed before): the current
   pipeline owns MSAA policy plus a final SMAA pass and reports
   `antialiasingSamples`/`postEdgeAntialiasingPreset`. Proposed: TRAA
@@ -201,9 +199,17 @@ The consumer for `blendlink_tsl_ir`, designed against the census:
    the examples CI gate grows a pixel check.
 5. v1.0: default runtime flips, pmndrs deps leave, package gate flips.
 
-## Decision points requiring sign-off
+## Decision points — signed off 2026-07-27
 
-1. **AO**: GTAONode (recommended; in-tree, but a look change) vs
-   n8ao-webgpu (continuity, new dependency).
-2. **AA default**: TRAA (recommended) vs SMAA-TSL vs FXAA-only.
-3. **v1.0 boundary**: when the WebGPU runtime becomes default.
+1. **AO: N8AO** (user decision, superseding the GTAO recommendation on
+   quality grounds). Ship via the author-endorsed `n8ao-webgpu`
+   adaptation (CC0-1.0, peer `three@^0.182`, composes into the
+   node-based PostProcessing chain). The CC0 license is the drift
+   hedge: the pass is small enough to vendor as a Blendlink-owned TSL
+   node the moment it lags a pinned three release, and the Track 0
+   per-effect fixture harness gates it like every other effect.
+   GTAONode remains the documented in-tree fallback.
+2. **AA default: TRAA**, with SMAA-TSL/FXAA selectable.
+3. **v1.0 boundary**: as recommended — the WebGPU runtime becomes the
+   default at v1.0, when the pmndrs `postprocessing`/`n8ao` WebGL
+   stack leaves the dependency graph and the package gate flips.
