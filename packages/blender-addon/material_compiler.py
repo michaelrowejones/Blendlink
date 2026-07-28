@@ -1411,7 +1411,21 @@ def _binding_map(objects) -> dict:
     return bindings
 
 
-_DEFORMING_MODIFIERS = frozenset({"ARMATURE", "SUBSURF"})
+# Modifiers a rest-basis UV-space channel bake is independent of:
+# pure deformers move positions but never touch topology or UV layouts,
+# SUBSURF refines topology while interpolating the authored UVs, and the
+# data-only kinds edit weights/normals/masks. Topology GENERATORS
+# (Mirror/Array/Solidify/Skin/Screw), particles, and UV-mutating
+# modifiers (UVProject/UVWarp) stay refused by name — their evaluated
+# UV layout diverges from the packed base layer.
+_DEFORMING_MODIFIERS = frozenset({
+    "ARMATURE", "SUBSURF", "LATTICE", "CORRECTIVE_SMOOTH", "SHRINKWRAP",
+    "SURFACE_DEFORM", "CURVE", "SMOOTH", "LAPLACIANSMOOTH",
+    "LAPLACIANDEFORM", "SIMPLE_DEFORM", "CAST", "HOOK", "WARP", "WAVE",
+    "MESH_DEFORM", "VERTEX_WEIGHT_MIX", "VERTEX_WEIGHT_EDIT",
+    "VERTEX_WEIGHT_PROXIMITY", "MASK", "NORMAL_EDIT", "DATA_TRANSFER",
+    "WEIGHTED_NORMAL",
+})
 
 
 def _deforming_receiver(obj) -> bool:
@@ -1549,7 +1563,11 @@ def _materialized_binding_issues(
             "the artist source.",
             (obj.name,),
         ))
-    if getattr(obj.data, "shape_keys", None) is not None:
+    if getattr(obj.data, "shape_keys", None) is not None \
+            and not deforming_receivers:
+        # Shape keys are deformation (facial blend shapes): the rest-basis
+        # UV-space bake is independent of them, so the bake intent passes;
+        # the freezing materialization route still refuses.
         issues.append(MaterialIssue(
             "material.selected-field-shape-keys-unsupported", material.name,
             f'Object "{obj.name}" has shape keys.',
@@ -2701,7 +2719,7 @@ def set_tsl_ir(material, enabled: bool) -> None:
         del material[TSL_IR_PROPERTY]
 
 
-def _attach_tsl_ir(tree, channels) -> None:
+def _attach_tsl_ir(tree, channels, *, surface_resolved: bool = False) -> None:
     """Additive per-channel TSL IR for an opted-in material's channel plan.
 
     Every channel record — bake, factor, and refused alike — gains either
@@ -2718,9 +2736,59 @@ def _attach_tsl_ir(tree, channels) -> None:
     # against published assets; the harness contract stays embedded-only.
     tsl_ir.set_texture_ref_emission(True)
     try:
-        _attach_tsl_ir_documents(tree, channels, hashlib, _json)
+        if surface_resolved:
+            _attach_surface_tsl_ir(tree, channels, hashlib, _json)
+        else:
+            _attach_tsl_ir_documents(tree, channels, hashlib, _json)
     finally:
         tsl_ir.set_texture_ref_emission(False)
+
+
+def _attach_surface_tsl_ir(tree, channels, hashlib, _json) -> None:
+    """Per-channel IR for a surface-resolved plan: the fold's documents
+    keyed onto the plan records (the merged Emission record carries the
+    radiance document, strength ships as 1)."""
+    try:
+        emitted = tsl_ir.emit_surface(tree)
+    except (tsl_ir.TslIrRefusal, RecursionError) as refusal:
+        for entry in channels:
+            entry["tslIrRefusal"] = str(refusal) or "surface emission failed"
+        return
+    fold_channels = emitted.get("channels", {})
+    mapping = {
+        "Base Color": "Base Color", "Metallic": "Metallic",
+        "Roughness": "Roughness", "Alpha": "Alpha",
+        "Emission": "Emission Color",
+    }
+    for entry in channels:
+        document = fold_channels.get(mapping.get(entry.get("channel")))
+        if document is None:
+            entry["tslIrRefusal"] = (
+                f"channel {entry.get('channel')!r} has no surface fold"
+            )
+            continue
+        encoded = _json.dumps(
+            document, sort_keys=True, separators=(",", ":"),
+        )
+        if len(encoded) > TSL_IR_BYTE_BUDGET:
+            entry["tslIrRefusal"] = (
+                f"IR serializes to {len(encoded)} bytes, over the "
+                f"{TSL_IR_BYTE_BUDGET}-byte channel budget"
+            )
+            continue
+        referenced_images = set()
+        _collect_texture_ref_images(document, referenced_images)
+        if len(referenced_images) > 1:
+            entry["tslIrRefusal"] = (
+                f"channel references {len(referenced_images)} large "
+                "images; the texture transport carries one per channel"
+            )
+            continue
+        entry["tslIr"] = document
+        entry["tslIrHash"] = hashlib.sha256(
+            encoded.encode("utf8"),
+        ).hexdigest()
+        entry["tslIrBytes"] = len(encoded)
 
 
 def _collect_texture_ref_images(value, names) -> None:
@@ -2920,6 +2988,92 @@ def _bounded_power_of_two(value: float, floor: int, ceiling: int) -> int:
     return result
 
 
+def _synthesize_surface_routing(tree):
+    """Channel routing for a surface-resolvable non-Principled material.
+
+    The Mix-Shader fold (user-approved 2026-07-28) projects the closure
+    tree onto the Principled channel vector, so the planner can reuse the
+    entire principled pipeline: the whole Surface socket classifies once
+    (conservative union of every contributing space), fold-constant
+    channels become factors, and everything else routes with the surface
+    class. Returns the routing dict, a {"reason": ...} refusal, or None
+    when the surface does not resolve at all."""
+    if tree is None:
+        return None
+    try:
+        tsl_ir.resolve_surface(tree)
+    except (tsl_ir.TslIrRefusal, RecursionError) as refusal:
+        return {"reason": str(refusal) or "surface resolution failed"}
+    output = next(
+        (node for node in tree.nodes
+         if node.bl_idname == "ShaderNodeOutputMaterial"
+         and getattr(node, "is_active_output", True)),
+        None,
+    )
+    surface_socket = output.inputs.get("Surface") if output is not None else None
+    if surface_socket is None or not surface_socket.is_linked:
+        return None
+    surface_record = procedural._classify_channel("Surface", surface_socket)
+    routing_kind = str(surface_record.get("routing") or "unknown")
+    if routing_kind in ("viewDependent", "sceneDependent", "unknown"):
+        reasons = "; ".join(surface_record.get("reasons") or ()) or routing_kind
+        return {"reason": (
+            f"The mixed surface classifies as {routing_kind}: {reasons}"
+        )}
+    emitted = None
+    tsl_ir.set_texture_ref_emission(True)
+    try:
+        emitted = tsl_ir.emit_surface(tree)
+    except (tsl_ir.TslIrRefusal, RecursionError):
+        # Channels bake without fold-constant detection (and without the
+        # IR upgrade); the projection tap does not need IR emission.
+        emitted = None
+    finally:
+        tsl_ir.set_texture_ref_emission(False)
+    fold_channels = (emitted or {}).get("channels", {})
+
+    def record(name, document):
+        expression = (document or {}).get("output") or {}
+        op = expression.get("op")
+        if op == "const_float":
+            return {
+                "channel": name, "linked": False, "routing": "constant",
+                "value": round(float(expression["value"]), 6),
+            }
+        if op == "const_vec3":
+            return {
+                "channel": name, "linked": False, "routing": "constant",
+                "value": [round(float(item), 6) for item in expression["value"]],
+            }
+        return {
+            "channel": name,
+            "linked": True,
+            "routing": routing_kind,
+            "uvMaps": list(surface_record.get("uvMaps") or ()),
+            "usesActiveUv": bool(surface_record.get("usesActiveUv")),
+            "animated": bool(surface_record.get("animated")),
+            "reasons": list(surface_record.get("reasons") or ()),
+        }
+
+    channels = [
+        record(name, fold_channels.get(name))
+        for name in (
+            "Base Color", "Metallic", "Roughness", "Alpha", "Emission Color",
+        )
+    ]
+    channels.append(record(
+        "Emission Strength",
+        fold_channels.get("Emission Strength")
+        or {"output": {"op": "const_float", "value": 1.0}},
+    ))
+    return {
+        "model": procedural.CHANNEL_ROUTING_MODEL,
+        "surfaceRoot": "principled",
+        "surfaceResolved": True,
+        "channels": channels,
+    }
+
+
 def _object_attribute_names(tree) -> tuple[str, ...]:
     """Names of per-object Attribute OBJECT properties the surface samples
     (the shared-material per-object-tint pattern)."""
@@ -2949,21 +3103,39 @@ def _plan_material_bake(
         if tree is not None else None
     )
     if root is None or routing is None or routing["surfaceRoot"] != "principled":
-        reason = (
-            routing["reason"] if routing and routing.get("reason")
-            else "The material has no single root-level Principled BSDF surface."
-        )
-        issues.append(MaterialIssue(
-            "material.bake-surface-unsupported", material.name, reason,
-            "Route the surface through one root-level Principled BSDF, or "
-            "use an Appearance bake for deliberately flattened output.",
-            object_names,
-        ))
-        return MaterialDecision(
-            material.name, "materialBake", "blocked", None, "per-channel", None,
-            tuple(MaterialBinding(obj.name, slot) for obj, slot in raw_bindings),
-            issues=tuple(issues),
-        )
+        # Mix-Shader fold (user-approved 2026-07-28): a surface-resolvable
+        # closure tree plans through the SAME pipeline with synthesized
+        # routing (the whole-Surface classification + fold constants); the
+        # projection tap bakes its folded channels.
+        synthesized = _synthesize_surface_routing(tree)
+        if synthesized is not None \
+                and synthesized.get("surfaceRoot") == "principled":
+            routing = synthesized
+        else:
+            reason = (
+                f"{synthesized['reason']} (surface-resolved planning)"
+                if synthesized is not None and synthesized.get("reason")
+                else routing["reason"]
+                if routing and routing.get("reason")
+                else "The material has no single root-level Principled "
+                     "BSDF surface."
+            )
+            issues.append(MaterialIssue(
+                "material.bake-surface-unsupported", material.name, reason,
+                "Route the surface through one root-level Principled BSDF, "
+                "or use an Appearance bake for deliberately flattened "
+                "output.",
+                object_names,
+            ))
+            return MaterialDecision(
+                material.name, "materialBake", "blocked", None,
+                "per-channel", None,
+                tuple(
+                    MaterialBinding(obj.name, slot)
+                    for obj, slot in raw_bindings
+                ),
+                issues=tuple(issues),
+            )
 
     routed = {entry["channel"]: entry for entry in routing["channels"]}
     channels = []
@@ -3285,11 +3457,13 @@ def _plan_material_bake(
         binding.object_name for binding in planned_bindings
         if binding.distinct_material
     )
+    surface_resolved = bool(routing.get("surfaceResolved"))
     if tsl_ir_requested(material):
-        _attach_tsl_ir(tree, channels)
+        _attach_tsl_ir(tree, channels, surface_resolved=surface_resolved)
     channel_plan = {
         "model": CHANNEL_PLAN_MODEL,
         "channels": channels,
+        **({"surfaceResolved": True} if surface_resolved else {}),
         "consolidation": {
             "population": population,
             "bindings": len(planned_bindings),
@@ -3318,12 +3492,36 @@ def _plan_material_bake(
     )
 
 
+_SURFACE_BAKE_KINDS = {
+    "baseColor": "Base Color",
+    "alpha": "Alpha",
+    "metallic": "Metallic",
+    "roughness": "Roughness",
+    "emissive": "Emission",
+}
+
+
 def _material_bake_channel_material(
     decision: MaterialDecision, kind: str, created_materials: list,
 ):
     """Private per-channel proxy: the channel's field through an isolated
     Emission sink, or a neutral Principled keeping only the Normal chain for
     the NORMAL pass.  The artist's graph is copied, never mutated."""
+    if (decision.channel_plan or {}).get("surfaceResolved"):
+        channel_name = _SURFACE_BAKE_KINDS.get(kind)
+        if channel_name is None:
+            raise MaterialCompileError(
+                f"Surface-resolved bake has no {kind!r} channel material."
+            )
+        surface_source = bpy.data.materials.get(decision.material_name)
+        if surface_source is None:
+            raise MaterialCompileError(
+                f'Material "{decision.material_name}" disappeared before '
+                "its surface channel bake."
+            )
+        return _surface_channel_bake_material(
+            surface_source, channel_name, created_materials,
+        )
     source = bpy.data.materials.get(decision.material_name)
     if source is None:
         raise MaterialCompileError(
