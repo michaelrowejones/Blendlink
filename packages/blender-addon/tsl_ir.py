@@ -103,6 +103,57 @@ def _noise_random_offset(seed, count):
     ]
 
 
+def _fold_constant_scalar(expression):
+    """Evaluate a pure-constant scalar IR subtree to a float, else None.
+
+    Covers the wrapper shapes corpus graphs put around literal knobs
+    (Clamp over group-input constants); anything genuinely varying stays
+    None so the caller refuses by name."""
+    if not isinstance(expression, dict):
+        return None
+    op = expression.get("op")
+    if op == "const_float":
+        return float(expression["value"])
+    if op == "clamp01":
+        value = _fold_constant_scalar(expression.get("input"))
+        if value is None:
+            return None
+        return min(max(value, 0.0), 1.0)
+    if op == "clamp_minmax":
+        value = _fold_constant_scalar(expression.get("value"))
+        low = _fold_constant_scalar(expression.get("min"))
+        high = _fold_constant_scalar(expression.get("max"))
+        if value is None or low is None or high is None:
+            return None
+        return min(max(value, low), high)
+    if op == "math":
+        operation = str(expression.get("operation", ""))
+        a = _fold_constant_scalar(expression.get("a"))
+        b = _fold_constant_scalar(expression.get("b"))
+        if a is None or b is None:
+            return None
+        if operation == "ADD":
+            return a + b
+        if operation == "SUBTRACT":
+            return a - b
+        if operation == "MULTIPLY":
+            return a * b
+        if operation == "DIVIDE":
+            # Cycles safe divide: b == 0 -> 0.
+            return a / b if b != 0.0 else 0.0
+        if operation == "MINIMUM":
+            return min(a, b)
+        if operation == "MAXIMUM":
+            return max(a, b)
+        if operation == "MULTIPLY_ADD":
+            c = _fold_constant_scalar(expression.get("c"))
+            if c is None:
+                return None
+            return a * b + c
+        return None
+    return None
+
+
 def _import_procedural():
     """procedural in both loading modes: as an addon submodule (packaged)
     or as a bare module (harness scripts insert the directory on path)."""
@@ -1386,12 +1437,29 @@ def emit_output(node, from_socket, stack=()):
             or abs(float(distortion.default_value)) > 1e-9
         ):
             _refuse("Noise distortion has no cell yet")
-        for name in ("Detail", "Roughness", "Lacunarity"):
+        def _folded_noise_scalar(name, default):
+            # Same contract as Scale below: a linked value that folds to a
+            # constant through group walls (the ellie paint corpus drives
+            # Detail/Roughness through value + Clamp plumbing) is boundable
+            # like any literal; genuinely varying inputs refuse by name.
             socket = node.inputs.get(name)
-            if socket is not None and socket.is_linked:
-                _refuse(f"Noise with linked {name} has no cell yet")
+            if socket is None:
+                return float(default)
+            if not socket.is_linked:
+                return float(socket.default_value)
+            expression = emit_input(socket, stack=stack)
+            folded = _fold_constant_scalar(expression)
+            if folded is None:
+                _refuse(
+                    f"Noise with a non-constant {name} has no cell yet "
+                    f"(source op {expression.get('op')!r})"
+                )
+            return folded
+
         vector = node.inputs["Vector"]
-        detail_value = float(node.inputs["Detail"].default_value)
+        detail_value = _folded_noise_scalar("Detail", 0.0)
+        roughness_value = _folded_noise_scalar("Roughness", 0.5)
+        lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
         if detail_value > 4.0 + 1e-9:
             # Detail 4 is the proven range (the noise-detail4 cell; the
             # original bound of 2 came from the detail-6/scale-5 3.9e-2
@@ -1406,8 +1474,13 @@ def emit_output(node, from_socket, stack=()):
         # a constant through group walls (the splash corpus feeds noise
         # scales through group inputs) is boundable like any literal.
         scale_expression = emit_input(node.inputs["Scale"], stack=stack)
-        if scale_expression.get("op") != "const_float":
-            _refuse("Noise with a non-constant Scale has no bounded cell yet")
+        folded_scale = _fold_constant_scalar(scale_expression)
+        if folded_scale is None:
+            _refuse(
+                "Noise with a non-constant Scale has no bounded cell yet "
+                f"(source op {scale_expression.get('op')!r})"
+            )
+        scale_expression = {"op": "const_float", "value": folded_scale}
         if abs(float(scale_expression["value"])) > 20.0 + 1e-9:
             # Sub-texel sample-position differences between the two
             # rasterizers (~3e-5 in UV) multiply by the scale; measured at
@@ -1419,17 +1492,13 @@ def emit_output(node, from_socket, stack=()):
                 "exceeds the proven range (<= 20); sample-position "
                 "differences decorrelate high-frequency noise"
             )
-        lacunarity = node.inputs.get("Lacunarity")
         expression = {
             "op": "noise",
             "output": "fac" if noise_output == "Fac" else "color",
             "dimensions": 2 if dimensions == "2D" else 3,
-            "detail": float(node.inputs["Detail"].default_value),
-            "roughness": float(node.inputs["Roughness"].default_value),
-            "lacunarity": (
-                float(lacunarity.default_value)
-                if lacunarity is not None else 2.0
-            ),
+            "detail": detail_value,
+            "roughness": roughness_value,
+            "lacunarity": lacunarity_value,
             "scale": scale_expression,
             "input": _texture_vector(vector, stack),
         }
