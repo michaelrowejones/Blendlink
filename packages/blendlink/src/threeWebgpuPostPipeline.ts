@@ -42,6 +42,7 @@ import {
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
 import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js'
 import { outline } from 'three/addons/tsl/display/OutlineNode.js'
+import { fxaa } from 'three/addons/tsl/display/FXAANode.js'
 import { pixelationPass } from 'three/addons/tsl/display/PixelationPassNode.js'
 import { sharpen } from 'three/addons/tsl/display/SharpenNode.js'
 import { traa } from 'three/addons/tsl/display/TRAANode.js'
@@ -201,6 +202,28 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       scene,
       camera,
     }
+
+    const hasPixelation = registrations.some((entry) => entry.intentionalPixelation)
+    const needsTemporalAA = !hasPixelation && registrations.length > 0
+    if (needsTemporalAA) {
+      // TRAA is the signed-off default and it resolves FIRST, over the raw
+      // scene pass: TRAANode's updateBefore reaches through its beauty input
+      // to the owning pass's render target (measured: any wrapped beauty
+      // chain resolves from a never-rendered target and renders black), and
+      // temporally-correct AA resolves before post effects anyway.
+      // Intentional pixelation suppresses it: temporal smoothing would
+      // destroy the authored grid.
+      context.color = traa(
+        context.color,
+        scenePass.getTextureNode('depth'),
+        scenePass.getTextureNode('velocity'),
+        camera,
+      )
+      this.edgeAntialiasingActive = true
+      this.applyEdgeAntialiasingQuality('balanced')
+      this.resolvedOrder.push('temporal-antialiasing')
+    }
+
     const beforeTone = registrations.filter((entry) => entry.phase !== 'post-ldr')
     const afterTone = registrations.filter((entry) => entry.phase === 'post-ldr')
     for (const registration of beforeTone) {
@@ -217,21 +240,12 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       this.resolvedOrder.push(registration.id)
     }
 
-    const hasPixelation = registrations.some((entry) => entry.intentionalPixelation)
-    const needsPostEdgeAA = registrations.some((entry) => entry.generatesHardPostEdges)
-      || registrations.some((entry) => !entry.intentionalPixelation)
-    if (!hasPixelation && needsPostEdgeAA && registrations.length > 0) {
-      // TRAA is the signed-off default. It consumes the scene pass depth and
-      // velocity targets and runs on the LDR result. Intentional pixelation
-      // suppresses it: temporal smoothing would destroy the authored grid.
-      context.color = traa(
-        context.color,
-        scenePass.getTextureNode('depth'),
-        scenePass.getTextureNode('velocity'),
-        camera,
-      )
-      this.edgeAntialiasingActive = true
-      this.applyEdgeAntialiasingQuality('balanced')
+    if (needsTemporalAA
+      && registrations.some((entry) => entry.generatesHardPostEdges)) {
+      // AO and Outline create fresh hard edges AFTER the temporal resolve —
+      // the coverage the WebGL pipeline's final SMAA provided. A final FXAA
+      // smooths exactly those post edges without another temporal stage.
+      context.color = fxaa(context.color)
       this.resolvedOrder.push('post-edge-antialiasing')
     }
 

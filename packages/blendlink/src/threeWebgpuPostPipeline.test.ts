@@ -50,8 +50,11 @@ describe('ThreeWebgpuPostPipelineService', () => {
     await service.addEffect(descriptor('sharpen-1', 'blendlink.sharpen'))
     service.finalize()
 
+    // TRAA resolves FIRST over the raw scene pass (TRAANode's beauty input
+    // must be the pass texture — a wrapped chain renders black); the final
+    // FXAA entry appears only when AO/Outline add hard post edges.
     expect(service.resolvedOrder).toEqual([
-      'scene-color', 'bloom-1', 'sharpen-1', 'vignette-1', 'post-edge-antialiasing',
+      'scene-color', 'temporal-antialiasing', 'bloom-1', 'sharpen-1', 'vignette-1',
     ])
     // The WebGL pipeline's synthetic entries never appear here: MRT rides
     // the scene pass and tone mapping is the renderOutput boundary.

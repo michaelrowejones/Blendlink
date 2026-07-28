@@ -130,6 +130,22 @@ Look continuity vs the pmndrs control (mean-luma delta, context not gate):
 | selective-bloom / bloom | 26 / 93 | pmndrs luminance threshold 0.9 vs node threshold 0 — Track B maps parameters |
 | n8ao | 68.4 | `n8ao-webgpu` defaults ≠ old `N8AOPostPass` defaults — Track B maps the authored AO config and re-measures |
 
+**Update 2: production-service cells — 8/8.** Four `service-*` cells drive
+the BUILT `ThreeWebgpuPostPipelineService` (via the `@blendlink-dist` vite
+alias) through create → addEffect → finalize → activate → render on both
+backends: baseline, full chain (bloom + sharpen + vignette + TRAA), AO +
+outline (n8ao + TRAA + final FXAA), and geometry pixelation (AA
+suppressed). Each cell also asserts the exact `resolvedOrder`. The cells
+immediately caught an architecture bug the unit suite could not:
+**TRAANode's beauty input must be the scene pass texture itself** — its
+`updateBefore` reaches through `beautyNode.passNode.renderTarget`
+(or `isRTTNode`), so any wrapped chain resolves from a never-rendered
+target and renders black on BOTH backends. The service therefore resolves
+TRAA first (`temporal-antialiasing` directly after `scene-color`), runs
+the effect chain on the resolved output, and appends a final FXAA
+(`post-edge-antialiasing`) only when AO/Outline introduce hard post
+edges — the coverage the WebGL pipeline's final SMAA provided.
+
 Measured traps encoded in the instrument:
 
 - WebGPU canvases may present-and-clear before a `drawImage` capture; node

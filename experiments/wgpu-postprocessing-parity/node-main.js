@@ -36,6 +36,7 @@ import {
   blendlinkTiltShift,
   blendlinkVignette,
 } from 'blendlink/three/tsl-effects'
+import { ThreeWebgpuPostPipelineService } from '@blendlink-dist/threeWebgpuPostPipeline.js'
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
 import { chromaticAberration } from 'three/addons/tsl/display/ChromaticAberrationNode.js'
 import { pixelationPass } from 'three/addons/tsl/display/PixelationPassNode.js'
@@ -364,6 +365,136 @@ function nodeCells(context) {
 // has a measured cell above.  The empty list stays so the run.mjs honesty
 // check (a pending id must never also have a cell) keeps its seam.
 const PENDING_TRACK_B = []
+
+// Browser truth for the production service: each cell drives the BUILT
+// ThreeWebgpuPostPipelineService through its full lifecycle (create →
+// addEffect per descriptor → finalize → activate → render) — the unit
+// suite proves the plumbing, only this compiles the shaders.
+const SERVICE_CELLS = {
+  'service-baseline': { components: [], expectedOrder: ['scene-color'] },
+  'service-full': {
+    components: [
+      {
+        id: 'bloom-1', type: 'blendlink.bloom', phase: 'post-hdr',
+        values: { intensity: 1.2, threshold: 0.8, radius: 0.4, mode: 'bright-pixels' },
+      },
+      {
+        id: 'sharpen-1', type: 'blendlink.sharpen', phase: 'post-ldr',
+        values: { amount: 0.5 },
+      },
+      {
+        id: 'vignette-1', type: 'blendlink.vignette', phase: 'post-ldr',
+        values: { intensity: 0.6, softness: 0.55, color: [0, 0, 0] },
+      },
+    ],
+    expectedOrder: [
+      'scene-color', 'temporal-antialiasing', 'bloom-1', 'sharpen-1', 'vignette-1',
+    ],
+  },
+  'service-ao-outline': {
+    components: [
+      {
+        id: 'ao-1', type: 'blendlink.ambient-occlusion', phase: 'post-hdr',
+        values: { radiusMode: 'world', worldRadius: 1, intensity: 2, color: [0, 0, 0] },
+      },
+      {
+        id: 'outline-1', type: 'blendlink.outline', phase: 'post-hdr',
+        values: {
+          thickness: 1, strength: 3,
+          visibleColor: [1, 1, 1], hiddenColor: [0.3, 0.2, 0.2], xRay: false,
+        },
+      },
+    ],
+    expectedOrder: [
+      'scene-color', 'temporal-antialiasing', 'ao-1', 'outline-1', 'post-edge-antialiasing',
+    ],
+  },
+  'service-pixelation': {
+    components: [
+      {
+        id: 'pixelation-1', type: 'blendlink.pixelation', phase: 'post-ldr',
+        values: { pixelSize: 6, depthEdgeStrength: 1, normalEdgeStrength: 1 },
+      },
+    ],
+    // Intentional pixelation suppresses the TRAA default.
+    expectedOrder: ['scene-color', 'pixelation-1'],
+  },
+}
+
+window.__wgpuServiceCell = async (backendId, cellId) => {
+  const entry = state.node[backendId]
+  if (!entry) return { ok: false, phase: 'construct-renderer' }
+  const config = SERVICE_CELLS[cellId]
+  if (!config) return { ok: false, phase: 'unknown-cell', error: cellId }
+  const { renderer } = entry
+  const context = entry.context
+  let phase = 'create-service'
+  let service = null
+  let target = null
+  try {
+    const options = {
+      renderer,
+      scene: context.scene,
+      camera: context.camera,
+      root: context.scene,
+      bindings: { byId: {}, byName: {} },
+      components: config.components.map((component) => ({
+        id: component.id, type: component.type, enabled: true, values: component.values,
+      })),
+    }
+    service = await ThreeWebgpuPostPipelineService.create(options)
+    phase = 'add-effects'
+    for (const component of config.components) {
+      await service.addEffect({
+        id: component.id,
+        type: component.type,
+        phase: component.phase,
+        values: component.values,
+      })
+    }
+    phase = 'finalize'
+    service.finalize()
+    if (JSON.stringify(service.resolvedOrder) !== JSON.stringify(config.expectedOrder)) {
+      throw new Error(
+        `resolvedOrder ${JSON.stringify(service.resolvedOrder)} != expected ${JSON.stringify(config.expectedOrder)}`,
+      )
+    }
+    phase = 'activate'
+    service.activate(context.scene, context.camera)
+    phase = 'render'
+    target = new THREE.RenderTarget(SIZE, SIZE, { type: THREE.UnsignedByteType })
+    renderer.setRenderTarget(target)
+    for (let frame = 0; frame < WARMUP_FRAMES; frame += 1) service.render(1 / 60)
+    renderer.setRenderTarget(null)
+    phase = 'readback'
+    const data = await renderer.readRenderTargetPixelsAsync(target, 0, 0, SIZE, SIZE)
+    const pixels = await statsFromRgba(data)
+    return {
+      ok: true,
+      pixels,
+      resolvedOrder: [...service.resolvedOrder],
+      postEdgeAntialiasing: service.postEdgeAntialiasing,
+      antialiasingSamples: service.multisampling,
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      phase,
+      error: `${error?.name ?? 'Error'}: ${error?.message ?? error}`,
+    }
+  } finally {
+    try {
+      renderer.setRenderTarget(null)
+      target?.dispose()
+      service?.dispose()
+    } catch {
+      // The recorded failure above is the evidence; cleanup of a half-built
+      // service may itself fail.
+    }
+  }
+}
+
+window.__wgpuServiceCellIds = () => Object.keys(SERVICE_CELLS)
 
 async function statsFromRgba(data) {
   let sum = 0

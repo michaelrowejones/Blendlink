@@ -63,6 +63,14 @@ const server = await createServer({
   root: experimentDir,
   logLevel: 'warn',
   optimizeDeps: { noDiscovery: true },
+  resolve: {
+    alias: {
+      // The WebGPU post service is intentionally not a package subpath (it
+      // loads via the renderer-family branch); the service cells drive the
+      // BUILT module so the harness measures exactly what ships.
+      '@blendlink-dist': join(repositoryRoot, 'packages', 'blendlink', 'dist'),
+    },
+  },
   server: {
     host: '127.0.0.1',
     port: 0,
@@ -174,6 +182,40 @@ try {
     }
   }
 
+  // Production-service cells: the built ThreeWebgpuPostPipelineService
+  // driven end-to-end on both backends.
+  const serviceIds = await page.evaluate(() => window.__wgpuServiceCellIds())
+  const service = { native: {}, fallback: {} }
+  for (const backendId of ['native', 'fallback']) {
+    for (const cellId of serviceIds) {
+      service[backendId][cellId] = await page.evaluate(
+        ({ backend, id }) => window.__wgpuServiceCell(backend, id),
+        { backend: backendId, id: cellId },
+      )
+    }
+  }
+  for (const backendId of ['native', 'fallback']) {
+    const baseline = service[backendId]['service-baseline']
+    for (const cellId of serviceIds) {
+      const cell = service[backendId][cellId]
+      if (!cell?.ok) {
+        failures.push(
+          `${backendId}/${cellId}: ${cell?.phase ?? 'missing'} — ${cell?.error ?? 'no result'}`,
+        )
+        continue
+      }
+      if (cell.pixels.nonBackgroundPixels === 0) {
+        failures.push(`${backendId}/${cellId}: rendered fully black`)
+      }
+      if (
+        cellId !== 'service-baseline' && baseline?.ok
+        && cell.pixels.sha256 === baseline.pixels.sha256
+      ) {
+        failures.push(`${backendId}/${cellId}: pixels identical to the no-effect service baseline`)
+      }
+    }
+  }
+
   const crossBackend = {}
   for (const effectId of ids.node) {
     const native = node.native[effectId]
@@ -213,6 +255,11 @@ try {
       .filter((id) => node.native[id]?.ok).length,
     nodeCellsPassingFallback: ids.node
       .filter((id) => node.fallback[id]?.ok).length,
+    serviceCellsAttempted: serviceIds.length,
+    serviceCellsPassingNative: serviceIds
+      .filter((id) => service.native[id]?.ok).length,
+    serviceCellsPassingFallback: serviceIds
+      .filter((id) => service.fallback[id]?.ok).length,
     controlCellsPassing: ids.control
       .filter((id) => control[id]?.ok).length,
     pendingTrackB: ids.pendingTrackB,
@@ -227,6 +274,7 @@ try {
     environment,
     control,
     node,
+    service,
     crossBackend,
     lookContinuity,
     summary,
@@ -253,6 +301,7 @@ try {
     + `nativeBackend=${summary.nativeBackendReal ? 'native' : 'fallback-or-absent'} `
     + `native=${summary.nodeCellsPassingNative}/${summary.nodeCellsAttempted} `
     + `fallback=${summary.nodeCellsPassingFallback}/${summary.nodeCellsAttempted} `
+    + `service=${summary.serviceCellsPassingNative}+${summary.serviceCellsPassingFallback}/${serviceIds.length * 2} `
     + `control=${summary.controlCellsPassing}/${ids.control.length} `
     + `pendingTrackB=${ids.pendingTrackB.length} `
     + `failures=${failures.length}`,

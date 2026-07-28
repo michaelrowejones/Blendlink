@@ -493,6 +493,142 @@
       }
     }
   },
+  "service": {
+    "native": {
+      "service-baseline": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.70972268350528,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "80cd8837504be9b19faa7651574be4e2de148c7e96c05a105eed1d4287684c9b"
+        },
+        "resolvedOrder": [
+          "scene-color"
+        ],
+        "postEdgeAntialiasing": false,
+        "antialiasingSamples": 0
+      },
+      "service-full": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 91.23574539397164,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "26a95426772b651b5eb1add14349c10c6c686126175a7a7a1bf3ec727acf56cf"
+        },
+        "resolvedOrder": [
+          "scene-color",
+          "temporal-antialiasing",
+          "bloom-1",
+          "sharpen-1",
+          "vignette-1"
+        ],
+        "postEdgeAntialiasing": true,
+        "antialiasingSamples": 0
+      },
+      "service-ao-outline": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 3.4279852973090277,
+          "nonBackgroundPixels": 3972,
+          "nonFinitePixels": 0,
+          "sha256": "c1d8477b601901c9e26b166b857b7251982df66db4043fd3ff114467c627f498"
+        },
+        "resolvedOrder": [
+          "scene-color",
+          "temporal-antialiasing",
+          "ao-1",
+          "outline-1",
+          "post-edge-antialiasing"
+        ],
+        "postEdgeAntialiasing": true,
+        "antialiasingSamples": 0
+      },
+      "service-pixelation": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 69.97460424808659,
+          "nonBackgroundPixels": 142416,
+          "nonFinitePixels": 0,
+          "sha256": "e0953535b610d1202da03adba6e6c5b4112228c334867fb489e6b3ab91f8bac8"
+        },
+        "resolvedOrder": [
+          "scene-color",
+          "pixelation-1"
+        ],
+        "postEdgeAntialiasing": false,
+        "antialiasingSamples": 0
+      }
+    },
+    "fallback": {
+      "service-baseline": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 78.70967433023176,
+          "nonBackgroundPixels": 146213,
+          "nonFinitePixels": 0,
+          "sha256": "6219003f007029aa9ea63ea2a34ea0f309078d3809ec5d476c806d3b3344d199"
+        },
+        "resolvedOrder": [
+          "scene-color"
+        ],
+        "postEdgeAntialiasing": false,
+        "antialiasingSamples": 0
+      },
+      "service-full": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 91.23574539397164,
+          "nonBackgroundPixels": 147456,
+          "nonFinitePixels": 0,
+          "sha256": "26a95426772b651b5eb1add14349c10c6c686126175a7a7a1bf3ec727acf56cf"
+        },
+        "resolvedOrder": [
+          "scene-color",
+          "temporal-antialiasing",
+          "bloom-1",
+          "sharpen-1",
+          "vignette-1"
+        ],
+        "postEdgeAntialiasing": true,
+        "antialiasingSamples": 0
+      },
+      "service-ao-outline": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 3.4279717339409723,
+          "nonBackgroundPixels": 3972,
+          "nonFinitePixels": 0,
+          "sha256": "6b22c75124679d1eed6846efab9a35e34c72bc9f7a974bb0f5be4442e744abfb"
+        },
+        "resolvedOrder": [
+          "scene-color",
+          "temporal-antialiasing",
+          "ao-1",
+          "outline-1",
+          "post-edge-antialiasing"
+        ],
+        "postEdgeAntialiasing": true,
+        "antialiasingSamples": 0
+      },
+      "service-pixelation": {
+        "ok": true,
+        "pixels": {
+          "meanLuma": 69.98634077159808,
+          "nonBackgroundPixels": 142812,
+          "nonFinitePixels": 0,
+          "sha256": "3ec9d6a67640ef1a5bac1023fbd54075a2436c0ae05aa40cefcb7dde64f8ca9e"
+        },
+        "resolvedOrder": [
+          "scene-color",
+          "pixelation-1"
+        ],
+        "postEdgeAntialiasing": false,
+        "antialiasingSamples": 0
+      }
+    }
+  },
   "crossBackend": {
     "render-pass-only": {
       "meanLumaDelta": 0.000048353273513157546,
@@ -650,13 +786,18 @@
     "nodeCellsAttempted": 19,
     "nodeCellsPassingNative": 19,
     "nodeCellsPassingFallback": 19,
+    "serviceCellsAttempted": 4,
+    "serviceCellsPassingNative": 4,
+    "serviceCellsPassingFallback": 4,
     "controlCellsPassing": 13,
     "pendingTrackB": [],
     "failures": []
   },
-  "pageErrorCount": 1,
+  "pageErrorCount": 3,
   "pageErrorSample": [
-    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "THREE.TSL: TypeError: beautyNode.sample is not a function [Unknown location]",
+    "THREE.TSL: TypeError: beautyNode.sample is not a function [Unknown location]"
   ],
   "limits": [
     "One deterministic scene; production Blendlink scenes are broader.",
