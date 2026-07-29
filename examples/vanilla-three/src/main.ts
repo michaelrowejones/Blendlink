@@ -4,11 +4,18 @@
 // `src/blendlink/HeroScene.ts` and `src/generated/` are produced by
 // `blendlink connect` (or the CI gate) — see examples/README.md.
 import * as THREE from 'three'
+import { WebGPURenderer } from 'three/webgpu'
 import { installHeroScene } from './blendlink/HeroScene'
 
-const renderer = new THREE.WebGLRenderer({ antialias: true })
+// WebGPURenderer renders on native WebGPU where available and falls back
+// to WebGL2 on its own. On the WebGPU family, Blendlink's installer also
+// applies any published TSL material programs automatically; a classic
+// THREE.WebGLRenderer remains fully supported and renders the shipped
+// baked carriers.
+const renderer = new WebGPURenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+await renderer.init()
 document.body.appendChild(renderer.domElement)
 
 const scene = new THREE.Scene()
