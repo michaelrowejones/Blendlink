@@ -4569,6 +4569,26 @@ def _buffer_view_payload(document: dict, binary: bytes, view_index: int) -> byte
     return binary[offset:offset + length]
 
 
+# Three r184's GLTFLoader maps only TEXCOORD_0..3 onto geometry (its
+# ATTRIBUTES table stops at 'uv3'); a material that asks for a higher
+# channel gets vec2(0,0) and silently samples the atlas gutter, which is
+# transparent. Blendlink refuses instead of shipping that.
+MAX_BINDABLE_TEX_COORD = 3
+
+
+def _refuse_unbindable_tex_coord(source: str, tex_coord: int, channel: str) -> None:
+    if tex_coord <= MAX_BINDABLE_TEX_COORD:
+        return
+    raise MaterialCompileError(
+        f'Material output mismatch for "{source}": the baked {channel} '
+        f"texture samples TEXCOORD_{tex_coord}, but Three.js binds only "
+        f"TEXCOORD_0..{MAX_BINDABLE_TEX_COORD}. A mesh carrying this "
+        "material has too many UV maps for the private bake layer to land "
+        "in a bindable channel; remove the UV maps the website does not "
+        "use, or keep the object Realtime."
+    )
+
+
 def _attest_material_bake_texture(
     document: dict,
     binary: bytes,
@@ -4639,13 +4659,15 @@ def _attest_material_bake_texture(
             f"{channel} sampler wrap {actual_wrap!r} does not match the "
             f'{image_fact.get("uv")} route.'
         )
+    baked_tex_coord = int(texture_info.get("texCoord", 0))
+    _refuse_unbindable_tex_coord(fact["source"], baked_tex_coord, channel)
     return {
         "textureIndex": texture_index,
         "imageSha256": actual_hash,
         "imageMime": image.get("mimeType"),
         "imageWidth": image_fact["width"],
         "imageHeight": image_fact["height"],
-        "texCoord": int(texture_info.get("texCoord", 0)),
+        "texCoord": baked_tex_coord,
         "wrap": expected_wrap,
     }
 
@@ -4843,6 +4865,7 @@ def _attest_image_transport(
             f'Material output mismatch for "{fact["source"]}": image uses '
             f"TEXCOORD_{tex_coord}, expected TEXCOORD_{expected_tex_coord}."
         )
+    _refuse_unbindable_tex_coord(fact["source"], tex_coord, channel)
 
     all_actual_values = []
     for mesh_index in sorted(uvs_by_mesh):

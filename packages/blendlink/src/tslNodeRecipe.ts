@@ -435,9 +435,12 @@ function build(expression: TslIrExpression): TslExpression {
       const channel = typeof uvMap === 'string' && uvMap && activeOptions.uvChannel
         ? activeOptions.uvChannel(uvMap)
         : 0
-      if (!Number.isInteger(channel) || channel < 0) {
+      // Three binds only TEXCOORD_0..3 (its GLTFLoader ATTRIBUTES table stops
+      // at 'uv3'); a higher channel silently becomes vec2(0,0).
+      if (!Number.isInteger(channel) || channel < 0 || channel > 3) {
         return fail(
-          `BuildTslOptions.uvChannel resolved ${JSON.stringify(uvMap)} to invalid index ${channel}`,
+          `BuildTslOptions.uvChannel resolved ${JSON.stringify(uvMap)} to invalid index ${channel}`
+          + ' (expected glTF TEXCOORD channel 0, 1, 2, or 3)',
         )
       }
       const coordinates = tslUv(channel)
