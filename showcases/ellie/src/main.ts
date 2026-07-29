@@ -11,8 +11,17 @@ const canvasElement = document.querySelector<HTMLCanvasElement>('#scene')
 if (!canvasElement) throw new Error('Blendlink starter: #scene canvas is missing')
 const canvas: HTMLCanvasElement = canvasElement
 
-console.log('blendlink: creating WebGPURenderer')
-const renderer = new WebGPURenderer({ canvas, antialias: true })
+// Diagnostics for the WebGPU pipeline frontier: ?webgl forces the WebGL2
+// fallback backend; ?strip removes the artist utility UV/color layers
+// before the first render (the body ships 16 vertex attributes — exactly
+// WebGPU's default maxVertexAttributes).
+const params = new URLSearchParams(location.search)
+console.log('blendlink: creating WebGPURenderer', params.has('webgl') ? '(forceWebGL)' : '')
+const renderer = new WebGPURenderer({
+  canvas,
+  antialias: true,
+  forceWebGL: params.has('webgl'),
+})
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 await renderer.init()
 console.log('blendlink: renderer initialized, backend',
@@ -27,6 +36,23 @@ const installed = await installEllieAnimationScene({
 console.log('blendlink: scene installed')
 // Debug handle for browser-console inspection of the live installation.
 ;(window as unknown as { __blendlink?: unknown }).__blendlink = installed
+
+if (params.has('strip')) {
+  let strippedMeshes = 0
+  installed.root.traverse((object) => {
+    const mesh = object as THREE.Mesh
+    if (!mesh.isMesh) return
+    let changed = false
+    for (const key of Object.keys(mesh.geometry.attributes)) {
+      if (/^(uv[123]|texcoord_[45]|color_[12345])$/.test(key)) {
+        mesh.geometry.deleteAttribute(key)
+        changed = true
+      }
+    }
+    if (changed) strippedMeshes += 1
+  })
+  console.log('blendlink: stripped utility attributes on', strippedMeshes, 'meshes')
+}
 console.log(
   'blendlink tslMaterials:',
   installed.tslMaterials

@@ -5158,6 +5158,13 @@ def gltf_export_contract(out_path: str, settings: dict) -> tuple[dict, list[str]
         "export_cameras": True,
         "export_animations": True,
         "export_morph": True,
+        # Ship only deforming joints. Control rigs (CloudRig et al.) carry
+        # thousands of mechanism/control bones; exporting them wholesale
+        # produced an 1867-joint skin whose matrix buffer (119KB) exceeds
+        # the 64KB uniform-block limit on BOTH web render backends — the
+        # character could never skin. Deform-only is the standard
+        # game-export contract; the exporter keeps required parents.
+        "export_def_bones": True,
         # Compression happens post-export in Node where the library version is
         # controlled; the exporter's Draco path has a history of UV corruption.
         "export_draco_mesh_compression_enable": False,
