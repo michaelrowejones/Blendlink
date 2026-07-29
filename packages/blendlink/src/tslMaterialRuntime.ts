@@ -463,9 +463,25 @@ export async function installTslMaterials(
         if (!variant) {
           const resources = createTslBuildResources()
           const clone = new MeshStandardNodeMaterial()
+          // NodeMaterial.copy reads node slots off the source; copying from
+          // a plain shipped MeshStandardMaterial turns every null default
+          // (fragmentNode, vertexNode, mrtNode, ...) into UNDEFINED — and
+          // NodeMaterial.setup() distinguishes the two: `fragmentNode ===
+          // null` falls through and `undefined.isOutputStructNode` throws
+          // on the first shader build (measured on every ellie program
+          // clone, both WGSL and GLSL builders). Capture the constructor's
+          // null slots and restore them after the copy.
+          const nullNodeSlots = Object.keys(clone).filter(
+            (key) => key.endsWith('Node')
+              && (clone as unknown as Record<string, unknown>)[key] === null,
+          )
           // Material.copy is brand-generic at runtime; @types narrows the
           // NodeMaterial overload to node materials only.
           clone.copy(material as unknown as MeshStandardNodeMaterial)
+          for (const key of nullNodeSlots) {
+            const record = clone as unknown as Record<string, unknown>
+            if (record[key] === undefined) record[key] = null
+          }
           clone.name = material.name
           clone.userData = { ...material.userData }
           const buildOptions = buildOptionsFor(

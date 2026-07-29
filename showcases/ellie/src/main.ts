@@ -45,8 +45,9 @@ const rimLight = new THREE.DirectionalLight(0xdfeaff, 1.1)
 rimLight.position.set(-3, 2.5, -2.5)
 world.add(rimLight)
 world.add(new THREE.HemisphereLight(0xbfd4ff, 0x3a3228, 0.9))
-// Debug handle for browser-console inspection of the live installation.
+// Debug handles for browser-console inspection of the live installation.
 ;(window as unknown as { __blendlink?: unknown }).__blendlink = installed
+;(window as unknown as { __blendlinkRenderer?: unknown }).__blendlinkRenderer = renderer
 
 if (params.has('strip')) {
   let strippedMeshes = 0

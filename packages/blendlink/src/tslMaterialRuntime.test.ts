@@ -66,12 +66,22 @@ describe('installTslMaterials', () => {
       colorNode: unknown
       roughnessNode: unknown
       metalnessNode: unknown
+      fragmentNode: unknown
+      vertexNode: unknown
+      mrtNode: unknown
     }
     expect(mesh.material).not.toBe(material)
     expect(applied.colorNode).toBeTruthy()
     expect(applied.roughnessNode).toBeTruthy()
     // Metallic shipped no IR: its carrier (copied factor) stays untouched.
     expect(applied.metalnessNode ?? null).toBeNull()
+    // NodeMaterial.copy from a plain shipped material turns null node-slot
+    // defaults into undefined, and NodeMaterial.setup() distinguishes the
+    // two (`fragmentNode === null` falls through; undefined crashes the
+    // first shader build). The clone must restore exact nulls.
+    expect(applied.fragmentNode).toBeNull()
+    expect(applied.vertexNode).toBeNull()
+    expect(applied.mrtNode).toBeNull()
     installed.dispose()
     expect(mesh.material).toBe(material)
   })
