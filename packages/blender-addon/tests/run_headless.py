@@ -8870,6 +8870,27 @@ def main():
            "camera/fog defaults must preserve the authored page until explicitly enabled")
     expect(recipe["atlases"][0]["bakeOutput"] == "lighting",
            "Main atlas bake output was not stored in the canonical recipe")
+    # An unmapped Bake Output must refuse, not quietly publish Appearance.
+    # Blender's RNA rejects an unknown enum string on assignment, so the only
+    # way to reach -- and the only way to test -- the mapping's failure branch
+    # is to call it directly, exactly as a commit that grows the enum without
+    # extending the table would. The coverage assertion is what makes that
+    # commit safe: it fails here rather than shipping a flattened bake.
+    atlas_enum_identifiers = {
+        item.identifier
+        for item in project.atlases[0].bl_rna.properties["bake_output"].enum_items
+    }
+    expect(set(props._BAKE_OUTPUT_RECIPE_VALUES) == atlas_enum_identifiers,
+           "Bake Output enum and its portable spelling drifted apart; extend "
+           f"props._BAKE_OUTPUT_RECIPE_VALUES to cover {atlas_enum_identifiers}")
+    try:
+        props._recipe_bake_output("Main", "SURFACE")
+    except ValueError as error:
+        expect("Main" in str(error) and "'SURFACE'" in str(error)
+               and "LIGHTING" in str(error) and "APPEARANCE" in str(error),
+               f"unmapped Bake Output refusal was not actionable: {error}")
+    else:
+        raise AssertionError("unmapped atlas Bake Output silently became Appearance")
     expect(not ops.BLENDLINK_OT_setup_website_export.poll(bpy.context)
            and ops.BLENDLINK_OT_add_composition.poll(bpy.context)
            and ops.BLENDLINK_OT_add_state.poll(bpy.context),

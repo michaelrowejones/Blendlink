@@ -135,10 +135,31 @@ authored component if secondary motion is ever needed.
 
 ## 6. Open measurements, in priority order
 
-- **a. Does a Node `toStack()`'d after `SkinningNode` generate after it?** Gates Phase 3
-  entirely. ~40-line headless probe dumping both shaders and asserting statement order. Half a
-  day. Keep as a version-pin regression test — this is an internal ordering guarantee three does
-  not document.
+- **a. ANSWERED — NO. Measured 2026-07-29** via `showcases/ellie/deformer-order.html` +
+  `src/deformerOrder.js`, four authoring patterns against both backends, a fresh renderer per
+  pattern (sharing one let the node-builder cache serve a previously built program, which
+  presented as an override that never ran while still producing a shader):
+
+  | pattern | emitted? | position vs skinning |
+  | --- | --- | --- |
+  | `Fn(…)().toStack()` after `super.setupPosition()` | **no** — the Fn body never executes | absent |
+  | a real `Node` subclass `.toStack()`'d (void *or* vec3 return) | **no** — `setup()` never runs | absent |
+  | `positionLocal.addAssign(…)` directly after super | yes | **before** skinning |
+  | `material.positionNode` reading `positionLocal` | yes | **before** skinning |
+
+  Two conclusions. `toStack()` called from inside a `setupPosition` override never builds the
+  node at all — silently — so the originally proposed Phase 3 mechanism would have shipped a
+  deformer that does nothing. And the two patterns that do emit are byte-identical and both
+  land *before* skinning, confirming that `positionNode` feeds into skinning rather than
+  following it.
+
+  **Post-skin deformation is therefore not expressible through any documented material-level
+  seam in r184.** The remaining routes are: open-code skinning inside `positionNode` (carrying
+  the four traps already priced, including an `isSkinnedMesh` lie that disables per-frame
+  material updates); a compute prepass (WebGPU only — WebGL2's transform-feedback path renders
+  black); or pose-driven morph targets, which is Phase 4 and glTF-native. Phase 3 must not be
+  written until one of those is proven. `getShaderAsync` returned nothing usable on the WebGL2
+  backend, so that half is a probe limitation rather than a measured three limitation.
 - **b. How wrong is an undeformed shadow for the eyes and teeth?** Decides whether the shadow
   limitation needs a workaround. Diff the shadow map; likely sub-texel.
 - **c. What does 7-stacked B-spline LATTICE cost on the head?** Sets the refusal threshold.

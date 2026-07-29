@@ -1713,6 +1713,33 @@ def serialized_components(project) -> list[dict]:
     return result
 
 
+# Portable recipe spelling for every Bake Output the RNA enum offers.
+# Deliberately a mapping and not a ternary: the previous
+# `"lighting" if atlas.bake_output == "LIGHTING" else "appearance"` turned
+# every value it did not recognise into Appearance, so adding a third Bake
+# Output would have silently published a flattened Combined bake. Blender's
+# RNA rejects an unknown enum string on assignment (measured: TypeError
+# 'enum "SURFACE" not found'), so a mismatch here can only come from this
+# table falling behind the enum above -- which the addon suite now asserts.
+_BAKE_OUTPUT_RECIPE_VALUES = {
+    "LIGHTING": "lighting",
+    "APPEARANCE": "appearance",
+}
+
+
+def _recipe_bake_output(atlas_name: str, value: str) -> str:
+    """Portable spelling of one atlas Bake Output, or a loud refusal."""
+    try:
+        return _BAKE_OUTPUT_RECIPE_VALUES[value]
+    except KeyError:
+        raise ValueError(
+            f"Atlas {atlas_name!r} has Bake Output {value!r}, which this "
+            f"Blendlink build cannot publish; choose one of "
+            f"{', '.join(sorted(_BAKE_OUTPUT_RECIPE_VALUES))}, or install the "
+            f"Blendlink version that added it"
+        ) from None
+
+
 def project_recipe(project) -> dict:
     _require_scene_object(
         project, project.main_camera, "Website Camera", stable_identity=True,
@@ -1742,7 +1769,7 @@ def project_recipe(project) -> dict:
             "targetDensity": float(atlas.target_density),
             "margin": int(atlas.margin),
             "fitPolicy": "scale" if atlas.fit_policy == "SCALE" else "block",
-            "bakeOutput": "lighting" if atlas.bake_output == "LIGHTING" else "appearance",
+            "bakeOutput": _recipe_bake_output(atlas_name, atlas.bake_output),
         })
     states = []
     state_names = set()
