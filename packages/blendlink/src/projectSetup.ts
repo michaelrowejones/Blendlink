@@ -229,6 +229,7 @@ function writeNewSite(root: string, sceneName: string, changes: string[]): void 
   const integrationName = sceneIntegrationName(sceneName)
   writeFileSync(join(root, 'src', 'main.ts'), `${STARTER_MARKER}
 import * as THREE from 'three'
+import { WebGPURenderer } from 'three/webgpu'
 import { install${integrationName} } from './blendlink/${integrationName}'
 import './style.css'
 
@@ -236,8 +237,14 @@ const canvasElement = document.querySelector<HTMLCanvasElement>('#scene')
 if (!canvasElement) throw new Error('Blendlink starter: #scene canvas is missing')
 const canvas: HTMLCanvasElement = canvasElement
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
+// WebGPURenderer renders on native WebGPU where available and falls back
+// to WebGL2 on its own; on the WebGPU family Blendlink also applies any
+// published TSL material programs automatically. Prefer a classic
+// \`new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })\`
+// (and drop the init() await) to stay on the classic renderer.
+const renderer = new WebGPURenderer({ canvas, antialias: true })
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+await renderer.init()
 const world = new THREE.Scene()
 
 const installed = await install${integrationName}({
