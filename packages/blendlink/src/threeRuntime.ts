@@ -223,9 +223,37 @@ export interface ThreeSceneViewport {
 
 export type ThreePresentationCamera = THREE.PerspectiveCamera | THREE.OrthographicCamera
 
+/** Either Three renderer family. WebGPURenderer's class type lives in
+ * 'three/webgpu'; a structural stand-in here keeps that module out of
+ * WebGL-only type graphs while the runtime's family assertion does the
+ * real gatekeeping (isWebGLRenderer || isWebGPURenderer). */
+export interface WebgpuRendererLike {
+  readonly isWebGPURenderer: true
+  domElement: HTMLCanvasElement
+  render: (scene: THREE.Object3D, camera: THREE.Camera) => unknown
+  setSize: (width: number, height: number, updateStyle?: boolean) => unknown
+  dispose: () => void
+}
+
+export type CompiledSceneRendererOption =
+  | THREE.WebGLRenderer
+  | WebgpuRendererLike
+
+/** Internal legacy view of either renderer family. Family gatekeeping is
+ * runtime-structural: assertCompiledSceneRenderer admits exactly the two
+ * families, and every family-sensitive seam branches on isWebGPURenderer
+ * before touching WebGL-only surface. The static WebGLRenderer view keeps
+ * those seams' structural parameter contracts unchanged for the classic
+ * path. */
+function legacyRendererView(
+  renderer: CompiledSceneRendererOption,
+): THREE.WebGLRenderer {
+  return renderer as unknown as THREE.WebGLRenderer
+}
+
 export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
   descriptor: CompiledSceneDescriptor
-  renderer: THREE.WebGLRenderer
+  renderer: CompiledSceneRendererOption
   scene: THREE.Scene
   /** Application-owned manager. Blendlink never calls abort() on it. When
    * omitted, the one-call installer owns a private attempt-scoped manager.
@@ -1547,7 +1575,7 @@ async function prepareThreeCompiledSceneAttempt(
     if (needsKtx2 && !options.ktx2Loader && !applicationKtx2Loader) {
       ownedKtx2Loader = createOwnedKtx2Loader(
         options.descriptor,
-        options.renderer,
+        legacyRendererView(options.renderer),
         manager,
       )
     }
@@ -1770,7 +1798,7 @@ export async function prepareLoadedThreeCompiledScene(
 
       const lookOptions = threeCompiledSceneLookOptions(resolvedPreview)
       const lookCandidate = prepareCompiledSceneLook(
-        options.renderer,
+        legacyRendererView(options.renderer),
         options.scene,
         descriptor,
         lookOptions,
@@ -1778,7 +1806,7 @@ export async function prepareLoadedThreeCompiledScene(
       resources.own('prepared compiled look', () => lookCandidate.dispose())
       const stagingLook = installDetachedLookPreview(
         stagingScene,
-        options.renderer,
+        legacyRendererView(options.renderer),
         descriptor,
         resolvedPreview,
       )
@@ -1804,7 +1832,7 @@ export async function prepareLoadedThreeCompiledScene(
       )
       resources.own('detached preview mesh shadows', () => previewMeshShadows.dispose())
       const shadowsCandidate = prepareCompiledSceneShadows(
-        options.renderer,
+        legacyRendererView(options.renderer),
         authoringPreviewShadowRoot(root, resolvedPreview.defaultMeshShadows),
         descriptor,
         {
@@ -2061,7 +2089,8 @@ async function installLoadedThreeCompiledSceneNow(
     options.useAuthoringPreview === true,
   )
   const descriptor = resolvedPreview.descriptor
-  const { renderer, scene } = options
+  const { scene } = options
+  const renderer = legacyRendererView(options.renderer)
   const loadingManager = options.loadingManager ?? options.loader?.manager ?? new THREE.LoadingManager()
   if (resolvedPreview.warnings.length > 0) {
     const warn = options.onWarning ?? ((message: string) => console.warn(message))
@@ -2987,7 +3016,7 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
-function assertCompiledSceneRenderer(renderer: THREE.WebGLRenderer): void {
+function assertCompiledSceneRenderer(renderer: CompiledSceneRendererOption): void {
   const identity = renderer as THREE.WebGLRenderer & {
     isWebGLRenderer?: boolean
     isWebGPURenderer?: boolean

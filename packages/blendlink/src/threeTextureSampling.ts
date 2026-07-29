@@ -3,10 +3,21 @@ import * as THREE from 'three'
 export type ThreeTextureAnisotropy = 'authored' | 'renderer-max' | number
 
 export type ThreeTextureSamplingRenderer = Readonly<{
-  capabilities: Readonly<{
+  /** Absent on the WebGPU renderer family, which exposes no capabilities
+   * object — its samplers accept anisotropy 1..16 by specification. */
+  capabilities?: Readonly<{
     getMaxAnisotropy(): number
   }>
 }>
+
+/** WebGPU samplers accept maxAnisotropy 1..16 by specification. */
+const WEBGPU_MAX_ANISOTROPY = 16
+
+function rendererMaxAnisotropy(renderer: ThreeTextureSamplingRenderer): number {
+  return renderer.capabilities
+    ? renderer.capabilities.getMaxAnisotropy()
+    : WEBGPU_MAX_ANISOTROPY
+}
 
 export type ThreeTextureSamplingReport = Readonly<{
   policy: ThreeTextureAnisotropy
@@ -132,7 +143,7 @@ function resolveAnisotropy(
   policy: ThreeTextureAnisotropy,
 ): number | null {
   if (policy === 'authored') return null
-  const maximum = renderer.capabilities.getMaxAnisotropy()
+  const maximum = rendererMaxAnisotropy(renderer)
   if (!Number.isFinite(maximum) || maximum < 1) {
     throw new Error(
       `Blendlink needs a finite renderer maximum anisotropy of at least 1; got ${maximum}.`,
@@ -153,7 +164,7 @@ export function installThreeTextureSampling(
   policy: ThreeTextureAnisotropy,
 ): InstalledThreeTextureSampling {
   const requestedAnisotropy = policy === 'renderer-max'
-    ? renderer.capabilities.getMaxAnisotropy()
+    ? rendererMaxAnisotropy(renderer)
     : typeof policy === 'number'
       ? policy
       : null
