@@ -254,7 +254,25 @@ export interface MaterialCompilationEvidence {
   gltfEvidence: Array<{
     sourceMaterial: string
     generatedMaterial: string
-    transport: 'factor' | 'vertexColor' | 'image'
+    transport: 'factor' | 'vertexColor' | 'image' | 'channels'
+    /** MTL-BAKE-001 per-channel carrier evidence for `channels` transport:
+     * every planned baked texture slot with its exact embedded bytes,
+     * dimensions, texCoord, and wrap contract. */
+    materialBake?: {
+      channels?: unknown
+      gates?: unknown
+      textures?: Partial<Record<'baseColor' | 'orm' | 'normal' | 'emissive', {
+        textureIndex: number
+        imageSha256: string
+        imageMime: 'image/png' | 'image/jpeg'
+        imageWidth: number
+        imageHeight: number
+        texCoord: number
+        wrap: number
+        emissiveStrength?: number
+      }>>
+      uvEvidence?: unknown
+    }
     surfaceResponse?: 'lit' | 'unlit'
     unlit: boolean
     metallicFactor?: number
@@ -394,6 +412,7 @@ export interface MaterialCompilationEvidence {
         | 'ambiguous-render-fallback'
         | 'ambiguous-render-fallback+local-degenerate-rescue'
         | 'smart-project-fallback'
+        | 'smart-project-fallback+lightmap-rescue'
       /**
        * Origin of the complete private UV candidate before bounded evaluated
        * or post-pack repairs. Absent on older schema-1 producer output.
@@ -1443,6 +1462,95 @@ export function verifyMaterialCompilationEvidence(
           )
         }
       }
+    } else if (evidence.transport === 'channels') {
+      // MTL-BAKE-001 carriers: every texture slot must match its planned
+      // bake exactly — bytes, dimensions, texCoord, and wrap — and no
+      // unplanned slot may ship. The Python compiler attested the same
+      // contract pre-optimization; this re-proves it after final
+      // transforms.
+      const bakeTextures = evidence.materialBake?.textures
+      if (!bakeTextures) {
+        materialEvidenceFailure(
+          evidence.sourceMaterial,
+          'has channels transport without material-bake texture evidence.',
+        )
+      }
+      const slots = [
+        {
+          kind: 'baseColor' as const,
+          texture: baseColorTexture,
+          info: material.getBaseColorTextureInfo(),
+        },
+        {
+          kind: 'orm' as const,
+          texture: material.getMetallicRoughnessTexture(),
+          info: material.getMetallicRoughnessTextureInfo(),
+        },
+        {
+          kind: 'normal' as const,
+          texture: material.getNormalTexture(),
+          info: material.getNormalTextureInfo(),
+        },
+        {
+          kind: 'emissive' as const,
+          texture: material.getEmissiveTexture(),
+          info: material.getEmissiveTextureInfo(),
+        },
+      ]
+      for (const { kind, texture, info } of slots) {
+        const planned = bakeTextures[kind]
+        if (!planned) {
+          if (texture) {
+            materialEvidenceFailure(
+              evidence.sourceMaterial,
+              `gained an unplanned baked ${kind} texture.`,
+            )
+          }
+          continue
+        }
+        if (!texture || !info) {
+          materialEvidenceFailure(
+            evidence.sourceMaterial,
+            `lost its baked ${kind} texture.`,
+          )
+        }
+        const image = texture.getImage()
+        const actualHash = image
+          ? createHash('sha256').update(image).digest('hex')
+          : null
+        if (actualHash !== planned.imageSha256
+            || texture.getMimeType() !== planned.imageMime) {
+          materialEvidenceFailure(
+            evidence.sourceMaterial,
+            `changed baked ${kind} image bytes or MIME from ` +
+            `${planned.imageMime}/${planned.imageSha256} to ` +
+            `${texture.getMimeType() || 'unknown'}/${actualHash || 'missing'}.`,
+          )
+        }
+        const imageSize = texture.getSize()
+        if (!imageSize || imageSize[0] !== planned.imageWidth
+            || imageSize[1] !== planned.imageHeight) {
+          materialEvidenceFailure(
+            evidence.sourceMaterial,
+            `changed baked ${kind} image dimensions from ` +
+            `${planned.imageWidth}x${planned.imageHeight}.`,
+          )
+        }
+        if (info.getTexCoord() !== planned.texCoord) {
+          materialEvidenceFailure(
+            evidence.sourceMaterial,
+            `changed baked ${kind} texCoord from ${planned.texCoord} ` +
+            `to ${info.getTexCoord()}.`,
+          )
+        }
+        if (info.getWrapS() !== planned.wrap || info.getWrapT() !== planned.wrap) {
+          materialEvidenceFailure(
+            evidence.sourceMaterial,
+            `changed baked ${kind} sampler wrap from ${planned.wrap} to ` +
+            `${info.getWrapS()}/${info.getWrapT()}.`,
+          )
+        }
+      }
     } else if (baseColorTexture) {
       materialEvidenceFailure(evidence.sourceMaterial, 'gained an unexpected base-color texture.')
     }
@@ -1537,7 +1645,12 @@ export function verifyMaterialCompilationEvidence(
           'changed the shared Emission sampler or texCoord after final transforms.',
         )
       }
-    } else if (material.getEmissiveTexture()) {
+    } else if (
+      // The channels branch above owns emissive-slot verification for
+      // MTL-BAKE-001 carriers (planned bake or refused-unplanned).
+      evidence.transport !== 'channels'
+      && material.getEmissiveTexture()
+    ) {
       materialEvidenceFailure(
         evidence.sourceMaterial,
         'gained an unexpected emissive texture.',

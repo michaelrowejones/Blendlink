@@ -3497,7 +3497,7 @@ _SURFACE_BAKE_KINDS = {
     "alpha": "Alpha",
     "metallic": "Metallic",
     "roughness": "Roughness",
-    "emissive": "Emission",
+    "emission": "Emission",
 }
 
 
@@ -5966,7 +5966,7 @@ def _surface_channel_bake_material(
 
 
 def _split_slot_receiver(obj, slot_index: int):
-    """A disposable single-slot receiver holding ONLY the slot's faces.
+    """A disposable receiver holding ONLY the slot's faces.
 
     Multi-slot meshes bake per slot (user-approved 2026-07-28): the split
     runs the unchanged single-slot pack/proof/bake pipeline, and the packed
@@ -5990,10 +5990,19 @@ def _split_slot_receiver(obj, slot_index: int):
         bm.to_mesh(mesh)
     finally:
         bm.free()
-    mesh.materials.clear()
-    mesh.materials.append(obj.material_slots[slot_index].material)
-    for polygon in mesh.polygons:
-        polygon.material_index = 0
+    # Receivers start without any accumulated private atlas layers:
+    # earlier slots' writebacks live on the original private mesh, and a
+    # copy that carries them forces the UV resolver into suffixed names —
+    # and, slot by slot, toward Blender's 8-layer limit. Stripping them
+    # keeps every slot resolving the ONE canonical shared layer name.
+    for stale in [
+        layer for layer in mesh.uv_layers
+        if layer.name.startswith(bakelib.MATERIAL_ATLAS_UV)
+    ]:
+        mesh.uv_layers.remove(stale)
+    # The slot layout stays IDENTICAL to the source: downstream density
+    # and validation flows re-measure against the binding's slot index,
+    # so the split keeps every slot and only the faces change.
     receiver = bpy.data.objects.new(
         f"BLENDLINK_SLOT_RECEIVER.{obj.name}.{slot_index}", mesh,
     )
@@ -6068,6 +6077,10 @@ def _bake_material_channels(
 ) -> dict:
     """Split-receiver wrapper: multi-slot bindings bake on a disposable
     single-slot split, and the packed layer writes back on success."""
+    if bpy.context.mode != "OBJECT":
+        # A scene saved mid-pose (character files routinely are) leaves
+        # object-mode operators unpollable for the bake's selection flow.
+        bpy.ops.object.mode_set(mode="OBJECT")
     split_state = {"receiver": None}
     try:
         products = _bake_material_channels_inner(
@@ -6144,10 +6157,7 @@ def _bake_material_channels_inner(
         if record.get("uv") == "unique":
             evidence = ensure_unique_uv()
             receiver = split_state["receiver"] or obj
-            slot = receiver.material_slots[
-                0 if split_state["receiver"] is not None
-                else binding.slot_index
-            ]
+            slot = receiver.material_slots[binding.slot_index]
             slot.link = "DATA"
             slot.material = bake_material
             receivers = [receiver]
@@ -6183,7 +6193,7 @@ def _bake_material_channels_inner(
                     return bakelib.bake_channel_field_pixels(
                         targets, size=size, margin_px=margin,
                         uv_layer=uv_layer, label=label,
-                        allow_hdr=allow_hdr, log=log,
+                        allow_hdr=allow_hdr, clamp_ldr=True, log=log,
                     )
                 finally:
                     if window_proxy is not None:

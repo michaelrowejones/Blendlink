@@ -2740,13 +2740,15 @@ def prepare_material_texture_uv(
                         "using a private Smart Project while preserving the "
                         "artist UV"
                     )
-                    smart_project_private_uvs(
+                    projection = smart_project_private_uvs(
                         [obj],
                         uv_name=resolved_uv_name,
                         log=log,
                         world_linear=True,
                     )
                     uv_strategy = "smart-project-fallback"
+                    if projection.get("rescuedNonInjective"):
+                        uv_strategy = "smart-project-fallback+lightmap-rescue"
                     uv_generation_space = "world-linear-private-proxy"
                 elif not source_layout_issues:
                     uv_strategy = source_strategy
@@ -2804,19 +2806,46 @@ def prepare_material_texture_uv(
                     "Repair/unpin that layout or remove the authored atlas layer "
                     "to let Blendlink pack a private one"
                 )
-            repairs, final_held = pack_with_evaluated_uv_repair(
-                [obj],
-                resolved_uv_name,
-                lambda _obj: 1.0,
-                margin,
-                size,
-                held=held,
-                pin=True,
-                delivery_size=size,
-                guard_px=4,
-                world_linear_repairs=True,
-                log=log,
-            )
+            try:
+                repairs, final_held = pack_with_evaluated_uv_repair(
+                    [obj],
+                    resolved_uv_name,
+                    lambda _obj: 1.0,
+                    margin,
+                    size,
+                    held=held,
+                    pin=True,
+                    delivery_size=size,
+                    guard_px=4,
+                    world_linear_repairs=True,
+                    # The complete proof below measures exact geometric
+                    # gutters; AABB charts satisfy it by construction.
+                    chart_shape="AABB",
+                    log=log,
+                )
+            except ReceiverGutterProofError as error:
+                if candidate_index + 1 < len(candidates):
+                    next_candidate = candidates[candidate_index + 1]
+                elif size * 2 <= 4096:
+                    # The density ceiling is a QUALITY cap, not a correctness
+                    # cap: island-dense receivers (per-face lightmap charts,
+                    # many-piece meshes) may need more texels than density
+                    # demands before the fixed-pixel gutter contract becomes
+                    # provable. Growing past the ceiling wastes texels but
+                    # never bleeds; the global resolution maximum still
+                    # bounds the ladder.
+                    next_candidate = size * 2
+                    candidates.append(next_candidate)
+                else:
+                    raise
+                # Gutters are fixed pixels: the same layout doubles its
+                # achieved gutter at the next power-of-two candidate.
+                log(
+                    f"blendlink: island gutters on {obj.name} cannot reach "
+                    f"the bake contract at {size}px ({error}); retrying the "
+                    f"bounded {next_candidate}px candidate"
+                )
+                continue
             all_repairs = [*prepack_repairs, *repairs]
             coverage = material_binding_packed_uv_coverage(
                 obj,
@@ -2837,6 +2866,40 @@ def prepare_material_texture_uv(
                 minimum_gutter=(margin + 4.0) / size,
             )
             if complete_issues:
+                complete_kinds = {
+                    str(issue.get("kind", "layout"))
+                    for issue in complete_issues
+                }
+                if complete_kinds <= {
+                    "insufficient-gutter", "insufficient-edge-gutter",
+                    "out-of-bounds", "degenerate",
+                }:
+                    # These kinds are resolution-dependent. Gutters are
+                    # fixed pixels while layouts are fixed fractions, so a
+                    # layout's gutter grows linearly with resolution. And at
+                    # small candidates fixed-pixel margins become infeasible
+                    # FRACTIONS — pack_islands then silently overflows the
+                    # unit square (measured: 54 islands x 0.094 margin needs
+                    # ~1.9 units^2; the pack spans u=[0.08,1.98] and islands
+                    # shrink toward degeneracy). Retry a larger candidate
+                    # (past the density ceiling if needed) before refusing;
+                    # overlap kinds stay immediate refusals — packing again
+                    # bigger cannot fix a fold.
+                    if candidate_index + 1 < len(candidates):
+                        next_candidate = candidates[candidate_index + 1]
+                    elif size * 2 <= 4096:
+                        next_candidate = size * 2
+                        candidates.append(next_candidate)
+                    else:
+                        next_candidate = None
+                    if next_candidate is not None:
+                        log(
+                            f"blendlink: packed gutters on {obj.name} fall "
+                            f"short of the bake contract at {size}px "
+                            f"({_format_private_uv_issues(complete_issues[:3])}); "
+                            f"retrying the bounded {next_candidate}px candidate"
+                        )
+                        continue
                 raise RuntimeError(
                     "private selected-field UV failed its complete bounds/"
                     "injectivity/gutter proof after packing: "
@@ -3040,6 +3103,74 @@ def _smart_project_private_uv_objects(objects, uv_name: str) -> None:
             bpy.ops.object.mode_set(mode="OBJECT")
 
 
+def _lightmap_pack_private_uv_object(obj, uv_name: str) -> None:
+    """Per-face lightmap charts on a private/disposable object.
+
+    Injective by construction (every face gets its own chart), at the cost
+    of a seam on every edge. Rescue-only: never a first choice."""
+    obj.data.uv_layers.active = obj.data.uv_layers[uv_name]
+    select_only([obj])
+    bpy.ops.object.mode_set(mode="EDIT")
+    try:
+        bpy.ops.mesh.select_all(action="SELECT")
+        bpy.ops.uv.select_all(action="SELECT")
+        bpy.ops.uv.lightmap_pack(
+            PREF_CONTEXT="ALL_FACES",
+            PREF_PACK_IN_ONE=True,
+            PREF_MARGIN_DIV=0.2,
+        )
+    finally:
+        if bpy.context.mode != "OBJECT":
+            bpy.ops.object.mode_set(mode="OBJECT")
+
+
+def _projection_overlap_issues(obj, uv_name: str):
+    """Self-overlap issues only: folds WITHIN an island that no amount of
+    downstream island packing can separate. Inter-island overlaps after a
+    margin-0 Smart Project are packing artifacts the ordinary pack fixes —
+    treating them as fold evidence once shredded a 3168-triangle mesh into
+    per-face charts whose fixed-pixel gutters fit no atlas."""
+    layer = obj.data.uv_layers.get(uv_name)
+    mask = {obj.name: [True for _loop in layer.data]}
+    issues = pinned_uv_layout_issues([obj], uv_name, mask, minimum_gutter=0.0)
+    return [
+        issue for issue in issues
+        if str(issue.get("kind", "")) == "self-overlap"
+    ]
+
+
+def _rescue_noninjective_smart_projection(objects, uv_name: str, log) -> int:
+    """Replace still-folded Smart Project layouts with lightmap charts.
+
+    Smart Project assigns islands by projection direction, so coplanar
+    stacked pieces (patches, straps, decal-like shells) land in the same
+    island and overlap at ANY angle limit — measured on the ellie
+    fannypack: self-overlap persists 66°→12° and through seam-guided
+    conformal unwrap, while a per-face lightmap pack proves clean. Each
+    rescued object is re-proved here and the caller's complete post-pack
+    proof still gates the final layout."""
+    rescued = 0
+    for obj in objects:
+        overlaps = _projection_overlap_issues(obj, uv_name)
+        if not overlaps:
+            continue
+        log(
+            f"blendlink: Smart Project left {len(overlaps)} self-overlapping "
+            f"island(s) on {obj.name} "
+            f"({_format_private_uv_issues(overlaps)}); rescuing with "
+            "per-face lightmap charts on the private layer"
+        )
+        _lightmap_pack_private_uv_object(obj, uv_name)
+        remaining = _projection_overlap_issues(obj, uv_name)
+        if remaining:
+            raise RuntimeError(
+                f"{obj.name}: per-face lightmap rescue still overlaps: "
+                + _format_private_uv_issues(remaining)
+            )
+        rescued += 1
+    return rescued
+
+
 def _validated_private_uv_layers(source_obj, target_obj, uv_name: str):
     """Prove an unwrap proxy kept topology and return its UV layer pair."""
     source_mesh = source_obj.data
@@ -3199,9 +3330,13 @@ def smart_project_private_uvs(
             + object_names
         )
         _smart_project_private_uv_objects(objects, uv_name)
+        rescued_count = _rescue_noninjective_smart_projection(
+            objects, uv_name, log,
+        )
         return {
             "geometrySpace": "object-local",
             "proxyCount": 0,
+            "rescuedNonInjective": rescued_count,
         }
 
     log(
@@ -3211,6 +3346,7 @@ def smart_project_private_uvs(
     )
     records = []
     primary_error = None
+    rescued_count = 0
     try:
         for obj in objects:
             linear = obj.matrix_world.to_3x3()
@@ -3270,6 +3406,9 @@ def smart_project_private_uvs(
         _smart_project_private_uv_objects(
             [record["object"] for record in records],
             uv_name,
+        )
+        rescued_count = _rescue_noninjective_smart_projection(
+            [record["object"] for record in records], uv_name, log,
         )
         # Validate every proxy before copying any UVs. A failed object cannot
         # leave an earlier private receiver partially updated.
@@ -3334,6 +3473,7 @@ def smart_project_private_uvs(
     return {
         "geometrySpace": "world-linear",
         "proxyCount": len(records),
+        "rescuedNonInjective": rescued_count,
     }
 
 
@@ -3347,13 +3487,25 @@ def _uv_close(left, right, epsilon: float = _UV_CONNECT_EPSILON) -> bool:
             and abs(float(left[1]) - float(right[1])) <= epsilon)
 
 
+# Blender's pack/select-linked island model merges UV-adjacent faces at
+# the sticky connect limit (STD_UV_CONNECT_LIMIT, 1e-4) and ignores seam
+# flags (seams guide unwrap, not island identity). The proof MUST model
+# what the packer can actually separate: stitched charts (ellie body,
+# boundary UVs welded to ~1e-5 across seam-marked edges) move as ONE
+# island under pack_islands, so demanding gutters between them can never
+# be satisfied at any resolution — and bleed across a stitch shows the
+# correct continuation of the surface anyway.
+_UV_ISLAND_CONNECT_EPSILON = 1e-4
+
+
 def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
     """Resolve UV islands without changing Blender selection or edit mode.
 
-    Two polygons share an island only when they meet across a non-seam mesh
-    edge and both endpoint UVs agree. The returned display numbers are stable
-    (ordered by the first polygon in each island), which keeps plan errors
-    actionable and deterministic.
+    Two polygons share an island when they meet across a mesh edge and both
+    endpoint UVs agree within the packer's sticky connect limit — matching
+    Blender's own UV-adjacency island model. The returned display numbers
+    are stable (ordered by the first polygon in each island), which keeps
+    plan errors actionable and deterministic.
     """
     parents = list(range(len(mesh.polygons)))
 
@@ -3374,9 +3526,6 @@ def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
         for offset, loop_index in enumerate(indices):
             next_index = indices[(offset + 1) % len(indices)]
             loop = mesh.loops[loop_index]
-            edge = mesh.edges[loop.edge_index]
-            if edge.use_seam:
-                continue
             next_loop = mesh.loops[next_index]
             vertices = (loop.vertex_index, next_loop.vertex_index)
             coordinates = {
@@ -3391,7 +3540,10 @@ def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
             for other_polygon, other_coordinates in uses[index + 1:]:
                 if all(
                     vertex in other_coordinates
-                    and _uv_close(coordinate, other_coordinates[vertex])
+                    and _uv_close(
+                        coordinate, other_coordinates[vertex],
+                        _UV_ISLAND_CONNECT_EPSILON,
+                    )
                     for vertex, coordinate in coordinates.items()
                 ):
                     union(polygon, other_polygon)
@@ -6007,6 +6159,14 @@ def _receiver_island_bounds(obj) -> list[tuple[int, tuple[float, float, float, f
     return sorted(result)
 
 
+class ReceiverGutterProofError(RuntimeError):
+    """The packed layout cannot honor its fixed-pixel gutter contract.
+
+    Gutters are fixed pixel amounts, so the same fractional layout doubles
+    its achieved gutter at double the resolution — callers with a bounded
+    resolution ladder may retry a larger candidate instead of refusing."""
+
+
 def validate_receiver_group_spacing(
         objs, margin_px: int, size: int, *, guard_px: int = 4) -> None:
     """Prove final AABB-pack spacing at the ownership levels that write it."""
@@ -6060,7 +6220,7 @@ def validate_receiver_group_spacing(
         if failures and failures[-1].startswith("receivers "):
             break
     if failures:
-        raise RuntimeError(
+        raise ReceiverGutterProofError(
             "hierarchical receiver packing could not prove its chart/receiver "
             "gutter contract: " + "; ".join(failures[:8])
         )
@@ -6068,15 +6228,30 @@ def validate_receiver_group_spacing(
 
 def pack(
         objs, margin_px: int, size: int, pin: bool = False, *,
-        guard_px: int = 4, group_receivers: bool = False) -> None:
+        guard_px: int = 4, group_receivers: bool = False,
+        chart_shape: str | None = None) -> None:
     packable = [obj for obj in objs if len(obj.data.polygons) > 0]
     if not packable:
         return
-    if group_receivers:
+    # Hierarchical ownership exists to keep cross-receiver area ratios and
+    # ownership rectangles; a single receiver owns the whole atlas, and the
+    # ordinary global pack separates dense per-face chart layouts that the
+    # no-scale local AABB pass leaves stacked (measured: 288 lightmap
+    # charts, hierarchical min gap 0px vs plain pack 48px at 4096).
+    if group_receivers and len(packable) > 1:
         _pack_receiver_groups(
             packable, margin_px, size, guard_px=guard_px,
         )
         return
+    # AABB outlines when the caller's downstream proof measures exact
+    # geometric gutters: a bounding-box gap always lower-bounds the true
+    # shape gap, so the proof holds by construction. CONCAVE outlines are
+    # simplified approximations that measurably under-deliver between
+    # deeply concave organic charts (ellie skin: 30 insufficient-gutter
+    # pairs at the packer's own margin, identical at every resolution).
+    shape_method = (
+        "AABB" if (chart_shape == "AABB" or group_receivers) else "CONCAVE"
+    )
     select_only(packable)
     bpy.ops.object.mode_set(mode="EDIT")
     bpy.ops.mesh.select_all(action="SELECT")
@@ -6090,7 +6265,7 @@ def pack(
         margin=required_bake_gutter_px(
             margin_px, guard_px=guard_px,
         ) / size,
-        shape_method="CONCAVE",
+        shape_method=shape_method,
     )
     if pin:
         # LOCKED: islands containing any pinned UV keep position AND scale;
@@ -6288,7 +6463,8 @@ def pack_with_evaluated_uv_repair(
         held=None, pin: bool = False, log=print,
         delivery_size: int | None = None,
         guard_px: int = 4,
-        world_linear_repairs: bool = False) -> tuple[list[dict], dict]:
+        world_linear_repairs: bool = False,
+        chart_shape: str | None = None) -> tuple[list[dict], dict]:
     """Pack, repair float32 UV collapse, and repack with bounded fallbacks.
 
     Modifier-created triangles are repaired before packing by
@@ -6327,6 +6503,7 @@ def pack_with_evaluated_uv_repair(
         pack(
             objects, margin_px, size, pin=pin, guard_px=guard_px,
             group_receivers=not current_held,
+            chart_shape=chart_shape,
         )
 
     scale_and_pack()
@@ -6376,7 +6553,14 @@ def pack_with_evaluated_uv_repair(
             "Apply or simplify the generating modifier, repair the source UVs, "
             "or keep the object Realtime"
         )
-    if not current_held:
+    # The AABB spacing proof matches the hierarchical receiver pack, whose
+    # ownership contract IS rectangles. Single receivers take the ordinary
+    # global CONCAVE pack (see pack()), where organic islands legitimately
+    # interlock their bounding boxes at any resolution while their exact
+    # outlines keep the packer's margin — bleed safety for that layout is
+    # proved geometrically by the caller's complete bounds/injectivity/
+    # gutter proof, not by AABB distances.
+    if not current_held and len(objects) > 1:
         validate_receiver_group_spacing(
             objects, margin_px, size, guard_px=guard_px,
         )
@@ -7120,14 +7304,20 @@ def save_channel_png(
 def bake_channel_field_pixels(
         objs, *, size: int, margin_px: int, uv_layer: str = ATLAS_UV,
         label: str = "material channel field", allow_hdr: bool = False,
-        view_from: str = "ABOVE_SURFACE", log=print) -> dict:
+        clamp_ldr: bool = False, view_from: str = "ABOVE_SURFACE",
+        log=print) -> dict:
     """Bake one caller-installed private EMIT channel to float pixels.
 
     The Material bake composes several scalar channels into one packed PNG,
     so the float result and its proved coverage return to the caller instead
     of saving here.  Values must stay 0..1; ``allow_hdr`` (emission) reports
     the covered peak for ``KHR_materials_emissive_strength`` instead of
-    refusing it.
+    refusing it.  ``clamp_ldr`` clamps an out-of-range LDR field into the
+    carrier instead of refusing: Cycles renders Principled Base Color above
+    1.0 unclamped (measured: (1.2, 2.0, 0.5) bakes ~(1.16, 1.93, 0.48) in
+    the DIFFUSE color pass), so an 8-bit carrier of such a material is
+    necessarily approximate — the clamped texture is the closest one it can
+    hold, and the attached TSL program keeps the exact field.
     """
     result = _bake_isolated_field_pixels(
         objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
@@ -7135,11 +7325,25 @@ def bake_channel_field_pixels(
     )
     minimum = result["rgbMin"]
     maximum = result["rgbMax"]
+    peak = float(max(maximum))
+    if clamp_ldr and not allow_hdr and (
+            min(minimum) < -1.0e-6 or peak > 1.0 + 1.0e-6):
+        import numpy as np
+        log(
+            f"blendlink: {label}: channel field range {minimum!r}.."
+            f"{maximum!r} exceeds the 8-bit carrier; clamping the carrier "
+            "to 0..1 (the TSL program keeps the exact field)"
+        )
+        np.clip(result["pixels"], 0.0, 1.0, out=result["pixels"])
+        minimum = tuple(min(max(float(v), 0.0), 1.0) for v in minimum)
+        maximum = tuple(min(max(float(v), 0.0), 1.0) for v in maximum)
+        result["rgbMin"] = minimum
+        result["rgbMax"] = maximum
+        peak = float(max(maximum))
     if min(minimum) < -1.0e-6:
         raise RuntimeError(
             f"{label}: channel field contains negative values {minimum!r}"
         )
-    peak = float(max(maximum))
     if not allow_hdr and peak > 1.0 + 1.0e-6:
         raise RuntimeError(
             f"{label}: channel field range {minimum!r}..{maximum!r} cannot be "

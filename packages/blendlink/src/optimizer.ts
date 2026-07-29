@@ -537,7 +537,11 @@ function verifyResampledAnimations(before: AnimationSamplerEvidence[], document:
         (keyframe + 1) * source.elementSize,
       )
       for (let component = 0; component < expected.length; component += 1) {
-        if (sampled[component] !== expected[component]) {
+        // glTF stores float32; interpolation here runs in float64, so a
+        // reconstruction may differ from the stored value by a double ULP
+        // while rounding to the identical float32 bits. Lossless means
+        // lossless at the precision the file can carry.
+        if (Math.fround(sampled[component]!) !== Math.fround(expected[component]!)) {
           throw new Error(
             `Lossless animation verification changed sampler ${index}, key ${keyframe}, `
               + `component ${component} from ${expected[component]} to ${sampled[component]}.`,
