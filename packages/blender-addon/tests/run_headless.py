@@ -4464,10 +4464,15 @@ def main():
     repairs = bakelib.repair_evaluated_atlas_uvs(
         [solidified_unpinned], log=repair_messages.append,
     )
+    # A Solidify shell projects its inner and outer surfaces onto each other,
+    # so the whole-object Smart Project still self-overlaps. That layout used
+    # to ship (this path has no post-pack injectivity proof); the fold rescue
+    # now replaces it with per-face charts and, since this repair is a large
+    # visible quality change, says so in the strategy.
     expect(repairs == [{
         "object": solidified_unpinned.name,
         "triangleCount": len(unpinned_bad),
-        "strategy": "smart-project-whole-unpinned-object",
+        "strategy": "smart-project-whole-unpinned-object+lightmap-rescue",
     }], f"unexpected evaluated UV repair report: {repairs}")
     expect(not bakelib._nonzero_geometry_zero_uv_triangles(
         solidified_unpinned, bakelib.ATLAS_UV,
@@ -5498,10 +5503,12 @@ def main():
         pin=True,
         log=post_pack_messages.append,
     )
+    # Same Solidify inner/outer fold as above: the projection self-overlaps,
+    # so the per-face rescue runs and reports itself.
     expect(post_pack_repairs == [{
         "object": solidified_unpinned.name,
         "triangleCount": len(post_pack_bad),
-        "strategy": "smart-project-whole-unpinned-object",
+        "strategy": "smart-project-whole-unpinned-object+lightmap-rescue",
     }], f"unexpected post-pack repair report: {post_pack_repairs}")
     expect(final_held == {},
            f"post-pack repair invented pinned ownership: {final_held}")

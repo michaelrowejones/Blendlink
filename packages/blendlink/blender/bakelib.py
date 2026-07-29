@@ -3492,25 +3492,19 @@ def _uv_close(left, right, epsilon: float = _UV_CONNECT_EPSILON) -> bool:
             and abs(float(left[1]) - float(right[1])) <= epsilon)
 
 
-# Blender's pack/select-linked island model merges UV-adjacent faces at
-# the sticky connect limit (STD_UV_CONNECT_LIMIT, 1e-4) and ignores seam
-# flags (seams guide unwrap, not island identity). The proof MUST model
-# what the packer can actually separate: stitched charts (ellie body,
-# boundary UVs welded to ~1e-5 across seam-marked edges) move as ONE
-# island under pack_islands, so demanding gutters between them can never
-# be satisfied at any resolution — and bleed across a stitch shows the
-# correct continuation of the surface anyway.
-_UV_ISLAND_CONNECT_EPSILON = 1e-4
-
-
 def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
     """Resolve UV islands without changing Blender selection or edit mode.
 
-    Two polygons share an island when they meet across a mesh edge and both
-    endpoint UVs agree within the packer's sticky connect limit — matching
-    Blender's own UV-adjacency island model. The returned display numbers
-    are stable (ordered by the first polygon in each island), which keeps
-    plan errors actionable and deterministic.
+    Two polygons share an island only when they meet across a non-seam mesh
+    edge and both endpoint UVs agree. This is the TOPOLOGICAL model, and it
+    is the right one for fold detection: two shells that project onto each
+    other (a Solidify inner/outer pair) must read as separate islands that
+    overlap, not as one island that self-overlaps, because the difference
+    decides whether a layout can be repaired by packing or is a genuine
+    fold. Gutter proofs need the packer's coarser model instead — see
+    :func:`_uv_welded_island_pairs`. The returned display numbers are
+    stable (ordered by the first polygon in each island), which keeps plan
+    errors actionable and deterministic.
     """
     parents = list(range(len(mesh.polygons)))
 
@@ -3531,6 +3525,9 @@ def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
         for offset, loop_index in enumerate(indices):
             next_index = indices[(offset + 1) % len(indices)]
             loop = mesh.loops[loop_index]
+            edge = mesh.edges[loop.edge_index]
+            if edge.use_seam:
+                continue
             next_loop = mesh.loops[next_index]
             vertices = (loop.vertex_index, next_loop.vertex_index)
             coordinates = {
@@ -3545,10 +3542,7 @@ def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
             for other_polygon, other_coordinates in uses[index + 1:]:
                 if all(
                     vertex in other_coordinates
-                    and _uv_close(
-                        coordinate, other_coordinates[vertex],
-                        _UV_ISLAND_CONNECT_EPSILON,
-                    )
+                    and _uv_close(coordinate, other_coordinates[vertex])
                     for vertex, coordinate in coordinates.items()
                 ):
                     union(polygon, other_polygon)

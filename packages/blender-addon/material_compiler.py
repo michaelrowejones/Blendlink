@@ -4576,6 +4576,123 @@ def _buffer_view_payload(document: dict, binary: bytes, view_index: int) -> byte
 MAX_BINDABLE_TEX_COORD = 3
 
 
+def _sampled_uv_map_names(material) -> set:
+    """UV maps a material samples by name through its shader graph."""
+    names = set()
+    tree = getattr(material, "node_tree", None) if material else None
+    if tree is None:
+        return names
+    for node in tree.nodes:
+        if node.bl_idname == "ShaderNodeUVMap" and node.uv_map:
+            names.add(str(node.uv_map))
+        # A Geometry-domain Attribute can address a UV layer by name.
+        elif node.bl_idname == "ShaderNodeAttribute" \
+                and getattr(node, "attribute_type", "GEOMETRY") == "GEOMETRY" \
+                and node.attribute_name:
+            names.add(str(node.attribute_name))
+    return names
+
+
+def _prune_unpublished_uv_layers(data_swaps, generated_facts, log=print) -> int:
+    """Drop UV layers nothing in the published output samples.
+
+    The private bake layer is appended after the artist's UV sets, so a mesh
+    authored with five or six of them exports the atlas as TEXCOORD_4+ —
+    past the TEXCOORD_0..3 that Three can bind.  Meshes routed entirely
+    through the bake carry those authored sets for nothing.
+
+    The keep set is deliberately conservative: every Blendlink-owned layer,
+    every layer a surviving artist material names, every layer the TSL
+    runtime resolves, and — whenever any artist material survives on the
+    mesh — the active-render layer, because a texture with no explicit UV
+    Map node samples it.  This mirrors the legacy appearance prune in
+    export_scene.py, which collapses its atlas to TEXCOORD_0 the same way.
+    """
+    runtime_uv_names = {}
+    for fact in generated_facts.values():
+        for object_name, entry in (fact.get("tslRuntimeMeshes") or {}).items():
+            runtime_uv_names.setdefault(object_name, set()).update(
+                str(name) for name in (entry.get("uvChannels") or {})
+            )
+
+    # Transports other than the per-channel bake pin a TEXCOORD index at
+    # PLAN time and attest against it, so reordering their layers would
+    # invalidate evidence that is already fixed. Only meshes whose
+    # generated materials all read their index back out of the emitted
+    # glTF (the "channels" bake) are safe to prune.
+    index_pinned_materials = {
+        name for name, fact in generated_facts.items()
+        if fact.get("transport") != "channels"
+    }
+
+    removed_total = 0
+    for swap in data_swaps:
+        mesh = swap["private"]
+        layers = getattr(mesh, "uv_layers", None)
+        if not layers or len(layers) <= 1:
+            continue
+        keep = {
+            layer.name for layer in layers
+            if layer.name.startswith(bakelib.MATERIAL_ATLAS_UV)
+            or layer.name.startswith(bakelib.ATLAS_UV)
+        }
+        artist_material_present = False
+        index_pinned = False
+        for object_name in swap["objects"]:
+            obj = bpy.data.objects.get(object_name)
+            if obj is None:
+                continue
+            keep |= runtime_uv_names.get(object_name, set())
+            for slot in obj.material_slots:
+                material = slot.material
+                if material is None:
+                    continue
+                if material.name in generated_facts:
+                    if material.name in index_pinned_materials:
+                        index_pinned = True
+                    continue
+                artist_material_present = True
+                keep |= _sampled_uv_map_names(material)
+        if index_pinned:
+            continue
+        if artist_material_present:
+            active = next(
+                (layer.name for layer in layers if layer.active_render),
+                layers[0].name,
+            )
+            keep.add(active)
+        doomed = [layer for layer in layers if layer.name not in keep]
+        if not doomed or len(doomed) == len(layers):
+            continue
+        for layer in doomed:
+            layers.remove(layer)
+        removed_total += len(doomed)
+        log(
+            f"blendlink: pruned {len(doomed)} unpublished UV layer(s) from "
+            f"{mesh.name!r}; kept {[layer.name for layer in layers]}"
+        )
+
+    if removed_total:
+        # Layer order is the exporter's TEXCOORD order, so every recorded
+        # index moved. Re-resolve them against the pruned meshes.
+        for fact in generated_facts.values():
+            for object_name, entry in (fact.get("tslRuntimeMeshes") or {}).items():
+                channels = entry.get("uvChannels") or {}
+                if not channels:
+                    continue
+                obj = bpy.data.objects.get(object_name)
+                layer_names = [layer.name for layer in obj.data.uv_layers] \
+                    if obj is not None else []
+                for name in list(channels):
+                    if name not in layer_names:
+                        raise MaterialCompileError(
+                            f'UV pruning removed {name!r} from "{object_name}", '
+                            "which the TSL runtime resolves."
+                        )
+                    channels[name] = layer_names.index(name)
+    return removed_total
+
+
 def _refuse_unbindable_tex_coord(source: str, tex_coord: int, channel: str) -> None:
     if tex_coord <= MAX_BINDABLE_TEX_COORD:
         return
@@ -7304,6 +7421,9 @@ def with_compiled_materials(
                     f'{binding.object_name}[{binding.slot_index}]: {error}'
                 ) from error
 
+        # Prune before the export reads UV order: this is what keeps the
+        # private bake layer inside the TEXCOORD_0..3 range Three can bind.
+        _prune_unpublished_uv_layers(data_swaps, generated_facts)
         try:
             bpy.context.view_layer.update()
         except (AttributeError, ReferenceError, RuntimeError) as error:
