@@ -25,6 +25,8 @@ const installed = await installEllieAnimationScene({
   scene: world,
 })
 console.log('blendlink: scene installed')
+// Debug handle for browser-console inspection of the live installation.
+;(window as unknown as { __blendlink?: unknown }).__blendlink = installed
 console.log(
   'blendlink tslMaterials:',
   installed.tslMaterials
