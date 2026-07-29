@@ -2821,6 +2821,11 @@ def prepare_material_texture_uv(
                     # The complete proof below measures exact geometric
                     # gutters; AABB charts satisfy it by construction.
                     chart_shape="AABB",
+                    # This function runs the complete bounds/injectivity/
+                    # gutter proof over the packed layout a few lines down
+                    # (an all-True mask through pinned_uv_layout_issues),
+                    # which subsumes the AABB receiver-spacing proof.
+                    caller_proves_layout=True,
                     log=log,
                 )
             except ReceiverGutterProofError as error:
@@ -4107,12 +4112,17 @@ def repair_evaluated_atlas_uvs(
 
     reports = []
     for obj, layer, triangles in affected:
-        smart_project_private_uvs(
+        # The fold rescue inside this call can replace the whole layout
+        # with per-face lightmap charts. That is a large, visible quality
+        # change, so it reaches the caller's log and the report strategy
+        # below rather than being swallowed.
+        projection = smart_project_private_uvs(
             [obj],
             uv_name=uv_name,
-            log=lambda _message: None,
+            log=log,
             world_linear=world_linear,
         )
+        lightmap_rescued = bool(projection.get("rescuedNonInjective"))
 
         remaining = _nonzero_geometry_zero_uv_triangles(obj, uv_name)
         rescued_polygons = []
@@ -4134,9 +4144,9 @@ def repair_evaluated_atlas_uvs(
             "object": obj.name,
             "triangleCount": len(triangles),
             "strategy": (
-                "smart-project-whole-unpinned-object+planar-polygon-rescue"
-                if rescued_polygons
-                else "smart-project-whole-unpinned-object"
+                "smart-project-whole-unpinned-object"
+                + ("+planar-polygon-rescue" if rescued_polygons else "")
+                + ("+lightmap-rescue" if lightmap_rescued else "")
             ),
         }
         if rescued_polygons:
@@ -4144,8 +4154,14 @@ def repair_evaluated_atlas_uvs(
         reports.append(report)
         log(
             f"blendlink: repaired {len(triangles)} evaluated triangle(s) with "
-            f"zero-area atlas UVs on {obj.name} by Smart Projecting the whole "
-            f"fully unpinned {uv_name} layer"
+            f"zero-area atlas UVs on {obj.name} by "
+            + (
+                "replacing the fully unpinned "
+                f"{uv_name} layer with per-face lightmap charts (the Smart "
+                "Project still self-overlapped)"
+                if lightmap_rescued
+                else f"Smart Projecting the whole fully unpinned {uv_name} layer"
+            )
             + (
                 f" and locally projecting {len(rescued_polygons)} tiny "
                 "polygon(s) that remained collapsed"
@@ -6464,7 +6480,8 @@ def pack_with_evaluated_uv_repair(
         delivery_size: int | None = None,
         guard_px: int = 4,
         world_linear_repairs: bool = False,
-        chart_shape: str | None = None) -> tuple[list[dict], dict]:
+        chart_shape: str | None = None,
+        caller_proves_layout: bool = False) -> tuple[list[dict], dict]:
     """Pack, repair float32 UV collapse, and repack with bounded fallbacks.
 
     Modifier-created triangles are repaired before packing by
@@ -6553,14 +6570,11 @@ def pack_with_evaluated_uv_repair(
             "Apply or simplify the generating modifier, repair the source UVs, "
             "or keep the object Realtime"
         )
-    # The AABB spacing proof matches the hierarchical receiver pack, whose
-    # ownership contract IS rectangles. Single receivers take the ordinary
-    # global CONCAVE pack (see pack()), where organic islands legitimately
-    # interlock their bounding boxes at any resolution while their exact
-    # outlines keep the packer's margin — bleed safety for that layout is
-    # proved geometrically by the caller's complete bounds/injectivity/
-    # gutter proof, not by AABB distances.
-    if not current_held and len(objects) > 1:
+    # This is the ONLY post-pack bleed/bounds proof the atlas callers have,
+    # so it runs for every unpinned pack whatever the receiver count. The
+    # single caller that may skip it says so explicitly and runs its own
+    # complete geometric proof over the same layout immediately afterward.
+    if not current_held and not caller_proves_layout:
         validate_receiver_group_spacing(
             objects, margin_px, size, guard_px=guard_px,
         )
@@ -7315,9 +7329,13 @@ def bake_channel_field_pixels(
     refusing it.  ``clamp_ldr`` clamps an out-of-range LDR field into the
     carrier instead of refusing: Cycles renders Principled Base Color above
     1.0 unclamped (measured: (1.2, 2.0, 0.5) bakes ~(1.16, 1.93, 0.48) in
-    the DIFFUSE color pass), so an 8-bit carrier of such a material is
-    necessarily approximate — the clamped texture is the closest one it can
-    hold, and the attached TSL program keeps the exact field.
+    the DIFFUSE color pass), so an 8-bit carrier of such a material cannot
+    be exact — the clamped texture is the closest one it can hold.  This is
+    a NAMED loss, not a lossless route: a TSL program may recover the exact
+    field on the WebGPU family, but IR is opt-in, can be refused per
+    channel, and never loads on WebGL, so the clamped carrier is what many
+    viewers see.  ``result['clampedToCarrier']`` records the true measured
+    range for any caller that publishes evidence.
     """
     result = _bake_isolated_field_pixels(
         objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
@@ -7326,24 +7344,30 @@ def bake_channel_field_pixels(
     minimum = result["rgbMin"]
     maximum = result["rgbMax"]
     peak = float(max(maximum))
-    if clamp_ldr and not allow_hdr and (
-            min(minimum) < -1.0e-6 or peak > 1.0 + 1.0e-6):
-        import numpy as np
-        log(
-            f"blendlink: {label}: channel field range {minimum!r}.."
-            f"{maximum!r} exceeds the 8-bit carrier; clamping the carrier "
-            "to 0..1 (the TSL program keeps the exact field)"
-        )
-        np.clip(result["pixels"], 0.0, 1.0, out=result["pixels"])
-        minimum = tuple(min(max(float(v), 0.0), 1.0) for v in minimum)
-        maximum = tuple(min(max(float(v), 0.0), 1.0) for v in maximum)
-        result["rgbMin"] = minimum
-        result["rgbMax"] = maximum
-        peak = float(max(maximum))
+    # A negative field is a graph defect, never a carrier-precision problem,
+    # so it keeps refusing ahead of any clamp.
     if min(minimum) < -1.0e-6:
         raise RuntimeError(
             f"{label}: channel field contains negative values {minimum!r}"
         )
+    if clamp_ldr and not allow_hdr and peak > 1.0 + 1.0e-6:
+        import numpy as np
+        log(
+            f"blendlink: {label}: channel field range {minimum!r}.."
+            f"{maximum!r} exceeds the 8-bit carrier; clamping the carrier "
+            "to 0..1"
+        )
+        np.clip(result["pixels"], 0.0, 1.0, out=result["pixels"])
+        # The measured range stays the truth the evidence publishes; the
+        # clamp is recorded beside it so nothing reads a clamped carrier as
+        # a faithful one.
+        result["clampedToCarrier"] = {
+            "measuredRgbMin": list(minimum),
+            "measuredRgbMax": list(maximum),
+        }
+        maximum = tuple(min(max(float(v), 0.0), 1.0) for v in maximum)
+        result["rgbMax"] = maximum
+        peak = float(max(maximum))
     if not allow_hdr and peak > 1.0 + 1.0e-6:
         raise RuntimeError(
             f"{label}: channel field range {minimum!r}..{maximum!r} cannot be "

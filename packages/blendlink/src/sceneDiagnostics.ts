@@ -431,6 +431,10 @@ export interface MaterialCompilationEvidence {
       uvRepairStrategies?: Array<
         | 'smart-project-whole-unpinned-object'
         | 'smart-project-whole-unpinned-object+planar-polygon-rescue'
+        /** The projection still self-overlapped, so the layout became
+         * per-face lightmap charts — injective, but one seam per edge. */
+        | 'smart-project-whole-unpinned-object+lightmap-rescue'
+        | 'smart-project-whole-unpinned-object+planar-polygon-rescue+lightmap-rescue'
         | 'sampleable-regular-polygon-rescue'
       >
       ignoredZeroAreaTriangles: number
