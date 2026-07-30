@@ -3755,6 +3755,132 @@ def _material_bake_channel_material(
     return material
 
 
+def atlas_channel_tap(source, kind: str, created_materials: list):
+    """A private channel-tap material for one MATERIAL-ATLAS member.
+
+    Two deliberate differences from the per-material bake's tap
+    (`_material_bake_channel_material`): unlinked Base Color / Metallic /
+    Roughness channels tap their CONSTANT value instead of refusing — the
+    atlas page is the only carrier, there is no per-material glTF factor
+    for a constant to ride — and a missing Normal chain returns ``None``
+    so the caller bakes the flat geometry normal for that member instead
+    of refusing. Principled roots take the per-channel tap; surface-
+    resolvable trees take the fold tap; anything else raises with the
+    material named, which refuses the whole atlas loudly.
+    """
+    tree, root = _principled_root_of(source)
+    if tree is None:
+        raise MaterialCompileError(
+            f'Material-atlas member "{source.name}" has no node tree to tap.'
+        )
+    if root is None:
+        # The fold tap covers Mix-Shader/emission/coerced-colour surfaces
+        # exactly as the surface-resolved per-material bake does.
+        channel_name = _SURFACE_BAKE_KINDS.get(kind)
+        if channel_name is None:
+            if kind == "normal":
+                return None
+            raise MaterialCompileError(
+                f'Material-atlas member "{source.name}" has no {kind!r} '
+                "surface channel."
+            )
+        return _surface_channel_bake_material(
+            source, channel_name, created_materials,
+        )
+    try:
+        material = source.copy()
+    except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+        raise MaterialCompileError(
+            f'Cannot create a private atlas channel material from '
+            f'"{source.name}": {error}'
+        ) from error
+    created_materials.append(material)
+    material.name = f"{PRIVATE_CHANNEL_PREFIX}atlas.{kind}.{source.name}"
+    material["blendlink_private_materialization"] = "cyclesEmit"
+    tree, root = _principled_root_of(material)
+    if tree is None or root is None:
+        raise MaterialCompileError(
+            f'Private atlas channel copy of "{source.name}" lost its '
+            "Principled root."
+        )
+
+    def channel_source(name):
+        socket = procedural._node_input(root, name)
+        if socket is None or not socket.is_linked:
+            return None, (
+                float(socket.default_value)
+                if socket is not None
+                and isinstance(socket.default_value, (int, float))
+                else tuple(socket.default_value)
+                if socket is not None else None
+            )
+        return socket.links[0].from_socket, None
+
+    for output in [
+        item for item in tree.nodes
+        if item.bl_idname == "ShaderNodeOutputMaterial"
+    ]:
+        tree.nodes.remove(output)
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    output.name = "BLENDLINK_PRIVATE_CHANNEL_OUTPUT"
+    if hasattr(output, "is_active_output"):
+        output.is_active_output = True
+
+    if kind == "normal":
+        normal_source, _constant = channel_source("Normal")
+        if normal_source is None:
+            created_materials.remove(material)
+            bpy.data.materials.remove(material)
+            return None
+        sink = tree.nodes.new("ShaderNodeBsdfPrincipled")
+        sink.name = "BLENDLINK_PRIVATE_CHANNEL_NORMAL_SINK"
+        tree.links.new(normal_source, sink.inputs["Normal"])
+        tree.links.new(sink.outputs["BSDF"], output.inputs["Surface"])
+        return material
+
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.name = "BLENDLINK_PRIVATE_CHANNEL_EMIT"
+    emission.inputs["Strength"].default_value = 1.0
+    if kind == "emission":
+        color_source, color_constant = channel_source("Emission Color")
+        strength_source, strength_constant = channel_source(
+            "Emission Strength",
+        )
+        if color_source is not None:
+            tree.links.new(color_source, emission.inputs["Color"])
+        elif color_constant is not None:
+            emission.inputs["Color"].default_value = tuple(color_constant)
+        if strength_source is not None:
+            tree.links.new(strength_source, emission.inputs["Strength"])
+        elif strength_constant is not None:
+            emission.inputs["Strength"].default_value = float(
+                strength_constant,
+            )
+    else:
+        socket_name = {
+            "baseColor": "Base Color", "alpha": "Alpha",
+            "metallic": "Metallic", "roughness": "Roughness",
+        }[kind]
+        linked_source, constant = channel_source(socket_name)
+        if linked_source is not None:
+            tree.links.new(linked_source, emission.inputs["Color"])
+        elif isinstance(constant, tuple):
+            emission.inputs["Color"].default_value = (
+                tuple(constant[:3]) + (1.0,)
+            )
+        elif isinstance(constant, float):
+            emission.inputs["Color"].default_value = (
+                constant, constant, constant, 1.0,
+            )
+        else:
+            raise MaterialCompileError(
+                f'Material-atlas member "{source.name}" has no usable '
+                f"{kind!r} channel."
+            )
+    tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+    return material
+
+
 def plan_materials(objects, *, purpose: str = "inspect") -> MaterialPlan:
     """Plan every used material binding in an already resolved export scope."""
     if purpose not in {"inspect", "preview", "final"}:
