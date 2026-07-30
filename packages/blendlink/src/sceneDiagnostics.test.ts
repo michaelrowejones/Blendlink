@@ -9,6 +9,8 @@ import {
   compileSceneDiagnostics,
   type BlenderSceneDiagnostics,
   type MaterialCompilationEvidence,
+  type ShapeKeyTransportDiagnostic,
+  type SkinApproximationDiagnostic,
 } from './sceneDiagnostics.js'
 import {
   RUNTIME_SCENE_DIAGNOSTICS_SCHEMA_VERSION,
@@ -291,6 +293,85 @@ function verifyFixture(
     materialCompilation,
     limits: { maxAuditFrames: 120, maxMorphCacheBytes: 64 * 1024 * 1024 },
   })
+}
+
+function geometryFixture(blender: Partial<BlenderSceneDiagnostics>) {
+  return compileSceneDiagnostics(documentWithLods().document, vocabulary([]), {
+    procedural: [],
+    instances: [],
+    limits: { maxAuditFrames: 120, maxMorphCacheBytes: 64 * 1024 * 1024 },
+    ...blender,
+  })
+}
+
+function frozenDeformerRecord(
+  object: string,
+): NonNullable<BlenderSceneDiagnostics['frozenDeformers']>[number] {
+  return {
+    code: 'geometry.frozen-deformer-no-armature',
+    object,
+    objectId: `${object}-id`,
+    modifiers: [{
+      name: 'SurfaceDeform',
+      type: 'SURFACE_DEFORM',
+      timeSource: 'RIG-Ellie.001',
+    }],
+    frameRange: [1, 120],
+    reason: `${object} publishes one frozen pose of a deformer the timeline keeps moving.`,
+  }
+}
+
+function shapeKeyRecord(
+  object: string,
+  severity: ShapeKeyTransportDiagnostic['severity'],
+  transport: ShapeKeyTransportDiagnostic['keys'][number]['transport'],
+  positionSource: ShapeKeyTransportDiagnostic['positionSource'] = 'evaluated',
+): ShapeKeyTransportDiagnostic {
+  return {
+    object,
+    positionSource,
+    sourceVertices: 100,
+    appliedVertices: 100,
+    bboxDiagonal: 2,
+    containerModifiers: ['Solidify'],
+    keys: [{
+      name: 'Smile',
+      transport,
+      value: 0.5,
+      muted: false,
+      maxDelta: 0.01,
+      animation: 'constant',
+      valueRange: [0, 1],
+    }],
+    valueProof: 'exhaustive',
+    frameRange: [1, 120],
+    frozenAtFrame: 0,
+    severity,
+    message: `${object}: ${severity}`,
+  }
+}
+
+function skinApproximationRecord(
+  object: string,
+  flags: { preserveVolume: boolean; boneEnvelopes: boolean },
+): SkinApproximationDiagnostic {
+  return {
+    object,
+    skinned: true,
+    armature: 'RIG-Ellie.001',
+    exporterSelected: 'Armature',
+    ...flags,
+    modifiers: [{
+      name: 'Armature',
+      armature: 'RIG-Ellie.001',
+      ...flags,
+      vertexGroups: true,
+      showViewport: true,
+      exporterSelected: true,
+    }],
+    severity: flags.preserveVolume || flags.boneEnvelopes ? 'warn' : 'info',
+    message: `${object}: approximated`,
+  }
 }
 
 describe('scene diagnostics', () => {
@@ -1245,6 +1326,89 @@ describe('scene diagnostics', () => {
       procedural: [], instances: [], materialCompilation: evidence,
       limits: { maxAuditFrames: 120, maxMorphCacheBytes: 64 * 1024 * 1024 },
     })).toThrow(/refused the final GLB.*changed TEXCOORD_0 corner association/)
+  })
+
+  it('omits the geometry-fidelity sections a producer never reported', () => {
+    // The absent/empty distinction is the whole contract: a manifest compiled
+    // before these checks existed must not read as "nothing was lost".
+    const silent = geometryFixture({})
+    expect(silent).not.toHaveProperty('frozenDeformers')
+    expect(silent).not.toHaveProperty('shapeKeys')
+    expect(silent).not.toHaveProperty('skinApproximation')
+
+    const ran = geometryFixture({
+      frozenDeformers: [], shapeKeys: [], skinApproximation: [],
+    })
+    expect(ran.frozenDeformers).toEqual({ objects: [], blockers: 0 })
+    expect(ran.shapeKeys).toEqual({
+      objects: [], dropped: 0, basisSourced: 0, warnings: [], refusals: [],
+    })
+    expect(ran.skinApproximation).toEqual({
+      objects: [], preserveVolume: 0, boneEnvelopes: 0, warnings: [],
+    })
+  })
+
+  it('counts every frozen deformer as a blocker and copies it off the sidecar graph', () => {
+    const sidecar = [frozenDeformerRecord('Teeth'), frozenDeformerRecord('Tongue')]
+    const report = geometryFixture({ frozenDeformers: sidecar })
+
+    expect(report.frozenDeformers?.blockers).toBe(2)
+    expect(report.frozenDeformers?.objects).toEqual(sidecar)
+    // Every sibling section copies field by field so the manifest cannot be
+    // mutated through the sidecar, or vice versa. This one must not be the
+    // exception that quietly re-links the two object graphs.
+    expect(report.frozenDeformers?.objects).not.toBe(sidecar)
+    expect(report.frozenDeformers?.objects?.[0]).not.toBe(sidecar[0])
+    expect(report.frozenDeformers?.objects?.[0]?.modifiers)
+      .not.toBe(sidecar[0]!.modifiers)
+    expect(report.frozenDeformers?.objects?.[0]?.frameRange)
+      .not.toBe(sidecar[0]!.frameRange)
+  })
+
+  it('separates dropped shape keys from the severity the artist has to act on', () => {
+    const sidecar = [
+      shapeKeyRecord('Zeta', 'refuse', 'frozen', 'basis'),
+      shapeKeyRecord('Alpha', 'warn', 'frozen'),
+      shapeKeyRecord('Mid', 'info', 'morphTarget'),
+    ]
+    const report = geometryFixture({ shapeKeys: sidecar })
+
+    expect(report.shapeKeys?.objects.map((record) => record.object))
+      .toEqual(['Alpha', 'Mid', 'Zeta'])
+    // `dropped` counts meshes that lost a key, which is independent of
+    // severity: a proven-constant key is dropped and still only warns.
+    expect(report.shapeKeys).toMatchObject({
+      dropped: 2,
+      basisSourced: 1,
+      warnings: ['Alpha: warn'],
+      refusals: ['Zeta: refuse'],
+    })
+    expect(report.shapeKeys?.objects[0]).not.toBe(sidecar[1])
+    expect(report.shapeKeys?.objects[0]?.containerModifiers)
+      .not.toBe(sidecar[1]!.containerModifiers)
+    expect(report.shapeKeys?.objects[0]?.keys[0]).not.toBe(sidecar[1]!.keys[0])
+    expect(report.shapeKeys?.objects[0]?.keys[0]?.valueRange)
+      .not.toBe(sidecar[1]!.keys[0]!.valueRange)
+    expect(report.shapeKeys?.objects[0]?.frameRange).not.toBe(sidecar[1]!.frameRange)
+  })
+
+  it('counts each skinning approximation independently and never refuses on one', () => {
+    const sidecar = [
+      skinApproximationRecord('Zeta', { preserveVolume: true, boneEnvelopes: true }),
+      skinApproximationRecord('Alpha', { preserveVolume: true, boneEnvelopes: false }),
+      skinApproximationRecord('Mid', { preserveVolume: false, boneEnvelopes: false }),
+    ]
+    const report = geometryFixture({ skinApproximation: sidecar })
+
+    expect(report.skinApproximation?.objects.map((record) => record.object))
+      .toEqual(['Alpha', 'Mid', 'Zeta'])
+    expect(report.skinApproximation).toMatchObject({
+      preserveVolume: 2,
+      boneEnvelopes: 1,
+      warnings: ['Alpha: approximated', 'Zeta: approximated'],
+    })
+    expect(report.skinApproximation?.objects[0]).not.toBe(sidecar[1])
+    expect(report.skinApproximation?.objects[0]?.modifiers[0]).not.toBe(sidecar[1]!.modifiers[0])
   })
 
   it('projects exactly the versioned LOD and instance inputs needed by browser adapters', () => {

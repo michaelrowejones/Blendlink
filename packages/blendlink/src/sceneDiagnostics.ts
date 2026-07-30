@@ -2200,7 +2200,11 @@ export function compileSceneDiagnostics(
     ...(blender?.frozenDeformers
       ? {
           frozenDeformers: {
-            objects: blender.frozenDeformers,
+            objects: blender.frozenDeformers.map((record) => ({
+              ...record,
+              modifiers: record.modifiers.map((modifier) => ({ ...modifier })),
+              frameRange: [...record.frameRange] as [number, number],
+            })),
             blockers: blender.frozenDeformers.length,
           },
         }
