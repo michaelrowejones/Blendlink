@@ -126,10 +126,44 @@ when the target is skinned — fixes two of the four catastrophic objects, 143% 
 verifying the target's stack is pure LBS, else measure and refuse. Class-D attribute bake plus
 the animated-driver refusal. Split MASK static/animated.
 
+**Phase 1b — stop baking constant channels. Measured 2026-07-30; do this before Phase 2.**
+The per-channel bake writes a texture for every Principled channel whether or not the channel
+varies. On ellie that is **38 of 85 textures and 75.2 MB of the 201.5 MB GPU budget — 37.3% —
+for images that are a single solid colour**. Decoded from the shipped GLB, "constant" meaning no
+channel varies by more than one 8-bit code value:
+
+| what | count | GPU bytes | fill |
+| --- | --- | --- | --- |
+| emissive | 24 | 53.0 MB | `(0,0,0)` — pure black, every one |
+| ORM | 12 | 22.2 MB | e.g. `(255,152,64)` = AO 1.0, rough 0.596, metal 0.251 |
+| base colour | 2 | 0.1 MB | `(236,67,216)`, `(162,149,135)` |
+
+**75.2 MB of it is free**, not merely recoverable: every black emissive sits under
+`emissiveFactor = [1,1,1]` so the product is already zero, and every constant ORM sits under
+`roughnessFactor = metallicFactor = 1.0` so the constant *is* the factor, exactly. Only the two
+base colours (0.1 MB) need arithmetic, an sRGB→linear fold to `baseColorFactor`
+(`(236,67,216)` → `[0.8388, 0.0561, 0.6867]`). Nothing needs re-baking and nothing changes
+visually.
+
+The information to skip them is already in the plan and is simply not read. The shipped manifest
+records **105 channels as `routing: "constant"` with the exact `value`** — against 8 `unique`, 3
+`tileable`, 2 `viewDependent`, 1 `uniform` — including `Emission Color: [0,0,0,1]`, which is the
+24 black textures verbatim. The channel router does the analysis and the baker ignores the
+answer.
+
+This lands ahead of Phase 2 because it is bigger than what the shared atlas was scoped to buy,
+costs no new route, and shrinks the input the atlas would have to pack. Note it is a **VRAM and
+binding-count win, not a download win** — those PNGs are already 14 KB each, so the 23.8 MB GLB
+barely moves. The win is 37% of texture memory, 38 fewer texture bindings, and 51 materials that
+stop pretending to be textured.
+
 **Phase 2 — the route model.** Lighting × Surface split; `bakeOutput = "material"` through all
 four gate points; per-slot shared surface atlas; delete the `compile_objects` subtraction so
 lighting and TSL compose; promote TSL to a real route with its own property, UI and decision
-path. Success is measured as ellie's draw calls (65) and texture bytes (211 MB) before/after.
+path. Success is measured as ellie's draw calls (65) and texture bytes before/after — against
+the post-1b figure, **126.3 MB**, not today's 201.5 MB, so the atlas is not credited with 1b's
+win. (The plan's earlier "211 MB" was an estimate; 201.5 MB is measured from the shipped GLB as
+RGBA8 plus a full mip chain.)
 
 **Phase 3 — one runtime deformer: LATTICE, post-skin.** A deform node material subclass, a
 deformer node writing position/normal/previous, the cage as a 3D texture or uniform array. All
@@ -200,8 +234,14 @@ authored component if secondary motion is ever needed.
 - **f. Is the deformer residual a pure function of pose?** Go/no-go for Phase 4. Find two frames
   in different clips with near-identical bone transforms and diff the deformed meshes.
 - **g. Does a shared surface atlas actually reduce ellie's GPU bytes?** Phase 2's whole
-  justification. Run the allocator at candidate densities and sum against today's 211 MB
-  *before* building the route.
+  justification. Run the allocator at candidate densities and sum against the **post-1b 126.3 MB**
+  *before* building the route. Half-measured 2026-07-30: today's budget is **201.5 MB** across 85
+  textures (RGBA8 + full mip chain, decoded from the shipped GLB), 65 draw calls, 51 materials.
+  Composition: one 2048² `ellie.dirt_map` at 21.3 MB shared by 3 materials, 30 × 1024² at 160.0 MB,
+  then 9 × 512², 18 × 256², 25 × 128², 2 × 64². **Only 21.3 MB is shared by more than one material
+  slot; 180.1 MB is single-use.** Phase 1b removes 75.2 MB of that as provably constant, which
+  leaves ~126.3 MB in genuinely varying single-use images — that residue, not the headline number,
+  is what the atlas has to beat. The allocator run is still owed.
 
 ## 7. Prior art
 
