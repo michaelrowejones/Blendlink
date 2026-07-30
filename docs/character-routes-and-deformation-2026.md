@@ -176,8 +176,27 @@ authored component if secondary motion is ever needed.
 - **c. What does 7-stacked B-spline LATTICE cost on the head?** Sets the refusal threshold.
 - **d. Is CORRECTIVE_SMOOTH's 2.4% visible at delivery resolution?** Decides whether Phase 4 or
   class B3 ever gets built.
-- **e. Do any of ellie's four visible MASKs use ARMATURE mode?** One RNA read; the only place the
-  "no pre-skin deformers" conclusion can weaken.
+- **e. ANSWERED — NO. Measured 2026-07-30** by RNA read over the 33 visible meshes. All **13**
+  MASK modifiers in the scene are `VERTEX_GROUP` mode; **zero** are `ARMATURE`. The "no pre-skin
+  deformers" conclusion holds, and there is no bone dependency hiding in a mask.
+
+  The read also settles Phase 1's "split MASK static/animated" for this scene, in the direction
+  that removes work. Of the 13, four are enabled — `eyelashes/Mask`, `head/Mask`,
+  `jacket/Mask Collar`, `tongue/Mask` — and **not one of them carries any animation on any
+  property**. The other nine are disabled and *are* driven, but only on `show_viewport` /
+  `show_render`, never on `vertex_group` or `threshold`. Each driver reads one rig custom
+  property (`Properties_Character_Ellie["Mask Left Arm"]` and siblings, `PRP-Spine["FannyPackStrap"]`).
+
+  A driver on `show_viewport` is topology-changing — enabling a MASK deletes vertices — so this
+  looked like a second, worse instance of Phase 0f. It is not. Every one of those properties is
+  keyed by 6–7 actions and **every keyframe in every action is 0.0**: one distinct value set,
+  `(0.0,)`, per property, across the whole clip library. The remaining ~50 clips do not key them
+  and hold the same 0.0. So the masks are provably off in every clip, and the shipped topology
+  does not depend on which action was assigned. Contrast `["Quality"]`, which five clips key at
+  2.0 — that is why 0f is real and this is not.
+
+  Phase 1 still needs the static/animated split as a *mechanism*, because nothing here proves the
+  next scene is as tidy; it just does not need it for ellie.
 - **f. Is the deformer residual a pure function of pose?** Go/no-go for Phase 4. Find two frames
   in different clips with near-identical bone transforms and diff the deformed meshes.
 - **g. Does a shared surface atlas actually reduce ellie's GPU bytes?** Phase 2's whole
