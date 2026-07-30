@@ -465,6 +465,24 @@ export interface BlenderSceneDiagnostics {
     }>
     refuse: Array<Record<string, unknown> & { object: string }>
   }
+  /** Meshes that publish one frozen pose of a deformer that keeps moving.
+   * Blender's glTF exporter mutes ARMATURE modifiers and nothing else before
+   * it evaluates the mesh, so an unskinned mesh whose deformer input is
+   * animated ships a single snapshot forever. Decided with no depsgraph
+   * evaluation: presence means the contribution provably varies, never by how
+   * much. An empty array is the positive evidence that the check ran. */
+  frozenDeformers?: Array<Record<string, unknown> & {
+    code: 'geometry.frozen-deformer-no-armature'
+    object: string
+    objectId?: string
+    modifiers: Array<Record<string, unknown> & {
+      name: string
+      type: string
+      timeSource: string
+    }>
+    frameRange: [number, number]
+    reason: string
+  }>
   limits: { maxAuditFrames: number; maxMorphCacheBytes: number }
 }
 
@@ -516,6 +534,13 @@ export interface SceneDiagnostics {
     blockers: number
     topologyChanging: number
     cacheCandidates: number
+  }
+  /** Phase 0a. Meshes publishing one frozen pose of a moving deformer.
+   * Absent on manifests compiled before the check existed; `objects: []`
+   * is the positive evidence that it ran and found nothing. */
+  frozenDeformers?: {
+    objects: BlenderSceneDiagnostics['frozenDeformers']
+    blockers: number
   }
   /** Additive schema-v3 evidence; absent on manifests compiled before the
    * material portability audit was persisted. */
@@ -2002,6 +2027,17 @@ export function compileSceneDiagnostics(
       ).length,
     },
     ...(materialCompilation ? { materialCompilation } : {}),
+    // Carried explicitly, like every other diagnostics field: a producer that
+    // predates the check omits it entirely, and an empty array from a producer
+    // that has it is the evidence the check ran.
+    ...(blender?.frozenDeformers
+      ? {
+          frozenDeformers: {
+            objects: blender.frozenDeformers,
+            blockers: blender.frozenDeformers.length,
+          },
+        }
+      : {}),
     ...(authoredOrthographicAspect
       ? { camera: { authoredOrthographicAspect } }
       : {}),
