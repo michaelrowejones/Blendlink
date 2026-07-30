@@ -243,6 +243,35 @@ authored component if secondary motion is ever needed.
   leaves ~126.3 MB in genuinely varying single-use images — that residue, not the headline number,
   is what the atlas has to beat. The allocator run is still owed.
 
+  **The draw-call half of the same baseline, measured 2026-07-30.** 65 draw calls = 36 mesh
+  instances carrying 65 primitives; no mesh is instanced more than once. A glTF mesh needs one
+  primitive per material, so **if the surface atlas collapses materials, the floor is 36 draw
+  calls — a 45% cut** — and 15 multi-material meshes account for every one of the 29 extra calls.
+  The worst is `ellie_boots` at 9 primitives / 9 materials on one 17,148-triangle mesh; five
+  jacket pins each split into 2 purely to give the underside its own material. Below 36 you would
+  have to merge meshes, and there the binding constraint is **20 distinct vertex-attribute
+  layouts**, with alpha mode (26 BLEND / 25 OPAQUE) as the last hard boundary.
+
+  Two things fell out that are not about the atlas:
+
+  - **All 51 materials are `doubleSided: true`.** Nothing is back-face culled anywhere on the
+    character. Worth a separate look — it is fragment cost paid on every surface, and for a
+    closed character mesh most of it should be unnecessary.
+  - Vertex attributes total 4.74 MB, of which **1.24 MB (26.1%) has no standard `GLTFLoader`
+    binding**: `TEXCOORD_4..6` (481 KB) and `COLOR_1..COLOR_8` (788 KB). Neither is straightforwardly
+    waste, and both need care before anyone "fixes" them:
+    - The `TEXCOORD_4..6` here is the **pre-fix state**. This GLB predates the texCoord work;
+      `MAX_BINDABLE_TEX_COORD = 3` at `packages/blender-addon/material_compiler.py:4576` already
+      refuses them at HEAD. Historical, not open. It does mean the whole §6g measurement needs
+      re-taking on a clean HEAD compile before Phase 2 is scored against it.
+    - The extra `COLOR_n` sets **are** read — the TSL recipe path binds them by name
+      (`color_1`, see `tslNodeRecipe.test.ts:89`) — so they are not dead. But **135 of the 194
+      extra COLOR bindings are byte-identical to that primitive's own `COLOR_0`.** That is a
+      concrete, measured instance of the TSL consolidation question: 70% of the extra colour
+      sets carry no information their `COLOR_0` does not already carry. (Whether they already
+      share accessors is a separate question this measurement does not answer, so the byte
+      saving is not yet established — only the redundancy.)
+
 ## 7. Prior art
 
 Nobody ships DCC deformers as deformers. Unreal, Unity, Houdini Engine, USD, VRM and Needle
