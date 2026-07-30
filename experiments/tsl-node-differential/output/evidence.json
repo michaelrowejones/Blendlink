@@ -1014,6 +1014,18 @@
       },
       "failureClass": "per-object attribute (the ellie paint-set frontier x30)"
     },
+    "objectinfo-random": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000014988439033913892,
+        "p99Abs": 0.000015020370483398438,
+        "maxAbs": 0.000015020370483398438
+      },
+      "failureClass": "Object Info Random (per-object name hash)"
+    },
     "white-noise": {
       "ok": true,
       "claim": "exact",
@@ -1510,7 +1522,7 @@
     }
   },
   "claims": {
-    "exact": 122,
+    "exact": 123,
     "approximate": 1,
     "diagnostic": 1
   },

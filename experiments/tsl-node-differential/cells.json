@@ -1919,6 +1919,18 @@
    "claim": "exact"
   },
   {
+   "id": "objectinfo-random",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Object Info Random (per-object name hash)",
+   "notes": "Object Info Random scaled by the UV.x gradient - 5 of ellie's 49 visible materials (all five jacket pins) read exactly this output. Cycles derives Random as hash_uint2(hash_string(object name), 0)/0xFFFFFFFF and EEVEE computes the identical value, verified against a real render to float32 ('Cube' -> 0.313141934). The reference bake declares the TSL fixture FROM the live proxy's name via the production object_random_number helper, so the hash itself sits inside the gate - if the helper drifts from what Cycles renders, this cell fails. At runtime the value rides the proven attribute_object seam: the exporter stamps blendlink_object_random on every exported mesh object, so a material shared by several objects gets each object's own value. Named caveats: renaming an object changes the value (in Blender too), and instanced duplis use a different random_id chain the exporter does not stamp."
+  },
+  {
    "id": "white-noise",
    "gate": true,
    "tolerance": {

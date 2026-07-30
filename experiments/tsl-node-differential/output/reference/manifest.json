@@ -1850,6 +1850,35 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "objectinfo-random": {
+      "path": "objectinfo-random.f32",
+      "pipeline": "ir",
+      "ir": "ir/objectinfo-random.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007511404808610678,
+        0.007511404808610678,
+        0.007511404808610678
+      ],
+      "rgbMax": [
+        0.9520593285560608,
+        0.9520593285560608,
+        0.9520593285560608
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix",
+      "objectAttributes": {
+        "blendlink_object_random": [
+          0.9595407675857518,
+          0.9595407675857518,
+          0.9595407675857518
+        ]
+      }
+    },
     "white-noise": {
       "path": "white-noise.f32",
       "pipeline": "ir",

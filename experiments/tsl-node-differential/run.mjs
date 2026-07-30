@@ -328,7 +328,12 @@ try {
         pipeline: cell.pipeline ?? 'ir',
         analyticCamera: Boolean(cell.analyticCamera),
         analyticLight: cell.analyticLight ?? null,
-        objectAttributes: cell.objectAttributes ?? null,
+        // A cell may declare its fixture statically, or the reference bake
+        // may declare it from live scene state (objectinfo-random computes
+        // the proxy's name hash with the production helper, so the hash is
+        // inside the gate).
+        objectAttributes: cell.objectAttributes
+          ?? reference.cells[cell.id]?.objectAttributes ?? null,
       },
     )
     if (pageErrors.length > errorsBefore) {

@@ -37,6 +37,7 @@ try:
     import nla_sequence  # noqa: E402
     import probe_authoring  # noqa: E402
     import procedural  # noqa: E402
+    import tsl_ir  # noqa: E402
     import weblights  # noqa: E402
 except ModuleNotFoundError:
     # Source-tree convenience. Published builds place the canonical addon
@@ -50,6 +51,7 @@ except ModuleNotFoundError:
     import nla_sequence  # noqa: E402
     import probe_authoring  # noqa: E402
     import procedural  # noqa: E402
+    import tsl_ir  # noqa: E402
     import weblights  # noqa: E402
 
 
@@ -5576,9 +5578,32 @@ def main() -> None:
             # nests strictly LIFO within the material transaction and the outer
             # finally below.
             lowered = procedural.prepare_lowered_skins(lowering_derivations)
+            # Object Info Random rides node extras: Cycles derives it from
+            # the object NAME, so the compiler stamps the same hash as a
+            # transient custom property (export_extras carries it into
+            # extras, GLTFLoader lands it in userData, and the TSL runtime's
+            # attribute_object uniform reads it per draw). Stamped on every
+            # mesh object rather than only bound ones so a shared material
+            # always finds each object's own value; removed afterwards
+            # because the artist's scene is not ours to annotate.
+            stamped_random = []
+            for stamped_obj in bpy.context.scene.objects:
+                if stamped_obj.type != "MESH":
+                    continue
+                if tsl_ir.OBJECT_RANDOM_PROPERTY in stamped_obj:
+                    continue
+                stamped_obj[tsl_ir.OBJECT_RANDOM_PROPERTY] = (
+                    tsl_ir.object_random_number(stamped_obj.name)
+                )
+                stamped_random.append(stamped_obj)
             try:
                 return bpy.ops.export_scene.gltf(**export_kwargs)
             finally:
+                for stamped_obj in stamped_random:
+                    try:
+                        del stamped_obj[tsl_ir.OBJECT_RANDOM_PROPERTY]
+                    except (KeyError, ReferenceError):
+                        pass
                 procedural.restore_lowered_skins(lowered)
 
         if material_plan.lowerings:

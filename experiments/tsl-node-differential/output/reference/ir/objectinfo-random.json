@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "math",
+    "operation": "MULTIPLY",
+    "a": {
+      "op": "attribute_object",
+      "name": "blendlink_object_random",
+      "output": "fac"
+    },
+    "b": {
+      "op": "separate",
+      "channel": "x",
+      "input": {
+        "op": "uv"
+      }
+    }
+  }
+}

@@ -1303,6 +1303,34 @@ def build_attribute_object(tree, emission):
     tree.links.new(multiply.outputs["Vector"], emission.inputs["Color"])
 
 
+def build_objectinfo_random(tree, emission):
+    """Object Info Random scaled by the UV.x gradient, so the diff carries
+    both the per-object value and its spatial application. The reference
+    side needs no fixture property: Cycles derives Random from the proxy
+    object's NAME, and the manifest hook below computes the same value with
+    the production helper for the TSL side."""
+    info = tree.nodes.new("ShaderNodeObjectInfo")
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    multiply = tree.nodes.new("ShaderNodeMath")
+    multiply.operation = "MULTIPLY"
+    tree.links.new(info.outputs["Random"], multiply.inputs[0])
+    tree.links.new(separate.outputs["X"], multiply.inputs[1])
+    tree.links.new(multiply.outputs["Value"], emission.inputs["Color"])
+
+
+def manifest_objectinfo_random(proxy):
+    """Declare the TSL fixture FROM the proxy's actual name via the
+    production helper, so the hash itself is inside the gate: if
+    object_random_number ever drifts from what Cycles renders, this cell
+    fails rather than both sides agreeing on a wrong constant."""
+    value = tsl_ir.object_random_number(proxy.name)
+    return {"objectAttributes": {
+        tsl_ir.OBJECT_RANDOM_PROPERTY: [value, value, value],
+    }}
+
+
 def proxy_object_attribute(proxy):
     proxy["blendlink_probe"] = [0.8, 0.35, 0.1]
 
@@ -1979,6 +2007,12 @@ CELL_PROXY_SETUP = {
     "attribute-object": proxy_object_attribute,
 }
 
+# Hooks that contribute per-cell manifest fields computed while the proxy
+# still exists (it is removed before the manifest entry is written).
+CELL_MANIFEST_EXTRA = {
+    "objectinfo-random": manifest_objectinfo_random,
+}
+
 
 BUILDERS = {
     "constant-linear": build_constant_linear,
@@ -2009,6 +2043,7 @@ BUILDERS = {
     "texco-generated": build_texco_generated,
     "attribute-fac": build_attribute_fac,
     "attribute-object": build_attribute_object,
+    "objectinfo-random": build_objectinfo_random,
     "hash-probe": build_hash_probe,
     "voronoi-rand0-probe": build_voronoi_rand0_probe,
     "noise-z-probe": build_noise_z_probe,
@@ -2180,10 +2215,14 @@ def main():
             if view_from == "ACTIVE_CAMERA":
                 ensure_view_camera()
             proxy = bakelib.uv_tile_proxy([], window=(0.0, 0.0, 1.0, 1.0))
+            manifest_extra = {}
             try:
                 setup = CELL_PROXY_SETUP.get(cell_id)
                 if setup is not None:
                     setup(proxy)
+                extra_hook = CELL_MANIFEST_EXTRA.get(cell_id)
+                if extra_hook is not None:
+                    manifest_extra = extra_hook(proxy)
                 proxy.data.materials.append(material)
                 result = bakelib.bake_channel_field_pixels(
                     [proxy], size=SIZE, margin_px=0,
@@ -2208,6 +2247,7 @@ def main():
             "rgbMax": list(result["rgbMax"]),
             "deviceClass": result["deviceClass"],
             "backend": result["backend"],
+            **manifest_extra,
         }
         print(f"tsl differential reference: {cell_id} baked ({pipeline})")
     (OUTPUT / "manifest.json").write_text(

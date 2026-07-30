@@ -103,6 +103,36 @@ def _hash_float_to_float(x):
     ) / 0xFFFFFFFF
 
 
+# The per-object extra the exporter stamps and the runtime reads back through
+# userData. One reserved name, shared by the emitter, the exporter and the
+# differential harness, so it cannot drift apart silently.
+OBJECT_RANDOM_PROPERTY = "blendlink_object_random"
+
+
+def object_random_number(name: str) -> float:
+    """Cycles' Object Info Random for a non-instanced object, from its name.
+
+    Verbatim: ``object->set_random_id(hash_uint2(hash_string(name), 0))``
+    (intern/cycles/scene/object.cpp), where ``hash_string`` is ``i = i*37 + c``
+    per byte; EEVEE computes the identical value via BLI_hash_string /
+    BLI_hash_int_2d, so both engines agree. Verified against a Blender 5.2
+    render to float32 ('Cube' -> 0.313141934, 'Ellie' -> 0.556522661).
+
+    Renaming the object changes the value -- in Blender too, so this matches
+    the oracle rather than diverging from it. Instanced duplis do NOT use the
+    name hash (their random_id carries a persistent-id chain and a
+    root-object XOR); the exporter only stamps real exported objects, which
+    is exactly the population this derivation is correct for.
+    """
+    accumulated = 0
+    for byte in str(name).encode("utf-8"):
+        accumulated = (accumulated * 37 + byte) & 0xFFFFFFFF
+    seed = (0xDEADBEEF + (2 << 2) + 13) & 0xFFFFFFFF
+    return _jenkins_final(
+        (seed + accumulated) & 0xFFFFFFFF, seed, seed,
+    ) / 0xFFFFFFFF
+
+
 def _noise_random_offset(seed, count):
     """noisetex.h random_floatN_offset for a constant seed.
 
@@ -958,6 +988,26 @@ def emit_output(node, from_socket, stack=()):
                 "op": "clamp01", "input": expression,
             }
         return expression
+
+    if idname == "ShaderNodeObjectInfo":
+        output_id = getattr(from_socket, "identifier", socket_name)
+        if output_id != "Random":
+            # Location/Color/Alpha/Index/Material Index are all per-object
+            # uniforms too, but nothing in the corpus reaches them yet and a
+            # cell must exist first.
+            _refuse(f"Object Info output {socket_name!r} has no cell yet")
+        # A per-object constant, so it rides the proven attribute_object
+        # seam: the exporter stamps OBJECT_RANDOM_PROPERTY on every exported
+        # mesh object (export_scene.emit_gltf), GLTFLoader lands it in
+        # userData, and the runtime's onObjectUpdate uniform delivers it per
+        # draw. A material SHARED by several objects therefore gets each
+        # object's own value -- per-object behaviour, not a baked average.
+        # 'fac' averages the resolver's (r, r, r) back to the scalar.
+        return {
+            "op": "attribute_object",
+            "name": OBJECT_RANDOM_PROPERTY,
+            "output": "fac",
+        }
 
     if idname == "ShaderNodeVectorRotate":
         # One Rodrigues path serves every fixed-axis mode. Verbatim from
