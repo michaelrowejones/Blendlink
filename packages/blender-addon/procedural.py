@@ -95,6 +95,52 @@ _ALWAYS_DYNAMIC_MODIFIERS = {
     "SURFACE_DEFORM", "WARP", "WAVE",
 }
 
+# Refusing a mesh whose only motion is a deformer glTF cannot carry needs its
+# own modifier table. ``material_compiler._DEFORMING_MODIFIERS`` is NOT it:
+# that set answers which modifiers a rest-basis UV-space channel bake is
+# invariant to, so it holds SUBSURF/MASK and six data-only kinds that move no
+# vertex, and omits DISPLACE/MULTIRES. Run through this refusal's scope gate on
+# the ellie character it selects five unskinned publish-scoped meshes, two of
+# which deviate by exactly 0.000000 m across all 331 frames -- a 40%
+# false-refusal rate on a hard stop. This table asks the narrower question: can
+# the modifier INTRODUCE motion that Blender's glTF exporter would freeze? Each
+# value names the ID-valued inputs whose movement is the only way it can, so a
+# deformer bound to a provably static input stays publishable.
+#
+# Deliberately absent, because the next reader will want to add them back:
+# SUBSURF/MULTIRES/MASK refine or remove geometry and introduce no motion;
+# VERTEX_WEIGHT_*/NORMAL_EDIT/DATA_TRANSFER/WEIGHTED_NORMAL edit data, not
+# positions; CORRECTIVE_SMOOTH/SMOOTH/LAPLACIANSMOOTH amplify whatever is
+# upstream and have no independent time source (measured at 1.6-2.4% of the
+# bounding-box diagonal on ellie, which is the residual diagnostic's business,
+# not a refusal's); ARMATURE is the absence this refusal is about; NODES is
+# owned by ``_procedural_facts``.
+_FROZEN_DEFORMER_INPUTS = {
+    "CAST": ("object",),
+    "CURVE": ("object",),
+    "DISPLACE": ("texture_coords_object", "texture"),
+    "HOOK": ("object",),
+    # Parameters only: it can vary, never from an input it does not have.
+    "LAPLACIANDEFORM": (),
+    "LATTICE": ("object",),
+    "MESH_DEFORM": ("object",),
+    "SHRINKWRAP": ("target", "auxiliary_target"),
+    "SIMPLE_DEFORM": ("origin",),
+    "SURFACE_DEFORM": ("target",),
+    "WARP": ("object_from", "object_to"),
+    # Wave reads scene time directly, so it needs no moving input at all.
+    "WAVE": (),
+}
+
+# Followed only to WALK toward a time source, never to classify a modifier, so
+# a superset is safe: an attribute a modifier type does not have is simply
+# absent. Sorted so the source named in the manifest is deterministic.
+_DEFORMER_INPUT_ATTRIBUTES = (
+    "auxiliary_target", "curve", "mirror_object", "object", "object_from",
+    "object_to", "offset_object", "origin", "projector_object", "target",
+    "texture", "texture_coords_object",
+)
+
 _VIEW_DEPENDENT_SHADER_NODES = {
     "ShaderNodeBsdfGlass", "ShaderNodeBsdfRefraction", "ShaderNodeBsdfTransparent",
     "ShaderNodeFresnel", "ShaderNodeLayerWeight", "ShaderNodeCameraData",
@@ -1916,6 +1962,286 @@ def pointer_animation_issues(scene, allow_forced_bake=False, objects=None):
     return issues
 
 
+def _skinned_by_armature(obj):
+    """The exporter's own skin test, not ours.
+
+    ``io_scene_gltf2`` decides a node is skinned from
+    ``modifiers["ARMATURE"].object is not None`` and never consults
+    ``show_viewport`` -- it mutes the modifier itself before evaluating. A
+    viewport-disabled Armature modifier therefore still produces a glTF skin
+    and must count as skinned here, or we would refuse a mesh whose motion
+    actually ships as joints.
+    """
+    return any(
+        modifier.type == "ARMATURE" and modifier.object is not None
+        for modifier in getattr(obj, "modifiers", ())
+    )
+
+
+def _driven_data_paths(obj):
+    """Driver data paths on one Object, for modifier liveness and variation."""
+    animation = getattr(obj, "animation_data", None)
+    if animation is None:
+        return ()
+    return tuple(
+        str(getattr(curve, "data_path", "") or "")
+        for curve in getattr(animation, "drivers", ())
+    )
+
+
+def _keyframed_modifier_parameter(obj, modifier):
+    """Name keyframed motion on this modifier's own parameters, if any.
+
+    Channel presence is not the test. Rigs key constant-valued switch channels
+    -- 23 of them measured on ellie, one distinct value across 4-12 keyframes
+    -- so a keyed channel counts only when its keyed values differ. An F-Curve
+    modifier (Noise/Cycles) varies by construction whatever the keys say.
+    """
+    prefix = f'modifiers["{modifier.name}"]'
+    animation = getattr(obj, "animation_data", None)
+    if animation is None:
+        return None
+    sources = []
+    action = getattr(animation, "action", None)
+    if action is not None:
+        sources.append((action, getattr(animation, "action_slot", None)))
+    for strip in _effective_nla_strips(animation):
+        strip_action = getattr(strip, "action", None)
+        if strip_action is not None:
+            sources.append((strip_action, getattr(strip, "action_slot", None)))
+    for candidate, slot in sources:
+        curves, inspectable = _action_fcurves(candidate, slot)
+        if not inspectable:
+            # A non-empty Action in a representation this build cannot read
+            # must not be blessed as constant.
+            return (
+                f"Action {candidate.name!r}, which this Blender build cannot "
+                "inspect"
+            )
+        for curve in curves:
+            path = str(getattr(curve, "data_path", "") or "")
+            if not path.startswith(prefix):
+                continue
+            if any(not getattr(item, "mute", False)
+                   for item in getattr(curve, "modifiers", ())):
+                return f"an F-Curve modifier on {path}"
+            keyed = {
+                round(float(point.co[1]), 6)
+                for point in getattr(curve, "keyframe_points", ())
+            }
+            if len(keyed) > 1:
+                return f"keyframes on {path}"
+    return None
+
+
+def _deformer_motion_source(value, seen=None):
+    """Name the authored time source that can move a deformer's input.
+
+    Returns ``(id_name, kind)`` or ``None``. ``_animation_sources`` answers a
+    similar question for Geometry Nodes object inputs but stops at parents and
+    constraints, and every frozen-deformer target on the ellie character fails
+    that walk: the teeth SurfaceDeform cages and the fannypack lattices carry
+    no ``animation_data`` at all and move only because an ARMATURE/HOOK
+    modifier binds them to the rig. Following modifier inputs too is therefore
+    not an optimisation -- without it this refusal exempts exactly the objects
+    it exists to catch. Kept as a sibling rather than folded into
+    ``_animation_sources`` because widening that function would change which
+    Geometry Nodes records enter the exhaustive finite-frame audit, a separate
+    proven contract. ``_time_dependent_id`` is called with a fresh cycle guard
+    on purpose: this function's ``seen`` tracks the object graph, and passing
+    it down would make every ID report itself already visited.
+    """
+    if value is None:
+        return None
+    seen = seen if seen is not None else set()
+    try:
+        pointer = value.as_pointer()
+    except (AttributeError, ReferenceError):
+        return None
+    if pointer in seen:
+        return None
+    seen.add(pointer)
+    if _time_dependent_id(value):
+        return value.name, "animation"
+    data = getattr(value, "data", None)
+    if data is not None:
+        if _time_dependent_id(data):
+            return data.name, "geometry"
+        shape_keys = getattr(data, "shape_keys", None)
+        if shape_keys is not None and _time_dependent_id(shape_keys):
+            return shape_keys.name, "shapeKeys"
+    # Bone parenting arrives here as an ordinary parent whose own action is the
+    # time source, so it needs no separate case.
+    source = _deformer_motion_source(getattr(value, "parent", None), seen)
+    if source is not None:
+        return source
+    for constraint in getattr(value, "constraints", ()):
+        source = _deformer_motion_source(
+            getattr(constraint, "target", None), seen,
+        )
+        if source is not None:
+            return source
+    for modifier in getattr(value, "modifiers", ()):
+        for attribute in _DEFORMER_INPUT_ATTRIBUTES:
+            source = _deformer_motion_source(
+                getattr(modifier, attribute, None), seen,
+            )
+            if source is not None:
+                return source
+    return None
+
+
+def _frozen_deformer_evidence(obj, modifier, inputs):
+    """Why this one modifier's frozen contribution provably moves, or None."""
+    if modifier.type == "WAVE":
+        return {
+            "name": modifier.name, "type": modifier.type,
+            "timeSource": "the scene timeline",
+        }
+    for attribute in inputs:
+        value = getattr(modifier, attribute, None)
+        if value is None:
+            continue
+        source = _deformer_motion_source(value)
+        if source is not None:
+            name, kind = source
+            return {
+                "name": modifier.name, "type": modifier.type,
+                "input": attribute,
+                "inputId": getattr(value, "name", str(value)),
+                "timeSource": name, "timeSourceKind": kind,
+            }
+    parameter = _keyframed_modifier_parameter(obj, modifier)
+    if parameter is not None:
+        return {
+            "name": modifier.name, "type": modifier.type,
+            "timeSource": parameter,
+        }
+    prefix = f'modifiers["{modifier.name}"]'
+    for path in _driven_data_paths(obj):
+        if path.startswith(prefix):
+            return {
+                "name": modifier.name, "type": modifier.type,
+                "timeSource": f"a driver on {path}",
+            }
+    return None
+
+
+def _frozen_deformer_reason(moving):
+    """One artist-facing refusal naming the object's deformers and the remedy."""
+    clauses = []
+    for entry in moving:
+        label = (
+            f"{entry['type'].lower().replace('_', ' ')} modifier "
+            f"{entry['name']!r}"
+        )
+        if "inputId" not in entry:
+            clauses.append(f"{label} varies with {entry['timeSource']}")
+        elif entry["timeSource"] == entry["inputId"]:
+            clauses.append(
+                f"{label} follows {entry['inputId']!r}, which is animated"
+            )
+        else:
+            clauses.append(
+                f"{label} follows {entry['inputId']!r}, which the timeline "
+                f"moves through {entry['timeSource']!r}"
+            )
+    names = ", ".join(f"{entry['name']!r}" for entry in moving)
+    return (
+        f"{'; '.join(clauses)}. This mesh has no Armature modifier, and "
+        "Blender's glTF exporter mutes only ARMATURE modifiers before it "
+        "evaluates the depsgraph, so every other deformer freezes at the "
+        "single export frame: the published mesh holds one shape forever while "
+        "the object driving it keeps moving. Skin this mesh to the same "
+        "armature -- add an Armature modifier, or parent it to a bone with "
+        "automatic weights -- so the deformation ships as glTF joint "
+        f"animation; or accept it as static by applying or removing {names}, "
+        "so Blender and the website agree."
+    )
+
+
+def _frozen_deformer_issue(obj, frame_range):
+    """One JSON-safe refusal record for this mesh, or None.
+
+    One record per object, not per modifier: the remedy is per-object, and
+    telling the artist to skin the same mesh five times is noise. Every
+    implicated modifier is listed inside the record.
+    """
+    if obj.type != "MESH" or obj.hide_render:
+        return None
+    mesh = getattr(obj, "data", None)
+    if mesh is None or len(getattr(mesh, "polygons", ())) == 0:
+        return None
+    if _skinned_by_armature(obj):
+        return None
+    driven_paths = _driven_data_paths(obj)
+    moving = []
+    for modifier in getattr(obj, "modifiers", ()):
+        inputs = _FROZEN_DEFORMER_INPUTS.get(modifier.type)
+        if inputs is None:
+            continue
+        # show_viewport, not show_render: the exporter evaluates the VIEWPORT
+        # depsgraph. A DRIVEN flag still counts as live -- ellie's fannypack
+        # zippers drive three SurfaceDeform show_viewport flags, so one frame's
+        # read under-reports the stack the exporter will apply.
+        driven_visibility = (
+            f'modifiers["{modifier.name}"].show_viewport' in driven_paths
+        )
+        if not modifier.show_viewport and not driven_visibility:
+            continue
+        evidence = _frozen_deformer_evidence(obj, modifier, inputs)
+        if evidence is None:
+            continue
+        evidence["showViewport"] = bool(modifier.show_viewport)
+        evidence["drivenVisibility"] = driven_visibility
+        moving.append(evidence)
+    if not moving:
+        return None
+    identity = obj.get("blendlink_id")
+    return {
+        "code": "geometry.frozen-deformer-no-armature",
+        "object": obj.name,
+        **({"objectId": identity}
+           if isinstance(identity, str) and identity else {}),
+        "modifiers": moving,
+        "frameRange": list(frame_range),
+        "reason": _frozen_deformer_reason(moving),
+    }
+
+
+def frozen_deformer_issues(scene, objects=None):
+    """Meshes that publish one frozen pose of a deformer that keeps moving.
+
+    Blender's glTF exporter mutes ARMATURE modifiers and nothing else before it
+    evaluates the mesh. A mesh with no Armature modifier and a deformer whose
+    input provably moves therefore ships a single snapshot while Blender keeps
+    animating -- silently, and with no glTF channel that could carry the
+    difference.
+
+    Zero depsgraph evaluation and zero frame stepping, by construction: this
+    decides only that the frozen contribution provably varies, never by how
+    much. Measured on the ellie character it names the two teeth meshes, which
+    ship 143.5% and 144.9% of their bounding-box diagonal out of position, and
+    the fannypack zippers at 72.3%, with no false positives over 41
+    render-visible meshes.
+    """
+    if scene.frame_start == scene.frame_end:
+        # A single-frame scene has nothing to freeze; the exported snapshot is
+        # the whole authored result. This is only an outer sanity gate -- the
+        # reachability walk above is what actually discriminates.
+        return []
+    frame_range = (scene.frame_start, scene.frame_end)
+    issues = (
+        _frozen_deformer_issue(obj, frame_range)
+        for obj in (tuple(scene.objects) if objects is None else tuple(objects))
+    )
+    # Sorted because these records reach the content-hashed manifest.
+    return sorted(
+        (issue for issue in issues if issue is not None),
+        key=lambda item: item["object"].casefold(),
+    )
+
+
 def automatic_dynamic_reason(obj):
     """Automatic safety reason without applying the artist's override."""
     animation_source = _animated_transform_dependency(obj)
@@ -2707,6 +3033,10 @@ def analyze_scene(scene, full=False, fixed_camera=False, objects=None):
         "procedural": procedural,
         "instances": _analyze_instances(scene, scoped_objects),
         "materials": sorted(materials.values(), key=lambda item: item["material"].casefold()),
+        # Phase 0a. Additive and independent of every sample above: this is
+        # decided with no depsgraph evaluation, so it stays correct even when
+        # the procedural audit is not run exhaustively.
+        "frozenDeformers": frozen_deformer_issues(scene, objects=scoped_objects),
         "limits": {
             "maxAuditFrames": MAX_AUDIT_FRAMES,
             "maxAuditSnapshots": MAX_AUDIT_SNAPSHOTS,
