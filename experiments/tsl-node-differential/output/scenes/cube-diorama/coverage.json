@@ -12,10 +12,9 @@
   "refusals": {
     "ShaderNodeFloatCurve has no proven TSL mapping": 1,
     "Image 1024x1024 exceeds the embedded-IR bound (128x128); the texture transport carries it": 4,
-    "Attribute output 'Vector' has no cell yet": 4,
+    "Attribute output 'Vector' has no cell yet": 5,
     "no root-level single Principled surface": 15,
     "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 10,
-    "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
     "Unnormalized noise has no cell yet": 4,
     "Object Info output 'Color' has no cell yet": 1
   },

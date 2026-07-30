@@ -2275,6 +2275,18 @@
    "claim": "exact"
   },
   {
+   "id": "ambient-occlusion-passthrough",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "ambient occlusion algebra (declared non-carriage)",
+   "notes": "AO on the lone flat tile, where Cycles ray-traces factor 1.0 (nothing occludes) and the Colour output equals the input - matching the runtime's unoccluded default exactly, so the ALGEBRA gates exact here. What is deliberately NOT claimed: scene occlusion, which is geometry-dependent and declared not-carried via the document's geometryDependent marker (the viewDependent/lightDependent precedent); a baked aoMap plugs into BuildTslOptions.ambientOcclusion later. 31 splash surfaces author this node, all white-input Colour-output - the dominant stylized-corpus gap. Inside, Only Local and linked Normal refuse by name."
+  },
+  {
    "id": "mix-factor-color-ramp",
    "gate": true,
    "claim": "exact",

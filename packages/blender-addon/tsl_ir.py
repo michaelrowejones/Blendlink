@@ -788,6 +788,13 @@ def _channel_document(expression):
     encoded = _json.dumps(expression)
     if '"view_cos"' in encoded:
         document["viewDependent"] = True
+    if '"ambient_occlusion"' in encoded:
+        # Scene occlusion is not carried: the runtime evaluates the
+        # unoccluded algebra unless a baked occlusion source is wired
+        # into the hook. Declared, like viewDependent and
+        # lightDependent, so no consumer can mistake the passthrough
+        # for ray-traced AO.
+        document["geometryDependent"] = True
     if '"shader_to_rgb_diffuse"' in encoded:
         document["lightDependent"] = True
     return document
@@ -1190,6 +1197,35 @@ def emit_output(node, from_socket, stack=()):
                 "op": "clamp01", "input": expression,
             }
         return expression
+
+    if idname == "ShaderNodeAmbientOcclusion":
+        # Cycles ray-traces this; no material node can. The translation
+        # carries the node's ALGEBRA (Color output = input colour x AO
+        # factor) with the factor supplied by a runtime hook that defaults
+        # to 1.0 -- the unoccluded value, and exactly what Cycles evaluates
+        # on the harness's lone flat tile, so the passthrough gates exact
+        # there. Scene occlusion is a geometry-dependent quantity the
+        # document DECLARES it does not carry (the geometryDependent marker,
+        # the lightDependent precedent); the runtime hook is where a baked
+        # aoMap plugs in later. The splash corpus authors 31 of these, all
+        # white-input Color-output.
+        output_id = getattr(from_socket, "identifier", socket_name)
+        if output_id not in {"Color", "AO"}:
+            _refuse(f"Ambient Occlusion output {socket_name!r} unsupported")
+        if bool(getattr(node, "inside", False)):
+            _refuse("Ambient Occlusion 'Inside' has no cell yet")
+        if bool(getattr(node, "only_local", False)):
+            _refuse("Ambient Occlusion 'Only Local' has no cell yet")
+        normal_socket = node.inputs.get("Normal")
+        if normal_socket is not None and normal_socket.is_linked:
+            _refuse("Ambient Occlusion with a linked Normal has no cell yet")
+        return {
+            "op": "ambient_occlusion",
+            "output": "ao" if output_id == "AO" else "color",
+            "color": emit_input(
+                node.inputs["Color"], stack=stack, as_vector=True,
+            ),
+        }
 
     if idname == "ShaderNodeObjectInfo":
         output_id = getattr(from_socket, "identifier", socket_name)
@@ -2169,6 +2205,13 @@ def emit_channel(socket, stack=()) -> dict:
         # A view-dependent channel can never take the tile-bake routes; the
         # TSL runtime is its only faithful transport.
         document["viewDependent"] = True
+    if '"ambient_occlusion"' in encoded:
+        # Scene occlusion is not carried: the runtime evaluates the
+        # unoccluded algebra unless a baked occlusion source is wired
+        # into the hook. Declared, like viewDependent and
+        # lightDependent, so no consumer can mistake the passthrough
+        # for ray-traced AO.
+        document["geometryDependent"] = True
     if '"shader_to_rgb_diffuse"' in encoded:
         # Captured lighting: only the TSL runtime (or an EEVEE-render
         # oracle under the light contract) can evaluate it.

@@ -1334,6 +1334,18 @@
       },
       "failureClass": "vector rotate arbitrary axis (Rodrigues + normalize)"
     },
+    "ambient-occlusion-passthrough": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000015617224562447518,
+        "p99Abs": 0.00003123283386230469,
+        "maxAbs": 0.00003123283386230469
+      },
+      "failureClass": "ambient occlusion algebra (declared non-carriage)"
+    },
     "mix-factor-color-ramp": {
       "ok": true,
       "claim": "exact",
@@ -1720,7 +1732,7 @@
     }
   },
   "claims": {
-    "exact": 129,
+    "exact": 130,
     "approximate": 7,
     "diagnostic": 1
   },
@@ -1856,10 +1868,9 @@
         "refusals": {
           "ShaderNodeFloatCurve has no proven TSL mapping": 1,
           "Image 1024x1024 exceeds the embedded-IR bound (128x128); the texture transport carries it": 4,
-          "Attribute output 'Vector' has no cell yet": 4,
+          "Attribute output 'Vector' has no cell yet": 5,
           "no root-level single Principled surface": 15,
           "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 10,
-          "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
           "Unnormalized noise has no cell yet": 4,
           "Object Info output 'Color' has no cell yet": 1
         },
@@ -2013,10 +2024,11 @@
           "channelsCompiled": 84,
           "viewDependent": 0,
           "refusals": {
-            "ShaderNodeAmbientOcclusion has no proven TSL mapping": 19,
+            "Voronoi scale 150 exceeds the proven range (<= 40); sample-position differences decorrelate high-frequency patterns": 13,
             "Image 1000x1000 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
             "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
-            "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1
+            "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1,
+            "Voronoi scale 155 exceeds the proven range (<= 40); sample-position differences decorrelate high-frequency patterns": 6
           }
         },
         "sampled": [],

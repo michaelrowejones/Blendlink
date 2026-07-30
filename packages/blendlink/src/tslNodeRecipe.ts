@@ -261,6 +261,10 @@ export interface BuildTslOptions {
    * The runtime supplies a per-object uniform reading exported extras;
    * the harness supplies the fixture constant. Refuses without it. */
   objectAttribute?: (name: string) => TslExpression
+  /** The ambient-occlusion factor for this draw (e.g. a sampled baked
+   * aoMap). Absent, AO nodes evaluate unoccluded (factor 1.0) -- the
+   * declared geometryDependent non-carriage. */
+  ambientOcclusion?: () => TslExpression
   /** Collects every DataTexture the build allocates (ramp/curve LUTs,
    * embedded tex_image pixels) so the applying runtime can dispose them
    * with the material. Create with createTslBuildResources(). */
@@ -592,6 +596,14 @@ function build(expression: TslIrExpression): TslExpression {
         curveChannel(input.z, sample => sample.z),
       )
       return tslMix(input, curved, factor)
+    }
+    case 'ambient_occlusion': {
+      // Colour output = input colour x AO factor; the factor comes from
+      // the hook or is the unoccluded 1.0. Scene occlusion is declared
+      // not-carried via the document's geometryDependent marker.
+      const occlusion = activeOptions.ambientOcclusion?.() ?? tslFloat(1.0)
+      if (expression.output === 'ao') return occlusion
+      return build(child(expression, 'color')).mul(occlusion)
     }
     case 'attribute_object': {
       // A per-object custom property. Cycles reads obj["name"]; the

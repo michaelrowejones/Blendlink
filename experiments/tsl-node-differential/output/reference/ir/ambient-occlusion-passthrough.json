@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "ambient_occlusion",
+    "output": "color",
+    "color": {
+      "op": "uv"
+    }
+  },
+  "geometryDependent": true
+}

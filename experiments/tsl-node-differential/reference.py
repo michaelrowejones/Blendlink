@@ -1294,6 +1294,18 @@ def build_noise_effective_scale400(tree, emission):
     tree.links.new(factor, emission.inputs["Color"])
 
 
+def build_ambient_occlusion_passthrough(tree, emission):
+    # AO on the lone flat tile: no occluders, so Cycles evaluates factor 1.0
+    # and the Colour output equals the input colour - which is exactly the
+    # runtime's unoccluded default. The input is a UV gradient rather than
+    # the corpus's constant white so the passthrough algebra is actually
+    # exercised; the corpus shape (white input) is strictly easier.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeAmbientOcclusion")
+    tree.links.new(coord.outputs["UV"], node.inputs["Color"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
 def build_mix_factor_color_ramp(tree, emission):
     # A NON-grayscale ColorRamp COLOR wired into Mix.Factor: Cycles inserts
     # linear_rgb_to_gray on the link. A coloured ramp distinguishes the
@@ -2279,6 +2291,7 @@ BUILDERS = {
     "white-noise-1d": build_white_noise_1d,
     "white-noise-4d": build_white_noise_4d,
     "noise-effective-scale400": build_noise_effective_scale400,
+    "ambient-occlusion-passthrough": build_ambient_occlusion_passthrough,
     "mix-factor-color-ramp": build_mix_factor_color_ramp,
     "noise-texture-panel-mapping": build_noise_texture_panel_mapping,
     "noise-2d-scale200": build_noise_2d_scale200,

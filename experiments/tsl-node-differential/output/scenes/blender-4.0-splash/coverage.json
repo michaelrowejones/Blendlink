@@ -17,10 +17,11 @@
     "channelsCompiled": 84,
     "viewDependent": 0,
     "refusals": {
-      "ShaderNodeAmbientOcclusion has no proven TSL mapping": 19,
+      "Voronoi scale 150 exceeds the proven range (<= 40); sample-position differences decorrelate high-frequency patterns": 13,
       "Image 1000x1000 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
       "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
-      "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1
+      "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1,
+      "Voronoi scale 155 exceeds the proven range (<= 40); sample-position differences decorrelate high-frequency patterns": 6
     }
   },
   "sampled": [],

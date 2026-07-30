@@ -2319,6 +2319,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "ambient-occlusion-passthrough": {
+      "path": "ambient-occlusion-passthrough.f32",
+      "pipeline": "ir",
+      "ir": "ir/ambient-occlusion-passthrough.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007828124798834324,
+        0.007843732833862305,
+        0.0
+      ],
+      "rgbMax": [
+        0.9922031164169312,
+        0.9922187328338623,
+        0.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "mix-factor-color-ramp": {
       "path": "mix-factor-color-ramp.f32",
       "pipeline": "ir",
