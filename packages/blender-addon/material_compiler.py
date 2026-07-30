@@ -55,6 +55,12 @@ TSL_IR_BYTE_BUDGET = 262144
 CHANNEL_PLAN_MODEL = "principled-channel-plan-v1"
 PRIVATE_CHANNEL_PREFIX = "BLENDLINK_PRIVATE_CHANNEL."
 MATERIAL_BAKE_RULE = "blendlink.lit.material-bake"
+# The standalone TSL-program route: the carrier is a stock passthrough
+# copy of the artist material (the runtime finds programs ONLY through
+# blendlink_source_material extras on generated materials), and the
+# sidecar carries the proven per-channel IR. No bake, no image products.
+TSL_PROGRAM_RULE = "blendlink.stock.tsl-program"
+TSL_PROGRAM_PLAN_MODEL = "tsl-program-plan-v1"
 
 
 class MaterialCompileError(RuntimeError):
@@ -229,9 +235,9 @@ class MaterialBinding:
 @dataclass(frozen=True)
 class MaterialDecision:
     material_name: str
-    intent: str  # automatic | webColor
+    intent: str  # automatic | webColor | materialBake | tslProgram
     outcome: str  # preserved | lowered | blocked
-    transport: str | None  # stock | factor | vertexColor | image
+    transport: str | None  # stock | factor | vertexColor | image | channels | program
     fidelity: str  # full-surface | selected-field
     surface_response: str | None  # lit | unlit
     bindings: tuple[MaterialBinding, ...]
@@ -2346,11 +2352,32 @@ def _plan_selected_material(
             return _plan_material_bake(
                 material, raw_bindings, binding_issues, purpose=purpose,
             )
+        if tsl_ir_requested(material):
+            # The standalone route (plan-doc 8b gap 1): before this
+            # branch existed, set_tsl_ir without the bake fell through to
+            # the automatic/preserved return below -- a total silent
+            # no-op with no channel plan, no sidecar and no evidence.
+            return _plan_tsl_program(
+                material, raw_bindings, binding_issues, purpose=purpose,
+            )
         return MaterialDecision(
             material.name, "automatic", "preserved", "stock", "full-surface", None,
             tuple(MaterialBinding(obj.name, slot) for obj, slot in raw_bindings),
         )
     issues = list(binding_issues)
+    if tsl_ir_requested(material) and not material_bake_requested(material):
+        issues.append(MaterialIssue(
+            "material.tsl-conflicts-with-web-color", material.name,
+            "TSL Program and a Blendlink Web Color marker are both set.",
+            "Clear one intent: the Web Color marker lowers one selected "
+            "field, while a TSL Program translates proven channels.",
+            object_names,
+        ))
+        return MaterialDecision(
+            material.name, "tslProgram", "blocked", None, "per-channel", None,
+            tuple(MaterialBinding(obj.name, slot) for obj, slot in raw_bindings),
+            issues=tuple(issues),
+        )
     if material_bake_requested(material):
         issues.append(MaterialIssue(
             "material.bake-conflicts-with-web-color", material.name,
@@ -3118,6 +3145,75 @@ def _object_attribute_names(tree) -> tuple[str, ...]:
             if name:
                 names.add(name)
     return tuple(sorted(names))
+
+
+def _plan_tsl_program(
+    material, raw_bindings, binding_issues=(), *, purpose: str,
+) -> MaterialDecision:
+    """The standalone TSL-program route: translate, never bake.
+
+    The carrier is a stock passthrough copy of the artist material (the
+    compile transaction stamps the runtime identity extras on it), and
+    the programs sidecar carries whatever per-channel IR the emitter
+    proves. Channels that refuse keep the shipped carrier BY NAME --
+    routes never change at runtime, fidelity only upgrades. A material
+    with no proven channel stays `preserved` rather than `blocked`: an
+    unproven program must not block the whole export, because the artist
+    material ships stock either way and the named refusals on the channel
+    plan are the evidence."""
+    object_names = tuple(sorted({obj.name for obj, _slot in raw_bindings}))
+    bindings = tuple(
+        MaterialBinding(obj.name, slot) for obj, slot in raw_bindings
+    )
+    issues = list(binding_issues)
+    tree = bakelib.active_shader_node_tree(material)
+    if tree is None:
+        # Nothing to translate; the stock export already carries a
+        # node-less material faithfully.
+        return MaterialDecision(
+            material.name, "tslProgram", "preserved", "stock",
+            "per-channel", None, bindings, issues=tuple(issues),
+        )
+    # Principled roots take the per-channel emitters; anything else takes
+    # the surface fold, exactly like the bake's IR attachment.
+    surface_resolved = False
+    try:
+        tsl_ir.find_principled_root(tree)
+    except (tsl_ir.TslIrRefusal, RecursionError):
+        surface_resolved = True
+    channels = [
+        {"channel": name}
+        for name in (
+            "Base Color", "Metallic", "Roughness", "Alpha", "Emission",
+        )
+    ]
+    _attach_tsl_ir(tree, channels, surface_resolved=surface_resolved)
+    for entry in channels:
+        entry["route"] = "program" if "tslIr" in entry else "refused"
+    channel_plan = {
+        "model": TSL_PROGRAM_PLAN_MODEL,
+        "channels": channels,
+        **({"surfaceResolved": True} if surface_resolved else {}),
+    }
+    if not any("tslIr" in entry for entry in channels):
+        issues.append(MaterialIssue(
+            "material.tsl-program-unproven", material.name,
+            "No channel of this material has a proven TSL program; each "
+            "refusal is named on the channel plan.",
+            "Simplify the refusing channels or clear the TSL Program "
+            "intent.",
+            object_names,
+        ))
+        return MaterialDecision(
+            material.name, "tslProgram", "preserved", "stock",
+            "per-channel", None, bindings,
+            issues=tuple(issues), channel_plan=channel_plan,
+        )
+    return MaterialDecision(
+        material.name, "tslProgram", "lowered", "program",
+        "per-channel", None, bindings,
+        issues=tuple(issues), channel_plan=channel_plan,
+    )
 
 
 def _plan_material_bake(
@@ -5529,7 +5625,15 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
         emitted_unlit = (
             "KHR_materials_unlit" in (emitted.get("extensions") or {})
         )
-        if emitted_unlit != expected_unlit:
+        # A "program" carrier is the artist graph exported stock: its
+        # surface response, textures and PBR factors are the glTF
+        # exporter's own derivation, not values this plan computed, so
+        # they are recorded as observed rather than asserted. Identity
+        # (extras, single generated match, source-not-shipped, binding
+        # ownership) stays fully asserted -- that is what the runtime
+        # depends on.
+        stock_program_carrier = fact["transport"] == "program"
+        if not stock_program_carrier and emitted_unlit != expected_unlit:
             raise MaterialCompileError(
                 f'Material output mismatch for "{fact["source"]}": the generated material '
                 f'{"exported" if emitted_unlit else "did not export"} '
@@ -5643,6 +5747,8 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
             image_evidence = _attest_material_bake_channels(
                 document, binary, pbr, emitted, fact,
             )
+        elif stock_program_carrier:
+            image_evidence = {}
         elif pbr.get("baseColorTexture") is not None:
             raise MaterialCompileError(
                 f'Material output mismatch for "{fact["source"]}": direct selected field '
@@ -5723,14 +5829,15 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
                 ],
             }
         emitted_factor = tuple(pbr.get("baseColorFactor", (1.0, 1.0, 1.0, 1.0)))
-        if not _close_vector(emitted_factor, fact["baseColorFactor"], 1e-6):
+        if not stock_program_carrier \
+                and not _close_vector(emitted_factor, fact["baseColorFactor"], 1e-6):
             raise MaterialCompileError(
                 f'Material output mismatch for "{fact["source"]}": baseColorFactor '
                 f'{emitted_factor!r} != selected {fact["baseColorFactor"]!r}.'
             )
         emitted_metallic = float(pbr.get("metallicFactor", 1.0))
         emitted_roughness = float(pbr.get("roughnessFactor", 1.0))
-        if not expected_unlit and (
+        if not stock_program_carrier and not expected_unlit and (
             abs(emitted_metallic - fact["metallicFactor"]) > 1e-6
             or abs(emitted_roughness - fact["roughnessFactor"]) > 1e-6
         ):
@@ -5741,13 +5848,14 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
                 f'{fact["metallicFactor"]!r}/{fact["roughnessFactor"]!r}.'
             )
         emitted_alpha = emitted.get("alphaMode", "OPAQUE")
-        if emitted_alpha != fact["alphaMode"]:
+        if not stock_program_carrier and emitted_alpha != fact["alphaMode"]:
             raise MaterialCompileError(
                 f'Material output mismatch for "{fact["source"]}": alphaMode '
                 f'{emitted_alpha!r} != selected {fact["alphaMode"]!r}.'
             )
         emitted_double_sided = bool(emitted.get("doubleSided", False))
-        if emitted_double_sided != fact["doubleSided"]:
+        if not stock_program_carrier \
+                and emitted_double_sided != fact["doubleSided"]:
             raise MaterialCompileError(
                 f'Material output mismatch for "{fact["source"]}": doubleSided '
                 f'{emitted_double_sided!r} != selected {fact["doubleSided"]!r}.'
@@ -5856,7 +5964,12 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
                 "color0Tolerance": attested_color_tolerance,
             } if fact["transport"] == "vertexColor" else {}),
             "alphaMode": emitted_alpha,
-            "baseColorFactor": list(fact["baseColorFactor"]),
+            **({
+                "baseColorFactor": list(fact["baseColorFactor"]),
+            } if not stock_program_carrier else {
+                "baseColorFactor": list(emitted_factor),
+                "observedOnly": True,
+            }),
             "doubleSided": emitted_double_sided,
             "bindings": binding_labels,
             "bindingPrimitives": binding_primitives,
@@ -6914,6 +7027,75 @@ def with_compiled_materials(
                     f'Material binding {binding.object_name}[{binding.slot_index}] disappeared during installation.'
                 )
             binding_key = (binding.object_name, binding.slot_index)
+            if decision.intent == "tslProgram":
+                if binding_key not in installed_binding_keys:
+                    installed_bindings.append(entry)
+                    installed_binding_keys.add(binding_key)
+                program_key = ("tslProgram", decision.material_name)
+                generated = generated_by_variant.get(program_key)
+                if generated is None:
+                    # ONE carrier per material, deliberately: the runtime
+                    # resolves programs by blendlink_source_material and
+                    # the attestation requires exactly one generated
+                    # match. Per-binding variance rides the per-object
+                    # mesh extras, not the material.
+                    program_variant = hashlib.sha256(json.dumps(
+                        decision.fingerprint_dict(), sort_keys=True,
+                        separators=(",", ":"),
+                    ).encode("utf8")).hexdigest()[:10]
+                    try:
+                        generated = entry["source"].copy()
+                    except (AttributeError, ReferenceError, RuntimeError,
+                            TypeError) as error:
+                        raise MaterialCompileError(
+                            f'Cannot copy "{decision.material_name}" for '
+                            f"the TSL program carrier: {error}"
+                        ) from error
+                    generated.name = (
+                        f"{decision.material_name}.BLENDLINK_TSL."
+                        f"{program_variant}"
+                    )
+                    generated["blendlink_source_material"] = (
+                        decision.material_name
+                    )
+                    generated["blendlink_material_rule"] = TSL_PROGRAM_RULE
+                    generated["blendlink_material_variant"] = program_variant
+                    created_materials.append(generated)
+                    generated_by_variant[program_key] = generated
+                    generated_facts[generated.name] = {
+                        "source": decision.material_name,
+                        "rule": TSL_PROGRAM_RULE,
+                        "variant": program_variant,
+                        "transport": "program",
+                        # The carrier is the artist graph exported stock;
+                        # its surface response and PBR derivation belong
+                        # to the glTF exporter's own contract, not this
+                        # plan. The attestation records them as observed
+                        # instead of asserting planned values.
+                        "surfaceResponse": None,
+                        "bindings": set(),
+                        "bindingRanges": {},
+                        "bindingUvs": {},
+                    }
+                fact = generated_facts[generated.name]
+                fact["bindings"].add(binding_key)
+                runtime_entry = _tsl_runtime_mesh_entry(decision, obj)
+                if runtime_entry is not None:
+                    fact.setdefault("tslRuntimeMeshes", {})[
+                        binding.object_name
+                    ] = runtime_entry
+                slot = obj.material_slots[binding.slot_index]
+                try:
+                    slot.link = "DATA"
+                    slot.material = generated
+                except (AttributeError, ReferenceError, RuntimeError,
+                        TypeError) as error:
+                    raise MaterialCompileError(
+                        f'Cannot install the TSL program carrier on '
+                        f'{binding.object_name}[{binding.slot_index}]: '
+                        f"{error}"
+                    ) from error
+                continue
             if decision.intent == "materialBake":
                 if temporary_directory is None:
                     temporary_directory = tempfile.TemporaryDirectory(

@@ -2671,6 +2671,55 @@ class BLENDLINK_OT_clear_web_material_source(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class BLENDLINK_OT_toggle_tsl_program(bpy.types.Operator):
+    """Translate this material's proven channels to a TSL program.
+
+    No bake, no image products: the artist material ships as a stock
+    passthrough carrier and the WebGPU runtime rebuilds each proven
+    channel from its published program. Channels the emitter cannot
+    prove keep the shipped carrier, each refusal named on the plan.
+    Unlike Material Bake this is meaningful on any status -- an exact
+    material can still trade its textures for a program.
+    """
+    bl_idname = "blendlink.toggle_tsl_program"
+    bl_label = "TSL Program"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        material = _active_material(context)
+        if material is None:
+            cls.poll_message_set("Select a material first")
+            return False
+        if getattr(material, "library", None) is not None:
+            cls.poll_message_set(
+                "Make the linked material local or create a library override"
+            )
+            return False
+        if material_compiler.marker_nodes(material):
+            cls.poll_message_set(
+                "Clear the Blendlink Web Color selection first; a TSL "
+                "Program translates proven channels instead of one "
+                "selected field"
+            )
+            return False
+        return True
+
+    def execute(self, context):
+        from . import handlers
+        material = _active_material(context)
+        enabled = not material_compiler.tsl_ir_requested(material)
+        material_compiler.set_tsl_ir(material, enabled)
+        validation.mark_dirty()
+        handlers.mark_bake_table_changed()
+        self.report(
+            {"INFO"},
+            f'TSL Program {"enabled" if enabled else "disabled"} for '
+            f'"{material.name}"',
+        )
+        return {"FINISHED"}
+
+
 class BLENDLINK_OT_toggle_material_bake(bpy.types.Operator):
     """Carry every Principled channel of this material as lit glTF.
 
@@ -4298,6 +4347,7 @@ classes = (
     BLENDLINK_OT_set_web_material_source,
     BLENDLINK_OT_clear_web_material_source,
     BLENDLINK_OT_toggle_material_bake,
+    BLENDLINK_OT_toggle_tsl_program,
     BLENDLINK_OT_select_atlas_objects,
     BLENDLINK_OT_preview_atlas_uvs,
     BLENDLINK_OT_materialize_atlas_uvs,

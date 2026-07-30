@@ -56,6 +56,11 @@ export interface ChannelNodeMapping {
 export const MATERIAL_CHANNEL_NODES: Record<string, ChannelNodeMapping> = {
   'Base Color': { node: 'colorNode', kind: 'color' },
   'Emission Color': { node: 'emissiveNode', kind: 'color' },
+  // The plan's merged Emission record: the surface fold publishes its
+  // radiance under this key (the sidecar keys channels by PLAN channel
+  // name), and without the alias a surface-resolved emission program
+  // would be skipped by name at install.
+  Emission: { node: 'emissiveNode', kind: 'color' },
   Roughness: { node: 'roughnessNode', kind: 'scalar' },
   Metallic: { node: 'metalnessNode', kind: 'scalar' },
   Alpha: { node: 'opacityNode', kind: 'scalar' },

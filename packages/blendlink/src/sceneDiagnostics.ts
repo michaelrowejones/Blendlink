@@ -202,10 +202,10 @@ export interface MaterialPortabilityDiagnostic {
    * `materialBake` intent (MTL-BAKE-001) carries every Principled channel
    * per its own route instead of one selected field. */
   materialCompilation?: {
-    intent: 'automatic' | 'webColor' | 'materialBake'
+    intent: 'automatic' | 'webColor' | 'materialBake' | 'tslProgram'
     outcome: 'preserved' | 'lowered' | 'blocked'
     fidelity: 'full-surface' | 'selected-field' | 'per-channel'
-    transport?: 'stock' | 'factor' | 'vertexColor' | 'image' | 'channels'
+    transport?: 'stock' | 'factor' | 'vertexColor' | 'image' | 'channels' | 'program'
     surfaceResponse?: 'lit' | 'unlit'
     colorSource?: {
       node: string
@@ -236,7 +236,7 @@ export interface MaterialPortabilityDiagnostic {
  * constant base colour filled into the RGBA carrier a baked alpha needs. */
 export interface MaterialChannelPlanEntry {
   channel: string
-  route: 'factor' | 'factor-over-carrier' | 'passthrough' | 'bake' | 'refused'
+  route: 'factor' | 'factor-over-carrier' | 'passthrough' | 'bake' | 'program' | 'refused'
   uv?: 'tile' | 'unique'
   resolution?: number | 'per-binding'
   colorspace?: 'srgb' | 'data'

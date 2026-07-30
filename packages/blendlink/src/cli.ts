@@ -90,6 +90,11 @@ function formatChannelRoutes(
     if (entry.route === 'factor-over-carrier') {
       return `${entry.channel}: factor over carrier${formatValue(entry.value)}${tsl}`
     }
+    if (entry.route === 'program') {
+      // Standalone TSL route: the program IS the payload, not evidence
+      // beside a carrier, so the +tsl suffix would be redundant here.
+      return `${entry.channel}: program`
+    }
     if (entry.route === 'bake') {
       const size = typeof entry.resolution === 'number'
         ? ` ${entry.resolution}`
@@ -601,7 +606,7 @@ async function main(): Promise<number> {
         {
           const records = result.sidecar.diagnostics?.materials ?? []
           const materialBakes = records.filter(
-            (item) => item.materialCompilation?.intent === 'materialBake',
+            (item) => ['materialBake', 'tslProgram'].includes(item.materialCompilation?.intent ?? ''),
           )
           if (materialBakes.length > 0 && !asJson) {
             console.log(`\nmaterial bake — ${scene.name}:`)

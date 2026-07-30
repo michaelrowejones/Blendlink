@@ -2479,6 +2479,35 @@ def _draw_material_compatibility(layout, result):
     for reason in result.get("reasons", [])[:4]:
         _draw_wrapped(box, reason, icon="DOT")
     compilation = result.get("materialCompilation") or {}
+    if compilation.get("intent") == "tslProgram":
+        program_box = box.box()
+        program_box.alert = compilation.get("outcome") == "blocked"
+        program_box.label(
+            text={
+                "lowered": "TSL Program ready to compile",
+                "blocked": "TSL Program needs attention",
+                "preserved": "TSL Program has no proven channel",
+            }.get(compilation.get("outcome"), "TSL Program"),
+            icon={
+                "lowered": "CHECKMARK", "blocked": "ERROR",
+                "preserved": "INFO",
+            }.get(compilation.get("outcome"), "NODETREE"),
+        )
+        for entry in (compilation.get("channels") or {}).get("channels", ())[:8]:
+            route = entry.get("route")
+            detail = (
+                "translates to a program" if route == "program" else "refused"
+            )
+            _draw_wrapped(
+                program_box,
+                f'{entry.get("channel", "?")}: {detail}',
+                icon="DOT" if route == "program" else "ERROR",
+            )
+        program_box.operator(
+            "blendlink.toggle_tsl_program",
+            text="Disable TSL Program",
+            icon="X",
+        )
     if compilation.get("intent") == "materialBake":
         bake_box = box.box()
         bake_box.alert = compilation.get("outcome") == "blocked"
@@ -2522,6 +2551,17 @@ def _draw_material_compatibility(layout, result):
                 "blendlink.toggle_material_bake",
                 text="Material Bake — keep it lit",
                 icon="TEXTURE",
+            )
+        if compilation.get("intent") not in {"materialBake", "tslProgram"}:
+            # Deliberately NOT gated on needsBake alone elsewhere: unlike
+            # the bake row this one is also drawn from the route list
+            # below for exact materials, where a program is still a
+            # texture-for-ALU trade. Here it rides the needsBake block
+            # beside the bake offer.
+            box.operator(
+                "blendlink.toggle_tsl_program",
+                text="TSL Program — translate the nodes",
+                icon="NODETREE",
             )
         if cycles_appearance.get("status") == "blocked":
             for blocker in cycles_appearance.get("blockers", []):

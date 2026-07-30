@@ -15,7 +15,9 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import struct
 import sys
+import tempfile
 from pathlib import Path
 
 import bpy
@@ -88,6 +90,39 @@ def channel_record(decision, name):
     )
 
 
+def emit_selected(objects):
+    def emit(output_path):
+        selected_before = list(bpy.context.selected_objects)
+        active_before = bpy.context.view_layer.objects.active
+        try:
+            bpy.ops.object.select_all(action="DESELECT")
+            for obj in objects:
+                obj.select_set(True)
+            bpy.context.view_layer.objects.active = objects[0]
+            return bpy.ops.export_scene.gltf(
+                filepath=output_path,
+                export_format="GLB",
+                export_extras=True,
+                export_image_format="AUTO",
+                export_texcoords=True,
+                use_selection=True,
+            )
+        finally:
+            bpy.ops.object.select_all(action="DESELECT")
+            for item in selected_before:
+                if bpy.context.scene.objects.get(item.name) is item:
+                    item.select_set(True)
+            bpy.context.view_layer.objects.active = active_before
+    return emit
+
+
+def read_glb_json(path):
+    raw = Path(path).read_bytes()
+    expect(raw[:4] == b"glTF", "GLB magic missing")
+    length = struct.unpack_from("<I", raw, 12)[0]
+    return json.loads(raw[20:20 + length])
+
+
 def decision_for(plan, material_name):
     for decision in plan.lowerings:
         if decision.material_name == material_name:
@@ -144,8 +179,42 @@ def main():
     plain_obj.data.materials.append(plain_material)
     compiler.set_material_bake(plain_material, True)
 
+    # --- IR opt-in WITHOUT the bake: the standalone tslProgram route -----
+    solo_obj = quad_object("Solo Target", fixtures)
+    solo_obj.location = (9.0, 0.0, 0.0)
+    solo_material, solo_tree, solo_principled = base_material("TSL Solo")
+    solo_coord = solo_tree.nodes.new("ShaderNodeTexCoord")
+    solo_separate = solo_tree.nodes.new("ShaderNodeSeparateXYZ")
+    solo_tree.links.new(
+        solo_coord.outputs["UV"], solo_separate.inputs["Vector"],
+    )
+    solo_tree.links.new(
+        solo_separate.outputs["Y"], solo_principled.inputs["Roughness"],
+    )
+    solo_obj.data.materials.append(solo_material)
+    compiler.set_tsl_ir(solo_material, True)
+
+    # --- IR opt-in without the bake, nothing provable --------------------
+    stuck_obj = quad_object("Stuck Target", fixtures)
+    stuck_obj.location = (12.0, 0.0, 0.0)
+    stuck_material, stuck_tree, stuck_principled = base_material("TSL Stuck")
+    stuck_coord = stuck_tree.nodes.new("ShaderNodeTexCoord")
+    stuck_voronoi = stuck_tree.nodes.new("ShaderNodeTexVoronoi")
+    stuck_voronoi.feature = "F2"
+    stuck_tree.links.new(
+        stuck_coord.outputs["UV"], stuck_voronoi.inputs["Vector"],
+    )
+    for channel in ("Base Color", "Roughness", "Metallic", "Alpha"):
+        stuck_tree.links.new(
+            stuck_voronoi.outputs["Distance"],
+            stuck_principled.inputs[channel],
+        )
+    stuck_obj.data.materials.append(stuck_material)
+    compiler.set_tsl_ir(stuck_material, True)
+
     plan = compiler.plan_materials(
-        (evidence_obj, refused_obj, plain_obj), purpose="inspect",
+        (evidence_obj, refused_obj, plain_obj, solo_obj, stuck_obj),
+        purpose="inspect",
     )
 
     evidence = decision_for(plan, "TSL Evidence")
@@ -218,6 +287,126 @@ def main():
     expect(
         "tslIr" not in absent_json,
         "materials without the opt-in must carry no tslIr keys",
+    )
+
+    # --- The standalone route: IR without the bake is a real decision ----
+    solo = decision_for(plan, "TSL Solo")
+    expect(
+        solo.intent == "tslProgram" and solo.outcome == "lowered"
+        and solo.transport == "program",
+        "IR without the bake must plan as a lowered tslProgram decision, "
+        f"got {solo.intent}/{solo.outcome}/{solo.transport}",
+    )
+    solo_roughness = channel_record(solo, "Roughness")
+    expect(
+        solo_roughness is not None
+        and solo_roughness.get("route") == "program"
+        and solo_roughness.get("tslIr") is not None,
+        "the solo route must carry program IR on its proven channel",
+    )
+    solo_base = channel_record(solo, "Base Color")
+    expect(
+        solo_base is not None and solo_base.get("route") == "program"
+        and solo_base.get("tslIr", {}).get("output", {}).get("op")
+        == "const_vec3",
+        "constant channels ride the program route as constant IR",
+    )
+    expect(
+        (solo.channel_plan or {}).get("model") == "tsl-program-plan-v1",
+        "the solo route must carry its own plan model",
+    )
+    solo_fingerprint = json.dumps(
+        solo.fingerprint_dict(), sort_keys=True, separators=(",", ":"),
+    )
+    expect(
+        '"tslIr":' not in solo_fingerprint
+        and '"tslIrHash":' in solo_fingerprint,
+        "tslProgram fingerprints must strip bodies and keep hashes",
+    )
+
+    # Preserved decisions never enter plan.lowerings (that is the point:
+    # an unproven program must not publish or install anything), so the
+    # Stuck lookup goes through the full decision list.
+    stuck = next(
+        decision for decision in plan.decisions
+        if decision.material_name == "TSL Stuck"
+    )
+    expect(
+        stuck.intent == "tslProgram" and stuck.outcome == "preserved"
+        and stuck.transport == "stock",
+        "an unproven tslProgram must stay preserved (never block the "
+        f"export), got {stuck.intent}/{stuck.outcome}/{stuck.transport}",
+    )
+    expect(
+        any(
+            issue.code == "material.tsl-program-unproven"
+            for issue in stuck.issues
+        ),
+        "the unproven solo route must name its refusal",
+    )
+    stuck_channels = (stuck.channel_plan or {}).get("channels", ())
+    expect(
+        stuck_channels
+        and all(entry.get("route") == "refused" for entry in stuck_channels)
+        and all(entry.get("tslIrRefusal") for entry in stuck_channels),
+        "every unproven channel must carry a named tslIrRefusal",
+    )
+
+    # --- The solo route through the REAL compile transaction -------------
+    # Plan-level truth is above; this proves the carrier: one generated
+    # passthrough copy per material carrying the runtime identity extras,
+    # the artist material not shipped, the attestation accepting a stock
+    # carrier whose PBR derivation it records instead of asserting, and
+    # the slot restored afterwards.
+    solo_plan = compiler.plan_materials((solo_obj,), purpose="final")
+    expect(not solo_plan.errors, f"solo plan blocked: {solo_plan.errors}")
+    original_slot_material = solo_obj.material_slots[0].material
+    with tempfile.TemporaryDirectory(prefix="blendlink-tsl-solo-") as directory:
+        out_path = Path(directory) / "tsl-solo.glb"
+        _value, compilation = compiler.with_compiled_materials(
+            solo_plan, str(out_path), emit_selected([solo_obj]),
+        )
+        expect(out_path.is_file(), "tsl solo compile emitted no GLB")
+        expect(
+            len(compilation.generated_materials) == 1,
+            f"one solo material must generate one carrier: "
+            f"{compilation.generated_materials}",
+        )
+        document = read_glb_json(out_path)
+        shipped_names = [
+            material.get("name")
+            for material in document.get("materials", ())
+        ]
+        expect(
+            "TSL Solo" not in shipped_names,
+            f"the artist material must not ship beside its carrier: "
+            f"{shipped_names}",
+        )
+        carriers = [
+            material for material in document.get("materials", ())
+            if (material.get("extras") or {}).get("blendlink_material_rule")
+            == compiler.TSL_PROGRAM_RULE
+        ]
+        expect(
+            len(carriers) == 1
+            and (carriers[0]["extras"].get("blendlink_source_material")
+                 == "TSL Solo"),
+            f"exactly one program carrier with source extras must ship: "
+            f"{carriers}",
+        )
+        evidence = next(
+            item for item in compilation.gltf_evidence
+            if item["sourceMaterial"] == "TSL Solo"
+        )
+        expect(
+            evidence["transport"] == "program"
+            and evidence.get("observedOnly") is True,
+            f"program attestation must record observed PBR, not assert "
+            f"planned values: {evidence}",
+        )
+    expect(
+        solo_obj.material_slots[0].material is original_slot_material,
+        "the compile transaction must restore the artist material binding",
     )
 
     print("BLENDLINK_MATERIAL_TSL_IR_CHECK_PASSED")
