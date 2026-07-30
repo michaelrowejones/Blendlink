@@ -423,17 +423,38 @@ sim.
 Two independent measurements over the 49 materials on ellie's visible meshes, ~9,300 shader nodes
 in total, groups recursed.
 
-**Node-type census** — every `bl_idname` reachable from each material, diffed against the node set
-`tsl_ir.py` handles (46 types). The entire gap is **two node types**:
+**Node-type census — SUPERSEDED, and wrong in a way worth recording.** A first pass diffed every
+`bl_idname` in each material tree against the 46 types `tsl_ir.py` handles and reported the gap as
+`ShaderNodeBump` (35 materials) and `ShaderNodeVectorRotate` (17), concluding that Bump alone would
+move coverage from 12/49 to 28/49. **That is false.** The census counted nodes the IR never walks.
+`_leaf_channels` (`tsl_ir.py:423`) reads exactly five Principled sockets — Base Color, Metallic,
+Roughness, Alpha, Emission Colour and Strength — and **never reads `Normal`**. Every one of those 35
+Bump nodes feeds `Normal`, so the IR never traverses to it and it was never a blocker.
+Implementing `ShaderNodeBump` would unblock **zero** materials.
 
-| missing node | materials needing it |
+**Reachability-aware census — the real node gap.** Walking only the sub-graph the IR actually
+reads: **47 of 49 materials contain no unsupported node at all.** Two do:
+
+| material | reachable unsupported nodes |
 | --- | --- |
-| `ShaderNodeBump` | 35 |
-| `ShaderNodeVectorRotate` | 17 |
+| `ellie.denim_inside` | `ShaderNodeVectorRotate` |
+| `ellie.eyes_pupils` | `ShaderNodeCameraData`, `ShaderNodeTangent`, `ShaderNodeVectorTransform` |
 
-12 materials are already fully covered; 16 need only Bump; 13 need both; **none needs
-`VectorRotate` alone**. So Bump alone takes coverage from 12/49 to 28/49, and both together reach
-49/49 at the node-type level.
+Four node types across two materials — and 23 of the 49 reach no nodes whatsoever, being
+constant/factor-only. This agrees with the translation run below, where the surviving one-off
+refusals name `VectorTransform` on exactly `eyes_pupils`.
+
+**The lesson, since this misled three separate conclusions.** Node presence ≠ node reachability ≠
+translation blocker. Any future coverage claim has to walk from the channel sockets, or it is
+counting decoration.
+
+**Normal is not carried at all, and that is the real finding under the Bump question.**
+`emit_surface` returns six channels and `Normal` is not one of them, so every material that
+translates today translates *without its bump or normal detail*. The portability audit does report
+this (`"Bump shading has no direct glTF form"` on 31 materials), so it is not silent — but the TSL
+route's own fidelity ceiling is lower than §8a previously implied. Carrying the Normal channel is a
+real feature worth scoping on its own, and `ShaderNodeBump` is one input to it rather than a
+standalone win.
 
 **Actual translation run** — `tsl_ir.emit_surface` invoked on all 49. 13 translate; 36 refuse by
 name; **zero unexpected errors**, which is itself worth recording: every failure is a deliberate,
