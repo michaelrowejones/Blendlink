@@ -45,7 +45,7 @@ export interface BakeSettings {
     fitPolicy?: 'block' | 'scale'
     /** Lighting preserves realtime PBR with baked indirect GI; appearance
      * flattens the final authored look. Missing legacy values mean appearance. */
-    bakeOutput?: 'lighting' | 'appearance'
+    bakeOutput?: 'lighting' | 'appearance' | 'material'
   }>
   /** Internal Preview-quality escape hatch. Preview may show a reduced-detail
    * result while Final continues to enforce every authored block policy. */
@@ -172,7 +172,7 @@ export interface BakePlan {
   atlases?: Record<string, {
     size: number
     /** The authored composition contract for every receiver in this atlas. */
-    bakeOutput?: 'lighting' | 'appearance'
+    bakeOutput?: 'lighting' | 'appearance' | 'material'
     occupancy: number
     objects: number
     targetDensity?: number
@@ -199,7 +199,7 @@ export interface BakePlan {
     /** Which atlas the object landed in (property override or proximity). */
     atlas?: string
     /** Appearance owns the visible Surface; Lighting keeps the live material. */
-    bakeOutput?: 'lighting' | 'appearance'
+    bakeOutput?: 'lighting' | 'appearance' | 'material'
     areaM2: number
     uvShare: number
     pxPerMeter: number

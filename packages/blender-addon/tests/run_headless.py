@@ -4457,8 +4457,24 @@ def main():
             "main": {"size": 256, "bakeOutput": "mystery"},
         }})
     except SystemExit as error:
-        invalid_output_blocked = "appearance or lighting" in str(error)
+        invalid_output_blocked = "appearance, lighting or material" in str(error)
     expect(invalid_output_blocked, "invalid atlas bakeOutput did not fail loudly")
+    # "material" is recipe-valid since Phase 2 unit C but its bake path is
+    # unit D: atlas_config must ACCEPT it and configure_atlas_bake must
+    # refuse it by name -- the earliest gate every bake reaches, which is
+    # what keeps the two-branch finalize sites from publishing a material
+    # atlas as a plausible-looking lightmap in the meantime.
+    expect(exporter.atlas_config({"atlases": {
+        "main": {"size": 256, "bakeOutput": "material"},
+    }})["main"]["bakeOutput"] == "material",
+           "schema-valid material bakeOutput was rejected at atlas_config")
+    material_bake_refused = False
+    try:
+        exporter.configure_atlas_bake(bpy.context.scene, 4, "material")
+    except RuntimeError as error:
+        material_bake_refused = "not implemented yet" in str(error)
+    expect(material_bake_refused,
+           "material bakeOutput must refuse by name at the configure gate")
     light_group_issue = exporter.light_group_output_issue(
         {"main": "lighting", "painted": "appearance"}, {"Practical", "Accent"},
     )
@@ -10812,7 +10828,8 @@ def main():
         with redirect_stdout(invalid_recipe_log):
             loaded = props.load_legacy_recipe(invalid_recipe_scene)
         expect(not loaded and not invalid_recipe_scene.blendlink_project.configured
-               and "bakeOutput must be lighting or appearance" in invalid_recipe_log.getvalue()
+               and "bakeOutput must be lighting, appearance or material"
+               in invalid_recipe_log.getvalue()
                and "future-output" in invalid_recipe_scene.blendlink_project.recipe_error,
                "invalid serialized bakeOutput was silently rewritten as Appearance")
     finally:

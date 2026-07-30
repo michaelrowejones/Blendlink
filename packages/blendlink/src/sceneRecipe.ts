@@ -10,7 +10,7 @@ export const SCENE_RECIPE_SCHEMA_VERSION = 1 as const
 
 export type PresentationMode = 'hybrid' | 'realtime' | 'baked'
 export type AtlasFitPolicy = 'block' | 'scale'
-export type AtlasBakeOutput = 'lighting' | 'appearance'
+export type AtlasBakeOutput = 'lighting' | 'appearance' | 'material'
 export type CameraBehavior = 'fixed' | 'orbit' | 'free'
 export type CameraFraming = 'authored' | 'fit-scene' | 'fit-target'
 export type GeometryOptimization = 'none' | 'meshopt'
@@ -38,7 +38,9 @@ export interface AtlasRecipe {
   margin: number
   fitPolicy: AtlasFitPolicy
   /** Lighting preserves PBR materials and captures indirect GI. Appearance
-   * flattens the final authored look for intentionally stylized surfaces. */
+   * flattens the final authored look for intentionally stylized surfaces.
+   * Material bakes the surface channels only (no lighting), for objects
+   * that deform or compose with a lightmap. */
   bakeOutput: AtlasBakeOutput
 }
 
@@ -299,10 +301,11 @@ export function parseSceneRecipe(value: unknown): {
       diagnostics.push({ severity: 'error', path: `${path}.fitPolicy`, message: 'fitPolicy must be block or scale' })
     }
     const bakeOutput = atlas.bakeOutput
-    if (bakeOutput !== undefined && bakeOutput !== 'lighting' && bakeOutput !== 'appearance') {
+    if (bakeOutput !== undefined && bakeOutput !== 'lighting'
+      && bakeOutput !== 'appearance' && bakeOutput !== 'material') {
       diagnostics.push({
         severity: 'error', path: `${path}.bakeOutput`,
-        message: 'bakeOutput must be lighting or appearance',
+        message: 'bakeOutput must be lighting, appearance or material',
       })
     }
     atlases.push({
@@ -313,8 +316,13 @@ export function parseSceneRecipe(value: unknown): {
       margin,
       fitPolicy: fitPolicy === 'scale' ? 'scale' : 'block',
       // Recipes written before bakeOutput existed produced flattened Combined
-      // atlases. Preserve that appearance instead of silently changing them.
-      bakeOutput: bakeOutput === 'lighting' ? 'lighting' : 'appearance',
+      // atlases; those keep appearance. Unknown values were already pushed
+      // as error diagnostics above, so this exhaustive chain (replacing the
+      // two-way ternary that silently rewrote them) only ever collapses the
+      // legacy-missing case.
+      bakeOutput: bakeOutput === 'lighting' ? 'lighting'
+        : bakeOutput === 'material' ? 'material'
+        : 'appearance',
     })
   }
   if (atlases[0]?.id !== 'main') {

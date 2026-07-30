@@ -317,9 +317,9 @@ def resolve_scene_recipe(config_settings: dict) -> tuple[dict, dict | None]:
         if atlas.get("fitPolicy") not in {"block", "scale"}:
             raise SystemExit(f"web atlas {atlas_id!r} fitPolicy must be block or scale")
         bake_output = atlas.get("bakeOutput")
-        if bake_output is not None and bake_output not in {"appearance", "lighting"}:
+        if bake_output is not None and bake_output not in {"appearance", "lighting", "material"}:
             raise SystemExit(
-                f"web atlas {atlas_id!r} bakeOutput must be appearance or lighting"
+                f"web atlas {atlas_id!r} bakeOutput must be appearance, lighting or material"
             )
 
     quality_name = "preview" if config_settings.get("draft") else "final"
@@ -2035,9 +2035,9 @@ def atlas_config(bake: dict) -> dict:
     resolved = {}
     for name, entry in atlases.items():
         bake_output = entry.get("bakeOutput", "appearance")
-        if bake_output not in {"appearance", "lighting"}:
+        if bake_output not in {"appearance", "lighting", "material"}:
             raise SystemExit(
-                f"atlas {name!r} bakeOutput must be appearance or lighting, "
+                f"atlas {name!r} bakeOutput must be appearance, lighting or material, "
                 f"not {bake_output!r}"
             )
         resolved[name] = {
@@ -2080,6 +2080,12 @@ def lightmap_uv_channel(obj) -> int:
 def stamp_bake_output_metadata(obj, bake_output: str) -> int | None:
     """Stamp the node extras consumed by the generated Three adapter."""
     if bake_output not in {"appearance", "lighting"}:
+        # Deliberately STRICTER than the schema validators: "material" is
+        # recipe-valid (Phase 2 unit C) but has no finalize semantics until
+        # the material-atlas route lands, and stamping it here would hand
+        # the runtime a lightmap-shaped contract for an atlas that is not
+        # one. The configure gate refuses material atlases long before any
+        # object reaches this stamp; this alarm is the backstop.
         raise RuntimeError(f"unsupported atlas bake output {bake_output!r}")
     obj["blendlink_bake_output"] = bake_output
     if bake_output == "appearance":
@@ -2436,6 +2442,19 @@ def configure_atlas_bake(
         )
     elif bake_output == "lighting":
         bakelib.configure_lighting_bake(scene, margin_px)
+    elif bake_output == "material":
+        # Schema-valid since Phase 2 unit C; the bake path itself is unit
+        # D. Refusing HERE -- the first gate every bake reaches, before
+        # any RNA is touched or any fingerprint is taken -- is what keeps
+        # the two-branch sites downstream (bake_state's DIFFUSE/COMBINED
+        # pick, the finalize loop's lighting fallthrough, the one-image-
+        # per-group orchestration) from silently publishing a material
+        # atlas as a plausible-looking lightmap.
+        raise RuntimeError(
+            "bakeOutput 'material' is accepted by the recipe schema but "
+            "its bake path is not implemented yet; use appearance or "
+            "lighting until the material-atlas route lands"
+        )
     else:
         raise RuntimeError(f"unsupported atlas bake output {bake_output!r}")
 

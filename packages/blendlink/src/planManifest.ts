@@ -22,7 +22,7 @@ export interface RealtimePlanMaterialOptions {
     objects: ReadonlyArray<{
       name: string
       atlas?: string
-      bakeOutput?: 'lighting' | 'appearance'
+      bakeOutput?: 'lighting' | 'appearance' | 'material'
     }>
     dynamicObjects?: ReadonlyArray<{ name: string }>
   }

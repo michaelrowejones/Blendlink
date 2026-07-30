@@ -104,7 +104,10 @@ class BlendlinkAtlasSettings(bpy.types.PropertyGroup):
     )
     bake_output: bpy.props.EnumProperty(
         name="Bake Output",
-        description="Choose whether this atlas stores lighting or the final visible appearance",
+        description=(
+            "Choose whether this atlas stores lighting, the final visible "
+            "appearance, or the surface material channels"
+        ),
         items=(
             (
                 "LIGHTING", "Bake Lighting (Recommended)",
@@ -113,6 +116,13 @@ class BlendlinkAtlasSettings(bpy.types.PropertyGroup):
             (
                 "APPEARANCE", "Bake Appearance",
                 "Flatten the final stylized look into the atlas",
+            ),
+            (
+                "MATERIAL", "Bake Material",
+                "Bake the surface channels only -- no lighting -- so "
+                "deforming objects can share the atlas and lightmaps can "
+                "compose on top (bake path lands with the material-atlas "
+                "route)",
             ),
         ),
         # Existing .blend files have collection entries that predate this RNA
@@ -1724,6 +1734,7 @@ def serialized_components(project) -> list[dict]:
 _BAKE_OUTPUT_RECIPE_VALUES = {
     "LIGHTING": "lighting",
     "APPEARANCE": "appearance",
+    "MATERIAL": "material",
 }
 
 
@@ -2378,9 +2389,10 @@ def _validate_legacy_recipe_payload(recipe, scene=None) -> str:
             if fit_policy not in {"block", "scale"}:
                 raise ValueError(f"{path}.fitPolicy must be block or scale, not {fit_policy!r}")
             bake_output = atlas.get("bakeOutput")
-            if bake_output not in {None, "lighting", "appearance"}:
+            if bake_output not in {None, "lighting", "appearance", "material"}:
                 raise ValueError(
-                    f"{path}.bakeOutput must be lighting or appearance, not {bake_output!r}"
+                    f"{path}.bakeOutput must be lighting, appearance or "
+                    f"material, not {bake_output!r}"
                 )
 
         states = recipe.get("states")
@@ -2803,9 +2815,16 @@ def load_legacy_recipe(scene) -> bool:
             atlas.fit_policy = "SCALE" if raw_atlas.get("fitPolicy") == "scale" else "BLOCK"
             # Missing values are pre-lightmap recipes whose Combined bake
             # flattened the visible material and lighting into one texture.
-            atlas.bake_output = (
-                "LIGHTING" if raw_atlas.get("bakeOutput") == "lighting" else "APPEARANCE"
-            )
+            # Every other value passed the recipe validator above; an
+            # exhaustive mapping (instead of the old two-way ternary that
+            # silently rewrote unknowns as APPEARANCE) makes validator
+            # drift a loud KeyError here rather than a flattened bake.
+            atlas.bake_output = {
+                None: "APPEARANCE",
+                "lighting": "LIGHTING",
+                "appearance": "APPEARANCE",
+                "material": "MATERIAL",
+            }[raw_atlas.get("bakeOutput")]
         project.states.clear()
         for raw_state in recipe.get("states") or [{"name": "default"}]:
             state = project.states.add()
