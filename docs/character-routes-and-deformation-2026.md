@@ -723,3 +723,100 @@ Phase 2:
    `Material.copy`; what that actually protects is skinning, because a non-null `vertexNode`
    bypasses `setupPosition` entirely. Add a SkinnedMesh + morph assertion that the generated
    vertex shader still contains the skinning statements.
+
+### 8c. Phase 2 execution plan (seam-mapped 2026-07-31)
+
+Six parallel readers mapped every seam Phase 2 touches (52 sites for the subtraction alone).
+The findings that reshape the naive plan, then the unit order.
+
+**Findings that change the plan:**
+
+1. **Deleting the `compile_objects` subtraction is an ORDERING problem.** The material plan is
+   computed at `export_scene.py:5400` and enacted at `:5610`, and the whole bake runs between:
+   `freeze_evaluated_meshes` replaces `obj.data` (:2198), `stage_atlas_layers` adds ATLAS_UV
+   (:2211), and `rebuild_baked_materials`/`fork_lighting_materials` swap `slot.material`
+   (:3868/:3893) -- so a naive deletion makes every baked export die at
+   `material_compiler.py:6795` ("changed after planning"). And a blanket deletion is WRONG:
+   an Appearance atlas genuinely destroys the surface (unlit rebuild + UV-layer deletion at
+   :3879-3883). The safe form is bakeOutput-conditional: stop subtracting LIGHTING-owned
+   objects (compose), keep subtracting APPEARANCE-owned ones. `validation.py:443` already
+   skips the subtraction when any atlas is Lighting -- the exporter is stricter than the UI
+   that mirrors it, and the exporter's own unsubtracted `full_plan` (:5276) proves planning
+   the full scope works. Second-order breaks that must land in the same unit: the
+   selected-field x Lighting refusal (:5287 + validation.py:516), attestation fan-out
+   (`_resolve_generated_material` N>1 at material_compiler.py:4579 -- needs the
+   (output, atlas, channel) key `final_material_binding_key` :1715 already uses), the runtime
+   clone key missing an atlas/channel term (tslMaterialRuntime.ts:461 -> bakedRecipe.ts:404
+   throws), and `installTslMaterials` not being wired to `trackMaterialClone`
+   (threeRuntime.ts:2153). No test locks the subtraction itself -- write the composition
+   regression test FIRST.
+2. **`blendlink_tsl_ir` is a decoration, not a route** -- one read site 369 lines inside
+   `_plan_material_bake` (material_compiler.py:3492); set_tsl_ir(True) without the bake is a
+   total silent no-op (falls to the automatic/preserved return at :2349). Promotion =
+   a third intent branch at :2344 (`tslProgram`), its own branch in the compile transaction
+   (:6917 -- a lowered decision without one falls into the webColor path with color=None),
+   `_tsl_runtime_mesh_entry` hoisted out of the bake branch (:7076), a passthrough carrier
+   material so the runtime can find the program (the runtime matches ONLY
+   `blendlink_source_material` extras stamped on generated materials, tslMaterialRuntime.ts:433),
+   operator+UI rows cloned from the bake toggle (ops.py:2674, ui.py:2482/2513 -- the enable
+   row's needsBake gate must NOT be cloned), TS unions (sceneDiagnostics.ts:205), cli.ts:604
+   filter, and a new IR-without-bake fixture in material_tsl_ir_check.py. Trap: 'passthrough'
+   in the TS route union is a phantom no Python site emits; both route formatters fail OPEN
+   (unknown -> 'refused').
+3. **`bakeOutput = "material"` has four gates and two dormant silent-downgrade bugs.**
+   Phase 0's raise-on-unknown landed only RNA->recipe (props.py:1730); props.py:2806 and
+   sceneRecipe.ts:317 still collapse unknown values to appearance, currently shadowed by
+   validators -- adding "material" to validators without fixing both ternaries turns the bugs
+   live. Gate 2 (configure dispatch :2426) needs a per-channel loop, not one RNA config; the
+   bakelib primitives all exist (configure_emit_bake :6794, configure_normal_bake :6760,
+   bake_channel_field_pixels :7396, compose_channel_pack_pixels :7533). Gate 3's finalize is
+   if/else not three-way (:3875 -- an unknown output ships as a plausible-looking LIGHTMAP);
+   the HDR normalize (:3683) must not touch material planes; one-image-per-group is baked
+   into the whole orchestration (:3426) and the incremental-cache job naming. A material
+   bake is state-independent -- left unchanged the state loop multiplies bake cost by
+   (states x lightGroups) for identical output. Gate 4: bindingOf/createBakedScene
+   (bakedRecipe.ts:136/:294/:392) + the generated-template version bump ripple.
+4. **The shared surface atlas blocker is identity, not packing.** `allocate_receiver_rectangles`
+   (bakelib.py:5908) is pure geometry and reusable as-is; per-slot UV overlap is a documented
+   invariant that inverts to disjointness; `_variant_key` (material_compiler.py:3723) folds
+   per-binding materialization into identity so nothing can share; blit-after-bake avoids
+   re-running the determinism gate at page resolution; attestation needs a sub-rect record;
+   page assignment (which materials share a page, sRGB vs data, BLEND vs OPAQUE) is genuinely
+   new machinery. Tile-route materials stay out (per-record resolutions); pinned receivers
+   refuse.
+5. **Envelope generalization: five of six fields are additive; `nodes` is not.** Flattening
+   the output tree to id-addressed nodes changes every emitter return and both TS builders,
+   and its benefit (sharing/CSE) is already delivered at build time by the content-addressed
+   LUT cache. DEFERRED by decision -- do the additive parts (unify the duplicated
+   `_channel_document` construction tsl_ir.py:826 vs :2271, convert the dependency-flag
+   substring sniffs to typed walks, explicit `inputs` manifest, shaped `budget`, `id`), keep
+   `output` a tree, keep `hash` a SIBLING (the fingerprint split at material_compiler.py:2900
+   and the attestation strip at :7029 both key on the literal `tslIr` prefix -- renaming keys
+   silently un-strips megabyte bodies into fingerprints).
+6. **8b.4's stated mechanism is half wrong.** An undefined `vertexNode` is harmless
+   (`this.vertexNode || mvp`); the restore actually protects `fragmentNode` (NodeMaterial.js
+   :533 dereferences `.isOutputStructNode`). The real skinning hazard is a FUTURE positionNode
+   deformer: positionNode ASSIGNS positionLocal after skinning wrote it, so modifier IR that
+   does not read positionLocal erases skinning while the skinning statements remain in the
+   shader -- the WGSL assertion must also check the read, and it can only run as a browser
+   cell (no vitest WebGPU path exists; wgpu-postprocessing-parity needs the same dist-mtime
+   staleness guard tsl-node-differential already has).
+
+**Unit order (each its own commit, test:full gated):**
+
+- **2-A. Installer split + skinning invariant** (8b.3/8b.4): buildMaterialProgram vs
+  installIntoMaterial (the installer must own clone construction -- the null-slot list comes
+  from a fresh clone; name/userData assigned after copy), skinned+morph WGSL cell on
+  animation-deformation-fixture.glb with a synthetic loadPrograms override + staleness guard,
+  plus a generic vitest null-slot-restore structural test.
+- **2-B. tslProgram route** (finding 2), with the envelope's additive generalization (finding
+  5) folded in where the new path constructs documents.
+- **2-C. bakeOutput = "material" schema plumbing**: validators, both dormant ternaries fixed,
+  three-way dispatches that REFUSE BY NAME at the not-yet-implemented gates, enum + recipe
+  tables, e2e generator awareness. Ships the value without silent mis-routing.
+- **2-D. The material-atlas bake path** (finding 3's gates 2-4).
+- **2-E. Conditional compile_objects subtraction** (finding 1) -- composition test first.
+- **2-F. Per-slot shared surface atlas** (finding 4) -- scored against the fresh baseline.
+
+Success metric unchanged: ellie draw calls and GPU texture bytes against the clean-HEAD
+baseline (re-measured this session, replacing the stale 201.5 MiB / 65 figures).
