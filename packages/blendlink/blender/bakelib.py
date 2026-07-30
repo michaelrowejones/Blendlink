@@ -3555,6 +3555,75 @@ def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
     return roots, {root: index + 1 for index, root in enumerate(ordered)}
 
 
+def _uv_welded_island_pairs(mesh, layer, roots) -> dict:
+    """Group topological islands into the units ``pack_islands`` moves.
+
+    Blender packs with ``options.topology_from_uvs = true`` and
+    ``topology_from_uvs_use_seams = false``, so seams are NOT island
+    boundaries, and ``BM_loop_uv_share_edge_check`` compares the two loop
+    pairs with ``equals_v2v2`` -- bitwise float equality, no epsilon
+    (measured on 5.2.0: a 1e-7 UV mismatch already splits the island, and a
+    seam-marked shared edge with equal UVs does not). Two topological
+    islands are therefore one packer island exactly when some shared mesh
+    edge carries bit-equal UVs on both endpoints from both sides.
+
+    UV coincidence alone is not enough: split vertices with identical UVs
+    pack apart (measured 0.10 at margin 0.05), so surface adjacency is
+    required and a coincidental touch between unrelated charts still owes
+    its gutter.
+
+    Returns island root -> welded component root. Consumed ONLY by the
+    ``insufficient-gutter`` comparison in :func:`pinned_uv_layout_issues`:
+    the packer cannot open a gap inside a unit it moves rigidly, so
+    demanding one is unsatisfiable at every resolution. Overlap,
+    self-overlap, bounds and degeneracy keep consuming
+    :func:`_uv_polygon_islands` unchanged -- that separation is why this is
+    a second model and not an edit to the first.
+    """
+    parents = {root: root for root in roots}
+
+    def find(root: int) -> int:
+        while parents[root] != root:
+            parents[root] = parents[parents[root]]
+            root = parents[root]
+        return root
+
+    def union(left: int, right: int) -> None:
+        left_root, right_root = find(left), find(right)
+        if left_root != right_root:
+            parents[max(left_root, right_root)] = min(left_root, right_root)
+
+    edge_uses = {}
+    for polygon in mesh.polygons:
+        indices = list(polygon.loop_indices)
+        for offset, loop_index in enumerate(indices):
+            next_index = indices[(offset + 1) % len(indices)]
+            loop = mesh.loops[loop_index]
+            next_loop = mesh.loops[next_index]
+            key = tuple(sorted((loop.vertex_index, next_loop.vertex_index)))
+            edge_uses.setdefault(key, []).append((
+                polygon.index,
+                {
+                    loop.vertex_index: tuple(layer.data[loop_index].uv),
+                    next_loop.vertex_index: tuple(layer.data[next_index].uv),
+                },
+            ))
+
+    for uses in edge_uses.values():
+        for index, (polygon, coordinates) in enumerate(uses):
+            for other_polygon, other_coordinates in uses[index + 1:]:
+                # Exact equality, matching equals_v2v2. Do NOT use _uv_close
+                # here: its 1e-7 is looser than the packer's.
+                if all(
+                    vertex in other_coordinates
+                    and coordinate == other_coordinates[vertex]
+                    for vertex, coordinate in coordinates.items()
+                ):
+                    union(roots[polygon], roots[other_polygon])
+
+    return {root: find(root) for root in parents}
+
+
 def _signed_polygon_area(points) -> float:
     return 0.5 * sum(
         points[index][0] * points[(index + 1) % len(points)][1]
@@ -4890,6 +4959,7 @@ def pinned_uv_layout_issues(objs, uv_name: str = ATLAS_UV,
         )
     issues = []
     triangles = []
+    packer_islands = {}
     degenerate_owners = set()
     for obj in sorted(objs, key=lambda item: item.name):
         mesh = obj.data
@@ -4912,6 +4982,11 @@ def pinned_uv_layout_issues(objs, uv_name: str = ATLAS_UV,
             for polygon in mesh.polygons
             if any(mask[index] for index in polygon.loop_indices)
         }
+        welded = _uv_welded_island_pairs(mesh, layer, roots)
+        for root in pinned_roots:
+            packer_islands[(obj.name, display_numbers[root])] = (
+                obj.name, "packer-island", welded[root],
+            )
         coordinates_by_root = {root: [] for root in pinned_roots}
         for polygon in mesh.polygons:
             root = roots[polygon.index]
@@ -5038,15 +5113,27 @@ def pinned_uv_layout_issues(objs, uv_name: str = ATLAS_UV,
             pair = tuple(sorted((candidate["owner"], island["owner"])))
             if pair in overlapping_pairs:
                 continue
+            # Distinct packer islands only. Blender moves a welded group
+            # rigidly, so a gutter demanded inside one is unobtainable at
+            # every resolution -- and unnecessary: a bit-weld leaves no
+            # uncovered texels for EXTEND to dilate into (measured: 0 covered
+            # texels changed at margin 4 and margin 16). Overlap is still
+            # measured on the topological islands, so a fold across a weld is
+            # still an exact, reported overlap.
+            gutter = (
+                0.0 if packer_islands.get(pair[0], pair[0])
+                == packer_islands.get(pair[1], pair[1])
+                else minimum_gutter
+            )
             overlaps, distance = _bvh_pair_relation(
-                candidate["hierarchy"], island["hierarchy"], minimum_gutter,
+                candidate["hierarchy"], island["hierarchy"], gutter,
             )
             if overlaps:
                 overlapping_pairs.add(pair)
                 insufficient_gutters.pop(pair, None)
                 continue
-            if (minimum_gutter > 0.0
-                    and distance < minimum_gutter - _UV_CONNECT_EPSILON):
+            if (gutter > 0.0
+                    and distance < gutter - _UV_CONNECT_EPSILON):
                 insufficient_gutters[pair] = min(
                     distance, insufficient_gutters.get(pair, math.inf)
                 )
@@ -6255,10 +6342,7 @@ def pack(
         return
     # AABB outlines when the caller's downstream proof measures exact
     # geometric gutters: a bounding-box gap always lower-bounds the true
-    # shape gap, so the proof holds by construction. CONCAVE outlines are
-    # simplified approximations that measurably under-deliver between
-    # deeply concave organic charts (ellie skin: 30 insufficient-gutter
-    # pairs at the packer's own margin, identical at every resolution).
+    # shape gap, so the proof holds by construction.
     shape_method = (
         "AABB" if (chart_shape == "AABB" or group_receivers) else "CONCAVE"
     )
