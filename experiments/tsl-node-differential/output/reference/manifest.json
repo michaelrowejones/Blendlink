@@ -464,6 +464,72 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "noise-1d-color-distortion": {
+      "path": "noise-1d-color-distortion.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-1d-color-distortion.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.3308188319206238,
+        0.2614884376525879,
+        0.24091726541519165
+      ],
+      "rgbMax": [
+        0.6247341632843018,
+        0.7032607197761536,
+        0.6731166839599609
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "noise-4d": {
+      "path": "noise-4d.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-4d.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.28946569561958313,
+        0.28946569561958313,
+        0.28946569561958313
+      ],
+      "rgbMax": [
+        0.7458422183990479,
+        0.7458422183990479,
+        0.7458422183990479
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "noise-4d-color-distortion": {
+      "path": "noise-4d-color-distortion.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-4d-color-distortion.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.22740291059017181,
+        0.26038408279418945,
+        0.24678805470466614
+      ],
+      "rgbMax": [
+        0.7999129295349121,
+        0.7386817336082458,
+        0.7751942276954651
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "vertex-color": {
       "path": "vertex-color.f32",
       "pipeline": "ir",

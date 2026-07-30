@@ -258,6 +258,42 @@
       },
       "failureClass": "Blender perlin_1d through the fBM loop"
     },
+    "noise-1d-color-distortion": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00004894534261741986,
+        "p99Abs": 0.00028890371322631836,
+        "maxAbs": 0.0002969801425933838
+      },
+      "failureClass": "1D noise colour + distortion lane counts"
+    },
+    "noise-4d": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00004212637577438727,
+        "p99Abs": 0.00012922286987304688,
+        "maxAbs": 0.00017443299293518066
+      },
+      "failureClass": "Blender perlin_4d through the fBM loop"
+    },
+    "noise-4d-color-distortion": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00007694032926034804,
+        "p99Abs": 0.00028190016746520996,
+        "maxAbs": 0.0005192756652832031
+      },
+      "failureClass": "4D noise colour + distortion seed allocation"
+    },
     "vertex-color": {
       "ok": true,
       "claim": "exact",
@@ -1474,7 +1510,7 @@
     }
   },
   "claims": {
-    "exact": 119,
+    "exact": 122,
     "approximate": 1,
     "diagnostic": 1
   },

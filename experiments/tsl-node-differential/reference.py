@@ -1152,6 +1152,52 @@ def build_noise_1d_detail0(tree, emission):
     tree.links.new(factor, emission.inputs["Color"])
 
 
+def build_noise_4d(tree, emission):
+    # 4D Fac: Vector from UV, constant W -- the watch-family shape.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "4D"
+    node.inputs["Scale"].default_value = 5.0
+    node.inputs["Detail"].default_value = 2.0
+    node.inputs["W"].default_value = 3.3
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_noise_4d_color_distortion(tree, emission):
+    # Colour output AND distortion together: colour lanes sit at seeds 4/5
+    # precisely because 4D distortion consumes 0..3, so this cell fails if
+    # either lane family is given the wrong seeds or the wrong arity.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "4D"
+    node.inputs["Scale"].default_value = 8.0
+    node.inputs["Detail"].default_value = 2.0
+    node.inputs["W"].default_value = 3.3
+    node.inputs["Distortion"].default_value = 0.5
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    color = next(s for s in node.outputs if s.identifier == "Color")
+    tree.links.new(color, emission.inputs["Color"])
+
+
+def build_noise_1d_color_distortion(tree, emission):
+    # The 1D twin of the cell above: one scalar distortion lane at seed 0,
+    # colour lanes at seeds 1/2. Guards the lane-count fix -- the old
+    # "2 if 2D else 3" fallthrough emitted three offsets here.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "1D"
+    node.inputs["Scale"].default_value = 7.0
+    node.inputs["Detail"].default_value = 2.0
+    node.inputs["Distortion"].default_value = 0.7
+    tree.links.new(separate.outputs["X"], node.inputs["W"])
+    color = next(s for s in node.outputs if s.identifier == "Color")
+    tree.links.new(color, emission.inputs["Color"])
+
+
 def build_white_noise_continuous_uv(tree, emission):
     # Raw UV straight into White Noise -- no floor/ceil/snap. This is the
     # configuration the corpus actually uses and the one that cannot agree
@@ -1981,6 +2027,9 @@ BUILDERS = {
     "tex-image-linear": build_tex_image_linear,
     "noise-1d-detail0": build_noise_1d_detail0,
     "noise-1d": build_noise_1d,
+    "noise-1d-color-distortion": build_noise_1d_color_distortion,
+    "noise-4d": build_noise_4d,
+    "noise-4d-color-distortion": build_noise_4d_color_distortion,
     "white-noise-continuous-uv": build_white_noise_continuous_uv,
     "tex-image-cubic": build_tex_image_cubic,
     "tex-image-cubic-extend": build_tex_image_cubic_extend,

@@ -10,7 +10,7 @@
 import * as THREE from 'three'
 import { WebGPURenderer, MeshBasicNodeMaterial } from 'three/webgpu'
 import {
-  bitcast, float, floor, fract, int, mix, select, uint, uv, vec3,
+  Fn, bitcast, float, floor, fract, int, mix, select, uint, uv, vec3,
 } from 'three/tsl'
 
 const SIZE = 64
@@ -65,6 +65,92 @@ function perlin1d(x) {
   return mix(a, b, u)
 }
 
+// --- 4D under test: verbatim shapes from the production patch --------------
+
+function jenkinsMix(a0, b0, c0) {
+  let a = a0
+  let b = b0
+  let c = c0
+  a = a.sub(c); a = a.bitXor(uintRotate(c, 4)); c = c.add(b)
+  b = b.sub(a); b = b.bitXor(uintRotate(a, 6)); a = a.add(c)
+  c = c.sub(b); c = c.bitXor(uintRotate(b, 8)); b = b.add(a)
+  a = a.sub(c); a = a.bitXor(uintRotate(c, 16)); c = c.add(b)
+  b = b.sub(a); b = b.bitXor(uintRotate(a, 19)); a = a.add(c)
+  c = c.sub(b); c = c.bitXor(uintRotate(b, 4)); b = b.add(a)
+  return [a, b, c]
+}
+
+const SEED4 = 0xdeadbeef + (4 << 2) + 13
+
+function hashUint4(kx, ky, kz, kw) {
+  const [a, b, c] = jenkinsMix(
+    uint(SEED4).add(kx), uint(SEED4).add(ky), uint(SEED4).add(kz),
+  )
+  return jenkinsFinal(a.add(kw), b, c)
+}
+
+// Fn-wrapped like three's own mx_gradient_float: arguments are evaluated at
+// the CALL SITE, so an outer .toVar() can never have its assignment pulled
+// inside one of the selects' if/else branches.
+const grad4 = Fn(([hash, x, y, z, w]) => {
+  const h = hash.bitAnd(uint(31))
+  const u = select(h.lessThan(uint(24)), x, y)
+  const v = select(h.lessThan(uint(16)), y, z)
+  const s = select(h.lessThan(uint(8)), z, w)
+  return select(h.bitAnd(uint(1)).equal(uint(0)), u, u.negate())
+    .add(select(h.bitAnd(uint(2)).equal(uint(0)), v, v.negate()))
+    .add(select(h.bitAnd(uint(4)).equal(uint(0)), s, s.negate()))
+}).setLayout({
+  name: 'blenderGrad4',
+  type: 'float',
+  inputs: [
+    { name: 'hash', type: 'uint' },
+    { name: 'x', type: 'float' },
+    { name: 'y', type: 'float' },
+    { name: 'z', type: 'float' },
+    { name: 'w', type: 'float' },
+  ],
+})
+
+function perlin4d(px, py, pz, pw) {
+  const ix = floor(px)
+  const iy = floor(py)
+  const iz = floor(pz)
+  const iw = floor(pw)
+  const fx = px.sub(ix).toVar()
+  const fy = py.sub(iy).toVar()
+  const fz = pz.sub(iz).toVar()
+  const fw = pw.sub(iw).toVar()
+  const X = bitcast(int(ix), 'uint').toVar()
+  const Y = bitcast(int(iy), 'uint').toVar()
+  const Z = bitcast(int(iz), 'uint').toVar()
+  const W = bitcast(int(iw), 'uint').toVar()
+  const u = fadeNode(fx).toVar()
+  const v = fadeNode(fy).toVar()
+  const t = fadeNode(fz).toVar()
+  const sw = fadeNode(fw).toVar()
+  const one = uint(1)
+  const tap = (i, j, k, l) => grad4(
+    hashUint4(
+      i ? X.add(one) : X, j ? Y.add(one) : Y,
+      k ? Z.add(one) : Z, l ? W.add(one) : W,
+    ),
+    i ? fx.sub(1.0) : fx, j ? fy.sub(1.0) : fy,
+    k ? fz.sub(1.0) : fz, l ? fw.sub(1.0) : fw,
+  ).toVar()
+  const tri = (l) => mix(
+    mix(
+      mix(tap(0, 0, 0, l), tap(1, 0, 0, l), u),
+      mix(tap(0, 1, 0, l), tap(1, 1, 0, l), u), v,
+    ),
+    mix(
+      mix(tap(0, 0, 1, l), tap(1, 0, 1, l), u),
+      mix(tap(0, 1, 1, l), tap(1, 1, 1, l), u), v,
+    ), t,
+  )
+  return mix(tri(0), tri(1), sw).mul(0.8344)
+}
+
 // --- the stage ladder ------------------------------------------------------
 
 const toUnit = (value) => float(value).div(4294967295.0)
@@ -90,6 +176,137 @@ const STAGES = {
   fade: () => fadeNode(fract(uv().x.mul(8.0))),
   // The whole thing, in Blender's Fac form: 0.5 * (0.25 * perlin) + 0.5.
   perlin: () => perlin1d(uv().x.mul(11.0)).mul(0.25).mul(0.5).add(0.5),
+  // 4D ladder, full-field (varies in x AND y).
+  hash4cell: () => float(hashUint4(
+    bitcast(int(floor(uv().x.mul(5.0))), 'uint'),
+    bitcast(int(floor(uv().y.mul(5.0))), 'uint'),
+    uint(0), uint(16),
+  )).div(4294967295.0),
+  grad4probe: () => grad4(
+    hashUint4(
+      bitcast(int(floor(uv().x.mul(5.0))), 'uint'),
+      bitcast(int(floor(uv().y.mul(5.0))), 'uint'),
+      uint(0), uint(16),
+    ),
+    fract(uv().x.mul(5.0)), fract(uv().y.mul(5.0)), float(0.3), float(0.7),
+  ).mul(0.1).add(0.5),
+  perlin4dsingle: () => perlin4d(
+    uv().x.mul(5.0), uv().y.mul(5.0), float(0.0), float(16.5),
+  ).mul(0.5).add(0.5),
+  // Single tap with the full perlin4d-style lattice derivation (toVars and
+  // all): isolates the composition from the arithmetic that grad4probe
+  // already proved.
+  tap0000: () => {
+    const px = uv().x.mul(5.0)
+    const py = uv().y.mul(5.0)
+    const ix = floor(px)
+    const iy = floor(py)
+    const fx = px.sub(ix).toVar()
+    const fy = py.sub(iy).toVar()
+    const X = bitcast(int(ix), 'uint').toVar()
+    const Y = bitcast(int(iy), 'uint').toVar()
+    return grad4(hashUint4(X, Y, uint(0).toVar(), uint(16).toVar()),
+      fx, fy, float(0.0), float(0.5)).mul(0.1).add(0.5)
+  },
+  mixtap: () => {
+    // The innermost lerp of tri(0): mix(tap0000, tap1000, fadeU).
+    const px = uv().x.mul(5.0)
+    const py = uv().y.mul(5.0)
+    const ix = floor(px)
+    const iy = floor(py)
+    const fx = px.sub(ix).toVar()
+    const fy = py.sub(iy).toVar()
+    const X = bitcast(int(ix), 'uint').toVar()
+    const Y = bitcast(int(iy), 'uint').toVar()
+    const Z = uint(0).toVar()
+    const W = uint(16).toVar()
+    const one = uint(1)
+    const u = fadeNode(fx).toVar()
+    const a = grad4(hashUint4(X, Y, Z, W), fx, fy, float(0.0), float(0.5)).toVar()
+    const b = grad4(hashUint4(X.add(one), Y, Z, W),
+      fx.sub(1.0), fy, float(0.0), float(0.5)).toVar()
+    return mix(a, b, u).mul(0.1).add(0.5)
+  },
+  tri0: () => {
+    // One full trilinear over the l=0 plane, exactly as perlin4d builds it.
+    const px = uv().x.mul(5.0)
+    const py = uv().y.mul(5.0)
+    const ix = floor(px)
+    const iy = floor(py)
+    const fx = px.sub(ix).toVar()
+    const fy = py.sub(iy).toVar()
+    const X = bitcast(int(ix), 'uint').toVar()
+    const Y = bitcast(int(iy), 'uint').toVar()
+    const Z = uint(0).toVar()
+    const W = uint(16).toVar()
+    const one = uint(1)
+    const u = fadeNode(fx).toVar()
+    const v = fadeNode(fy).toVar()
+    const t = fadeNode(float(0.0)).toVar()
+    const tap = (i, j, k) => grad4(
+      hashUint4(i ? X.add(one) : X, j ? Y.add(one) : Y,
+        k ? Z.add(one) : Z, W),
+      i ? fx.sub(1.0) : fx, j ? fy.sub(1.0) : fy,
+      k ? float(-1.0) : float(0.0), float(0.5),
+    ).toVar()
+    return mix(
+      mix(mix(tap(0, 0, 0), tap(1, 0, 0), u), mix(tap(0, 1, 0), tap(1, 1, 0), u), v),
+      mix(mix(tap(0, 0, 1), tap(1, 0, 1), u), mix(tap(0, 1, 1), tap(1, 1, 1), u), v),
+      t,
+    ).mul(0.1).add(0.5)
+  },
+  tap1100: () => {
+    // The DOUBLE-incremented corner tap: X+1 and Y+1 together, which no
+    // earlier stage exercised.
+    const px = uv().x.mul(5.0)
+    const py = uv().y.mul(5.0)
+    const ix = floor(px)
+    const iy = floor(py)
+    const fx = px.sub(ix).toVar()
+    const fy = py.sub(iy).toVar()
+    const X = bitcast(int(ix), 'uint').toVar()
+    const Y = bitcast(int(iy), 'uint').toVar()
+    const one = uint(1)
+    return grad4(
+      hashUint4(X.add(one), Y.add(one), uint(0).toVar(), uint(16).toVar()),
+      fx.sub(1.0), fy.sub(1.0), float(0.0), float(0.5),
+    ).mul(0.1).add(0.5)
+  },
+  bil0: () => {
+    // Four taps + three mixes: the bilinear over the k=0, l=0 plane.
+    const px = uv().x.mul(5.0)
+    const py = uv().y.mul(5.0)
+    const ix = floor(px)
+    const iy = floor(py)
+    const fx = px.sub(ix).toVar()
+    const fy = py.sub(iy).toVar()
+    const X = bitcast(int(ix), 'uint').toVar()
+    const Y = bitcast(int(iy), 'uint').toVar()
+    const Z = uint(0).toVar()
+    const W = uint(16).toVar()
+    const one = uint(1)
+    const u = fadeNode(fx).toVar()
+    const v = fadeNode(fy).toVar()
+    const tap = (i, j) => grad4(
+      hashUint4(i ? X.add(one) : X, j ? Y.add(one) : Y, Z, W),
+      i ? fx.sub(1.0) : fx, j ? fy.sub(1.0) : fy, float(0.0), float(0.5),
+    ).toVar()
+    return mix(
+      mix(tap(0, 0), tap(1, 0), u), mix(tap(0, 1), tap(1, 1), u), v,
+    ).mul(0.1).add(0.5)
+  },
+  tap1000: () => {
+    const px = uv().x.mul(5.0)
+    const py = uv().y.mul(5.0)
+    const ix = floor(px)
+    const iy = floor(py)
+    const fx = px.sub(ix).toVar()
+    const fy = py.sub(iy).toVar()
+    const X = bitcast(int(ix), 'uint').toVar()
+    const Y = bitcast(int(iy), 'uint').toVar()
+    return grad4(hashUint4(X.add(uint(1)), Y, uint(0).toVar(), uint(16).toVar()),
+      fx.sub(1.0), fy, float(0.0), float(0.5)).mul(0.1).add(0.5)
+  },
 }
 
 // --- render machinery, cribbed from main.js --------------------------------
@@ -128,6 +345,24 @@ window.__debugInit = async () => {
     state.ready = true
   }
   return { ready: state.ready, error: state.error, backend: state.backend }
+}
+
+window.__debugShader = async (stageId) => {
+  if (state.error) return { ok: false, error: state.error }
+  try {
+    const factory = STAGES[stageId]
+    if (!factory) return { ok: false, error: `unknown stage ${stageId}` }
+    const material = new MeshBasicNodeMaterial()
+    material.colorNode = vec3(factory())
+    state.mesh.material.dispose()
+    state.mesh.material = material
+    const shaders = await state.renderer.debug.getShaderAsync(
+      state.scene, state.camera, state.mesh,
+    )
+    return { ok: true, fragment: shaders.fragmentShader ?? null }
+  } catch (error) {
+    return { ok: false, error: `${error?.name ?? 'Error'}: ${error?.message ?? error}` }
+  }
 }
 
 window.__debugRun = async (stageId) => {

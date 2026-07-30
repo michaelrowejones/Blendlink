@@ -43,6 +43,7 @@ import {
   uv,
   vec2,
   vec3,
+  vec4,
 } from 'three/tsl'
 import {
   ClampToEdgeWrapping,
@@ -78,6 +79,7 @@ export interface TslExpression {
   x: TslExpression
   y: TslExpression
   z: TslExpression
+  w: TslExpression
 }
 export type TslExprLike = TslExpression | number
 
@@ -118,6 +120,17 @@ const tslNoise = mx_noise_float as unknown as (
   position: TslExprLike,
 ) => TslExpression
 const tslVec2 = vec2 as unknown as (...values: TslExprLike[]) => TslExpression
+const tslVec4 = vec4 as unknown as (...values: TslExprLike[]) => TslExpression
+type TslFnLayout = {
+  name: string
+  type: string
+  inputs: Array<{ name: string; type: string }>
+}
+const tslFn = (TSLX as Record<string, unknown>).Fn as (
+  callback: (args: TslExpression[]) => TslExpression,
+) => ((...args: TslExprLike[]) => TslExpression) & {
+  setLayout(layout: TslFnLayout): (...args: TslExprLike[]) => TslExpression
+}
 const tslAttribute = attribute as unknown as (name: string) => TslExpression
 const tslTexture = texture as unknown as (
   map: DataTexture, coordinates: TslExpression,
@@ -672,11 +685,22 @@ function build(expression: TslIrExpression): TslExpression {
       return tslOneMinus(tslPow(facing, exponent))
     }
     case 'noise': {
-      let position = build(child(expression, 'input'))
-        .mul(build(child(expression, 'scale')))
       const dimensions = scalar(expression, 'dimensions')
+      let position = build(child(expression, 'input'))
+      if (dimensions === 4) {
+        // Blender scales the WHOLE float4(co, w), so w joins before the
+        // scale multiply, not after.
+        position = tslVec4(position, build(child(expression, 'w')))
+      }
+      position = position.mul(build(child(expression, 'scale')))
       // dimensions === 1 needs no coordinate surgery: the emitter sends the W
       // socket as a scalar, and perlin1d consumes it directly.
+      // The per-dimension single octave: 2D/3D ride MaterialX (proven to
+      // agree with Blender by the noise-2d / noise-scale cells); 1D and 4D
+      // are Blender's own perlins ported, because three has neither arity.
+      const octaveForDimension = dimensions === 1 ? perlin1d
+        : dimensions === 4 ? perlin4d
+          : tslNoise
       if (dimensions === 2) {
         // Blender's 2D noise is a genuinely different Perlin dimension,
         // matched by mx_noise_float's vec2 overload (the noise-2d cell).
@@ -688,16 +712,23 @@ function build(expression: TslIrExpression): TslExpression {
       // noisetex.h and gpu_shader_material_tex_noise.glsl, which agree.
       if (typeof expression.distortion === 'number') {
         const offsets = expression.distortionOffsets as number[][]
+        // Lane count follows the dimension, and the lane noise is the SAME
+        // dimension's snoise — perlin1d/perlin4d where MaterialX has no
+        // arity. offset/lane vectors match: 1D shifts by a scalar.
         const shift = (offset: number[]): TslExpression => (
-          dimensions === 2
-            ? position.add(tslVec2(offset[0], offset[1]))
-            : position.add(tslVec3(offset[0], offset[1], offset[2]))
+          dimensions === 1 ? position.add(offset[0]!)
+            : dimensions === 2 ? position.add(tslVec2(offset[0], offset[1]))
+              : dimensions === 4
+                ? position.add(tslVec4(offset[0], offset[1], offset[2], offset[3]))
+                : position.add(tslVec3(offset[0], offset[1], offset[2]))
         )
-        const lanes = offsets.map((offset) => tslNoise(shift(offset)))
+        const lanes = offsets.map((offset) => octaveForDimension(shift(offset)))
         position = position.add(
-          (dimensions === 2
-            ? tslVec2(lanes[0], lanes[1])
-            : tslVec3(lanes[0], lanes[1], lanes[2])
+          (dimensions === 1 ? lanes[0]!
+            : dimensions === 2 ? tslVec2(lanes[0], lanes[1])
+              : dimensions === 4
+                ? tslVec4(lanes[0], lanes[1], lanes[2], lanes[3])
+                : tslVec3(lanes[0], lanes[1], lanes[2])
           ).mul(expression.distortion),
         )
       }
@@ -706,22 +737,27 @@ function build(expression: TslIrExpression): TslExpression {
       const lacunarity = typeof expression.lacunarity === 'number'
         ? expression.lacunarity : 2.0
       const fac = blenderNoiseFac(
-        position, detail, roughness, lacunarity,
-        dimensions === 1 ? perlin1d : tslNoise,
+        position, detail, roughness, lacunarity, octaveForDimension,
       )
       if (expression.output !== 'color') return fac
       // Color lanes are the same fBM at constant hash-derived offsets
       // (the emitter precomputed noisetex.h's random offsets).
       const offsets = expression.colorOffsets as number[][]
       const shifted = (offset: number[]): TslExpression => (
-        dimensions === 2
-          ? position.add(tslVec2(offset[0], offset[1]))
-          : position.add(tslVec3(offset[0], offset[1], offset[2]))
+        dimensions === 1 ? position.add(offset[0]!)
+          : dimensions === 2 ? position.add(tslVec2(offset[0], offset[1]))
+            : dimensions === 4
+              ? position.add(tslVec4(offset[0], offset[1], offset[2], offset[3]))
+              : position.add(tslVec3(offset[0], offset[1], offset[2]))
       )
       return tslVec3(
         fac,
-        blenderNoiseFac(shifted(offsets[0]), detail, roughness, lacunarity),
-        blenderNoiseFac(shifted(offsets[1]), detail, roughness, lacunarity),
+        blenderNoiseFac(
+          shifted(offsets[0]), detail, roughness, lacunarity, octaveForDimension,
+        ),
+        blenderNoiseFac(
+          shifted(offsets[1]), detail, roughness, lacunarity, octaveForDimension,
+        ),
       )
     }
     case 'rgb_to_hsv':
@@ -1356,12 +1392,24 @@ function perlinFade(t: TslExpression): TslExpression {
  *   int h = hash & 15; float g = 1 + (h & 7);
  *   return negate_if(g, h & 8) * x;
  */
-function perlinGrad1(hash: TslExpression, x: TslExpression): TslExpression {
-  const h = hash.bitAnd(tslUintOf(15))
+const perlinGrad1 = tslFn(([hash, x]) => {
+  const h = hash!.bitAnd(tslUintOf(15))
   const g = tslFloat(h.bitAnd(tslUintOf(7))).add(1.0)
   const positive = h.bitAnd(tslUintOf(8)).equal(tslUintOf(0))
-  return tslSelect(positive, g, g.negate()).mul(x)
-}
+  return tslSelect(positive, g, g.negate()).mul(x!)
+}).setLayout({
+  // Fn + layout, matching three's own mx_gradient_float, and it is
+  // load-bearing: TSL emits a .toVar()'s assignment at its FIRST USE site,
+  // and select() compiles to if/else, so a var first read inside a select
+  // that sits in an inline DAG gets a CONDITIONAL assignment -- fragments
+  // taking the other branch read an unassigned var<private>. Measured on the
+  // 4D bilinear: taps individually exact, composition off by 1.4e-1 at
+  // lattice corners. Arguments to a laid-out Fn are evaluated at the call
+  // site, unconditionally, which closes the hazard for every caller.
+  name: 'blenderPerlinGrad1',
+  type: 'float',
+  inputs: [{ name: 'hash', type: 'uint' }, { name: 'x', type: 'float' }],
+})
 
 /** Blender's `perlin_1d` with `noise_scale1`'s 0.25 normalisation folded in.
  *
@@ -1386,6 +1434,81 @@ function perlin1d(x: TslExpression): TslExpression {
     u,
   )
   return result.mul(0.25)
+}
+
+const perlinGrad4 = tslFn(([hash, x, y, z, w]) => {
+  const h = hash!.bitAnd(tslUintOf(31))
+  const u = tslSelect(h.lessThan(tslUintOf(24)), x!, y!)
+  const v = tslSelect(h.lessThan(tslUintOf(16)), y!, z!)
+  const s = tslSelect(h.lessThan(tslUintOf(8)), z!, w!)
+  return tslSelect(h.bitAnd(tslUintOf(1)).equal(tslUintOf(0)), u, u.negate())
+    .add(tslSelect(h.bitAnd(tslUintOf(2)).equal(tslUintOf(0)), v, v.negate()))
+    .add(tslSelect(h.bitAnd(tslUintOf(4)).equal(tslUintOf(0)), s, s.negate()))
+}).setLayout({
+  // Same rationale as perlinGrad1's layout, and this is the function where
+  // the hazard was actually caught: run-debug1d.mjs measured the inline-DAG
+  // form corrupting the outer fade var at lattice corners.
+  name: 'blenderPerlinGrad4',
+  type: 'float',
+  inputs: [
+    { name: 'hash', type: 'uint' },
+    { name: 'x', type: 'float' },
+    { name: 'y', type: 'float' },
+    { name: 'z', type: 'float' },
+    { name: 'w', type: 'float' },
+  ],
+})
+
+/** Blender's `perlin_4d` with `noise_scale4`'s 0.8344 folded in.
+ *
+ * Sixteen `grad4(hashUint4(...))` taps, x-fastest lattice order, combined by
+ * `quad_mix` = two `tri_mix` (x innermost, then y, then z) mixed along w —
+ * the nested tslMix form is the same polynomial up to fp reassociation.
+ * `hashUint4` is the already-proven arity (white-noise 4D gates it), so
+ * unlike hashUint1 there is no const-fold trap: every operand mixes in a
+ * runtime key. `snoise_4d`'s |p| >= 1e6 fmod precision guard is deliberately
+ * omitted — corpus coordinates are orders of magnitude below it.
+ * Taps and lattice coords are `.toVar()`d to keep the WGSL flat: at detail 6
+ * this function instantiates up to 7 octaves x 16 Jenkins hashes.
+ */
+function perlin4d(p: TslExpression): TslExpression {
+  const ix = tslFloor(p.x)
+  const iy = tslFloor(p.y)
+  const iz = tslFloor(p.z)
+  const iw = tslFloor(p.w)
+  const fx = p.x.sub(ix).toVar()
+  const fy = p.y.sub(iy).toVar()
+  const fz = p.z.sub(iz).toVar()
+  const fw = p.w.sub(iw).toVar()
+  const X = tslBitcast(tslIntOf(ix), 'uint').toVar()
+  const Y = tslBitcast(tslIntOf(iy), 'uint').toVar()
+  const Z = tslBitcast(tslIntOf(iz), 'uint').toVar()
+  const W = tslBitcast(tslIntOf(iw), 'uint').toVar()
+  const u = perlinFade(fx).toVar()
+  const v = perlinFade(fy).toVar()
+  const t = perlinFade(fz).toVar()
+  const sw = perlinFade(fw).toVar()
+  const one = tslUintOf(1)
+  const tap = (i: number, j: number, k: number, l: number): TslExpression =>
+    perlinGrad4(
+      hashUint4(
+        i ? X.add(one) : X, j ? Y.add(one) : Y,
+        k ? Z.add(one) : Z, l ? W.add(one) : W,
+      ),
+      i ? fx.sub(1.0) : fx, j ? fy.sub(1.0) : fy,
+      k ? fz.sub(1.0) : fz, l ? fw.sub(1.0) : fw,
+    ).toVar()
+  const tri = (l: number): TslExpression => tslMix(
+    tslMix(
+      tslMix(tap(0, 0, 0, l), tap(1, 0, 0, l), u),
+      tslMix(tap(0, 1, 0, l), tap(1, 1, 0, l), u), v,
+    ),
+    tslMix(
+      tslMix(tap(0, 0, 1, l), tap(1, 0, 1, l), u),
+      tslMix(tap(0, 1, 1, l), tap(1, 1, 1, l), u), v,
+    ), t,
+  )
+  return tslMix(tri(0), tri(1), sw).mul(0.8344)
 }
 
 function hashUint2(kx: TslExpression, ky: TslExpression): TslExpression {

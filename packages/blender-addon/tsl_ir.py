@@ -95,8 +95,26 @@ def _hash_float2_to_float(x, y):
     return c / 0xFFFFFFFF
 
 
+def _hash_float_to_float(x):
+    """util/hash.h hash_float_to_float: the ONE-argument Jenkins member."""
+    seed = (0xDEADBEEF + (1 << 2) + 13) & 0xFFFFFFFF
+    return _jenkins_final(
+        (seed + _float_bits(x)) & 0xFFFFFFFF, seed, seed,
+    ) / 0xFFFFFFFF
+
+
 def _noise_random_offset(seed, count):
-    """noisetex.h random_floatN_offset for a constant seed."""
+    """noisetex.h random_floatN_offset for a constant seed.
+
+    The scalar helper is NOT the vec2 hash with a zero lane:
+    ``random_float_offset`` calls ``hash_float_to_float(seed)`` -- the
+    one-argument hash -- while every vector arity calls
+    ``hash_vec2_to_float(vec2(seed, index))``. Conflating them emits valid
+    but WRONG offsets for 1D distortion and colour lanes, which decorrelates
+    the field at ~9e-2 while everything else measures exact.
+    """
+    if count == 1:
+        return [100.0 + _hash_float_to_float(seed) * 100.0]
     return [
         100.0 + _hash_float2_to_float(seed, float(index)) * 100.0
         for index in range(count)
@@ -1548,7 +1566,7 @@ def emit_output(node, from_socket, stack=()):
         # bisection that found it is run-debug1d.mjs in the differential
         # harness, and the gated noise-1d cells hold the claim. 4D still
         # refuses: it needs grad4 and the 16-tap quad_mix, not just a hash.
-        if dimensions not in {"1D", "2D", "3D"}:
+        if dimensions not in {"1D", "2D", "3D", "4D"}:
             _refuse(
                 f"Noise dimensions {dimensions!r} has no cell yet"
             )
@@ -1627,7 +1645,7 @@ def emit_output(node, from_socket, stack=()):
             # sends the scalar W into mx_noise_float, whose
             # .convert('vec2|vec3') turns it into a plausible-looking 3D field,
             # producing a wrong result that reads exactly like a hash bug.
-            "dimensions": {"1D": 1, "2D": 2}.get(dimensions, 3),
+            "dimensions": {"1D": 1, "2D": 2, "4D": 4}.get(dimensions, 3),
             "detail": detail_value,
             "roughness": roughness_value,
             "lacunarity": lacunarity_value,
@@ -1638,6 +1656,11 @@ def emit_output(node, from_socket, stack=()):
             "input": (
                 emit_input(node.inputs["W"], stack=stack)
                 if dimensions == "1D" else _texture_vector(vector, stack)
+            ),
+            # 4D reads Vector AND W; Blender scales the whole float4(co, w).
+            **(
+                {"w": emit_input(node.inputs["W"], stack=stack)}
+                if dimensions == "4D" else {}
             ),
         }
         # Distortion perturbs the SCALED coordinate before any octave runs,
@@ -1667,7 +1690,12 @@ def emit_output(node, from_socket, stack=()):
             else:
                 distortion_value = float(distortion_socket.default_value)
         if abs(distortion_value) > 1e-9:
-            count = 2 if dimensions == "2D" else 3
+            # Lane count follows the dimension. The old "2 if 2D else 3" was
+            # the same silent fallthrough that broke 1D dimensions: it would
+            # emit three offsets for a 1D or 4D noise and the runtime would
+            # decorrelate. noisetex.h: 1D uses one scalar lane at seed 0; N-D
+            # uses N lanes at seeds 0..N-1.
+            count = {"1D": 1, "2D": 2, "4D": 4}.get(dimensions, 3)
             expression["distortion"] = distortion_value
             expression["distortionOffsets"] = [
                 _noise_random_offset(float(seed), count)
@@ -1680,8 +1708,11 @@ def emit_output(node, from_socket, stack=()):
             # low seeds per dimension, so 2D color uses (2, 3) and 3D
             # uses (3, 4) — measured: the wrong pair decorrelates both
             # offset lanes at 1e-1 while Fac stays at 4e-5.
-            count = 2 if dimensions == "2D" else 3
-            seeds = (2.0, 3.0) if dimensions == "2D" else (3.0, 4.0)
+            # N-D colour lanes use seeds (N, N+1) with N-component offsets:
+            # distortion consumes seeds 0..N-1 first. The old 2D/3D pair
+            # (2,3)/(3,4) is exactly this rule; 1D gives (1,2), 4D (4,5).
+            count = {"1D": 1, "2D": 2, "4D": 4}.get(dimensions, 3)
+            seeds = (float(count), float(count + 1))
             expression["colorOffsets"] = [
                 _noise_random_offset(seed, count) for seed in seeds
             ]

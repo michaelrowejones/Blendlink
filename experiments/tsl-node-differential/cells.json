@@ -255,6 +255,42 @@
    "notes": "Detail 2, scale 6, W driven from UV.x - 9 of ellie's 49 visible materials use 1D noise. Pairs with noise-1d-detail0: this one adds the octave loop on top of the octave that cell already pins. hash_uint is the 1-ARGUMENT member of the Jenkins family and its seed encodes the arity as 0xdeadbeef + (1 << 2) + 13, so it is not hashUint2(x, 0) and substituting one for the other silently yields a different field."
   },
   {
+   "id": "noise-1d-color-distortion",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "1D noise colour + distortion lane counts",
+   "notes": "Colour output with Distortion 0.7 on 1D noise: one scalar distortion lane at seed 0, colour lanes at seeds 1 and 2. Guards the lane-count rule -- the old '2 if 2D else 3' fallthrough emitted three vec3 offsets for a scalar field, the same silent-else family as the dimensions bug that sent 1D through mx_noise_float."
+  },
+  {
+   "id": "noise-4d",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "Blender perlin_4d through the fBM loop",
+   "notes": "4D Fac, Vector from UV, constant W 3.3, scale 5, detail 2 -- the watch-family shape; 7 of ellie's 49 visible materials use 4D noise. grad4 and quad_mix ported verbatim from intern/cycles/kernel/svm/noise.h with noise_scale4's 0.8344 folded in; hashUint4 was already proven by the white-noise 4D path, and unlike hashUint1 it has no const-fold trap because every operand mixes in a runtime key."
+  },
+  {
+   "id": "noise-4d-color-distortion",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "4D noise colour + distortion seed allocation",
+   "notes": "Colour output AND Distortion 0.5 together on 4D: four distortion lanes at seeds 0..3, colour lanes at seeds 4 and 5. Fails if either family gets the wrong seeds or arity. This is the exact configuration ellie's watch materials author (scale 19.7, detail 4, distortion 0.5, Color)."
+  },
+  {
    "id": "vertex-color",
    "gate": true,
    "tolerance": {
