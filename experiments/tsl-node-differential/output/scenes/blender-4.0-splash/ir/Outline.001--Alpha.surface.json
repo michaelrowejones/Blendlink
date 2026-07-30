@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "math",
+    "operation": "MULTIPLY",
+    "a": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "b": {
+      "op": "math",
+      "operation": "SUBTRACT",
+      "a": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "b": {
+        "op": "clamp01",
+        "input": {
+          "op": "rgb_to_bw",
+          "input": {
+            "op": "vertex_color",
+            "layer": "Color.001"
+          }
+        }
+      }
+    }
+  }
+}

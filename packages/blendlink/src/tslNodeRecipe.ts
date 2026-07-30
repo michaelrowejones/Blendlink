@@ -1461,6 +1461,33 @@ const perlinGrad1 = tslFn(([hash, x]) => {
   inputs: [{ name: 'hash', type: 'uint' }, { name: 'x', type: 'float' }],
 })
 
+// Overlay's per-channel branch, sealed in a laid-out Fn for the same
+// var-in-branch reason as the perlin gradients: arguments are evaluated at
+// the call site, so a var-carrying operand (a Voronoi accumulator chain)
+// is fully assigned before the select runs. Inline, the operand's vars
+// were first used inside the dark arm and every a >= 0.5 texel read them
+// unassigned -- measured as DP-SkyPaint.MAT's half-tile divergence and
+// pinned by the overlay-branch-voronoi cell. A .toVar() hoist in
+// buildMixColor does NOT fix it (measured: the assignment still lands at
+// the var's first use site).
+const blenderOverlayChannel = tslFn(([aChannel, bChannel, f]) => {
+  const inverse = tslOneMinus(f!)
+  const dark = aChannel!.mul(inverse.add(f!.mul(2.0).mul(bChannel!)))
+  const light = tslOneMinus(
+    inverse.add(f!.mul(2.0).mul(tslOneMinus(bChannel!)))
+      .mul(tslOneMinus(aChannel!)),
+  )
+  return tslSelect(aChannel!.lessThan(0.5), dark, light)
+}).setLayout({
+  name: 'blenderOverlayChannel',
+  type: 'float',
+  inputs: [
+    { name: 'aChannel', type: 'float' },
+    { name: 'bChannel', type: 'float' },
+    { name: 'f', type: 'float' },
+  ],
+})
+
 /** Blender's `perlin_1d` with `noise_scale1`'s 0.25 normalisation folded in.
  *
  * three has no 1D Perlin at all — `mx_perlin_noise_float` is an overloadingFn
@@ -2201,6 +2228,11 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
   if (expression.clampFactor !== false) {
     factor = tslClamp(factor, 0.0, 1.0)
   }
+  // NOT hoisted with .toVar(): measured on overlay-branch-voronoi, a
+  // toVar here still emits its assignment at the var's first USE site,
+  // which can sit inside a select arm -- the numbers moved and the
+  // half-tile divergence stayed. Branching blends seal their branches
+  // inside a laid-out Fn instead (see blenderOverlayChannel).
   const a = build(child(expression, 'a'))
   const b = build(child(expression, 'b'))
   let blended: TslExpression
@@ -2340,22 +2372,15 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
       // a < 0.5 ? a * (1 - f + 2 f b) : 1 - (1 - f + 2 f (1 - b)) (1 - a).
       // Built with scalar selects per channel — measured 2026-07-27: a
       // vector-condition select collapses to one lane here, sending every
-      // channel down the first component's branch.
-      const inverseFactor = tslOneMinus(factor)
-      const channel = (
-        aChannel: TslExpression, bChannel: TslExpression,
-      ): TslExpression => {
-        const dark = aChannel.mul(
-          inverseFactor.add(factor.mul(2.0).mul(bChannel)),
-        )
-        const light = tslOneMinus(
-          inverseFactor.add(factor.mul(2.0).mul(tslOneMinus(bChannel)))
-            .mul(tslOneMinus(aChannel)),
-        )
-        return tslSelect(aChannel.lessThan(0.5), dark, light)
-      }
+      // channel down the first component's branch. The select lives in a
+      // laid-out Fn (blenderOverlayChannel) so a var-carrying operand is
+      // evaluated at the call site, unconditionally — inline, the operand's
+      // vars are first used inside one select arm and the other arm reads
+      // them unassigned (measured: overlay-branch-voronoi, DP-SkyPaint).
       blended = tslVec3(
-        channel(a.x, b.x), channel(a.y, b.y), channel(a.z, b.z),
+        blenderOverlayChannel(a.x, b.x, factor),
+        blenderOverlayChannel(a.y, b.y, factor),
+        blenderOverlayChannel(a.z, b.z, factor),
       )
       break
     }

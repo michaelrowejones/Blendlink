@@ -33,6 +33,10 @@
       "status": "baked"
     },
     {
+      "cell": "ellie.fanny_pack_black--Base_Color",
+      "status": "baked"
+    },
+    {
       "cell": "ellie.gums--Base_Color",
       "status": "baked"
     },
@@ -58,7 +62,9 @@
     }
   ],
   "limits": [
-    "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+    "surface tap v2 samples radiance, or Alpha when the surface is a flat transparent mix over a non-Principled leaf (the outline class); lit-lit mixes, Principled-leaf alphas and the remaining fold channels stay unsampled by name",
+    "vertex-color documents sample against the linear-in-UV tile fixture the vertex-color cell proves; documents referencing more than one distinct color layer skip by name",
+    "scene bakes hide all other render geometry so ray-traced nodes (Ambient Occlusion) evaluate the same unoccluded tile the runtime's declared default carries; real-scene occlusion stays the declared geometryDependent non-carriage"
   ],
   "irCompiledAttributeDriven": 1,
   "irCompiledApproximate": 1

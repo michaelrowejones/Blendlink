@@ -2,6 +2,22 @@
   "schemaVersion": 1,
   "size": 64,
   "cells": {
+    "Brush--Base_Color": {
+      "path": "Brush--Base_Color.f32",
+      "material": "Brush",
+      "channel": "Base Color",
+      "kind": "principled",
+      "rgbMin": [
+        0.016577865928411484,
+        0.006307241972535849,
+        0.0024318688083440065
+      ],
+      "rgbMax": [
+        0.0862007811665535,
+        0.038159601390361786,
+        0.016860252246260643
+      ]
+    },
     "Clay--Base_Color": {
       "path": "Clay--Base_Color.f32",
       "material": "Clay",

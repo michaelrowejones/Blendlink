@@ -25,6 +25,22 @@
         ]
       }
     },
+    "ellie.fanny_pack_black--Base_Color": {
+      "path": "ellie.fanny_pack_black--Base_Color.f32",
+      "material": "ellie.fanny_pack_black",
+      "channel": "Base Color",
+      "kind": "principled",
+      "rgbMin": [
+        0.007828124798834324,
+        0.007843732833862305,
+        0.25
+      ],
+      "rgbMax": [
+        0.9922031164169312,
+        0.9922187328338623,
+        0.25
+      ]
+    },
     "ellie.gums--Base_Color": {
       "path": "ellie.gums--Base_Color.f32",
       "material": "ellie.gums",

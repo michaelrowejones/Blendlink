@@ -2326,6 +2326,18 @@
    "notes": "A non-grayscale ColorRamp COLOR into Mix.Factor. Cycles inserts NODE_CONVERT_CF (linear_rgb_to_gray, convert.h verbatim) on every colour-to-float link; the emitter wraps such sources in rgb_to_bw, whose Rec.709 row is that function. The coloured ramp distinguishes luminance from a component average AND from the x-lane truncation that reproduced plants.leaf's corpus failure to four digits; the runtime guard fails any IR still carrying a vector factor."
   },
   {
+   "id": "overlay-branch-voronoi",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "branching blend over a var-carrying operand",
+   "notes": "The DP-SkyPaint minimizer. OVERLAY branches per channel on a < 0.5; TSL emits .toVar() assignments at FIRST USE and select() compiles to if/else, so a var-heavy operand (the Voronoi argmin chain) whose assignments land inside one arm leaves the other arm reading unassigned vars. Measured pre-fix: meanAbs 3.0e-2, divergence confined to exactly the half-tile where A crossed 0.5. A .toVar() hoist in buildMixColor does NOT fix it (measured: the numbers moved, the half-tile stayed); sealing the branch in a laid-out Fn (blenderOverlayChannel) does -- post-fix meanAbs 3.3e-5. B is the voronoi DISTANCE lane: as var-heavy as Color (same argmin loop, same hazard trigger) but continuous across winner flips, so the cell gates exactly; the Color lane's sparse O(1) flip tail is the emitter's declared tsl.voronoi-color-winner-flip approximation instead (with Color this cell drew a maxAbs 0.207 single-texel flip at scale 6 -- the measurement that showed the <=40 bound, earned on Distance, never transferred to Color). Also the first cell measuring Voronoi over a NEGATIVE domain (Object coordinates span [-1,1])."
+  },
+  {
    "id": "noise-texture-panel-mapping",
    "gate": true,
    "claim": "exact",

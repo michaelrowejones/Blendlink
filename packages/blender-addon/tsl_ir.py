@@ -275,6 +275,22 @@ _APPROXIMATION_CELLS = {
             "is measurably over the exact gate, so it ships declared."
         ),
     },
+    "tsl.voronoi-color-winner-flip": {
+        "cell": "voronoi-scale155-f1-color",
+        "divergenceKind": "bounded",
+        "provenBy": ["voronoi-f1", "voronoi-scale40"],
+        "detail": (
+            "Voronoi COLOR output at ANY scale: F1 distance is continuous "
+            "across a winner flip, but the winning-cell hash colour is "
+            "not, so sample-position wiggle near a cell boundary flips a "
+            "sparse set of texels to an unrelated colour -- maxAbs O(1) "
+            "with tiny mean. Measured sparsely at scale 6 over the object "
+            "domain (one texel, maxAbs 0.207) and densely at 155 by the "
+            "named cell, whose declared budget upper-bounds every smaller "
+            "scale. The <=40 exact bound was earned on the Distance "
+            "output and never transferred to Color."
+        ),
+    },
     "tsl.voronoi-f1-color-scale-above-exact": {
         "cell": "voronoi-scale155-f1-color",
         "divergenceKind": "bounded",
@@ -768,7 +784,13 @@ def _fold_surface(expression):
         return None
     if kind != "mix":
         return _leaf_channels(expression)
-    factor = emit_input(expression["fac_socket"], expression["fac_stack"])
+    # The Fac socket is FLOAT: a color-driven mix factor takes Cycles'
+    # implicit COLOR->FLOAT conversion exactly like Mix.Factor does --
+    # the splash outline class drives MixShader.Fac with a vertex color,
+    # and omitting the conversion is the same class of defect the
+    # mix-factor-color-ramp cell pinned (caught here by the surface tap
+    # baking through a real Math input, which Blender converts).
+    factor = _scalar_input(expression["fac_socket"], expression["fac_stack"])
     clamped = {"op": "clamp01", "input": factor}
     a = _fold_surface(expression["a"])
     b = _fold_surface(expression["b"])
@@ -907,29 +929,11 @@ def _fold_vector_prescale(expression):
 
 
 def _scalar_input(socket, stack):
-    """A float input socket with Cycles' implicit link conversion.
-
-    Cycles inserts NODE_CONVERT_CF -- linear_rgb_to_gray -- on every
-    COLOR-to-FLOAT link (intern/cycles/kernel/svm/convert.h), and the
-    rgb_to_bw op's Rec.709 row is that function verbatim. Omitting it
-    handed plants.leaf's Mix a vec3 factor, which the OVERLAY builder
-    truncated through tslVec3 to the x-lane -- reproducing the measured
-    corpus failure to four digits. Vector sources (NODE_CONVERT_VF,
-    component average) refuse by name until a cell exists."""
-    expression = emit_input(socket, stack=stack)
-    source = _socket_source(socket)
-    if source is None:
-        return expression
-    _source_node, from_socket = source
-    socket_type = str(getattr(from_socket, "type", ""))
-    if socket_type == "RGBA":
-        return {"op": "rgb_to_bw", "input": expression}
-    if socket_type == "VECTOR":
-        _refuse(
-            "implicit vector-to-float conversion (component average) "
-            "has no cell yet"
-        )
-    return expression
+    """A float input socket. The implicit COLOR->FLOAT conversion now
+    lives in ``_convert_link`` (applied by emit_input at EVERY link, the
+    way Cycles applies it); this wrapper remains only as the historical
+    name at the Mix/Math factor call sites."""
+    return emit_input(socket, stack=stack)
 
 
 def _texture_vector(socket, stack, node=None):
@@ -996,7 +1000,34 @@ def emit_input(socket, stack=(), *, as_vector=False):
             _refuse(f"socket {socket.name!r} has no usable constant")
         return _vector(value) if as_vector else _scalar(value)
     node, from_socket = source
-    return emit_output(node, from_socket, stack)
+    return _convert_link(emit_output(node, from_socket, stack), from_socket, socket)
+
+
+def _convert_link(expression, from_socket, to_socket):
+    """Cycles' implicit link conversion, applied AT THE LINK.
+
+    Cycles inserts NODE_CONVERT_CF -- linear_rgb_to_gray -- on every
+    COLOR-to-FLOAT link (intern/cycles/kernel/svm/convert.h); rgb_to_bw's
+    Rec.709 row is that function verbatim. The first miss (plants.leaf's
+    Mix.Factor) was patched at the consumer socket; the splash outline
+    class then hid the SAME conversion one group wall away -- a vertex
+    color wired into a group's float input, where no consumer-site check
+    can see it. Cycles' actual rule is per-LINK, group boundaries
+    included, so the emitter's is now too: this runs on every linked
+    socket emit_input resolves, in both group directions. FLOAT->COLOR
+    broadcast needs no op (scalar replication is what both Cycles and
+    TSL broadcasting do); vector-to-float (NODE_CONVERT_VF, component
+    average) refuses by name until a cell exists."""
+    from_type = str(getattr(from_socket, "type", ""))
+    to_type = str(getattr(to_socket, "type", ""))
+    if to_type == "VALUE" and from_type == "RGBA":
+        return {"op": "rgb_to_bw", "input": expression}
+    if to_type == "VALUE" and from_type == "VECTOR":
+        _refuse(
+            "implicit vector-to-float conversion (component average) "
+            "has no cell yet"
+        )
+    return expression
 
 
 def emit_output(node, from_socket, stack=()):
@@ -1810,6 +1841,15 @@ def emit_output(node, from_socket, stack=()):
                 "sample-position "
                 "differences decorrelate high-frequency patterns"
             )
+        if (
+            output_id == "Color"
+            and voronoi_scale_magnitude <= _VORONOI_SCALE_BOUND + 1e-9
+        ):
+            # Above the exact bound the Color band's declaration already
+            # includes the flip tail; at or below it the tail is the ONLY
+            # divergence and still needs declaring -- Color is not
+            # Distance, and the exact bound was never earned for it.
+            _approximate("tsl.voronoi-color-winner-flip")
         expression = {
             "op": "tex_voronoi",
             "dimensions": 2 if dimensions == "2D" else 3,

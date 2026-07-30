@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "mix_color",
+    "blendType": "MULTIPLY",
+    "clampFactor": true,
+    "clampResult": false,
+    "factor": {
+      "op": "const_float",
+      "value": 0.75
+    },
+    "a": {
+      "op": "mix_color",
+      "blendType": "MIX",
+      "clampFactor": true,
+      "clampResult": false,
+      "factor": {
+        "op": "math",
+        "operation": "POWER",
+        "a": {
+          "op": "math",
+          "operation": "PINGPONG",
+          "a": {
+            "op": "math",
+            "operation": "MULTIPLY",
+            "a": {
+              "op": "separate",
+              "channel": "y",
+              "input": {
+                "op": "uv"
+              }
+            },
+            "b": {
+              "op": "const_float",
+              "value": 600.0
+            }
+          },
+          "b": {
+            "op": "const_float",
+            "value": 1.0
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 3.0
+        }
+      },
+      "a": {
+        "op": "const_vec3",
+        "value": [
+          0.11856956779956818,
+          0.052489057183265686,
+          0.023191628977656364
+        ]
+      },
+      "b": {
+        "op": "const_vec3",
+        "value": [
+          0.050412338227033615,
+          0.01811995543539524,
+          0.006562121212482452
+        ]
+      }
+    },
+    "b": {
+      "op": "math",
+      "operation": "POWER",
+      "a": {
+        "op": "math",
+        "operation": "MULTIPLY",
+        "a": {
+          "op": "math",
+          "operation": "ADD",
+          "a": {
+            "op": "math",
+            "operation": "ADD",
+            "a": {
+              "op": "separate",
+              "channel": "x",
+              "input": {
+                "op": "vertex_color",
+                "layer": "Gradient"
+              }
+            },
+            "b": {
+              "op": "separate",
+              "channel": "y",
+              "input": {
+                "op": "vertex_color",
+                "layer": "Gradient"
+              }
+            }
+          },
+          "b": {
+            "op": "separate",
+            "channel": "z",
+            "input": {
+              "op": "vertex_color",
+              "layer": "Gradient"
+            }
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 0.3333333333333333
+        }
+      },
+      "b": {
+        "op": "const_float",
+        "value": 1.5
+      }
+    }
+  }
+}

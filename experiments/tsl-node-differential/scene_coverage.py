@@ -153,19 +153,66 @@ def _privatize_groups(tree):
             _privatize_groups(node.node_tree)
 
 
-def tap_surface_channel_proxy(material):
-    """Private proxy emitting a mixed surface's RADIANCE channel.
+def tap_surface_channel_proxy(material, channel_name="Emission Color"):
+    """Private proxy emitting one channel of a mixed surface.
 
-    Handles the single-leaf classes (coerced color, Emission leaf) whose
-    Emission Color document is the only non-constant surface channel —
-    the dominant resolved population (the splash outline/paint class).
-    Multi-leaf mixes raise; the caller tallies them by name.
+    "Emission Color" handles the single-leaf classes (coerced color,
+    Emission leaf) whose radiance is the only non-constant surface
+    channel. "Alpha" handles the flat outline class: one Mix Shader with
+    exactly one transparent branch over a non-Principled leaf, whose
+    alpha fold is clamp01(fac) or 1 - clamp01(fac) -- realized here with
+    a single clamped Math node (clamp01(1 - fac) == 1 - clamp01(fac) for
+    every real fac). Principled lit branches raise: their leaf Alpha is a
+    live socket, not the constant 1 the fold relies on. Other shapes
+    raise; the caller tallies them by name.
     """
     copy = material.copy()
     copy.name = f"TSL_SURF_PROXY.{material.name}"
     tree = bakelib.active_shader_node_tree(copy)
     _privatize_groups(tree)
     expression = tsl_ir.resolve_surface(tree)
+
+    if channel_name == "Alpha":
+        if expression.get("kind") != "mix":
+            raise RuntimeError(
+                "surface tap v2: Alpha sampling needs a transparent mix"
+            )
+        a, b = expression["a"], expression["b"]
+        transparent_a = a.get("kind") == "transparent"
+        transparent_b = b.get("kind") == "transparent"
+        if transparent_a == transparent_b:
+            raise RuntimeError(
+                "surface tap v2: Alpha needs exactly one transparent branch"
+            )
+        lit = b if transparent_a else a
+        if lit.get("kind") in {"mix", "principled"}:
+            raise RuntimeError(
+                "surface tap v2: Alpha over a nested or Principled lit "
+                "branch has no tap yet"
+            )
+        fac_socket = expression["fac_socket"]
+        if not fac_socket.is_linked:
+            raise RuntimeError(
+                "surface tap v2: a constant Alpha factor has nothing to "
+                "measure"
+            )
+        source = _thread_tap(
+            tree, fac_socket.links[0].from_socket,
+            list(expression["fac_stack"]),
+        )
+        math = tree.nodes.new("ShaderNodeMath")
+        math.use_clamp = True
+        if transparent_a:
+            # fac weights branch b (the lit one): alpha = clamp01(fac).
+            math.operation = "ADD"
+            math.inputs[1].default_value = 0.0
+            tree.links.new(source, math.inputs[0])
+        else:
+            math.operation = "SUBTRACT"
+            math.inputs[0].default_value = 1.0
+            tree.links.new(source, math.inputs[1])
+        _emission_surface(tree, math.outputs["Value"])
+        return copy
 
     def radiance_source(expr):
         kind = expr.get("kind")
@@ -208,6 +255,42 @@ def tap_surface_channel_proxy(material):
     source_socket = _thread_tap(tree, source_socket, stack)
     _emission_surface(tree, source_socket)
     return copy
+
+
+def _fixture_vertex_colors(proxy, document):
+    """Create the document's color attribute on the tile proxy.
+
+    Linear in UV -- (u, v, 0.25), the exact fixture the vertex-color cell
+    proves against the TSL side's quad attribute -- so any triangulation
+    interpolates it identically. The runtime resolves every layer name to
+    the one 'color' geometry attribute, so a document referencing more
+    than one DISTINCT layer cannot be represented; it raises and the
+    caller records the named skip."""
+    layers = sorted({
+        str(item.get("layer") or "")
+        for item in _walk_ir(document)
+        if item.get("op") == "vertex_color"
+    })
+    if not layers:
+        return
+    if len(layers) > 1:
+        raise RuntimeError(
+            f"vertex-color fixture: {len(layers)} distinct layers "
+            f"{layers!r} but the TSL side has one color attribute"
+        )
+    mesh = proxy.data
+    layer = mesh.color_attributes.new(
+        layers[0] or "Col", "FLOAT_COLOR", "CORNER",
+    )
+    # An empty layer name means the ACTIVE color attribute (DP-SkyPaint's
+    # authoring); creation alone does not make the fixture active, so the
+    # bake would silently read something else. Force both actives.
+    mesh.color_attributes.active_color = layer
+    mesh.color_attributes.active = layer
+    source = mesh.uv_layers[0]
+    for index, item in enumerate(source.data):
+        u, v = item.uv
+        layer.data[index].color = (u, v, 0.25, 1.0)
 
 
 def remove_proxy(material):
@@ -281,10 +364,17 @@ def main():
         },
         "sampled": [],
         "limits": [
-            "surface tap v1 samples radiance only: the Alpha coverage "
-            "of constant-radiance outline materials and every other "
-            "fold channel have no bake path yet, so surface-compiled "
-            "channels can outnumber sampleable ones by design",
+            "surface tap v2 samples radiance, or Alpha when the surface "
+            "is a flat transparent mix over a non-Principled leaf (the "
+            "outline class); lit-lit mixes, Principled-leaf alphas and "
+            "the remaining fold channels stay unsampled by name",
+            "vertex-color documents sample against the linear-in-UV tile "
+            "fixture the vertex-color cell proves; documents referencing "
+            "more than one distinct color layer skip by name",
+            "scene bakes hide all other render geometry so ray-traced "
+            "nodes (Ambient Occlusion) evaluate the same unoccluded tile "
+            "the runtime's declared default carries; real-scene "
+            "occlusion stays the declared geometryDependent non-carriage",
         ],
     }
     candidates = []
@@ -295,20 +385,31 @@ def main():
         one named reason for the whole surface.  Returns the surface
         document on success so radiance channels can be sampled."""
         surface = coverage["surface"]
+        tsl_ir.drain_approximations()
         try:
             document = tsl_ir.emit_surface(tree)
         except tsl_ir.TslIrRefusal as refusal:
+            tsl_ir.drain_approximations()
             reason = str(refusal)
             surface["refusals"][reason] = (
                 surface["refusals"].get(reason, 0) + 1
             )
-            return None
+            return None, []
         except RecursionError:
+            tsl_ir.drain_approximations()
             reason = "surface emission exceeded the recursion bound"
             surface["refusals"][reason] = (
                 surface["refusals"].get(reason, 0) + 1
             )
-            return None
+            return None, []
+        # Surface-wide, mirroring material_compiler's per-surface drain:
+        # emit_surface emits all six channels in one call, so a sampled
+        # chain may inherit an approximation declared by a sibling
+        # channel -- a looser gate than strictly needed, never a tighter
+        # one, and always reported.
+        approximations = tsl_ir.drain_approximations()
+        if approximations:
+            surface["approximate"] = surface.get("approximate", 0) + 1
         surface["resolved"] += 1
         for channel_document in document["channels"].values():
             surface["channelsCompiled"] += 1
@@ -318,7 +419,7 @@ def main():
             coverage["irCompiled"] += 1
             if channel_document.get("viewDependent"):
                 surface["viewDependent"] += 1
-        return document
+        return document, approximations
 
     for material in sorted(bpy.data.materials, key=lambda m: m.name):
         tree = bakelib.active_shader_node_tree(material)
@@ -339,35 +440,52 @@ def main():
                 coverage["refusals"].get(reason, 0) + 1
             )
             if reason == "no root-level single Principled surface":
-                surface_document = tally_surface(tree)
+                surface_document, surface_approximations = (
+                    tally_surface(tree)
+                )
                 if surface_document is not None:
-                    # The radiance channel is the one worth diffing on
-                    # single-leaf surfaces (every other channel of that
-                    # class is constant); the tap builder decides whether
-                    # this surface's shape is sampleable.
-                    radiance = surface_document["channels"]["Emission Color"]
-                    encoded_radiance = json.dumps(radiance)
-                    varying = any(
-                        f'"{op}"' in encoded_radiance
-                        for op in (
-                            "uv", "generated", "object_coords",
-                            "tex_image", "tex_checker", "tex_gradient",
-                            "tex_magic", "tex_wave", "tex_voronoi",
-                            "tex_white_noise", "noise",
+                    def _sampleable(channel_document):
+                        # Captured-lighting documents need the light
+                        # contract's EEVEE oracle, not a tile emission
+                        # bake, exactly like view-dependent ones need a
+                        # camera.
+                        if channel_document.get("viewDependent"):
+                            return False
+                        if channel_document.get("lightDependent"):
+                            return False
+                        encoded = json.dumps(channel_document)
+                        # vertex_color counts as varying: it samples the
+                        # tile fixture, no longer a dead end.
+                        return any(
+                            f'"{op}"' in encoded
+                            for op in (
+                                "uv", "generated", "object_coords",
+                                "tex_image", "tex_checker", "tex_gradient",
+                                "tex_magic", "tex_wave", "tex_voronoi",
+                                "tex_white_noise", "noise", "vertex_color",
+                            )
                         )
-                    )
-                    if radiance.get("viewDependent"):
-                        pass
-                    elif '"vertex_color"' in encoded_radiance:
+
+                    radiance = surface_document["channels"]["Emission Color"]
+                    alpha_document = surface_document["channels"]["Alpha"]
+                    if '"vertex_color"' in json.dumps(radiance):
                         coverage["irCompiledAttributeDriven"] = (
                             coverage.get("irCompiledAttributeDriven", 0) + 1
                         )
-                    elif varying:
-                        # Constant-valued radiance (e.g. an all-black
-                        # closure tree) has nothing to measure on a tile.
+                    # One candidate per surface: radiance when it varies,
+                    # else Alpha (the outline class: constant-black
+                    # radiance, varying coverage). The tap builder decides
+                    # whether the surface's SHAPE is sampleable and raises
+                    # a named skip otherwise.
+                    if _sampleable(radiance):
                         candidates.append((
                             material.name, "Emission Color", radiance,
-                            "surface",
+                            "surface", surface_approximations,
+                        ))
+                    elif _sampleable(alpha_document):
+                        candidates.append((
+                            material.name, "Alpha", alpha_document,
+                            "surface", surface_approximations,
                         ))
             continue
         coverage["principledRoots"] += 1
@@ -403,14 +521,17 @@ def main():
                 # tile bake cannot reference a view-dependent field.
                 coverage["irCompiledViewDependent"] += 1
                 continue
+            if document.get("lightDependent"):
+                # Captured lighting: the tile emission bake has no light
+                # contract; the shader-to-rgb cells own that oracle.
+                continue
             if '"vertex_color"' in encoded:
-                # Mesh-attribute data has no tile-domain representation; the
-                # vertex-color cell proves the formula against controlled
-                # attributes on both sides.
+                # Tallied for the scoreboard, but no longer excluded: the
+                # bake fixtures the tile proxy with the linear-in-UV
+                # attribute the vertex-color cell proves on both sides.
                 coverage["irCompiledAttributeDriven"] = (
                     coverage.get("irCompiledAttributeDriven", 0) + 1
                 )
-                continue
             candidates.append((
                 material.name, channel_name, document, "principled",
                 channel_approximations,
@@ -437,15 +558,24 @@ def main():
             for item in _walk_ir(document)
             if item.get("op") == "uv" and item.get("uvMap")
         })
+        # Geometry isolation snapshot: the bake must see ONLY the tile,
+        # or ray-traced nodes (Ambient Occlusion) measure the opened
+        # scene's real occlusion while the runtime carries the declared
+        # unoccluded default -- the tile-domain oracle is about the
+        # material field, never scene ray effects.
+        saved_visibility = [
+            (obj, obj.hide_render) for obj in bpy.context.scene.objects
+        ]
         try:
             proxy_material = (
-                tap_surface_channel_proxy(material)
+                tap_surface_channel_proxy(material, channel_name)
                 if kind == "surface"
                 else tap_channel_proxy(material, channel_name)
             )
             proxy = bakelib.uv_tile_proxy(
                 uv_names, window=(0.0, 0.0, 1.0, 1.0),
             )
+            _fixture_vertex_colors(proxy, document)
             # The reference bakes on THIS proxy, so attribute-driven
             # channels must fixture the proxy's values for the TSL side:
             # a custom property the proxy lacks bakes as zero (fixture
@@ -479,6 +609,9 @@ def main():
                         float(raw), float(raw), float(raw),
                     ]
             proxy.data.materials.append(proxy_material)
+            for scene_object in bpy.context.scene.objects:
+                if scene_object is not proxy:
+                    scene_object.hide_render = True
             result = bakelib.bake_channel_field_pixels(
                 [proxy], size=SIZE, margin_px=0,
                 uv_layer="BLENDLINK_TILE_BAKE",
@@ -492,6 +625,8 @@ def main():
             })
             continue
         finally:
+            for scene_object, hidden in saved_visibility:
+                scene_object.hide_render = hidden
             if proxy is not None:
                 bakelib.remove_uv_tile_proxy(proxy)
             remove_proxy(proxy_material)

@@ -582,6 +582,12 @@ try {
         const renderedPixels = new Float32Array(
           Uint8Array.from(atob(rendered.base64), (c) => c.charCodeAt(0)).buffer,
         )
+        // Saved beside the reference so a failing chain can be bisected
+        // spatially instead of re-hypothesized from three numbers.
+        writeFileSync(
+          join(sceneDir, `${cellEntry.path}.rendered`),
+          Buffer.from(renderedPixels.buffer),
+        )
         const referencePixels = new Float32Array(
           readFileSync(join(sceneDir, cellEntry.path)).buffer,
         )

@@ -1,5 +1,190 @@
 {
   "schemaVersion": 1,
   "size": 64,
-  "cells": {}
+  "cells": {
+    "DP-SkyPaint.MAT--Emission_Color.surface": {
+      "path": "DP-SkyPaint.MAT--Emission_Color.surface.f32",
+      "material": "DP-SkyPaint.MAT",
+      "channel": "Emission Color",
+      "kind": "surface",
+      "rgbMin": [
+        0.00961495190858841,
+        0.014110037125647068,
+        0.13360176980495453
+      ],
+      "rgbMax": [
+        1.0,
+        1.0,
+        0.4010293483734131
+      ],
+      "approximations": [
+        {
+          "code": "tsl.voronoi-color-winner-flip",
+          "cell": "voronoi-scale155-f1-color",
+          "divergenceKind": "bounded",
+          "provenBy": [
+            "voronoi-f1",
+            "voronoi-scale40"
+          ],
+          "detail": "Voronoi COLOR output at ANY scale: F1 distance is continuous across a winner flip, but the winning-cell hash colour is not, so sample-position wiggle near a cell boundary flips a sparse set of texels to an unrelated colour -- maxAbs O(1) with tiny mean. Measured sparsely at scale 6 over the object domain (one texel, maxAbs 0.207) and densely at 155 by the named cell, whose declared budget upper-bounds every smaller scale. The <=40 exact bound was earned on the Distance output and never transferred to Color."
+        }
+      ]
+    },
+    "DPMLeaf--Alpha.surface": {
+      "path": "DPMLeaf--Alpha.surface.f32",
+      "material": "DPMLeaf",
+      "channel": "Alpha",
+      "kind": "surface",
+      "rgbMin": [
+        0.06136643886566162,
+        0.06136643886566162,
+        0.06136643886566162
+      ],
+      "rgbMax": [
+        0.9746776819229126,
+        0.9746776819229126,
+        0.9746776819229126
+      ],
+      "approximations": [
+        {
+          "code": "tsl.voronoi-f1-color-scale-above-exact",
+          "cell": "voronoi-scale155-f1-color",
+          "divergenceKind": "bounded",
+          "provenBy": [
+            "voronoi-f1",
+            "voronoi-scale40"
+          ],
+          "detail": "F1 voronoi COLOR output between scale 40 and 160. Measured at 155: more than 99% of texels agree exactly (p99Abs 0) because the ~3e-5 sample-position wiggle is only ~5e-3 of a cell width; the divergence is confined to boundary texels whose winning cell flips to a different hash colour (meanAbs 2.45e-3, maxAbs 0.819). The hash-to-colour algebra is proven at low scale by voronoi-f1; scale robustness to 40 by voronoi-scale40."
+        }
+      ]
+    },
+    "DPMLeaf.001--Alpha.surface": {
+      "path": "DPMLeaf.001--Alpha.surface.f32",
+      "material": "DPMLeaf.001",
+      "channel": "Alpha",
+      "kind": "surface",
+      "rgbMin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rgbMax": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "approximations": [
+        {
+          "code": "tsl.voronoi-f1-color-scale-above-exact",
+          "cell": "voronoi-scale155-f1-color",
+          "divergenceKind": "bounded",
+          "provenBy": [
+            "voronoi-f1",
+            "voronoi-scale40"
+          ],
+          "detail": "F1 voronoi COLOR output between scale 40 and 160. Measured at 155: more than 99% of texels agree exactly (p99Abs 0) because the ~3e-5 sample-position wiggle is only ~5e-3 of a cell width; the divergence is confined to boundary texels whose winning cell flips to a different hash colour (meanAbs 2.45e-3, maxAbs 0.819). The hash-to-colour algebra is proven at low scale by voronoi-f1; scale robustness to 40 by voronoi-scale40."
+        }
+      ]
+    },
+    "DPMLeaf.002--Alpha.surface": {
+      "path": "DPMLeaf.002--Alpha.surface.f32",
+      "material": "DPMLeaf.002",
+      "channel": "Alpha",
+      "kind": "surface",
+      "rgbMin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rgbMax": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "approximations": [
+        {
+          "code": "tsl.voronoi-f1-color-scale-above-exact",
+          "cell": "voronoi-scale155-f1-color",
+          "divergenceKind": "bounded",
+          "provenBy": [
+            "voronoi-f1",
+            "voronoi-scale40"
+          ],
+          "detail": "F1 voronoi COLOR output between scale 40 and 160. Measured at 155: more than 99% of texels agree exactly (p99Abs 0) because the ~3e-5 sample-position wiggle is only ~5e-3 of a cell width; the divergence is confined to boundary texels whose winning cell flips to a different hash colour (meanAbs 2.45e-3, maxAbs 0.819). The hash-to-colour algebra is proven at low scale by voronoi-f1; scale robustness to 40 by voronoi-scale40."
+        }
+      ]
+    },
+    "DPMLeaf.004--Alpha.surface": {
+      "path": "DPMLeaf.004--Alpha.surface.f32",
+      "material": "DPMLeaf.004",
+      "channel": "Alpha",
+      "kind": "surface",
+      "rgbMin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rgbMax": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "approximations": [
+        {
+          "code": "tsl.voronoi-f1-color-scale-above-exact",
+          "cell": "voronoi-scale155-f1-color",
+          "divergenceKind": "bounded",
+          "provenBy": [
+            "voronoi-f1",
+            "voronoi-scale40"
+          ],
+          "detail": "F1 voronoi COLOR output between scale 40 and 160. Measured at 155: more than 99% of texels agree exactly (p99Abs 0) because the ~3e-5 sample-position wiggle is only ~5e-3 of a cell width; the divergence is confined to boundary texels whose winning cell flips to a different hash colour (meanAbs 2.45e-3, maxAbs 0.819). The hash-to-colour algebra is proven at low scale by voronoi-f1; scale robustness to 40 by voronoi-scale40."
+        }
+      ]
+    },
+    "DPMLeaf.005--Alpha.surface": {
+      "path": "DPMLeaf.005--Alpha.surface.f32",
+      "material": "DPMLeaf.005",
+      "channel": "Alpha",
+      "kind": "surface",
+      "rgbMin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rgbMax": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "approximations": [
+        {
+          "code": "tsl.voronoi-f1-color-scale-above-exact",
+          "cell": "voronoi-scale155-f1-color",
+          "divergenceKind": "bounded",
+          "provenBy": [
+            "voronoi-f1",
+            "voronoi-scale40"
+          ],
+          "detail": "F1 voronoi COLOR output between scale 40 and 160. Measured at 155: more than 99% of texels agree exactly (p99Abs 0) because the ~3e-5 sample-position wiggle is only ~5e-3 of a cell width; the divergence is confined to boundary texels whose winning cell flips to a different hash colour (meanAbs 2.45e-3, maxAbs 0.819). The hash-to-colour algebra is proven at low scale by voronoi-f1; scale robustness to 40 by voronoi-scale40."
+        }
+      ]
+    },
+    "Outline.001--Alpha.surface": {
+      "path": "Outline.001--Alpha.surface.f32",
+      "material": "Outline.001",
+      "channel": "Alpha",
+      "kind": "surface",
+      "rgbMin": [
+        0.06136643886566162,
+        0.06136643886566162,
+        0.06136643886566162
+      ],
+      "rgbMax": [
+        0.9746776819229126,
+        0.9746776819229126,
+        0.9746776819229126
+      ]
+    }
+  }
 }

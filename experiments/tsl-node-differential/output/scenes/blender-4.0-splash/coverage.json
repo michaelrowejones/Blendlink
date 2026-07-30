@@ -20,11 +20,43 @@
       "Image 1000x1000 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
       "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
       "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1
-    }
+    },
+    "approximate": 20
   },
-  "sampled": [],
-  "limits": [
-    "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+  "sampled": [
+    {
+      "cell": "DP-SkyPaint.MAT--Emission_Color.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "DPMLeaf--Alpha.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "DPMLeaf.001--Alpha.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "DPMLeaf.002--Alpha.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "DPMLeaf.004--Alpha.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "DPMLeaf.005--Alpha.surface",
+      "status": "baked"
+    },
+    {
+      "cell": "Outline.001--Alpha.surface",
+      "status": "baked"
+    }
   ],
-  "irCompiledAttributeDriven": 18
+  "limits": [
+    "surface tap v2 samples radiance, or Alpha when the surface is a flat transparent mix over a non-Principled leaf (the outline class); lit-lit mixes, Principled-leaf alphas and the remaining fold channels stay unsampled by name",
+    "vertex-color documents sample against the linear-in-UV tile fixture the vertex-color cell proves; documents referencing more than one distinct color layer skip by name",
+    "scene bakes hide all other render geometry so ray-traced nodes (Ambient Occlusion) evaluate the same unoccluded tile the runtime's declared default carries; real-scene occlusion stays the declared geometryDependent non-carriage"
+  ],
+  "irCompiledAttributeDriven": 20
 }

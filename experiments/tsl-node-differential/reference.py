@@ -1294,6 +1294,51 @@ def build_noise_effective_scale400(tree, emission):
     tree.links.new(factor, emission.inputs["Color"])
 
 
+def build_overlay_branch_voronoi(tree, emission):
+    # The DP-SkyPaint composition, minimized: an OVERLAY whose A operand
+    # crosses 0.5 mid-tile (UV as colour) while B is a var-heavy Voronoi
+    # colour over OBJECT coordinates (so the negative half of the domain
+    # is finally measured too). Overlay selects its branch PER CHANNEL
+    # per texel; TSL emits .toVar() assignments at the FIRST USE site and
+    # select() compiles to if/else, so an operand whose vars first
+    # materialize inside one arm leaves the other arm reading them
+    # unassigned -- measured as an exact half-tile divergence on
+    # DP-SkyPaint.MAT, zero on the a<0.5 half, 0.45 max on the other.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    voronoi = tree.nodes.new("ShaderNodeTexVoronoi")
+    voronoi.voronoi_dimensions = "3D"
+    voronoi.feature = "F1"
+    voronoi.distance = "EUCLIDEAN"
+    if hasattr(voronoi, "normalize"):
+        voronoi.normalize = False
+    voronoi.inputs["Scale"].default_value = 6.0
+    voronoi.inputs["Randomness"].default_value = 1.0
+    voronoi.inputs["Detail"].default_value = 0.0
+    tree.links.new(coord.outputs["Object"], voronoi.inputs["Vector"])
+    mix = tree.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    mix.blend_type = "OVERLAY"
+    mix.clamp_result = True
+    a_socket = next(s for s in mix.inputs if s.identifier == "A_Color")
+    b_socket = next(s for s in mix.inputs if s.identifier == "B_Color")
+    tree.links.new(coord.outputs["UV"], a_socket)
+    # Distance, not Color: the argmin loop is exactly as var-heavy (the
+    # hazard trigger), but F1 distance is CONTINUOUS across a winner flip
+    # while the winning-cell hash colour is not -- with Color this cell
+    # measured a maxAbs 0.207 single-texel lottery that no exact gate can
+    # hold. That tail is the emitter's declared
+    # tsl.voronoi-color-winner-flip approximation, measured densely by
+    # voronoi-scale155-f1-color; this cell stays a tight exact gate for
+    # the branch-sealing mechanism.
+    tree.links.new(voronoi.outputs["Distance"], b_socket)
+    factor = next(s for s in mix.inputs if s.identifier == "Factor_Float")
+    factor.default_value = 0.5
+    result = next(
+        item for item in mix.outputs if item.identifier == "Result_Color"
+    )
+    tree.links.new(result, emission.inputs["Color"])
+
+
 def build_ambient_occlusion_passthrough(tree, emission):
     # AO on the lone flat tile: no occluders, so Cycles evaluates factor 1.0
     # and the Colour output equals the input colour - which is exactly the
@@ -2312,6 +2357,7 @@ BUILDERS = {
     "white-noise-1d": build_white_noise_1d,
     "white-noise-4d": build_white_noise_4d,
     "noise-effective-scale400": build_noise_effective_scale400,
+    "overlay-branch-voronoi": build_overlay_branch_voronoi,
     "ambient-occlusion-passthrough": build_ambient_occlusion_passthrough,
     "mix-factor-color-ramp": build_mix_factor_color_ramp,
     "noise-texture-panel-mapping": build_noise_texture_panel_mapping,

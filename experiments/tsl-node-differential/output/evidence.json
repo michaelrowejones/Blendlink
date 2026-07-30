@@ -1379,6 +1379,18 @@
       },
       "failureClass": "implicit COLOR->FLOAT link conversion (Mix.Factor)"
     },
+    "overlay-branch-voronoi": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000037475553691971676,
+        "p99Abs": 0.00018298625946044922,
+        "maxAbs": 0.00023663043975830078
+      },
+      "failureClass": "branching blend over a var-carrying operand"
+    },
     "noise-texture-panel-mapping": {
       "ok": true,
       "claim": "exact",
@@ -1753,7 +1765,7 @@
     }
   },
   "claims": {
-    "exact": 130,
+    "exact": 131,
     "approximate": 8,
     "diagnostic": 1
   },
@@ -1927,6 +1939,10 @@
         },
         "sampled": [
           {
+            "cell": "Brush--Base_Color",
+            "status": "baked"
+          },
+          {
             "cell": "Clay--Base_Color",
             "status": "baked"
           },
@@ -1962,12 +1978,24 @@
           }
         ],
         "limits": [
-          "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+          "surface tap v2 samples radiance, or Alpha when the surface is a flat transparent mix over a non-Principled leaf (the outline class); lit-lit mixes, Principled-leaf alphas and the remaining fold channels stay unsampled by name",
+          "vertex-color documents sample against the linear-in-UV tile fixture the vertex-color cell proves; documents referencing more than one distinct color layer skip by name",
+          "scene bakes hide all other render geometry so ray-traced nodes (Ambient Occlusion) evaluate the same unoccluded tile the runtime's declared default carries; real-scene occlusion stays the declared geometryDependent non-carriage"
         ],
         "irCompiledAttributeDriven": 1,
         "irCompiledApproximate": 1
       },
       "differentials": {
+        "Brush--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.00034094560565260207,
+            "p99Abs": 0.0017844773828983307,
+            "maxAbs": 0.0023600757122039795
+          }
+        },
         "Clay--Base_Color": {
           "ok": true,
           "claim": "exact",
@@ -1993,19 +2021,19 @@
           "claim": "approximate/amplified",
           "pass": true,
           "measured": {
-            "meanAbs": 0.002599222330900375,
+            "meanAbs": 0.0025992224836954847,
             "p99Abs": 0.033084750175476074,
-            "maxAbs": 0.047662198543548584
+            "maxAbs": 0.04766225814819336
           },
           "distribution": {
             "refMean": 0.42140035751799587,
-            "tslMean": 0.4211053284161608,
-            "meanDelta": 0.0002950291018350981,
+            "tslMean": 0.42110533024242613,
+            "meanDelta": 0.00029502727556973696,
             "refStd": 0.061057603991040404,
-            "tslStd": 0.060605483218240774,
-            "stdDeltaFraction": 0.007404823367552621,
+            "tslStd": 0.06060548672087296,
+            "stdDeltaFraction": 0.007404766001525208,
             "histogramL1": 0.03515625,
-            "radialSpectrumL1": 0.003167304308979494
+            "radialSpectrumL1": 0.003167319798970905
           }
         },
         "bluebell--Base_Color": {
@@ -2063,15 +2091,118 @@
             "Image 1000x1000 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
             "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
             "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1
+          },
+          "approximate": 20
+        },
+        "sampled": [
+          {
+            "cell": "DP-SkyPaint.MAT--Emission_Color.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "DPMLeaf--Alpha.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "DPMLeaf.001--Alpha.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "DPMLeaf.002--Alpha.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "DPMLeaf.004--Alpha.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "DPMLeaf.005--Alpha.surface",
+            "status": "baked"
+          },
+          {
+            "cell": "Outline.001--Alpha.surface",
+            "status": "baked"
+          }
+        ],
+        "limits": [
+          "surface tap v2 samples radiance, or Alpha when the surface is a flat transparent mix over a non-Principled leaf (the outline class); lit-lit mixes, Principled-leaf alphas and the remaining fold channels stay unsampled by name",
+          "vertex-color documents sample against the linear-in-UV tile fixture the vertex-color cell proves; documents referencing more than one distinct color layer skip by name",
+          "scene bakes hide all other render geometry so ray-traced nodes (Ambient Occlusion) evaluate the same unoccluded tile the runtime's declared default carries; real-scene occlusion stays the declared geometryDependent non-carriage"
+        ],
+        "irCompiledAttributeDriven": 20
+      },
+      "differentials": {
+        "DP-SkyPaint.MAT--Emission_Color.surface": {
+          "ok": true,
+          "claim": "approximate/bounded",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.000049856865871333866,
+            "p99Abs": 0.000056684017181396484,
+            "maxAbs": 0.21483951807022095
           }
         },
-        "sampled": [],
-        "limits": [
-          "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
-        ],
-        "irCompiledAttributeDriven": 18
-      },
-      "differentials": {}
+        "DPMLeaf--Alpha.surface": {
+          "ok": true,
+          "claim": "approximate/bounded",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.000021671439753845334,
+            "p99Abs": 0.00004369020462036133,
+            "maxAbs": 0.00004661083221435547
+          }
+        },
+        "DPMLeaf.001--Alpha.surface": {
+          "ok": true,
+          "claim": "approximate/bounded",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.0000809676421340555,
+            "p99Abs": 0.0003708004951477051,
+            "maxAbs": 0.00042700767517089844
+          }
+        },
+        "DPMLeaf.002--Alpha.surface": {
+          "ok": true,
+          "claim": "approximate/bounded",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.0000809676421340555,
+            "p99Abs": 0.0003708004951477051,
+            "maxAbs": 0.00042700767517089844
+          }
+        },
+        "DPMLeaf.004--Alpha.surface": {
+          "ok": true,
+          "claim": "approximate/bounded",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.0000809676421340555,
+            "p99Abs": 0.0003708004951477051,
+            "maxAbs": 0.00042700767517089844
+          }
+        },
+        "DPMLeaf.005--Alpha.surface": {
+          "ok": true,
+          "claim": "approximate/bounded",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.0000809676421340555,
+            "p99Abs": 0.0003708004951477051,
+            "maxAbs": 0.00042700767517089844
+          }
+        },
+        "Outline.001--Alpha.surface": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.000021671439753845334,
+            "p99Abs": 0.00004369020462036133,
+            "maxAbs": 0.00004661083221435547
+          }
+        }
+      }
     },
     "trapx-painterly": {
       "coverage": {
@@ -2100,7 +2231,9 @@
         },
         "sampled": [],
         "limits": [
-          "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+          "surface tap v2 samples radiance, or Alpha when the surface is a flat transparent mix over a non-Principled leaf (the outline class); lit-lit mixes, Principled-leaf alphas and the remaining fold channels stay unsampled by name",
+          "vertex-color documents sample against the linear-in-UV tile fixture the vertex-color cell proves; documents referencing more than one distinct color layer skip by name",
+          "scene bakes hide all other render geometry so ray-traced nodes (Ambient Occlusion) evaluate the same unoccluded tile the runtime's declared default carries; real-scene occlusion stays the declared geometryDependent non-carriage"
         ]
       },
       "differentials": {}
@@ -2141,6 +2274,10 @@
             "status": "baked"
           },
           {
+            "cell": "ellie.fanny_pack_black--Base_Color",
+            "status": "baked"
+          },
+          {
             "cell": "ellie.gums--Base_Color",
             "status": "baked"
           },
@@ -2166,7 +2303,9 @@
           }
         ],
         "limits": [
-          "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+          "surface tap v2 samples radiance, or Alpha when the surface is a flat transparent mix over a non-Principled leaf (the outline class); lit-lit mixes, Principled-leaf alphas and the remaining fold channels stay unsampled by name",
+          "vertex-color documents sample against the linear-in-UV tile fixture the vertex-color cell proves; documents referencing more than one distinct color layer skip by name",
+          "scene bakes hide all other render geometry so ray-traced nodes (Ambient Occlusion) evaluate the same unoccluded tile the runtime's declared default carries; real-scene occlusion stays the declared geometryDependent non-carriage"
         ],
         "irCompiledAttributeDriven": 1,
         "irCompiledApproximate": 1
@@ -2180,6 +2319,16 @@
             "meanAbs": 0.000019475235603749752,
             "p99Abs": 0.00009709596633911133,
             "maxAbs": 0.00009825825691223145
+          }
+        },
+        "ellie.fanny_pack_black--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.000015617224562447518,
+            "p99Abs": 0.00003123283386230469,
+            "maxAbs": 0.00003123283386230469
           }
         },
         "ellie.gums--Base_Color": {
@@ -2197,7 +2346,7 @@
           "claim": "approximate/bounded",
           "pass": true,
           "measured": {
-            "meanAbs": 0.000004492493651457134,
+            "meanAbs": 0.000004492508004531419,
             "p99Abs": 0.00003857840783894062,
             "maxAbs": 0.00010424084030091763
           }
@@ -2217,9 +2366,9 @@
           "claim": "exact",
           "pass": true,
           "measured": {
-            "meanAbs": 0.000020935318995422374,
-            "p99Abs": 0.00006154179573059082,
-            "maxAbs": 0.0001341700553894043
+            "meanAbs": 0.00002094012840340535,
+            "p99Abs": 0.00006157159805297852,
+            "maxAbs": 0.0001342296600341797
           }
         },
         "ellie.teeth--Roughness": {
@@ -2245,13 +2394,9 @@
       }
     }
   },
-  "pageErrorCount": 5,
+  "pageErrorCount": 1,
   "pageErrorSample": [
-    "Failed to load resource: the server responded with a status of 404 (Not Found)",
-    "THREE.TSL: Length of 'vec2()' data exceeds maximum length of output type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
-    "THREE.TSL: Length of parameters exceeds maximum length of function 'vec2()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
-    "THREE.TSL: Length of 'vec2()' data exceeds maximum length of output type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
-    "THREE.TSL: Length of parameters exceeds maximum length of function 'vec2()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces."
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
   ],
   "limits": [
     "Cells drive the production IR pipeline (tsl_ir.py -> tslNodeRecipe.ts); only diagnostic cells without an IR route stay hand-written.",

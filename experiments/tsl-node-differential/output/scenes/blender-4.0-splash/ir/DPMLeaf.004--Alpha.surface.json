@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "math",
+    "operation": "MULTIPLY",
+    "a": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "b": {
+      "op": "math",
+      "operation": "SUBTRACT",
+      "a": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "b": {
+        "op": "clamp01",
+        "input": {
+          "op": "rgb_to_bw",
+          "input": {
+            "op": "color_ramp",
+            "interpolation": "LINEAR",
+            "stops": [
+              {
+                "position": 0.33986929059028625,
+                "color": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              },
+              {
+                "position": 0.5196074843406677,
+                "color": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              }
+            ],
+            "input": {
+              "op": "noise",
+              "output": "fac",
+              "dimensions": 3,
+              "detail": 2.0,
+              "roughness": 0.5,
+              "lacunarity": 2.0,
+              "scale": {
+                "op": "const_float",
+                "value": 2.3000001907348633
+              },
+              "input": {
+                "op": "generated"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

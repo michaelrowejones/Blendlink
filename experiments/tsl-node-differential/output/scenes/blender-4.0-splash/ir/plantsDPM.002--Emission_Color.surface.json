@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "hue_sat",
+    "hue": {
+      "op": "const_float",
+      "value": 0.5
+    },
+    "saturation": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "value": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "factor": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "input": {
+      "op": "mix_color",
+      "blendType": "OVERLAY",
+      "clampFactor": true,
+      "clampResult": true,
+      "factor": {
+        "op": "const_float",
+        "value": 0.699999988079071
+      },
+      "a": {
+        "op": "mix_color",
+        "blendType": "MULTIPLY",
+        "clampFactor": true,
+        "clampResult": true,
+        "factor": {
+          "op": "rgb_to_bw",
+          "input": {
+            "op": "bright_contrast",
+            "input": {
+              "op": "noise",
+              "output": "fac",
+              "dimensions": 3,
+              "detail": 0.6000001430511475,
+              "roughness": 0.5,
+              "lacunarity": 2.0,
+              "scale": {
+                "op": "const_float",
+                "value": 2.0
+              },
+              "input": {
+                "op": "mapping",
+                "vectorType": "POINT",
+                "input": {
+                  "op": "object_coords"
+                },
+                "location": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              }
+            },
+            "bright": {
+              "op": "const_float",
+              "value": 0.0
+            },
+            "contrast": {
+              "op": "const_float",
+              "value": -0.5
+            }
+          }
+        },
+        "a": {
+          "op": "bright_contrast",
+          "input": {
+            "op": "mix_color",
+            "blendType": "MULTIPLY",
+            "clampFactor": true,
+            "clampResult": true,
+            "factor": {
+              "op": "const_float",
+              "value": 0.8999999761581421
+            },
+            "a": {
+              "op": "mix_color",
+              "blendType": "MULTIPLY",
+              "clampFactor": true,
+              "clampResult": true,
+              "factor": {
+                "op": "const_float",
+                "value": 0.800000011920929
+              },
+              "a": {
+                "op": "vertex_color",
+                "layer": ""
+              },
+              "b": {
+                "op": "mix_color",
+                "blendType": "ADD",
+                "clampFactor": true,
+                "clampResult": true,
+                "factor": {
+                  "op": "const_float",
+                  "value": 1.0
+                },
+                "a": {
+                  "op": "color_ramp",
+                  "interpolation": "CONSTANT",
+                  "stops": [
+                    {
+                      "position": 0.0,
+                      "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                      ]
+                    },
+                    {
+                      "position": 0.16519948840141296,
+                      "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                      ]
+                    }
+                  ],
+                  "input": {
+                    "op": "shader_to_rgb_diffuse",
+                    "color": {
+                      "op": "const_vec3",
+                      "value": [
+                        0.800000011920929,
+                        0.800000011920929,
+                        0.800000011920929
+                      ]
+                    }
+                  }
+                },
+                "b": {
+                  "op": "const_vec3",
+                  "value": [
+                    0.045375920832157135,
+                    0.16254782676696777,
+                    0.5092454552650452
+                  ]
+                }
+              }
+            },
+            "b": {
+              "op": "mix_color",
+              "blendType": "ADD",
+              "clampFactor": true,
+              "clampResult": true,
+              "factor": {
+                "op": "const_float",
+                "value": 1.0
+              },
+              "a": {
+                "op": "color_ramp",
+                "interpolation": "LINEAR",
+                "stops": [
+                  {
+                    "position": 0.0,
+                    "color": [
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0
+                    ]
+                  },
+                  {
+                    "position": 1.0,
+                    "color": [
+                      1.0,
+                      1.0,
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "input": {
+                  "op": "ambient_occlusion",
+                  "output": "color",
+                  "color": {
+                    "op": "const_vec3",
+                    "value": [
+                      1.0,
+                      1.0,
+                      1.0
+                    ]
+                  }
+                }
+              },
+              "b": {
+                "op": "const_vec3",
+                "value": [
+                  0.09550900012254715,
+                  0.15075500309467316,
+                  0.428864985704422
+                ]
+              }
+            }
+          },
+          "bright": {
+            "op": "const_float",
+            "value": 0.07999999821186066
+          },
+          "contrast": {
+            "op": "const_float",
+            "value": 0.3799999952316284
+          }
+        },
+        "b": {
+          "op": "mix_color",
+          "blendType": "MULTIPLY",
+          "clampFactor": true,
+          "clampResult": true,
+          "factor": {
+            "op": "const_float",
+            "value": 0.8999999761581421
+          },
+          "a": {
+            "op": "mix_color",
+            "blendType": "MULTIPLY",
+            "clampFactor": true,
+            "clampResult": true,
+            "factor": {
+              "op": "const_float",
+              "value": 0.800000011920929
+            },
+            "a": {
+              "op": "vertex_color",
+              "layer": ""
+            },
+            "b": {
+              "op": "mix_color",
+              "blendType": "ADD",
+              "clampFactor": true,
+              "clampResult": true,
+              "factor": {
+                "op": "const_float",
+                "value": 1.0
+              },
+              "a": {
+                "op": "color_ramp",
+                "interpolation": "CONSTANT",
+                "stops": [
+                  {
+                    "position": 0.0,
+                    "color": [
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0
+                    ]
+                  },
+                  {
+                    "position": 0.16519948840141296,
+                    "color": [
+                      1.0,
+                      1.0,
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "input": {
+                  "op": "shader_to_rgb_diffuse",
+                  "color": {
+                    "op": "const_vec3",
+                    "value": [
+                      0.800000011920929,
+                      0.800000011920929,
+                      0.800000011920929
+                    ]
+                  }
+                }
+              },
+              "b": {
+                "op": "const_vec3",
+                "value": [
+                  0.045375920832157135,
+                  0.16254782676696777,
+                  0.5092454552650452
+                ]
+              }
+            }
+          },
+          "b": {
+            "op": "mix_color",
+            "blendType": "ADD",
+            "clampFactor": true,
+            "clampResult": true,
+            "factor": {
+              "op": "const_float",
+              "value": 1.0
+            },
+            "a": {
+              "op": "color_ramp",
+              "interpolation": "LINEAR",
+              "stops": [
+                {
+                  "position": 0.0,
+                  "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                  ]
+                },
+                {
+                  "position": 1.0,
+                  "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              ],
+              "input": {
+                "op": "ambient_occlusion",
+                "output": "color",
+                "color": {
+                  "op": "const_vec3",
+                  "value": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              }
+            },
+            "b": {
+              "op": "const_vec3",
+              "value": [
+                0.09550900012254715,
+                0.15075500309467316,
+                0.428864985704422
+              ]
+            }
+          }
+        }
+      },
+      "b": {
+        "op": "tex_voronoi",
+        "dimensions": 3,
+        "feature": "f1",
+        "output": "color",
+        "vector": {
+          "op": "mapping",
+          "vectorType": "POINT",
+          "input": {
+            "op": "object_coords"
+          },
+          "location": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "scale": {
+          "op": "const_float",
+          "value": 150.0
+        },
+        "randomness": {
+          "op": "const_float",
+          "value": 1.0
+        }
+      }
+    }
+  },
+  "geometryDependent": true,
+  "lightDependent": true
+}

@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "hue_sat",
+    "hue": {
+      "op": "const_float",
+      "value": 0.5
+    },
+    "saturation": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "value": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "factor": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "input": {
+      "op": "mix_color",
+      "blendType": "OVERLAY",
+      "clampFactor": true,
+      "clampResult": true,
+      "factor": {
+        "op": "const_float",
+        "value": 0.5
+      },
+      "a": {
+        "op": "mix_color",
+        "blendType": "ADD",
+        "clampFactor": true,
+        "clampResult": false,
+        "factor": {
+          "op": "const_float",
+          "value": 0.019999999552965164
+        },
+        "a": {
+          "op": "vertex_color",
+          "layer": ""
+        },
+        "b": {
+          "op": "color_ramp",
+          "interpolation": "LINEAR",
+          "stops": [
+            {
+              "position": 0.34071022272109985,
+              "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "position": 0.9870970249176025,
+              "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "input": {
+            "op": "noise",
+            "output": "fac",
+            "dimensions": 3,
+            "detail": 2.0,
+            "roughness": 0.5,
+            "lacunarity": 2.0,
+            "scale": {
+              "op": "const_float",
+              "value": 20.0
+            },
+            "input": {
+              "op": "generated"
+            }
+          }
+        }
+      },
+      "b": {
+        "op": "tex_voronoi",
+        "dimensions": 3,
+        "feature": "f1",
+        "output": "color",
+        "vector": {
+          "op": "mapping",
+          "vectorType": "POINT",
+          "input": {
+            "op": "object_coords"
+          },
+          "location": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "scale": {
+          "op": "const_float",
+          "value": 6.0
+        },
+        "randomness": {
+          "op": "const_float",
+          "value": 1.0
+        }
+      }
+    }
+  }
+}

@@ -275,52 +275,55 @@
         }
       },
       "b": {
-        "op": "color_ramp",
-        "interpolation": "LINEAR",
-        "stops": [
-          {
-            "position": 0.5681819915771484,
-            "color": [
-              0.0,
-              0.0,
-              0.0,
-              1.0
-            ]
-          },
-          {
-            "position": 0.795454740524292,
-            "color": [
-              1.0,
-              1.0,
-              1.0,
-              1.0
-            ]
-          }
-        ],
+        "op": "rgb_to_bw",
         "input": {
-          "op": "noise",
-          "output": "fac",
-          "dimensions": 3,
-          "detail": 2.0,
-          "roughness": 0.5,
-          "lacunarity": 2.0,
-          "scale": {
-            "op": "const_float",
-            "value": 4.0
-          },
-          "input": {
-            "op": "vector_math",
-            "operation": "MULTIPLY",
-            "a": {
-              "op": "object_coords"
-            },
-            "b": {
-              "op": "const_vec3",
-              "value": [
-                1.0,
-                100.0,
-                100.0
+          "op": "color_ramp",
+          "interpolation": "LINEAR",
+          "stops": [
+            {
+              "position": 0.5681819915771484,
+              "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
               ]
+            },
+            {
+              "position": 0.795454740524292,
+              "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            }
+          ],
+          "input": {
+            "op": "noise",
+            "output": "fac",
+            "dimensions": 3,
+            "detail": 2.0,
+            "roughness": 0.5,
+            "lacunarity": 2.0,
+            "scale": {
+              "op": "const_float",
+              "value": 4.0
+            },
+            "input": {
+              "op": "vector_math",
+              "operation": "MULTIPLY",
+              "a": {
+                "op": "object_coords"
+              },
+              "b": {
+                "op": "const_vec3",
+                "value": [
+                  1.0,
+                  100.0,
+                  100.0
+                ]
+              }
             }
           }
         }

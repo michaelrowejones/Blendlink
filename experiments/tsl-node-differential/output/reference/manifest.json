@@ -2385,6 +2385,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "overlay-branch-voronoi": {
+      "path": "overlay-branch-voronoi.f32",
+      "pipeline": "ir",
+      "ir": "ir/overlay-branch-voronoi.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.005027878563851118,
+        0.005293073132634163,
+        0.0
+      ],
+      "rgbMax": [
+        0.9953014850616455,
+        0.9952001571655273,
+        0.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "noise-texture-panel-mapping": {
       "path": "noise-texture-panel-mapping.f32",
       "pipeline": "ir",
