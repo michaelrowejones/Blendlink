@@ -296,4 +296,95 @@ describe('Meshopt optimization stage', () => {
       rmSync(directory, { recursive: true, force: true })
     }
   })
+
+  it('merges byte-identical generated channel textures and leaves authored names alone', async () => {
+    const document = new Document()
+    document.createBuffer()
+    const black = new Uint8Array(await sharp({
+      create: { width: 32, height: 32, channels: 4, background: '#000000' },
+    }).png().toBuffer())
+    // Three generated emissives sharing one payload, plus an authored texture
+    // with the SAME bytes. The authored one must survive with its name: that is
+    // the boundary the naming policy protects.
+    const first = document.createTexture('channel-87afa5b3b6f6-emissive')
+      .setImage(black).setMimeType('image/png')
+    const second = document.createTexture('channel-64c5753ebd93-emissive')
+      .setImage(new Uint8Array(black)).setMimeType('image/png')
+    const third = document.createTexture('channel-ab42803a50ad-emissive')
+      .setImage(new Uint8Array(black)).setMimeType('image/png')
+    const authored = document.createTexture('Hero Poster')
+      .setImage(new Uint8Array(black)).setMimeType('image/png')
+    // A generated texture whose bytes differ must not be swept up either.
+    const distinct = document.createTexture('channel-b98feac9d562-emissive')
+      .setImage(new Uint8Array(await sharp({
+        create: { width: 32, height: 32, channels: 4, background: '#010203' },
+      }).png().toBuffer()))
+      .setMimeType('image/png')
+
+    const materials = [first, second, third, authored, distinct].map((texture, index) =>
+      document.createMaterial(`M${index}`).setEmissiveTexture(texture))
+    // Distinct samplers on two of the merged slots: sampler state lives on
+    // TextureInfo, so merging must not disturb it.
+    materials[0]!.getEmissiveTextureInfo()!.setWrapS(33071)
+    materials[1]!.getEmissiveTextureInfo()!.setWrapS(10497)
+
+    // Real geometry so the bounds verification has something finite to check,
+    // and so each material is actually reachable from the scene.
+    const buffer = document.getRoot().listBuffers()[0]!
+    const scene = document.createScene('Scene')
+    materials.forEach((material, index) => {
+      const position = document.createAccessor(`P${index}`)
+        .setType('VEC3')
+        .setArray(new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]))
+        .setBuffer(buffer)
+      const primitive = document.createPrimitive()
+        .setAttribute('POSITION', position)
+        .setMaterial(material)
+      const mesh = document.createMesh(`Mesh${index}`).addPrimitive(primitive)
+      scene.addChild(document.createNode(`Node${index}`).setMesh(mesh))
+    })
+
+    const directory = mkdtempSync(join(tmpdir(), 'blendlink-merge-'))
+    const path = join(directory, 'merge.glb')
+    try {
+      const io = new NodeIO().registerExtensions(ALL_EXTENSIONS)
+      writeFileSync(path, await io.writeBinary(document))
+      const report = await optimizeMeshopt(path)
+
+      expect(report.passes.mergedGeneratedTextures).toMatchObject({
+        textures: 2,
+        merges: [{
+          kept: 'channel-64c5753ebd93-emissive',
+          dropped: ['channel-87afa5b3b6f6-emissive', 'channel-ab42803a50ad-emissive'],
+        }],
+      })
+      // 32*32*4*4/3 per dropped texture.
+      expect(report.passes.mergedGeneratedTextures.gpuBytesReclaimed)
+        .toBe(2 * Math.round(32 * 32 * 4 * (4 / 3)))
+
+      await MeshoptDecoder.ready
+      const merged = await new NodeIO()
+        .registerExtensions(ALL_EXTENSIONS)
+        .registerDependencies({ 'meshopt.decoder': MeshoptDecoder })
+        .read(path)
+      const names = merged.getRoot().listTextures().map((texture) => texture.getName()).sort()
+      expect(names).toEqual([
+        'Hero Poster',
+        'channel-64c5753ebd93-emissive',
+        'channel-b98feac9d562-emissive',
+      ])
+      // Every material still resolves an emissive texture, and the three that
+      // shared a payload now point at one image.
+      const emissives = merged.getRoot().listMaterials()
+        .map((material) => material.getEmissiveTexture())
+      expect(emissives.every(Boolean)).toBe(true)
+      expect(new Set(emissives.slice(0, 3)).size).toBe(1)
+      // Per-slot sampler state survived the swap.
+      expect(merged.getRoot().listMaterials()
+        .map((material) => material.getEmissiveTextureInfo()?.getWrapS())
+        .slice(0, 2)).toEqual([33071, 10497])
+    } finally {
+      rmSync(directory, { recursive: true, force: true })
+    }
+  })
 })

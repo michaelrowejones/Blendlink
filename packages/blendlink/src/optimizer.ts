@@ -9,6 +9,7 @@ import {
   type Primitive,
   type Property,
   PropertyType,
+  type Texture,
   type TypedArray,
 } from '@gltf-transform/core'
 import { ALL_EXTENSIONS, EXTMeshoptCompression } from '@gltf-transform/extensions'
@@ -30,6 +31,16 @@ export interface OptimizationPassReport {
   weldedVertices: number
   /** Root resources merged only when their authored metadata permits it. */
   deduplicated: Omit<ResourceCountReport, 'buffers'>
+  /** Compiler-generated per-channel textures merged because their payloads are
+   * byte-identical. Reported apart from `deduplicated` because this pass alone
+   * discards a name, which the general pass is forbidden to do. */
+  mergedGeneratedTextures: {
+    textures: number
+    /** Uncompressed RGBA8 upload bytes, mip chain included, no longer resident. */
+    gpuBytesReclaimed: number
+    /** Every merge performed, so a lost name is always traceable. */
+    merges: Array<{ kept: string; dropped: string[] }>
+  }
   /** Unreferenced resources removed while retaining attributes, extras, and solid textures. */
   pruned: ResourceCountReport
   /** Optional passes refused for this asset, with an actionable reason for each refusal. */
@@ -320,6 +331,17 @@ function captureSemanticIdentity(document: Document): string {
     .filter((property) => property.getName())
     .map((property) => property.getName()))].sort()
 
+  // Compiler-generated channel texture names are deliberately outside the
+  // identity contract. `material_compiler.py:6262` derives the token as
+  // sha256(_variant_key(decision, binding))[:12], so the name rotates whenever
+  // the material plan does — it was never an identity application code could
+  // hold onto, and treating it as one would forbid
+  // `mergeGeneratedChannelTextures` from collapsing byte-identical payloads.
+  // Every other resource name stays strictly pinned, and each merge is listed
+  // in `passes.mergedGeneratedTextures.merges` so a dropped name is traceable.
+  const stableTextureNames = (textures: Property[]): string[] =>
+    uniqueNames(textures).filter((name) => !GENERATED_CHANNEL_TEXTURE.test(name))
+
   return canonicalJson({
     rootExtras: root.getExtras(),
     defaultScene: root.getDefaultScene() ? root.listScenes().indexOf(root.getDefaultScene()!) : -1,
@@ -374,7 +396,7 @@ function captureSemanticIdentity(document: Document): string {
     resourceNames: {
       accessors: uniqueNames(root.listAccessors()),
       materials: uniqueNames(root.listMaterials()),
-      textures: uniqueNames(root.listTextures()),
+      textures: stableTextureNames(root.listTextures()),
       buffers: uniqueNames(root.listBuffers()),
     },
   })
@@ -698,6 +720,75 @@ function protectNamedResourcesForPrune(document: Document): Map<Property, Record
   return protectedExtras
 }
 
+/** Names minted by the per-channel material bake, and only those.
+ * `material_compiler.py:6454-6543` writes `channel-<token>-<slot>.png` for the
+ * base, orm, emissive and normal slots; the token is the variant hash. Nothing
+ * else in a Blendlink asset carries this shape, and an artist cannot author it
+ * from Blender, so matching on it can never claim a hand-named texture. */
+const GENERATED_CHANNEL_TEXTURE = /^channel-[0-9a-f]+-(?:base|orm|emissive|normal)$/
+
+/** Merge compiler-generated channel textures whose payloads are byte-identical.
+ *
+ * The general `dedup` pass runs with `keepUniqueNames: true` and every texture
+ * in a Blendlink asset has a unique name, so it merges none of them. That is
+ * deliberate — the policy below `prune` refuses to "discard a named resource
+ * that may be addressed by application code", and `TextureResizePolicy`
+ * (:746) really does address textures by name and throws when one is missing.
+ *
+ * That rationale does not reach these names. They are minted by the bake from
+ * a variant hash, they are not stable across a recompile, and no artist can
+ * author one. The resize policy is also already resolved by this point, so a
+ * name dropped here cannot break a lookup in the same run.
+ *
+ * Byte-identical is the whole test: same image bytes, same MIME type. Sampler
+ * state is deliberately absent from the key because glTF-Transform models it
+ * on `TextureInfo` — the per-slot binding — not on `Texture`, so every slot
+ * keeps the wrap and filter it already had and merging cannot change how
+ * anything samples. Two textures whose bytes differ are left alone even when
+ * they render the same, because proving that is a different claim.
+ */
+function mergeGeneratedChannelTextures(document: Document) {
+  const merges: Array<{ kept: string; dropped: string[] }> = []
+  const groups = new Map<string, Texture[]>()
+  for (const texture of document.getRoot().listTextures()) {
+    const name = texture.getName()
+    const image = texture.getImage()
+    if (!image || !GENERATED_CHANNEL_TEXTURE.test(name)) continue
+    if (!isEmptyObject(texture.getExtras())) continue
+    const key = [
+      createHash('sha256').update(image).digest('hex'),
+      texture.getMimeType(),
+    ].join('|')
+    groups.set(key, [...(groups.get(key) ?? []), texture])
+  }
+
+  let gpuBytesReclaimed = 0
+  for (const group of groups.values()) {
+    if (group.length < 2) continue
+    // Deterministic survivor: the asset must not depend on listTextures order.
+    const ordered = [...group].sort((a, b) => a.getName().localeCompare(b.getName()))
+    const [kept, ...duplicates] = ordered
+    for (const duplicate of duplicates) {
+      const size = duplicate.getSize()
+      if (size) gpuBytesReclaimed += Math.round(size[0] * size[1] * 4 * (4 / 3))
+      // swap() repoints every referencing slot, including extension slots, so
+      // no enumeration of material fields can fall behind the spec.
+      for (const parent of duplicate.listParents()) {
+        if (parent.propertyType === PropertyType.ROOT) continue
+        parent.swap(duplicate, kept!)
+      }
+      duplicate.dispose()
+    }
+    merges.push({ kept: kept!.getName(), dropped: duplicates.map((entry) => entry.getName()) })
+  }
+  merges.sort((a, b) => a.kept.localeCompare(b.kept))
+  return {
+    textures: merges.reduce((sum, entry) => sum + entry.dropped.length, 0),
+    gpuBytesReclaimed,
+    merges,
+  }
+}
+
 export interface TextureResizePolicy {
   name: string
   maxSize: number
@@ -898,6 +989,10 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
   } else {
     refusePass('Texture de-duplication was skipped because at least one texture has authored extras.')
   }
+  // Runs before the general pass and is accounted separately: this is the one
+  // place Blendlink drops a resource name, and it must never be hidden inside
+  // the dedup delta.
+  const mergedGeneratedTextures = mergeGeneratedChannelTextures(document)
   const beforeDedup = resourceCounts(document)
   if (dedupTypes.length > 0) {
     await document.transform(dedup({ keepUniqueNames: true, propertyTypes: dedupTypes }))
@@ -1053,6 +1148,7 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
         materials: dedupDelta.materials,
         textures: dedupDelta.textures,
       },
+      mergedGeneratedTextures,
       pruned,
       skipped,
     },
