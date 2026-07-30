@@ -676,6 +676,29 @@ The first corpus run surfaced four findings, in order of what they say about the
    refusals named. The sampler-widening work (radiance-only tap, vertex-color fixtures, AO ×19
    as splash's dominant next mapping) remains as the named next tranche.
 
+5. **The sampler tranche — SHIPPED 2026-07-31** (commits `96a3252`, `bd509da`, `0103b30`):
+   Ambient Occlusion ships as algebra with a declared `geometryDependent` non-carriage (the
+   runtime hook defaults to the unoccluded 1.0 that the isolated tile bake also measures;
+   `ambient-occlusion-passthrough`, 3.1e-5); the unmasked Voronoi 150/155 got an F1-Color
+   band to 160 — bounded, NOT decorrelated: the inverted per-texel floor refuted the analogy,
+   measured p99Abs 0 (`voronoi-scale155-f1-color`). Splash **resolved 14 → 33 of 45**.
+   Surface tap v2 then samples Alpha for the flat outline class, fixtures vertex-color docs
+   on the tile (linear-in-UV, the vertex-color cell's proof), isolates scene bakes from scene
+   geometry, and excludes lightDependent docs like viewDependent ones. The wider net caught
+   two real emitter lies within an hour: (a) Cycles' implicit COLOR→FLOAT conversion is
+   per-LINK including group boundaries — `_convert_link` now runs on every resolved link,
+   subsuming the consumer-site `_scalar_input` fix; (b) the TSL var-in-branch hazard applies
+   to branching BLENDS — OVERLAY's select read a var-heavy Voronoi operand unassigned on the
+   a≥0.5 half-tile (DP-SkyPaint), sealed in a laid-out Fn (`blenderOverlayChannel`,
+   `overlay-branch-voronoi`: 3.0e-2 pre-fix → 3.3e-5). A `.toVar()` hoist does NOT fix it —
+   measured. BURN/HUE/SATURATION/COLOR/DIVIDE share the shape and are a named follow-up.
+   The same cell measured that voronoi COLOR is discontinuous across winner flips at ANY
+   scale (the ≤40 bound was earned on Distance) → `tsl.voronoi-color-winner-flip` declared
+   at every scale, bounded by the 155 cell's budget. **Sweep: 140 cells green, cube 7/7,
+   splash 7/7 (six new chains incl. Alpha), ellie 8/8**; splash's remaining unsampled
+   surfaces are lightDependent (Shader-to-RGB — needs the light-contract oracle in the scene
+   stage), BOX-projection blend ×10, one oversize image, one MixShader Shader-to-RGB.
+
 The scene stage also learned to render attribute-driven channels (it never passed an
 `objectAttribute` resolver, so every paint-set material failed to render rather than measure) —
 fixtures now come from the live bake proxy, with `Random` inheriting the `objectinfo-random`
