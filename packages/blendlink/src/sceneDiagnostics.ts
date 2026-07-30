@@ -1758,6 +1758,24 @@ export function verifyMaterialCompilationEvidence(
           )
         }
       }
+      // glTF multiplies emissiveFactor by the emissive texture, so a carrier
+      // that ships no emissive image and keeps a non-black factor emits that
+      // colour at full strength. The loop above only ever compares textures,
+      // so without this the constant-channel elision could drop a black
+      // emissive map, leave the factor at [1,1,1], and ship a white-hot
+      // material past every gate. Mirrors the Python attestation in
+      // `material_compiler.py:_attest_material_bake_channels`.
+      if (!bakeTextures?.emissive) {
+        const emissiveFactor = material.getEmissiveFactor()
+        if (emissiveFactor.some((component) => Math.abs(component) > 1e-6)) {
+          materialEvidenceFailure(
+            evidence.sourceMaterial,
+            `planned no emissive texture but ships emissive factor ` +
+            `[${emissiveFactor.map((component) => component.toFixed(4)).join(', ')}], ` +
+            'so it emits light the bake never measured.',
+          )
+        }
+      }
     } else if (baseColorTexture) {
       materialEvidenceFailure(evidence.sourceMaterial, 'gained an unexpected base-color texture.')
     }

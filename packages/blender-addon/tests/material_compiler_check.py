@@ -2868,6 +2868,60 @@ def main():
                 )
             else:
                 raise AssertionError("cleanup failure was swallowed")
+
+        # A channels carrier that plans no emissive image must ship a black
+        # emissive factor. glTF multiplies factor by texture, so dropping a
+        # black emissive map while leaving the factor at the identity makes
+        # the material emit FULL WHITE -- the exact failure the constant
+        # channel elision would introduce. Until this gate existed the whole
+        # emissive attestation sat under "if an emissive image was planned",
+        # so nothing could see it. Called directly: the branch needs no bake,
+        # and routing a real one through here would prove less, not more.
+        no_emissive_fact = {"source": "Emissive Gate", "materialBake": {"images": {}}}
+        try:
+            compiler._attest_material_bake_channels(
+                {}, b"", {}, {"emissiveFactor": [1.0, 1.0, 1.0]}, no_emissive_fact,
+            )
+        except compiler.MaterialCompileError as error:
+            expect(
+                "no emissive texture was planned" in str(error)
+                and "is not black" in str(error),
+                f"unplanned emissive factor refused for the wrong reason: {error}",
+            )
+        else:
+            raise AssertionError(
+                "a carrier with no planned emissive image shipped a white "
+                "emissive factor without refusing"
+            )
+        black_evidence = compiler._attest_material_bake_channels(
+            {}, b"", {}, {"emissiveFactor": [0.0, 0.0, 0.0]}, no_emissive_fact,
+        )
+        expect(
+            black_evidence["materialBake"]["textures"] == {},
+            "a carrier with no planned emissive image and a black factor was "
+            "refused or invented texture evidence, and producing exactly this "
+            f"is what the elision must be allowed to do: {black_evidence!r}",
+        )
+        try:
+            compiler._attest_material_bake_channels(
+                {}, b"", {},
+                {
+                    "emissiveFactor": [0.0, 0.0, 0.0],
+                    "extensions": {"KHR_materials_emissive_strength": {
+                        "emissiveStrength": 2.0,
+                    }},
+                },
+                no_emissive_fact,
+            )
+        except compiler.MaterialCompileError as error:
+            expect(
+                "KHR_materials_emissive_strength shipped" in str(error),
+                f"unplanned emissive strength refused for the wrong reason: {error}",
+            )
+        else:
+            raise AssertionError(
+                "an emissive strength shipped with no planned emissive image"
+            )
     finally:
         addon.unregister()
     print("BLENDLINK_MATERIAL_COMPILER_CHECK_PASSED")

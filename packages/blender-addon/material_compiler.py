@@ -4825,6 +4825,38 @@ def _attest_material_bake_channels(
             "occlusion texture shipped."
         )
     emissive_fact = planned.get("emissive")
+    if emissive_fact is None:
+        # The emissive factor has to be attested whether or not an image
+        # shipped, because glTF multiplies the two. A carrier that drops its
+        # emissive image and keeps emissiveFactor at the identity does not
+        # stop emitting -- it emits FULL WHITE. That is the exact failure the
+        # constant-channel elision would introduce, and until this branch
+        # existed nothing in either language could see it: the whole check
+        # below sat under "if an emissive image was planned".
+        #
+        # Measured on the ellie character: every generated carrier that plans
+        # no emissive image emits (0, 0, 0), and the one material in the scene
+        # that is genuinely emissive white (ellie.highlights) is not compiled
+        # and never reaches this attestation. So black is the invariant here,
+        # not merely the common case. When the elision starts folding a
+        # non-zero constant emission into the factor it must record the
+        # expected value on the plan and this branch must compare against it
+        # -- widening it silently would give the elision back the hole.
+        emitted_factor = tuple(emitted.get("emissiveFactor", (0.0, 0.0, 0.0)))
+        if not _close_vector(emitted_factor, (0.0, 0.0, 0.0), 1e-6):
+            raise MaterialCompileError(
+                f'Material output mismatch for "{fact["source"]}": no emissive '
+                f"texture was planned, but emissive factor {emitted_factor!r} "
+                "is not black, so the material emits light the bake never "
+                "measured."
+            )
+        extensions = emitted.get("extensions") or {}
+        if "KHR_materials_emissive_strength" in extensions:
+            raise MaterialCompileError(
+                f'Material output mismatch for "{fact["source"]}": no emissive '
+                "texture was planned, but KHR_materials_emissive_strength "
+                "shipped."
+            )
     if emissive_fact is not None:
         emitted_factor = tuple(emitted.get("emissiveFactor", (0.0, 0.0, 0.0)))
         if not _close_vector(emitted_factor, (1.0, 1.0, 1.0), 1e-6):

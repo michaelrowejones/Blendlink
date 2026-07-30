@@ -1032,6 +1032,47 @@ describe('scene diagnostics', () => {
       .toThrow(/refused the final GLB.*no longer shares one Texture object/)
   })
 
+  it('refuses a channels carrier that emits light its bake never measured', () => {
+    // A carrier that plans no emissive image must ship a black emissive
+    // factor. glTF multiplies the two, so keeping [1,1,1] while dropping the
+    // texture is not "no emission" — it is full white. Nothing checked this
+    // before: the slot loop only ever compares textures.
+    const build = (emissiveFactor: [number, number, number]) => {
+      const { document, evidence } = imageAttestationFixture(true)
+      const material = document.getRoot().listMaterials()
+        .find((entry) => entry.getName() === 'BLENDLINK_WEB.IMAGE.Attested')!
+      material.setEmissiveFactor(emissiveFactor)
+      const entry = evidence.gltfEvidence[0]!
+      const channels = {
+        ...evidence,
+        gltfEvidence: [{
+          ...entry,
+          transport: 'channels' as const,
+          materialBake: {
+            textures: {
+              baseColor: {
+                imageSha256: entry.imageSha256!,
+                imageMime: 'image/png',
+                imageWidth: 1,
+                imageHeight: 1,
+                texCoord: 0,
+                wrap: 10497,
+              },
+            },
+          },
+        }],
+      }
+      return () => verifyFixture(document, channels)
+    }
+
+    expect(build([1, 1, 1])).toThrow(
+      /planned no emissive texture but ships emissive factor \[1\.0000, 1\.0000, 1\.0000\]/,
+    )
+    // The same carrier with the factor zeroed is exactly what the elision must
+    // produce, and it must pass.
+    expect(build([0, 0, 0])).not.toThrow()
+  })
+
   it('refuses unsupported nested material-compilation evidence versions', () => {
     const { document } = documentWithLods()
     expect(() => compileSceneDiagnostics(document, vocabulary([]), {
