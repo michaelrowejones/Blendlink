@@ -5451,6 +5451,30 @@ def main() -> None:
                 f'{item["object"]}: {item["reason"]}' for item in blockers
             )
         )
+    # Phase 0a/0c. These diagnostics are computed in analyze_scene and would
+    # otherwise ride the manifest with a zero exit code -- a record that says
+    # "refuse" and does not refuse is worse than no record, because it reads
+    # as a guarantee. Enacted here, beside the procedural blockers, so every
+    # geometry refusal leaves by the same door.
+    frozen_deformers = sidecar["diagnostics"].get("frozenDeformers") or []
+    if frozen_deformers:
+        raise SystemExit(
+            "Geometry Fidelity blocked:\n  - " + "\n  - ".join(
+                f'{item["object"]}: {item["reason"]}'
+                for item in frozen_deformers
+            )
+        )
+    dropped_shape_keys = [
+        item for item in (sidecar["diagnostics"].get("shapeKeys") or [])
+        if item.get("severity") == "refuse"
+    ]
+    if dropped_shape_keys:
+        raise SystemExit(
+            "Shape Key transport blocked:\n  - " + "\n  - ".join(
+                f'{item["object"]}: {item.get("reason", "shape keys are dropped")}'
+                for item in dropped_shape_keys
+            )
+        )
     environment_asset = publish_environment(recipe, out_path)
     reflection_probe_assets = publish_reflection_probe_assets(recipe, out_path)
 
