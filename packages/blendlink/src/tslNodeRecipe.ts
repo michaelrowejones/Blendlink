@@ -1031,6 +1031,37 @@ function build(expression: TslIrExpression): TslExpression {
           tslFloor(coordU.mul(width)),
           tslFloor(coordV.mul(height)),
         )
+      } else if (expression.interpolation === 'Cubic') {
+        // Cubic B-spline over a 4x4 neighbourhood, taps at ix-1..ix+2.
+        // Weights transcribed from SET_CUBIC_SPLINE_WEIGHTS in
+        // intern/cycles/kernel/device/cpu/image.h, in Horner form as Blender
+        // writes them; three's own TextureBicubic w0..w3 are the same basis,
+        // but its 4-tap trick leans on the hardware sampler's bilinear filter
+        // and mip chain, so it cannot be reused here — every other branch in
+        // this function fetches texels explicitly to keep Blender's wrap and
+        // texel-centre semantics exact, and cubic has to match that.
+        const x = coordU.mul(width).sub(0.5)
+        const y = coordV.mul(height).sub(0.5)
+        const ix = tslFloor(x)
+        const iy = tslFloor(y)
+        const splineWeights = (t: TslExpression): TslExpression[] => [
+          t.mul(-1.0 / 6.0).add(0.5).mul(t).sub(0.5).mul(t).add(1.0 / 6.0),
+          t.mul(0.5).sub(1.0).mul(t).mul(t).add(2.0 / 3.0),
+          t.mul(-0.5).add(0.5).mul(t).add(0.5).mul(t).add(1.0 / 6.0),
+          t.mul(t).mul(t).mul(1.0 / 6.0),
+        ]
+        const wx = splineWeights(x.sub(ix))
+        const wy = splineWeights(y.sub(iy))
+        let accumulated: TslExpression | undefined
+        for (let row = 0; row < 4; row += 1) {
+          for (let column = 0; column < 4; column += 1) {
+            const tap = texel(
+              ix.add(column - 1), iy.add(row - 1),
+            ).mul(wx[column]!.mul(wy[row]!))
+            accumulated = accumulated ? accumulated.add(tap) : tap
+          }
+        }
+        sample = accumulated!
       } else {
         const x = coordU.mul(width).sub(0.5)
         const y = coordV.mul(height).sub(0.5)

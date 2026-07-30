@@ -1156,7 +1156,14 @@ def emit_output(node, from_socket, stack=()):
         if image_output not in {"Color", "Alpha"}:
             _refuse(f"Image Texture output {socket_name!r} unsupported")
         interpolation = str(node.interpolation)
-        if interpolation not in {"Linear", "Closest"}:
+        # Cubic is the cubic B-spline, tapped at ix-1..ix+2. Cycles'
+        # SET_CUBIC_SPLINE_WEIGHTS (intern/cycles/kernel/device/cpu/image.h)
+        # and three's own TextureBicubic w0..w3 are the same basis term for
+        # term, which is what makes this mappable at all. 'Smart' is an
+        # EEVEE-only mip heuristic that Cycles resolves to cubic, so it stays
+        # refused until something needs it and a cell can pin which of the two
+        # the oracle actually ran.
+        if interpolation not in {"Linear", "Closest", "Cubic"}:
             _refuse(
                 f"Image interpolation {interpolation!r} has no cell yet"
             )

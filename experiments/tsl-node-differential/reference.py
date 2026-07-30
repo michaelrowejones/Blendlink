@@ -1120,6 +1120,33 @@ def build_tex_image_linear(tree, emission):
     tree.links.new(node.outputs["Color"], emission.inputs["Color"])
 
 
+def build_tex_image_cubic(tree, emission):
+    # Cubic B-spline over a 4x4 neighbourhood. REPEAT extension on purpose:
+    # the wrap has to hold for the ix-1 and ix+2 taps, which reach outside the
+    # tile at every edge, and those are exactly the taps bilinear never uses.
+    node = tree.nodes.new("ShaderNodeTexImage")
+    node.image = _test_image(
+        "TSL_IMG_CUBIC", float_buffer=True, colorspace="Non-Color",
+    )
+    node.interpolation = "Cubic"
+    node.extension = "REPEAT"
+    tree.links.new(_scaled_uv(tree, 2.0, 0.0), node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
+def build_tex_image_cubic_extend(tree, emission):
+    # Same filter against the EXTEND clamp, where the outer taps saturate
+    # instead of wrapping.
+    node = tree.nodes.new("ShaderNodeTexImage")
+    node.image = _test_image(
+        "TSL_IMG_CUBIC_EXT", float_buffer=True, colorspace="Non-Color",
+    )
+    node.interpolation = "Cubic"
+    node.extension = "EXTEND"
+    tree.links.new(_scaled_uv(tree, 1.5, -0.25), node.inputs["Vector"])
+    tree.links.new(node.outputs["Color"], emission.inputs["Color"])
+
+
 def build_tex_image_box(tree, emission):
     node = tree.nodes.new("ShaderNodeTexImage")
     node.image = _test_image(
@@ -1908,6 +1935,8 @@ BUILDERS = {
     "voronoi-scale20": build_voronoi_scale20,
     "voronoi-scale40": build_voronoi_scale40,
     "tex-image-linear": build_tex_image_linear,
+    "tex-image-cubic": build_tex_image_cubic,
+    "tex-image-cubic-extend": build_tex_image_cubic_extend,
     "tex-image-closest-srgb": build_tex_image_closest_srgb,
     "tex-image-box": build_tex_image_box,
     "surface-mix-color": projection_mix_color,

@@ -996,6 +996,28 @@
       },
       "failureClass": "corpus-priority node (Image Texture x14)"
     },
+    "tex-image-cubic": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00041206423096203554,
+        "p99Abs": 0.0022905468940734863,
+        "maxAbs": 0.002380281686782837
+      },
+      "failureClass": "image cubic B-spline filter, REPEAT wrap"
+    },
+    "tex-image-cubic-extend": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00019764027797286587,
+        "p99Abs": 0.001422107219696045,
+        "maxAbs": 0.0027160048484802246
+      },
+      "failureClass": "image cubic B-spline filter, EXTEND clamp"
+    },
     "tex-image-closest-srgb": {
       "ok": true,
       "gated": true,

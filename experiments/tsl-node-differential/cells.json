@@ -1901,6 +1901,28 @@
    "notes": "An 8x8 float Non-Color image sampled Linear/REPEAT over uv*2: manual bilinear at u*W - 0.5 with per-tap floored-modulo wrapping, no float32-filterable dependency. Pixels embed in the IR (bounded at 128x128; the texture transport carries larger images)."
   },
   {
+   "id": "tex-image-cubic",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "image cubic B-spline filter, REPEAT wrap",
+   "notes": "Cubic interpolation, 7 of ellie's 49 visible materials. Weights come from SET_CUBIC_SPLINE_WEIGHTS in intern/cycles/kernel/device/cpu/image.h, taps at ix-1..ix+2. three's own TextureBicubic uses the same B-spline basis term for term, but its 4-tap form leans on the hardware sampler's bilinear filter and mip chain, so it cannot be reused: every branch of the image op fetches texels explicitly to keep Blender's wrap and texel-centre semantics. REPEAT here because the outer two taps leave the tile at every edge and are precisely the ones bilinear never exercises."
+  },
+  {
+   "id": "tex-image-cubic-extend",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "image cubic B-spline filter, EXTEND clamp",
+   "notes": "The same filter against the EXTEND clamp, where the ix-1 and ix+2 taps saturate rather than wrap. Paired with tex-image-cubic because a wrap bug and a clamp bug look identical in the interior and differ only in the border ring."
+  },
+  {
    "id": "tex-image-closest-srgb",
    "gate": true,
    "tolerance": {
