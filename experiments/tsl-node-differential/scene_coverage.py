@@ -280,6 +280,12 @@ def main():
             "refusals": {},
         },
         "sampled": [],
+        "limits": [
+            "surface tap v1 samples radiance only: the Alpha coverage "
+            "of constant-radiance outline materials and every other "
+            "fold channel have no bake path yet, so surface-compiled "
+            "channels can outnumber sampleable ones by design",
+        ],
     }
     candidates = []
 
@@ -306,6 +312,10 @@ def main():
         surface["resolved"] += 1
         for channel_document in document["channels"].values():
             surface["channelsCompiled"] += 1
+            # Surface-compiled channels ARE compiled channels: they must
+            # reach the same top-level figure the principled route feeds,
+            # or a scene of stylized materials reads as compiling nothing.
+            coverage["irCompiled"] += 1
             if channel_document.get("viewDependent"):
                 surface["viewDependent"] += 1
         return document
@@ -319,8 +329,14 @@ def main():
             root, stack = tsl_ir.find_principled_root(tree)
         except tsl_ir.TslIrRefusal as refusal:
             reason = str(refusal)
+            # Tallied once per MATERIAL, not once per channel: the first
+            # corpus sweep multiplied this by len(CHANNELS) and splash
+            # read '270 refused / 0 compiled' while 84 channels compiled
+            # through the surface route below -- an accounting lie that
+            # misdirected a whole diagnosis toward a routing hole that
+            # did not exist.
             coverage["refusals"][reason] = (
-                coverage["refusals"].get(reason, 0) + len(CHANNELS)
+                coverage["refusals"].get(reason, 0) + 1
             )
             if reason == "no root-level single Principled surface":
                 surface_document = tally_surface(tree)

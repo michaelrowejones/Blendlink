@@ -7,10 +7,10 @@
     "linked": 0,
     "constant": 138
   },
-  "irCompiled": 0,
+  "irCompiled": 84,
   "irCompiledViewDependent": 0,
   "refusals": {
-    "no root-level single Principled surface": 270
+    "no root-level single Principled surface": 45
   },
   "surface": {
     "resolved": 14,
@@ -24,5 +24,8 @@
     }
   },
   "sampled": [],
+  "limits": [
+    "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+  ],
   "irCompiledAttributeDriven": 1
 }

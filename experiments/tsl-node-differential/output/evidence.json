@@ -1780,9 +1780,363 @@
       ]
     }
   ],
-  "pageErrorCount": 1,
+  "scenes": {
+    "cube-diorama": {
+      "coverage": {
+        "sceneId": "cube-diorama",
+        "materials": 52,
+        "principledRoots": 37,
+        "groupWrappedRoots": 16,
+        "channels": {
+          "linked": 35,
+          "constant": 187
+        },
+        "irCompiled": 34,
+        "irCompiledViewDependent": 3,
+        "refusals": {
+          "ShaderNodeFloatCurve has no proven TSL mapping": 1,
+          "Image 1024x1024 exceeds the embedded-IR bound (128x128); the texture transport carries it": 4,
+          "Attribute output 'Vector' has no cell yet": 4,
+          "no root-level single Principled surface": 15,
+          "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 10,
+          "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
+          "Unnormalized noise has no cell yet": 4,
+          "Object Info output 'Color' has no cell yet": 1
+        },
+        "surface": {
+          "resolved": 4,
+          "channelsCompiled": 24,
+          "viewDependent": 1,
+          "refusals": {
+            "material output has no linked Surface": 2,
+            "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+            "Image alpha mode 'NONE' has no cell yet": 1,
+            "surface node ShaderNodeAddShader has no surface-expression mapping": 3,
+            "Image 870x500 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+            "Image 362x512 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+            "Image 500x664 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+            "Image 1280x720 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1
+          }
+        },
+        "sampled": [
+          {
+            "cell": "Clay--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "Glass--Emission_Color.surface",
+            "status": "reference-skipped",
+            "reason": "surface tap v1: a lit-lit mix radiance needs a projection graph"
+          },
+          {
+            "cell": "Metal--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "Wooden_Bars--Roughness",
+            "status": "baked"
+          },
+          {
+            "cell": "bluebell--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "bluebell_center--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "picture_frame_glass--Emission_Color.surface",
+            "status": "reference-skipped",
+            "reason": "surface tap v1: a lit-lit mix radiance needs a projection graph"
+          },
+          {
+            "cell": "plants.leaf--Base_Color",
+            "status": "baked"
+          }
+        ],
+        "limits": [
+          "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+        ],
+        "irCompiledAttributeDriven": 1
+      },
+      "differentials": {
+        "Clay--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Metal--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "Wooden_Bars--Roughness": {
+          "ok": true,
+          "claim": "exact",
+          "pass": false,
+          "measured": {
+            "meanAbs": 0.002599222330900375,
+            "p99Abs": 0.033084750175476074,
+            "maxAbs": 0.047662198543548584
+          }
+        },
+        "bluebell--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": false,
+          "measured": {
+            "meanAbs": 0.004455420104325943,
+            "p99Abs": 0.04195728898048401,
+            "maxAbs": 0.08201479911804199
+          }
+        },
+        "bluebell_center--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.00007663319532487851,
+            "p99Abs": 0.000543057918548584,
+            "maxAbs": 0.0010131597518920898
+          }
+        },
+        "plants.leaf--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": false,
+          "measured": {
+            "meanAbs": 0.0642733418322526,
+            "p99Abs": 0.1978285014629364,
+            "maxAbs": 0.2532453238964081
+          }
+        }
+      }
+    },
+    "blender-4.0-splash": {
+      "coverage": {
+        "sceneId": "blender-4.0-splash",
+        "materials": 68,
+        "principledRoots": 23,
+        "groupWrappedRoots": 0,
+        "channels": {
+          "linked": 0,
+          "constant": 138
+        },
+        "irCompiled": 84,
+        "irCompiledViewDependent": 0,
+        "refusals": {
+          "no root-level single Principled surface": 45
+        },
+        "surface": {
+          "resolved": 14,
+          "channelsCompiled": 84,
+          "viewDependent": 0,
+          "refusals": {
+            "ShaderNodeAmbientOcclusion has no proven TSL mapping": 19,
+            "Image 1000x1000 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
+            "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
+            "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1
+          }
+        },
+        "sampled": [],
+        "limits": [
+          "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+        ],
+        "irCompiledAttributeDriven": 1
+      },
+      "differentials": {}
+    },
+    "trapx-painterly": {
+      "coverage": {
+        "sceneId": "trapx-painterly",
+        "materials": 7,
+        "principledRoots": 2,
+        "groupWrappedRoots": 0,
+        "channels": {
+          "linked": 0,
+          "constant": 12
+        },
+        "irCompiled": 0,
+        "irCompiledViewDependent": 0,
+        "refusals": {
+          "no root-level single Principled surface": 5
+        },
+        "surface": {
+          "resolved": 0,
+          "channelsCompiled": 0,
+          "viewDependent": 0,
+          "refusals": {
+            "Transparent BSDF with a linked Color has no cell yet": 2,
+            "surface node ShaderNodeBsdfGlass has no surface-expression mapping": 2,
+            "surface node ShaderNodeAddShader has no surface-expression mapping": 1
+          }
+        },
+        "sampled": [],
+        "limits": [
+          "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+        ]
+      },
+      "differentials": {}
+    },
+    "ellie-animation": {
+      "coverage": {
+        "sceneId": "ellie-animation",
+        "materials": 53,
+        "principledRoots": 19,
+        "groupWrappedRoots": 1,
+        "channels": {
+          "linked": 12,
+          "constant": 102
+        },
+        "irCompiled": 8,
+        "irCompiledViewDependent": 0,
+        "refusals": {
+          "no root-level single Principled surface": 34,
+          "ShaderNodeVectorTransform has no proven TSL mapping": 1,
+          "ShaderNodeNormalMap has no proven TSL mapping": 1,
+          "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 2
+        },
+        "surface": {
+          "resolved": 0,
+          "channelsCompiled": 0,
+          "viewDependent": 0,
+          "refusals": {
+            "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 30,
+            "ShaderNodeLightPath has no proven TSL mapping": 1,
+            "surface node ShaderNodeBsdfHairPrincipled has no surface-expression mapping": 1,
+            "surface node ShaderNodeAddShader has no surface-expression mapping": 1,
+            "Transparent BSDF with a non-white Color tints transmission; no cell yet": 1
+          }
+        },
+        "sampled": [
+          {
+            "cell": "ellie.eyes--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "ellie.gums--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "ellie.hair_mesh--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "ellie.pins_underside--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "ellie.teeth--Base_Color",
+            "status": "baked"
+          },
+          {
+            "cell": "ellie.teeth--Roughness",
+            "status": "baked"
+          },
+          {
+            "cell": "ellie.tongue--Base_Color",
+            "status": "baked"
+          }
+        ],
+        "limits": [
+          "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+        ],
+        "irCompiledAttributeDriven": 1,
+        "irCompiledApproximate": 1
+      },
+      "differentials": {
+        "ellie.eyes--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.000019475235603749752,
+            "p99Abs": 0.00009709596633911133,
+            "maxAbs": 0.00009825825691223145
+          }
+        },
+        "ellie.gums--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "ellie.hair_mesh--Base_Color": {
+          "ok": true,
+          "claim": "approximate/bounded",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.000004492493651457134,
+            "p99Abs": 0.00003857840783894062,
+            "maxAbs": 0.00010424084030091763
+          }
+        },
+        "ellie.pins_underside--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "ellie.teeth--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.000020935318995422374,
+            "p99Abs": 0.00006154179573059082,
+            "maxAbs": 0.0001341700553894043
+          }
+        },
+        "ellie.teeth--Roughness": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0,
+            "p99Abs": 0,
+            "maxAbs": 0
+          }
+        },
+        "ellie.tongue--Base_Color": {
+          "ok": true,
+          "claim": "exact",
+          "pass": true,
+          "measured": {
+            "meanAbs": 0.000005492705289119233,
+            "p99Abs": 0.00002950429916381836,
+            "maxAbs": 0.000030487775802612305
+          }
+        }
+      }
+    }
+  },
+  "pageErrorCount": 7,
   "pageErrorSample": [
-    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "THREE.TSL: Length of parameters exceeds maximum length of function 'vec3()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
+    "THREE.TSL: Length of parameters exceeds maximum length of function 'vec3()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
+    "THREE.TSL: Length of 'vec2()' data exceeds maximum length of output type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
+    "THREE.TSL: Length of parameters exceeds maximum length of function 'vec2()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
+    "THREE.TSL: Length of 'vec2()' data exceeds maximum length of output type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
+    "THREE.TSL: Length of parameters exceeds maximum length of function 'vec2()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces."
   ],
   "limits": [
     "Cells drive the production IR pipeline (tsl_ir.py -> tslNodeRecipe.ts); only diagnostic cells without an IR route stay hand-written.",

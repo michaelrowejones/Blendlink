@@ -10,7 +10,7 @@
   "irCompiled": 8,
   "irCompiledViewDependent": 0,
   "refusals": {
-    "no root-level single Principled surface": 204,
+    "no root-level single Principled surface": 34,
     "ShaderNodeVectorTransform has no proven TSL mapping": 1,
     "ShaderNodeNormalMap has no proven TSL mapping": 1,
     "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 2
@@ -56,6 +56,9 @@
       "cell": "ellie.tongue--Base_Color",
       "status": "baked"
     }
+  ],
+  "limits": [
+    "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
   ],
   "irCompiledAttributeDriven": 1,
   "irCompiledApproximate": 1

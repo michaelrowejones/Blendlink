@@ -153,7 +153,25 @@ window.__tslDiffRun = async (
     state.mesh.material.dispose()
     state.mesh.material = material
     state.renderer.setRenderTarget(state.target)
+    // Truthfulness, in two parts. Clear in an OWN submit first, so a
+    // cell whose pipeline later fails reads back the magenta sentinel,
+    // never the previous cell's pixels. Then bracket the render in a
+    // validation error scope, so an async pipeline failure surfaces as
+    // ok:false instead of a silent stale readback -- the failure mode
+    // that measured ellie.hair_mesh as a bit-exact copy of the gums
+    // reference and cost a misdiagnosis.
+    await state.renderer.clearAsync()
+    const device = state.renderer.backend?.device
+    device?.pushErrorScope('validation')
     await state.renderer.renderAsync(state.scene, state.camera)
+    const validationError = await device?.popErrorScope()
+    if (validationError) {
+      state.renderer.setRenderTarget(null)
+      return {
+        ok: false,
+        error: `WebGPU validation: ${validationError.message}`,
+      }
+    }
     const pixels = await state.renderer.readRenderTargetPixelsAsync(
       state.target, 0, 0, SIZE, SIZE,
     )

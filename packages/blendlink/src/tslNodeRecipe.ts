@@ -285,6 +285,11 @@ export function createTslBuildResources(): TslBuildResources {
 }
 
 let activeOptions: BuildTslOptions = {}
+// Content-addressed LUT cache, reset per build. ellie.hair_mesh carries
+// 40 LUT nodes over only 5 distinct tables; without dedup the chain
+// requests 40 sampled-texture bindings against WebGPU's default 16 and
+// the pipeline never validates.
+let lutCache = new Map<string, { lut: DataTexture, samples: number }>()
 
 /** Cycles fresnel_dielectric_cos for the front face: c = |cos|,
  * g2 = eta^2 - 1 + c^2; total internal reflection (g2 < 0) returns 1. */
@@ -1706,6 +1711,25 @@ function hashInt2ToFloat2(
   return [signedHashUnit(hx), signedHashUnit(hy)]
 }
 
+/** Refuse, by name, a chain that requests more sampled textures than a
+ * WebGPU pipeline can bind. The default per-stage limit is 16 and three
+ * uses some bindings itself, so the budget is deliberately below it.
+ * Without this the pipeline fails validation asynchronously and, before
+ * the harness learned to surface that, the readback silently returned
+ * the PREVIOUS render -- ellie.hair_mesh measured as a bit-exact copy of
+ * the gums constant and was misdiagnosed as a mapping defect. */
+function assertSampledTextureBudget(texturesBefore: number): void {
+  const total = activeOptions.resources?.textures.length ?? 0
+  const sampled = total - texturesBefore
+  const budget = 14
+  if (sampled > budget) {
+    fail(
+      `chain binds ${sampled} sampled textures; the WebGPU default `
+      + `per-stage limit is 16 and the budget is ${budget}`,
+    )
+  }
+}
+
 function buildLutTexture(
   expression: TslIrExpression,
 ): { lut: DataTexture, samples: number } {
@@ -1714,6 +1738,12 @@ function buildLutTexture(
   if (values.length !== samples * 4) {
     fail(`IR ${expression.op} values do not match its sample count`)
   }
+  // Content-addressed: identical tables share one DataTexture. Semantic
+  // identity (same bytes, nearest-filtered, clamped), measured on the
+  // hair chain as 40 nodes -> 5 textures.
+  const cacheKey = `${samples}:${values.join(',')}`
+  const cached = lutCache.get(cacheKey)
+  if (cached) return cached
   const data = new Float32Array(values)
   const lut = new DataTexture(data, samples, 1, RGBAFormat, FloatType)
   lut.minFilter = NearestFilter
@@ -1723,7 +1753,9 @@ function buildLutTexture(
   lut.generateMipmaps = false
   lut.needsUpdate = true
   activeOptions.resources?.textures.push(lut)
-  return { lut, samples }
+  const entry = { lut, samples }
+  lutCache.set(cacheKey, entry)
+  return entry
 }
 
 /** Manual two-texel lerp over a nearest-filtered LUT row; the factor must
@@ -2322,13 +2354,17 @@ export function buildTslColorNode(
 ): TslExpression {
   assertTslIrDocument(document)
   activeOptions = options
+  lutCache = new Map()
+  const texturesBefore = options.resources?.textures.length ?? 0
   try {
     const built = build(document.output)
+    assertSampledTextureBudget(texturesBefore)
     // A scalar channel broadcasts to RGB, matching Blender's implicit
     // float -> color conversion.
     return tslVec3(built)
   } finally {
     activeOptions = {}
+    lutCache = new Map()
   }
 }
 
@@ -2340,8 +2376,12 @@ export function buildTslScalarNode(
 ): TslExpression {
   assertTslIrDocument(document)
   activeOptions = options
+  lutCache = new Map()
+  const texturesBefore = options.resources?.textures.length ?? 0
   try {
-    return build(document.output)
+    const built = build(document.output)
+    assertSampledTextureBudget(texturesBefore)
+    return built
   } finally {
     activeOptions = {}
   }

@@ -10,7 +10,7 @@
   "irCompiled": 0,
   "irCompiledViewDependent": 0,
   "refusals": {
-    "no root-level single Principled surface": 30
+    "no root-level single Principled surface": 5
   },
   "surface": {
     "resolved": 0,
@@ -22,5 +22,8 @@
       "surface node ShaderNodeAddShader has no surface-expression mapping": 1
     }
   },
-  "sampled": []
+  "sampled": [],
+  "limits": [
+    "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
+  ]
 }

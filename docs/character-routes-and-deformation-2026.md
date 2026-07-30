@@ -637,13 +637,24 @@ The first corpus run surfaced four findings, in order of what they say about the
    bounded chains at the loosest member budget, falling back to a chain-level distribution gate
    (histogram + radial spectrum) as `approximate/amplified`; decorrelated chains on the
    distribution gate directly.
-2. **That distribution gate immediately caught a real defect.** `hair_mesh` fails it at
-   `histogramL1 = 2.0000` — the maximum possible, fully disjoint distributions — so it is a
-   broken mapping somewhere in that chain, not amplification. Open, with the bisection rig as
-   the instrument.
-3. **The stylized scenes compile nothing in the scene sampler** (270 and 30 refusals at
-   `find_principled_root`) even though `emit_surface` handles their Mix Shader folds — the
-   sampler's surface route is not reaching them. Open.
+2. **The `hair_mesh` "defect" was the harness lying, not the mapping — RESOLVED 2026-07-31.**
+   The `histogramL1 = 2.0` failure was measured against a stale readback: the chain's 40 LUT
+   nodes (only 5 distinct tables) exceeded WebGPU's 16-per-stage sampled-texture limit, the
+   pipeline failed validation asynchronously, and the harness returned the PREVIOUS cell's
+   pixels with `ok: true` — the "hair TSL" statistics were bit-identical to the gums constant.
+   Fixed threefold: LUT textures are content-addressed (40 → 5), a chain over the binding
+   budget refuses by name, and the harness clears in its own submit and brackets the render in
+   a validation error scope so it structurally cannot lie again (the third such
+   truthfulness hole, after the stale build and the stale IR). Re-measured: hair passes at
+   meanAbs 4.5e-6 — three orders of magnitude inside the exact gate. The chain was never wrong.
+3. **The stylized "hole" was mostly an accounting lie — corrected 2026-07-31.** Splash
+   actually compiles **84 surface channels across 14 materials**; the sampler tallied six
+   phantom refusals per material before the surface fallback ran and never counted surface
+   successes. Now tallied once per material with surface channels in the top-level compiled
+   figure, plus a declared radiance-only sampling limit. The real remaining gaps: the sampler
+   taps only radiance (outline Alpha content unsampled, one procedural surface pre-empted by
+   vertex_color), and trapx genuinely refuses on Glass ×2 / AddShader / tinted Transparent ×2 —
+   named, honest, needing surface-expression mappings.
 4. **cube-diorama fails three chains at the exact gate** (`plants.leaf` 6.4e-2 mean;
    `Wooden_Bars`/`bluebell` with small means but 5–8e-2 maxima — localized, edge-like). Open;
    these are precisely the "harming the others while polishing one" class the corpus view exists

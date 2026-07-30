@@ -7,13 +7,13 @@
     "linked": 35,
     "constant": 187
   },
-  "irCompiled": 10,
+  "irCompiled": 34,
   "irCompiledViewDependent": 3,
   "refusals": {
     "ShaderNodeFloatCurve has no proven TSL mapping": 1,
     "Image 1024x1024 exceeds the embedded-IR bound (128x128); the texture transport carries it": 4,
     "Attribute output 'Vector' has no cell yet": 4,
-    "no root-level single Principled surface": 90,
+    "no root-level single Principled surface": 15,
     "Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it": 10,
     "ShaderNodeAmbientOcclusion has no proven TSL mapping": 1,
     "Unnormalized noise has no cell yet": 4,
@@ -69,6 +69,9 @@
       "cell": "plants.leaf--Base_Color",
       "status": "baked"
     }
+  ],
+  "limits": [
+    "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
   ],
   "irCompiledAttributeDriven": 1
 }
