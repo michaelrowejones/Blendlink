@@ -121,10 +121,52 @@ to be assigned at export. Report the assigned action and any modifier property d
 rig property that other clips key differently. Same shape as 0a: no depsgraph evaluation needed
 to detect it, only to quantify it.
 
-**Phase 1 — export-time lowerings, no runtime code.** SURFACE_DEFORM to `JOINTS_0/WEIGHTS_0`
-when the target is skinned — fixes two of the four catastrophic objects, 143% to ~0.25%. Guard by
-verifying the target's stack is pure LBS, else measure and refuse. Class-D attribute bake plus
-the animated-driver refusal. Split MASK static/animated.
+**Phase 1 — export-time lowerings, no runtime code. SURFACE_DEFORM lowering SHIPPED 2026-07-30.**
+Measured on ellie, exhaustively over all 331 frames:
+
+| mesh | ships today | lowered | improvement |
+| --- | --- | --- | --- |
+| `GEO-ellie_teeth_top.001` | 178.8 mm = 143.53% | **0.089 mm = 0.071%** | 2009× |
+| `GEO-ellie_teeth_btm.001` | 173.8 mm = 144.87% | **1.109 mm = 0.925%** | 157× |
+
+Both on 8 joints of `RIG-Ellie.001`, adding **no new joints** — every bone was already shipped.
+
+Three corrections the measurement forced on this plan:
+
+- **"Guard by verifying the target's stack is pure LBS" is refuted.** On ellie that test is both
+  unnecessary — both impure targets lower fine — and insufficient, because the target whose
+  SHRINKWRAP is *provably inert* (0.000 m contribution) is the worse of the two at 0.925%. The
+  guard measures the residual instead.
+- **The "~0.25%" above was never the lowering error.** It is the SHRINKWRAP impurity, reproduced
+  at 0.234% and 0.000%. The real error is 0.071% and 0.925%. The bottom is 3.7× the plan's claim
+  because its rest cage is 42 verts driving a 678-vert mesh, and barycentric interpolation cannot
+  reproduce SurfaceDeform's multi-polygon reconstruction at that resolution.
+- **Reading Blender's own bind data is impossible.** 5.2 exposes 20 RNA properties on
+  `SurfaceDeformModifier` and none is bind data; the `SDefVert` array never leaves C.
+
+Still owed in Phase 1: class-D attribute bake plus the animated-driver refusal. MASK
+static/animated is answered by §6e — the mechanism is still owed, ellie does not need it.
+
+**Phase 1 residue — the fannypack zippers, and why they are not the next win.** After the teeth
+lowered, `GEO-ellie_fannypack_zippers.001` is the *only* mesh left in ellie's Geometry Fidelity
+refusal. Two separate things are true about it and they point opposite ways:
+
+- **Its bind-branch refusal is over-strict.** Phase 1 refuses because three SurfaceDeform binds
+  share the mesh and "their visibility selects between different cages". Measured: they are
+  mutually exclusive by construction — `SurfaceDeform` is driven by `1-FannyPackOpenable`, both
+  `OpenableTop` and `OpenableBot` by `FannyPackOpenable` — and that rig property is **keyed by 6
+  actions with every keyframe 0.0**, single distinct value set, current value 0. Exactly the §6e
+  pattern. So the branch is provably resolved to one live cage,
+  `GEO-ellie_fannypack_zipper_combined_deformer.001`, and the refusal could be relaxed with the
+  constant-driver predicate Blendlink already applies elsewhere.
+- **Relaxing it would not unblock ellie.** The same mesh carries two animated LATTICE modifiers,
+  `Lattice Front` and `Lattice Top`, following cages the timeline moves through `RIG-Ellie.001`.
+  Those are Phase 3, which §6a leaves blocked. The zipper mesh is refused for a second reason that
+  no export-time lowering can address.
+
+Record this so nobody relaxes the bind-branch refusal expecting a green compile. The honest status
+is that Phase 1 took ellie's geometry refusals from three meshes to one, and the last one is
+waiting on Phase 3.
 
 **Phase 1b — stop baking constant channels. Measured 2026-07-30; do this before Phase 2.**
 The per-channel bake writes a texture for every Principled channel whether or not the channel
