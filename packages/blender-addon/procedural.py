@@ -10,11 +10,13 @@ into the manifest.  Nothing here mutates authored meshes or node trees.
 from __future__ import annotations
 
 import ast
+import contextlib
 from dataclasses import dataclass
 import hashlib
 import struct
 
 import bpy
+from mathutils import Vector
 
 if __package__:
     from .bakelib_loader import bakelib
@@ -2991,6 +2993,643 @@ def evaluated_material_uses(obj, depsgraph=None):
                 modifier.show_viewport = show_viewport
 
 
+# ---------------------------------------------------------------------------
+# Phase 0c / 0d: name the two silent losses in Blendlink's applied-modifier
+# export contract — shape keys that never reach the glb, and ARMATURE options
+# glTF cannot carry.  Both are reports, not refusals, except for the one case
+# that is provably wrong: a dropped key whose value actually animates.
+# ---------------------------------------------------------------------------
+
+# io_scene_gltf2/blender/exp/export.py:28-29 calls ``frame_set(0)`` unless
+# ``gltf_current_frame`` is set, and Blendlink never sets it
+# (packages/blendlink/blender/export_scene.py:5125-5160 pins export_apply,
+# export_skins and export_morph and nothing else).  Frame 0 is therefore the
+# frame whose evaluated state freezes into the shipped mesh, and on a scene
+# whose range starts at 1 it cannot be inferred from that range.
+_EXPORTER_FROZEN_FRAME = 0
+
+# Warn line for a shipped-vs-evaluated displacement, as a fraction of the
+# object's bounding-box diagonal.  Deliberately the same 1% the frozen-modifier
+# residual uses, so the two diagnostics cannot disagree about "small".
+_DISPLACEMENT_WARN_FRACTION = 0.01
+
+# Modifier types whose evaluated output can change the vertex container.
+# ``to_mesh`` keeps ``mesh->key`` only when no *enabled* modifier changes that
+# container, so this table only narrows the leave-one-out attribution below; it
+# never decides the drop itself, which is always read off the evaluated mesh.
+# This is deliberately not material_compiler._DEFORMING_MODIFIERS: that set's
+# own comment says it names the modifiers a rest-basis UV bake is invariant to,
+# which is a different question and would both miss ARRAY/BOOLEAN and include
+# motion-free deformers.  Measured on ellie: GEO-ellie_jacket.001 loses four
+# key blocks through the one MASK of its three that is enabled, which removes
+# 801 vertices (5186 -> 4385), while GEO-ellie_eyelashes.001 loses two through
+# a stack no single member of which is responsible (72 -> 564).  Listing a type
+# here is therefore never the decision.
+_VERTEX_CONTAINER_MODIFIERS = frozenset({
+    "ARRAY", "BEVEL", "BOOLEAN", "BUILD", "DECIMATE", "EDGE_SPLIT",
+    "EXPLODE", "MASK", "MESH_SEQUENCE_CACHE", "MIRROR", "MULTIRES", "NODES",
+    "OCEAN", "PARTICLE_INSTANCE", "REMESH", "SCREW", "SKIN", "SOLIDIFY",
+    "SUBSURF", "TRIANGULATE", "VOLUME_TO_MESH", "WELD", "WIREFRAME",
+})
+
+
+def _rounded(value):
+    """Keep committed generated manifests free of float-noise churn."""
+    return None if value is None else round(float(value), 7)
+
+
+def _percent(value, diagonal):
+    """One place that turns metres into a fraction of a bounding box."""
+    if not diagonal:
+        return "an unmeasurable fraction"
+    return f"{value / diagonal * 100.0:.2f}%"
+
+
+def _skip_shape_key(key_blocks, key):
+    """Port of io_scene_gltf2 ``blender/com/data_path.py:69-76`` (``skip_sk``).
+
+    The exporter drops the Basis, muted keys, and any key relative to itself.
+    Ported rather than imported: the addon must report the same decision in a
+    Blender where io_scene_gltf2 is not enabled.
+    """
+    return (
+        key == key.relative_key
+        or bool(key.mute)
+        or key_blocks[0].name == key.name
+    )
+
+
+def _exported_shape_keys(shape_keys):
+    """The key blocks io_scene_gltf2 would export (``get_sk_exported``)."""
+    if shape_keys is None:
+        return ()
+    key_blocks = shape_keys.key_blocks
+    return tuple(
+        key for key in key_blocks if not _skip_shape_key(key_blocks, key)
+    )
+
+
+@contextlib.contextmanager
+def _applied_mesh(obj):
+    """Yield the Mesh io_scene_gltf2 would export for ``obj``, or ``None``.
+
+    Follows ``blender/exp/nodes.py:294-330``.  Under Blendlink's pinned
+    ``export_apply=True``/``export_skins=True``
+    (packages/blendlink/blender/export_scene.py:5125-5126) the exporter exports
+    the source Mesh datablock when the object carries no modifier, and
+    otherwise mutes only *this* object's ARMATURE modifiers, takes
+    ``bpy.context.evaluated_depsgraph_get()`` and calls
+    ``to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)`` — the same
+    sequence ``evaluated_material_uses`` above already relies on.
+
+    Per-object muting is load-bearing, not an optimisation to undo: batching
+    every candidate's ARMATURE into one depsgraph rebuild would change the
+    evaluated result of a mesh whose SURFACE_DEFORM target is itself skinned.
+    """
+    if len(obj.modifiers) == 0:
+        # nodes.py:294-296 — with no modifier the exporter exports the source
+        # Mesh datablock itself, so every key block survives.
+        yield obj.data
+        return
+    armature_states = [
+        (modifier, modifier.show_viewport)
+        for modifier in obj.modifiers
+        if modifier.type == "ARMATURE"
+    ]
+    evaluated = None
+    mesh = None
+    try:
+        for modifier, _show_viewport in armature_states:
+            modifier.show_viewport = False
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        evaluated = obj.evaluated_get(depsgraph)
+        mesh = evaluated.to_mesh(
+            preserve_all_data_layers=True, depsgraph=depsgraph,
+        )
+        yield mesh
+    finally:
+        try:
+            if mesh is not None and evaluated is not None:
+                evaluated.to_mesh_clear()
+        finally:
+            for modifier, show_viewport in armature_states:
+                modifier.show_viewport = show_viewport
+
+
+def _bbox_diagonal(obj):
+    """World-space bounding-box diagonal: what every percentage divides by.
+
+    Read from ``obj.bound_box``, which tracks the current evaluated pose, so a
+    percentage carries the animated pose's drift across a range while the metre
+    figures do not.
+    """
+    corners = [obj.matrix_world @ Vector(corner) for corner in obj.bound_box]
+    return max(
+        (first - second).length
+        for index, first in enumerate(corners)
+        for second in corners[index + 1:]
+    ) if len(corners) > 1 else 0.0
+
+
+def _basis_displacement(obj, mesh, exported):
+    """Metres between what the glb ships and the evaluated mesh.
+
+    ``primitive_extract.py:1112-1116`` (``__get_positions``) sources POSITION from
+    ``self.key_blocks[0].relative_key.points`` — the Basis cage — whenever any
+    key block survives, and never from the evaluated positions.  A frozen
+    closed-form deformer's contribution is therefore *absent* from the glb for
+    these meshes rather than frozen into it.  Only the 3x3 of ``matrix_world``
+    is applied because a shared translation cancels in the difference.
+    """
+    points = exported[0].relative_key.points
+    if len(points) != len(mesh.vertices):
+        return None
+    matrix = obj.matrix_world.to_3x3()
+    worst = 0.0
+    for vertex, point in zip(mesh.vertices, points):
+        worst = max(worst, (matrix @ (vertex.co - point.co)).length)
+    return worst
+
+
+def _key_displacement(obj, key):
+    """Metres this key block moves at value 1.0, before the modifier stack.
+
+    Shape-key blending is linear in the key value, so the motion a dropped key
+    loses across a value range is exactly this figure times that range — before
+    the stack, which can amplify or attenuate it.
+    """
+    relative = key.relative_key
+    matrix = obj.matrix_world.to_3x3()
+    worst = 0.0
+    for point, base in zip(key.points, relative.points):
+        worst = max(worst, (matrix @ (point.co - base.co)).length)
+    return worst
+
+
+def _shape_key_restoring_modifiers(obj):
+    """Name every enabled modifier whose absence alone restores the key blocks.
+
+    Causal isolation, not an inference from the modifier type: on ellie,
+    disabling GEO-ellie_jacket.001's one enabled MASK restores its key blocks,
+    while GEO-ellie_eyelashes.001 keeps zero key blocks with each of its
+    container-changing modifiers switched off in turn, so its list is correctly
+    empty and the message must say so.  Only container-changing types are
+    probed, and only for an object that already lost its keys, so the cost is a
+    handful of extra evaluations.  ``show_viewport`` is restored to its literal
+    authored value; a driver on that property re-asserts itself on the next
+    depsgraph update, exactly as ``evaluated_material_uses`` already relies on.
+    """
+    restoring = []
+    for modifier in obj.modifiers:
+        if modifier.type not in _VERTEX_CONTAINER_MODIFIERS:
+            continue
+        if not modifier.show_viewport:
+            continue
+        show_viewport = modifier.show_viewport
+        modifier.show_viewport = False
+        try:
+            with _applied_mesh(obj) as mesh:
+                if mesh is not None and _exported_shape_keys(
+                        getattr(mesh, "shape_keys", None)):
+                    restoring.append(modifier.name)
+        finally:
+            modifier.show_viewport = show_viewport
+    return tuple(restoring)
+
+
+def _shape_key_facts(obj):
+    """Decide, with no timeline traversal, what the glb does with ``obj``'s keys.
+
+    Blender's own property description is unconditional — io_scene_gltf2
+    ``__init__.py:679-684``, ``export_apply``: "Apply modifiers (excluding
+    Armatures) to mesh objects - WARNING: prevents exporting shape keys" — but
+    the code is not.  ``primitive_extract.py:151-158`` still admits an
+    exporter-applied mesh (its own comment hedges at line 154), and what
+    actually decides the outcome is whether ``to_mesh`` kept ``mesh->key``.
+    Measured on ellie: 7 of 9 render-visible shape-keyed meshes ship real morph
+    targets; only GEO-ellie_jacket.001 and GEO-ellie_eyelashes.001 lose theirs.
+    A blanket refusal here would refuse a working export.
+    """
+    shape_keys = getattr(obj.data, "shape_keys", None)
+    if shape_keys is None:
+        return None
+    authored = _exported_shape_keys(shape_keys)
+    with _applied_mesh(obj) as mesh:
+        if mesh is None:
+            # An evaluated Mesh is unavailable (a Geometry Nodes graph emitted
+            # a non-mesh, for example). Say nothing rather than guess.
+            return None
+        exported = _exported_shape_keys(getattr(mesh, "shape_keys", None))
+        exported_names = {key.name for key in exported}
+        applied_vertices = len(mesh.vertices)
+        basis_key = exported[0].relative_key.name if exported else None
+        basis_displacement = (
+            _basis_displacement(obj, mesh, exported) if exported else None
+        )
+    authored_names = {key.name for key in authored}
+    frozen_names = sorted(authored_names - exported_names)
+    # A Key datablock with no reachable time source cannot change by frame, so
+    # its constancy is proven without evaluating anything.  The converse is not
+    # true and must not be assumed: GEO-ellie_jacket.001's Key *does* have a
+    # reachable time source, yet all four of its dropped keys hold one value
+    # across frames 0 and 1..330.  A channel existing proves nothing; only the
+    # evaluated value can be trusted.
+    time_dependent = bool(frozen_names) and _time_dependent_id(shape_keys)
+    keys = []
+    for index, key in enumerate(shape_keys.key_blocks):
+        if key.name in exported_names:
+            transport = "morphTarget"
+        elif key.name in authored_names:
+            transport = "frozen"
+        else:
+            # The Basis, a muted key, or a key relative to itself: skip_sk
+            # drops it and Blender contributes nothing from it either.
+            transport = "skipped"
+        keys.append({
+            "index": index,
+            "name": key.name,
+            "transport": transport,
+            "muted": bool(key.mute),
+            "value": _rounded(key.value),
+            "frozenValue": _rounded(key.value),
+            "maxDelta": _rounded(_key_displacement(obj, key)),
+            # A dropped key on a Key ID with no reachable time source is
+            # already proven constant here; every other reading waits for the
+            # evaluated sample below rather than guessing.
+            "animation": (
+                "constant"
+                if transport == "frozen" and not time_dependent
+                else "notSampled"
+            ),
+            "values": [],
+        })
+    return {
+        "object_ref": obj,
+        "shape_keys_ref": shape_keys,
+        "position_source": "basis" if exported else "evaluated",
+        "basis_key": basis_key,
+        "basis_displacement": basis_displacement,
+        "source_vertices": len(obj.data.vertices),
+        "applied_vertices": applied_vertices,
+        "bbox_diagonal": _bbox_diagonal(obj),
+        "container_modifiers": tuple(
+            modifier.name for modifier in obj.modifiers
+            if modifier.type in _VERTEX_CONTAINER_MODIFIERS
+            and modifier.show_viewport
+        ),
+        "restored_by": (
+            _shape_key_restoring_modifiers(obj)
+            if authored and not exported else None
+        ),
+        "keys": keys,
+        "frozen_names": frozen_names,
+        "sampled_keys": [
+            item for item in keys if item["transport"] == "frozen"
+        ] if time_dependent else [],
+        "value_proof": (
+            "notRequired" if not frozen_names
+            else ("static" if not time_dependent else "unproven")
+        ),
+        "frozen_at_frame": _EXPORTER_FROZEN_FRAME,
+    }
+
+
+def _sample_shape_key_values(scene, facts, full):
+    """Prove whether a dropped key's value varies, by evaluating it per frame.
+
+    Channel presence is not the predicate: GEO-ellie_jacket.001's Key ID has a
+    reachable time source and every one of its four dropped keys still measures
+    one value over frames 0 and 1..330, so "an F-Curve exists" would refuse a
+    working export.  Curve inspection is not the predicate either:
+    Blender 5.2 stores slotted-action curves behind channelbags, and a driven
+    value is not on a curve at all.  The only honest reading is the evaluated
+    one, ``shape_keys.evaluated_get(depsgraph).key_blocks[i].value``.
+
+    Frame 0 is visited deliberately — it is the frame io_scene_gltf2 freezes
+    (``blender/exp/export.py:28-29``) and it lies outside a range that starts
+    at 1.
+    """
+    candidates = [item for item in facts if item["sampled_keys"]]
+    if not candidates:
+        return
+    original_frame = scene.frame_current
+    start, end = scene.frame_start, scene.frame_end
+    frame_count = end - start + 1
+    required_snapshots = frame_count * len(candidates)
+    if not full:
+        # The live addon never moves the timeline. One frame cannot bless a
+        # value as constant, so the record stays unproven and cannot refuse.
+        frames, proof = (original_frame,), "currentFrame"
+    elif required_snapshots <= MAX_AUDIT_SNAPSHOTS:
+        frames = tuple(sorted({
+            _EXPORTER_FROZEN_FRAME, *range(start, end + 1),
+        }))
+        proof = "exhaustive"
+    else:
+        # Witnesses can prove variation but never constancy — the same
+        # asymmetry the procedural audit relies on, pointing the other way, so
+        # an over-budget scene warns instead of blessing or refusing.
+        frames = tuple(sorted({
+            _EXPORTER_FROZEN_FRAME, start, original_frame, end,
+        }))
+        proof = "sampled"
+    try:
+        for frame in frames:
+            _set_audit_frame(scene, frame)
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            for item in candidates:
+                blocks = item["shape_keys_ref"].evaluated_get(
+                    depsgraph,
+                ).key_blocks
+                for sample in item["sampled_keys"]:
+                    sample["values"].append(
+                        (int(frame), float(blocks[sample["index"]].value)),
+                    )
+    finally:
+        _set_audit_frame(scene, original_frame)
+    for item in candidates:
+        item["value_proof"] = proof
+        item["frozen_at_frame"] = (
+            _EXPORTER_FROZEN_FRAME if full else original_frame
+        )
+        item["audit_required_snapshots"] = required_snapshots
+        for sample in item["sampled_keys"]:
+            values = [value for _frame, value in sample["values"]]
+            sample["frozenValue"] = _rounded(next(
+                (
+                    value for frame, value in sample["values"]
+                    if frame == item["frozen_at_frame"]
+                ),
+                values[0],
+            ))
+            sample["valueRange"] = [
+                _rounded(min(values)), _rounded(max(values)),
+            ]
+            if len(set(values)) > 1:
+                sample["animation"] = "varying"
+                sample["lostDisplacement"] = _rounded(
+                    sample["maxDelta"] * (max(values) - min(values)),
+                )
+            elif proof == "exhaustive":
+                sample["animation"] = "constant"
+            else:
+                sample["animation"] = "unproven"
+
+
+def _restored_clause(facts):
+    restored = facts["restored_by"] or ()
+    if len(restored) == 1:
+        return f'disabling modifier "{restored[0]}" restores them'
+    if restored:
+        names = ", ".join(f'"{name}"' for name in restored)
+        return f"disabling any one of {names} restores them"
+    return (
+        "no single modifier restores them — the whole applied stack changes "
+        "the container"
+    )
+
+
+def _finalize_shape_keys(facts, scene):
+    """Turn one object's shape-key facts into the artist-facing record.
+
+    Only one of the three findings refuses, and only on measured variation: a
+    dropped key whose evaluated value actually animates is nowhere in the glb.
+    A dropped key with a constant value — zero or not — is already baked into
+    the exported positions by ``to_mesh``, so it warns; refusing it would
+    refuse a correct export, which is what ellie's jacket and eyelashes are.
+    A Basis-sourced POSITION warns and hands the frozen-modifier residual the
+    baseline selector it needs; that diagnostic owns the >10% refusal, and two
+    refusals for one defect would be two messages for one fix.
+    """
+    obj = facts["object_ref"]
+    diagonal = facts["bbox_diagonal"]
+    keys = facts["keys"]
+    frozen = [item for item in keys if item["transport"] == "frozen"]
+    exported = [item for item in keys if item["transport"] == "morphTarget"]
+    varying = [item for item in frozen if item["animation"] == "varying"]
+    displacement = facts["basis_displacement"]
+    if varying:
+        worst = max(varying, key=lambda item: item["lostDisplacement"])
+        low, high = worst["valueRange"]
+        severity = "refuse"
+        message = (
+            f'{obj.name}: shape key "{worst["name"]}" animates between '
+            f"{low:.3f} and {high:.3f} but cannot reach the glb. Blendlink "
+            f"publishes with Apply Modifiers on, and this object's evaluated "
+            f"mesh changes the vertex container "
+            f"({facts['source_vertices']} -> {facts['applied_vertices']} "
+            f"vertices), so Blender keeps no key block at all "
+            f"({_restored_clause(facts)}). The website ships the shape frozen "
+            f"at the exporter's frame {facts['frozen_at_frame']} value "
+            f"{worst['frozenValue']:.3f}, silently dropping up to "
+            f"{worst['lostDisplacement'] * 1000.0:.1f} mm of authored motion "
+            f"({_percent(worst['lostDisplacement'], diagonal)} of this "
+            f"object's {diagonal:.4f} m bounding-box diagonal). Disable or "
+            f"apply the modifier that changes the vertex count, re-author the "
+            f"motion as bone animation, or delete the key."
+        )
+    elif frozen:
+        names = ", ".join(f'"{item["name"]}"' for item in frozen)
+        proven = facts["value_proof"] in {"static", "exhaustive"}
+        severity = "warn"
+        message = (
+            f"{obj.name}: {len(frozen)} shape key(s) will not reach the glb "
+            f"({names}). Apply Modifiers is on and this object's evaluated "
+            f"mesh changes the vertex container "
+            f"({facts['source_vertices']} -> {facts['applied_vertices']} "
+            f"vertices), so Blender keeps no key block "
+            f"({_restored_clause(facts)}). "
+            + (
+                f"Every dropped key holds one value over frames "
+                f"{scene.frame_start}..{scene.frame_end}, and a constant "
+                f"blend is already baked into the exported positions, so "
+                f"nothing shipped is wrong — the website simply cannot drive "
+                f"these keys at runtime."
+                if proven else
+                "Their values were read at one frame only, so constancy is "
+                "unproven here; the publish audit measures every frame and "
+                "refuses if any of them animates."
+            )
+        )
+    elif (
+        displacement is not None
+        and diagonal > 0.0
+        and displacement > diagonal * _DISPLACEMENT_WARN_FRACTION
+    ):
+        severity = "warn"
+        message = (
+            f"{obj.name}: its shape keys ship as glTF morph targets, so the "
+            f'exporter sources POSITION from the "{facts["basis_key"]}" cage '
+            f"(primitive_extract.py:1112-1116) instead of the evaluated mesh. "
+            f"This object's evaluated stack moves it "
+            f"{displacement * 1000.0:.1f} mm "
+            f"({_percent(displacement, diagonal)} of its {diagonal:.4f} m "
+            f"bounding-box diagonal) away from that cage, and none of that "
+            f"deformation is in the glb — it is absent, not frozen. Lower the "
+            f"deformer to skinning, remove the shape keys, or accept the "
+            f"rest-cage export."
+        )
+    else:
+        severity = "info"
+        message = (
+            f"{obj.name}: {len(exported)} shape key(s) reach the glb as morph "
+            f'targets and the exported positions match the '
+            f'"{facts["basis_key"]}" cage to '
+            f"{(displacement or 0.0) * 1000.0:.3f} mm."
+            if facts["position_source"] == "basis" else
+            f"{obj.name}: no shape key block reaches the glb and none is "
+            f"lost — every key is muted or relative to itself."
+        )
+    return {
+        "object": obj.name,
+        **({"objectId": obj.get("blendlink_id")}
+           if isinstance(obj.get("blendlink_id"), str) else {}),
+        "positionSource": facts["position_source"],
+        **({"basisKey": facts["basis_key"]} if facts["basis_key"] else {}),
+        "sourceVertices": facts["source_vertices"],
+        "appliedVertices": facts["applied_vertices"],
+        "bboxDiagonal": _rounded(diagonal),
+        **({"basisDisplacement": _rounded(displacement)}
+           if displacement is not None else {}),
+        "containerModifiers": list(facts["container_modifiers"]),
+        **({"restoredBy": list(facts["restored_by"])}
+           if facts["restored_by"] is not None else {}),
+        "keys": [
+            {
+                "name": item["name"],
+                "transport": item["transport"],
+                "muted": item["muted"],
+                "value": item["value"],
+                "maxDelta": item["maxDelta"],
+                "animation": item["animation"],
+                **({"frozenValue": item["frozenValue"]}
+                   if item["transport"] == "frozen" else {}),
+                **({"valueRange": item["valueRange"]}
+                   if "valueRange" in item else {}),
+                **({"lostDisplacement": item["lostDisplacement"]}
+                   if "lostDisplacement" in item else {}),
+            }
+            for item in keys
+        ],
+        "valueProof": facts["value_proof"],
+        "frameRange": [scene.frame_start, scene.frame_end],
+        "frozenAtFrame": facts["frozen_at_frame"],
+        "severity": severity,
+        "message": message,
+    }
+
+
+def _skin_approximation_record(obj):
+    """Name the ARMATURE options the glb cannot carry.  No evaluation at all.
+
+    glTF skinning is linear blend skinning only: neither the format nor three's
+    skinning node has a dual-quaternion mode, and envelope falloff has no
+    exported form because ``primitive_extract.py:1557`` derives
+    JOINTS_0/WEIGHTS_0 from vertex groups alone.  Both flags are therefore lost
+    silently — the export succeeds and the deformation is merely different.
+
+    Measured on ellie, max |C(DQS on) - C(DQS off)| over frames 1..330 of the
+    full authored stack in world space, divided by this module's own
+    ``_bbox_diagonal``: GEO-ellie_jacket.001 6.255 mm = 1.62% at frame 196,
+    GEO-ellie_body.001 7.060 mm = 0.91% at frame 48, GEO-ellie_boots.001
+    0.214 mm = 0.044%, GEO-ellie_eyebrows.001 0.002 mm = 0.0009% — 4 of its 36
+    render-visible ARMATURE modifiers.  ``use_bone_envelopes`` is False on
+    every one of them, so that half of this record ships without a real-scene
+    witness and needs the synthetic test.  Only the jacket crosses the 1% warn
+    line and none approaches the 10% refusal line, which is why this warns: the
+    only artist action is to clear the flag and re-weight, and refusing would
+    refuse every volume-preserving rig that ships acceptably today.  The
+    percentages are denominator-sensitive and the metres are not; an earlier
+    probe divided by a rest-pose diagonal and read 1.627% / 1.083% for the same
+    two millimetre figures.
+
+    The magnitude is deliberately not measured here.  It costs two evaluated
+    meshes per frame per object — exactly the harness the frozen-modifier
+    residual builds — so this record names the object and the modifier instead,
+    so that measurement can subtract the DQS term rather than report it as
+    noise.
+    """
+    armatures = [
+        modifier for modifier in obj.modifiers if modifier.type == "ARMATURE"
+    ]
+    if not armatures:
+        return None
+    if not any(
+        modifier.use_deform_preserve_volume or modifier.use_bone_envelopes
+        for modifier in armatures
+    ):
+        return None
+    # tree.py:247-248 builds ``{m.type: m for m in modifiers}`` and then tests
+    # ``modifiers["ARMATURE"].object is not None``, so only the LAST ARMATURE
+    # modifier can produce a skin, and ``show_viewport`` is never consulted
+    # (nodes.py:308-311 mutes it regardless).  ``exporterSelected`` is carried
+    # per modifier so a second ARMATURE the exporter's dict discards is visible
+    # rather than implied.
+    selected = armatures[-1]
+    skinned = selected.object is not None
+    preserve_volume = bool(selected.use_deform_preserve_volume)
+    bone_envelopes = bool(selected.use_bone_envelopes)
+    sentences = []
+    if preserve_volume:
+        sentences.append(
+            f'{obj.name}: ARMATURE modifier "{selected.name}" has Preserve '
+            f"Volume enabled. glTF skinning is linear blend skinning only — "
+            f"neither the format nor three's SkinningNode has a "
+            f"dual-quaternion mode — so the website ships the linearised "
+            f"deformation. On Blendlink's reference character that "
+            f"linearisation moves vertices up to 1.62% of the bounding-box "
+            f"diagonal; this scene's magnitude is not measured here. Clear "
+            f"Preserve Volume and re-weight if the website must match "
+            f"Blender, or accept the linear result."
+        )
+    if bone_envelopes:
+        sentences.append(
+            f'{obj.name}: ARMATURE modifier "{selected.name}" has Bone '
+            f"Envelopes enabled. The exporter derives JOINTS_0/WEIGHTS_0 from "
+            f"vertex groups only (primitive_extract.py:1557), so envelope "
+            f"falloff has no exported form and the website ships the "
+            f"vertex-group weights alone. Bake the falloff into groups with "
+            f"Weight from Bones (with envelopes), or clear Bone Envelopes."
+        )
+    if not sentences:
+        sentences.append(
+            f"{obj.name}: a Preserve Volume or Bone Envelopes ARMATURE "
+            f"modifier is present, but the exporter's skin comes from "
+            f'"{selected.name}", which sets neither, so nothing is '
+            f"approximated."
+        )
+    return {
+        "object": obj.name,
+        **({"objectId": obj.get("blendlink_id")}
+           if isinstance(obj.get("blendlink_id"), str) else {}),
+        "skinned": skinned,
+        **({"armature": selected.object.name} if skinned else {}),
+        "exporterSelected": selected.name,
+        "preserveVolume": preserve_volume,
+        "boneEnvelopes": bone_envelopes,
+        "modifiers": [
+            {
+                "name": modifier.name,
+                "armature": (
+                    modifier.object.name
+                    if modifier.object is not None else None
+                ),
+                "preserveVolume": bool(modifier.use_deform_preserve_volume),
+                "boneEnvelopes": bool(modifier.use_bone_envelopes),
+                "vertexGroups": bool(modifier.use_vertex_groups),
+                "showViewport": bool(modifier.show_viewport),
+                "exporterSelected": modifier == selected,
+            }
+            for modifier in armatures
+        ],
+        "severity": (
+            "warn" if skinned and (preserve_volume or bone_envelopes)
+            else "info"
+        ),
+        "message": " ".join(sentences),
+    }
+
+
 def analyze_scene(scene, full=False, fixed_camera=False, objects=None):
     """Return JSON-safe compiler diagnostics without modifying authored data.
 
@@ -3029,10 +3668,34 @@ def analyze_scene(scene, full=False, fixed_camera=False, objects=None):
             _finalize_procedural(facts, scene, full, fixed_camera)
             for facts in procedural_facts
         ]
+    # A second traversal on purpose. ``_shape_key_facts`` mutes ARMATURE
+    # modifiers, which invalidates the dependency graph the loop above hands to
+    # ``evaluated_material_uses`` (see that function's own note). Repeating the
+    # cheap visibility gate costs less than making the tested material contract
+    # depend on iteration order.
+    shape_key_facts = []
+    skin_approximation = []
+    for obj in scoped_objects:
+        if obj.type != "MESH" or obj.hide_render:
+            continue
+        facts = _shape_key_facts(obj)
+        if facts is not None:
+            shape_key_facts.append(facts)
+        skin_record = _skin_approximation_record(obj)
+        if skin_record is not None:
+            skin_approximation.append(skin_record)
+    _sample_shape_key_values(scene, shape_key_facts, full)
+    shape_keys = [
+        _finalize_shape_keys(facts, scene) for facts in shape_key_facts
+    ]
     return {
         "procedural": procedural,
         "instances": _analyze_instances(scene, scoped_objects),
         "materials": sorted(materials.values(), key=lambda item: item["material"].casefold()),
+        # Phase 0c / 0d. Additive: shape keys the applied-modifier export path
+        # drops, and ARMATURE options glTF has no form for.
+        "shapeKeys": shape_keys,
+        "skinApproximation": skin_approximation,
         # Phase 0a. Additive and independent of every sample above: this is
         # decided with no depsgraph evaluation, so it stays correct even when
         # the procedural audit is not run exhaustively.

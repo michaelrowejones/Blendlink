@@ -79,6 +79,96 @@ export interface ProceduralDiagnostic {
   estimatedMorphBytes?: number
 }
 
+/** Phase 0c evidence: what Blendlink's pinned `export_apply=True` actually
+ * does to one shape-keyed mesh. Blender's own property text
+ * (io_scene_gltf2 __init__.py:679-684) claims applying modifiers always
+ * prevents exporting shape keys; measured, it does not — 7 of
+ * ellie's 9 render-visible shape-keyed meshes ship real morph targets. The
+ * record therefore reports the per-key outcome instead of asserting the
+ * general rule. */
+export interface ShapeKeyTransportDiagnostic {
+  object: string
+  objectId?: string
+  /** Which array io_scene_gltf2 reads POSITION from. `basis` means
+   * primitive_extract.py:1112-1116 sources the Basis cage because a key block
+   * survived, so the evaluated deformer stack is absent from the glb rather
+   * than frozen into it. This field is the baseline selector the frozen
+   * modifier residual needs. */
+  positionSource: 'basis' | 'evaluated'
+  basisKey?: string
+  sourceVertices: number
+  appliedVertices: number
+  /** World-space, from `obj.bound_box` at the audited frame, so percentages
+   * carry the animated pose's drift while the metre figures do not. */
+  bboxDiagonal: number
+  /** Metres between the exported POSITION and the evaluated mesh. Present only
+   * when `positionSource` is `basis`. */
+  basisDisplacement?: number
+  /** Enabled modifiers whose type can change the vertex container. Context for
+   * the drop, never the proof of it. */
+  containerModifiers: string[]
+  /** Leave-one-out attribution, present only when key blocks were lost. Empty
+   * means no single modifier restores them. */
+  restoredBy?: string[]
+  keys: Array<{
+    name: string
+    /** `frozen` keys are dropped by the applied path with their current blend
+     * already baked into POSITION; `skipped` keys are the Basis, muted, or
+     * self-relative ones Blender's own `skip_sk` discards. */
+    transport: 'morphTarget' | 'frozen' | 'skipped'
+    value: number
+    muted: boolean
+    /** Metres this key moves at value 1.0, before the modifier stack. */
+    maxDelta: number
+    /** Evaluated, never inferred from channel presence: ellie's rig keys
+     * constant-valued F-Curves, so existence of a channel proves nothing. */
+    animation: 'notSampled' | 'unproven' | 'constant' | 'varying'
+    /** The value that freezes into the shipped mesh. Present for `frozen`. */
+    frozenValue?: number
+    valueRange?: [number, number]
+    /** `maxDelta` times the value range: the motion the glb cannot carry. */
+    lostDisplacement?: number
+  }>
+  /** `static` needs no frames (the Key has no reachable time source);
+   * `currentFrame` is the live addon, which can never refuse. */
+  valueProof: 'notRequired' | 'static' | 'currentFrame' | 'sampled' | 'exhaustive'
+  frameRange: [number, number]
+  /** io_scene_gltf2 blender/exp/export.py:28-29 freezes frame 0, which can lie
+   * outside the scene's own range. */
+  frozenAtFrame: number
+  severity: 'info' | 'warn' | 'refuse'
+  message: string
+}
+
+/** Phase 0d evidence: ARMATURE options with no glTF form. Presence is the loss
+ * — glTF skinning is LBS-only and weights come from vertex groups alone
+ * (primitive_extract.py:1557) — so this record is measured by RNA read and
+ * deliberately carries no magnitude. Emitted only for objects that set a flag. */
+export interface SkinApproximationDiagnostic {
+  object: string
+  objectId?: string
+  /** Whether the exporter-selected modifier actually produces a skin
+   * (tree.py:247-248 keys on `modifiers["ARMATURE"].object is not null`). */
+  skinned: boolean
+  armature?: string
+  /** The ARMATURE modifier the exporter's `{type: modifier}` dict keeps: the
+   * last one, regardless of `show_viewport`. */
+  exporterSelected: string
+  preserveVolume: boolean
+  boneEnvelopes: boolean
+  modifiers: Array<{
+    name: string
+    armature: string | null
+    preserveVolume: boolean
+    boneEnvelopes: boolean
+    vertexGroups: boolean
+    showViewport: boolean
+    exporterSelected: boolean
+  }>
+  severity: 'info' | 'warn'
+  message: string
+}
+
 export interface InstanceSourceDiagnostic {
   id: string
   meshData: string
@@ -483,6 +573,11 @@ export interface BlenderSceneDiagnostics {
     frameRange: [number, number]
     reason: string
   }>
+  /** Phase 0c: shape-key transport per shape-keyed mesh. Additive; absent from
+   * sidecars written before the addon reported it. */
+  shapeKeys?: ShapeKeyTransportDiagnostic[]
+  /** Phase 0d: ARMATURE options glTF cannot carry. Additive. */
+  skinApproximation?: SkinApproximationDiagnostic[]
   limits: { maxAuditFrames: number; maxMorphCacheBytes: number }
 }
 
@@ -554,6 +649,22 @@ export interface SceneDiagnostics {
   /** Finished-GLB evidence emitted only after every generated material passes
    * the compiler's unlit/COLOR_0/alpha attestation. */
   materialCompilation?: MaterialCompilationEvidence
+  /** Phase 0c. Absent — not empty — when the sidecar predates the diagnostic,
+   * so a missing section can never be read as "nothing was lost". */
+  shapeKeys?: {
+    objects: ShapeKeyTransportDiagnostic[]
+    dropped: number
+    basisSourced: number
+    warnings: string[]
+    refusals: string[]
+  }
+  /** Phase 0d. Same absent-vs-empty rule. */
+  skinApproximation?: {
+    objects: SkinApproximationDiagnostic[]
+    preserveVolume: number
+    boneEnvelopes: number
+    warnings: string[]
+  }
   /** Final-GLB projection evidence for an explicitly authored presentation
    * camera. Fit modes and perspective cameras do not use this diagnostic. */
   camera?: {
@@ -2001,6 +2112,60 @@ export function compileSceneDiagnostics(
     document,
     cameraRecipe,
   )
+  // Explicit, field-by-field copy: the manifest report must not alias the
+  // sidecar object graph, and a field nobody named here is a field nobody
+  // meant to persist.
+  const shapeKeys = blender?.shapeKeys
+    ? (() => {
+        const objects = blender.shapeKeys
+          .map((record): ShapeKeyTransportDiagnostic => ({
+            ...record,
+            containerModifiers: [...record.containerModifiers],
+            ...(record.restoredBy ? { restoredBy: [...record.restoredBy] } : {}),
+            keys: record.keys.map((key) => ({
+              ...key,
+              ...(key.valueRange
+                ? { valueRange: [...key.valueRange] as [number, number] }
+                : {}),
+            })),
+            frameRange: [...record.frameRange] as [number, number],
+          }))
+          .sort((a, b) => a.object.localeCompare(b.object))
+        return {
+          objects,
+          dropped: objects.filter(
+            (record) => record.keys.some((key) => key.transport === 'frozen'),
+          ).length,
+          basisSourced: objects.filter(
+            (record) => record.positionSource === 'basis',
+          ).length,
+          warnings: objects
+            .filter((record) => record.severity === 'warn')
+            .map((record) => record.message),
+          refusals: objects
+            .filter((record) => record.severity === 'refuse')
+            .map((record) => record.message),
+        }
+      })()
+    : undefined
+  const skinApproximation = blender?.skinApproximation
+    ? (() => {
+        const objects = blender.skinApproximation
+          .map((record): SkinApproximationDiagnostic => ({
+            ...record,
+            modifiers: record.modifiers.map((modifier) => ({ ...modifier })),
+          }))
+          .sort((a, b) => a.object.localeCompare(b.object))
+        return {
+          objects,
+          preserveVolume: objects.filter((record) => record.preserveVolume).length,
+          boneEnvelopes: objects.filter((record) => record.boneEnvelopes).length,
+          warnings: objects
+            .filter((record) => record.severity === 'warn')
+            .map((record) => record.message),
+        }
+      })()
+    : undefined
   return {
     lod: compileLods(document, vocabulary, loadedNames),
     instances: {
@@ -2027,6 +2192,8 @@ export function compileSceneDiagnostics(
       ).length,
     },
     ...(materialCompilation ? { materialCompilation } : {}),
+    ...(shapeKeys ? { shapeKeys } : {}),
+    ...(skinApproximation ? { skinApproximation } : {}),
     // Carried explicitly, like every other diagnostics field: a producer that
     // predates the check omits it entirely, and an empty array from a producer
     // that has it is the evidence the check ran.

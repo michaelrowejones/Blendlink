@@ -8474,6 +8474,226 @@ def main():
             f"over-budget temporal graph escaped the deterministic gate: {item}",
         )
 
+    # Phase 0c/0d. Three findings, one of which refuses, and the refusal must
+    # key on measured variation: ellie's two shape-key droppers are constant
+    # and refusing them would refuse a correct export.
+    sk_old_start = bpy.context.scene.frame_start
+    sk_old_end = bpy.context.scene.frame_end
+    sk_old_frame = bpy.context.scene.frame_current
+    bpy.context.scene.frame_start, bpy.context.scene.frame_end = 1, 10
+    bpy.context.scene.frame_set(1)
+
+    def shape_keyed_cube(name, *, value, muted=False):
+        obj = make_cube(name)
+        obj.shape_key_add(name="Basis", from_mix=False)
+        key = obj.shape_key_add(name="Push", from_mix=False)
+        for point in key.data:
+            point.co.z += 0.5
+        key.value = value
+        key.mute = muted
+        return obj, key
+
+    def mask_half(obj):
+        group = obj.vertex_groups.new(name="Keep")
+        group.add([0, 1, 2, 3], 1.0, "REPLACE")
+        modifier = obj.modifiers.new("Collar Mask", "MASK")
+        modifier.vertex_group = "Keep"
+        return modifier
+
+    def shape_key_record(name, *, full, objects=None):
+        return next(
+            item for item in procedural_module.analyze_scene(
+                bpy.context.scene, full=full, objects=objects,
+            )["shapeKeys"]
+            if item["object"] == name
+        )
+
+    # 1. Keys with no modifier survive, POSITION comes from the Basis cage, and
+    #    an undeformed mesh matches that cage — so nothing is reported wrong.
+    kept, _kept_key = shape_keyed_cube("Shape Key Kept", value=0.4)
+    kept_record = shape_key_record(kept.name, full=True)
+    expect(
+        kept_record["positionSource"] == "basis"
+        and kept_record["severity"] == "info"
+        and kept_record["valueProof"] == "notRequired"
+        and [item["transport"] for item in kept_record["keys"]]
+        == ["skipped", "morphTarget"]
+        and kept_record["basisDisplacement"] < 1e-6,
+        f"a preserved shape key was not reported as a morph target: {kept_record}",
+    )
+
+    # 2. A non-zero CONSTANT value that the applied path drops must warn, never
+    #    refuse: to_mesh bakes the constant blend into the exported positions,
+    #    so nothing shipped is wrong. The culprit modifier is named by causal
+    #    isolation, not inferred from its type.
+    frozen, _frozen_key = shape_keyed_cube("Shape Key Frozen", value=0.6)
+    frozen_mask = mask_half(frozen)
+    frozen_record = shape_key_record(frozen.name, full=True)
+    frozen_key_record = next(
+        item for item in frozen_record["keys"] if item["name"] == "Push"
+    )
+    expect(
+        frozen_record["severity"] == "warn"
+        and frozen_record["positionSource"] == "evaluated"
+        and frozen_record["restoredBy"] == [frozen_mask.name]
+        and frozen_record["valueProof"] == "static"
+        and frozen_key_record["transport"] == "frozen"
+        and frozen_key_record["animation"] == "constant"
+        and "lostDisplacement" not in frozen_key_record
+        and "nothing shipped is wrong" in frozen_record["message"]
+        and f'"{frozen_mask.name}" restores them' in frozen_record["message"],
+        f"a constant dropped shape key was not reported honestly: {frozen_record}",
+    )
+
+    # 3. The same drop with a value that ACTUALLY animates is silently wrong and
+    #    must refuse, naming the object, the metres lost, and the frozen value.
+    animated, animated_key = shape_keyed_cube("Shape Key Animated", value=0.0)
+    animated_mask = mask_half(animated)
+    animated_key.value = 0.0
+    animated_key.keyframe_insert("value", frame=1)
+    animated_key.value = 1.0
+    animated_key.keyframe_insert("value", frame=10)
+    animated_record = shape_key_record(animated.name, full=True)
+    animated_key_record = next(
+        item for item in animated_record["keys"] if item["name"] == "Push"
+    )
+    expect(
+        animated_record["severity"] == "refuse"
+        and animated_record["valueProof"] == "exhaustive"
+        and animated_record["frozenAtFrame"] == 0
+        and animated_key_record["animation"] == "varying"
+        and animated_key_record["valueRange"] == [0.0, 1.0]
+        and animated_key_record["lostDisplacement"] > 0.0
+        and "animates between 0.000 and 1.000" in animated_record["message"]
+        and "mm of authored motion" in animated_record["message"]
+        and f'"{animated_mask.name}" restores them' in animated_record["message"],
+        f"an animated dropped shape key escaped the refusal: {animated_record}",
+    )
+
+    # 4. The live addon never moves the timeline, so it can warn but never
+    #    refuse — the same asymmetry the procedural audit already relies on.
+    #    Scoped to this one object so the frame calls counted here are the
+    #    shape-key sampler's own and not the procedural audit's traversal.
+    live_frame_calls = []
+    live_original_set_audit_frame = procedural_module._set_audit_frame
+
+    def live_counting_set_audit_frame(scene, frame):
+        live_frame_calls.append(int(frame))
+        live_original_set_audit_frame(scene, frame)
+
+    procedural_module._set_audit_frame = live_counting_set_audit_frame
+    try:
+        live_record = shape_key_record(
+            animated.name, full=False, objects=[animated],
+        )
+    finally:
+        procedural_module._set_audit_frame = live_original_set_audit_frame
+    expect(
+        live_record["severity"] == "warn"
+        and live_record["valueProof"] == "currentFrame"
+        and live_frame_calls == [1, 1]
+        and "constancy is unproven here" in live_record["message"],
+        f"the live shape-key report refused on an unproven sample: "
+        f"{live_record} {live_frame_calls}",
+    )
+
+    # 5. A muted key is dropped by Blender's own skip_sk AND contributes nothing
+    #    to the evaluated mesh, so it is not a loss and must not be reported.
+    muted, _muted_key = shape_keyed_cube("Shape Key Muted", value=1.0, muted=True)
+    mask_half(muted)
+    muted_record = shape_key_record(muted.name, full=True)
+    expect(
+        muted_record["severity"] == "info"
+        and all(item["transport"] == "skipped" for item in muted_record["keys"])
+        and "none is lost" in muted_record["message"],
+        f"a muted shape key was reported as a loss: {muted_record}",
+    )
+
+    # 6. Phase 0d. Preserve Volume and Bone Envelopes warn; a plain ARMATURE
+    #    emits no record at all, so a clean scene ships an empty section.
+    bpy.ops.object.armature_add()
+    skin_rig = bpy.context.active_object
+    skin_rig.name = "Linearisation Rig"
+    dqs_mesh = make_cube("Preserve Volume Mesh")
+    dqs_modifier = dqs_mesh.modifiers.new("Armature", "ARMATURE")
+    dqs_modifier.object = skin_rig
+    dqs_modifier.use_deform_preserve_volume = True
+    envelope_mesh = make_cube("Bone Envelope Mesh")
+    envelope_modifier = envelope_mesh.modifiers.new("Armature", "ARMATURE")
+    envelope_modifier.object = skin_rig
+    envelope_modifier.use_bone_envelopes = True
+    plain_mesh = make_cube("Linear Skin Mesh")
+    plain_mesh.modifiers.new("Armature", "ARMATURE").object = skin_rig
+    skin_report = procedural_module.analyze_scene(bpy.context.scene, full=False)
+    skin_records = {
+        item["object"]: item for item in skin_report["skinApproximation"]
+    }
+    expect(
+        plain_mesh.name not in skin_records,
+        f"a plain linear ARMATURE produced a needless record: {skin_records}",
+    )
+    expect(
+        skin_records[dqs_mesh.name]["severity"] == "warn"
+        and skin_records[dqs_mesh.name]["preserveVolume"] is True
+        and skin_records[dqs_mesh.name]["boneEnvelopes"] is False
+        and skin_records[dqs_mesh.name]["skinned"] is True
+        and skin_records[dqs_mesh.name]["armature"] == skin_rig.name
+        and skin_records[dqs_mesh.name]["exporterSelected"] == "Armature"
+        and "linear blend skinning only"
+        in skin_records[dqs_mesh.name]["message"],
+        f"Preserve Volume linearisation was not reported: "
+        f"{skin_records.get(dqs_mesh.name)}",
+    )
+    expect(
+        skin_records[envelope_mesh.name]["boneEnvelopes"] is True
+        and "primitive_extract.py:1557"
+        in skin_records[envelope_mesh.name]["message"],
+        f"Bone Envelopes had no exported-form report: "
+        f"{skin_records.get(envelope_mesh.name)}",
+    )
+    # The exporter's {type: modifier} dict keeps only the LAST ARMATURE, so a
+    # flag on an earlier one changes nothing that ships.
+    shadowed = make_cube("Shadowed Preserve Volume Mesh")
+    shadowed_first = shadowed.modifiers.new("Armature Preserve", "ARMATURE")
+    shadowed_first.object = skin_rig
+    shadowed_first.use_deform_preserve_volume = True
+    shadowed.modifiers.new("Armature Linear", "ARMATURE").object = skin_rig
+    shadowed_record = next(
+        item for item in procedural_module.analyze_scene(
+            bpy.context.scene, full=False,
+        )["skinApproximation"]
+        if item["object"] == shadowed.name
+    )
+    expect(
+        shadowed_record["severity"] == "info"
+        and shadowed_record["exporterSelected"] == "Armature Linear"
+        and shadowed_record["preserveVolume"] is False
+        and [item["exporterSelected"] for item in shadowed_record["modifiers"]]
+        == [False, True]
+        and "nothing is approximated" in shadowed_record["message"],
+        f"the exporter's last-ARMATURE selection was misreported: "
+        f"{shadowed_record}",
+    )
+
+    # 7. The additive contract: the historical keys are untouched and the two
+    #    new ones are always arrays.
+    additive_report = procedural_module.analyze_scene(
+        bpy.context.scene, full=False,
+    )
+    expect(
+        {"procedural", "instances", "materials", "limits", "shapeKeys",
+         "skinApproximation"} <= set(additive_report)
+        and isinstance(additive_report["shapeKeys"], list)
+        and isinstance(additive_report["skinApproximation"], list),
+        f"analyze_scene lost or renamed a diagnostics section: "
+        f"{sorted(additive_report)}",
+    )
+
+    bpy.context.scene.frame_start, bpy.context.scene.frame_end = (
+        sk_old_start, sk_old_end,
+    )
+    bpy.context.scene.frame_set(sk_old_frame)
+
     # A driver can be an authoring constraint without being timeline
     # animation. Cube Diorama uses this exact shape for Book Thickness: one
     # static custom property drives a Geometry Nodes input. A long scene range
