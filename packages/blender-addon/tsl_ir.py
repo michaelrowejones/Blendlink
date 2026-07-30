@@ -178,6 +178,14 @@ def _refuse(reason: str):
 # embedded-pixel contract.
 _allow_texture_refs = False
 
+# The highest Noise Texture Scale a gated differential cell has measured
+# inside tolerance. Raising this REQUIRES a passing cell at the new value:
+# fBM octave phases amplify the harness's ~3e-5 UV sample-position wiggle,
+# so noise cannot inherit Voronoi's separately-earned bound of 40 (see
+# `voronoi-scale40`, whose integer-cell hashing only shifts local
+# distances). Cells: `noise-scale16`, `noise-scale20`, `noise-scale40`.
+_NOISE_SCALE_BOUND = 40.0
+
 
 def set_texture_ref_emission(enabled: bool) -> None:
     global _allow_texture_refs
@@ -1481,16 +1489,24 @@ def emit_output(node, from_socket, stack=()):
                 f"(source op {scale_expression.get('op')!r})"
             )
         scale_expression = {"op": "const_float", "value": folded_scale}
-        if abs(float(scale_expression["value"])) > 20.0 + 1e-9:
+        if abs(float(scale_expression["value"])) > _NOISE_SCALE_BOUND + 1e-9:
             # Sub-texel sample-position differences between the two
-            # rasterizers (~3e-5 in UV) multiply by the scale; measured at
-            # scale 100 (ellie hair) the channel decorrelates to 1.8e-1
-            # while scale 16 stays inside tolerance. Material bake carries
-            # higher frequencies faithfully.
+            # rasterizers (~3e-5 in UV) multiply by the scale. Measured
+            # 2026-07-30, maxAbs against a 0.01 gate: scale 16 7.2e-4,
+            # scale 20 9.5e-4, scale 40 1.8e-3, scale 100 4.3e-3. The growth
+            # is near-linear in frequency, not a decorrelation cliff -- an
+            # earlier comment here claimed scale 100 reached 1.8e-1, which is
+            # wrong by ~175x and predates whatever fixed the fBM composition.
+            # Scale 100 still refuses, but only because it misses the 1.0e-3
+            # meanAbs gate by 2.3% (1.023e-3) -- p99 and max are both inside.
+            # There is deliberately no scale-100 cell: a cell draws its IR
+            # from this emitter, so the harness cannot hold one above this
+            # bound, which is why the figures above are recorded here instead.
+            # Material bake carries what refuses.
             _refuse(
                 f"Noise scale {float(scale_expression['value']):g} "
-                "exceeds the proven range (<= 20); sample-position "
-                "differences decorrelate high-frequency noise"
+                f"exceeds the proven range (<= {_NOISE_SCALE_BOUND:g}); "
+                "sample-position differences decorrelate high-frequency noise"
             )
         expression = {
             "op": "noise",

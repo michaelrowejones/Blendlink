@@ -851,6 +851,17 @@ def build_noise_scale20(tree, emission):
     tree.links.new(factor, emission.inputs["Color"])
 
 
+def build_noise_scale40(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 40.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
 def build_voronoi_scale20(tree, emission):
     uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
     node = tree.nodes.new("ShaderNodeTexVoronoi")
@@ -1794,6 +1805,7 @@ BUILDERS = {
     "noise-detail4": build_noise_detail4,
     "noise-scale16": build_noise_scale16,
     "noise-scale20": build_noise_scale20,
+    "noise-scale40": build_noise_scale40,
     "voronoi-scale20": build_voronoi_scale20,
     "voronoi-scale40": build_voronoi_scale40,
     "tex-image-linear": build_tex_image_linear,

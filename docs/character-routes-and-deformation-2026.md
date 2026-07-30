@@ -456,18 +456,50 @@ route's own fidelity ceiling is lower than §8a previously implied. Carrying the
 real feature worth scoping on its own, and `ShaderNodeBump` is one input to it rather than a
 standalone win.
 
-**Actual translation run** — `tsl_ir.emit_surface` invoked on all 49. 13 translate; 36 refuse by
-name; **zero unexpected errors**, which is itself worth recording: every failure is a deliberate,
-named refusal, not a crash. The 36 refusals:
+**Actual translation run — corrected twice, then improved.** My first run reported 13/49
+translating with 30 of 36 refusals blamed on a `128x128` embedded-IR image bound. **That bound was
+an artifact of my probe**, which called `emit_surface` without production's configuration:
+`_allow_texture_refs` defaults to `False`, and `material_compiler.py:2737` and `:3024` set it
+`True` around the real plan and compile. With it on, the image bound refuses **nothing** and the
+whole `texture_ref` path — Python emit, `tslNodeRecipe.ts` resolve, `tslMaterialRuntime.ts`
+publish, with tests — is already shipped and wired.
 
-| refusal | count | what it really is |
-| --- | --- | --- |
-| `Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it` | 30 | a transport bound, not a semantic gap — the shader is expressible, the image just travels separately |
-| `Noise scale N exceeds the proven range (<= 20)` (N = 30, 100) | 2 | the known open noise-scale experiment |
-| `ShaderNodeVectorTransform has no proven TSL mapping` | 1 | `ellie.eyes_pupils` |
-| `surface node ShaderNodeAddShader has no surface-expression mapping` | 1 | `ellie.highlights` |
-| `ShaderNodeNormalMap has no proven TSL mapping` | 1 | `ellie.scrunchie` |
-| `Transparent BSDF with a non-white Color tints transmission; no cell yet` | 1 | `ellie.watch_glass` |
+Re-run with production config, the dominant blocker was Noise: **29 of 49 materials refused on
+`Noise scale > 20`, 27 of them at exactly scale 40.**
+
+**The scale bound is now measured at 40, and coverage went 13/49 → 20/49 (27% → 41%).** A new
+gated cell `noise-scale40` in the differential harness passes with 5.6× headroom, and the harness
+stays green at 110 cells / 109 gated:
+
+| cell | meanAbs | p99Abs | maxAbs | gate (maxAbs 0.01) |
+| --- | --- | --- | --- | --- |
+| `noise-scale16` | 1.73e-4 | 5.37e-4 | 7.19e-4 | pass |
+| `noise-scale20` | 2.03e-4 | 6.33e-4 | 9.46e-4 | pass |
+| **`noise-scale40`** | **4.15e-4** | **1.30e-3** | **1.77e-3** | **pass** |
+| `noise-scale100` | 1.023e-3 | 3.16e-3 | 4.33e-3 | **fails meanAbs by 2.3%** |
+
+Two things worth keeping from that table. The error is **near-linear in frequency, not a
+decorrelation cliff** — which refutes the justification the emitter itself carried, that scale 100
+"decorrelates to 1.8e-1". The real figure is 1.023e-3, wrong by ~175×, and it predates whatever
+fixed the fBM composition that the harness README still lists as a 1.9e-1 diagnostic. And scale
+100 *still refuses*, because it misses the meanAbs gate by 2.3% — the tolerance was not loosened to
+admit it, and the material bake carries it faithfully today. There is no `noise-scale100` cell in
+the manifest because a cell draws its IR from the production emitter, so the harness structurally
+cannot hold a cell above the emitter's own bound.
+
+Clearing the bound exposed what was queued behind it — `_refuse` raises on the first problem, so
+these were always there:
+
+| refusal | materials |
+| --- | --- |
+| `Noise distortion has no cell yet` | 10 |
+| `ShaderNodeVectorRotate has no proven TSL mapping` | 7 |
+| `Noise detail 6 exceeds the proven range (<= 4)` | 4 |
+| `Image interpolation has no cell yet` | 2 |
+| `VectorTransform`, `AddShader`, `NormalMap`, tinted Transparent, scale 100, dimensions | 1 each |
+
+Noise is still the dominant blocker at **15 of 29**, now on distortion, detail and dimensions
+rather than scale, with `VectorRotate` second at 7.
 
 **Neither number is the truth on its own, and it matters which way each is wrong.** `_refuse`
 raises on the *first* problem found, so the runtime list is a lower bound — 30 materials stop at

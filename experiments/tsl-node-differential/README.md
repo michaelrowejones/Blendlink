@@ -27,6 +27,15 @@ node experiments/tsl-node-differential/run.mjs
 Evidence: `output/evidence.json`; both float fields are retained under
 `output/reference/` and `output/rendered/`.
 
+> **This table is superseded and two of its rows are no longer true.** It records fourteen cells;
+> the manifest now holds **110 (109 gated)**. More importantly, the `noise-fractal-detail` and
+> `voronoi-f1-divergence` rows below are listed as diagnostics measuring 1.9e-1 and 9.6e-1 — both
+> are now gated cells passing at ~1e-3, so whatever fixed the fBM composition and the Worley hash
+> landed after this was written and the run summary reports `noiseDivergenceMean=0.0000`. That
+> stale 1.9e-1 figure had propagated into `tsl_ir.py` as the justification for capping Noise Scale
+> at 20; re-measuring on 2026-07-30 put scale 40 at 1.8e-3 maxAbs and earned the bound. Treat the
+> numbers below as history and `output/evidence.json` as current.
+
 ## Measured results — 2026-07-27
 
 Blender 5.2.0 (Cycles/OptiX reference) versus three 0.184.0 TSL on a native

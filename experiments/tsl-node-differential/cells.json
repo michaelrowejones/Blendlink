@@ -1,992 +1,2205 @@
 {
-  "schemaVersion": 1,
-  "size": 64,
-  "cells": [
-    {
-      "id": "constant-linear",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "colorspace calibration",
-      "notes": "Constant emission (0.25, 0.5, 0.75). Proves the linear float path end to end on both sides: any hidden sRGB encode, tone map, or view transform shifts every value."
-    },
-    {
-      "id": "uv-gradient",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.005,
-        "p99Abs": 0.01,
-        "maxAbs": 0.03
-      },
-      "failureClass": "coordinate-space mismatch",
-      "notes": "Emission = (u, v, 0). Proves UV origin, orientation, and readback row order agree; the documented MaterialX/three 'upside down' UV trap inverts the green channel here."
-    },
-    {
-      "id": "math-compare",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "inverted logic nodes",
-      "notes": "R = GREATER_THAN(u, 0.5), G = LESS_THAN(v, 0.5). The documented mx_ifgreater/mx_ifequal inversion class: an inverted comparison flips half the texels, far outside tolerance. Texel centers never sit exactly on 0.5 at this size."
-    },
-    {
-      "id": "mapping-rotate",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.005,
-        "p99Abs": 0.01,
-        "maxAbs": 0.03
-      },
-      "failureClass": "coordinate-space mismatch (rotate2d/place2d matrix math)",
-      "notes": "Blender Mapping (POINT): scale (2,1), Z rotation 30deg over UV, visualized as biased coordinates 0.25*p + 0.5 so the range stays bakeable. Wrong operation order or rotation sign produces gross error."
-    },
-    {
-      "id": "colorramp-linear",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.005,
-        "p99Abs": 0.01,
-        "maxAbs": 0.03
-      },
-      "failureClass": "corpus-priority node (110 uses in the splash audit)",
-      "notes": "Two-stop LINEAR ColorRamp over u: position 0.2 -> (0.1, 0.2, 0.8), position 0.8 -> (0.9, 0.5, 0.1). Exact linear remap + mix; interpolation-mode sweeps come later."
-    },
-    {
-      "id": "math-safe-divide",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "safe-math semantics (divide by zero)",
-      "notes": "a = 4u-2 divided by a three-band divisor floor(3v)-1 in {-1, 0, 1}. Cycles' safe_divide returns 0 on the zero band; raw GPU division returns inf/NaN. The TSL mapping must carry Blender's guard, and this cell proves it. Output biased 0.25x+0.5 and clamped on both sides."
-    },
-    {
-      "id": "math-modulo-sign",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "safe-math semantics (modulo sign convention)",
-      "notes": "MODULO(8u-4, 1.5). Blender uses C fmod (truncated, sign of the dividend); GLSL mod is floored (sign of the divisor) \u2014 fmod(-3.1, 1.5) = -0.1 versus 1.4. The TSL mapping must emit truncated modulo. Output biased 0.25x+0.5."
-    },
-    {
-      "id": "math-power-negative-base",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "safe-math semantics (pow with negative base)",
-      "notes": "POWER(4u-2, 2.0). GLSL pow with a negative base is undefined (NaN on most drivers); Blender's compatible pow gives pow(|x|, y) with the sign of an odd integer exponent. The TSL mapping must carry Blender's convention. Output scaled 0.2x and clamped."
-    },
-    {
-      "id": "math-trig",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "transcendental precision cross-check",
-      "notes": "R = 0.5+0.5*sin(8u), G = 0.5+0.5*cos(8v). GPU sin/cos versus Cycles' \u2014 proves transcendental agreement stays inside channel tolerance."
-    },
-    {
-      "id": "colorramp-constant",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "interpolation-mode sweep (ColorRamp CONSTANT)",
-      "notes": "Three-stop CONSTANT ramp over u (stops at 0.0, 0.3, 0.6). Constant interpolation takes the left stop's color; texel centers never sit exactly on a stop at this size."
-    },
-    {
-      "id": "mapping-texture-mode",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.005,
-        "p99Abs": 0.01,
-        "maxAbs": 0.03
-      },
-      "failureClass": "coordinate-space mismatch (place2d inverse transform)",
-      "notes": "Blender Mapping TEXTURE mode with scale (2,1), Z rotation 30deg: the INVERSE of POINT \u2014 inverse-rotate first, then divide by scale. Wrong inversion order is the documented place2d class. Output biased 0.25x+0.5."
-    },
-    {
-      "id": "noise-fractal-detail",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.001,
-        "p99Abs": 0.005,
-        "maxAbs": 0.01
-      },
-      "failureClass": "disagreeing noise implementations (fBM composition, now ported)",
-      "notes": "Blender Noise detail 2, roughness 0.5 through the PORTED Cycles fractal loop (blenderNoiseFac: i <= floor(detail) octaves over the shared base octave, amplitude-sum normalization, fractional-detail blend). MaterialX's own fBM measured 4.6e-2 divergence; the port must close it."
-    },
-    {
-      "id": "mix-modes",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.005,
-        "p99Abs": 0.01,
-        "maxAbs": 0.03
-      },
-      "failureClass": "Mix node blend modes (MIX / MULTIPLY / ADD)",
-      "notes": "Three RGBA Mix nodes with varying factors feed one channel each: R = MIX(u), G = MULTIPLY(v), B = ADD(u). Blender blends toward the operator result by the factor: mix(a, op(a, b), fac)."
-    },
-    {
-      "id": "mix-divide",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.005,
-        "p99Abs": 0.01,
-        "maxAbs": 0.03
-      },
-      "failureClass": "corpus-measured node gap (Mix DIVIDE x9) + zero-divisor semantics",
-      "notes": "RGBA Mix DIVIDE with B = (0.5, 0, 2): the green channel divides by zero, and the reference decides Blender's fallback empirically. The mapping keeps A untouched on the zero band."
-    },
-    {
-      "id": "map-range-smoothstep",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "corpus-measured node gap (Map Range SMOOTHSTEP x8)",
-      "notes": "Smoothstep interpolation applies the cubic ease to the clamped safe-divide factor before the target remap."
-    },
-    {
-      "id": "map-range-smootherstep",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "corpus-measured node gap (Map Range SMOOTHERSTEP x27 — the whole ellie denim class)",
-      "notes": "Quintic smootherstep t^3(t(6t-15)+10) applied to the clamped safe-divide factor — one interpolation enum blocks all 27 paint-stroke mix factors in ellie."
-    },
-    {
-      "id": "colorramp-bspline",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.001,
-        "p99Abs": 0.005,
-        "maxAbs": 0.01
-      },
-      "failureClass": "corpus-measured node gap (ColorRamp B_SPLINE x6)",
-      "notes": "Three-stop B-Spline colorband via the sampled-LUT route: Blender's own evaluate() fills 257 texels and the shader lerps between exact samples \u2014 no reimplementation of the spline basis to drift."
-    },
-    {
-      "id": "colorramp-cardinal",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.001,
-        "p99Abs": 0.005,
-        "maxAbs": 0.01
-      },
-      "failureClass": "corpus-measured node gap (ColorRamp CARDINAL x2)",
-      "notes": "Cardinal interpolation through the same sampled-LUT route as B-Spline."
-    },
-    {
-      "id": "noise-2d",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.001,
-        "p99Abs": 0.005,
-        "maxAbs": 0.01
-      },
-      "failureClass": "corpus-measured node gap (2D noise x4)",
-      "notes": "Blender's 2D noise dimension against mx_noise_float's vec2 overload \u2014 a different Perlin dimension than 3D-at-z=0, measured rather than assumed to share the lineage."
-    },
-    {
-      "id": "vertex-color",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.005,
-        "p99Abs": 0.01,
-        "maxAbs": 0.03
-      },
-      "failureClass": "corpus-measured node gap (Attribute/Vertex Color x2)",
-      "notes": "A corner color attribute linear in UV (exact under any triangulation) sampled by Vertex Color, against three's 'color' geometry attribute \u2014 the COLOR_0 contract the glTF path ships."
-    },
-    {
-      "id": "group-passthrough",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.001,
-        "p99Abs": 0.005,
-        "maxAbs": 0.01
-      },
-      "failureClass": "node-group wall crossing (the dominant scene refusal)",
-      "notes": "Outer UV feeds a group instance whose inside runs Noise; the emitter must cross the group wall in both directions with the instance context. Scene coverage measured group-wrapped surfaces as the single largest refusal class."
-    },
-    {
-      "id": "map-range-linear",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "corpus-measured node gap (Map Range x8 across scenes)",
-      "notes": "LINEAR float Map Range 0.2..0.8 -> 0.1..0.9 with clamp: safe-divide factor, then result clamped to the ordered target range."
-    },
-    {
-      "id": "mix-overlay",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.005,
-        "p99Abs": 0.01,
-        "maxAbs": 0.03
-      },
-      "failureClass": "corpus-measured node gap (Mix OVERLAY x4 across scenes)",
-      "notes": "Cycles folds the factor into the per-channel overlay formula (a < 0.5 branches) rather than lerping the result; the cell proves the folded form."
-    },
-    {
-      "id": "math-pingpong",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "corpus-measured node gap (Math PINGPONG)",
-      "notes": "PINGPONG(4u, 0.75): |fract((a-b)/(2b)) * 2b - b| with the b = 0 guard."
-    },
-    {
-      "id": "clamp-node",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.0001,
-        "p99Abs": 0.001,
-        "maxAbs": 0.005
-      },
-      "failureClass": "corpus-measured node gap (Clamp)",
-      "notes": "Clamp node in Min Max mode over 2u-0.5: min(max(value, 0.1), 0.9)."
-    },
-    {
-      "id": "math-sqrt",
-      "gate": true,
-      "sweep": {"operation": "SQRT", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (safe semantics)",
-      "notes": "safe_sqrt over 4u-2: the left half exercises the negative-input -> 0 guard; raw GPU sqrt returns NaN there."
-    },
-    {
-      "id": "math-inverse-sqrt",
-      "gate": true,
-      "sweep": {"operation": "INVERSE_SQRT", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.1}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (safe semantics)",
-      "notes": "inversesqrt(a) for a > 0, else 0. The nearest positive texel value (1/32) bounds the pole; dyadic texel inputs are float-exact on both engines."
-    },
-    {
-      "id": "math-absolute",
-      "gate": true,
-      "sweep": {"operation": "ABSOLUTE", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep",
-      "notes": "|4u-2| * 0.5."
-    },
-    {
-      "id": "math-exponent",
-      "gate": true,
-      "sweep": {"operation": "EXPONENT", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.125}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (transcendental)",
-      "notes": "exp over (-2, 2), scaled 0.125 into range."
-    },
-    {
-      "id": "math-logarithm",
-      "gate": true,
-      "sweep": {"operation": "LOGARITHM", "a": {"axis": "u", "scale": 4, "offset": -2}, "b": {"axis": "v", "scale": 2, "offset": 2}, "post": {"scale": 0.1, "offset": 0.6}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (safe semantics)",
-      "notes": "safe_log: a <= 0 -> 0 (the left half), else log(a)/log(base) with base swept 2..4. The base ~= 1 divisor-zero branch is covered by the safe-divide cell."
-    },
-    {
-      "id": "math-ceil",
-      "gate": true,
-      "sweep": {"operation": "CEIL", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.25, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (rounding family)",
-      "notes": "ceil over (-2, 2); dyadic texel centers never land on integer boundaries."
-    },
-    {
-      "id": "math-fract",
-      "gate": true,
-      "sweep": {"operation": "FRACT", "a": {"axis": "u", "scale": 3, "offset": -1}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (rounding family)",
-      "notes": "fract over (-1, 2): the negative stretch proves x - floor(x), not truncation."
-    },
-    {
-      "id": "math-trunc",
-      "gate": true,
-      "sweep": {"operation": "TRUNC", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.25, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (rounding family)",
-      "notes": "trunc over (-2, 2): rounds toward zero, so the negative side differs from floor by one."
-    },
-    {
-      "id": "math-round",
-      "gate": true,
-      "sweep": {"operation": "ROUND", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.2, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (rounding family)",
-      "notes": "Blender rounds half away from zero; WGSL's native round is half-to-even, so the mapping uses sign(x)*floor(|x|+0.5). Texel centers never sit on half-integers at this size."
-    },
-    {
-      "id": "math-snap",
-      "gate": true,
-      "sweep": {"operation": "SNAP", "a": {"axis": "u", "scale": 4, "offset": -2}, "b": {"axis": "v", "scale": 0.5, "offset": 0.26}, "post": {"scale": 0.18, "offset": 0.55}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (safe semantics)",
-      "notes": "floor(safe_divide(a, b)) * b with the increment swept 0.26..0.76; the non-dyadic offset keeps step boundaries off exact float values."
-    },
-    {
-      "id": "math-wrap",
-      "gate": true,
-      "sweep": {"operation": "WRAP", "a": {"axis": "u", "scale": 4, "offset": -2}, "b": 0.8, "c": {"axis": "v", "scale": 0.3, "offset": 0.01}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (safe semantics)",
-      "notes": "wrapf(value, max, min): range = max - min, value - range*floor((value-min)/range). Min swept 0.01..0.31 under a fixed max of 0.8; output lands in [min, max)."
-    },
-    {
-      "id": "math-compare-band",
-      "gate": true,
-      "sweep": {"operation": "COMPARE", "a": {"axis": "u"}, "b": 0.5, "c": {"axis": "v", "scale": 0.19, "offset": 0.013}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (comparison semantics)",
-      "notes": "Cycles: |a - b| <= max(epsilon, 1e-5) ? 1 : 0 — the epsilon floor is part of the semantics. A wedge that widens with v. Measured: a slope of exactly 0.2 puts 13 texel rows (2j+1 divisible by 5, where 0.2*5/128 = 1/128) on exact float knife edges that interpolation ulps flip per engine; the 0.19/0.013 spec keeps every boundary off representable coincidences."
-    },
-    {
-      "id": "math-smooth-min",
-      "gate": true,
-      "sweep": {"operation": "SMOOTH_MIN", "a": {"axis": "u", "scale": 2, "offset": -1}, "b": {"axis": "v", "scale": 2, "offset": -1}, "c": 0.5, "post": {"scale": 0.4, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (polynomial smooth blend)",
-      "notes": "smoothminf: h = max(k - |a-b|, 0)/k; min(a,b) - h^3*k/6 with k = 0.5."
-    },
-    {
-      "id": "math-smooth-max",
-      "gate": true,
-      "sweep": {"operation": "SMOOTH_MAX", "a": {"axis": "u", "scale": 2, "offset": -1}, "b": {"axis": "v", "scale": 2, "offset": -1}, "c": 0.5, "post": {"scale": 0.4, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (polynomial smooth blend)",
-      "notes": "-smoothminf(-a, -b, k) with k = 0.5."
-    },
-    {
-      "id": "math-sign",
-      "gate": true,
-      "sweep": {"operation": "SIGN", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.4, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep",
-      "notes": "sign over (-2, 2); texel centers never hit exactly zero."
-    },
-    {
-      "id": "math-tangent",
-      "gate": true,
-      "sweep": {"operation": "TANGENT", "a": {"axis": "u", "scale": 2.8, "offset": -1.4}, "post": {"scale": 0.08, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (transcendental)",
-      "notes": "tan over (-1.4, 1.4), inside the poles at +-pi/2; |tan| <= 5.8 scaled 0.08 into range."
-    },
-    {
-      "id": "math-arcsine",
-      "gate": true,
-      "sweep": {"operation": "ARCSINE", "a": {"axis": "u", "scale": 3, "offset": -1.5}, "post": {"scale": 0.25, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (safe semantics)",
-      "notes": "Input swept (-1.5, 1.5): Cycles clamps to [-1, 1] before asin, so the overshoot proves the domain clamp instead of NaN."
-    },
-    {
-      "id": "math-arccosine",
-      "gate": true,
-      "sweep": {"operation": "ARCCOSINE", "a": {"axis": "u", "scale": 3, "offset": -1.5}, "post": {"scale": 0.25}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (safe semantics)",
-      "notes": "Same clamped domain as arcsine; acos lands in [0, pi], scaled 0.25."
-    },
-    {
-      "id": "math-arctangent",
-      "gate": true,
-      "sweep": {"operation": "ARCTANGENT", "a": {"axis": "u", "scale": 8, "offset": -4}, "post": {"scale": 0.3, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (transcendental)",
-      "notes": "atan over (-4, 4)."
-    },
-    {
-      "id": "math-arctan2",
-      "gate": true,
-      "sweep": {"operation": "ARCTAN2", "a": {"axis": "u", "scale": 2, "offset": -1}, "b": {"axis": "v", "scale": 2, "offset": -1}, "post": {"scale": 0.15, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (transcendental)",
-      "notes": "atan2(y = 2u-1, x = 2v-1) covers all four quadrants; y never hits exactly zero at texel centers, so the branch cut stays off the grid."
-    },
-    {
-      "id": "math-sinh",
-      "gate": true,
-      "sweep": {"operation": "SINH", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.12, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (transcendental)",
-      "notes": "sinh over (-2, 2)."
-    },
-    {
-      "id": "math-cosh",
-      "gate": true,
-      "sweep": {"operation": "COSH", "a": {"axis": "u", "scale": 4, "offset": -2}, "post": {"scale": 0.2}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (transcendental)",
-      "notes": "cosh over (-2, 2)."
-    },
-    {
-      "id": "math-tanh",
-      "gate": true,
-      "sweep": {"operation": "TANH", "a": {"axis": "u", "scale": 6, "offset": -3}, "post": {"scale": 0.45, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (transcendental)",
-      "notes": "tanh over (-3, 3)."
-    },
-    {
-      "id": "math-radians",
-      "gate": true,
-      "sweep": {"operation": "RADIANS", "a": {"axis": "u", "scale": 360, "offset": -180}, "post": {"scale": 0.15, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep",
-      "notes": "degrees -> radians over (-180, 180)."
-    },
-    {
-      "id": "math-degrees",
-      "gate": true,
-      "sweep": {"operation": "DEGREES", "a": {"axis": "u", "scale": 6, "offset": -3}, "post": {"scale": 0.0025, "offset": 0.5}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep",
-      "notes": "radians -> degrees over (-3, 3), scaled 1/400 into range."
-    },
-    {
-      "id": "math-floored-modulo",
-      "gate": true,
-      "sweep": {"operation": "FLOORED_MODULO", "a": {"axis": "u", "scale": 8, "offset": -4}, "b": 1.5, "post": {"scale": 0.25, "offset": 0.1}},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Math-enum sweep (modulo sign convention)",
-      "notes": "The floored twin of math-modulo-sign: a - floor(a/b)*b keeps the divisor's sign, so the negative stretch lands in [0, 1.5) instead of (-1.5, 0]."
-    },
-    {
-      "id": "mix-sub-screen-diff",
-      "gate": true,
-      "mixSweep": {"entries": [
-        {"blend": "SUBTRACT", "axis": "u", "channel": "Green"},
-        {"blend": "SCREEN", "axis": "v", "channel": "Red"},
-        {"blend": "DIFFERENCE", "axis": "u", "channel": "Red"}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Mix blend-mode sweep (arithmetic family)",
-      "notes": "R = SUBTRACT.G (interp toward a-b), G = SCREEN.R (1 - (tm + t(1-b))(1-a)), B = DIFFERENCE.R (interp toward |a-b|). Channels chosen so every output stays in the bakeable range."
-    },
-    {
-      "id": "mix-darken-lighten-exclusion",
-      "gate": true,
-      "mixSweep": {"entries": [
-        {"blend": "DARKEN", "axis": "u", "channel": "Green"},
-        {"blend": "LIGHTEN", "axis": "v", "channel": "Red"},
-        {"blend": "EXCLUSION", "axis": "u", "channel": "Blue"}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Mix blend-mode sweep (min/max family)",
-      "notes": "DARKEN interps toward min(a,b); LIGHTEN interps toward max(a,b) — MEASURED: the legacy compositor's asymmetric max(a, b*t) form diverged mean 2.6e-2 / max 0.155 with the kink at t = a/b, so Cycles' Mix uses the symmetric interp; EXCLUSION is max(interp toward a+b-2ab, 0)."
-    },
-    {
-      "id": "mix-dodge-burn-softlight",
-      "gate": true,
-      "mixSweep": {"entries": [
-        {"blend": "DODGE", "axis": "u", "channel": "Blue", "b": [0.9, 0.1, 1.4]},
-        {"blend": "BURN", "axis": "v", "channel": "Green"},
-        {"blend": "SOFT_LIGHT", "axis": "u", "channel": "Red"}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Mix blend-mode sweep (photographic family)",
-      "notes": "DODGE with an HDR B channel (1.4) so t*b crosses 1 and the divisor-collapse -> 1 branch is exercised along with the min clamp; BURN's 1-(1-a)/tmp crosses its lower clamp as v -> 1; SOFT_LIGHT is the branchless screen-weighted form."
-    },
-    {
-      "id": "mix-linear-light",
-      "gate": true,
-      "mixSweep": {"entries": [
-        {"blend": "LINEAR_LIGHT", "axis": "u", "full": true}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Mix blend-mode sweep (linear light)",
-      "notes": "a + t*(2b - 1) across all three channels of one node; the default A/B constants keep every channel inside the bakeable range for the whole factor sweep."
-    },
-    {
-      "id": "mix-hue-sat",
-      "gate": true,
-      "mixSweep": {"entries": [
-        {"blend": "HUE", "axis": "u", "channel": "Red"},
-        {"blend": "SATURATION", "axis": "v", "channel": "Green"}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Mix blend-mode sweep (HSV family, rgb<->hsv port)",
-      "notes": "HUE grafts B's hue (0.896, sextant 5) onto A's S/V and lerps; SATURATION lerps A's saturation toward B's inside A's hue (0.389, sextant 2). Both run the ported Cycles rgb_to_hsv / hsv_to_rgb round trip on constants, so branch decisions are stable. The B-saturation-zero gate branch stays constant-A and is covered by construction."
-    },
-    {
-      "id": "mix-value-color",
-      "gate": true,
-      "mixSweep": {"entries": [
-        {"blend": "VALUE", "axis": "u", "channel": "Red"},
-        {"blend": "COLOR", "axis": "v", "channel": "Green"}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Mix blend-mode sweep (HSV family, rgb<->hsv port)",
-      "notes": "VALUE lerps A's V toward B's (ungated in Cycles); COLOR grafts B's hue AND saturation over A's value with the same saturation gate as HUE."
-    },
-    {
-      "id": "vecmath-arith",
-      "gate": true,
-      "vectorSweep": {"entries": [
-        {"operation": "SUBTRACT", "a": [{"axis": "u"}, {"axis": "v"}, 0.3], "b": [0.25, 0.5, 0.1], "component": "X", "post": {"scale": 0.5, "offset": 0.3}},
-        {"operation": "DIVIDE", "a": [0.3, 0.4, {"axis": "u", "scale": 0.5, "offset": 0.2}], "b": [1, 1, {"axis": "v", "scale": 0.5, "offset": 0.25}], "component": "Z", "post": {"scale": 0.25, "offset": 0.1}},
-        {"operation": "DIVIDE", "a": [0.3, 0.4, {"axis": "u", "scale": 0.5, "offset": 0.2}], "b": [1, 1, 0], "component": "Z", "post": {"scale": 1, "offset": 0.3}}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Vector Math sweep (arithmetic + safe divide)",
-      "notes": "Componentwise subtract, a swept safe divide, and a constant-zero divisor lane that must return 0 (the whole channel sits at the post offset)."
-    },
-    {
-      "id": "vecmath-products",
-      "gate": true,
-      "vectorSweep": {"entries": [
-        {"operation": "DOT_PRODUCT", "a": [{"axis": "u"}, {"axis": "v"}, 0.5], "b": [0.4, 0.3, 0.6], "output": "Value"},
-        {"operation": "CROSS_PRODUCT", "a": [{"axis": "u"}, {"axis": "v"}, 0.3], "b": [0.5, 0.2, 0.7], "component": "Y", "post": {"scale": 0.5, "offset": 0.5}},
-        {"operation": "MULTIPLY", "a": [{"axis": "u"}, {"axis": "v"}, 0.3], "b": [0.8, 1.2, 2.0], "component": "Y", "post": {"scale": 0.5, "offset": 0.05}}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Vector Math sweep (products)",
-      "notes": "Dot product through the scalar Value output (the emitter marks these scalar), a cross-product component, and the componentwise multiply the corpus uses (x4 in cube-diorama)."
-    },
-    {
-      "id": "vecmath-metrics",
-      "gate": true,
-      "vectorSweep": {"entries": [
-        {"operation": "LENGTH", "a": [{"axis": "u", "scale": 4, "offset": -2}, {"axis": "v", "scale": 2, "offset": -1}, 0.5], "output": "Value", "post": {"scale": 0.4}},
-        {"operation": "DISTANCE", "a": [{"axis": "u"}, {"axis": "v"}, 0], "b": [0.5, 0.5, 0.2], "output": "Value"},
-        {"operation": "NORMALIZE", "a": [{"axis": "u", "scale": 4, "offset": -2}, {"axis": "v", "scale": 2, "offset": -1}, 0.5], "component": "X", "post": {"scale": 0.4, "offset": 0.5}}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Vector Math sweep (metrics)",
-      "notes": "Length and distance through the Value output; normalize's X component with a constant z of 0.5 keeping the length bounded away from the safe_normalize zero branch."
-    },
-    {
-      "id": "vecmath-minmax-abs",
-      "gate": true,
-      "vectorSweep": {"entries": [
-        {"operation": "MINIMUM", "a": [{"axis": "u"}, 0, 0], "b": [{"axis": "v", "scale": -0.4, "offset": 0.6}, 0, 0], "component": "X"},
-        {"operation": "MAXIMUM", "a": [0, {"axis": "u", "scale": 0.7}, 0], "b": [0, {"axis": "v", "scale": 0.5, "offset": 0.15}, 0], "component": "Y"},
-        {"operation": "ABSOLUTE", "a": [0, 0, {"axis": "u", "scale": 3, "offset": -1.5}], "component": "Z", "post": {"scale": 0.6, "offset": 0.05}}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Vector Math sweep (min/max/abs)",
-      "notes": "Componentwise min against a falling ramp, max against a rising one (both kink mid-tile), and abs over a sign-crossing sweep."
-    },
-    {
-      "id": "vecmath-rounding",
-      "gate": true,
-      "vectorSweep": {"entries": [
-        {"operation": "FLOOR", "a": [{"axis": "u", "scale": 4, "offset": -2}, 0, 0], "component": "X", "post": {"scale": 0.2, "offset": 0.55}},
-        {"operation": "CEIL", "a": [0, {"axis": "v", "scale": 4, "offset": -2}, 0], "component": "Y", "post": {"scale": 0.2, "offset": 0.45}},
-        {"operation": "FRACTION", "a": [0, 0, {"axis": "u", "scale": 3, "offset": -1}], "component": "Z"}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Vector Math sweep (rounding family)",
-      "notes": "Floor, ceil, and fraction (x - floor(x)) over sign-crossing sweeps; dyadic texel centers never land on integer boundaries."
-    },
-    {
-      "id": "vecmath-modular",
-      "gate": true,
-      "vectorSweep": {"entries": [
-        {"operation": "MODULO", "a": [{"axis": "u", "scale": 8, "offset": -4}, 0, 0], "b": [1.5, 1, 1], "component": "X", "post": {"scale": 0.25, "offset": 0.5}},
-        {"operation": "SNAP", "a": [0, {"axis": "v", "scale": 4, "offset": -2}, 0], "b": [1, 0.35, 1], "component": "Y", "post": {"scale": 0.18, "offset": 0.55}},
-        {"operation": "WRAP", "a": [0, 0, {"axis": "u", "scale": 4, "offset": -2}], "b": [1, 1, 0.75], "c": [0, 0, 0.05], "component": "Z"}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Vector Math sweep (modular family)",
-      "notes": "The vector twins of the proven scalar modulo/snap/wrap semantics, built per channel because a vector-condition select collapses to one lane."
-    },
-    {
-      "id": "vecmath-trig",
-      "gate": true,
-      "vectorSweep": {"entries": [
-        {"operation": "SINE", "a": [{"axis": "u", "scale": 8}, 0, 0], "component": "X", "post": {"scale": 0.5, "offset": 0.5}},
-        {"operation": "COSINE", "a": [0, {"axis": "v", "scale": 8}, 0], "component": "Y", "post": {"scale": 0.5, "offset": 0.5}},
-        {"operation": "TANGENT", "a": [0, 0, {"axis": "u", "scale": 2.8, "offset": -1.4}], "component": "Z", "post": {"scale": 0.08, "offset": 0.5}}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Vector Math sweep (componentwise trig)",
-      "notes": "Componentwise sin/cos/tan; tan stays inside the poles at +-pi/2."
-    },
-    {
-      "id": "vecmath-muladd",
-      "gate": true,
-      "vectorSweep": {"entries": [
-        {"operation": "MULTIPLY_ADD", "full": true, "a": [{"axis": "u", "scale": 0.5}, {"axis": "v", "scale": 0.5, "offset": 0.1}, 0.3], "b": [0.8, 0.6, 0.5], "c": [0.1, 0.2, 0.05]}
-      ]},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Vector Math sweep (multiply-add, full vector)",
-      "notes": "The whole a*b + c vector feeds the channel directly, proving the implicit vector -> color conversion path as well."
-    },
-    {
-      "id": "rgb-curve",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "corpus-priority node (RGB Curves x11 across scenes)",
-      "notes": "RGB Curves via the sampled-LUT route Cycles itself uses: a bent composite C curve composed before distinct R/G/B channel curves (wrong order is gross error), per-channel input gradients, and the Fac lerp swept over v. Tolerance is the LUT-reconstruction class shared with the spline colorramps."
-    },
-    {
-      "id": "tex-checker",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "deterministic texture (Checker)",
-      "notes": "Scale-4 checker over UV with two constant colors: epsilon-nudged floor parity in all three axes ((xi%2 == yi%2) == zi%2). Dyadic texel centers never land on cell boundaries."
-    },
-    {
-      "id": "tex-gradient",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "deterministic texture (Gradient)",
-      "notes": "R = LINEAR over u, G = QUADRATIC over 2u-1 (crosses the max(x,0) guard), B = RADIAL around the tile center (all four atan2 quadrants; the branch cut at v = 0.5 stays off texel centers). Cycles saturates the output."
-    },
-    {
-      "id": "tex-magic",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "deterministic texture (Magic trig cascade)",
-      "notes": "Depth 2 (default), scale 3, distortion 1.2: the fixed sin/cos cascade with the final 2*distortion shrink. Chained transcendentals share the trig tolerance class."
-    },
-    {
-      "id": "tex-wave",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "deterministic texture (Wave, all three profiles)",
-      "notes": "R = BANDS/X/SIN over UV, G = RINGS/SPHERICAL/SAW around the center, B = BANDS/DIAGONAL/TRI with distortion 1 detail 2 through the ported fractal (the raw [-1,1] fBM recovered as 2*fac - 1). Saw/tri discontinuities land off texel centers."
-    },
-    {
-      "id": "color-utilities",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "color utilities (Invert / Gamma / Bright-Contrast)",
-      "notes": "R = Invert with a swept factor; G = Gamma with the exponent swept 0.5..2.5 (positive components only — Cycles passes zero/negative through); B = Bright/Contrast crossing its zero clamp (a = 1+contrast, b = bright - contrast/2)."
-    },
-    {
-      "id": "color-hsv",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "color-space family (RGB->BW, Separate/Combine HSV)",
-      "notes": "R = RGB-to-BW (Rec.709 luminance) over a 2D gradient; G = Separate Color HSV saturation with a moving max channel; B = Combine Color HSV with the hue swept 0..1 — every hsv_to_rgb sextant crosses this row (the sextant switch is continuous, so boundaries carry no knife edges)."
-    },
-    {
-      "id": "hue-saturation",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "Hue/Saturation/Value node (full rgb<->hsv round trip)",
-      "notes": "Hue shifted a full circle over v (fract(h + hue + 0.5) wraps), saturation scaled 1.3 into its clamp, value 0.9, factor 0.8 — the complete Cycles pipeline over the ported conversions."
-    },
-    {
-      "id": "hash-probe",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "hash family (constant-input Jenkins probe)",
-      "notes": "White Noise COLOR of the constant (2, 3, 0) — lanes (0.9638, 0.2377, 0.6632) pin the GPU hash3 AND hash4/jenkinsMix paths against CPU-verified ground truth, independent of any coordinate interpolation."
-    },
-    {
-      "id": "voronoi-rand0-probe",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "hash family (hash-free lattice control)",
-      "notes": "Randomness-0 Voronoi F1 distance is pure lattice geometry — the control that separates a wrong hash from a wrong cell construction (it localized the 5.x signed-PCG finding)."
-    },
-    {
-      "id": "texco-object",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "coordinate space (Object -> positionGeometry)",
-      "notes": "Object texture coordinates are the object-space shading position (measured on the tile proxy: the raw quad coordinates), mapping to three's positionGeometry. Biased 0.25p + 0.5 into range. Unlocks the splash DPM class (x21)."
-    },
-    {
-      "id": "texco-generated",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "coordinate space (Generated -> texspace mapping)",
-      "notes": "Generated = (p - texspace_location) / (2 * texspace_size) + 0.5, measured on the proxy (which reports size (1,1,1); the degenerate z axis reads 0.5). The runtime contract supplies the mesh texspace via BuildTslOptions. Unlocks the ellie paint-stroke class (x27)."
-    },
-    {
-      "id": "attribute-fac",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "corpus-measured node gap (Attribute Fac output x3)",
-      "notes": "The Fac output of a color attribute is the component average (r+g+b)/3 — composed from the proven vertex_color and math ops over the corner-attribute proxy."
-    },
-    {
-      "id": "attribute-object",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "per-object attribute (the ellie paint-set frontier x30)",
-      "objectAttributes": {"blendlink_probe": [0.8, 0.35, 0.1]},
-      "notes": "Attribute OBJECT reads an object custom property; the cell multiplies the per-object color by the UV gradient so the diff carries both. The runtime supplies the value through a per-object uniform (proven onObjectUpdate contract); the harness resolves the fixture constant via BuildTslOptions.objectAttribute."
-    },
-    {
-      "id": "white-noise",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "hash family (Jenkins lookup3 port)",
-      "notes": "R = 3D Value, G = 2D Value, B = 3D Color's second lane (the w=1 4D hash), all over floor(uv*8) blocks. Blender hashes RAW float bits (__float_as_uint) and interpolated UVs differ between engines by ~260 ulps (measured on the uv-gradient cell), so continuous-coordinate White Noise decorrelates per texel on ANY two backends — the quantized cell gates the Jenkins port itself; continuous inputs are same-distribution but not texel-comparable."
-    },
-    {
-      "id": "voronoi-f1",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "hash family (Voronoi F1 via the ported Jenkins hash)",
-      "notes": "R = 3D F1 Distance (scale 4, randomness 1, x0.6), G = 3D Color's first lane, B = 2D F1 Distance. Cell coordinates are integer-valued floats, so the hash inputs are bit-identical across engines — the 0.28 mx_worley divergence closes by porting Blender's own hash, not by finding a shared lineage. F2/smooth/other metrics/fractal detail stay named refusals."
-    },
-    {
-      "id": "noise-z-probe",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "noise lineage (large-coordinate control)",
-      "notes": "The proven fBM on the z = 150.37 plane — the control that pins Perlin-lineage agreement in the coordinate range the noise color offsets (100..200) actually use, separating it from the offset computation."
-    },
-    {
-      "id": "noise-detail4",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "noise detail bound (detail <= 4 candidate)",
-      "notes": "3D fBM at scale 4, detail 4 — measuring whether the detail bound (set at <= 2 after the detail-6/scale-5 3.9e-2 divergence) can honestly extend to 4, the ellie paint-stroke class's setting (x28)."
-    },
-    {
-      "id": "noise-scale16",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "noise frequency bound (scale <= 16)",
-      "notes": "3D fBM at scale 16, detail 2 — the cell that earns the emitter's scale bound. Sub-texel sample-position differences (~3e-5 UV) multiply by frequency: scale 100 (ellie hair) measured 1.8e-1 mean decorrelation, so higher scales refuse and the Material bake carries them."
-    },
-    {
-      "id": "tex-image-linear",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "corpus-priority node (Image Texture x14)",
-      "notes": "An 8x8 float Non-Color image sampled Linear/REPEAT over uv*2: manual bilinear at u*W - 0.5 with per-tap floored-modulo wrapping, no float32-filterable dependency. Pixels embed in the IR (bounded at 128x128; the texture transport carries larger images)."
-    },
-    {
-      "id": "tex-image-closest-srgb",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "corpus-priority node (Image Texture, byte/sRGB path)",
-      "notes": "An 8x8 BYTE sRGB image with zero-alpha texels, sampled Closest/EXTEND over uv*1.5 - 0.25. MEASURED against baked ground truth: Cycles associates alpha at load IN BYTE sRGB SPACE with integer floor division (rgb_byte*alpha_byte//255), THEN applies the exact IEC decode, and the Color output stays associated — zero alpha bakes black and nothing divides back. The emitter reproduces that byte-exact pipeline; the out-of-range sweep exercises the clamp."
-    },
-    {
-      "id": "noise-scale20",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "noise frequency bound (scale <= 20 candidate)",
-      "notes": "3D fBM at scale 20, detail 2 — the corpus needs 18.9-20 (ellie paint chain, splash bushes); measured to extend the frequency bound honestly."
-    },
-    {
-      "id": "voronoi-scale20",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "voronoi frequency bound (scale <= 20 candidate)",
-      "notes": "3D F1 Distance at scale 20 (x0.6): integer-cell hashing is immune to coordinate wiggle away from cell boundaries, so only the local distance shifts — measured to extend the bound to the ellie paint chain's setting."
-    },
-    {
-      "id": "voronoi-scale40",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "voronoi frequency bound (scale <= 40 candidate)",
-      "notes": "3D F1 Distance at scale 40 (x0.6) — the deepest voronoi in the ellie paint chain. Voronoi tolerates coordinate wiggle structurally (integer-cell hashing; only local distances shift), unlike fBM noise whose octave phases amplify, so its bound is measured separately."
-    },
-    {
-      "id": "tex-image-box",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "corpus-measured node gap (Image BOX projection x10)",
-      "notes": "Sharp box mapping (blend 0) over Object coordinates: the +Z tile normal selects the z-plane with the measured flip (Nz>0 -> u = 1-y, v = x), and the out-of-range sweep exercises REPEAT. The flat tile gates only the +Z branch; the other planes carry the same ported Cycles formula (sign flips included) as a named bound. Blend > 0 refuses."
-    },
-    {
-      "id": "noise-color",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "corpus-measured node gap (Noise Color output x3)",
-      "notes": "3D Noise Color (scale 4, detail 2): the second and third lanes are the SAME proven fBM at constant hash-derived offsets (noisetex.h random_float3_offset, seeds 2 and 3 — the emitter precomputes them with a CPU Jenkins). Coordinates around 100..200 keep the shared-lineage agreement."
-    },
-    {
-      "id": "noise-color-2d",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "corpus-measured node gap (Noise Color output, 2D)",
-      "notes": "The vec2 twin of noise-color through random_float2_offset."
-    },
-    {
-      "id": "voronoi-smooth-f1",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "corpus-measured node gap (Voronoi SMOOTH_F1)",
-      "notes": "R = 3D SMOOTH_F1 Distance (smoothness 1 -> params 0.5, x0.6), G = its Color lane, B = 2D Distance. The 5^d h-chain with polynomial corrections, ported verbatim; smoothness folds at emit time and zero falls back to F1 exactly like Cycles."
-    },
-    {
-      "id": "tex-magic-fac",
-      "gate": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "deterministic texture (Magic Fac)",
-      "notes": "Magic's Fac output is the color average; the mapping also carries the upstream fmod(p*scale, 2pi) wrap Cycles applies before the cascade."
-    },
-    {
-      "id": "surface-mix-color",
-      "gate": true,
-      "surface": {"channel": "Base Color"},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "surface expression (Mix Shader color lerp)",
-      "notes": "Mix Shader of two Principleds (one constant base, one UV-driven) with the factor swept past [0,1] (1.5v-0.25): emit_surface must produce mix_color with a clamped factor. The reference bakes the hand-built projection; the IR comes from the real closure graph."
-    },
-    {
-      "id": "surface-mix-scalar",
-      "gate": true,
-      "surface": {"channel": "Roughness"},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "surface expression (scalar channel lerp)",
-      "notes": "Roughness 0.15 vs 0.85 lerped by a clamped out-of-range factor — the scalar-lerp composition (a + (b-a)*clamp01(fac)) from proven math ops. NOTE: parameter lerp is the documented projection model; the closure mix of BRDFs under lighting is nonlinear in these parameters and the EMIT oracle cannot measure that difference."
-    },
-    {
-      "id": "surface-transparent-alpha",
-      "gate": true,
-      "surface": {"channel": "Alpha"},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "surface expression (Transparent coverage)",
-      "notes": "Mix(Principled(alpha 0.9), Transparent, fac=u): the Transparent branch contributes ONLY coverage — alpha = 0.9*(1-fac) and every other channel passes the lit branch through unweighted (lerping toward invented neutrals would corrupt them). White Transparent only; tinted refuses."
-    },
-    {
-      "id": "surface-emission-radiance",
-      "gate": true,
-      "surface": {"channel": "Emission Color"},
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "surface expression (radiance lerp)",
-      "notes": "Mix(Emission(2.5x HDR), Principled(emission strength 2u)) over v: emission lerps as RADIANCE (color x strength folded first) — lerping color and strength separately is not linear in emitted light. Surface documents always ship radiance in Emission Color with Strength = 1."
-    },
-    {
-      "id": "surface-nested-mix",
-      "gate": true,
-      "surface": {"channel": "Base Color"},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "surface expression (nested Mix Shader)",
-      "notes": "Mix(Mix(P1, P2, u), P3, v): recursive per-channel folding — the ellie head/skin class (depth 4 in the corpus) exercised at depth 2."
-    },
-    {
-      "id": "surface-diffuse-glossy",
-      "gate": true,
-      "surface": {"channel": "Metallic"},
-      "tolerance": {"meanAbs": 0.0001, "p99Abs": 0.001, "maxAbs": 0.005},
-      "failureClass": "surface expression (Diffuse/Glossy canonicalization)",
-      "notes": "Mix(Diffuse, Glossy, fac=u) Metallic channel: Diffuse canonicalizes to metallic 0 / roughness 1, Glossy to metallic 1, so the lerp reads back the clamped factor. The canonical channel embedding is a documented model decision."
-    },
-    {
-      "id": "surface-coerced-color",
-      "gate": true,
-      "surface": {"channel": "Emission Color"},
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "surface expression (implicit color->shader coercion)",
-      "notes": "A ColorRamp's Color output plugged straight into the Material Output Surface socket — Blender's implicit coercion treats it as emission of that color (the splash outline/sky class, 45/68 splash materials need this rule). Radiance = the color chain, strength 1."
-    },
-    {
-      "id": "surface-fresnel-mix",
-      "gate": true,
-      "surface": {"channel": "Base Color"},
-      "viewFrom": "ACTIVE_CAMERA",
-      "analyticCamera": true,
-      "tolerance": {"meanAbs": 0.001, "p99Abs": 0.005, "maxAbs": 0.01},
-      "failureClass": "surface expression (view-dependent factor)",
-      "notes": "Mix(P1, P2, fac=Fresnel IOR 1.45) under the fixed camera contract: the composed Base Color document is viewDependent and evaluates through the proven fresnel/view_cos ops — the layered-glass corpus class stays shader-side where it is exact."
-    },
-    {
-      "id": "shader-to-rgb-flat",
-      "gate": true,
-      "surface": {"channel": "Emission Color"},
-      "eeveeLight": {"strength": 3.0, "rotation": [0, 0, 0]},
-      "analyticLight": {"irradiance": [0.95493, 0.95493, 0.95493]},
-      "tolerance": {"meanAbs": 0.002, "p99Abs": 0.008, "maxAbs": 0.02},
-      "failureClass": "captured lighting (Shader to RGB, EEVEE oracle)",
-      "notes": "Shader to RGB over a Diffuse BSDF with a UV-gradient albedo, coerced into the surface — the splash painterly pattern. Reference: an EEVEE ortho render under the fixed-light contract (sun straight on, strength 3, no world); TSL: albedo x diffuseIrradiance with the analytic contract value S/pi. The cell MEASURES EEVEE's diffuse response constant."
-    },
-    {
-      "id": "shader-to-rgb-tilted",
-      "gate": true,
-      "surface": {"channel": "Emission Color"},
-      "eeveeLight": {"strength": 3.0, "rotation": [1.0471975511965976, 0, 0]},
-      "analyticLight": {"irradiance": [0.477465, 0.477465, 0.477465]},
-      "tolerance": {"meanAbs": 0.002, "p99Abs": 0.008, "maxAbs": 0.02},
-      "failureClass": "captured lighting (cosine law under the light contract)",
-      "notes": "Same capture with the sun tilted 60 degrees: the plateau must halve (S cos(theta) / pi), gating the Lambert cosine through a second point. The flat tile cannot vary N — the cosine is gated across cells, not across texels; production normals are Phase 4's application seam."
-    },
-    {
-      "id": "shader-to-rgb-ramped",
-      "gate": true,
-      "surface": {"channel": "Emission Color"},
-      "eeveeLight": {"strength": 3.0, "rotation": [0, 0, 0]},
-      "analyticLight": {"irradiance": [0.95493, 0.95493, 0.95493]},
-      "tolerance": {"meanAbs": 0.002, "p99Abs": 0.008, "maxAbs": 0.02},
-      "failureClass": "captured lighting (the full splash chain shape)",
-      "notes": "Shader to RGB -> Separate -> ColorRamp -> surface: the captured value quantized by a ramp, exactly the painterly composition. The ramp amplifies any capture-constant error, making this the sensitive gate."
-    },
-    {
-      "id": "fresnel-dielectric",
-      "gate": true,
-      "viewFrom": "ACTIVE_CAMERA",
-      "analyticCamera": true,
-      "tolerance": {
-        "meanAbs": 0.001,
-        "p99Abs": 0.005,
-        "maxAbs": 0.01
-      },
-      "failureClass": "view-dependent optics (the trapx frontier)",
-      "notes": "Fresnel IOR 1.45 under the fixed camera contract: Cycles bakes with view_from=ACTIVE_CAMERA (rays from the camera at (0,0,2)), and the TSL side evaluates Cycles' fresnel_dielectric_cos with the analytic view cosine from the same contract. Gates the dielectric formula; the runtime view builtins are the production wiring of the same op."
-    },
-    {
-      "id": "layer-weight",
-      "gate": true,
-      "viewFrom": "ACTIVE_CAMERA",
-      "analyticCamera": true,
-      "tolerance": {
-        "meanAbs": 0.001,
-        "p99Abs": 0.005,
-        "maxAbs": 0.01
-      },
-      "failureClass": "view-dependent optics (the trapx frontier)",
-      "notes": "Layer Weight blend 0.3 under the fixed camera contract: R = Facing (exponent-warped 1-|cos|^e), G = Fresnel (eta = 1/(1-blend))."
-    },
-    {
-      "id": "voronoi-f1-divergence",
-      "gate": false,
-      "pipeline": "handwritten",
-      "tolerance": null,
-      "failureClass": "disagreeing noise implementations (Worley \u2014 diagnostic)",
-      "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. Measured 2026-07-27 at mean 0.28 / max 0.96 \u2014 a completely different cell hash, the published Worley finding reproduced. RESOLVED the same day by porting Blender's own hash_pcg3d_i (see the gated voronoi-f1 cell); this cell stays as the negative control proving mx_worley is NOT that hash."
-    },
-    {
-      "id": "noise-mx-divergence",
-      "gate": true,
-      "tolerance": {
-        "meanAbs": 0.001,
-        "p99Abs": 0.005,
-        "maxAbs": 0.01
-      },
-      "failureClass": "disagreeing noise implementations \u2014 measured NOT to apply to this pairing",
-      "notes": "Blender Noise Texture (scale 4, detail 0, 3D at z=0) versus three's mx_noise_float remapped 0.5+0.5x. Planned as the negative control for the published 'a slightly different hash produces a completely different pattern' class \u2014 but measured 2026-07-27 at meanAbs 4.1e-5 / maxAbs 1.2e-4 over a real 0.67-span field: the base Perlin octave SHARES an implementation lineage between Cycles and MaterialX. Now a gated regression. The bounded claim covers exactly this configuration; fractal detail octaves, roughness, lacunarity, distortion, 4D, and Voronoi remain unproven and need their own cells."
+ "schemaVersion": 1,
+ "size": 64,
+ "cells": [
+  {
+   "id": "constant-linear",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "colorspace calibration",
+   "notes": "Constant emission (0.25, 0.5, 0.75). Proves the linear float path end to end on both sides: any hidden sRGB encode, tone map, or view transform shifts every value."
+  },
+  {
+   "id": "uv-gradient",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.005,
+    "p99Abs": 0.01,
+    "maxAbs": 0.03
+   },
+   "failureClass": "coordinate-space mismatch",
+   "notes": "Emission = (u, v, 0). Proves UV origin, orientation, and readback row order agree; the documented MaterialX/three 'upside down' UV trap inverts the green channel here."
+  },
+  {
+   "id": "math-compare",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "inverted logic nodes",
+   "notes": "R = GREATER_THAN(u, 0.5), G = LESS_THAN(v, 0.5). The documented mx_ifgreater/mx_ifequal inversion class: an inverted comparison flips half the texels, far outside tolerance. Texel centers never sit exactly on 0.5 at this size."
+  },
+  {
+   "id": "mapping-rotate",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.005,
+    "p99Abs": 0.01,
+    "maxAbs": 0.03
+   },
+   "failureClass": "coordinate-space mismatch (rotate2d/place2d matrix math)",
+   "notes": "Blender Mapping (POINT): scale (2,1), Z rotation 30deg over UV, visualized as biased coordinates 0.25*p + 0.5 so the range stays bakeable. Wrong operation order or rotation sign produces gross error."
+  },
+  {
+   "id": "colorramp-linear",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.005,
+    "p99Abs": 0.01,
+    "maxAbs": 0.03
+   },
+   "failureClass": "corpus-priority node (110 uses in the splash audit)",
+   "notes": "Two-stop LINEAR ColorRamp over u: position 0.2 -> (0.1, 0.2, 0.8), position 0.8 -> (0.9, 0.5, 0.1). Exact linear remap + mix; interpolation-mode sweeps come later."
+  },
+  {
+   "id": "math-safe-divide",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "safe-math semantics (divide by zero)",
+   "notes": "a = 4u-2 divided by a three-band divisor floor(3v)-1 in {-1, 0, 1}. Cycles' safe_divide returns 0 on the zero band; raw GPU division returns inf/NaN. The TSL mapping must carry Blender's guard, and this cell proves it. Output biased 0.25x+0.5 and clamped on both sides."
+  },
+  {
+   "id": "math-modulo-sign",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "safe-math semantics (modulo sign convention)",
+   "notes": "MODULO(8u-4, 1.5). Blender uses C fmod (truncated, sign of the dividend); GLSL mod is floored (sign of the divisor) \u2014 fmod(-3.1, 1.5) = -0.1 versus 1.4. The TSL mapping must emit truncated modulo. Output biased 0.25x+0.5."
+  },
+  {
+   "id": "math-power-negative-base",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "safe-math semantics (pow with negative base)",
+   "notes": "POWER(4u-2, 2.0). GLSL pow with a negative base is undefined (NaN on most drivers); Blender's compatible pow gives pow(|x|, y) with the sign of an odd integer exponent. The TSL mapping must carry Blender's convention. Output scaled 0.2x and clamped."
+  },
+  {
+   "id": "math-trig",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "transcendental precision cross-check",
+   "notes": "R = 0.5+0.5*sin(8u), G = 0.5+0.5*cos(8v). GPU sin/cos versus Cycles' \u2014 proves transcendental agreement stays inside channel tolerance."
+  },
+  {
+   "id": "colorramp-constant",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "interpolation-mode sweep (ColorRamp CONSTANT)",
+   "notes": "Three-stop CONSTANT ramp over u (stops at 0.0, 0.3, 0.6). Constant interpolation takes the left stop's color; texel centers never sit exactly on a stop at this size."
+  },
+  {
+   "id": "mapping-texture-mode",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.005,
+    "p99Abs": 0.01,
+    "maxAbs": 0.03
+   },
+   "failureClass": "coordinate-space mismatch (place2d inverse transform)",
+   "notes": "Blender Mapping TEXTURE mode with scale (2,1), Z rotation 30deg: the INVERSE of POINT \u2014 inverse-rotate first, then divide by scale. Wrong inversion order is the documented place2d class. Output biased 0.25x+0.5."
+  },
+  {
+   "id": "noise-fractal-detail",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "disagreeing noise implementations (fBM composition, now ported)",
+   "notes": "Blender Noise detail 2, roughness 0.5 through the PORTED Cycles fractal loop (blenderNoiseFac: i <= floor(detail) octaves over the shared base octave, amplitude-sum normalization, fractional-detail blend). MaterialX's own fBM measured 4.6e-2 divergence; the port must close it."
+  },
+  {
+   "id": "mix-modes",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.005,
+    "p99Abs": 0.01,
+    "maxAbs": 0.03
+   },
+   "failureClass": "Mix node blend modes (MIX / MULTIPLY / ADD)",
+   "notes": "Three RGBA Mix nodes with varying factors feed one channel each: R = MIX(u), G = MULTIPLY(v), B = ADD(u). Blender blends toward the operator result by the factor: mix(a, op(a, b), fac)."
+  },
+  {
+   "id": "mix-divide",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.005,
+    "p99Abs": 0.01,
+    "maxAbs": 0.03
+   },
+   "failureClass": "corpus-measured node gap (Mix DIVIDE x9) + zero-divisor semantics",
+   "notes": "RGBA Mix DIVIDE with B = (0.5, 0, 2): the green channel divides by zero, and the reference decides Blender's fallback empirically. The mapping keeps A untouched on the zero band."
+  },
+  {
+   "id": "map-range-smoothstep",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "corpus-measured node gap (Map Range SMOOTHSTEP x8)",
+   "notes": "Smoothstep interpolation applies the cubic ease to the clamped safe-divide factor before the target remap."
+  },
+  {
+   "id": "map-range-smootherstep",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "corpus-measured node gap (Map Range SMOOTHERSTEP x27 \u2014 the whole ellie denim class)",
+   "notes": "Quintic smootherstep t^3(t(6t-15)+10) applied to the clamped safe-divide factor \u2014 one interpolation enum blocks all 27 paint-stroke mix factors in ellie."
+  },
+  {
+   "id": "colorramp-bspline",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-measured node gap (ColorRamp B_SPLINE x6)",
+   "notes": "Three-stop B-Spline colorband via the sampled-LUT route: Blender's own evaluate() fills 257 texels and the shader lerps between exact samples \u2014 no reimplementation of the spline basis to drift."
+  },
+  {
+   "id": "colorramp-cardinal",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-measured node gap (ColorRamp CARDINAL x2)",
+   "notes": "Cardinal interpolation through the same sampled-LUT route as B-Spline."
+  },
+  {
+   "id": "noise-2d",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-measured node gap (2D noise x4)",
+   "notes": "Blender's 2D noise dimension against mx_noise_float's vec2 overload \u2014 a different Perlin dimension than 3D-at-z=0, measured rather than assumed to share the lineage."
+  },
+  {
+   "id": "vertex-color",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.005,
+    "p99Abs": 0.01,
+    "maxAbs": 0.03
+   },
+   "failureClass": "corpus-measured node gap (Attribute/Vertex Color x2)",
+   "notes": "A corner color attribute linear in UV (exact under any triangulation) sampled by Vertex Color, against three's 'color' geometry attribute \u2014 the COLOR_0 contract the glTF path ships."
+  },
+  {
+   "id": "group-passthrough",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "node-group wall crossing (the dominant scene refusal)",
+   "notes": "Outer UV feeds a group instance whose inside runs Noise; the emitter must cross the group wall in both directions with the instance context. Scene coverage measured group-wrapped surfaces as the single largest refusal class."
+  },
+  {
+   "id": "map-range-linear",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "corpus-measured node gap (Map Range x8 across scenes)",
+   "notes": "LINEAR float Map Range 0.2..0.8 -> 0.1..0.9 with clamp: safe-divide factor, then result clamped to the ordered target range."
+  },
+  {
+   "id": "mix-overlay",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.005,
+    "p99Abs": 0.01,
+    "maxAbs": 0.03
+   },
+   "failureClass": "corpus-measured node gap (Mix OVERLAY x4 across scenes)",
+   "notes": "Cycles folds the factor into the per-channel overlay formula (a < 0.5 branches) rather than lerping the result; the cell proves the folded form."
+  },
+  {
+   "id": "math-pingpong",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "corpus-measured node gap (Math PINGPONG)",
+   "notes": "PINGPONG(4u, 0.75): |fract((a-b)/(2b)) * 2b - b| with the b = 0 guard."
+  },
+  {
+   "id": "clamp-node",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "corpus-measured node gap (Clamp)",
+   "notes": "Clamp node in Min Max mode over 2u-0.5: min(max(value, 0.1), 0.9)."
+  },
+  {
+   "id": "math-sqrt",
+   "gate": true,
+   "sweep": {
+    "operation": "SQRT",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.5
     }
-  ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (safe semantics)",
+   "notes": "safe_sqrt over 4u-2: the left half exercises the negative-input -> 0 guard; raw GPU sqrt returns NaN there."
+  },
+  {
+   "id": "math-inverse-sqrt",
+   "gate": true,
+   "sweep": {
+    "operation": "INVERSE_SQRT",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.1
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (safe semantics)",
+   "notes": "inversesqrt(a) for a > 0, else 0. The nearest positive texel value (1/32) bounds the pole; dyadic texel inputs are float-exact on both engines."
+  },
+  {
+   "id": "math-absolute",
+   "gate": true,
+   "sweep": {
+    "operation": "ABSOLUTE",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep",
+   "notes": "|4u-2| * 0.5."
+  },
+  {
+   "id": "math-exponent",
+   "gate": true,
+   "sweep": {
+    "operation": "EXPONENT",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.125
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (transcendental)",
+   "notes": "exp over (-2, 2), scaled 0.125 into range."
+  },
+  {
+   "id": "math-logarithm",
+   "gate": true,
+   "sweep": {
+    "operation": "LOGARITHM",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "b": {
+     "axis": "v",
+     "scale": 2,
+     "offset": 2
+    },
+    "post": {
+     "scale": 0.1,
+     "offset": 0.6
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (safe semantics)",
+   "notes": "safe_log: a <= 0 -> 0 (the left half), else log(a)/log(base) with base swept 2..4. The base ~= 1 divisor-zero branch is covered by the safe-divide cell."
+  },
+  {
+   "id": "math-ceil",
+   "gate": true,
+   "sweep": {
+    "operation": "CEIL",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.25,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (rounding family)",
+   "notes": "ceil over (-2, 2); dyadic texel centers never land on integer boundaries."
+  },
+  {
+   "id": "math-fract",
+   "gate": true,
+   "sweep": {
+    "operation": "FRACT",
+    "a": {
+     "axis": "u",
+     "scale": 3,
+     "offset": -1
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (rounding family)",
+   "notes": "fract over (-1, 2): the negative stretch proves x - floor(x), not truncation."
+  },
+  {
+   "id": "math-trunc",
+   "gate": true,
+   "sweep": {
+    "operation": "TRUNC",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.25,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (rounding family)",
+   "notes": "trunc over (-2, 2): rounds toward zero, so the negative side differs from floor by one."
+  },
+  {
+   "id": "math-round",
+   "gate": true,
+   "sweep": {
+    "operation": "ROUND",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.2,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (rounding family)",
+   "notes": "Blender rounds half away from zero; WGSL's native round is half-to-even, so the mapping uses sign(x)*floor(|x|+0.5). Texel centers never sit on half-integers at this size."
+  },
+  {
+   "id": "math-snap",
+   "gate": true,
+   "sweep": {
+    "operation": "SNAP",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "b": {
+     "axis": "v",
+     "scale": 0.5,
+     "offset": 0.26
+    },
+    "post": {
+     "scale": 0.18,
+     "offset": 0.55
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (safe semantics)",
+   "notes": "floor(safe_divide(a, b)) * b with the increment swept 0.26..0.76; the non-dyadic offset keeps step boundaries off exact float values."
+  },
+  {
+   "id": "math-wrap",
+   "gate": true,
+   "sweep": {
+    "operation": "WRAP",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "b": 0.8,
+    "c": {
+     "axis": "v",
+     "scale": 0.3,
+     "offset": 0.01
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (safe semantics)",
+   "notes": "wrapf(value, max, min): range = max - min, value - range*floor((value-min)/range). Min swept 0.01..0.31 under a fixed max of 0.8; output lands in [min, max)."
+  },
+  {
+   "id": "math-compare-band",
+   "gate": true,
+   "sweep": {
+    "operation": "COMPARE",
+    "a": {
+     "axis": "u"
+    },
+    "b": 0.5,
+    "c": {
+     "axis": "v",
+     "scale": 0.19,
+     "offset": 0.013
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (comparison semantics)",
+   "notes": "Cycles: |a - b| <= max(epsilon, 1e-5) ? 1 : 0 \u2014 the epsilon floor is part of the semantics. A wedge that widens with v. Measured: a slope of exactly 0.2 puts 13 texel rows (2j+1 divisible by 5, where 0.2*5/128 = 1/128) on exact float knife edges that interpolation ulps flip per engine; the 0.19/0.013 spec keeps every boundary off representable coincidences."
+  },
+  {
+   "id": "math-smooth-min",
+   "gate": true,
+   "sweep": {
+    "operation": "SMOOTH_MIN",
+    "a": {
+     "axis": "u",
+     "scale": 2,
+     "offset": -1
+    },
+    "b": {
+     "axis": "v",
+     "scale": 2,
+     "offset": -1
+    },
+    "c": 0.5,
+    "post": {
+     "scale": 0.4,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (polynomial smooth blend)",
+   "notes": "smoothminf: h = max(k - |a-b|, 0)/k; min(a,b) - h^3*k/6 with k = 0.5."
+  },
+  {
+   "id": "math-smooth-max",
+   "gate": true,
+   "sweep": {
+    "operation": "SMOOTH_MAX",
+    "a": {
+     "axis": "u",
+     "scale": 2,
+     "offset": -1
+    },
+    "b": {
+     "axis": "v",
+     "scale": 2,
+     "offset": -1
+    },
+    "c": 0.5,
+    "post": {
+     "scale": 0.4,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (polynomial smooth blend)",
+   "notes": "-smoothminf(-a, -b, k) with k = 0.5."
+  },
+  {
+   "id": "math-sign",
+   "gate": true,
+   "sweep": {
+    "operation": "SIGN",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.4,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep",
+   "notes": "sign over (-2, 2); texel centers never hit exactly zero."
+  },
+  {
+   "id": "math-tangent",
+   "gate": true,
+   "sweep": {
+    "operation": "TANGENT",
+    "a": {
+     "axis": "u",
+     "scale": 2.8,
+     "offset": -1.4
+    },
+    "post": {
+     "scale": 0.08,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (transcendental)",
+   "notes": "tan over (-1.4, 1.4), inside the poles at +-pi/2; |tan| <= 5.8 scaled 0.08 into range."
+  },
+  {
+   "id": "math-arcsine",
+   "gate": true,
+   "sweep": {
+    "operation": "ARCSINE",
+    "a": {
+     "axis": "u",
+     "scale": 3,
+     "offset": -1.5
+    },
+    "post": {
+     "scale": 0.25,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (safe semantics)",
+   "notes": "Input swept (-1.5, 1.5): Cycles clamps to [-1, 1] before asin, so the overshoot proves the domain clamp instead of NaN."
+  },
+  {
+   "id": "math-arccosine",
+   "gate": true,
+   "sweep": {
+    "operation": "ARCCOSINE",
+    "a": {
+     "axis": "u",
+     "scale": 3,
+     "offset": -1.5
+    },
+    "post": {
+     "scale": 0.25
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (safe semantics)",
+   "notes": "Same clamped domain as arcsine; acos lands in [0, pi], scaled 0.25."
+  },
+  {
+   "id": "math-arctangent",
+   "gate": true,
+   "sweep": {
+    "operation": "ARCTANGENT",
+    "a": {
+     "axis": "u",
+     "scale": 8,
+     "offset": -4
+    },
+    "post": {
+     "scale": 0.3,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (transcendental)",
+   "notes": "atan over (-4, 4)."
+  },
+  {
+   "id": "math-arctan2",
+   "gate": true,
+   "sweep": {
+    "operation": "ARCTAN2",
+    "a": {
+     "axis": "u",
+     "scale": 2,
+     "offset": -1
+    },
+    "b": {
+     "axis": "v",
+     "scale": 2,
+     "offset": -1
+    },
+    "post": {
+     "scale": 0.15,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (transcendental)",
+   "notes": "atan2(y = 2u-1, x = 2v-1) covers all four quadrants; y never hits exactly zero at texel centers, so the branch cut stays off the grid."
+  },
+  {
+   "id": "math-sinh",
+   "gate": true,
+   "sweep": {
+    "operation": "SINH",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.12,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (transcendental)",
+   "notes": "sinh over (-2, 2)."
+  },
+  {
+   "id": "math-cosh",
+   "gate": true,
+   "sweep": {
+    "operation": "COSH",
+    "a": {
+     "axis": "u",
+     "scale": 4,
+     "offset": -2
+    },
+    "post": {
+     "scale": 0.2
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (transcendental)",
+   "notes": "cosh over (-2, 2)."
+  },
+  {
+   "id": "math-tanh",
+   "gate": true,
+   "sweep": {
+    "operation": "TANH",
+    "a": {
+     "axis": "u",
+     "scale": 6,
+     "offset": -3
+    },
+    "post": {
+     "scale": 0.45,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (transcendental)",
+   "notes": "tanh over (-3, 3)."
+  },
+  {
+   "id": "math-radians",
+   "gate": true,
+   "sweep": {
+    "operation": "RADIANS",
+    "a": {
+     "axis": "u",
+     "scale": 360,
+     "offset": -180
+    },
+    "post": {
+     "scale": 0.15,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep",
+   "notes": "degrees -> radians over (-180, 180)."
+  },
+  {
+   "id": "math-degrees",
+   "gate": true,
+   "sweep": {
+    "operation": "DEGREES",
+    "a": {
+     "axis": "u",
+     "scale": 6,
+     "offset": -3
+    },
+    "post": {
+     "scale": 0.0025,
+     "offset": 0.5
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep",
+   "notes": "radians -> degrees over (-3, 3), scaled 1/400 into range."
+  },
+  {
+   "id": "math-floored-modulo",
+   "gate": true,
+   "sweep": {
+    "operation": "FLOORED_MODULO",
+    "a": {
+     "axis": "u",
+     "scale": 8,
+     "offset": -4
+    },
+    "b": 1.5,
+    "post": {
+     "scale": 0.25,
+     "offset": 0.1
+    }
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Math-enum sweep (modulo sign convention)",
+   "notes": "The floored twin of math-modulo-sign: a - floor(a/b)*b keeps the divisor's sign, so the negative stretch lands in [0, 1.5) instead of (-1.5, 0]."
+  },
+  {
+   "id": "mix-sub-screen-diff",
+   "gate": true,
+   "mixSweep": {
+    "entries": [
+     {
+      "blend": "SUBTRACT",
+      "axis": "u",
+      "channel": "Green"
+     },
+     {
+      "blend": "SCREEN",
+      "axis": "v",
+      "channel": "Red"
+     },
+     {
+      "blend": "DIFFERENCE",
+      "axis": "u",
+      "channel": "Red"
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Mix blend-mode sweep (arithmetic family)",
+   "notes": "R = SUBTRACT.G (interp toward a-b), G = SCREEN.R (1 - (tm + t(1-b))(1-a)), B = DIFFERENCE.R (interp toward |a-b|). Channels chosen so every output stays in the bakeable range."
+  },
+  {
+   "id": "mix-darken-lighten-exclusion",
+   "gate": true,
+   "mixSweep": {
+    "entries": [
+     {
+      "blend": "DARKEN",
+      "axis": "u",
+      "channel": "Green"
+     },
+     {
+      "blend": "LIGHTEN",
+      "axis": "v",
+      "channel": "Red"
+     },
+     {
+      "blend": "EXCLUSION",
+      "axis": "u",
+      "channel": "Blue"
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Mix blend-mode sweep (min/max family)",
+   "notes": "DARKEN interps toward min(a,b); LIGHTEN interps toward max(a,b) \u2014 MEASURED: the legacy compositor's asymmetric max(a, b*t) form diverged mean 2.6e-2 / max 0.155 with the kink at t = a/b, so Cycles' Mix uses the symmetric interp; EXCLUSION is max(interp toward a+b-2ab, 0)."
+  },
+  {
+   "id": "mix-dodge-burn-softlight",
+   "gate": true,
+   "mixSweep": {
+    "entries": [
+     {
+      "blend": "DODGE",
+      "axis": "u",
+      "channel": "Blue",
+      "b": [
+       0.9,
+       0.1,
+       1.4
+      ]
+     },
+     {
+      "blend": "BURN",
+      "axis": "v",
+      "channel": "Green"
+     },
+     {
+      "blend": "SOFT_LIGHT",
+      "axis": "u",
+      "channel": "Red"
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Mix blend-mode sweep (photographic family)",
+   "notes": "DODGE with an HDR B channel (1.4) so t*b crosses 1 and the divisor-collapse -> 1 branch is exercised along with the min clamp; BURN's 1-(1-a)/tmp crosses its lower clamp as v -> 1; SOFT_LIGHT is the branchless screen-weighted form."
+  },
+  {
+   "id": "mix-linear-light",
+   "gate": true,
+   "mixSweep": {
+    "entries": [
+     {
+      "blend": "LINEAR_LIGHT",
+      "axis": "u",
+      "full": true
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Mix blend-mode sweep (linear light)",
+   "notes": "a + t*(2b - 1) across all three channels of one node; the default A/B constants keep every channel inside the bakeable range for the whole factor sweep."
+  },
+  {
+   "id": "mix-hue-sat",
+   "gate": true,
+   "mixSweep": {
+    "entries": [
+     {
+      "blend": "HUE",
+      "axis": "u",
+      "channel": "Red"
+     },
+     {
+      "blend": "SATURATION",
+      "axis": "v",
+      "channel": "Green"
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Mix blend-mode sweep (HSV family, rgb<->hsv port)",
+   "notes": "HUE grafts B's hue (0.896, sextant 5) onto A's S/V and lerps; SATURATION lerps A's saturation toward B's inside A's hue (0.389, sextant 2). Both run the ported Cycles rgb_to_hsv / hsv_to_rgb round trip on constants, so branch decisions are stable. The B-saturation-zero gate branch stays constant-A and is covered by construction."
+  },
+  {
+   "id": "mix-value-color",
+   "gate": true,
+   "mixSweep": {
+    "entries": [
+     {
+      "blend": "VALUE",
+      "axis": "u",
+      "channel": "Red"
+     },
+     {
+      "blend": "COLOR",
+      "axis": "v",
+      "channel": "Green"
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Mix blend-mode sweep (HSV family, rgb<->hsv port)",
+   "notes": "VALUE lerps A's V toward B's (ungated in Cycles); COLOR grafts B's hue AND saturation over A's value with the same saturation gate as HUE."
+  },
+  {
+   "id": "vecmath-arith",
+   "gate": true,
+   "vectorSweep": {
+    "entries": [
+     {
+      "operation": "SUBTRACT",
+      "a": [
+       {
+        "axis": "u"
+       },
+       {
+        "axis": "v"
+       },
+       0.3
+      ],
+      "b": [
+       0.25,
+       0.5,
+       0.1
+      ],
+      "component": "X",
+      "post": {
+       "scale": 0.5,
+       "offset": 0.3
+      }
+     },
+     {
+      "operation": "DIVIDE",
+      "a": [
+       0.3,
+       0.4,
+       {
+        "axis": "u",
+        "scale": 0.5,
+        "offset": 0.2
+       }
+      ],
+      "b": [
+       1,
+       1,
+       {
+        "axis": "v",
+        "scale": 0.5,
+        "offset": 0.25
+       }
+      ],
+      "component": "Z",
+      "post": {
+       "scale": 0.25,
+       "offset": 0.1
+      }
+     },
+     {
+      "operation": "DIVIDE",
+      "a": [
+       0.3,
+       0.4,
+       {
+        "axis": "u",
+        "scale": 0.5,
+        "offset": 0.2
+       }
+      ],
+      "b": [
+       1,
+       1,
+       0
+      ],
+      "component": "Z",
+      "post": {
+       "scale": 1,
+       "offset": 0.3
+      }
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Vector Math sweep (arithmetic + safe divide)",
+   "notes": "Componentwise subtract, a swept safe divide, and a constant-zero divisor lane that must return 0 (the whole channel sits at the post offset)."
+  },
+  {
+   "id": "vecmath-products",
+   "gate": true,
+   "vectorSweep": {
+    "entries": [
+     {
+      "operation": "DOT_PRODUCT",
+      "a": [
+       {
+        "axis": "u"
+       },
+       {
+        "axis": "v"
+       },
+       0.5
+      ],
+      "b": [
+       0.4,
+       0.3,
+       0.6
+      ],
+      "output": "Value"
+     },
+     {
+      "operation": "CROSS_PRODUCT",
+      "a": [
+       {
+        "axis": "u"
+       },
+       {
+        "axis": "v"
+       },
+       0.3
+      ],
+      "b": [
+       0.5,
+       0.2,
+       0.7
+      ],
+      "component": "Y",
+      "post": {
+       "scale": 0.5,
+       "offset": 0.5
+      }
+     },
+     {
+      "operation": "MULTIPLY",
+      "a": [
+       {
+        "axis": "u"
+       },
+       {
+        "axis": "v"
+       },
+       0.3
+      ],
+      "b": [
+       0.8,
+       1.2,
+       2.0
+      ],
+      "component": "Y",
+      "post": {
+       "scale": 0.5,
+       "offset": 0.05
+      }
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Vector Math sweep (products)",
+   "notes": "Dot product through the scalar Value output (the emitter marks these scalar), a cross-product component, and the componentwise multiply the corpus uses (x4 in cube-diorama)."
+  },
+  {
+   "id": "vecmath-metrics",
+   "gate": true,
+   "vectorSweep": {
+    "entries": [
+     {
+      "operation": "LENGTH",
+      "a": [
+       {
+        "axis": "u",
+        "scale": 4,
+        "offset": -2
+       },
+       {
+        "axis": "v",
+        "scale": 2,
+        "offset": -1
+       },
+       0.5
+      ],
+      "output": "Value",
+      "post": {
+       "scale": 0.4
+      }
+     },
+     {
+      "operation": "DISTANCE",
+      "a": [
+       {
+        "axis": "u"
+       },
+       {
+        "axis": "v"
+       },
+       0
+      ],
+      "b": [
+       0.5,
+       0.5,
+       0.2
+      ],
+      "output": "Value"
+     },
+     {
+      "operation": "NORMALIZE",
+      "a": [
+       {
+        "axis": "u",
+        "scale": 4,
+        "offset": -2
+       },
+       {
+        "axis": "v",
+        "scale": 2,
+        "offset": -1
+       },
+       0.5
+      ],
+      "component": "X",
+      "post": {
+       "scale": 0.4,
+       "offset": 0.5
+      }
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Vector Math sweep (metrics)",
+   "notes": "Length and distance through the Value output; normalize's X component with a constant z of 0.5 keeping the length bounded away from the safe_normalize zero branch."
+  },
+  {
+   "id": "vecmath-minmax-abs",
+   "gate": true,
+   "vectorSweep": {
+    "entries": [
+     {
+      "operation": "MINIMUM",
+      "a": [
+       {
+        "axis": "u"
+       },
+       0,
+       0
+      ],
+      "b": [
+       {
+        "axis": "v",
+        "scale": -0.4,
+        "offset": 0.6
+       },
+       0,
+       0
+      ],
+      "component": "X"
+     },
+     {
+      "operation": "MAXIMUM",
+      "a": [
+       0,
+       {
+        "axis": "u",
+        "scale": 0.7
+       },
+       0
+      ],
+      "b": [
+       0,
+       {
+        "axis": "v",
+        "scale": 0.5,
+        "offset": 0.15
+       },
+       0
+      ],
+      "component": "Y"
+     },
+     {
+      "operation": "ABSOLUTE",
+      "a": [
+       0,
+       0,
+       {
+        "axis": "u",
+        "scale": 3,
+        "offset": -1.5
+       }
+      ],
+      "component": "Z",
+      "post": {
+       "scale": 0.6,
+       "offset": 0.05
+      }
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Vector Math sweep (min/max/abs)",
+   "notes": "Componentwise min against a falling ramp, max against a rising one (both kink mid-tile), and abs over a sign-crossing sweep."
+  },
+  {
+   "id": "vecmath-rounding",
+   "gate": true,
+   "vectorSweep": {
+    "entries": [
+     {
+      "operation": "FLOOR",
+      "a": [
+       {
+        "axis": "u",
+        "scale": 4,
+        "offset": -2
+       },
+       0,
+       0
+      ],
+      "component": "X",
+      "post": {
+       "scale": 0.2,
+       "offset": 0.55
+      }
+     },
+     {
+      "operation": "CEIL",
+      "a": [
+       0,
+       {
+        "axis": "v",
+        "scale": 4,
+        "offset": -2
+       },
+       0
+      ],
+      "component": "Y",
+      "post": {
+       "scale": 0.2,
+       "offset": 0.45
+      }
+     },
+     {
+      "operation": "FRACTION",
+      "a": [
+       0,
+       0,
+       {
+        "axis": "u",
+        "scale": 3,
+        "offset": -1
+       }
+      ],
+      "component": "Z"
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Vector Math sweep (rounding family)",
+   "notes": "Floor, ceil, and fraction (x - floor(x)) over sign-crossing sweeps; dyadic texel centers never land on integer boundaries."
+  },
+  {
+   "id": "vecmath-modular",
+   "gate": true,
+   "vectorSweep": {
+    "entries": [
+     {
+      "operation": "MODULO",
+      "a": [
+       {
+        "axis": "u",
+        "scale": 8,
+        "offset": -4
+       },
+       0,
+       0
+      ],
+      "b": [
+       1.5,
+       1,
+       1
+      ],
+      "component": "X",
+      "post": {
+       "scale": 0.25,
+       "offset": 0.5
+      }
+     },
+     {
+      "operation": "SNAP",
+      "a": [
+       0,
+       {
+        "axis": "v",
+        "scale": 4,
+        "offset": -2
+       },
+       0
+      ],
+      "b": [
+       1,
+       0.35,
+       1
+      ],
+      "component": "Y",
+      "post": {
+       "scale": 0.18,
+       "offset": 0.55
+      }
+     },
+     {
+      "operation": "WRAP",
+      "a": [
+       0,
+       0,
+       {
+        "axis": "u",
+        "scale": 4,
+        "offset": -2
+       }
+      ],
+      "b": [
+       1,
+       1,
+       0.75
+      ],
+      "c": [
+       0,
+       0,
+       0.05
+      ],
+      "component": "Z"
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Vector Math sweep (modular family)",
+   "notes": "The vector twins of the proven scalar modulo/snap/wrap semantics, built per channel because a vector-condition select collapses to one lane."
+  },
+  {
+   "id": "vecmath-trig",
+   "gate": true,
+   "vectorSweep": {
+    "entries": [
+     {
+      "operation": "SINE",
+      "a": [
+       {
+        "axis": "u",
+        "scale": 8
+       },
+       0,
+       0
+      ],
+      "component": "X",
+      "post": {
+       "scale": 0.5,
+       "offset": 0.5
+      }
+     },
+     {
+      "operation": "COSINE",
+      "a": [
+       0,
+       {
+        "axis": "v",
+        "scale": 8
+       },
+       0
+      ],
+      "component": "Y",
+      "post": {
+       "scale": 0.5,
+       "offset": 0.5
+      }
+     },
+     {
+      "operation": "TANGENT",
+      "a": [
+       0,
+       0,
+       {
+        "axis": "u",
+        "scale": 2.8,
+        "offset": -1.4
+       }
+      ],
+      "component": "Z",
+      "post": {
+       "scale": 0.08,
+       "offset": 0.5
+      }
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Vector Math sweep (componentwise trig)",
+   "notes": "Componentwise sin/cos/tan; tan stays inside the poles at +-pi/2."
+  },
+  {
+   "id": "vecmath-muladd",
+   "gate": true,
+   "vectorSweep": {
+    "entries": [
+     {
+      "operation": "MULTIPLY_ADD",
+      "full": true,
+      "a": [
+       {
+        "axis": "u",
+        "scale": 0.5
+       },
+       {
+        "axis": "v",
+        "scale": 0.5,
+        "offset": 0.1
+       },
+       0.3
+      ],
+      "b": [
+       0.8,
+       0.6,
+       0.5
+      ],
+      "c": [
+       0.1,
+       0.2,
+       0.05
+      ]
+     }
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Vector Math sweep (multiply-add, full vector)",
+   "notes": "The whole a*b + c vector feeds the channel directly, proving the implicit vector -> color conversion path as well."
+  },
+  {
+   "id": "rgb-curve",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-priority node (RGB Curves x11 across scenes)",
+   "notes": "RGB Curves via the sampled-LUT route Cycles itself uses: a bent composite C curve composed before distinct R/G/B channel curves (wrong order is gross error), per-channel input gradients, and the Fac lerp swept over v. Tolerance is the LUT-reconstruction class shared with the spline colorramps."
+  },
+  {
+   "id": "tex-checker",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "deterministic texture (Checker)",
+   "notes": "Scale-4 checker over UV with two constant colors: epsilon-nudged floor parity in all three axes ((xi%2 == yi%2) == zi%2). Dyadic texel centers never land on cell boundaries."
+  },
+  {
+   "id": "tex-gradient",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "deterministic texture (Gradient)",
+   "notes": "R = LINEAR over u, G = QUADRATIC over 2u-1 (crosses the max(x,0) guard), B = RADIAL around the tile center (all four atan2 quadrants; the branch cut at v = 0.5 stays off texel centers). Cycles saturates the output."
+  },
+  {
+   "id": "tex-magic",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "deterministic texture (Magic trig cascade)",
+   "notes": "Depth 2 (default), scale 3, distortion 1.2: the fixed sin/cos cascade with the final 2*distortion shrink. Chained transcendentals share the trig tolerance class."
+  },
+  {
+   "id": "tex-wave",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "deterministic texture (Wave, all three profiles)",
+   "notes": "R = BANDS/X/SIN over UV, G = RINGS/SPHERICAL/SAW around the center, B = BANDS/DIAGONAL/TRI with distortion 1 detail 2 through the ported fractal (the raw [-1,1] fBM recovered as 2*fac - 1). Saw/tri discontinuities land off texel centers."
+  },
+  {
+   "id": "color-utilities",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "color utilities (Invert / Gamma / Bright-Contrast)",
+   "notes": "R = Invert with a swept factor; G = Gamma with the exponent swept 0.5..2.5 (positive components only \u2014 Cycles passes zero/negative through); B = Bright/Contrast crossing its zero clamp (a = 1+contrast, b = bright - contrast/2)."
+  },
+  {
+   "id": "color-hsv",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "color-space family (RGB->BW, Separate/Combine HSV)",
+   "notes": "R = RGB-to-BW (Rec.709 luminance) over a 2D gradient; G = Separate Color HSV saturation with a moving max channel; B = Combine Color HSV with the hue swept 0..1 \u2014 every hsv_to_rgb sextant crosses this row (the sextant switch is continuous, so boundaries carry no knife edges)."
+  },
+  {
+   "id": "hue-saturation",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "Hue/Saturation/Value node (full rgb<->hsv round trip)",
+   "notes": "Hue shifted a full circle over v (fract(h + hue + 0.5) wraps), saturation scaled 1.3 into its clamp, value 0.9, factor 0.8 \u2014 the complete Cycles pipeline over the ported conversions."
+  },
+  {
+   "id": "hash-probe",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "hash family (constant-input Jenkins probe)",
+   "notes": "White Noise COLOR of the constant (2, 3, 0) \u2014 lanes (0.9638, 0.2377, 0.6632) pin the GPU hash3 AND hash4/jenkinsMix paths against CPU-verified ground truth, independent of any coordinate interpolation."
+  },
+  {
+   "id": "voronoi-rand0-probe",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "hash family (hash-free lattice control)",
+   "notes": "Randomness-0 Voronoi F1 distance is pure lattice geometry \u2014 the control that separates a wrong hash from a wrong cell construction (it localized the 5.x signed-PCG finding)."
+  },
+  {
+   "id": "texco-object",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "coordinate space (Object -> positionGeometry)",
+   "notes": "Object texture coordinates are the object-space shading position (measured on the tile proxy: the raw quad coordinates), mapping to three's positionGeometry. Biased 0.25p + 0.5 into range. Unlocks the splash DPM class (x21)."
+  },
+  {
+   "id": "texco-generated",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "coordinate space (Generated -> texspace mapping)",
+   "notes": "Generated = (p - texspace_location) / (2 * texspace_size) + 0.5, measured on the proxy (which reports size (1,1,1); the degenerate z axis reads 0.5). The runtime contract supplies the mesh texspace via BuildTslOptions. Unlocks the ellie paint-stroke class (x27)."
+  },
+  {
+   "id": "attribute-fac",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "corpus-measured node gap (Attribute Fac output x3)",
+   "notes": "The Fac output of a color attribute is the component average (r+g+b)/3 \u2014 composed from the proven vertex_color and math ops over the corner-attribute proxy."
+  },
+  {
+   "id": "attribute-object",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "per-object attribute (the ellie paint-set frontier x30)",
+   "objectAttributes": {
+    "blendlink_probe": [
+     0.8,
+     0.35,
+     0.1
+    ]
+   },
+   "notes": "Attribute OBJECT reads an object custom property; the cell multiplies the per-object color by the UV gradient so the diff carries both. The runtime supplies the value through a per-object uniform (proven onObjectUpdate contract); the harness resolves the fixture constant via BuildTslOptions.objectAttribute."
+  },
+  {
+   "id": "white-noise",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "hash family (Jenkins lookup3 port)",
+   "notes": "R = 3D Value, G = 2D Value, B = 3D Color's second lane (the w=1 4D hash), all over floor(uv*8) blocks. Blender hashes RAW float bits (__float_as_uint) and interpolated UVs differ between engines by ~260 ulps (measured on the uv-gradient cell), so continuous-coordinate White Noise decorrelates per texel on ANY two backends \u2014 the quantized cell gates the Jenkins port itself; continuous inputs are same-distribution but not texel-comparable."
+  },
+  {
+   "id": "voronoi-f1",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "hash family (Voronoi F1 via the ported Jenkins hash)",
+   "notes": "R = 3D F1 Distance (scale 4, randomness 1, x0.6), G = 3D Color's first lane, B = 2D F1 Distance. Cell coordinates are integer-valued floats, so the hash inputs are bit-identical across engines \u2014 the 0.28 mx_worley divergence closes by porting Blender's own hash, not by finding a shared lineage. F2/smooth/other metrics/fractal detail stay named refusals."
+  },
+  {
+   "id": "noise-z-probe",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise lineage (large-coordinate control)",
+   "notes": "The proven fBM on the z = 150.37 plane \u2014 the control that pins Perlin-lineage agreement in the coordinate range the noise color offsets (100..200) actually use, separating it from the offset computation."
+  },
+  {
+   "id": "noise-detail4",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise detail bound (detail <= 4 candidate)",
+   "notes": "3D fBM at scale 4, detail 4 \u2014 measuring whether the detail bound (set at <= 2 after the detail-6/scale-5 3.9e-2 divergence) can honestly extend to 4, the ellie paint-stroke class's setting (x28)."
+  },
+  {
+   "id": "noise-scale16",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise frequency bound (scale <= 16)",
+   "notes": "3D fBM at scale 16, detail 2 \u2014 the cell that earns the emitter's scale bound. Sub-texel sample-position differences (~3e-5 UV) multiply by frequency: scale 100 (ellie hair) measured 1.8e-1 mean decorrelation, so higher scales refuse and the Material bake carries them."
+  },
+  {
+   "id": "tex-image-linear",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-priority node (Image Texture x14)",
+   "notes": "An 8x8 float Non-Color image sampled Linear/REPEAT over uv*2: manual bilinear at u*W - 0.5 with per-tap floored-modulo wrapping, no float32-filterable dependency. Pixels embed in the IR (bounded at 128x128; the texture transport carries larger images)."
+  },
+  {
+   "id": "tex-image-closest-srgb",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-priority node (Image Texture, byte/sRGB path)",
+   "notes": "An 8x8 BYTE sRGB image with zero-alpha texels, sampled Closest/EXTEND over uv*1.5 - 0.25. MEASURED against baked ground truth: Cycles associates alpha at load IN BYTE sRGB SPACE with integer floor division (rgb_byte*alpha_byte//255), THEN applies the exact IEC decode, and the Color output stays associated \u2014 zero alpha bakes black and nothing divides back. The emitter reproduces that byte-exact pipeline; the out-of-range sweep exercises the clamp."
+  },
+  {
+   "id": "noise-scale20",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise frequency bound (scale <= 20 candidate)",
+   "notes": "3D fBM at scale 20, detail 2 \u2014 the corpus needs 18.9-20 (ellie paint chain, splash bushes); measured to extend the frequency bound honestly."
+  },
+  {
+   "id": "noise-scale40",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise frequency bound (scale <= 40 candidate)",
+   "notes": "3D fBM at scale 40, detail 2 - the frequency 27 of ellie's 49 visible materials actually ask for, and the single largest TSL blocker measured on that character. Voronoi is already proven at 40 (voronoi-scale40) because integer-cell hashing only shifts local distances under coordinate wiggle; fBM octave phases amplify it instead, so noise cannot inherit that bound and has to earn its own. Scale 100 measured 1.8e-1, scale 20 passes; this cell decides whether 40 is inside tolerance or whether the material bake keeps carrying it."
+  },
+  {
+   "id": "voronoi-scale20",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "voronoi frequency bound (scale <= 20 candidate)",
+   "notes": "3D F1 Distance at scale 20 (x0.6): integer-cell hashing is immune to coordinate wiggle away from cell boundaries, so only the local distance shifts \u2014 measured to extend the bound to the ellie paint chain's setting."
+  },
+  {
+   "id": "voronoi-scale40",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "voronoi frequency bound (scale <= 40 candidate)",
+   "notes": "3D F1 Distance at scale 40 (x0.6) \u2014 the deepest voronoi in the ellie paint chain. Voronoi tolerates coordinate wiggle structurally (integer-cell hashing; only local distances shift), unlike fBM noise whose octave phases amplify, so its bound is measured separately."
+  },
+  {
+   "id": "tex-image-box",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-measured node gap (Image BOX projection x10)",
+   "notes": "Sharp box mapping (blend 0) over Object coordinates: the +Z tile normal selects the z-plane with the measured flip (Nz>0 -> u = 1-y, v = x), and the out-of-range sweep exercises REPEAT. The flat tile gates only the +Z branch; the other planes carry the same ported Cycles formula (sign flips included) as a named bound. Blend > 0 refuses."
+  },
+  {
+   "id": "noise-color",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-measured node gap (Noise Color output x3)",
+   "notes": "3D Noise Color (scale 4, detail 2): the second and third lanes are the SAME proven fBM at constant hash-derived offsets (noisetex.h random_float3_offset, seeds 2 and 3 \u2014 the emitter precomputes them with a CPU Jenkins). Coordinates around 100..200 keep the shared-lineage agreement."
+  },
+  {
+   "id": "noise-color-2d",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-measured node gap (Noise Color output, 2D)",
+   "notes": "The vec2 twin of noise-color through random_float2_offset."
+  },
+  {
+   "id": "voronoi-smooth-f1",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "corpus-measured node gap (Voronoi SMOOTH_F1)",
+   "notes": "R = 3D SMOOTH_F1 Distance (smoothness 1 -> params 0.5, x0.6), G = its Color lane, B = 2D Distance. The 5^d h-chain with polynomial corrections, ported verbatim; smoothness folds at emit time and zero falls back to F1 exactly like Cycles."
+  },
+  {
+   "id": "tex-magic-fac",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "deterministic texture (Magic Fac)",
+   "notes": "Magic's Fac output is the color average; the mapping also carries the upstream fmod(p*scale, 2pi) wrap Cycles applies before the cascade."
+  },
+  {
+   "id": "surface-mix-color",
+   "gate": true,
+   "surface": {
+    "channel": "Base Color"
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "surface expression (Mix Shader color lerp)",
+   "notes": "Mix Shader of two Principleds (one constant base, one UV-driven) with the factor swept past [0,1] (1.5v-0.25): emit_surface must produce mix_color with a clamped factor. The reference bakes the hand-built projection; the IR comes from the real closure graph."
+  },
+  {
+   "id": "surface-mix-scalar",
+   "gate": true,
+   "surface": {
+    "channel": "Roughness"
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "surface expression (scalar channel lerp)",
+   "notes": "Roughness 0.15 vs 0.85 lerped by a clamped out-of-range factor \u2014 the scalar-lerp composition (a + (b-a)*clamp01(fac)) from proven math ops. NOTE: parameter lerp is the documented projection model; the closure mix of BRDFs under lighting is nonlinear in these parameters and the EMIT oracle cannot measure that difference."
+  },
+  {
+   "id": "surface-transparent-alpha",
+   "gate": true,
+   "surface": {
+    "channel": "Alpha"
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "surface expression (Transparent coverage)",
+   "notes": "Mix(Principled(alpha 0.9), Transparent, fac=u): the Transparent branch contributes ONLY coverage \u2014 alpha = 0.9*(1-fac) and every other channel passes the lit branch through unweighted (lerping toward invented neutrals would corrupt them). White Transparent only; tinted refuses."
+  },
+  {
+   "id": "surface-emission-radiance",
+   "gate": true,
+   "surface": {
+    "channel": "Emission Color"
+   },
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "surface expression (radiance lerp)",
+   "notes": "Mix(Emission(2.5x HDR), Principled(emission strength 2u)) over v: emission lerps as RADIANCE (color x strength folded first) \u2014 lerping color and strength separately is not linear in emitted light. Surface documents always ship radiance in Emission Color with Strength = 1."
+  },
+  {
+   "id": "surface-nested-mix",
+   "gate": true,
+   "surface": {
+    "channel": "Base Color"
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "surface expression (nested Mix Shader)",
+   "notes": "Mix(Mix(P1, P2, u), P3, v): recursive per-channel folding \u2014 the ellie head/skin class (depth 4 in the corpus) exercised at depth 2."
+  },
+  {
+   "id": "surface-diffuse-glossy",
+   "gate": true,
+   "surface": {
+    "channel": "Metallic"
+   },
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "surface expression (Diffuse/Glossy canonicalization)",
+   "notes": "Mix(Diffuse, Glossy, fac=u) Metallic channel: Diffuse canonicalizes to metallic 0 / roughness 1, Glossy to metallic 1, so the lerp reads back the clamped factor. The canonical channel embedding is a documented model decision."
+  },
+  {
+   "id": "surface-coerced-color",
+   "gate": true,
+   "surface": {
+    "channel": "Emission Color"
+   },
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "surface expression (implicit color->shader coercion)",
+   "notes": "A ColorRamp's Color output plugged straight into the Material Output Surface socket \u2014 Blender's implicit coercion treats it as emission of that color (the splash outline/sky class, 45/68 splash materials need this rule). Radiance = the color chain, strength 1."
+  },
+  {
+   "id": "surface-fresnel-mix",
+   "gate": true,
+   "surface": {
+    "channel": "Base Color"
+   },
+   "viewFrom": "ACTIVE_CAMERA",
+   "analyticCamera": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "surface expression (view-dependent factor)",
+   "notes": "Mix(P1, P2, fac=Fresnel IOR 1.45) under the fixed camera contract: the composed Base Color document is viewDependent and evaluates through the proven fresnel/view_cos ops \u2014 the layered-glass corpus class stays shader-side where it is exact."
+  },
+  {
+   "id": "shader-to-rgb-flat",
+   "gate": true,
+   "surface": {
+    "channel": "Emission Color"
+   },
+   "eeveeLight": {
+    "strength": 3.0,
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "analyticLight": {
+    "irradiance": [
+     0.95493,
+     0.95493,
+     0.95493
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.002,
+    "p99Abs": 0.008,
+    "maxAbs": 0.02
+   },
+   "failureClass": "captured lighting (Shader to RGB, EEVEE oracle)",
+   "notes": "Shader to RGB over a Diffuse BSDF with a UV-gradient albedo, coerced into the surface \u2014 the splash painterly pattern. Reference: an EEVEE ortho render under the fixed-light contract (sun straight on, strength 3, no world); TSL: albedo x diffuseIrradiance with the analytic contract value S/pi. The cell MEASURES EEVEE's diffuse response constant."
+  },
+  {
+   "id": "shader-to-rgb-tilted",
+   "gate": true,
+   "surface": {
+    "channel": "Emission Color"
+   },
+   "eeveeLight": {
+    "strength": 3.0,
+    "rotation": [
+     1.0471975511965976,
+     0,
+     0
+    ]
+   },
+   "analyticLight": {
+    "irradiance": [
+     0.477465,
+     0.477465,
+     0.477465
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.002,
+    "p99Abs": 0.008,
+    "maxAbs": 0.02
+   },
+   "failureClass": "captured lighting (cosine law under the light contract)",
+   "notes": "Same capture with the sun tilted 60 degrees: the plateau must halve (S cos(theta) / pi), gating the Lambert cosine through a second point. The flat tile cannot vary N \u2014 the cosine is gated across cells, not across texels; production normals are Phase 4's application seam."
+  },
+  {
+   "id": "shader-to-rgb-ramped",
+   "gate": true,
+   "surface": {
+    "channel": "Emission Color"
+   },
+   "eeveeLight": {
+    "strength": 3.0,
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "analyticLight": {
+    "irradiance": [
+     0.95493,
+     0.95493,
+     0.95493
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 0.002,
+    "p99Abs": 0.008,
+    "maxAbs": 0.02
+   },
+   "failureClass": "captured lighting (the full splash chain shape)",
+   "notes": "Shader to RGB -> Separate -> ColorRamp -> surface: the captured value quantized by a ramp, exactly the painterly composition. The ramp amplifies any capture-constant error, making this the sensitive gate."
+  },
+  {
+   "id": "fresnel-dielectric",
+   "gate": true,
+   "viewFrom": "ACTIVE_CAMERA",
+   "analyticCamera": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "view-dependent optics (the trapx frontier)",
+   "notes": "Fresnel IOR 1.45 under the fixed camera contract: Cycles bakes with view_from=ACTIVE_CAMERA (rays from the camera at (0,0,2)), and the TSL side evaluates Cycles' fresnel_dielectric_cos with the analytic view cosine from the same contract. Gates the dielectric formula; the runtime view builtins are the production wiring of the same op."
+  },
+  {
+   "id": "layer-weight",
+   "gate": true,
+   "viewFrom": "ACTIVE_CAMERA",
+   "analyticCamera": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "view-dependent optics (the trapx frontier)",
+   "notes": "Layer Weight blend 0.3 under the fixed camera contract: R = Facing (exponent-warped 1-|cos|^e), G = Fresnel (eta = 1/(1-blend))."
+  },
+  {
+   "id": "voronoi-f1-divergence",
+   "gate": false,
+   "pipeline": "handwritten",
+   "tolerance": null,
+   "failureClass": "disagreeing noise implementations (Worley \u2014 diagnostic)",
+   "notes": "Blender Voronoi F1 Distance (scale 4, Euclidean) versus three's mx_worley_noise_float. Measured 2026-07-27 at mean 0.28 / max 0.96 \u2014 a completely different cell hash, the published Worley finding reproduced. RESOLVED the same day by porting Blender's own hash_pcg3d_i (see the gated voronoi-f1 cell); this cell stays as the negative control proving mx_worley is NOT that hash."
+  },
+  {
+   "id": "noise-mx-divergence",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "disagreeing noise implementations \u2014 measured NOT to apply to this pairing",
+   "notes": "Blender Noise Texture (scale 4, detail 0, 3D at z=0) versus three's mx_noise_float remapped 0.5+0.5x. Planned as the negative control for the published 'a slightly different hash produces a completely different pattern' class \u2014 but measured 2026-07-27 at meanAbs 4.1e-5 / maxAbs 1.2e-4 over a real 0.67-span field: the base Perlin octave SHARES an implementation lineage between Cycles and MaterialX. Now a gated regression. The bounded claim covers exactly this configuration; fractal detail octaves, roughness, lacunarity, distortion, 4D, and Voronoi remain unproven and need their own cells."
+  }
+ ]
 }
