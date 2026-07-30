@@ -10,7 +10,7 @@
 // Non-cells are NAMED: vignette/tilt-shift/kuwahara wait on Track B nodes.
 //
 //   node experiments/wgpu-postprocessing-parity/node-run.mjs
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
@@ -53,6 +53,31 @@ if (pins.three !== '0.184.0' || pins['n8ao-webgpu'] !== '0.1.0') {
     `installed pins moved: ${JSON.stringify(pins)}; re-measure before `
     + 'trusting WGPU-NODE-001 on a different three or n8ao-webgpu',
   )
+}
+
+// The harness measures BUILT dist modules; a stale build measures the
+// previous runtime against current sources and reports it as truth (the
+// tsl-node-differential harness earned this guard through a false
+// refutation). Refuse instead of measuring a lie.
+{
+  const distDir = join(repositoryRoot, 'packages', 'blendlink', 'dist')
+  const srcDir = join(repositoryRoot, 'packages', 'blendlink', 'src')
+  const distPath = join(distDir, 'tslMaterialRuntime.js')
+  if (existsSync(distPath)) {
+    const builtAt = statSync(distPath).mtimeMs
+    for (const sourceName of [
+      'tslMaterialRuntime.ts', 'tslMaterialProgram.ts', 'tslNodeRecipe.ts',
+    ]) {
+      const sourcePath = join(srcDir, sourceName)
+      if (existsSync(sourcePath) && statSync(sourcePath).mtimeMs > builtAt) {
+        throw new Error(
+          `built tslMaterialRuntime.js is older than src/${sourceName}; `
+          + 'run npm run build first, or this harness measures the previous '
+          + 'runtime and reports it as the current one',
+        )
+      }
+    }
+  }
 }
 
 const { createServer } = await import(pathToFileURL(join(
@@ -247,9 +272,10 @@ try {
       if (cell.after.nonBackgroundPixels === 0) {
         failures.push(`${backendId}/runtime-diorama: rendered fully black after install`)
       }
-      if (cell.after.sha256 === cell.before.sha256) {
+      if (cell.perturbed.sha256 === cell.before.sha256) {
         failures.push(
-          `${backendId}/runtime-diorama: pixels identical before/after install — programs changed nothing`,
+          `${backendId}/runtime-diorama: perturbed programs did not change pixels — `
+          + 'the install pipeline is not reaching the render',
         )
       }
     }
@@ -277,6 +303,43 @@ try {
         + `(left=${probe.leftRed.toFixed(3)}, right=${probe.rightRed.toFixed(3)})`,
       )
     }
+  }
+
+  // 8b.4: skinning survives program install, proven in vertex-shader
+  // text. Native backend only: getShaderAsync on the WebGL2 backend
+  // returned nothing usable when measured for plan-doc section 6a.
+  const skinningFixture = join(
+    repositoryRoot, 'experiments', 'animation-deformation-browser',
+    'output', 'animation-deformation-fixture.glb',
+  )
+  const skinning = {}
+  if (existsSync(skinningFixture)) {
+    skinning.native = await page.evaluate(
+      ({ backend, config }) => window.__wgpuSkinningCell(backend, config),
+      { backend: 'native', config: { glbUrl: fsUrl(skinningFixture) } },
+    )
+    const cell = skinning.native
+    if (!cell?.ok) {
+      failures.push(
+        `native/skinning-invariant: ${cell?.phase ?? 'missing'} — ${cell?.error ?? 'no result'}`,
+      )
+    } else {
+      if (!cell.markers.skinIndex || !cell.markers.skinWeight) {
+        failures.push(
+          'native/skinning-invariant: vertex shader lost skinning '
+          + `(markers ${JSON.stringify(cell.markers)}); snippet: `
+          + `${(cell.snippet ?? '').slice(0, 400)}`,
+        )
+      }
+      if (cell.morphCount > 0 && !cell.markers.morph) {
+        failures.push(
+          `native/skinning-invariant: vertex shader lost morphs (${cell.morphCount} `
+          + `targets, markers ${JSON.stringify(cell.markers)})`,
+        )
+      }
+    }
+  } else {
+    console.log('skinning-invariant cell skipped: fixture GLB not present')
   }
 
   const crossBackend = {}
@@ -326,6 +389,11 @@ try {
     controlCellsPassing: ids.control
       .filter((id) => control[id]?.ok).length,
     pendingTrackB: ids.pendingTrackB,
+    skinningInvariant: skinning.native
+      ? skinning.native.ok === true
+        && skinning.native.markers?.skinIndex === true
+        && skinning.native.markers?.skinWeight === true
+      : 'skipped',
     failures,
   }
 
@@ -340,6 +408,7 @@ try {
     service,
     runtime,
     objectUniform,
+    skinning,
     crossBackend,
     lookContinuity,
     summary,
@@ -370,6 +439,7 @@ try {
     + `runtime=${['native', 'fallback'].filter((id) => runtime[id]?.ok).length}/${runtimeAvailable ? 2 : 0} `
     + `control=${summary.controlCellsPassing}/${ids.control.length} `
     + `pendingTrackB=${ids.pendingTrackB.length} `
+    + `skinning=${summary.skinningInvariant === true ? 'ok' : summary.skinningInvariant === 'skipped' ? 'skipped' : 'FAIL'} `
     + `failures=${failures.length}`,
   )
 } finally {

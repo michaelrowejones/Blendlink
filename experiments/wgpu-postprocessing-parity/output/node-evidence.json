@@ -673,14 +673,21 @@
         "sha256": "f81eda3391be2859bb7be58a489585b30ea507515475b0d7f5af526aa756e602"
       },
       "after": {
-        "meanLuma": 4.7525286675246905,
-        "nonBackgroundPixels": 4460,
+        "meanLuma": 4.824239267296367,
+        "nonBackgroundPixels": 4639,
         "nonFinitePixels": 0,
-        "sha256": "a2d5018379c39e9ca7f73a720cbd6306ec822f1d002661cafb06facae6d994b6"
+        "sha256": "f81eda3391be2859bb7be58a489585b30ea507515475b0d7f5af526aa756e602"
+      },
+      "perturbed": {
+        "meanLuma": 5.02226690808346,
+        "nonBackgroundPixels": 6020,
+        "nonFinitePixels": 0,
+        "sha256": "d1d95beba61bfd974761b07adb3ce38e2b2b90970306795c87cc0a678b753f8f"
       },
       "materials": 6,
       "applied": 6,
-      "skipped": []
+      "skipped": [],
+      "perturbedApplied": 6
     },
     "fallback": {
       "ok": true,
@@ -691,14 +698,21 @@
         "sha256": "bf150ca3b30654c00483abca11962497ff6fe17e7ff2c63a14ff6810e11280c0"
       },
       "after": {
-        "meanLuma": 4.752841985395863,
-        "nonBackgroundPixels": 4460,
+        "meanLuma": 4.824420849598591,
+        "nonBackgroundPixels": 4639,
         "nonFinitePixels": 0,
-        "sha256": "597b55969eb7add88ff95af58f9eccc9f15f41b435fd15f11aa0f28a8f5e3d50"
+        "sha256": "bf150ca3b30654c00483abca11962497ff6fe17e7ff2c63a14ff6810e11280c0"
+      },
+      "perturbed": {
+        "meanLuma": 5.022505680325992,
+        "nonBackgroundPixels": 6019,
+        "nonFinitePixels": 0,
+        "sha256": "96ae170061cbe49282d489c0b7c35a63b0c4f0aa732b6843858c4e1472ea4377"
       },
       "materials": 6,
       "applied": 6,
-      "skipped": []
+      "skipped": [],
+      "perturbedApplied": 6
     }
   },
   "objectUniform": {
@@ -711,6 +725,20 @@
       "ok": true,
       "leftRed": 0.25098039215686274,
       "rightRed": 0.7490196078431373
+    }
+  },
+  "skinning": {
+    "native": {
+      "ok": true,
+      "applied": 1,
+      "morphCount": 1,
+      "markers": {
+        "skinIndex": true,
+        "skinWeight": true,
+        "morph": true
+      },
+      "vertexBytes": 4474,
+      "snippet": null
     }
   },
   "crossBackend": {
@@ -875,22 +903,14 @@
     "serviceCellsPassingFallback": 5,
     "controlCellsPassing": 13,
     "pendingTrackB": [],
+    "skinningInvariant": true,
     "failures": []
   },
-  "pageErrorCount": 15,
+  "pageErrorCount": 3,
   "pageErrorSample": [
     "Failed to load resource: the server responded with a status of 404 (Not Found)",
     "THREE.TSL: TypeError: beautyNode.sample is not a function [Unknown location]",
-    "THREE.TSL: TypeError: beautyNode.sample is not a function [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]",
-    "THREE.TSL: TypeError: Cannot read properties of undefined (reading 'isOutputStructNode') [Unknown location]"
+    "THREE.TSL: TypeError: beautyNode.sample is not a function [Unknown location]"
   ],
   "limits": [
     "One deterministic scene; production Blendlink scenes are broader.",

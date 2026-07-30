@@ -580,7 +580,8 @@ window.__wgpuRuntimeCell = async (backendId, config) => {
     const hash = [...new Uint8Array(digest)]
       .map((item) => item.toString(16).padStart(2, '0')).join('').slice(0, 16)
     phase = 'install'
-    const { installTslMaterials } = await import('@blendlink-dist/tslMaterialRuntime.js')
+    // eslint-disable-next-line no-var
+    var { installTslMaterials } = await import('@blendlink-dist/tslMaterialRuntime.js')
     installed = await installTslMaterials({
       root: gltf.scene,
       descriptor: {
@@ -594,13 +595,54 @@ window.__wgpuRuntimeCell = async (backendId, config) => {
     })
     phase = 'render-after'
     const after = await capture()
+    const shipped = {
+      materials: installed.materials,
+      applied: installed.applied,
+      skipped: installed.skipped,
+    }
+    // Liveness is proven with a PERTURBED program, not by demanding the
+    // shipped programs differ from their carriers: the diorama's six
+    // programs are all constants, and a constant program that equals its
+    // carrier's factors renders byte-identically -- which is correctness,
+    // not deadness (the earlier "4.82 vs 4.75" delta this cell used to
+    // ride was a runtime inexactness that has since been fixed). Override
+    // every Base Color with a distinctive red; if THAT render matches the
+    // carrier render, the install pipeline is provably not reaching
+    // pixels.
+    phase = 'perturbed-install'
+    installed.dispose()
+    installed = null
+    const document = JSON.parse(new TextDecoder().decode(payload))
+    for (const material of Object.values(document.materials)) {
+      material.channels['Base Color'] = {
+        tslIr: {
+          schemaVersion: 1,
+          model: 'blendlink-tsl-ir-v1',
+          output: { op: 'const_vec3', value: [1, 0, 0] },
+        },
+      }
+    }
+    installed = await installTslMaterials({
+      root: gltf.scene,
+      descriptor: {
+        materialPrograms: {
+          url: config.programsUrl,
+          bytes: payload.byteLength,
+          hash,
+          materials: 0,
+        },
+      },
+      loadPrograms: async () => document,
+    })
+    phase = 'render-perturbed'
+    const perturbed = await capture()
     return {
       ok: true,
       before,
       after,
-      materials: installed.materials,
-      applied: installed.applied,
-      skipped: installed.skipped,
+      perturbed,
+      ...shipped,
+      perturbedApplied: installed.applied,
     }
   } catch (error) {
     return {
@@ -613,6 +655,113 @@ window.__wgpuRuntimeCell = async (backendId, config) => {
       renderer.setRenderTarget(null)
       installed?.dispose()
       target?.dispose()
+    } catch {
+      // The recorded failure above is the evidence.
+    }
+  }
+}
+
+// 8b.4: the load-bearing skinning invariant. Install a program clone onto
+// a SkinnedMesh carrying a morph target and prove the generated VERTEX
+// shader still contains the skinning and morph statements. A clone whose
+// null-slot restore missed vertexNode would bypass setupPosition -- where
+// morphReference and skinning are stacked -- and the character would
+// render at bind pose under a perfectly plausible surface. Vitest cannot
+// see this (no backend, no shader text); only getShaderAsync can, and only
+// on the native backend (the WebGL2 backend returned nothing usable for
+// shader text when measured for plan-doc section 6a).
+window.__wgpuSkinningCell = async (backendId, config) => {
+  const entry = state.node[backendId]
+  if (!entry) return { ok: false, phase: 'construct-renderer' }
+  const { renderer } = entry
+  let phase = 'load-glb'
+  let installed = null
+  const scene = new THREE.Scene()
+  try {
+    const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js')
+    const loader = new GLTFLoader()
+    const gltf = await loader.loadAsync(config.glbUrl)
+    scene.add(gltf.scene)
+    scene.add(new THREE.AmbientLight(0xffffff, 1))
+    phase = 'find-skinned-mesh'
+    let skinned = null
+    gltf.scene.traverse((object) => {
+      if (object.isSkinnedMesh && !skinned) skinned = object
+    })
+    if (!skinned) throw new Error('fixture has no SkinnedMesh')
+    const morphCount = skinned.geometry.morphAttributes.position?.length ?? 0
+    phase = 'install'
+    const material = Array.isArray(skinned.material)
+      ? skinned.material[0]
+      : skinned.material
+    material.userData.blendlink_source_material = 'SkinningFixture'
+    const { installTslMaterials } = await import('@blendlink-dist/tslMaterialRuntime.js')
+    installed = await installTslMaterials({
+      root: gltf.scene,
+      descriptor: {
+        materialPrograms: {
+          url: 'synthetic://skinning', bytes: 0, hash: '0', materials: 1,
+        },
+      },
+      loadPrograms: async () => ({
+        schemaVersion: 1,
+        model: 'blendlink-material-programs-v1',
+        materials: {
+          SkinningFixture: {
+            channels: {
+              'Base Color': {
+                tslIr: {
+                  schemaVersion: 1,
+                  model: 'blendlink-tsl-ir-v1',
+                  output: { op: 'separate', channel: 'x', input: { op: 'uv' } },
+                },
+              },
+            },
+          },
+        },
+      }),
+    })
+    if (installed.applied < 1) {
+      throw new Error(
+        `program did not install: skipped=${JSON.stringify(installed.skipped)}`,
+      )
+    }
+    phase = 'get-shader'
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
+    camera.position.set(0, 1, 4)
+    camera.lookAt(0, 0.5, 0)
+    const shaders = await renderer.debug.getShaderAsync(scene, camera, skinned)
+    const vertex = String(shaders?.vertexShader ?? '')
+    const markers = {
+      skinIndex: vertex.includes('skinIndex'),
+      skinWeight: vertex.includes('skinWeight'),
+      // Morphs never say "morph" in generated WGSL: the target table
+      // compiles to a vertex-stage texture_2d_array sample (measured on
+      // this fixture -- nodeUniform : texture_2d_array<f32> plus a
+      // mangled influence uniform). The array texture IS the signature;
+      // nothing else binds one in the vertex stage of this material.
+      morph: vertex.includes('texture_2d_array'),
+    }
+    const healthy = markers.skinIndex && markers.skinWeight
+      && (morphCount === 0 || markers.morph)
+    return {
+      ok: true,
+      applied: installed.applied,
+      morphCount,
+      markers,
+      vertexBytes: vertex.length,
+      // Failure diagnosis only: localize what the shader actually holds.
+      snippet: healthy ? null : vertex.slice(0, 2000),
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      phase,
+      error: `${error?.name ?? 'Error'}: ${error?.message ?? error}`,
+    }
+  } finally {
+    try {
+      installed?.dispose()
     } catch {
       // The recorded failure above is the evidence.
     }

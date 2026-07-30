@@ -16,19 +16,33 @@ import * as THREE from 'three'
 import { MeshStandardNodeMaterial } from 'three/webgpu'
 import { uniform } from 'three/tsl'
 import {
-  buildTslColorNode,
-  buildTslScalarNode,
   createTslBuildResources,
-  TslIrError,
   type BuildTslOptions,
-  type TslIrDocument,
 } from './tslNodeRecipe.js'
+import {
+  buildMaterialProgram,
+  buildOptionsFor,
+  collectObjectAttributeNames,
+  type MaterialNodeSlot,
+  type MaterialProgramChannel,
+  type TslRuntimeMeshExtras,
+} from './tslMaterialProgram.js'
 
-export interface MaterialProgramChannel {
-  tslIr: TslIrDocument
-  tslIrHash?: string
-  tslIrBytes?: number
-}
+// The builder half (plan-doc gap 8b.3) is a separate module with no
+// three/webgpu dependency; the subpath re-exports it so consumers reach
+// both halves through `blendlink/three/tsl-materials`.
+export {
+  buildMaterialProgram,
+  buildOptionsFor,
+  collectObjectAttributeNames,
+  MATERIAL_CHANNEL_NODES,
+  type BuiltMaterialProgram,
+  type ChannelNodeMapping,
+  type MaterialNodeSlot,
+  type MaterialProgramChannel,
+  type MaterialProgramSkip,
+  type TslRuntimeMeshExtras,
+} from './tslMaterialProgram.js'
 
 export interface MaterialProgramImage {
   /** Basename beside the sidecar; resolved against the sidecar URL. */
@@ -47,15 +61,6 @@ export interface MaterialProgramsDocument {
   materials: Record<string, { channels: Record<string, MaterialProgramChannel> }>
   /** texture_ref source images published beside the sidecar. */
   images?: Record<string, MaterialProgramImage>
-}
-
-/** The mesh extras stamped by the exporter (blendlink_tsl_runtime). */
-interface TslRuntimeMeshExtras {
-  schemaVersion?: number
-  uvChannels?: Record<string, number>
-  colorLayers?: Record<string, string>
-  texspace?: { location: number[]; size: number[] }
-  objectSpace?: string
 }
 
 export interface InstallTslMaterialsOptions {
@@ -103,15 +108,44 @@ export interface InstalledTslMaterials {
   dispose(): void
 }
 
-const CHANNEL_NODES: Record<string, {
-  node: 'colorNode' | 'emissiveNode' | 'roughnessNode' | 'metalnessNode' | 'opacityNode'
-  kind: 'color' | 'scalar'
-}> = {
-  'Base Color': { node: 'colorNode', kind: 'color' },
-  'Emission Color': { node: 'emissiveNode', kind: 'color' },
-  Roughness: { node: 'roughnessNode', kind: 'scalar' },
-  Metallic: { node: 'metalnessNode', kind: 'scalar' },
-  Alpha: { node: 'opacityNode', kind: 'scalar' },
+/**
+ * The slot-installation half of gap 8b.3: construct the node-material
+ * clone for one source material and assign the built slot nodes. Owns
+ * clone CONSTRUCTION deliberately — the null-slot restore list must be
+ * read off a freshly constructed clone (Object.keys on an already-copied
+ * material finds no nulls), so the builder can only ever hand back nodes.
+ */
+export function installProgramIntoMaterial(
+  source: THREE.Material,
+  nodes: Partial<Record<MaterialNodeSlot, unknown>>,
+): MeshStandardNodeMaterial {
+  const clone = new MeshStandardNodeMaterial()
+  // NodeMaterial.copy reads node slots off the source; copying from
+  // a plain shipped MeshStandardMaterial turns every null default
+  // (fragmentNode, vertexNode, mrtNode, ...) into UNDEFINED — and
+  // NodeMaterial.setup() distinguishes the two: `fragmentNode ===
+  // null` falls through and `undefined.isOutputStructNode` throws
+  // on the first shader build (measured on every ellie program
+  // clone, both WGSL and GLSL builders). Capture the constructor's
+  // null slots and restore them after the copy.
+  const nullNodeSlots = Object.keys(clone).filter(
+    (key) => key.endsWith('Node')
+      && (clone as unknown as Record<string, unknown>)[key] === null,
+  )
+  // Material.copy is brand-generic at runtime; @types narrows the
+  // NodeMaterial overload to node materials only.
+  clone.copy(source as unknown as MeshStandardNodeMaterial)
+  for (const key of nullNodeSlots) {
+    const record = clone as unknown as Record<string, unknown>
+    if (record[key] === undefined) record[key] = null
+  }
+  // After copy: Material.copy overwrites both name and userData.
+  clone.name = source.name
+  clone.userData = { ...source.userData }
+  for (const [slot, node] of Object.entries(nodes)) {
+    ;(clone as unknown as Record<string, unknown>)[slot] = node
+  }
+  return clone
 }
 
 async function fetchPrograms(pointer: {
@@ -258,22 +292,6 @@ async function loadProgramTextures(
   }
 }
 
-function collectObjectAttributeNames(value: unknown, names: Set<string>): void {
-  if (Array.isArray(value)) {
-    for (const item of value) collectObjectAttributeNames(item, names)
-    return
-  }
-  if (value && typeof value === 'object') {
-    const record = value as Record<string, unknown>
-    if (record.op === 'attribute_object' && typeof record.name === 'string') {
-      names.add(record.name)
-    }
-    for (const item of Object.values(record)) {
-      collectObjectAttributeNames(item, names)
-    }
-  }
-}
-
 /** One shared resolver: every attribute_object op becomes a per-object
  * uniform reading the exported node extras through onObjectUpdate (the
  * harness-proven per-object delivery contract). Missing values read
@@ -306,56 +324,6 @@ function meshRuntimeExtras(object: THREE.Object3D): TslRuntimeMeshExtras | null 
   return extras && typeof extras === 'object'
     ? extras as TslRuntimeMeshExtras
     : null
-}
-
-function buildOptionsFor(
-  extras: TslRuntimeMeshExtras | null,
-  resources: BuildTslOptions['resources'],
-  materialName: string,
-  textures?: BuildTslOptions['textures'],
-  objectAttribute?: BuildTslOptions['objectAttribute'],
-): BuildTslOptions {
-  const options: BuildTslOptions = { resources }
-  if (textures) options.textures = textures
-  if (objectAttribute) options.objectAttribute = objectAttribute
-  if (extras?.uvChannels) {
-    const uvChannels = extras.uvChannels
-    options.uvChannel = (uvMap) => {
-      const index = uvChannels[uvMap]
-      if (typeof index !== 'number') {
-        throw new TslIrError(
-          `Material "${materialName}" IR references UV map ${JSON.stringify(uvMap)} ` +
-            'that the exported mesh extras do not map.',
-        )
-      }
-      return index
-    }
-  }
-  if (extras?.colorLayers) {
-    const colorLayers = extras.colorLayers
-    options.colorAttribute = (layer) => {
-      const name = colorLayers[layer]
-      if (typeof name !== 'string') {
-        throw new TslIrError(
-          `Material "${materialName}" IR references color layer ${JSON.stringify(layer)} ` +
-            'that the exported mesh extras do not map.',
-        )
-      }
-      return name
-    }
-  }
-  if (extras?.texspace
-    && extras.texspace.location?.length === 3
-    && extras.texspace.size?.length === 3) {
-    options.generatedTexspace = {
-      location: [...extras.texspace.location] as [number, number, number],
-      size: [...extras.texspace.size] as [number, number, number],
-    }
-  }
-  if (extras?.objectSpace === 'gltf-y-up') {
-    options.objectSpace = { basis: 'gltf-y-up' }
-  }
-  return options
 }
 
 /**
@@ -391,7 +359,6 @@ export async function installTslMaterials(
     original: THREE.Material
     clone: MeshStandardNodeMaterial
     release?: (transferred: boolean) => void
-    resources: ReturnType<typeof createTslBuildResources>
   }
   const installed: InstalledSwap[] = []
   // One clone per (source material x runtime-extras variant): meshes whose
@@ -462,60 +429,21 @@ export async function installTslMaterials(
         let variant = variants.get(variantKey)
         if (!variant) {
           const resources = createTslBuildResources()
-          const clone = new MeshStandardNodeMaterial()
-          // NodeMaterial.copy reads node slots off the source; copying from
-          // a plain shipped MeshStandardMaterial turns every null default
-          // (fragmentNode, vertexNode, mrtNode, ...) into UNDEFINED — and
-          // NodeMaterial.setup() distinguishes the two: `fragmentNode ===
-          // null` falls through and `undefined.isOutputStructNode` throws
-          // on the first shader build (measured on every ellie program
-          // clone, both WGSL and GLSL builders). Capture the constructor's
-          // null slots and restore them after the copy.
-          const nullNodeSlots = Object.keys(clone).filter(
-            (key) => key.endsWith('Node')
-              && (clone as unknown as Record<string, unknown>)[key] === null,
+          // Build first, install second (the 8b.3 seam): the builder
+          // returns slot nodes and named skips; the installer constructs
+          // the clone only when something built, so the no-channel path
+          // never allocates a material at all.
+          const program = buildMaterialProgram(
+            Object.fromEntries(channels),
+            buildOptionsFor(
+              extras, resources, source, programTextures?.resolver,
+              objectAttribute,
+            ),
           )
-          // Material.copy is brand-generic at runtime; @types narrows the
-          // NodeMaterial overload to node materials only.
-          clone.copy(material as unknown as MeshStandardNodeMaterial)
-          for (const key of nullNodeSlots) {
-            const record = clone as unknown as Record<string, unknown>
-            if (record[key] === undefined) record[key] = null
+          for (const item of program.skipped) {
+            skipped.push({ material: source, ...item })
           }
-          clone.name = material.name
-          clone.userData = { ...material.userData }
-          const buildOptions = buildOptionsFor(
-            extras, resources, source, programTextures?.resolver,
-            objectAttribute,
-          )
-          let builtAny = false
-          for (const [channel, entry] of channels) {
-            const mapping = CHANNEL_NODES[channel]
-            if (!mapping) {
-              skipped.push({
-                material: source,
-                channel,
-                reason: 'channel has no node mapping in this runtime version; its carrier stays',
-              })
-              continue
-            }
-            try {
-              const node = mapping.kind === 'color'
-                ? buildTslColorNode(entry.tslIr, buildOptions)
-                : buildTslScalarNode(entry.tslIr, buildOptions)
-              ;(clone as unknown as Record<string, unknown>)[mapping.node] = node
-              builtAny = true
-            } catch (error) {
-              if (!(error instanceof TslIrError)) throw error
-              skipped.push({
-                material: source,
-                channel,
-                reason: `program refused to build: ${error.message}`,
-              })
-            }
-          }
-          if (!builtAny) {
-            clone.dispose()
+          if (Object.keys(program.nodes).length === 0) {
             resources.dispose()
             skipped.push({
               material: source,
@@ -523,7 +451,10 @@ export async function installTslMaterials(
             })
             return
           }
-          variant = { clone, resources }
+          variant = {
+            clone: installProgramIntoMaterial(material, program.nodes),
+            resources,
+          }
           variants.set(variantKey, variant)
         }
         const release = options.trackMaterialClone?.(material, variant.clone)
@@ -533,7 +464,6 @@ export async function installTslMaterials(
           original: material,
           clone: variant.clone,
           ...(release ? { release } : {}),
-          resources: variant.resources,
         })
         if (Array.isArray(mesh.material)) {
           mesh.material[index] = variant.clone

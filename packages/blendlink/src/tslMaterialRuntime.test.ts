@@ -303,4 +303,56 @@ describe('installTslMaterials', () => {
     installed.dispose()
     expect(release).toHaveBeenCalledWith(false)
   })
+
+  it('restores EVERY constructor-null node slot after the copy, generically', async () => {
+    // The hand-listed fragmentNode/vertexNode/mrtNode assertions above
+    // would keep passing if three added a new *Node slot the restore loop
+    // missed. Enumerate the constructor's own null slots and require the
+    // installed clone to hold exact null (never undefined) for all of
+    // them — a non-null vertexNode would bypass setupPosition and erase
+    // skinning; an undefined fragmentNode crashes the first shader build.
+    const { MeshStandardNodeMaterial } = await import('three/webgpu')
+    const fresh = new MeshStandardNodeMaterial() as unknown as Record<string, unknown>
+    const constructorNullSlots = Object.keys(fresh).filter(
+      (key) => key.endsWith('Node') && fresh[key] === null,
+    )
+    expect(constructorNullSlots.length).toBeGreaterThan(3)
+
+    const material = new THREE.MeshStandardMaterial()
+    material.userData.blendlink_source_material = 'Paint'
+    const { root, mesh } = sceneWith(material)
+    const installed = await installTslMaterials({
+      root,
+      descriptor: { materialPrograms: pointer },
+      loadPrograms: async () => programs({
+        Paint: { channels: { 'Base Color': { tslIr: UV_X_DOCUMENT } } },
+      }),
+    })
+    const applied = mesh.material as unknown as Record<string, unknown>
+    for (const key of constructorNullSlots) {
+      if (key === 'colorNode') continue // the program's own slot
+      expect(applied[key], key).toBeNull()
+    }
+    installed.dispose()
+  })
+
+  it('builds a program without any material through the exported seam', async () => {
+    const { buildMaterialProgram } = await import('./tslMaterialProgram.js')
+    const { createTslBuildResources } = await import('./tslNodeRecipe.js')
+    const resources = createTslBuildResources()
+    const program = buildMaterialProgram(
+      {
+        'Base Color': { tslIr: UV_X_DOCUMENT },
+        Unmapped: { tslIr: UV_X_DOCUMENT },
+      },
+      { resources },
+    )
+    expect(program.nodes.colorNode).toBeTruthy()
+    expect(Object.keys(program.nodes)).toEqual(['colorNode'])
+    expect(program.skipped).toEqual([{
+      channel: 'Unmapped',
+      reason: 'channel has no node mapping in this runtime version; its carrier stays',
+    }])
+    resources.dispose()
+  })
 })
