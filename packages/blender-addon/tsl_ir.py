@@ -1540,6 +1540,29 @@ def emit_output(node, from_socket, stack=()):
         if not bool(getattr(node, "normalize", True)):
             _refuse("Unnormalized noise has no cell yet")
         dimensions = str(getattr(node, "noise_dimensions", "3D"))
+        # 1D attempted 2026-07-30 and reverted: the TSL port of perlin_1d
+        # measured meanAbs 1.79e-1 against a 1e-3 gate. What the attempt DID
+        # establish, so the next one need not redo it:
+        #   * The algorithm is understood. A Python port of perlin_1d, grad1
+        #     and hash_uint matches the reference bake to 2e-4, so Blender's
+        #     side is not in doubt.
+        #   * hash_uint's seed is 0xdeadbeef + (1 << 2) + 13 -- the arity is
+        #     encoded, so it is NOT hashUint2(x, 0).
+        #   * three has no 1D Perlin at all: mx_perlin_noise_float is an
+        #     overloadingFn over vec2 and vec3 only, so this must be a direct
+        #     port of Blender's rather than a MaterialX mapping.
+        #   * Ruled out by testing against the rendered field: wrong seed
+        #     arity, flipped grad1 negate branch, missing noise_scale1 0.25.
+        #   * The remaining suspect is the TSL integer path -- bitcast(int(
+        #     floor(x)), 'uint') and the u32 arithmetic inside the 1-argument
+        #     hash. The float half is fine; the field has the right frequency
+        #     and range and only the gradient selection differs.
+        #   * Also fixed and then reverted with it: the emitter's dimensions
+        #     ternary read `2 if dimensions == "2D" else 3`, which silently
+        #     mapped 1D to 3 and fed the scalar W into mx_noise_float, whose
+        #     .convert('vec2|vec3') produced a plausible-looking wrong field.
+        #     Any future 1D work must carry dimensions explicitly first, or it
+        #     will debug a hash that was never reached.
         if dimensions not in {"2D", "3D"}:
             _refuse(
                 f"Noise dimensions {dimensions!r} has no cell yet"
@@ -1563,7 +1586,9 @@ def emit_output(node, from_socket, stack=()):
                 )
             return folded
 
-        vector = node.inputs["Vector"]
+        # 1D noise has no Vector socket at all -- the node swaps it for W --
+        # so this cannot be fetched unconditionally.
+        vector = node.inputs.get("Vector")
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
