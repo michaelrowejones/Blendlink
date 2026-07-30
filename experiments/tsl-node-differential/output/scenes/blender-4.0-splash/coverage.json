@@ -7,26 +7,24 @@
     "linked": 0,
     "constant": 138
   },
-  "irCompiled": 84,
+  "irCompiled": 198,
   "irCompiledViewDependent": 0,
   "refusals": {
     "no root-level single Principled surface": 45
   },
   "surface": {
-    "resolved": 14,
-    "channelsCompiled": 84,
-    "viewDependent": 0,
+    "resolved": 33,
+    "channelsCompiled": 198,
+    "viewDependent": 7,
     "refusals": {
-      "Voronoi scale 150 exceeds the proven range (<= 40); sample-position differences decorrelate high-frequency patterns": 13,
       "Image 1000x1000 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
       "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
-      "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1,
-      "Voronoi scale 155 exceeds the proven range (<= 40); sample-position differences decorrelate high-frequency patterns": 6
+      "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1
     }
   },
   "sampled": [],
   "limits": [
     "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
   ],
-  "irCompiledAttributeDriven": 1
+  "irCompiledAttributeDriven": 18
 }

@@ -1419,6 +1419,27 @@ def build_voronoi_scale177_smoothf1(tree, emission):
     tree.links.new(distance, emission.inputs["Color"])
 
 
+def build_voronoi_scale155_f1_color(tree, emission):
+    # The splash configuration verbatim: 19 nodes, all 3D F1 EUCLIDEAN,
+    # randomness 1.0, Color output, group-linked Scale folding to 150 or
+    # 155. Sub-texel cells: the per-texel colour is the hash of whichever
+    # cell wins, and sample-position wiggle flips the winner, so this is
+    # measured as a distribution, never per texel.
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+    node = tree.nodes.new("ShaderNodeTexVoronoi")
+    node.voronoi_dimensions = "3D"
+    node.feature = "F1"
+    node.distance = "EUCLIDEAN"
+    if hasattr(node, "normalize"):
+        node.normalize = False
+    node.inputs["Scale"].default_value = 155.0
+    node.inputs["Randomness"].default_value = 1.0
+    node.inputs["Detail"].default_value = 0.0
+    tree.links.new(uv, node.inputs["Vector"])
+    color = next(s for s in node.outputs if s.identifier == "Color")
+    tree.links.new(color, emission.inputs["Color"])
+
+
 def build_white_noise_continuous_uv(tree, emission):
     # Raw UV straight into White Noise -- no floor/ceil/snap. This is the
     # configuration the corpus actually uses and the one that cannot agree
@@ -2299,6 +2320,7 @@ BUILDERS = {
     "noise-1d-scale1600": build_noise_1d_scale1600,
     "noise-2d-scale100-color": build_noise_2d_scale100_color,
     "voronoi-scale177-smoothf1": build_voronoi_scale177_smoothf1,
+    "voronoi-scale155-f1-color": build_voronoi_scale155_f1_color,
     "white-noise-continuous-uv": build_white_noise_continuous_uv,
     "tex-image-cubic": build_tex_image_cubic,
     "tex-image-cubic-extend": build_tex_image_cubic_extend,

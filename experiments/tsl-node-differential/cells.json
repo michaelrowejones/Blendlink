@@ -2153,6 +2153,33 @@
    "tileBound": true
   },
   {
+   "id": "voronoi-scale155-f1-color",
+   "gate": true,
+   "claim": "approximate",
+   "divergenceKind": "bounded",
+   "tolerance": null,
+   "declaredDivergence": {
+    "meanAbs": 0.00245,
+    "p99Abs": 0.0,
+    "maxAbs": 0.819
+   },
+   "divergenceBudget": {
+    "meanAbs": 0.003,
+    "p99Abs": 0.01,
+    "maxAbs": 1.0
+   },
+   "provenBy": [
+    "voronoi-f1",
+    "voronoi-scale40"
+   ],
+   "measuredAt": "2026-07-30",
+   "blenderVersion": "5.2.0",
+   "threeVersion": "0.184.0",
+   "tileBound": true,
+   "failureClass": "F1 voronoi Color, scale band 40..160 (bounded, boundary-texel tail)",
+   "notes": "DECLARED, NOT PROVEN. The splash configuration verbatim: 19 nodes, 3D F1 EUCLIDEAN randomness 1.0, Color output, group-linked Scale folding to 150/155; the cell measures the band top at 155. First declared as decorrelated by analogy with white noise and REFUTED by the inverted per-texel floor doing its job: measured p99Abs is 0 -- more than 99% of texels agree exactly, because the ~3e-5 sample-position wiggle is only ~5e-3 of a cell width even at this scale. The divergence is a fat tail confined to cell-boundary texels whose winning cell flips to a different hash colour: meanAbs 2.447e-3, maxAbs 0.819 (distribution essentially identical, histogramL1 5.2e-3). The p99Abs budget of 0.01 is the cliff detector: if the flip fraction ever exceeds ~1% of texels, p99 jumps O(1) and fails loudly. maxAbs cannot regress past its budget of 1.0 by construction (channels are clamped colours); meanAbs and p99 carry the gate. Hash-to-colour algebra proven by voronoi-f1, scale robustness by voronoi-scale40, both exact."
+  },
+  {
    "id": "white-noise-continuous-uv",
    "gate": true,
    "claim": "approximate",

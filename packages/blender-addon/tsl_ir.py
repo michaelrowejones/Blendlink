@@ -275,6 +275,21 @@ _APPROXIMATION_CELLS = {
             "is measurably over the exact gate, so it ships declared."
         ),
     },
+    "tsl.voronoi-f1-color-scale-above-exact": {
+        "cell": "voronoi-scale155-f1-color",
+        "divergenceKind": "bounded",
+        "provenBy": ["voronoi-f1", "voronoi-scale40"],
+        "detail": (
+            "F1 voronoi COLOR output between scale 40 and 160. Measured at "
+            "155: more than 99% of texels agree exactly (p99Abs 0) because "
+            "the ~3e-5 sample-position wiggle is only ~5e-3 of a cell "
+            "width; the divergence is confined to boundary texels whose "
+            "winning cell flips to a different hash colour (meanAbs "
+            "2.45e-3, maxAbs 0.819). The hash-to-colour algebra is proven "
+            "at low scale by voronoi-f1; scale robustness to 40 by "
+            "voronoi-scale40."
+        ),
+    },
     "tsl.white-noise-continuous-uv": {
         "cell": "white-noise-continuous-uv",
         "divergenceKind": "decorrelated",
@@ -333,6 +348,15 @@ _NOISE_SCALE_BOUND = 80.0
 # constants from the exact bound rather than a raised copy of it.
 _NOISE_SCALE_APPROXIMATE_BOUNDS = {"1D": 1600.0, "2D": 200.0, "3D": 400.0}
 _VORONOI_SMOOTH_F1_APPROXIMATE_BOUND = 180.0
+# F1 COLOR only: the splash corpus asks for 150/155. Measured 2026-07-30
+# at 155: even with ~0.8-texel cells, the ~3e-5 sample-position wiggle is
+# only ~5e-3 of a cell width, so MORE THAN 99% of texels agree exactly
+# (p99Abs 0) and only boundary texels flip winners (maxAbs 0.819,
+# meanAbs 2.45e-3) -- bounded with a fat tail, NOT the decorrelated
+# regime the refusal message used to predict. F1 Distance above 40 still
+# refuses: it would be bounded-class too, but nothing needs it yet and
+# an unmeasured band is not shippable.
+_VORONOI_F1_COLOR_APPROXIMATE_BOUND = 160.0
 _VORONOI_SCALE_BOUND = 40.0
 _NOISE_DETAIL_BOUND = 6.0
 
@@ -1753,10 +1777,21 @@ def emit_output(node, from_socket, stack=()):
             and voronoi_scale_magnitude
             <= _VORONOI_SMOOTH_F1_APPROXIMATE_BOUND + 1e-9
         ):
-            # Only the corpus feature has a measured band; F1 at 177.1
-            # measured meanAbs 3.01e-3 too and could earn its own cell when
-            # something needs it.
+            # Only the measured features have bands; F1 Distance above 40
+            # could earn its own (bounded-class) cell when something needs
+            # it.
             _approximate("tsl.voronoi-smooth-f1-scale-above-exact")
+        elif (
+            voronoi_scale_magnitude > _VORONOI_SCALE_BOUND + 1e-9
+            and feature == "F1"
+            and output_id == "Color"
+            and voronoi_scale_magnitude
+            <= _VORONOI_F1_COLOR_APPROXIMATE_BOUND + 1e-9
+        ):
+            # The splash shape: 19 nodes, 3D F1 EUCLIDEAN randomness 1.0,
+            # Color output, group-linked Scale folding to 150/155. Bounded
+            # with a fat boundary-texel tail -- see the band constant.
+            _approximate("tsl.voronoi-f1-color-scale-above-exact")
         elif abs(float(voronoi_scale["value"])) > _VORONOI_SCALE_BOUND + 1e-9:
             # Voronoi's bound is measured separately from noise: integer
             # cell hashing tolerates coordinate wiggle structurally (only

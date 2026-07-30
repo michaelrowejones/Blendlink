@@ -1212,6 +1212,27 @@
       },
       "failureClass": "Smooth F1 voronoi, scale band 40..180 (bounded approximation)"
     },
+    "voronoi-scale155-f1-color": {
+      "ok": true,
+      "claim": "approximate",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0024466525874989506,
+        "p99Abs": 0,
+        "maxAbs": 0.818643806502223
+      },
+      "provenBy": [
+        "voronoi-f1",
+        "voronoi-scale40"
+      ],
+      "declaredDivergence": {
+        "meanAbs": 0.00245,
+        "p99Abs": 0,
+        "maxAbs": 0.819
+      },
+      "failureClass": "F1 voronoi Color, scale band 40..160 (bounded, boundary-texel tail)"
+    },
     "white-noise-continuous-uv": {
       "ok": true,
       "claim": "approximate",
@@ -1733,7 +1754,7 @@
   },
   "claims": {
     "exact": 130,
-    "approximate": 7,
+    "approximate": 8,
     "diagnostic": 1
   },
   "approximations": [
@@ -1824,6 +1845,21 @@
       "distribution": null,
       "provenBy": [
         "voronoi-smooth-f1",
+        "voronoi-scale40"
+      ]
+    },
+    {
+      "id": "voronoi-scale155-f1-color",
+      "failureClass": "F1 voronoi Color, scale band 40..160 (bounded, boundary-texel tail)",
+      "pass": true,
+      "perTexel": {
+        "meanAbs": 0.0024466525874989506,
+        "p99Abs": 0,
+        "maxAbs": 0.818643806502223
+      },
+      "distribution": null,
+      "provenBy": [
+        "voronoi-f1",
         "voronoi-scale40"
       ]
     },
@@ -2014,28 +2050,26 @@
           "linked": 0,
           "constant": 138
         },
-        "irCompiled": 84,
+        "irCompiled": 198,
         "irCompiledViewDependent": 0,
         "refusals": {
           "no root-level single Principled surface": 45
         },
         "surface": {
-          "resolved": 14,
-          "channelsCompiled": 84,
-          "viewDependent": 0,
+          "resolved": 33,
+          "channelsCompiled": 198,
+          "viewDependent": 7,
           "refusals": {
-            "Voronoi scale 150 exceeds the proven range (<= 40); sample-position differences decorrelate high-frequency patterns": 13,
             "Image 1000x1000 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
             "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
-            "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1,
-            "Voronoi scale 155 exceeds the proven range (<= 40); sample-position differences decorrelate high-frequency patterns": 6
+            "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1
           }
         },
         "sampled": [],
         "limits": [
           "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
         ],
-        "irCompiledAttributeDriven": 1
+        "irCompiledAttributeDriven": 18
       },
       "differentials": {}
     },

@@ -2121,6 +2121,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "voronoi-scale155-f1-color": {
+      "path": "voronoi-scale155-f1-color.f32",
+      "pipeline": "ir",
+      "ir": "ir/voronoi-scale155-f1-color.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.00012257788330316544,
+        0.0003137602470815182,
+        0.00010678218677639961
+      ],
+      "rgbMax": [
+        0.9996318221092224,
+        0.9999420046806335,
+        0.9997348785400391
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "white-noise-continuous-uv": {
       "path": "white-noise-continuous-uv.f32",
       "pipeline": "ir",
