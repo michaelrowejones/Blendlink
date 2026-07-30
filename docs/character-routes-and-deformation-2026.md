@@ -214,13 +214,23 @@ emissive, a constant ORM *and* the binary alpha that forces BLEND, all from one 
 are one defect with three symptoms**, and the population is the stylized set that §8a shows TSL
 could carry.
 
-**The attestation cannot currently catch the white-emissive failure — verified.** The whole
-emissive gate at `material_compiler.py:4827-4848` sits behind `if emissive_fact is not None`, so
-it only runs when an emissive *image* was planned, and `:6953` records `"emissiveFactor": None`
-for the channels transport. The moment 1b drops a black emissive texture there is nothing
-checking that `emissiveFactor` became `[0,0,0]` — the exact failure this phase exists to prevent
-would ship unattested. **Land that gate before the elision, not with it**, so it is proven to
-pass on today's output first and the elision cannot regress it silently.
+**The attestation gate — SHIPPED 2026-07-30, ahead of the elision.** The emissive check used to
+sit entirely behind `if emissive_fact is not None`, so it only ran when an emissive *image* was
+planned: the one case that cannot fail. Both languages now gate the other case — when no emissive
+image is planned the emitted factor must be black and no `KHR_materials_emissive_strength` may
+ship. `npm run test:full` passes with the gate in place, so the invariant holds across the whole
+release corpus, not just ellie. When the elision starts folding a non-zero constant emission into
+the factor it must record the expected value on the plan and compare against it; widening this
+branch silently would hand 1b back the hole it exists to close.
+
+**Also shipped 2026-07-30: the duplicate half of the win.** `mergeGeneratedChannelTextures` in
+`optimizer.ts` merges byte-identical compiler-generated channel textures. Measured on ellie:
+**85 → 63 textures, 201.458 → 148.875 MiB GPU (−52.583 MiB, −26.1%)**, no material slot losing a
+binding, file size essentially unchanged. The scoping matters — it matches only
+`channel-<token>-<slot>`, whose token is `sha256(_variant_key(...))[:12]` and therefore never was
+stable identity, so every authored name keeps all three of the protections that guard it
+(`keepUniqueNames`, `protectNamedResourcesForPrune`, `captureSemanticIdentity`). **1b's remaining
+marginal win is the 22.771 MiB that is genuinely constant rather than duplicated.**
 
 Finally, it is a **VRAM and binding-count win, not a download win** — those PNGs are 14 KB each
 and total 207 kB of a 10.2 MB payload. Quote the **37.4%**, not the megabytes: under KTX2/BC7 the
