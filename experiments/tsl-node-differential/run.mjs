@@ -314,6 +314,7 @@ try {
   }
 
   const results = {}
+  const deferredProvenBy = []
   const failures = []
   for (const cell of cellsManifest.cells) {
     const errorsBefore = pageErrors.length
@@ -385,7 +386,6 @@ try {
       // this cell's honest claim is only that the residual divergence is
       // confined to sample position.
       for (const dependency of cell.provenBy ?? []) {
-        const evidence = results[dependency]
         const declared = cellsManifest.cells.find((c) => c.id === dependency)
         if (!declared || (declared.claim ?? 'exact') !== 'exact') {
           throw new Error(
@@ -394,12 +394,9 @@ try {
             + 'approximation.',
           )
         }
-        if (!evidence || evidence.pass !== true) {
-          throw new Error(
-            `${cell.id}: provenBy names ${dependency}, which did not pass -- `
-            + 'the algorithm behind this approximation is unproven.',
-          )
-        }
+        // Pass/fail is validated AFTER the loop: manifest order must not
+        // decide whether a dependency "exists" yet.
+        deferredProvenBy.push({ cellId: cell.id, dependency })
       }
       if (cell.divergenceKind === 'decorrelated') {
         distribution = distributionStats(referencePixels, renderedPixels)
@@ -432,10 +429,57 @@ try {
             + 'disagree, so this is a mapping defect, not decorrelation.',
           )
         }
+      } else if (cell.divergenceKind === 'bounded') {
+        // Per-texel comparison IS meaningful here; the error merely exceeds
+        // the exact bar (sub-texel sample-position wiggle multiplied by an
+        // extreme frequency). Gated on an absolute budget AND two-sided
+        // pinning of the declared figure: >1.25x declared is a regression,
+        // <0.5x declared means the declaration has gone stale-pessimistic
+        // and must be re-declared tighter or promoted to exact. One-sided
+        // pinning is exactly what let the 1.8e-1 fiction survive in the
+        // emitter's comments for a month.
+        const budget = cell.divergenceBudget
+        const declared = cell.declaredDivergence
+        if (!budget || !declared) {
+          throw new Error(
+            `${cell.id}: bounded approximation needs divergenceBudget AND `
+            + 'declaredDivergence -- an unbounded bound is not a claim.',
+          )
+        }
+        pass = measured.meanAbs <= budget.meanAbs
+          && measured.p99Abs <= budget.p99Abs
+          && measured.maxAbs <= budget.maxAbs
+        if (!pass) {
+          failures.push(
+            `${cell.id} (${cell.failureClass}, approximate/bounded): mean `
+            + `${measured.meanAbs.toExponential(3)} p99 `
+            + `${measured.p99Abs.toExponential(3)} max `
+            + `${measured.maxAbs.toExponential(3)} exceeds `
+            + `${JSON.stringify(budget)}`,
+          )
+        }
+        if (measured.meanAbs > declared.meanAbs * 1.25) {
+          failures.push(
+            `${cell.id}: measured meanAbs ${measured.meanAbs.toExponential(3)} `
+            + `exceeds declaredDivergence ${declared.meanAbs.toExponential(3)} `
+            + '* 1.25 -- the declared divergence has regressed; re-measure '
+            + 'and re-declare, do not raise the budget.',
+          )
+          pass = false
+        }
+        if (measured.meanAbs < declared.meanAbs * 0.5) {
+          failures.push(
+            `${cell.id}: measured meanAbs ${measured.meanAbs.toExponential(3)} `
+            + `fell below declaredDivergence ${declared.meanAbs.toExponential(3)} `
+            + '* 0.5 -- the declaration is stale-pessimistic; re-declare '
+            + "tighter, or promote the configuration to claim 'exact'.",
+          )
+          pass = false
+        }
       } else {
         throw new Error(
           `${cell.id}: claim 'approximate' needs divergenceKind `
-          + "'decorrelated' (bounded is not implemented yet).",
+          + "'decorrelated' or 'bounded'.",
         )
       }
     } else if (gated) {
@@ -461,6 +505,18 @@ try {
       ...(cell.declaredDivergence
         ? { declaredDivergence: cell.declaredDivergence } : {}),
       failureClass: cell.failureClass,
+    }
+  }
+
+  // provenBy pass/fail validation, deferred so manifest order is irrelevant.
+  for (const { cellId, dependency } of deferredProvenBy) {
+    const evidence = results[dependency]
+    if (!evidence || evidence.pass !== true) {
+      failures.push(
+        `${cellId}: provenBy names ${dependency}, which did not pass -- `
+        + 'the algorithm behind this approximation is unproven.',
+      )
+      if (results[cellId]) results[cellId].pass = false
     }
   }
 
@@ -509,10 +565,13 @@ try {
       const differentials = {}
       for (const [cellId, cellEntry] of Object.entries(sceneManifest.cells)) {
         const rendered = await page.evaluate(
-          ({ id, irPath }) => window.__tslDiffRun(id, 'ir', irPath),
+          ({ id, irPath, objectAttributes }) => window.__tslDiffRun(
+            id, 'ir', irPath, false, null, objectAttributes,
+          ),
           {
             id: cellId,
             irPath: `/output/scenes/${sceneId}/ir/${cellId}.json`,
+            objectAttributes: cellEntry.objectAttributes ?? null,
           },
         )
         if (!rendered.ok) {
@@ -527,17 +586,117 @@ try {
           readFileSync(join(sceneDir, cellEntry.path)).buffer,
         )
         const measured = stats(referencePixels, renderedPixels)
-        const pass = measured.meanAbs <= sceneTolerance.meanAbs
-          && measured.p99Abs <= sceneTolerance.p99Abs
-          && measured.maxAbs <= sceneTolerance.maxAbs
-        if (!pass) {
-          failures.push(
-            `${sceneId}/${cellId}: mean ${measured.meanAbs.toExponential(3)} `
-            + `p99 ${measured.p99Abs.toExponential(3)} `
-            + `max ${measured.maxAbs.toExponential(3)}`,
-          )
+        // A channel whose IR carries declared approximations must be
+        // gated by its DECLARATION, not by exactness -- the first corpus
+        // sweep measured a decorrelated white-noise chain at 1.8e-1
+        // against the exact tolerance and called it a failure of a
+        // mapping that is working exactly as declared.
+        const approximations = cellEntry.approximations ?? []
+        const kinds = new Set(
+          approximations.map((item) => item.divergenceKind),
+        )
+        let pass
+        let claim = 'exact'
+        // Chain-level distribution agreement: same ramps and palettes
+        // over statistically identical noise must agree in histogram
+        // and spectrum even where texels flip, so this distinguishes a
+        // mapping bug from declared divergence at CHAIN level.
+        const chainDistributionTolerance = {
+          meanDelta: 0.02, stdDeltaFraction: 0.08,
+          histogramL1: 0.2, radialSpectrumL1: 0.35,
         }
-        differentials[cellId] = { ok: true, pass, measured }
+        const distributionPass = (distribution) => (
+          distribution.meanDelta <= chainDistributionTolerance.meanDelta
+          && distribution.stdDeltaFraction
+            <= chainDistributionTolerance.stdDeltaFraction
+          && distribution.histogramL1
+            <= chainDistributionTolerance.histogramL1
+          && distribution.radialSpectrumL1
+            <= chainDistributionTolerance.radialSpectrumL1
+        )
+        let distribution
+        if (kinds.has('decorrelated')) {
+          // Per-texel agreement is impossible in principle for the whole
+          // chain, but the distributions must still agree -- that is
+          // what separates declared decorrelation from a broken mapping.
+          claim = 'approximate/decorrelated'
+          distribution = distributionStats(referencePixels, renderedPixels)
+          pass = distributionPass(distribution)
+          if (!pass) {
+            failures.push(
+              `${sceneId}/${cellId} (approximate/decorrelated): `
+              + `histogramL1 ${distribution.histogramL1.toFixed(4)} `
+              + `radialSpectrumL1 ${distribution.radialSpectrumL1.toFixed(4)} `
+              + `meanDelta ${distribution.meanDelta.toFixed(4)} -- the `
+              + 'distributions disagree, so this is a mapping defect, '
+              + 'not decorrelation.',
+            )
+          }
+        } else if (kinds.has('bounded')) {
+          // Element-wise loosest budget of the member cells: never
+          // looser than the worst declared bound, never tighter than
+          // the exact tolerance.
+          claim = 'approximate/bounded'
+          const budget = { ...sceneTolerance }
+          for (const item of approximations) {
+            const declared = cellsManifest.cells.find(
+              (candidate) => candidate.id === item.cell,
+            )?.divergenceBudget
+            if (!declared) continue
+            budget.meanAbs = Math.max(budget.meanAbs, declared.meanAbs)
+            budget.p99Abs = Math.max(budget.p99Abs, declared.p99Abs)
+            budget.maxAbs = Math.max(budget.maxAbs, declared.maxAbs)
+          }
+          pass = measured.meanAbs <= budget.meanAbs
+            && measured.p99Abs <= budget.p99Abs
+            && measured.maxAbs <= budget.maxAbs
+          if (!pass) {
+            // Bounded-ness does not COMPOSE: a declared 1e-3 divergence
+            // on a noise feeding abs(a-b) into a steep ramp flips whole
+            // regions, so the chain can exceed every member budget while
+            // every node performs as declared (measured on
+            // ellie.hair_mesh: nodes at 1.2e-3, chain at 3.5e-1). The
+            // chain-level truth is then the distribution gate, and the
+            // chain is reported as AMPLIFIED, a named category -- never
+            // silently passed, never confused with exact.
+            distribution = distributionStats(
+              referencePixels, renderedPixels,
+            )
+            if (distributionPass(distribution)) {
+              claim = 'approximate/amplified'
+              pass = true
+            } else {
+              failures.push(
+                `${sceneId}/${cellId} (approximate/bounded): mean `
+                + `${measured.meanAbs.toExponential(3)} p99 `
+                + `${measured.p99Abs.toExponential(3)} max `
+                + `${measured.maxAbs.toExponential(3)} exceeds the member `
+                + `budget ${JSON.stringify(budget)} AND the distributions `
+                + `disagree (histogramL1 `
+                + `${distribution.histogramL1.toFixed(4)}, `
+                + `radialSpectrumL1 `
+                + `${distribution.radialSpectrumL1.toFixed(4)}) -- a `
+                + 'mapping defect, not amplification.',
+              )
+            }
+          }
+        } else {
+          pass = measured.meanAbs <= sceneTolerance.meanAbs
+            && measured.p99Abs <= sceneTolerance.p99Abs
+            && measured.maxAbs <= sceneTolerance.maxAbs
+          if (!pass) {
+            failures.push(
+              `${sceneId}/${cellId}: mean `
+              + `${measured.meanAbs.toExponential(3)} p99 `
+              + `${measured.p99Abs.toExponential(3)} `
+              + `max ${measured.maxAbs.toExponential(3)}`,
+            )
+          }
+        }
+        differentials[cellId] = {
+          ok: true, claim, pass, measured,
+          ...(distribution ? { distribution } : {}),
+        }
       }
       sceneResults[sceneId] = { coverage, differentials }
     }
@@ -576,6 +735,7 @@ try {
       'Cells drive the production IR pipeline (tsl_ir.py -> tslNodeRecipe.ts); only diagnostic cells without an IR route stay hand-written.',
       'One 64px tile per configuration; scene sampling covers UV-driven compiled channels only (the tile proxy provides UV space).',
       'Scene coverage refusals are the compiler to-do list, tallied by named reason.',
+      'Scene chains carrying declared approximations gate on their declaration: bounded chains on the loosest member budget, falling back to the distribution gate as approximate/amplified when node-level bounded-ness is amplified past it by thresholding, and decorrelated chains on the distribution gate directly. Chain-level per-texel figures for those categories are reported, not gated.',
       "claim:approximate cells are gated on DECLARED DIVERGENCE, not on exactness: a decorrelated cell is gated on distribution agreement (mean, std, histogram, radial spectrum) because per-texel agreement is impossible in principle, and its algorithm is proven separately by the cells named in provenBy. The word 'proven' belongs to claim:exact only.",
     ],
   }

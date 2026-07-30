@@ -614,6 +614,50 @@ Note this counts **classes reachable from the channel sockets**, so it is not in
 for White Noise over continuous coordinates that means a declared approximation, not a proof, since
 it hashes raw bits of interpolated floats and cannot agree across engines per-pixel.
 
+### 8a-ter. The corpus scoreboard (measured 2026-07-31)
+
+Per the project owner's direction, the scoreboard is now **corpus-wide, not ellie-only**: the
+differential harness's `--scenes` stage sweeps the compiler over four corpus scenes and gates
+sampled chains end-to-end. The correctness cells were always scene-independent; what was
+ellie-shaped was the coverage metric and the prioritisation, and both now come from the corpus.
+
+| scene | channels compiling | sampled chains | passing | note |
+| --- | --- | --- | --- | --- |
+| cube-diorama | 10 | 6 | **3 of 6** | three exact-gate failures ellie never exposed |
+| blender-4.0-splash | **0** | 0 | — | every material refuses `no root-level single Principled surface` |
+| trapx-painterly | **0** | 0 | — | same — the stylized world is not reaching the surface-fold route in the scene sampler |
+| ellie-animation | 8 | 7 | 6 of 7 | `hair_mesh` is a REAL mapping defect, not declared divergence |
+
+The first corpus run surfaced four findings, in order of what they say about the design:
+
+1. **Bounded-ness does not compose through thresholding.** `ellie.hair_mesh` chains 48 scale-100
+   noises through `abs(a − b)` differences into steep ramps: every node performs as declared
+   (1.2e-3) while the chain measures 3.5e-1, because a near-zero difference field crossing a
+   threshold flips whole regions. The scene stage now gates such chains by their DECLARATION —
+   bounded chains at the loosest member budget, falling back to a chain-level distribution gate
+   (histogram + radial spectrum) as `approximate/amplified`; decorrelated chains on the
+   distribution gate directly.
+2. **That distribution gate immediately caught a real defect.** `hair_mesh` fails it at
+   `histogramL1 = 2.0000` — the maximum possible, fully disjoint distributions — so it is a
+   broken mapping somewhere in that chain, not amplification. Open, with the bisection rig as
+   the instrument.
+3. **The stylized scenes compile nothing in the scene sampler** (270 and 30 refusals at
+   `find_principled_root`) even though `emit_surface` handles their Mix Shader folds — the
+   sampler's surface route is not reaching them. Open.
+4. **cube-diorama fails three chains at the exact gate** (`plants.leaf` 6.4e-2 mean;
+   `Wooden_Bars`/`bluebell` with small means but 5–8e-2 maxima — localized, edge-like). Open;
+   these are precisely the "harming the others while polishing one" class the corpus view exists
+   to catch.
+
+The scene stage also learned to render attribute-driven channels (it never passed an
+`objectAttribute` resolver, so every paint-set material failed to render rather than measure) —
+fixtures now come from the live bake proxy, with `Random` inheriting the `objectinfo-random`
+cell's gate through the shared production helper.
+
+Ellie standing after the scale bands: **33/49 (67%)**, with the next layer unmasked as 1D/4D
+White Noise (8 materials — both hash arities already proven exactly, so this is a small
+extension), one 3D noise at 200, and the one-offs.
+
 ### 8b. Structural gaps
 
 Solid as a shipping material feature; not yet rails for a modifier IR. Four gaps to close in

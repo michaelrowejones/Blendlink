@@ -230,6 +230,40 @@ def _refuse(reason: str):
 _approximations: list = []
 
 _APPROXIMATION_CELLS = {
+    "tsl.noise-1d-scale-above-exact": {
+        "cell": "noise-1d-scale1600",
+        "divergenceKind": "bounded",
+        "provenBy": ["noise-1d", "noise-1d-detail0"],
+        "detail": (
+            "1D noise between scale 80 and 1600. The algorithm is exact "
+            "(perlin_1d port, gated by the provenBy cells); the divergence is "
+            "the harness rasterizers' ~3e-5 UV sample-position difference "
+            "multiplied by the frequency, measured at the corpus maximum and "
+            "monotone in scale, so the declared figure bounds every smaller "
+            "scale in the band."
+        ),
+    },
+    "tsl.noise-2d-scale-above-exact": {
+        "cell": "noise-2d-scale100-color",
+        "divergenceKind": "bounded",
+        "provenBy": ["noise-2d", "noise-scale80"],
+        "detail": (
+            "2D noise between scale 80 and 100, Fac and Color lanes. Same "
+            "mechanism as the 1D band: exact algorithm, sample-position "
+            "divergence measured at the corpus maximum."
+        ),
+    },
+    "tsl.voronoi-smooth-f1-scale-above-exact": {
+        "cell": "voronoi-scale177-smoothf1",
+        "divergenceKind": "bounded",
+        "provenBy": ["voronoi-smooth-f1", "voronoi-scale40"],
+        "detail": (
+            "Smooth F1 voronoi between scale 40 and 180. Integer-cell "
+            "hashing shifts only local distances under coordinate wiggle and "
+            "the smooth minimum damps them further, but at 177.1 the residual "
+            "is measurably over the exact gate, so it ships declared."
+        ),
+    },
     "tsl.white-noise-continuous-uv": {
         "cell": "white-noise-continuous-uv",
         "divergenceKind": "decorrelated",
@@ -281,6 +315,13 @@ _allow_texture_refs = False
 # `voronoi-scale40`, whose integer-cell hashing only shifts local
 # distances). Cells: `noise-scale16`, `noise-scale20`, `noise-scale40`.
 _NOISE_SCALE_BOUND = 80.0
+# Above the exact bound, per-dimension APPROXIMATE bands ship as declared,
+# cell-measured approximations instead of refusing. Keyed by the emitter's
+# dimensions string; a dimension with no band still refuses above the exact
+# bound. One number cannot carry two claims, which is why these are separate
+# constants from the exact bound rather than a raised copy of it.
+_NOISE_SCALE_APPROXIMATE_BOUNDS = {"1D": 1600.0, "2D": 100.0}
+_VORONOI_SMOOTH_F1_APPROXIMATE_BOUND = 180.0
 _VORONOI_SCALE_BOUND = 40.0
 _NOISE_DETAIL_BOUND = 6.0
 
@@ -1484,7 +1525,18 @@ def emit_output(node, from_socket, stack=()):
             _refuse(
                 "Voronoi with a non-constant Scale has no bounded cell yet"
             )
-        if abs(float(voronoi_scale["value"])) > _VORONOI_SCALE_BOUND + 1e-9:
+        voronoi_scale_magnitude = abs(float(voronoi_scale["value"]))
+        if (
+            voronoi_scale_magnitude > _VORONOI_SCALE_BOUND + 1e-9
+            and feature == "SMOOTH_F1"
+            and voronoi_scale_magnitude
+            <= _VORONOI_SMOOTH_F1_APPROXIMATE_BOUND + 1e-9
+        ):
+            # Only the corpus feature has a measured band; F1 at 177.1
+            # measured meanAbs 3.01e-3 too and could earn its own cell when
+            # something needs it.
+            _approximate("tsl.voronoi-smooth-f1-scale-above-exact")
+        elif abs(float(voronoi_scale["value"])) > _VORONOI_SCALE_BOUND + 1e-9:
             # Voronoi's bound is measured separately from noise: integer
             # cell hashing tolerates coordinate wiggle structurally (only
             # local distances shift), so scale 40 gates where fBM noise
@@ -1669,7 +1721,20 @@ def emit_output(node, from_socket, stack=()):
                 f"(source op {scale_expression.get('op')!r})"
             )
         scale_expression = {"op": "const_float", "value": folded_scale}
-        if abs(float(scale_expression["value"])) > _NOISE_SCALE_BOUND + 1e-9:
+        scale_magnitude = abs(float(scale_expression["value"]))
+        approximate_bound = _NOISE_SCALE_APPROXIMATE_BOUNDS.get(dimensions)
+        if (
+            scale_magnitude > _NOISE_SCALE_BOUND + 1e-9
+            and approximate_bound is not None
+            and scale_magnitude <= approximate_bound + 1e-9
+        ):
+            # Inside the declared band: ships as a bounded approximation
+            # measured at the corpus-maximum frequency for this dimension.
+            _approximate({
+                "1D": "tsl.noise-1d-scale-above-exact",
+                "2D": "tsl.noise-2d-scale-above-exact",
+            }[dimensions])
+        elif abs(float(scale_expression["value"])) > _NOISE_SCALE_BOUND + 1e-9:
             # Sub-texel sample-position differences between the two
             # rasterizers (~3e-5 in UV) multiply by the scale. Measured
             # 2026-07-30, maxAbs against a 0.01 gate: scale 16 7.2e-4,

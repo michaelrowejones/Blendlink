@@ -1198,6 +1198,53 @@ def build_noise_1d_color_distortion(tree, emission):
     tree.links.new(color, emission.inputs["Color"])
 
 
+def build_noise_1d_scale1600(tree, emission):
+    # The corpus-maximum 1D frequency (fannypack seams). 1600 periods across
+    # the 64px tile is 25 per texel: both engines alias identically in
+    # structure, and the divergence is sample position times frequency.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "1D"
+    node.inputs["Scale"].default_value = 1600.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(separate.outputs["X"], node.inputs["W"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_noise_2d_scale100_color(tree, emission):
+    # The hair configuration: 2D, detail 0.5, Colour output at scale 100.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "2D"
+    node.inputs["Scale"].default_value = 100.0
+    node.inputs["Detail"].default_value = 0.5
+    node.inputs["Roughness"].default_value = 0.4
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    color = next(s for s in node.outputs if s.identifier == "Color")
+    tree.links.new(color, emission.inputs["Color"])
+
+
+def build_voronoi_scale177_smoothf1(tree, emission):
+    # The head/skin configuration verbatim: SMOOTH_F1, EUCLIDEAN,
+    # smoothness 1.0, randomness 1.0, Distance output at 177.1.
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+    node = tree.nodes.new("ShaderNodeTexVoronoi")
+    node.voronoi_dimensions = "3D"
+    node.feature = "SMOOTH_F1"
+    node.distance = "EUCLIDEAN"
+    if hasattr(node, "normalize"):
+        node.normalize = False
+    node.inputs["Scale"].default_value = 177.1
+    node.inputs["Smoothness"].default_value = 1.0
+    node.inputs["Randomness"].default_value = 1.0
+    tree.links.new(uv, node.inputs["Vector"])
+    distance = next(s for s in node.outputs if s.identifier == "Distance")
+    tree.links.new(distance, emission.inputs["Color"])
+
+
 def build_white_noise_continuous_uv(tree, emission):
     # Raw UV straight into White Noise -- no floor/ceil/snap. This is the
     # configuration the corpus actually uses and the one that cannot agree
@@ -2065,6 +2112,9 @@ BUILDERS = {
     "noise-1d-color-distortion": build_noise_1d_color_distortion,
     "noise-4d": build_noise_4d,
     "noise-4d-color-distortion": build_noise_4d_color_distortion,
+    "noise-1d-scale1600": build_noise_1d_scale1600,
+    "noise-2d-scale100-color": build_noise_2d_scale100_color,
+    "voronoi-scale177-smoothf1": build_voronoi_scale177_smoothf1,
     "white-noise-continuous-uv": build_white_noise_continuous_uv,
     "tex-image-cubic": build_tex_image_cubic,
     "tex-image-cubic-extend": build_tex_image_cubic_extend,

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "tex_voronoi",
+    "dimensions": 3,
+    "feature": "smooth_f1",
+    "output": "distance",
+    "vector": {
+      "op": "uv"
+    },
+    "scale": {
+      "op": "const_float",
+      "value": 177.10000610351562
+    },
+    "randomness": {
+      "op": "const_float",
+      "value": 1.0
+    },
+    "smoothness": 0.5
+  }
+}

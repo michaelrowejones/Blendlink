@@ -34,6 +34,52 @@
         0.12319393455982208
       ]
     },
+    "Wooden_Bars--Roughness": {
+      "path": "Wooden_Bars--Roughness.f32",
+      "material": "Wooden Bars",
+      "channel": "Roughness",
+      "kind": "principled",
+      "rgbMin": [
+        0.4000000059604645,
+        0.4000000059604645,
+        0.4000000059604645
+      ],
+      "rgbMax": [
+        0.9293913245201111,
+        0.9293913245201111,
+        0.9293913245201111
+      ],
+      "objectAttributes": {
+        "blendlink_object_random": [
+          0.9595407675857518,
+          0.9595407675857518,
+          0.9595407675857518
+        ]
+      }
+    },
+    "bluebell--Base_Color": {
+      "path": "bluebell--Base_Color.f32",
+      "material": "bluebell",
+      "channel": "Base Color",
+      "kind": "principled",
+      "rgbMin": [
+        0.014379244297742844,
+        0.007827308028936386,
+        0.03144386410713196
+      ],
+      "rgbMax": [
+        0.06697650998830795,
+        0.014095538295805454,
+        0.5492768883705139
+      ],
+      "objectAttributes": {
+        "blendlink_object_random": [
+          0.9595407675857518,
+          0.9595407675857518,
+          0.9595407675857518
+        ]
+      }
+    },
     "bluebell_center--Base_Color": {
       "path": "bluebell_center--Base_Color.f32",
       "material": "bluebell_center",
@@ -49,6 +95,29 @@
         0.8569331765174866,
         0.7088383436203003
       ]
+    },
+    "plants.leaf--Base_Color": {
+      "path": "plants.leaf--Base_Color.f32",
+      "material": "plants.leaf",
+      "channel": "Base Color",
+      "kind": "principled",
+      "rgbMin": [
+        0.060613974928855896,
+        0.12838999927043915,
+        0.008957616053521633
+      ],
+      "rgbMax": [
+        0.25205981731414795,
+        0.4348476827144623,
+        0.09507887065410614
+      ],
+      "objectAttributes": {
+        "blendlink_object_random": [
+          0.9595407675857518,
+          0.9595407675857518,
+          0.9595407675857518
+        ]
+      }
     }
   }
 }

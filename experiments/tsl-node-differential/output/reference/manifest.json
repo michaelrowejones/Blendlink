@@ -1901,6 +1901,72 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "noise-1d-scale1600": {
+      "path": "noise-1d-scale1600.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-1d-scale1600.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.2790292203426361,
+        0.2790292203426361,
+        0.2790292203426361
+      ],
+      "rgbMax": [
+        0.7648067474365234,
+        0.7648067474365234,
+        0.7648067474365234
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "noise-2d-scale100-color": {
+      "path": "noise-2d-scale100-color.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-2d-scale100-color.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.0885104089975357,
+        0.1013476699590683,
+        0.09721346944570541
+      ],
+      "rgbMax": [
+        0.8758367300033569,
+        0.9011018872261047,
+        0.9353896379470825
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "voronoi-scale177-smoothf1": {
+      "path": "voronoi-scale177-smoothf1.f32",
+      "pipeline": "ir",
+      "ir": "ir/voronoi-scale177-smoothf1.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.03351661190390587,
+        0.03351661190390587,
+        0.03351661190390587
+      ],
+      "rgbMax": [
+        0.8532548546791077,
+        0.8532548546791077,
+        0.8532548546791077
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "white-noise-continuous-uv": {
       "path": "white-noise-continuous-uv.f32",
       "pipeline": "ir",

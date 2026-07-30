@@ -17,11 +17,10 @@
     "channelsCompiled": 84,
     "viewDependent": 0,
     "refusals": {
-      "ShaderNodeAmbientOcclusion has no proven TSL mapping": 17,
-      "Noise dimensions '4D' has no cell yet": 1,
+      "ShaderNodeAmbientOcclusion has no proven TSL mapping": 19,
+      "Image 1000x1000 exceeds the embedded-IR bound (128x128); the texture transport carries it": 1,
       "Image BOX projection with blend > 0 has no cell yet (sharp box only)": 10,
-      "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1,
-      "ShaderNodeObjectInfo has no proven TSL mapping": 2
+      "Shader to RGB over ShaderNodeMixShader has no cell yet (Diffuse only)": 1
     }
   },
   "sampled": [],

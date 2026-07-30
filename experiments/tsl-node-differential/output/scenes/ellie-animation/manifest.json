@@ -2,6 +2,85 @@
   "schemaVersion": 1,
   "size": 64,
   "cells": {
+    "ellie.eyes--Base_Color": {
+      "path": "ellie.eyes--Base_Color.f32",
+      "material": "ellie.eyes",
+      "channel": "Base Color",
+      "kind": "principled",
+      "rgbMin": [
+        0.35843324661254883,
+        0.10850851982831955,
+        0.08829177170991898
+      ],
+      "rgbMax": [
+        0.7998957633972168,
+        0.799861490726471,
+        0.7998211979866028
+      ],
+      "objectAttributes": {
+        "switch_head_bruise": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "ellie.gums--Base_Color": {
+      "path": "ellie.gums--Base_Color.f32",
+      "material": "ellie.gums",
+      "channel": "Base Color",
+      "kind": "principled",
+      "rgbMin": [
+        0.800000011920929,
+        0.1387310028076172,
+        0.13270999491214752
+      ],
+      "rgbMax": [
+        0.800000011920929,
+        0.1387310028076172,
+        0.13270999491214752
+      ],
+      "objectAttributes": {
+        "distressed_MASTER": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "distressed_STAGE": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "ellie.hair_mesh--Base_Color": {
+      "path": "ellie.hair_mesh--Base_Color.f32",
+      "material": "ellie.hair_mesh",
+      "channel": "Base Color",
+      "kind": "principled",
+      "rgbMin": [
+        0.0,
+        0.0005432034377008677,
+        0.0018974840641021729
+      ],
+      "rgbMax": [
+        0.009517638012766838,
+        0.008498056791722775,
+        0.009320132434368134
+      ],
+      "approximations": [
+        {
+          "code": "tsl.noise-2d-scale-above-exact",
+          "cell": "noise-2d-scale100-color",
+          "divergenceKind": "bounded",
+          "provenBy": [
+            "noise-2d",
+            "noise-scale80"
+          ],
+          "detail": "2D noise between scale 80 and 100, Fac and Color lanes. Same mechanism as the 1D band: exact algorithm, sample-position divergence measured at the corpus maximum."
+        }
+      ]
+    },
     "ellie.pins_underside--Base_Color": {
       "path": "ellie.pins_underside--Base_Color.f32",
       "material": "ellie.pins_underside",
@@ -17,6 +96,62 @@
         0.3007098436355591,
         0.24267275631427765
       ]
+    },
+    "ellie.teeth--Base_Color": {
+      "path": "ellie.teeth--Base_Color.f32",
+      "material": "ellie.teeth",
+      "channel": "Base Color",
+      "kind": "principled",
+      "rgbMin": [
+        0.23132213950157166,
+        0.17748254537582397,
+        0.1668049544095993
+      ],
+      "rgbMax": [
+        0.8754135966300964,
+        0.81256103515625,
+        0.7816461324691772
+      ],
+      "objectAttributes": {
+        "distressed_MASTER": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "distressed_STAGE": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "ellie.teeth--Roughness": {
+      "path": "ellie.teeth--Roughness.f32",
+      "material": "ellie.teeth",
+      "channel": "Roughness",
+      "kind": "principled",
+      "rgbMin": [
+        0.6499999761581421,
+        0.6499999761581421,
+        0.6499999761581421
+      ],
+      "rgbMax": [
+        0.6499999761581421,
+        0.6499999761581421,
+        0.6499999761581421
+      ],
+      "objectAttributes": {
+        "distressed_MASTER": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "distressed_STAGE": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
     },
     "ellie.tongue--Base_Color": {
       "path": "ellie.tongue--Base_Color.f32",

@@ -1943,6 +1943,87 @@
    "claim": "exact"
   },
   {
+   "id": "noise-1d-scale1600",
+   "gate": true,
+   "claim": "approximate",
+   "failureClass": "1D noise, scale band 80..1600 (bounded approximation)",
+   "notes": "DECLARED, NOT PROVEN. The corpus-maximum 1D frequency (fannypack seams at 1600; denim, shorts, shoes_loop, handkerchief between 600 and 1400 - 8 materials). The algorithm is exact and separately gated (provenBy); the divergence is the rasterizers' ~3e-5 UV sample-position difference times the frequency, measured 1.177e-2 meanAbs at scale 1600 and monotone in scale, so this figure bounds every smaller scale in the band. Bounded, not decorrelated: 1.2e-2 is thirty times short of the 0.33 a decorrelated field measures. Two-sided pinning applies - if a harness change moves this past 1.25x declared it is a regression, and below 0.5x the declaration must tighten or promote.",
+   "divergenceKind": "bounded",
+   "tolerance": null,
+   "declaredDivergence": {
+    "meanAbs": 0.0118,
+    "p99Abs": 0.033,
+    "maxAbs": 0.033
+   },
+   "divergenceBudget": {
+    "meanAbs": 0.025,
+    "p99Abs": 0.06,
+    "maxAbs": 0.08
+   },
+   "provenBy": [
+    "noise-1d",
+    "noise-1d-detail0"
+   ],
+   "measuredAt": "2026-07-30",
+   "blenderVersion": "5.2.0",
+   "threeVersion": "0.184.0",
+   "tileBound": true
+  },
+  {
+   "id": "noise-2d-scale100-color",
+   "gate": true,
+   "claim": "approximate",
+   "failureClass": "2D noise, scale band 80..100 with Colour (bounded approximation)",
+   "notes": "DECLARED, NOT PROVEN - but only just: meanAbs 1.208e-3 misses the exact 1e-3 gate by 21% while p99 and max sit INSIDE the exact tolerances. The hair configuration (2D, detail 0.5, Colour output, scale 100), one material. The candidate for promotion to exact if the sample-position story ever improves; the inverted pinning below 0.5x declared will demand exactly that.",
+   "divergenceKind": "bounded",
+   "tolerance": null,
+   "declaredDivergence": {
+    "meanAbs": 0.00121,
+    "p99Abs": 0.0034,
+    "maxAbs": 0.0047
+   },
+   "divergenceBudget": {
+    "meanAbs": 0.002,
+    "p99Abs": 0.006,
+    "maxAbs": 0.01
+   },
+   "provenBy": [
+    "noise-2d",
+    "noise-scale80"
+   ],
+   "measuredAt": "2026-07-30",
+   "blenderVersion": "5.2.0",
+   "threeVersion": "0.184.0",
+   "tileBound": true
+  },
+  {
+   "id": "voronoi-scale177-smoothf1",
+   "gate": true,
+   "claim": "approximate",
+   "failureClass": "Smooth F1 voronoi, scale band 40..180 (bounded approximation)",
+   "notes": "DECLARED, NOT PROVEN. The head/head_lips/skin configuration verbatim: SMOOTH_F1, EUCLIDEAN, smoothness 1.0, randomness 1.0, Distance at 177.1. Measured meanAbs 1.719e-3 - notably better than plain F1 at the same scale (3.01e-3, measured 2026-07-30 and refused), because the smooth minimum damps the cell-boundary shifts that coordinate wiggle causes. Scoped to SMOOTH_F1 only; F1 above 40 still refuses until something needs it and earns its own cell.",
+   "divergenceKind": "bounded",
+   "tolerance": null,
+   "declaredDivergence": {
+    "meanAbs": 0.00172,
+    "p99Abs": 0.0055,
+    "maxAbs": 0.0061
+   },
+   "divergenceBudget": {
+    "meanAbs": 0.003,
+    "p99Abs": 0.009,
+    "maxAbs": 0.012
+   },
+   "provenBy": [
+    "voronoi-smooth-f1",
+    "voronoi-scale40"
+   ],
+   "measuredAt": "2026-07-30",
+   "blenderVersion": "5.2.0",
+   "threeVersion": "0.184.0",
+   "tileBound": true
+  },
+  {
    "id": "white-noise-continuous-uv",
    "gate": true,
    "claim": "approximate",

@@ -1,0 +1,387 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "mix_color",
+    "blendType": "MIX",
+    "clampFactor": true,
+    "clampResult": false,
+    "factor": {
+      "op": "map_range",
+      "interpolation": "LINEAR",
+      "clamp": true,
+      "value": {
+        "op": "separate",
+        "channel": "y",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "fromMin": {
+        "op": "const_float",
+        "value": 0.699999988079071
+      },
+      "fromMax": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "toMin": {
+        "op": "const_float",
+        "value": 0.0
+      },
+      "toMax": {
+        "op": "const_float",
+        "value": 1.0
+      }
+    },
+    "a": {
+      "op": "mix_color",
+      "blendType": "OVERLAY",
+      "clampFactor": true,
+      "clampResult": false,
+      "factor": {
+        "op": "const_float",
+        "value": 0.307692289352417
+      },
+      "a": {
+        "op": "mix_color",
+        "blendType": "OVERLAY",
+        "clampFactor": true,
+        "clampResult": false,
+        "factor": {
+          "op": "color_ramp",
+          "interpolation": "LINEAR",
+          "stops": [
+            {
+              "position": 0.0,
+              "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "position": 0.267175555229187,
+              "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            {
+              "position": 0.38549619913101196,
+              "color": [
+                0.02602303959429264,
+                0.02602303959429264,
+                0.02602303959429264,
+                1.0
+              ]
+            },
+            {
+              "position": 0.48473307490348816,
+              "color": [
+                0.8093981146812439,
+                0.8093981146812439,
+                0.8093981146812439,
+                1.0
+              ]
+            },
+            {
+              "position": 0.5801529288291931,
+              "color": [
+                0.036791130900382996,
+                0.036791130900382996,
+                0.036791130900382996,
+                1.0
+              ]
+            },
+            {
+              "position": 0.7366412878036499,
+              "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            {
+              "position": 1.0,
+              "color": [
+                0.9797977209091187,
+                0.9797977209091187,
+                0.9797977209091187,
+                1.0
+              ]
+            }
+          ],
+          "input": {
+            "op": "separate",
+            "channel": "x",
+            "input": {
+              "op": "uv"
+            }
+          }
+        },
+        "a": {
+          "op": "const_vec3",
+          "value": [
+            0.09560830146074295,
+            0.21404017508029938,
+            0.015005153603851795
+          ]
+        },
+        "b": {
+          "op": "const_vec3",
+          "value": [
+            0.3242916464805603,
+            0.3242916464805603,
+            0.3242916464805603
+          ]
+        }
+      },
+      "b": {
+        "op": "mix_color",
+        "blendType": "MIX",
+        "clampFactor": true,
+        "clampResult": false,
+        "factor": {
+          "op": "noise",
+          "output": "fac",
+          "dimensions": 2,
+          "detail": 0.0,
+          "roughness": 0.5,
+          "lacunarity": 2.0,
+          "scale": {
+            "op": "const_float",
+            "value": 40.0
+          },
+          "input": {
+            "op": "vector_math",
+            "operation": "ADD",
+            "a": {
+              "op": "uv"
+            },
+            "b": {
+              "op": "combine",
+              "x": {
+                "op": "attribute_object",
+                "name": "blendlink_object_random",
+                "output": "fac"
+              },
+              "y": {
+                "op": "const_float",
+                "value": 0.0
+              },
+              "z": {
+                "op": "const_float",
+                "value": 0.0
+              }
+            }
+          }
+        },
+        "a": {
+          "op": "const_vec3",
+          "value": [
+            0.3006629943847656,
+            0.24928000569343567,
+            0.2285729944705963
+          ]
+        },
+        "b": {
+          "op": "const_vec3",
+          "value": [
+            0.8292741179466248,
+            0.6013289093971252,
+            0.6613358855247498
+          ]
+        }
+      }
+    },
+    "b": {
+      "op": "hue_sat",
+      "hue": {
+        "op": "const_float",
+        "value": 0.5
+      },
+      "saturation": {
+        "op": "const_float",
+        "value": 0.8400000333786011
+      },
+      "value": {
+        "op": "const_float",
+        "value": 2.0
+      },
+      "factor": {
+        "op": "const_float",
+        "value": 1.0
+      },
+      "input": {
+        "op": "mix_color",
+        "blendType": "OVERLAY",
+        "clampFactor": true,
+        "clampResult": false,
+        "factor": {
+          "op": "const_float",
+          "value": 0.307692289352417
+        },
+        "a": {
+          "op": "mix_color",
+          "blendType": "OVERLAY",
+          "clampFactor": true,
+          "clampResult": false,
+          "factor": {
+            "op": "color_ramp",
+            "interpolation": "LINEAR",
+            "stops": [
+              {
+                "position": 0.0,
+                "color": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "position": 0.267175555229187,
+                "color": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              },
+              {
+                "position": 0.38549619913101196,
+                "color": [
+                  0.02602303959429264,
+                  0.02602303959429264,
+                  0.02602303959429264,
+                  1.0
+                ]
+              },
+              {
+                "position": 0.48473307490348816,
+                "color": [
+                  0.8093981146812439,
+                  0.8093981146812439,
+                  0.8093981146812439,
+                  1.0
+                ]
+              },
+              {
+                "position": 0.5801529288291931,
+                "color": [
+                  0.036791130900382996,
+                  0.036791130900382996,
+                  0.036791130900382996,
+                  1.0
+                ]
+              },
+              {
+                "position": 0.7366412878036499,
+                "color": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              },
+              {
+                "position": 1.0,
+                "color": [
+                  0.9797977209091187,
+                  0.9797977209091187,
+                  0.9797977209091187,
+                  1.0
+                ]
+              }
+            ],
+            "input": {
+              "op": "separate",
+              "channel": "x",
+              "input": {
+                "op": "uv"
+              }
+            }
+          },
+          "a": {
+            "op": "const_vec3",
+            "value": [
+              0.09560830146074295,
+              0.21404017508029938,
+              0.015005153603851795
+            ]
+          },
+          "b": {
+            "op": "const_vec3",
+            "value": [
+              0.3242916464805603,
+              0.3242916464805603,
+              0.3242916464805603
+            ]
+          }
+        },
+        "b": {
+          "op": "mix_color",
+          "blendType": "MIX",
+          "clampFactor": true,
+          "clampResult": false,
+          "factor": {
+            "op": "noise",
+            "output": "fac",
+            "dimensions": 2,
+            "detail": 0.0,
+            "roughness": 0.5,
+            "lacunarity": 2.0,
+            "scale": {
+              "op": "const_float",
+              "value": 40.0
+            },
+            "input": {
+              "op": "vector_math",
+              "operation": "ADD",
+              "a": {
+                "op": "uv"
+              },
+              "b": {
+                "op": "combine",
+                "x": {
+                  "op": "attribute_object",
+                  "name": "blendlink_object_random",
+                  "output": "fac"
+                },
+                "y": {
+                  "op": "const_float",
+                  "value": 0.0
+                },
+                "z": {
+                  "op": "const_float",
+                  "value": 0.0
+                }
+              }
+            }
+          },
+          "a": {
+            "op": "const_vec3",
+            "value": [
+              0.3006629943847656,
+              0.24928000569343567,
+              0.2285729944705963
+            ]
+          },
+          "b": {
+            "op": "const_vec3",
+            "value": [
+              0.8292741179466248,
+              0.6013289093971252,
+              0.6613358855247498
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -365,14 +365,21 @@ def main():
                 coverage["channels"]["constant"] += 1
                 continue
             coverage["channels"]["linked"] += 1
+            tsl_ir.drain_approximations()
             try:
                 document = tsl_ir.emit_channel(socket, stack)
             except tsl_ir.TslIrRefusal as refusal:
+                tsl_ir.drain_approximations()
                 reason = str(refusal)
                 coverage["refusals"][reason] = (
                     coverage["refusals"].get(reason, 0) + 1
                 )
                 continue
+            channel_approximations = tsl_ir.drain_approximations()
+            if channel_approximations:
+                coverage["irCompiledApproximate"] = (
+                    coverage.get("irCompiledApproximate", 0) + 1
+                )
             coverage["irCompiled"] += 1
             encoded = json.dumps(document)
             if document.get("viewDependent"):
@@ -390,10 +397,15 @@ def main():
                 continue
             candidates.append((
                 material.name, channel_name, document, "principled",
+                channel_approximations,
             ))
 
     manifest = {"schemaVersion": 1, "size": SIZE, "cells": {}}
-    for material_name, channel_name, document, kind in candidates[:sample_cap]:
+    for candidate in candidates[:sample_cap]:
+        material_name, channel_name, document, kind = candidate[:4]
+        candidate_approximations = (
+            list(candidate[4]) if len(candidate) > 4 else []
+        )
         cell_id = f"{material_name}--{channel_name}".replace(" ", "_")
         if kind == "surface":
             cell_id += ".surface"
@@ -418,6 +430,38 @@ def main():
             proxy = bakelib.uv_tile_proxy(
                 uv_names, window=(0.0, 0.0, 1.0, 1.0),
             )
+            # The reference bakes on THIS proxy, so attribute-driven
+            # channels must fixture the proxy's values for the TSL side:
+            # a custom property the proxy lacks bakes as zero (fixture
+            # [0,0,0] -- a valid formula check, weaker than real values),
+            # and Object Info Random is the hash of the PROXY's name,
+            # computed with the production helper so the scene stage
+            # inherits the objectinfo-random cell's gate.
+            cell_object_attributes = {}
+            for item in _walk_ir(document):
+                if item.get("op") != "attribute_object":
+                    continue
+                attribute_name = str(item.get("name") or "")
+                if not attribute_name:
+                    continue
+                if attribute_name == tsl_ir.OBJECT_RANDOM_PROPERTY:
+                    value = tsl_ir.object_random_number(proxy.name)
+                    cell_object_attributes[attribute_name] = [
+                        value, value, value,
+                    ]
+                    continue
+                raw = proxy.get(attribute_name)
+                if raw is None:
+                    cell_object_attributes[attribute_name] = [0.0, 0.0, 0.0]
+                elif hasattr(raw, "__len__"):
+                    values = [float(v) for v in raw][:3]
+                    while len(values) < 3:
+                        values.append(0.0)
+                    cell_object_attributes[attribute_name] = values
+                else:
+                    cell_object_attributes[attribute_name] = [
+                        float(raw), float(raw), float(raw),
+                    ]
             proxy.data.materials.append(proxy_material)
             result = bakelib.bake_channel_field_pixels(
                 [proxy], size=SIZE, margin_px=0,
@@ -447,6 +491,14 @@ def main():
             "kind": kind,
             "rgbMin": list(result["rgbMin"]),
             "rgbMax": list(result["rgbMax"]),
+            **(
+                {"objectAttributes": cell_object_attributes}
+                if cell_object_attributes else {}
+            ),
+            **(
+                {"approximations": candidate_approximations}
+                if candidate_approximations else {}
+            ),
         }
         coverage["sampled"].append({"cell": cell_id, "status": "baked"})
         print(f"scene {scene_id}: baked {cell_id}")

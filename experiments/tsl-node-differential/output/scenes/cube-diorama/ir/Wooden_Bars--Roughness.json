@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "math",
+    "operation": "MULTIPLY_ADD",
+    "a": {
+      "op": "math",
+      "operation": "ADD",
+      "a": {
+        "op": "map_range",
+        "interpolation": "LINEAR",
+        "clamp": true,
+        "value": {
+          "op": "math",
+          "operation": "ADD",
+          "a": {
+            "op": "map_range",
+            "interpolation": "LINEAR",
+            "clamp": false,
+            "value": {
+              "op": "math",
+              "operation": "MINIMUM",
+              "a": {
+                "op": "math",
+                "operation": "MINIMUM",
+                "a": {
+                  "op": "math",
+                  "operation": "SMOOTH_MAX",
+                  "a": {
+                    "op": "separate",
+                    "channel": "x",
+                    "input": {
+                      "op": "vector_math",
+                      "operation": "ABSOLUTE",
+                      "a": {
+                        "op": "vector_math",
+                        "operation": "SUBTRACT",
+                        "a": {
+                          "op": "generated"
+                        },
+                        "b": {
+                          "op": "const_vec3",
+                          "value": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "b": {
+                    "op": "separate",
+                    "channel": "y",
+                    "input": {
+                      "op": "vector_math",
+                      "operation": "ABSOLUTE",
+                      "a": {
+                        "op": "vector_math",
+                        "operation": "SUBTRACT",
+                        "a": {
+                          "op": "generated"
+                        },
+                        "b": {
+                          "op": "const_vec3",
+                          "value": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "c": {
+                    "op": "const_float",
+                    "value": 0.4000000059604645
+                  }
+                },
+                "b": {
+                  "op": "math",
+                  "operation": "SMOOTH_MAX",
+                  "a": {
+                    "op": "separate",
+                    "channel": "x",
+                    "input": {
+                      "op": "vector_math",
+                      "operation": "ABSOLUTE",
+                      "a": {
+                        "op": "vector_math",
+                        "operation": "SUBTRACT",
+                        "a": {
+                          "op": "generated"
+                        },
+                        "b": {
+                          "op": "const_vec3",
+                          "value": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "b": {
+                    "op": "separate",
+                    "channel": "z",
+                    "input": {
+                      "op": "vector_math",
+                      "operation": "ABSOLUTE",
+                      "a": {
+                        "op": "vector_math",
+                        "operation": "SUBTRACT",
+                        "a": {
+                          "op": "generated"
+                        },
+                        "b": {
+                          "op": "const_vec3",
+                          "value": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "c": {
+                    "op": "const_float",
+                    "value": 0.4000000059604645
+                  }
+                }
+              },
+              "b": {
+                "op": "math",
+                "operation": "SMOOTH_MAX",
+                "a": {
+                  "op": "separate",
+                  "channel": "y",
+                  "input": {
+                    "op": "vector_math",
+                    "operation": "ABSOLUTE",
+                    "a": {
+                      "op": "vector_math",
+                      "operation": "SUBTRACT",
+                      "a": {
+                        "op": "generated"
+                      },
+                      "b": {
+                        "op": "const_vec3",
+                        "value": [
+                          0.5,
+                          0.5,
+                          0.5
+                        ]
+                      }
+                    }
+                  }
+                },
+                "b": {
+                  "op": "separate",
+                  "channel": "z",
+                  "input": {
+                    "op": "vector_math",
+                    "operation": "ABSOLUTE",
+                    "a": {
+                      "op": "vector_math",
+                      "operation": "SUBTRACT",
+                      "a": {
+                        "op": "generated"
+                      },
+                      "b": {
+                        "op": "const_vec3",
+                        "value": [
+                          0.5,
+                          0.5,
+                          0.5
+                        ]
+                      }
+                    }
+                  }
+                },
+                "c": {
+                  "op": "const_float",
+                  "value": 0.4000000059604645
+                }
+              }
+            },
+            "fromMin": {
+              "op": "const_float",
+              "value": 0.3499999940395355
+            },
+            "fromMax": {
+              "op": "const_float",
+              "value": 0.5
+            },
+            "toMin": {
+              "op": "const_float",
+              "value": 0.0
+            },
+            "toMax": {
+              "op": "const_float",
+              "value": 1.0
+            }
+          },
+          "b": {
+            "op": "math",
+            "operation": "MULTIPLY",
+            "a": {
+              "op": "math",
+              "operation": "SUBTRACT",
+              "a": {
+                "op": "noise",
+                "output": "fac",
+                "dimensions": 3,
+                "detail": 2.0,
+                "roughness": 0.5,
+                "lacunarity": 2.0,
+                "scale": {
+                  "op": "const_float",
+                  "value": 25.0
+                },
+                "input": {
+                  "op": "vector_math",
+                  "operation": "ADD",
+                  "a": {
+                    "op": "object_coords"
+                  },
+                  "b": {
+                    "op": "vector_scale",
+                    "input": {
+                      "op": "const_vec3",
+                      "value": [
+                        1.0,
+                        1.0,
+                        1.0
+                      ]
+                    },
+                    "scale": {
+                      "op": "attribute_object",
+                      "name": "blendlink_object_random",
+                      "output": "fac"
+                    }
+                  }
+                }
+              },
+              "b": {
+                "op": "const_float",
+                "value": 0.5
+              }
+            },
+            "b": {
+              "op": "const_float",
+              "value": 2.0
+            }
+          }
+        },
+        "fromMin": {
+          "op": "const_float",
+          "value": 0.6100000143051147
+        },
+        "fromMax": {
+          "op": "const_float",
+          "value": 0.7099999785423279
+        },
+        "toMin": {
+          "op": "const_float",
+          "value": 0.0
+        },
+        "toMax": {
+          "op": "const_float",
+          "value": 1.0
+        }
+      },
+      "b": {
+        "op": "color_ramp",
+        "interpolation": "LINEAR",
+        "stops": [
+          {
+            "position": 0.5681819915771484,
+            "color": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          {
+            "position": 0.795454740524292,
+            "color": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "input": {
+          "op": "noise",
+          "output": "fac",
+          "dimensions": 3,
+          "detail": 2.0,
+          "roughness": 0.5,
+          "lacunarity": 2.0,
+          "scale": {
+            "op": "const_float",
+            "value": 4.0
+          },
+          "input": {
+            "op": "vector_math",
+            "operation": "MULTIPLY",
+            "a": {
+              "op": "object_coords"
+            },
+            "b": {
+              "op": "const_vec3",
+              "value": [
+                1.0,
+                100.0,
+                100.0
+              ]
+            }
+          }
+        }
+      }
+    },
+    "b": {
+      "op": "const_float",
+      "value": 0.4000000059604645
+    },
+    "c": {
+      "op": "const_float",
+      "value": 0.4000000059604645
+    }
+  }
+}

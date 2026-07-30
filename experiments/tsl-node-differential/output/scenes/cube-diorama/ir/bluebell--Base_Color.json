@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "mix_color",
+    "blendType": "MIX",
+    "clampFactor": true,
+    "clampResult": false,
+    "factor": {
+      "op": "map_range",
+      "interpolation": "LINEAR",
+      "clamp": true,
+      "value": {
+        "op": "separate",
+        "channel": "y",
+        "input": {
+          "op": "uv"
+        }
+      },
+      "fromMin": {
+        "op": "const_float",
+        "value": 0.5
+      },
+      "fromMax": {
+        "op": "const_float",
+        "value": 0.20000000298023224
+      },
+      "toMin": {
+        "op": "const_float",
+        "value": 0.0
+      },
+      "toMax": {
+        "op": "const_float",
+        "value": 1.0
+      }
+    },
+    "a": {
+      "op": "mix_color",
+      "blendType": "MIX",
+      "clampFactor": true,
+      "clampResult": false,
+      "factor": {
+        "op": "map_range",
+        "interpolation": "LINEAR",
+        "clamp": true,
+        "value": {
+          "op": "separate",
+          "channel": "y",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "fromMin": {
+          "op": "const_float",
+          "value": 0.6000000238418579
+        },
+        "fromMax": {
+          "op": "const_float",
+          "value": 1.100000023841858
+        },
+        "toMin": {
+          "op": "const_float",
+          "value": 0.0
+        },
+        "toMax": {
+          "op": "const_float",
+          "value": 1.0
+        }
+      },
+      "a": {
+        "op": "mix_color",
+        "blendType": "MIX",
+        "clampFactor": true,
+        "clampResult": false,
+        "factor": {
+          "op": "noise",
+          "output": "fac",
+          "dimensions": 2,
+          "detail": 0.0,
+          "roughness": 0.5,
+          "lacunarity": 2.0,
+          "scale": {
+            "op": "const_float",
+            "value": 40.0
+          },
+          "input": {
+            "op": "vector_math",
+            "operation": "MULTIPLY",
+            "a": {
+              "op": "vector_math",
+              "operation": "ADD",
+              "a": {
+                "op": "uv"
+              },
+              "b": {
+                "op": "combine",
+                "x": {
+                  "op": "attribute_object",
+                  "name": "blendlink_object_random",
+                  "output": "fac"
+                },
+                "y": {
+                  "op": "const_float",
+                  "value": 0.0
+                },
+                "z": {
+                  "op": "const_float",
+                  "value": 0.0
+                }
+              }
+            },
+            "b": {
+              "op": "const_vec3",
+              "value": [
+                2.0,
+                1.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "a": {
+          "op": "mix_color",
+          "blendType": "SOFT_LIGHT",
+          "clampFactor": true,
+          "clampResult": false,
+          "factor": {
+            "op": "const_float",
+            "value": 1.0
+          },
+          "a": {
+            "op": "const_vec3",
+            "value": [
+              0.05331359803676605,
+              0.014332977123558521,
+              0.5681419968605042
+            ]
+          },
+          "b": {
+            "op": "const_vec3",
+            "value": [
+              0.23767484724521637,
+              0.23767484724521637,
+              0.23767484724521637
+            ]
+          }
+        },
+        "b": {
+          "op": "const_vec3",
+          "value": [
+            0.05331359803676605,
+            0.014332977123558521,
+            0.5681419968605042
+          ]
+        }
+      },
+      "b": {
+        "op": "mix_color",
+        "blendType": "SOFT_LIGHT",
+        "clampFactor": true,
+        "clampResult": false,
+        "factor": {
+          "op": "const_float",
+          "value": 0.6210843324661255
+        },
+        "a": {
+          "op": "const_vec3",
+          "value": [
+            0.05331359803676605,
+            0.014332977123558521,
+            0.5681419968605042
+          ]
+        },
+        "b": {
+          "op": "const_vec3",
+          "value": [
+            0.8000000715255737,
+            0.11975940316915512,
+            0.41862520575523376
+          ]
+        }
+      }
+    },
+    "b": {
+      "op": "const_vec3",
+      "value": [
+        0.014379244297742844,
+        0.014095538295805454,
+        0.031443871557712555
+      ]
+    }
+  }
+}
