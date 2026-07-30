@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "noise",
+    "output": "color",
+    "dimensions": 2,
+    "detail": 2.0,
+    "roughness": 0.5,
+    "lacunarity": 2.0,
+    "scale": {
+      "op": "const_float",
+      "value": 200.0
+    },
+    "input": {
+      "op": "uv"
+    },
+    "colorOffsets": [
+      [
+        111.63384265071569,
+        157.36939531224067
+      ],
+      [
+        165.44527757573996,
+        162.76821379148592
+      ]
+    ]
+  }
+}

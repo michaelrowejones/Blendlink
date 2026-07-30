@@ -1086,6 +1086,48 @@
       },
       "failureClass": "hash family (4-argument Jenkins, xyzw/zxwy/wzyx Colour)"
     },
+    "noise-2d-scale200": {
+      "ok": true,
+      "claim": "approximate",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0025899590509652626,
+        "p99Abs": 0.007989287376403809,
+        "maxAbs": 0.012802332639694214
+      },
+      "provenBy": [
+        "noise-2d",
+        "noise-scale80"
+      ],
+      "declaredDivergence": {
+        "meanAbs": 0.0026,
+        "p99Abs": 0.008,
+        "maxAbs": 0.013
+      },
+      "failureClass": "2D noise, scale band 80..200 with Colour (bounded approximation)"
+    },
+    "noise-3d-scale200": {
+      "ok": true,
+      "claim": "approximate",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.002090923077048501,
+        "p99Abs": 0.006388187408447266,
+        "maxAbs": 0.008159041404724121
+      },
+      "provenBy": [
+        "noise-scale80",
+        "noise-scale40"
+      ],
+      "declaredDivergence": {
+        "meanAbs": 0.0021,
+        "p99Abs": 0.0064,
+        "maxAbs": 0.0082
+      },
+      "failureClass": "3D noise, scale band 80..200 (bounded approximation)"
+    },
     "noise-1d-scale1600": {
       "ok": true,
       "claim": "approximate",
@@ -1634,10 +1676,40 @@
   },
   "claims": {
     "exact": 127,
-    "approximate": 4,
+    "approximate": 6,
     "diagnostic": 1
   },
   "approximations": [
+    {
+      "id": "noise-2d-scale200",
+      "failureClass": "2D noise, scale band 80..200 with Colour (bounded approximation)",
+      "pass": true,
+      "perTexel": {
+        "meanAbs": 0.0025899590509652626,
+        "p99Abs": 0.007989287376403809,
+        "maxAbs": 0.012802332639694214
+      },
+      "distribution": null,
+      "provenBy": [
+        "noise-2d",
+        "noise-scale80"
+      ]
+    },
+    {
+      "id": "noise-3d-scale200",
+      "failureClass": "3D noise, scale band 80..200 (bounded approximation)",
+      "pass": true,
+      "perTexel": {
+        "meanAbs": 0.002090923077048501,
+        "p99Abs": 0.006388187408447266,
+        "maxAbs": 0.008159041404724121
+      },
+      "distribution": null,
+      "provenBy": [
+        "noise-scale80",
+        "noise-scale40"
+      ]
+    },
     {
       "id": "noise-1d-scale1600",
       "failureClass": "1D noise, scale band 80..1600 (bounded approximation)",

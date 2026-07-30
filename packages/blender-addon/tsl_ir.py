@@ -230,6 +230,17 @@ def _refuse(reason: str):
 _approximations: list = []
 
 _APPROXIMATION_CELLS = {
+    "tsl.noise-3d-scale-above-exact": {
+        "cell": "noise-3d-scale200",
+        "divergenceKind": "bounded",
+        "provenBy": ["noise-scale80", "noise-scale40"],
+        "detail": (
+            "3D noise between scale 80 and 200. Same mechanism as the 1D and "
+            "2D bands: exact algorithm (the proven fBM over MaterialX "
+            "Perlin), sample-position divergence measured at the corpus "
+            "maximum and monotone in scale."
+        ),
+    },
     "tsl.noise-1d-scale-above-exact": {
         "cell": "noise-1d-scale1600",
         "divergenceKind": "bounded",
@@ -320,7 +331,7 @@ _NOISE_SCALE_BOUND = 80.0
 # dimensions string; a dimension with no band still refuses above the exact
 # bound. One number cannot carry two claims, which is why these are separate
 # constants from the exact bound rather than a raised copy of it.
-_NOISE_SCALE_APPROXIMATE_BOUNDS = {"1D": 1600.0, "2D": 100.0}
+_NOISE_SCALE_APPROXIMATE_BOUNDS = {"1D": 1600.0, "2D": 200.0, "3D": 200.0}
 _VORONOI_SMOOTH_F1_APPROXIMATE_BOUND = 180.0
 _VORONOI_SCALE_BOUND = 40.0
 _NOISE_DETAIL_BOUND = 6.0
@@ -1785,6 +1796,7 @@ def emit_output(node, from_socket, stack=()):
             _approximate({
                 "1D": "tsl.noise-1d-scale-above-exact",
                 "2D": "tsl.noise-2d-scale-above-exact",
+                "3D": "tsl.noise-3d-scale-above-exact",
             }[dimensions])
         elif abs(float(scale_expression["value"])) > _NOISE_SCALE_BOUND + 1e-9:
             # Sub-texel sample-position differences between the two

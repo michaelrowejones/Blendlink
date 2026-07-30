@@ -1277,6 +1277,31 @@ def build_white_noise_4d(tree, emission):
     tree.links.new(color, emission.inputs["Color"])
 
 
+def build_noise_2d_scale200(tree, emission):
+    # The head/skin 2D config: detail 2, Colour output at scale 200 - found
+    # hidden behind the Voronoi-177 refusal after the first band pass.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "2D"
+    node.inputs["Scale"].default_value = 200.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    color = next(s for s in node.outputs if s.identifier == "Color")
+    tree.links.new(color, emission.inputs["Color"])
+
+
+def build_noise_3d_scale200(tree, emission):
+    # The corpus-maximum 3D frequency. Same shape as the scale-40/80 cells.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 200.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
 def build_noise_1d_scale1600(tree, emission):
     # The corpus-maximum 1D frequency (fannypack seams). 1600 periods across
     # the 64px tile is 25 per texel: both engines alias identically in
@@ -2195,6 +2220,8 @@ BUILDERS = {
     "muted-mix-color": build_muted_mix_color,
     "white-noise-1d": build_white_noise_1d,
     "white-noise-4d": build_white_noise_4d,
+    "noise-2d-scale200": build_noise_2d_scale200,
+    "noise-3d-scale200": build_noise_3d_scale200,
     "noise-1d-scale1600": build_noise_1d_scale1600,
     "noise-2d-scale100-color": build_noise_2d_scale100_color,
     "voronoi-scale177-smoothf1": build_voronoi_scale177_smoothf1,
