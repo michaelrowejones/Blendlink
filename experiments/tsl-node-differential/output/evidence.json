@@ -234,6 +234,30 @@
       },
       "failureClass": "corpus-measured node gap (2D noise x4)"
     },
+    "noise-1d-detail0": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00014518573880195618,
+        "p99Abs": 0.0003440976142883301,
+        "maxAbs": 0.0003440976142883301
+      },
+      "failureClass": "Blender perlin_1d, single octave"
+    },
+    "noise-1d": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0000343636711477302,
+        "p99Abs": 0.00012090802192687988,
+        "maxAbs": 0.00012090802192687988
+      },
+      "failureClass": "Blender perlin_1d through the fBM loop"
+    },
     "vertex-color": {
       "ok": true,
       "claim": "exact",
@@ -1450,7 +1474,7 @@
     }
   },
   "claims": {
-    "exact": 117,
+    "exact": 119,
     "approximate": 1,
     "diagnostic": 1
   },

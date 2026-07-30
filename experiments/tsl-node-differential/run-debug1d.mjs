@@ -1,0 +1,175 @@
+// Stage-by-stage GPU-vs-CPU bisection of Blender's perlin_1d in TSL.
+//
+//   node experiments/tsl-node-differential/run-debug1d.mjs
+//
+// Renders each stage in debug1d.js on WebGPU and diffs it against the same
+// stage computed here in >>>0 integer JS — the CPU port already proven to
+// match the Blender reference bake to 2e-4, so a stage that disagrees HERE is
+// the stage where the GPU translation breaks. No Blender involved.
+import { existsSync } from 'node:fs'
+import { join, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
+
+const experimentDir = resolve(import.meta.dirname)
+const repositoryRoot = resolve(experimentDir, '..', '..')
+const SIZE = 64
+
+// --- CPU ground truth: >>>0 arithmetic, f64 floats -------------------------
+
+const rot = (x, k) => (((x << k) | (x >>> (32 - k))) >>> 0)
+function jenkinsFinal(a0, b0, c0) {
+  let a = a0 >>> 0
+  let b = b0 >>> 0
+  let c = c0 >>> 0
+  c = (c ^ b) >>> 0; c = (c - rot(b, 14)) >>> 0
+  a = (a ^ c) >>> 0; a = (a - rot(c, 11)) >>> 0
+  b = (b ^ a) >>> 0; b = (b - rot(a, 25)) >>> 0
+  c = (c ^ b) >>> 0; c = (c - rot(b, 16)) >>> 0
+  a = (a ^ c) >>> 0; a = (a - rot(c, 4)) >>> 0
+  b = (b ^ a) >>> 0; b = (b - rot(a, 14)) >>> 0
+  c = (c ^ b) >>> 0; c = (c - rot(b, 24)) >>> 0
+  return c
+}
+const SEED1 = (0xdeadbeef + (1 << 2) + 13) >>> 0
+const hashUint1 = (kx) => jenkinsFinal((SEED1 + kx) >>> 0, SEED1, SEED1)
+const fade = (t) => t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
+function grad1(hash, x) {
+  const h = hash & 15
+  const g = 1.0 + (h & 7)
+  return ((h & 8) ? -g : g) * x
+}
+function perlin1d(x) {
+  const X = Math.floor(x)
+  const fx = x - X
+  const u = fade(fx)
+  const a = grad1(hashUint1(X >>> 0), fx)
+  const b = grad1(hashUint1((X + 1) >>> 0), fx - 1.0)
+  return a + u * (b - a)
+}
+
+const UNIT = 4294967295.0
+const EXPECTED = {
+  x: (u) => u,
+  seed: () => SEED1 / UNIT,
+  rot14: () => rot(0x12345678, 14) / UNIT,
+  floorx: (u) => Math.floor(u * 8.0) / 8.0,
+  hash1: (u) => hashUint1(Math.floor(u * 8.0) >>> 0) / UNIT,
+  hash1next: (u) => hashUint1((Math.floor(u * 8.0) + 1) >>> 0) / UNIT,
+  grad: (u) => {
+    const cell = Math.floor(u * 8.0)
+    return grad1(hashUint1(cell >>> 0), u * 8.0 - cell) * 0.0625 + 0.5
+  },
+  fade: (u) => fade(u * 8.0 - Math.floor(u * 8.0)),
+  perlin: (u) => perlin1d(u * 11.0) * 0.25 * 0.5 + 0.5,
+}
+
+// --- browser machinery, cribbed from run.mjs -------------------------------
+
+async function importPlaywright() {
+  const candidates = [
+    process.env.BLENDLINK_PLAYWRIGHT_MODULE,
+    join(repositoryRoot, 'node_modules', 'playwright', 'index.mjs'),
+    join(
+      repositoryRoot, '..', 'MichaelRoweJonesSite',
+      'node_modules', 'playwright', 'index.mjs',
+    ),
+  ].filter(Boolean)
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return await import(pathToFileURL(candidate).href)
+  }
+  throw new Error(`Playwright is unavailable; looked at: ${candidates.join(', ')}`)
+}
+
+const { createServer } = await import(pathToFileURL(join(
+  repositoryRoot, 'node_modules', 'vite', 'dist', 'node', 'index.js',
+)).href)
+const server = await createServer({
+  configFile: false,
+  root: experimentDir,
+  logLevel: 'warn',
+  optimizeDeps: { noDiscovery: true },
+  server: {
+    host: '127.0.0.1',
+    port: 0,
+    strictPort: false,
+    fs: { allow: [repositoryRoot] },
+  },
+})
+await server.listen()
+const baseUrl = `http://127.0.0.1:${server.httpServer.address().port}/`
+
+const { chromium } = await importPlaywright()
+const executableCandidates = [
+  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
+  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+].filter(Boolean)
+const executablePath = executableCandidates.find((item) => existsSync(item))
+if (!executablePath) throw new Error('no Chromium executable found')
+
+const browser = await chromium.launch({
+  executablePath,
+  headless: true,
+  args: ['--enable-unsafe-webgpu', '--enable-unsafe-swiftshader'],
+})
+const page = await browser.newPage({ viewport: { width: 320, height: 320 } })
+const pageErrors = []
+page.on('pageerror', (error) => pageErrors.push(String(error)))
+page.on('console', (message) => {
+  pageErrors.push(`[${message.type()}] ${message.text()}`)
+})
+
+try {
+  await page.goto(`${baseUrl}debug1d.html`)
+  const environment = await page.evaluate(() => window.__debugInit())
+  if (!environment.ready || environment.error) {
+    throw new Error(`page init failed: ${environment.error}`)
+  }
+  console.log(`backend=${environment.backend ? 'webgpu' : 'fallback'}`)
+
+  for (const [stage, expected] of Object.entries(EXPECTED)) {
+    const rendered = await page.evaluate(
+      (id) => window.__debugRun(id), stage,
+    )
+    if (!rendered.ok) {
+      console.log(`${stage.padEnd(10)} RENDER FAILED: ${rendered.error}`)
+      continue
+    }
+    const pixels = new Float32Array(
+      Uint8Array.from(atob(rendered.base64), (c) => c.charCodeAt(0)).buffer,
+    )
+    const components = rendered.components
+    // Fields vary in x only; read the top readback row (any row) and also
+    // verify rows agree with each other so a y-dependence is itself caught.
+    let maxAbs = 0
+    let worstColumn = -1
+    let rowSpread = 0
+    for (let column = 0; column < SIZE; column += 1) {
+      const u = (column + 0.5) / SIZE
+      const value = pixels[(0 * SIZE + column) * components]
+      const other = pixels[(32 * SIZE + column) * components]
+      rowSpread = Math.max(rowSpread, Math.abs(value - other))
+      const delta = Math.abs(value - expected(u))
+      if (delta > maxAbs) {
+        maxAbs = delta
+        worstColumn = column
+      }
+    }
+    const verdict = maxAbs < 1e-4 ? 'ok  ' : 'FAIL'
+    let detail = ''
+    if (maxAbs >= 1e-4) {
+      const u = (worstColumn + 0.5) / SIZE
+      detail = `  worst col ${worstColumn}: gpu=${
+        pixels[worstColumn * components].toFixed(6)} cpu=${
+        expected(u).toFixed(6)}`
+    }
+    console.log(`${stage.padEnd(10)} ${verdict} maxAbs=${
+      maxAbs.toExponential(2)} rowSpread=${rowSpread.toExponential(1)}${detail}`)
+  }
+  if (pageErrors.length) {
+    console.log(`page errors:\n  ${pageErrors.slice(0, 5).join('\n  ')}`)
+  }
+} finally {
+  await browser.close()
+  await server.close()
+}

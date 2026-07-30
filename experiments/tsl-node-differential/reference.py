@@ -1120,6 +1120,38 @@ def build_tex_image_linear(tree, emission):
     tree.links.new(node.outputs["Color"], emission.inputs["Color"])
 
 
+def build_noise_1d(tree, emission):
+    # 1D noise consumes the W socket alone. Driven from UV.x through a
+    # Separate XYZ so the field actually varies across the tile; a constant W
+    # would measure one texel repeated 4096 times and prove nothing.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "1D"
+    node.inputs["Scale"].default_value = 6.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(separate.outputs["X"], node.inputs["W"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_noise_1d_detail0(tree, emission):
+    # Detail 0 isolates the single perlin_1d octave from the fBM loop, so a
+    # gradient/hash error and an octave-accumulation error cannot hide in each
+    # other.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "1D"
+    node.inputs["Scale"].default_value = 11.0
+    node.inputs["Detail"].default_value = 0.0
+    tree.links.new(separate.outputs["Y"], node.inputs["W"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
 def build_white_noise_continuous_uv(tree, emission):
     # Raw UV straight into White Noise -- no floor/ceil/snap. This is the
     # configuration the corpus actually uses and the one that cannot agree
@@ -1947,6 +1979,8 @@ BUILDERS = {
     "voronoi-scale20": build_voronoi_scale20,
     "voronoi-scale40": build_voronoi_scale40,
     "tex-image-linear": build_tex_image_linear,
+    "noise-1d-detail0": build_noise_1d_detail0,
+    "noise-1d": build_noise_1d,
     "white-noise-continuous-uv": build_white_noise_continuous_uv,
     "tex-image-cubic": build_tex_image_cubic,
     "tex-image-cubic-extend": build_tex_image_cubic_extend,

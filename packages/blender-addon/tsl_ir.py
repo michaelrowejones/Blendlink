@@ -1540,30 +1540,15 @@ def emit_output(node, from_socket, stack=()):
         if not bool(getattr(node, "normalize", True)):
             _refuse("Unnormalized noise has no cell yet")
         dimensions = str(getattr(node, "noise_dimensions", "3D"))
-        # 1D attempted 2026-07-30 and reverted: the TSL port of perlin_1d
-        # measured meanAbs 1.79e-1 against a 1e-3 gate. What the attempt DID
-        # establish, so the next one need not redo it:
-        #   * The algorithm is understood. A Python port of perlin_1d, grad1
-        #     and hash_uint matches the reference bake to 2e-4, so Blender's
-        #     side is not in doubt.
-        #   * hash_uint's seed is 0xdeadbeef + (1 << 2) + 13 -- the arity is
-        #     encoded, so it is NOT hashUint2(x, 0).
-        #   * three has no 1D Perlin at all: mx_perlin_noise_float is an
-        #     overloadingFn over vec2 and vec3 only, so this must be a direct
-        #     port of Blender's rather than a MaterialX mapping.
-        #   * Ruled out by testing against the rendered field: wrong seed
-        #     arity, flipped grad1 negate branch, missing noise_scale1 0.25.
-        #   * The remaining suspect is the TSL integer path -- bitcast(int(
-        #     floor(x)), 'uint') and the u32 arithmetic inside the 1-argument
-        #     hash. The float half is fine; the field has the right frequency
-        #     and range and only the gradient selection differs.
-        #   * Also fixed and then reverted with it: the emitter's dimensions
-        #     ternary read `2 if dimensions == "2D" else 3`, which silently
-        #     mapped 1D to 3 and fed the scalar W into mx_noise_float, whose
-        #     .convert('vec2|vec3') produced a plausible-looking wrong field.
-        #     Any future 1D work must carry dimensions explicitly first, or it
-        #     will debug a hash that was never reached.
-        if dimensions not in {"2D", "3D"}:
+        # 1D shipped 2026-07-30, second attempt. The first failed at 1.79e-1
+        # because hashUint1's all-literal b/c seeds CONST-FOLDED in WGSL, and a
+        # WGSL const-expression that overflows u32 is a compile error, not a
+        # wrap -- the shader never built and the harness read back the previous
+        # render. Two .toVar() calls fix it; the stage-by-stage GPU-vs-CPU
+        # bisection that found it is run-debug1d.mjs in the differential
+        # harness, and the gated noise-1d cells hold the claim. 4D still
+        # refuses: it needs grad4 and the 16-tap quad_mix, not just a hash.
+        if dimensions not in {"1D", "2D", "3D"}:
             _refuse(
                 f"Noise dimensions {dimensions!r} has no cell yet"
             )
@@ -1638,12 +1623,22 @@ def emit_output(node, from_socket, stack=()):
         expression = {
             "op": "noise",
             "output": "fac" if noise_output == "Fac" else "color",
-            "dimensions": 2 if dimensions == "2D" else 3,
+            # 1D must be carried explicitly: an "else 3" fallthrough silently
+            # sends the scalar W into mx_noise_float, whose
+            # .convert('vec2|vec3') turns it into a plausible-looking 3D field,
+            # producing a wrong result that reads exactly like a hash bug.
+            "dimensions": {"1D": 1, "2D": 2}.get(dimensions, 3),
             "detail": detail_value,
             "roughness": roughness_value,
             "lacunarity": lacunarity_value,
             "scale": scale_expression,
-            "input": _texture_vector(vector, stack),
+            # 1D noise consumes the W socket alone -- the node has no Vector
+            # socket at all -- so the runtime receives a SCALAR here and runs
+            # Blender's ported perlin_1d over it.
+            "input": (
+                emit_input(node.inputs["W"], stack=stack)
+                if dimensions == "1D" else _texture_vector(vector, stack)
+            ),
         }
         # Distortion perturbs the SCALED coordinate before any octave runs,
         # by a single signed Perlin octave per component sampled at the low

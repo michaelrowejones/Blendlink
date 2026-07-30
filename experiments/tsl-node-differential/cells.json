@@ -231,6 +231,30 @@
    "claim": "exact"
   },
   {
+   "id": "noise-1d-detail0",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "Blender perlin_1d, single octave",
+   "notes": "Detail 0, scale 11, W driven from UV.y. three has NO 1D Perlin - mx_perlin_noise_float is an overloadingFn over vec2 and vec3 only - so this is a direct port of Blender's perlin_1d, grad1 and hash_uint from intern/cycles/kernel/svm/noise.h with noise_scale1's 0.25 folded in. Detail 0 isolates the single octave so a gradient or hash error cannot hide inside the fBM accumulation. The port's .toVar() calls are load-bearing: hashUint1's all-literal seeds const-fold in WGSL, and a const-expression that overflows u32 is a compile ERROR, not a wrap - the first attempt shipped an uncompilable shader and measured stale pixels at 1.79e-1. run-debug1d.mjs is the bisection rig that found it."
+  },
+  {
+   "id": "noise-1d",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "Blender perlin_1d through the fBM loop",
+   "notes": "Detail 2, scale 6, W driven from UV.x - 9 of ellie's 49 visible materials use 1D noise. Pairs with noise-1d-detail0: this one adds the octave loop on top of the octave that cell already pins. hash_uint is the 1-ARGUMENT member of the Jenkins family and its seed encodes the arity as 0xdeadbeef + (1 << 2) + 13, so it is not hashUint2(x, 0) and substituting one for the other silently yields a different field."
+  },
+  {
    "id": "vertex-color",
    "gate": true,
    "tolerance": {

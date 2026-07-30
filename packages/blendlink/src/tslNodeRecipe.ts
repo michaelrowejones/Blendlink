@@ -362,6 +362,10 @@ export function blenderNoiseFac(
   detail: number,
   roughness: number,
   lacunarity: number,
+  // The single-octave primitive. Defaults to MaterialX's Perlin, which the
+  // 2D/3D cells prove agrees with Blender's; 1D has no MaterialX counterpart
+  // at all and runs Blender's own ported perlin1d instead.
+  octaveFn: (position: TslExpression) => TslExpression = tslNoise,
 ): TslExpression {
   const clampedDetail = Math.min(Math.max(detail, 0), 15)
   const octaves = Math.floor(clampedDetail)
@@ -372,7 +376,7 @@ export function blenderNoiseFac(
   let maxAmplitude = 0
   let sum = tslFloat(0.0)
   for (let octave = 0; octave <= octaves; octave += 1) {
-    sum = sum.add(tslNoise(position.mul(frequency)).mul(amplitude))
+    sum = sum.add(octaveFn(position.mul(frequency)).mul(amplitude))
     maxAmplitude += amplitude
     amplitude *= amplitudeRatio
     frequency *= lacunarity
@@ -380,7 +384,7 @@ export function blenderNoiseFac(
   let normalized = sum.div(maxAmplitude)
   if (remainder > 1e-9) {
     const extra = sum
-      .add(tslNoise(position.mul(frequency)).mul(amplitude))
+      .add(octaveFn(position.mul(frequency)).mul(amplitude))
       .div(maxAmplitude + amplitude)
     normalized = tslMix(normalized, extra, remainder)
   }
@@ -671,6 +675,8 @@ function build(expression: TslIrExpression): TslExpression {
       let position = build(child(expression, 'input'))
         .mul(build(child(expression, 'scale')))
       const dimensions = scalar(expression, 'dimensions')
+      // dimensions === 1 needs no coordinate surgery: the emitter sends the W
+      // socket as a scalar, and perlin1d consumes it directly.
       if (dimensions === 2) {
         // Blender's 2D noise is a genuinely different Perlin dimension,
         // matched by mx_noise_float's vec2 overload (the noise-2d cell).
@@ -699,7 +705,10 @@ function build(expression: TslIrExpression): TslExpression {
       const roughness = scalar(expression, 'roughness')
       const lacunarity = typeof expression.lacunarity === 'number'
         ? expression.lacunarity : 2.0
-      const fac = blenderNoiseFac(position, detail, roughness, lacunarity)
+      const fac = blenderNoiseFac(
+        position, detail, roughness, lacunarity,
+        dimensions === 1 ? perlin1d : tslNoise,
+      )
       if (expression.output !== 'color') return fac
       // Color lanes are the same fBM at constant hash-derived offsets
       // (the emitter precomputed noisetex.h's random offsets).
@@ -1312,6 +1321,71 @@ function jenkinsMix(
 
 function floatBits(value: TslExpression): TslExpression {
   return tslBitcast(value, 'uint')
+}
+
+/** Blender's `hash_uint` — the 1-argument member of the same family.
+ *
+ * The arity is encoded in the seed: `0xdeadbeef + (N << 2) + 13`, so this is
+ * not `hashUint2(x, 0)` and substituting one for the other silently produces a
+ * different field.
+ *
+ * The `.toVar()` calls are load-bearing, not style. WGSL evaluates all-literal
+ * subexpressions as CONST-expressions, and a const-expression that overflows
+ * u32 is a compile ERROR, not a wrap — Tint: "'305419896 << 14' cannot be
+ * represented as 'u32'". hashUint2/3/4 never hit this because every one of
+ * their b/c operands mixes in a runtime key; here b and c stay literal seeds,
+ * so without the vars the whole Jenkins mix folds at compile time, the shader
+ * never builds, and the readback silently returns the PREVIOUS render —
+ * measured as a plausible-looking 1.79e-1 divergence before the stage-by-stage
+ * bisection (experiments/tsl-node-differential/run-debug1d.mjs) isolated it.
+ */
+function hashUint1(kx: TslExpression): TslExpression {
+  const seed = 0xdeadbeef + (1 << 2) + 13
+  const b = tslUintOf(seed).toVar()
+  const c = tslUintOf(seed).toVar()
+  return jenkinsFinal(tslUintOf(seed).add(kx), b, c)
+}
+
+/** Blender's `fade` — the quintic Perlin ease, t^3(t(6t-15)+10). */
+function perlinFade(t: TslExpression): TslExpression {
+  return t.mul(t).mul(t).mul(t.mul(t.mul(6.0).sub(15.0)).add(10.0))
+}
+
+/** Blender's `grad1`, verbatim from intern/cycles/kernel/svm/noise.h:
+ *
+ *   int h = hash & 15; float g = 1 + (h & 7);
+ *   return negate_if(g, h & 8) * x;
+ */
+function perlinGrad1(hash: TslExpression, x: TslExpression): TslExpression {
+  const h = hash.bitAnd(tslUintOf(15))
+  const g = tslFloat(h.bitAnd(tslUintOf(7))).add(1.0)
+  const positive = h.bitAnd(tslUintOf(8)).equal(tslUintOf(0))
+  return tslSelect(positive, g, g.negate()).mul(x)
+}
+
+/** Blender's `perlin_1d` with `noise_scale1`'s 0.25 normalisation folded in.
+ *
+ * three has no 1D Perlin at all — `mx_perlin_noise_float` is an overloadingFn
+ * over vec2 and vec3 only — so this is a direct port of Blender's rather than
+ * a MaterialX mapping. GPU-vs-CPU bisection measured every stage (hash,
+ * gradient, fade, full perlin) agreeing to 4.2e-8; the gated `noise-1d` cells
+ * hold the Blender-vs-TSL claim.
+ */
+function perlin1d(x: TslExpression): TslExpression {
+  const ix = tslFloor(x)
+  const fx = x.sub(ix)
+  // Blender keeps X as a signed int and hands it to hash_uint, which C
+  // reinterprets as two's complement. A WGSL value conversion u32(i32) is
+  // undefined for negatives, so bitcast is the only well-defined spelling and
+  // negative coordinates are entirely normal here.
+  const X = tslBitcast(tslIntOf(ix), 'uint')
+  const u = perlinFade(fx)
+  const result = tslMix(
+    perlinGrad1(hashUint1(X), fx),
+    perlinGrad1(hashUint1(X.add(tslUintOf(1))), fx.sub(1.0)),
+    u,
+  )
+  return result.mul(0.25)
 }
 
 function hashUint2(kx: TslExpression, ky: TslExpression): TslExpression {

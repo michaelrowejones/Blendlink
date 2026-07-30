@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "noise",
+    "output": "fac",
+    "dimensions": 1,
+    "detail": 2.0,
+    "roughness": 0.5,
+    "lacunarity": 2.0,
+    "scale": {
+      "op": "const_float",
+      "value": 6.0
+    },
+    "input": {
+      "op": "separate",
+      "channel": "x",
+      "input": {
+        "op": "uv"
+      }
+    }
+  }
+}
