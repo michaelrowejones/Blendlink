@@ -820,3 +820,38 @@ The findings that reshape the naive plan, then the unit order.
 
 Success metric unchanged: ellie draw calls and GPU texture bytes against the clean-HEAD
 baseline (re-measured this session, replacing the stale 201.5 MiB / 65 figures).
+
+**2-D design, forced by the implementation map (measured 2026-07-31, four readers over the
+orchestration).** Three decisions the code left no room to make differently:
+
+1. **The material atlas bypasses the state loop entirely.** Threading four channel images
+   through the existing orchestration breaks it everywhere it is keyed by group name alone:
+   one fingerprint per (state, group) cannot distinguish channels (the digest hashes bake RNA,
+   and each channel's configure_* writes different RNA); state/light file names interpolate
+   the raw group name so a channel segment collides with a group named like a channel; the
+   job arithmetic goes negative; save_resolved without data=True pushes ORM/normal through
+   the sRGB dither; normalize_bake_image and state scales assume radiance. Instead: its own
+   loop after the state loop, job names `material:{group}:{channel}` (configure-before-
+   fingerprint AND configure-before-execute, the two-phase invariant the state loop already
+   documents), file names with a `.material.` segment, data=True for orm/normal, allow_hdr
+   for emissive only, no normalize, no state scale. Light-group and state loops simply
+   exclude material groups.
+2. **v1 owns static meshes only.** `freeze_evaluated_meshes` bakes the CURRENT POSE and then
+   `obj.modifiers.clear()` deletes the armature -- an atlas-owned character would silently
+   ship unrigged. The rest-basis mechanism that fixes this exists (`_split_slot_receiver`
+   copies obj.data with no depsgraph and no modifiers) but is gated by a slot-count
+   heuristic, and the tangent frame of a posed NORMAL bake would disagree with the exporter's
+   rest tangents. Deforming ownership is its own follow-up unit: force the split receiver for
+   `_deforming_receiver` objects, bypass the freeze for material-owned members, and make
+   texel weights pose-independent. Until then the character case keeps riding the
+   per-material routes, which already handle deforming receivers.
+3. **v1 is GLB-carried and state-less.** The runtime's whole baked contract assumes ONE url
+   per (state, atlas); a material atlas is N textures per material, and a state-less atlas
+   never reaches bindingOf at all (hasBakedAssets is computed from states+lightGroups). So
+   v1 rebuilds lit PBR materials in Blender (cloning the exporter-compatible node shape
+   `_generated_material_bake` already builds), bakes the pages into the GLB, does NOT stamp
+   `blendlink_bake_output` on its objects (the stamp is a lightmap-shaped contract), and
+   records itself in a separate manifest field for evidence. Delivery-tier promotion and
+   states for material atlases need a per-channel URL shape and are deliberately out of v1.
+   The latent planManifest bug (material-owned objects bucketed 'live', emitting phantom
+   needs-bake errors in plan-only mode) is fixed ahead of the route.

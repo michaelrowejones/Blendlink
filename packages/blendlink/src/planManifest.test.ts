@@ -220,6 +220,33 @@ describe('plan manifest metadata', () => {
     },
   )
 
+  it('exempts material-atlas-owned objects exactly like appearance-owned ones', () => {
+    // The material atlas bakes the object's complete surface (that is its
+    // definition), so a needsBake material used only by material-owned
+    // objects must not block the realtime plan. Before the material arm
+    // existed in the ownership bucket, this emitted a phantom
+    // material.used-needs-bake error in plan-only mode.
+    const inspection = inspectRealtimePlanMaterialDiagnostics({
+      materials: [{
+        material: 'Painted Surface',
+        status: 'needsBake',
+        label: 'Needs Bake',
+        summary: 'The authored surface is not portable stock glTF.',
+        reasons: ['Shader to RGB is not portable stock glTF.'],
+        usedBy: ['Material Receiver'],
+      }],
+    }, {
+      bakePlan: {
+        objects: [{
+          name: 'Material Receiver',
+          atlas: 'surface',
+          bakeOutput: 'material',
+        }],
+      },
+    })
+    expect(inspection).toEqual({ errors: [], warnings: [] })
+  })
+
   it('does not exempt an ambiguous duplicate name with conflicting Hybrid ownership', () => {
     const inspection = inspectRealtimePlanMaterialDiagnostics({
       materials: [{

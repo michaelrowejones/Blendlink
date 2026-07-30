@@ -51,7 +51,16 @@ function unambiguousAppearanceOwnedObjectNames(
   for (const object of plan.objects) {
     record(
       object.name,
-      object.bakeOutput === 'appearance' ? 'appearance' : 'live',
+      // Appearance AND material atlases own their objects' complete
+      // surface (the bake carries it), so neither needs a live material
+      // route; only lighting-owned objects keep live materials. Without
+      // the material arm, a material-atlas plan emits phantom
+      // material.used-needs-bake errors for surfaces that are in fact
+      // baked (found latent by the Phase 2 seam map: the type at
+      // plan.objects already admitted 'material' before this bucket did).
+      object.bakeOutput === 'appearance' || object.bakeOutput === 'material'
+        ? 'appearance'
+        : 'live',
     )
   }
   for (const object of plan.dynamicObjects ?? []) record(object.name, 'live')
