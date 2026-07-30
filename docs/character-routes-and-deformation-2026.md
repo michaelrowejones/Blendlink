@@ -168,36 +168,65 @@ Record this so nobody relaxes the bind-branch refusal expecting a green compile.
 is that Phase 1 took ellie's geometry refusals from three meshes to one, and the last one is
 waiting on Phase 3.
 
-**Phase 1b — stop baking constant channels. Measured 2026-07-30; do this before Phase 2.**
-The per-channel bake writes a texture for every Principled channel whether or not the channel
-varies. On ellie that is **38 of 85 textures and 75.2 MB of the 201.5 MB GPU budget — 37.3% —
-for images that are a single solid colour**. Decoded from the shipped GLB, "constant" meaning no
-channel varies by more than one 8-bit code value:
+**Phase 1b — stop baking constant channels. Measured 2026-07-30, then corrected by an
+adversarial re-measurement the same day; do this before Phase 2.**
+The per-channel bake writes a texture for every channel whether or not the channel varies. On
+ellie that is **38 of 85 textures and 75.354 MiB of the 201.5 MiB GPU budget — 37.4% — for images
+that are a single solid colour**. "Constant" here means *zero* variation in every channel, not
+merely small variation. The total cross-checks against the manifest's own
+`stats.gpuTextureBytes`.
 
 | what | count | GPU bytes | fill |
 | --- | --- | --- | --- |
-| emissive | 24 | 53.0 MB | `(0,0,0)` — pure black, every one |
-| ORM | 12 | 22.2 MB | e.g. `(255,152,64)` = AO 1.0, rough 0.596, metal 0.251 |
-| base colour | 2 | 0.1 MB | `(236,67,216)`, `(162,149,135)` |
+| emissive | 26 | 59.667 MiB | `(0,0,0)` — pure black, all 26 |
+| ORM | 10 | 15.583 MiB | e.g. `(255,152,64)` = AO 1.0, rough 0.596, metal 0.251 |
+| base colour | 2 | 0.104 MiB | `(236,67,216)`, `(162,149,135)` |
 
-**75.2 MB of it is free**, not merely recoverable: every black emissive sits under
-`emissiveFactor = [1,1,1]` so the product is already zero, and every constant ORM sits under
-`roughnessFactor = metallicFactor = 1.0` so the constant *is* the factor, exactly. Only the two
-base colours (0.1 MB) need arithmetic, an sRGB→linear fold to `baseColorFactor`
-(`(236,67,216)` → `[0.8388, 0.0561, 0.6867]`). Nothing needs re-baking and nothing changes
-visually.
+**Every one of these needs a factor rewritten; none is free.** glTF multiplies factor by texture,
+so dropping a texture and leaving the factor alone changes the result in all three classes:
+a black emissive under `emissiveFactor = [1,1,1]` becomes **fully emissive white**, and a constant
+ORM under `roughnessFactor = metallicFactor = 1.0` becomes **roughness 1.0 / metallic 1.0** rather
+than the constant. The rewrites: `emissiveFactor → [0,0,0]`; `roughnessFactor`/`metallicFactor` →
+the constant channel value (linear, no conversion, and all 10 have AO = 255 so occlusion drops as
+identity); `baseColorFactor` → the sRGB→linear fold, e.g. `(236,67,216)` → `[0.8388, 0.0561,
+0.6867]`.
 
-The information to skip them is already in the plan and is simply not read. The shipped manifest
-records **105 channels as `routing: "constant"` with the exact `value`** — against 8 `unique`, 3
-`tileable`, 2 `viewDependent`, 1 `uniform` — including `Emission Color: [0,0,0,1]`, which is the
-24 black textures verbatim. The channel router does the analysis and the baker ignores the
-answer.
+**Most of this is duplication, not constancy, and that changes what to build first.** The 38
+constant textures share only **16 distinct payloads** — one single payload backs 10 of them and
+accounts for 53.3 MiB by itself. **52.583 MiB is recoverable by plain de-duplication**, leaving
+**22.771 MiB (11.3%) as the elision's actual marginal win.** `optimizer.ts:903` already runs
+`dedup(...)`, but with `keepUniqueNames: true`, and all 85 texture names are unique, so it merges
+exactly nothing. That is not an oversight to flip: the policy note at `optimizer.ts:962-978` says
+never *"flatten a solid texture ... or discard a named resource that may be addressed by
+application code"*, and `prune` is called with `keepSolidTextures: true`. Changing it reverses a
+recorded decision. The counter-argument worth weighing is that these names are generated
+(`channel-<hash>-emissive`), not authored, so "application code may address them" is much weaker
+here than for an artist-named texture — but that is a call to make deliberately, not by flipping a
+flag.
 
-This lands ahead of Phase 2 because it is bigger than what the shared atlas was scoped to buy,
-costs no new route, and shrinks the input the atlas would have to pack. Note it is a **VRAM and
-binding-count win, not a download win** — those PNGs are already 14 KB each, so the 23.8 MB GLB
-barely moves. The win is 37% of texture memory, 38 fewer texture bindings, and 51 materials that
-stop pretending to be textured.
+**The root cause is not what I first wrote.** I claimed the router computes `routing: "constant"`
+and the baker ignores it. That is refuted: all 105 constant-routed channels already take
+`route: "factor"` and none of them produced a texture. The truth is the same defect as 1c — the
+26 constant-emissive materials are **exactly** the 26 `BLEND` materials, and all 26 are
+`surfaceRoot: "unsupported"` with an empty channel list. The router has no answer for these
+materials to ignore. A non-Principled root means the whole surface is baked, which emits a black
+emissive, a constant ORM *and* the binary alpha that forces BLEND, all from one cause. **1b and 1c
+are one defect with three symptoms**, and the population is the stylized set that §8a shows TSL
+could carry.
+
+Reported by the adversarial pass but **not independently verified by me**: the emissive-factor
+attestation is guarded by "if an emissive image was planned", so the fully-emissive-white failure
+this phase exists to prevent is currently unverifiable in both languages. Check before relying on
+it.
+
+Finally, it is a **VRAM and binding-count win, not a download win** — those PNGs are 14 KB each
+and total 207 kB of a 10.2 MB payload. Quote the **37.4%**, not the megabytes: under KTX2/BC7 the
+whole budget is roughly 50 MB and the constant share roughly 19 MB, but the fraction holds.
+
+**These figures are stale and must be re-measured before they score anything.** The GLB they came
+from is dated 2026-07-29 07:10 and predates both the `TEXCOORD > 3` refusal
+(`material_compiler.py:4576`) and the UV prune; it still carries texCoord 4, 5 and 6, which HEAD
+now refuses. The atlas at HEAD is not the atlas these 38 were counted from.
 
 **Phase 1c — half the character is in the transparent queue and none of it is transparent.
 Measured 2026-07-30.** 26 of ellie's 51 materials publish `alphaMode: BLEND`. Every one of the 26
@@ -326,9 +355,10 @@ authored component if secondary motion is ever needed.
   textures (RGBA8 + full mip chain, decoded from the shipped GLB), 65 draw calls, 51 materials.
   Composition: one 2048² `ellie.dirt_map` at 21.3 MB shared by 3 materials, 30 × 1024² at 160.0 MB,
   then 9 × 512², 18 × 256², 25 × 128², 2 × 64². **Only 21.3 MB is shared by more than one material
-  slot; 180.1 MB is single-use.** Phase 1b removes 75.2 MB of that as provably constant, which
-  leaves ~126.3 MB in genuinely varying single-use images — that residue, not the headline number,
-  is what the atlas has to beat. The allocator run is still owed.
+  slot; 180.1 MB is single-use.** Phase 1b plus plain de-duplication remove 75.354 MiB of that,
+  which leaves ~126.1 MiB in genuinely varying single-use images — that residue, not the headline
+  number, is what the atlas has to beat. The allocator run is still owed, and so is re-taking this
+  whole baseline on a clean HEAD compile.
 
   **The draw-call half of the same baseline, measured 2026-07-30.** 65 draw calls = 36 mesh
   instances carrying 65 primitives; no mesh is instanced more than once. A glTF mesh needs one
