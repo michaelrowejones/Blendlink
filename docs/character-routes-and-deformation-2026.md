@@ -157,6 +157,40 @@ binding-count win, not a download win** — those PNGs are already 14 KB each, s
 barely moves. The win is 37% of texture memory, 38 fewer texture bindings, and 51 materials that
 stop pretending to be textured.
 
+**Phase 1c — half the character is in the transparent queue and none of it is transparent.
+Measured 2026-07-30.** 26 of ellie's 51 materials publish `alphaMode: BLEND`. Every one of the 26
+is a `BLENDLINK_WEB.*` per-channel bake output, and **every one of them has exactly 0.00% midtone
+alpha** — the base-colour alpha is purely binary, 0 or 255. It is the atlas's uncovered
+background, not authored translucency. Blender agrees: of the 49 source materials on visible
+meshes, **47 are `DITHERED` and only 2 are `BLENDED`**.
+
+This is not a hidden bug. The compiler declares it at
+`packages/blender-addon/material_compiler.py:3432` — *"Baked alpha publishes as BLEND; MASK
+detection from baked coverage is not implemented yet"* — and the mode is chosen one branch above,
+at `:3413`: `"BLEND" if (alpha_baked or alpha_factor < 1.0) else "OPAQUE"`. What is new is the
+evidence that implementing the missing detection is now worth it and is provably lossless: the
+coverage is binary in **26 of 26** cases, so `MASK` with cutoff 0.5 is exactly equivalent on every
+sampled texel while restoring depth write.
+
+The cost of leaving it is not only performance. A `BLEND` material does not write depth and is
+sorted back-to-front per frame, so overlapping surfaces on the same character — eyes inside a
+head, teeth inside a mouth, hair over a scalp — resolve in draw order rather than depth order.
+That is the mechanism behind the "seeing the eyeballs through the head" defect reported against
+the first ellie render.
+
+There is a sharp lead on *why* the alpha is being baked at all. Across the 43 materials on the
+per-channel bake route, the presence of an `Alpha` channel record in the router's own output
+predicts the mode perfectly: **17 of 17 materials that have one publish `OPAQUE`; 26 of 26 that
+lack one publish `BLEND`.** `ellie.head_hair` carries `Alpha: {routing: "constant", value: 1}` and
+ships opaque; `ellie.head`, from the same mesh, carries no `Alpha` record and ships BLEND. So the
+absent analysis result — not a measured alpha — is what selects the expensive mode. Whether the
+router declines to emit the record or the bake declines to read it is not yet established, and is
+the first thing to find out.
+
+Same theme as 1b, which is why they are adjacent: the router already knows, and the baker does not
+ask. 1b spends that on memory; 1c spends it on correctness. Both wait on a clean HEAD compile
+before the numbers are re-quoted, since these were measured on the pre-texCoord-fix GLB.
+
 **Phase 2 — the route model.** Lighting × Surface split; `bakeOutput = "material"` through all
 four gate points; per-slot shared surface atlas; delete the `compile_objects` subtraction so
 lighting and TSL compose; promote TSL to a real route with its own property, UI and decision
