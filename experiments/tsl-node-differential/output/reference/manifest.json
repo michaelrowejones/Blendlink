@@ -1850,6 +1850,94 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "noise-distortion": {
+      "path": "noise-distortion.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-distortion.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.24297265708446503,
+        0.24297265708446503,
+        0.24297265708446503
+      ],
+      "rgbMax": [
+        0.7742674350738525,
+        0.7742674350738525,
+        0.7742674350738525
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "noise-distortion-color": {
+      "path": "noise-distortion-color.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-distortion-color.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.2460251897573471,
+        0.2844693064689636,
+        0.2232132852077484
+      ],
+      "rgbMax": [
+        0.7813367247581482,
+        0.8326830863952637,
+        0.7592520713806152
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "vector-rotate-z": {
+      "path": "vector-rotate-z.f32",
+      "pipeline": "ir",
+      "ir": "ir/vector-rotate-z.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.23283854126930237,
+        0.2328530251979828,
+        0.5
+      ],
+      "rgbMax": [
+        0.7671604752540588,
+        0.7671749591827393,
+        0.5
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "vector-rotate-axis-angle": {
+      "path": "vector-rotate-axis-angle.f32",
+      "pipeline": "ir",
+      "ir": "ir/vector-rotate-axis-angle.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.2660542130470276,
+        0.2678643465042114,
+        0.3486804962158203
+      ],
+      "rgbMax": [
+        0.7339409589767456,
+        0.7321609854698181,
+        0.6513303518295288
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "noise-scale16": {
       "path": "noise-scale16.f32",
       "pipeline": "ir",

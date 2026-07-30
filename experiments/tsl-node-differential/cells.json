@@ -1835,6 +1835,50 @@
    "notes": "3D fBM at detail 6, scale 4 - the octave count 4 of ellie's visible materials ask for. The emitter's bound of 4 cites a detail-6/scale-5 measurement of 3.9e-2, but that figure is the same vintage as its scale-100 claim of 1.8e-1, which re-measurement put at 1.023e-3 - wrong by ~175x - so this one is worth re-measuring rather than inheriting."
   },
   {
+   "id": "noise-distortion",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise coordinate distortion (Fac)",
+   "notes": "3D noise, scale 5, detail 2, Distortion 1.0 - 10 of ellie's 49 visible materials. Distortion perturbs the SCALED coordinate by one signed Perlin octave per component sampled at random_floatN_offset(0..N-1); the offsets fold at emit time because they depend only on a literal seed. noisetex.h and gpu_shader_material_tex_noise.glsl were both read and agree verbatim."
+  },
+  {
+   "id": "noise-distortion-color",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise distortion x colour-lane offset collision",
+   "notes": "Distortion 0.75 with the Colour output. The colour lanes use seeds 3 and 4 precisely because distortion consumes 0..2, so this cell fails if the two features are ever given overlapping offsets - the colour-lane comment records the wrong pair decorrelating at 1e-1 while Fac stays at 4e-5, which is exactly the trap."
+  },
+  {
+   "id": "vector-rotate-z",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "vector rotate fixed axis + centre offset",
+   "notes": "Z_AXIS, centre (0.5,0.5,0), angle 0.5, rotating UV straight into the emission colour so the measurement is the vector itself rather than something downstream of it. 12 of ellie's 19 Vector Rotate nodes are Z_AXIS. Centre is at the tile middle because the reference bake refuses negative channel values."
+  },
+  {
+   "id": "vector-rotate-axis-angle",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "vector rotate arbitrary axis (Rodrigues + normalize)",
+   "notes": "AXIS_ANGLE with a non-unit, non-axis-aligned Axis (0.3,-0.7,0.5) and angle 0.9 - gates the normalize and all nine Rodrigues coefficients at once, including the sintheta sign asymmetry between rows. The X/Y/Z_AXIS literals ride this cell rather than needing three more, since the emitter folds them into the same op with a constant axis."
+  },
+  {
    "id": "noise-scale16",
    "gate": true,
    "tolerance": {

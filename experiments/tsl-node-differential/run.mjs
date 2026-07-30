@@ -9,7 +9,7 @@
 //   node experiments/tsl-node-differential/run.mjs
 //   BLENDLINK_TSL_DIFF_REUSE=1  # skip re-baking the Blender reference
 import { execFileSync } from 'node:child_process'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
@@ -68,6 +68,28 @@ if (!existsSync(recipeModule)) {
   throw new Error(
     `built tslNodeRecipe module missing (${recipeModule}); run npm run build`,
   )
+}
+// The harness gates the BUILT module, which is the point -- a cell must prove
+// what ships. But a stale build silently measures the previous mapping against
+// the current Blender reference, which reads as a decorrelated failure of a
+// cell whose TSL half simply is not there yet. That cost a correct noise
+// distortion mapping a false 6.6e-2 "refutation" and a revert on 2026-07-30.
+// Refuse instead of measuring a lie.
+const recipeSource = join(
+  repositoryRoot, 'packages', 'blendlink', 'src', 'tslNodeRecipe.ts',
+)
+if (existsSync(recipeSource)) {
+  const builtAt = statSync(recipeModule).mtimeMs
+  const editedAt = statSync(recipeSource).mtimeMs
+  if (editedAt > builtAt) {
+    throw new Error(
+      'built tslNodeRecipe.js is older than src/tslNodeRecipe.ts '
+      + `(${new Date(builtAt).toISOString()} vs `
+      + `${new Date(editedAt).toISOString()}); run npm run build first, or the `
+      + 'harness measures the previous TSL mapping against the current '
+      + 'Blender reference and every edited cell fails for the wrong reason.',
+    )
+  }
 }
 const server = await createServer({
   configFile: false,

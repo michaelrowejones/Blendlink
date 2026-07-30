@@ -930,6 +930,50 @@
       },
       "failureClass": "noise octave bound (detail <= 6 candidate)"
     },
+    "noise-distortion": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00006575313454959542,
+        "p99Abs": 0.0002738535404205322,
+        "maxAbs": 0.0005245506763458252
+      },
+      "failureClass": "noise coordinate distortion (Fac)"
+    },
+    "noise-distortion-color": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00005926541537822535,
+        "p99Abs": 0.00022986531257629395,
+        "maxAbs": 0.0004309415817260742
+      },
+      "failureClass": "noise distortion x colour-lane offset collision"
+    },
+    "vector-rotate-z": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000004821595211979002,
+        "p99Abs": 0.000014007091522216797,
+        "maxAbs": 0.000014066696166992188
+      },
+      "failureClass": "vector rotate fixed axis + centre offset"
+    },
+    "vector-rotate-axis-angle": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000006829483027104288,
+        "p99Abs": 0.000012695789337158203,
+        "maxAbs": 0.000012725591659545898
+      },
+      "failureClass": "vector rotate arbitrary axis (Rodrigues + normalize)"
+    },
     "noise-scale16": {
       "ok": true,
       "gated": true,

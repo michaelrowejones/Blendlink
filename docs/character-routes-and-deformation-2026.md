@@ -520,28 +520,37 @@ Standing at scale 40 / detail 6, the blockers are:
 Noise is still dominant at **15 of 29** — distortion and dimensions now, not scale or detail —
 with `VectorRotate` second at 7.
 
-**Distortion was attempted and refused by measurement, 2026-07-30.** Unlike the two bounds above
-this is real implementation, not a stale figure. Both `noisetex.h` and
-`gpu_shader_material_tex_noise.glsl` were read and agree verbatim: distortion perturbs the
-**scaled** coordinate, before any octave, by one signed Perlin octave per component sampled at
-`random_floatN_offset(0..N-1)`. Implemented on both sides with two gated cells; the cells measured
-**meanAbs 6.6e-2 / maxAbs 3.3e-1 against a 1e-3 gate** — decorrelated. The mapping is structurally
-wrong somewhere, so it was **reverted rather than shipped**, and the material bake keeps carrying
-those 10 materials.
+**Noise distortion and Vector Rotate both SHIPPED 2026-07-30, with a false negative in between
+worth recording.** Both read from primary sources first, both proven by gated cells:
 
-Three things that attempt did establish, recorded in `tsl_ir.py` so the next one starts from them:
+| cell | meanAbs | maxAbs | gate (maxAbs 0.01) |
+| --- | --- | --- | --- |
+| `noise-distortion` | 6.58e-5 | 5.25e-4 | pass |
+| `noise-distortion-color` | 5.93e-5 | 4.31e-4 | pass |
+| `vector-rotate-z` | 4.82e-6 | 1.41e-5 | pass |
+| `vector-rotate-axis-angle` | 6.83e-6 | 1.27e-5 | pass |
 
-- **The offsets are correct.** `_noise_random_offset(seed, count)` for seeds 0..N-1 reproduces
-  Blender's values exactly — verified against an independent reimplementation of `hash_uint2` from
-  the Jenkins lookup3 `final` mixing, agreeing to every digit. The existing colour-lane seeds
-  (3, 4 for 3D) already assume distortion consumes 0..2, which corroborates it.
-- **`tslNoise` is the right primitive.** It is signed, since `blenderNoiseFac` ends in `*0.5+0.5`,
-  matching Blender's `snoise`.
-- **Large offsets are not the cause.** `noise-color` passes using offsets from the same helper in
-  the same [100,200] range.
+Distortion perturbs the **scaled** coordinate, before any octave, by one signed Perlin octave per
+component at `random_floatN_offset(0..N-1)` — the offsets fold at emit time, so the runtime never
+needs Blender's integer hash. Vector Rotate is `rotate_around_axis` from
+`intern/cycles/util/math_float3.h` transcribed as nine Rodrigues coefficients, with Centre applied
+by the node around the call; `X/Y/Z_AXIS` fold to a literal axis and ride the axis-angle cell
+rather than needing three more. `EULER_XYZ` and `Invert` refuse — unexercised by the corpus and
+unproven by a cell.
 
-The error is therefore in the composition, not the constants or the primitive — which is a much
-smaller search space than the attempt started with.
+**The false negative.** Distortion was first measured at meanAbs 6.6e-2 / maxAbs 3.3e-1,
+"refuted", and reverted. That was wrong. The harness aliases the **built**
+`packages/blendlink/dist/tslNodeRecipe.js`, and the build had not been re-run, so it measured the
+*previous* TSL mapping — which ignored distortion entirely — against a Blender reference that
+applied it. Blender with distortion versus TSL without is exactly a decorrelated result. The
+mapping was correct the whole time. `run.mjs` now refuses to run when `dist/tslNodeRecipe.js` is
+older than `src/tslNodeRecipe.ts`, so the next person gets an error instead of a plausible lie.
+
+Coverage went 20/49 → **21/49 (43%)**, a smaller gain than the 17 materials those two nodes appear
+in, because most of them have further gaps behind: `White Noise` decorrelation (8), `ObjectInfo`
+(5), noise dimensions (5), image interpolation (3). The White Noise one is a genuine ceiling rather
+than a bound to raise — it hashes raw bits of interpolated floats, which cannot agree across
+engines.
 
 **Neither number is the truth on its own, and it matters which way each is wrong.** `_refuse`
 raises on the *first* problem found, so the runtime list is a lower bound — 30 materials stop at

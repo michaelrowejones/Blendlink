@@ -840,6 +840,77 @@ def build_noise_detail4(tree, emission):
     tree.links.new(factor, emission.inputs["Color"])
 
 
+def build_noise_distortion(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 5.0
+    node.inputs["Detail"].default_value = 2.0
+    node.inputs["Distortion"].default_value = 1.0
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_noise_distortion_color(tree, emission):
+    # Distortion AND the colour lanes together: the lanes use seeds 3 and 4
+    # precisely because distortion consumes 0..2, so this is the cell that
+    # catches the two features colliding over the same offsets.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 5.0
+    node.inputs["Detail"].default_value = 2.0
+    node.inputs["Distortion"].default_value = 0.75
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    color = next(s for s in node.outputs if s.identifier == "Color")
+    tree.links.new(color, emission.inputs["Color"])
+
+
+def _rotate_probe_point(tree):
+    """UV shrunk to [0.3,0.7]^2 at z=0.5, so a rotation about (0.5,0.5,0.5)
+    keeps ALL THREE components inside [0,1].
+
+    The reference bake refuses negative channel values and clamps above 1, so
+    a cell that rotated the full unit tile could not measure anything: the
+    square's half-diagonal is 0.707, which leaves [0,1] under any rotation
+    that is not a multiple of 90 degrees. Shrinking the sampled region to an
+    in-plane radius of 0.283 about the centre bounds every rotated component
+    to roughly [0.2, 0.8] for an arbitrary axis, not just for Z.
+    """
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    mapping = tree.nodes.new("ShaderNodeMapping")
+    mapping.vector_type = "POINT"
+    mapping.inputs["Location"].default_value = (0.3, 0.3, 0.5)
+    mapping.inputs["Scale"].default_value = (0.4, 0.4, 0.0)
+    tree.links.new(coord.outputs["UV"], mapping.inputs["Vector"])
+    return mapping.outputs["Vector"]
+
+
+def build_vector_rotate_z(tree, emission):
+    point = _rotate_probe_point(tree)
+    node = tree.nodes.new("ShaderNodeVectorRotate")
+    node.rotation_type = "Z_AXIS"
+    node.inputs["Center"].default_value = (0.5, 0.5, 0.5)
+    node.inputs["Angle"].default_value = 0.5
+    tree.links.new(point, node.inputs["Vector"])
+    tree.links.new(node.outputs["Vector"], emission.inputs["Color"])
+
+
+def build_vector_rotate_axis_angle(tree, emission):
+    # A deliberately non-unit, non-axis-aligned Axis: this is the cell that
+    # gates the normalize and all nine Rodrigues coefficients at once, and
+    # therefore also stands behind the X/Y/Z_AXIS literals.
+    point = _rotate_probe_point(tree)
+    node = tree.nodes.new("ShaderNodeVectorRotate")
+    node.rotation_type = "AXIS_ANGLE"
+    node.inputs["Center"].default_value = (0.5, 0.5, 0.5)
+    node.inputs["Axis"].default_value = (0.3, -0.7, 0.5)
+    node.inputs["Angle"].default_value = 0.9
+    tree.links.new(point, node.inputs["Vector"])
+    tree.links.new(node.outputs["Vector"], emission.inputs["Color"])
+
+
 def build_noise_detail6(tree, emission):
     coord = tree.nodes.new("ShaderNodeTexCoord")
     node = tree.nodes.new("ShaderNodeTexNoise")
@@ -1815,6 +1886,10 @@ BUILDERS = {
     "noise-z-probe": build_noise_z_probe,
     "noise-detail4": build_noise_detail4,
     "noise-detail6": build_noise_detail6,
+    "noise-distortion": build_noise_distortion,
+    "noise-distortion-color": build_noise_distortion_color,
+    "vector-rotate-z": build_vector_rotate_z,
+    "vector-rotate-axis-angle": build_vector_rotate_axis_angle,
     "noise-scale16": build_noise_scale16,
     "noise-scale20": build_noise_scale20,
     "noise-scale40": build_noise_scale40,

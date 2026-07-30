@@ -892,6 +892,45 @@ def emit_output(node, from_socket, stack=()):
             }
         return expression
 
+    if idname == "ShaderNodeVectorRotate":
+        # One Rodrigues path serves every fixed-axis mode. Verbatim from
+        # `rotate_around_axis` in intern/cycles/util/math_float3.h, which
+        # takes the already-centred vector; the node subtracts Center before
+        # the call and adds it back after, and Cycles applies invert as
+        # `angle = node.invert ? -angle : angle`. X/Y/Z_AXIS are the same
+        # formula with a literal axis, so they ride the axis-angle cell
+        # rather than needing three more of their own.
+        rotation_type = str(getattr(node, "rotation_type", "AXIS_ANGLE"))
+        if rotation_type == "EULER_XYZ":
+            _refuse("Vector Rotate EULER_XYZ has no cell yet (needs a matrix)")
+        if bool(getattr(node, "invert", False)):
+            # One negated angle, but unexercised by the corpus and unproven
+            # by a cell, so it refuses rather than shipping on inspection.
+            _refuse("Vector Rotate with Invert has no cell yet")
+        center_socket = node.inputs["Center"]
+        if center_socket.is_linked:
+            _refuse("Vector Rotate with a linked Center has no cell yet")
+        axis_literal = {
+            "X_AXIS": [1.0, 0.0, 0.0],
+            "Y_AXIS": [0.0, 1.0, 0.0],
+            "Z_AXIS": [0.0, 0.0, 1.0],
+        }.get(rotation_type)
+        if axis_literal is not None:
+            axis = {"op": "const_vec3", "value": axis_literal}
+        else:
+            axis_socket = node.inputs["Axis"]
+            axis = emit_input(axis_socket, stack=stack, as_vector=True)
+        return {
+            "op": "vector_rotate",
+            "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
+            "center": [float(item) for item in center_socket.default_value],
+            "axis": axis,
+            "angle": emit_input(node.inputs["Angle"], stack=stack),
+            # A literal axis is already unit-length, so the runtime skips the
+            # normalize and its zero-length guard.
+            "normalizeAxis": axis_literal is None,
+        }
+
     if idname == "ShaderNodeVectorMath":
         operation = str(node.operation)
         if operation not in _VECTOR_MATH_OPERATIONS:
@@ -1516,34 +1555,39 @@ def emit_output(node, from_socket, stack=()):
             "scale": scale_expression,
             "input": _texture_vector(vector, stack),
         }
-        # Distortion still refuses, and this is a MEASURED refusal rather
-        # than an unexplored one. Attempted 2026-07-30 following both
-        # noisetex.h and gpu_shader_material_tex_noise.glsl, which agree:
+        # Distortion perturbs the SCALED coordinate before any octave runs,
+        # by a single signed Perlin octave per component sampled at the low
+        # hash-derived offsets. noisetex.h and
+        # gpu_shader_material_tex_noise.glsl agree verbatim:
         #     p += floatN(snoise(p + random_floatN_offset(0)) * distortion,
         #                 snoise(p + random_floatN_offset(1)) * distortion,
         #                 ...)
-        # applied to the SCALED coordinate, before any octave. Two gated
-        # cells measured meanAbs 6.6e-2 / maxAbs 3.3e-1 against a 1e-3 gate
-        # -- decorrelated, so the mapping is structurally wrong and was
-        # reverted rather than shipped.
-        #
-        # What that attempt DID prove, so the next one need not redo it:
-        # `_noise_random_offset(seed, count)` for seeds 0..N-1 reproduces
-        # Blender's offsets exactly -- [186.031275845, 114.955953768,
-        # 154.447503470], [199.840001878, 162.292592684, 154.048234400],
-        # [111.633842651, 157.369395312, 199.088111473] for 3D -- confirmed
-        # against an independent reimplementation of hash_uint2 from the
-        # Jenkins lookup3 `final` mixing. The colour-lane seeds (3, 4 for 3D)
-        # already assume distortion consumes 0..2, which corroborates it.
-        # `tslNoise` is also the right primitive: it is signed, since
-        # `blenderNoiseFac` ends in *0.5+0.5. The error is elsewhere, and
-        # `noise-color` passing rules out large offsets as the cause.
-        distortion = node.inputs.get("Distortion")
-        if distortion is not None and (
-            distortion.is_linked
-            or abs(float(distortion.default_value)) > 1e-9
-        ):
-            _refuse("Noise distortion has no cell yet")
+        # The offsets depend only on a literal seed, so they fold here and the
+        # runtime never needs Blender's integer hash. Seeds 0..N-1 are exactly
+        # the ones the colour lanes below already skip, which is why that
+        # comment says distortion consumes the low seeds.
+        distortion_socket = node.inputs.get("Distortion")
+        distortion_value = 0.0
+        if distortion_socket is not None:
+            if distortion_socket.is_linked:
+                folded = _fold_constant_scalar(
+                    emit_input(distortion_socket, stack=stack)
+                )
+                if folded is None:
+                    _refuse(
+                        "Noise with a non-constant Distortion has no bounded "
+                        "cell yet"
+                    )
+                distortion_value = folded
+            else:
+                distortion_value = float(distortion_socket.default_value)
+        if abs(distortion_value) > 1e-9:
+            count = 2 if dimensions == "2D" else 3
+            expression["distortion"] = distortion_value
+            expression["distortionOffsets"] = [
+                _noise_random_offset(float(seed), count)
+                for seed in range(count)
+            ]
         if noise_output == "Color":
             # Cycles noise color lanes are the same fBM at constant
             # hash-derived offsets (noisetex.h random_floatN_offset).

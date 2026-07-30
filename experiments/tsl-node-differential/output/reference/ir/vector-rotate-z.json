@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "vector_rotate",
+    "input": {
+      "op": "mapping",
+      "vectorType": "POINT",
+      "input": {
+        "op": "uv"
+      },
+      "location": [
+        0.30000001192092896,
+        0.30000001192092896,
+        0.5
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        0.4000000059604645,
+        0.4000000059604645,
+        0.0
+      ]
+    },
+    "center": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "axis": {
+      "op": "const_vec3",
+      "value": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "angle": {
+      "op": "const_float",
+      "value": 0.5
+    },
+    "normalizeAxis": false
+  }
+}

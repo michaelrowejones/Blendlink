@@ -469,6 +469,8 @@ function build(expression: TslIrExpression): TslExpression {
         .mul(build(child(expression, 'scale')))
     case 'vector_math':
       return buildVectorMath(expression)
+    case 'vector_rotate':
+      return buildVectorRotate(expression)
     case 'mapping':
       return buildMapping(expression)
     case 'color_ramp':
@@ -673,6 +675,25 @@ function build(expression: TslIrExpression): TslExpression {
         // Blender's 2D noise is a genuinely different Perlin dimension,
         // matched by mx_noise_float's vec2 overload (the noise-2d cell).
         position = tslVec2(position.x, position.y)
+      }
+      // Distortion perturbs the scaled coordinate before any octave runs.
+      // One SIGNED single octave per component — tslNoise, not the fBM —
+      // sampled at the emitter-folded low hash offsets. Verbatim from
+      // noisetex.h and gpu_shader_material_tex_noise.glsl, which agree.
+      if (typeof expression.distortion === 'number') {
+        const offsets = expression.distortionOffsets as number[][]
+        const shift = (offset: number[]): TslExpression => (
+          dimensions === 2
+            ? position.add(tslVec2(offset[0], offset[1]))
+            : position.add(tslVec3(offset[0], offset[1], offset[2]))
+        )
+        const lanes = offsets.map((offset) => tslNoise(shift(offset)))
+        position = position.add(
+          (dimensions === 2
+            ? tslVec2(lanes[0], lanes[1])
+            : tslVec3(lanes[0], lanes[1], lanes[2])
+          ).mul(expression.distortion),
+        )
       }
       const detail = scalar(expression, 'detail')
       const roughness = scalar(expression, 'roughness')
@@ -1449,6 +1470,59 @@ function sampleLut(
   const low = tslTexture(lut, coordinate(0))
   const high = tslTexture(lut, coordinate(1))
   return tslMix(low, high, blend)
+}
+
+/** Blender's Vector Rotate for every fixed-axis mode.
+ *
+ * Transcribed term by term from `rotate_around_axis` in
+ * `intern/cycles/util/math_float3.h` — Rodrigues written out as nine
+ * coefficients rather than a matrix, which is how Blender writes it:
+ *
+ *   r.x = ((c + (1-c)*a.x*a.x) * p.x)
+ *       + (((1-c)*a.x*a.y - a.z*s) * p.y)
+ *       + (((1-c)*a.x*a.z + a.y*s) * p.z);
+ *
+ * and cyclically for y and z. The sintheta term is NEGATIVE on the
+ * lower-index partner and positive on the higher in each row, which is the
+ * detail worth transcribing carefully rather than deriving.
+ *
+ * Center is applied by the node, not the helper: subtract before, add after.
+ */
+function buildVectorRotate(expression: TslIrExpression): TslExpression {
+  const center = expression.center as number[]
+  const centered = build(child(expression, 'input'))
+    .sub(tslVec3(center[0], center[1], center[2]))
+  const angle = build(child(expression, 'angle'))
+  const rawAxis = build(child(expression, 'axis'))
+  // A literal axis is already unit length; only a linked one needs the
+  // normalize, and Blender leaves the vector untouched when it is zero.
+  const axis = expression.normalizeAxis === true ? tslNormalize(rawAxis) : rawAxis
+  const cosTheta = tslCos(angle)
+  const sinTheta = tslSin(angle)
+  const oneMinus = tslFloat(1.0).sub(cosTheta)
+  const term = (
+    diagonal: TslExpression,
+    offDiagonalA: TslExpression,
+    offDiagonalB: TslExpression,
+  ): TslExpression => diagonal.add(offDiagonalA).add(offDiagonalB)
+  const rotated = tslVec3(
+    term(
+      cosTheta.add(oneMinus.mul(axis.x).mul(axis.x)).mul(centered.x),
+      oneMinus.mul(axis.x).mul(axis.y).sub(axis.z.mul(sinTheta)).mul(centered.y),
+      oneMinus.mul(axis.x).mul(axis.z).add(axis.y.mul(sinTheta)).mul(centered.z),
+    ),
+    term(
+      oneMinus.mul(axis.x).mul(axis.y).add(axis.z.mul(sinTheta)).mul(centered.x),
+      cosTheta.add(oneMinus.mul(axis.y).mul(axis.y)).mul(centered.y),
+      oneMinus.mul(axis.y).mul(axis.z).sub(axis.x.mul(sinTheta)).mul(centered.z),
+    ),
+    term(
+      oneMinus.mul(axis.x).mul(axis.z).sub(axis.y.mul(sinTheta)).mul(centered.x),
+      oneMinus.mul(axis.y).mul(axis.z).add(axis.x.mul(sinTheta)).mul(centered.y),
+      cosTheta.add(oneMinus.mul(axis.z).mul(axis.z)).mul(centered.z),
+    ),
+  )
+  return rotated.add(tslVec3(center[0], center[1], center[2]))
 }
 
 function buildVectorMath(expression: TslIrExpression): TslExpression {
