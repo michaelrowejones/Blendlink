@@ -178,18 +178,29 @@ head, teeth inside a mouth, hair over a scalp — resolve in draw order rather t
 That is the mechanism behind the "seeing the eyeballs through the head" defect reported against
 the first ellie render.
 
-There is a sharp lead on *why* the alpha is being baked at all. Across the 43 materials on the
-per-channel bake route, the presence of an `Alpha` channel record in the router's own output
-predicts the mode perfectly: **17 of 17 materials that have one publish `OPAQUE`; 26 of 26 that
-lack one publish `BLEND`.** `ellie.head_hair` carries `Alpha: {routing: "constant", value: 1}` and
-ships opaque; `ellie.head`, from the same mesh, carries no `Alpha` record and ships BLEND. So the
-absent analysis result — not a measured alpha — is what selects the expensive mode. Whether the
-router declines to emit the record or the bake declines to read it is not yet established, and is
-the first thing to find out.
+**Why the alpha is baked at all.** The BLEND population is exactly the materials whose surface
+root the channel router could not read: **all 26 are `status: needsBake` with
+`surfaceRoot: "unsupported"`**, and their channel list is empty — the router emits no channels at
+all, not merely no `Alpha`. `ellie.head_hair` has `surfaceRoot: "principled"`, a full seven-channel
+record including `Alpha: {routing: "constant", value: 1}`, and ships opaque. `ellie.head`, off the
+same mesh, has an unsupported root and ships BLEND.
 
-Same theme as 1b, which is why they are adjacent: the router already knows, and the baker does not
-ask. 1b spends that on memory; 1c spends it on correctness. Both wait on a clean HEAD compile
-before the numbers are re-quoted, since these were measured on the pre-texCoord-fix GLB.
+The causal chain is therefore: non-Principled surface root → nothing to read a constant alpha
+*from* → the whole surface is baked, alpha included → `alpha_baked` is true → `:3413` picks BLEND.
+`surfaceRoot: "unsupported"` is necessary but not sufficient: 7 further materials are also
+`needsBake`/`unsupported` and still publish OPAQUE, because they never went through the
+per-channel bake.
+
+That distinguishes 1c from 1b. In 1b the router genuinely does know the answer and the baker does
+not ask. Here the router has nothing to offer, so the fix is not "read the existing record" — it is
+the MASK detection the compiler already names as missing, deciding the mode from the *baked
+coverage* instead of from the absence of a source constant. Worth noting where this lands
+strategically: those 26 stylized, non-Principled materials are precisely the population the TSL
+route exists to serve, so 1c is the near-term correctness fix and TSL is the answer that stops them
+being baked at all.
+
+Both 1b and 1c were measured on the pre-texCoord-fix GLB and need re-quoting after a clean HEAD
+compile.
 
 **Phase 2 — the route model.** Lighting × Surface split; `bakeOutput = "material"` through all
 four gate points; per-slot shared surface atlas; delete the `compile_objects` subtraction so
