@@ -6257,6 +6257,128 @@ def main():
             ],
         )
 
+        # Packer-island fixtures. Every one marks the shared edge SEAM so
+        # _uv_polygon_islands reports two topological islands; that isolates
+        # _uv_welded_island_pairs as the only thing deciding whether a gutter
+        # is owed, which is exactly the predicate under test. (Unseamed, the
+        # 1e-7 in _uv_close would merge some of these topologically and the
+        # pair would never be compared at all.)
+        def mark_seam(obj, vertex_pair):
+            target = tuple(sorted(vertex_pair))
+            for edge in obj.data.edges:
+                if tuple(sorted(edge.vertices)) == target:
+                    edge.use_seam = True
+                    return
+            raise AssertionError(
+                f"seam edge {vertex_pair} missing from {obj.name}")
+
+        def packer_islands(obj):
+            layer = obj.data.uv_layers[bakelib.AUTHORED_UV]
+            roots, _numbers = bakelib._uv_polygon_islands(obj.data, layer)
+            welded = bakelib._uv_welded_island_pairs(obj.data, layer, roots)
+            return len(set(roots)), len(set(welded.values()))
+
+        # Two triangles across shared edge (1, 2), bit-equal UVs on both
+        # endpoints: one chart the packer moves rigidly.
+        welded_seam = make_pinned_fixture(
+            "__Blendlink Pinned Welded Seam",
+            [(0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0)],
+            [(0, 1, 2), (1, 3, 2)],
+            [
+                [(0.2, 0.2), (0.4, 0.2), (0.2, 0.4)],
+                [(0.4, 0.2), (0.4, 0.4), (0.2, 0.4)],
+            ],
+        )
+        mark_seam(welded_seam, (1, 2))
+        # The same UVs with the vertices split. No shared mesh edge, so the
+        # packer separates these (measured 0.10 at margin 0.05) and the
+        # gutter is genuinely owed. This is the configuration a sloppy
+        # "distance == 0 means welded" predicate would wave through.
+        split_touch = make_pinned_fixture(
+            "__Blendlink Pinned Split Touch",
+            [(0, 0, 0), (1, 0, 0), (0, 1, 0),
+             (1, 0, 0), (1, 1, 0), (0, 1, 0)],
+            [(0, 1, 2), (3, 4, 5)],
+            [
+                [(0.2, 0.6), (0.4, 0.6), (0.2, 0.8)],
+                [(0.4, 0.6), (0.4, 0.8), (0.2, 0.8)],
+            ],
+        )
+        # Shared mesh edge, UVs off by a hair. Blender splits the island at
+        # 1e-7, so an epsilon creeping into the predicate -- the precise
+        # failure of the reverted 46ffe8b -- must not exempt these.
+        near_welds = []
+        for label, delta in (("1e-7", 1.0e-7), ("1e-5", 1.0e-5)):
+            near_weld = make_pinned_fixture(
+                f"__Blendlink Pinned Near Weld {label}",
+                [(0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0)],
+                [(0, 1, 2), (1, 3, 2)],
+                [
+                    [(0.5, 0.2), (0.7, 0.2), (0.5, 0.4)],
+                    [(0.7 + delta, 0.2), (0.7 + delta, 0.4), (0.5 + delta, 0.4)],
+                ],
+            )
+            mark_seam(near_weld, (1, 2))
+            near_welds.append((label, delta, near_weld))
+        # A fold whose hinge is a real weld: same packer island, so no gutter
+        # is owed, but the two halves positively intersect. Exempting the
+        # pair from the gutter must not exempt it from overlap -- this is the
+        # assertion a "merge the BVHs instead" refactor would break.
+        folded_weld = make_pinned_fixture(
+            "__Blendlink Pinned Folded Weld",
+            [(0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0)],
+            [(0, 1, 2), (1, 3, 2)],
+            [
+                [(0.5, 0.6), (0.7, 0.6), (0.5, 0.8)],
+                [(0.7, 0.6), (0.55, 0.65), (0.5, 0.8)],
+            ],
+        )
+        mark_seam(folded_weld, (1, 2))
+
+        expect(packer_islands(welded_seam) == (2, 1),
+               "a bit-welded seam did not collapse to one packer island while "
+               f"staying two topological ones: {packer_islands(welded_seam)}")
+        welded_seam_issues = bakelib.pinned_uv_layout_issues(
+            [welded_seam], bakelib.AUTHORED_UV, minimum_gutter=0.05,
+        )
+        expect(not welded_seam_issues,
+               "two halves of one packer island were charged a gutter the "
+               f"packer cannot open: {welded_seam_issues}")
+        welded_seam.hide_render = True
+        expect(packer_islands(split_touch) == (2, 2),
+               "UV coincidence without surface adjacency was treated as a "
+               f"weld: {packer_islands(split_touch)}")
+        split_touch_issues = bakelib.pinned_uv_layout_issues(
+            [split_touch], bakelib.AUTHORED_UV, minimum_gutter=0.05,
+        )
+        expect(any(item["kind"] == "insufficient-gutter"
+                   for item in split_touch_issues),
+               "split vertices sharing a UV border were exempted from the "
+               f"gutter the packer would give them: {split_touch_issues}")
+        split_touch.hide_render = True
+        for label, delta, near_weld in near_welds:
+            expect(packer_islands(near_weld) == (2, 2),
+                   f"a {label} UV mismatch was welded even though Blender "
+                   f"splits it: {packer_islands(near_weld)}")
+            near_weld_issues = bakelib.pinned_uv_layout_issues(
+                [near_weld], bakelib.AUTHORED_UV, minimum_gutter=0.05,
+            )
+            expect(any(item["kind"] == "insufficient-gutter"
+                       for item in near_weld_issues),
+                   f"islands {delta} apart were exempted from the gutter: "
+                   f"{near_weld_issues}")
+            near_weld.hide_render = True
+        expect(packer_islands(folded_weld) == (2, 1),
+               "the folded fixture stopped being one packer island, so it no "
+               f"longer tests the exemption: {packer_islands(folded_weld)}")
+        folded_weld_issues = bakelib.pinned_uv_layout_issues(
+            [folded_weld], bakelib.AUTHORED_UV, minimum_gutter=0.05,
+        )
+        expect(any("overlap" in item["kind"] for item in folded_weld_issues),
+               "a fold hinged on a weld passed the layout proof because the "
+               f"pair was exempt from the gutter: {folded_weld_issues}")
+        folded_weld.hide_render = True
+
         folded_issues = bakelib.pinned_uv_layout_issues(
             [folded], bakelib.AUTHORED_UV,
         )
