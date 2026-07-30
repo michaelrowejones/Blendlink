@@ -110,6 +110,17 @@ dropped shape keys (28 of 241 meshes carry them) and DQS linearisation. Make the
 ternary raise instead of collapsing an unknown value to `appearance`. Extract the differential
 harness runner so its oracle is pluggable.
 
+**Phase 0f — the export depends on which action is assigned.** Found while specifying 0a, not
+in the original plan. Ellie's `["Quality"]` rig property drives 39 modifier properties and is
+keyed at 2.0 by five of the 56 shipped clips, but is *not* keyed by the assigned
+`ANI-ellie.idle`, where it holds 1. Swapping the assigned action moves 31 `SUBSURF.levels` and
+the evaluated visible-mesh vertex count from **47,022 to 173,290 — 3.68×**. The shipped GLB is
+the Quality=1 state; five clips ship expecting the denser mesh. Constant within any one clip, so
+it does not disqualify class A, but the published topology is silently whichever action happened
+to be assigned at export. Report the assigned action and any modifier property driven by a
+rig property that other clips key differently. Same shape as 0a: no depsgraph evaluation needed
+to detect it, only to quantify it.
+
 **Phase 1 — export-time lowerings, no runtime code.** SURFACE_DEFORM to `JOINTS_0/WEIGHTS_0`
 when the target is skinned — fixes two of the four catastrophic objects, 143% to ~0.25%. Guard by
 verifying the target's stack is pure LBS, else measure and refuse. Class-D attribute bake plus
