@@ -17,6 +17,8 @@ import struct
 
 import bpy
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
+from mathutils.interpolate import poly_3d_calc
 
 if __package__:
     from .bakelib_loader import bakelib
@@ -3630,6 +3632,1224 @@ def _skin_approximation_record(obj):
     }
 
 
+# ---------------------------------------------------------------------------
+# Phase 1: lower a SURFACE_DEFORM bind onto glTF skin weights.
+#
+# When a mesh is bound by SURFACE_DEFORM to a target that is itself LBS-skinned,
+# "static bind composed with linear blend skinning" is linear blend skinning
+# with derived weights, so the bound mesh can ship as an ordinary glTF skin
+# instead of the static prop the Phase 0a refusal correctly rejects today.
+#
+# Two gates that measurement refuted, and are therefore NOT used here:
+#
+#  * "Verify the target's stack is pure LBS."  Neither necessary nor
+#    sufficient.  Both ellie teeth cages carry a SHRINKWRAP and both lower to
+#    under 1%; the cage whose SHRINKWRAP is provably inert (0.000 m across 330
+#    frames) is the WORSE of the two.  A purity gate would refuse the good case
+#    and wave the bad one through.  Worse, the identity is exact only when
+#    every bind's support is weight-homogeneous, which holds on 0 of 84 and 0
+#    of 10 cage polygons here -- so no predicate over modifier types can
+#    certify exactness even for a perfectly pure cage.
+#
+#  * "Measure the residual and nothing else."  The fannypack zippers' two
+#    rig-hooked LATTICEs structurally break the lowering and still contribute
+#    0.0001% of the bounding-box diagonal across the whole assigned clip.
+#    Measurement is per-assigned-action; structure is not -- the Phase 0f
+#    hazard in a new place.
+#
+# So a structural predicate runs first (``deformer_lowering_plan``, no
+# depsgraph evaluation at all, same shape as ``frozen_deformer_issues``) and an
+# end-to-end measurement runs second (``verify_deformer_lowerings``).  Neither
+# substitutes for the other, and a mesh that fails either one stays refused by
+# the existing Phase 0a door.
+#
+# The measured oracle is deliberately the RUNTIME's arithmetic, not Blender's:
+# the exported rest positions, the exported interpolated weights and linear
+# blend skinning from the pose matrices, against the authored evaluated stack,
+# in world space.  Re-evaluating the lowered stack in Blender instead would
+# hide the subdivide-then-skin / skin-then-subdivide difference a post-bind
+# SUBSURF introduces, because Blender computes it the other way round.
+# ---------------------------------------------------------------------------
+
+_LOWERING_ARMATURE_MODIFIER = "BLENDLINK_LOWERED_ARMATURE"
+
+# The 10% line the frozen-modifier residual already refuses at.  The 1% warn
+# line is ``_DISPLACEMENT_WARN_FRACTION`` above, shared on purpose so the three
+# geometry diagnostics cannot disagree about "small".
+_LOWERING_REFUSE_FRACTION = 0.10
+
+# ``primitive_extract.py:1587`` computes ``num_joint_sets = (max + 3) // 4``
+# with no cap, so a fifth influence emits a JOINTS_1/WEIGHTS_1 pair that
+# three's GLTFLoader never binds -- the weight is dropped at runtime and the
+# residual measured here would be a lie.  Refuse instead.
+_LOWERING_MAX_INFLUENCES = 4
+_LOWERING_WEIGHT_EPSILON = 1e-6
+
+# Frame samples per measured object.  Ellie's 330-frame range fits
+# exhaustively.  Beyond the cap the sweep strides and says so in the record: a
+# strided measurement must never be readable as an exhaustive one.  Measured on
+# ellie a stride of 5 reproduced the every-frame maximum to six decimals, but
+# that flatness is a property of a smooth pose-driven residual, not a promise.
+_LOWERING_MAX_SAMPLED_FRAMES = 600
+
+# Modifiers allowed on the BOUND mesh after the bind.  Deliberately narrower
+# than "class A": DATA_TRANSFER and VERTEX_WEIGHT_* are excluded because they
+# rewrite vertex groups between the ARMATURE modifier Blender evaluates and the
+# weights the exporter reads off the evaluated mesh, a divergence the residual
+# gate cannot see.  Any deformer here is a hard refusal -- after lowering, the
+# exporter bakes it into the REST mesh and the runtime skins the result, which
+# re-freezes exactly the defect Phase 1 exists to remove.
+_LOWERING_TOPOLOGY_ONLY = frozenset({
+    "ARRAY", "BEVEL", "BOOLEAN", "BUILD", "DECIMATE", "EDGE_SPLIT", "MASK",
+    "MIRROR", "MULTIRES", "NORMAL_EDIT", "REMESH", "SCREW", "SOLIDIFY",
+    "SUBSURF", "TRIANGULATE", "UV_PROJECT", "UV_WARP", "WEIGHTED_NORMAL",
+    "WELD", "WIREFRAME",
+})
+
+# Modifiers on the TARGET that leave no readable rest cage at all.  Not
+# "impure" -- impurity is priced by the measurement; these have nothing to
+# snapshot.
+_LOWERING_TARGET_BREAKING = frozenset({
+    "NODES", "CLOTH", "SOFT_BODY", "OCEAN", "FLUID", "DYNAMIC_PAINT",
+    "EXPLODE", "PARTICLE_SYSTEM", "PARTICLE_INSTANCE", "MESH_SEQUENCE_CACHE",
+    "MESH_CACHE", "SURFACE_DEFORM", "MESH_DEFORM",
+})
+
+# Modifiers on the TARGET that perturb the "the cage's motion IS LBS" identity.
+# Recorded and attributed, never refused: the measurement decides.
+_LOWERING_TARGET_PERTURBING = frozenset({
+    "SHRINKWRAP", "CORRECTIVE_SMOOTH", "SMOOTH", "LAPLACIANSMOOTH",
+    "LAPLACIANDEFORM", "VERTEX_WEIGHT_EDIT", "VERTEX_WEIGHT_MIX",
+    "VERTEX_WEIGHT_PROXIMITY", "LATTICE", "CURVE", "HOOK", "WARP", "CAST",
+    "SIMPLE_DEFORM", "DISPLACE", "WAVE",
+})
+
+_LOWERING_BIND_TYPES = frozenset({"SURFACE_DEFORM", "MESH_DEFORM"})
+
+
+def _lowering_conditional_modifiers(obj):
+    """Modifier names on ``obj`` whose visibility a driver or keyframe moves.
+
+    A conditionally-applied stack has no single derived weight set, and one
+    frame's read of ``show_viewport`` under-reports it -- the same reason
+    ``_frozen_deformer_issue`` consults ``_driven_data_paths``.  Ellie's
+    fannypack zippers are the witness: three SurfaceDeform modifiers whose
+    visibility a rig property switches between one cage and two others.
+    """
+    driven = _driven_data_paths(obj)
+    conditional = []
+    for modifier in getattr(obj, "modifiers", ()):
+        prefix = f'modifiers["{modifier.name}"]'
+        if any(
+            path in (f"{prefix}.show_viewport", f"{prefix}.show_render")
+            for path in driven
+        ):
+            conditional.append(modifier.name)
+            continue
+        keyed = _keyframed_modifier_parameter(obj, modifier)
+        if keyed is not None and (
+            ".show_viewport" in keyed or ".show_render" in keyed
+        ):
+            conditional.append(modifier.name)
+    return tuple(conditional)
+
+
+def _lowering_live_modifiers(obj):
+    """The modifiers the exporter's viewport depsgraph can apply.
+
+    ``show_viewport``, not ``show_render``: ``nodes.py:294-330`` evaluates the
+    viewport graph.  A driven flag counts as live for the same reason
+    ``_frozen_deformer_issue`` treats it as live.
+    """
+    driven = _driven_data_paths(obj)
+    return tuple(
+        modifier for modifier in getattr(obj, "modifiers", ())
+        if modifier.show_viewport
+        or f'modifiers["{modifier.name}"].show_viewport' in driven
+    )
+
+
+def _lowering_refused(obj, modifier_name, target_name, reason):
+    """One JSON-safe record for a bind the lowering will not touch."""
+    identity = obj.get("blendlink_id")
+    return {
+        "code": "geometry.surface-deform-not-lowerable",
+        "object": obj.name,
+        **({"objectId": identity}
+           if isinstance(identity, str) and identity else {}),
+        **({"modifier": modifier_name} if modifier_name else {}),
+        **({"target": target_name} if target_name else {}),
+        "outcome": "refused",
+        "severity": "refuse",
+        "reason": reason,
+    }
+
+
+def _deformer_lowering_candidate(obj, frozen_record, scene):
+    """Decide, with no depsgraph evaluation, whether ``obj``'s bind can lower.
+
+    Returns a planned record, a refusal record, or ``None`` when the object
+    carries no bind at all and is therefore not this diagnostic's business.
+    """
+    all_binds = [
+        modifier for modifier in getattr(obj, "modifiers", ())
+        if modifier.type in _LOWERING_BIND_TYPES
+    ]
+    if not all_binds:
+        return None
+    live = _lowering_live_modifiers(obj)
+    binds = [modifier for modifier in live if modifier.type in _LOWERING_BIND_TYPES]
+    if len(all_binds) != 1 or len(binds) != 1:
+        names = ", ".join(repr(item.name) for item in all_binds)
+        return _lowering_refused(
+            obj, None, None,
+            f"{len(all_binds)} bind modifiers ({names}) share this mesh and "
+            "their visibility selects between different cages, so there is no "
+            "single set of skin weights that reproduces this stack. Resolve "
+            "the branch -- delete or apply the binds that are never enabled -- "
+            "and re-run.",
+        )
+    bind = binds[0]
+    target = getattr(bind, "target", None)
+    target_name = getattr(target, "name", None)
+    if bind.type != "SURFACE_DEFORM":
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"{bind.name!r} is a {bind.type.lower().replace('_', ' ')} "
+            "modifier. Only SurfaceDeform binds lower to skin weights; the "
+            "mesh-deform cage bind is a different interpolation Blendlink has "
+            "not measured.",
+        )
+
+    conditional = _lowering_conditional_modifiers(obj)
+    if conditional:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            "a driver or keyframe switches the visibility of "
+            + ", ".join(repr(name) for name in conditional)
+            + " on this mesh, so its modifier stack -- and with it the set of "
+            "skin weights that would reproduce it -- is not the same on every "
+            "frame.",
+        )
+
+    order = list(obj.modifiers)
+    index = order.index(bind)
+    before = [item for item in order[:index] if item in live]
+    if before:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            "modifier(s) "
+            + ", ".join(repr(item.name) for item in before)
+            + f" run before {bind.name!r}, so the geometry the bind reads is "
+            "not this mesh's authored vertices and the derived weights would "
+            "be sampled at the wrong positions. Move the SurfaceDeform to the "
+            "top of the stack, or apply what precedes it.",
+        )
+    after = [
+        item for item in order[index + 1:]
+        if item in live and item.type not in _LOWERING_TOPOLOGY_ONLY
+    ]
+    if after:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            "modifier(s) "
+            + ", ".join(
+                f"{item.name!r} ({item.type.lower().replace('_', ' ')})"
+                for item in after
+            )
+            + f" run after {bind.name!r}. Lowering the bind to skin weights "
+            "would leave them baked into the exported rest mesh and skinned as "
+            "though they were static, which is the same defect this lowering "
+            "exists to remove. Apply or remove them first.",
+        )
+
+    if float(getattr(bind, "strength", 1.0)) != 1.0:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"{bind.name!r} has Strength {bind.strength:g}, so it is a partial "
+            "blend between the bound and undeformed positions. Plain skin "
+            "weights cannot express that blend. Set Strength to 1.0.",
+        )
+    if str(getattr(bind, "vertex_group", "") or ""):
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"{bind.name!r} is masked by vertex group {bind.vertex_group!r}, "
+            "so it deforms only part of the mesh. Plain skin weights cannot "
+            "express that mask. Clear the vertex group, or split the masked "
+            "region into its own object.",
+        )
+    if not bool(getattr(bind, "is_bound", False)):
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"{bind.name!r} is not bound, so it contributes nothing and there "
+            "is nothing to lower. Press Bind, or remove the modifier.",
+        )
+    if bool(getattr(bind, "use_pin_to_last", False)):
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"{bind.name!r} has Pin To Last enabled, which re-orders it after "
+            "every later modifier at evaluation time, so the stack this "
+            "predicate read is not the stack Blender applies.",
+        )
+
+    if getattr(obj.data, "shape_keys", None) is not None:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            "this mesh has shape keys. primitive_extract.py:1112-1116 sources "
+            "POSITION from the Basis cage whenever a key block survives, so "
+            "the shipped rest positions are not the ones this lowering "
+            "measures and the residual gate would be blind to the difference. "
+            "Blendlink has no measurement for that path and refuses rather "
+            "than guessing.",
+        )
+
+    if target is None or getattr(target, "type", None) != "MESH":
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"{bind.name!r} has no mesh cage, so there is no rest surface to "
+            "derive weights from.",
+        )
+
+    target_conditional = _lowering_conditional_modifiers(target)
+    if target_conditional:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            "a driver or keyframe switches the visibility of "
+            + ", ".join(repr(name) for name in target_conditional)
+            + f" on the deformer cage {target.name!r}, so the cage the weights "
+            "would be derived from is not the same on every frame.",
+        )
+    target_live = _lowering_live_modifiers(target)
+    breaking = [
+        item for item in target_live if item.type in _LOWERING_TARGET_BREAKING
+    ]
+    if breaking:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"the deformer cage {target.name!r} carries "
+            + ", ".join(
+                f"{item.name!r} ({item.type.lower().replace('_', ' ')})"
+                for item in breaking
+            )
+            + ", which has no readable rest pose -- its output is a "
+            "simulation, a node graph, or another bind. There is no cage to "
+            "snapshot.",
+        )
+    armatures = [item for item in target_live if item.type == "ARMATURE"]
+    if len(armatures) != 1 or armatures[0].object is None:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"the deformer cage {target.name!r} has {len(armatures)} usable "
+            "Armature modifier(s). The lowering is valid only when the cage's "
+            "own motion IS linear blend skinning from exactly one armature. "
+            "Skin the cage, or skin this mesh directly.",
+        )
+    armature_modifier = armatures[0]
+    rig = armature_modifier.object
+    if bool(getattr(armature_modifier, "use_bone_envelopes", False)):
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"the deformer cage {target.name!r} uses Bone Envelopes, which "
+            "have no exported form (primitive_extract.py:1557 derives weights "
+            "from vertex groups alone), so the weights this lowering can read "
+            "are not the weights Blender is using. Bake the envelopes into "
+            "groups with Weight from Bones.",
+        )
+    if not bool(getattr(armature_modifier, "use_vertex_groups", True)):
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"the deformer cage {target.name!r} has Vertex Groups switched off "
+            "on its Armature modifier, so its motion does not come from the "
+            "weights this lowering would transfer.",
+        )
+
+    if obj.parent is not rig:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"this mesh's parent is {getattr(obj.parent, 'name', None)!r}, not "
+            f"the armature {rig.name!r} that drives its deformer cage. "
+            "tree.py:246-260 attaches a skinned mesh to its skin through the "
+            "parent link and falls back to a name search otherwise, which can "
+            "leave the node unskinned with only a log line. Parent this mesh "
+            "to the armature (Object > Parent > Object, Keep Transform).",
+        )
+
+    bones = getattr(getattr(rig, "data", None), "bones", None)
+    if bones is None:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"{rig.name!r} has no armature data to read bones from.",
+        )
+    joints, non_deform = [], []
+    for group in target.vertex_groups:
+        bone = bones.get(group.name)
+        if bone is None:
+            # Blender's own ARMATURE modifier ignores a group that names no
+            # bone, so dropping it here changes nothing that ships.
+            continue
+        (joints if bone.use_deform else non_deform).append(group.name)
+    if non_deform:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"the deformer cage {target.name!r} is weighted to "
+            + ", ".join(repr(name) for name in sorted(non_deform))
+            + ", which are bones with Deform switched off. Blendlink exports "
+            "with export_def_bones=True, so those bones are not joints and the "
+            "transferred weight would vanish -- the exporter reassigns the "
+            "affected vertices to a fabricated neutral joint "
+            "(primitive_extract.py:1580-1581). Enable Deform on those bones, "
+            "or remove the groups.",
+        )
+    if not joints:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            f"the deformer cage {target.name!r} carries no vertex group naming "
+            f"a deform bone of {rig.name!r}, so there is nothing to transfer.",
+        )
+    # Every group naming a deform bone is a hazard, not only the ones the
+    # lowering would write.  primitive_extract.py:1556-1557 matches groups to
+    # joints BY NAME, so an unrelated authored group naming any deform bone
+    # ships as a joint influence the measurement below does not model, and the
+    # measured residual would then be describing a different mesh than the one
+    # that ships.
+    collisions = sorted(
+        {group.name for group in obj.vertex_groups}.intersection(
+            bone.name for bone in bones if bone.use_deform
+        )
+    )
+    if collisions:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            "this mesh already carries vertex group(s) "
+            + ", ".join(repr(name) for name in collisions)
+            + f" naming deform bones of {rig.name!r}. The exporter matches "
+            "groups to joints by name, so those would ship as skin weights "
+            "beside the derived ones -- rewriting authored data where the "
+            "names coincide, and going unmeasured where they do not. Rename "
+            "or remove those groups.",
+        )
+
+    # The frozen record is per object, and lowering the bind removes only the
+    # bind's contribution.  Another moving deformer on the same mesh would stay
+    # frozen behind a green tick.
+    others = [
+        entry for entry in frozen_record["modifiers"]
+        if entry["name"] != bind.name
+    ]
+    if others:
+        return _lowering_refused(
+            obj, bind.name, target_name,
+            "this mesh also freezes "
+            + ", ".join(
+                f"{entry['name']!r} ({entry['type'].lower().replace('_', ' ')})"
+                for entry in others
+            )
+            + ". Lowering the SurfaceDeform alone would remove one defect and "
+            "leave the others in place while the export succeeded, which reads "
+            "as a guarantee it is not.",
+        )
+
+    identity = obj.get("blendlink_id")
+    return {
+        "code": "geometry.surface-deform-lowered-to-skin",
+        "object": obj.name,
+        **({"objectId": identity}
+           if isinstance(identity, str) and identity else {}),
+        "modifier": bind.name,
+        "target": target.name,
+        "armature": rig.name,
+        "joints": sorted(joints),
+        "falloff": float(getattr(bind, "falloff", 4.0)),
+        "targetPerturbingModifiers": [
+            {"name": item.name, "type": item.type}
+            for item in target_live
+            if item.type in _LOWERING_TARGET_PERTURBING
+        ],
+        "frameRange": [scene.frame_start, scene.frame_end],
+        "outcome": "planned",
+        "severity": "info",
+    }
+
+
+def deformer_lowering_plan(scene, objects=None, frozen=None):
+    """Which frozen SURFACE_DEFORM binds can ship as glTF skins, and which cannot.
+
+    Pure RNA: zero depsgraph evaluation and zero frame stepping, exactly like
+    ``frozen_deformer_issues``, so the addon can show it live.  Every record in
+    ``lower`` is a *proposal*.  ``verified`` stays False until
+    ``verify_deformer_lowerings`` has measured it, and an unverified proposal
+    must never suppress the frozen-deformer refusal.
+
+    Scoped to objects that already produce a frozen-deformer refusal: a mesh
+    whose bind provably does not move is not broken and needs no lowering.
+    """
+    def _empty():
+        return {
+            "lower": [], "refuse": [],
+            "warnFraction": _DISPLACEMENT_WARN_FRACTION,
+            "refuseFraction": _LOWERING_REFUSE_FRACTION,
+            "verified": False,
+        }
+
+    if scene.frame_start == scene.frame_end:
+        return _empty()
+    scoped = tuple(scene.objects if objects is None else objects)
+    records = (
+        frozen_deformer_issues(scene, objects=scoped) if frozen is None
+        else frozen
+    )
+    by_object = {item["object"]: item for item in records}
+    if not by_object:
+        return _empty()
+    lower, refuse = [], []
+    for obj in scoped:
+        record = by_object.get(obj.name)
+        if record is None:
+            continue
+        entry = _deformer_lowering_candidate(obj, record, scene)
+        if entry is None:
+            continue
+        (lower if entry["outcome"] == "planned" else refuse).append(entry)
+    plan = _empty()
+    plan["lower"] = sorted(lower, key=lambda item: item["object"].casefold())
+    plan["refuse"] = sorted(refuse, key=lambda item: item["object"].casefold())
+    return plan
+
+
+# ---------------------------------------------------------------------------
+# Derivation, installation, measurement.
+# ---------------------------------------------------------------------------
+
+
+def _lowering_rest_cage(target):
+    """Snapshot the cage: vertices, triangles, per-vertex group weights.
+
+    Only the cage's own ARMATURE is muted -- MIRROR and every other class-A
+    modifier stay, because they define the rest mesh the skin acts on.  Reading
+    the base mesh instead would miss ellie's bottom cage entirely, whose 42
+    evaluated vertices come from 22 base vertices through a MIRROR with merge,
+    and whose flipped .L/.R groups exist only after that MIRROR runs.
+    """
+    with _applied_mesh(target) as mesh:
+        if mesh is None:
+            return None
+        mesh.calc_loop_triangles()
+        return {
+            "co": [vertex.co.copy() for vertex in mesh.vertices],
+            "weights": [
+                {item.group: item.weight for item in vertex.groups}
+                for vertex in mesh.vertices
+            ],
+            "triangles": [tuple(tri.vertices) for tri in mesh.loop_triangles],
+            "groups": [group.name for group in target.vertex_groups],
+        }
+
+
+def _derive_lowering_weights(obj, target, joints):
+    """Closest-point, face-interpolated weight transfer from the rest cage.
+
+    Mechanism (a) -- reading SurfaceDeform's own bind -- is unavailable:
+    Blender 5.2 registers 20 RNA properties on ``SurfaceDeformModifier`` and
+    none of them is the bind array, so the interpolation must be
+    reconstructed.  Measured against the alternatives on ellie, this one sits
+    on the accuracy plateau: a falloff-weighted average over every cage polygon
+    at exponents 2/4/8 returned byte-identical maxima, while nearest-VERTEX was
+    1.6x worse on the bottom teeth.  ``poly_3d_calc`` is Blender's own
+    barycentric routine rather than a second implementation of it.
+
+    Returns ``(per_vertex_weights, facts)`` or ``(None, reason)``.
+    """
+    cage = _lowering_rest_cage(target)
+    if cage is None or not cage["triangles"]:
+        return None, (
+            f"the deformer cage {target.name!r} evaluates to no triangles, so "
+            "there is no surface to transfer weights from."
+        )
+    wanted = set(joints)
+    tree = BVHTree.FromPolygons(
+        [tuple(point) for point in cage["co"]],
+        [list(triangle) for triangle in cage["triangles"]],
+        all_triangles=True,
+    )
+    to_target = target.matrix_world.inverted() @ obj.matrix_world
+    per_vertex = []
+    farthest = 0.0
+    unweighted = 0
+    clamped = 0
+    widest = 0
+    for vertex in obj.data.vertices:
+        location, _normal, index, distance = tree.find_nearest(
+            to_target @ vertex.co,
+        )
+        if index is None:
+            per_vertex.append({})
+            unweighted += 1
+            continue
+        farthest = max(farthest, float(distance or 0.0))
+        triangle = cage["triangles"][index]
+        corners = [cage["co"][corner] for corner in triangle]
+        blended = {}
+        for share, corner in zip(
+                poly_3d_calc(corners, Vector(location)), triangle):
+            if share <= 0.0:
+                continue
+            for group_index, weight in cage["weights"][corner].items():
+                name = cage["groups"][group_index]
+                if name not in wanted or weight <= 0.0:
+                    continue
+                blended[name] = blended.get(name, 0.0) + share * weight
+        blended = {
+            name: value for name, value in blended.items()
+            if value > _LOWERING_WEIGHT_EPSILON
+        }
+        widest = max(widest, len(blended))
+        if len(blended) > _LOWERING_MAX_INFLUENCES:
+            clamped += 1
+            blended = dict(sorted(
+                blended.items(), key=lambda item: (-item[1], item[0]),
+            )[:_LOWERING_MAX_INFLUENCES])
+        total = sum(blended.values())
+        if total <= 0.0:
+            per_vertex.append({})
+            unweighted += 1
+            continue
+        per_vertex.append(
+            {name: value / total for name, value in blended.items()}
+        )
+    if unweighted:
+        return None, (
+            f"{unweighted} of {len(per_vertex)} vertices land on no weighted "
+            f"part of the deformer cage {target.name!r}, so their motion "
+            "cannot be expressed as skin weights at all."
+        )
+    return per_vertex, {
+        "cageVertices": len(cage["co"]),
+        "cageTriangles": len(cage["triangles"]),
+        "maxBindDistance": _rounded(farthest),
+        "derivedInfluences": widest,
+        "clampedVertices": clamped,
+    }
+
+
+def prepare_lowered_skins(derivations):
+    """Install every verified lowering on a private mesh copy, for one export.
+
+    Three mutations per object, two of them on the *Object* -- vertex groups
+    and the modifier stack are Object-level, which is why material_compiler's
+    Mesh-only ``data_swaps`` protocol covers half of this and why the Mesh half
+    additionally renames the source aside (see below).
+
+    Called from inside ``emit_gltf``, after ``with_compiled_materials`` has
+    re-validated its own fingerprint.  Installing earlier would move
+    ``_materialized_binding_hash``'s per-modifier digest
+    (material_compiler.py:1453-1459) and abort a real export with a spurious
+    "run Preview again".
+    """
+    if not derivations:
+        return None
+    changed = {"objects": []}
+    try:
+        for item in derivations:
+            obj = bpy.data.objects.get(item["object"])
+            if obj is None:
+                raise RuntimeError(
+                    f"lowered object {item['object']!r} disappeared before "
+                    "installation"
+                )
+            original = obj.data
+            mesh_name = original.name
+            private = original.copy()
+            state = {
+                "object": obj, "name": item["object"], "original": original,
+                "private": private, "meshName": mesh_name, "groups": [],
+                "muted": [], "armature": None,
+            }
+            changed["objects"].append(state)
+            # Rename aside rather than material_compiler's plain
+            # ``private.name = original.name``: Blender keeps the incumbent ID
+            # and suffixes the assignment, so that form ships a Mesh called
+            # "X.001", and a lowered export would then carry different glTF
+            # mesh names than the same scene exported without the lowering.
+            # This is ``realize_unsupported_renderables``'s rename-aside
+            # (export_scene.py:4443-4445), applied to a Mesh.
+            original.name = f"{mesh_name}.blendlink-lowered-source"
+            private.name = mesh_name
+            obj.data = private
+            if len(private.vertices) != len(item["weights"]):
+                raise RuntimeError(
+                    f"{obj.name}: derived weights cover "
+                    f"{len(item['weights'])} vertices but the mesh has "
+                    f"{len(private.vertices)}"
+                )
+            for name in item["joints"]:
+                group = obj.vertex_groups.new(name=name)
+                state["groups"].append(group)
+                if group.name != name:
+                    # Blender suffixes a colliding group name.  Measured trap:
+                    # the duplicate is bone-less, the ARMATURE modifier ignores
+                    # it and renormalises, so the geometry looks right and the
+                    # only symptom is a spurious JOINTS_1 at export.
+                    raise RuntimeError(
+                        f"{obj.name}: derived vertex group {name!r} collided "
+                        f"with an existing group and Blender renamed it to "
+                        f"{group.name!r}"
+                    )
+            by_name = {group.name: group for group in state["groups"]}
+            for index, entry in enumerate(item["weights"]):
+                for name, weight in entry.items():
+                    by_name[name].add([index], weight, "REPLACE")
+            for modifier in obj.modifiers:
+                if modifier.name != item["modifier"]:
+                    continue
+                state["muted"].append((modifier, modifier.show_viewport))
+                modifier.show_viewport = False
+            if not state["muted"]:
+                raise RuntimeError(
+                    f"{obj.name}: bind modifier {item['modifier']!r} "
+                    "disappeared before installation"
+                )
+            rig = bpy.data.objects.get(item["armature"])
+            if rig is None:
+                raise RuntimeError(
+                    f"{obj.name}: armature {item['armature']!r} disappeared "
+                    "before installation"
+                )
+            armature = obj.modifiers.new(
+                name=_LOWERING_ARMATURE_MODIFIER, type="ARMATURE",
+            )
+            state["armature"] = armature
+            armature.object = rig
+            armature.use_vertex_groups = True
+            armature.use_bone_envelopes = False
+            # Index 0 so a post-bind SUBSURF still subdivides a deformed cage,
+            # matching the authored order the SurfaceDeform occupied.
+            obj.modifiers.move(obj.modifiers.find(armature.name), 0)
+        bpy.context.view_layer.update()
+        return changed
+    except BaseException:
+        restore_lowered_skins(changed)
+        raise
+
+
+def restore_lowered_skins(changed) -> None:
+    """Reverse ``prepare_lowered_skins`` exactly, collecting every failure.
+
+    Order is load-bearing.  The vertex groups must go while the private Mesh is
+    still installed: removing a group strips its deform layer from whatever
+    Mesh is bound at that moment, and doing it after the swap-back would strip
+    the authored one.
+    """
+    if not changed:
+        return
+    errors = []
+    for state in reversed(changed.get("objects", ())):
+        obj = state["object"]
+        label = state["name"]
+        try:
+            if state["armature"] is not None:
+                obj.modifiers.remove(state["armature"])
+        except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+            errors.append(f"{label} armature: {error}")
+        for modifier, show_viewport in reversed(state["muted"]):
+            try:
+                # The literal authored value: a driver re-asserts itself on the
+                # next depsgraph update, exactly as
+                # ``_shape_key_restoring_modifiers`` already relies on.
+                modifier.show_viewport = show_viewport
+            except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+                errors.append(f"{label} bind mute: {error}")
+        for group in reversed(state["groups"]):
+            try:
+                obj.vertex_groups.remove(group)
+            except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+                errors.append(f"{label} vertex group: {error}")
+        try:
+            if obj.data is not state["original"]:
+                # ``is original`` means the swap never happened -- a rollback
+                # from part-way through installation -- and there is nothing to
+                # undo.  Anything else is someone else's Mesh and must not be
+                # overwritten silently.
+                if obj.data is not state["private"]:
+                    raise RuntimeError(
+                        "private Mesh binding changed before cleanup"
+                    )
+                obj.data = state["original"]
+                if obj.data is not state["original"]:
+                    raise RuntimeError("source Mesh did not restore exactly")
+        except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+            errors.append(f"{label} Mesh restore: {error}")
+        try:
+            private = state["private"]
+            if private.users != 0:
+                raise RuntimeError(
+                    f"private Mesh still has {private.users} users"
+                )
+            bpy.data.meshes.remove(private)
+        except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+            errors.append(f"{label} private Mesh: {error}")
+        try:
+            # Only after the private copy is gone; the name is taken until then.
+            state["original"].name = state["meshName"]
+            if state["original"].name != state["meshName"]:
+                raise RuntimeError(
+                    f"source Mesh kept the name {state['original'].name!r}"
+                )
+        except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
+            errors.append(f"{label} source Mesh name: {error}")
+    if errors:
+        raise RuntimeError(
+            "lowered-skin restoration failed: " + "; ".join(errors)
+        )
+    bpy.context.view_layer.update()
+
+
+def _lowering_evaluated_points(obj, matrix=None):
+    """Evaluated vertices of the AUTHORED stack as plain float triples.
+
+    Tuples rather than ``Vector`` on purpose: the sweep holds one frame's worth
+    per object and the attribution pass caches a whole range.
+    """
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    evaluated = obj.evaluated_get(depsgraph)
+    mesh = evaluated.to_mesh(
+        preserve_all_data_layers=True, depsgraph=depsgraph,
+    )
+    if mesh is None:
+        return None
+    try:
+        if matrix is None:
+            return [tuple(vertex.co) for vertex in mesh.vertices]
+        return [tuple(matrix @ vertex.co) for vertex in mesh.vertices]
+    finally:
+        evaluated.to_mesh_clear()
+
+
+def _lowering_shipped_rest(obj, rig, joints):
+    """What the exporter would ship for a lowered ``obj``: rest + skin weights.
+
+    ``_applied_mesh`` is the exporter's own read (``nodes.py:294-330``): mute
+    this object's ARMATURE modifiers, evaluate the viewport depsgraph,
+    ``to_mesh``.  With the lowering installed that mutes the synthetic
+    ARMATURE, the bind is already muted, and what comes back is exactly the
+    rest mesh and the interpolated weights the glb carries -- including any
+    interpolation a post-bind SUBSURF performed on the derived groups.
+
+    Rest positions are returned in the ARMATURE object's space, which is where
+    the pose matrices act.
+    """
+    wanted = {name: index for index, name in enumerate(joints)}
+    lookup = [wanted.get(group.name) for group in obj.vertex_groups]
+    widest = 0
+    with _applied_mesh(obj) as mesh:
+        if mesh is None:
+            return None, "the lowered mesh does not evaluate"
+        pre = rig.matrix_world.inverted() @ obj.matrix_world
+        rest = []
+        influences = []
+        for vertex in mesh.vertices:
+            pairs = [
+                (lookup[item.group], float(item.weight))
+                for item in vertex.groups
+                if item.group < len(lookup)
+                and lookup[item.group] is not None
+                and item.weight > _LOWERING_WEIGHT_EPSILON
+            ]
+            widest = max(widest, len(pairs))
+            total = sum(weight for _joint, weight in pairs)
+            if total <= 0.0:
+                return None, (
+                    "a vertex of the lowered mesh carries no joint weight, so "
+                    "the exporter would reassign it to a fabricated neutral "
+                    "joint (primitive_extract.py:1580-1581)"
+                )
+            rest.append(pre @ vertex.co)
+            influences.append(
+                tuple((joint, weight / total) for joint, weight in pairs)
+            )
+    if widest > _LOWERING_MAX_INFLUENCES:
+        return None, (
+            f"the exported mesh would carry up to {widest} joint influences "
+            f"per vertex. primitive_extract.py:1587 emits "
+            f"{(widest + 3) // 4} joint sets for that, and three's GLTFLoader "
+            "binds only JOINTS_0/WEIGHTS_0, so the extra weight would be "
+            "dropped at runtime without a word. Limit the deformer cage's "
+            "weights to 4 influences per vertex."
+        )
+    return {"rest": rest, "influences": influences, "maxInfluences": widest}, None
+
+
+def _lowering_pose_matrices(rig, joints):
+    """One skinning matrix per joint, in the armature object's space."""
+    bones = rig.data.bones
+    pose = rig.pose.bones
+    matrices = []
+    for name in joints:
+        bone = bones.get(name)
+        posed = pose.get(name)
+        if bone is None or posed is None:
+            return None
+        matrices.append(posed.matrix @ bone.matrix_local.inverted())
+    return matrices
+
+
+def _lowering_skinned_points(shipped, matrices, rig_world):
+    """Linear blend skinning in world space, as the runtime computes it."""
+    out = []
+    for position, influences in zip(shipped["rest"], shipped["influences"]):
+        blended = Vector((0.0, 0.0, 0.0))
+        for joint, weight in influences:
+            blended += (matrices[joint] @ position) * weight
+        out.append(tuple(rig_world @ blended))
+    return out
+
+
+def _lowering_worst(left, right):
+    """Max Euclidean distance between two point lists, or ``None``."""
+    if left is None or right is None or len(left) != len(right):
+        return None
+    worst = 0.0
+    for (ax, ay, az), (bx, by, bz) in zip(left, right):
+        dx, dy, dz = ax - bx, ay - by, az - bz
+        squared = dx * dx + dy * dy + dz * dz
+        if squared > worst:
+            worst = squared
+    return worst ** 0.5
+
+
+def _lowering_frames(scene):
+    """The frames to sample, and the stride that produced them."""
+    span = list(range(int(scene.frame_start), int(scene.frame_end) + 1))
+    stride = 1
+    if len(span) > _LOWERING_MAX_SAMPLED_FRAMES:
+        stride = -(-len(span) // _LOWERING_MAX_SAMPLED_FRAMES)
+        span = span[::stride]
+        if span[-1] != int(scene.frame_end):
+            span.append(int(scene.frame_end))
+    if _EXPORTER_FROZEN_FRAME not in span:
+        # The frame the glb bakes, which a range starting at 1 never contains.
+        span.insert(0, _EXPORTER_FROZEN_FRAME)
+    return span, stride
+
+
+def _lowering_message(record):
+    """The artist-facing sentence, with both numbers in it."""
+    joints = len(record["joints"])
+    diagonal = record.get("bboxDiagonal") or 0.0
+    residual = record.get("residual")
+    frozen = record.get("frozenDeviation")
+    head = (
+        f"{record['object']}: its SurfaceDeform bind to {record['target']} was "
+        f"lowered to glTF skin weights on {joints} joint"
+        f"{'' if joints == 1 else 's'} of {record['armature']}."
+    )
+    if residual is None or frozen is None:
+        return head
+    head += (
+        f" Blender and the website agree to {residual * 1000.0:.3f} mm "
+        f"({_percent(residual, diagonal)} of the {diagonal:.3f} m "
+        f"bounding-box diagonal, worst at frame {record.get('worstFrame')}), "
+        f"against {frozen * 1000.0:.1f} mm ({_percent(frozen, diagonal)}) if "
+        "it shipped as a static prop."
+    )
+    if record.get("severity") != "warn":
+        return head
+    names = ", ".join(
+        f"{item['name']!r} ({item['type'].lower().replace('_', ' ')})"
+        for item in record.get("targetPerturbingModifiers") or ()
+    )
+    attribution = record.get("targetPerturbation")
+    if names and attribution is not None:
+        return head + (
+            f" That is above the 1% agreement line. The deformer cage's "
+            f"{names} is not linear blend skinning and accounts for "
+            f"{_percent(attribution, diagonal)} of it; the remainder is the "
+            f"weight transfer itself, which the cage's resolution "
+            f"({record.get('cageVertices')} vertices, "
+            f"{record.get('cageTriangles')} triangles for "
+            f"{record.get('exportedVertices')} bound vertices) bounds from "
+            "below. Subdivide the cage, or remove those modifiers from it, if "
+            "the website must match Blender."
+        )
+    return head + (
+        " That is above the 1% agreement line. The deformer cage "
+        f"({record.get('cageVertices')} vertices, "
+        f"{record.get('cageTriangles')} triangles for "
+        f"{record.get('exportedVertices')} bound vertices) is coarse relative "
+        "to the bound mesh, which bounds how well any set of skin weights can "
+        "reproduce the bind. Subdivide the cage if the website must match "
+        "Blender."
+    )
+
+
+def _score_lowering(record, residual, frozen, worst_frame, diagonal):
+    """Apply the shared 1%/10% lines plus the strict-improvement guard."""
+    record["bboxDiagonal"] = _rounded(diagonal)
+    record["residual"] = _rounded(residual)
+    record["frozenDeviation"] = _rounded(frozen)
+    record["worstFrame"] = worst_frame
+    fraction = (residual / diagonal) if diagonal else None
+    record["residualFraction"] = _rounded(fraction)
+    record["frozenFraction"] = _rounded((frozen / diagonal) if diagonal else None)
+    record["improvementRatio"] = _rounded(
+        (frozen / residual) if residual > 0.0 else None
+    )
+    if fraction is None:
+        record["outcome"] = "refused"
+        record["severity"] = "refuse"
+        record["reason"] = (
+            f"{record['object']}: its bounding box is degenerate, so the "
+            "residual cannot be expressed as a fraction of it and the lowering "
+            "cannot be scored."
+        )
+        return
+    if residual >= frozen:
+        record["outcome"] = "refused"
+        record["severity"] = "refuse"
+        record["reason"] = (
+            f"{record['object']}: lowering its SurfaceDeform bind to skin "
+            f"weights leaves the website {_percent(residual, diagonal)} of the "
+            f"bounding-box diagonal away from Blender, which is no better than "
+            f"the {_percent(frozen, diagonal)} it already ships as a frozen "
+            "prop. A lowering that is not a strict improvement is not worth "
+            "the approximation."
+        )
+        return
+    if fraction > _LOWERING_REFUSE_FRACTION:
+        record["outcome"] = "refused"
+        record["severity"] = "refuse"
+        record["reason"] = (
+            f"{record['object']}: its SurfaceDeform bind to "
+            f"{record['target']} can be lowered to skin weights, but the "
+            f"measured result differs from Blender by "
+            f"{_percent(residual, diagonal)} of the bounding-box diagonal "
+            f"(worst at frame {worst_frame}) -- above the "
+            f"{_LOWERING_REFUSE_FRACTION * 100:.0f}% refusal line. It would "
+            f"beat the {_percent(frozen, diagonal)} a frozen prop ships, but "
+            "not by enough to publish silently. Subdivide the deformer cage, "
+            "or skin this mesh to the armature directly."
+        )
+        return
+    record["outcome"] = "lowered"
+    record["severity"] = (
+        "warn" if fraction > _DISPLACEMENT_WARN_FRACTION else "info"
+    )
+    record["message"] = _lowering_message(record)
+
+
+def _refuse_lowering(record, reason):
+    record["outcome"] = "refused"
+    record["severity"] = "refuse"
+    record["reason"] = f"{record['object']}: {reason}"
+
+
+def verify_deformer_lowerings(scene, plan):
+    """Measure every planned lowering end to end and score it.
+
+    Mutates ``plan`` in place -- each record in ``plan["lower"]`` gains its
+    measured residual and an ``outcome`` of ``"lowered"`` or ``"refused"`` --
+    and returns the derivations the enactor needs, for the records that passed.
+
+    One short install/restore transaction captures the shipped rest mesh and
+    weights; the frame sweep afterwards evaluates only the AUTHORED stack and
+    computes the shipped state by linear blend skinning.  That is both half the
+    depsgraph work and the more honest oracle: re-evaluating the lowered stack
+    in Blender would hide the subdivide-then-skin difference, because Blender
+    skins first.
+    """
+    plan["verified"] = True
+    planned = [
+        record for record in plan.get("lower", ())
+        if record.get("outcome") == "planned"
+    ]
+    if not planned:
+        return []
+    frames, stride = _lowering_frames(scene)
+    for record in plan.get("lower", ()):
+        record["sampledFrames"] = len(frames)
+        record["frameStride"] = stride
+        record["exhaustive"] = stride == 1
+    restore_frame = scene.frame_current
+    derivations = []
+    installed = None
+    try:
+        scene.frame_set(_EXPORTER_FROZEN_FRAME)
+        bpy.context.view_layer.update()
+        for record in planned:
+            obj = bpy.data.objects.get(record["object"])
+            target = bpy.data.objects.get(record["target"])
+            rig = bpy.data.objects.get(record["armature"])
+            if obj is None or target is None or rig is None:
+                _refuse_lowering(record, (
+                    "the mesh, its deformer cage or its armature disappeared "
+                    "before the lowering could be measured."
+                ))
+                continue
+            weights, facts = _derive_lowering_weights(
+                obj, target, record["joints"],
+            )
+            if weights is None:
+                _refuse_lowering(record, facts)
+                continue
+            record.update(facts)
+            derivations.append({
+                "object": obj.name,
+                "modifier": record["modifier"],
+                "armature": rig.name,
+                "joints": list(record["joints"]),
+                "weights": weights,
+                "record": record,
+                # What the glb ships when the lowering is refused: the frame-0
+                # evaluated mesh, carried by the node's own animated transform.
+                "frozenLocal": _lowering_evaluated_points(obj),
+                "diagonal": _bbox_diagonal(obj),
+            })
+        if derivations:
+            installed = prepare_lowered_skins(derivations)
+            scene.frame_set(_EXPORTER_FROZEN_FRAME)
+            bpy.context.view_layer.update()
+            for item in list(derivations):
+                record = item["record"]
+                obj = bpy.data.objects[item["object"]]
+                rig = bpy.data.objects[item["armature"]]
+                shipped, reason = _lowering_shipped_rest(
+                    obj, rig, item["joints"],
+                )
+                if shipped is None:
+                    _refuse_lowering(record, reason)
+                    derivations.remove(item)
+                    continue
+                if item["frozenLocal"] is None or len(shipped["rest"]) != len(
+                        item["frozenLocal"]):
+                    _refuse_lowering(record, (
+                        "the lowered stack evaluates to a different vertex "
+                        "count than the authored one, so the two cannot be "
+                        "compared vertex by vertex."
+                    ))
+                    derivations.remove(item)
+                    continue
+                record["exportedVertices"] = len(shipped["rest"])
+                record["exportedInfluences"] = shipped["maxInfluences"]
+                item["shipped"] = shipped
+    finally:
+        if installed is not None:
+            restore_lowered_skins(installed)
+
+    if not derivations:
+        scene.frame_set(restore_frame)
+        bpy.context.view_layer.update()
+        return []
+
+    try:
+        worst = {item["object"]: [0.0, None, 0.0] for item in derivations}
+        for frame in frames:
+            scene.frame_set(frame)
+            bpy.context.view_layer.update()
+            for item in derivations:
+                obj = bpy.data.objects[item["object"]]
+                rig = bpy.data.objects[item["armature"]]
+                authored = _lowering_evaluated_points(obj, obj.matrix_world)
+                matrices = _lowering_pose_matrices(rig, item["joints"])
+                if authored is None or matrices is None:
+                    continue
+                frozen = _lowering_worst(authored, [
+                    tuple(obj.matrix_world @ Vector(point))
+                    for point in item["frozenLocal"]
+                ])
+                residual = _lowering_worst(authored, _lowering_skinned_points(
+                    item["shipped"], matrices, rig.matrix_world,
+                ))
+                entry = worst[item["object"]]
+                if residual is not None and residual > entry[0]:
+                    entry[0], entry[1] = residual, frame
+                if frozen is not None and frozen > entry[2]:
+                    entry[2] = frozen
+        for item in derivations:
+            residual, frame, frozen = worst[item["object"]]
+            _score_lowering(
+                item["record"], residual, frozen, frame, item["diagonal"],
+            )
+        _attribute_target_perturbation(scene, frames, derivations)
+    finally:
+        scene.frame_set(restore_frame)
+        bpy.context.view_layer.update()
+    return [
+        item for item in derivations
+        if item["record"].get("outcome") == "lowered"
+    ]
+
+
+def _attribute_target_perturbation(scene, frames, derivations):
+    """Price the cage's non-LBS modifiers, for warn-severity records only.
+
+    A second sweep, so it is spent only where the artist has a decision to
+    make.  Measured on ellie this is the difference between "your Shrinkwrap
+    costs 0.23%" and "your Shrinkwrap costs nothing and the cage is too
+    coarse" -- the second is the bottom teeth, and without the attribution the
+    artist would remove a modifier that changes nothing.
+
+    Both states are evaluated inside the frame loop rather than diffing against
+    a cached copy of the first sweep: caching would size peak memory by the
+    artist's frame range, and this pass runs only for a warn.
+    """
+    wanted = [
+        item for item in derivations
+        if item["record"].get("severity") == "warn"
+        and item["record"].get("targetPerturbingModifiers")
+    ]
+    if not wanted:
+        return
+    perturbers = []
+    for item in wanted:
+        target = bpy.data.objects.get(item["record"]["target"])
+        if target is None:
+            continue
+        names = {
+            entry["name"]
+            for entry in item["record"]["targetPerturbingModifiers"]
+        }
+        perturbers.extend(
+            (modifier, modifier.show_viewport)
+            for modifier in target.modifiers
+            if modifier.name in names and modifier.show_viewport
+        )
+    if not perturbers:
+        return
+    worst = {item["object"]: 0.0 for item in wanted}
+    try:
+        for frame in frames:
+            scene.frame_set(frame)
+            for modifier, _was in perturbers:
+                modifier.show_viewport = False
+            bpy.context.view_layer.update()
+            pure = {
+                item["object"]: _lowering_evaluated_points(
+                    bpy.data.objects[item["object"]],
+                    bpy.data.objects[item["object"]].matrix_world,
+                )
+                for item in wanted
+            }
+            for modifier, was in perturbers:
+                modifier.show_viewport = was
+            bpy.context.view_layer.update()
+            for item in wanted:
+                obj = bpy.data.objects[item["object"]]
+                delta = _lowering_worst(
+                    pure[item["object"]],
+                    _lowering_evaluated_points(obj, obj.matrix_world),
+                )
+                if delta is not None and delta > worst[item["object"]]:
+                    worst[item["object"]] = delta
+    finally:
+        # The literal authored value; a driver re-asserts itself on the next
+        # depsgraph update.
+        for modifier, was in reversed(perturbers):
+            modifier.show_viewport = was
+        bpy.context.view_layer.update()
+    for item in wanted:
+        item["record"]["targetPerturbation"] = _rounded(worst[item["object"]])
+        item["record"]["message"] = _lowering_message(item["record"])
+
+
 def analyze_scene(scene, full=False, fixed_camera=False, objects=None):
     """Return JSON-safe compiler diagnostics without modifying authored data.
 
@@ -3688,6 +4908,12 @@ def analyze_scene(scene, full=False, fixed_camera=False, objects=None):
     shape_keys = [
         _finalize_shape_keys(facts, scene) for facts in shape_key_facts
     ]
+    # Phase 0a's record stays exactly as it is: the mesh IS frozen as authored
+    # and the artist must be told so, whether or not the exporter can repair it
+    # for one export.  Phase 1 rides beside it as a separate, unverified
+    # proposal; only the exporter's measurement can promote a proposal into a
+    # reason not to refuse.
+    frozen_deformers = frozen_deformer_issues(scene, objects=scoped_objects)
     return {
         "procedural": procedural,
         "instances": _analyze_instances(scene, scoped_objects),
@@ -3699,7 +4925,14 @@ def analyze_scene(scene, full=False, fixed_camera=False, objects=None):
         # Phase 0a. Additive and independent of every sample above: this is
         # decided with no depsgraph evaluation, so it stays correct even when
         # the procedural audit is not run exhaustively.
-        "frozenDeformers": frozen_deformer_issues(scene, objects=scoped_objects),
+        "frozenDeformers": frozen_deformers,
+        # Phase 1. Also depsgraph-free: a *proposal* to lower a frozen
+        # SurfaceDeform bind onto glTF skin weights, with ``verified`` False
+        # until the exporter has measured the residual on the real lowered
+        # mesh. Nothing acts on an unverified proposal.
+        "deformerLowerings": deformer_lowering_plan(
+            scene, objects=scoped_objects, frozen=frozen_deformers,
+        ),
         "limits": {
             "maxAuditFrames": MAX_AUDIT_FRAMES,
             "maxAuditSnapshots": MAX_AUDIT_SNAPSHOTS,

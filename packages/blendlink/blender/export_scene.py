@@ -5451,16 +5451,68 @@ def main() -> None:
                 f'{item["object"]}: {item["reason"]}' for item in blockers
             )
         )
+    # Phase 1. A frozen SurfaceDeform bind whose cage is itself LBS-skinned can
+    # ship as an ordinary glTF skin instead of a static prop. analyze_scene has
+    # already produced the depsgraph-free proposal; this is the only place that
+    # measures it, because measuring costs a frame sweep and two evaluated
+    # meshes per object. The measurement writes the residual and an outcome
+    # back into every record, refuses above the shared 10% line, and returns
+    # the derivations the enactor installs inside emit_gltf. A proposal that is
+    # never verified -- or that verification refuses -- suppresses nothing.
+    lowering_plan = sidecar["diagnostics"].get("deformerLowerings") or {}
+    lowering_derivations = []
+    if lowering_plan.get("lower"):
+        progress(0.30, "measuring deformer lowerings")
+        lowering_derivations = procedural.verify_deformer_lowerings(
+            bpy.context.scene, lowering_plan,
+        )
+        sidecar["diagnostics"]["deformerLowerings"] = lowering_plan
+    lowered_objects = {
+        record["object"] for record in lowering_plan.get("lower", ())
+        if lowering_plan.get("verified") and record.get("outcome") == "lowered"
+    }
+    # Every successful lowering warns, not only the ones over the 1% line. This
+    # is a mutation the exporter chose to make to the artist's mesh, priced but
+    # still an approximation, and an approximation that reports itself only
+    # when it is large is a silent one the rest of the time.
+    warnings.extend(
+        record["message"] for record in lowering_plan.get("lower", ())
+        if record.get("outcome") == "lowered" and record.get("message")
+    )
     # Phase 0a/0c. These diagnostics are computed in analyze_scene and would
     # otherwise ride the manifest with a zero exit code -- a record that says
     # "refuse" and does not refuse is worse than no record, because it reads
     # as a guarantee. Enacted here, beside the procedural blockers, so every
     # geometry refusal leaves by the same door.
-    frozen_deformers = sidecar["diagnostics"].get("frozenDeformers") or []
+    #
+    # The one exemption is an object whose entire frozen contribution the
+    # verified Phase 1 lowering removes. Its frozenDeformers record stays in
+    # the manifest -- the authored mesh really is frozen -- next to the
+    # deformerLowerings record that says by how much the export repaired it.
+    lowering_refusals = [
+        record for record in (
+            list(lowering_plan.get("lower", ()))
+            + list(lowering_plan.get("refuse", ()))
+        )
+        if record.get("outcome") == "refused"
+    ]
+    frozen_deformers = [
+        item for item in (sidecar["diagnostics"].get("frozenDeformers") or [])
+        if item["object"] not in lowered_objects
+    ]
     if frozen_deformers:
+        attempted = {
+            record["object"]: record["reason"]
+            for record in lowering_refusals if record.get("reason")
+        }
         raise SystemExit(
             "Geometry Fidelity blocked:\n  - " + "\n  - ".join(
                 f'{item["object"]}: {item["reason"]}'
+                + (
+                    "\n    Blendlink tried to lower this to skin weights and "
+                    f'could not: {attempted[item["object"]]}'
+                    if item["object"] in attempted else ""
+                )
                 for item in frozen_deformers
             )
         )
@@ -5515,7 +5567,19 @@ def main() -> None:
         def emit_gltf(filepath=out_path):
             export_kwargs = dict(kwargs)
             export_kwargs["filepath"] = filepath
-            return bpy.ops.export_scene.gltf(**export_kwargs)
+            # Phase 1's mutation lands here and nowhere earlier. It adds an
+            # ARMATURE modifier and swaps in a private Mesh, both of which feed
+            # material_compiler's planning fingerprint
+            # (material_compiler.py:1453-1459), so installing it before
+            # with_compiled_materials re-validates that fingerprint would abort
+            # a real export with a spurious "run Preview again". Inside emit it
+            # nests strictly LIFO within the material transaction and the outer
+            # finally below.
+            lowered = procedural.prepare_lowered_skins(lowering_derivations)
+            try:
+                return bpy.ops.export_scene.gltf(**export_kwargs)
+            finally:
+                procedural.restore_lowered_skins(lowered)
 
         if material_plan.lowerings:
             _export_result, material_compilation = material_compiler.with_compiled_materials(

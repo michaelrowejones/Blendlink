@@ -9,6 +9,7 @@ import {
   compileSceneDiagnostics,
   type BlenderSceneDiagnostics,
   type MaterialCompilationEvidence,
+  type DeformerLoweringDiagnostic,
   type ShapeKeyTransportDiagnostic,
   type SkinApproximationDiagnostic,
 } from './sceneDiagnostics.js'
@@ -302,6 +303,24 @@ function geometryFixture(blender: Partial<BlenderSceneDiagnostics>) {
     limits: { maxAuditFrames: 120, maxMorphCacheBytes: 64 * 1024 * 1024 },
     ...blender,
   })
+}
+
+function loweringRecord(
+  object: string,
+  outcome: DeformerLoweringDiagnostic['outcome'],
+  extra: Partial<DeformerLoweringDiagnostic> = {},
+): DeformerLoweringDiagnostic {
+  return {
+    code: outcome === 'lowered'
+      ? 'geometry.surface-deform-lowered-to-skin'
+      : 'geometry.surface-deform-not-lowerable',
+    object,
+    modifier: 'SurfaceDeform',
+    joints: ['DEF-jaw', 'DEF-head'],
+    outcome,
+    severity: outcome === 'refused' ? 'refuse' : 'info',
+    ...extra,
+  }
 }
 
 function frozenDeformerRecord(
@@ -1409,6 +1428,95 @@ describe('scene diagnostics', () => {
     })
     expect(report.skinApproximation?.objects[0]).not.toBe(sidecar[1])
     expect(report.skinApproximation?.objects[0]?.modifiers[0]).not.toBe(sidecar[1]!.modifiers[0])
+  })
+
+  it('merges both deformer-lowering outcomes without letting a refusal read as a repair', () => {
+    const report = geometryFixture({
+      deformerLowerings: {
+        lower: [
+          loweringRecord('Zeta', 'lowered', {
+            severity: 'warn',
+            message: 'Zeta: lowered, 0.925% of the bounding-box diagonal',
+            residualFraction: 0.00925,
+          }),
+          loweringRecord('Alpha', 'lowered', {
+            message: 'Alpha: lowered, 0.071% of the bounding-box diagonal',
+            residualFraction: 0.00071,
+          }),
+        ],
+        refuse: [
+          loweringRecord('Mid', 'refused', { reason: 'Mid: target is not skinned' }),
+        ],
+        warnFraction: 0.01,
+        refuseFraction: 0.1,
+        verified: true,
+      },
+    })
+
+    // Both buckets land in one sorted list, because an artist reading the
+    // manifest cares which meshes were touched, not which array they arrived in.
+    expect(report.deformerLowerings?.objects.map((record) => record.object))
+      .toEqual(['Alpha', 'Mid', 'Zeta'])
+    expect(report.deformerLowerings).toMatchObject({
+      lowered: 2,
+      refused: 1,
+      verified: true,
+      warnings: ['Zeta: lowered, 0.925% of the bounding-box diagonal'],
+      refusals: ['Mid: target is not skinned'],
+    })
+    // The headline number is the worst residual, so a good mesh cannot average
+    // away a bad one.
+    expect(report.deformerLowerings?.worstResidualFraction).toBeCloseTo(0.00925, 10)
+  })
+
+  it('never reports a residual or a repair from an unverified lowering proposal', () => {
+    // analyze_scene proposes without a depsgraph; until the exporter measures,
+    // nothing was enacted and no refusal was lifted.
+    const proposal = geometryFixture({
+      deformerLowerings: {
+        lower: [loweringRecord('Teeth', 'planned')],
+        refuse: [],
+        warnFraction: 0.01,
+        refuseFraction: 0.1,
+        verified: false,
+      },
+    })
+    expect(proposal.deformerLowerings).toMatchObject({
+      lowered: 0,
+      refused: 0,
+      verified: false,
+      warnings: [],
+      refusals: [],
+      worstResidualFraction: null,
+    })
+
+    const ran = geometryFixture({
+      deformerLowerings: {
+        lower: [], refuse: [], warnFraction: 0.01, refuseFraction: 0.1, verified: true,
+      },
+    })
+    expect(ran.deformerLowerings).toEqual({
+      objects: [], lowered: 0, refused: 0, verified: true,
+      warnings: [], refusals: [], worstResidualFraction: null,
+    })
+    expect(geometryFixture({})).not.toHaveProperty('deformerLowerings')
+  })
+
+  it('copies lowering records off the sidecar and still names an unlabelled outcome', () => {
+    const lower = [loweringRecord('Alpha', 'lowered')]
+    const refuse = [loweringRecord('Mid', 'refused')]
+    const report = geometryFixture({
+      deformerLowerings: {
+        lower, refuse, warnFraction: 0.01, refuseFraction: 0.1, verified: true,
+      },
+    })
+
+    expect(report.deformerLowerings?.objects[0]).not.toBe(lower[0])
+    expect(report.deformerLowerings?.objects[0]?.joints).not.toBe(lower[0]!.joints)
+    // A record with no message/reason must still surface as text rather than
+    // vanishing from the summary lists.
+    expect(report.deformerLowerings?.refusals).toEqual(['Mid: not lowerable'])
+    expect(report.deformerLowerings?.warnings).toEqual([])
   })
 
   it('projects exactly the versioned LOD and instance inputs needed by browser adapters', () => {

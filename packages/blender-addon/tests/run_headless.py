@@ -578,6 +578,353 @@ def run_unsupported_renderable_export_test(exporter):
             bpy.context.view_layer.objects.active = active_before
 
 
+def run_deformer_lowering_tests(procedural):
+    """Phase 1: SurfaceDeform -> glTF skin weights, predicate then measurement.
+
+    Built as a synthetic rig rather than against ellie so the assertions can
+    name exact outcomes.  The positive case is a cage that moves rigidly, where
+    "static bind composed with LBS is LBS with derived weights" is exactly
+    true, so the measured residual pins the derivation and the oracle rather
+    than the accident of one character's cage resolution.
+    """
+    scene = bpy.context.scene
+    selected_before = list(bpy.context.selected_objects)
+    active_before = bpy.context.view_layer.objects.active
+    created = []
+    rig_data = bpy.data.armatures.new("Lowering Rig")
+    rig = bpy.data.objects.new("Lowering Rig", rig_data)
+    scene.collection.objects.link(rig)
+    created.append(rig)
+    try:
+        select_only(rig)
+        bpy.ops.object.mode_set(mode="EDIT")
+        deform_bone = rig_data.edit_bones.new("DEF-Jaw")
+        deform_bone.head, deform_bone.tail = (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)
+        control_bone = rig_data.edit_bones.new("CTRL-Jaw")
+        control_bone.head, control_bone.tail = (1.0, 0.0, 0.0), (1.0, 0.0, 1.0)
+        bpy.ops.object.mode_set(mode="OBJECT")
+        rig_data.bones["CTRL-Jaw"].use_deform = False
+        posed = rig.pose.bones["DEF-Jaw"]
+        for frame, offset in ((1, 0.0), (10, 0.6)):
+            posed.location = (0.0, offset, 0.0)
+            posed.keyframe_insert("location", frame=frame)
+        scene.frame_set(1)
+
+        def build_pair(label, *, group="DEF-Jaw", parent=True):
+            cage = make_cube(f"{label} Cage")
+            created.append(cage)
+            weights = cage.vertex_groups.new(name=group)
+            weights.add(
+                [vertex.index for vertex in cage.data.vertices], 1.0, "REPLACE",
+            )
+            cage.modifiers.new("Armature", "ARMATURE").object = rig
+            bound = make_cube(f"{label} Bound")
+            created.append(bound)
+            bound.scale = (0.4, 0.4, 0.4)
+            bpy.context.view_layer.update()
+            if parent:
+                bound.parent = rig
+            select_only(bound)
+            bind = bound.modifiers.new("SurfaceDeform", "SURFACE_DEFORM")
+            bind.target = cage
+            bpy.ops.object.surfacedeform_bind(modifier=bind.name)
+            bpy.context.view_layer.update()
+            return cage, bound, bind
+
+        def plan_for(*objects):
+            return procedural.deformer_lowering_plan(
+                scene, objects=tuple(objects) + (rig,),
+            )
+
+        def record_for(plan, name):
+            for key in ("lower", "refuse"):
+                for item in plan[key]:
+                    if item["object"] == name:
+                        return item
+            return None
+
+        cage, bound, bind = build_pair("Lowering")
+        expect(
+            bind.is_bound,
+            "the synthetic SurfaceDeform never bound, so nothing below is a test",
+        )
+        expect(
+            [item["object"] for item in procedural.frozen_deformer_issues(
+                scene, objects=(cage, bound, rig),
+            )] == [bound.name],
+            "Phase 0a did not name the synthetic bound mesh as frozen",
+        )
+
+        # 1. The depsgraph-free predicate admits it, and says so as a proposal.
+        plan = plan_for(cage, bound)
+        planned = record_for(plan, bound.name)
+        expect(
+            plan["verified"] is False
+            and planned is not None
+            and planned["outcome"] == "planned"
+            and planned["joints"] == ["DEF-Jaw"]
+            and planned["target"] == cage.name
+            and planned["armature"] == rig.name,
+            f"the lowering predicate did not admit a skinned cage: {planned}",
+        )
+
+        # 2. The measurement scores it, and the authored scene is untouched
+        #    afterwards -- mesh identity, vertex groups, stack and datablock
+        #    count all included.
+        before = (
+            bound.data.as_pointer(), bound.data.name,
+            [group.name for group in bound.vertex_groups],
+            [(item.type, item.name, item.show_viewport)
+             for item in bound.modifiers],
+            len(bpy.data.meshes),
+        )
+        derivations = procedural.verify_deformer_lowerings(scene, plan)
+        after = (
+            bound.data.as_pointer(), bound.data.name,
+            [group.name for group in bound.vertex_groups],
+            [(item.type, item.name, item.show_viewport)
+             for item in bound.modifiers],
+            len(bpy.data.meshes),
+        )
+        expect(
+            before == after,
+            f"measuring the lowering modified the authored scene: "
+            f"{before} -> {after}",
+        )
+        measured = record_for(plan, bound.name)
+        expect(
+            plan["verified"] is True
+            and measured["outcome"] == "lowered"
+            and measured["severity"] == "info"
+            and measured["exhaustive"] is True
+            and measured["sampledFrames"] == 11
+            and measured["exportedInfluences"] == 1
+            and measured["residual"] < measured["frozenDeviation"]
+            and measured["improvementRatio"] > 10.0
+            and measured["residualFraction"] < 0.01
+            and "was lowered to glTF skin weights" in measured["message"]
+            and "if it shipped as a static prop" in measured["message"],
+            f"a rigidly-moving cage did not measure as an accurate lowering: "
+            f"{measured}",
+        )
+        expect(
+            [item["object"] for item in derivations] == [bound.name],
+            f"verification returned the wrong derivations: {derivations}",
+        )
+
+        # 3. Install for real, then restore exactly.
+        installed = procedural.prepare_lowered_skins(derivations)
+        expect(
+            [(item.type, item.name, item.show_viewport)
+             for item in bound.modifiers]
+            == [("ARMATURE", "BLENDLINK_LOWERED_ARMATURE", True),
+                ("SURFACE_DEFORM", "SurfaceDeform", False)]
+            and [group.name for group in bound.vertex_groups] == ["DEF-Jaw"]
+            and bound.data.name == before[1]
+            and bound.data.as_pointer() != before[0],
+            f"the installed lowering is not an ARMATURE over a muted bind on a "
+            f"private mesh: "
+            f"{[(m.type, m.name, m.show_viewport) for m in bound.modifiers]}",
+        )
+        procedural.restore_lowered_skins(installed)
+        expect(
+            (bound.data.as_pointer(), bound.data.name,
+             [group.name for group in bound.vertex_groups],
+             [(item.type, item.name, item.show_viewport)
+              for item in bound.modifiers],
+             len(bpy.data.meshes)) == before,
+            "restore_lowered_skins did not put the authored scene back exactly",
+        )
+
+        # 4. A failure part-way through installation rolls the whole batch back.
+        broken = [
+            dict(derivations[0]),
+            {**derivations[0], "object": "No Such Mesh"},
+        ]
+        raised = None
+        try:
+            procedural.prepare_lowered_skins(broken)
+        except RuntimeError as error:
+            raised = str(error)
+        expect(
+            raised is not None and "No Such Mesh" in raised
+            and (bound.data.as_pointer(), [g.name for g in bound.vertex_groups],
+                 [(m.type, m.name, m.show_viewport) for m in bound.modifiers],
+                 len(bpy.data.meshes))
+            == (before[0], before[2], before[3], before[4]),
+            f"a half-installed lowering leaked into the authored scene: "
+            f"{raised}",
+        )
+
+        # 5. Structural refusals the residual could never catch.  A post-bind
+        #    LATTICE measures ~0 on ellie's zippers across the whole assigned
+        #    clip and still breaks the lowering.
+        lattice_data = bpy.data.lattices.new("Lowering Lattice")
+        lattice = bpy.data.objects.new("Lowering Lattice", lattice_data)
+        scene.collection.objects.link(lattice)
+        created.append(lattice)
+        post = bound.modifiers.new("Lattice", "LATTICE")
+        post.object = lattice
+        refused = record_for(plan_for(cage, bound, lattice), bound.name)
+        expect(
+            refused["outcome"] == "refused"
+            and "run after 'SurfaceDeform'" in refused["reason"]
+            and "'Lattice' (lattice)" in refused["reason"],
+            f"a post-bind LATTICE was not refused on shape: {refused}",
+        )
+        bound.modifiers.remove(post)
+
+        # 6. A cage weighted to a non-deform bone would have its weight
+        #    silently reassigned to a fabricated neutral joint.
+        stray = cage.vertex_groups.new(name="CTRL-Jaw")
+        stray.add([0], 0.5, "REPLACE")
+        refused = record_for(plan_for(cage, bound), bound.name)
+        expect(
+            refused["outcome"] == "refused"
+            and "'CTRL-Jaw'" in refused["reason"]
+            and "Deform switched off" in refused["reason"],
+            f"a non-deform-bone cage group was not refused: {refused}",
+        )
+        cage.vertex_groups.remove(stray)
+
+        # 7. Two binds, an unparented mesh, and a name collision.
+        second = bound.modifiers.new("SurfaceDeform Alternate", "SURFACE_DEFORM")
+        second.target = cage
+        refused = record_for(plan_for(cage, bound), bound.name)
+        expect(
+            refused["outcome"] == "refused"
+            and "2 bind modifiers" in refused["reason"],
+            f"a branching pair of binds was not refused: {refused}",
+        )
+        bound.modifiers.remove(second)
+
+        collision = bound.vertex_groups.new(name="DEF-Jaw")
+        refused = record_for(plan_for(cage, bound), bound.name)
+        expect(
+            refused["outcome"] == "refused"
+            and "already carries vertex group" in refused["reason"],
+            f"a colliding authored vertex group was not refused: {refused}",
+        )
+        bound.vertex_groups.remove(collision)
+
+        _orphan_cage, orphan, _orphan_bind = build_pair(
+            "Orphan Lowering", parent=False,
+        )
+        refused = record_for(plan_for(_orphan_cage, orphan), orphan.name)
+        expect(
+            refused["outcome"] == "refused"
+            and "tree.py:246-260" in refused["reason"],
+            f"an unparented bound mesh was not refused: {refused}",
+        )
+
+        # 8. The predicate is back to admitting the clean pair, so none of the
+        #    refusals above left state behind.
+        expect(
+            record_for(plan_for(cage, bound), bound.name)["outcome"]
+            == "planned",
+            "the clean pair stopped being lowerable after the refusal cases",
+        )
+
+        # 9. The measured bands. A cage that bends instead of moving rigidly
+        #    breaks weight homogeneity, which is where the identity stops being
+        #    exact -- so this is the case only a measurement can decide, and
+        #    the one a "is the cage pure LBS?" predicate would get wrong.
+        bend_rig_data = bpy.data.armatures.new("Bending Rig")
+        bend_rig = bpy.data.objects.new("Bending Rig", bend_rig_data)
+        scene.collection.objects.link(bend_rig)
+        created.append(bend_rig)
+        select_only(bend_rig)
+        bpy.ops.object.mode_set(mode="EDIT")
+        root = bend_rig_data.edit_bones.new("DEF-Root")
+        root.head, root.tail = (0.0, 0.0, -1.0), (0.0, 0.0, 0.0)
+        tip = bend_rig_data.edit_bones.new("DEF-Tip")
+        tip.head, tip.tail = (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)
+        tip.parent = root
+        bpy.ops.object.mode_set(mode="OBJECT")
+
+        def build_bending_pair(label, degrees, *, smooth):
+            if bend_rig.animation_data and bend_rig.animation_data.action:
+                bpy.data.actions.remove(bend_rig.animation_data.action)
+            hinge = bend_rig.pose.bones["DEF-Tip"]
+            hinge.rotation_mode = "XYZ"
+            for frame, angle in ((1, 0.0), (10, math.radians(degrees))):
+                hinge.rotation_euler = (angle, 0.0, 0.0)
+                hinge.keyframe_insert("rotation_euler", frame=frame)
+            scene.frame_set(1)
+            bend_cage = make_cube(f"{label} Cage")
+            created.append(bend_cage)
+            low = bend_cage.vertex_groups.new(name="DEF-Root")
+            high = bend_cage.vertex_groups.new(name="DEF-Tip")
+            for vertex in bend_cage.data.vertices:
+                share = 0.5 + 0.5 * max(-1.0, min(1.0, vertex.co.z))
+                high.add([vertex.index], share, "REPLACE")
+                low.add([vertex.index], 1.0 - share, "REPLACE")
+            bend_cage.modifiers.new("Armature", "ARMATURE").object = bend_rig
+            if smooth:
+                relax = bend_cage.modifiers.new(
+                    "CorrectiveSmooth", "CORRECTIVE_SMOOTH",
+                )
+                relax.factor, relax.iterations = 0.9, 12
+            bend_bound = make_cube(f"{label} Bound")
+            created.append(bend_bound)
+            bend_bound.scale = (0.6, 0.6, 0.6)
+            bend_bound.parent = bend_rig
+            bpy.context.view_layer.update()
+            select_only(bend_bound)
+            hinge_bind = bend_bound.modifiers.new(
+                "SurfaceDeform", "SURFACE_DEFORM",
+            )
+            hinge_bind.target = bend_cage
+            bpy.ops.object.surfacedeform_bind(modifier=hinge_bind.name)
+            bpy.context.view_layer.update()
+            bend_plan = procedural.deformer_lowering_plan(
+                scene, objects=(bend_cage, bend_bound, bend_rig),
+            )
+            procedural.verify_deformer_lowerings(scene, bend_plan)
+            return record_for(bend_plan, bend_bound.name)
+
+        warned = build_bending_pair("Warn Band", 10.0, smooth=True)
+        expect(
+            warned["outcome"] == "lowered"
+            and warned["severity"] == "warn"
+            and 0.01 < warned["residualFraction"] <= 0.10
+            and warned["targetPerturbation"] > 0.0
+            and "corrective smooth" in warned["message"]
+            and "accounts for" in warned["message"]
+            and "above the 1% agreement line" in warned["message"],
+            f"a 1-10% lowering did not warn with a leave-one-out attribution: "
+            f"{warned}",
+        )
+        refused = build_bending_pair("Refuse Band", 45.0, smooth=True)
+        expect(
+            refused["outcome"] == "refused"
+            and refused["severity"] == "refuse"
+            and refused["residualFraction"] > 0.10
+            # It IS an improvement on the frozen prop and is refused anyway:
+            # "better than catastrophic" is not a publishable standard.
+            and refused["improvementRatio"] > 1.0
+            and "above the 10% refusal line" in refused["reason"],
+            f"a >10% lowering was not refused: {refused}",
+        )
+        print("deformer lowering: SurfaceDeform lowered to skin weights, "
+              "measured, and every structural refusal held")
+    finally:
+        for obj in reversed(created):
+            data = obj.data
+            if bpy.data.objects.get(obj.name) is obj:
+                bpy.data.objects.remove(obj, do_unlink=True)
+            if isinstance(data, bpy.types.Mesh) and data.users == 0:
+                bpy.data.meshes.remove(data)
+        if bpy.data.armatures.get(rig_data.name) is rig_data \
+                and rig_data.users == 0:
+            bpy.data.armatures.remove(rig_data)
+        select_only(*[
+            obj for obj in selected_before if obj.name in bpy.data.objects
+        ])
+        if active_before is not None and active_before.name in bpy.data.objects:
+            bpy.context.view_layer.objects.active = active_before
+
+
 def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     addon = load_addon()
@@ -8804,12 +9151,15 @@ def main():
     )
     expect(
         {"procedural", "instances", "materials", "limits", "shapeKeys",
-         "skinApproximation"} <= set(additive_report)
+         "skinApproximation", "deformerLowerings"} <= set(additive_report)
         and isinstance(additive_report["shapeKeys"], list)
-        and isinstance(additive_report["skinApproximation"], list),
+        and isinstance(additive_report["skinApproximation"], list)
+        and additive_report["deformerLowerings"]["verified"] is False,
         f"analyze_scene lost or renamed a diagnostics section: "
         f"{sorted(additive_report)}",
     )
+
+    run_deformer_lowering_tests(procedural_module)
 
     bpy.context.scene.frame_start, bpy.context.scene.frame_end = (
         sk_old_start, sk_old_end,

@@ -535,6 +535,46 @@ export interface MaterialCompilationEvidence {
   }>
 }
 
+/** Phase 1. One SurfaceDeform bind the exporter either lowered onto glTF skin
+ * weights or refused to. `residual` is the measured world-space distance in
+ * metres between the authored Blender stack and the runtime's own linear blend
+ * skinning of the exported rest mesh, maximised over vertices and sampled
+ * frames; `frozenDeviation` is the same quantity against the static prop the
+ * mesh ships as when the lowering is refused. Both are absent until the
+ * exporter's verification pass has run. */
+export type DeformerLoweringDiagnostic = Record<string, unknown> & {
+  code:
+    | 'geometry.surface-deform-lowered-to-skin'
+    | 'geometry.surface-deform-not-lowerable'
+  object: string
+  objectId?: string
+  modifier?: string
+  target?: string
+  armature?: string
+  joints?: string[]
+  outcome: 'planned' | 'lowered' | 'refused'
+  severity: 'info' | 'warn' | 'refuse'
+  /** Present on every refusal, structural or measured. */
+  reason?: string
+  /** Present on every successful lowering, carrying both numbers. */
+  message?: string
+  bboxDiagonal?: number
+  residual?: number
+  residualFraction?: number
+  frozenDeviation?: number
+  frozenFraction?: number
+  improvementRatio?: number | null
+  worstFrame?: number | null
+  /** Metres of the residual attributable to the cage's non-LBS modifiers.
+   * Measured by leave-one-out, and only for a warn-severity record. */
+  targetPerturbation?: number
+  sampledFrames?: number
+  frameStride?: number
+  /** False when the frame sweep strided; a strided measurement must never be
+   * read as an exhaustive one. */
+  exhaustive?: boolean
+}
+
 export interface BlenderSceneDiagnostics {
   procedural: ProceduralDiagnostic[]
   instances: InstanceSourceDiagnostic[]
@@ -573,6 +613,18 @@ export interface BlenderSceneDiagnostics {
     frameRange: [number, number]
     reason: string
   }>
+  /** Phase 1: SurfaceDeform binds whose cage is itself LBS-skinned, lowered to
+   * glTF skin weights for one export instead of shipping as a frozen prop.
+   * `verified` is false until the exporter has measured the residual on the
+   * real lowered mesh; an unverified proposal enacts nothing and suppresses no
+   * refusal. Records in `refuse` never lower at all. */
+  deformerLowerings?: {
+    lower: DeformerLoweringDiagnostic[]
+    refuse: DeformerLoweringDiagnostic[]
+    warnFraction: number
+    refuseFraction: number
+    verified: boolean
+  }
   /** Phase 0c: shape-key transport per shape-keyed mesh. Additive; absent from
    * sidecars written before the addon reported it. */
   shapeKeys?: ShapeKeyTransportDiagnostic[]
@@ -636,6 +688,21 @@ export interface SceneDiagnostics {
   frozenDeformers?: {
     objects: BlenderSceneDiagnostics['frozenDeformers']
     blockers: number
+  }
+  /** Phase 1. Same absent-vs-empty rule: `objects: []` is the evidence the
+   * check ran. A record with `outcome: 'lowered'` names an approximation the
+   * export made on purpose and measured; every other outcome is a refusal that
+   * left the frozen-deformer blocker standing. */
+  deformerLowerings?: {
+    objects: DeformerLoweringDiagnostic[]
+    lowered: number
+    refused: number
+    /** False when only the depsgraph-free proposal ran, so nothing was
+     * enacted and no residual was measured. */
+    verified: boolean
+    warnings: string[]
+    refusals: string[]
+    worstResidualFraction: number | null
   }
   /** Additive schema-v3 evidence; absent on manifests compiled before the
    * material portability audit was persisted. */
@@ -2166,6 +2233,35 @@ export function compileSceneDiagnostics(
         }
       })()
     : undefined
+  const deformerLowerings = blender?.deformerLowerings
+    ? (() => {
+        const objects = [
+          ...blender.deformerLowerings.lower,
+          ...blender.deformerLowerings.refuse,
+        ]
+          .map((record): DeformerLoweringDiagnostic => ({
+            ...record,
+            ...(record.joints ? { joints: [...record.joints] } : {}),
+          }))
+          .sort((a, b) => a.object.localeCompare(b.object))
+        const residuals = objects
+          .map((record) => record.residualFraction)
+          .filter((value): value is number => typeof value === 'number')
+        return {
+          objects,
+          lowered: objects.filter((record) => record.outcome === 'lowered').length,
+          refused: objects.filter((record) => record.outcome === 'refused').length,
+          verified: blender.deformerLowerings.verified,
+          warnings: objects
+            .filter((record) => record.outcome === 'lowered' && record.severity === 'warn')
+            .map((record) => record.message ?? `${record.object}: lowered with a warning`),
+          refusals: objects
+            .filter((record) => record.outcome === 'refused')
+            .map((record) => record.reason ?? `${record.object}: not lowerable`),
+          worstResidualFraction: residuals.length ? Math.max(...residuals) : null,
+        }
+      })()
+    : undefined
   return {
     lod: compileLods(document, vocabulary, loadedNames),
     instances: {
@@ -2194,6 +2290,7 @@ export function compileSceneDiagnostics(
     ...(materialCompilation ? { materialCompilation } : {}),
     ...(shapeKeys ? { shapeKeys } : {}),
     ...(skinApproximation ? { skinApproximation } : {}),
+    ...(deformerLowerings ? { deformerLowerings } : {}),
     // Carried explicitly, like every other diagnostics field: a producer that
     // predates the check omits it entirely, and an empty array from a producer
     // that has it is the evidence the check ran.
