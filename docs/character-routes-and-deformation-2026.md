@@ -572,6 +572,48 @@ That is a short, enumerable list, and it is the measured basis for treating TSL 
 the stylized population rather than an aspiration. It also identifies the highest-value single
 piece of work: **`ShaderNodeBump` is the most-needed missing translator in the codebase.**
 
+### 8a-bis. The true gap, and why single-node wins keep evaporating
+
+Measured 2026-07-30. Every refusal histogram above understates every class but one, because
+`_refuse` raises on the **first** problem it finds. Walking the reachable sub-graph and collecting
+**all** the conditions that would refuse gives the real picture:
+
+| refusal class | materials |
+| --- | --- |
+| `noise-dimensions-1D` | 9 |
+| `white-noise` | 9 |
+| `image-interpolation-Cubic` | 7 |
+| `noise-dimensions-4D` | 6 |
+| `object-info` | 5 |
+| `noise-scale > 40` | 3 |
+| `voronoi-scale > 40` | 3 |
+| `vector-transform` | 2 |
+| `add-shader`, `normal-map`, `transparent-tinted` | 1 each |
+
+The distribution is the point. Of 49 materials: **22 are already clean, 11 are blocked by exactly
+one class, 12 by two, and 4 by three.** So clearing any single class frees *nothing* — every
+material blocked by 1D noise is also blocked by something else. That is the mechanism behind
+distortion and Vector Rotate appearing in 17 materials and moving coverage by 1, and it means
+**this work has to be batched to pay at all**:
+
+| clear the top… | materials clean |
+| --- | --- |
+| 1 class | 22 / 49 |
+| 4 classes | **35 / 49** |
+| 5 classes | 40 / 49 |
+| 7 classes | 44 / 49 |
+| **all 11** | **49 / 49** |
+
+Two consequences worth acting on. The unit of work is a *batch* of classes, not the next-biggest
+refusal — clearing 1D noise, White Noise, Cubic interpolation and 4D noise together takes coverage
+from 22 to 35, while any one of them alone takes it from 22 to 22. And full coverage of a real
+production character is reachable: 11 classes, of which three are single-material one-offs.
+
+Note this counts **classes reachable from the channel sockets**, so it is not inflated by the
+`Normal`-branch mistake recorded in 8a. It also assumes each class becomes translatable *somehow* —
+for White Noise over continuous coordinates that means a declared approximation, not a proof, since
+it hashes raw bits of interpolated floats and cannot agree across engines per-pixel.
+
 ### 8b. Structural gaps
 
 Solid as a shipping material feature; not yet rails for a modifier IR. Four gaps to close in
