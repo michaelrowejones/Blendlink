@@ -1901,6 +1901,50 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "white-noise-1d": {
+      "path": "white-noise-1d.f32",
+      "pipeline": "ir",
+      "ir": "ir/white-noise-1d.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.004495010245591402,
+        0.14955954253673553,
+        0.223829984664917
+      ],
+      "rgbMax": [
+        0.9241169095039368,
+        0.7715463042259216,
+        0.990881085395813
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "white-noise-4d": {
+      "path": "white-noise-4d.f32",
+      "pipeline": "ir",
+      "ir": "ir/white-noise-4d.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.003630080260336399,
+        0.012902644462883472,
+        0.002465953817591071
+      ],
+      "rgbMax": [
+        0.9981881380081177,
+        0.9904900789260864,
+        0.9938485026359558
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "noise-1d-scale1600": {
       "path": "noise-1d-scale1600.f32",
       "pipeline": "ir",

@@ -1943,6 +1943,30 @@
    "claim": "exact"
   },
   {
+   "id": "white-noise-1d",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "hash family (1-argument Jenkins, Value+Color)",
+   "notes": "Quantized W through the production node: gates hash_uint's 1-argument arity AND hash_float_to_vec3's Colour re-hash (lanes at vec2(k,1) and vec2(k,2), verbatim from gpu_shader_common_hash.glsl). 8 of ellie's materials use 1D/4D White Noise; the arity seed is 0xdeadbeef + (1<<2) + 13, not hashUint2(x, 0)."
+  },
+  {
+   "id": "white-noise-4d",
+   "gate": true,
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 0.0001,
+    "p99Abs": 0.001,
+    "maxAbs": 0.005
+   },
+   "failureClass": "hash family (4-argument Jenkins, xyzw/zxwy/wzyx Colour)",
+   "notes": "Quantized vector with constant W through the production node: gates hash_vec4_to_float and hash_vec4_to_vec3's swizzle triple (xyzw, zxwy, wzyx - verbatim, and verified against an independent CPU reimplementation during research: 0.7419682145 / 0.4811842442 / 0.9910845757)."
+  },
+  {
    "id": "noise-1d-scale1600",
    "gate": true,
    "claim": "approximate",

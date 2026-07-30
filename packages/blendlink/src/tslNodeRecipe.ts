@@ -1133,6 +1133,19 @@ function build(expression: TslIrExpression): TslExpression {
     case 'tex_white_noise': {
       const p = build(child(expression, 'vector'))
       const dimensions = scalar(expression, 'dimensions')
+      if (dimensions === 1) {
+        // 1D hashes the W scalar's raw bits; Color re-hashes with the
+        // vec2 hash at literal lanes 1 and 2 (hash_float_to_vec3).
+        return expression.output === 'color'
+          ? hashFloat1ToFloat3(p)
+          : hashFloat1ToFloat(p)
+      }
+      if (dimensions === 4) {
+        const w = build(child(expression, 'w'))
+        return expression.output === 'color'
+          ? hashFloat4ToFloat3(p.x, p.y, p.z, w)
+          : hashFloat4ToFloat(p.x, p.y, p.z, w)
+      }
       if (expression.output === 'color') {
         return dimensions === 2
           ? hashFloat2ToFloat3(p.x, p.y)
@@ -1543,6 +1556,35 @@ function hashUint4(
 
 const uintToUnitFloat = (value: TslExpression): TslExpression =>
   tslFloat(value).div(4294967295.0)
+
+function hashFloat1ToFloat(w: TslExpression): TslExpression {
+  return uintToUnitFloat(hashUint1(floatBits(w)))
+}
+
+/** Cycles/EEVEE hash_float_to_vec3, verbatim:
+ *   float3(hash_float_to_float(k),
+ *          hash_vec2_to_float(float2(k, 1.0)),
+ *          hash_vec2_to_float(float2(k, 2.0)))
+ */
+function hashFloat1ToFloat3(w: TslExpression): TslExpression {
+  return tslVec3(
+    hashFloat1ToFloat(w),
+    hashFloat2ToFloat(w, tslFloat(1.0)),
+    hashFloat2ToFloat(w, tslFloat(2.0)),
+  )
+}
+
+/** Cycles/EEVEE hash_vec4_to_vec3, verbatim: the SAME 4-lane hash over
+ * the xyzw, zxwy and wzyx swizzles of one coordinate. */
+function hashFloat4ToFloat3(
+  x: TslExpression, y: TslExpression, z: TslExpression, w: TslExpression,
+): TslExpression {
+  return tslVec3(
+    hashFloat4ToFloat(x, y, z, w),
+    hashFloat4ToFloat(z, x, w, y),
+    hashFloat4ToFloat(w, z, y, x),
+  )
+}
 
 function hashFloat2ToFloat(
   x: TslExpression, y: TslExpression,

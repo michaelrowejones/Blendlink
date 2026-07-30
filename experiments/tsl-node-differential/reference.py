@@ -1198,6 +1198,48 @@ def build_noise_1d_color_distortion(tree, emission):
     tree.links.new(color, emission.inputs["Color"])
 
 
+def build_white_noise_1d(tree, emission):
+    # Quantized W (floor of uv.x * 8): integer-valued bits, bit-identical
+    # across engines, gating the 1-argument hash and the hash_float_to_vec3
+    # Colour re-hash through the production node.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    scale = tree.nodes.new("ShaderNodeMath")
+    scale.operation = "MULTIPLY"
+    scale.inputs[1].default_value = 8.0
+    tree.links.new(separate.outputs["X"], scale.inputs[0])
+    quantize = tree.nodes.new("ShaderNodeMath")
+    quantize.operation = "FLOOR"
+    tree.links.new(scale.outputs["Value"], quantize.inputs[0])
+    node = tree.nodes.new("ShaderNodeTexWhiteNoise")
+    node.noise_dimensions = "1D"
+    tree.links.new(quantize.outputs["Value"], node.inputs["W"])
+    color = next(s for s in node.outputs if s.identifier == "Color")
+    tree.links.new(color, emission.inputs["Color"])
+
+
+def build_white_noise_4d(tree, emission):
+    # Quantized vector AND constant W: gates hash_vec4_to_float and the
+    # xyzw/zxwy/wzyx Colour swizzles through the production node.
+    out_mix = tree.nodes.new("ShaderNodeCombineColor")
+    out_mix.mode = "RGB"
+    uv = tree.nodes.new("ShaderNodeTexCoord").outputs["UV"]
+    scale = tree.nodes.new("ShaderNodeVectorMath")
+    scale.operation = "SCALE"
+    scale.inputs["Scale"].default_value = 8.0
+    tree.links.new(uv, scale.inputs[0])
+    quantize = tree.nodes.new("ShaderNodeVectorMath")
+    quantize.operation = "FLOOR"
+    tree.links.new(scale.outputs["Vector"], quantize.inputs[0])
+    node = tree.nodes.new("ShaderNodeTexWhiteNoise")
+    node.noise_dimensions = "4D"
+    node.inputs["W"].default_value = 7.25
+    tree.links.new(quantize.outputs["Vector"], node.inputs["Vector"])
+    color = next(s for s in node.outputs if s.identifier == "Color")
+    tree.links.new(color, emission.inputs["Color"])
+
+
 def build_noise_1d_scale1600(tree, emission):
     # The corpus-maximum 1D frequency (fannypack seams). 1600 periods across
     # the 64px tile is 25 per texel: both engines alias identically in
@@ -2112,6 +2154,8 @@ BUILDERS = {
     "noise-1d-color-distortion": build_noise_1d_color_distortion,
     "noise-4d": build_noise_4d,
     "noise-4d-color-distortion": build_noise_4d_color_distortion,
+    "white-noise-1d": build_white_noise_1d,
+    "white-noise-4d": build_white_noise_4d,
     "noise-1d-scale1600": build_noise_1d_scale1600,
     "noise-2d-scale100-color": build_noise_2d_scale100_color,
     "voronoi-scale177-smoothf1": build_voronoi_scale177_smoothf1,

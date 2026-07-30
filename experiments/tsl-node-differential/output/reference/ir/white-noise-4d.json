@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "tex_white_noise",
+    "dimensions": 4,
+    "output": "color",
+    "vector": {
+      "op": "vector_math",
+      "operation": "FLOOR",
+      "a": {
+        "op": "vector_scale",
+        "input": {
+          "op": "uv"
+        },
+        "scale": {
+          "op": "const_float",
+          "value": 8.0
+        }
+      }
+    },
+    "w": {
+      "op": "const_float",
+      "value": 7.25
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "tex_white_noise",
+    "dimensions": 1,
+    "output": "color",
+    "vector": {
+      "op": "math",
+      "operation": "FLOOR",
+      "a": {
+        "op": "math",
+        "operation": "MULTIPLY",
+        "a": {
+          "op": "separate",
+          "channel": "x",
+          "input": {
+            "op": "uv"
+          }
+        },
+        "b": {
+          "op": "const_float",
+          "value": 8.0
+        }
+      }
+    }
+  }
+}

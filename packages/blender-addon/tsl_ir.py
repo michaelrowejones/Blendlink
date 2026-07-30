@@ -276,7 +276,7 @@ _APPROXIMATION_CELLS = {
             "white-noise over quantized blocks. What is approximate is only "
             "the sample position, so the field is statistically identical and "
             "per-texel different, which is what Blender's own two engines also "
-            "produce for this node."
+            "produce for this node. The mechanism is arity-independent (1D/2D/3D/4D hash raw bits identically); the hash arities are proven separately by hash-probe and the white-noise family of cells."
         ),
     },
 }
@@ -1452,18 +1452,29 @@ def emit_output(node, from_socket, stack=()):
         if output_id not in {"Value", "Color"}:
             _refuse(f"White Noise output {socket_name!r} unsupported")
         dimensions = str(node.noise_dimensions)
-        if dimensions not in {"2D", "3D"}:
+        if dimensions not in {"1D", "2D", "3D", "4D"}:
             _refuse(
                 f"White Noise dimensions {dimensions!r} has no cell yet"
             )
-        if not node.inputs["Vector"].is_linked:
-            _refuse(
-                "White Noise with implicit Generated coordinates has no "
-                "cell yet"
+        # 1D consumes the W socket alone (the node has no Vector socket
+        # in that mode); 4D consumes Vector AND W. Verbatim per
+        # gpu_shader_material_tex_white_noise.glsl: 1D hashes
+        # hash_float_to_float(w), 4D hashes float4(vector, w).
+        w_expression = None
+        if dimensions == "1D":
+            vector_expression = emit_input(node.inputs["W"], stack=stack)
+        else:
+            vector_socket = node.inputs.get("Vector")
+            if vector_socket is None or not vector_socket.is_linked:
+                _refuse(
+                    "White Noise with implicit Generated coordinates has "
+                    "no cell yet"
+                )
+            vector_expression = emit_input(
+                vector_socket, stack=stack, as_vector=True,
             )
-        vector_expression = emit_input(
-            node.inputs["Vector"], stack=stack, as_vector=True,
-        )
+            if dimensions == "4D":
+                w_expression = emit_input(node.inputs["W"], stack=stack)
         # The hash consumes RAW float bits, and interpolated coordinates
         # differ between engines by hundreds of ulps (measured) — the
         # avalanche decorrelates every texel. Only quantized coordinates
@@ -1483,13 +1494,25 @@ def emit_output(node, from_socket, stack=()):
             if isinstance(item, list):
                 return any(_contains_uv(value) for value in item)
             return False
-        quantized_root = (
-            vector_expression.get("op") == "vector_math"
-            and vector_expression.get("operation") in {
-                "FLOOR", "CEIL", "SNAP",
-            }
+        def _quantized_root(expression):
+            # A scalar W quantizes through math FLOOR/CEIL/SNAP; vectors
+            # through vector_math. Both make the hashed bits
+            # integer-valued and bit-identical across engines.
+            return (
+                expression.get("op") in {"vector_math", "math"}
+                and expression.get("operation") in {
+                    "FLOOR", "CEIL", "SNAP",
+                }
+            )
+        quantized_root = _quantized_root(vector_expression) and (
+            w_expression is None
+            or _quantized_root(w_expression)
+            or not _contains_uv(w_expression)
         )
-        if _contains_uv(vector_expression) and not quantized_root:
+        if (
+            _contains_uv(vector_expression)
+            or (w_expression is not None and _contains_uv(w_expression))
+        ) and not quantized_root:
             # Ships as a DECLARED approximation rather than refusing. The hash
             # port itself is exact and separately gated; only the sample
             # position diverges, so the two fields agree in distribution and
@@ -1498,9 +1521,10 @@ def emit_output(node, from_socket, stack=()):
             _approximate("tsl.white-noise-continuous-uv")
         return {
             "op": "tex_white_noise",
-            "dimensions": 2 if dimensions == "2D" else 3,
+            "dimensions": {"1D": 1, "2D": 2, "4D": 4}.get(dimensions, 3),
             "output": "color" if output_id == "Color" else "value",
             "vector": vector_expression,
+            **({"w": w_expression} if w_expression is not None else {}),
         }
 
     if idname == "ShaderNodeTexVoronoi":
