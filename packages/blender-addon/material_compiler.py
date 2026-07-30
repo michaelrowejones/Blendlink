@@ -2748,12 +2748,20 @@ def _attach_surface_tsl_ir(tree, channels, hashlib, _json) -> None:
     """Per-channel IR for a surface-resolved plan: the fold's documents
     keyed onto the plan records (the merged Emission record carries the
     radiance document, strength ships as 1)."""
+    tsl_ir.drain_approximations()
     try:
         emitted = tsl_ir.emit_surface(tree)
     except (tsl_ir.TslIrRefusal, RecursionError) as refusal:
+        tsl_ir.drain_approximations()
         for entry in channels:
             entry["tslIrRefusal"] = str(refusal) or "surface emission failed"
         return
+    # One emission covers every channel, so per-channel attribution is
+    # not recoverable here: every surviving channel carries the full
+    # list. That over-marks (a Base Color approximation also marks
+    # Roughness) and never under-marks -- the safe direction for a
+    # fidelity claim.
+    surface_approximations = tsl_ir.drain_approximations()
     fold_channels = emitted.get("channels", {})
     mapping = {
         "Base Color": "Base Color", "Metallic": "Metallic",
@@ -2789,6 +2797,15 @@ def _attach_surface_tsl_ir(tree, channels, hashlib, _json) -> None:
             encoded.encode("utf8"),
         ).hexdigest()
         entry["tslIrBytes"] = len(encoded)
+        # The surface emission ran once for every channel, so each surviving
+        # entry carries its own copy of the surface-wide list (drained above,
+        # before this loop). Deliberately INSIDE the plan fingerprint -- the
+        # fingerprint strips only tslIr -- so a change in approximation
+        # status churns variant identity like any other plan change.
+        if surface_approximations:
+            entry["tslIrApproximations"] = [
+                dict(item) for item in surface_approximations
+            ]
 
 
 def _collect_texture_ref_images(value, names) -> None:
@@ -2804,6 +2821,9 @@ def _collect_texture_ref_images(value, names) -> None:
 
 
 def _attach_tsl_ir_documents(tree, channels, hashlib, _json) -> None:
+    # Residue guard: a prior emission that refused midway may have
+    # declared approximations that never drained; they belong to nobody.
+    tsl_ir.drain_approximations()
     try:
         root, stack = tsl_ir.find_principled_root(tree)
     except tsl_ir.TslIrRefusal as refusal:
@@ -2833,15 +2853,21 @@ def _attach_tsl_ir_documents(tree, channels, hashlib, _json) -> None:
         try:
             document = tsl_ir.emit_channel(socket, stack)
         except tsl_ir.TslIrRefusal as refusal:
+            tsl_ir.drain_approximations()
             entry["tslIrRefusal"] = str(refusal)
             continue
         except RecursionError:
             # Deep pathological graphs must degrade to a named refusal,
             # never a planner crash.
+            tsl_ir.drain_approximations()
             entry["tslIrRefusal"] = (
                 "IR emission exceeded the recursion bound"
             )
             continue
+        # Drained IMMEDIATELY after emission, before the budget checks below
+        # can `continue`: a channel refused for size must not leave its
+        # declared approximations behind for the next channel to claim.
+        approximations = tsl_ir.drain_approximations()
         encoded = _json.dumps(
             document, sort_keys=True, separators=(",", ":"),
         )
@@ -2864,6 +2890,11 @@ def _attach_tsl_ir_documents(tree, channels, hashlib, _json) -> None:
             encoded.encode("utf8"),
         ).hexdigest()
         entry["tslIrBytes"] = len(encoded)
+        # Attached only when the IR ships (an approximation of a refused
+        # channel is moot) and inside the plan fingerprint, same as the
+        # surface path.
+        if approximations:
+            entry["tslIrApproximations"] = approximations
 
 
 def _channel_plan_fingerprint(channel_plan):

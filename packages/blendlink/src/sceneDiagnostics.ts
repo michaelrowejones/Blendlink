@@ -261,6 +261,19 @@ export interface MaterialChannelPlanEntry {
   /** Named reason the emitter refused this channel (unproven node, byte
    * budget, merged Emission record). */
   tslIrRefusal?: string
+  /** Declared, cell-backed approximations inside this channel's IR. Each
+   * names the differential cell that measures its divergence and the exact
+   * cells that prove the underlying algorithm (`provenBy`); the emitter
+   * refuses to declare a code with no cell behind it. Surface-resolved
+   * plans attribute at surface level, which over-marks and never
+   * under-marks. Deliberately inside the plan fingerprint. */
+  tslIrApproximations?: Array<Record<string, unknown> & {
+    code: string
+    cell: string
+    divergenceKind: 'decorrelated' | 'bounded'
+    provenBy: string[]
+    detail: string
+  }>
 }
 
 export interface MaterialChannelPlanDiagnostic {
@@ -2068,6 +2081,16 @@ export function compileSceneDiagnostics(
                           tslIr: JSON.parse(
                             JSON.stringify(entry.tslIr),
                           ) as typeof entry.tslIr,
+                        }
+                      : {}),
+                    ...(entry.tslIrApproximations
+                      ? {
+                          tslIrApproximations: entry.tslIrApproximations.map(
+                            (item) => ({
+                              ...item,
+                              provenBy: [...item.provenBy],
+                            }),
+                          ),
                         }
                       : {}),
                   }),

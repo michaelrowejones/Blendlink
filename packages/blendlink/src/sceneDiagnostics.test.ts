@@ -618,6 +618,13 @@ describe('scene diagnostics', () => {
 
   it('carries per-channel TSL IR evidence through to the manifest report', () => {
     const { document } = documentWithLods()
+    const declaredApproximation = {
+      code: 'tsl.white-noise-continuous-uv',
+      cell: 'white-noise-continuous-uv',
+      divergenceKind: 'decorrelated' as const,
+      provenBy: ['hash-probe', 'white-noise'],
+      detail: 'sample-position ulps only; the port is exact',
+    }
     const tslIr = {
       schemaVersion: 1 as const,
       model: 'blendlink-tsl-ir-v1',
@@ -659,6 +666,12 @@ describe('scene diagnostics', () => {
               route: 'refused',
               reasons: ['view-dependent'],
               tslIrRefusal: 'Fresnel with a linked Normal has no cell yet',
+            }, {
+              channel: 'Emission Color',
+              route: 'bake',
+              tslIrHash: 'def456',
+              tslIrBytes: 64,
+              tslIrApproximations: [declaredApproximation],
             }],
           },
         },
@@ -682,6 +695,17 @@ describe('scene diagnostics', () => {
       route: 'refused',
       tslIrRefusal: 'Fresnel with a linked Normal has no cell yet',
     })
+    // A declared approximation reaches the manifest naming its cell and the
+    // exact cells proving the algorithm -- deep-copied, never aliased, so
+    // mutating the report cannot rewrite the sidecar's fidelity claim.
+    const approximations = channels?.[2]?.tslIrApproximations
+    expect(approximations?.[0]).toMatchObject({
+      code: 'tsl.white-noise-continuous-uv',
+      divergenceKind: 'decorrelated',
+      provenBy: ['hash-probe', 'white-noise'],
+    })
+    expect(approximations?.[0]).not.toBe(declaredApproximation)
+    expect(approximations?.[0]?.provenBy).not.toBe(declaredApproximation.provenBy)
   })
 
   it('persists finished-GLB material compiler attestation without reshaping portability', () => {
