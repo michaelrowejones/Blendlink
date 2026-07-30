@@ -214,10 +214,13 @@ emissive, a constant ORM *and* the binary alpha that forces BLEND, all from one 
 are one defect with three symptoms**, and the population is the stylized set that §8a shows TSL
 could carry.
 
-Reported by the adversarial pass but **not independently verified by me**: the emissive-factor
-attestation is guarded by "if an emissive image was planned", so the fully-emissive-white failure
-this phase exists to prevent is currently unverifiable in both languages. Check before relying on
-it.
+**The attestation cannot currently catch the white-emissive failure — verified.** The whole
+emissive gate at `material_compiler.py:4827-4848` sits behind `if emissive_fact is not None`, so
+it only runs when an emissive *image* was planned, and `:6953` records `"emissiveFactor": None`
+for the channels transport. The moment 1b drops a black emissive texture there is nothing
+checking that `emissiveFactor` became `[0,0,0]` — the exact failure this phase exists to prevent
+would ship unattested. **Land that gate before the elision, not with it**, so it is proven to
+pass on today's output first and the elision cannot regress it silently.
 
 Finally, it is a **VRAM and binding-count win, not a download win** — those PNGs are 14 KB each
 and total 207 kB of a 10.2 MB payload. Quote the **37.4%**, not the megabytes: under KTX2/BC7 the
