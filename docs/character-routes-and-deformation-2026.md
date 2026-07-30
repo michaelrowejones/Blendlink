@@ -518,10 +518,30 @@ Standing at scale 40 / detail 6, the blockers are:
 | `VectorTransform`, `AddShader`, `NormalMap`, tinted Transparent, scale 100 | 1 each |
 
 Noise is still dominant at **15 of 29** — distortion and dimensions now, not scale or detail —
-with `VectorRotate` second at 7. Distortion is the one piece here that is real implementation
-rather than a measurement: Blender perturbs the input coordinates by noise sampled at three
-hash-derived offsets, and because those offsets depend only on a seed they are constants that can
-be folded at emit time rather than requiring Blender's integer hash in TSL.
+with `VectorRotate` second at 7.
+
+**Distortion was attempted and refused by measurement, 2026-07-30.** Unlike the two bounds above
+this is real implementation, not a stale figure. Both `noisetex.h` and
+`gpu_shader_material_tex_noise.glsl` were read and agree verbatim: distortion perturbs the
+**scaled** coordinate, before any octave, by one signed Perlin octave per component sampled at
+`random_floatN_offset(0..N-1)`. Implemented on both sides with two gated cells; the cells measured
+**meanAbs 6.6e-2 / maxAbs 3.3e-1 against a 1e-3 gate** — decorrelated. The mapping is structurally
+wrong somewhere, so it was **reverted rather than shipped**, and the material bake keeps carrying
+those 10 materials.
+
+Three things that attempt did establish, recorded in `tsl_ir.py` so the next one starts from them:
+
+- **The offsets are correct.** `_noise_random_offset(seed, count)` for seeds 0..N-1 reproduces
+  Blender's values exactly — verified against an independent reimplementation of `hash_uint2` from
+  the Jenkins lookup3 `final` mixing, agreeing to every digit. The existing colour-lane seeds
+  (3, 4 for 3D) already assume distortion consumes 0..2, which corroborates it.
+- **`tslNoise` is the right primitive.** It is signed, since `blenderNoiseFac` ends in `*0.5+0.5`,
+  matching Blender's `snoise`.
+- **Large offsets are not the cause.** `noise-color` passes using offsets from the same helper in
+  the same [100,200] range.
+
+The error is therefore in the composition, not the constants or the primitive — which is a much
+smaller search space than the attempt started with.
 
 **Neither number is the truth on its own, and it matters which way each is wrong.** `_refuse`
 raises on the *first* problem found, so the runtime list is a lower bound — 30 materials stop at

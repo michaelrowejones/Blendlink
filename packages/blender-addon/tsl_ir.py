@@ -1440,12 +1440,6 @@ def emit_output(node, from_socket, stack=()):
             _refuse(
                 f"Noise dimensions {dimensions!r} has no cell yet"
             )
-        distortion = node.inputs.get("Distortion")
-        if distortion is not None and (
-            distortion.is_linked
-            or abs(float(distortion.default_value)) > 1e-9
-        ):
-            _refuse("Noise distortion has no cell yet")
         def _folded_noise_scalar(name, default):
             # Same contract as Scale below: a linked value that folds to a
             # constant through group walls (the ellie paint corpus drives
@@ -1522,6 +1516,34 @@ def emit_output(node, from_socket, stack=()):
             "scale": scale_expression,
             "input": _texture_vector(vector, stack),
         }
+        # Distortion still refuses, and this is a MEASURED refusal rather
+        # than an unexplored one. Attempted 2026-07-30 following both
+        # noisetex.h and gpu_shader_material_tex_noise.glsl, which agree:
+        #     p += floatN(snoise(p + random_floatN_offset(0)) * distortion,
+        #                 snoise(p + random_floatN_offset(1)) * distortion,
+        #                 ...)
+        # applied to the SCALED coordinate, before any octave. Two gated
+        # cells measured meanAbs 6.6e-2 / maxAbs 3.3e-1 against a 1e-3 gate
+        # -- decorrelated, so the mapping is structurally wrong and was
+        # reverted rather than shipped.
+        #
+        # What that attempt DID prove, so the next one need not redo it:
+        # `_noise_random_offset(seed, count)` for seeds 0..N-1 reproduces
+        # Blender's offsets exactly -- [186.031275845, 114.955953768,
+        # 154.447503470], [199.840001878, 162.292592684, 154.048234400],
+        # [111.633842651, 157.369395312, 199.088111473] for 3D -- confirmed
+        # against an independent reimplementation of hash_uint2 from the
+        # Jenkins lookup3 `final` mixing. The colour-lane seeds (3, 4 for 3D)
+        # already assume distortion consumes 0..2, which corroborates it.
+        # `tslNoise` is also the right primitive: it is signed, since
+        # `blenderNoiseFac` ends in *0.5+0.5. The error is elsewhere, and
+        # `noise-color` passing rules out large offsets as the cause.
+        distortion = node.inputs.get("Distortion")
+        if distortion is not None and (
+            distortion.is_linked
+            or abs(float(distortion.default_value)) > 1e-9
+        ):
+            _refuse("Noise distortion has no cell yet")
         if noise_output == "Color":
             # Cycles noise color lanes are the same fBM at constant
             # hash-derived offsets (noisetex.h random_floatN_offset).
