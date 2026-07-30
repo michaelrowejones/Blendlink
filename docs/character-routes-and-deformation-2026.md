@@ -498,8 +498,30 @@ these were always there:
 | `Image interpolation has no cell yet` | 2 |
 | `VectorTransform`, `AddShader`, `NormalMap`, tinted Transparent, scale 100, dimensions | 1 each |
 
-Noise is still the dominant blocker at **15 of 29**, now on distortion, detail and dimensions
-rather than scale, with `VectorRotate` second at 7.
+`noise-detail6` was then earned the same way — maxAbs **2.49e-4** against the 0.01 gate, **40x
+headroom**, barely worse than detail 4's 1.94e-4. The bound had sat at 4 citing a detail-6
+measurement of 3.9e-2, wrong by ~157x: the same vintage and the same direction as the scale-100
+claim. **Two stale figures in this file's own comments had been capping the compiler.**
+
+That one bought no coverage, and the reason is worth recording: the four detail-6 materials also
+use an unsupported noise *dimension*, so clearing detail moved them from one refusal to the next
+and `Noise dimensions` went 1 → 5. Earning a bound and gaining a material are different events.
+
+Standing at scale 40 / detail 6, the blockers are:
+
+| refusal | materials |
+| --- | --- |
+| `Noise distortion has no cell yet` | 10 |
+| `ShaderNodeVectorRotate has no proven TSL mapping` | 7 |
+| `Noise dimensions has no cell yet` (1D/4D) | 5 |
+| `Image interpolation has no cell yet` | 2 |
+| `VectorTransform`, `AddShader`, `NormalMap`, tinted Transparent, scale 100 | 1 each |
+
+Noise is still dominant at **15 of 29** — distortion and dimensions now, not scale or detail —
+with `VectorRotate` second at 7. Distortion is the one piece here that is real implementation
+rather than a measurement: Blender perturbs the input coordinates by noise sampled at three
+hash-derived offsets, and because those offsets depend only on a seed they are constants that can
+be folded at emit time rather than requiring Blender's integer hash in TSL.
 
 **Neither number is the truth on its own, and it matters which way each is wrong.** `_refuse`
 raises on the *first* problem found, so the runtime list is a lower bound — 30 materials stop at

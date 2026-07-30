@@ -1824,6 +1824,17 @@
    "notes": "3D fBM at scale 4, detail 4 \u2014 measuring whether the detail bound (set at <= 2 after the detail-6/scale-5 3.9e-2 divergence) can honestly extend to 4, the ellie paint-stroke class's setting (x28)."
   },
   {
+   "id": "noise-detail6",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise octave bound (detail <= 6 candidate)",
+   "notes": "3D fBM at detail 6, scale 4 - the octave count 4 of ellie's visible materials ask for. The emitter's bound of 4 cites a detail-6/scale-5 measurement of 3.9e-2, but that figure is the same vintage as its scale-100 claim of 1.8e-1, which re-measurement put at 1.023e-3 - wrong by ~175x - so this one is worth re-measuring rather than inheriting."
+  },
+  {
    "id": "noise-scale16",
    "gate": true,
    "tolerance": {

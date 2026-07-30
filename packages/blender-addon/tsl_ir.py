@@ -185,6 +185,7 @@ _allow_texture_refs = False
 # `voronoi-scale40`, whose integer-cell hashing only shifts local
 # distances). Cells: `noise-scale16`, `noise-scale20`, `noise-scale40`.
 _NOISE_SCALE_BOUND = 40.0
+_NOISE_DETAIL_BOUND = 6.0
 
 
 def set_texture_ref_emission(enabled: bool) -> None:
@@ -1468,15 +1469,18 @@ def emit_output(node, from_socket, stack=()):
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
-        if detail_value > 4.0 + 1e-9:
-            # Detail 4 is the proven range (the noise-detail4 cell; the
-            # original bound of 2 came from the detail-6/scale-5 3.9e-2
-            # phase-divergence measurement). Higher octave counts amplify
-            # float phase differences past channel tolerance; the
-            # Material bake carries those channels faithfully instead.
+        if detail_value > _NOISE_DETAIL_BOUND + 1e-9:
+            # Cells: `noise-detail4`, `noise-detail6`. Measured 2026-07-30,
+            # maxAbs against a 0.01 gate: detail 4 1.94e-4, detail 6 2.49e-4 --
+            # 40x headroom, and barely worse than detail 4. The bound used to
+            # sit at 4 citing a detail-6/scale-5 measurement of 3.9e-2; that
+            # was wrong by ~157x, the same vintage and the same direction as
+            # the scale-100 claim above. Raising this still REQUIRES a passing
+            # cell at the new value.
             _refuse(
                 f"Noise detail {detail_value:g} exceeds the proven range "
-                "(<= 4); high-octave phase divergence measured"
+                f"(<= {_NOISE_DETAIL_BOUND:g}); high-octave phase divergence "
+                "measured"
             )
         # Resolve the Scale expression FIRST: a linked scale that folds to
         # a constant through group walls (the splash corpus feeds noise

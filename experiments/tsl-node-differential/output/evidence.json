@@ -919,6 +919,17 @@
       },
       "failureClass": "noise detail bound (detail <= 4 candidate)"
     },
+    "noise-detail6": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000059291218349244446,
+        "p99Abs": 0.0001793503761291504,
+        "maxAbs": 0.00024893879890441895
+      },
+      "failureClass": "noise octave bound (detail <= 6 candidate)"
+    },
     "noise-scale16": {
       "ok": true,
       "gated": true,

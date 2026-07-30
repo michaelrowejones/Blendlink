@@ -1828,6 +1828,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "noise-detail6": {
+      "path": "noise-detail6.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-detail6.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.267522394657135,
+        0.267522394657135,
+        0.267522394657135
+      ],
+      "rgbMax": [
+        0.6910115480422974,
+        0.6910115480422974,
+        0.6910115480422974
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "noise-scale16": {
       "path": "noise-scale16.f32",
       "pipeline": "ir",
