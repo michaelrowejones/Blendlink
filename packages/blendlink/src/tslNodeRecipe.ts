@@ -499,8 +499,28 @@ function build(expression: TslIrExpression): TslExpression {
       return buildColorRamp(expression, 'color')
     case 'ramp_alpha':
       return buildColorRamp(child(expression, 'input'), 'alpha')
-    case 'mix_color':
+    case 'mix_color': {
+      // Guard, atomic with the emitter's implicit COLOR->FLOAT
+      // conversion: a vector-typed factor would fan the per-channel
+      // blend builders out to vec3 lanes and tslVec3 would TRUNCATE the
+      // join to the x-channel -- silently, reproducing the plants.leaf
+      // corpus failure. The emitter now wraps colour sources in
+      // rgb_to_bw; any IR that still carries a vector factor is a
+      // contract violation and must fail loudly.
+      const factorOp = (expression.factor as TslIrExpression | undefined)?.op
+      const vectorProducers = new Set([
+        'const_vec3', 'combine', 'mix_color', 'curve_rgb', 'color_ramp',
+        'vertex_color', 'tex_checker', 'hsv_to_rgb', 'object_coords',
+        'generated', 'uv', 'mapping', 'attribute_object', 'vector_rotate',
+      ])
+      if (typeof factorOp === 'string' && vectorProducers.has(factorOp)) {
+        fail(
+          `IR mix_color factor is vector-typed (${factorOp}); the emitter `
+          + 'must wrap colour sources in rgb_to_bw',
+        )
+      }
       return buildMixColor(expression)
+    }
     case 'map_range': {
       // Cycles map range with safe divide; SMOOTHSTEP applies the cubic
       // ease to the clamped factor; the clamp option clamps the result to

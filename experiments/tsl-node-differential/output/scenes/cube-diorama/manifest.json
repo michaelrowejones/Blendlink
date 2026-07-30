@@ -55,7 +55,19 @@
           0.9595407675857518,
           0.9595407675857518
         ]
-      }
+      },
+      "approximations": [
+        {
+          "code": "tsl.noise-3d-scale-above-exact",
+          "cell": "noise-3d-scale200",
+          "divergenceKind": "bounded",
+          "provenBy": [
+            "noise-scale80",
+            "noise-scale40"
+          ],
+          "detail": "3D noise between scale 80 and 200. Same mechanism as the 1D and 2D bands: exact algorithm (the proven fBM over MaterialX Perlin), sample-position divergence measured at the corpus maximum and monotone in scale."
+        }
+      ]
     },
     "bluebell--Base_Color": {
       "path": "bluebell--Base_Color.f32",

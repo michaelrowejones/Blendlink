@@ -1128,6 +1128,27 @@
       },
       "failureClass": "3D noise, scale band 80..200 (bounded approximation)"
     },
+    "noise-effective-scale400": {
+      "ok": true,
+      "claim": "approximate",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.003576490667910548,
+        "p99Abs": 0.011429786682128906,
+        "maxAbs": 0.015153706073760986
+      },
+      "provenBy": [
+        "noise-scale80",
+        "noise-scale40"
+      ],
+      "declaredDivergence": {
+        "meanAbs": 0.0036,
+        "p99Abs": 0.0115,
+        "maxAbs": 0.0155
+      },
+      "failureClass": "3D noise, effective scale to 400 (bounded approximation)"
+    },
     "noise-1d-scale1600": {
       "ok": true,
       "claim": "approximate",
@@ -1312,6 +1333,30 @@
         "maxAbs": 0.000012725591659545898
       },
       "failureClass": "vector rotate arbitrary axis (Rodrigues + normalize)"
+    },
+    "mix-factor-color-ramp": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000001822210227449735,
+        "p99Abs": 0.0000064373016357421875,
+        "maxAbs": 0.000006616115570068359
+      },
+      "failureClass": "implicit COLOR->FLOAT link conversion (Mix.Factor)"
+    },
+    "noise-texture-panel-mapping": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.00002436168142594397,
+        "p99Abs": 0.00009116530418395996,
+        "maxAbs": 0.00010353326797485352
+      },
+      "failureClass": "texture-panel mapping (node.texture_mapping)"
     },
     "noise-scale16": {
       "ok": true,
@@ -1675,8 +1720,8 @@
     }
   },
   "claims": {
-    "exact": 127,
-    "approximate": 6,
+    "exact": 129,
+    "approximate": 7,
     "diagnostic": 1
   },
   "approximations": [
@@ -1703,6 +1748,21 @@
         "meanAbs": 0.002090923077048501,
         "p99Abs": 0.006388187408447266,
         "maxAbs": 0.008159041404724121
+      },
+      "distribution": null,
+      "provenBy": [
+        "noise-scale80",
+        "noise-scale40"
+      ]
+    },
+    {
+      "id": "noise-effective-scale400",
+      "failureClass": "3D noise, effective scale to 400 (bounded approximation)",
+      "pass": true,
+      "perTexel": {
+        "meanAbs": 0.003576490667910548,
+        "p99Abs": 0.011429786682128906,
+        "maxAbs": 0.015153706073760986
       },
       "distribution": null,
       "provenBy": [
@@ -1857,7 +1917,8 @@
         "limits": [
           "surface tap v1 samples radiance only: the Alpha coverage of constant-radiance outline materials and every other fold channel have no bake path yet, so surface-compiled channels can outnumber sampleable ones by design"
         ],
-        "irCompiledAttributeDriven": 1
+        "irCompiledAttributeDriven": 1,
+        "irCompiledApproximate": 1
       },
       "differentials": {
         "Clay--Base_Color": {
@@ -1882,22 +1943,32 @@
         },
         "Wooden_Bars--Roughness": {
           "ok": true,
-          "claim": "exact",
-          "pass": false,
+          "claim": "approximate/amplified",
+          "pass": true,
           "measured": {
             "meanAbs": 0.002599222330900375,
             "p99Abs": 0.033084750175476074,
             "maxAbs": 0.047662198543548584
+          },
+          "distribution": {
+            "refMean": 0.42140035751799587,
+            "tslMean": 0.4211053284161608,
+            "meanDelta": 0.0002950291018350981,
+            "refStd": 0.061057603991040404,
+            "tslStd": 0.060605483218240774,
+            "stdDeltaFraction": 0.007404823367552621,
+            "histogramL1": 0.03515625,
+            "radialSpectrumL1": 0.003167304308979494
           }
         },
         "bluebell--Base_Color": {
           "ok": true,
           "claim": "exact",
-          "pass": false,
+          "pass": true,
           "measured": {
-            "meanAbs": 0.004455420104325943,
-            "p99Abs": 0.04195728898048401,
-            "maxAbs": 0.08201479911804199
+            "meanAbs": 0.000013327470014701248,
+            "p99Abs": 0.00009566545486450195,
+            "maxAbs": 0.00015369057655334473
           }
         },
         "bluebell_center--Base_Color": {
@@ -1913,11 +1984,11 @@
         "plants.leaf--Base_Color": {
           "ok": true,
           "claim": "exact",
-          "pass": false,
+          "pass": true,
           "measured": {
-            "meanAbs": 0.0642733418322526,
-            "p99Abs": 0.1978285014629364,
-            "maxAbs": 0.2532453238964081
+            "meanAbs": 0.000007624407013887928,
+            "p99Abs": 0.00003960728645324707,
+            "maxAbs": 0.00006958842277526855
           }
         }
       }
@@ -2128,11 +2199,9 @@
       }
     }
   },
-  "pageErrorCount": 7,
+  "pageErrorCount": 5,
   "pageErrorSample": [
     "Failed to load resource: the server responded with a status of 404 (Not Found)",
-    "THREE.TSL: Length of parameters exceeds maximum length of function 'vec3()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
-    "THREE.TSL: Length of parameters exceeds maximum length of function 'vec3()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
     "THREE.TSL: Length of 'vec2()' data exceeds maximum length of output type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
     "THREE.TSL: Length of parameters exceeds maximum length of function 'vec2()' type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",
     "THREE.TSL: Length of 'vec2()' data exceeds maximum length of output type. Stack trace not available. Enable \"THREE.Node.captureStackTrace\" to capture stack traces.",

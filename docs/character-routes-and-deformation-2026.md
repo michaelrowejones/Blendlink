@@ -655,10 +655,26 @@ The first corpus run surfaced four findings, in order of what they say about the
    taps only radiance (outline Alpha content unsampled, one procedural surface pre-empted by
    vertex_color), and trapx genuinely refuses on Glass ×2 / AddShader / tinted Transparent ×2 —
    named, honest, needing surface-expression mappings.
-4. **cube-diorama fails three chains at the exact gate** (`plants.leaf` 6.4e-2 mean;
-   `Wooden_Bars`/`bluebell` with small means but 5–8e-2 maxima — localized, edge-like). Open;
-   these are precisely the "harming the others while polishing one" class the corpus view exists
-   to catch.
+4. **cube-diorama's three chains — RESOLVED 2026-07-31, three distinct long-standing emitter
+   gaps** (verified not regressions), each fixed with a gated cell and recovering at exactly the
+   CPU-predicted figure:
+   - the Texture-panel `texture_mapping` every texture node carries was ignored entirely →
+     honoured via the proven mapping op (`noise-texture-panel-mapping`, 2.4e-5); bluebell
+     recovered to 1.33e-5 (predicted 1.338e-5);
+   - Cycles' implicit COLOR→FLOAT conversion (`linear_rgb_to_gray`) was missing on Mix.Factor,
+     and the vec3 factor silently truncated through `tslVec3` to the x-lane → `rgb_to_bw` wrap
+     plus an atomic runtime type guard (`mix-factor-color-ramp`, 1.8e-6); plants.leaf recovered
+     to 7.6e-6 (predicted 7.646e-6);
+   - the noise bound saw only the Scale socket while Wooden_Bars pre-multiplied coordinates by
+     (1,100,100) → `_fold_vector_prescale` folds constant pre-multiplies and the panel mapping
+     into effective scale, with a measured 3D band to 400 (`noise-effective-scale400`, 3.6e-3 on
+     the near-linear ladder); Wooden_Bars now classifies `approximate/amplified` honestly. The
+     residual blind spot — a linked non-constant pre-scale — is named, not silent.
+
+   **The corpus sweep is GREEN**: ellie 7/7, cube 6/6 (four exact, one declared), splash's 84
+   compiled channels truthfully accounted with a declared radiance-only sampling limit, trapx's
+   refusals named. The sampler-widening work (radiance-only tap, vertex-color fixtures, AO ×19
+   as splash's dominant next mapping) remains as the named next tranche.
 
 The scene stage also learned to render attribute-driven channels (it never passed an
 `objectAttribute` resolver, so every paint-set material failed to render rather than measure) —

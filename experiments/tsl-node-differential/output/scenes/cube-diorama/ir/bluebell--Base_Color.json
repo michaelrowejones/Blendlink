@@ -84,39 +84,58 @@
             "value": 40.0
           },
           "input": {
-            "op": "vector_math",
-            "operation": "MULTIPLY",
-            "a": {
+            "op": "mapping",
+            "vectorType": "POINT",
+            "input": {
               "op": "vector_math",
-              "operation": "ADD",
+              "operation": "MULTIPLY",
               "a": {
-                "op": "uv"
+                "op": "vector_math",
+                "operation": "ADD",
+                "a": {
+                  "op": "uv"
+                },
+                "b": {
+                  "op": "combine",
+                  "x": {
+                    "op": "attribute_object",
+                    "name": "blendlink_object_random",
+                    "output": "fac"
+                  },
+                  "y": {
+                    "op": "const_float",
+                    "value": 0.0
+                  },
+                  "z": {
+                    "op": "const_float",
+                    "value": 0.0
+                  }
+                }
               },
               "b": {
-                "op": "combine",
-                "x": {
-                  "op": "attribute_object",
-                  "name": "blendlink_object_random",
-                  "output": "fac"
-                },
-                "y": {
-                  "op": "const_float",
-                  "value": 0.0
-                },
-                "z": {
-                  "op": "const_float",
-                  "value": 0.0
-                }
+                "op": "const_vec3",
+                "value": [
+                  2.0,
+                  1.0,
+                  0.0
+                ]
               }
             },
-            "b": {
-              "op": "const_vec3",
-              "value": [
-                2.0,
-                1.0,
-                0.0
-              ]
-            }
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.800000011920929,
+              0.1599999964237213,
+              1.0
+            ]
           }
         },
         "a": {

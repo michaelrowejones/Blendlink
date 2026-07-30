@@ -2033,6 +2033,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "noise-effective-scale400": {
+      "path": "noise-effective-scale400.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-effective-scale400.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.24534626305103302,
+        0.24534626305103302,
+        0.24534626305103302
+      ],
+      "rgbMax": [
+        0.7588432431221008,
+        0.7588432431221008,
+        0.7588432431221008
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "noise-1d-scale1600": {
       "path": "noise-1d-scale1600.f32",
       "pipeline": "ir",
@@ -2293,6 +2315,50 @@
         0.7339409589767456,
         0.7321609854698181,
         0.6513303518295288
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "mix-factor-color-ramp": {
+      "path": "mix-factor-color-ramp.f32",
+      "pipeline": "ir",
+      "ir": "ir/mix-factor-color-ramp.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.222977876663208,
+        0.46583831310272217,
+        0.36893364787101746
+      ],
+      "rgbMax": [
+        0.2498735934495926,
+        0.5112248063087463,
+        0.4496208131313324
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "noise-texture-panel-mapping": {
+      "path": "noise-texture-panel-mapping.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-texture-panel-mapping.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.27227234840393066,
+        0.27227234840393066,
+        0.27227234840393066
+      ],
+      "rgbMax": [
+        0.7130004167556763,
+        0.7130004167556763,
+        0.7130004167556763
       ],
       "deviceClass": "gpu",
       "backend": "optix"

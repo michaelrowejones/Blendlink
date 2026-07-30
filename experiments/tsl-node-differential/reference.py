@@ -1277,6 +1277,64 @@ def build_white_noise_4d(tree, emission):
     tree.links.new(color, emission.inputs["Color"])
 
 
+def build_noise_effective_scale400(tree, emission):
+    # The Wooden_Bars shape: a constant per-axis pre-multiply ahead of a
+    # small Scale socket, effective frequency 400 on the dominant axes.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    premultiply = tree.nodes.new("ShaderNodeVectorMath")
+    premultiply.operation = "MULTIPLY"
+    premultiply.inputs[1].default_value = (1.0, 100.0, 100.0)
+    tree.links.new(coord.outputs["UV"], premultiply.inputs[0])
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 4.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(premultiply.outputs["Vector"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
+def build_mix_factor_color_ramp(tree, emission):
+    # A NON-grayscale ColorRamp COLOR wired into Mix.Factor: Cycles inserts
+    # linear_rgb_to_gray on the link. A coloured ramp distinguishes the
+    # correct luminance from a component average and from the x-lane
+    # truncation the guard exists to prevent.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    ramp = tree.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.elements[0].color = (0.9, 0.1, 0.3, 1.0)
+    ramp.color_ramp.elements[1].color = (0.05, 0.8, 0.6, 1.0)
+    tree.links.new(separate.outputs["X"], ramp.inputs["Fac"])
+    mix = tree.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    mix.blend_type = "OVERLAY"
+    a_socket = next(s for s in mix.inputs if s.identifier == "A_Color")
+    b_socket = next(s for s in mix.inputs if s.identifier == "B_Color")
+    a_socket.default_value = (0.2, 0.55, 0.3, 1.0)
+    b_socket.default_value = (0.7, 0.35, 0.9, 1.0)
+    factor = next(s for s in mix.inputs if s.identifier == "Factor_Float")
+    tree.links.new(ramp.outputs["Color"], factor)
+    result = next(s for s in mix.outputs if s.identifier == "Result_Color")
+    tree.links.new(result, emission.inputs["Color"])
+
+
+def build_noise_texture_panel_mapping(tree, emission):
+    # The collapsed Texture-panel transform on the node itself, not a
+    # Mapping node: the cube-diorama defect class. Non-uniform scale plus a
+    # translation, applied by Cycles BEFORE the Scale socket.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 6.0
+    node.inputs["Detail"].default_value = 2.0
+    node.texture_mapping.scale = (0.8, 0.16, 1.0)
+    node.texture_mapping.translation = (0.35, -0.2, 0.0)
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
 def build_noise_2d_scale200(tree, emission):
     # The head/skin 2D config: detail 2, Colour output at scale 200 - found
     # hidden behind the Voronoi-177 refusal after the first band pass.
@@ -2220,6 +2278,9 @@ BUILDERS = {
     "muted-mix-color": build_muted_mix_color,
     "white-noise-1d": build_white_noise_1d,
     "white-noise-4d": build_white_noise_4d,
+    "noise-effective-scale400": build_noise_effective_scale400,
+    "mix-factor-color-ramp": build_mix_factor_color_ramp,
+    "noise-texture-panel-mapping": build_noise_texture_panel_mapping,
     "noise-2d-scale200": build_noise_2d_scale200,
     "noise-3d-scale200": build_noise_3d_scale200,
     "noise-1d-scale1600": build_noise_1d_scale1600,

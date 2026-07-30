@@ -331,7 +331,7 @@ _NOISE_SCALE_BOUND = 80.0
 # dimensions string; a dimension with no band still refuses above the exact
 # bound. One number cannot carry two claims, which is why these are separate
 # constants from the exact bound rather than a raised copy of it.
-_NOISE_SCALE_APPROXIMATE_BOUNDS = {"1D": 1600.0, "2D": 200.0, "3D": 200.0}
+_NOISE_SCALE_APPROXIMATE_BOUNDS = {"1D": 1600.0, "2D": 200.0, "3D": 400.0}
 _VORONOI_SMOOTH_F1_APPROXIMATE_BOUND = 180.0
 _VORONOI_SCALE_BOUND = 40.0
 _NOISE_DETAIL_BOUND = 6.0
@@ -826,12 +826,134 @@ def emit_surface(tree):
     }
 
 
-def _texture_vector(socket, stack):
+def _fold_vector_prescale(expression):
+    """Conservative max-axis multiplier applied to a coordinate BEFORE
+    a texture's Scale socket. Wooden_Bars multiplies Object coords by
+    (1, 100, 100) ahead of a scale-4 noise: effective frequency 400,
+    while the bound saw 4 and the chain shipped claiming exact inside
+    the measured float32-divergence class. Folds only what is certain --
+    constant vector_math MULTIPLY/SCALE factors and the texture-panel
+    mapping wrapper -- and returns 1.0 for anything else, which keeps
+    every unfoldable input exactly as blind as before but NAMED here
+    rather than silently: a linked non-constant pre-scale remains the
+    known residual gap."""
+    factor = 1.0
+    current = expression
+    for _ in range(16):
+        if not isinstance(current, dict):
+            break
+        op = current.get("op")
+        if op == "mapping":
+            factor *= max(
+                abs(float(v)) for v in current.get("scale", [1.0])
+            )
+            current = current.get("input")
+            continue
+        if op == "vector_scale":
+            scale = current.get("scale")
+            folded = _fold_constant_scalar(scale) if scale else None
+            if folded is None:
+                break
+            factor *= abs(folded)
+            current = current.get("input")
+            continue
+        if op == "vector_math" and current.get("operation") == "MULTIPLY":
+            a = current.get("a")
+            b = current.get("b")
+            const = None
+            varying = None
+            for side, other in ((a, b), (b, a)):
+                if isinstance(side, dict) and side.get("op") == "const_vec3":
+                    const, varying = side, other
+                    break
+            if const is None:
+                break
+            factor *= max(abs(float(v)) for v in const.get("value", [1.0]))
+            current = varying
+            continue
+        break
+    return factor
+
+
+def _scalar_input(socket, stack):
+    """A float input socket with Cycles' implicit link conversion.
+
+    Cycles inserts NODE_CONVERT_CF -- linear_rgb_to_gray -- on every
+    COLOR-to-FLOAT link (intern/cycles/kernel/svm/convert.h), and the
+    rgb_to_bw op's Rec.709 row is that function verbatim. Omitting it
+    handed plants.leaf's Mix a vec3 factor, which the OVERLAY builder
+    truncated through tslVec3 to the x-lane -- reproducing the measured
+    corpus failure to four digits. Vector sources (NODE_CONVERT_VF,
+    component average) refuse by name until a cell exists."""
+    expression = emit_input(socket, stack=stack)
+    source = _socket_source(socket)
+    if source is None:
+        return expression
+    _source_node, from_socket = source
+    socket_type = str(getattr(from_socket, "type", ""))
+    if socket_type == "RGBA":
+        return {"op": "rgb_to_bw", "input": expression}
+    if socket_type == "VECTOR":
+        _refuse(
+            "implicit vector-to-float conversion (component average) "
+            "has no cell yet"
+        )
+    return expression
+
+
+def _texture_vector(socket, stack, node=None):
     """A texture node's Vector input: its link's expression, or Generated
-    coordinates when unlinked (Blender's implicit default)."""
-    if socket.is_linked:
-        return emit_input(socket, stack=stack, as_vector=True)
-    return {"op": "generated"}
+    coordinates when unlinked (Blender's implicit default).
+
+    When the owning ``node`` is supplied, its Texture-panel transform
+    (``node.texture_mapping`` -- the collapsed Mapping section every
+    texture node carries) wraps the coordinate. Cycles applies it BEFORE
+    the Scale socket; ignoring it decorrelated cube-diorama's bluebell
+    and plants.leaf noises (panel scales (0.8, 0.16, 1.0) and
+    (0.8, 0.07, 1.0)); with the mapping applied the CPU-exact chains
+    match the bake at 1e-5. Refuses by name for the shapes the proven
+    mapping cell does not cover."""
+    expression = (
+        emit_input(socket, stack=stack, as_vector=True)
+        if socket.is_linked else {"op": "generated"}
+    )
+    mapping = getattr(node, "texture_mapping", None) if node else None
+    if mapping is None:
+        return expression
+    location = [float(v) for v in mapping.translation]
+    rotation = [float(v) for v in mapping.rotation]
+    scale = [float(v) for v in mapping.scale]
+    identity = (
+        all(abs(v) <= 1e-9 for v in location)
+        and all(abs(v) <= 1e-9 for v in rotation)
+        and all(abs(v - 1.0) <= 1e-9 for v in scale)
+    )
+    if identity:
+        return expression
+    if str(mapping.vector_type) != "POINT":
+        _refuse(
+            f"texture panel mapping type {mapping.vector_type!r} has no "
+            "cell yet"
+        )
+    if bool(getattr(mapping, "use_min", False)) or bool(
+        getattr(mapping, "use_max", False)
+    ):
+        _refuse("texture panel mapping min/max clamp has no cell yet")
+    if abs(rotation[0]) > 1e-9 or abs(rotation[1]) > 1e-9:
+        _refuse(
+            "texture panel mapping X/Y rotation has no cell yet (Z only)"
+        )
+    # Rides the PROVEN mapping op (mapping-rotate / mapping-texture-mode
+    # cells): POINT order scale-rotate-translate matches Cycles'
+    # TextureMapping compile.
+    return {
+        "op": "mapping",
+        "vectorType": "POINT",
+        "input": expression,
+        "location": location,
+        "rotation": rotation,
+        "scale": scale,
+    }
 
 
 def emit_input(socket, stack=(), *, as_vector=False):
@@ -1005,7 +1127,7 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeInvert":
         return {
             "op": "invert",
-            "factor": emit_input(node.inputs["Fac"], stack=stack),
+            "factor": _scalar_input(node.inputs["Fac"], stack),
             "input": emit_input(
                 node.inputs["Color"], stack=stack, as_vector=True,
             ),
@@ -1044,7 +1166,7 @@ def emit_output(node, from_socket, stack=()):
             "hue": emit_input(node.inputs["Hue"], stack=stack),
             "saturation": emit_input(node.inputs["Saturation"], stack=stack),
             "value": emit_input(node.inputs["Value"], stack=stack),
-            "factor": emit_input(node.inputs["Fac"], stack=stack),
+            "factor": _scalar_input(node.inputs["Fac"], stack),
             "input": emit_input(
                 node.inputs["Color"], stack=stack, as_vector=True,
             ),
@@ -1257,7 +1379,7 @@ def emit_output(node, from_socket, stack=()):
             _refuse(f"Checker output {socket_name!r} unsupported")
         expression = {
             "op": "tex_checker",
-            "vector": _texture_vector(node.inputs["Vector"], stack),
+            "vector": _texture_vector(node.inputs["Vector"], stack, node),
             "color1": emit_input(
                 node.inputs["Color1"], stack=stack, as_vector=True,
             ),
@@ -1284,7 +1406,7 @@ def emit_output(node, from_socket, stack=()):
         return {
             "op": "tex_gradient",
             "gradientType": gradient_type,
-            "vector": _texture_vector(node.inputs["Vector"], stack),
+            "vector": _texture_vector(node.inputs["Vector"], stack, node),
         }
 
     if idname == "ShaderNodeTexMagic":
@@ -1296,7 +1418,7 @@ def emit_output(node, from_socket, stack=()):
             "depth": int(node.turbulence_depth),
             # Fac is the color average.
             "output": "fac" if magic_output == "Fac" else "color",
-            "vector": _texture_vector(node.inputs["Vector"], stack),
+            "vector": _texture_vector(node.inputs["Vector"], stack, node),
             "scale": emit_input(node.inputs["Scale"], stack=stack),
             "distortion": emit_input(node.inputs["Distortion"], stack=stack),
         }
@@ -1333,7 +1455,7 @@ def emit_output(node, from_socket, stack=()):
             "bandsDirection": str(node.bands_direction),
             "ringsDirection": str(node.rings_direction),
             "profile": str(node.wave_profile),
-            "vector": _texture_vector(node.inputs["Vector"], stack),
+            "vector": _texture_vector(node.inputs["Vector"], stack, node),
             "scale": emit_input(node.inputs["Scale"], stack=stack),
             "distortion": distortion_value,
             "detail": detail_value,
@@ -1622,7 +1744,7 @@ def emit_output(node, from_socket, stack=()):
             "dimensions": 2 if dimensions == "2D" else 3,
             "feature": "f1",
             "output": "color" if output_id == "Color" else "distance",
-            "vector": _texture_vector(node.inputs["Vector"], stack),
+            "vector": _texture_vector(node.inputs["Vector"], stack, node),
             "scale": voronoi_scale,
             "randomness": emit_input(node.inputs["Randomness"], stack=stack),
         }
@@ -1669,7 +1791,7 @@ def emit_output(node, from_socket, stack=()):
             "op": "curve_rgb",
             "samples": samples,
             "values": values,
-            "factor": emit_input(node.inputs["Fac"], stack=stack),
+            "factor": _scalar_input(node.inputs["Fac"], stack),
             "input": emit_input(
                 node.inputs["Color"], stack=stack, as_vector=True,
             ),
@@ -1706,7 +1828,7 @@ def emit_output(node, from_socket, stack=()):
             "blendType": blend,
             "clampFactor": clamp_factor,
             "clampResult": clamp_result,
-            "factor": emit_input(factor, stack=stack),
+            "factor": _scalar_input(factor, stack),
             "a": emit_input(a_input, stack=stack, as_vector=True),
             "b": emit_input(b_input, stack=stack, as_vector=True),
         }
@@ -1784,7 +1906,15 @@ def emit_output(node, from_socket, stack=()):
                 f"(source op {scale_expression.get('op')!r})"
             )
         scale_expression = {"op": "const_float", "value": folded_scale}
-        scale_magnitude = abs(float(scale_expression["value"]))
+        input_expression = (
+            emit_input(node.inputs["W"], stack=stack)
+            if dimensions == "1D" else _texture_vector(vector, stack, node)
+        )
+        prescale = (
+            1.0 if dimensions == "1D"
+            else _fold_vector_prescale(input_expression)
+        )
+        scale_magnitude = abs(float(scale_expression["value"])) * prescale
         approximate_bound = _NOISE_SCALE_APPROXIMATE_BOUNDS.get(dimensions)
         if (
             scale_magnitude > _NOISE_SCALE_BOUND + 1e-9
@@ -1813,9 +1943,11 @@ def emit_output(node, from_socket, stack=()):
             # bound, which is why the figures above are recorded here instead.
             # Material bake carries what refuses.
             _refuse(
-                f"Noise scale {float(scale_expression['value']):g} "
-                f"exceeds the proven range (<= {_NOISE_SCALE_BOUND:g}); "
-                "sample-position differences decorrelate high-frequency noise"
+                f"Noise effective scale {scale_magnitude:g} "
+                f"(socket {float(scale_expression['value']):g} x "
+                f"pre-scale {prescale:g}) exceeds the proven range "
+                f"(<= {_NOISE_SCALE_BOUND:g}); sample-position "
+                "differences decorrelate high-frequency noise"
             )
         expression = {
             "op": "noise",
@@ -1834,7 +1966,7 @@ def emit_output(node, from_socket, stack=()):
             # Blender's ported perlin_1d over it.
             "input": (
                 emit_input(node.inputs["W"], stack=stack)
-                if dimensions == "1D" else _texture_vector(vector, stack)
+                if dimensions == "1D" else _texture_vector(vector, stack, node)
             ),
             # 4D reads Vector AND W; Blender scales the whole float4(co, w).
             **(
