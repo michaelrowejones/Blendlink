@@ -1029,6 +1029,17 @@
       },
       "failureClass": "noise frequency bound (scale <= 40 candidate)"
     },
+    "noise-scale80": {
+      "ok": true,
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.0008673433367221151,
+        "p99Abs": 0.002682417631149292,
+        "maxAbs": 0.0040593743324279785
+      },
+      "failureClass": "noise frequency bound (scale <= 80 candidate)"
+    },
     "voronoi-scale20": {
       "ok": true,
       "gated": true,

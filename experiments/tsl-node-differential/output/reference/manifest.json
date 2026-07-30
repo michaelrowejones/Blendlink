@@ -2048,6 +2048,28 @@
       "deviceClass": "gpu",
       "backend": "optix"
     },
+    "noise-scale80": {
+      "path": "noise-scale80.f32",
+      "pipeline": "ir",
+      "ir": "ir/noise-scale80.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.22362670302391052,
+        0.22362670302391052,
+        0.22362670302391052
+      ],
+      "rgbMax": [
+        0.7472149133682251,
+        0.7472149133682251,
+        0.7472149133682251
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "voronoi-scale20": {
       "path": "voronoi-scale20.f32",
       "pipeline": "ir",

@@ -184,7 +184,8 @@ _allow_texture_refs = False
 # so noise cannot inherit Voronoi's separately-earned bound of 40 (see
 # `voronoi-scale40`, whose integer-cell hashing only shifts local
 # distances). Cells: `noise-scale16`, `noise-scale20`, `noise-scale40`.
-_NOISE_SCALE_BOUND = 40.0
+_NOISE_SCALE_BOUND = 80.0
+_VORONOI_SCALE_BOUND = 40.0
 _NOISE_DETAIL_BOUND = 6.0
 
 
@@ -1359,14 +1360,22 @@ def emit_output(node, from_socket, stack=()):
             _refuse(
                 "Voronoi with a non-constant Scale has no bounded cell yet"
             )
-        if abs(float(voronoi_scale["value"])) > 40.0 + 1e-9:
+        if abs(float(voronoi_scale["value"])) > _VORONOI_SCALE_BOUND + 1e-9:
             # Voronoi's bound is measured separately from noise: integer
             # cell hashing tolerates coordinate wiggle structurally (only
             # local distances shift), so scale 40 gates where fBM noise
-            # is bounded at 20.
+            # needed its own ladder. That structural tolerance does NOT
+            # extend indefinitely: scale 177.1 -- the frequency ellie.head,
+            # ellie.head_lips and ellie.skin ask for -- measured meanAbs
+            # 3.01e-3 and p99 6.11e-3 on 2026-07-30, over both gates by ~3x
+            # and ~1.2x though maxAbs 6.18e-3 stays inside. So it is a real
+            # divergence and an approximation candidate, not a bound to
+            # raise. No cell records it because a cell draws its IR from
+            # this emitter and cannot outlive the bound.
             _refuse(
                 f"Voronoi scale {float(voronoi_scale['value']):g} "
-                "exceeds the proven range (<= 40); sample-position "
+                f"exceeds the proven range (<= {_VORONOI_SCALE_BOUND:g}); "
+                "sample-position "
                 "differences decorrelate high-frequency patterns"
             )
         expression = {

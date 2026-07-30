@@ -1934,6 +1934,17 @@
    "notes": "3D fBM at scale 40, detail 2 - the frequency 27 of ellie's 49 visible materials actually ask for, and the single largest TSL blocker measured on that character. Voronoi is already proven at 40 (voronoi-scale40) because integer-cell hashing only shifts local distances under coordinate wiggle; fBM octave phases amplify it instead, so noise cannot inherit that bound and has to earn its own. Scale 100 measured 1.8e-1, scale 20 passes; this cell decides whether 40 is inside tolerance or whether the material bake keeps carrying it."
   },
   {
+   "id": "noise-scale80",
+   "gate": true,
+   "tolerance": {
+    "meanAbs": 0.001,
+    "p99Abs": 0.005,
+    "maxAbs": 0.01
+   },
+   "failureClass": "noise frequency bound (scale <= 80 candidate)",
+   "notes": "3D fBM at scale 80 - the corpus asks for 50, 60 and 80, so a bound at 80 clears every 3D noise ellie has except the 2D hair at 100. Scale 40 measured 1.77e-3 maxAbs and scale 100 1.02e-3 MEAN (2.3% over its gate), with growth near-linear in frequency, so 80 is the honest place to test."
+  },
+  {
    "id": "voronoi-scale20",
    "gate": true,
    "tolerance": {

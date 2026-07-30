@@ -840,6 +840,17 @@ def build_noise_detail4(tree, emission):
     tree.links.new(factor, emission.inputs["Color"])
 
 
+def build_noise_scale80(tree, emission):
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexNoise")
+    node.noise_dimensions = "3D"
+    node.inputs["Scale"].default_value = 80.0
+    node.inputs["Detail"].default_value = 2.0
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    factor = next(s for s in node.outputs if s.identifier == "Fac")
+    tree.links.new(factor, emission.inputs["Color"])
+
+
 def build_noise_distortion(tree, emission):
     coord = tree.nodes.new("ShaderNodeTexCoord")
     node = tree.nodes.new("ShaderNodeTexNoise")
@@ -1886,6 +1897,7 @@ BUILDERS = {
     "noise-z-probe": build_noise_z_probe,
     "noise-detail4": build_noise_detail4,
     "noise-detail6": build_noise_detail6,
+    "noise-scale80": build_noise_scale80,
     "noise-distortion": build_noise_distortion,
     "noise-distortion-color": build_noise_distortion_color,
     "vector-rotate-z": build_vector_rotate_z,
