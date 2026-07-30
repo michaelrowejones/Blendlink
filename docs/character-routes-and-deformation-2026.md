@@ -333,6 +333,58 @@ sim.
 
 ## 8. TSL readiness
 
+### 8a. Measured coverage against ellie, 2026-07-30
+
+Two independent measurements over the 49 materials on ellie's visible meshes, ~9,300 shader nodes
+in total, groups recursed.
+
+**Node-type census** — every `bl_idname` reachable from each material, diffed against the node set
+`tsl_ir.py` handles (46 types). The entire gap is **two node types**:
+
+| missing node | materials needing it |
+| --- | --- |
+| `ShaderNodeBump` | 35 |
+| `ShaderNodeVectorRotate` | 17 |
+
+12 materials are already fully covered; 16 need only Bump; 13 need both; **none needs
+`VectorRotate` alone**. So Bump alone takes coverage from 12/49 to 28/49, and both together reach
+49/49 at the node-type level.
+
+**Actual translation run** — `tsl_ir.emit_surface` invoked on all 49. 13 translate; 36 refuse by
+name; **zero unexpected errors**, which is itself worth recording: every failure is a deliberate,
+named refusal, not a crash. The 36 refusals:
+
+| refusal | count | what it really is |
+| --- | --- | --- |
+| `Image 2048x2048 exceeds the embedded-IR bound (128x128); the texture transport carries it` | 30 | a transport bound, not a semantic gap — the shader is expressible, the image just travels separately |
+| `Noise scale N exceeds the proven range (<= 20)` (N = 30, 100) | 2 | the known open noise-scale experiment |
+| `ShaderNodeVectorTransform has no proven TSL mapping` | 1 | `ellie.eyes_pupils` |
+| `surface node ShaderNodeAddShader has no surface-expression mapping` | 1 | `ellie.highlights` |
+| `ShaderNodeNormalMap has no proven TSL mapping` | 1 | `ellie.scrunchie` |
+| `Transparent BSDF with a non-white Color tints transmission; no cell yet` | 1 | `ellie.watch_glass` |
+
+**Neither number is the truth on its own, and it matters which way each is wrong.** `_refuse`
+raises on the *first* problem found, so the runtime list is a lower bound — 30 materials stop at
+the image bound and were never walked far enough to hit their Bump nodes, which is why Bump never
+appears as a refusal reason despite being in 35 materials. The census is an upper bound in the
+other direction: it sees node *types* and knows nothing about per-mode gaps like the noise-scale
+bound.
+
+Taking the union, the complete blocker list for 65% of a real production character is:
+
+1. the 128×128 embedded-IR image bound (30 materials) — transport, and the texture transport
+   already carries these, so this may not be a gap at all once the route is real;
+2. `ShaderNodeBump` (35) and `ShaderNodeVectorRotate` (17) — both plain math, both with
+   direct TSL forms;
+3. noise scale > 20 (2) — the experiment already on the books;
+4. four one-off features, one material each.
+
+That is a short, enumerable list, and it is the measured basis for treating TSL as the answer for
+the stylized population rather than an aspiration. It also identifies the highest-value single
+piece of work: **`ShaderNodeBump` is the most-needed missing translator in the codebase.**
+
+### 8b. Structural gaps
+
 Solid as a shipping material feature; not yet rails for a modifier IR. Four gaps to close in
 Phase 2:
 
