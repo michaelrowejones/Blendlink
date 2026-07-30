@@ -8,6 +8,7 @@
   "cells": {
     "constant-linear": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -19,6 +20,7 @@
     },
     "uv-gradient": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -30,6 +32,7 @@
     },
     "math-compare": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -41,6 +44,7 @@
     },
     "mapping-rotate": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -52,6 +56,7 @@
     },
     "colorramp-linear": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -63,6 +68,7 @@
     },
     "math-safe-divide": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -74,6 +80,7 @@
     },
     "math-modulo-sign": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -85,6 +92,7 @@
     },
     "math-power-negative-base": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -96,6 +104,7 @@
     },
     "math-trig": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -107,6 +116,7 @@
     },
     "colorramp-constant": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -118,6 +128,7 @@
     },
     "mapping-texture-mode": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -129,6 +140,7 @@
     },
     "noise-fractal-detail": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -140,6 +152,7 @@
     },
     "mix-modes": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -151,6 +164,7 @@
     },
     "mix-divide": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -162,6 +176,7 @@
     },
     "map-range-smoothstep": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -173,6 +188,7 @@
     },
     "map-range-smootherstep": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -184,6 +200,7 @@
     },
     "colorramp-bspline": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -195,6 +212,7 @@
     },
     "colorramp-cardinal": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -206,6 +224,7 @@
     },
     "noise-2d": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -217,6 +236,7 @@
     },
     "vertex-color": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -228,6 +248,7 @@
     },
     "group-passthrough": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -239,6 +260,7 @@
     },
     "map-range-linear": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -250,6 +272,7 @@
     },
     "mix-overlay": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -261,6 +284,7 @@
     },
     "math-pingpong": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -272,6 +296,7 @@
     },
     "clamp-node": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -283,6 +308,7 @@
     },
     "math-sqrt": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -294,6 +320,7 @@
     },
     "math-inverse-sqrt": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -305,6 +332,7 @@
     },
     "math-absolute": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -316,6 +344,7 @@
     },
     "math-exponent": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -327,6 +356,7 @@
     },
     "math-logarithm": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -338,6 +368,7 @@
     },
     "math-ceil": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -349,6 +380,7 @@
     },
     "math-fract": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -360,6 +392,7 @@
     },
     "math-trunc": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -371,6 +404,7 @@
     },
     "math-round": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -382,6 +416,7 @@
     },
     "math-snap": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -393,6 +428,7 @@
     },
     "math-wrap": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -404,6 +440,7 @@
     },
     "math-compare-band": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -415,6 +452,7 @@
     },
     "math-smooth-min": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -426,6 +464,7 @@
     },
     "math-smooth-max": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -437,6 +476,7 @@
     },
     "math-sign": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -448,6 +488,7 @@
     },
     "math-tangent": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -459,6 +500,7 @@
     },
     "math-arcsine": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -470,6 +512,7 @@
     },
     "math-arccosine": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -481,6 +524,7 @@
     },
     "math-arctangent": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -492,6 +536,7 @@
     },
     "math-arctan2": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -503,6 +548,7 @@
     },
     "math-sinh": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -514,6 +560,7 @@
     },
     "math-cosh": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -525,6 +572,7 @@
     },
     "math-tanh": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -536,6 +584,7 @@
     },
     "math-radians": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -547,6 +596,7 @@
     },
     "math-degrees": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -558,6 +608,7 @@
     },
     "math-floored-modulo": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -569,6 +620,7 @@
     },
     "mix-sub-screen-diff": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -580,6 +632,7 @@
     },
     "mix-darken-lighten-exclusion": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -591,6 +644,7 @@
     },
     "mix-dodge-burn-softlight": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -602,6 +656,7 @@
     },
     "mix-linear-light": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -613,6 +668,7 @@
     },
     "mix-hue-sat": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -624,6 +680,7 @@
     },
     "mix-value-color": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -635,6 +692,7 @@
     },
     "vecmath-arith": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -646,6 +704,7 @@
     },
     "vecmath-products": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -657,6 +716,7 @@
     },
     "vecmath-metrics": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -668,6 +728,7 @@
     },
     "vecmath-minmax-abs": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -679,6 +740,7 @@
     },
     "vecmath-rounding": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -690,6 +752,7 @@
     },
     "vecmath-modular": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -701,6 +764,7 @@
     },
     "vecmath-trig": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -712,6 +776,7 @@
     },
     "vecmath-muladd": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -723,6 +788,7 @@
     },
     "rgb-curve": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -734,6 +800,7 @@
     },
     "tex-checker": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -745,6 +812,7 @@
     },
     "tex-gradient": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -756,6 +824,7 @@
     },
     "tex-magic": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -767,6 +836,7 @@
     },
     "tex-wave": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -778,6 +848,7 @@
     },
     "color-utilities": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -789,6 +860,7 @@
     },
     "color-hsv": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -800,6 +872,7 @@
     },
     "hue-saturation": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -811,6 +884,7 @@
     },
     "hash-probe": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -822,6 +896,7 @@
     },
     "voronoi-rand0-probe": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -833,6 +908,7 @@
     },
     "texco-object": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -844,6 +920,7 @@
     },
     "texco-generated": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -855,6 +932,7 @@
     },
     "attribute-fac": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -866,6 +944,7 @@
     },
     "attribute-object": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -877,6 +956,7 @@
     },
     "white-noise": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -886,8 +966,35 @@
       },
       "failureClass": "hash family (Jenkins lookup3 port)"
     },
+    "white-noise-continuous-uv": {
+      "ok": true,
+      "claim": "approximate",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.3370769199334518,
+        "p99Abs": 0.9068438988178968,
+        "maxAbs": 0.9872168218716979
+      },
+      "distribution": {
+        "refMean": 0.489881569895374,
+        "tslMean": 0.5004256864381205,
+        "meanDelta": 0.010544116542746451,
+        "refStd": 0.291327171635941,
+        "tslStd": 0.2884216321845023,
+        "stdDeltaFraction": 0.009973458483541862,
+        "histogramL1": 0.07421875,
+        "radialSpectrumL1": 0.10317081010142574
+      },
+      "provenBy": [
+        "hash-probe",
+        "white-noise"
+      ],
+      "failureClass": "white noise over continuous coordinates (declared decorrelation)"
+    },
     "voronoi-f1": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -899,6 +1006,7 @@
     },
     "noise-z-probe": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -910,6 +1018,7 @@
     },
     "noise-detail4": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -921,6 +1030,7 @@
     },
     "noise-detail6": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -932,6 +1042,7 @@
     },
     "noise-distortion": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -943,6 +1054,7 @@
     },
     "noise-distortion-color": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -954,6 +1066,7 @@
     },
     "vector-rotate-z": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -965,6 +1078,7 @@
     },
     "vector-rotate-axis-angle": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -976,6 +1090,7 @@
     },
     "noise-scale16": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -987,6 +1102,7 @@
     },
     "tex-image-linear": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -998,6 +1114,7 @@
     },
     "tex-image-cubic": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1009,6 +1126,7 @@
     },
     "tex-image-cubic-extend": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1020,6 +1138,7 @@
     },
     "tex-image-closest-srgb": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1031,6 +1150,7 @@
     },
     "noise-scale20": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1042,6 +1162,7 @@
     },
     "noise-scale40": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1053,6 +1174,7 @@
     },
     "noise-scale80": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1064,6 +1186,7 @@
     },
     "voronoi-scale20": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1075,6 +1198,7 @@
     },
     "voronoi-scale40": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1086,6 +1210,7 @@
     },
     "tex-image-box": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1097,6 +1222,7 @@
     },
     "noise-color": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1108,6 +1234,7 @@
     },
     "noise-color-2d": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1119,6 +1246,7 @@
     },
     "voronoi-smooth-f1": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1130,6 +1258,7 @@
     },
     "tex-magic-fac": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1141,6 +1270,7 @@
     },
     "surface-mix-color": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1152,6 +1282,7 @@
     },
     "surface-mix-scalar": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1163,6 +1294,7 @@
     },
     "surface-transparent-alpha": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1174,6 +1306,7 @@
     },
     "surface-emission-radiance": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1185,6 +1318,7 @@
     },
     "surface-nested-mix": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1196,6 +1330,7 @@
     },
     "surface-diffuse-glossy": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1207,6 +1342,7 @@
     },
     "surface-coerced-color": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1218,6 +1354,7 @@
     },
     "surface-fresnel-mix": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1229,6 +1366,7 @@
     },
     "shader-to-rgb-flat": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1240,6 +1378,7 @@
     },
     "shader-to-rgb-tilted": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1251,6 +1390,7 @@
     },
     "shader-to-rgb-ramped": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1262,6 +1402,7 @@
     },
     "fresnel-dielectric": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1273,6 +1414,7 @@
     },
     "layer-weight": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1284,6 +1426,7 @@
     },
     "voronoi-f1-divergence": {
       "ok": true,
+      "claim": "diagnostic",
       "gated": false,
       "pass": null,
       "measured": {
@@ -1295,6 +1438,7 @@
     },
     "noise-mx-divergence": {
       "ok": true,
+      "claim": "exact",
       "gated": true,
       "pass": true,
       "measured": {
@@ -1305,6 +1449,37 @@
       "failureClass": "disagreeing noise implementations — measured NOT to apply to this pairing"
     }
   },
+  "claims": {
+    "exact": 117,
+    "approximate": 1,
+    "diagnostic": 1
+  },
+  "approximations": [
+    {
+      "id": "white-noise-continuous-uv",
+      "failureClass": "white noise over continuous coordinates (declared decorrelation)",
+      "pass": true,
+      "perTexel": {
+        "meanAbs": 0.3370769199334518,
+        "p99Abs": 0.9068438988178968,
+        "maxAbs": 0.9872168218716979
+      },
+      "distribution": {
+        "refMean": 0.489881569895374,
+        "tslMean": 0.5004256864381205,
+        "meanDelta": 0.010544116542746451,
+        "refStd": 0.291327171635941,
+        "tslStd": 0.2884216321845023,
+        "stdDeltaFraction": 0.009973458483541862,
+        "histogramL1": 0.07421875,
+        "radialSpectrumL1": 0.10317081010142574
+      },
+      "provenBy": [
+        "hash-probe",
+        "white-noise"
+      ]
+    }
+  ],
   "pageErrorCount": 1,
   "pageErrorSample": [
     "Failed to load resource: the server responded with a status of 404 (Not Found)"
@@ -1312,6 +1487,7 @@
   "limits": [
     "Cells drive the production IR pipeline (tsl_ir.py -> tslNodeRecipe.ts); only diagnostic cells without an IR route stay hand-written.",
     "One 64px tile per configuration; scene sampling covers UV-driven compiled channels only (the tile proxy provides UV space).",
-    "Scene coverage refusals are the compiler to-do list, tallied by named reason."
+    "Scene coverage refusals are the compiler to-do list, tallied by named reason.",
+    "claim:approximate cells are gated on DECLARED DIVERGENCE, not on exactness: a decorrelated cell is gated on distribution agreement (mean, std, histogram, radial spectrum) because per-texel agreement is impossible in principle, and its algorithm is proven separately by the cells named in provenBy. The word 'proven' belongs to claim:exact only."
   ]
 }

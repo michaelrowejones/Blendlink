@@ -1120,6 +1120,18 @@ def build_tex_image_linear(tree, emission):
     tree.links.new(node.outputs["Color"], emission.inputs["Color"])
 
 
+def build_white_noise_continuous_uv(tree, emission):
+    # Raw UV straight into White Noise -- no floor/ceil/snap. This is the
+    # configuration the corpus actually uses and the one that cannot agree
+    # per texel; the quantized `white-noise` cell gates the port itself.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    node = tree.nodes.new("ShaderNodeTexWhiteNoise")
+    node.noise_dimensions = "3D"
+    tree.links.new(coord.outputs["UV"], node.inputs["Vector"])
+    value = next(s for s in node.outputs if s.identifier == "Value")
+    tree.links.new(value, emission.inputs["Color"])
+
+
 def build_tex_image_cubic(tree, emission):
     # Cubic B-spline over a 4x4 neighbourhood. REPEAT extension on purpose:
     # the wrap has to hold for the ix-1 and ix+2 taps, which reach outside the
@@ -1935,6 +1947,7 @@ BUILDERS = {
     "voronoi-scale20": build_voronoi_scale20,
     "voronoi-scale40": build_voronoi_scale40,
     "tex-image-linear": build_tex_image_linear,
+    "white-noise-continuous-uv": build_white_noise_continuous_uv,
     "tex-image-cubic": build_tex_image_cubic,
     "tex-image-cubic-extend": build_tex_image_cubic_extend,
     "tex-image-closest-srgb": build_tex_image_closest_srgb,

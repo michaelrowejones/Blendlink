@@ -172,6 +172,54 @@ def _refuse(reason: str):
     raise TslIrRefusal(reason)
 
 
+# Declared approximations for the channel currently being emitted, drained by
+# emit_channel/emit_surface. The peer of _refuse: where _refuse means "this
+# cannot ship", _approximate means "this ships and here is exactly how far off
+# it is, and which cells prove the algorithm underneath". Every code must have
+# a matching claim:approximate cell in the differential harness -- a bare
+# string here with no cell behind it is the failure mode this whole tier exists
+# to prevent.
+_approximations: list = []
+
+_APPROXIMATION_CELLS = {
+    "tsl.white-noise-continuous-uv": {
+        "cell": "white-noise-continuous-uv",
+        "divergenceKind": "decorrelated",
+        "provenBy": ["hash-probe", "white-noise"],
+        "detail": (
+            "White Noise hashes the raw bits of an interpolated coordinate, "
+            "and the two rasterizers' interpolated UVs differ by ulps, so the "
+            "Jenkins avalanche decorrelates every texel. The PORT is exact -- "
+            "gated byte-for-byte by hash-probe on constant input and by "
+            "white-noise over quantized blocks. What is approximate is only "
+            "the sample position, so the field is statistically identical and "
+            "per-texel different, which is what Blender's own two engines also "
+            "produce for this node."
+        ),
+    },
+}
+
+
+def _approximate(code: str) -> None:
+    """Declare a named, cell-backed approximation for this channel."""
+    record = _APPROXIMATION_CELLS.get(code)
+    if record is None:
+        raise TslIrRefusal(
+            f"approximation code {code!r} has no declared cell; an "
+            "approximation without measured evidence is not shippable"
+        )
+    entry = {"code": code, **record}
+    if entry not in _approximations:
+        _approximations.append(entry)
+
+
+def drain_approximations() -> list:
+    """Take and clear the approximations declared since the last drain."""
+    global _approximations
+    drained, _approximations = _approximations, []
+    return drained
+
+
 # Production opt-in (Phase 4 Track C): over-budget images emit texture_ref
 # ops resolved against published image assets instead of refusing. The
 # differential harness never sets this — its cells keep the byte-exact
@@ -1333,11 +1381,12 @@ def emit_output(node, from_socket, stack=()):
             }
         )
         if _contains_uv(vector_expression) and not quantized_root:
-            _refuse(
-                "White Noise over continuous coordinates decorrelates "
-                "across engines (raw-bit hash of interpolated floats); "
-                "only quantized (floor/ceil/snap) inputs are comparable"
-            )
+            # Ships as a DECLARED approximation rather than refusing. The hash
+            # port itself is exact and separately gated; only the sample
+            # position diverges, so the two fields agree in distribution and
+            # differ per texel. Blender does not hold its own two engines to
+            # per-pixel agreement on this node either.
+            _approximate("tsl.white-noise-continuous-uv")
         return {
             "op": "tex_white_noise",
             "dimensions": 2 if dimensions == "2D" else 3,
