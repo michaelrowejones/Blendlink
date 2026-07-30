@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "model": "blendlink-tsl-ir-v1",
+  "output": {
+    "op": "separate",
+    "channel": "x",
+    "input": {
+      "op": "uv"
+    }
+  }
+}

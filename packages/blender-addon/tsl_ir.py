@@ -462,7 +462,20 @@ def _resolve_shader_link(socket, stack):
         node, from_socket = source
         idname = node.bl_idname
         if getattr(node, "mute", False):
-            _refuse(f"muted node {idname} has no proven passthrough mapping")
+            # Same internal_links bypass as emit_output, for shader
+            # sockets: a muted Mix Shader passes one branch through.
+            bypass = None
+            for internal in node.internal_links:
+                if internal.to_socket.identifier == from_socket.identifier:
+                    bypass = internal.from_socket
+                    break
+            if bypass is None:
+                _refuse(
+                    f"muted node {idname} has no internal bypass to "
+                    f"{from_socket.name!r}"
+                )
+            source = _socket_source(bypass)
+            continue
         if idname == "NodeReroute":
             source = _socket_source(node.inputs[0])
             continue
@@ -832,7 +845,22 @@ def emit_output(node, from_socket, stack=()):
     socket_name = from_socket.name
 
     if getattr(node, "mute", False):
-        _refuse(f"muted node {idname} has no proven passthrough mapping")
+        # A muted node bypasses per its OWN internal_links -- Blender's
+        # authoritative statement of which input each output passes
+        # through, the same data the renderer uses. Reading it beats any
+        # hand table: per-node bypass rules (first matching-type socket)
+        # live in Blender and can change there. The muted-math and
+        # muted-mix-color cells gate the mechanism against the bake.
+        for internal in node.internal_links:
+            if internal.to_socket.identifier == from_socket.identifier:
+                return emit_input(
+                    internal.from_socket, stack=stack,
+                    as_vector=from_socket.type in {"VECTOR", "RGBA"},
+                )
+        _refuse(
+            f"muted node {idname} has no internal bypass to "
+            f"{socket_name!r}"
+        )
 
     if idname == "NodeReroute":
         inner = _socket_source(node.inputs[0])

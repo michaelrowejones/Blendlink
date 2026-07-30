@@ -1198,6 +1198,43 @@ def build_noise_1d_color_distortion(tree, emission):
     tree.links.new(color, emission.inputs["Color"])
 
 
+def build_muted_math(tree, emission):
+    # A MUTED Math between a varying value and the output: Blender bypasses
+    # per the node's internal_links (input 0 passes through), so the field
+    # must equal the raw uv.x gradient, not the multiply.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coord.outputs["UV"], separate.inputs["Vector"])
+    muted = tree.nodes.new("ShaderNodeMath")
+    muted.operation = "MULTIPLY"
+    muted.inputs[1].default_value = 0.25
+    muted.mute = True
+    tree.links.new(separate.outputs["X"], muted.inputs[0])
+    tree.links.new(muted.outputs["Value"], emission.inputs["Color"])
+
+
+def build_muted_mix_color(tree, emission):
+    # A MUTED Mix (RGBA) with a varying A and constant B: the bypass passes
+    # A through, proving the mechanism on a second node shape whose
+    # internal_links map differently-typed sockets.
+    coord = tree.nodes.new("ShaderNodeTexCoord")
+    muted = tree.nodes.new("ShaderNodeMix")
+    muted.data_type = "RGBA"
+    muted.blend_type = "MIX"
+    muted.mute = True
+    factor = next(
+        s for s in muted.inputs
+        if s.identifier == "Factor_Float"
+    )
+    factor.default_value = 0.75
+    a_socket = next(s for s in muted.inputs if s.identifier == "A_Color")
+    b_socket = next(s for s in muted.inputs if s.identifier == "B_Color")
+    b_socket.default_value = (0.9, 0.1, 0.2, 1.0)
+    tree.links.new(coord.outputs["UV"], a_socket)
+    result = next(s for s in muted.outputs if s.identifier == "Result_Color")
+    tree.links.new(result, emission.inputs["Color"])
+
+
 def build_white_noise_1d(tree, emission):
     # Quantized W (floor of uv.x * 8): integer-valued bits, bit-identical
     # across engines, gating the 1-argument hash and the hash_float_to_vec3
@@ -2154,6 +2191,8 @@ BUILDERS = {
     "noise-1d-color-distortion": build_noise_1d_color_distortion,
     "noise-4d": build_noise_4d,
     "noise-4d-color-distortion": build_noise_4d_color_distortion,
+    "muted-math": build_muted_math,
+    "muted-mix-color": build_muted_mix_color,
     "white-noise-1d": build_white_noise_1d,
     "white-noise-4d": build_white_noise_4d,
     "noise-1d-scale1600": build_noise_1d_scale1600,

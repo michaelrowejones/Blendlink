@@ -1879,6 +1879,50 @@
         ]
       }
     },
+    "muted-math": {
+      "path": "muted-math.f32",
+      "pipeline": "ir",
+      "ir": "ir/muted-math.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007828124798834324,
+        0.007828124798834324,
+        0.007828124798834324
+      ],
+      "rgbMax": [
+        0.9922031164169312,
+        0.9922031164169312,
+        0.9922031164169312
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
+    "muted-mix-color": {
+      "path": "muted-mix-color.f32",
+      "pipeline": "ir",
+      "ir": "ir/muted-mix-color.json",
+      "shape": [
+        64,
+        64,
+        3
+      ],
+      "rgbMin": [
+        0.007828124798834324,
+        0.007843732833862305,
+        0.0
+      ],
+      "rgbMax": [
+        0.9922031164169312,
+        0.9922187328338623,
+        0.0
+      ],
+      "deviceClass": "gpu",
+      "backend": "optix"
+    },
     "white-noise": {
       "path": "white-noise.f32",
       "pipeline": "ir",

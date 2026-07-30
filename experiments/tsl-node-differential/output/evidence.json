@@ -1026,6 +1026,30 @@
       },
       "failureClass": "Object Info Random (per-object name hash)"
     },
+    "muted-math": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000015618839825037867,
+        "p99Abs": 0.00001563131809234619,
+        "maxAbs": 0.00001563131809234619
+      },
+      "failureClass": "muted-node bypass (internal_links, scalar)"
+    },
+    "muted-mix-color": {
+      "ok": true,
+      "claim": "exact",
+      "gated": true,
+      "pass": true,
+      "measured": {
+        "meanAbs": 0.000015617224562447518,
+        "p99Abs": 0.00003123283386230469,
+        "maxAbs": 0.00003123283386230469
+      },
+      "failureClass": "muted-node bypass (internal_links, RGBA)"
+    },
     "white-noise": {
       "ok": true,
       "claim": "exact",
@@ -1609,7 +1633,7 @@
     }
   },
   "claims": {
-    "exact": 125,
+    "exact": 127,
     "approximate": 4,
     "diagnostic": 1
   },
