@@ -6157,6 +6157,249 @@ def main():
     bpy.data.objects.remove(grouped_pack_a, do_unlink=True)
     bpy.data.objects.remove(grouped_pack_b, do_unlink=True)
 
+    # The outer rectangle allocation multiplies every receiver by ONE
+    # uniform scale; a receiver with many small charts inflates its local
+    # AABB with margin padding, drags that scale below 1, and every
+    # same-owner gutter in the atlas shrinks with it. The requested local
+    # margin must close the loop on the DELIVERED gutter. This fixture
+    # first proves the single-pass mechanism under-delivers (so the test
+    # visibly loses its teeth if packing behavior shifts), then proves the
+    # transactional wrapper's fixed-point loop repairs it.
+    def make_many_chart_receiver(name, count_side=16, quad_size=0.04):
+        vertices = []
+        faces = []
+        for row in range(count_side):
+            for column in range(count_side):
+                base = len(vertices)
+                x0 = column * 1.0
+                y0 = row * 1.0
+                vertices.extend([
+                    (x0, y0, 0), (x0 + quad_size, y0, 0),
+                    (x0 + quad_size, y0 + quad_size, 0),
+                    (x0, y0 + quad_size, 0),
+                ])
+                faces.append((base, base + 1, base + 2, base + 3))
+        mesh = bpy.data.meshes.new(name + " Mesh")
+        mesh.from_pydata(vertices, [], faces)
+        mesh.update()
+        uv = mesh.uv_layers.new(name=bakelib.ATLAS_UV)
+        for polygon in mesh.polygons:
+            for loop_index, coordinate in zip(
+                    polygon.loop_indices,
+                    ((0.0, 0.0), (0.1, 0.0), (0.1, 0.1), (0.0, 0.1))):
+                uv.data[loop_index].uv = coordinate
+        mesh.uv_layers.active = uv
+        obj = bpy.data.objects.new(name, mesh)
+        bpy.context.scene.collection.objects.link(obj)
+        return obj
+
+    # Measured tuning (Blender 5.2): one 256-chart receiver whose local
+    # AABB is margin-padded past the atlas budget plus six plain receivers
+    # consuming outer gutters put the uniform allocation scale below 1 --
+    # the single pass delivers 18.64px of the 20px contract. Deeper
+    # collapse (e.g. 100 charts at size 256) SATURATES: no local charge
+    # can deliver the contract at that resolution, which is what the
+    # resolution ladder above this packer exists for.
+    scale_collapse_many = make_many_chart_receiver(
+        "__Blendlink Scale Collapse Many")
+    scale_collapse_plains = [
+        make_grouped_pack_receiver(f"__Blendlink Scale Collapse Plain {index}")
+        for index in range(6)
+    ]
+    scale_collapse_objects = [scale_collapse_many] + scale_collapse_plains
+    scale_collapse_snapshot = {
+        obj.name: [
+            tuple(loop.uv)
+            for loop in obj.data.uv_layers[bakelib.ATLAS_UV].data
+        ]
+        for obj in scale_collapse_objects
+    }
+    hierarchical = bakelib._pack_receiver_groups_mutating(
+        scale_collapse_objects, 16, 512, guard_px=4,
+        local_margin_scale=1.0,
+    )
+    expect(hierarchical,
+           "scale-collapse fixture fell off the hierarchical path")
+    single_pass_shortfall = bakelib._receiver_intra_gutter_shortfall(
+        scale_collapse_objects, 16, 512, guard_px=4,
+    )
+    expect(
+        single_pass_shortfall is not None,
+        "the scale-collapse fixture no longer exposes the single-pass "
+        "gutter shortfall; re-tune it (more/smaller charts) so the "
+        "fixed-point loop stays observable",
+    )
+    for obj in scale_collapse_objects:
+        layer = obj.data.uv_layers[bakelib.ATLAS_UV]
+        for loop, coordinate in zip(
+                layer.data, scale_collapse_snapshot[obj.name]):
+            loop.uv = coordinate
+    bakelib._pack_receiver_groups(
+        scale_collapse_objects, 16, 512, guard_px=4,
+    )
+    expect(
+        bakelib._receiver_intra_gutter_shortfall(
+            scale_collapse_objects, 16, 512, guard_px=4,
+        ) is None,
+        "the fixed-point margin loop did not deliver the same-owner "
+        "island gutter under a collapsed outer scale",
+    )
+    bakelib.validate_receiver_group_spacing(
+        scale_collapse_objects, 16, 512, guard_px=4,
+    )
+    for scale_collapse_obj in scale_collapse_objects:
+        bpy.data.objects.remove(scale_collapse_obj, do_unlink=True)
+
+    # The receiver gutter proof must measure the units pack_islands moves
+    # RIGIDLY: a seam splits the topological island model, but a shared
+    # mesh edge with bit-equal UVs on both sides is one packer island
+    # (equals_v2v2, no epsilon), and the packer cannot open a gap inside
+    # it -- demanding one is unsatisfiable at every resolution (the
+    # 232dab8 class). Two quads, continuous UVs, seam on the shared edge.
+    welded_mesh = bpy.data.meshes.new("__Blendlink Welded Proof Mesh")
+    welded_mesh.from_pydata(
+        [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (2, 0, 0), (2, 1, 0)],
+        [], [(0, 1, 2, 3), (1, 4, 5, 2)],
+    )
+    welded_mesh.update()
+    welded_uv = welded_mesh.uv_layers.new(name=bakelib.ATLAS_UV)
+    welded_coordinates = (
+        ((0.1, 0.1), (0.4, 0.1), (0.4, 0.4), (0.1, 0.4)),
+        ((0.4, 0.1), (0.7, 0.1), (0.7, 0.4), (0.4, 0.4)),
+    )
+    for polygon, quad in zip(welded_mesh.polygons, welded_coordinates):
+        for loop_index, coordinate in zip(polygon.loop_indices, quad):
+            welded_uv.data[loop_index].uv = coordinate
+    welded_mesh.uv_layers.active = welded_uv
+    for edge in welded_mesh.edges:
+        if set(edge.vertices) == {1, 2}:
+            edge.use_seam = True
+    welded_obj = bpy.data.objects.new(
+        "__Blendlink Welded Proof", welded_mesh)
+    bpy.context.scene.collection.objects.link(welded_obj)
+    welded_roots, _welded_numbers = bakelib._uv_polygon_islands(
+        welded_mesh, welded_uv)
+    expect(
+        len(set(welded_roots)) == 2,
+        "welded-proof fixture lost its seam split; the topological model "
+        f"found {len(set(welded_roots))} island(s), expected 2",
+    )
+    welded_bounds = bakelib._receiver_island_bounds(welded_obj)
+    expect(
+        len(welded_bounds) == 1,
+        "the receiver gutter proof split a bit-welded packer island: "
+        f"{welded_bounds} -- it would demand an unsatisfiable internal "
+        "gutter",
+    )
+    bpy.data.objects.remove(welded_obj, do_unlink=True)
+
+    # Island-granular repair (the 46ffe8b regression class): an object with
+    # healthy authored islands and ONE degenerate island must keep the
+    # healthy islands bit-for-bit and reproject only the degenerate one --
+    # the whole-layer Smart Project once shredded 11,689 faces into
+    # per-face charts over a 3,700-triangle defect and collapsed the
+    # receiver allocation scale atlas-wide.
+    scoped_mesh = bpy.data.meshes.new("__Blendlink Scoped Repair Mesh")
+    scoped_mesh.from_pydata(
+        [
+            (0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+            (2, 0, 0), (3, 0, 0), (3, 1, 0), (2, 1, 0),
+            (4, 0, 0), (5, 0, 0), (5, 1, 0), (4, 1, 0),
+        ],
+        [], [(0, 1, 2, 3), (4, 5, 6, 7), (8, 9, 10, 11)],
+    )
+    scoped_mesh.update()
+    scoped_uv = scoped_mesh.uv_layers.new(name=bakelib.ATLAS_UV)
+    scoped_quads = (
+        ((0.05, 0.05), (0.4, 0.05), (0.4, 0.4), (0.05, 0.4)),
+        ((0.55, 0.05), (0.9, 0.05), (0.9, 0.4), (0.55, 0.4)),
+        ((0.5, 0.7), (0.5, 0.7), (0.5, 0.7), (0.5, 0.7)),
+    )
+    for polygon, quad in zip(scoped_mesh.polygons, scoped_quads):
+        for loop_index, coordinate in zip(polygon.loop_indices, quad):
+            scoped_uv.data[loop_index].uv = coordinate
+    scoped_mesh.uv_layers.active = scoped_uv
+    scoped_obj = bpy.data.objects.new(
+        "__Blendlink Scoped Repair", scoped_mesh)
+    bpy.context.scene.collection.objects.link(scoped_obj)
+    kept_loops = list(scoped_mesh.polygons[0].loop_indices) + list(
+        scoped_mesh.polygons[1].loop_indices)
+    # Read through a FRESH layer wrapper on every comparison: the scoped
+    # UV operators reallocate CustomData storage, and a wrapper captured
+    # before Edit Mode silently reads freed memory afterwards (measured:
+    # float32 denormals where coordinates should be).
+    kept_before = [
+        tuple(scoped_mesh.uv_layers.get(bakelib.ATLAS_UV).data[index].uv)
+        for index in kept_loops
+    ]
+    scoped_messages = []
+    scoped_reports = bakelib.repair_evaluated_atlas_uvs(
+        [scoped_obj], log=scoped_messages.append,
+    )
+    expect(
+        len(scoped_reports) == 1
+        and scoped_reports[0]["strategy"].startswith(
+            "smart-project-degenerate-islands")
+        and scoped_reports[0]["repairedIslands"] == 1
+        and scoped_reports[0]["totalIslands"] == 3,
+        f"scoped repair report is wrong: {scoped_reports}",
+    )
+    kept_after = [
+        tuple(scoped_mesh.uv_layers.get(bakelib.ATLAS_UV).data[index].uv)
+        for index in kept_loops
+    ]
+    expect(
+        kept_after == kept_before,
+        "scoped repair changed healthy authored islands "
+        f"({kept_before} -> {kept_after})",
+    )
+    expect(
+        not bakelib._nonzero_geometry_zero_uv_triangles(
+            scoped_obj, bakelib.ATLAS_UV,
+        ),
+        "scoped repair left collapsed atlas triangles",
+    )
+    bpy.data.objects.remove(scoped_obj, do_unlink=True)
+
+    # Seed selection: a degenerate first UV layer must not out-rank a
+    # measurably valid later layer as the atlas seed.
+    seeded_mesh = bpy.data.meshes.new("__Blendlink Seed Mesh")
+    seeded_mesh.from_pydata(
+        [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)],
+        [], [(0, 1, 2, 3)],
+    )
+    seeded_mesh.update()
+    seeded_bad = seeded_mesh.uv_layers.new(name="Collapsed")
+    for loop in seeded_bad.data:
+        loop.uv = (0.5, 0.5)
+    seeded_good = seeded_mesh.uv_layers.new(name="Authored Detail")
+    for loop_index, coordinate in zip(
+            seeded_mesh.polygons[0].loop_indices,
+            ((0.1, 0.1), (0.9, 0.1), (0.9, 0.9), (0.1, 0.9))):
+        seeded_good.data[loop_index].uv = coordinate
+    seeded_obj = bpy.data.objects.new("__Blendlink Seeded", seeded_mesh)
+    bpy.context.scene.collection.objects.link(seeded_obj)
+    seed_messages = []
+    bakelib.stage_atlas_layers([seeded_obj], log=seed_messages.append)
+    staged_layer = seeded_mesh.uv_layers.get(bakelib.ATLAS_UV)
+    staged_values = [tuple(loop.uv) for loop in staged_layer.data]
+    # Fresh wrapper: uv_layers.new() during staging reallocates storage.
+    good_values = [
+        tuple(loop.uv)
+        for loop in seeded_mesh.uv_layers.get("Authored Detail").data
+    ]
+    expect(
+        staged_values == good_values,
+        "atlas staging seeded from the degenerate first layer instead of "
+        f"the valid one: {staged_values}",
+    )
+    expect(
+        any("seeding the atlas layer" in message
+            and "Authored Detail" in message for message in seed_messages),
+        f"seed selection did not announce itself: {seed_messages}",
+    )
+    bpy.data.objects.remove(seeded_obj, do_unlink=True)
+
     # Needle and Blender keep separate selected receivers in one shared image.
     # This is not merely a performance choice: joining collapses Object
     # Attribute/Object Info/Generated-coordinate context to one object. Prove

@@ -2333,17 +2333,45 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
             # know cannot bake. Plan callers still receive the exact authored
             # coordinates plus actionable errors; final callers block below.
             continue
-        post_pack_repairs, final_held = bakelib.pack_with_evaluated_uv_repair(
-            objs,
-            ATLAS_UV,
-            lambda obj: weights[obj.name]["auto"] * weights[obj.name]["artist"],
-            margin * supersample,
-            entry["size"] * supersample,
-            held=held,
-            pin=True,
-            delivery_size=entry["size"],
-            guard_px=4 * supersample,
-        )
+        # Bounded resolution ladder, mirroring prepare_material_texture_uv's:
+        # gutters are fixed pixel amounts, so a chart-dense atlas (per-face
+        # fold rescues, many-piece meshes) can saturate the packer's margin
+        # loop at the recipe size while the same layout proves cleanly one
+        # power of two up. The recipe size is a QUALITY floor, not a
+        # correctness cap; growing past it spends texels but never bleeds.
+        atlas_sizes = [entry["size"]]
+        while atlas_sizes[-1] * 2 <= 4096:
+            atlas_sizes.append(atlas_sizes[-1] * 2)
+        for size_index, atlas_size in enumerate(atlas_sizes):
+            try:
+                post_pack_repairs, final_held = bakelib.pack_with_evaluated_uv_repair(
+                    objs,
+                    ATLAS_UV,
+                    lambda obj: weights[obj.name]["auto"] * weights[obj.name]["artist"],
+                    margin * supersample,
+                    atlas_size * supersample,
+                    held=held,
+                    pin=True,
+                    delivery_size=atlas_size,
+                    guard_px=4 * supersample,
+                )
+            except bakelib.ReceiverGutterProofError as error:
+                if size_index + 1 >= len(atlas_sizes):
+                    raise
+                print(
+                    f"blendlink: atlas {name} cannot prove its bake gutter "
+                    f"contract at {atlas_size}px ({error}); retrying the "
+                    f"bounded {atlas_sizes[size_index + 1]}px candidate"
+                )
+                continue
+            if atlas_size != entry["size"]:
+                layout["_warnings"].append(
+                    f"{name}: island-dense receivers needed more texels than "
+                    f"the recipe's {entry['size']}px to prove the fixed-pixel "
+                    f"bake gutter contract; the atlas grew to {atlas_size}px"
+                )
+                entry["size"] = atlas_size
+            break
         layout["_held"].update(final_held)
         for repair in post_pack_repairs:
             if repair["strategy"] == "sampleable-regular-polygon-rescue":
@@ -2355,6 +2383,20 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
                     + (
                         " with one bounded adaptive enlargement"
                         if repair.get("adaptiveRepack") else ""
+                    )
+                )
+            elif repair["strategy"].startswith(
+                    "smart-project-degenerate-islands"):
+                action = (
+                    f"Smart Projected {repair['repairedIslands']} degenerate/"
+                    f"folded island(s) of {repair['totalIslands']} on the "
+                    "fully unpinned derived atlas layer (authored islands "
+                    "kept bit-for-bit) and repacked the complete atlas"
+                    + (
+                        f", locally projecting "
+                        f"{repair['rescuePolygonCount']} tiny polygon(s) "
+                        "still collapsed by Blender"
+                        if repair.get("rescuePolygonCount") else ""
                     )
                 )
             elif repair.get("rescuePolygonCount"):

@@ -3060,7 +3060,10 @@ def stage_atlas_layers(objs, uv_name: str = ATLAS_UV,
     for obj in objs:
         mesh = obj.data
         authored = mesh.uv_layers.get(authored_name)
-        source = authored if authored is not None else mesh.uv_layers[0]
+        source = (
+            authored if authored is not None
+            else _atlas_seed_layer(obj, log)
+        )
         values = [loop.uv.copy() for loop in source.data]
         pins = [loop.pin_uv for loop in source.data] if authored is not None else None
         previous = mesh.uv_layers.get(uv_name)
@@ -3086,6 +3089,39 @@ def stage_atlas_layers(objs, uv_name: str = ATLAS_UV,
     return authored_names
 
 
+def _atlas_seed_layer(obj, log):
+    """The measurably best seed for the atlas workspace layer.
+
+    Blindly seeding from ``uv_layers[0]`` once handed the repair pipeline
+    a layer with 19,818 unbakeable triangles while a nearly valid layer
+    sat beside it (cube-diorama's Bracken: UVMap vs Leaf/Stem at 3,700) --
+    the degenerate seed cascaded into a whole-layer Smart Project, a
+    per-face fold rescue, and an atlas-wide packing scale collapse. Pick
+    the layer with the fewest non-zero-surface triangles that have
+    zero-area UVs; ties keep authoring order.
+    """
+    mesh = obj.data
+    layers = list(mesh.uv_layers)
+    if len(layers) <= 1:
+        return layers[0]
+    best = None
+    for index, layer in enumerate(layers):
+        count = len(_nonzero_geometry_zero_uv_triangles(obj, layer.name))
+        if best is None or count < best[0]:
+            best = (count, index, layer)
+        if count == 0 and index == 0:
+            break
+    count, index, layer = best
+    if index != 0:
+        log(
+            f"blendlink: seeding the atlas layer for {obj.name} from UV "
+            f"layer {layer.name!r} ({count} unbakeable triangle(s); the "
+            f"first layer {layers[0].name!r} has "
+            f"{len(_nonzero_geometry_zero_uv_triangles(obj, layers[0].name))})"
+        )
+    return layer
+
+
 def _smart_project_private_uv_objects(objects, uv_name: str) -> None:
     """Run Blender's Smart Project on validated disposable/private objects."""
     for obj in objects:
@@ -3106,6 +3142,97 @@ def _smart_project_private_uv_objects(objects, uv_name: str) -> None:
     finally:
         if bpy.context.mode != "OBJECT":
             bpy.ops.object.mode_set(mode="OBJECT")
+
+
+def _enter_edit_selecting_faces(mesh, polygon_indices) -> None:
+    """Enter Edit Mode with exactly the given faces selected.
+
+    Object-mode element flags are unreliable here: Blender re-derives the
+    selection on Edit-Mode entry through select-mode flushing, and a stale
+    all-selected vertex state silently widens the scoped operators back to
+    the whole mesh (measured: the scoped Smart Project reprojected every
+    island). Selecting through bmesh in FACE mode makes the scope
+    explicit, and vertex-sharing between kept and repaired islands cannot
+    bleed the selection."""
+    import bmesh
+
+    wanted = set(polygon_indices)
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_mode(type="FACE")
+    if not bpy.context.tool_settings.use_uv_select_sync:
+        # Stale per-loop UV selection flags survive on faces the UV editor
+        # cannot currently see, and the UV operators' pack phase moves
+        # every UV-selected island (measured: kept islands repacked while
+        # the projection itself stayed scoped). Clear them all while every
+        # face is visible, then scope.
+        bpy.ops.mesh.select_all(action="SELECT")
+        bpy.ops.uv.select_all(action="DESELECT")
+    bpy.ops.mesh.select_all(action="DESELECT")
+    bm = bmesh.from_edit_mesh(mesh)
+    bm.faces.ensure_lookup_table()
+    for face in bm.faces:
+        face.select_set(face.index in wanted)
+    bm.select_flush_mode()
+    bmesh.update_edit_mesh(mesh)
+
+
+def _smart_project_private_uv_faces(
+        obj, uv_name: str, polygon_indices) -> None:
+    """Smart Project ONLY the given faces of a private/disposable object.
+
+    The unselected islands keep their coordinates bit-for-bit; the UV
+    select-all inside Edit Mode only reaches the selected faces' UVs in
+    either sync mode. Projected islands may land over kept ones -- the
+    ordinary pack separates islands, exactly as after a margin-0
+    whole-object projection."""
+    mesh = obj.data
+    mesh.uv_layers.active = mesh.uv_layers[uv_name]
+    select_only([obj])
+    previous_select_mode = tuple(bpy.context.tool_settings.mesh_select_mode)
+    _enter_edit_selecting_faces(mesh, polygon_indices)
+    try:
+        # With UV sync ON, uv.select_all(SELECT) re-selects the whole
+        # MESH (measured: it silently widened this scoped projection back
+        # to every island). Sync mode needs no UV selection at all -- the
+        # face selection is the operand; only sync-off needs the visible
+        # (selected faces') UVs selected.
+        if not bpy.context.tool_settings.use_uv_select_sync:
+            bpy.ops.uv.select_all(action="SELECT")
+        bpy.ops.uv.smart_project(
+            angle_limit=math.radians(66.0),
+            island_margin=0.0,
+            # Blender implements this as independent U/V scaling. Keeping it
+            # false is essential when world-linear geometry is intentionally
+            # projected to preserve directional texel density.
+            scale_to_bounds=False,
+        )
+    finally:
+        if bpy.context.mode != "OBJECT":
+            bpy.ops.object.mode_set(mode="OBJECT")
+        bpy.context.tool_settings.mesh_select_mode = previous_select_mode
+
+
+def _lightmap_pack_private_uv_faces(
+        obj, uv_name: str, polygon_indices) -> None:
+    """Per-face lightmap charts for ONLY the given faces (rescue-scoped)."""
+    mesh = obj.data
+    mesh.uv_layers.active = mesh.uv_layers[uv_name]
+    select_only([obj])
+    previous_select_mode = tuple(bpy.context.tool_settings.mesh_select_mode)
+    _enter_edit_selecting_faces(mesh, polygon_indices)
+    try:
+        # Same sync-mode hazard as the scoped Smart Project above.
+        if not bpy.context.tool_settings.use_uv_select_sync:
+            bpy.ops.uv.select_all(action="SELECT")
+        bpy.ops.uv.lightmap_pack(
+            PREF_CONTEXT="SEL_FACES",
+            PREF_PACK_IN_ONE=True,
+            PREF_MARGIN_DIV=0.2,
+        )
+    finally:
+        if bpy.context.mode != "OBJECT":
+            bpy.ops.object.mode_set(mode="OBJECT")
+        bpy.context.tool_settings.mesh_select_mode = previous_select_mode
 
 
 def _lightmap_pack_private_uv_object(obj, uv_name: str) -> None:
@@ -3573,9 +3700,11 @@ def _uv_welded_island_pairs(mesh, layer, roots) -> dict:
     its gutter.
 
     Returns island root -> welded component root. Consumed ONLY by the
-    ``insufficient-gutter`` comparison in :func:`pinned_uv_layout_issues`:
-    the packer cannot open a gap inside a unit it moves rigidly, so
-    demanding one is unsatisfiable at every resolution. Overlap,
+    gutter proofs -- the ``insufficient-gutter`` comparison in
+    :func:`pinned_uv_layout_issues` and the same-owner island bounds in
+    :func:`_receiver_island_bounds`: the packer cannot open a gap inside a
+    unit it moves rigidly, so demanding one is unsatisfiable at every
+    resolution. Overlap,
     self-overlap, bounds and degeneracy keep consuming
     :func:`_uv_polygon_islands` unchanged -- that separation is why this is
     a second model and not an edit to the first.
@@ -4125,6 +4254,89 @@ def _minimum_rescued_delivery_texel_centers(
     return min(counts, default=0)
 
 
+def _scoped_atlas_island_repair(obj, uv_name: str, zero_triangles):
+    """Repair only the islands that are degenerate or folded.
+
+    Returns None when every island needs repair (the whole-layer path is
+    then honest) -- otherwise Smart Projects just the repair set, keeping
+    every other island's coordinates bit-for-bit, and rescues a
+    still-folded projection with per-face lightmap charts scoped to the
+    same faces. Measured motivation (cube-diorama Bracken): the
+    whole-object rescue shredded 11,689 faces into per-face charts when
+    only the degenerate subset needed new coordinates, collapsing the
+    receiver allocation scale atlas-wide.
+    """
+    mesh = obj.data
+    layer = mesh.uv_layers.get(uv_name)
+    mesh.calc_loop_triangles()
+    roots, display = _uv_polygon_islands(mesh, layer)
+    polygon_of_triangle = {
+        triangle.index: triangle.polygon_index
+        for triangle in mesh.loop_triangles
+    }
+    repair_roots = {
+        roots[polygon_of_triangle[index]]
+        for index in zero_triangles
+        if index in polygon_of_triangle
+    }
+    mask = {obj.name: [True for _loop in layer.data]}
+    root_by_display = {number: root for root, number in display.items()}
+    for issue in pinned_uv_layout_issues(
+            [obj], uv_name, mask, minimum_gutter=0.0):
+        # Folds and collapsed triangles need new coordinates; plain
+        # inter-island overlap and out-of-bounds are the pack's job.
+        if str(issue.get("kind")) not in {"self-overlap", "degenerate"}:
+            continue
+        number = issue.get("island")
+        if number in root_by_display:
+            repair_roots.add(root_by_display[number])
+    if not repair_roots or repair_roots >= set(roots):
+        return None
+    face_indices = [
+        polygon.index for polygon in mesh.polygons
+        if roots[polygon.index] in repair_roots
+    ]
+    _smart_project_private_uv_faces(obj, uv_name, face_indices)
+    lightmap_rescued = 0
+    folds = _projection_overlap_issues(obj, uv_name)
+    if folds:
+        # Kept islands were fold-free by construction (folded islands
+        # joined the repair set), so any fold here is inside the projected
+        # subset -- and the per-face rescue takes ONLY the still-folded
+        # islands' faces, not the whole subset. (Measured on Bracken: the
+        # projection heals most of the 3,053-face subset; per-face
+        # charting all of it re-created the chart explosion this function
+        # exists to avoid, one level down.)
+        fold_roots, fold_display = _uv_polygon_islands(
+            mesh, mesh.uv_layers.get(uv_name))
+        fold_root_by_display = {
+            number: root for root, number in fold_display.items()
+        }
+        folded = {
+            fold_root_by_display[issue.get("island")]
+            for issue in folds
+            if issue.get("island") in fold_root_by_display
+        }
+        folded_faces = [
+            polygon.index for polygon in mesh.polygons
+            if fold_roots[polygon.index] in folded
+        ]
+        _lightmap_pack_private_uv_faces(obj, uv_name, folded_faces)
+        remaining = _projection_overlap_issues(obj, uv_name)
+        if remaining:
+            raise RuntimeError(
+                f"{obj.name}: scoped per-face lightmap rescue still "
+                "overlaps: " + _format_private_uv_issues(remaining)
+            )
+        lightmap_rescued = len(folded_faces)
+    return {
+        "repairedIslands": len(repair_roots),
+        "totalIslands": len(set(roots)),
+        "faceCount": len(face_indices),
+        "lightmapRescued": lightmap_rescued,
+    }
+
+
 def repair_evaluated_atlas_uvs(
         objs, uv_name: str = ATLAS_UV, log=print, *,
         world_linear: bool = False) -> list[dict]:
@@ -4175,17 +4387,23 @@ def repair_evaluated_atlas_uvs(
 
     reports = []
     for obj, layer, triangles in affected:
-        # The fold rescue inside this call can replace the whole layout
-        # with per-face lightmap charts. That is a large, visible quality
-        # change, so it reaches the caller's log and the report strategy
-        # below rather than being swallowed.
-        projection = smart_project_private_uvs(
-            [obj],
-            uv_name=uv_name,
-            log=log,
-            world_linear=world_linear,
-        )
-        lightmap_rescued = bool(projection.get("rescuedNonInjective"))
+        scoped = None
+        if not world_linear:
+            scoped = _scoped_atlas_island_repair(obj, uv_name, triangles)
+        if scoped is not None:
+            lightmap_rescued = scoped["lightmapRescued"]
+        else:
+            # The fold rescue inside this call can replace the whole layout
+            # with per-face lightmap charts. That is a large, visible quality
+            # change, so it reaches the caller's log and the report strategy
+            # below rather than being swallowed.
+            projection = smart_project_private_uvs(
+                [obj],
+                uv_name=uv_name,
+                log=log,
+                world_linear=world_linear,
+            )
+            lightmap_rescued = bool(projection.get("rescuedNonInjective"))
 
         remaining = _nonzero_geometry_zero_uv_triangles(obj, uv_name)
         rescued_polygons = []
@@ -4207,24 +4425,48 @@ def repair_evaluated_atlas_uvs(
             "object": obj.name,
             "triangleCount": len(triangles),
             "strategy": (
-                "smart-project-whole-unpinned-object"
+                (
+                    "smart-project-degenerate-islands"
+                    if scoped is not None
+                    else "smart-project-whole-unpinned-object"
+                )
                 + ("+planar-polygon-rescue" if rescued_polygons else "")
                 + ("+lightmap-rescue" if lightmap_rescued else "")
             ),
         }
+        if scoped is not None:
+            report["repairedIslands"] = scoped["repairedIslands"]
+            report["totalIslands"] = scoped["totalIslands"]
         if rescued_polygons:
             report["rescuePolygonCount"] = len(rescued_polygons)
         reports.append(report)
-        log(
-            f"blendlink: repaired {len(triangles)} evaluated triangle(s) with "
-            f"zero-area atlas UVs on {obj.name} by "
-            + (
+        if scoped is not None:
+            projected_how = (
+                f"Smart Projecting {scoped['repairedIslands']} degenerate/"
+                f"folded island(s) of {scoped['totalIslands']} "
+                f"({scoped['faceCount']} face(s)) on the fully unpinned "
+                f"{uv_name} layer"
+                + (
+                    ", then replacing the still-folded island(s) with "
+                    f"per-face lightmap charts ({scoped['lightmapRescued']} "
+                    "face(s))"
+                    if lightmap_rescued else ""
+                )
+            )
+        elif lightmap_rescued:
+            projected_how = (
                 "replacing the fully unpinned "
                 f"{uv_name} layer with per-face lightmap charts (the Smart "
                 "Project still self-overlapped)"
-                if lightmap_rescued
-                else f"Smart Projecting the whole fully unpinned {uv_name} layer"
             )
+        else:
+            projected_how = (
+                f"Smart Projecting the whole fully unpinned {uv_name} layer"
+            )
+        log(
+            f"blendlink: repaired {len(triangles)} evaluated triangle(s) with "
+            f"zero-area atlas UVs on {obj.name} by "
+            + projected_how
             + (
                 f" and locally projecting {len(rescued_polygons)} tiny "
                 "polygon(s) that remained collapsed"
@@ -6057,7 +6299,8 @@ def allocate_receiver_rectangles(
 
 
 def _pack_receiver_groups_mutating(
-        objs, margin_px: int, size: int, *, guard_px: int = 4) -> None:
+        objs, margin_px: int, size: int, *, guard_px: int = 4,
+        local_margin_scale: float = 1.0) -> bool:
     """Pack local charts, then globally pack one rectangle per receiver.
 
     Needle 1.4.2 uses the same two-level ownership shape. The large native
@@ -6075,7 +6318,7 @@ def _pack_receiver_groups_mutating(
     """
     objects = [obj for obj in objs if len(obj.data.polygons) > 0]
     if not objects:
-        return
+        return False
     if size <= 0:
         raise ValueError(f"receiver pack size must be positive: {size}")
 
@@ -6096,7 +6339,7 @@ def _pack_receiver_groups_mutating(
                 ) / size,
                 rotate=True,
             )
-            return
+            return False
         target_areas[obj.as_pointer()] = area
 
     total_area = sum(target_areas.values())
@@ -6114,7 +6357,12 @@ def _pack_receiver_groups_mutating(
     inner_guard = float(guard_px)
     for obj in sorted(objects, key=lambda item: item.name):
         expected_area = target_areas[obj.as_pointer()] * normalization * normalization
-        local_margin = (float(margin_px) + inner_guard) / float(size)
+        # The caller's fixed-point loop scales this request until the
+        # DELIVERED gutter (this local charge times the outer allocation's
+        # uniform scale) meets the final-space contract.
+        local_margin = (
+            (float(margin_px) + inner_guard) / float(size)
+        ) * float(local_margin_scale)
         select_only([obj])
         _pack_selected_uv_islands(
             margin=local_margin, rotate=True, scale=False,
@@ -6175,6 +6423,44 @@ def _pack_receiver_groups_mutating(
                 loop.uv.y - source_bounds[1]
             ) * scale_v
     select_only(objects)
+    return True
+
+
+# The fixed-point margin loop saturates in the margin-dominated regime
+# (raising the local charge inflates the local AABBs, which lowers the
+# uniform outer scale) -- bound the passes and let the proof refuse.
+_RECEIVER_LOCAL_MARGIN_PASSES = 6
+
+
+def _receiver_intra_gutter_shortfall(
+        objs, margin_px: int, size: int, *, guard_px: int = 4):
+    """Worst delivered same-owner island gutter, if under contract.
+
+    Returns ``(delivered, required)`` in UV fraction units for the worst
+    same-owner packer-island pair across all receivers, or ``None`` when
+    every pair honors ``(margin + guard) / size``. The cross-receiver and
+    edge gutters are enforced exactly by ``allocate_receiver_rectangles``
+    in final space and need no feedback.
+    """
+    required = (float(margin_px) + float(guard_px)) / float(size)
+    epsilon = 2e-6
+    worst = None
+    for obj in objs:
+        islands = _receiver_island_bounds(obj)
+        for index, (_left_number, left) in enumerate(islands):
+            for _right_number, right in islands[index + 1:]:
+                distance = _uv_bounds_tuple_distance(left, right)
+                if distance + epsilon < required and (
+                        worst is None or distance < worst):
+                    worst = distance
+    if worst is None:
+        return None
+    return worst, required
+
+
+class _ReceiverUvRestoreError(RuntimeError):
+    """The between-pass UV snapshot restore failed; packing state is the
+    diagnosis, not the pack itself -- surfaced unwrapped."""
 
 
 def _pack_receiver_groups(
@@ -6189,30 +6475,99 @@ def _pack_receiver_groups(
         snapshots.append((
             obj, layer.name, [tuple(loop.uv) for loop in layer.data],
         ))
-    try:
-        _pack_receiver_groups_mutating(
-            objects, margin_px, size, guard_px=guard_px,
-        )
-    except BaseException as error:
-        rollback_failures = []
+    def restore_snapshots() -> list:
+        failures = []
         for obj, layer_name, coordinates in snapshots:
             # UV operators can replace CustomData storage while retaining the
             # layer name. Reusing the pre-Edit-Mode RNA wrapper silently writes
             # stale memory and does not roll back the live mesh.
             layer = obj.data.uv_layers.get(layer_name)
             if layer is None:
-                rollback_failures.append(
+                failures.append(
                     f"{obj.name}: missing UV layer {layer_name}"
                 )
                 continue
             if len(layer.data) != len(coordinates):
-                rollback_failures.append(
+                failures.append(
                     f"{obj.name}: {layer_name} changed from "
                     f"{len(coordinates)} to {len(layer.data)} loops"
                 )
                 continue
             for loop, coordinate in zip(layer.data, coordinates):
                 loop.uv = coordinate
+        return failures
+
+    try:
+        # The local packs charge the chart gutter BEFORE the outer
+        # allocation multiplies every receiver by its single uniform scale,
+        # so the delivered same-owner gutter is (charge x scale) -- under
+        # contract whenever local packing efficiency pushes the scale below
+        # 1. Close the loop on the measurement itself: escalate the local
+        # charge by the measured shortfall (agnostic of Blender's
+        # margin-to-gap factor), repack from the pristine snapshot, and
+        # refuse only when the margin-dominated regime saturates.
+        local_margin_scale = 1.0
+        base_charge = (float(margin_px) + float(guard_px)) / float(size)
+        previous_delivered = None
+        for attempt in range(_RECEIVER_LOCAL_MARGIN_PASSES):
+            hierarchical = _pack_receiver_groups_mutating(
+                objects, margin_px, size, guard_px=guard_px,
+                local_margin_scale=local_margin_scale,
+            )
+            if not hierarchical:
+                break
+            shortfall = _receiver_intra_gutter_shortfall(
+                objects, margin_px, size, guard_px=guard_px,
+            )
+            if shortfall is None:
+                break
+            delivered, required = shortfall
+            # A convergent pass closes a meaningful fraction of the
+            # REMAINING gap; the margin-dominated regime (raising the
+            # charge inflates the local AABBs, which lowers the uniform
+            # outer scale) barely moves it -- refuse now instead of
+            # burning the remaining passes on it. Measured: the
+            # cube-diorama moves 5.46px -> 5.62px against a 12px contract
+            # (2.5% of its gap, unresolvable at any charge) while the
+            # convergent headless fixture moves 18.64px -> 19.3px against
+            # 20px (half its gap per pass).
+            saturated = (
+                previous_delivered is not None
+                and (delivered - previous_delivered)
+                < 0.25 * (required - previous_delivered)
+            )
+            if saturated or attempt + 1 >= _RECEIVER_LOCAL_MARGIN_PASSES:
+                raise ReceiverGutterProofError(
+                    "hierarchical receiver packing saturated before "
+                    "delivering its chart gutter: "
+                    f"{delivered * size:.3g}px of {required * size:.3g}px "
+                    f"after {attempt + 1} margin pass(es)"
+                )
+            previous_delivered = delivered
+            # 5% headroom so convergence does not asymptote just under the
+            # proof's epsilon; the touching-pair floor bounds each pass's
+            # escalation at 4.2x. Blender's pack_islands FRACTION margin
+            # hard-clamps at 1.0 (measured on 5.2: 1.0, 5.0, and 100.0
+            # produce bit-identical layouts), so cap the request there --
+            # one pass at the clamp is the maximal attempt, and the
+            # progress check above refuses the bit-identical pass after it.
+            local_margin_scale = min(
+                local_margin_scale
+                * 1.05 * required / max(delivered, required / 4.0),
+                1.0 / base_charge,
+            )
+            between_failures = restore_snapshots()
+            if between_failures:
+                raise _ReceiverUvRestoreError(
+                    "receiver packing could not restore its UV transaction "
+                    "between margin passes: " + "; ".join(between_failures)
+                )
+    except _ReceiverUvRestoreError:
+        # The restore itself is the diagnosis; re-restoring cannot succeed
+        # and rewrapping would misattribute the failure to the pack.
+        raise
+    except BaseException as error:
+        rollback_failures = restore_snapshots()
         if rollback_failures:
             raise RuntimeError(
                 "receiver packing failed and could not restore its UV "
@@ -6232,9 +6587,13 @@ def _receiver_island_bounds(obj) -> list[tuple[int, tuple[float, float, float, f
     if layer is None:
         raise RuntimeError(f"{obj.name}: receiver spacing validation needs an active UV layer")
     roots, display_numbers = _uv_polygon_islands(obj.data, layer)
+    # Fold welded topological islands into the packer's units: pack_islands
+    # moves a welded component rigidly, so demanding a gutter inside one is
+    # unsatisfiable at every resolution.
+    welded = _uv_welded_island_pairs(obj.data, layer, roots)
     coordinates = {}
     for polygon in obj.data.polygons:
-        root = roots[polygon.index]
+        root = welded[roots[polygon.index]]
         coordinates.setdefault(root, []).extend(
             tuple(layer.data[index].uv) for index in polygon.loop_indices
         )

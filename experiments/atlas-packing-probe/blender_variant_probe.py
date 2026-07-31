@@ -101,8 +101,12 @@ if (
     if global_shape not in {"AABB", "CONVEX", "CONCAVE"}:
         raise ValueError(f"unknown global shape {global_shape!r}")
 
-    def global_pack(objects, margin_px, size, *, guard_px=4):
-        """Replay the pre-hierarchy all-island pack without saving."""
+    def global_pack(objects, margin_px, size, *, guard_px=4, **_kwargs):
+        """Replay the pre-hierarchy all-island pack without saving.
+
+        Returns falsy so the production fixed-point margin loop breaks
+        after one replay -- exactly this probe's replay-once semantics.
+        """
         bakelib.select_only(objects)
         original_pack(
             margin=(
