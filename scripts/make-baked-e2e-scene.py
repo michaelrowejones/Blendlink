@@ -172,6 +172,13 @@ atlas = {
 }
 if bake_output in {"lighting", "material"}:
     atlas["bakeOutput"] = bake_output
+if bake_output == "lighting":
+    # Phase 2 unit E: Lighting and TSL COMPOSE. The lighting-owned
+    # Gallery opts into a standalone TSL program; the compiled carrier
+    # must survive the lighting fork (the fork copies whatever the slot
+    # holds) and publish its program sidecar beside the lightmap
+    # contract.
+    material["blendlink_tsl_ir"] = True
 
 scene["blendlink_recipe"] = json.dumps({
     "schemaVersion": 1,

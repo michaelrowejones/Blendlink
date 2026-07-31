@@ -423,6 +423,19 @@ if (!lightingModule.includes('bakeOutputs:') || !lightingModule.includes('stateS
   throw new Error('generated scene module omitted lighting output/scale contracts')
 }
 
+// Unit 2-E: the lighting-owned Gallery carries a TSL program. The
+// program sidecar must publish, and the SHIPPED Gallery material must be
+// the lighting fork OF THE PROGRAM CARRIER -- carrying the runtime
+// identity extras so installTslMaterials can find it -- while the
+// lightmap channel contract stays intact (asserted below on the same
+// GLB).
+if ((lightingManifest.materialPrograms?.materials ?? 0) < 1) {
+  throw new Error(
+    'lighting x TSL composition lost the program sidecar: '
+    + JSON.stringify(lightingManifest.materialPrograms ?? null),
+  )
+}
+
 const lightingGlbPath = join(lightingWork, 'public', 'models', 'lightmap.glb')
 const lightingDocument = readGlbJson(lightingGlbPath)
 const galleryNode = lightingDocument.nodes?.find((node) => node.name === 'Gallery')
@@ -452,6 +465,12 @@ if (
   lightingDocument.extensionsUsed?.includes('KHR_materials_unlit')
 ) {
   throw new Error(`Gallery PBR material was flattened during lighting export: ${JSON.stringify(galleryMaterial)}`)
+}
+if (galleryMaterial?.extras?.blendlink_source_material !== 'Plaster') {
+  throw new Error(
+    'the shipped lighting material must be the fork of the TSL program '
+    + `carrier (runtime identity extras missing): ${JSON.stringify(galleryMaterial?.extras ?? null)}`,
+  )
 }
 
 const lightingLit = join(

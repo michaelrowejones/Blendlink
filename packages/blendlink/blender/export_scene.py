@@ -5825,9 +5825,16 @@ def plan_export_materials(
                 "these objects through Realtime. Selected materials: "
                 + ", ".join(sorted(decision.material_name for decision in selected))
             )
-        # Appearance baking owns the complete active Surface of static meshes.
-        # Compile only exact survivors of the same render_meshes() predicate
-        # used by the pack, bake, and later material replacement transaction.
+        # Appearance and material atlases own the complete active Surface
+        # of their static meshes and their finalize REPLACES slot
+        # materials, so compiled carriers there would be overwritten and
+        # the attestation would refuse -- those objects stay subtracted.
+        # LIGHTING atlases preserve the surface (the fork copies whatever
+        # the slot holds), so a lighting-owned object whose material
+        # carries an explicit intent (Material Bake or TSL Program)
+        # COMPOSES: its carrier installs before the bake, the fork copies
+        # the carrier, and the lightmap rides on top (Phase 2 unit E).
+        # Unmarked atlas-owned objects keep exactly the old behavior.
         baked_pointers = {
             obj.as_pointer()
             for obj in render_meshes(
@@ -5836,10 +5843,54 @@ def plan_export_materials(
                 ),
             )
         }
-        compile_objects = tuple(
-            obj for obj in export_objects
-            if obj.as_pointer() not in baked_pointers
-        )
+
+        def _material_intent_marked(obj):
+            for slot in obj.material_slots:
+                slot_material = slot.material
+                if slot_material is not None and (
+                    material_compiler.material_bake_requested(slot_material)
+                    or material_compiler.tsl_ir_requested(slot_material)
+                ):
+                    return True
+            return False
+
+        def _owned_output(obj):
+            # The same override-or-main default assign_atlases starts
+            # from; proximity refinement happens at bake time, but a
+            # marked object on a proximity-assigned atlas is an authored
+            # setup that should pin the atlas explicitly.
+            spec = atlas_specs.get(str(obj.get("blendlink_atlas", "main")))
+            if spec is None:
+                spec = atlas_specs.get("main") or {}
+            return spec.get("bakeOutput", "appearance")
+
+        composed = []
+        surviving = []
+        for obj in export_objects:
+            if obj.as_pointer() not in baked_pointers:
+                surviving.append(obj)
+                continue
+            if not _material_intent_marked(obj):
+                continue
+            output = _owned_output(obj)
+            if output == "lighting":
+                surviving.append(obj)
+                composed.append(obj.name)
+                continue
+            raise SystemExit(
+                "Website material compilation blocked:\n  - "
+                f'"{obj.name}" carries a Material Bake or TSL Program '
+                f"intent but its {output!r} atlas replaces the complete "
+                "surface, so the compiled carrier could never ship. Move "
+                "the object to a Lighting atlas, mark it Realtime, or "
+                "clear the material intent."
+            )
+        if composed:
+            print(
+                "blendlink materials: composing lighting atlas with "
+                f"compiled carriers on {', '.join(sorted(composed))}"
+            )
+        compile_objects = tuple(surviving)
     material_plan = material_compiler.plan_materials(
         compile_objects, purpose=purpose,
     )
@@ -6065,20 +6116,31 @@ def main() -> None:
 
     baked_report = {}
     plan = None
-    if settings.get("mode") == "baked":
-        # The plan rides along on every real sync so the manifest can carry
-        # per-object density — the addon shows it next to the Lightmap Scale
-        # slider. The UV prep it runs is idempotent; the bake re-runs it.
+
+    def run_bake_stage():
+        # Runs INSIDE the material transaction's emit (Phase 2 unit E):
+        # compiled carriers install first, so fork_lighting_materials
+        # copies the CARRIER and Lighting x TSL/bake compose. For a
+        # tslProgram carrier the copied graph is byte-identical to the
+        # artist's, so the irradiance bake sees the same bounce light;
+        # a materialBake carrier is the same surface baked. The plan
+        # rides along on every real sync so the manifest can carry
+        # per-object density; its UV prep is idempotent and the bake
+        # re-runs it.
+        nonlocal baked_report, plan
+        if settings.get("mode") != "baked":
+            return
         plan = compute_bake_plan(settings, recipe)
         if plan.get("errors"):
-            raise SystemExit("bake plan blocked:\n  - " + "\n  - ".join(plan["errors"]))
+            raise SystemExit(
+                "bake plan blocked:\n  - " + "\n  - ".join(plan["errors"])
+            )
         baked_report = run_baked_mode(settings, out_path)
         # The inspectable UVs must describe the actual second/final pack,
         # never rely on the plan pass merely being deterministic.
         plan["atlasLayout"] = baked_report.pop("atlasLayout")
         warnings.extend(baked_report.pop("warnings", []))
 
-    progress(0.82, "writing glTF")
     sequence_export_restore = nla_sequence.prepare_action_export(
         recipe.get("animationSequence") if isinstance(recipe, dict) else None,
         bpy.context.scene,
@@ -6087,16 +6149,6 @@ def main() -> None:
     realized_restore = None
     material_compilation = None
     try:
-        realized_restore = realize_unsupported_renderables(
-            bpy.context.scene, view_layer=bpy.context.view_layer,
-            export_kwargs=kwargs,
-        )
-        if realized_restore is not None:
-            sidecar["diagnostics"]["realizedGeometry"] = realized_restore["plan"]
-        render_visibility_restore = enforce_export_render_visibility(
-            bpy.context.scene, view_layer=bpy.context.view_layer,
-            export_kwargs=kwargs,
-        )
         def emit_gltf(filepath=out_path):
             export_kwargs = dict(kwargs)
             export_kwargs["filepath"] = filepath
@@ -6137,15 +6189,40 @@ def main() -> None:
                         pass
                 procedural.restore_lowered_skins(lowered)
 
+        def emit_pipeline(filepath=out_path):
+            # Bake first (inside the transaction when carriers exist),
+            # then the export-only scene adjustments that the bake must
+            # not run under: realization changes what render_meshes
+            # sees, and the export visibility regime differs from the
+            # bake's own contributor management -- both keep their
+            # historical position strictly between bake and glTF write.
+            nonlocal realized_restore, render_visibility_restore
+            run_bake_stage()
+            realized_restore = realize_unsupported_renderables(
+                bpy.context.scene, view_layer=bpy.context.view_layer,
+                export_kwargs=kwargs,
+            )
+            if realized_restore is not None:
+                sidecar["diagnostics"]["realizedGeometry"] = (
+                    realized_restore["plan"]
+                )
+            render_visibility_restore = enforce_export_render_visibility(
+                bpy.context.scene, view_layer=bpy.context.view_layer,
+                export_kwargs=kwargs,
+            )
+            progress(0.82, "writing glTF")
+            return emit_gltf(filepath)
+
         if material_plan.lowerings:
             _export_result, material_compilation = material_compiler.with_compiled_materials(
                 material_plan,
                 out_path,
-                emit_gltf,
+                emit_pipeline,
+                emit_replaces_mesh_data=(settings.get("mode") == "baked"),
                 preserve_custom_attributes=preserve_custom_attributes,
             )
         else:
-            emit_gltf()
+            emit_pipeline()
     finally:
         try:
             nla_sequence.restore_action_export(sequence_export_restore)

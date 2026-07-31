@@ -6133,6 +6133,12 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
         evidence.append({
             "sourceMaterial": fact["source"],
             "generatedMaterial": generated_name,
+            # The SHIPPED name: identical to generatedMaterial except for
+            # composed lighting-owned carriers, where the lighting fork's
+            # per-(atlas, channel) copy is what actually exports (matched
+            # above by extras). Downstream verification must check the
+            # artifact, not the pre-fork datablock.
+            "emittedMaterial": emitted.get("name"),
             "transport": fact["transport"],
             "surfaceResponse": fact["surfaceResponse"],
             "unlit": emitted_unlit,
@@ -7329,6 +7335,7 @@ def with_compiled_materials(
     output_glb: str,
     emit: Callable[[str], object],
     *,
+    emit_replaces_mesh_data: bool = False,
     preserve_custom_attributes: bool = False,
 ) -> tuple[object, MaterialCompilation]:
     """Install private lowerings for one export, attest, then restore."""
@@ -7428,6 +7435,10 @@ def with_compiled_materials(
                 "objects": [],
                 "original": original_data,
                 "private": private_data,
+                # Declared by callers whose emit runs the baked pipeline:
+                # freeze_evaluated_meshes legitimately replaces obj.data
+                # before the restore runs.
+                "emitReplacedData": bool(emit_replaces_mesh_data),
             }
             data_swaps.append(swap)
             # Avoid publishing an implementation-prefixed Mesh name. Blender
@@ -8324,7 +8335,19 @@ def with_compiled_materials(
                 if obj is None:
                     raise RuntimeError("object disappeared")
                 if obj.data != private_data:
-                    raise RuntimeError("private Mesh binding changed before cleanup")
+                    # The baked pipeline now runs INSIDE emit (Phase 2
+                    # unit E), and its freeze_evaluated_meshes replaces
+                    # obj.data with a frozen evaluated Mesh for every
+                    # atlas-owned receiver -- for a composed
+                    # lighting-owned object that replacement is expected,
+                    # not third-party interference. The artist datablock
+                    # still restores; the frozen mesh is the background
+                    # export process's own transient, exactly as it is on
+                    # the uncompiled path.
+                    if not swap.get("emitReplacedData"):
+                        raise RuntimeError(
+                            "private Mesh binding changed before cleanup"
+                        )
                 obj.data = original_data
                 if obj.data != original_data:
                     raise RuntimeError("source Mesh did not restore exactly")

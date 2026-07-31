@@ -357,7 +357,11 @@ export interface MaterialCompilationEvidence {
   gltfEvidence: Array<{
     sourceMaterial: string
     generatedMaterial: string
-    transport: 'factor' | 'vertexColor' | 'image' | 'channels'
+    /** The name that actually shipped: differs from generatedMaterial
+     * only for composed lighting-owned carriers, whose lighting fork is
+     * the exported material. */
+    emittedMaterial?: string
+    transport: 'factor' | 'vertexColor' | 'image' | 'channels' | 'program'
     /** MTL-BAKE-001 per-channel carrier evidence for `channels` transport:
      * every planned baked texture slot with its exact embedded bytes,
      * dimensions, texCoord, and wrap contract. */
@@ -1411,8 +1415,9 @@ export function verifyMaterialCompilationEvidence(
   }
 
   for (const evidence of compilation.gltfEvidence) {
+    const emittedName = evidence.emittedMaterial ?? evidence.generatedMaterial
     const matches = materials.filter((material) =>
-      material.getName() === evidence.generatedMaterial)
+      material.getName() === emittedName)
     if (matches.length !== 1) {
       materialEvidenceFailure(
         evidence.sourceMaterial,
@@ -1789,6 +1794,12 @@ export function verifyMaterialCompilationEvidence(
           )
         }
       }
+    } else if (evidence.transport === 'program') {
+      // A stock program carrier ships the artist's own graph: its
+      // textures and factors are the glTF exporter's derivation, recorded
+      // as observed by the Python attestation (observedOnly), never
+      // asserted here. The runtime identity extras are what this
+      // verification pinned above.
     } else if (baseColorTexture) {
       materialEvidenceFailure(evidence.sourceMaterial, 'gained an unexpected base-color texture.')
     }
@@ -1972,7 +1983,9 @@ export function verifiedMaterialCompilationImageTextures(
   return [...new Set(compilation.gltfEvidence
     .filter((evidence) => evidence.transport === 'image')
     .map((evidence) => materials.find((material) =>
-      material.getName() === evidence.generatedMaterial)!.getBaseColorTexture()!))]
+      material.getName()
+        === (evidence.emittedMaterial ?? evidence.generatedMaterial),
+    )!.getBaseColorTexture()!))]
 }
 
 /**

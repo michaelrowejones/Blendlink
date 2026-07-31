@@ -425,7 +425,14 @@ export async function installTslMaterials(
             return
           }
         }
-        const variantKey = `${source} ${JSON.stringify(extras ?? null)}`
+        // Keyed by the LOADED MATERIAL INSTANCE, not the source name:
+        // fork_lighting_materials deliberately splits one compiled
+        // carrier into per-(atlas, lightmap-channel) copies that all
+        // carry the same source extras, and consolidating them back onto
+        // one clone would make createBakedScene refuse ("shared by atlas
+        // groups"). Meshes sharing one loaded material still share one
+        // clone per runtime-extras variant.
+        const variantKey = `${material.uuid} ${JSON.stringify(extras ?? null)}`
         let variant = variants.get(variantKey)
         if (!variant) {
           const resources = createTslBuildResources()

@@ -441,7 +441,34 @@ def _material_compiler_inspection_scope(project, visible_objects, scene=None):
         for atlas in atlases
     )
     if has_lighting:
-        return visible_objects, True
+        # Mirror of the exporter's composition rule (Phase 2 unit E):
+        # unmarked atlas-owned objects are subtracted exactly like the
+        # all-Appearance case; objects whose materials carry an explicit
+        # Material Bake / TSL Program intent stay in scope (the exporter
+        # composes them on Lighting atlases and refuses them by name on
+        # surface-replacing ones -- the UI deliberately shows the plan
+        # either way, so the refusal is never a surprise).
+        fixed_camera_appearance = _fixed_camera_appearance_enabled(
+            project, scene or bpy.context.scene,
+        )
+
+        def _material_intent_marked(obj):
+            for slot in getattr(obj, "material_slots", ()):
+                slot_material = slot.material
+                if slot_material is not None and (
+                    slot_material.get("blendlink_material_bake")
+                    or slot_material.get("blendlink_tsl_ir")
+                ):
+                    return True
+            return False
+
+        return tuple(
+            obj for obj in visible_objects
+            if not _appearance_bake_owned(
+                obj, fixed_camera_appearance=fixed_camera_appearance,
+            )
+            or _material_intent_marked(obj)
+        ), True
     # Appearance owns complete static surfaces. Only the exact surviving live
     # objects can consume a selected-field compiler lowering.
     fixed_camera_appearance = _fixed_camera_appearance_enabled(
