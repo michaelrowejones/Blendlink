@@ -7944,14 +7944,37 @@ def with_compiled_materials(
             for entry in deferred_bake_entries:
                 variant = _variant_key(entry["decision"], entry["binding"])
                 products = material_bake_products[variant]
-                if products.get("uvEvidence") \
-                        and variant not in unique_variants:
-                    unique_variants[variant] = {
-                        "variant": variant,
-                        "resolution": int(
-                            products["uvEvidence"]["resolution"],
-                        ),
-                    }
+                if not products.get("uvEvidence") \
+                        or variant in unique_variants:
+                    continue
+                orm_entry = products["images"].get("orm")
+                if orm_entry is not None and not (
+                    {"Metallic", "Roughness"}
+                    <= set(orm_entry.get("bakedChannels") or ())
+                ):
+                    # A partial ORM (one channel baked, the other riding
+                    # its glTF factor) links only one SeparateColor lane,
+                    # and Blender's exporter then SYNTHESIZES a packed
+                    # metallicRoughness image instead of passing the page
+                    # bytes through -- two byte-divergent images under one
+                    # page name, which the attestation refuses (measured
+                    # on ellie.watch_metal). Such variants keep their
+                    # private textures; single-source kinds never
+                    # re-encode, so full-ORM and no-ORM members page
+                    # safely.
+                    print(
+                        "blendlink material pages: "
+                        f"{entry['decision'].material_name!r} keeps "
+                        "private textures (partial ORM would re-encode "
+                        "on export)"
+                    )
+                    continue
+                unique_variants[variant] = {
+                    "variant": variant,
+                    "resolution": int(
+                        products["uvEvidence"]["resolution"],
+                    ),
+                }
             page_plan = (
                 _plan_material_pages(sorted(
                     unique_variants.values(),

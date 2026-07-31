@@ -264,8 +264,69 @@ def main():
     bpy.context.view_layer.update()
 
     # --- Plan ------------------------------------------------------------
+    # A TWO-SLOT object whose both slots are unique-route members: the
+    # ellie watch/boots shape (split receivers, per-slot packed UVs, two
+    # variants paging from one mesh) that single-slot quads cannot cover.
+    twin_obj = quad_object("Twin Slots", fixtures)
+    twin_obj.location = (3.0, 3.0, 0.0)
+    twin_a, twin_a_tree, twin_a_principled = base_material("Twin Slot A")
+    twin_a_coord = twin_a_tree.nodes.new("ShaderNodeTexCoord")
+    twin_a_noise = twin_a_tree.nodes.new("ShaderNodeTexNoise")
+    twin_a_noise.inputs["Scale"].default_value = 5.0
+    twin_a_tree.links.new(
+        twin_a_coord.outputs["Object"], twin_a_noise.inputs["Vector"],
+    )
+    twin_a_tree.links.new(
+        twin_a_noise.outputs["Color"], twin_a_principled.inputs["Base Color"],
+    )
+    twin_b, twin_b_tree, twin_b_principled = base_material("Twin Slot B")
+    twin_b_coord = twin_b_tree.nodes.new("ShaderNodeTexCoord")
+    twin_b_noise = twin_b_tree.nodes.new("ShaderNodeTexNoise")
+    twin_b_noise.inputs["Scale"].default_value = 13.0
+    twin_b_tree.links.new(
+        twin_b_coord.outputs["Object"], twin_b_noise.inputs["Vector"],
+    )
+    twin_b_tree.links.new(
+        twin_b_noise.outputs["Color"], twin_b_principled.inputs["Base Color"],
+    )
+    twin_b_principled.inputs["Metallic"].default_value = 0.8
+    # And a PARTIAL ORM: baked roughness beside the constant metallic.
+    # The exporter synthesizes a packed metallicRoughness image for a
+    # carrier that links only one SeparateColor lane, so partial-ORM
+    # variants must keep private textures (measured on ellie.watch_metal
+    # as two byte-divergent images under one page name).
+    twin_b_rough = twin_b_tree.nodes.new("ShaderNodeTexNoise")
+    twin_b_rough.inputs["Scale"].default_value = 4.0
+    twin_b_tree.links.new(
+        twin_b_coord.outputs["Object"], twin_b_rough.inputs["Vector"],
+    )
+    twin_b_tree.links.new(
+        twin_b_rough.outputs["Fac"], twin_b_principled.inputs["Roughness"],
+    )
+    twin_obj.data.materials.append(twin_a)
+    twin_obj.data.materials.append(twin_b)
+    # Assign half the quad's single polygon... a quad has one polygon;
+    # give the mesh a second face so each slot owns one.
+    import bmesh
+    twin_bm = bmesh.new()
+    twin_bm.from_mesh(twin_obj.data)
+    twin_bm.faces.ensure_lookup_table()
+    result = bmesh.ops.subdivide_edges(
+        twin_bm,
+        edges=list(twin_bm.edges),
+        cuts=1,
+        use_grid_fill=True,
+    )
+    twin_bm.to_mesh(twin_obj.data)
+    twin_bm.free()
+    half = len(twin_obj.data.polygons) // 2
+    for index, polygon in enumerate(twin_obj.data.polygons):
+        polygon.material_index = 0 if index < half else 1
+    compiler.set_material_bake(twin_a, True)
+    compiler.set_material_bake(twin_b, True)
+
     plan = compiler.plan_materials(
-        (tile_obj, shared_obj, unique_obj, page_obj, refused_obj),
+        (tile_obj, shared_obj, unique_obj, page_obj, twin_obj, refused_obj),
         purpose="final",
     )
     decisions = {item.material_name: item for item in plan.decisions}
@@ -346,7 +407,8 @@ def main():
     # --- Compile the two good materials through the real exporter --------
     compiler.set_material_bake(refused_material, False)
     good_plan = compiler.plan_materials(
-        (tile_obj, shared_obj, unique_obj, page_obj), purpose="final",
+        (tile_obj, shared_obj, unique_obj, page_obj, twin_obj),
+        purpose="final",
     )
     expect(not good_plan.errors, f"good plan blocked: {good_plan.errors}")
 
@@ -356,12 +418,14 @@ def main():
         _value, compilation = compiler.with_compiled_materials(
             good_plan,
             str(out_path),
-            emit_selected([tile_obj, shared_obj, unique_obj, page_obj]),
+            emit_selected(
+                [tile_obj, shared_obj, unique_obj, page_obj, twin_obj],
+            ),
         )
         expect(out_path.is_file(), "material bake emitted no GLB")
         expect(
-            len(compilation.generated_materials) == 3,
-            f"tile consolidation plus two page members: "
+            len(compilation.generated_materials) == 5,
+            f"tile consolidation plus four page members: "
             f"{compilation.generated_materials}",
         )
         evidence_by_source = {
@@ -403,24 +467,49 @@ def main():
         )
 
         # --- Shared surface page (Phase 2 unit F) ------------------------
+        # Eligibility follows the partial-ORM rule: World Channels bakes
+        # roughness beside a CONSTANT metallic, so it keeps private
+        # textures (the exporter would synthesize a divergent packed
+        # metallicRoughness image, measured on ellie.watch_metal); the
+        # sibling and Twin Slot A have no ORM at all and page together.
         sibling_evidence = evidence_by_source["World Channels Sibling"]
         unique_base = unique_evidence["materialBake"]["textures"]["baseColor"]
         sibling_base = sibling_evidence["materialBake"]["textures"][
             "baseColor"
         ]
+        twin_a_evidence = evidence_by_source["Twin Slot A"]
+        twin_a_base = twin_a_evidence["materialBake"]["textures"][
+            "baseColor"
+        ]
         expect(
-            unique_base["imageSha256"] == sibling_base["imageSha256"],
-            "two unique-route members must share one baseColor page: "
-            f"{unique_base['imageSha256'][:12]} vs "
+            twin_a_base["imageSha256"] == sibling_base["imageSha256"],
+            "two eligible members must share one baseColor page: "
+            f"{twin_a_base['imageSha256'][:12]} vs "
             f"{sibling_base['imageSha256'][:12]}",
         )
         expect(
-            unique_base.get("pageRect") and sibling_base.get("pageRect")
-            and unique_base["pageRect"] != sibling_base["pageRect"]
-            and unique_base.get("page") == sibling_base.get("page")
-            and unique_base.get("primitivesChecked", 0) >= 1,
+            twin_a_base.get("pageRect") and sibling_base.get("pageRect")
+            and twin_a_base["pageRect"] != sibling_base["pageRect"]
+            and twin_a_base.get("page") == sibling_base.get("page")
+            and twin_a_base.get("primitivesChecked", 0) >= 1,
             f"page members must attest DISTINCT rects on one page: "
-            f"{unique_base.get('pageRect')} vs {sibling_base.get('pageRect')}",
+            f"{twin_a_base.get('pageRect')} vs {sibling_base.get('pageRect')}",
+        )
+        expect(
+            "pageRect" not in unique_base
+            and unique_base["imageSha256"] != sibling_base["imageSha256"],
+            "a partial-ORM variant must keep private textures off the "
+            f"page: {unique_base}",
+        )
+        twin_b_evidence = evidence_by_source["Twin Slot B"]
+        twin_b_base = twin_b_evidence["materialBake"]["textures"][
+            "baseColor"
+        ]
+        expect(
+            "pageRect" not in twin_b_base
+            and twin_b_base["imageSha256"] != sibling_base["imageSha256"],
+            "the second partial-ORM variant must also stay private: "
+            f"{twin_b_base}",
         )
         tile_base = tile_evidence["materialBake"]["textures"]["baseColor"]
         expect(
@@ -451,8 +540,8 @@ def main():
             == compiler.MATERIAL_BAKE_RULE
         ]
         expect(
-            len(generated) == 3,
-            f"GLB must carry three material-bake materials: "
+            len(generated) == 5,
+            f"GLB must carry five material-bake materials: "
             f"{[item.get('name') for item in document.get('materials', ())]}",
         )
         for material in generated:
