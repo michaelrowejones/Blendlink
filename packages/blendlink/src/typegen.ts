@@ -321,6 +321,13 @@ export interface SceneManifest {
   /** Atlas output intent. Absent entries preserve the legacy appearance-map
    * behavior; lighting atlases are installed as Three light maps. */
   bakeOutputs?: Record<string, 'appearance' | 'lighting'>
+  /** GLB-carried surface atlases: evidence, not a binding contract. */
+  materialAtlases?: Record<string, {
+    channels: Record<string, { sha256: string }>
+    strength: number
+    hasAlpha: boolean
+    reused: boolean
+  }>
   /** Required decode scale for every normalized Lighting state/atlas pair;
    * optional for Appearance, where omission preserves the legacy scale 1. */
   stateScales?: Record<string, Record<string, number>>
@@ -745,6 +752,7 @@ export async function generateSceneModule(options: {
   excluded?: string[]
   states?: SceneManifest['states']
   bakeOutputs?: SceneManifest['bakeOutputs']
+  materialAtlases?: SceneManifest['materialAtlases']
   stateScales?: SceneManifest['stateScales']
   stateVisibility?: SceneManifest['stateVisibility']
   lightGroups?: SceneManifest['lightGroups']
@@ -1125,6 +1133,9 @@ export async function generateSceneModule(options: {
     ...(options.runtimeAssetGraph ? { runtimeAssetGraph: options.runtimeAssetGraph } : {}),
     ...(options.states ? { states: options.states } : {}),
     ...(options.bakeOutputs ? { bakeOutputs: options.bakeOutputs } : {}),
+    ...(Object.keys(options.materialAtlases ?? {}).length > 0
+      ? { materialAtlases: options.materialAtlases }
+      : {}),
     ...(options.stateScales ? { stateScales: options.stateScales } : {}),
     ...(options.stateVisibility ? { stateVisibility: options.stateVisibility } : {}),
     ...(options.lightGroups ? { lightGroups: options.lightGroups } : {}),

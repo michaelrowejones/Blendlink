@@ -465,4 +465,83 @@ execFileSync(blender, [
   join(root, 'scripts', 'verify-baked-e2e-images.py'), '--', lightingLit, lightingDark,
 ], { stdio: 'inherit' })
 
+// The material atlas: surface channels only, fully GLB-carried. The
+// same textured fixture compiles with bakeOutput material; the proof is
+// that the manifest records the atlas as EVIDENCE (materialAtlases) while
+// deliberately keeping it OUT of the runtime bakeOutputs contract, and
+// that the GLB carries lit PBR atlas materials (base/ORM/normal/emissive
+// textures on TEXCOORD_0) with no unlit flattening, no lightmap stamp and
+// no surviving source materials on atlas members.
+const materialWork = mkdtempSync(join(tmpdir(), 'blendlink-material-e2e-'))
+const materialBlend = join(materialWork, 'surfatlas.blend')
+execFileSync(blender, [
+  '--background', '--factory-startup', '--python',
+  join(root, 'scripts', 'make-baked-e2e-scene.py'), '--',
+  materialBlend, '12', 'material',
+], { stdio: 'inherit' })
+writeFileSync(join(materialWork, 'blendlink.config.mjs'), `export default {
+  outDir: 'public/models',
+  genDir: 'src/generated',
+  urlPrefix: '/models',
+  scenes: [{ file: 'surfatlas.blend', name: 'surfatlas' }],
+}\n`)
+execFileSync(process.execPath, [cli, 'compile', '--force'], {
+  cwd: materialWork,
+  stdio: 'inherit',
+})
+
+const materialManifest = JSON.parse(readFileSync(
+  join(materialWork, 'src', 'generated', 'surfatlas.manifest.json'), 'utf8',
+))
+const materialAtlas = materialManifest.materialAtlases?.main
+const materialChannels = Object.keys(materialAtlas?.channels ?? {}).sort()
+if (
+  JSON.stringify(materialChannels)
+    !== JSON.stringify(['baseColor', 'emissive', 'normal', 'orm'])
+  || !Number.isFinite(materialAtlas?.strength)
+) {
+  throw new Error(`material atlas evidence is missing: ${JSON.stringify(
+    materialManifest.materialAtlases,
+  )}`)
+}
+for (const [kind, entry] of Object.entries(materialAtlas.channels)) {
+  if (!/^[0-9a-f]{64}$/.test(entry.sha256 ?? '')) {
+    throw new Error(`material atlas ${kind} channel is not hash-pinned: ${JSON.stringify(entry)}`)
+  }
+}
+if (materialManifest.bakeOutputs?.main !== undefined) {
+  throw new Error(
+    'a material atlas must stay OUT of the runtime bakeOutputs contract '
+    + `(it is GLB-carried, state-less): ${JSON.stringify(materialManifest.bakeOutputs)}`,
+  )
+}
+
+const materialGlb = readGlbJson(join(materialWork, 'public', 'models', 'surfatlas.glb'))
+const materialGallery = materialGlb.nodes?.find((node) => node.name === 'Gallery')
+if (materialGallery?.extras?.blendlink_bake_output !== undefined) {
+  throw new Error(
+    'material-owned objects must not carry the lightmap-shaped '
+    + `blendlink_bake_output stamp: ${JSON.stringify(materialGallery?.extras)}`,
+  )
+}
+const materialPrimitive = materialGlb.meshes?.[materialGallery.mesh]?.primitives?.[0]
+const atlasMaterial = materialGlb.materials?.[materialPrimitive?.material]
+if (
+  !atlasMaterial?.name?.includes('BLENDLINK_MATERIAL') ||
+  !atlasMaterial?.pbrMetallicRoughness?.baseColorTexture ||
+  !atlasMaterial?.pbrMetallicRoughness?.metallicRoughnessTexture ||
+  !atlasMaterial?.normalTexture ||
+  !atlasMaterial?.emissiveTexture ||
+  atlasMaterial?.extensions?.KHR_materials_unlit
+) {
+  throw new Error(`material atlas GLB material is not the lit PBR carrier: ${JSON.stringify(atlasMaterial)}`)
+}
+if (materialPrimitive?.attributes?.TEXCOORD_1 !== undefined) {
+  throw new Error('material atlas members must collapse to TEXCOORD_0 only')
+}
+const shippedNames = (materialGlb.materials ?? []).map((item) => item.name)
+if (shippedNames.some((name) => name === 'Plaster' || name === 'Day Decor Paint')) {
+  throw new Error(`source materials shipped beside the atlas carrier: ${JSON.stringify(shippedNames)}`)
+}
+
 console.log('BLENDLINK_BAKED_E2E_PASSED', work)

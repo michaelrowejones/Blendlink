@@ -2429,6 +2429,386 @@ def bake_engine(samples: int) -> dict:
     )
 
 
+# The material atlas's bake channels (jobs) and its published images. The
+# five bake jobs compose into four PNGs: metallic and roughness pack into
+# the glTF ORM arrangement, and the alpha plane rides the baseColor
+# carrier when any member is genuinely non-opaque.
+MATERIAL_ATLAS_BAKE_KINDS = (
+    "baseColor", "alpha", "metallic", "roughness", "emissive", "normal",
+)
+MATERIAL_ATLAS_IMAGE_KINDS = ("baseColor", "orm", "emissive", "normal")
+
+
+def material_atlas_file(out_glb: str, group: str, kind: str) -> str:
+    """Artifact path for one material-atlas channel image.
+
+    The state/light families interpolate the raw group name too; the
+    distinct `.material.` segment keeps the three families collision-free
+    (a group named like a channel cannot alias another family's file).
+    """
+    return f"{out_glb}.material.{group}.{kind}.png"
+
+
+def bake_material_atlas_group(
+        name, objects, size, margin, out_glb,
+        group_fingerprints, previous_group_fingerprints,
+        previous_group_hashes, job_timings, reused_jobs, log=print):
+    """Bake one material atlas group's channel images.
+
+    State- and light-independent BY DEFINITION -- a surface bake does not
+    change with lighting -- so this runs outside the state loop with its
+    own `material:{group}:{kind}` job identity (the 2-D design in the
+    plan doc: threading channels through the state loop breaks
+    fingerprints, file naming, job arithmetic and the HDR normalize).
+
+    Channel taps come from material_compiler.atlas_channel_tap per member
+    material; every slot of every member is swapped to the kind's tap for
+    the bake and restored after (the export scene is disposable, the same
+    license rebuild_baked_materials relies on, but the restore keeps the
+    later material-compiler passes truthful). Reuse is group-coarse and
+    byte-verified: every bake fingerprint AND every artifact hash must
+    match, or the whole group rebakes.
+    """
+    import numpy as np
+
+    reused = bool(previous_group_fingerprints) and all(
+        previous_group_fingerprints.get(kind) == group_fingerprints.get(kind)
+        for kind in MATERIAL_ATLAS_BAKE_KINDS
+    )
+    hashes = {
+        kind: value
+        for kind, value in (previous_group_hashes or {}).items()
+        if kind in MATERIAL_ATLAS_IMAGE_KINDS
+    }
+    if reused:
+        for kind in MATERIAL_ATLAS_IMAGE_KINDS:
+            path = material_atlas_file(out_glb, name, kind)
+            expected = hashes.get(kind)
+            if not expected or not os.path.isfile(path)                     or bakelib.file_sha256(path) != expected:
+                reused = False
+                break
+    if reused:
+        meta = (previous_group_hashes or {}).get("meta") or {}
+        for kind in MATERIAL_ATLAS_BAKE_KINDS:
+            job_name = f"material:{name}:{kind}"
+            reused_jobs.append(job_name)
+            job_timings.append({
+                "job": job_name, "status": "reused", "durationMs": 0,
+                "effectiveSize": int(size),
+            })
+        log(f"blendlink bake cache: reused material atlas {name!r}")
+        return {
+            "reused": True,
+            "channels": {
+                kind: {
+                    "path": material_atlas_file(out_glb, name, kind),
+                    "sha256": hashes[kind],
+                }
+                for kind in MATERIAL_ATLAS_IMAGE_KINDS
+            },
+            "strength": float(meta.get("strength", 1.0)),
+            "hasAlpha": bool(meta.get("hasAlpha", False)),
+            "hashes": dict(hashes, meta=dict(meta)),
+        }
+
+    created_materials = []
+    slot_originals = []
+    appended_meshes = []
+    neutrals = {}
+
+    def neutral_tap(kind):
+        """Member with no material (or no Normal chain): the neutral the
+        lighting fork's _neutral_pbr_material precedent implies -- white
+        base, metallic 0, roughness 1, black emission, flat normal."""
+        material = neutrals.get(kind)
+        if material is not None:
+            return material
+        material = bpy.data.materials.new(
+            f"BLENDLINK_MATERIAL_ATLAS_NEUTRAL.{kind}.{name}"
+        )
+        created_materials.append(material)
+        tree = bakelib.ensure_shader_node_tree(material)
+        if kind != "normal":
+            # A flat default Principled IS the normal neutral; every
+            # other kind taps its constant through an emission sink.
+            tree.nodes.clear()
+            output = tree.nodes.new("ShaderNodeOutputMaterial")
+            emission = tree.nodes.new("ShaderNodeEmission")
+            emission.inputs["Strength"].default_value = 1.0
+            value = {
+                "baseColor": (1.0, 1.0, 1.0, 1.0),
+                "alpha": (1.0, 1.0, 1.0, 1.0),
+                "metallic": (0.0, 0.0, 0.0, 1.0),
+                "roughness": (1.0, 1.0, 1.0, 1.0),
+                "emissive": (0.0, 0.0, 0.0, 1.0),
+            }[kind]
+            emission.inputs["Color"].default_value = value
+            tree.links.new(
+                emission.outputs["Emission"], output.inputs["Surface"],
+            )
+        neutrals[kind] = material
+        return material
+
+    def install_taps(kind):
+        taps = {}
+        for obj in objects:
+            if not obj.material_slots:
+                # Material-less members bake neutral, exactly like the
+                # appearance atlas's neutral rebuild.
+                obj.data.materials.append(neutral_tap(kind))
+                appended_meshes.append(obj.data)
+                continue
+            for slot in obj.material_slots:
+                source = slot.material
+                if source is None:
+                    slot_originals.append((slot, slot.material, slot.link))
+                    slot.link = "DATA"
+                    slot.material = neutral_tap(kind)
+                    continue
+                key = source.as_pointer()
+                if key not in taps:
+                    # The tap vocabulary follows the per-material bake's
+                    # channel table, where the glTF "emissive" image is
+                    # the "emission" channel.
+                    taps[key] = material_compiler.atlas_channel_tap(
+                        source,
+                        "emission" if kind == "emissive" else kind,
+                        created_materials,
+                    )
+                tap = taps[key] or neutral_tap(kind)
+                slot_originals.append((slot, slot.material, slot.link))
+                slot.link = "DATA"
+                slot.material = tap
+
+    def restore_taps():
+        for slot, material, link in reversed(slot_originals):
+            slot.material = material
+            slot.link = link
+        slot_originals.clear()
+        for mesh in reversed(appended_meshes):
+            mesh.materials.pop()
+        appended_meshes.clear()
+        neutrals.clear()
+
+    results = {}
+    try:
+        for kind in MATERIAL_ATLAS_BAKE_KINDS:
+            job_name = f"material:{name}:{kind}"
+            job_started = time.perf_counter()
+            install_taps(kind)
+            try:
+                if kind == "normal":
+                    results[kind] = bakelib.bake_tangent_normal_field_pixels(
+                        objects, size=int(size), margin_px=int(margin),
+                        uv_layer=bakelib.ATLAS_UV,
+                        label=f"material atlas {name} {kind}", log=log,
+                    )
+                else:
+                    results[kind] = bakelib.bake_channel_field_pixels(
+                        objects, size=int(size), margin_px=int(margin),
+                        uv_layer=bakelib.ATLAS_UV,
+                        label=f"material atlas {name} {kind}",
+                        allow_hdr=(kind == "emissive"),
+                        clamp_ldr=(kind == "baseColor"), log=log,
+                    )
+            finally:
+                restore_taps()
+            job_timings.append({
+                "job": job_name, "status": "rebuilt",
+                "durationMs": round(
+                    (time.perf_counter() - job_started) * 1000,
+                ),
+                "effectiveSize": int(size),
+            })
+    finally:
+        restore_taps()
+        for material in created_materials:
+            if material.name in bpy.data.materials:
+                bpy.data.materials.remove(material)
+
+    base = results["baseColor"]
+    alpha_plane = np.asarray(
+        results["alpha"]["pixels"], dtype=np.float32,
+    )[:, :, 0]
+    # Authored transparency is judged over COVERED texels only: the
+    # bake's use_clear leaves uncovered background transparent, which
+    # would read every opaque atlas as alpha-carrying.
+    coverage_mask = np.asarray(
+        results["alpha"]["coverage"], dtype=bool,
+    )
+    covered_alpha = alpha_plane[coverage_mask]
+    has_alpha = covered_alpha.size > 0 and float(
+        covered_alpha.min(),
+    ) < 1.0 - (1.0 / 255.0)
+    strength = 1.0
+    emissive_pixels = np.asarray(
+        results["emissive"]["pixels"], dtype=np.float32,
+    )
+    peak = float(results["emissive"].get("peak", 1.0))
+    if peak > 1.0 + 1e-6:
+        # Same HDR contract as the per-material bake: normalize the PNG,
+        # carry the peak as the rebuilt material's Emission Strength (the
+        # exporter ships it as KHR_materials_emissive_strength).
+        emissive_pixels = emissive_pixels / peak
+        strength = peak
+
+    saved = {}
+    saved["baseColor"] = bakelib.save_channel_png(
+        results["baseColor"]["pixels"], base["coverage"],
+        material_atlas_file(out_glb, name, "baseColor"),
+        colorspace="srgb",
+        alpha=alpha_plane if has_alpha else None,
+        label=f"material atlas {name} baseColor",
+    )
+    orm = bakelib.compose_channel_pack_pixels(
+        int(size),
+        green=np.asarray(
+            results["roughness"]["pixels"], dtype=np.float32,
+        )[:, :, 0],
+        blue=np.asarray(
+            results["metallic"]["pixels"], dtype=np.float32,
+        )[:, :, 0],
+    )
+    saved["orm"] = bakelib.save_channel_png(
+        orm, base["coverage"],
+        material_atlas_file(out_glb, name, "orm"),
+        colorspace="data", label=f"material atlas {name} orm",
+    )
+    saved["emissive"] = bakelib.save_channel_png(
+        emissive_pixels, base["coverage"],
+        material_atlas_file(out_glb, name, "emissive"),
+        colorspace="srgb", label=f"material atlas {name} emissive",
+    )
+    saved["normal"] = bakelib.save_channel_png(
+        results["normal"]["pixels"], base["coverage"],
+        material_atlas_file(out_glb, name, "normal"),
+        colorspace="data", label=f"material atlas {name} normal",
+    )
+    hashes = {kind: item["sha256"] for kind, item in saved.items()}
+    hashes["meta"] = {"strength": strength, "hasAlpha": has_alpha}
+    return {
+        "reused": False,
+        "channels": {
+            kind: {"path": item["path"], "sha256": item["sha256"]}
+            for kind, item in saved.items()
+        },
+        "strength": strength,
+        "hasAlpha": has_alpha,
+        "hashes": hashes,
+    }
+
+
+def rebuild_material_atlas_materials(objects, products_by_group, atlas_for):
+    """Replace member materials with lit PBR atlas materials.
+
+    The lit sibling of ``rebuild_baked_materials``: one generated material
+    per (source, group) via ``final_material_binding_key(source,
+    "material", group, 0)``, wired in the stock exporter's recognized
+    pbrMetallicRoughness arrangements (the node shapes proven by
+    material_compiler's per-material carrier), sampling the group's atlas
+    pages on ATLAS_UV with EXTEND.
+    """
+    generated = {}
+    loaded_images = {}
+
+    def group_image(group, kind, colorspace):
+        key = (group, kind)
+        image = loaded_images.get(key)
+        if image is None:
+            products = products_by_group[group]
+            image = bpy.data.images.load(
+                products["channels"][kind]["path"], check_existing=False,
+            )
+            image.name = f"BLENDLINK_MATERIAL_ATLAS.{group}.{kind}"
+            image.colorspace_settings.name = colorspace
+            image.alpha_mode = "STRAIGHT"
+            loaded_images[key] = image
+        return image
+
+    def generated_for(source, group):
+        key = final_material_binding_key(source, "material", group, 0)
+        material = generated.get(key)
+        if material is not None:
+            return material
+        products = products_by_group.get(group)
+        if products is None:
+            raise RuntimeError(
+                f"material atlas {group!r} finalized without bake products"
+            )
+        material = bpy.data.materials.new(
+            f"{source.name}.BLENDLINK_MATERIAL.{group}"
+            if source is not None
+            else f"BLENDLINK_MATERIAL_NEUTRAL.{group}"
+        )
+        tree = bakelib.ensure_shader_node_tree(material)
+        tree.nodes.clear()
+        output = tree.nodes.new("ShaderNodeOutputMaterial")
+        principled = tree.nodes.new("ShaderNodeBsdfPrincipled")
+        tree.links.new(principled.outputs["BSDF"], output.inputs["Surface"])
+        uv_node = tree.nodes.new("ShaderNodeUVMap")
+        uv_node.uv_map = ATLAS_UV
+
+        def image_node(kind, colorspace):
+            node = tree.nodes.new("ShaderNodeTexImage")
+            node.name = f"BLENDLINK_MATERIAL_{kind.upper()}"
+            node.image = group_image(group, kind, colorspace)
+            node.interpolation = "Linear"
+            node.projection = "FLAT"
+            node.extension = "EXTEND"
+            tree.links.new(uv_node.outputs["UV"], node.inputs["Vector"])
+            return node
+
+        base_node = image_node("baseColor", "sRGB")
+        tree.links.new(
+            base_node.outputs["Color"], principled.inputs["Base Color"],
+        )
+        if products.get("hasAlpha"):
+            tree.links.new(
+                base_node.outputs["Alpha"], principled.inputs["Alpha"],
+            )
+            material.surface_render_method = "DITHERED"
+        orm_node = image_node("orm", "Non-Color")
+        separate = tree.nodes.new("ShaderNodeSeparateColor")
+        separate.mode = "RGB"
+        tree.links.new(orm_node.outputs["Color"], separate.inputs["Color"])
+        tree.links.new(
+            separate.outputs["Green"], principled.inputs["Roughness"],
+        )
+        tree.links.new(
+            separate.outputs["Blue"], principled.inputs["Metallic"],
+        )
+        emissive_node = image_node("emissive", "sRGB")
+        tree.links.new(
+            emissive_node.outputs["Color"],
+            principled.inputs["Emission Color"],
+        )
+        principled.inputs["Emission Strength"].default_value = float(
+            products.get("strength", 1.0),
+        )
+        normal_node = image_node("normal", "Non-Color")
+        normal_map = tree.nodes.new("ShaderNodeNormalMap")
+        normal_map.inputs["Strength"].default_value = 1.0
+        normal_map.uv_map = ATLAS_UV
+        tree.links.new(
+            normal_node.outputs["Color"], normal_map.inputs["Color"],
+        )
+        tree.links.new(
+            normal_map.outputs["Normal"], principled.inputs["Normal"],
+        )
+        generated[key] = material
+        return material
+
+    for obj in objects:
+        group = atlas_for(obj)
+        if not obj.material_slots:
+            obj.data.materials.append(generated_for(None, group))
+            continue
+        for slot in obj.material_slots:
+            slot.link = "DATA"
+            slot.material = generated_for(slot.material, group)
+    return generated
+
+
 def configure_atlas_bake(
         scene, margin_px: int, bake_output: str, *, emit: bool = True,
         fixed_camera_appearance: bool = False) -> None:
@@ -3449,6 +3829,9 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             alpha=True, float_buffer=True,
         )
         for name, entry in groups.items()
+        # Material atlases bake per channel through bakelib's isolated
+        # targets; the shared state/light image never hosts them.
+        if entry["bakeOutput"] != "material"
     }
     margins = {name: entry["margin"] * supersample for name, entry in groups.items()}
     final_sizes = {name: entry["size"] for name, entry in groups.items()}
@@ -3481,7 +3864,14 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     # No populated atlas means no bake jobs. Counting a phantom job here made
     # the manifest claim work was rebuilt while its explicit job lists were
     # empty, hiding the exact no-bake condition the UI is meant to explain.
-    bake_jobs = (len(states) + len(grouped_lights)) * len(groups)
+    material_group_names = sorted(
+        name for name, output in bake_outputs.items() if output == "material"
+    )
+    bake_jobs = (
+        (len(states) + len(grouped_lights))
+        * (len(groups) - len(material_group_names))
+        + len(MATERIAL_ATLAS_BAKE_KINDS) * len(material_group_names)
+    )
     per_job = 0.6 / max(bake_jobs, 1)
     job = 0
     state_guides = {}
@@ -3533,6 +3923,10 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
                 try:
                     fingerprints["states"][state["name"]] = {}
                     for name in groups:
+                        if bake_outputs[name] == "material":
+                            # Fingerprinted in the channel-keyed block
+                            # below; state identity does not apply.
+                            continue
                         configure_atlas_bake(
                             bpy.context.scene, margins[name],
                             bake_outputs[name], emit=True,
@@ -3557,6 +3951,8 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             for light_name in sorted(grouped_lights):
                 fingerprints["lightGroups"][light_name] = {}
                 for name in groups:
+                    if bake_outputs[name] == "material":
+                        continue
                     configure_atlas_bake(
                         bpy.context.scene, margins[name], bake_outputs[name],
                         emit=False,
@@ -3571,6 +3967,31 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             for light, _ in grouped_prev:
                 light.hide_render = True
 
+            # Material atlases are state- and light-independent: their
+            # channel jobs are fingerprinted ONCE each, keyed
+            # material:{kind}, inside the same two-phase boundary. The
+            # mode string carries channel identity in the digest and the
+            # RNA is normalized per kind, so identity stays a pure
+            # function of the prepared scene.
+            fingerprints["material"] = {}
+            for name in material_group_names:
+                fingerprints["material"][name] = {}
+                for kind in MATERIAL_ATLAS_BAKE_KINDS:
+                    if kind == "normal":
+                        bakelib.configure_normal_bake(
+                            bpy.context.scene, groups[name]["margin"],
+                        )
+                    else:
+                        bakelib.configure_emit_bake(
+                            bpy.context.scene, groups[name]["margin"],
+                        )
+                    fingerprints["material"][name][kind] = (
+                        bakelib.fingerprint_bake_dependencies(
+                            bpy.context.scene, layout, fingerprint_settings,
+                            name, f"material:{kind}",
+                        )
+                    )
+
             for state in states:
                 saved_collections = hide_collections(state.get("hideCollections", []))
                 state_paths[state["name"]] = {}
@@ -3578,6 +3999,8 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
                 state_scales[state["name"]] = {}
                 dirty = []
                 for name in groups:
+                    if bake_outputs[name] == "material":
+                        continue
                     path = state_file(state["name"], name)
                     configure_atlas_bake(
                         bpy.context.scene, margins[name], bake_outputs[name], emit=True,
@@ -3743,6 +4166,8 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             skipped_layers = set()
             for light_name in sorted(grouped_lights):
                 for name in groups:
+                    if bake_outputs[name] == "material":
+                        continue
                     configure_atlas_bake(
                         bpy.context.scene, margins[name], bake_outputs[name], emit=False,
                         fixed_camera_appearance=fixed_camera_appearance,
@@ -3826,7 +4251,12 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
                             name, margins[name],
                         )
             group_layers = bake_light_groups(
-                targets, images, margins, final_sizes, grouped_lights, out_glb,
+                {
+                    group: group_targets
+                    for group, group_targets in targets.items()
+                    if bake_outputs.get(group) != "material"
+                },
+                images, margins, final_sizes, grouped_lights, out_glb,
                 bake_outputs,
                 progress_start=0.15 + job * per_job, progress_step=per_job,
                 denoise=denoise, guides=light_guides,
@@ -3835,6 +4265,28 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
                 timings=job_timings, supersample=supersample,
                 fixed_camera_appearance=fixed_camera_appearance,
             )
+        material_atlases = {}
+        if material_group_names:
+            progress(0.72, "baking material atlas surface channels")
+            material_targets = build_bake_targets()
+            previous_material_hashes = previous_artifacts.get("material") or {}
+            previous_material_fps = previous_fingerprints.get("material") or {}
+            for name in material_group_names:
+                receivers = material_targets.get(name) or []
+                if not receivers:
+                    print(
+                        f"blendlink bake: material atlas {name!r} has no "
+                        "visible receivers; skipped"
+                    )
+                    continue
+                material_atlases[name] = bake_material_atlas_group(
+                    name, receivers, final_sizes[name],
+                    groups[name]["margin"], out_glb,
+                    fingerprints["material"][name],
+                    previous_material_fps.get(name) or {},
+                    previous_material_hashes.get(name) or {},
+                    job_timings, reused_jobs,
+                )
     finally:
         for obj, was_hidden in excluded_contributors:
             obj.hide_render = was_hidden
@@ -3890,6 +4342,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             atlas_for=lambda obj: atlas_of[obj.name],
     )
     lighting_objects = []
+    material_objects = []
     for obj in baked_objects:
         output = bake_outputs[atlas_of[obj.name]]
         if output == "appearance":
@@ -3901,6 +4354,19 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             mesh.uv_layers.active_index = 0
             mesh.uv_layers[0].active_render = True
             stamp_bake_output_metadata(obj, output)
+        elif output == "material":
+            # Surface-only pages replace the source materials, so the
+            # atlas becomes TEXCOORD_0 exactly like appearance -- but the
+            # generated material is LIT PBR and the object is deliberately
+            # NOT stamped: blendlink_bake_output is a lightmap-shaped
+            # runtime contract, and a v1 material atlas is fully
+            # GLB-carried (design in the plan doc, 8c).
+            mesh = obj.data
+            for layer in [layer for layer in mesh.uv_layers if layer.name != ATLAS_UV]:
+                mesh.uv_layers.remove(layer)
+            mesh.uv_layers.active_index = 0
+            mesh.uv_layers[0].active_render = True
+            material_objects.append(obj)
         else:
             channel = stamp_bake_output_metadata(obj, output)
             lighting_objects.append(obj)
@@ -3913,6 +4379,11 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             lighting_objects,
             atlas_for=lambda obj: atlas_of[obj.name],
             channel_for=lambda obj: obj["blendlink_lightmap_uv"],
+        )
+    if material_objects:
+        rebuild_material_atlas_materials(
+            material_objects, material_atlases,
+            atlas_for=lambda obj: atlas_of[obj.name],
         )
 
     artifact_hashes = {
@@ -3931,6 +4402,10 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             }
             for light_name, by_group in group_layers.items()
         },
+        "material": {
+            name: item["hashes"]
+            for name, item in material_atlases.items()
+        },
     }
     all_jobs = [
         f"state:{state_name}:{group}"
@@ -3940,13 +4415,47 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
         f"light:{light_name}:{group}"
         for light_name, by_group in fingerprints["lightGroups"].items()
         for group in by_group
+    ] + [
+        f"material:{name}:{kind}"
+        for name, by_kind in (fingerprints.get("material") or {}).items()
+        for kind in by_kind
     ]
     reused_set = set(reused_jobs)
     rebuilt_jobs = [name for name in all_jobs if name not in reused_set]
     return {
-        "states": {name: path for name, path in state_paths.items()},
-        "stateScales": state_scales,
-        "bakeOutputs": bake_outputs,
+        # A state with no baked groups (a material-only scene: the state
+        # loop owns no atlases) must not publish an empty entry -- the TS
+        # side cross-references states and stateScales and refuses a
+        # scale row for a state that published nothing.
+        "states": {name: path for name, path in state_paths.items() if path},
+        "stateScales": {
+            name: scales for name, scales in state_scales.items() if scales
+        },
+        # Material atlases are deliberately EXCLUDED from the runtime
+        # bakeOutputs contract: they are fully GLB-carried (no state
+        # URLs, no lightmap channel, nothing to bind), and typegen
+        # requires every bakeOutputs key to be published by a state.
+        # Their record is materialAtlases, which is evidence, not a
+        # binding contract.
+        "bakeOutputs": {
+            name: output for name, output in bake_outputs.items()
+            if output != "material"
+        },
+        "materialAtlases": {
+            name: {
+                "channels": {
+                    kind: {
+                        "path": item["channels"][kind]["path"],
+                        "sha256": item["channels"][kind]["sha256"],
+                    }
+                    for kind in item["channels"]
+                },
+                "strength": item["strength"],
+                "hasAlpha": item["hasAlpha"],
+                "reused": item["reused"],
+            }
+            for name, item in material_atlases.items()
+        },
         "lightmapUvs": {
             name: {
                 obj.name: int(obj["blendlink_lightmap_uv"])
@@ -3957,7 +4466,10 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
         "stateVisibility": state_visibility_membership,
         "lightGroups": group_layers,
         "variants": {
-            "states": state_variants,
+            "states": {
+                name: variants
+                for name, variants in state_variants.items() if variants
+            },
             "lightGroups": light_variants,
         },
         "warnings": warnings,

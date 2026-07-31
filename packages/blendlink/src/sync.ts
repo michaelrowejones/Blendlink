@@ -1464,6 +1464,9 @@ async function syncSceneWithPublicationLease(
     ...(Object.keys(exported.bakeOutputs ?? {}).length > 0
       ? { bakeOutputs: exported.bakeOutputs! }
       : {}),
+    ...(Object.keys(exported.materialAtlases ?? {}).length > 0
+      ? { materialAtlases: exported.materialAtlases! }
+      : {}),
     ...(Object.keys(exported.bakedStateScales ?? {}).length > 0
       ? { stateScales: exported.bakedStateScales! }
       : {}),

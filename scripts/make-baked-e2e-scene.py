@@ -17,7 +17,7 @@ script_args = sys.argv[sys.argv.index("--") + 1:]
 out_path = script_args[0]
 target_density = float(script_args[1]) if len(script_args) > 1 else 12
 bake_output = script_args[2] if len(script_args) > 2 else "appearance"
-if bake_output not in {"appearance", "lighting"}:
+if bake_output not in {"appearance", "lighting", "material"}:
     raise SystemExit(f"unknown bake output {bake_output!r}")
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
@@ -28,9 +28,11 @@ cube.name = "Gallery"
 cube["blendlink_id"] = str(uuid.uuid4())
 material = bpy.data.materials.new("Plaster")
 material.diffuse_color = (0.55, 0.32, 0.16, 1)
-if bake_output == "lighting":
+if bake_output in {"lighting", "material"}:
     # The lighting-mode fixture must prove that high-frequency PBR detail
-    # survives separately from the indirect-light atlas.
+    # survives separately from the indirect-light atlas; the material-mode
+    # fixture reuses the same textured surface so its channel bakes have
+    # real varying content to carry into the atlas pages.
     bakelib.ensure_shader_node_tree(material)
     nodes = material.node_tree.nodes
     links = material.node_tree.links
@@ -168,8 +170,8 @@ atlas = {
     "id": "main", "name": "Main", "size": 128,
     "targetDensity": target_density, "margin": 8, "fitPolicy": "block",
 }
-if bake_output == "lighting":
-    atlas["bakeOutput"] = "lighting"
+if bake_output in {"lighting", "material"}:
+    atlas["bakeOutput"] = bake_output
 
 scene["blendlink_recipe"] = json.dumps({
     "schemaVersion": 1,

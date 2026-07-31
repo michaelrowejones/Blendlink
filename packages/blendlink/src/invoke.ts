@@ -376,6 +376,15 @@ export interface ExportResult {
   bakedStates: Record<string, Record<string, string>>
   /** Per-atlas output intent. Missing entries are legacy appearance bakes. */
   bakeOutputs: Record<string, 'appearance' | 'lighting'>
+  /** Material-atlas evidence: fully GLB-carried surface atlases, keyed by
+   * group. Hash-pinned channels only -- bake artifact paths are local
+   * cache internals and never leave the exporter. */
+  materialAtlases: Record<string, {
+    channels: Record<string, { sha256: string }>
+    strength: number
+    hasAlpha: boolean
+    reused: boolean
+  }>
   /** Decode scales for normalized Lighting and Appearance state atlases. */
   bakedStateScales: Record<string, Record<string, number>>
   /** Full collection-state membership; texture swaps alone cannot make
@@ -663,6 +672,7 @@ export async function exportBlend(options: {
       | 'durationMs'
       | 'bakedStates'
       | 'bakeOutputs'
+      | 'materialAtlases'
       | 'bakedStateScales'
       | 'bakedLightGroups'
       | 'bakedVariants'
@@ -670,6 +680,12 @@ export async function exportBlend(options: {
       baked?: {
         states?: Record<string, Record<string, string>>
         bakeOutputs?: ExportResult['bakeOutputs']
+        materialAtlases?: Record<string, {
+          channels: Record<string, { path: string; sha256: string }>
+          strength: number
+          hasAlpha: boolean
+          reused: boolean
+        }>
         stateScales?: ExportResult['bakedStateScales']
         stateVisibility?: ExportResult['bakedStateVisibility']
         lightGroups?: Record<string, Record<string, { path: string; maxValue: number }>>
@@ -693,6 +709,7 @@ export async function exportBlend(options: {
         ...result,
         bakedStates: {},
         bakeOutputs: {},
+        materialAtlases: {},
         bakedStateScales: {},
         bakedStateVisibility: {},
         bakedLightGroups: {},
@@ -801,6 +818,20 @@ export async function exportBlend(options: {
       ...result,
       bakedStates,
       bakeOutputs: result.baked?.bakeOutputs ?? {},
+      materialAtlases: Object.fromEntries(
+        Object.entries(result.baked?.materialAtlases ?? {}).map(
+          ([group, atlas]) => [group, {
+            channels: Object.fromEntries(
+              Object.entries(atlas.channels).map(([kind, entry]) => [
+                kind, { sha256: entry.sha256 },
+              ]),
+            ),
+            strength: atlas.strength,
+            hasAlpha: atlas.hasAlpha,
+            reused: atlas.reused,
+          }],
+        ),
+      ),
       bakedStateScales: result.baked?.stateScales ?? {},
       bakedStateVisibility: result.baked?.stateVisibility ?? {},
       bakedLightGroups,
