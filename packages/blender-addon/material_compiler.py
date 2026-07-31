@@ -5048,11 +5048,67 @@ def _attest_material_bake_channels(
     pbr: dict,
     emitted: dict,
     fact: dict,
+    primitive_entries=(),
 ) -> dict:
     """Per-channel texture attestation for one material-bake carrier."""
     bake = fact.get("materialBake") or {}
     planned = bake.get("images") or {}
     channel_evidence = {}
+
+    def attest_page_rect(kind, image_fact, texture_info):
+        """A shared-page member must sample ITS rect, proven from the
+        emitted accessors: with N materials on one page every whole-image
+        byte check passes by construction, so the sub-rect claim is the
+        accessor min/max of this carrier's TEXCOORD lying inside the
+        planned rect (glTF V runs downward, so the rect's v-band flips).
+        The AABB is the honest granularity here -- the full triangle-hash
+        association is the image transport's machinery and a separate
+        gap."""
+        rect = image_fact.get("pageRect")
+        page = image_fact.get("page")
+        if not rect or not page:
+            return None
+        x0, y0, size = (int(rect[0]), int(rect[1]), int(rect[2]))
+        page = int(page)
+        tex_coord = int(texture_info.get("texCoord", 0) or 0)
+        tolerance = 1.0 / page
+        u_min = x0 / page - tolerance
+        u_max = (x0 + size) / page + tolerance
+        v_min = 1.0 - (y0 + size) / page - tolerance
+        v_max = 1.0 - y0 / page + tolerance
+        checked = 0
+        for _mesh_index, _primitive_index, primitive in primitive_entries:
+            attributes = primitive.get("attributes") or {}
+            accessor_index = attributes.get(f"TEXCOORD_{tex_coord}")
+            if accessor_index is None:
+                raise MaterialCompileError(
+                    f'Material output mismatch for "{fact["source"]}": a '
+                    f"page-member primitive lacks TEXCOORD_{tex_coord}."
+                )
+            # TEXCOORD accessors are not required to publish min/max
+            # (only POSITION is), so the range is computed from the
+            # payload bytes like the vertex-color attestation does.
+            _accessor, low, high = _accessor_range(
+                document, binary, int(accessor_index),
+            )
+            if low[0] < u_min or high[0] > u_max                     or low[1] < v_min or high[1] > v_max:
+                raise MaterialCompileError(
+                    f'Material output mismatch for "{fact["source"]}": '
+                    f"{kind} UVs [{low[0]:.4f},{low[1]:.4f}].."
+                    f"[{high[0]:.4f},{high[1]:.4f}] escape the attested "
+                    f"page rect ({x0},{y0})+{size}/{page}."
+                )
+            checked += 1
+        if checked == 0:
+            raise MaterialCompileError(
+                f'Material output mismatch for "{fact["source"]}": page '
+                "rect attestation found no primitives to check."
+            )
+        return {
+            "pageRect": [x0, y0, size],
+            "page": page,
+            "primitivesChecked": checked,
+        }
 
     slots = {
         "baseColor": pbr.get("baseColorTexture"),
@@ -5072,6 +5128,9 @@ def _attest_material_bake_channels(
         channel_evidence[kind] = _attest_material_bake_texture(
             document, binary, fact, texture_info, image_fact, kind,
         )
+        rect_evidence = attest_page_rect(kind, image_fact, texture_info)
+        if rect_evidence is not None:
+            channel_evidence[kind].update(rect_evidence)
     if emitted.get("occlusionTexture") is not None:
         raise MaterialCompileError(
             f'Material output mismatch for "{fact["source"]}": an unplanned '
@@ -5872,6 +5931,7 @@ def _attest_generated_materials(path: str, generated_facts: dict) -> tuple[dict,
         elif fact["transport"] == "channels":
             image_evidence = _attest_material_bake_channels(
                 document, binary, pbr, emitted, fact,
+                primitive_entries,
             )
         elif stock_program_carrier:
             image_evidence = {}
@@ -6861,11 +6921,223 @@ def _bake_material_channels_inner(
     }
 
 
+MATERIAL_PAGE_KINDS = ("baseColor", "orm", "emissive", "normal")
+# Gutter between page members, in page pixels. Each member PNG already
+# carries its own baked-in dilation margin; this spacing exists so mip
+# levels 1-2 cannot average across members.
+MATERIAL_PAGE_GUTTER_PX = 8
+
+
+def _plan_material_pages(requests):
+    """Arrange unique-route bake products onto one shared page layout.
+
+    ``requests`` is a list of ``{"variant", "resolution"}`` dicts (one per
+    variant; every kind of a unique-route variant shares one achieved
+    resolution). Returns ``None`` when fewer than two variants would share
+    a page. The allocator is used for the ARRANGEMENT only: the page side
+    is grown until ``allocate_receiver_rectangles`` returns scale >= 1,
+    at which point native-size integer rects anchored at the allocated
+    origins are guaranteed to fit with every gutter intact -- the blit
+    stays a pure byte copy and per-member density is untouched. The
+    integer rects are re-proved per axis (min gap, not hypot: mip box
+    filtering is axis-separable).
+    """
+    if len(requests) < 2:
+        return None
+    total_area = sum(int(item["resolution"]) ** 2 for item in requests)
+    largest = max(int(item["resolution"]) for item in requests)
+    page = 1
+    while page * page < total_area or page < largest:
+        page *= 2
+    gutter = MATERIAL_PAGE_GUTTER_PX
+    for _attempt in range(6):
+        allocation = bakelib.allocate_receiver_rectangles(
+            [
+                (
+                    item["variant"],
+                    item["resolution"] / page,
+                    item["resolution"] / page,
+                )
+                for item in requests
+            ],
+            edge_gutter=gutter / page,
+            receiver_gutter=gutter / page,
+        )
+        if allocation["scale"] >= 1.0:
+            break
+        page *= 2
+    else:
+        raise MaterialCompileError(
+            f"material page allocation did not converge for "
+            f"{len(requests)} members (page {page})"
+        )
+    rects = {}
+    for item in requests:
+        min_u, min_v, _max_u, _max_v = allocation["placements"][
+            item["variant"]
+        ]
+        x0 = int(round(min_u * page))
+        y0 = int(round(min_v * page))
+        size = int(item["resolution"])
+        rects[item["variant"]] = (x0, y0, size)
+    # Integer re-proof, per axis: in bounds, and every pair separated by
+    # the gutter on at least one axis.
+    entries = sorted(rects.items())
+    for variant, (x0, y0, size) in entries:
+        if x0 < 0 or y0 < 0 or x0 + size > page or y0 + size > page:
+            raise MaterialCompileError(
+                f"material page rect out of bounds for {variant!r}: "
+                f"({x0},{y0})+{size} on {page}"
+            )
+    for index, (variant_a, (ax, ay, asize)) in enumerate(entries):
+        for variant_b, (bx, by, bsize) in entries[index + 1:]:
+            gap_x = max(bx - (ax + asize), ax - (bx + bsize))
+            gap_y = max(by - (ay + asize), ay - (by + bsize))
+            if max(gap_x, gap_y) < gutter:
+                raise MaterialCompileError(
+                    "material page rects closer than the gutter: "
+                    f"{variant_a!r} vs {variant_b!r} "
+                    f"(gaps {gap_x},{gap_y} < {gutter})"
+                )
+    return {"page": page, "rects": rects}
+
+
+def _load_raw_pixels(path):
+    """A saved channel PNG's stored bytes as float32 (H, W, C).
+
+    Loaded through a throwaway bpy image: ``pixels`` returns the stored
+    values (byte/255) untransformed, so the page compose is a pure byte
+    transplant -- an sRGB-encoded member stays sRGB-encoded on the page,
+    a data member stays linear, and re-saving through the data path
+    preserves every byte.
+    """
+    import numpy as np
+
+    image = bpy.data.images.load(path, check_existing=False)
+    try:
+        width, height = int(image.size[0]), int(image.size[1])
+        channels = int(image.channels)
+        pixels = np.empty(width * height * channels, dtype=np.float32)
+        image.pixels.foreach_get(pixels)
+        return pixels.reshape(height, width, channels)
+    finally:
+        bpy.data.images.remove(image)
+
+
+def _compose_material_pages(page_plan, products_by_variant, out_dir):
+    """Blit every member's channel PNGs into shared per-kind pages.
+
+    Returns ``{kind: saved}`` (the ``save_channel_png`` records) plus the
+    page token. Byte-pure: pixels are read raw and re-saved through the
+    data path; encoding semantics ride the carrier's image colorspace
+    exactly as they do for per-variant PNGs.
+    """
+    import numpy as np
+
+    page = page_plan["page"]
+    rects = page_plan["rects"]
+    token_payload = json.dumps(
+        {
+            "model": "material-page-v1",
+            "page": page,
+            "members": {
+                variant: list(rect) for variant, rect in sorted(
+                    rects.items(),
+                )
+            },
+            "images": {
+                variant: {
+                    kind: item["saved"]["sha256"]
+                    for kind, item in sorted(
+                        products_by_variant[variant]["images"].items(),
+                    )
+                }
+                for variant in sorted(rects)
+            },
+        },
+        sort_keys=True, separators=(",", ":"),
+    )
+    page_token = hashlib.sha256(token_payload.encode("utf8")).hexdigest()
+    saved_pages = {}
+    for kind in MATERIAL_PAGE_KINDS:
+        members = [
+            (variant, products_by_variant[variant]["images"].get(kind))
+            for variant in sorted(rects)
+        ]
+        present = [(variant, item) for variant, item in members if item]
+        if not present:
+            continue
+        has_alpha = any(
+            bool(item["saved"].get("hasAlpha")) for _v, item in present
+        )
+        channel_count = 4 if has_alpha else 3
+        plane = np.zeros((page, page, channel_count), dtype=np.float32)
+        if has_alpha:
+            plane[:, :, 3] = 1.0
+        coverage = np.zeros((page, page), dtype=bool)
+        for variant, item in present:
+            x0, y0, size = rects[variant]
+            member = _load_raw_pixels(item["saved"]["path"])
+            if member.shape[0] != size or member.shape[1] != size:
+                raise MaterialCompileError(
+                    f"page member {variant!r} {kind} is "
+                    f"{member.shape[1]}x{member.shape[0]}, planned {size}"
+                )
+            plane[y0:y0 + size, x0:x0 + size, :3] = member[:, :, :3]
+            if has_alpha and member.shape[2] >= 4:
+                plane[y0:y0 + size, x0:x0 + size, 3] = member[:, :, 3]
+            coverage[y0:y0 + size, x0:x0 + size] = True
+        # Same basename family as the per-variant channel PNGs (the glTF
+        # texture name is the file basename, and the optimizer's
+        # generated-name regex covers both families in one pattern).
+        suffix = "base" if kind == "baseColor" else kind
+        path = os.path.join(
+            out_dir, f"page-{page_token[:12]}-{suffix}.png",
+        )
+        saved_pages[kind] = bakelib.save_channel_png(
+            plane[:, :, :3], coverage, path,
+            colorspace="data",
+            alpha=plane[:, :, 3] if has_alpha else None,
+            label=f"material page {kind}",
+        )
+    return saved_pages, page_token
+
+
+def _remap_slot_uv_rect(obj, slot_index, uv_name, rect, page):
+    """Scale one binding's packed 0..1 layout into its page rect.
+
+    Rides the same polygon/loop walk shape as ``_writeback_split_uv``:
+    only loops whose polygon carries ``slot_index`` move, which
+    degenerates correctly to every loop on a single-slot mesh (the
+    no-split case, where the packed layer already lives on ``obj``).
+    """
+    mesh = obj.data
+    layer = mesh.uv_layers.get(uv_name)
+    if layer is None:
+        raise MaterialCompileError(
+            f'Page remap: mesh "{mesh.name}" lost UV layer {uv_name!r}.'
+        )
+    x0, y0, size = rect
+    scale = size / page
+    offset_u = x0 / page
+    offset_v = y0 / page
+    for polygon in mesh.polygons:
+        if int(polygon.material_index) != int(slot_index):
+            continue
+        for loop_index in polygon.loop_indices:
+            u, v = layer.data[loop_index].uv
+            layer.data[loop_index].uv = (
+                offset_u + u * scale,
+                offset_v + v * scale,
+            )
+
+
 def _generated_material_bake(
     decision: MaterialDecision,
     binding: MaterialBinding,
     created_materials: list,
     products: dict,
+    page_images: dict | None = None,
 ):
     """Ordinary lit glTF pbrMetallicRoughness from the channel products,
     wired in the stock exporter's recognized arrangements."""
@@ -6918,7 +7190,11 @@ def _generated_material_bake(
             tree.links.new(uv_node.outputs["UV"], node.inputs["Vector"])
         return node
 
-    images = products.get("images", {})
+    # Shared-page members bind the page images; the placement lives
+    # entirely in the remapped UV loops, so no node changes are needed
+    # (EXTEND clamps at the page border and the sub-rect is enforced by
+    # the loops plus the attested rect).
+    images = page_images if page_images is not None else products.get("images", {})
     uses_alpha = False
 
     base_entry = images.get("baseColor")
@@ -7144,6 +7420,7 @@ def with_compiled_materials(
                 swap["objects"].append(object_name)
 
         material_bake_products = {}
+        deferred_bake_entries = []
         for entry in binding_entries:
             decision = entry["decision"]
             binding = entry["binding"]
@@ -7247,155 +7524,12 @@ def with_compiled_materials(
                             f"{error}"
                         ) from error
                     material_bake_products[variant] = products
-                generated = generated_by_variant.get(variant)
-                if generated is None:
-                    generated = _generated_material_bake(
-                        decision, binding, created_materials, products,
-                    )
-                    generated_by_variant[variant] = generated
-                    plan_records = {
-                        item["channel"]: item
-                        for item in (decision.channel_plan or {}).get(
-                            "channels", (),
-                        )
-                    }
-                    base_record = plan_records.get("Base Color")
-                    alpha_record = plan_records.get("Alpha")
-                    alpha_factor = (
-                        float(alpha_record.get("value") or 1.0)
-                        if alpha_record is not None
-                        and alpha_record.get("route") == "factor" else 1.0
-                    )
-                    has_base_image = "baseColor" in products["images"]
-                    base_factor = (1.0, 1.0, 1.0)
-                    if not has_base_image and base_record is not None \
-                            and base_record.get("route") == "factor":
-                        value = base_record.get("value")
-                        if isinstance(value, (list, tuple)) and len(value) >= 3:
-                            base_factor = tuple(
-                                float(item) for item in value[:3]
-                            )
-                    metallic_factor = 1.0 if "orm" in products["images"] and \
-                        "Metallic" in (
-                            products["images"]["orm"].get("bakedChannels") or ()
-                        ) else 0.0
-                    roughness_factor = 1.0 if "orm" in products["images"] and \
-                        "Roughness" in (
-                            products["images"]["orm"].get("bakedChannels") or ()
-                        ) else 0.5
-                    for name, key in (
-                        ("Metallic", "metallic"), ("Roughness", "roughness"),
-                    ):
-                        record = plan_records.get(name)
-                        if record is not None \
-                                and record.get("route") == "factor" \
-                                and isinstance(
-                                    record.get("value"), (int, float),
-                                ):
-                            if name == "Metallic":
-                                metallic_factor = float(record["value"])
-                            else:
-                                roughness_factor = float(record["value"])
-                    generated_facts[generated.name] = {
-                        "source": decision.material_name,
-                        "rule": generated.get("blendlink_material_rule"),
-                        "variant": generated.get("blendlink_material_variant"),
-                        "transport": "channels",
-                        "surfaceResponse": "lit",
-                        "metallicFactor": metallic_factor,
-                        "roughnessFactor": roughness_factor,
-                        "usesAlpha": binding.alpha_mode != "OPAQUE",
-                        "alphaMode": binding.alpha_mode,
-                        "baseColorFactor": tuple(base_factor) + (
-                            alpha_factor if not products["images"].get(
-                                "baseColor", {},
-                            ).get("hasAlpha") else 1.0,
-                        ),
-                        "doubleSided": not bool(
-                            entry["source"].use_backface_culling,
-                        ),
-                        "carrierSemantic": None,
-                        "color0Type": None,
-                        "image": None,
-                        "texCoord": None,
-                        "surfaceFactorization": None,
-                        "emissiveImage": None,
-                        "emissiveTexCoord": None,
-                        "emissiveFactor": None,
-                        "materialization": None,
-                        "materializationEvidence": None,
-                        "materialBake": {
-                            # TSL IR stays out of the glTF attestation
-                            # evidence by declared scope: the evidence
-                            # verifier has no channels/IR model, and the
-                            # per-channel bodies belong to the plan
-                            # record, not the GLB byte attestation.
-                            "channels": [
-                                {
-                                    key: value
-                                    for key, value in item.items()
-                                    if not key.startswith("tslIr")
-                                }
-                                for item in
-                                (decision.channel_plan or {}).get(
-                                    "channels", (),
-                                )
-                            ],
-                            "gates": products["gates"],
-                            "images": {
-                                kind: {
-                                    "sha256": item["saved"]["sha256"],
-                                    "mime": item["saved"]["mime"],
-                                    "width": item["saved"]["width"],
-                                    "height": item["saved"]["height"],
-                                    "colorspace": item["saved"]["colorspace"],
-                                    "hasAlpha": bool(
-                                        item["saved"].get("hasAlpha"),
-                                    ),
-                                    "uv": item.get("uv"),
-                                    **({
-                                        "strength": item["strength"],
-                                    } if "strength" in item else {}),
-                                }
-                                for kind, item in products["images"].items()
-                            },
-                            **({
-                                "uvEvidence": {
-                                    "uvName": products["uvEvidence"]["uvName"],
-                                    "resolution": products["uvEvidence"][
-                                        "resolution"
-                                    ],
-                                    "margin": products["uvEvidence"]["margin"],
-                                    "uvStrategy": products["uvEvidence"][
-                                        "uvStrategy"
-                                    ],
-                                    "densityMet": products["uvEvidence"][
-                                        "densityMet"
-                                    ],
-                                },
-                            } if products.get("uvEvidence") else {}),
-                        },
-                        "bindings": set(),
-                        "bindingRanges": {},
-                        "bindingUvs": {},
-                    }
-                fact = generated_facts[generated.name]
-                fact["bindings"].add(binding_key)
-                runtime_entry = _tsl_runtime_mesh_entry(decision, obj)
-                if runtime_entry is not None:
-                    fact.setdefault("tslRuntimeMeshes", {})[
-                        binding.object_name
-                    ] = runtime_entry
-                slot = obj.material_slots[binding.slot_index]
-                try:
-                    slot.link = "DATA"
-                    slot.material = generated
-                except (AttributeError, ReferenceError, RuntimeError,
-                        TypeError) as error:
-                    raise MaterialCompileError(
-                        f'Cannot install the private website material on '
-                        f'{binding.object_name}[{binding.slot_index}]: {error}'
-                    ) from error
+                # Carrier, fact and slot install are DEFERRED to the
+                # second pass below: shared surface pages (Phase 2 unit
+                # F) need every unique-route variant's products in hand
+                # before any carrier binds an image.
+                deferred_bake_entries.append(entry)
+                continue
                 continue
             materialization = None
             if decision.color is not None \
@@ -7794,6 +7928,287 @@ def with_compiled_materials(
 
         # Prune before the export reads UV order: this is what keeps the
         # private bake layer inside the TEXCOORD_0..3 range Three can bind.
+
+        # ---- Shared surface pages (Phase 2 unit F) ----
+        # Unique-route variants (one achieved resolution across all four
+        # kinds, EXTEND sampling, per-binding identity) pack onto shared
+        # per-kind pages: the allocator arranges, native-size integer
+        # rects anchor at the allocated origins (scale >= 1 guarantees
+        # the fit), the blit is a pure byte transplant of the
+        # already-gated channel PNGs, and each binding's packed 0..1
+        # layout scales into its rect. Tile-route variants keep their
+        # private REPEAT textures; a lone unique variant pages nothing.
+        page_images_by_variant = {}
+        if deferred_bake_entries:
+            unique_variants = {}
+            for entry in deferred_bake_entries:
+                variant = _variant_key(entry["decision"], entry["binding"])
+                products = material_bake_products[variant]
+                if products.get("uvEvidence") \
+                        and variant not in unique_variants:
+                    unique_variants[variant] = {
+                        "variant": variant,
+                        "resolution": int(
+                            products["uvEvidence"]["resolution"],
+                        ),
+                    }
+            page_plan = (
+                _plan_material_pages(sorted(
+                    unique_variants.values(),
+                    key=lambda item: item["variant"],
+                ))
+                if len(unique_variants) >= 2 else None
+            )
+            if page_plan is not None:
+                saved_pages, page_token = _compose_material_pages(
+                    page_plan, material_bake_products,
+                    temporary_directory.name,
+                )
+                page_colorspaces = {
+                    "baseColor": "sRGB", "emissive": "sRGB",
+                    "orm": "Non-Color", "normal": "Non-Color",
+                }
+                page_bpy_images = {}
+                for kind, saved in saved_pages.items():
+                    image = bpy.data.images.load(
+                        saved["path"], check_existing=False,
+                    )
+                    created_images.append(image)
+                    image.name = (
+                        f"BLENDLINK_WEB_PAGE.{page_token[:12]}.{kind}"
+                    )
+                    image.colorspace_settings.name = page_colorspaces[kind]
+                    image.alpha_mode = "STRAIGHT"
+                    page_bpy_images[kind] = image
+                remapped_variants = set()
+                for entry in deferred_bake_entries:
+                    variant = _variant_key(
+                        entry["decision"], entry["binding"],
+                    )
+                    rect = page_plan["rects"].get(variant)
+                    if rect is None or variant in remapped_variants:
+                        continue
+                    remapped_variants.add(variant)
+                    products = material_bake_products[variant]
+                    binding = entry["binding"]
+                    remap_obj = bpy.data.objects.get(binding.object_name)
+                    if remap_obj is None:
+                        raise MaterialCompileError(
+                            f'Page member object '
+                            f'"{binding.object_name}" disappeared before '
+                            "the UV remap."
+                        )
+                    _remap_slot_uv_rect(
+                        remap_obj, binding.slot_index,
+                        products["uvEvidence"]["uvName"],
+                        rect, page_plan["page"],
+                    )
+                for variant in unique_variants:
+                    rect = page_plan["rects"][variant]
+                    products = material_bake_products[variant]
+                    page_images_by_variant[variant] = {
+                        kind: {
+                            "image": page_bpy_images[kind],
+                            "saved": saved_pages[kind],
+                            "uv": "unique",
+                            # The MEMBER's own alpha decides the carrier's
+                            # Alpha link (an opaque member must not gain
+                            # one); the page record's page-wide hasAlpha
+                            # rides "saved" for the byte attestation.
+                            "hasAlpha": bool(item.get("hasAlpha")),
+                            **({
+                                "strength": item["strength"],
+                            } if "strength" in item else {}),
+                            **({
+                                "bakedChannels": item["bakedChannels"],
+                            } if "bakedChannels" in item else {}),
+                            "pageRect": [rect[0], rect[1], rect[2]],
+                            "page": page_plan["page"],
+                        }
+                        for kind, item in products["images"].items()
+                        if kind in saved_pages
+                    }
+                print(
+                    "blendlink material pages: packed "
+                    f"{len(unique_variants)} unique-route variants onto "
+                    f"{len(saved_pages)} {page_plan['page']}px pages"
+                )
+
+        for entry in deferred_bake_entries:
+            decision = entry["decision"]
+            binding = entry["binding"]
+            obj = bpy.data.objects.get(binding.object_name)
+            if obj is None or not (
+                0 <= binding.slot_index < len(obj.material_slots)
+            ):
+                raise MaterialCompileError(
+                    f'Material binding {binding.object_name}'
+                    f'[{binding.slot_index}] disappeared before carrier '
+                    "installation."
+                )
+            binding_key = (binding.object_name, binding.slot_index)
+            variant = _variant_key(decision, binding)
+            products = material_bake_products[variant]
+            page_images = page_images_by_variant.get(variant)
+            generated = generated_by_variant.get(variant)
+            if generated is None:
+                generated = _generated_material_bake(
+                    decision, binding, created_materials, products,
+                    page_images=page_images,
+                )
+                fact_images = (
+                    page_images if page_images is not None
+                    else products["images"]
+                )
+                generated_by_variant[variant] = generated
+                plan_records = {
+                    item["channel"]: item
+                    for item in (decision.channel_plan or {}).get(
+                        "channels", (),
+                    )
+                }
+                base_record = plan_records.get("Base Color")
+                alpha_record = plan_records.get("Alpha")
+                alpha_factor = (
+                    float(alpha_record.get("value") or 1.0)
+                    if alpha_record is not None
+                    and alpha_record.get("route") == "factor" else 1.0
+                )
+                has_base_image = "baseColor" in products["images"]
+                base_factor = (1.0, 1.0, 1.0)
+                if not has_base_image and base_record is not None \
+                        and base_record.get("route") == "factor":
+                    value = base_record.get("value")
+                    if isinstance(value, (list, tuple)) and len(value) >= 3:
+                        base_factor = tuple(
+                            float(item) for item in value[:3]
+                        )
+                metallic_factor = 1.0 if "orm" in products["images"] and \
+                    "Metallic" in (
+                        products["images"]["orm"].get("bakedChannels") or ()
+                    ) else 0.0
+                roughness_factor = 1.0 if "orm" in products["images"] and \
+                    "Roughness" in (
+                        products["images"]["orm"].get("bakedChannels") or ()
+                    ) else 0.5
+                for name, key in (
+                    ("Metallic", "metallic"), ("Roughness", "roughness"),
+                ):
+                    record = plan_records.get(name)
+                    if record is not None \
+                            and record.get("route") == "factor" \
+                            and isinstance(
+                                record.get("value"), (int, float),
+                            ):
+                        if name == "Metallic":
+                            metallic_factor = float(record["value"])
+                        else:
+                            roughness_factor = float(record["value"])
+                generated_facts[generated.name] = {
+                    "source": decision.material_name,
+                    "rule": generated.get("blendlink_material_rule"),
+                    "variant": generated.get("blendlink_material_variant"),
+                    "transport": "channels",
+                    "surfaceResponse": "lit",
+                    "metallicFactor": metallic_factor,
+                    "roughnessFactor": roughness_factor,
+                    "usesAlpha": binding.alpha_mode != "OPAQUE",
+                    "alphaMode": binding.alpha_mode,
+                    "baseColorFactor": tuple(base_factor) + (
+                        alpha_factor if not products["images"].get(
+                            "baseColor", {},
+                        ).get("hasAlpha") else 1.0,
+                    ),
+                    "doubleSided": not bool(
+                        entry["source"].use_backface_culling,
+                    ),
+                    "carrierSemantic": None,
+                    "color0Type": None,
+                    "image": None,
+                    "texCoord": None,
+                    "surfaceFactorization": None,
+                    "emissiveImage": None,
+                    "emissiveTexCoord": None,
+                    "emissiveFactor": None,
+                    "materialization": None,
+                    "materializationEvidence": None,
+                    "materialBake": {
+                        # TSL IR stays out of the glTF attestation
+                        # evidence by declared scope: the evidence
+                        # verifier has no channels/IR model, and the
+                        # per-channel bodies belong to the plan
+                        # record, not the GLB byte attestation.
+                        "channels": [
+                            {
+                                key: value
+                                for key, value in item.items()
+                                if not key.startswith("tslIr")
+                            }
+                            for item in
+                            (decision.channel_plan or {}).get(
+                                "channels", (),
+                            )
+                        ],
+                        "gates": products["gates"],
+                        "images": {
+                            kind: {
+                                "sha256": item["saved"]["sha256"],
+                                **({
+                                    "pageRect": list(item["pageRect"]),
+                                    "page": int(item["page"]),
+                                } if "pageRect" in item else {}),
+                                "mime": item["saved"]["mime"],
+                                "width": item["saved"]["width"],
+                                "height": item["saved"]["height"],
+                                "colorspace": item["saved"]["colorspace"],
+                                "hasAlpha": bool(
+                                    item["saved"].get("hasAlpha"),
+                                ),
+                                "uv": item.get("uv"),
+                                **({
+                                    "strength": item["strength"],
+                                } if "strength" in item else {}),
+                            }
+                            for kind, item in fact_images.items()
+                        },
+                        **({
+                            "uvEvidence": {
+                                "uvName": products["uvEvidence"]["uvName"],
+                                "resolution": products["uvEvidence"][
+                                    "resolution"
+                                ],
+                                "margin": products["uvEvidence"]["margin"],
+                                "uvStrategy": products["uvEvidence"][
+                                    "uvStrategy"
+                                ],
+                                "densityMet": products["uvEvidence"][
+                                    "densityMet"
+                                ],
+                            },
+                        } if products.get("uvEvidence") else {}),
+                    },
+                    "bindings": set(),
+                    "bindingRanges": {},
+                    "bindingUvs": {},
+                }
+            fact = generated_facts[generated.name]
+            fact["bindings"].add(binding_key)
+            runtime_entry = _tsl_runtime_mesh_entry(decision, obj)
+            if runtime_entry is not None:
+                fact.setdefault("tslRuntimeMeshes", {})[
+                    binding.object_name
+                ] = runtime_entry
+            slot = obj.material_slots[binding.slot_index]
+            try:
+                slot.link = "DATA"
+                slot.material = generated
+            except (AttributeError, ReferenceError, RuntimeError,
+                    TypeError) as error:
+                raise MaterialCompileError(
+                    f'Cannot install the private website material on '
+                    f'{binding.object_name}[{binding.slot_index}]: {error}'
+                ) from error
+
         _prune_unpublished_uv_layers(data_swaps, generated_facts)
         try:
             bpy.context.view_layer.update()

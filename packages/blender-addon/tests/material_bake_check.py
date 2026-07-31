@@ -228,6 +228,27 @@ def main():
     unique_obj.data.materials.append(unique_material)
     compiler.set_material_bake(unique_material, True)
 
+    # A second unique-route material: with two unique variants the shared
+    # surface page forms (a lone unique variant deliberately pages
+    # nothing), proving the 2-F path end to end.
+    page_obj = quad_object("Page Sibling", fixtures)
+    page_obj.location = (0.0, 3.0, 0.0)
+    page_material, page_tree, page_principled = base_material(
+        "World Channels Sibling",
+    )
+    page_coord = page_tree.nodes.new("ShaderNodeTexCoord")
+    page_noise = page_tree.nodes.new("ShaderNodeTexNoise")
+    page_noise.inputs["Scale"].default_value = 9.0
+    page_tree.links.new(
+        page_coord.outputs["Object"], page_noise.inputs["Vector"],
+    )
+    page_tree.links.new(
+        page_noise.outputs["Color"], page_principled.inputs["Base Color"],
+    )
+    page_principled.inputs["Roughness"].default_value = 0.6
+    page_obj.data.materials.append(page_material)
+    compiler.set_material_bake(page_material, True)
+
     # --- Refusals stay named ---------------------------------------------
     refused_obj = quad_object("Refused Target", fixtures)
     refused_material, refused_tree, refused_principled = base_material(
@@ -244,7 +265,8 @@ def main():
 
     # --- Plan ------------------------------------------------------------
     plan = compiler.plan_materials(
-        (tile_obj, shared_obj, unique_obj, refused_obj), purpose="final",
+        (tile_obj, shared_obj, unique_obj, page_obj, refused_obj),
+        purpose="final",
     )
     decisions = {item.material_name: item for item in plan.decisions}
 
@@ -324,7 +346,7 @@ def main():
     # --- Compile the two good materials through the real exporter --------
     compiler.set_material_bake(refused_material, False)
     good_plan = compiler.plan_materials(
-        (tile_obj, shared_obj, unique_obj), purpose="final",
+        (tile_obj, shared_obj, unique_obj, page_obj), purpose="final",
     )
     expect(not good_plan.errors, f"good plan blocked: {good_plan.errors}")
 
@@ -334,13 +356,13 @@ def main():
         _value, compilation = compiler.with_compiled_materials(
             good_plan,
             str(out_path),
-            emit_selected([tile_obj, shared_obj, unique_obj]),
+            emit_selected([tile_obj, shared_obj, unique_obj, page_obj]),
         )
         expect(out_path.is_file(), "material bake emitted no GLB")
         expect(
-            len(compilation.generated_materials) == 2,
-            f"two bindings of one tileable material must consolidate to one "
-            f"generated material: {compilation.generated_materials}",
+            len(compilation.generated_materials) == 3,
+            f"tile consolidation plus two page members: "
+            f"{compilation.generated_materials}",
         )
         evidence_by_source = {
             item["sourceMaterial"]: item for item in compilation.gltf_evidence
@@ -380,6 +402,34 @@ def main():
             f"HDR emissive strength lost: {unique_textures['emissive']}",
         )
 
+        # --- Shared surface page (Phase 2 unit F) ------------------------
+        sibling_evidence = evidence_by_source["World Channels Sibling"]
+        unique_base = unique_evidence["materialBake"]["textures"]["baseColor"]
+        sibling_base = sibling_evidence["materialBake"]["textures"][
+            "baseColor"
+        ]
+        expect(
+            unique_base["imageSha256"] == sibling_base["imageSha256"],
+            "two unique-route members must share one baseColor page: "
+            f"{unique_base['imageSha256'][:12]} vs "
+            f"{sibling_base['imageSha256'][:12]}",
+        )
+        expect(
+            unique_base.get("pageRect") and sibling_base.get("pageRect")
+            and unique_base["pageRect"] != sibling_base["pageRect"]
+            and unique_base.get("page") == sibling_base.get("page")
+            and unique_base.get("primitivesChecked", 0) >= 1,
+            f"page members must attest DISTINCT rects on one page: "
+            f"{unique_base.get('pageRect')} vs {sibling_base.get('pageRect')}",
+        )
+        tile_base = tile_evidence["materialBake"]["textures"]["baseColor"]
+        expect(
+            "pageRect" not in tile_base
+            and tile_base["imageSha256"] != unique_base["imageSha256"],
+            "the tile route must keep its private REPEAT texture off the "
+            "page",
+        )
+
         document, binary = read_glb_json(out_path)
         tile_nodes = {
             node.get("name"): node for node in document.get("nodes", ())
@@ -401,8 +451,8 @@ def main():
             == compiler.MATERIAL_BAKE_RULE
         ]
         expect(
-            len(generated) == 2,
-            f"GLB must carry two material-bake materials: "
+            len(generated) == 3,
+            f"GLB must carry three material-bake materials: "
             f"{[item.get('name') for item in document.get('materials', ())]}",
         )
         for material in generated:

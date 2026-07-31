@@ -722,10 +722,11 @@ function protectNamedResourcesForPrune(document: Document): Map<Property, Record
 
 /** Names minted by the per-channel material bake, and only those.
  * `material_compiler.py:6454-6543` writes `channel-<token>-<slot>.png` for the
- * base, orm, emissive and normal slots; the token is the variant hash. Nothing
+ * base, orm, emissive and normal slots; the token is the variant hash (or,
+ * for `page-` names, the shared-surface-page content hash). Nothing
  * else in a Blendlink asset carries this shape, and an artist cannot author it
  * from Blender, so matching on it can never claim a hand-named texture. */
-const GENERATED_CHANNEL_TEXTURE = /^channel-[0-9a-f]+-(?:base|orm|emissive|normal)$/
+const GENERATED_CHANNEL_TEXTURE = /^(?:channel|page)-[0-9a-f]+-(?:base|orm|emissive|normal)$/
 
 /** Merge compiler-generated channel textures whose payloads are byte-identical.
  *
