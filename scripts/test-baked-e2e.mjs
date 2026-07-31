@@ -436,6 +436,33 @@ if ((lightingManifest.materialPrograms?.materials ?? 0) < 1) {
   )
 }
 
+// The runtime resolves every texture_ref image BY BASENAME against the
+// sidecar URL, so publication must rewrite the sidecar's file references
+// out of the staging name family when it renames the assets — each
+// referenced file has to exist beside the sidecar with the pinned bytes.
+// (The fixture's 144x144 base image crosses the embedded-IR bound
+// precisely so this contract is exercised.)
+const lightingSidecarPath = join(lightingWork, 'public', 'models', 'lightmap.materials.json')
+const lightingSidecar = JSON.parse(readFileSync(lightingSidecarPath, 'utf8'))
+const sidecarImages = Object.entries(lightingSidecar.images ?? {})
+if (!sidecarImages.length) {
+  throw new Error('the TSL program fixture stopped publishing texture_ref images')
+}
+for (const [imageName, image] of sidecarImages) {
+  const imagePath = join(lightingWork, 'public', 'models', image.file)
+  const published = existsSync(imagePath) ? readFileSync(imagePath) : null
+  const publishedHash = published
+    ? createHash('sha256').update(published).digest('hex').slice(0, 16)
+    : null
+  if (published?.byteLength !== image.bytes || publishedHash !== image.hash) {
+    throw new Error(
+      `sidecar image ${imageName} does not resolve beside the sidecar: `
+      + `${image.file} is ${published?.byteLength ?? 'missing'}`
+      + `/${publishedHash ?? 'nohash'}, pinned ${image.bytes}/${image.hash}`,
+    )
+  }
+}
+
 const lightingGlbPath = join(lightingWork, 'public', 'models', 'lightmap.glb')
 const lightingDocument = readGlbJson(lightingGlbPath)
 const galleryNode = lightingDocument.nodes?.find((node) => node.name === 'Gallery')

@@ -38,11 +38,15 @@ if bake_output in {"lighting", "material"}:
     links = material.node_tree.links
     principled = nodes.get("Principled BSDF")
 
-    base_image = bpy.data.images.new("Gallery Base Detail", width=16, height=16)
+    # 144x144 deliberately crosses the 128x128 embedded-IR bound, so the
+    # lighting-mode TSL program carries this image as a texture_ref and the
+    # sidecar's published-image contract (basenames resolving beside the
+    # sidecar) is exercised end to end.
+    base_image = bpy.data.images.new("Gallery Base Detail", width=144, height=144)
     base_pixels = []
-    for y in range(16):
-        for x in range(16):
-            value = 0.2 if (x // 2 + y // 2) % 2 else 0.8
+    for y in range(144):
+        for x in range(144):
+            value = 0.2 if (x // 18 + y // 18) % 2 else 0.8
             base_pixels.extend((value, 0.15 + value * 0.25, 0.08, 1.0))
     base_image.pixels.foreach_set(base_pixels)
     base_path = os.path.join(os.path.dirname(out_path), "gallery-base-detail.png")

@@ -2069,6 +2069,24 @@ async function verifyScenesWithPublicationLease(
         })
         continue
       }
+      // The runtime resolves every texture_ref image BY BASENAME against
+      // the sidecar URL, so each `"file":"..."` reference must exist
+      // beside the published sidecar. Scanned textually rather than
+      // parsed: a `"` inside a JSON string value is escaped as `\"`, so
+      // the pattern only matches real image entries, and non-standard
+      // number tokens never reach a parser.
+      const sidecarText = programsBytes.toString('utf8')
+      const missingImage = [...sidecarText.matchAll(/"file":"([^"\\]+)"/g)]
+        .map((match) => match[1])
+        .find((file) => !existsSync(join(dirname(programsPath), file)))
+      if (missingImage) {
+        issues.push({
+          scene: scene.name,
+          problem: `material programs sidecar references ${missingImage}, which is not published beside it`,
+          fix: 'Run `blendlink sync` and commit source + artifacts together.',
+        })
+        continue
+      }
     }
     let reflectionProbeFailure: string | undefined
     for (const [probeId, asset] of Object.entries(manifest.reflectionProbeAssets ?? {})) {
