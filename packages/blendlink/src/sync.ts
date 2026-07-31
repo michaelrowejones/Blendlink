@@ -1400,6 +1400,16 @@ async function syncSceneWithPublicationLease(
         materials: exported.materialPrograms.materials,
       }
     : undefined
+  // texture_ref source images publish BESIDE the sidecar and the runtime
+  // resolves them by basename against the sidecar URL -- they are never
+  // URL-addressed here, so toUrl() never sees them, and without an
+  // explicit declaration the staging integrity check refuses the whole
+  // publish as an undeclared compiler-owned file. Found live on ellie's
+  // first texture_ref-carrying sync (ellieAnimation.tex.ellie-dirt-map):
+  // every prior scene shipped an images-free sidecar.
+  for (const texturePath of exported.materialPrograms?.texturePaths ?? []) {
+    declaredStagePaths.add(resolve(texturePath))
+  }
   const reflectionProbeAssets: NonNullable<SceneManifest['reflectionProbeAssets']> =
     Object.fromEntries(Object.entries(exported.reflectionProbeAssets ?? {}).map(([id, asset]) => {
       const { path, ...published } = asset
