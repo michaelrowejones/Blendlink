@@ -831,7 +831,7 @@ so the draw-call figure is 64, one below the stale reference's 65, from the excl
 | stale pre-session reference (03:21 GLB, different scene state) | 201.4 MiB | 23.9 MB | 12 materials |
 | baked, paged v1 (single 8192 page -- WITHDRAWN) | **1.02 GiB** | 26.4 MB | 30 materials |
 | **programs only, no bakes** | **64.0 MiB** | 23.1 MB | **36 materials** |
-| baked, paged v1.1 (bounded pow2 bins) | measuring | -- | -- |
+| baked, paged v1.1 (bounded pow2 bins) | **171.7 MiB** | 23.3 MB | 30 materials |
 
 Two findings worth the whole phase:
 
@@ -846,8 +846,13 @@ Two findings worth the whole phase:
    compresses empty page area, VRAM does not -- while the binding collapse itself was real
    (~120 channel textures became 3 pages). v1.1 (bounded multi-bin pow2 quadtree packing,
    gutter-free because pow2 ladder members separate by their own baked-in margins) bounds
-   page VRAM at member VRAM plus last-bin rounding; its ellie figure is the row being
-   measured.
+   page VRAM at member VRAM plus last-bin rounding. Measured: three bins yielding seven
+   2048px pages (kind sets differ per bin) plus five small private channels -- 171.7 MiB,
+   a 15% byte win over the reference AND a ~120-textures-to-12-images binding collapse,
+   with the same 30 programs riding as evidence. The verdict the table forces: for the
+   character scene the PROGRAMS route dominates outright (-68%); bounded pages are the
+   right transport where every backend needs textures (the WebGL-fidelity constraint) or
+   where binding count is the scarce resource.
 
 **2-D design, forced by the implementation map (measured 2026-07-31, four readers over the
 orchestration).** Three decisions the code left no room to make differently:
