@@ -802,6 +802,20 @@ The findings that reshape the naive plan, then the unit order.
    cell (no vitest WebGPU path exists; wgpu-postprocessing-parity needs the same dist-mtime
    staleness guard tsl-node-differential already has).
 
+**PHASE 2 COMPLETE (2026-07-31).** All six units landed and scored; the table above is
+the phase's verdict. Unit 2-E landed last (commit 34c2ca2): the subtraction is opt-in
+composition-aware (appearance/material-owned objects subtract unconditionally and marking
+one refuses by name; lighting-owned objects with explicit material intents compose), the
+bake runs inside the material transaction's emit so the lighting fork copies the compiled
+carrier, the transaction restore gained the emit_replaces_mesh_data allowance for the
+bake's mesh freeze, evidence records the EMITTED fork name beside the carrier name, and
+clone consolidation keys on the loaded material instance so per-atlas forks never collapse.
+The webColor x Lighting refusal deliberately survives: a selected-field carrier genuinely
+changes the lighting formula; program and bake carriers do not. Composition is pinned by
+the baked e2e's lighting pass (written RED first). Next majors: Phase 3 (runtime LATTICE,
+blocked on the 6a mechanism), the seven filed chips (constant-ORM fill and COLOR_n mapping
+recover the largest exclusions), and delivery tiers for program images / material pages.
+
 **Unit order (each its own commit, test:full gated):**
 
 - **2-A. Installer split + skinning invariant** (8b.3/8b.4): buildMaterialProgram vs
