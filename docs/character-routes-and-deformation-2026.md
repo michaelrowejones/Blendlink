@@ -821,6 +821,34 @@ The findings that reshape the naive plan, then the unit order.
 Success metric unchanged: ellie draw calls and GPU texture bytes against the clean-HEAD
 baseline (re-measured this session, replacing the stale 201.5 MiB / 65 figures).
 
+**Phase 2 measurements (2026-07-31, in progress).** Scene basis for every figure: the
+zipper mesh excluded per the Phase 3 decision, and the mark-time resolver dropping TSL
+programs whose install would refuse (watch layer mismatch, boots/shoes extras conflicts) --
+so the draw-call figure is 64, one below the stale reference's 65, from the exclusion.
+
+| configuration | gpuTextureBytes | file | programs |
+| --- | --- | --- | --- |
+| stale pre-session reference (03:21 GLB, different scene state) | 201.4 MiB | 23.9 MB | 12 materials |
+| baked, paged v1 (single 8192 page -- WITHDRAWN) | **1.02 GiB** | 26.4 MB | 30 materials |
+| **programs only, no bakes** | **64.0 MiB** | 23.1 MB | **36 materials** |
+| baked, paged v1.1 (bounded pow2 bins) | measuring | -- | -- |
+
+Two findings worth the whole phase:
+
+1. **The programs-only route is the character-scene win: 201 -> 64 MiB (-68%)**, and the
+   64 MiB residue is entirely authored source images shipping stock (the paint class costs
+   zero texture bytes). Program coverage reached 36 of 49 materials -- MORE than bake
+   marking reaches (30), because the program planner accepts materials the bake gates
+   refuse. The declared trade: WebGL renders the stock approximation; the WebGPU family
+   rebuilds the authored look. The 2.04 MB sidecar is the entire surface payload.
+2. **Paged v1's single-page design was refuted by its first live measurement**: one 8192px
+   page to fit 30 members at scale >= 1 quintupled the GPU budget to 1.02 GiB -- PNG
+   compresses empty page area, VRAM does not -- while the binding collapse itself was real
+   (~120 channel textures became 3 pages). v1.1 (bounded multi-bin pow2 quadtree packing,
+   gutter-free because pow2 ladder members separate by their own baked-in margins) bounds
+   page VRAM at member VRAM plus last-bin rounding; its ellie figure is the row being
+   measured.
+
 **2-D design, forced by the implementation map (measured 2026-07-31, four readers over the
 orchestration).** Three decisions the code left no room to make differently:
 
