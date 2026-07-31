@@ -6922,84 +6922,112 @@ def _bake_material_channels_inner(
 
 
 MATERIAL_PAGE_KINDS = ("baseColor", "orm", "emissive", "normal")
-# Gutter between page members, in page pixels. Each member PNG already
-# carries its own baked-in dilation margin; this spacing exists so mip
-# levels 1-2 cannot average across members.
-MATERIAL_PAGE_GUTTER_PX = 8
+# VRAM ceiling per page. The first live measurement (ellie, 2026-07-31)
+# let a single page grow to 8192px to fit every member at scale >= 1 and
+# the GPU texture budget quintupled -- PNG compresses empty page area,
+# VRAM does not. Pages are now bounded bins.
+MATERIAL_PAGE_MAX = 2048
+
+
+def _pack_pow2_bin(page, members):
+    """Quadtree (buddy) placement of pow2 squares into a pow2 bin.
+
+    ``members`` is [(variant, size)] sorted largest-first. Every
+    unique-route resolution is a power-of-two ladder value, so first-fit
+    descending into quadrant splits packs with ZERO fragmentation: the
+    placement succeeds exactly when the member areas fit, and rects are
+    disjoint by construction. Returns {variant: (x, y, size)} or None.
+    """
+    free = {int(page): [(0, 0)]}
+    rects = {}
+    for variant, size in members:
+        available = sorted(
+            slot_size for slot_size, slots in free.items()
+            if slot_size >= size and slots
+        )
+        if not available:
+            return None
+        slot_size = available[0]
+        x, y = free[slot_size].pop()
+        while slot_size > size:
+            slot_size //= 2
+            free.setdefault(slot_size, []).extend((
+                (x + slot_size, y),
+                (x, y + slot_size),
+                (x + slot_size, y + slot_size),
+            ))
+        rects[variant] = (x, y, size)
+    return rects
 
 
 def _plan_material_pages(requests):
-    """Arrange unique-route bake products onto one shared page layout.
+    """Arrange unique-route bake products onto bounded shared pages.
 
-    ``requests`` is a list of ``{"variant", "resolution"}`` dicts (one per
-    variant; every kind of a unique-route variant shares one achieved
-    resolution). Returns ``None`` when fewer than two variants would share
-    a page. The allocator is used for the ARRANGEMENT only: the page side
-    is grown until ``allocate_receiver_rectangles`` returns scale >= 1,
-    at which point native-size integer rects anchored at the allocated
-    origins are guaranteed to fit with every gutter intact -- the blit
-    stays a pure byte copy and per-member density is untouched. The
-    integer rects are re-proved per axis (min gap, not hypot: mip box
-    filtering is axis-separable).
+    Multi-bin, pow2, gutter-free: members separate by their own baked-in
+    dilation margins, so bin VRAM equals member VRAM except the last
+    bin's pow2 rounding -- the property the first single-page design
+    lacked, measured as a 5x GPU-budget regression on ellie. Each bin is
+    packed first-fit-descending at MATERIAL_PAGE_MAX, then shrunk to the
+    smallest power of two that still fits (always succeeds for pow2
+    squares whose areas fit). Bins left holding one member page nothing
+    (no sharing win); non-pow2 or oversized resolutions stay private by
+    name. Returns a list of {"page", "rects"} bins, or None when nothing
+    shares.
     """
-    if len(requests) < 2:
-        return None
-    total_area = sum(int(item["resolution"]) ** 2 for item in requests)
-    largest = max(int(item["resolution"]) for item in requests)
-    page = 1
-    while page * page < total_area or page < largest:
-        page *= 2
-    gutter = MATERIAL_PAGE_GUTTER_PX
-    for _attempt in range(6):
-        allocation = bakelib.allocate_receiver_rectangles(
-            [
-                (
-                    item["variant"],
-                    item["resolution"] / page,
-                    item["resolution"] / page,
-                )
-                for item in requests
-            ],
-            edge_gutter=gutter / page,
-            receiver_gutter=gutter / page,
-        )
-        if allocation["scale"] >= 1.0:
-            break
-        page *= 2
-    else:
-        raise MaterialCompileError(
-            f"material page allocation did not converge for "
-            f"{len(requests)} members (page {page})"
-        )
-    rects = {}
-    for item in requests:
-        min_u, min_v, _max_u, _max_v = allocation["placements"][
-            item["variant"]
-        ]
-        x0 = int(round(min_u * page))
-        y0 = int(round(min_v * page))
+    sized = []
+    for item in sorted(requests, key=lambda entry: entry["variant"]):
         size = int(item["resolution"])
-        rects[item["variant"]] = (x0, y0, size)
-    # Integer re-proof, per axis: in bounds, and every pair separated by
-    # the gutter on at least one axis.
-    entries = sorted(rects.items())
-    for variant, (x0, y0, size) in entries:
-        if x0 < 0 or y0 < 0 or x0 + size > page or y0 + size > page:
-            raise MaterialCompileError(
-                f"material page rect out of bounds for {variant!r}: "
-                f"({x0},{y0})+{size} on {page}"
+        if size & (size - 1) or size > MATERIAL_PAGE_MAX:
+            print(
+                "blendlink material pages: "
+                f"{item['variant'][:48]}... keeps private textures "
+                f"(resolution {size} outside the pow2 page ladder)"
             )
-    for index, (variant_a, (ax, ay, asize)) in enumerate(entries):
-        for variant_b, (bx, by, bsize) in entries[index + 1:]:
-            gap_x = max(bx - (ax + asize), ax - (bx + bsize))
-            gap_y = max(by - (ay + asize), ay - (by + bsize))
-            if max(gap_x, gap_y) < gutter:
+            continue
+        sized.append((item["variant"], size))
+    if len(sized) < 2:
+        return None
+    sized.sort(key=lambda entry: (-entry[1], entry[0]))
+
+    bins = []
+    for variant, size in sized:
+        placed = False
+        for entry in bins:
+            attempt = _pack_pow2_bin(
+                MATERIAL_PAGE_MAX, entry["members"] + [(variant, size)],
+            )
+            if attempt is not None:
+                entry["members"].append((variant, size))
+                placed = True
+                break
+        if not placed:
+            bins.append({"members": [(variant, size)]})
+
+    plans = []
+    for entry in bins:
+        members = entry["members"]
+        if len(members) < 2:
+            continue
+        area = sum(size * size for _v, size in members)
+        largest = max(size for _v, size in members)
+        page = largest
+        while page * page < area:
+            page *= 2
+        rects = _pack_pow2_bin(page, members)
+        if rects is None:
+            # Cannot happen for pow2 squares whose areas fit; refuse
+            # loudly rather than fall back to an unbounded page.
+            raise MaterialCompileError(
+                f"material page packing failed at {page}px for "
+                f"{len(members)} pow2 members"
+            )
+        for variant, (x, y, size) in rects.items():
+            if x < 0 or y < 0 or x + size > page or y + size > page:
                 raise MaterialCompileError(
-                    "material page rects closer than the gutter: "
-                    f"{variant_a!r} vs {variant_b!r} "
-                    f"(gaps {gap_x},{gap_y} < {gutter})"
+                    f"material page rect out of bounds: {variant!r}"
                 )
-    return {"page": page, "rects": rects}
+        plans.append({"page": page, "rects": rects})
+    return plans or None
 
 
 def _load_raw_pixels(path):
@@ -7975,14 +8003,14 @@ def with_compiled_materials(
                         products["uvEvidence"]["resolution"],
                     ),
                 }
-            page_plan = (
+            page_plans = (
                 _plan_material_pages(sorted(
                     unique_variants.values(),
                     key=lambda item: item["variant"],
                 ))
                 if len(unique_variants) >= 2 else None
             )
-            if page_plan is not None:
+            for page_plan in page_plans or ():
                 saved_pages, page_token = _compose_material_pages(
                     page_plan, material_bake_products,
                     temporary_directory.name,
@@ -8026,7 +8054,7 @@ def with_compiled_materials(
                         products["uvEvidence"]["uvName"],
                         rect, page_plan["page"],
                     )
-                for variant in unique_variants:
+                for variant in page_plan["rects"]:
                     rect = page_plan["rects"][variant]
                     products = material_bake_products[variant]
                     page_images_by_variant[variant] = {
@@ -8051,10 +8079,16 @@ def with_compiled_materials(
                         for kind, item in products["images"].items()
                         if kind in saved_pages
                     }
+                member_area = sum(
+                    rect[2] * rect[2]
+                    for rect in page_plan["rects"].values()
+                )
                 print(
                     "blendlink material pages: packed "
-                    f"{len(unique_variants)} unique-route variants onto "
-                    f"{len(saved_pages)} {page_plan['page']}px pages"
+                    f"{len(page_plan['rects'])} variants onto "
+                    f"{len(saved_pages)} {page_plan['page']}px pages "
+                    f"({100 * member_area // (page_plan['page'] ** 2)}% "
+                    "fill)"
                 )
 
         for entry in deferred_bake_entries:
