@@ -254,6 +254,18 @@ export const ClampToEdgeWrapping = 'clamp'
       })
       expect(bakedOriginal.anisotropy).toBe(8)
       expect(initialized).toContain(bakedOriginal)
+      // The WebGPU renderer family exposes getMaxAnisotropy() DIRECTLY and
+      // carries no `capabilities` object (three r184
+      // renderers/common/Renderer.js). Prewarm is the default, so typing
+      // this seam as WebGL-only threw on every WebGPU scene with baked
+      // states.
+      const webgpuInitialized = []
+      await expect(handle.prepare({
+        getMaxAnisotropy: () => 16,
+        initTexture: (texture) => webgpuInitialized.push(texture),
+      })).resolves.toBeUndefined()
+      expect(bakedOriginal.anisotropy).toBe(16)
+      expect(webgpuInitialized).toContain(bakedOriginal)
       // GLTFLoader has already decoded the Appearance atlas embedded in the
       // GLB. The declared default state must reuse that loader-owned texture,
       // not request the same PNG a second time.

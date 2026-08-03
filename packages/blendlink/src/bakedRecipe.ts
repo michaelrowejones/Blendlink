@@ -1,7 +1,7 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+﻿import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 /** The owned baked-composition recipe (shadcn model): written ONCE into the
- * user's genDir beside the generated module, then it is THEIRS — sync never
+ * user's genDir beside the generated module, then it is THEIRS â€” sync never
  * overwrites it. */
 
 export const BAKED_RECIPE_TEMPLATE_VERSION = 11
@@ -66,7 +66,7 @@ export function updateBakedRecipeTemplateFile(
 }
 
 export function renderBakedRecipe(exportName: string): string {
-  return `/* Generated once by blendlink — this file is YOURS to edit and will not
+  return `/* Generated once by blendlink â€” this file is YOURS to edit and will not
  * be overwritten. Runtime contract: blendlink docs/MANIFEST.md.
  *
  * Composes a baked scene: base state atlas + additive light-group layers in
@@ -226,6 +226,26 @@ interface LightingEntry {
 
 type PatchedEntry = AppearanceEntry | LightingEntry
 
+// A renderer able to prewarm baked textures, in either family. The two
+// families expose the same fact through different shapes: the WebGL
+// renderer carries a capabilities object, while the WebGPU renderer
+// exposes getMaxAnisotropy() directly and has NO capabilities property at
+// all (three r184 renderers/common/Renderer.js). Typing this seam as
+// WebGL-only threw on every WebGPU scene carrying baked states, because
+// prewarm is the default.
+export type BakedPrewarmRenderer = Readonly<{
+  initTexture(texture: THREE.Texture): void
+  getMaxAnisotropy?: () => number
+  capabilities?: Readonly<{ getMaxAnisotropy(): number }>
+}>
+
+function prewarmMaxAnisotropy(renderer: BakedPrewarmRenderer): number {
+  if (renderer.capabilities) return renderer.capabilities.getMaxAnisotropy()
+  return typeof renderer.getMaxAnisotropy === 'function'
+    ? renderer.getMaxAnisotropy()
+    : Number.NaN
+}
+
 export interface BakedSceneHandle {
   /** Resolves after the default state. Inactive light groups are deliberately
    * lazy so authored options do not become startup requests or GPU residency. */
@@ -233,7 +253,7 @@ export interface BakedSceneHandle {
   /** Resolves when an embedded bootstrap has been promoted to the selected
    * delivery tier. First paint deliberately does not wait for it. */
   readonly qualityReady: Promise<void>
-  prepare(renderer: Pick<THREE.WebGLRenderer, 'initTexture' | 'capabilities'>): Promise<void>
+  prepare(renderer: BakedPrewarmRenderer): Promise<void>
   setState(name: string): boolean
   setStateAsync(name: string): Promise<boolean>
   setLightGroup(
@@ -506,12 +526,12 @@ export function createBakedScene(
     throw new Error('textureCacheBytes must be a non-negative finite byte count or Infinity.')
   }
   const atlasDeliveryQuality = options.atlasDeliveryQuality ?? 'authored'
-  let prewarmRenderer: Pick<THREE.WebGLRenderer, 'initTexture' | 'capabilities'> | null = null
+  let prewarmRenderer: BakedPrewarmRenderer | null = null
   const prepareTexture = (
-    renderer: Pick<THREE.WebGLRenderer, 'initTexture' | 'capabilities'>,
+    renderer: BakedPrewarmRenderer,
     texture: THREE.Texture,
   ): void => {
-    const anisotropy = renderer.capabilities.getMaxAnisotropy()
+    const anisotropy = prewarmMaxAnisotropy(renderer)
     if (Number.isFinite(anisotropy) && anisotropy > 0 && texture.anisotropy !== anisotropy) {
       texture.anisotropy = anisotropy
       texture.needsUpdate = true
