@@ -24,3 +24,10 @@ AGENTS.md
 CONTEXT.md
 .claude/
 .codex/
+
+# Session debris from local build/compile/test runs at the repo root
+/*.log
+/e2e*.txt
+/compile_*.manifest.json
+/NUL
+showcases/*/*.log
