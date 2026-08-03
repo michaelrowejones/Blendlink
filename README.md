@@ -13,9 +13,11 @@ Realtime, or Fully Baked presentation; mark individual objects Realtime or
 Baked; design editable atlases; preview quickly; and see a quality problem
 before committing to a final bake.
 
-The generated one-call integration targets Three's `WebGLRenderer`. A WebGPU
-site can still consume the portable GLB, manifest, and typed data, but it owns
-the renderer-specific environment, shadow, probe, and lifecycle adapter.
+The generated one-call integration accepts Three's `WebGLRenderer` or an
+initialized `WebGPURenderer`; environment, shadow, probe, KTX2, and lifecycle
+behavior are renderer-family-aware. Compiled TSL material programs shipped in
+a scene's material-programs sidecar apply automatically on the WebGPU family
+only — on WebGL those materials keep their portable glTF form.
 
 ## The artist workflow
 
@@ -112,8 +114,13 @@ This source-safe normalization touches only unbound GLB primitives; it neither
 creates a material in the `.blend` nor changes any authored material binding.
 Procedural textures, shader mixing, bump-only detail, and other unsupported
 active graph branches are named rather than silently advertised as portable.
-Use an Appearance bake, simplify the active shader branch, or deliberately own
-a custom runtime material when the panel says **Needs Bake**. A per-image
+When the panel says **Needs Bake**, the remedies are: mark the material for a
+**TSL Program** (measured node graphs translate to TSL IR and ship in the
+scene's material-programs sidecar, applied at runtime on the WebGPU renderer
+family), mark it for a per-channel **Material Bake** (baked
+baseColor/ORM/normal/emissive carriers, with unique-route bakes packing onto
+shared surface-atlas pages), use an Appearance bake, simplify the active
+shader branch, or deliberately own a custom runtime material. A per-image
 Published Max resizes PNG/JPEG/WebP sources without changing aspect ratio;
 Preview and Final share the same transform and the manifest records
 before/after dimensions and bytes.
@@ -787,9 +794,9 @@ playback?.dispose()
 
 For an existing R3F site, `blendlink connect` creates one tiny user-owned
 association component per configured scene, such as
-`src/blendlink/HeroScene.ts`. Add the one you want
-inside a WebGL Canvas (the standard installer deliberately rejects
-`WebGPURenderer`):
+`src/blendlink/HeroScene.ts`. Add the one you want inside a Canvas — the
+installer accepts the WebGL renderer or an initialized `WebGPURenderer`,
+and R3F context-loss handling covers both families:
 
 ```tsx
 import { HeroScene } from './blendlink/HeroScene'
@@ -859,7 +866,8 @@ preserving that intent from Blender through a portable, efficient handoff.
 
 ## Support and verification
 
-Focused local Windows gates exercise Blender 5.1.2 and 5.2 LTS with Node 24.
+Focused local Windows gates exercise the discoverable Blender 5.2 LTS
+installation with Node 24.
 Blender 4.2+ plus supported Node 22.15+ and Node 24 are the declared
 compatibility floor; the same-commit release workflow defines exact 4.2/5.2
 Linux and Windows jobs, but those hosted results remain pending until the

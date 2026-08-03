@@ -110,6 +110,26 @@ running a local sync, not by committing a cache record. No `.blend`, website
 source, or runtime asset needs mutation. To roll back a local experiment,
 restore the matching older package and generated artifacts together.
 
+### Local development: recompile scenes that published a material-programs sidecar
+
+Scenes compiled with TSL program materials before the sidecar
+publication-rename fix have broken published artifacts: their
+`<scene>.materials.json` pins staging image basenames (`out.glb.tex.*`)
+that publication renamed on disk, so every `texture_ref` program image
+404s at scene install and the runtime's byte/hash verification refuses
+the scene. `blendlink sync verify` on current versions also reports the
+unresolvable references at publish time.
+
+Recompile each affected scene with the current compiler (a forced
+compile/sync/publish); generated artifacts are compiler-owned and fully
+regenerable, and publication now rewrites the sidecar's image references
+to the published basenames and re-pins its bytes and hash. Verify by
+running `blendlink verify` and loading the scene — the install succeeds
+and the programs apply. To roll back a local experiment, restore the
+prior matched package and its generated artifacts together. Scenes whose
+sidecar carries no images (all program textures embedded in IR) were
+never affected.
+
 ### Local development: Three.js support is pinned to r184
 
 Source-development websites that previously used Blendlink's provisional

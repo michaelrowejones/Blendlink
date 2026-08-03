@@ -497,7 +497,20 @@ PNG output continues to use its separately owned compositor stage.
   GPU residency.
 - `bakeOutputs` — `{ atlas: "lighting" | "appearance" }`. Missing metadata is
   the pre-0.8 **Appearance** contract; readers must never reinterpret an old
-  flattened bake as a lightmap.
+  flattened bake as a lightmap. A recipe may also declare
+  `bakeOutput: "material"` on an atlas: that group bakes lit PBR surface
+  pages carried inside the GLB rather than state files, is excluded from the
+  published `bakeOutputs` map, and is recorded in the additive
+  `materialAtlases` field instead — per group `{ channels: { kind:
+  { sha256 } }, strength, hasAlpha, reused }`. Node-extra stamping
+  (`blendlink_bake_output`) remains appearance/lighting-only.
+- `materialPrograms` — additive schema-v3 pointer to the TSL
+  material-programs sidecar published beside the GLB:
+  `{ url, bytes, hash, materials }`. The runtime fetches the sidecar with
+  byte-count and sha256-prefix verification, resolves each `texture_ref`
+  image by basename against the sidecar URL with per-image byte/hash
+  verification, and applies the programs by mesh identity on the WebGPU
+  renderer family only. Absent when no compiled material carries IR.
 - **Lighting** preserves the exported PBR material, its material/detail UVs,
   and maps such as base color, tangent normal, roughness, and metallic. Cycles
   bakes only diffuse indirect illumination (`direct=false`, `color=false`,
@@ -1154,9 +1167,14 @@ The full manifest evidence includes:
   cast as current evidence. It carries a `sourceFingerprint`, sorted
   source/generated material inventories, and one `gltfEvidence` record per
   lowered material. Each record binds source and generated material names,
-  transport (`factor`, `vertexColor`, or `image`), `surfaceResponse`
+  transport (`factor`, `vertexColor`, `image`, `channels` for per-channel
+  Material bakes, or `program` for TSL program carriers), `surfaceResponse`
   (`lit`/`unlit`), boolean unlit status, primitive count, source object/slot
-  bindings, base-color factor, alpha mode, and double-sided state. Lit records
+  bindings, base-color factor, alpha mode, and double-sided state. A record
+  may additionally carry `emittedMaterial` — the name that actually shipped,
+  differing from `generatedMaterial` only for composed lighting-owned
+  carriers whose lighting fork is the exported material; verification
+  matches on it when present. Lit records
   additionally attest core-PBR metallic and roughness factors; unlit records
   attest `KHR_materials_unlit`. Vertex-color records additionally carry `color0`,
   `color0Type`, aggregate `color0Min`/`color0Max`, and a storage-derived
