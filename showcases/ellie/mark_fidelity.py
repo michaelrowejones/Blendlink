@@ -40,6 +40,20 @@ render.resolution_x = 1920
 render.resolution_y = 1080
 render.resolution_percentage = 100
 
+# Phase 3 blocker, excluded by standing decision: this mesh's animated
+# LATTICE deformers cannot ship until the runtime LATTICE route exists
+# (plan doc section 5, Phase 3), and HEAD's Geometry Fidelity gate
+# correctly refuses the WHOLE export while it is present (its
+# SurfaceDeform branch alone is provably resolvable, but the lattices are
+# not -- see the plan doc's Phase 1 residue note). The showcase ships
+# without the zippers until Phase 3; fidelity-gate scope is view-layer
+# membership, so exclusion means unlinking from every collection.
+zipper = bpy.data.objects.get("GEO-ellie_fannypack_zippers.001")
+if zipper is not None:
+    for collection in list(zipper.users_collection):
+        collection.objects.unlink(zipper)
+    print("EXCLUDED_PHASE3_BLOCKER GEO-ellie_fannypack_zippers.001")
+
 for material in bpy.data.materials:
     if material.use_nodes and material.node_tree is not None:
         compiler.set_material_bake(material, True)
@@ -58,7 +72,63 @@ for name in blocked:
         compiler.set_tsl_ir(material, False)
 print(f"UNMARKED {len(blocked)}: {blocked}")
 
+# TSL runtime extras are PER MESH, but their needs are per material: a
+# multi-material mesh (the 9-slot boots) whose bindings demand different
+# uv/texspace contracts refuses at export, and a binding whose entry
+# cannot be built at all (watch_metal samples vertex-color layer 'Edges',
+# which is not the active COLOR_0 layer) refuses the same way. Both are
+# INSTALL-time refusals the plan-time self-validation below cannot see,
+# and each failed compile costs hours -- so resolve them here: compute
+# every lowered material's runtime entry per mesh, keep the largest
+# agreeing set on each shared mesh, and drop TSL (bake keeps carrying the
+# material) from the rest by name. The compiler improvements that would
+# dissolve this -- merging non-conflicting extras, COLOR_n layer mapping
+# -- are filed separately.
+import collections
+import json
+
+
+def resolve_tsl_extras_conflicts(plan):
+    mesh_entries = collections.defaultdict(dict)
+    failed = set()
+    for decision in plan.lowerings:
+        channels = (decision.channel_plan or {}).get("channels", ())
+        if not any("tslIr" in channel for channel in channels):
+            continue
+        for binding in decision.bindings:
+            obj = bpy.data.objects.get(binding.object_name)
+            if obj is None:
+                continue
+            try:
+                entry = compiler._tsl_runtime_mesh_entry(decision, obj)
+            except compiler.MaterialCompileError as error:
+                failed.add(decision.material_name)
+                print(f"TSL_ENTRY_FAILED {decision.material_name}: {error}")
+                continue
+            if entry is None:
+                continue
+            mesh_entries[obj.data.as_pointer()].setdefault(
+                decision.material_name,
+                json.dumps(entry, sort_keys=True),
+            )
+    dropped = set(failed)
+    for _mesh, by_material in mesh_entries.items():
+        variants = collections.Counter(by_material.values())
+        if len(variants) <= 1:
+            continue
+        keep, _count = variants.most_common(1)[0]
+        for material_name, encoded in by_material.items():
+            if encoded != keep:
+                dropped.add(material_name)
+    for material_name in dropped:
+        material = bpy.data.materials.get(material_name)
+        if material is not None:
+            compiler.set_tsl_ir(material, False)
+    return dropped
+
 verify = compiler.plan_materials(objects, purpose="final")
+tsl_dropped = resolve_tsl_extras_conflicts(verify)
+print(f"UNMARKED_TSL_CONFLICTS {len(tsl_dropped)}: {sorted(tsl_dropped)}")
 lowered = [
     d for d in verify.decisions
     if d.intent == "materialBake" and d.outcome == "lowered"

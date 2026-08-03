@@ -2,1879 +2,340 @@
 import type * as THREE from 'three'
 
 export const ellieAnimation = {
-  url: "/models/ellieAnimation/57596872aca51984e2a48a2b97bb738b697e461c8fc8a3dfc8dca01ca681f07e/ellieAnimation.glb?v=7213075ccdd53910",
-  hash: "7213075ccdd53910",
+  url: "/models/ellieAnimation/1295b27ba30319a7f0daa9bea3657b28e37da5c3d0074fa0d5f7c7dc523b8420/ellieAnimation.glb?v=dfedf480a99390c6",
+  hash: "dfedf480a99390c6",
   nodes: {
   Animation_Camera: "Animation_Camera",
   Backdrop: "Backdrop",
+  "ROOT-LTC-ArmpitL": "ROOT-LTC-ArmpitL",
+  "ROOT-LTC-ArmpitR": "ROOT-LTC-ArmpitR",
+  "ROOT-LTC-Cheek1L": "ROOT-LTC-Cheek1L",
+  "ROOT-LTC-Cheek1R": "ROOT-LTC-Cheek1R",
+  "ROOT-LTC-Lips": "ROOT-LTC-Lips",
   "DEF-Bridge_Chin": "DEF-Bridge_Chin",
-  Bridge_Chin: "Bridge_Chin",
   "DEF-Bridge_Chin1_1L": "DEF-Bridge_Chin1_1L",
-  Bridge_Chin1_1L: "Bridge_Chin1_1L",
   "DEF-Bridge_Chin1_1R": "DEF-Bridge_Chin1_1R",
-  Bridge_Chin1_1R: "Bridge_Chin1_1R",
   "DEF-Bridge_Chin1_2L": "DEF-Bridge_Chin1_2L",
-  Bridge_Chin1_2L: "Bridge_Chin1_2L",
   "DEF-Bridge_Chin1_2R": "DEF-Bridge_Chin1_2R",
-  Bridge_Chin1_2R: "Bridge_Chin1_2R",
   "DEF-Bridge_Chin2_1L": "DEF-Bridge_Chin2_1L",
-  Bridge_Chin2_1L: "Bridge_Chin2_1L",
   "DEF-Bridge_Chin2_1R": "DEF-Bridge_Chin2_1R",
-  Bridge_Chin2_1R: "Bridge_Chin2_1R",
   "DEF-Bridge_Chin2_2L": "DEF-Bridge_Chin2_2L",
-  Bridge_Chin2_2L: "Bridge_Chin2_2L",
   "DEF-Bridge_Chin2_2R": "DEF-Bridge_Chin2_2R",
-  Bridge_Chin2_2R: "Bridge_Chin2_2R",
   "DEF-Bridge_Lower_Chin": "DEF-Bridge_Lower_Chin",
-  Bridge_Lower_Chin: "Bridge_Lower_Chin",
   "DEF-Cheek1_1L": "DEF-Cheek1_1L",
-  Cheek1_1L: "Cheek1_1L",
   "DEF-Cheek1_1R": "DEF-Cheek1_1R",
-  Cheek1_1R: "Cheek1_1R",
   "DEF-Cheek1_2L": "DEF-Cheek1_2L",
-  Cheek1_2L: "Cheek1_2L",
   "DEF-Cheek1_2R": "DEF-Cheek1_2R",
-  Cheek1_2R: "Cheek1_2R",
   "DEF-Cheek2_1L": "DEF-Cheek2_1L",
-  Cheek2_1L: "Cheek2_1L",
   "DEF-Cheek2_1R": "DEF-Cheek2_1R",
-  Cheek2_1R: "Cheek2_1R",
   "DEF-Cheek2_2L": "DEF-Cheek2_2L",
-  Cheek2_2L: "Cheek2_2L",
   "DEF-Cheek2_2R": "DEF-Cheek2_2R",
-  Cheek2_2R: "Cheek2_2R",
   "DEF-Cheek2_3L": "DEF-Cheek2_3L",
-  Cheek2_3L: "Cheek2_3L",
   "DEF-Cheek2_3R": "DEF-Cheek2_3R",
-  Cheek2_3R: "Cheek2_3R",
   "DEF-Cheek3_1L": "DEF-Cheek3_1L",
-  Cheek3_1L: "Cheek3_1L",
   "DEF-Cheek3_1R": "DEF-Cheek3_1R",
-  Cheek3_1R: "Cheek3_1R",
   "DEF-Cheek3_2L": "DEF-Cheek3_2L",
-  Cheek3_2L: "Cheek3_2L",
   "DEF-Cheek3_2R": "DEF-Cheek3_2R",
-  Cheek3_2R: "Cheek3_2R",
   "DEF-Chin": "DEF-Chin",
-  Chin: "Chin",
   "DEF-JawLine2L": "DEF-JawLine2L",
-  JawLine2L: "JawLine2L",
   "DEF-JawLine2R": "DEF-JawLine2R",
-  JawLine2R: "JawLine2R",
   "DEF-JawLine3L": "DEF-JawLine3L",
-  JawLine3L: "JawLine3L",
   "DEF-JawLine3R": "DEF-JawLine3R",
-  JawLine3R: "JawLine3R",
   "DEF-Chin_Main": "DEF-Chin_Main",
-  Chin_Main: "Chin_Main",
-  "CTR-Cheek_MidL": "CTR-Cheek_MidL",
-  "CTR-Cheek_MidR": "CTR-Cheek_MidR",
-  "CTR-CheekRaiseL": "CTR-CheekRaiseL",
-  "CTR-CheekRaiseR": "CTR-CheekRaiseR",
-  "ORG-STR-Lip_Bottom2L": "ORG-STR-Lip_Bottom2L",
-  "ORG-STR-TIP-Lip_Top2L": "ORG-STR-TIP-Lip_Top2L",
   "DEF-OuterLipL": "DEF-OuterLipL",
-  OuterLipL: "OuterLipL",
-  "P-Lip_CornerL": "P-Lip_CornerL",
-  "CTR-LipCornerL": "CTR-LipCornerL",
-  "ORG-STR-Lip_Bottom2R": "ORG-STR-Lip_Bottom2R",
-  "ORG-STR-TIP-Lip_Top2R": "ORG-STR-TIP-Lip_Top2R",
   "DEF-OuterLipR": "DEF-OuterLipR",
-  OuterLipR: "OuterLipR",
-  "P-Lip_CornerR": "P-Lip_CornerR",
-  "CTR-LipCornerR": "CTR-LipCornerR",
-  "DSP-AutoRubberHose-ForearmL": "DSP-AutoRubberHose-ForearmL",
-  "DSP-AutoRubberHose-ForearmR": "DSP-AutoRubberHose-ForearmR",
-  "DSP-AutoRubberHose-KneeL": "DSP-AutoRubberHose-KneeL",
-  "DSP-AutoRubberHose-KneeR": "DSP-AutoRubberHose-KneeR",
   "DEF-Eyebrow2L": "DEF-Eyebrow2L",
-  Eyebrow2L: "Eyebrow2L",
-  "DT-Eyebrow2L": "DT-Eyebrow2L",
   "DEF-Eyebrow2R": "DEF-Eyebrow2R",
-  Eyebrow2R: "Eyebrow2R",
-  "DT-Eyebrow2R": "DT-Eyebrow2R",
   "DEF-Eyebrow4L": "DEF-Eyebrow4L",
-  Eyebrow4L: "Eyebrow4L",
-  "DT-Eyebrow4L": "DT-Eyebrow4L",
   "DEF-Eyebrow4R": "DEF-Eyebrow4R",
-  Eyebrow4R: "Eyebrow4R",
-  "DT-Eyebrow4R": "DT-Eyebrow4R",
   "DEF-Eyebrow1L": "DEF-Eyebrow1L",
-  Eyebrow1L: "Eyebrow1L",
   "DEF-Eyebrow1R": "DEF-Eyebrow1R",
-  Eyebrow1R: "Eyebrow1R",
   "DEF-Eyebrow3L": "DEF-Eyebrow3L",
-  Eyebrow3L: "Eyebrow3L",
   "DEF-Eyebrow3R": "DEF-Eyebrow3R",
-  Eyebrow3R: "Eyebrow3R",
   "DEF-Eyebrow5L": "DEF-Eyebrow5L",
-  Eyebrow5L: "Eyebrow5L",
   "DEF-Eyebrow5R": "DEF-Eyebrow5R",
-  Eyebrow5R: "Eyebrow5R",
   "DEF-Eyebrow_Mid": "DEF-Eyebrow_Mid",
-  Eyebrow_Mid: "Eyebrow_Mid",
   "DEF-Eyelash5L": "DEF-Eyelash5L",
-  Eyelash5L: "Eyelash5L",
   "DEF-Eyelash5R": "DEF-Eyelash5R",
-  Eyelash5R: "Eyelash5R",
-  "FK-Head_Top": "FK-Head_Top",
-  "STR-TIP-Head_Top": "STR-TIP-Head_Top",
-  "MSTR-Head_Top": "MSTR-Head_Top",
-  "PRP-Head": "PRP-Head",
-  "FK-Head": "FK-Head",
-  "FK-HNG-Head": "FK-HNG-Head",
-  "FK-Neck": "FK-Neck",
-  "FK-HNG-Neck": "FK-HNG-Neck",
-  "FK-Ponytail1": "FK-Ponytail1",
-  "FK-HNG-Ponytail1": "FK-HNG-Ponytail1",
-  "FK-Ponytail6": "FK-Ponytail6",
-  "FK-Ponytail5": "FK-Ponytail5",
-  "FK-Ponytail4": "FK-Ponytail4",
-  "FK-Ponytail3": "FK-Ponytail3",
-  "FK-Ponytail2": "FK-Ponytail2",
-  "FK-HNG-Ponytail2": "FK-HNG-Ponytail2",
-  "FK-FootL": "FK-FootL",
-  "FK-W-FootL": "FK-W-FootL",
-  "FK-KneeL": "FK-KneeL",
-  "FK-ThighL": "FK-ThighL",
-  "FK-HNG-ThighL": "FK-HNG-ThighL",
-  "FK-FootR": "FK-FootR",
-  "FK-W-FootR": "FK-W-FootR",
-  "FK-KneeR": "FK-KneeR",
-  "FK-ThighR": "FK-ThighR",
-  "FK-HNG-ThighR": "FK-HNG-ThighR",
-  "FK-WristL": "FK-WristL",
-  "FK-ForearmL": "FK-ForearmL",
-  "FK-UpperArmL": "FK-UpperArmL",
-  "FK-HNG-UpperArmL": "FK-HNG-UpperArmL",
-  "FK-WristR": "FK-WristR",
-  "FK-ForearmR": "FK-ForearmR",
-  "FK-UpperArmR": "FK-UpperArmR",
-  "FK-HNG-UpperArmR": "FK-HNG-UpperArmR",
-  "FK-HipsL": "FK-HipsL",
-  "FK-P-HipsL": "FK-P-HipsL",
-  "FK-HipsR": "FK-HipsR",
-  "FK-P-HipsR": "FK-P-HipsR",
-  "FK-Watch": "FK-Watch",
-  "FK-P-Watch": "FK-P-Watch",
-  "FK-ToesL": "FK-ToesL",
-  "FK-ToesR": "FK-ToesR",
-  "FK-Tongue5": "FK-Tongue5",
-  "FK-Tongue4": "FK-Tongue4",
-  "FK-Tongue3": "FK-Tongue3",
-  "FK-Tongue2": "FK-Tongue2",
-  "FK-Tongue1": "FK-Tongue1",
   "DEF-HeadSide1L": "DEF-HeadSide1L",
-  HeadSide1L: "HeadSide1L",
   "DEF-HeadSide1R": "DEF-HeadSide1R",
-  HeadSide1R: "HeadSide1R",
   "DEF-Hip_Center": "DEF-Hip_Center",
-  Hip_Center: "Hip_Center",
-  "IK-POLE-P-Finger_Index1L": "IK-POLE-P-Finger_Index1L",
-  "IK-POLE-P-Finger_Index1R": "IK-POLE-P-Finger_Index1R",
-  "IK-POLE-P-Finger_Middle1L": "IK-POLE-P-Finger_Middle1L",
-  "IK-POLE-P-Finger_Middle1R": "IK-POLE-P-Finger_Middle1R",
-  "IK-POLE-P-Finger_Pinky1L": "IK-POLE-P-Finger_Pinky1L",
-  "IK-POLE-P-Finger_Pinky1R": "IK-POLE-P-Finger_Pinky1R",
-  "IK-POLE-P-Finger_Ring1L": "IK-POLE-P-Finger_Ring1L",
-  "IK-POLE-P-Finger_Ring1R": "IK-POLE-P-Finger_Ring1R",
-  "IK-POLE-P-Finger_Thumb1L": "IK-POLE-P-Finger_Thumb1L",
-  "IK-POLE-P-Finger_Thumb1R": "IK-POLE-P-Finger_Thumb1R",
-  "DSP-IK-POLE-ThighL": "DSP-IK-POLE-ThighL",
-  "IK-POLE-LINE-ThighL": "IK-POLE-LINE-ThighL",
-  "IK-POLE-LegL": "IK-POLE-LegL",
-  "IK-POLE-P-ThighL": "IK-POLE-P-ThighL",
-  "DSP-IK-POLE-ThighR": "DSP-IK-POLE-ThighR",
-  "IK-POLE-LINE-ThighR": "IK-POLE-LINE-ThighR",
-  "IK-POLE-LegR": "IK-POLE-LegR",
-  "IK-POLE-P-ThighR": "IK-POLE-P-ThighR",
-  "DSP-IK-POLE-UpperArmL": "DSP-IK-POLE-UpperArmL",
-  "IK-POLE-LINE-UpperArmL": "IK-POLE-LINE-UpperArmL",
-  "IK-POLE-ArmL": "IK-POLE-ArmL",
-  "IK-POLE-P-UpperArmL": "IK-POLE-P-UpperArmL",
-  "DSP-IK-POLE-UpperArmR": "DSP-IK-POLE-UpperArmR",
-  "IK-POLE-LINE-UpperArmR": "IK-POLE-LINE-UpperArmR",
-  "IK-POLE-ArmR": "IK-POLE-ArmR",
-  "IK-POLE-P-UpperArmR": "IK-POLE-P-UpperArmR",
   "DEF-JawLine4L": "DEF-JawLine4L",
-  JawLine4L: "JawLine4L",
   "DEF-JawLine4R": "DEF-JawLine4R",
-  JawLine4R: "JawLine4R",
   "DEF-Nose_Base": "DEF-Nose_Base",
   "DEF-Nose_Tip": "DEF-Nose_Tip",
-  Nose_Tip: "Nose_Tip",
   "DEF-NostrilL": "DEF-NostrilL",
-  NostrilL: "NostrilL",
   "DEF-NostrilR": "DEF-NostrilR",
-  NostrilR: "NostrilR",
-  Nose_Base: "Nose_Base",
   "DEF-Nose_Mid": "DEF-Nose_Mid",
-  Nose_Mid: "Nose_Mid",
   "DEF-NoseBridge1L": "DEF-NoseBridge1L",
-  NoseBridge1L: "NoseBridge1L",
   "DEF-NoseBridge1R": "DEF-NoseBridge1R",
-  NoseBridge1R: "NoseBridge1R",
-  "LTC-EyelashL": "LTC-EyelashL",
   "ROOT-LTC-EyelashL": "ROOT-LTC-EyelashL",
-  "ORG-EyelashL": "ORG-EyelashL",
-  "ORG-P-EyelashL": "ORG-P-EyelashL",
-  "LTC-EyelashR": "LTC-EyelashR",
   "ROOT-LTC-EyelashR": "ROOT-LTC-EyelashR",
-  "ORG-EyelashR": "ORG-EyelashR",
-  "ORG-P-EyelashR": "ORG-P-EyelashR",
-  "LTC-FannyPack_Bag": "LTC-FannyPack_Bag",
   "ROOT-LTC-FannyPack_Bag": "ROOT-LTC-FannyPack_Bag",
-  "ORG-FannyPack_Bag": "ORG-FannyPack_Bag",
-  "ORG-P-FannyPack_Bag": "ORG-P-FannyPack_Bag",
-  "LTC-FannyPack_Bag_Top": "LTC-FannyPack_Bag_Top",
   "ROOT-LTC-FannyPack_Bag_Top": "ROOT-LTC-FannyPack_Bag_Top",
-  "ORG-FannyPack_Bag_Top": "ORG-FannyPack_Bag_Top",
-  "ORG-P-FannyPack_Bag_Top": "ORG-P-FannyPack_Bag_Top",
-  "STR-TIP-TAN-ShortsL": "STR-TIP-TAN-ShortsL",
-  "STR-TIP-ShortsL": "STR-TIP-ShortsL",
-  "ORG-TIP-ShortsL": "ORG-TIP-ShortsL",
   "DEF-ShortsL": "DEF-ShortsL",
-  "STR-TAN-ShortsL": "STR-TAN-ShortsL",
-  "STR-ShortsL": "STR-ShortsL",
-  "ORG-ShortsL": "ORG-ShortsL",
-  "ORG-P-ShortsL": "ORG-P-ShortsL",
-  "STR-TIP-TAN-ShortsR": "STR-TIP-TAN-ShortsR",
-  "STR-TIP-ShortsR": "STR-TIP-ShortsR",
-  "ORG-TIP-ShortsR": "ORG-TIP-ShortsR",
   "DEF-ShortsR": "DEF-ShortsR",
-  "STR-TAN-ShortsR": "STR-TAN-ShortsR",
-  "STR-ShortsR": "STR-ShortsR",
-  "ORG-ShortsR": "ORG-ShortsR",
-  "ORG-P-ShortsR": "ORG-P-ShortsR",
   "DEF-OuterLip_Lower": "DEF-OuterLip_Lower",
-  OuterLip_Lower: "OuterLip_Lower",
   "DEF-OuterLip_Lower1L": "DEF-OuterLip_Lower1L",
-  OuterLip_Lower1L: "OuterLip_Lower1L",
   "DEF-OuterLip_Lower1R": "DEF-OuterLip_Lower1R",
-  OuterLip_Lower1R: "OuterLip_Lower1R",
   "DEF-OuterLip_Upper": "DEF-OuterLip_Upper",
-  OuterLip_Upper: "OuterLip_Upper",
   "DEF-OuterLip_Upper1L": "DEF-OuterLip_Upper1L",
-  OuterLip_Upper1L: "OuterLip_Upper1L",
   "DEF-OuterLip_Upper1R": "DEF-OuterLip_Upper1R",
-  OuterLip_Upper1R: "OuterLip_Upper1R",
   "DEF-OuterLip_Upper2L": "DEF-OuterLip_Upper2L",
-  OuterLip_Upper2L: "OuterLip_Upper2L",
   "DEF-OuterLip_Upper2R": "DEF-OuterLip_Upper2R",
-  OuterLip_Upper2R: "OuterLip_Upper2R",
-  "LTC-LipCornerL": "LTC-LipCornerL",
   "ROOT-LTC-LipCornerL": "ROOT-LTC-LipCornerL",
-  "ORG-LipCornerL": "ORG-LipCornerL",
-  "ACT-MouthCornerL": "ACT-MouthCornerL",
-  "P-ACT-MouthCornerL": "P-ACT-MouthCornerL",
-  "ACT-MouthCornerR": "ACT-MouthCornerR",
-  "P-ACT-MouthCornerR": "P-ACT-MouthCornerR",
   "DEF-Button1": "DEF-Button1",
-  Button1: "Button1",
-  "P-Button1": "P-Button1",
   "DEF-Button2": "DEF-Button2",
-  Button2: "Button2",
-  "P-Button2": "P-Button2",
   "DEF-Button3": "DEF-Button3",
-  Button3: "Button3",
-  "P-Button3": "P-Button3",
   "DEF-Collar_BackL": "DEF-Collar_BackL",
-  Collar_BackL: "Collar_BackL",
-  "P-Collar_BackL": "P-Collar_BackL",
-  "CTR-CheekPuffL": "CTR-CheekPuffL",
-  "P-CTR-CheekPuffL": "P-CTR-CheekPuffL",
-  "CTR-CheekPuffR": "CTR-CheekPuffR",
-  "P-CTR-CheekPuffR": "P-CTR-CheekPuffR",
   "DEF-EarringL": "DEF-EarringL",
-  EarringL: "EarringL",
-  "P-EarringL": "P-EarringL",
   "DEF-EarringR": "DEF-EarringR",
-  EarringR: "EarringR",
-  "P-EarringR": "P-EarringR",
   "DEF-Eyelash1L": "DEF-Eyelash1L",
-  Eyelash1L: "Eyelash1L",
-  "P-Eyelash1L": "P-Eyelash1L",
   "DEF-Eyelash1R": "DEF-Eyelash1R",
-  Eyelash1R: "Eyelash1R",
-  "P-Eyelash1R": "P-Eyelash1R",
   "DEF-Eyelash2L": "DEF-Eyelash2L",
-  Eyelash2L: "Eyelash2L",
-  "P-Eyelash2L": "P-Eyelash2L",
   "DEF-Eyelash2R": "DEF-Eyelash2R",
-  Eyelash2R: "Eyelash2R",
-  "P-Eyelash2R": "P-Eyelash2R",
   "DEF-Eyelash3L": "DEF-Eyelash3L",
-  Eyelash3L: "Eyelash3L",
-  "P-Eyelash3L": "P-Eyelash3L",
   "DEF-Eyelash3R": "DEF-Eyelash3R",
-  Eyelash3R: "Eyelash3R",
-  "P-Eyelash3R": "P-Eyelash3R",
   "DEF-Eyelash4L": "DEF-Eyelash4L",
-  Eyelash4L: "Eyelash4L",
-  "P-Eyelash4L": "P-Eyelash4L",
   "DEF-Eyelash4R": "DEF-Eyelash4R",
-  Eyelash4R: "Eyelash4R",
-  "P-Eyelash4R": "P-Eyelash4R",
   "DEF-FannyPack7": "DEF-FannyPack7",
   "DEF-FannyPack_Buckle_Inner": "DEF-FannyPack_Buckle_Inner",
   "DEF-FannyPack_Buckle_Calmp_Bottom": "DEF-FannyPack_Buckle_Calmp_Bottom",
-  FannyPack_Buckle_Calmp_Bottom: "FannyPack_Buckle_Calmp_Bottom",
   "DEF-FannyPack_Buckle_Calmp_Top": "DEF-FannyPack_Buckle_Calmp_Top",
-  FannyPack_Buckle_Calmp_Top: "FannyPack_Buckle_Calmp_Top",
-  FannyPack_Buckle_Inner: "FannyPack_Buckle_Inner",
   "DEF-FannyPack_Strap_Ring_Inner": "DEF-FannyPack_Strap_Ring_Inner",
-  FannyPack_Strap_Ring_Inner: "FannyPack_Strap_Ring_Inner",
-  "STR-FannyPack7": "STR-FannyPack7",
   "DEF-FannyPack_Buckle_Outer": "DEF-FannyPack_Buckle_Outer",
-  FannyPack_Buckle_Outer: "FannyPack_Buckle_Outer",
   "DEF-FannyPack_Strap_Ring_Outer": "DEF-FannyPack_Strap_Ring_Outer",
-  FannyPack_Strap_Ring_Outer: "FannyPack_Strap_Ring_Outer",
-  "STR-TIP-FannyPack5_2": "STR-TIP-FannyPack5_2",
-  FannyPack_Buckle: "FannyPack_Buckle",
-  "P-FannyPack_Buckle": "P-FannyPack_Buckle",
   "DEF-Fannypack_Zipper_Slider": "DEF-Fannypack_Zipper_Slider",
   "DEF-Fannypack_Zipper_Tab": "DEF-Fannypack_Zipper_Tab",
-  Fannypack_Zipper_Tab: "Fannypack_Zipper_Tab",
-  Fannypack_Zipper_Slider: "Fannypack_Zipper_Slider",
-  "P-Fannypack_Zipper_Slider": "P-Fannypack_Zipper_Slider",
   "DEF-Handkerchief_Back": "DEF-Handkerchief_Back",
-  Handkerchief_Back: "Handkerchief_Back",
-  "P-Handkerchief_Back": "P-Handkerchief_Back",
   "DEF-Handkerchief_Knot": "DEF-Handkerchief_Knot",
   "DEF-HandkerchiefL": "DEF-HandkerchiefL",
-  HandkerchiefL: "HandkerchiefL",
   "DEF-HandkerchiefR": "DEF-HandkerchiefR",
-  HandkerchiefR: "HandkerchiefR",
-  Handkerchief_Knot: "Handkerchief_Knot",
-  "P-Handkerchief_Knot": "P-Handkerchief_Knot",
-  "DSP-IK-MSTR-FootL": "DSP-IK-MSTR-FootL",
-  "DSP-IK-MSTR-C-FootL": "DSP-IK-MSTR-C-FootL",
-  "IK-STR-TGT-FootL": "IK-STR-TGT-FootL",
-  "ROLL-FootL": "ROLL-FootL",
-  "FK-W-SNAP-FootL": "FK-W-SNAP-FootL",
-  "IK-FootL": "IK-FootL",
-  "RIK-FootL": "RIK-FootL",
-  "IK-ToesL": "IK-ToesL",
-  "RIK-ToesL": "RIK-ToesL",
-  "IK-RollBackL": "IK-RollBackL",
-  "ROLL-MSTR-FootL": "ROLL-MSTR-FootL",
-  "IK-MSTR-C-FootL": "IK-MSTR-C-FootL",
-  "IK-MSTR-FootL": "IK-MSTR-FootL",
-  "P-IK-MSTR-FootL": "P-IK-MSTR-FootL",
-  "DSP-IK-MSTR-FootR": "DSP-IK-MSTR-FootR",
-  "DSP-IK-MSTR-C-FootR": "DSP-IK-MSTR-C-FootR",
-  "IK-STR-TGT-FootR": "IK-STR-TGT-FootR",
-  "ROLL-FootR": "ROLL-FootR",
-  "FK-W-SNAP-FootR": "FK-W-SNAP-FootR",
-  "IK-FootR": "IK-FootR",
-  "RIK-FootR": "RIK-FootR",
-  "IK-ToesR": "IK-ToesR",
-  "RIK-ToesR": "RIK-ToesR",
-  "IK-RollBackR": "IK-RollBackR",
-  "ROLL-MSTR-FootR": "ROLL-MSTR-FootR",
-  "IK-MSTR-C-FootR": "IK-MSTR-C-FootR",
-  "IK-MSTR-FootR": "IK-MSTR-FootR",
-  "P-IK-MSTR-FootR": "P-IK-MSTR-FootR",
-  "IK-STR-TGT-WristL": "IK-STR-TGT-WristL",
-  "IK-WristL": "IK-WristL",
-  "IK-MSTR-C-WristL": "IK-MSTR-C-WristL",
-  "IK-MSTR-WristL": "IK-MSTR-WristL",
-  "P-IK-MSTR-WristL": "P-IK-MSTR-WristL",
-  "IK-STR-TGT-WristR": "IK-STR-TGT-WristR",
-  "IK-WristR": "IK-WristR",
-  "IK-MSTR-C-WristR": "IK-MSTR-C-WristR",
-  "IK-MSTR-WristR": "IK-MSTR-WristR",
-  "P-IK-MSTR-WristR": "P-IK-MSTR-WristR",
-  "DSP-TGT-EyeL": "DSP-TGT-EyeL",
-  "TGT-EyeL": "TGT-EyeL",
-  "DSP-TGT-EyeR": "DSP-TGT-EyeR",
-  "TGT-EyeR": "TGT-EyeR",
-  "MSTR-TGT-Eyes": "MSTR-TGT-Eyes",
-  "P-MSTR-TGT-Eyes": "P-MSTR-TGT-Eyes",
-  Binoculars_Empty1: "Binoculars_Empty1",
-  "P-Binoculars_Empty1": "P-Binoculars_Empty1",
-  "P-P-Binoculars_Empty1": "P-P-Binoculars_Empty1",
-  Empty1L: "Empty1L",
-  "P-Empty1L": "P-Empty1L",
-  "P-P-Empty1L": "P-P-Empty1L",
-  Empty1R: "Empty1R",
-  "P-Empty1R": "P-Empty1R",
-  "P-P-Empty1R": "P-P-Empty1R",
-  Empty2L: "Empty2L",
-  "P-Empty2L": "P-Empty2L",
-  "P-P-Empty2L": "P-P-Empty2L",
-  Empty2R: "Empty2R",
-  "P-Empty2R": "P-Empty2R",
-  "P-P-Empty2R": "P-P-Empty2R",
-  GrabL: "GrabL",
-  "P-GrabL": "P-GrabL",
-  "P-P-GrabL": "P-P-GrabL",
-  GrabR: "GrabR",
-  "P-GrabR": "P-GrabR",
-  "P-P-GrabR": "P-P-GrabR",
-  "P-P-Pin4": "P-P-Pin4",
   "DEF-Pin1": "DEF-Pin1",
-  Pin1: "Pin1",
-  "P-Pin1": "P-Pin1",
   "DEF-Pin2": "DEF-Pin2",
-  Pin2: "Pin2",
-  "P-Pin2": "P-Pin2",
   "DEF-Pin3": "DEF-Pin3",
-  Pin3: "Pin3",
-  "P-Pin3": "P-Pin3",
   "DEF-Pin4": "DEF-Pin4",
-  Pin4: "Pin4",
-  "P-Pin4": "P-Pin4",
   "DEF-Pin5": "DEF-Pin5",
-  Pin5: "Pin5",
-  "P-Pin5": "P-Pin5",
-  action_props: "action_props",
-  Elbow_AnchorL: "Elbow_AnchorL",
-  Elbow_AnchorR: "Elbow_AnchorR",
-  Knee_AnchorL: "Knee_AnchorL",
-  Knee_AnchorR: "Knee_AnchorR",
   "DEF-Chest": "DEF-Chest",
-  "CTR-DEF-Chest": "CTR-DEF-Chest",
-  "CTR-DEF-P-Chest": "CTR-DEF-P-Chest",
-  "FK-ShoulderL": "FK-ShoulderL",
-  "FK-ShoulderR": "FK-ShoulderR",
-  "ORG-ArmpitL": "ORG-ArmpitL",
-  "ORG-ArmpitR": "ORG-ArmpitR",
-  ScarfPivotL: "ScarfPivotL",
-  "LTC-HandkerchiefL": "LTC-HandkerchiefL",
   "ROOT-LTC-HandkerchiefL": "ROOT-LTC-HandkerchiefL",
-  "ORG-LTC-HandkerchiefL": "ORG-LTC-HandkerchiefL",
-  "IK-STR-UpperArmL": "IK-STR-UpperArmL",
-  "IK-ForearmL": "IK-ForearmL",
-  "IK-UpperArmL": "IK-UpperArmL",
-  "AutoRubberHose-ForearmL": "AutoRubberHose-ForearmL",
-  "ACT-Hand_SplayL": "ACT-Hand_SplayL",
   "DEF-WristL": "DEF-WristL",
-  "FK-Finger_Index_CarpalL": "FK-Finger_Index_CarpalL",
-  "FK-Finger_Middle_CarpalL": "FK-Finger_Middle_CarpalL",
-  "FK-Finger_Pinky_CarpalL": "FK-Finger_Pinky_CarpalL",
-  "FK-Finger_Ring_CarpalL": "FK-Finger_Ring_CarpalL",
-  "STR-TIP-TAN-Finger_Index_CarpalL": "STR-TIP-TAN-Finger_Index_CarpalL",
-  "STR-TIP-Finger_Index_CarpalL": "STR-TIP-Finger_Index_CarpalL",
-  "ORG-TIP-Finger_Index_CarpalL": "ORG-TIP-Finger_Index_CarpalL",
-  "IK-SW-Finger_Index1L": "IK-SW-Finger_Index1L",
-  "FK-Finger_Index3L": "FK-Finger_Index3L",
-  "FK-Finger_Index2L": "FK-Finger_Index2L",
-  "FK-Finger_Index1L": "FK-Finger_Index1L",
-  "IK-Finger_Index3L": "IK-Finger_Index3L",
-  "IK-Finger_Index2L": "IK-Finger_Index2L",
-  "IK-Finger_Index1L": "IK-Finger_Index1L",
-  "DSP-IK-POLE-Finger_Index1L": "DSP-IK-POLE-Finger_Index1L",
-  "IK-POLE-LINE-Finger_Index1L": "IK-POLE-LINE-Finger_Index1L",
-  "IK-POLE-Finger_Index1L": "IK-POLE-Finger_Index1L",
-  "IK-STR-Finger_Index1L": "IK-STR-Finger_Index1L",
-  "DSP-IK-SW-Finger_Index1L": "DSP-IK-SW-Finger_Index1L",
-  "ORG-TIP-Finger_Index3L": "ORG-TIP-Finger_Index3L",
   "DEF-Finger_Index3L": "DEF-Finger_Index3L",
-  "STR-TAN-Finger_Index3L": "STR-TAN-Finger_Index3L",
-  "STR-Finger_Index3L": "STR-Finger_Index3L",
-  "STR-S-Finger_Index3L": "STR-S-Finger_Index3L",
-  "STR-TIP-TAN-Finger_Index3L": "STR-TIP-TAN-Finger_Index3L",
-  "STR-TIP-Finger_Index3L": "STR-TIP-Finger_Index3L",
-  "STR-TIP-S-Finger_Index3L": "STR-TIP-S-Finger_Index3L",
-  "XROT-Finger_Index3L": "XROT-Finger_Index3L",
-  "ORG-Finger_Index3L": "ORG-Finger_Index3L",
   "DEF-Finger_Index2L": "DEF-Finger_Index2L",
-  "STR-TAN-Finger_Index2L": "STR-TAN-Finger_Index2L",
-  "STR-Finger_Index2L": "STR-Finger_Index2L",
-  "STR-S-Finger_Index2L": "STR-S-Finger_Index2L",
-  "TIP-ORG-Finger_Index3L": "TIP-ORG-Finger_Index3L",
-  "ORG-Finger_Index2L": "ORG-Finger_Index2L",
   "DEF-Finger_Index1L": "DEF-Finger_Index1L",
-  "STR-TAN-Finger_Index1L": "STR-TAN-Finger_Index1L",
-  "STR-Finger_Index1L": "STR-Finger_Index1L",
-  "ORG-Finger_Index1L": "ORG-Finger_Index1L",
-  "ROOT-Finger_Index1L": "ROOT-Finger_Index1L",
   "DEF-Finger_Index_CarpalL": "DEF-Finger_Index_CarpalL",
-  "STR-TAN-Finger_Index_CarpalL": "STR-TAN-Finger_Index_CarpalL",
-  "STR-Finger_Index_CarpalL": "STR-Finger_Index_CarpalL",
-  "ORG-Finger_Index_CarpalL": "ORG-Finger_Index_CarpalL",
-  "STR-TIP-TAN-Finger_Middle_CarpalL": "STR-TIP-TAN-Finger_Middle_CarpalL",
-  "STR-TIP-Finger_Middle_CarpalL": "STR-TIP-Finger_Middle_CarpalL",
-  "ORG-TIP-Finger_Middle_CarpalL": "ORG-TIP-Finger_Middle_CarpalL",
-  "IK-SW-Finger_Middle1L": "IK-SW-Finger_Middle1L",
-  "FK-Finger_Middle3L": "FK-Finger_Middle3L",
-  "FK-Finger_Middle2L": "FK-Finger_Middle2L",
-  "FK-Finger_Middle1L": "FK-Finger_Middle1L",
-  "IK-Finger_Middle3L": "IK-Finger_Middle3L",
-  "IK-Finger_Middle2L": "IK-Finger_Middle2L",
-  "IK-Finger_Middle1L": "IK-Finger_Middle1L",
-  "DSP-IK-POLE-Finger_Middle1L": "DSP-IK-POLE-Finger_Middle1L",
-  "IK-POLE-LINE-Finger_Middle1L": "IK-POLE-LINE-Finger_Middle1L",
-  "IK-POLE-Finger_Middle1L": "IK-POLE-Finger_Middle1L",
-  "IK-STR-Finger_Middle1L": "IK-STR-Finger_Middle1L",
-  "DSP-IK-SW-Finger_Middle1L": "DSP-IK-SW-Finger_Middle1L",
-  "ORG-TIP-Finger_Middle3L": "ORG-TIP-Finger_Middle3L",
   "DEF-Finger_Middle3L": "DEF-Finger_Middle3L",
-  "STR-TAN-Finger_Middle3L": "STR-TAN-Finger_Middle3L",
-  "STR-Finger_Middle3L": "STR-Finger_Middle3L",
-  "STR-S-Finger_Middle3L": "STR-S-Finger_Middle3L",
-  "STR-TIP-TAN-Finger_Middle3L": "STR-TIP-TAN-Finger_Middle3L",
-  "STR-TIP-Finger_Middle3L": "STR-TIP-Finger_Middle3L",
-  "STR-TIP-S-Finger_Middle3L": "STR-TIP-S-Finger_Middle3L",
-  "XROT-Finger_Middle3L": "XROT-Finger_Middle3L",
-  "ORG-Finger_Middle3L": "ORG-Finger_Middle3L",
   "DEF-Finger_Middle2L": "DEF-Finger_Middle2L",
-  "STR-TAN-Finger_Middle2L": "STR-TAN-Finger_Middle2L",
-  "STR-Finger_Middle2L": "STR-Finger_Middle2L",
-  "STR-S-Finger_Middle2L": "STR-S-Finger_Middle2L",
-  "TIP-ORG-Finger_Middle3L": "TIP-ORG-Finger_Middle3L",
-  "ORG-Finger_Middle2L": "ORG-Finger_Middle2L",
   "DEF-Finger_Middle1L": "DEF-Finger_Middle1L",
-  "STR-TAN-Finger_Middle1L": "STR-TAN-Finger_Middle1L",
-  "STR-Finger_Middle1L": "STR-Finger_Middle1L",
-  "ORG-Finger_Middle1L": "ORG-Finger_Middle1L",
-  "ROOT-Finger_Middle1L": "ROOT-Finger_Middle1L",
   "DEF-Finger_Middle_CarpalL": "DEF-Finger_Middle_CarpalL",
-  "STR-TAN-Finger_Middle_CarpalL": "STR-TAN-Finger_Middle_CarpalL",
-  "STR-Finger_Middle_CarpalL": "STR-Finger_Middle_CarpalL",
-  "ORG-Finger_Middle_CarpalL": "ORG-Finger_Middle_CarpalL",
-  "STR-TIP-TAN-Finger_Pinky_CarpalL": "STR-TIP-TAN-Finger_Pinky_CarpalL",
-  "STR-TIP-Finger_Pinky_CarpalL": "STR-TIP-Finger_Pinky_CarpalL",
-  "ORG-TIP-Finger_Pinky_CarpalL": "ORG-TIP-Finger_Pinky_CarpalL",
-  "IK-SW-Finger_Pinky1L": "IK-SW-Finger_Pinky1L",
-  "FK-Finger_Pinky3L": "FK-Finger_Pinky3L",
-  "FK-Finger_Pinky2L": "FK-Finger_Pinky2L",
-  "FK-Finger_Pinky1L": "FK-Finger_Pinky1L",
-  "IK-Finger_Pinky3L": "IK-Finger_Pinky3L",
-  "IK-Finger_Pinky2L": "IK-Finger_Pinky2L",
-  "IK-Finger_Pinky1L": "IK-Finger_Pinky1L",
-  "DSP-IK-POLE-Finger_Pinky1L": "DSP-IK-POLE-Finger_Pinky1L",
-  "IK-POLE-LINE-Finger_Pinky1L": "IK-POLE-LINE-Finger_Pinky1L",
-  "IK-POLE-Finger_Pinky1L": "IK-POLE-Finger_Pinky1L",
-  "IK-STR-Finger_Pinky1L": "IK-STR-Finger_Pinky1L",
-  "DSP-IK-SW-Finger_Pinky1L": "DSP-IK-SW-Finger_Pinky1L",
-  "ORG-TIP-Finger_Pinky3L": "ORG-TIP-Finger_Pinky3L",
   "DEF-Finger_Pinky3L": "DEF-Finger_Pinky3L",
-  "STR-TAN-Finger_Pinky3L": "STR-TAN-Finger_Pinky3L",
-  "STR-Finger_Pinky3L": "STR-Finger_Pinky3L",
-  "STR-S-Finger_Pinky3L": "STR-S-Finger_Pinky3L",
-  "STR-TIP-TAN-Finger_Pinky3L": "STR-TIP-TAN-Finger_Pinky3L",
-  "STR-TIP-Finger_Pinky3L": "STR-TIP-Finger_Pinky3L",
-  "STR-TIP-S-Finger_Pinky3L": "STR-TIP-S-Finger_Pinky3L",
-  "XROT-Finger_Pinky3L": "XROT-Finger_Pinky3L",
-  "ORG-Finger_Pinky3L": "ORG-Finger_Pinky3L",
   "DEF-Finger_Pinky2L": "DEF-Finger_Pinky2L",
-  "STR-TAN-Finger_Pinky2L": "STR-TAN-Finger_Pinky2L",
-  "STR-Finger_Pinky2L": "STR-Finger_Pinky2L",
-  "STR-S-Finger_Pinky2L": "STR-S-Finger_Pinky2L",
-  "TIP-ORG-Finger_Pinky3L": "TIP-ORG-Finger_Pinky3L",
-  "ORG-Finger_Pinky2L": "ORG-Finger_Pinky2L",
   "DEF-Finger_Pinky1L": "DEF-Finger_Pinky1L",
-  "STR-TAN-Finger_Pinky1L": "STR-TAN-Finger_Pinky1L",
-  "STR-Finger_Pinky1L": "STR-Finger_Pinky1L",
-  "ORG-Finger_Pinky1L": "ORG-Finger_Pinky1L",
-  "ROOT-Finger_Pinky1L": "ROOT-Finger_Pinky1L",
   "DEF-Finger_Pinky_CarpalL": "DEF-Finger_Pinky_CarpalL",
-  "STR-TAN-Finger_Pinky_CarpalL": "STR-TAN-Finger_Pinky_CarpalL",
-  "STR-Finger_Pinky_CarpalL": "STR-Finger_Pinky_CarpalL",
-  "ORG-Finger_Pinky_CarpalL": "ORG-Finger_Pinky_CarpalL",
-  "STR-TIP-TAN-Finger_Ring_CarpalL": "STR-TIP-TAN-Finger_Ring_CarpalL",
-  "STR-TIP-Finger_Ring_CarpalL": "STR-TIP-Finger_Ring_CarpalL",
-  "ORG-TIP-Finger_Ring_CarpalL": "ORG-TIP-Finger_Ring_CarpalL",
-  "IK-SW-Finger_Ring1L": "IK-SW-Finger_Ring1L",
-  "FK-Finger_Ring3L": "FK-Finger_Ring3L",
-  "FK-Finger_Ring2L": "FK-Finger_Ring2L",
-  "FK-Finger_Ring1L": "FK-Finger_Ring1L",
-  "IK-Finger_Ring3L": "IK-Finger_Ring3L",
-  "IK-Finger_Ring2L": "IK-Finger_Ring2L",
-  "IK-Finger_Ring1L": "IK-Finger_Ring1L",
-  "DSP-IK-POLE-Finger_Ring1L": "DSP-IK-POLE-Finger_Ring1L",
-  "IK-POLE-LINE-Finger_Ring1L": "IK-POLE-LINE-Finger_Ring1L",
-  "IK-POLE-Finger_Ring1L": "IK-POLE-Finger_Ring1L",
-  "IK-STR-Finger_Ring1L": "IK-STR-Finger_Ring1L",
-  "DSP-IK-SW-Finger_Ring1L": "DSP-IK-SW-Finger_Ring1L",
-  "ORG-TIP-Finger_Ring3L": "ORG-TIP-Finger_Ring3L",
   "DEF-Finger_Ring3L": "DEF-Finger_Ring3L",
-  "STR-TAN-Finger_Ring3L": "STR-TAN-Finger_Ring3L",
-  "STR-Finger_Ring3L": "STR-Finger_Ring3L",
-  "STR-S-Finger_Ring3L": "STR-S-Finger_Ring3L",
-  "STR-TIP-TAN-Finger_Ring3L": "STR-TIP-TAN-Finger_Ring3L",
-  "STR-TIP-Finger_Ring3L": "STR-TIP-Finger_Ring3L",
-  "STR-TIP-S-Finger_Ring3L": "STR-TIP-S-Finger_Ring3L",
-  "XROT-Finger_Ring3L": "XROT-Finger_Ring3L",
-  "ORG-Finger_Ring3L": "ORG-Finger_Ring3L",
   "DEF-Finger_Ring2L": "DEF-Finger_Ring2L",
-  "STR-TAN-Finger_Ring2L": "STR-TAN-Finger_Ring2L",
-  "STR-Finger_Ring2L": "STR-Finger_Ring2L",
-  "STR-S-Finger_Ring2L": "STR-S-Finger_Ring2L",
-  "TIP-ORG-Finger_Ring3L": "TIP-ORG-Finger_Ring3L",
-  "ORG-Finger_Ring2L": "ORG-Finger_Ring2L",
   "DEF-Finger_Ring1L": "DEF-Finger_Ring1L",
-  "STR-TAN-Finger_Ring1L": "STR-TAN-Finger_Ring1L",
-  "STR-Finger_Ring1L": "STR-Finger_Ring1L",
-  "ORG-Finger_Ring1L": "ORG-Finger_Ring1L",
-  "ROOT-Finger_Ring1L": "ROOT-Finger_Ring1L",
   "DEF-Finger_Ring_CarpalL": "DEF-Finger_Ring_CarpalL",
-  "STR-TAN-Finger_Ring_CarpalL": "STR-TAN-Finger_Ring_CarpalL",
-  "STR-Finger_Ring_CarpalL": "STR-Finger_Ring_CarpalL",
-  "ORG-Finger_Ring_CarpalL": "ORG-Finger_Ring_CarpalL",
-  "PRP-UpperArmL": "PRP-UpperArmL",
-  "IK-SW-Finger_Thumb1L": "IK-SW-Finger_Thumb1L",
-  "FK-Finger_Thumb3L": "FK-Finger_Thumb3L",
-  "FK-Finger_Thumb2L": "FK-Finger_Thumb2L",
-  "FK-Finger_Thumb1L": "FK-Finger_Thumb1L",
-  "IK-Finger_Thumb3L": "IK-Finger_Thumb3L",
-  "IK-Finger_Thumb2L": "IK-Finger_Thumb2L",
-  "IK-Finger_Thumb1L": "IK-Finger_Thumb1L",
-  "DSP-IK-POLE-Finger_Thumb1L": "DSP-IK-POLE-Finger_Thumb1L",
-  "IK-POLE-LINE-Finger_Thumb1L": "IK-POLE-LINE-Finger_Thumb1L",
-  "IK-POLE-Finger_Thumb1L": "IK-POLE-Finger_Thumb1L",
-  "IK-STR-Finger_Thumb1L": "IK-STR-Finger_Thumb1L",
-  "DSP-IK-SW-Finger_Thumb1L": "DSP-IK-SW-Finger_Thumb1L",
-  "ORG-TIP-Finger_Thumb3L": "ORG-TIP-Finger_Thumb3L",
   "DEF-Finger_Thumb3L": "DEF-Finger_Thumb3L",
-  "STR-TAN-Finger_Thumb3L": "STR-TAN-Finger_Thumb3L",
-  "STR-Finger_Thumb3L": "STR-Finger_Thumb3L",
-  "STR-S-Finger_Thumb3L": "STR-S-Finger_Thumb3L",
-  "STR-TIP-TAN-Finger_Thumb3L": "STR-TIP-TAN-Finger_Thumb3L",
-  "STR-TIP-Finger_Thumb3L": "STR-TIP-Finger_Thumb3L",
-  "STR-TIP-S-Finger_Thumb3L": "STR-TIP-S-Finger_Thumb3L",
-  "XROT-Finger_Thumb3L": "XROT-Finger_Thumb3L",
-  "ORG-Finger_Thumb3L": "ORG-Finger_Thumb3L",
   "DEF-Finger_Thumb2L": "DEF-Finger_Thumb2L",
-  "STR-TAN-Finger_Thumb2L": "STR-TAN-Finger_Thumb2L",
-  "STR-Finger_Thumb2L": "STR-Finger_Thumb2L",
-  "STR-S-Finger_Thumb2L": "STR-S-Finger_Thumb2L",
-  "TIP-ORG-Finger_Thumb3L": "TIP-ORG-Finger_Thumb3L",
-  "ORG-Finger_Thumb2L": "ORG-Finger_Thumb2L",
   "DEF-Finger_Thumb1L": "DEF-Finger_Thumb1L",
-  "STR-TAN-Finger_Thumb1L": "STR-TAN-Finger_Thumb1L",
-  "STR-Finger_Thumb1L": "STR-Finger_Thumb1L",
-  "ORG-Finger_Thumb1L": "ORG-Finger_Thumb1L",
-  "ROOT-Finger_Thumb1L": "ROOT-Finger_Thumb1L",
-  "STR-TAN-WristL": "STR-TAN-WristL",
-  "STR-RI-WristL": "STR-RI-WristL",
-  "STR-RO-WristL": "STR-RO-WristL",
-  Track_WristL: "Track_WristL",
-  "STR-WristL": "STR-WristL",
-  "ORG-WristL": "ORG-WristL",
   "DEF-Forearm2L": "DEF-Forearm2L",
-  "STR-Forearm2L": "STR-Forearm2L",
-  "STR-TAN-Forearm2L": "STR-TAN-Forearm2L",
-  "STR-H-Forearm2L": "STR-H-Forearm2L",
-  "SKH-Forearm1L": "SKH-Forearm1L",
-  "SKP-Forearm1L": "SKP-Forearm1L",
   "DEF-Forearm1L": "DEF-Forearm1L",
-  "STR-RI-Forearm1L": "STR-RI-Forearm1L",
-  "STR-RO-Forearm1L": "STR-RO-Forearm1L",
-  "STR-Forearm1L": "STR-Forearm1L",
-  "STR-S-Forearm1L": "STR-S-Forearm1L",
-  "STR-TAN-Forearm1L": "STR-TAN-Forearm1L",
-  "ORG-ForearmL": "ORG-ForearmL",
-  "STR-TIP-TAN-Watch": "STR-TIP-TAN-Watch",
-  "STR-TIP-Watch": "STR-TIP-Watch",
-  "ORG-TIP-Watch": "ORG-TIP-Watch",
   "DEF-Watch": "DEF-Watch",
-  "STR-TAN-Watch": "STR-TAN-Watch",
-  "STR-Watch": "STR-Watch",
-  "ORG-Watch": "ORG-Watch",
-  "STR-TAN-UpperArm2L": "STR-TAN-UpperArm2L",
-  "SKH-UpperArm2L": "SKH-UpperArm2L",
-  "SKP-UpperArm2L": "SKP-UpperArm2L",
   "DEF-UpperArm2L": "DEF-UpperArm2L",
-  "STR-UpperArm2L": "STR-UpperArm2L",
-  "STR-H-UpperArm2L": "STR-H-UpperArm2L",
-  "STR-TAN-UpperArm1L": "STR-TAN-UpperArm1L",
-  "SKH-UpperArm1L": "SKH-UpperArm1L",
-  "SKP-UpperArm1L": "SKP-UpperArm1L",
   "DEF-UpperArm1L": "DEF-UpperArm1L",
-  "STR-UpperArm1L": "STR-UpperArm1L",
-  "ORG-UpperArmL": "ORG-UpperArmL",
-  "ROOT-UpperArmL": "ROOT-UpperArmL",
   "DEF-ShoulderL": "DEF-ShoulderL",
-  "STR-TAN-ShoulderL": "STR-TAN-ShoulderL",
-  "STR-ShoulderL": "STR-ShoulderL",
-  "ORG-ShoulderL": "ORG-ShoulderL",
-  ScarfPivotR: "ScarfPivotR",
-  "LTC-HandkerchiefR": "LTC-HandkerchiefR",
   "ROOT-LTC-HandkerchiefR": "ROOT-LTC-HandkerchiefR",
-  "ORG-LTC-HandkerchiefR": "ORG-LTC-HandkerchiefR",
-  "IK-STR-UpperArmR": "IK-STR-UpperArmR",
-  "IK-ForearmR": "IK-ForearmR",
-  "IK-UpperArmR": "IK-UpperArmR",
-  "AutoRubberHose-ForearmR": "AutoRubberHose-ForearmR",
-  "ACT-Hand_SplayR": "ACT-Hand_SplayR",
   "DEF-WristR": "DEF-WristR",
-  "FK-Finger_Index_CarpalR": "FK-Finger_Index_CarpalR",
-  "FK-Finger_Middle_CarpalR": "FK-Finger_Middle_CarpalR",
-  "FK-Finger_Pinky_CarpalR": "FK-Finger_Pinky_CarpalR",
-  "FK-Finger_Ring_CarpalR": "FK-Finger_Ring_CarpalR",
-  "STR-TIP-TAN-Finger_Index_CarpalR": "STR-TIP-TAN-Finger_Index_CarpalR",
-  "STR-TIP-Finger_Index_CarpalR": "STR-TIP-Finger_Index_CarpalR",
-  "ORG-TIP-Finger_Index_CarpalR": "ORG-TIP-Finger_Index_CarpalR",
-  "IK-SW-Finger_Index1R": "IK-SW-Finger_Index1R",
-  "FK-Finger_Index3R": "FK-Finger_Index3R",
-  "FK-Finger_Index2R": "FK-Finger_Index2R",
-  "FK-Finger_Index1R": "FK-Finger_Index1R",
-  "IK-Finger_Index3R": "IK-Finger_Index3R",
-  "IK-Finger_Index2R": "IK-Finger_Index2R",
-  "IK-Finger_Index1R": "IK-Finger_Index1R",
-  "DSP-IK-POLE-Finger_Index1R": "DSP-IK-POLE-Finger_Index1R",
-  "IK-POLE-LINE-Finger_Index1R": "IK-POLE-LINE-Finger_Index1R",
-  "IK-POLE-Finger_Index1R": "IK-POLE-Finger_Index1R",
-  "IK-STR-Finger_Index1R": "IK-STR-Finger_Index1R",
-  "DSP-IK-SW-Finger_Index1R": "DSP-IK-SW-Finger_Index1R",
-  "ORG-TIP-Finger_Index3R": "ORG-TIP-Finger_Index3R",
   "DEF-Finger_Index3R": "DEF-Finger_Index3R",
-  "STR-TAN-Finger_Index3R": "STR-TAN-Finger_Index3R",
-  "STR-Finger_Index3R": "STR-Finger_Index3R",
-  "STR-S-Finger_Index3R": "STR-S-Finger_Index3R",
-  "STR-TIP-TAN-Finger_Index3R": "STR-TIP-TAN-Finger_Index3R",
-  "STR-TIP-Finger_Index3R": "STR-TIP-Finger_Index3R",
-  "STR-TIP-S-Finger_Index3R": "STR-TIP-S-Finger_Index3R",
-  "XROT-Finger_Index3R": "XROT-Finger_Index3R",
-  "ORG-Finger_Index3R": "ORG-Finger_Index3R",
   "DEF-Finger_Index2R": "DEF-Finger_Index2R",
-  "STR-TAN-Finger_Index2R": "STR-TAN-Finger_Index2R",
-  "STR-Finger_Index2R": "STR-Finger_Index2R",
-  "STR-S-Finger_Index2R": "STR-S-Finger_Index2R",
-  "TIP-ORG-Finger_Index3R": "TIP-ORG-Finger_Index3R",
-  "ORG-Finger_Index2R": "ORG-Finger_Index2R",
   "DEF-Finger_Index1R": "DEF-Finger_Index1R",
-  "STR-TAN-Finger_Index1R": "STR-TAN-Finger_Index1R",
-  "STR-Finger_Index1R": "STR-Finger_Index1R",
-  "ORG-Finger_Index1R": "ORG-Finger_Index1R",
-  "ROOT-Finger_Index1R": "ROOT-Finger_Index1R",
   "DEF-Finger_Index_CarpalR": "DEF-Finger_Index_CarpalR",
-  "STR-TAN-Finger_Index_CarpalR": "STR-TAN-Finger_Index_CarpalR",
-  "STR-Finger_Index_CarpalR": "STR-Finger_Index_CarpalR",
-  "ORG-Finger_Index_CarpalR": "ORG-Finger_Index_CarpalR",
-  "STR-TIP-TAN-Finger_Middle_CarpalR": "STR-TIP-TAN-Finger_Middle_CarpalR",
-  "STR-TIP-Finger_Middle_CarpalR": "STR-TIP-Finger_Middle_CarpalR",
-  "ORG-TIP-Finger_Middle_CarpalR": "ORG-TIP-Finger_Middle_CarpalR",
-  "IK-SW-Finger_Middle1R": "IK-SW-Finger_Middle1R",
-  "FK-Finger_Middle3R": "FK-Finger_Middle3R",
-  "FK-Finger_Middle2R": "FK-Finger_Middle2R",
-  "FK-Finger_Middle1R": "FK-Finger_Middle1R",
-  "IK-Finger_Middle3R": "IK-Finger_Middle3R",
-  "IK-Finger_Middle2R": "IK-Finger_Middle2R",
-  "IK-Finger_Middle1R": "IK-Finger_Middle1R",
-  "DSP-IK-POLE-Finger_Middle1R": "DSP-IK-POLE-Finger_Middle1R",
-  "IK-POLE-LINE-Finger_Middle1R": "IK-POLE-LINE-Finger_Middle1R",
-  "IK-POLE-Finger_Middle1R": "IK-POLE-Finger_Middle1R",
-  "IK-STR-Finger_Middle1R": "IK-STR-Finger_Middle1R",
-  "DSP-IK-SW-Finger_Middle1R": "DSP-IK-SW-Finger_Middle1R",
-  "ORG-TIP-Finger_Middle3R": "ORG-TIP-Finger_Middle3R",
   "DEF-Finger_Middle3R": "DEF-Finger_Middle3R",
-  "STR-TAN-Finger_Middle3R": "STR-TAN-Finger_Middle3R",
-  "STR-Finger_Middle3R": "STR-Finger_Middle3R",
-  "STR-S-Finger_Middle3R": "STR-S-Finger_Middle3R",
-  "STR-TIP-TAN-Finger_Middle3R": "STR-TIP-TAN-Finger_Middle3R",
-  "STR-TIP-Finger_Middle3R": "STR-TIP-Finger_Middle3R",
-  "STR-TIP-S-Finger_Middle3R": "STR-TIP-S-Finger_Middle3R",
-  "XROT-Finger_Middle3R": "XROT-Finger_Middle3R",
-  "ORG-Finger_Middle3R": "ORG-Finger_Middle3R",
   "DEF-Finger_Middle2R": "DEF-Finger_Middle2R",
-  "STR-TAN-Finger_Middle2R": "STR-TAN-Finger_Middle2R",
-  "STR-Finger_Middle2R": "STR-Finger_Middle2R",
-  "STR-S-Finger_Middle2R": "STR-S-Finger_Middle2R",
-  "TIP-ORG-Finger_Middle3R": "TIP-ORG-Finger_Middle3R",
-  "ORG-Finger_Middle2R": "ORG-Finger_Middle2R",
   "DEF-Finger_Middle1R": "DEF-Finger_Middle1R",
-  "STR-TAN-Finger_Middle1R": "STR-TAN-Finger_Middle1R",
-  "STR-Finger_Middle1R": "STR-Finger_Middle1R",
-  "ORG-Finger_Middle1R": "ORG-Finger_Middle1R",
-  "ROOT-Finger_Middle1R": "ROOT-Finger_Middle1R",
   "DEF-Finger_Middle_CarpalR": "DEF-Finger_Middle_CarpalR",
-  "STR-TAN-Finger_Middle_CarpalR": "STR-TAN-Finger_Middle_CarpalR",
-  "STR-Finger_Middle_CarpalR": "STR-Finger_Middle_CarpalR",
-  "ORG-Finger_Middle_CarpalR": "ORG-Finger_Middle_CarpalR",
-  "STR-TIP-TAN-Finger_Pinky_CarpalR": "STR-TIP-TAN-Finger_Pinky_CarpalR",
-  "STR-TIP-Finger_Pinky_CarpalR": "STR-TIP-Finger_Pinky_CarpalR",
-  "ORG-TIP-Finger_Pinky_CarpalR": "ORG-TIP-Finger_Pinky_CarpalR",
-  "IK-SW-Finger_Pinky1R": "IK-SW-Finger_Pinky1R",
-  "FK-Finger_Pinky3R": "FK-Finger_Pinky3R",
-  "FK-Finger_Pinky2R": "FK-Finger_Pinky2R",
-  "FK-Finger_Pinky1R": "FK-Finger_Pinky1R",
-  "IK-Finger_Pinky3R": "IK-Finger_Pinky3R",
-  "IK-Finger_Pinky2R": "IK-Finger_Pinky2R",
-  "IK-Finger_Pinky1R": "IK-Finger_Pinky1R",
-  "DSP-IK-POLE-Finger_Pinky1R": "DSP-IK-POLE-Finger_Pinky1R",
-  "IK-POLE-LINE-Finger_Pinky1R": "IK-POLE-LINE-Finger_Pinky1R",
-  "IK-POLE-Finger_Pinky1R": "IK-POLE-Finger_Pinky1R",
-  "IK-STR-Finger_Pinky1R": "IK-STR-Finger_Pinky1R",
-  "DSP-IK-SW-Finger_Pinky1R": "DSP-IK-SW-Finger_Pinky1R",
-  "ORG-TIP-Finger_Pinky3R": "ORG-TIP-Finger_Pinky3R",
   "DEF-Finger_Pinky3R": "DEF-Finger_Pinky3R",
-  "STR-TAN-Finger_Pinky3R": "STR-TAN-Finger_Pinky3R",
-  "STR-Finger_Pinky3R": "STR-Finger_Pinky3R",
-  "STR-S-Finger_Pinky3R": "STR-S-Finger_Pinky3R",
-  "STR-TIP-TAN-Finger_Pinky3R": "STR-TIP-TAN-Finger_Pinky3R",
-  "STR-TIP-Finger_Pinky3R": "STR-TIP-Finger_Pinky3R",
-  "STR-TIP-S-Finger_Pinky3R": "STR-TIP-S-Finger_Pinky3R",
-  "XROT-Finger_Pinky3R": "XROT-Finger_Pinky3R",
-  "ORG-Finger_Pinky3R": "ORG-Finger_Pinky3R",
   "DEF-Finger_Pinky2R": "DEF-Finger_Pinky2R",
-  "STR-TAN-Finger_Pinky2R": "STR-TAN-Finger_Pinky2R",
-  "STR-Finger_Pinky2R": "STR-Finger_Pinky2R",
-  "STR-S-Finger_Pinky2R": "STR-S-Finger_Pinky2R",
-  "TIP-ORG-Finger_Pinky3R": "TIP-ORG-Finger_Pinky3R",
-  "ORG-Finger_Pinky2R": "ORG-Finger_Pinky2R",
   "DEF-Finger_Pinky1R": "DEF-Finger_Pinky1R",
-  "STR-TAN-Finger_Pinky1R": "STR-TAN-Finger_Pinky1R",
-  "STR-Finger_Pinky1R": "STR-Finger_Pinky1R",
-  "ORG-Finger_Pinky1R": "ORG-Finger_Pinky1R",
-  "ROOT-Finger_Pinky1R": "ROOT-Finger_Pinky1R",
   "DEF-Finger_Pinky_CarpalR": "DEF-Finger_Pinky_CarpalR",
-  "STR-TAN-Finger_Pinky_CarpalR": "STR-TAN-Finger_Pinky_CarpalR",
-  "STR-Finger_Pinky_CarpalR": "STR-Finger_Pinky_CarpalR",
-  "ORG-Finger_Pinky_CarpalR": "ORG-Finger_Pinky_CarpalR",
-  "STR-TIP-TAN-Finger_Ring_CarpalR": "STR-TIP-TAN-Finger_Ring_CarpalR",
-  "STR-TIP-Finger_Ring_CarpalR": "STR-TIP-Finger_Ring_CarpalR",
-  "ORG-TIP-Finger_Ring_CarpalR": "ORG-TIP-Finger_Ring_CarpalR",
-  "IK-SW-Finger_Ring1R": "IK-SW-Finger_Ring1R",
-  "FK-Finger_Ring3R": "FK-Finger_Ring3R",
-  "FK-Finger_Ring2R": "FK-Finger_Ring2R",
-  "FK-Finger_Ring1R": "FK-Finger_Ring1R",
-  "IK-Finger_Ring3R": "IK-Finger_Ring3R",
-  "IK-Finger_Ring2R": "IK-Finger_Ring2R",
-  "IK-Finger_Ring1R": "IK-Finger_Ring1R",
-  "DSP-IK-POLE-Finger_Ring1R": "DSP-IK-POLE-Finger_Ring1R",
-  "IK-POLE-LINE-Finger_Ring1R": "IK-POLE-LINE-Finger_Ring1R",
-  "IK-POLE-Finger_Ring1R": "IK-POLE-Finger_Ring1R",
-  "IK-STR-Finger_Ring1R": "IK-STR-Finger_Ring1R",
-  "DSP-IK-SW-Finger_Ring1R": "DSP-IK-SW-Finger_Ring1R",
-  "ORG-TIP-Finger_Ring3R": "ORG-TIP-Finger_Ring3R",
   "DEF-Finger_Ring3R": "DEF-Finger_Ring3R",
-  "STR-TAN-Finger_Ring3R": "STR-TAN-Finger_Ring3R",
-  "STR-Finger_Ring3R": "STR-Finger_Ring3R",
-  "STR-S-Finger_Ring3R": "STR-S-Finger_Ring3R",
-  "STR-TIP-TAN-Finger_Ring3R": "STR-TIP-TAN-Finger_Ring3R",
-  "STR-TIP-Finger_Ring3R": "STR-TIP-Finger_Ring3R",
-  "STR-TIP-S-Finger_Ring3R": "STR-TIP-S-Finger_Ring3R",
-  "XROT-Finger_Ring3R": "XROT-Finger_Ring3R",
-  "ORG-Finger_Ring3R": "ORG-Finger_Ring3R",
   "DEF-Finger_Ring2R": "DEF-Finger_Ring2R",
-  "STR-TAN-Finger_Ring2R": "STR-TAN-Finger_Ring2R",
-  "STR-Finger_Ring2R": "STR-Finger_Ring2R",
-  "STR-S-Finger_Ring2R": "STR-S-Finger_Ring2R",
-  "TIP-ORG-Finger_Ring3R": "TIP-ORG-Finger_Ring3R",
-  "ORG-Finger_Ring2R": "ORG-Finger_Ring2R",
   "DEF-Finger_Ring1R": "DEF-Finger_Ring1R",
-  "STR-TAN-Finger_Ring1R": "STR-TAN-Finger_Ring1R",
-  "STR-Finger_Ring1R": "STR-Finger_Ring1R",
-  "ORG-Finger_Ring1R": "ORG-Finger_Ring1R",
-  "ROOT-Finger_Ring1R": "ROOT-Finger_Ring1R",
   "DEF-Finger_Ring_CarpalR": "DEF-Finger_Ring_CarpalR",
-  "STR-TAN-Finger_Ring_CarpalR": "STR-TAN-Finger_Ring_CarpalR",
-  "STR-Finger_Ring_CarpalR": "STR-Finger_Ring_CarpalR",
-  "ORG-Finger_Ring_CarpalR": "ORG-Finger_Ring_CarpalR",
-  "PRP-UpperArmR": "PRP-UpperArmR",
-  "IK-SW-Finger_Thumb1R": "IK-SW-Finger_Thumb1R",
-  "FK-Finger_Thumb3R": "FK-Finger_Thumb3R",
-  "FK-Finger_Thumb2R": "FK-Finger_Thumb2R",
-  "FK-Finger_Thumb1R": "FK-Finger_Thumb1R",
-  "IK-Finger_Thumb3R": "IK-Finger_Thumb3R",
-  "IK-Finger_Thumb2R": "IK-Finger_Thumb2R",
-  "IK-Finger_Thumb1R": "IK-Finger_Thumb1R",
-  "DSP-IK-POLE-Finger_Thumb1R": "DSP-IK-POLE-Finger_Thumb1R",
-  "IK-POLE-LINE-Finger_Thumb1R": "IK-POLE-LINE-Finger_Thumb1R",
-  "IK-POLE-Finger_Thumb1R": "IK-POLE-Finger_Thumb1R",
-  "IK-STR-Finger_Thumb1R": "IK-STR-Finger_Thumb1R",
-  "DSP-IK-SW-Finger_Thumb1R": "DSP-IK-SW-Finger_Thumb1R",
-  "ORG-TIP-Finger_Thumb3R": "ORG-TIP-Finger_Thumb3R",
   "DEF-Finger_Thumb3R": "DEF-Finger_Thumb3R",
-  "STR-TAN-Finger_Thumb3R": "STR-TAN-Finger_Thumb3R",
-  "STR-Finger_Thumb3R": "STR-Finger_Thumb3R",
-  "STR-S-Finger_Thumb3R": "STR-S-Finger_Thumb3R",
-  "STR-TIP-TAN-Finger_Thumb3R": "STR-TIP-TAN-Finger_Thumb3R",
-  "STR-TIP-Finger_Thumb3R": "STR-TIP-Finger_Thumb3R",
-  "STR-TIP-S-Finger_Thumb3R": "STR-TIP-S-Finger_Thumb3R",
-  "XROT-Finger_Thumb3R": "XROT-Finger_Thumb3R",
-  "ORG-Finger_Thumb3R": "ORG-Finger_Thumb3R",
   "DEF-Finger_Thumb2R": "DEF-Finger_Thumb2R",
-  "STR-TAN-Finger_Thumb2R": "STR-TAN-Finger_Thumb2R",
-  "STR-Finger_Thumb2R": "STR-Finger_Thumb2R",
-  "STR-S-Finger_Thumb2R": "STR-S-Finger_Thumb2R",
-  "TIP-ORG-Finger_Thumb3R": "TIP-ORG-Finger_Thumb3R",
-  "ORG-Finger_Thumb2R": "ORG-Finger_Thumb2R",
   "DEF-Finger_Thumb1R": "DEF-Finger_Thumb1R",
-  "STR-TAN-Finger_Thumb1R": "STR-TAN-Finger_Thumb1R",
-  "STR-Finger_Thumb1R": "STR-Finger_Thumb1R",
-  "ORG-Finger_Thumb1R": "ORG-Finger_Thumb1R",
-  "ROOT-Finger_Thumb1R": "ROOT-Finger_Thumb1R",
-  "STR-TAN-WristR": "STR-TAN-WristR",
-  "STR-RI-WristR": "STR-RI-WristR",
-  "STR-RO-WristR": "STR-RO-WristR",
-  Track_WristR: "Track_WristR",
-  "STR-WristR": "STR-WristR",
-  "ORG-WristR": "ORG-WristR",
   "DEF-Forearm2R": "DEF-Forearm2R",
-  "STR-Forearm2R": "STR-Forearm2R",
-  "STR-TAN-Forearm2R": "STR-TAN-Forearm2R",
-  "STR-H-Forearm2R": "STR-H-Forearm2R",
-  "SKH-Forearm1R": "SKH-Forearm1R",
-  "SKP-Forearm1R": "SKP-Forearm1R",
   "DEF-Forearm1R": "DEF-Forearm1R",
-  "STR-RI-Forearm1R": "STR-RI-Forearm1R",
-  "STR-RO-Forearm1R": "STR-RO-Forearm1R",
-  "STR-Forearm1R": "STR-Forearm1R",
-  "STR-S-Forearm1R": "STR-S-Forearm1R",
-  "STR-TAN-Forearm1R": "STR-TAN-Forearm1R",
-  "ORG-ForearmR": "ORG-ForearmR",
-  "STR-TAN-UpperArm2R": "STR-TAN-UpperArm2R",
-  "SKH-UpperArm2R": "SKH-UpperArm2R",
-  "SKP-UpperArm2R": "SKP-UpperArm2R",
   "DEF-UpperArm2R": "DEF-UpperArm2R",
-  "STR-UpperArm2R": "STR-UpperArm2R",
-  "STR-H-UpperArm2R": "STR-H-UpperArm2R",
-  "STR-TAN-UpperArm1R": "STR-TAN-UpperArm1R",
-  "SKH-UpperArm1R": "SKH-UpperArm1R",
-  "SKP-UpperArm1R": "SKP-UpperArm1R",
   "DEF-UpperArm1R": "DEF-UpperArm1R",
-  "STR-UpperArm1R": "STR-UpperArm1R",
-  "ORG-UpperArmR": "ORG-UpperArmR",
-  "ROOT-UpperArmR": "ROOT-UpperArmR",
   "DEF-ShoulderR": "DEF-ShoulderR",
-  "STR-TAN-ShoulderR": "STR-TAN-ShoulderR",
-  "STR-ShoulderR": "STR-ShoulderR",
-  "ORG-ShoulderR": "ORG-ShoulderR",
-  "ORG-TIP-Chest": "ORG-TIP-Chest",
-  "STR-TIP-TAN-Neck": "STR-TIP-TAN-Neck",
-  "ORG-TIP-Neck": "ORG-TIP-Neck",
-  "CEN-Eyes": "CEN-Eyes",
-  "ORG-Cheek1L": "ORG-Cheek1L",
-  "STR-TIP-TAN-Eye_Ring_Lower4L": "STR-TIP-TAN-Eye_Ring_Lower4L",
-  "ORG-TIP-Eye_Ring_Lower4L": "ORG-TIP-Eye_Ring_Lower4L",
-  "STR-TAN-Eye_Ring_Lower4L": "STR-TAN-Eye_Ring_Lower4L",
-  "ORG-Eye_Ring_Lower4L": "ORG-Eye_Ring_Lower4L",
-  "STR-TAN-Eye_Ring_Lower3L": "STR-TAN-Eye_Ring_Lower3L",
-  "ORG-Eye_Ring_Lower3L": "ORG-Eye_Ring_Lower3L",
-  "STR-TAN-Eye_Ring_Lower2L": "STR-TAN-Eye_Ring_Lower2L",
-  "ORG-Eye_Ring_Lower2L": "ORG-Eye_Ring_Lower2L",
-  "STR-TAN-Eye_Ring_Lower1L": "STR-TAN-Eye_Ring_Lower1L",
-  "ORG-Eye_Ring_Lower1L": "ORG-Eye_Ring_Lower1L",
-  "STR-TIP-TAN-Eye_Ring_Lower4R": "STR-TIP-TAN-Eye_Ring_Lower4R",
-  "ORG-TIP-Eye_Ring_Lower4R": "ORG-TIP-Eye_Ring_Lower4R",
-  "STR-TAN-Eye_Ring_Lower4R": "STR-TAN-Eye_Ring_Lower4R",
-  "ORG-Eye_Ring_Lower4R": "ORG-Eye_Ring_Lower4R",
-  "STR-TAN-Eye_Ring_Lower3R": "STR-TAN-Eye_Ring_Lower3R",
-  "ORG-Eye_Ring_Lower3R": "ORG-Eye_Ring_Lower3R",
-  "STR-TAN-Eye_Ring_Lower2R": "STR-TAN-Eye_Ring_Lower2R",
-  "ORG-Eye_Ring_Lower2R": "ORG-Eye_Ring_Lower2R",
-  "STR-TAN-Eye_Ring_Lower1R": "STR-TAN-Eye_Ring_Lower1R",
-  "ORG-Eye_Ring_Lower1R": "ORG-Eye_Ring_Lower1R",
-  "STR-TIP-TAN-Eye_Ring_Upper4L": "STR-TIP-TAN-Eye_Ring_Upper4L",
-  "ORG-TIP-Eye_Ring_Upper4L": "ORG-TIP-Eye_Ring_Upper4L",
-  "STR-TAN-Eye_Ring_Upper4L": "STR-TAN-Eye_Ring_Upper4L",
-  "ORG-Eye_Ring_Upper4L": "ORG-Eye_Ring_Upper4L",
-  "STR-TAN-Eye_Ring_Upper3L": "STR-TAN-Eye_Ring_Upper3L",
-  "ORG-Eye_Ring_Upper3L": "ORG-Eye_Ring_Upper3L",
-  "STR-TAN-Eye_Ring_Upper2L": "STR-TAN-Eye_Ring_Upper2L",
-  "ORG-Eye_Ring_Upper2L": "ORG-Eye_Ring_Upper2L",
-  "STR-TAN-Eye_Ring_Upper1L": "STR-TAN-Eye_Ring_Upper1L",
-  "ORG-Eye_Ring_Upper1L": "ORG-Eye_Ring_Upper1L",
-  "STR-TIP-TAN-Eye_Ring_Upper4R": "STR-TIP-TAN-Eye_Ring_Upper4R",
-  "ORG-TIP-Eye_Ring_Upper4R": "ORG-TIP-Eye_Ring_Upper4R",
-  "STR-TAN-Eye_Ring_Upper4R": "STR-TAN-Eye_Ring_Upper4R",
-  "ORG-Eye_Ring_Upper4R": "ORG-Eye_Ring_Upper4R",
-  "STR-TAN-Eye_Ring_Upper3R": "STR-TAN-Eye_Ring_Upper3R",
-  "ORG-Eye_Ring_Upper3R": "ORG-Eye_Ring_Upper3R",
-  "STR-TAN-Eye_Ring_Upper2R": "STR-TAN-Eye_Ring_Upper2R",
-  "ORG-Eye_Ring_Upper2R": "ORG-Eye_Ring_Upper2R",
-  "STR-TAN-Eye_Ring_Upper1R": "STR-TAN-Eye_Ring_Upper1R",
-  "ORG-Eye_Ring_Upper1R": "ORG-Eye_Ring_Upper1R",
-  "STR-TIP-TAN-Eyelid_Lower4L": "STR-TIP-TAN-Eyelid_Lower4L",
-  "ORG-TIP-Eyelid_Lower4L": "ORG-TIP-Eyelid_Lower4L",
-  "STR-TAN-Eyelid_Lower4L": "STR-TAN-Eyelid_Lower4L",
-  "ORG-Eyelid_Lower4L": "ORG-Eyelid_Lower4L",
-  "STR-TAN-Eyelid_Lower3L": "STR-TAN-Eyelid_Lower3L",
-  "ORG-Eyelid_Lower3L": "ORG-Eyelid_Lower3L",
-  "STR-TAN-Eyelid_Lower2L": "STR-TAN-Eyelid_Lower2L",
-  "ORG-Eyelid_Lower2L": "ORG-Eyelid_Lower2L",
-  "STR-TAN-Eyelid_Lower1L": "STR-TAN-Eyelid_Lower1L",
-  "ORG-Eyelid_Lower1L": "ORG-Eyelid_Lower1L",
-  "STR-TIP-TAN-Eyelid_Lower4R": "STR-TIP-TAN-Eyelid_Lower4R",
-  "ORG-TIP-Eyelid_Lower4R": "ORG-TIP-Eyelid_Lower4R",
-  "STR-TAN-Eyelid_Lower4R": "STR-TAN-Eyelid_Lower4R",
-  "ORG-Eyelid_Lower4R": "ORG-Eyelid_Lower4R",
-  "STR-TAN-Eyelid_Lower3R": "STR-TAN-Eyelid_Lower3R",
-  "ORG-Eyelid_Lower3R": "ORG-Eyelid_Lower3R",
-  "STR-TAN-Eyelid_Lower2R": "STR-TAN-Eyelid_Lower2R",
-  "ORG-Eyelid_Lower2R": "ORG-Eyelid_Lower2R",
-  "STR-TAN-Eyelid_Lower1R": "STR-TAN-Eyelid_Lower1R",
-  "ORG-Eyelid_Lower1R": "ORG-Eyelid_Lower1R",
-  "STR-TIP-TAN-Eyelid_Upper4L": "STR-TIP-TAN-Eyelid_Upper4L",
-  "ORG-TIP-Eyelid_Upper4L": "ORG-TIP-Eyelid_Upper4L",
-  "STR-TAN-Eyelid_Upper4L": "STR-TAN-Eyelid_Upper4L",
-  "ORG-Eyelid_Upper4L": "ORG-Eyelid_Upper4L",
-  "STR-TAN-Eyelid_Upper3L": "STR-TAN-Eyelid_Upper3L",
-  "ORG-Eyelid_Upper3L": "ORG-Eyelid_Upper3L",
-  "STR-TAN-Eyelid_Upper2L": "STR-TAN-Eyelid_Upper2L",
-  "ORG-Eyelid_Upper2L": "ORG-Eyelid_Upper2L",
-  "STR-TAN-Eyelid_Upper1L": "STR-TAN-Eyelid_Upper1L",
-  "ORG-Eyelid_Upper1L": "ORG-Eyelid_Upper1L",
-  "STR-TIP-TAN-Eyelid_Upper4R": "STR-TIP-TAN-Eyelid_Upper4R",
-  "ORG-TIP-Eyelid_Upper4R": "ORG-TIP-Eyelid_Upper4R",
-  "STR-TAN-Eyelid_Upper4R": "STR-TAN-Eyelid_Upper4R",
-  "ORG-Eyelid_Upper4R": "ORG-Eyelid_Upper4R",
-  "STR-TAN-Eyelid_Upper3R": "STR-TAN-Eyelid_Upper3R",
-  "ORG-Eyelid_Upper3R": "ORG-Eyelid_Upper3R",
-  "STR-TAN-Eyelid_Upper2R": "STR-TAN-Eyelid_Upper2R",
-  "ORG-Eyelid_Upper2R": "ORG-Eyelid_Upper2R",
-  "STR-TAN-Eyelid_Upper1R": "STR-TAN-Eyelid_Upper1R",
-  "ORG-Eyelid_Upper1R": "ORG-Eyelid_Upper1R",
-  "ORG-STR-Head_Top": "ORG-STR-Head_Top",
-  "ORG-TIP-Head_Top": "ORG-TIP-Head_Top",
-  "ACT-Eyelid_LowerL": "ACT-Eyelid_LowerL",
-  "ACT-Eyelid_LowerR": "ACT-Eyelid_LowerR",
-  "ACT-Eyelid_UpperL": "ACT-Eyelid_UpperL",
-  "ACT-Eyelid_UpperR": "ACT-Eyelid_UpperR",
   "DEF-Cheek2_4L": "DEF-Cheek2_4L",
-  Cheek2_4L: "Cheek2_4L",
   "DEF-Cheek2_4R": "DEF-Cheek2_4R",
-  Cheek2_4R: "Cheek2_4R",
   "DEF-ForeheadRing": "DEF-ForeheadRing",
-  ForeheadRing: "ForeheadRing",
   "DEF-ForeheadRing1L": "DEF-ForeheadRing1L",
-  ForeheadRing1L: "ForeheadRing1L",
   "DEF-ForeheadRing1R": "DEF-ForeheadRing1R",
-  ForeheadRing1R: "ForeheadRing1R",
   "DEF-ForeheadRing2L": "DEF-ForeheadRing2L",
-  ForeheadRing2L: "ForeheadRing2L",
   "DEF-ForeheadRing2R": "DEF-ForeheadRing2R",
-  ForeheadRing2R: "ForeheadRing2R",
   "DEF-ForeheadRing3L": "DEF-ForeheadRing3L",
-  ForeheadRing3L: "ForeheadRing3L",
   "DEF-ForeheadRing3R": "DEF-ForeheadRing3R",
-  ForeheadRing3R: "ForeheadRing3R",
   "DEF-Hair_Cut_Back1": "DEF-Hair_Cut_Back1",
-  Hair_Cut_Back1: "Hair_Cut_Back1",
   "DEF-Hair_Cut_Back2": "DEF-Hair_Cut_Back2",
-  Hair_Cut_Back2: "Hair_Cut_Back2",
   "DEF-Hair_Cut_Back3": "DEF-Hair_Cut_Back3",
-  Hair_Cut_Back3: "Hair_Cut_Back3",
   "DEF-Hair_Cut_Front1": "DEF-Hair_Cut_Front1",
-  Hair_Cut_Front1: "Hair_Cut_Front1",
   "DEF-Hair_Cut_Front2": "DEF-Hair_Cut_Front2",
-  Hair_Cut_Front2: "Hair_Cut_Front2",
   "DEF-Hair_Cut_Front3": "DEF-Hair_Cut_Front3",
-  Hair_Cut_Front3: "Hair_Cut_Front3",
   "DEF-Hair_Cut_Front4": "DEF-Hair_Cut_Front4",
-  Hair_Cut_Front4: "Hair_Cut_Front4",
   "DEF-Hair_Cut_Front5": "DEF-Hair_Cut_Front5",
-  Hair_Cut_Front5: "Hair_Cut_Front5",
   "DEF-Hair_Cut_Side": "DEF-Hair_Cut_Side",
-  Hair_Cut_Side: "Hair_Cut_Side",
   "DEF-Hair_Cut_Top1": "DEF-Hair_Cut_Top1",
-  Hair_Cut_Top1: "Hair_Cut_Top1",
   "DEF-Hair_Front1": "DEF-Hair_Front1",
-  Hair_Front1: "Hair_Front1",
   "DEF-Hair_Front2": "DEF-Hair_Front2",
-  Hair_Front2: "Hair_Front2",
   "DEF-Hair_Front3": "DEF-Hair_Front3",
-  Hair_Front3: "Hair_Front3",
   "DEF-Hair_Front4": "DEF-Hair_Front4",
-  Hair_Front4: "Hair_Front4",
   "DEF-Hair_SideL": "DEF-Hair_SideL",
-  Hair_SideL: "Hair_SideL",
   "DEF-Hair_SideR": "DEF-Hair_SideR",
-  Hair_SideR: "Hair_SideR",
   "DEF-HeadSide2L": "DEF-HeadSide2L",
-  HeadSide2L: "HeadSide2L",
   "DEF-HeadSide2R": "DEF-HeadSide2R",
-  HeadSide2R: "HeadSide2R",
-  "LTC-Mask_Bottom": "LTC-Mask_Bottom",
-  "LTC-Mask_Top": "LTC-Mask_Top",
-  "LTC-Mask_Root": "LTC-Mask_Root",
   "DEF-BrowRing1L": "DEF-BrowRing1L",
-  BrowRing1L: "BrowRing1L",
   "DEF-BrowRing2L": "DEF-BrowRing2L",
-  BrowRing2L: "BrowRing2L",
   "DEF-BrowRing3L": "DEF-BrowRing3L",
-  BrowRing3L: "BrowRing3L",
-  "MSTR-Eyebrow_DetachedL": "MSTR-Eyebrow_DetachedL",
-  "MSTR-EyebrowL": "MSTR-EyebrowL",
   "DEF-BrowRing1R": "DEF-BrowRing1R",
-  BrowRing1R: "BrowRing1R",
   "DEF-BrowRing2R": "DEF-BrowRing2R",
-  BrowRing2R: "BrowRing2R",
   "DEF-BrowRing3R": "DEF-BrowRing3R",
-  BrowRing3R: "BrowRing3R",
-  "MSTR-Eyebrow_DetachedR": "MSTR-Eyebrow_DetachedR",
-  "MSTR-EyebrowR": "MSTR-EyebrowR",
-  "MSTR-EyeRing_LowerL": "MSTR-EyeRing_LowerL",
-  "MSTR-EyeRing_LowerR": "MSTR-EyeRing_LowerR",
-  "MSTR-EyeRing_UpperL": "MSTR-EyeRing_UpperL",
-  "MSTR-EyeRing_UpperR": "MSTR-EyeRing_UpperR",
   "DEF-NoseBridge1": "DEF-NoseBridge1",
-  NoseBridge1: "NoseBridge1",
-  "AIM-EyeL": "AIM-EyeL",
   "DEF-Eye_HighlightL": "DEF-Eye_HighlightL",
-  "CTR-Eye_HighlightL": "CTR-Eye_HighlightL",
   "DEF-EyeL": "DEF-EyeL",
-  "DSP-CTR-EyeL": "DSP-CTR-EyeL",
-  "CTR-EyeL": "CTR-EyeL",
-  "ORG-EyeL": "ORG-EyeL",
-  "ROOT-EyeL": "ROOT-EyeL",
-  "AIM-EyeR": "AIM-EyeR",
   "DEF-Eye_HighlightR": "DEF-Eye_HighlightR",
-  "CTR-Eye_HighlightR": "CTR-Eye_HighlightR",
   "DEF-EyeR": "DEF-EyeR",
-  "DSP-CTR-EyeR": "DSP-CTR-EyeR",
-  "CTR-EyeR": "CTR-EyeR",
-  "ORG-EyeR": "ORG-EyeR",
-  "ROOT-EyeR": "ROOT-EyeR",
-  "STR-TIP-Line1_2L": "STR-TIP-Line1_2L",
-  "STR-TIP-TAN-Line1_2L": "STR-TIP-TAN-Line1_2L",
-  "ORG-TIP-Line1_2L": "ORG-TIP-Line1_2L",
   "DEF-Line1_2L": "DEF-Line1_2L",
-  "STR-Line1_2L": "STR-Line1_2L",
-  "STR-TAN-Line1_2L": "STR-TAN-Line1_2L",
-  "ORG-Line1_2L": "ORG-Line1_2L",
   "DEF-Line1_1L": "DEF-Line1_1L",
-  "STR-Line1_1L": "STR-Line1_1L",
-  "STR-TAN-Line1_1L": "STR-TAN-Line1_1L",
-  "ORG-Line1_1L": "ORG-Line1_1L",
-  "ROOT-Line1L": "ROOT-Line1L",
-  "STR-TIP-Line1_2R": "STR-TIP-Line1_2R",
-  "STR-TIP-TAN-Line1_2R": "STR-TIP-TAN-Line1_2R",
-  "ORG-TIP-Line1_2R": "ORG-TIP-Line1_2R",
   "DEF-Line1_2R": "DEF-Line1_2R",
-  "STR-Line1_2R": "STR-Line1_2R",
-  "STR-TAN-Line1_2R": "STR-TAN-Line1_2R",
-  "ORG-Line1_2R": "ORG-Line1_2R",
   "DEF-Line1_1R": "DEF-Line1_1R",
-  "STR-Line1_1R": "STR-Line1_1R",
-  "STR-TAN-Line1_1R": "STR-TAN-Line1_1R",
-  "ORG-Line1_1R": "ORG-Line1_1R",
-  "ROOT-Line1R": "ROOT-Line1R",
-  "STR-TIP-Line2_2L": "STR-TIP-Line2_2L",
-  "STR-TIP-TAN-Line2_2L": "STR-TIP-TAN-Line2_2L",
-  "ORG-TIP-Line2_2L": "ORG-TIP-Line2_2L",
   "DEF-Line2_2L": "DEF-Line2_2L",
-  "STR-Line2_2L": "STR-Line2_2L",
-  "STR-TAN-Line2_2L": "STR-TAN-Line2_2L",
-  "ORG-Line2_2L": "ORG-Line2_2L",
   "DEF-Line2_1L": "DEF-Line2_1L",
-  "STR-Line2_1L": "STR-Line2_1L",
-  "STR-TAN-Line2_1L": "STR-TAN-Line2_1L",
-  "ORG-Line2_1L": "ORG-Line2_1L",
-  "ROOT-Line2L": "ROOT-Line2L",
-  "STR-TIP-Line2_2R": "STR-TIP-Line2_2R",
-  "STR-TIP-TAN-Line2_2R": "STR-TIP-TAN-Line2_2R",
-  "ORG-TIP-Line2_2R": "ORG-TIP-Line2_2R",
   "DEF-Line2_2R": "DEF-Line2_2R",
-  "STR-Line2_2R": "STR-Line2_2R",
-  "STR-TAN-Line2_2R": "STR-TAN-Line2_2R",
-  "ORG-Line2_2R": "ORG-Line2_2R",
   "DEF-Line2_1R": "DEF-Line2_1R",
-  "STR-Line2_1R": "STR-Line2_1R",
-  "STR-TAN-Line2_1R": "STR-TAN-Line2_1R",
-  "ORG-Line2_1R": "ORG-Line2_1R",
-  "ROOT-Line2R": "ROOT-Line2R",
-  "STR-TIP-Ponytail1": "STR-TIP-Ponytail1",
-  "STR-TIP-TAN-Ponytail1": "STR-TIP-TAN-Ponytail1",
-  "ORG-TIP-Ponytail1": "ORG-TIP-Ponytail1",
-  "STR-TIP-Ponytail6": "STR-TIP-Ponytail6",
-  "STR-TIP-TAN-Ponytail6": "STR-TIP-TAN-Ponytail6",
-  "ORG-TIP-Ponytail6": "ORG-TIP-Ponytail6",
   "DEF-Ponytail6": "DEF-Ponytail6",
-  "STR-Ponytail6": "STR-Ponytail6",
-  "STR-TAN-Ponytail6": "STR-TAN-Ponytail6",
-  "ORG-Ponytail6": "ORG-Ponytail6",
   "DEF-Ponytail5": "DEF-Ponytail5",
-  "STR-Ponytail5": "STR-Ponytail5",
-  "STR-TAN-Ponytail5": "STR-TAN-Ponytail5",
-  "ORG-Ponytail5": "ORG-Ponytail5",
   "DEF-Ponytail4": "DEF-Ponytail4",
-  "STR-Ponytail4": "STR-Ponytail4",
-  "STR-TAN-Ponytail4": "STR-TAN-Ponytail4",
-  "ORG-Ponytail4": "ORG-Ponytail4",
   "DEF-Ponytail3": "DEF-Ponytail3",
-  "STR-Ponytail3": "STR-Ponytail3",
-  "STR-TAN-Ponytail3": "STR-TAN-Ponytail3",
-  "ORG-Ponytail3": "ORG-Ponytail3",
   "DEF-Ponytail2": "DEF-Ponytail2",
-  "STR-Ponytail2": "STR-Ponytail2",
-  "STR-TAN-Ponytail2": "STR-TAN-Ponytail2",
-  "ORG-Ponytail2": "ORG-Ponytail2",
-  "ROOT-Ponytail2": "ROOT-Ponytail2",
   "DEF-Ponytail1": "DEF-Ponytail1",
-  "STR-Ponytail1": "STR-Ponytail1",
-  "STR-TAN-Ponytail1": "STR-TAN-Ponytail1",
-  "ORG-Ponytail1": "ORG-Ponytail1",
-  "ROOT-Ponytail1": "ROOT-Ponytail1",
   "DEF-Head_Top": "DEF-Head_Top",
-  "STR-Head_Top": "STR-Head_Top",
-  "ORG-Head_Top": "ORG-Head_Top",
   "DEF-Head_Bottom": "DEF-Head_Bottom",
   "DEF-Jaw": "DEF-Jaw",
-  "ORG-FK-Tongue1": "ORG-FK-Tongue1",
-  "ORG-Lips": "ORG-Lips",
-  "STR-TIP-TAN-Tongue5": "STR-TIP-TAN-Tongue5",
-  "STR-TIP-Tongue5": "STR-TIP-Tongue5",
-  "ORG-TIP-Tongue5": "ORG-TIP-Tongue5",
-  "STR-TAN-Tongue5": "STR-TAN-Tongue5",
   "DEF-Tongue5": "DEF-Tongue5",
-  "STR-Tongue5": "STR-Tongue5",
-  "ORG-Tongue5": "ORG-Tongue5",
-  "STR-TAN-Tongue4": "STR-TAN-Tongue4",
   "DEF-Tongue4": "DEF-Tongue4",
-  "STR-Tongue4": "STR-Tongue4",
-  "ORG-Tongue4": "ORG-Tongue4",
-  "STR-TAN-Tongue3": "STR-TAN-Tongue3",
   "DEF-Tongue3": "DEF-Tongue3",
-  "STR-Tongue3": "STR-Tongue3",
-  "ORG-Tongue3": "ORG-Tongue3",
-  "STR-TAN-Tongue2": "STR-TAN-Tongue2",
   "DEF-Tongue2": "DEF-Tongue2",
-  "STR-Tongue2": "STR-Tongue2",
-  "ORG-Tongue2": "ORG-Tongue2",
-  "STR-TAN-Tongue1": "STR-TAN-Tongue1",
   "DEF-Tongue1": "DEF-Tongue1",
-  "STR-Tongue1": "STR-Tongue1",
-  "ORG-Tongue1": "ORG-Tongue1",
-  Jaw: "Jaw",
-  "CLONE-Lip_CornerL": "CLONE-Lip_CornerL",
-  "CLONE-Lip_CornerR": "CLONE-Lip_CornerR",
-  "CLONE-STR-I-Lip_Bottom1": "CLONE-STR-I-Lip_Bottom1",
-  "CLONE-STR-I-Lip_Top1": "CLONE-STR-I-Lip_Top1",
-  "CLONE-STR-Lip_Bottom1L": "CLONE-STR-Lip_Bottom1L",
-  "CLONE-STR-Lip_Bottom1R": "CLONE-STR-Lip_Bottom1R",
-  "CLONE-STR-Lip_Bottom2L": "CLONE-STR-Lip_Bottom2L",
-  "CLONE-STR-Lip_Bottom2R": "CLONE-STR-Lip_Bottom2R",
-  "CLONE-STR-Lip_Top2L": "CLONE-STR-Lip_Top2L",
-  "CLONE-STR-Lip_Top2R": "CLONE-STR-Lip_Top2R",
-  "CLONE-STR-TIP-Lip_Top2L": "CLONE-STR-TIP-Lip_Top2L",
-  "CLONE-STR-TIP-Lip_Top2R": "CLONE-STR-TIP-Lip_Top2R",
-  "DSP-MSTR-Mouth": "DSP-MSTR-Mouth",
   "DEF-Lip_CornerL": "DEF-Lip_CornerL",
-  Lip_CornerL: "Lip_CornerL",
   "DEF-Lip_CornerR": "DEF-Lip_CornerR",
-  Lip_CornerR: "Lip_CornerR",
-  "ACT-Lip_Upper_Roll": "ACT-Lip_Upper_Roll",
-  "MSTR-Lip_Upper_Center": "MSTR-Lip_Upper_Center",
-  "ORG-TIP-Lip_Top2L": "ORG-TIP-Lip_Top2L",
-  "ORG-Lip_Top2L": "ORG-Lip_Top2L",
-  "ORG-Lip_Top1L": "ORG-Lip_Top1L",
-  "ORG-TIP-Lip_Top2R": "ORG-TIP-Lip_Top2R",
-  "ORG-Lip_Top2R": "ORG-Lip_Top2R",
-  "ORG-Lip_Top1R": "ORG-Lip_Top1R",
-  "ORG-STR-Lip_Top2L": "ORG-STR-Lip_Top2L",
-  "ORG-STR-Lip_Top2R": "ORG-STR-Lip_Top2R",
-  "MSTR-Lip_Upper": "MSTR-Lip_Upper",
-  "ACT-Lip_Lower_Roll": "ACT-Lip_Lower_Roll",
-  "MSTR-Lip_Lower_Center": "MSTR-Lip_Lower_Center",
-  "ORG-TIP-Lip_Bottom1L": "ORG-TIP-Lip_Bottom1L",
-  "ORG-Lip_Bottom1L": "ORG-Lip_Bottom1L",
-  "ORG-Lip_Bottom2L": "ORG-Lip_Bottom2L",
-  "ORG-TIP-Lip_Bottom1R": "ORG-TIP-Lip_Bottom1R",
-  "ORG-Lip_Bottom1R": "ORG-Lip_Bottom1R",
-  "ORG-Lip_Bottom2R": "ORG-Lip_Bottom2R",
-  "ORG-STR-Lip_Bottom1L": "ORG-STR-Lip_Bottom1L",
-  "ORG-STR-Lip_Bottom1R": "ORG-STR-Lip_Bottom1R",
-  "MSTR-Lip_Lower": "MSTR-Lip_Lower",
-  "MSTR-Mouth_Lower": "MSTR-Mouth_Lower",
   "DEF-OuterLip_Lower2L": "DEF-OuterLip_Lower2L",
-  OuterLip_Lower2L: "OuterLip_Lower2L",
   "DEF-OuterLip_Lower2R": "DEF-OuterLip_Lower2R",
-  OuterLip_Lower2R: "OuterLip_Lower2R",
-  "STR-TIP-TAN-Lip_Bottom1L": "STR-TIP-TAN-Lip_Bottom1L",
-  "STR-TIP-Lip_Bottom1L": "STR-TIP-Lip_Bottom1L",
-  "STR-TIP-TAN-Lip_Bottom1R": "STR-TIP-TAN-Lip_Bottom1R",
-  "STR-TIP-Lip_Bottom1R": "STR-TIP-Lip_Bottom1R",
-  "STR-I-Lip_Bottom1": "STR-I-Lip_Bottom1",
   "DEF-Lip_Top1L": "DEF-Lip_Top1L",
-  "STR-TAN-Lip_Top1L": "STR-TAN-Lip_Top1L",
-  "STR-Lip_Top1L": "STR-Lip_Top1L",
   "DEF-Lip_Top1R": "DEF-Lip_Top1R",
-  "STR-TAN-Lip_Top1R": "STR-TAN-Lip_Top1R",
-  "STR-Lip_Top1R": "STR-Lip_Top1R",
-  "STR-I-Lip_Top1": "STR-I-Lip_Top1",
   "DEF-Lip_Bottom1L": "DEF-Lip_Bottom1L",
-  "STR-TAN-Lip_Bottom1L": "STR-TAN-Lip_Bottom1L",
-  "STR-Lip_Bottom1L": "STR-Lip_Bottom1L",
   "DEF-Lip_Bottom1R": "DEF-Lip_Bottom1R",
-  "STR-TAN-Lip_Bottom1R": "STR-TAN-Lip_Bottom1R",
-  "STR-Lip_Bottom1R": "STR-Lip_Bottom1R",
   "DEF-Lip_Bottom2L": "DEF-Lip_Bottom2L",
-  "STR-TAN-Lip_Bottom2L": "STR-TAN-Lip_Bottom2L",
-  "STR-Lip_Bottom2L": "STR-Lip_Bottom2L",
   "DEF-Lip_Bottom2R": "DEF-Lip_Bottom2R",
-  "STR-TAN-Lip_Bottom2R": "STR-TAN-Lip_Bottom2R",
-  "STR-Lip_Bottom2R": "STR-Lip_Bottom2R",
   "DEF-Lip_Top2L": "DEF-Lip_Top2L",
-  "STR-TAN-Lip_Top2L": "STR-TAN-Lip_Top2L",
-  "STR-Lip_Top2L": "STR-Lip_Top2L",
   "DEF-Lip_Top2R": "DEF-Lip_Top2R",
-  "STR-TAN-Lip_Top2R": "STR-TAN-Lip_Top2R",
-  "STR-Lip_Top2R": "STR-Lip_Top2R",
-  "STR-TIP-TAN-Lip_Top2L": "STR-TIP-TAN-Lip_Top2L",
-  "STR-TIP-Lip_Top2L": "STR-TIP-Lip_Top2L",
-  "STR-TIP-TAN-Lip_Top2R": "STR-TIP-TAN-Lip_Top2R",
-  "STR-TIP-Lip_Top2R": "STR-TIP-Lip_Top2R",
-  "MSTR-Mouth": "MSTR-Mouth",
-  "MSTR-H-Head_Bottom": "MSTR-H-Head_Bottom",
-  "MSTR-Head_Bottom_Squash": "MSTR-Head_Bottom_Squash",
-  "MSTR-Head_Bottom": "MSTR-Head_Bottom",
-  "ORG-Cheek1R": "ORG-Cheek1R",
-  "LTC-LipCornerR": "LTC-LipCornerR",
   "ROOT-LTC-LipCornerR": "ROOT-LTC-LipCornerR",
-  "ORG-LipCornerR": "ORG-LipCornerR",
-  Track_Nose: "Track_Nose",
   "DEF-Head": "DEF-Head",
   "ROOT-LTC-NeckHead": "ROOT-LTC-NeckHead",
-  "ORG-NeckHead": "ORG-NeckHead",
-  "LTC-NeckHead": "LTC-NeckHead",
-  "STR-TIP-Neck": "STR-TIP-Neck",
-  "STR-Head": "STR-Head",
-  "ORG-Head": "ORG-Head",
-  "ROOT-Head": "ROOT-Head",
   "DEF-Neck": "DEF-Neck",
-  "STR-Neck": "STR-Neck",
-  "STR-TAN-Neck": "STR-TAN-Neck",
-  "ORG-Neck": "ORG-Neck",
-  "ROOT-Neck": "ROOT-Neck",
-  "ORG-Chest": "ORG-Chest",
-  "STR-TIP-TAN-Chest": "STR-TIP-TAN-Chest",
-  "STR-TIP-Chest": "STR-TIP-Chest",
-  "FK-Chest": "FK-Chest",
-  "STR-TAN-Chest": "STR-TAN-Chest",
-  "STR-Chest": "STR-Chest",
-  "FK-Belly": "FK-Belly",
   "DEF-Belly": "DEF-Belly",
-  "CTR-DEF-Belly": "CTR-DEF-Belly",
-  "CTR-DEF-P-Belly": "CTR-DEF-P-Belly",
-  "STR-TAN-Belly": "STR-TAN-Belly",
-  "STR-Belly": "STR-Belly",
-  "ORG-Belly": "ORG-Belly",
-  "FK-Spine": "FK-Spine",
-  "IK-CTR-Spine": "IK-CTR-Spine",
-  "IK-CTR-Belly": "IK-CTR-Belly",
-  "IK-CTR-Chest": "IK-CTR-Chest",
-  "IK-R-Belly": "IK-R-Belly",
-  "IK-R-Chest": "IK-R-Chest",
-  "MSTR-Spine_Chest": "MSTR-Spine_Chest",
-  "IK-Chest": "IK-Chest",
-  "IK-Belly": "IK-Belly",
-  "IK-Spine": "IK-Spine",
   "DEF-Spine": "DEF-Spine",
-  "CTR-DEF-Spine": "CTR-DEF-Spine",
-  "CTR-DEF-P-Spine": "CTR-DEF-P-Spine",
-  FannyPack_Front: "FannyPack_Front",
-  FannyPack_Root: "FannyPack_Root",
-  "IK-STR-ROLL-ThighL": "IK-STR-ROLL-ThighL",
-  "IK-STR-ThighL": "IK-STR-ThighL",
-  "IK-KneeL": "IK-KneeL",
-  "IK-ThighL": "IK-ThighL",
   "DEF-HipsL": "DEF-HipsL",
-  "CTR-DEF-HipsL": "CTR-DEF-HipsL",
-  "CTR-DEF-P-HipsL": "CTR-DEF-P-HipsL",
-  "ORG-TIP-HipsL": "ORG-TIP-HipsL",
-  "STR-TAN-HipsL": "STR-TAN-HipsL",
-  "STR-HipsL": "STR-HipsL",
-  "ORG-HipsL": "ORG-HipsL",
-  "AutoRubberHose-KneeL": "AutoRubberHose-KneeL",
-  "ORG-HeelPivotL": "ORG-HeelPivotL",
-  "STR-TIP-TAN-ToesL": "STR-TIP-TAN-ToesL",
-  "STR-RI-TIP-ToesL": "STR-RI-TIP-ToesL",
-  "STR-RO-TIP-ToesL": "STR-RO-TIP-ToesL",
-  Track_Shoe_FrontL: "Track_Shoe_FrontL",
-  "STR-TIP-ToesL": "STR-TIP-ToesL",
-  "ORG-TIP-ToesL": "ORG-TIP-ToesL",
-  "STR-TAN-ToesL": "STR-TAN-ToesL",
   "DEF-ToesL": "DEF-ToesL",
-  "STR-RI-ToesL": "STR-RI-ToesL",
-  "STR-RO-ToesL": "STR-RO-ToesL",
-  "STR-ToesL": "STR-ToesL",
-  "ORG-ToesL": "ORG-ToesL",
-  "PRP-ThighL": "PRP-ThighL",
-  "SKH-FootL": "SKH-FootL",
-  "SKP-FootL": "SKP-FootL",
   "DEF-FootL": "DEF-FootL",
-  "STR-RI-FootL": "STR-RI-FootL",
-  "STR-RO-FootL": "STR-RO-FootL",
-  "STR-FootL": "STR-FootL",
-  "STR-S-FootL": "STR-S-FootL",
-  "STR-TAN-FootL": "STR-TAN-FootL",
-  "ORG-FootL": "ORG-FootL",
-  "LTC-BootL": "LTC-BootL",
   "ROOT-LTC-BootL": "ROOT-LTC-BootL",
-  "ORG-LTC-BootL": "ORG-LTC-BootL",
-  "SKH-Knee2L": "SKH-Knee2L",
-  "SKP-Knee2L": "SKP-Knee2L",
   "DEF-Knee2L": "DEF-Knee2L",
-  "STR-Knee2L": "STR-Knee2L",
-  "STR-TAN-Knee2L": "STR-TAN-Knee2L",
-  "STR-H-Knee2L": "STR-H-Knee2L",
-  "SKH-Knee1L": "SKH-Knee1L",
-  "SKP-Knee1L": "SKP-Knee1L",
   "DEF-Knee1L": "DEF-Knee1L",
-  "STR-RI-Knee1L": "STR-RI-Knee1L",
-  "STR-RO-Knee1L": "STR-RO-Knee1L",
-  Track_KneeL: "Track_KneeL",
-  "STR-Knee1L": "STR-Knee1L",
-  "STR-S-Knee1L": "STR-S-Knee1L",
-  "STR-TAN-Knee1L": "STR-TAN-Knee1L",
-  "ORG-KneeL": "ORG-KneeL",
-  "ORG-STR-TIP-HipsL": "ORG-STR-TIP-HipsL",
-  "STR-TAN-Thigh2L": "STR-TAN-Thigh2L",
-  "SKH-Thigh2L": "SKH-Thigh2L",
-  "SKP-Thigh2L": "SKP-Thigh2L",
   "DEF-Thigh2L": "DEF-Thigh2L",
-  "STR-Thigh2L": "STR-Thigh2L",
-  "STR-H-Thigh2L": "STR-H-Thigh2L",
-  "STR-TAN-Thigh1L": "STR-TAN-Thigh1L",
-  "SKH-Thigh1L": "SKH-Thigh1L",
-  "SKP-Thigh1L": "SKP-Thigh1L",
   "DEF-Thigh1L": "DEF-Thigh1L",
-  "STR-Thigh1L": "STR-Thigh1L",
-  "ORG-ThighL": "ORG-ThighL",
-  "ROOT-ThighL": "ROOT-ThighL",
-  "IK-STR-ROLL-ThighR": "IK-STR-ROLL-ThighR",
-  "IK-STR-ThighR": "IK-STR-ThighR",
-  "IK-KneeR": "IK-KneeR",
-  "IK-ThighR": "IK-ThighR",
   "DEF-HipsR": "DEF-HipsR",
-  "CTR-DEF-HipsR": "CTR-DEF-HipsR",
-  "CTR-DEF-P-HipsR": "CTR-DEF-P-HipsR",
-  "ORG-TIP-HipsR": "ORG-TIP-HipsR",
-  "STR-TAN-HipsR": "STR-TAN-HipsR",
-  "STR-HipsR": "STR-HipsR",
-  "ORG-HipsR": "ORG-HipsR",
-  "AutoRubberHose-KneeR": "AutoRubberHose-KneeR",
-  "ORG-HeelPivotR": "ORG-HeelPivotR",
-  "STR-TIP-TAN-ToesR": "STR-TIP-TAN-ToesR",
-  "STR-RI-TIP-ToesR": "STR-RI-TIP-ToesR",
-  "STR-RO-TIP-ToesR": "STR-RO-TIP-ToesR",
-  Track_Shoe_FrontR: "Track_Shoe_FrontR",
-  "STR-TIP-ToesR": "STR-TIP-ToesR",
-  "ORG-TIP-ToesR": "ORG-TIP-ToesR",
-  "STR-TAN-ToesR": "STR-TAN-ToesR",
   "DEF-ToesR": "DEF-ToesR",
-  "STR-RI-ToesR": "STR-RI-ToesR",
-  "STR-RO-ToesR": "STR-RO-ToesR",
-  "STR-ToesR": "STR-ToesR",
-  "ORG-ToesR": "ORG-ToesR",
-  "PRP-ThighR": "PRP-ThighR",
-  "SKH-FootR": "SKH-FootR",
-  "SKP-FootR": "SKP-FootR",
   "DEF-FootR": "DEF-FootR",
-  "STR-RI-FootR": "STR-RI-FootR",
-  "STR-RO-FootR": "STR-RO-FootR",
-  "STR-FootR": "STR-FootR",
-  "STR-S-FootR": "STR-S-FootR",
-  "STR-TAN-FootR": "STR-TAN-FootR",
-  "ORG-FootR": "ORG-FootR",
-  "LTC-BootR": "LTC-BootR",
   "ROOT-LTC-BootR": "ROOT-LTC-BootR",
-  "ORG-LTC-BootR": "ORG-LTC-BootR",
-  "SKH-Knee2R": "SKH-Knee2R",
-  "SKP-Knee2R": "SKP-Knee2R",
   "DEF-Knee2R": "DEF-Knee2R",
-  "STR-Knee2R": "STR-Knee2R",
-  "STR-TAN-Knee2R": "STR-TAN-Knee2R",
-  "STR-H-Knee2R": "STR-H-Knee2R",
-  "SKH-Knee1R": "SKH-Knee1R",
-  "SKP-Knee1R": "SKP-Knee1R",
   "DEF-Knee1R": "DEF-Knee1R",
-  "STR-RI-Knee1R": "STR-RI-Knee1R",
-  "STR-RO-Knee1R": "STR-RO-Knee1R",
-  Track_KneeR: "Track_KneeR",
-  "STR-Knee1R": "STR-Knee1R",
-  "STR-S-Knee1R": "STR-S-Knee1R",
-  "STR-TAN-Knee1R": "STR-TAN-Knee1R",
-  "ORG-KneeR": "ORG-KneeR",
-  "ORG-STR-TIP-HipsR": "ORG-STR-TIP-HipsR",
-  "STR-TAN-Thigh2R": "STR-TAN-Thigh2R",
-  "SKH-Thigh2R": "SKH-Thigh2R",
-  "SKP-Thigh2R": "SKP-Thigh2R",
   "DEF-Thigh2R": "DEF-Thigh2R",
-  "STR-Thigh2R": "STR-Thigh2R",
-  "STR-H-Thigh2R": "STR-H-Thigh2R",
-  "STR-TAN-Thigh1R": "STR-TAN-Thigh1R",
-  "SKH-Thigh1R": "SKH-Thigh1R",
-  "SKP-Thigh1R": "SKP-Thigh1R",
   "DEF-Thigh1R": "DEF-Thigh1R",
-  "STR-Thigh1R": "STR-Thigh1R",
-  "ORG-ThighR": "ORG-ThighR",
-  "ROOT-ThighR": "ROOT-ThighR",
-  "STR-TAN-Spine": "STR-TAN-Spine",
-  "STR-TIP-TAN-HipsL": "STR-TIP-TAN-HipsL",
-  "STR-TIP-HipsL": "STR-TIP-HipsL",
-  "STR-TIP-TAN-HipsR": "STR-TIP-TAN-HipsR",
-  "STR-TIP-HipsR": "STR-TIP-HipsR",
-  "STR-Spine": "STR-Spine",
-  "ORG-Spine": "ORG-Spine",
-  "MSTR-Spine_Hips": "MSTR-Spine_Hips",
-  "PRP-Spine": "PRP-Spine",
-  "MSTR-Spine_Torso": "MSTR-Spine_Torso",
-  "ORG-DEF-WristL": "ORG-DEF-WristL",
-  "ORG-DEF-WristR": "ORG-DEF-WristR",
-  "ORG-STR-TAN-FannyPack7": "ORG-STR-TAN-FannyPack7",
-  "ORG-STR-FannyPack7": "ORG-STR-FannyPack7",
-  "ORG-STR-TIP-TAN-FannyPack5_2": "ORG-STR-TIP-TAN-FannyPack5_2",
-  "ORG-STR-TIP-FannyPack5_2": "ORG-STR-TIP-FannyPack5_2",
-  "STR-TIP-TAN-FannyPack5_2": "STR-TIP-TAN-FannyPack5_2",
-  "ORG-TIP-FannyPack5_2": "ORG-TIP-FannyPack5_2",
-  "STR-TAN-FannyPack5_2": "STR-TAN-FannyPack5_2",
-  "ORG-FannyPack5_2": "ORG-FannyPack5_2",
-  "STR-TAN-FannyPack5": "STR-TAN-FannyPack5",
-  "ORG-FannyPack5": "ORG-FannyPack5",
-  "STR-TAN-FannyPack4": "STR-TAN-FannyPack4",
-  "ORG-FannyPack4": "ORG-FannyPack4",
-  "STR-TAN-FannyPack3": "STR-TAN-FannyPack3",
-  "ORG-FannyPack3": "ORG-FannyPack3",
-  "STR-TAN-FannyPack2": "STR-TAN-FannyPack2",
-  "ORG-FannyPack2": "ORG-FannyPack2",
-  "STR-TAN-FannyPack1": "STR-TAN-FannyPack1",
-  "ORG-FannyPack1": "ORG-FannyPack1",
-  "STR-TAN-FannyPack7_2": "STR-TAN-FannyPack7_2",
-  "ORG-FannyPack7_2": "ORG-FannyPack7_2",
-  "STR-TAN-FannyPack7": "STR-TAN-FannyPack7",
-  "ORG-FannyPack7": "ORG-FannyPack7",
-  "ORG-STR-I-Lip_Bottom1": "ORG-STR-I-Lip_Bottom1",
-  "ORG-STR-I-Lip_Top1": "ORG-STR-I-Lip_Top1",
-  "HLP-ellie_settings001": "HLP-ellie_settings001",
   Properties_Character_Ellie: "Properties_Character_Ellie",
-  root: "root",
-  "P-root": "P-root",
   "DEF-ScarfL": "DEF-ScarfL",
-  ScarfL: "ScarfL",
-  "P-ScarfL": "P-ScarfL",
   "DEF-ScarfR": "DEF-ScarfR",
-  ScarfR: "ScarfR",
-  "P-ScarfR": "P-ScarfR",
   "DEF-Sleeve1L": "DEF-Sleeve1L",
-  Sleeve1L: "Sleeve1L",
-  "P-Sleeve1L": "P-Sleeve1L",
   "DEF-Sleeve1R": "DEF-Sleeve1R",
-  Sleeve1R: "Sleeve1R",
-  "P-Sleeve1R": "P-Sleeve1R",
   "DEF-Sleeve2L": "DEF-Sleeve2L",
   "DEF-Sleeve_ElbowL": "DEF-Sleeve_ElbowL",
-  Sleeve_ElbowL: "Sleeve_ElbowL",
-  Sleeve2L: "Sleeve2L",
-  "P-Sleeve2L": "P-Sleeve2L",
   "DEF-Sleeve2R": "DEF-Sleeve2R",
   "DEF-Sleeve_ElbowR": "DEF-Sleeve_ElbowR",
-  Sleeve_ElbowR: "Sleeve_ElbowR",
-  Sleeve2R: "Sleeve2R",
-  "P-Sleeve2R": "P-Sleeve2R",
-  "P-STR-I-Lip_Bottom1": "P-STR-I-Lip_Bottom1",
-  "P-STR-I-Lip_Top1": "P-STR-I-Lip_Top1",
-  "P-STR-Lip_Bottom1L": "P-STR-Lip_Bottom1L",
-  "P-STR-Lip_Bottom1R": "P-STR-Lip_Bottom1R",
-  "P-STR-Lip_Bottom2L": "P-STR-Lip_Bottom2L",
-  "P-STR-Lip_Bottom2R": "P-STR-Lip_Bottom2R",
-  "P-STR-Lip_Top2L": "P-STR-Lip_Top2L",
-  "P-STR-Lip_Top2R": "P-STR-Lip_Top2R",
-  "P-STR-TIP-Lip_Top2L": "P-STR-TIP-Lip_Top2L",
-  "P-STR-TIP-Lip_Top2R": "P-STR-TIP-Lip_Top2R",
-  "TIP-IK-Finger_Index3L": "TIP-IK-Finger_Index3L",
-  "TIP-IK-STR-TGT-Finger_Index3L": "TIP-IK-STR-TGT-Finger_Index3L",
-  "TIP-IK-MSTR-Finger_Index3L": "TIP-IK-MSTR-Finger_Index3L",
-  "P-TIP-IK-MSTR-Finger_Index3L": "P-TIP-IK-MSTR-Finger_Index3L",
-  "TIP-IK-Finger_Index3R": "TIP-IK-Finger_Index3R",
-  "TIP-IK-STR-TGT-Finger_Index3R": "TIP-IK-STR-TGT-Finger_Index3R",
-  "TIP-IK-MSTR-Finger_Index3R": "TIP-IK-MSTR-Finger_Index3R",
-  "P-TIP-IK-MSTR-Finger_Index3R": "P-TIP-IK-MSTR-Finger_Index3R",
-  "TIP-IK-Finger_Middle3L": "TIP-IK-Finger_Middle3L",
-  "TIP-IK-STR-TGT-Finger_Middle3L": "TIP-IK-STR-TGT-Finger_Middle3L",
-  "TIP-IK-MSTR-Finger_Middle3L": "TIP-IK-MSTR-Finger_Middle3L",
-  "P-TIP-IK-MSTR-Finger_Middle3L": "P-TIP-IK-MSTR-Finger_Middle3L",
-  "TIP-IK-Finger_Middle3R": "TIP-IK-Finger_Middle3R",
-  "TIP-IK-STR-TGT-Finger_Middle3R": "TIP-IK-STR-TGT-Finger_Middle3R",
-  "TIP-IK-MSTR-Finger_Middle3R": "TIP-IK-MSTR-Finger_Middle3R",
-  "P-TIP-IK-MSTR-Finger_Middle3R": "P-TIP-IK-MSTR-Finger_Middle3R",
-  "TIP-IK-Finger_Pinky3L": "TIP-IK-Finger_Pinky3L",
-  "TIP-IK-STR-TGT-Finger_Pinky3L": "TIP-IK-STR-TGT-Finger_Pinky3L",
-  "TIP-IK-MSTR-Finger_Pinky3L": "TIP-IK-MSTR-Finger_Pinky3L",
-  "P-TIP-IK-MSTR-Finger_Pinky3L": "P-TIP-IK-MSTR-Finger_Pinky3L",
-  "TIP-IK-Finger_Pinky3R": "TIP-IK-Finger_Pinky3R",
-  "TIP-IK-STR-TGT-Finger_Pinky3R": "TIP-IK-STR-TGT-Finger_Pinky3R",
-  "TIP-IK-MSTR-Finger_Pinky3R": "TIP-IK-MSTR-Finger_Pinky3R",
-  "P-TIP-IK-MSTR-Finger_Pinky3R": "P-TIP-IK-MSTR-Finger_Pinky3R",
-  "TIP-IK-Finger_Ring3L": "TIP-IK-Finger_Ring3L",
-  "TIP-IK-STR-TGT-Finger_Ring3L": "TIP-IK-STR-TGT-Finger_Ring3L",
-  "TIP-IK-MSTR-Finger_Ring3L": "TIP-IK-MSTR-Finger_Ring3L",
-  "P-TIP-IK-MSTR-Finger_Ring3L": "P-TIP-IK-MSTR-Finger_Ring3L",
-  "TIP-IK-Finger_Ring3R": "TIP-IK-Finger_Ring3R",
-  "TIP-IK-STR-TGT-Finger_Ring3R": "TIP-IK-STR-TGT-Finger_Ring3R",
-  "TIP-IK-MSTR-Finger_Ring3R": "TIP-IK-MSTR-Finger_Ring3R",
-  "P-TIP-IK-MSTR-Finger_Ring3R": "P-TIP-IK-MSTR-Finger_Ring3R",
-  "TIP-IK-Finger_Thumb3L": "TIP-IK-Finger_Thumb3L",
-  "TIP-IK-STR-TGT-Finger_Thumb3L": "TIP-IK-STR-TGT-Finger_Thumb3L",
-  "TIP-IK-MSTR-Finger_Thumb3L": "TIP-IK-MSTR-Finger_Thumb3L",
-  "P-TIP-IK-MSTR-Finger_Thumb3L": "P-TIP-IK-MSTR-Finger_Thumb3L",
-  "TIP-IK-Finger_Thumb3R": "TIP-IK-Finger_Thumb3R",
-  "TIP-IK-STR-TGT-Finger_Thumb3R": "TIP-IK-STR-TGT-Finger_Thumb3R",
-  "TIP-IK-MSTR-Finger_Thumb3R": "TIP-IK-MSTR-Finger_Thumb3R",
-  "P-TIP-IK-MSTR-Finger_Thumb3R": "P-TIP-IK-MSTR-Finger_Thumb3R",
-  "CTR-EarL": "CTR-EarL",
   "DEF-EarL": "DEF-EarL",
-  "STR-TIP-Ear3L": "STR-TIP-Ear3L",
-  "STR-TIP-TAN-Ear3L": "STR-TIP-TAN-Ear3L",
-  "ORG-TIP-Ear3L": "ORG-TIP-Ear3L",
-  "STR-TAN-Ear3L": "STR-TAN-Ear3L",
-  "ORG-Ear3L": "ORG-Ear3L",
-  "STR-TAN-Ear2L": "STR-TAN-Ear2L",
-  "ORG-Ear2L": "ORG-Ear2L",
   "DEF-Ear1L": "DEF-Ear1L",
-  "STR-Ear1L": "STR-Ear1L",
-  "STR-TAN-Ear1L": "STR-TAN-Ear1L",
-  "ORG-Ear1L": "ORG-Ear1L",
-  "ROOT-EarL": "ROOT-EarL",
-  "CTR-EarR": "CTR-EarR",
   "DEF-EarR": "DEF-EarR",
-  "STR-TIP-Ear3R": "STR-TIP-Ear3R",
-  "STR-TIP-TAN-Ear3R": "STR-TIP-TAN-Ear3R",
-  "ORG-TIP-Ear3R": "ORG-TIP-Ear3R",
-  "STR-TAN-Ear3R": "STR-TAN-Ear3R",
-  "ORG-Ear3R": "ORG-Ear3R",
-  "STR-TAN-Ear2R": "STR-TAN-Ear2R",
-  "ORG-Ear2R": "ORG-Ear2R",
   "DEF-Ear1R": "DEF-Ear1R",
-  "STR-Ear1R": "STR-Ear1R",
-  "STR-TAN-Ear1R": "STR-TAN-Ear1R",
-  "ORG-Ear1R": "ORG-Ear1R",
-  "ROOT-EarR": "ROOT-EarR",
-  "LTC-ArmpitL": "LTC-ArmpitL",
-  "ROOT-LTC-ArmpitL": "ROOT-LTC-ArmpitL",
-  "LTC-ArmpitR": "LTC-ArmpitR",
-  "ROOT-LTC-ArmpitR": "ROOT-LTC-ArmpitR",
-  "LTC-Cheek1L": "LTC-Cheek1L",
-  "ROOT-LTC-Cheek1L": "ROOT-LTC-Cheek1L",
-  "LTC-Cheek1R": "LTC-Cheek1R",
-  "ROOT-LTC-Cheek1R": "ROOT-LTC-Cheek1R",
-  "LTC-Lips": "LTC-Lips",
-  "ROOT-LTC-Lips": "ROOT-LTC-Lips",
-  Hook_Fannypack_End_00: "Hook_Fannypack_End_00",
-  Hook_Fannypack_End_01: "Hook_Fannypack_End_01",
-  Hook_Fannypack_End_02: "Hook_Fannypack_End_02",
-  Hook_Fannypack_End_03: "Hook_Fannypack_End_03",
-  Hook_Fannypack_End_04: "Hook_Fannypack_End_04",
-  "ORG-Fannypack_End": "ORG-Fannypack_End",
-  "ROOT-Fannypack_End": "ROOT-Fannypack_End",
-  "ROOT-P-Fannypack_End": "ROOT-P-Fannypack_End",
-  "STR-TIP-Teeth_Lower2L": "STR-TIP-Teeth_Lower2L",
-  "STR-TIP-Teeth_Lower2R": "STR-TIP-Teeth_Lower2R",
-  "STR-I-Teeth_Lower2": "STR-I-Teeth_Lower2",
-  "STR-TIP-TAN-Teeth_Lower2L": "STR-TIP-TAN-Teeth_Lower2L",
-  "STR-TIP-TAN-Teeth_Lower2R": "STR-TIP-TAN-Teeth_Lower2R",
-  "STR-I-P-Teeth_Lower2": "STR-I-P-Teeth_Lower2",
-  "STR-TIP-Teeth_Upper2L": "STR-TIP-Teeth_Upper2L",
-  "STR-TIP-Teeth_Upper2R": "STR-TIP-Teeth_Upper2R",
-  "STR-I-Teeth_Upper2": "STR-I-Teeth_Upper2",
-  "STR-TIP-TAN-Teeth_Upper2L": "STR-TIP-TAN-Teeth_Upper2L",
-  "STR-TIP-TAN-Teeth_Upper2R": "STR-TIP-TAN-Teeth_Upper2R",
-  "STR-I-P-Teeth_Upper2": "STR-I-P-Teeth_Upper2",
   "DEF-Ear2L": "DEF-Ear2L",
-  "STR-Ear2L": "STR-Ear2L",
-  "STR-P-Ear2L": "STR-P-Ear2L",
   "DEF-Ear2R": "DEF-Ear2R",
-  "STR-Ear2R": "STR-Ear2R",
-  "STR-P-Ear2R": "STR-P-Ear2R",
   "DEF-Ear3L": "DEF-Ear3L",
-  "STR-Ear3L": "STR-Ear3L",
-  "STR-P-Ear3L": "STR-P-Ear3L",
   "DEF-Ear3R": "DEF-Ear3R",
-  "STR-Ear3R": "STR-Ear3R",
-  "STR-P-Ear3R": "STR-P-Ear3R",
   "DEF-Eye_Ring_Lower1L": "DEF-Eye_Ring_Lower1L",
-  "STR-Eye_Ring_Lower1L": "STR-Eye_Ring_Lower1L",
-  "STR-P-Eye_Ring_Lower1L": "STR-P-Eye_Ring_Lower1L",
   "DEF-Eye_Ring_Lower1R": "DEF-Eye_Ring_Lower1R",
-  "STR-Eye_Ring_Lower1R": "STR-Eye_Ring_Lower1R",
-  "STR-P-Eye_Ring_Lower1R": "STR-P-Eye_Ring_Lower1R",
   "DEF-Eye_Ring_Lower2L": "DEF-Eye_Ring_Lower2L",
-  "STR-Eye_Ring_Lower2L": "STR-Eye_Ring_Lower2L",
-  "STR-P-Eye_Ring_Lower2L": "STR-P-Eye_Ring_Lower2L",
   "DEF-Eye_Ring_Lower2R": "DEF-Eye_Ring_Lower2R",
-  "STR-Eye_Ring_Lower2R": "STR-Eye_Ring_Lower2R",
-  "STR-P-Eye_Ring_Lower2R": "STR-P-Eye_Ring_Lower2R",
   "DEF-Eye_Ring_Lower3L": "DEF-Eye_Ring_Lower3L",
-  "STR-Eye_Ring_Lower3L": "STR-Eye_Ring_Lower3L",
-  "STR-P-Eye_Ring_Lower3L": "STR-P-Eye_Ring_Lower3L",
   "DEF-Eye_Ring_Lower3R": "DEF-Eye_Ring_Lower3R",
-  "STR-Eye_Ring_Lower3R": "STR-Eye_Ring_Lower3R",
-  "STR-P-Eye_Ring_Lower3R": "STR-P-Eye_Ring_Lower3R",
   "DEF-Eye_Ring_Lower4L": "DEF-Eye_Ring_Lower4L",
-  "STR-Eye_Ring_Lower4L": "STR-Eye_Ring_Lower4L",
-  "STR-P-Eye_Ring_Lower4L": "STR-P-Eye_Ring_Lower4L",
   "DEF-Eye_Ring_Lower4R": "DEF-Eye_Ring_Lower4R",
-  "STR-Eye_Ring_Lower4R": "STR-Eye_Ring_Lower4R",
-  "STR-P-Eye_Ring_Lower4R": "STR-P-Eye_Ring_Lower4R",
   "DEF-Eye_Ring_Upper1L": "DEF-Eye_Ring_Upper1L",
-  "STR-Eye_Ring_Upper1L": "STR-Eye_Ring_Upper1L",
-  "STR-P-Eye_Ring_Upper1L": "STR-P-Eye_Ring_Upper1L",
   "DEF-Eye_Ring_Upper1R": "DEF-Eye_Ring_Upper1R",
-  "STR-Eye_Ring_Upper1R": "STR-Eye_Ring_Upper1R",
-  "STR-P-Eye_Ring_Upper1R": "STR-P-Eye_Ring_Upper1R",
   "DEF-Eye_Ring_Upper2L": "DEF-Eye_Ring_Upper2L",
-  "STR-Eye_Ring_Upper2L": "STR-Eye_Ring_Upper2L",
-  "STR-P-Eye_Ring_Upper2L": "STR-P-Eye_Ring_Upper2L",
   "DEF-Eye_Ring_Upper2R": "DEF-Eye_Ring_Upper2R",
-  "STR-Eye_Ring_Upper2R": "STR-Eye_Ring_Upper2R",
-  "STR-P-Eye_Ring_Upper2R": "STR-P-Eye_Ring_Upper2R",
   "DEF-Eye_Ring_Upper3L": "DEF-Eye_Ring_Upper3L",
-  "STR-Eye_Ring_Upper3L": "STR-Eye_Ring_Upper3L",
-  "STR-P-Eye_Ring_Upper3L": "STR-P-Eye_Ring_Upper3L",
   "DEF-Eye_Ring_Upper3R": "DEF-Eye_Ring_Upper3R",
-  "STR-Eye_Ring_Upper3R": "STR-Eye_Ring_Upper3R",
-  "STR-P-Eye_Ring_Upper3R": "STR-P-Eye_Ring_Upper3R",
   "DEF-Eye_Ring_Upper4L": "DEF-Eye_Ring_Upper4L",
-  "STR-Eye_Ring_Upper4L": "STR-Eye_Ring_Upper4L",
-  "STR-P-Eye_Ring_Upper4L": "STR-P-Eye_Ring_Upper4L",
   "DEF-Eye_Ring_Upper4R": "DEF-Eye_Ring_Upper4R",
-  "STR-Eye_Ring_Upper4R": "STR-Eye_Ring_Upper4R",
-  "STR-P-Eye_Ring_Upper4R": "STR-P-Eye_Ring_Upper4R",
   "DEF-Eyelid_Lower1L": "DEF-Eyelid_Lower1L",
-  "STR-Eyelid_Lower1L": "STR-Eyelid_Lower1L",
-  "STR-P-Eyelid_Lower1L": "STR-P-Eyelid_Lower1L",
   "DEF-Eyelid_Lower1R": "DEF-Eyelid_Lower1R",
-  "STR-Eyelid_Lower1R": "STR-Eyelid_Lower1R",
-  "STR-P-Eyelid_Lower1R": "STR-P-Eyelid_Lower1R",
   "DEF-Eyelid_Lower2L": "DEF-Eyelid_Lower2L",
-  "STR-Eyelid_Lower2L": "STR-Eyelid_Lower2L",
-  "STR-P-Eyelid_Lower2L": "STR-P-Eyelid_Lower2L",
   "DEF-Eyelid_Lower2R": "DEF-Eyelid_Lower2R",
-  "STR-Eyelid_Lower2R": "STR-Eyelid_Lower2R",
-  "STR-P-Eyelid_Lower2R": "STR-P-Eyelid_Lower2R",
   "DEF-Eyelid_Lower3L": "DEF-Eyelid_Lower3L",
-  "STR-Eyelid_Lower3L": "STR-Eyelid_Lower3L",
-  "STR-P-Eyelid_Lower3L": "STR-P-Eyelid_Lower3L",
   "DEF-Eyelid_Lower3R": "DEF-Eyelid_Lower3R",
-  "STR-Eyelid_Lower3R": "STR-Eyelid_Lower3R",
-  "STR-P-Eyelid_Lower3R": "STR-P-Eyelid_Lower3R",
   "DEF-Eyelid_Lower4L": "DEF-Eyelid_Lower4L",
-  "STR-Eyelid_Lower4L": "STR-Eyelid_Lower4L",
-  "STR-P-Eyelid_Lower4L": "STR-P-Eyelid_Lower4L",
   "DEF-Eyelid_Lower4R": "DEF-Eyelid_Lower4R",
-  "STR-Eyelid_Lower4R": "STR-Eyelid_Lower4R",
-  "STR-P-Eyelid_Lower4R": "STR-P-Eyelid_Lower4R",
   "DEF-Eyelid_Upper1L": "DEF-Eyelid_Upper1L",
-  "STR-Eyelid_Upper1L": "STR-Eyelid_Upper1L",
-  "STR-P-Eyelid_Upper1L": "STR-P-Eyelid_Upper1L",
   "DEF-Eyelid_Upper1R": "DEF-Eyelid_Upper1R",
-  "STR-Eyelid_Upper1R": "STR-Eyelid_Upper1R",
-  "STR-P-Eyelid_Upper1R": "STR-P-Eyelid_Upper1R",
   "DEF-Eyelid_Upper2L": "DEF-Eyelid_Upper2L",
-  "STR-Eyelid_Upper2L": "STR-Eyelid_Upper2L",
-  "STR-P-Eyelid_Upper2L": "STR-P-Eyelid_Upper2L",
   "DEF-Eyelid_Upper2R": "DEF-Eyelid_Upper2R",
-  "STR-Eyelid_Upper2R": "STR-Eyelid_Upper2R",
-  "STR-P-Eyelid_Upper2R": "STR-P-Eyelid_Upper2R",
   "DEF-Eyelid_Upper3L": "DEF-Eyelid_Upper3L",
-  "STR-Eyelid_Upper3L": "STR-Eyelid_Upper3L",
-  "STR-P-Eyelid_Upper3L": "STR-P-Eyelid_Upper3L",
   "DEF-Eyelid_Upper3R": "DEF-Eyelid_Upper3R",
-  "STR-Eyelid_Upper3R": "STR-Eyelid_Upper3R",
-  "STR-P-Eyelid_Upper3R": "STR-P-Eyelid_Upper3R",
   "DEF-Eyelid_Upper4L": "DEF-Eyelid_Upper4L",
-  "STR-Eyelid_Upper4L": "STR-Eyelid_Upper4L",
-  "STR-P-Eyelid_Upper4L": "STR-P-Eyelid_Upper4L",
   "DEF-Eyelid_Upper4R": "DEF-Eyelid_Upper4R",
-  "STR-Eyelid_Upper4R": "STR-Eyelid_Upper4R",
-  "STR-P-Eyelid_Upper4R": "STR-P-Eyelid_Upper4R",
   "DEF-FannyPack1": "DEF-FannyPack1",
-  "STR-FannyPack1": "STR-FannyPack1",
-  "STR-P-FannyPack1": "STR-P-FannyPack1",
   "DEF-FannyPack2": "DEF-FannyPack2",
-  "STR-FannyPack2": "STR-FannyPack2",
-  "STR-P-FannyPack2": "STR-P-FannyPack2",
   "DEF-FannyPack3": "DEF-FannyPack3",
-  FannyPack_Bag_Shapes: "FannyPack_Bag_Shapes",
-  FannyPack_Bag_TopShapes: "FannyPack_Bag_TopShapes",
-  "STR-FannyPack3": "STR-FannyPack3",
-  "STR-P-FannyPack3": "STR-P-FannyPack3",
   "DEF-FannyPack4": "DEF-FannyPack4",
-  "STR-FannyPack4": "STR-FannyPack4",
-  "STR-P-FannyPack4": "STR-P-FannyPack4",
   "DEF-FannyPack5": "DEF-FannyPack5",
-  "STR-FannyPack5": "STR-FannyPack5",
-  "STR-P-FannyPack5": "STR-P-FannyPack5",
   "DEF-FannyPack5_2": "DEF-FannyPack5_2",
-  "STR-FannyPack5_2": "STR-FannyPack5_2",
-  "STR-P-FannyPack5_2": "STR-P-FannyPack5_2",
   "DEF-FannyPack7_2": "DEF-FannyPack7_2",
-  "STR-FannyPack7_2": "STR-FannyPack7_2",
-  "STR-P-FannyPack7_2": "STR-P-FannyPack7_2",
   "DEF-Teeth_Lower1L": "DEF-Teeth_Lower1L",
-  "STR-Teeth_Lower1L": "STR-Teeth_Lower1L",
-  "STR-P-Teeth_Lower1L": "STR-P-Teeth_Lower1L",
   "DEF-Teeth_Lower1R": "DEF-Teeth_Lower1R",
-  "STR-Teeth_Lower1R": "STR-Teeth_Lower1R",
-  "STR-P-Teeth_Lower1R": "STR-P-Teeth_Lower1R",
   "DEF-Teeth_Lower2L": "DEF-Teeth_Lower2L",
-  "STR-Teeth_Lower2L": "STR-Teeth_Lower2L",
-  "STR-P-Teeth_Lower2L": "STR-P-Teeth_Lower2L",
   "DEF-Teeth_Lower2R": "DEF-Teeth_Lower2R",
-  "STR-Teeth_Lower2R": "STR-Teeth_Lower2R",
-  "STR-P-Teeth_Lower2R": "STR-P-Teeth_Lower2R",
   "DEF-Teeth_Upper1L": "DEF-Teeth_Upper1L",
-  "STR-Teeth_Upper1L": "STR-Teeth_Upper1L",
-  "STR-P-Teeth_Upper1L": "STR-P-Teeth_Upper1L",
   "DEF-Teeth_Upper1R": "DEF-Teeth_Upper1R",
-  "STR-Teeth_Upper1R": "STR-Teeth_Upper1R",
-  "STR-P-Teeth_Upper1R": "STR-P-Teeth_Upper1R",
   "DEF-Teeth_Upper2L": "DEF-Teeth_Upper2L",
-  "STR-Teeth_Upper2L": "STR-Teeth_Upper2L",
-  "STR-P-Teeth_Upper2L": "STR-P-Teeth_Upper2L",
   "DEF-Teeth_Upper2R": "DEF-Teeth_Upper2R",
-  "STR-Teeth_Upper2R": "STR-Teeth_Upper2R",
-  "STR-P-Teeth_Upper2R": "STR-P-Teeth_Upper2R",
-  "STR-TIP-Eye_Ring_Lower4L": "STR-TIP-Eye_Ring_Lower4L",
-  "STR-TIP-P-Eye_Ring_Lower4L": "STR-TIP-P-Eye_Ring_Lower4L",
-  "STR-TIP-Eye_Ring_Lower4R": "STR-TIP-Eye_Ring_Lower4R",
-  "STR-TIP-P-Eye_Ring_Lower4R": "STR-TIP-P-Eye_Ring_Lower4R",
-  "STR-TIP-Eye_Ring_Upper4L": "STR-TIP-Eye_Ring_Upper4L",
-  "STR-TIP-P-Eye_Ring_Upper4L": "STR-TIP-P-Eye_Ring_Upper4L",
-  "STR-TIP-Eye_Ring_Upper4R": "STR-TIP-Eye_Ring_Upper4R",
-  "STR-TIP-P-Eye_Ring_Upper4R": "STR-TIP-P-Eye_Ring_Upper4R",
-  "STR-TIP-Eyelid_Lower4L": "STR-TIP-Eyelid_Lower4L",
-  "STR-TIP-P-Eyelid_Lower4L": "STR-TIP-P-Eyelid_Lower4L",
-  "STR-TIP-Eyelid_Lower4R": "STR-TIP-Eyelid_Lower4R",
-  "STR-TIP-P-Eyelid_Lower4R": "STR-TIP-P-Eyelid_Lower4R",
-  "STR-TIP-Eyelid_Upper4L": "STR-TIP-Eyelid_Upper4L",
-  "STR-TIP-P-Eyelid_Upper4L": "STR-TIP-P-Eyelid_Upper4L",
-  "STR-TIP-Eyelid_Upper4R": "STR-TIP-Eyelid_Upper4R",
-  "STR-TIP-P-Eyelid_Upper4R": "STR-TIP-P-Eyelid_Upper4R",
   "DEF-Gum_Lower1L": "DEF-Gum_Lower1L",
-  "CTR-DEF-Gum_Lower1L": "CTR-DEF-Gum_Lower1L",
   "DEF-Gum_Lower1R": "DEF-Gum_Lower1R",
-  "CTR-DEF-Gum_Lower1R": "CTR-DEF-Gum_Lower1R",
   "DEF-Gum_Lower2L": "DEF-Gum_Lower2L",
-  "CTR-DEF-Gum_Lower2L": "CTR-DEF-Gum_Lower2L",
   "DEF-Gum_Lower2R": "DEF-Gum_Lower2R",
-  "CTR-DEF-Gum_Lower2R": "CTR-DEF-Gum_Lower2R",
-  "ORG-TIP-Teeth_Lower2L": "ORG-TIP-Teeth_Lower2L",
-  "STR-TAN-Teeth_Lower2L": "STR-TAN-Teeth_Lower2L",
-  "ORG-Teeth_Lower2L": "ORG-Teeth_Lower2L",
-  "STR-TAN-Teeth_Lower1L": "STR-TAN-Teeth_Lower1L",
-  "ORG-Teeth_Lower1L": "ORG-Teeth_Lower1L",
-  "ORG-TIP-Teeth_Lower2R": "ORG-TIP-Teeth_Lower2R",
-  "STR-TAN-Teeth_Lower2R": "STR-TAN-Teeth_Lower2R",
-  "ORG-Teeth_Lower2R": "ORG-Teeth_Lower2R",
-  "STR-TAN-Teeth_Lower1R": "STR-TAN-Teeth_Lower1R",
-  "ORG-Teeth_Lower1R": "ORG-Teeth_Lower1R",
-  Teeth_Bottom_Root: "Teeth_Bottom_Root",
   "DEF-Gum_Upper1L": "DEF-Gum_Upper1L",
-  "CTR-DEF-Gum_Upper1L": "CTR-DEF-Gum_Upper1L",
   "DEF-Gum_Upper1R": "DEF-Gum_Upper1R",
-  "CTR-DEF-Gum_Upper1R": "CTR-DEF-Gum_Upper1R",
   "DEF-Gum_Upper2L": "DEF-Gum_Upper2L",
-  "CTR-DEF-Gum_Upper2L": "CTR-DEF-Gum_Upper2L",
   "DEF-Gum_Upper2R": "DEF-Gum_Upper2R",
-  "CTR-DEF-Gum_Upper2R": "CTR-DEF-Gum_Upper2R",
-  "ORG-TIP-Teeth_Upper2L": "ORG-TIP-Teeth_Upper2L",
-  "STR-TAN-Teeth_Upper2L": "STR-TAN-Teeth_Upper2L",
-  "ORG-Teeth_Upper2L": "ORG-Teeth_Upper2L",
-  "STR-TAN-Teeth_Upper1L": "STR-TAN-Teeth_Upper1L",
-  "ORG-Teeth_Upper1L": "ORG-Teeth_Upper1L",
-  "ORG-TIP-Teeth_Upper2R": "ORG-TIP-Teeth_Upper2R",
-  "STR-TAN-Teeth_Upper2R": "STR-TAN-Teeth_Upper2R",
-  "ORG-Teeth_Upper2R": "ORG-Teeth_Upper2R",
-  "STR-TAN-Teeth_Upper1R": "STR-TAN-Teeth_Upper1R",
-  "ORG-Teeth_Upper1R": "ORG-Teeth_Upper1R",
-  Teeth_Top_Root: "Teeth_Top_Root",
   "GEO-ellie_body001": "GEO-ellie_body001",
   "GEO-ellie_boots001": "GEO-ellie_boots001",
   "GEO-ellie_earrings001": "GEO-ellie_earrings001",
@@ -1890,7 +351,6 @@ export const ellieAnimation = {
   "GEO-ellie_fannypack_strap_slide001": "GEO-ellie_fannypack_strap_slide001",
   "GEO-ellie_fannypack_zipper_pull001": "GEO-ellie_fannypack_zipper_pull001",
   "GEO-ellie_fannypack_zipper_stop001": "GEO-ellie_fannypack_zipper_stop001",
-  "GEO-ellie_fannypack_zippers001": "GEO-ellie_fannypack_zippers001",
   "GEO-ellie_hairgroom_base001": "GEO-ellie_hairgroom_base001",
   "GEO-ellie_hairscalp-back001": "GEO-ellie_hairscalp-back001",
   "GEO-ellie_hairscalp-front001": "GEO-ellie_hairscalp-front001",
@@ -1921,7 +381,6 @@ export const ellieAnimation = {
   nodeIds: {
   Animation_Camera: "fd4a79de-983d-4da8-b1b7-e43f8e924951",
   Backdrop: "0382b964-1f0a-4add-8c0f-f6f526022e15",
-  "HLP-ellie_settings001": "3462ca8c-50dd-4137-82b3-e2574e3c82e5",
   "GEO-ellie_body001": "e51daf0e-2ee7-403f-9759-1ae6a43b6fc8",
   "GEO-ellie_boots001": "a6be9f99-29c3-40d6-81ab-46850c490aa2",
   "GEO-ellie_earrings001": "5b3102ce-2a40-42a0-904c-850862f9deb7",
@@ -1937,7 +396,6 @@ export const ellieAnimation = {
   "GEO-ellie_fannypack_strap_slide001": "39b3a849-5b37-4a72-a125-d2fc92e588f4",
   "GEO-ellie_fannypack_zipper_pull001": "db9270f1-c8f1-4370-baf9-5e59c64a8786",
   "GEO-ellie_fannypack_zipper_stop001": "031ef977-8859-46d8-8210-09db0f5db41d",
-  "GEO-ellie_fannypack_zippers001": "1d6d2966-b976-45e7-ba05-1f2906090783",
   "GEO-ellie_hairgroom_base001": "4ee9acfe-bd3c-43b6-a974-d973c6572d05",
   "GEO-ellie_hairscalp-back001": "eab661ef-d34b-43df-b8f0-59d4616feb9b",
   "GEO-ellie_hairscalp-front001": "ce42eadf-64b9-467e-91c9-470ef740b2a9",
@@ -1968,7 +426,6 @@ export const ellieAnimation = {
   objectsById: {
   "fd4a79de-983d-4da8-b1b7-e43f8e924951": "Animation_Camera",
   "0382b964-1f0a-4add-8c0f-f6f526022e15": "Backdrop",
-  "3462ca8c-50dd-4137-82b3-e2574e3c82e5": "HLP-ellie_settings001",
   "e51daf0e-2ee7-403f-9759-1ae6a43b6fc8": "GEO-ellie_body001",
   "a6be9f99-29c3-40d6-81ab-46850c490aa2": "GEO-ellie_boots001",
   "5b3102ce-2a40-42a0-904c-850862f9deb7": "GEO-ellie_earrings001",
@@ -1984,7 +441,6 @@ export const ellieAnimation = {
   "39b3a849-5b37-4a72-a125-d2fc92e588f4": "GEO-ellie_fannypack_strap_slide001",
   "db9270f1-c8f1-4370-baf9-5e59c64a8786": "GEO-ellie_fannypack_zipper_pull001",
   "031ef977-8859-46d8-8210-09db0f5db41d": "GEO-ellie_fannypack_zipper_stop001",
-  "1d6d2966-b976-45e7-ba05-1f2906090783": "GEO-ellie_fannypack_zippers001",
   "4ee9acfe-bd3c-43b6-a974-d973c6572d05": "GEO-ellie_hairgroom_base001",
   "eab661ef-d34b-43df-b8f0-59d4616feb9b": "GEO-ellie_hairscalp-back001",
   "ce42eadf-64b9-467e-91c9-470ef740b2a9": "GEO-ellie_hairscalp-front001",
@@ -2030,7 +486,7 @@ export const ellieAnimation = {
   environmentAsset: null,
   /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
    * transport): fetch by url, pin by hash. IR bodies never inline here. */
-  materialPrograms: {"url":"/models/ellieAnimation/57596872aca51984e2a48a2b97bb738b697e461c8fc8a3dfc8dca01ca681f07e/ellieAnimation.materials.json?v=be09b424421f5af6","bytes":29685,"hash":"be09b424421f5af6","materials":12} as const,
+  materialPrograms: {"url":"/models/ellieAnimation/1295b27ba30319a7f0daa9bea3657b28e37da5c3d0074fa0d5f7c7dc523b8420/ellieAnimation.materials.json?v=5281548a7d9c4e84","bytes":1687051,"hash":"5281548a7d9c4e84","materials":30} as const,
   /** Named local reflection captures. Influence is metadata for capture or a
    * custom parallax adapter; renderer assignment is always explicit. */
   reflectionProbes: [] as const,
@@ -2044,7 +500,7 @@ export const ellieAnimation = {
 
   },
   /** Deterministic post-export transforms applied to this exact GLB. */
-  optimization: {"geometry":"meshopt","inputBytes":68976952,"outputBytes":59383368,"savedBytes":9593584,"ratio":0.8609160926681713,"maxBoundsError":0,"boundsTolerance":0.0005417875883259048,"passes":{"animationKeyframesRemoved":16291,"weldedVertices":0,"deduplicated":{"accessors":1080,"materials":0,"textures":0},"pruned":{"accessors":1094,"materials":0,"textures":0,"buffers":0},"skipped":["Material de-duplication was skipped because at least one material has authored extras.","POSITION quantization was skipped because mesh node \"Backdrop\" has authored metadata or another transform-sensitive attachment; quantizing it would replace an authored attachment or insert a correction child."]}} as const,
+  optimization: {"geometry":"meshopt","inputBytes":29279724,"outputBytes":23255604,"savedBytes":6024120,"ratio":0.7942562573335732,"maxBoundsError":0,"boundsTolerance":0.0005417875883259048,"passes":{"animationKeyframesRemoved":4692,"weldedVertices":0,"deduplicated":{"accessors":603,"materials":0,"textures":0},"mergedGeneratedTextures":{"textures":2,"gpuBytesReclaimed":44739242,"merges":[{"kept":"page-0e30f81fefd7-emissive","dropped":["page-17dedf9efb67-emissive","page-26e19af14f72-emissive"]}]},"pruned":{"accessors":1000,"materials":0,"textures":0,"buffers":0},"skipped":["Material de-duplication was skipped because at least one material has authored extras.","POSITION quantization was skipped because mesh node \"Backdrop\" has authored metadata or another transform-sensitive attachment; quantizing it would replace an authored attachment or insert a correction child."]}} as const,
   /** Versioned browser inputs for optional LOD and instancing adapters. Full
    * procedural/material/camera evidence stays in the generated manifest. */
   runtimeDiagnostics: {"schemaVersion":1,"lodChains":[],"instanceGroups":[]} as const,
@@ -2061,21 +517,21 @@ export const ellieAnimation = {
   requiresMeshopt: true,
   /** Exact compiler-owned request graph; immutable caching still requires a
    * graph-addressed publication directory. */
-  runtimeAssetGraph: {"algorithm":"sha256","fingerprint":"57596872aca51984e2a48a2b97bb738b697e461c8fc8a3dfc8dca01ca681f07e","entries":[{"path":"ellieAnimation.glb","role":"scene","bytes":59383368,"sha256":"7213075ccdd539108fc780762bfed60415fefa00bc13029660062398a6ec126b"},{"path":"ellieAnimation.materials.json","role":"companion","bytes":29685,"sha256":"be09b424421f5af650799b7856375214d6719dd1c43461ca2863c0960f40c265"}]} as const,
+  runtimeAssetGraph: {"algorithm":"sha256","fingerprint":"1295b27ba30319a7f0daa9bea3657b28e37da5c3d0074fa0d5f7c7dc523b8420","entries":[{"path":"ellieAnimation.glb","role":"scene","bytes":23255604,"sha256":"dfedf480a99390c63e6f7e4770d3766c5350cda7485d917e9e9614c5baf160bc"},{"path":"ellieAnimation.materials.json","role":"companion","bytes":1687051,"sha256":"5281548a7d9c4e84b4f2ef5acb51f6b98ce2799c8e980fd051bf2678f76178f9"},{"path":"ellieAnimation.tex.ellie-dirt-map-5092c84f.png","role":"companion","bytes":2750733,"sha256":"b20f2d3c19fee9d0bd4610f428a99030d4d20aaf9f29861b676cdbb095e5e04a"}]} as const,
   /** Exact uncompressed Meshopt buffer-view bytes used for decode scheduling. */
-  meshoptDecodedBytes: 13228910,
+  meshoptDecodedBytes: 8158946,
   /** Per-image maximum-size transforms applied before compression. */
   textureTransforms: [] as const,
   materials: {
-  "BLENDLINK_WEB.87afa5b3b6.ellie.skin": "BLENDLINK_WEB.87afa5b3b6.ellie.skin",
-  "BLENDLINK_WEB.64c5753ebd.ellie.shoes_leather": "BLENDLINK_WEB.64c5753ebd.ellie.shoes_leather",
+  "BLENDLINK_WEB.b6454580e5.ellie.skin": "BLENDLINK_WEB.b6454580e5.ellie.skin",
+  "BLENDLINK_WEB.1d46d99910.ellie.shoes_leather": "BLENDLINK_WEB.1d46d99910.ellie.shoes_leather",
   "ellie.socks": "ellie.socks",
-  "BLENDLINK_WEB.ab42803a50.ellie.shoes_metal": "BLENDLINK_WEB.ab42803a50.ellie.shoes_metal",
-  "BLENDLINK_WEB.b98feac9d5.ellie.shoes_loop": "BLENDLINK_WEB.b98feac9d5.ellie.shoes_loop",
-  "BLENDLINK_WEB.502b0abf75.ellie.shoes_laces": "BLENDLINK_WEB.502b0abf75.ellie.shoes_laces",
-  "BLENDLINK_WEB.cc6e1bd002.ellie.shoes_soles_side": "BLENDLINK_WEB.cc6e1bd002.ellie.shoes_soles_side",
-  "BLENDLINK_WEB.597a24b574.ellie.shoes_soles_underneath": "BLENDLINK_WEB.597a24b574.ellie.shoes_soles_underneath",
-  "BLENDLINK_WEB.0a317d35a9.ellie.shoes_seam": "BLENDLINK_WEB.0a317d35a9.ellie.shoes_seam",
+  "BLENDLINK_WEB.4c5773be16.ellie.shoes_metal": "BLENDLINK_WEB.4c5773be16.ellie.shoes_metal",
+  "BLENDLINK_WEB.13c973cb36.ellie.shoes_loop": "BLENDLINK_WEB.13c973cb36.ellie.shoes_loop",
+  "BLENDLINK_WEB.499ac21896.ellie.shoes_laces": "BLENDLINK_WEB.499ac21896.ellie.shoes_laces",
+  "BLENDLINK_WEB.62933303c3.ellie.shoes_soles_side": "BLENDLINK_WEB.62933303c3.ellie.shoes_soles_side",
+  "BLENDLINK_WEB.5adf27e095.ellie.shoes_soles_underneath": "BLENDLINK_WEB.5adf27e095.ellie.shoes_soles_underneath",
+  "BLENDLINK_WEB.a8cd794a28.ellie.shoes_seam": "BLENDLINK_WEB.a8cd794a28.ellie.shoes_seam",
   "BLENDLINK_WEB.94ed7f9378.ellie.shoes_inner": "BLENDLINK_WEB.94ed7f9378.ellie.shoes_inner",
   "ellie.earrings": "ellie.earrings",
   "BLENDLINK_WEB.63ac167acb.ellie.earrings_metal": "BLENDLINK_WEB.63ac167acb.ellie.earrings_metal",
@@ -2085,38 +541,38 @@ export const ellieAnimation = {
   "BLENDLINK_WEB.29be8c0476.ellie.eyebrows": "BLENDLINK_WEB.29be8c0476.ellie.eyebrows",
   "BLENDLINK_WEB.288d32f49e.ellie.eyelashes": "BLENDLINK_WEB.288d32f49e.ellie.eyelashes",
   "BLENDLINK_WEB.e8ab99c0ef.ellie.fanny_pack_buckle": "BLENDLINK_WEB.e8ab99c0ef.ellie.fanny_pack_buckle",
-  "BLENDLINK_WEB.05d5299ad9.ellie.fannypack_magenta": "BLENDLINK_WEB.05d5299ad9.ellie.fannypack_magenta",
-  "BLENDLINK_WEB.4b55f56e57.ellie.fannypack_green": "BLENDLINK_WEB.4b55f56e57.ellie.fannypack_green",
+  "BLENDLINK_WEB.352580623e.ellie.fannypack_magenta": "BLENDLINK_WEB.352580623e.ellie.fannypack_magenta",
+  "BLENDLINK_WEB.fb7624aa45.ellie.fannypack_green": "BLENDLINK_WEB.fb7624aa45.ellie.fannypack_green",
   "ellie.fannypack_purple": "ellie.fannypack_purple",
   "BLENDLINK_WEB.7038dae22f.ellie.fanny_pack_black": "BLENDLINK_WEB.7038dae22f.ellie.fanny_pack_black",
   "ellie.fannypack_zipper": "ellie.fannypack_zipper",
   "BLENDLINK_WEB.cc30cabf2c.ellie.hair": "BLENDLINK_WEB.cc30cabf2c.ellie.hair",
   "ellie.hair_particles": "ellie.hair_particles",
-  "BLENDLINK_WEB.36c6c95a5e.ellie.handkerchief": "BLENDLINK_WEB.36c6c95a5e.ellie.handkerchief",
-  "BLENDLINK_WEB.5e5b9b5a83.ellie.head": "BLENDLINK_WEB.5e5b9b5a83.ellie.head",
-  "BLENDLINK_WEB.11cb94cbd7.ellie.head_lips": "BLENDLINK_WEB.11cb94cbd7.ellie.head_lips",
+  "BLENDLINK_WEB.419d53656e.ellie.handkerchief": "BLENDLINK_WEB.419d53656e.ellie.handkerchief",
+  "BLENDLINK_WEB.dea77dca2a.ellie.head": "BLENDLINK_WEB.dea77dca2a.ellie.head",
+  "BLENDLINK_WEB.30e8e22123.ellie.head_lips": "BLENDLINK_WEB.30e8e22123.ellie.head_lips",
   "BLENDLINK_WEB.f648ffde54.ellie.mouth_inner": "BLENDLINK_WEB.f648ffde54.ellie.mouth_inner",
   "BLENDLINK_WEB.4fe37d46e4.ellie.head_hair": "BLENDLINK_WEB.4fe37d46e4.ellie.head_hair",
-  "BLENDLINK_WEB.0374bf573f.ellie.denim": "BLENDLINK_WEB.0374bf573f.ellie.denim",
-  "BLENDLINK_WEB.0ded17c0cb.ellie.denim_inside": "BLENDLINK_WEB.0ded17c0cb.ellie.denim_inside",
-  "BLENDLINK_WEB.9bf49905db.ellie.buttons": "BLENDLINK_WEB.9bf49905db.ellie.buttons",
-  "BLENDLINK_WEB.9b1995d358.ellie.pins_blue": "BLENDLINK_WEB.9b1995d358.ellie.pins_blue",
+  "BLENDLINK_WEB.f2cc76b95e.ellie.denim": "BLENDLINK_WEB.f2cc76b95e.ellie.denim",
+  "BLENDLINK_WEB.c2e6d2b4dc.ellie.denim_inside": "BLENDLINK_WEB.c2e6d2b4dc.ellie.denim_inside",
+  "BLENDLINK_WEB.2fc940137f.ellie.buttons": "BLENDLINK_WEB.2fc940137f.ellie.buttons",
+  "BLENDLINK_WEB.0d50deb2c2.ellie.pins_blue": "BLENDLINK_WEB.0d50deb2c2.ellie.pins_blue",
   "BLENDLINK_WEB.ba04c9e045.ellie.pins_underside": "BLENDLINK_WEB.ba04c9e045.ellie.pins_underside",
-  "BLENDLINK_WEB.f22eefdf3b.ellie.pins_gold": "BLENDLINK_WEB.f22eefdf3b.ellie.pins_gold",
-  "BLENDLINK_WEB.fb141fb627.ellie.pins_light": "BLENDLINK_WEB.fb141fb627.ellie.pins_light",
-  "BLENDLINK_WEB.df9cc9c56a.ellie.pins_magenta": "BLENDLINK_WEB.df9cc9c56a.ellie.pins_magenta",
-  "BLENDLINK_WEB.ab8bd94a01.ellie.pins_green": "BLENDLINK_WEB.ab8bd94a01.ellie.pins_green",
+  "BLENDLINK_WEB.3b5e63db2c.ellie.pins_gold": "BLENDLINK_WEB.3b5e63db2c.ellie.pins_gold",
+  "BLENDLINK_WEB.81b21eba49.ellie.pins_light": "BLENDLINK_WEB.81b21eba49.ellie.pins_light",
+  "BLENDLINK_WEB.1f7e72a465.ellie.pins_magenta": "BLENDLINK_WEB.1f7e72a465.ellie.pins_magenta",
+  "BLENDLINK_WEB.af176aab94.ellie.pins_green": "BLENDLINK_WEB.af176aab94.ellie.pins_green",
   "ellie.scrunchie": "ellie.scrunchie",
   "ellie.teeth": "ellie.teeth",
   "ellie.gums": "ellie.gums",
   "BLENDLINK_WEB.e3fdc84702.ellie.tongue": "BLENDLINK_WEB.e3fdc84702.ellie.tongue",
-  "BLENDLINK_WEB.27930944f0.ellie.shorts": "BLENDLINK_WEB.27930944f0.ellie.shorts",
-  "BLENDLINK_WEB.ca8530b654.ellie.watch_strap": "BLENDLINK_WEB.ca8530b654.ellie.watch_strap",
-  "BLENDLINK_WEB.073661cf16.ellie.watch_metal": "BLENDLINK_WEB.073661cf16.ellie.watch_metal",
-  "BLENDLINK_WEB.83cbd40618.ellie.watch_rubber_guard": "BLENDLINK_WEB.83cbd40618.ellie.watch_rubber_guard",
-  "BLENDLINK_WEB.568b1a0f03.ellie.watch_gold": "BLENDLINK_WEB.568b1a0f03.ellie.watch_gold",
+  "BLENDLINK_WEB.36c7d79622.ellie.shorts": "BLENDLINK_WEB.36c7d79622.ellie.shorts",
+  "BLENDLINK_WEB.7b0f9d29f5.ellie.watch_strap": "BLENDLINK_WEB.7b0f9d29f5.ellie.watch_strap",
+  "BLENDLINK_WEB.416a62050c.ellie.watch_metal": "BLENDLINK_WEB.416a62050c.ellie.watch_metal",
+  "BLENDLINK_WEB.bdd79d1d1d.ellie.watch_rubber_guard": "BLENDLINK_WEB.bdd79d1d1d.ellie.watch_rubber_guard",
+  "BLENDLINK_WEB.daccdf6180.ellie.watch_gold": "BLENDLINK_WEB.daccdf6180.ellie.watch_gold",
   "ellie.watch_glass": "ellie.watch_glass",
-  "BLENDLINK_WEB.f56766b3b6.ellie.watch_red": "BLENDLINK_WEB.f56766b3b6.ellie.watch_red",
+  "BLENDLINK_WEB.9a53c232c6.ellie.watch_red": "BLENDLINK_WEB.9a53c232c6.ellie.watch_red",
   "Blendlink Blender Default": "Blendlink Blender Default",
   },
   /** Clip durations in seconds — scroll-scrub without string guessing. */
@@ -2216,48 +672,46 @@ export const ellieAnimation = {
   /** Blender custom properties (glTF extras), typed as literals. */
   extras: {
   Animation_Camera: {"blendlink_id":"fd4a79de-983d-4da8-b1b7-e43f8e924951"},
-  Backdrop: {"blendlink_id":"0382b964-1f0a-4add-8c0f-f6f526022e15"},
-  "HLP-ellie_settings001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"3462ca8c-50dd-4137-82b3-e2574e3c82e5"},
-  "GEO-ellie_body001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"e51daf0e-2ee7-403f-9759-1ae6a43b6fc8"},
-  "GEO-ellie_boots001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"a6be9f99-29c3-40d6-81ab-46850c490aa2"},
-  "GEO-ellie_earrings001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"5b3102ce-2a40-42a0-904c-850862f9deb7"},
-  "GEO-ellie_eyeL001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"1f364126-2be6-4fa3-b373-d3ac9cf70c77"},
-  "GEO-ellie_eyeR001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"3d69dc04-f8ed-4550-aaca-6d7d23c2a22d"},
-  "GEO-ellie_eye_highlights001": {"highlight_strength":1,"als":{},"blendlink_id":"095fb967-d1a1-4c43-9031-78aa84a03b02"},
-  "GEO-ellie_eyebrows001": {"als":{},"blendlink_id":"c02419d7-2ed7-4a3e-9698-dcaf81139fd5"},
-  "GEO-ellie_eyelashes001": {"als":{},"blendlink_id":"dae6cbb7-8e8c-4af7-af0f-6ffca912c229"},
-  "GEO-ellie_fannypack_buckle_ext001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"92c28718-e2aa-49ea-b119-7fcd131127b0"},
-  "GEO-ellie_fannypack_buckle_int001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"ccc736dc-a779-4a7e-98d3-f834c8c7c901"},
-  "GEO-ellie_fannypack_main001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"810da819-98e5-4724-bacf-5f1e9bd0cce4"},
-  "GEO-ellie_fannypack_strap001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"cd5ff5fc-90e0-4c87-b75d-5be60c3e8f78"},
-  "GEO-ellie_fannypack_strap_slide001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"39b3a849-5b37-4a72-a125-d2fc92e588f4"},
-  "GEO-ellie_fannypack_zipper_pull001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"db9270f1-c8f1-4370-baf9-5e59c64a8786"},
-  "GEO-ellie_fannypack_zipper_stop001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"031ef977-8859-46d8-8210-09db0f5db41d"},
-  "GEO-ellie_fannypack_zippers001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"1d6d2966-b976-45e7-ba05-1f2906090783"},
-  "GEO-ellie_hairgroom_base001": {"als":{},"blendlink_id":"4ee9acfe-bd3c-43b6-a974-d973c6572d05"},
-  "GEO-ellie_hairscalp-back001": {"als":{},"blendlink_id":"eab661ef-d34b-43df-b8f0-59d4616feb9b"},
-  "GEO-ellie_hairscalp-front001": {"als":{},"blendlink_id":"ce42eadf-64b9-467e-91c9-470ef740b2a9"},
-  "GEO-ellie_hairscalp-loose001": {"als":{},"blendlink_id":"769e9d3c-1b8b-4b58-8c17-29ab67ffbf57"},
-  "GEO-ellie_hairscalp-ponytail001": {"als":{},"blendlink_id":"4e6a7997-54e3-4e8d-809b-90c8d594b06a"},
-  "GEO-ellie_hairscalp001": {"als":{},"blendlink_id":"e32ed934-fd00-4a4b-8150-a454e6e97121"},
-  "GEO-ellie_hair_cutscalp-back001": {"als":{},"blendlink_id":"8d62ac7c-c304-473a-80bc-85c21d3ec5fa"},
-  "GEO-ellie_hair_cutscalp-front001": {"als":{},"blendlink_id":"31f26802-6def-4f5d-81b7-ddcf70f3a726"},
-  "GEO-ellie_hair_cutscalp-loose001": {"als":{},"blendlink_id":"1f0864c4-d68f-4d41-94d6-c7846c354447"},
-  "GEO-ellie_handkerchief001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"4f45d11c-40c0-4983-a7a5-a6ec45352065"},
-  "GEO-ellie_head001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"9a8bb7f2-5ea4-4e7e-b91a-303412c80b09"},
-  "GEO-ellie_jacket001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"active_islands_index":27,"island_groups":[{"index":0,"name":"DEF-Belly","islands":[{"vert_indicies":[{"index":68},{"index":110},{"index":131},{"index":4322},{"index":2424},{"index":2398},{"index":4337},{"index":4338},{"index":2399},{"index":2397},{"index":2396},{"index":2423},{"index":2409},{"index":2411},{"index":4326},{"index":82},{"index":342},{"index":83},{"index":306},{"index":132},{"index":111},{"index":69},{"index":104},{"index":125},{"index":76},{"index":360},{"index":353},{"index":126},{"index":77},{"index":219},{"index":276},{"index":252},{"index":211},{"index":260},{"index":284},{"index":227},{"index":231},{"index":288},{"index":381},{"index":388},{"index":230},{"index":229},{"index":228},{"index":313},{"index":4121},{"index":4113},{"index":2193},{"index":2202},{"index":2184},{"index":2185},{"index":2200},{"index":2188},{"index":2189},{"index":2198},{"index":2178},{"index":2288},{"index":2180},{"index":2199},{"index":2191},{"index":2190},{"index":2201},{"index":2187},{"index":2186},{"index":2203},{"index":2195},{"index":2194},{"index":2294},{"index":2286},{"index":2293},{"index":2290},{"index":2284},{"index":2289},{"index":2292},{"index":2285},{"index":2291},{"index":4180},{"index":4176},{"index":4191},{"index":4128},{"index":319},{"index":234},{"index":233},{"index":318},{"index":317},{"index":232},{"index":301},{"index":312},{"index":682},{"index":606},{"index":607},{"index":683},{"index":684},{"index":608},{"index":665},{"index":641},{"index":592},{"index":591},{"index":640},{"index":664},{"index":663},{"index":639},{"index":590},{"index":631},{"index":746},{"index":748},{"index":744},{"index":598},{"index":655},{"index":656},{"index":599},{"index":600},{"index":657},{"index":633},{"index":632},{"index":4192},{"index":2225},{"index":2211},{"index":2210},{"index":2227},{"index":2219},{"index":2218},{"index":2281},{"index":2273},{"index":2217},{"index":2226},{"index":2208},{"index":2209},{"index":2224},{"index":2212},{"index":2213},{"index":2222},{"index":2204},{"index":2275},{"index":2206},{"index":2223},{"index":2215},{"index":2214},{"index":2279},{"index":2272},{"index":2278},{"index":2276},{"index":2271},{"index":2277},{"index":2280},{"index":4197},{"index":4198},{"index":4199},{"index":649},{"index":625},{"index":624},{"index":648},{"index":647},{"index":623},{"index":745},{"index":303},{"index":273},{"index":249},{"index":250},{"index":274},{"index":225},{"index":282},{"index":258},{"index":217},{"index":266},{"index":290},{"index":289},{"index":265},{"index":216},{"index":300},{"index":747},{"index":749},{"index":257},{"index":281},{"index":224},{"index":291},{"index":267},{"index":218},{"index":259},{"index":283},{"index":226},{"index":275},{"index":4123},{"index":4122},{"index":4131},{"index":4132},{"index":4125},{"index":4126},{"index":4130},{"index":4133},{"index":4134},{"index":4200},{"index":4212},{"index":619},{"index":643},{"index":594},{"index":651},{"index":627},{"index":586},{"index":635},{"index":659},{"index":602},{"index":678},{"index":4205},{"index":4210},{"index":4209},{"index":4208},{"index":4206},{"index":4204},{"index":4211},{"index":4215},{"index":4214},{"index":603},{"index":604},{"index":737},{"index":730},{"index":733},{"index":739},{"index":734},{"index":731},{"index":738},{"index":732},{"index":645},{"index":621},{"index":620},{"index":644},{"index":595},{"index":652},{"index":628},{"index":587},{"index":636},{"index":660},{"index":661},{"index":637},{"index":588},{"index":629},{"index":653},{"index":596},{"index":646},{"index":622},{"index":618},{"index":642},{"index":593},{"index":650},{"index":626},{"index":585},{"index":634},{"index":658},{"index":601},{"index":605},{"index":662},{"index":638},{"index":589},{"index":630},{"index":654},{"index":597},{"index":5126},{"index":2640},{"index":2644},{"index":2642},{"index":5128},{"index":5132},{"index":2639},{"index":2641},{"index":5133},{"index":5125},{"index":2643},{"index":2637},{"index":5131},{"index":512},{"index":464},{"index":505},{"index":486},{"index":711},{"index":710},{"index":504},{"index":485},{"index":701},{"index":484},{"index":503},{"index":462},{"index":510},{"index":491},{"index":4350},{"index":2460},{"index":2438},{"index":4362},{"index":456},{"index":497},{"index":4361},{"index":2437},{"index":2463},{"index":4358},{"index":517},{"index":470},{"index":4357},{"index":2450},{"index":2448},{"index":2452},{"index":2464},{"index":2439},{"index":4355},{"index":502},{"index":461},{"index":460},{"index":501},{"index":521},{"index":474},{"index":475},{"index":4353},{"index":4356},{"index":677},{"index":4352},{"index":522},{"index":473},{"index":472},{"index":674},{"index":4394},{"index":4400},{"index":2502},{"index":2505},{"index":4401},{"index":519},{"index":499},{"index":458},{"index":459},{"index":500},{"index":520},{"index":494},{"index":493},{"index":513},{"index":465},{"index":466},{"index":514},{"index":515},{"index":467},{"index":468},{"index":516},{"index":496},{"index":495},{"index":4373},{"index":2461},{"index":2440},{"index":4366},{"index":2436},{"index":2435},{"index":2462},{"index":2459},{"index":2441},{"index":2442},{"index":2446},{"index":2445},{"index":4372},{"index":4371},{"index":4359},{"index":509},{"index":508},{"index":489},{"index":488},{"index":507},{"index":506},{"index":4402},{"index":2503},{"index":2486},{"index":2483},{"index":2477},{"index":2478},{"index":2484},{"index":2469},{"index":2470},{"index":2485},{"index":2479},{"index":2480},{"index":2482},{"index":4470},{"index":2522},{"index":761},{"index":768},{"index":765},{"index":759},{"index":764},{"index":767},{"index":760},{"index":766},{"index":883},{"index":877},{"index":884},{"index":881},{"index":876},{"index":882},{"index":885},{"index":878},{"index":4464},{"index":2519},{"index":2520},{"index":2526},{"index":2517},{"index":2518},{"index":2527},{"index":2521},{"index":4485},{"index":4477},{"index":4476},{"index":4473},{"index":4472},{"index":4484},{"index":4482},{"index":4471},{"index":2525},{"index":2497},{"index":2498},{"index":2504},{"index":4396},{"index":4395},{"index":4393},{"index":4391},{"index":2499},{"index":2500},{"index":4392},{"index":2458},{"index":2432},{"index":2427},{"index":2456},{"index":2457},{"index":4368},{"index":4367},{"index":2444},{"index":2443},{"index":4351},{"index":4360},{"index":2429},{"index":699},{"index":471},{"index":518},{"index":498},{"index":457},{"index":492},{"index":511},{"index":463},{"index":713},{"index":709},{"index":5124},{"index":2649},{"index":2636},{"index":5123},{"index":5122},{"index":2634},{"index":2632},{"index":5121},{"index":5120},{"index":2635},{"index":2638},{"index":2633},{"index":5135},{"index":5137},{"index":2629},{"index":2666},{"index":2628},{"index":2653},{"index":2657},{"index":2655},{"index":2652},{"index":2630},{"index":2624},{"index":2651},{"index":2662},{"index":2650},{"index":2625},{"index":2631},{"index":2667},{"index":2665},{"index":2627},{"index":2623},{"index":2663},{"index":2622},{"index":2626},{"index":2654},{"index":2656},{"index":2664},{"index":698},{"index":705},{"index":702},{"index":697},{"index":703},{"index":706},{"index":704},{"index":5127},{"index":4179},{"index":4178},{"index":4217},{"index":4170},{"index":4169},{"index":4168},{"index":4141},{"index":4150},{"index":4151},{"index":4152},{"index":4202},{"index":4203},{"index":4196},{"index":4195},{"index":4193},{"index":4110},{"index":245},{"index":269},{"index":220},{"index":277},{"index":253},{"index":212},{"index":261},{"index":285},{"index":286},{"index":262},{"index":213},{"index":214},{"index":263},{"index":287},{"index":384},{"index":390},{"index":385},{"index":382},{"index":389},{"index":383},{"index":271},{"index":247},{"index":222},{"index":279},{"index":255},{"index":254},{"index":278},{"index":221},{"index":270},{"index":272},{"index":248},{"index":244},{"index":268},{"index":119},{"index":98},{"index":357},{"index":354},{"index":118},{"index":97},{"index":344},{"index":96},{"index":117},{"index":75},{"index":124},{"index":103},{"index":345},{"index":348},{"index":341},{"index":347},{"index":340},{"index":346},{"index":349},{"index":4344},{"index":2421},{"index":2420},{"index":2422},{"index":2401},{"index":2400},{"index":2425},{"index":4319},{"index":137},{"index":116},{"index":74},{"index":73},{"index":115},{"index":136},{"index":87},{"index":310},{"index":309},{"index":86},{"index":85},{"index":308},{"index":4431},{"index":4424},{"index":4415},{"index":4439},{"index":4446},{"index":4422},{"index":4419},{"index":4443},{"index":4437},{"index":4413},{"index":4418},{"index":4442},{"index":4445},{"index":4421},{"index":4414},{"index":4438},{"index":4444},{"index":4420},{"index":120},{"index":78},{"index":127},{"index":106},{"index":71},{"index":113},{"index":134},{"index":135},{"index":114},{"index":72},{"index":107},{"index":108},{"index":109},{"index":130},{"index":81},{"index":80},{"index":129},{"index":128},{"index":79},{"index":121},{"index":122},{"index":101},{"index":123},{"index":4325},{"index":2419},{"index":2393},{"index":2387},{"index":2417},{"index":2403},{"index":2402},{"index":2404},{"index":2405},{"index":4331},{"index":4330},{"index":2418},{"index":2389},{"index":4328},{"index":4343},{"index":2406},{"index":2407},{"index":4340},{"index":4339},{"index":4334},{"index":4333},{"index":4329},{"index":311},{"index":88},{"index":4320},{"index":2413},{"index":4327},{"index":223},{"index":280},{"index":256},{"index":215},{"index":264},{"index":4109},{"index":4118},{"index":4119},{"index":4116},{"index":4117},{"index":4111},{"index":4112},{"index":5118},{"index":2594},{"index":2598},{"index":2596},{"index":5110},{"index":5111},{"index":2593},{"index":2595},{"index":5117},{"index":5116},{"index":2597},{"index":2591},{"index":5115},{"index":5114},{"index":2603},{"index":2590},{"index":5106},{"index":5105},{"index":2588},{"index":2586},{"index":5104},{"index":5103},{"index":2589},{"index":2592},{"index":5102},{"index":5109},{"index":2587},{"index":356},{"index":2620},{"index":355},{"index":2607},{"index":2611},{"index":2609},{"index":2606},{"index":359},{"index":105},{"index":2605},{"index":2616},{"index":2604},{"index":112},{"index":361},{"index":2621},{"index":2619},{"index":352},{"index":84},{"index":2617},{"index":70},{"index":133},{"index":2608},{"index":2610},{"index":2618},{"index":5107}]},{"vert_indicies":[{"index":4839},{"index":4844},{"index":4845},{"index":4842},{"index":4880},{"index":4882},{"index":4878},{"index":4875},{"index":4954},{"index":4957},{"index":4956},{"index":4951},{"index":4950},{"index":4980},{"index":4987},{"index":4990},{"index":4994},{"index":4992}]},{"vert_indicies":[{"index":4919},{"index":4920},{"index":4924},{"index":4922},{"index":4938},{"index":4945},{"index":4949},{"index":5061},{"index":5057},{"index":5050},{"index":5034},{"index":5036},{"index":5032},{"index":5031},{"index":5056},{"index":5053},{"index":5052},{"index":4940},{"index":4941},{"index":4944}]}],"num_expected_islands":3},{"index":1,"name":"DEF-Chest","islands":[{"vert_indicies":[{"index":0},{"index":1},{"index":3},{"index":4530},{"index":3024},{"index":2996},{"index":2980},{"index":2965},{"index":3020},{"index":2955},{"index":2964},{"index":2963},{"index":2962},{"index":2979},{"index":2995},{"index":4524},{"index":142},{"index":143},{"index":145},{"index":294},{"index":146},{"index":299},{"index":531},{"index":668},{"index":530},{"index":528},{"index":527},{"index":532},{"index":397},{"index":398},{"index":400},{"index":525},{"index":2952},{"index":2493},{"index":4547},{"index":2902},{"index":2880},{"index":2919},{"index":2947},{"index":2877},{"index":2929},{"index":2869},{"index":2876},{"index":2875},{"index":2874},{"index":2873},{"index":2900},{"index":2889},{"index":2905},{"index":4518},{"index":4539},{"index":2909},{"index":2897},{"index":2891},{"index":2907},{"index":4517},{"index":4521},{"index":2901},{"index":2879},{"index":2932},{"index":2890},{"index":2906},{"index":2933},{"index":4537},{"index":4540},{"index":4523},{"index":2950},{"index":2951},{"index":4538},{"index":2910},{"index":2927},{"index":2903},{"index":2881},{"index":2868},{"index":2923},{"index":2928},{"index":2918},{"index":2899},{"index":2893},{"index":2913},{"index":2914},{"index":2894},{"index":2896},{"index":2916},{"index":2912},{"index":2888},{"index":2931},{"index":2849},{"index":2930},{"index":2886},{"index":2855},{"index":2895},{"index":2915},{"index":2934},{"index":2949},{"index":2922},{"index":2921},{"index":2851},{"index":2920},{"index":2948},{"index":2848},{"index":2946},{"index":3065},{"index":2770},{"index":2742},{"index":3029},{"index":2743},{"index":2744},{"index":2771},{"index":2737},{"index":2717},{"index":2768},{"index":3026},{"index":3033},{"index":3027},{"index":2752},{"index":2708},{"index":3055},{"index":3063},{"index":3048},{"index":2871},{"index":2858},{"index":2854},{"index":2885},{"index":2884},{"index":2856},{"index":2857},{"index":2883},{"index":2882},{"index":2852},{"index":2850},{"index":2924},{"index":2870},{"index":2867},{"index":2887},{"index":2926},{"index":2911},{"index":3047},{"index":2692},{"index":2746},{"index":2704},{"index":2705},{"index":2706},{"index":2707},{"index":2693},{"index":3036},{"index":2710},{"index":2753},{"index":2756},{"index":2734},{"index":2691},{"index":2698},{"index":2697},{"index":2696},{"index":2695},{"index":2722},{"index":2711},{"index":2727},{"index":4500},{"index":847},{"index":848},{"index":849},{"index":865},{"index":850},{"index":819},{"index":802},{"index":817},{"index":801},{"index":800},{"index":799},{"index":803},{"index":773},{"index":774},{"index":775},{"index":797},{"index":2866},{"index":4496},{"index":4512},{"index":2814},{"index":2790},{"index":2832},{"index":2861},{"index":2787},{"index":2842},{"index":2777},{"index":2786},{"index":2785},{"index":2784},{"index":2801},{"index":2817},{"index":4506},{"index":4507},{"index":2821},{"index":2809},{"index":2803},{"index":2819},{"index":4509},{"index":4544},{"index":2813},{"index":2789},{"index":2845},{"index":2802},{"index":2818},{"index":2846},{"index":4532},{"index":4514},{"index":4515},{"index":2864},{"index":2865},{"index":4510},{"index":2822},{"index":2812},{"index":2829},{"index":2808},{"index":2800},{"index":2844},{"index":2807},{"index":2828},{"index":2847},{"index":2825},{"index":2863},{"index":2835},{"index":2834},{"index":2938},{"index":2935},{"index":2942},{"index":2936},{"index":2843},{"index":2797},{"index":2862},{"index":2833},{"index":3078},{"index":3011},{"index":2760},{"index":3012},{"index":3013},{"index":3041},{"index":3006},{"index":2985},{"index":3038},{"index":2757},{"index":3040},{"index":2975},{"index":2764},{"index":2758},{"index":3022},{"index":2978},{"index":2986},{"index":3007},{"index":3003},{"index":3025},{"index":3005},{"index":2763},{"index":2974},{"index":2957},{"index":2767},{"index":3021},{"index":3082},{"index":3067},{"index":2779},{"index":2796},{"index":2941},{"index":2945},{"index":3074},{"index":3075},{"index":3083},{"index":3039},{"index":3010},{"index":2968},{"index":2992},{"index":3042},{"index":4533},{"index":3044},{"index":4494},{"index":4529},{"index":4534},{"index":4495},{"index":4452},{"index":4453},{"index":4427},{"index":2528},{"index":53},{"index":776},{"index":789},{"index":2554},{"index":4580},{"index":796},{"index":778},{"index":784},{"index":783},{"index":779},{"index":794},{"index":782},{"index":777},{"index":785},{"index":791},{"index":793},{"index":787},{"index":781},{"index":780},{"index":788},{"index":4553},{"index":2559},{"index":2558},{"index":4584},{"index":4585},{"index":2560},{"index":2557},{"index":4583},{"index":795},{"index":798},{"index":4451},{"index":2556},{"index":4582},{"index":786},{"index":792},{"index":811},{"index":808},{"index":807},{"index":813},{"index":812},{"index":810},{"index":805},{"index":806},{"index":815},{"index":804},{"index":816},{"index":818},{"index":4589},{"index":2565},{"index":2563},{"index":4588},{"index":4554},{"index":2564},{"index":2561},{"index":4586},{"index":4581},{"index":2555},{"index":2562},{"index":4587},{"index":4602},{"index":2580},{"index":2575},{"index":4598},{"index":864},{"index":866},{"index":853},{"index":858},{"index":4556},{"index":2577},{"index":2576},{"index":4599},{"index":4600},{"index":2578},{"index":2574},{"index":4597},{"index":855},{"index":861},{"index":859},{"index":856},{"index":834},{"index":840},{"index":838},{"index":836},{"index":829},{"index":830},{"index":843},{"index":831},{"index":827},{"index":833},{"index":839},{"index":841},{"index":835},{"index":832},{"index":828},{"index":844},{"index":846},{"index":4596},{"index":2573},{"index":2571},{"index":4595},{"index":4555},{"index":2572},{"index":2569},{"index":4593},{"index":4592},{"index":2568},{"index":851},{"index":824},{"index":825},{"index":826},{"index":845},{"index":2774},{"index":4491},{"index":4502},{"index":2724},{"index":2702},{"index":2741},{"index":2769},{"index":2699},{"index":2751},{"index":2754},{"index":2701},{"index":2723},{"index":2729},{"index":2713},{"index":2719},{"index":2731},{"index":4498},{"index":4499},{"index":4511},{"index":4545},{"index":2755},{"index":2728},{"index":2712},{"index":2773},{"index":2772},{"index":4504},{"index":4503},{"index":3058},{"index":3050},{"index":3056},{"index":4535},{"index":4492},{"index":3057},{"index":444},{"index":2904},{"index":757},{"index":2552},{"index":4578},{"index":769},{"index":753},{"index":756},{"index":754},{"index":772},{"index":755},{"index":771},{"index":758},{"index":752},{"index":763},{"index":766},{"index":883},{"index":880},{"index":869},{"index":875},{"index":888},{"index":872},{"index":889},{"index":871},{"index":873},{"index":870},{"index":886},{"index":4457},{"index":842},{"index":469},{"index":476},{"index":837},{"index":4463},{"index":4460},{"index":4461},{"index":4458},{"index":4459},{"index":4454},{"index":4456},{"index":4464},{"index":4462},{"index":4465},{"index":4591},{"index":2567},{"index":416},{"index":4455},{"index":874},{"index":2579},{"index":4601},{"index":4611},{"index":4488},{"index":2726},{"index":2570},{"index":4594},{"index":2519},{"index":2525},{"index":2513},{"index":2514},{"index":2515},{"index":2516},{"index":2510},{"index":2507},{"index":2508},{"index":2509},{"index":2511},{"index":4486},{"index":2473},{"index":2471},{"index":2472},{"index":2467},{"index":2468},{"index":2475},{"index":2476},{"index":2466},{"index":2465},{"index":2483},{"index":2477},{"index":4482},{"index":4471},{"index":4467},{"index":4475},{"index":4474},{"index":4479},{"index":4478},{"index":4481},{"index":4480},{"index":4483},{"index":2503},{"index":2486},{"index":4403},{"index":487},{"index":409},{"index":410},{"index":488},{"index":507},{"index":508},{"index":489},{"index":425},{"index":436},{"index":490},{"index":4354},{"index":2432},{"index":2431},{"index":4370},{"index":4369},{"index":447},{"index":442},{"index":446},{"index":445},{"index":4390},{"index":2494},{"index":2487},{"index":4388},{"index":2495},{"index":2496},{"index":4404},{"index":685},{"index":4070},{"index":4059},{"index":4060},{"index":4057},{"index":4234},{"index":413},{"index":687},{"index":404},{"index":435},{"index":451},{"index":433},{"index":429},{"index":414},{"index":427},{"index":718},{"index":399},{"index":423},{"index":430},{"index":434},{"index":690},{"index":448},{"index":722},{"index":449},{"index":455},{"index":438},{"index":691},{"index":693},{"index":692},{"index":728},{"index":720},{"index":717},{"index":719},{"index":4239},{"index":4061},{"index":4069},{"index":4068},{"index":4073},{"index":4237},{"index":4236},{"index":4238},{"index":4240},{"index":4067},{"index":4763},{"index":4098},{"index":2116},{"index":2132},{"index":2111},{"index":2109},{"index":2110},{"index":2125},{"index":2228},{"index":2234},{"index":4720},{"index":4721},{"index":4785},{"index":4784},{"index":4094},{"index":4103},{"index":4738},{"index":4722},{"index":554},{"index":418},{"index":417},{"index":419},{"index":721},{"index":443},{"index":406},{"index":484},{"index":503},{"index":704},{"index":504},{"index":485},{"index":407},{"index":696},{"index":701},{"index":714},{"index":408},{"index":486},{"index":505},{"index":642},{"index":618},{"index":546},{"index":545},{"index":622},{"index":735},{"index":740},{"index":544},{"index":621},{"index":645},{"index":732},{"index":646},{"index":644},{"index":620},{"index":543},{"index":542},{"index":619},{"index":643},{"index":4214},{"index":2222},{"index":2204},{"index":2205},{"index":2270},{"index":2207},{"index":2206},{"index":2223},{"index":2278},{"index":2275},{"index":4199},{"index":649},{"index":625},{"index":561},{"index":548},{"index":624},{"index":648},{"index":647},{"index":623},{"index":547},{"index":577},{"index":578},{"index":4667},{"index":2687},{"index":2173},{"index":2175},{"index":2176},{"index":2165},{"index":2157},{"index":2152},{"index":2156},{"index":2158},{"index":2154},{"index":2153},{"index":2168},{"index":2169},{"index":2170},{"index":2167},{"index":2164},{"index":2155},{"index":2151},{"index":2166},{"index":2159},{"index":2145},{"index":2174},{"index":2177},{"index":2171},{"index":2172},{"index":2146},{"index":2147},{"index":2148},{"index":2150},{"index":2149},{"index":2162},{"index":2163},{"index":2160},{"index":2161},{"index":2689},{"index":2671},{"index":2672},{"index":4669},{"index":203},{"index":210},{"index":191},{"index":166},{"index":332},{"index":155},{"index":189},{"index":206},{"index":187},{"index":183},{"index":167},{"index":181},{"index":373},{"index":144},{"index":176},{"index":184},{"index":188},{"index":335},{"index":202},{"index":377},{"index":379},{"index":337},{"index":338},{"index":336},{"index":375},{"index":372},{"index":374},{"index":4661},{"index":4678},{"index":4687},{"index":4620},{"index":4622},{"index":4296},{"index":2094},{"index":2093},{"index":2090},{"index":2079},{"index":2091},{"index":2092},{"index":2074},{"index":2062},{"index":2073},{"index":2075},{"index":2076},{"index":2102},{"index":2078},{"index":2100},{"index":2072},{"index":2070},{"index":2071},{"index":2087},{"index":2088},{"index":2089},{"index":2098},{"index":2096},{"index":2104},{"index":2265},{"index":2266},{"index":2262},{"index":2247},{"index":2259},{"index":2248},{"index":2253},{"index":2252},{"index":2067},{"index":2066},{"index":2099},{"index":2077},{"index":2101},{"index":2264},{"index":2256},{"index":2250},{"index":2251},{"index":2257},{"index":2263},{"index":2254},{"index":4273},{"index":4656},{"index":323},{"index":59},{"index":321},{"index":8},{"index":9},{"index":1480},{"index":1457},{"index":1463},{"index":1486},{"index":1484},{"index":1461},{"index":1277},{"index":1274},{"index":1270},{"index":1278},{"index":1279},{"index":1280},{"index":1459},{"index":1483},{"index":4649},{"index":4257},{"index":4256},{"index":4258},{"index":4276},{"index":4647},{"index":4638},{"index":4637},{"index":2269},{"index":2258},{"index":2268},{"index":2261},{"index":2260},{"index":2249},{"index":4293},{"index":4297},{"index":4291},{"index":4290},{"index":4632},{"index":171},{"index":172},{"index":376},{"index":197},{"index":158},{"index":246},{"index":270},{"index":271},{"index":247},{"index":159},{"index":391},{"index":386},{"index":383},{"index":272},{"index":248},{"index":160},{"index":161},{"index":244},{"index":268},{"index":119},{"index":98},{"index":16},{"index":362},{"index":357},{"index":354},{"index":118},{"index":97},{"index":15},{"index":339},{"index":14},{"index":96},{"index":117},{"index":347},{"index":344},{"index":4330},{"index":2418},{"index":2389},{"index":2390},{"index":2388},{"index":2387},{"index":2417},{"index":2419},{"index":4325},{"index":123},{"index":102},{"index":47},{"index":35},{"index":101},{"index":122},{"index":121},{"index":100},{"index":18},{"index":17},{"index":99},{"index":120},{"index":4444},{"index":4420},{"index":4417},{"index":4441},{"index":4429},{"index":4407},{"index":4412},{"index":4425},{"index":4448},{"index":4053},{"index":4042},{"index":4434},{"index":4409},{"index":29},{"index":322},{"index":25},{"index":39},{"index":19},{"index":140},{"index":4408},{"index":4433},{"index":4447},{"index":4423},{"index":4410},{"index":4435},{"index":4436},{"index":4411},{"index":4426},{"index":4449},{"index":326},{"index":42},{"index":38},{"index":20},{"index":138},{"index":36},{"index":13},{"index":12},{"index":46},{"index":63},{"index":44},{"index":40},{"index":23},{"index":37},{"index":366},{"index":2},{"index":33},{"index":41},{"index":45},{"index":327},{"index":60},{"index":370},{"index":61},{"index":67},{"index":49},{"index":22},{"index":324},{"index":325},{"index":43},{"index":31},{"index":30},{"index":4230},{"index":4231},{"index":4043},{"index":4040},{"index":4044},{"index":4229},{"index":4232},{"index":4052},{"index":4051},{"index":4233},{"index":4226},{"index":4056},{"index":4050},{"index":4054},{"index":4041},{"index":4219},{"index":28},{"index":26},{"index":27},{"index":170},{"index":4633},{"index":4292},{"index":4295},{"index":4277},{"index":4278},{"index":4625},{"index":4631},{"index":4289},{"index":4281},{"index":4282},{"index":4627},{"index":4615},{"index":4618},{"index":4287},{"index":4288},{"index":4630},{"index":4614},{"index":4279},{"index":4280},{"index":4626},{"index":4616},{"index":34},{"index":178},{"index":177},{"index":371},{"index":168},{"index":169},{"index":363},{"index":364},{"index":24},{"index":65},{"index":50},{"index":193},{"index":204},{"index":208},{"index":192},{"index":195},{"index":165},{"index":175},{"index":292},{"index":180},{"index":156},{"index":190},{"index":207},{"index":209},{"index":194},{"index":205},{"index":182},{"index":164},{"index":293},{"index":295},{"index":4567},{"index":2539},{"index":2537},{"index":4566},{"index":4550},{"index":2538},{"index":2535},{"index":4564},{"index":4559},{"index":2529},{"index":2530},{"index":4560},{"index":4549},{"index":52},{"index":21},{"index":32},{"index":51},{"index":66},{"index":64},{"index":48},{"index":62},{"index":141},{"index":139},{"index":4561},{"index":2531},{"index":2534},{"index":4563},{"index":4562},{"index":2532},{"index":2533},{"index":4493},{"index":4548},{"index":4432},{"index":4610},{"index":4609},{"index":4558},{"index":4603},{"index":2582},{"index":890},{"index":395},{"index":4382},{"index":822},{"index":2566},{"index":4590},{"index":823},{"index":820},{"index":821},{"index":4381},{"index":394},{"index":393},{"index":895},{"index":894},{"index":893},{"index":896},{"index":891},{"index":392},{"index":396},{"index":4383},{"index":4},{"index":4607},{"index":4385},{"index":2540},{"index":4568},{"index":892},{"index":900},{"index":898},{"index":899},{"index":4557},{"index":2581},{"index":897},{"index":4384},{"index":147},{"index":4525},{"index":2999},{"index":2987},{"index":2981},{"index":2997},{"index":2991},{"index":2967},{"index":3023},{"index":4528},{"index":4546},{"index":2536},{"index":4565},{"index":4579},{"index":2553},{"index":2548},{"index":4575},{"index":667},{"index":669},{"index":550},{"index":576},{"index":4552},{"index":2550},{"index":2549},{"index":4576},{"index":4577},{"index":2551},{"index":2547},{"index":4574},{"index":573},{"index":583},{"index":552},{"index":723},{"index":715},{"index":553},{"index":415},{"index":716},{"index":424},{"index":560},{"index":4729},{"index":4099},{"index":2128},{"index":2113},{"index":2105},{"index":2112},{"index":2114},{"index":2115},{"index":2133},{"index":2246},{"index":2141},{"index":2135},{"index":2134},{"index":2107},{"index":2138},{"index":2106},{"index":2231},{"index":2243},{"index":2229},{"index":2240},{"index":2244},{"index":4311},{"index":4835},{"index":4823},{"index":905},{"index":402},{"index":901},{"index":902},{"index":908},{"index":906},{"index":1173},{"index":1174},{"index":1176},{"index":903},{"index":904},{"index":1170},{"index":1169},{"index":403},{"index":4824},{"index":4312},{"index":2108},{"index":2137},{"index":2136},{"index":2131},{"index":2139},{"index":2245},{"index":2238},{"index":2242},{"index":2241},{"index":2230},{"index":4306},{"index":4832},{"index":4821},{"index":686},{"index":4305},{"index":4316},{"index":4313},{"index":4836},{"index":4826},{"index":4828},{"index":4318},{"index":4317},{"index":4314},{"index":4315},{"index":4837},{"index":4825},{"index":4827},{"index":4310},{"index":1172},{"index":1171},{"index":1155},{"index":1203},{"index":1204},{"index":4097},{"index":4104},{"index":4107},{"index":4807},{"index":4694},{"index":4108},{"index":4105},{"index":4765},{"index":4689},{"index":4106},{"index":4697},{"index":4715},{"index":453},{"index":439},{"index":574},{"index":579},{"index":4569},{"index":2541},{"index":2542},{"index":4570},{"index":4551},{"index":441},{"index":412},{"index":422},{"index":523},{"index":426},{"index":405},{"index":437},{"index":452},{"index":454},{"index":440},{"index":450},{"index":428},{"index":411},{"index":524},{"index":526},{"index":4573},{"index":2546},{"index":2544},{"index":4572},{"index":2545},{"index":2543},{"index":4571},{"index":4608},{"index":4399},{"index":2492},{"index":2489},{"index":2488},{"index":4386},{"index":4387},{"index":2491},{"index":2490},{"index":4389},{"index":689},{"index":431},{"index":432},{"index":688},{"index":421},{"index":420},{"index":4241},{"index":4235},{"index":4398},{"index":4605},{"index":2584},{"index":4490},{"index":2474},{"index":2583},{"index":4604},{"index":4612},{"index":4487},{"index":2585},{"index":2512},{"index":4468},{"index":4606},{"index":4405},{"index":725},{"index":563},{"index":551},{"index":565},{"index":569},{"index":727},{"index":724},{"index":726},{"index":4718},{"index":4713},{"index":4704},{"index":4706},{"index":4698},{"index":4690},{"index":4709},{"index":540},{"index":571},{"index":581},{"index":582},{"index":572},{"index":541},{"index":562},{"index":666},{"index":557},{"index":575},{"index":584},{"index":580},{"index":549},{"index":564},{"index":567},{"index":695},{"index":555},{"index":556},{"index":694},{"index":568},{"index":4668},{"index":2669},{"index":2668},{"index":2677},{"index":4671},{"index":297},{"index":173},{"index":174},{"index":333},{"index":186},{"index":185},{"index":334},{"index":751},{"index":742},{"index":298},{"index":741},{"index":750},{"index":4663},{"index":2675},{"index":2676},{"index":4664},{"index":2674},{"index":4670},{"index":4662},{"index":2673},{"index":2670},{"index":4660},{"index":4659},{"index":4762},{"index":4731},{"index":4730},{"index":4742},{"index":4743},{"index":4740},{"index":4741},{"index":4748},{"index":4749},{"index":4746},{"index":4744},{"index":4736},{"index":4732},{"index":4733},{"index":4737},{"index":4739},{"index":4735},{"index":4734},{"index":4747},{"index":4764},{"index":4766},{"index":4768},{"index":4810},{"index":4700},{"index":4716},{"index":4692},{"index":4691},{"index":4792},{"index":4789},{"index":4818},{"index":4812},{"index":4808},{"index":4701},{"index":4804},{"index":4769},{"index":4777},{"index":4772},{"index":4813},{"index":4750},{"index":4757},{"index":4751},{"index":4776},{"index":4201},{"index":4200},{"index":4699},{"index":4809},{"index":4767},{"index":4770},{"index":4778},{"index":4773},{"index":4814},{"index":4815},{"index":4774},{"index":4779},{"index":4816},{"index":4775},{"index":4207},{"index":4212},{"index":4817},{"index":4771},{"index":4759},{"index":4760},{"index":4805},{"index":4800},{"index":4758},{"index":4761},{"index":4802},{"index":4806},{"index":4801},{"index":4717},{"index":4714},{"index":4712},{"index":4624},{"index":4298},{"index":4284},{"index":4628},{"index":4283},{"index":4285},{"index":4286},{"index":4629},{"index":4617},{"index":4635},{"index":4299},{"index":4613},{"index":4621},{"index":369},{"index":55},{"index":4224},{"index":4046},{"index":4055},{"index":4078},{"index":4079},{"index":4080},{"index":4074},{"index":4049},{"index":4220},{"index":58},{"index":54},{"index":57},{"index":56},{"index":4223},{"index":4047},{"index":4048},{"index":4045},{"index":4075},{"index":4076},{"index":4218},{"index":4222},{"index":4430},{"index":4342},{"index":2395},{"index":2394},{"index":2392},{"index":4321},{"index":4348},{"index":4252},{"index":4251},{"index":4253},{"index":4349},{"index":4347},{"index":4225},{"index":4082},{"index":4323},{"index":4328},{"index":2391},{"index":2393},{"index":4324},{"index":4341},{"index":4221},{"index":4227},{"index":4228},{"index":328},{"index":330},{"index":329},{"index":378},{"index":368},{"index":365},{"index":367},{"index":269},{"index":245},{"index":157},{"index":200},{"index":4666},{"index":2685},{"index":4135},{"index":4088},{"index":4680},{"index":2182},{"index":2179},{"index":2178},{"index":2198},{"index":4112},{"index":4110},{"index":4114},{"index":4115},{"index":4684},{"index":2291},{"index":2199},{"index":2180},{"index":2181},{"index":2183},{"index":4127},{"index":196},{"index":199},{"index":163},{"index":250},{"index":274},{"index":275},{"index":251},{"index":179},{"index":4124},{"index":4122},{"index":4123},{"index":273},{"index":249},{"index":162},{"index":296},{"index":743},{"index":198},{"index":4673},{"index":2681},{"index":2680},{"index":2686},{"index":4677},{"index":4665},{"index":2679},{"index":4672},{"index":4675},{"index":2683},{"index":2688},{"index":4136},{"index":4089},{"index":4681},{"index":2283},{"index":2282},{"index":2288},{"index":4682},{"index":4090},{"index":4137},{"index":4683},{"index":745},{"index":303},{"index":2684},{"index":2682},{"index":4674},{"index":4676},{"index":4679},{"index":2678},{"index":4685},{"index":4619},{"index":4623},{"index":710},{"index":711},{"index":4368},{"index":2457},{"index":2429},{"index":4360},{"index":4374},{"index":2430},{"index":2428},{"index":2427},{"index":2456},{"index":2458},{"index":4359},{"index":509},{"index":2433},{"index":2426},{"index":4375},{"index":4376},{"index":4244},{"index":4063},{"index":4072},{"index":4242},{"index":4245},{"index":4058},{"index":4756},{"index":4095},{"index":4096},{"index":4803},{"index":4102},{"index":4705},{"index":4071},{"index":4077},{"index":4081},{"index":4087},{"index":4086},{"index":4066},{"index":4246},{"index":4378},{"index":4250},{"index":2434},{"index":4038},{"index":4039},{"index":4377},{"index":4243},{"index":4084},{"index":4249},{"index":4062},{"index":4065},{"index":4064},{"index":4247},{"index":4248},{"index":4085},{"index":4083},{"index":506},{"index":4402},{"index":3061},{"index":3060},{"index":3046},{"index":3059},{"index":860},{"index":862},{"index":857},{"index":854},{"index":863},{"index":852},{"index":867},{"index":868},{"index":809},{"index":814},{"index":790},{"index":3076},{"index":3070},{"index":3077},{"index":3080},{"index":3079},{"index":3064},{"index":3043},{"index":2860},{"index":4543},{"index":4501},{"index":4542},{"index":4497},{"index":4541},{"index":2725},{"index":2703},{"index":2690},{"index":2745},{"index":2750},{"index":2740},{"index":2721},{"index":2715},{"index":2735},{"index":2736},{"index":2716},{"index":2718},{"index":2738},{"index":3032},{"index":3034},{"index":3035},{"index":3030},{"index":3028},{"index":2748},{"index":2709},{"index":2733},{"index":3045},{"index":2747},{"index":2749},{"index":2732},{"index":4508},{"index":4505},{"index":3054},{"index":3053},{"index":3052},{"index":3051},{"index":3062},{"index":2925},{"index":4519},{"index":4536},{"index":4516},{"index":4522},{"index":4520},{"index":4526},{"index":4531},{"index":4527},{"index":3000},{"index":2990}]},{"vert_indicies":[{"index":4838},{"index":4839},{"index":4844},{"index":4845},{"index":4842},{"index":4843},{"index":4848},{"index":4862},{"index":4849},{"index":4883},{"index":4881},{"index":4847},{"index":4846},{"index":4880},{"index":4882},{"index":4851},{"index":4850},{"index":4841},{"index":4875},{"index":4878},{"index":4861},{"index":4840},{"index":4871},{"index":4856},{"index":4854},{"index":4855},{"index":4852},{"index":4853},{"index":4863},{"index":4864},{"index":4867},{"index":4866},{"index":4865},{"index":4858},{"index":4857},{"index":4859},{"index":4860},{"index":4873},{"index":4872},{"index":4870},{"index":4869},{"index":4879},{"index":4868},{"index":4874},{"index":4876},{"index":4877},{"index":4989},{"index":4984},{"index":4982},{"index":4981},{"index":4952},{"index":4973},{"index":4950},{"index":4951},{"index":4956},{"index":4957},{"index":4954},{"index":4955},{"index":4960},{"index":4974},{"index":4961},{"index":4995},{"index":4993},{"index":4959},{"index":4958},{"index":4992},{"index":4994},{"index":4963},{"index":4962},{"index":4953},{"index":4987},{"index":4990},{"index":4968},{"index":4983},{"index":4985},{"index":4972},{"index":4971},{"index":4966},{"index":4967},{"index":4964},{"index":4965},{"index":4975},{"index":4976},{"index":4979},{"index":4978},{"index":4977},{"index":4970},{"index":4969},{"index":5093},{"index":4997},{"index":4998},{"index":5094},{"index":5095},{"index":4999},{"index":5002},{"index":5098},{"index":5099},{"index":5003},{"index":4891},{"index":5089},{"index":5088},{"index":4890},{"index":4887},{"index":5085},{"index":5084},{"index":4886},{"index":4885},{"index":5083},{"index":5082},{"index":4884},{"index":4888},{"index":5086},{"index":5087},{"index":4889},{"index":4892},{"index":5090},{"index":5091},{"index":4893},{"index":5005},{"index":5101},{"index":5100},{"index":5004},{"index":5001},{"index":5097},{"index":5096},{"index":5000},{"index":4996},{"index":5092},{"index":4980},{"index":4991},{"index":4986},{"index":4988}]},{"vert_indicies":[{"index":4894},{"index":4910},{"index":4919},{"index":4920},{"index":4924},{"index":4900},{"index":4904},{"index":4906},{"index":4907},{"index":4912},{"index":4913},{"index":4911},{"index":4902},{"index":4897},{"index":4923},{"index":4922},{"index":4896},{"index":4901},{"index":4938},{"index":4945},{"index":4949},{"index":4925},{"index":4898},{"index":4946},{"index":4936},{"index":4943},{"index":5071},{"index":4948},{"index":4932},{"index":4929},{"index":4928},{"index":5069},{"index":5062},{"index":4927},{"index":4926},{"index":5065},{"index":4908},{"index":4909},{"index":4905},{"index":4895},{"index":4899},{"index":4903},{"index":4916},{"index":4915},{"index":4914},{"index":4921},{"index":4939},{"index":4935},{"index":4944},{"index":4941},{"index":4940},{"index":5052},{"index":5036},{"index":5012},{"index":5016},{"index":5018},{"index":5019},{"index":5024},{"index":5025},{"index":5023},{"index":5014},{"index":5009},{"index":5035},{"index":5034},{"index":5008},{"index":5013},{"index":5050},{"index":5057},{"index":5061},{"index":5037},{"index":5010},{"index":5058},{"index":5048},{"index":5055},{"index":5081},{"index":5060},{"index":5044},{"index":5041},{"index":5040},{"index":5079},{"index":5072},{"index":5039},{"index":5038},{"index":5075},{"index":5020},{"index":5021},{"index":5017},{"index":5007},{"index":5011},{"index":5015},{"index":5032},{"index":5031},{"index":5022},{"index":5006},{"index":5028},{"index":5027},{"index":5026},{"index":5033},{"index":5051},{"index":5047},{"index":5056},{"index":5053},{"index":5049},{"index":5046},{"index":5054},{"index":5029},{"index":5030},{"index":5078},{"index":5043},{"index":5045},{"index":5074},{"index":5080},{"index":5059},{"index":4947},{"index":4933},{"index":5064},{"index":4917},{"index":4918},{"index":5068},{"index":4931},{"index":4930},{"index":5063},{"index":5042},{"index":5073},{"index":4942},{"index":4934},{"index":4937},{"index":5070},{"index":5076},{"index":5077},{"index":5066},{"index":5067}]}],"num_expected_islands":3},{"index":2,"name":"DEF-Shoulder.L","islands":[{"vert_indicies":[{"index":156},{"index":180},{"index":292},{"index":175},{"index":165},{"index":295},{"index":293},{"index":164},{"index":182},{"index":298},{"index":742},{"index":751},{"index":695},{"index":567},{"index":564},{"index":549},{"index":666},{"index":562},{"index":541},{"index":540},{"index":571},{"index":581},{"index":569},{"index":565},{"index":551},{"index":563},{"index":725},{"index":529},{"index":558},{"index":566},{"index":570},{"index":727},{"index":724},{"index":726},{"index":4718},{"index":4713},{"index":4704},{"index":4706},{"index":4698},{"index":4690},{"index":4709},{"index":694},{"index":568},{"index":556},{"index":555},{"index":297},{"index":173},{"index":174},{"index":333},{"index":186},{"index":185},{"index":334},{"index":4663},{"index":2675},{"index":2148},{"index":2147},{"index":2676},{"index":2677},{"index":4671},{"index":4659},{"index":2668},{"index":2172},{"index":2171},{"index":2177},{"index":2174},{"index":4732},{"index":4736},{"index":4744},{"index":4746},{"index":4749},{"index":4748},{"index":4741},{"index":4740},{"index":4743},{"index":4742},{"index":4730},{"index":4731},{"index":4762},{"index":4806},{"index":4668},{"index":2669},{"index":4802},{"index":4761},{"index":4758},{"index":4760},{"index":4805},{"index":4800},{"index":4801},{"index":4717},{"index":4703},{"index":4711},{"index":4790},{"index":4787},{"index":4728},{"index":4724},{"index":4726},{"index":4721},{"index":4720},{"index":4784},{"index":4094},{"index":2125},{"index":2110},{"index":2109},{"index":2111},{"index":2132},{"index":2116},{"index":2133},{"index":2115},{"index":2114},{"index":2112},{"index":2105},{"index":2113},{"index":2128},{"index":2127},{"index":2117},{"index":2126},{"index":2129},{"index":2130},{"index":2237},{"index":2121},{"index":2120},{"index":2119},{"index":2124},{"index":2118},{"index":2140},{"index":2106},{"index":2138},{"index":2107},{"index":2134},{"index":2135},{"index":2141},{"index":2139},{"index":2131},{"index":2136},{"index":2137},{"index":2108},{"index":2123},{"index":2122},{"index":2234},{"index":2228},{"index":2230},{"index":2241},{"index":2242},{"index":2238},{"index":2245},{"index":2246},{"index":2244},{"index":2240},{"index":2229},{"index":2243},{"index":2231},{"index":2239},{"index":2235},{"index":2236},{"index":2233},{"index":2232},{"index":4752},{"index":4719},{"index":4725},{"index":4723},{"index":4727},{"index":4754},{"index":4755},{"index":4753},{"index":4780},{"index":4797},{"index":4708},{"index":4702},{"index":4707},{"index":4688},{"index":1154},{"index":1175},{"index":1166},{"index":1165},{"index":1164},{"index":1163},{"index":1162},{"index":1161},{"index":1160},{"index":1159},{"index":907},{"index":401},{"index":905},{"index":1157},{"index":1158},{"index":1189},{"index":1190},{"index":1191},{"index":1192},{"index":1193},{"index":1194},{"index":1195},{"index":1196},{"index":1197},{"index":1088},{"index":1142},{"index":1091},{"index":1185},{"index":1206},{"index":1199},{"index":1090},{"index":992},{"index":984},{"index":976},{"index":975},{"index":967},{"index":977},{"index":991},{"index":1201},{"index":1170},{"index":904},{"index":903},{"index":1176},{"index":1174},{"index":1173},{"index":906},{"index":908},{"index":902},{"index":901},{"index":1155},{"index":1171},{"index":1172},{"index":1203},{"index":988},{"index":981},{"index":973},{"index":980},{"index":982},{"index":1151},{"index":1152},{"index":983},{"index":986},{"index":987},{"index":979},{"index":1204},{"index":1205},{"index":1207},{"index":1153},{"index":974},{"index":990},{"index":989},{"index":1030},{"index":1025},{"index":1031},{"index":1187},{"index":1156},{"index":402},{"index":4837},{"index":4315},{"index":4314},{"index":4317},{"index":4318},{"index":4306},{"index":4832},{"index":4821},{"index":686},{"index":4305},{"index":4316},{"index":4313},{"index":4836},{"index":4824},{"index":403},{"index":538},{"index":537},{"index":1168},{"index":1167},{"index":1169},{"index":1200},{"index":1198},{"index":4795},{"index":4302},{"index":4301},{"index":4830},{"index":4312},{"index":4782},{"index":4798},{"index":4799},{"index":4783},{"index":4781},{"index":4794},{"index":4826},{"index":4828},{"index":4827},{"index":4825},{"index":4310},{"index":4311},{"index":4835},{"index":4834},{"index":4309},{"index":4300},{"index":4829},{"index":533},{"index":539},{"index":534},{"index":535},{"index":536},{"index":4796},{"index":4303},{"index":4304},{"index":4831},{"index":4833},{"index":4308},{"index":4307},{"index":4822},{"index":4823},{"index":1188},{"index":1186},{"index":1202},{"index":985},{"index":4093},{"index":4693},{"index":4695},{"index":4101},{"index":4100},{"index":4745},{"index":4696},{"index":4710},{"index":4092},{"index":4091},{"index":4099},{"index":4729},{"index":560},{"index":424},{"index":399},{"index":423},{"index":430},{"index":434},{"index":690},{"index":448},{"index":722},{"index":449},{"index":455},{"index":438},{"index":413},{"index":687},{"index":404},{"index":435},{"index":451},{"index":433},{"index":429},{"index":414},{"index":427},{"index":718},{"index":716},{"index":415},{"index":553},{"index":715},{"index":723},{"index":552},{"index":583},{"index":573},{"index":574},{"index":579},{"index":453},{"index":439},{"index":441},{"index":412},{"index":422},{"index":523},{"index":426},{"index":405},{"index":437},{"index":452},{"index":454},{"index":440},{"index":450},{"index":428},{"index":411},{"index":524},{"index":526},{"index":4573},{"index":2546},{"index":2544},{"index":4572},{"index":4551},{"index":2545},{"index":2542},{"index":4570},{"index":4569},{"index":2541},{"index":2547},{"index":4574},{"index":4552},{"index":576},{"index":550},{"index":557},{"index":575},{"index":584},{"index":582},{"index":572},{"index":580},{"index":669},{"index":667},{"index":750},{"index":741},{"index":4579},{"index":2553},{"index":2548},{"index":4575},{"index":4577},{"index":2551},{"index":2549},{"index":4576},{"index":2550},{"index":528},{"index":527},{"index":532},{"index":397},{"index":398},{"index":400},{"index":525},{"index":2952},{"index":2493},{"index":4547},{"index":2902},{"index":2880},{"index":2919},{"index":2947},{"index":2877},{"index":2929},{"index":2869},{"index":2876},{"index":2875},{"index":2874},{"index":2873},{"index":2900},{"index":2889},{"index":2905},{"index":4518},{"index":4539},{"index":2909},{"index":2897},{"index":2891},{"index":2907},{"index":4517},{"index":4521},{"index":2901},{"index":2879},{"index":2932},{"index":2890},{"index":2906},{"index":2933},{"index":4537},{"index":4540},{"index":4523},{"index":2950},{"index":2951},{"index":4538},{"index":2910},{"index":2927},{"index":2903},{"index":2881},{"index":2925},{"index":2923},{"index":2928},{"index":2918},{"index":2899},{"index":2893},{"index":2913},{"index":2914},{"index":2894},{"index":2896},{"index":2916},{"index":2912},{"index":2888},{"index":2931},{"index":2849},{"index":2930},{"index":2886},{"index":2855},{"index":2895},{"index":2915},{"index":2934},{"index":2949},{"index":2922},{"index":2921},{"index":2946},{"index":3060},{"index":2743},{"index":2744},{"index":2771},{"index":2737},{"index":2717},{"index":2768},{"index":3026},{"index":3029},{"index":2742},{"index":2770},{"index":2708},{"index":2752},{"index":2693},{"index":2707},{"index":2706},{"index":2705},{"index":3035},{"index":2715},{"index":2735},{"index":2696},{"index":2695},{"index":2722},{"index":2711},{"index":2727},{"index":4500},{"index":847},{"index":848},{"index":849},{"index":865},{"index":850},{"index":4497},{"index":4541},{"index":2725},{"index":2749},{"index":2732},{"index":4508},{"index":4505},{"index":2747},{"index":2745},{"index":2750},{"index":2740},{"index":2721},{"index":4542},{"index":4501},{"index":2575},{"index":4598},{"index":864},{"index":866},{"index":853},{"index":858},{"index":4556},{"index":2577},{"index":2576},{"index":4599},{"index":4600},{"index":2578},{"index":2574},{"index":4597},{"index":855},{"index":861},{"index":859},{"index":856},{"index":834},{"index":840},{"index":838},{"index":836},{"index":829},{"index":830},{"index":843},{"index":831},{"index":827},{"index":833},{"index":839},{"index":841},{"index":835},{"index":832},{"index":828},{"index":844},{"index":846},{"index":4596},{"index":2573},{"index":2571},{"index":4595},{"index":4555},{"index":2572},{"index":2569},{"index":4593},{"index":4592},{"index":2568},{"index":851},{"index":824},{"index":825},{"index":826},{"index":845},{"index":2774},{"index":4491},{"index":4502},{"index":2724},{"index":2702},{"index":2741},{"index":2769},{"index":2699},{"index":2751},{"index":2691},{"index":2698},{"index":2697},{"index":2719},{"index":2731},{"index":4498},{"index":4499},{"index":2729},{"index":2713},{"index":2701},{"index":2723},{"index":2755},{"index":2728},{"index":2712},{"index":2773},{"index":2772},{"index":4504},{"index":4503},{"index":4545},{"index":4511},{"index":2754},{"index":2736},{"index":2716},{"index":2718},{"index":2738},{"index":2734},{"index":2710},{"index":2753},{"index":2756},{"index":3027},{"index":3033},{"index":3036},{"index":3032},{"index":3034},{"index":3058},{"index":3050},{"index":3056},{"index":4535},{"index":4492},{"index":3057},{"index":444},{"index":2904},{"index":757},{"index":2552},{"index":4578},{"index":769},{"index":753},{"index":756},{"index":873},{"index":870},{"index":886},{"index":4457},{"index":842},{"index":469},{"index":476},{"index":837},{"index":4462},{"index":4465},{"index":4591},{"index":2567},{"index":416},{"index":4455},{"index":874},{"index":2579},{"index":4601},{"index":4611},{"index":4488},{"index":2726},{"index":2570},{"index":4594},{"index":2508},{"index":2509},{"index":2511},{"index":4486},{"index":2473},{"index":2471},{"index":2472},{"index":2467},{"index":2491},{"index":4387},{"index":431},{"index":689},{"index":420},{"index":421},{"index":688},{"index":432},{"index":4235},{"index":4060},{"index":4059},{"index":4070},{"index":4064},{"index":4247},{"index":445},{"index":446},{"index":442},{"index":447},{"index":4369},{"index":2434},{"index":2433},{"index":2428},{"index":2430},{"index":2426},{"index":4375},{"index":443},{"index":406},{"index":4374},{"index":696},{"index":407},{"index":714},{"index":408},{"index":546},{"index":545},{"index":740},{"index":544},{"index":543},{"index":4700},{"index":4716},{"index":4692},{"index":4691},{"index":554},{"index":418},{"index":417},{"index":419},{"index":721},{"index":4242},{"index":4072},{"index":4063},{"index":4244},{"index":4376},{"index":4039},{"index":4038},{"index":4250},{"index":4378},{"index":4246},{"index":4066},{"index":4062},{"index":4249},{"index":4248},{"index":4065},{"index":4085},{"index":4083},{"index":4057},{"index":4234},{"index":4239},{"index":4061},{"index":4069},{"index":4068},{"index":4073},{"index":4237},{"index":4236},{"index":4238},{"index":4240},{"index":4067},{"index":4763},{"index":4098},{"index":4102},{"index":4095},{"index":4096},{"index":4803},{"index":4756},{"index":4058},{"index":4071},{"index":4705},{"index":4077},{"index":4081},{"index":4087},{"index":4086},{"index":4084},{"index":4243},{"index":4377},{"index":4245},{"index":4738},{"index":4103},{"index":4722},{"index":4792},{"index":4789},{"index":4785},{"index":4788},{"index":4786},{"index":4793},{"index":4791},{"index":4819},{"index":4820},{"index":4811},{"index":4771},{"index":4759},{"index":4818},{"index":4747},{"index":4734},{"index":4735},{"index":4739},{"index":4737},{"index":4733},{"index":4767},{"index":4809},{"index":4816},{"index":4779},{"index":4774},{"index":4815},{"index":4751},{"index":4776},{"index":4757},{"index":4750},{"index":4813},{"index":4772},{"index":4773},{"index":4814},{"index":4778},{"index":4770},{"index":4768},{"index":4766},{"index":4808},{"index":4810},{"index":4812},{"index":4764},{"index":4097},{"index":4104},{"index":4107},{"index":4807},{"index":4694},{"index":4108},{"index":4105},{"index":4765},{"index":4689},{"index":4106},{"index":4697},{"index":4715},{"index":4390},{"index":2494},{"index":2495},{"index":2496},{"index":4404},{"index":4389},{"index":2490},{"index":4241},{"index":4386},{"index":2488},{"index":2489},{"index":2492},{"index":4399},{"index":4608},{"index":4405},{"index":2584},{"index":4490},{"index":2474},{"index":2583},{"index":4604},{"index":4612},{"index":4487},{"index":2585},{"index":2512},{"index":4468},{"index":4606},{"index":4605},{"index":2543},{"index":4571},{"index":4398},{"index":4480},{"index":4483},{"index":3061},{"index":860},{"index":862},{"index":857},{"index":854},{"index":863},{"index":852},{"index":867},{"index":868},{"index":3052},{"index":3053},{"index":2884},{"index":2856},{"index":2857},{"index":2854},{"index":2885},{"index":2871},{"index":2858},{"index":3048},{"index":3063},{"index":3055},{"index":3054},{"index":4519},{"index":668},{"index":530},{"index":4536},{"index":531},{"index":299},{"index":4516},{"index":4565},{"index":559},{"index":719},{"index":717},{"index":720},{"index":728},{"index":692},{"index":693},{"index":691},{"index":4664},{"index":4712},{"index":4714}]},{"vert_indicies":[{"index":4857},{"index":4858},{"index":4865},{"index":4866},{"index":4867},{"index":4864},{"index":4976},{"index":4975},{"index":4965},{"index":4977},{"index":4970},{"index":4969},{"index":4971},{"index":4972},{"index":4985},{"index":4984},{"index":4989},{"index":4877},{"index":4872},{"index":4873},{"index":4860},{"index":4859},{"index":5082},{"index":4884},{"index":4888},{"index":5086},{"index":5087},{"index":4889},{"index":4892},{"index":5090},{"index":5091},{"index":4893},{"index":5005},{"index":5101},{"index":5100},{"index":5004},{"index":5001},{"index":5097},{"index":5096},{"index":5000},{"index":4996},{"index":5092},{"index":5093},{"index":4997},{"index":4998},{"index":5094},{"index":5095},{"index":4999},{"index":5002},{"index":5098},{"index":4978},{"index":4979},{"index":5099},{"index":5003},{"index":4891},{"index":5089},{"index":5088},{"index":4890},{"index":4887},{"index":5085},{"index":5084},{"index":4886},{"index":4885},{"index":5083}]}],"num_expected_islands":2},{"index":3,"name":"DEF-Finger_Index_Carpal.L"},{"index":4,"name":"DEF-Finger_Index3.L"},{"index":5,"name":"DEF-Finger_Index2.L"},{"index":6,"name":"DEF-Finger_Index1.L"},{"index":7,"name":"DEF-Finger_Middle_Carpal.L"},{"index":8,"name":"DEF-Finger_Middle3.L"},{"index":9,"name":"DEF-Finger_Middle2.L"},{"index":10,"name":"DEF-Finger_Middle1.L"},{"index":11,"name":"DEF-Finger_Ring_Carpal.L"},{"index":12,"name":"DEF-Finger_Ring3.L"},{"index":13,"name":"DEF-Finger_Ring2.L"},{"index":14,"name":"DEF-Finger_Ring1.L"},{"index":15,"name":"DEF-Finger_Pinky_Carpal.L"},{"index":16,"name":"DEF-Finger_Pinky3.L"},{"index":17,"name":"DEF-Finger_Pinky2.L"},{"index":18,"name":"DEF-Finger_Pinky1.L"},{"index":19,"name":"DEF-Wrist.L"},{"index":20,"name":"DEF-Finger_Thumb3.L"},{"index":21,"name":"DEF-Finger_Thumb2.L"},{"index":22,"name":"DEF-Finger_Thumb1.L"},{"index":23,"name":"DEF-Forearm2.L"},{"index":24,"name":"DEF-Forearm1.L"},{"index":25,"name":"DEF-UpperArm1.L","islands":[{"vert_indicies":[{"index":399},{"index":423},{"index":430},{"index":434},{"index":690},{"index":448},{"index":722},{"index":728},{"index":720},{"index":433},{"index":429},{"index":414},{"index":427},{"index":718},{"index":716},{"index":415},{"index":424},{"index":560},{"index":559},{"index":529},{"index":558},{"index":4745},{"index":4100},{"index":2126},{"index":2117},{"index":2127},{"index":2128},{"index":2113},{"index":2105},{"index":2112},{"index":2114},{"index":2115},{"index":2133},{"index":2116},{"index":2132},{"index":2111},{"index":2109},{"index":2110},{"index":2125},{"index":2228},{"index":2123},{"index":2108},{"index":2137},{"index":2136},{"index":2131},{"index":2139},{"index":2141},{"index":2135},{"index":2134},{"index":2107},{"index":2138},{"index":2106},{"index":2140},{"index":2118},{"index":2124},{"index":2119},{"index":2120},{"index":2121},{"index":2237},{"index":2232},{"index":2233},{"index":2236},{"index":2235},{"index":2239},{"index":2231},{"index":2243},{"index":2229},{"index":2240},{"index":2244},{"index":2246},{"index":2245},{"index":2238},{"index":2242},{"index":2241},{"index":2230},{"index":4754},{"index":4727},{"index":4723},{"index":4725},{"index":4719},{"index":4752},{"index":2234},{"index":2122},{"index":4302},{"index":4301},{"index":4830},{"index":538},{"index":403},{"index":904},{"index":903},{"index":1176},{"index":1170},{"index":1169},{"index":1167},{"index":1168},{"index":1154},{"index":1175},{"index":1166},{"index":1165},{"index":1164},{"index":1163},{"index":1162},{"index":1161},{"index":1160},{"index":1159},{"index":907},{"index":401},{"index":905},{"index":1157},{"index":1158},{"index":1189},{"index":1028},{"index":1023},{"index":1021},{"index":1020},{"index":1019},{"index":1015},{"index":1010},{"index":1011},{"index":1005},{"index":999},{"index":1003},{"index":997},{"index":994},{"index":932},{"index":931},{"index":930},{"index":922},{"index":938},{"index":934},{"index":920},{"index":1145},{"index":918},{"index":923},{"index":924},{"index":940},{"index":939},{"index":937},{"index":944},{"index":947},{"index":948},{"index":1062},{"index":1058},{"index":1057},{"index":1041},{"index":1059},{"index":1063},{"index":1067},{"index":1071},{"index":1075},{"index":1081},{"index":1140},{"index":1080},{"index":1076},{"index":1139},{"index":1138},{"index":1072},{"index":1068},{"index":1137},{"index":1136},{"index":1064},{"index":1060},{"index":1135},{"index":1134},{"index":1061},{"index":1096},{"index":1094},{"index":1095},{"index":1093},{"index":1000},{"index":1181},{"index":1180},{"index":1179},{"index":995},{"index":998},{"index":1182},{"index":1092},{"index":1053},{"index":1054},{"index":1001},{"index":1004},{"index":1007},{"index":1006},{"index":1097},{"index":1102},{"index":1103},{"index":1098},{"index":1099},{"index":1100},{"index":1101},{"index":1065},{"index":1069},{"index":1106},{"index":1112},{"index":1073},{"index":1077},{"index":1078},{"index":1123},{"index":1122},{"index":1119},{"index":1113},{"index":1104},{"index":1105},{"index":1111},{"index":1110},{"index":1109},{"index":1107},{"index":1013},{"index":1012},{"index":1016},{"index":1017},{"index":1108},{"index":1022},{"index":1024},{"index":1029},{"index":1128},{"index":1124},{"index":1114},{"index":1115},{"index":1117},{"index":1118},{"index":1120},{"index":1116},{"index":1125},{"index":1126},{"index":1127},{"index":1131},{"index":1089},{"index":1084},{"index":1083},{"index":1082},{"index":1088},{"index":1087},{"index":1196},{"index":1197},{"index":1206},{"index":1142},{"index":1091},{"index":1086},{"index":1141},{"index":1085},{"index":1079},{"index":1074},{"index":1070},{"index":1066},{"index":955},{"index":954},{"index":951},{"index":959},{"index":960},{"index":961},{"index":969},{"index":968},{"index":965},{"index":967},{"index":975},{"index":976},{"index":977},{"index":991},{"index":984},{"index":992},{"index":985},{"index":978},{"index":1090},{"index":1199},{"index":1198},{"index":1200},{"index":1201},{"index":1207},{"index":1153},{"index":986},{"index":983},{"index":1152},{"index":1151},{"index":982},{"index":966},{"index":956},{"index":952},{"index":1148},{"index":1149},{"index":1150},{"index":1147},{"index":945},{"index":935},{"index":936},{"index":941},{"index":943},{"index":942},{"index":993},{"index":996},{"index":1002},{"index":950},{"index":949},{"index":946},{"index":953},{"index":957},{"index":958},{"index":1008},{"index":1009},{"index":964},{"index":963},{"index":962},{"index":971},{"index":970},{"index":972},{"index":1014},{"index":1018},{"index":974},{"index":973},{"index":980},{"index":979},{"index":981},{"index":990},{"index":989},{"index":988},{"index":987},{"index":1204},{"index":1173},{"index":906},{"index":908},{"index":902},{"index":901},{"index":1155},{"index":1171},{"index":1172},{"index":1203},{"index":1202},{"index":1186},{"index":1030},{"index":1025},{"index":1026},{"index":1027},{"index":1032},{"index":1031},{"index":1187},{"index":1156},{"index":402},{"index":4837},{"index":4315},{"index":4314},{"index":4317},{"index":4318},{"index":4306},{"index":4832},{"index":4821},{"index":686},{"index":1174},{"index":1205},{"index":4305},{"index":4316},{"index":4313},{"index":4836},{"index":4824},{"index":4312},{"index":4826},{"index":4828},{"index":4827},{"index":4825},{"index":4310},{"index":4311},{"index":4835},{"index":4834},{"index":4309},{"index":4300},{"index":4829},{"index":533},{"index":539},{"index":534},{"index":535},{"index":536},{"index":4796},{"index":4303},{"index":4304},{"index":4831},{"index":4833},{"index":4308},{"index":4307},{"index":4822},{"index":4780},{"index":4797},{"index":4708},{"index":4702},{"index":4707},{"index":4688},{"index":4798},{"index":4782},{"index":4783},{"index":4799},{"index":4794},{"index":4781},{"index":4795},{"index":537},{"index":4823},{"index":1188},{"index":1146},{"index":1185},{"index":1195},{"index":1194},{"index":1193},{"index":1130},{"index":1129},{"index":1192},{"index":1191},{"index":1190},{"index":1121},{"index":4720},{"index":4721},{"index":4726},{"index":4753},{"index":4755},{"index":4788},{"index":4785},{"index":4784},{"index":4094},{"index":4103},{"index":4738},{"index":4722},{"index":554},{"index":418},{"index":417},{"index":419},{"index":721},{"index":443},{"index":4244},{"index":4376},{"index":4039},{"index":2426},{"index":4375},{"index":2433},{"index":2434},{"index":4250},{"index":4038},{"index":4377},{"index":4378},{"index":4246},{"index":447},{"index":442},{"index":446},{"index":4248},{"index":4065},{"index":4062},{"index":4249},{"index":4083},{"index":4057},{"index":4234},{"index":413},{"index":687},{"index":404},{"index":435},{"index":451},{"index":693},{"index":455},{"index":438},{"index":691},{"index":4239},{"index":4061},{"index":4069},{"index":4087},{"index":4086},{"index":4238},{"index":452},{"index":437},{"index":405},{"index":426},{"index":523},{"index":422},{"index":440},{"index":454},{"index":450},{"index":441},{"index":412},{"index":526},{"index":524},{"index":411},{"index":428},{"index":431},{"index":689},{"index":420},{"index":421},{"index":688},{"index":432},{"index":4235},{"index":4060},{"index":4059},{"index":4070},{"index":4085},{"index":685},{"index":4404},{"index":2496},{"index":2495},{"index":2490},{"index":4389},{"index":4387},{"index":2491},{"index":2488},{"index":4386},{"index":4398},{"index":2489},{"index":2492},{"index":4399},{"index":4608},{"index":4405},{"index":2584},{"index":4490},{"index":2543},{"index":4571},{"index":4573},{"index":2546},{"index":2544},{"index":4572},{"index":525},{"index":2952},{"index":2493},{"index":4547},{"index":2902},{"index":2880},{"index":2919},{"index":2947},{"index":2877},{"index":2890},{"index":2906},{"index":2950},{"index":4523},{"index":4540},{"index":2951},{"index":2932},{"index":2879},{"index":2891},{"index":2915},{"index":2895},{"index":2946},{"index":2921},{"index":2922},{"index":2949},{"index":3061},{"index":2744},{"index":2771},{"index":2737},{"index":2717},{"index":2768},{"index":2743},{"index":3029},{"index":3026},{"index":3033},{"index":2708},{"index":2752},{"index":3063},{"index":2930},{"index":2886},{"index":2855},{"index":2849},{"index":2931},{"index":2848},{"index":2948},{"index":2920},{"index":2851},{"index":3046},{"index":3059},{"index":2742},{"index":2770},{"index":3065},{"index":3055},{"index":3060},{"index":2699},{"index":2751},{"index":2691},{"index":2701},{"index":2723},{"index":2729},{"index":2713},{"index":2731},{"index":2727},{"index":2711},{"index":2732},{"index":2755},{"index":2754},{"index":2712},{"index":2773},{"index":2769},{"index":2741},{"index":3058},{"index":4605},{"index":4604},{"index":2583},{"index":2473},{"index":2471},{"index":2472},{"index":2467},{"index":2468},{"index":2475},{"index":4480},{"index":4483},{"index":4486},{"index":4241},{"index":4369},{"index":4242},{"index":4072},{"index":4058},{"index":4756},{"index":4095},{"index":4096},{"index":4803},{"index":4102},{"index":4098},{"index":4763},{"index":4067},{"index":4240},{"index":4237},{"index":4073},{"index":4077},{"index":4071},{"index":4705},{"index":4715},{"index":4697},{"index":4104},{"index":4107},{"index":4807},{"index":4694},{"index":4108},{"index":4105},{"index":4765},{"index":4689},{"index":4106},{"index":4099},{"index":4729},{"index":4710},{"index":4092},{"index":4091},{"index":4696},{"index":4097},{"index":4245},{"index":4691},{"index":4692},{"index":4789},{"index":4792},{"index":4791},{"index":4819},{"index":4748},{"index":4747},{"index":4764},{"index":4812},{"index":4818},{"index":715},{"index":719},{"index":717}]}]},{"index":26,"name":"DEF-UpperArm2.L","islands":[{"vert_indicies":[{"index":918},{"index":923},{"index":924},{"index":940},{"index":939},{"index":937},{"index":944},{"index":947},{"index":948},{"index":1062},{"index":1058},{"index":1057},{"index":1041},{"index":1059},{"index":1063},{"index":1136},{"index":1064},{"index":1060},{"index":1135},{"index":1134},{"index":1061},{"index":1096},{"index":1094},{"index":1095},{"index":1093},{"index":1000},{"index":1181},{"index":1180},{"index":1179},{"index":995},{"index":994},{"index":932},{"index":931},{"index":930},{"index":922},{"index":938},{"index":934},{"index":920},{"index":1145},{"index":1146},{"index":935},{"index":936},{"index":941},{"index":943},{"index":942},{"index":993},{"index":996},{"index":1002},{"index":950},{"index":1003},{"index":999},{"index":998},{"index":997},{"index":945},{"index":1147},{"index":1182},{"index":1092},{"index":1053},{"index":1054},{"index":1099},{"index":1101},{"index":1065},{"index":1106}]}]},{"index":27,"name":"DEF-Shoulder.R","islands":[{"vert_indicies":[{"index":0},{"index":1},{"index":3},{"index":4530},{"index":3024},{"index":2996},{"index":2980},{"index":2965},{"index":3020},{"index":2955},{"index":2964},{"index":2963},{"index":2962},{"index":2979},{"index":2995},{"index":4524},{"index":142},{"index":143},{"index":145},{"index":294},{"index":146},{"index":299},{"index":4522},{"index":4520},{"index":4526},{"index":4531},{"index":4527},{"index":3000},{"index":2990},{"index":4516},{"index":2553},{"index":4579},{"index":750},{"index":741},{"index":549},{"index":667},{"index":4575},{"index":164},{"index":182},{"index":180},{"index":292},{"index":175},{"index":194},{"index":209},{"index":167},{"index":181},{"index":373},{"index":144},{"index":176},{"index":184},{"index":188},{"index":335},{"index":202},{"index":377},{"index":203},{"index":210},{"index":191},{"index":166},{"index":332},{"index":155},{"index":189},{"index":206},{"index":187},{"index":183},{"index":372},{"index":375},{"index":379},{"index":337},{"index":338},{"index":336},{"index":374},{"index":207},{"index":190},{"index":156},{"index":186},{"index":333},{"index":174},{"index":173},{"index":334},{"index":185},{"index":4664},{"index":2676},{"index":2147},{"index":2148},{"index":2150},{"index":2149},{"index":2162},{"index":2163},{"index":2160},{"index":2161},{"index":2169},{"index":2170},{"index":2167},{"index":2164},{"index":2155},{"index":2151},{"index":2166},{"index":2159},{"index":2157},{"index":2152},{"index":2156},{"index":2158},{"index":2154},{"index":2153},{"index":2168},{"index":2678},{"index":2682},{"index":2684},{"index":4676},{"index":197},{"index":158},{"index":159},{"index":391},{"index":160},{"index":161},{"index":16},{"index":362},{"index":15},{"index":339},{"index":14},{"index":55},{"index":369},{"index":28},{"index":26},{"index":27},{"index":170},{"index":171},{"index":172},{"index":376},{"index":4674},{"index":4679},{"index":4685},{"index":4619},{"index":4291},{"index":2089},{"index":2088},{"index":2087},{"index":2071},{"index":2070},{"index":2072},{"index":2100},{"index":2078},{"index":2102},{"index":2076},{"index":2075},{"index":2073},{"index":2062},{"index":2074},{"index":2092},{"index":2091},{"index":2079},{"index":2090},{"index":2093},{"index":2094},{"index":2104},{"index":2096},{"index":2098},{"index":2262},{"index":2097},{"index":2095},{"index":2103},{"index":2144},{"index":2082},{"index":2143},{"index":2086},{"index":2081},{"index":2080},{"index":2142},{"index":2069},{"index":2063},{"index":2064},{"index":2065},{"index":2101},{"index":2077},{"index":2099},{"index":2066},{"index":2067},{"index":2068},{"index":2085},{"index":2084},{"index":2083},{"index":2247},{"index":2259},{"index":2248},{"index":2253},{"index":2252},{"index":2254},{"index":2263},{"index":2257},{"index":2264},{"index":2256},{"index":2250},{"index":2251},{"index":2255},{"index":2267},{"index":2249},{"index":2260},{"index":2261},{"index":2268},{"index":2258},{"index":2269},{"index":2265},{"index":2266},{"index":4261},{"index":4651},{"index":151},{"index":152},{"index":153},{"index":10},{"index":9},{"index":8},{"index":321},{"index":59},{"index":323},{"index":7},{"index":6},{"index":5},{"index":11},{"index":1469},{"index":1444},{"index":1323},{"index":1319},{"index":1320},{"index":1411},{"index":1412},{"index":1413},{"index":1414},{"index":1372},{"index":1370},{"index":1371},{"index":1453},{"index":1478},{"index":201},{"index":320},{"index":1485},{"index":1462},{"index":1424},{"index":1374},{"index":1441},{"index":1466},{"index":1479},{"index":1455},{"index":1373},{"index":1283},{"index":1275},{"index":1282},{"index":1268},{"index":1433},{"index":1274},{"index":1273},{"index":1257},{"index":1262},{"index":1261},{"index":1271},{"index":1270},{"index":1272},{"index":1278},{"index":1277},{"index":1461},{"index":1484},{"index":1483},{"index":1460},{"index":1459},{"index":1482},{"index":1481},{"index":1458},{"index":1280},{"index":1321},{"index":1322},{"index":1443},{"index":1468},{"index":1467},{"index":1442},{"index":1486},{"index":1463},{"index":1434},{"index":1457},{"index":1480},{"index":1465},{"index":1456},{"index":1454},{"index":1464},{"index":1432},{"index":4657},{"index":4274},{"index":4260},{"index":4259},{"index":4650},{"index":331},{"index":1477},{"index":1452},{"index":1451},{"index":1476},{"index":1210},{"index":150},{"index":1209},{"index":1474},{"index":1449},{"index":1450},{"index":1475},{"index":1448},{"index":1473},{"index":1472},{"index":1447},{"index":1446},{"index":1471},{"index":1470},{"index":1445},{"index":1208},{"index":148},{"index":149},{"index":154},{"index":4645},{"index":4271},{"index":4268},{"index":4654},{"index":4644},{"index":4269},{"index":4272},{"index":4646},{"index":4254},{"index":4255},{"index":4648},{"index":4636},{"index":4641},{"index":4264},{"index":4263},{"index":4652},{"index":4643},{"index":4267},{"index":4266},{"index":4653},{"index":4655},{"index":4270},{"index":4273},{"index":4656},{"index":4647},{"index":4276},{"index":4258},{"index":4256},{"index":4257},{"index":4649},{"index":4637},{"index":4638},{"index":4658},{"index":4275},{"index":4265},{"index":4262},{"index":4640},{"index":4642},{"index":4639},{"index":4297},{"index":4293},{"index":4634},{"index":4620},{"index":4294},{"index":4296},{"index":4299},{"index":4635},{"index":4629},{"index":4286},{"index":4285},{"index":4298},{"index":4284},{"index":4628},{"index":178},{"index":34},{"index":2},{"index":33},{"index":41},{"index":45},{"index":327},{"index":60},{"index":370},{"index":61},{"index":67},{"index":49},{"index":22},{"index":324},{"index":12},{"index":46},{"index":63},{"index":44},{"index":40},{"index":23},{"index":37},{"index":366},{"index":364},{"index":24},{"index":169},{"index":363},{"index":371},{"index":168},{"index":208},{"index":192},{"index":193},{"index":204},{"index":65},{"index":50},{"index":52},{"index":21},{"index":32},{"index":138},{"index":36},{"index":13},{"index":48},{"index":64},{"index":66},{"index":51},{"index":62},{"index":38},{"index":20},{"index":139},{"index":141},{"index":4563},{"index":2534},{"index":2532},{"index":4562},{"index":4549},{"index":2533},{"index":2530},{"index":4560},{"index":4559},{"index":2529},{"index":2535},{"index":4564},{"index":4550},{"index":195},{"index":165},{"index":295},{"index":293},{"index":4565},{"index":2536},{"index":2539},{"index":4567},{"index":4566},{"index":2537},{"index":2538},{"index":205},{"index":147},{"index":4525},{"index":2999},{"index":2987},{"index":2981},{"index":2997},{"index":2991},{"index":2967},{"index":3023},{"index":4528},{"index":4546},{"index":2531},{"index":4561},{"index":4610},{"index":4432},{"index":4427},{"index":2528},{"index":53},{"index":776},{"index":789},{"index":2554},{"index":4580},{"index":796},{"index":778},{"index":784},{"index":783},{"index":779},{"index":794},{"index":782},{"index":777},{"index":785},{"index":791},{"index":793},{"index":787},{"index":781},{"index":780},{"index":788},{"index":4553},{"index":2559},{"index":2558},{"index":4584},{"index":4585},{"index":2560},{"index":2557},{"index":4583},{"index":795},{"index":798},{"index":4451},{"index":4452},{"index":4453},{"index":4494},{"index":4529},{"index":2992},{"index":2968},{"index":3010},{"index":3039},{"index":3041},{"index":3013},{"index":3012},{"index":3038},{"index":2985},{"index":3006},{"index":3025},{"index":3003},{"index":2978},{"index":3022},{"index":2758},{"index":3021},{"index":2975},{"index":2764},{"index":3075},{"index":2797},{"index":2843},{"index":2779},{"index":2796},{"index":2941},{"index":2808},{"index":2829},{"index":2786},{"index":2777},{"index":2789},{"index":2813},{"index":2819},{"index":2803},{"index":2809},{"index":2821},{"index":4507},{"index":803},{"index":773},{"index":774},{"index":775},{"index":797},{"index":2866},{"index":4496},{"index":4512},{"index":2814},{"index":2790},{"index":2832},{"index":2861},{"index":2787},{"index":2842},{"index":2847},{"index":2828},{"index":2807},{"index":2860},{"index":2834},{"index":2835},{"index":2863},{"index":3080},{"index":3079},{"index":3077},{"index":3070},{"index":3076},{"index":4534},{"index":4495},{"index":2938},{"index":2935},{"index":2942},{"index":2936},{"index":2945},{"index":2800},{"index":2844},{"index":2825},{"index":2862},{"index":2833},{"index":2845},{"index":2802},{"index":2818},{"index":2846},{"index":4532},{"index":4544},{"index":4509},{"index":4514},{"index":4515},{"index":2864},{"index":2865},{"index":2556},{"index":4582},{"index":786},{"index":792},{"index":811},{"index":808},{"index":807},{"index":813},{"index":812},{"index":810},{"index":805},{"index":806},{"index":815},{"index":804},{"index":816},{"index":818},{"index":4589},{"index":2565},{"index":2563},{"index":4588},{"index":4554},{"index":2564},{"index":2561},{"index":4586},{"index":4581},{"index":2555},{"index":799},{"index":800},{"index":801},{"index":817},{"index":802},{"index":819},{"index":850},{"index":4497},{"index":4542},{"index":4501},{"index":4543},{"index":2575},{"index":4598},{"index":864},{"index":866},{"index":863},{"index":852},{"index":867},{"index":868},{"index":4602},{"index":2580},{"index":2562},{"index":4587},{"index":4510},{"index":2822},{"index":2812},{"index":2801},{"index":2817},{"index":4506},{"index":2784},{"index":2785},{"index":809},{"index":814},{"index":790},{"index":3074},{"index":2974},{"index":2763},{"index":2986},{"index":3007},{"index":3005},{"index":2767},{"index":2957},{"index":3067},{"index":3082},{"index":3043},{"index":3042},{"index":4533},{"index":3044},{"index":4493},{"index":4548},{"index":900},{"index":821},{"index":820},{"index":823},{"index":4383},{"index":396},{"index":392},{"index":394},{"index":4381},{"index":4},{"index":896},{"index":39},{"index":25},{"index":322},{"index":29},{"index":4409},{"index":4434},{"index":4042},{"index":4043},{"index":4231},{"index":31},{"index":30},{"index":326},{"index":42},{"index":43},{"index":325},{"index":4436},{"index":4411},{"index":4426},{"index":4449},{"index":4410},{"index":4435},{"index":4447},{"index":4423},{"index":19},{"index":140},{"index":4408},{"index":4433},{"index":4609},{"index":4558},{"index":4603},{"index":2582},{"index":890},{"index":395},{"index":4382},{"index":822},{"index":2566},{"index":4590},{"index":4607},{"index":4385},{"index":2540},{"index":4568},{"index":4557},{"index":899},{"index":898},{"index":2581},{"index":897},{"index":4384},{"index":892},{"index":891},{"index":4230},{"index":4228},{"index":4040},{"index":4044},{"index":4229},{"index":4232},{"index":4052},{"index":4051},{"index":4233},{"index":4226},{"index":4056},{"index":4050},{"index":4054},{"index":4041},{"index":4219},{"index":4221},{"index":4055},{"index":4046},{"index":4079},{"index":4078},{"index":4080},{"index":4074},{"index":4049},{"index":4220},{"index":58},{"index":54},{"index":57},{"index":56},{"index":4223},{"index":4047},{"index":4048},{"index":4045},{"index":4075},{"index":4076},{"index":4053},{"index":4448},{"index":4425},{"index":4412},{"index":4430},{"index":4218},{"index":4222},{"index":4342},{"index":2395},{"index":2394},{"index":2388},{"index":2390},{"index":2392},{"index":4321},{"index":4348},{"index":4224},{"index":4225},{"index":4082},{"index":4347},{"index":4251},{"index":4253},{"index":4349},{"index":4252},{"index":4323},{"index":4625},{"index":4278},{"index":4277},{"index":4295},{"index":4292},{"index":4633},{"index":4632},{"index":4290},{"index":4621},{"index":4613},{"index":4289},{"index":4631},{"index":4615},{"index":4281},{"index":4282},{"index":4627},{"index":4618},{"index":4287},{"index":4288},{"index":4630},{"index":4614},{"index":4279},{"index":4280},{"index":4626},{"index":4616},{"index":4283},{"index":4227},{"index":895},{"index":177},{"index":4624},{"index":4617},{"index":367},{"index":365},{"index":368},{"index":378},{"index":329},{"index":330},{"index":328},{"index":4622},{"index":4623},{"index":4686},{"index":4687},{"index":4678},{"index":2689},{"index":2671},{"index":2672},{"index":4669},{"index":4660},{"index":2670},{"index":2673},{"index":2674},{"index":4670},{"index":4663},{"index":2675},{"index":4662},{"index":4661},{"index":157},{"index":200},{"index":4666},{"index":2685},{"index":4135},{"index":4088},{"index":4680},{"index":2182},{"index":2179},{"index":2282},{"index":2181},{"index":2183},{"index":4127},{"index":196},{"index":199},{"index":4672},{"index":2679},{"index":2681},{"index":4673},{"index":2683},{"index":4675},{"index":4683},{"index":4137},{"index":4090},{"index":4682},{"index":4681},{"index":4089},{"index":4136},{"index":2688},{"index":2283},{"index":179},{"index":4124},{"index":4114},{"index":4115},{"index":4684}]},{"vert_indicies":[{"index":753},{"index":756},{"index":754},{"index":772},{"index":755},{"index":771},{"index":758},{"index":875},{"index":888},{"index":872},{"index":889},{"index":871},{"index":873},{"index":870},{"index":886},{"index":769},{"index":4462},{"index":4463},{"index":837},{"index":4460},{"index":4461},{"index":4458},{"index":4459},{"index":2514},{"index":2515},{"index":2516},{"index":2510},{"index":2507},{"index":2508},{"index":2509},{"index":4480},{"index":4481},{"index":2467},{"index":2468},{"index":2475},{"index":2476},{"index":2466},{"index":4475},{"index":4474},{"index":4479},{"index":4478},{"index":2494}]},{"vert_indicies":[{"index":4901},{"index":4902},{"index":4911},{"index":4913},{"index":4912},{"index":4907},{"index":4906},{"index":4904},{"index":4908},{"index":4909},{"index":4918},{"index":4917},{"index":4942},{"index":5054},{"index":5029},{"index":5030},{"index":5021},{"index":5020},{"index":5018},{"index":5019},{"index":5024},{"index":5025},{"index":5023},{"index":5014},{"index":5009},{"index":5035},{"index":5037},{"index":5010},{"index":5058},{"index":5048},{"index":5055},{"index":5081},{"index":5060},{"index":5044},{"index":5041},{"index":5040},{"index":5079},{"index":5072},{"index":5039},{"index":5038},{"index":5075},{"index":5073},{"index":5042},{"index":5043},{"index":5045},{"index":5074},{"index":5080},{"index":5059},{"index":4947},{"index":4933},{"index":5064},{"index":5070},{"index":5068},{"index":4931},{"index":4930},{"index":5063},{"index":5065},{"index":4926},{"index":4927},{"index":5062},{"index":5069},{"index":4928},{"index":4929},{"index":4932},{"index":5067},{"index":5071},{"index":4943},{"index":4936},{"index":4948},{"index":5066},{"index":5078},{"index":5076},{"index":5077},{"index":5008},{"index":5012},{"index":5016},{"index":5013},{"index":5015},{"index":5011},{"index":5007},{"index":5017}]}]},{"index":28,"name":"DEF-Finger_Index_Carpal.R"},{"index":29,"name":"DEF-Finger_Index3.R"},{"index":30,"name":"DEF-Finger_Index2.R"},{"index":31,"name":"DEF-Finger_Index1.R"},{"index":32,"name":"DEF-Finger_Middle_Carpal.R"},{"index":33,"name":"DEF-Finger_Middle3.R"},{"index":34,"name":"DEF-Finger_Middle2.R"},{"index":35,"name":"DEF-Finger_Middle1.R"},{"index":36,"name":"DEF-Finger_Ring_Carpal.R"},{"index":37,"name":"DEF-Finger_Ring3.R"},{"index":38,"name":"DEF-Finger_Ring2.R"},{"index":39,"name":"DEF-Finger_Ring1.R"},{"index":40,"name":"DEF-Finger_Pinky_Carpal.R"},{"index":41,"name":"DEF-Finger_Pinky3.R"},{"index":42,"name":"DEF-Finger_Pinky2.R"},{"index":43,"name":"DEF-Finger_Pinky1.R"},{"index":44,"name":"DEF-Wrist.R"},{"index":45,"name":"DEF-Finger_Thumb3.R"},{"index":46,"name":"DEF-Finger_Thumb2.R"},{"index":47,"name":"DEF-Finger_Thumb1.R"},{"index":48,"name":"DEF-Forearm2.R"},{"index":49,"name":"DEF-Forearm1.R"},{"index":50,"name":"DEF-UpperArm1.R","islands":[{"vert_indicies":[{"index":5},{"index":6},{"index":7},{"index":323},{"index":59},{"index":321},{"index":8},{"index":9},{"index":10},{"index":153},{"index":152},{"index":151},{"index":320},{"index":201},{"index":331},{"index":1477},{"index":1452},{"index":1370},{"index":1366},{"index":1365},{"index":1363},{"index":1359},{"index":1421},{"index":1358},{"index":1354},{"index":1350},{"index":1346},{"index":1342},{"index":1328},{"index":1416},{"index":1329},{"index":1330},{"index":1339},{"index":1379},{"index":1344},{"index":1343},{"index":1417},{"index":1418},{"index":1347},{"index":1348},{"index":1352},{"index":1351},{"index":1419},{"index":1420},{"index":1355},{"index":1356},{"index":1395},{"index":1389},{"index":1384},{"index":1383},{"index":1382},{"index":1378},{"index":1376},{"index":1291},{"index":1438},{"index":1437},{"index":1436},{"index":1286},{"index":1285},{"index":1223},{"index":1224},{"index":1284},{"index":1233},{"index":1229},{"index":1232},{"index":1227},{"index":1226},{"index":1236},{"index":1428},{"index":1235},{"index":1228},{"index":1230},{"index":1231},{"index":1341},{"index":1345},{"index":1239},{"index":1238},{"index":1245},{"index":1242},{"index":1250},{"index":1251},{"index":1252},{"index":1246},{"index":1349},{"index":1353},{"index":1357},{"index":1260},{"index":1259},{"index":1256},{"index":1258},{"index":1266},{"index":1267},{"index":1268},{"index":1282},{"index":1275},{"index":1283},{"index":1276},{"index":1269},{"index":1362},{"index":1368},{"index":1373},{"index":1455},{"index":1479},{"index":1466},{"index":1441},{"index":1374},{"index":1369},{"index":1364},{"index":1422},{"index":1423},{"index":1424},{"index":1371},{"index":1453},{"index":1478},{"index":1485},{"index":1462},{"index":1464},{"index":1454},{"index":1456},{"index":1465},{"index":1480},{"index":1457},{"index":1463},{"index":1434},{"index":1277},{"index":1274},{"index":1433},{"index":1432},{"index":1273},{"index":1257},{"index":1247},{"index":1243},{"index":1429},{"index":1430},{"index":1431},{"index":1244},{"index":1237},{"index":1240},{"index":1241},{"index":1234},{"index":1287},{"index":1293},{"index":1299},{"index":1249},{"index":1248},{"index":1254},{"index":1253},{"index":1262},{"index":1261},{"index":1263},{"index":1255},{"index":1300},{"index":1305},{"index":1309},{"index":1265},{"index":1264},{"index":1271},{"index":1270},{"index":1272},{"index":1281},{"index":1280},{"index":1279},{"index":1278},{"index":1460},{"index":1483},{"index":1482},{"index":1459},{"index":1458},{"index":1481},{"index":1467},{"index":1442},{"index":1321},{"index":1316},{"index":1317},{"index":1310},{"index":1306},{"index":1301},{"index":1302},{"index":1296},{"index":1290},{"index":1294},{"index":1288},{"index":1289},{"index":1292},{"index":1295},{"index":1298},{"index":1297},{"index":1380},{"index":1385},{"index":1386},{"index":1381},{"index":1388},{"index":1387},{"index":1396},{"index":1394},{"index":1393},{"index":1392},{"index":1390},{"index":1304},{"index":1303},{"index":1307},{"index":1308},{"index":1391},{"index":1313},{"index":1312},{"index":1311},{"index":1318},{"index":1314},{"index":1315},{"index":1320},{"index":1319},{"index":1323},{"index":1322},{"index":1443},{"index":1468},{"index":1469},{"index":1444},{"index":1445},{"index":1470},{"index":1208},{"index":11},{"index":4652},{"index":4263},{"index":2069},{"index":2063},{"index":2064},{"index":2065},{"index":2101},{"index":2077},{"index":2099},{"index":2066},{"index":2067},{"index":2068},{"index":2085},{"index":2084},{"index":2083},{"index":2097},{"index":2095},{"index":2103},{"index":2144},{"index":2082},{"index":2143},{"index":2086},{"index":2081},{"index":2080},{"index":2142},{"index":2267},{"index":2249},{"index":2260},{"index":2261},{"index":2268},{"index":2258},{"index":2269},{"index":2265},{"index":2266},{"index":2262},{"index":2247},{"index":2089},{"index":2088},{"index":2087},{"index":2071},{"index":2070},{"index":2072},{"index":2100},{"index":2078},{"index":2102},{"index":2076},{"index":2256},{"index":2264},{"index":2257},{"index":2263},{"index":2254},{"index":2252},{"index":2253},{"index":2248},{"index":2259},{"index":2250},{"index":2251},{"index":2255},{"index":4287},{"index":4282},{"index":4627},{"index":327},{"index":45},{"index":4618},{"index":60},{"index":370},{"index":61},{"index":67},{"index":49},{"index":4229},{"index":4044},{"index":4052},{"index":4051},{"index":4233},{"index":4226},{"index":4227},{"index":4050},{"index":4054},{"index":4041},{"index":4219},{"index":28},{"index":369},{"index":55},{"index":14},{"index":4323},{"index":2390},{"index":2388},{"index":2391},{"index":2395},{"index":4342},{"index":58},{"index":54},{"index":35},{"index":47},{"index":4341},{"index":4218},{"index":4045},{"index":4049},{"index":4220},{"index":4225},{"index":4082},{"index":4046},{"index":4055},{"index":4078},{"index":4079},{"index":4080},{"index":4074},{"index":4221},{"index":4224},{"index":4348},{"index":4252},{"index":2392},{"index":4321},{"index":2394},{"index":4251},{"index":4253},{"index":4349},{"index":4347},{"index":339},{"index":4625},{"index":4278},{"index":4277},{"index":4295},{"index":4292},{"index":4633},{"index":170},{"index":27},{"index":4621},{"index":171},{"index":4632},{"index":4290},{"index":4291},{"index":4289},{"index":4631},{"index":4615},{"index":4281},{"index":4232},{"index":329},{"index":378},{"index":4264},{"index":4255},{"index":4648},{"index":148},{"index":149},{"index":154},{"index":1209},{"index":1474},{"index":1449},{"index":1413},{"index":1409},{"index":1403},{"index":1401},{"index":1400},{"index":1398},{"index":1397},{"index":1407},{"index":1411},{"index":1412},{"index":1408},{"index":1399},{"index":1448},{"index":1473},{"index":1472},{"index":1447},{"index":1446},{"index":1471},{"index":1402},{"index":1405},{"index":1360},{"index":1361},{"index":1406},{"index":1367},{"index":1372},{"index":1414},{"index":1410},{"index":1404},{"index":1450},{"index":1475},{"index":1476},{"index":1451},{"index":1210},{"index":150},{"index":4644},{"index":4269},{"index":4272},{"index":4259},{"index":4650},{"index":4639},{"index":4260},{"index":4274},{"index":4657},{"index":4651},{"index":4261},{"index":4262},{"index":4265},{"index":4275},{"index":4658},{"index":4649},{"index":4257},{"index":4256},{"index":4258},{"index":4276},{"index":4273},{"index":4656},{"index":4655},{"index":4270},{"index":4266},{"index":4653},{"index":4643},{"index":4267},{"index":4647},{"index":4638},{"index":4637},{"index":4642},{"index":4640},{"index":4646},{"index":4268},{"index":4654},{"index":4645},{"index":4271},{"index":4254},{"index":4636},{"index":4641},{"index":1484},{"index":1461},{"index":1486},{"index":1427},{"index":1439},{"index":1375},{"index":1336},{"index":1337},{"index":1338},{"index":1377}]},{"vert_indicies":[{"index":2695},{"index":2696},{"index":2711},{"index":2727},{"index":2732},{"index":2722},{"index":2747},{"index":2745},{"index":2750},{"index":2740},{"index":2721},{"index":2715},{"index":2735},{"index":3035},{"index":2705},{"index":3052},{"index":2749},{"index":2725}]},{"vert_indicies":[{"index":2702},{"index":2741},{"index":2773}]},{"vert_indicies":[{"index":2758},{"index":3022},{"index":2978},{"index":2986},{"index":3007},{"index":2964},{"index":2955},{"index":2967},{"index":2981},{"index":3023},{"index":3020},{"index":2965},{"index":3006},{"index":2985},{"index":3038},{"index":3041},{"index":3039},{"index":2764},{"index":2975},{"index":3021},{"index":2957},{"index":2767},{"index":2763},{"index":3067},{"index":2779},{"index":2796},{"index":2941},{"index":2808},{"index":2829},{"index":2786},{"index":2777},{"index":2789},{"index":2813},{"index":2819},{"index":2803},{"index":2821},{"index":2817},{"index":2801},{"index":2784},{"index":2812},{"index":2822},{"index":2846},{"index":2845},{"index":2802},{"index":2787},{"index":2842},{"index":2847},{"index":2828},{"index":2807},{"index":2860},{"index":2834},{"index":2835},{"index":2863},{"index":2861},{"index":2832},{"index":2790},{"index":2865},{"index":3077},{"index":3080},{"index":3079},{"index":2938},{"index":2935},{"index":2942},{"index":2936},{"index":2843},{"index":2797},{"index":2862},{"index":2833},{"index":3075},{"index":3082},{"index":2945},{"index":2800},{"index":2844},{"index":2825},{"index":3074},{"index":3025},{"index":3003}]},{"vert_indicies":[{"index":2857},{"index":2893},{"index":2913},{"index":2874},{"index":2873},{"index":2900},{"index":2889},{"index":2905},{"index":2910},{"index":2927},{"index":2903},{"index":2881},{"index":2925},{"index":2923},{"index":2928},{"index":2918},{"index":2899}]},{"vert_indicies":[{"index":2962},{"index":2979},{"index":2995},{"index":3000},{"index":2990}]},{"vert_indicies":[{"index":3011}]},{"vert_indicies":[{"index":4620}]},{"vert_indicies":[{"index":4894},{"index":4910},{"index":4919},{"index":4920},{"index":4899},{"index":4895},{"index":4905},{"index":4916},{"index":4903},{"index":4908},{"index":4909},{"index":5063},{"index":4930},{"index":4926},{"index":5065},{"index":5062},{"index":4927},{"index":4928},{"index":4929},{"index":4932},{"index":5067},{"index":4913},{"index":4912},{"index":4907},{"index":4906},{"index":4904},{"index":4900},{"index":4901},{"index":5069},{"index":5066},{"index":4943},{"index":5071},{"index":4948},{"index":5060},{"index":5044},{"index":5041},{"index":5040},{"index":5079},{"index":5019},{"index":5024},{"index":5025},{"index":5055},{"index":5081},{"index":5077},{"index":5076},{"index":5018},{"index":5016},{"index":5015},{"index":5011},{"index":5020},{"index":5075},{"index":5038},{"index":5039},{"index":5072},{"index":4944},{"index":4935},{"index":5056},{"index":4921}]},{"vert_indicies":[{"index":4933},{"index":4947},{"index":5070},{"index":5080},{"index":5059},{"index":5045},{"index":5074},{"index":5043}]}]},{"index":51,"name":"DEF-UpperArm2.R","islands":[{"vert_indicies":[{"index":1223},{"index":1224},{"index":1286},{"index":1285},{"index":1284},{"index":1233},{"index":1229},{"index":1232},{"index":1227},{"index":1226},{"index":1236},{"index":1428},{"index":1235},{"index":1228},{"index":1230},{"index":1231},{"index":1341},{"index":1345},{"index":1239},{"index":1238},{"index":1246},{"index":1349},{"index":1350},{"index":1346},{"index":1342},{"index":1328},{"index":1416},{"index":1329},{"index":1330},{"index":1339},{"index":1379},{"index":1344},{"index":1343},{"index":1417},{"index":1418},{"index":1347},{"index":1348},{"index":1384},{"index":1383},{"index":1377},{"index":1378},{"index":1376},{"index":1291},{"index":1438},{"index":1437},{"index":1436},{"index":1439},{"index":1375},{"index":1336},{"index":1337},{"index":1338},{"index":1289},{"index":1288},{"index":1287},{"index":1234},{"index":1241},{"index":1240},{"index":1237},{"index":1293},{"index":1294},{"index":1290},{"index":1380},{"index":1381},{"index":1387},{"index":1351},{"index":1419},{"index":1427}]}]},{"index":52,"name":"DEF-Neck","islands":[{"vert_indicies":[{"index":0},{"index":1},{"index":3},{"index":4530},{"index":3024},{"index":2996},{"index":2980},{"index":2965},{"index":3020},{"index":2955},{"index":2964},{"index":2963},{"index":2962},{"index":2961},{"index":2990},{"index":2979},{"index":2995},{"index":4524},{"index":142},{"index":143},{"index":145},{"index":294},{"index":146},{"index":299},{"index":531},{"index":668},{"index":530},{"index":528},{"index":527},{"index":532},{"index":397},{"index":398},{"index":400},{"index":525},{"index":2952},{"index":2493},{"index":4547},{"index":2902},{"index":2880},{"index":2919},{"index":2947},{"index":2877},{"index":2929},{"index":2869},{"index":2876},{"index":2875},{"index":2874},{"index":2873},{"index":2900},{"index":2889},{"index":2905},{"index":4518},{"index":4539},{"index":2909},{"index":2897},{"index":2891},{"index":2907},{"index":4517},{"index":4521},{"index":2901},{"index":2879},{"index":2932},{"index":2890},{"index":2906},{"index":2933},{"index":4537},{"index":4540},{"index":4523},{"index":2950},{"index":2951},{"index":4538},{"index":2910},{"index":2927},{"index":2903},{"index":2881},{"index":2868},{"index":2872},{"index":2958},{"index":2970},{"index":2994},{"index":2908},{"index":4516},{"index":4519},{"index":4536},{"index":4522},{"index":4520},{"index":2998},{"index":2982},{"index":2960},{"index":2954},{"index":3014},{"index":3019},{"index":3009},{"index":2989},{"index":2983},{"index":3004},{"index":3005},{"index":2984},{"index":2986},{"index":3007},{"index":3003},{"index":2978},{"index":3022},{"index":2758},{"index":3021},{"index":2975},{"index":2764},{"index":2985},{"index":3006},{"index":3025},{"index":3041},{"index":3013},{"index":3010},{"index":3039},{"index":3043},{"index":2968},{"index":2992},{"index":3042},{"index":4533},{"index":3044},{"index":4494},{"index":4529},{"index":4534},{"index":4495},{"index":4496},{"index":4512},{"index":2814},{"index":2790},{"index":2832},{"index":2861},{"index":2787},{"index":2842},{"index":2777},{"index":2786},{"index":2785},{"index":2784},{"index":2783},{"index":2812},{"index":2801},{"index":2817},{"index":4506},{"index":799},{"index":800},{"index":801},{"index":817},{"index":802},{"index":819},{"index":850},{"index":865},{"index":849},{"index":848},{"index":847},{"index":851},{"index":824},{"index":825},{"index":826},{"index":845},{"index":2774},{"index":4491},{"index":4502},{"index":2724},{"index":2702},{"index":2741},{"index":2769},{"index":2699},{"index":2751},{"index":2691},{"index":2698},{"index":2697},{"index":2696},{"index":2695},{"index":2722},{"index":2711},{"index":2727},{"index":4500},{"index":4498},{"index":2731},{"index":2719},{"index":2713},{"index":2729},{"index":4499},{"index":4511},{"index":2723},{"index":2701},{"index":2754},{"index":2712},{"index":2728},{"index":2755},{"index":4545},{"index":4503},{"index":4504},{"index":2772},{"index":2773},{"index":4508},{"index":2732},{"index":2749},{"index":2725},{"index":2703},{"index":2690},{"index":2694},{"index":2780},{"index":2792},{"index":2816},{"index":2730},{"index":2714},{"index":4497},{"index":4541},{"index":4505},{"index":4542},{"index":4501},{"index":2820},{"index":2804},{"index":2782},{"index":2776},{"index":2836},{"index":2841},{"index":2831},{"index":2811},{"index":2805},{"index":2826},{"index":2827},{"index":2806},{"index":2808},{"index":2829},{"index":2825},{"index":2800},{"index":2844},{"index":2807},{"index":2828},{"index":2847},{"index":2863},{"index":2835},{"index":2834},{"index":2938},{"index":2935},{"index":2942},{"index":2936},{"index":2843},{"index":2797},{"index":2862},{"index":2833},{"index":3078},{"index":3011},{"index":2760},{"index":3012},{"index":3038},{"index":2757},{"index":3040},{"index":3083},{"index":3075},{"index":3082},{"index":3067},{"index":2957},{"index":2767},{"index":2763},{"index":2974},{"index":2973},{"index":2765},{"index":2766},{"index":2972},{"index":2971},{"index":2761},{"index":2759},{"index":3015},{"index":2956},{"index":2775},{"index":2976},{"index":3017},{"index":2988},{"index":3008},{"index":3002},{"index":2977},{"index":2859},{"index":2959},{"index":2878},{"index":2853},{"index":2898},{"index":2917},{"index":2911},{"index":2887},{"index":2926},{"index":2899},{"index":2918},{"index":2928},{"index":2923},{"index":2925},{"index":2913},{"index":2893},{"index":2894},{"index":2914},{"index":2916},{"index":2896},{"index":2888},{"index":2931},{"index":2849},{"index":2930},{"index":2886},{"index":2855},{"index":2895},{"index":2915},{"index":2934},{"index":2912},{"index":2949},{"index":2922},{"index":2921},{"index":2851},{"index":2920},{"index":2948},{"index":2848},{"index":2946},{"index":3065},{"index":2770},{"index":2742},{"index":3029},{"index":2743},{"index":2744},{"index":2771},{"index":2737},{"index":2717},{"index":2768},{"index":3026},{"index":3033},{"index":3027},{"index":2752},{"index":2708},{"index":3055},{"index":3063},{"index":3048},{"index":2871},{"index":2858},{"index":2854},{"index":2885},{"index":2884},{"index":2856},{"index":2857},{"index":2883},{"index":2882},{"index":2852},{"index":2850},{"index":2924},{"index":2870},{"index":2867},{"index":3047},{"index":2692},{"index":2700},{"index":2781},{"index":3037},{"index":3031},{"index":2720},{"index":2739},{"index":2824},{"index":2799},{"index":2810},{"index":2830},{"index":2823},{"index":2798},{"index":2839},{"index":2937},{"index":2953},{"index":2940},{"index":2788},{"index":2778},{"index":2837},{"index":2793},{"index":2794},{"index":2795},{"index":2796},{"index":2779},{"index":2945},{"index":2941},{"index":2943},{"index":2944},{"index":2939},{"index":3074},{"index":3073},{"index":3072},{"index":3071},{"index":3081},{"index":3066},{"index":3069},{"index":2966},{"index":2762},{"index":3068},{"index":3049},{"index":2733},{"index":2709},{"index":2748},{"index":2721},{"index":2740},{"index":2750},{"index":2745},{"index":2747},{"index":2735},{"index":2715},{"index":2716},{"index":2736},{"index":2738},{"index":2718},{"index":2710},{"index":2753},{"index":2756},{"index":2734},{"index":3036},{"index":3032},{"index":3034},{"index":3035},{"index":3030},{"index":3028},{"index":2746},{"index":2704},{"index":2705},{"index":2706},{"index":2707},{"index":2693},{"index":3054},{"index":3053},{"index":3052},{"index":3051},{"index":3062},{"index":3045},{"index":3061},{"index":3060},{"index":3046},{"index":3059},{"index":3058},{"index":3050},{"index":3056},{"index":4535},{"index":4492},{"index":3057},{"index":444},{"index":2904},{"index":757},{"index":2552},{"index":4578},{"index":769},{"index":753},{"index":756},{"index":873},{"index":870},{"index":886},{"index":4457},{"index":842},{"index":469},{"index":476},{"index":837},{"index":832},{"index":828},{"index":843},{"index":831},{"index":827},{"index":833},{"index":839},{"index":841},{"index":835},{"index":830},{"index":829},{"index":836},{"index":4555},{"index":2572},{"index":2571},{"index":4595},{"index":4596},{"index":2573},{"index":2570},{"index":4594},{"index":844},{"index":846},{"index":4591},{"index":2567},{"index":416},{"index":4455},{"index":874},{"index":2579},{"index":4601},{"index":4611},{"index":4488},{"index":2726},{"index":2569},{"index":4593},{"index":834},{"index":840},{"index":859},{"index":856},{"index":855},{"index":861},{"index":860},{"index":858},{"index":853},{"index":854},{"index":863},{"index":852},{"index":867},{"index":868},{"index":864},{"index":866},{"index":4600},{"index":2578},{"index":2576},{"index":4599},{"index":4556},{"index":2577},{"index":2574},{"index":4597},{"index":4592},{"index":2568},{"index":2575},{"index":4598},{"index":4602},{"index":2580},{"index":2562},{"index":4587},{"index":816},{"index":818},{"index":805},{"index":810},{"index":4554},{"index":2564},{"index":2563},{"index":4588},{"index":4589},{"index":2565},{"index":2561},{"index":4586},{"index":807},{"index":813},{"index":811},{"index":808},{"index":786},{"index":792},{"index":790},{"index":788},{"index":780},{"index":781},{"index":794},{"index":782},{"index":777},{"index":785},{"index":787},{"index":793},{"index":783},{"index":779},{"index":795},{"index":798},{"index":4585},{"index":2560},{"index":2558},{"index":4584},{"index":4553},{"index":2559},{"index":2556},{"index":4582},{"index":4581},{"index":2555},{"index":803},{"index":773},{"index":774},{"index":775},{"index":797},{"index":2866},{"index":4515},{"index":2864},{"index":2818},{"index":2802},{"index":2865},{"index":2845},{"index":2789},{"index":2813},{"index":2819},{"index":2803},{"index":2809},{"index":2821},{"index":4507},{"index":4509},{"index":4544},{"index":4532},{"index":2846},{"index":4514},{"index":2557},{"index":4583},{"index":4580},{"index":2554},{"index":789},{"index":776},{"index":53},{"index":2528},{"index":4558},{"index":140},{"index":19},{"index":39},{"index":4410},{"index":4435},{"index":4447},{"index":4423},{"index":4408},{"index":4433},{"index":139},{"index":141},{"index":21},{"index":52},{"index":4549},{"index":2533},{"index":2532},{"index":4562},{"index":4563},{"index":2534},{"index":2531},{"index":4561},{"index":4610},{"index":4432},{"index":4427},{"index":4609},{"index":4453},{"index":4452},{"index":4451},{"index":4493},{"index":4548},{"index":2530},{"index":4560},{"index":50},{"index":65},{"index":204},{"index":193},{"index":192},{"index":208},{"index":205},{"index":195},{"index":165},{"index":295},{"index":293},{"index":750},{"index":667},{"index":669},{"index":550},{"index":576},{"index":4552},{"index":2550},{"index":2549},{"index":4576},{"index":4577},{"index":2551},{"index":2548},{"index":4575},{"index":4579},{"index":2553},{"index":2536},{"index":4565},{"index":4567},{"index":2539},{"index":2537},{"index":4566},{"index":4550},{"index":2538},{"index":2535},{"index":4564},{"index":4559},{"index":2529},{"index":147},{"index":4525},{"index":2999},{"index":2987},{"index":2981},{"index":2997},{"index":2991},{"index":2967},{"index":3023},{"index":4528},{"index":4546},{"index":2547},{"index":4574},{"index":573},{"index":583},{"index":579},{"index":574},{"index":439},{"index":453},{"index":415},{"index":427},{"index":414},{"index":429},{"index":717},{"index":719},{"index":423},{"index":718},{"index":452},{"index":437},{"index":405},{"index":404},{"index":432},{"index":426},{"index":523},{"index":422},{"index":440},{"index":454},{"index":450},{"index":441},{"index":412},{"index":526},{"index":524},{"index":411},{"index":428},{"index":431},{"index":4387},{"index":2491},{"index":2488},{"index":4386},{"index":4398},{"index":2489},{"index":2492},{"index":4399},{"index":4608},{"index":4405},{"index":2584},{"index":4490},{"index":2474},{"index":2583},{"index":4604},{"index":2473},{"index":2471},{"index":2472},{"index":2467},{"index":4480},{"index":2508},{"index":2509},{"index":2511},{"index":4486},{"index":4483},{"index":4612},{"index":4487},{"index":2585},{"index":2512},{"index":4468},{"index":4606},{"index":4605},{"index":2543},{"index":4571},{"index":4573},{"index":2546},{"index":2544},{"index":4572},{"index":4551},{"index":2545},{"index":2542},{"index":4570},{"index":4569},{"index":2541},{"index":580},{"index":584},{"index":575},{"index":557},{"index":666},{"index":562},{"index":541},{"index":540},{"index":571},{"index":581},{"index":569},{"index":565},{"index":582},{"index":572},{"index":568},{"index":694},{"index":556},{"index":555},{"index":695},{"index":567},{"index":564},{"index":549},{"index":298},{"index":182},{"index":180},{"index":156},{"index":155},{"index":189},{"index":206},{"index":187},{"index":183},{"index":207},{"index":190},{"index":194},{"index":209},{"index":338},{"index":336},{"index":191},{"index":166},{"index":332},{"index":333},{"index":186},{"index":185},{"index":334},{"index":173},{"index":297},{"index":751},{"index":742},{"index":4671},{"index":2677},{"index":2146},{"index":2147},{"index":2148},{"index":2150},{"index":2674},{"index":4670},{"index":4663},{"index":174},{"index":2675},{"index":2676},{"index":4664},{"index":4662},{"index":2673},{"index":2166},{"index":2159},{"index":2145},{"index":2172},{"index":2171},{"index":2669},{"index":4668},{"index":4659},{"index":2668},{"index":4709},{"index":62},{"index":66},{"index":51},{"index":32},{"index":138},{"index":36},{"index":13},{"index":48},{"index":38},{"index":20},{"index":896},{"index":394},{"index":4381},{"index":821},{"index":820},{"index":823},{"index":4383},{"index":396},{"index":392},{"index":891},{"index":892},{"index":4603},{"index":2582},{"index":890},{"index":395},{"index":4382},{"index":822},{"index":2566},{"index":4590},{"index":4607},{"index":4385},{"index":2540},{"index":4568},{"index":4557},{"index":899},{"index":796},{"index":778},{"index":784},{"index":900},{"index":898},{"index":2581},{"index":897},{"index":4384},{"index":4},{"index":393},{"index":895},{"index":812},{"index":814},{"index":809},{"index":806},{"index":815},{"index":804},{"index":857},{"index":862},{"index":838},{"index":4462},{"index":4465},{"index":3001},{"index":3079},{"index":3064},{"index":3080},{"index":3077},{"index":3070},{"index":3076},{"index":2860},{"index":2838},{"index":2791},{"index":2815},{"index":2840},{"index":2822},{"index":4510},{"index":4513},{"index":4543},{"index":3016},{"index":2969},{"index":2993},{"index":3018},{"index":3000},{"index":4527},{"index":4531},{"index":4526},{"index":2892}]}]},{"index":53,"name":"DEF-Spine","islands":[{"vert_indicies":[{"index":82},{"index":305},{"index":350},{"index":306},{"index":83},{"index":132},{"index":111},{"index":5103},{"index":2589},{"index":2592},{"index":5102},{"index":5109},{"index":2587},{"index":2600},{"index":2613},{"index":356},{"index":2620},{"index":2615},{"index":2602},{"index":5113},{"index":351},{"index":307},{"index":304},{"index":227},{"index":284},{"index":260},{"index":264},{"index":384},{"index":381},{"index":388},{"index":380},{"index":316},{"index":231},{"index":288},{"index":4149},{"index":239},{"index":235},{"index":91},{"index":358},{"index":90},{"index":343},{"index":89},{"index":4138},{"index":4153},{"index":243},{"index":4154},{"index":617},{"index":4139},{"index":4345},{"index":4182},{"index":2410},{"index":2411},{"index":2409},{"index":2408},{"index":2412},{"index":4327},{"index":311},{"index":88},{"index":87},{"index":310},{"index":309},{"index":86},{"index":85},{"index":308},{"index":4142},{"index":92},{"index":93},{"index":94},{"index":95},{"index":4145},{"index":4144},{"index":4143},{"index":4346},{"index":4183},{"index":2416},{"index":4332},{"index":2415},{"index":2414},{"index":4336},{"index":4181},{"index":4440},{"index":4416},{"index":4428},{"index":4450},{"index":4431},{"index":4424},{"index":4415},{"index":4439},{"index":4446},{"index":4422},{"index":134},{"index":135},{"index":136},{"index":137},{"index":4319},{"index":2425},{"index":2400},{"index":2396},{"index":2423},{"index":2424},{"index":2398},{"index":4337},{"index":110},{"index":131},{"index":4322},{"index":4326},{"index":4335},{"index":349},{"index":346},{"index":342},{"index":2413},{"index":4320},{"index":387},{"index":238},{"index":237},{"index":236},{"index":4120},{"index":2197},{"index":2287},{"index":2196},{"index":4129},{"index":242},{"index":241},{"index":240},{"index":302},{"index":614},{"index":615},{"index":616},{"index":4170},{"index":684},{"index":608},{"index":607},{"index":683},{"index":682},{"index":606},{"index":663},{"index":749},{"index":301},{"index":312},{"index":317},{"index":232},{"index":233},{"index":318},{"index":319},{"index":234},{"index":291},{"index":267},{"index":4130},{"index":2186},{"index":2203},{"index":2195},{"index":2194},{"index":2294},{"index":2192},{"index":2193},{"index":2202},{"index":2184},{"index":2290},{"index":2293},{"index":2286},{"index":4109},{"index":285},{"index":228},{"index":313},{"index":314},{"index":229},{"index":230},{"index":315},{"index":4148},{"index":4147},{"index":4146},{"index":4190},{"index":4121},{"index":4113},{"index":4175},{"index":4180},{"index":4176},{"index":4191},{"index":4128},{"index":4134},{"index":4133},{"index":4152},{"index":4151},{"index":4150},{"index":4141},{"index":4168},{"index":4169},{"index":4140},{"index":287},{"index":263},{"index":262},{"index":286},{"index":290},{"index":289},{"index":664},{"index":665},{"index":4196},{"index":2227},{"index":2210},{"index":4195},{"index":2219},{"index":2218},{"index":2281},{"index":2216},{"index":2217},{"index":2226},{"index":2280},{"index":2273},{"index":4209},{"index":659},{"index":602},{"index":678},{"index":679},{"index":603},{"index":604},{"index":680},{"index":729},{"index":737},{"index":730},{"index":733},{"index":662},{"index":605},{"index":681},{"index":670},{"index":601},{"index":658},{"index":5127},{"index":2644},{"index":2642},{"index":2655},{"index":2657},{"index":2653},{"index":2628},{"index":2660},{"index":2647},{"index":2648},{"index":5129},{"index":708},{"index":673},{"index":4159},{"index":479},{"index":609},{"index":613},{"index":736},{"index":612},{"index":611},{"index":610},{"index":4213},{"index":2221},{"index":2274},{"index":2220},{"index":4194},{"index":4217},{"index":4178},{"index":4179},{"index":4177},{"index":4216},{"index":4164},{"index":4165},{"index":4166},{"index":4155},{"index":4167},{"index":4156},{"index":4205},{"index":4210},{"index":4202},{"index":4203},{"index":712},{"index":478},{"index":700},{"index":477},{"index":4157},{"index":671},{"index":470},{"index":4357},{"index":2450},{"index":2449},{"index":4363},{"index":4379},{"index":4185},{"index":2453},{"index":4365},{"index":2454},{"index":2455},{"index":4186},{"index":2451},{"index":2452},{"index":2448},{"index":2447},{"index":4184},{"index":2462},{"index":2435},{"index":2439},{"index":2464},{"index":4352},{"index":522},{"index":475},{"index":4353},{"index":4356},{"index":677},{"index":676},{"index":474},{"index":473},{"index":675},{"index":674},{"index":472},{"index":519},{"index":520},{"index":500},{"index":501},{"index":521},{"index":4401},{"index":2505},{"index":2497},{"index":2502},{"index":2501},{"index":4394},{"index":4406},{"index":4188},{"index":2506},{"index":4397},{"index":480},{"index":481},{"index":482},{"index":483},{"index":4364},{"index":4380},{"index":4163},{"index":4162},{"index":4161},{"index":4160},{"index":2481},{"index":4469},{"index":2524},{"index":762},{"index":879},{"index":4174},{"index":887},{"index":878},{"index":885},{"index":768},{"index":761},{"index":770},{"index":2523},{"index":2522},{"index":2521},{"index":2527},{"index":4477},{"index":4485},{"index":2479},{"index":2480},{"index":2482},{"index":4187},{"index":4489},{"index":4189},{"index":4173},{"index":4466},{"index":4470},{"index":4400},{"index":2437},{"index":2463},{"index":4358},{"index":517},{"index":497},{"index":4361},{"index":703},{"index":498},{"index":518},{"index":471},{"index":672},{"index":707},{"index":699},{"index":706},{"index":4171},{"index":4158},{"index":4172},{"index":5130},{"index":2646},{"index":2633},{"index":5135},{"index":5137},{"index":2638},{"index":2635},{"index":2625},{"index":2650},{"index":2629},{"index":2659},{"index":2661},{"index":2666},{"index":2662},{"index":2664},{"index":2651},{"index":5136},{"index":5134},{"index":2645},{"index":2640},{"index":5126},{"index":2658},{"index":661},{"index":660},{"index":5110},{"index":2596},{"index":2598},{"index":2594},{"index":2599},{"index":5119},{"index":5118},{"index":5107},{"index":5112},{"index":2601},{"index":2614},{"index":355},{"index":2607},{"index":2612},{"index":2611},{"index":2609},{"index":105},{"index":2605},{"index":2616},{"index":2604},{"index":112},{"index":2618},{"index":5108}]},{"vert_indicies":[{"index":3084},{"index":3085},{"index":3090},{"index":3091},{"index":3086},{"index":3087},{"index":3122},{"index":3088},{"index":3126},{"index":3089},{"index":3108},{"index":3107},{"index":3127},{"index":3106},{"index":3105},{"index":3104},{"index":3110},{"index":3109},{"index":3103},{"index":3102},{"index":3120},{"index":3148},{"index":3149},{"index":3155},{"index":3156},{"index":3150},{"index":3151},{"index":3152},{"index":3171},{"index":3153},{"index":3154},{"index":3135},{"index":3170},{"index":3134},{"index":3166},{"index":3133},{"index":3132},{"index":3137},{"index":3136},{"index":3131},{"index":3130},{"index":3138},{"index":3224},{"index":3251},{"index":3252},{"index":3253},{"index":3254},{"index":3247},{"index":3248},{"index":3225},{"index":3249},{"index":3226},{"index":3250},{"index":3246},{"index":3258},{"index":3263},{"index":3257},{"index":3256},{"index":3255},{"index":3262},{"index":3261},{"index":3260},{"index":3259},{"index":3219},{"index":3241},{"index":3242},{"index":3243},{"index":3244},{"index":3237},{"index":3238},{"index":3239},{"index":3245},{"index":3240},{"index":3228},{"index":3232},{"index":3222},{"index":3231},{"index":3221},{"index":3230},{"index":3229},{"index":3236},{"index":3235},{"index":3234},{"index":3233},{"index":3220},{"index":3092},{"index":3894},{"index":3892},{"index":3901},{"index":3789},{"index":3691},{"index":3348},{"index":3211},{"index":3357},{"index":3624},{"index":3677},{"index":3302},{"index":3093},{"index":3098},{"index":3099},{"index":3100},{"index":3101},{"index":3094},{"index":3095},{"index":3123},{"index":3096},{"index":3124},{"index":3097},{"index":3111},{"index":3115},{"index":3125},{"index":3114},{"index":3113},{"index":3112},{"index":3119},{"index":3118},{"index":3117},{"index":3116},{"index":3121},{"index":3162},{"index":3163},{"index":3164},{"index":3165},{"index":3158},{"index":3159},{"index":3160},{"index":3169},{"index":3161},{"index":3157},{"index":3143},{"index":3168},{"index":3142},{"index":3167},{"index":3141},{"index":3140},{"index":3147},{"index":3146},{"index":3145},{"index":3144},{"index":3139},{"index":3566},{"index":3582},{"index":3552},{"index":3173},{"index":3309},{"index":3556},{"index":3578},{"index":3572},{"index":3306},{"index":3288},{"index":3661},{"index":3610},{"index":3388},{"index":3197},{"index":3333},{"index":3722},{"index":3834},{"index":3835},{"index":3723},{"index":3334},{"index":3198},{"index":3199},{"index":3335},{"index":3724},{"index":3836},{"index":3837},{"index":3725},{"index":3336},{"index":3200},{"index":3193},{"index":3329},{"index":3718},{"index":3830},{"index":3831},{"index":3719},{"index":3330},{"index":3194},{"index":3216},{"index":3362},{"index":3629},{"index":3682},{"index":3307},{"index":3285},{"index":3658},{"index":3607},{"index":3385},{"index":3384},{"index":3391},{"index":3390},{"index":3389},{"index":3611},{"index":3612},{"index":3613},{"index":3606},{"index":3657},{"index":3284},{"index":3291},{"index":3664},{"index":3663},{"index":3290},{"index":3289},{"index":3662},{"index":3286},{"index":3659},{"index":3608},{"index":3386},{"index":3195},{"index":3331},{"index":3720},{"index":3832},{"index":3795},{"index":3697},{"index":3354},{"index":3217},{"index":3363},{"index":3630},{"index":3683},{"index":3308},{"index":3287},{"index":3660},{"index":3609},{"index":3387},{"index":3196},{"index":3332},{"index":3721},{"index":3833},{"index":3829},{"index":3717},{"index":3328},{"index":3192},{"index":3204},{"index":3340},{"index":3729},{"index":3841},{"index":3846},{"index":3734},{"index":3345},{"index":3209},{"index":3203},{"index":3339},{"index":3728},{"index":3840},{"index":3839},{"index":3727},{"index":3338},{"index":3202},{"index":3201},{"index":3337},{"index":3726},{"index":3838},{"index":3845},{"index":3733},{"index":3344},{"index":3208},{"index":3207},{"index":3343},{"index":3732},{"index":3844},{"index":3843},{"index":3731},{"index":3342},{"index":3206},{"index":3205},{"index":3341},{"index":3730},{"index":3842},{"index":3788},{"index":3690},{"index":3347},{"index":3210},{"index":3356},{"index":3623},{"index":3676},{"index":3301},{"index":3296},{"index":3669},{"index":3618},{"index":3396},{"index":3397},{"index":3398},{"index":3399},{"index":3392},{"index":3393},{"index":3394},{"index":3400},{"index":3395},{"index":3383},{"index":3605},{"index":3617},{"index":3622},{"index":3616},{"index":3615},{"index":3614},{"index":3621},{"index":3620},{"index":3619},{"index":3670},{"index":3297},{"index":3298},{"index":3671},{"index":3672},{"index":3299},{"index":3292},{"index":3665},{"index":3666},{"index":3293},{"index":3294},{"index":3667},{"index":3673},{"index":3300},{"index":3295},{"index":3668},{"index":3656},{"index":3283},{"index":3278},{"index":3651},{"index":3600},{"index":3378},{"index":3187},{"index":3323},{"index":3712},{"index":3824},{"index":3825},{"index":3713},{"index":3324},{"index":3188},{"index":3189},{"index":3325},{"index":3714},{"index":3826},{"index":3827},{"index":3715},{"index":3326},{"index":3190},{"index":3183},{"index":3319},{"index":3708},{"index":3820},{"index":3821},{"index":3709},{"index":3320},{"index":3184},{"index":3185},{"index":3321},{"index":3710},{"index":3822},{"index":3828},{"index":3716},{"index":3327},{"index":3191},{"index":3186},{"index":3322},{"index":3711},{"index":3823},{"index":3811},{"index":3699},{"index":3310},{"index":3174},{"index":3178},{"index":3314},{"index":3703},{"index":3815},{"index":3791},{"index":3693},{"index":3350},{"index":3213},{"index":3359},{"index":3626},{"index":3679},{"index":3304},{"index":3269},{"index":3642},{"index":3591},{"index":3369},{"index":3365},{"index":3377},{"index":3382},{"index":3376},{"index":3375},{"index":3374},{"index":3381},{"index":3380},{"index":3379},{"index":3601},{"index":3602},{"index":3603},{"index":3596},{"index":3597},{"index":3598},{"index":3604},{"index":3599},{"index":3587},{"index":3638},{"index":3265},{"index":3277},{"index":3650},{"index":3655},{"index":3282},{"index":3276},{"index":3649},{"index":3648},{"index":3275},{"index":3274},{"index":3647},{"index":3654},{"index":3281},{"index":3280},{"index":3653},{"index":3652},{"index":3279},{"index":3268},{"index":3641},{"index":3590},{"index":3368},{"index":3177},{"index":3313},{"index":3702},{"index":3814},{"index":3790},{"index":3692},{"index":3349},{"index":3212},{"index":3358},{"index":3625},{"index":3678},{"index":3303},{"index":3267},{"index":3640},{"index":3589},{"index":3367},{"index":3176},{"index":3312},{"index":3701},{"index":3813},{"index":3812},{"index":3700},{"index":3311},{"index":3175},{"index":3182},{"index":3318},{"index":3707},{"index":3819},{"index":3818},{"index":3706},{"index":3317},{"index":3181},{"index":3180},{"index":3316},{"index":3705},{"index":3817},{"index":3816},{"index":3704},{"index":3315},{"index":3179},{"index":3370},{"index":3371},{"index":3372},{"index":3373},{"index":3366},{"index":3588},{"index":3595},{"index":3594},{"index":3593},{"index":3592},{"index":3643},{"index":3270},{"index":3271},{"index":3644},{"index":3645},{"index":3272},{"index":3273},{"index":3646},{"index":3639},{"index":3266},{"index":3794},{"index":3696},{"index":3353},{"index":3793},{"index":3695},{"index":3352},{"index":3215},{"index":3361},{"index":3628},{"index":3681},{"index":3688},{"index":3636},{"index":3574},{"index":3570},{"index":3573},{"index":3579},{"index":3557},{"index":3355},{"index":3218},{"index":3364},{"index":3631},{"index":3684},{"index":3687},{"index":3635},{"index":3558},{"index":3580},{"index":3637},{"index":3689},{"index":3576},{"index":3554},{"index":4029},{"index":3686},{"index":3633},{"index":3550},{"index":3495},{"index":3561},{"index":3564},{"index":3548},{"index":4017},{"index":4011},{"index":4019},{"index":4026},{"index":4030},{"index":3744},{"index":3782},{"index":3883},{"index":3562},{"index":3505},{"index":3490},{"index":4007},{"index":3172},{"index":3227},{"index":3555},{"index":3577},{"index":3571},{"index":3809},{"index":3784},{"index":3786},{"index":3783},{"index":3698},{"index":3796},{"index":3808},{"index":3810},{"index":4032},{"index":3806},{"index":4013},{"index":3567},{"index":3583},{"index":3553},{"index":4020},{"index":3560},{"index":3585},{"index":3569},{"index":3456},{"index":3448},{"index":3449},{"index":3454},{"index":3455},{"index":3450},{"index":3451},{"index":3484},{"index":3452},{"index":3488},{"index":3453},{"index":3472},{"index":3471},{"index":3489},{"index":3470},{"index":3469},{"index":3468},{"index":3474},{"index":3473},{"index":3467},{"index":3466},{"index":3438},{"index":3420},{"index":3421},{"index":3427},{"index":3428},{"index":3422},{"index":3423},{"index":3424},{"index":3445},{"index":3425},{"index":3426},{"index":3407},{"index":3444},{"index":3406},{"index":3440},{"index":3405},{"index":3404},{"index":3409},{"index":3408},{"index":3403},{"index":3402},{"index":3410},{"index":3498},{"index":3511},{"index":3512},{"index":3513},{"index":3514},{"index":3507},{"index":3508},{"index":3499},{"index":3509},{"index":3500},{"index":3510},{"index":3506},{"index":3518},{"index":3523},{"index":3517},{"index":3516},{"index":3515},{"index":3522},{"index":3521},{"index":3520},{"index":3519},{"index":3497},{"index":3537},{"index":3538},{"index":3539},{"index":3540},{"index":3533},{"index":3534},{"index":3535},{"index":3541},{"index":3536},{"index":3524},{"index":3528},{"index":3504},{"index":3527},{"index":3503},{"index":3526},{"index":3525},{"index":3532},{"index":3531},{"index":3530},{"index":3529},{"index":3502},{"index":3803},{"index":3741},{"index":3785},{"index":3884},{"index":3575},{"index":3581},{"index":3885},{"index":3787},{"index":5183},{"index":5182},{"index":5142},{"index":5168},{"index":5169},{"index":5170},{"index":5171},{"index":5164},{"index":5165},{"index":5143},{"index":5166},{"index":5144},{"index":5167},{"index":5163},{"index":5175},{"index":5180},{"index":5174},{"index":5173},{"index":5172},{"index":5179},{"index":5178},{"index":5177},{"index":5176},{"index":5138},{"index":5158},{"index":5159},{"index":5160},{"index":5161},{"index":5154},{"index":5155},{"index":5156},{"index":5162},{"index":5157},{"index":5145},{"index":5149},{"index":5141},{"index":5148},{"index":5140},{"index":5147},{"index":5146},{"index":5153},{"index":5152},{"index":5151},{"index":5150},{"index":5139},{"index":5184},{"index":5185},{"index":5181},{"index":3781},{"index":3912},{"index":3898},{"index":3737},{"index":3750},{"index":3852},{"index":3799},{"index":3900},{"index":3886},{"index":3888},{"index":4034},{"index":4036},{"index":3903},{"index":3346},{"index":3446},{"index":3501},{"index":3264},{"index":3902},{"index":3914},{"index":3807},{"index":3802},{"index":3740},{"index":3547},{"index":3494},{"index":3549},{"index":3632},{"index":3685},{"index":3544},{"index":3447},{"index":3401},{"index":3904},{"index":3890},{"index":3411},{"index":3416},{"index":3417},{"index":3418},{"index":3419},{"index":3412},{"index":3413},{"index":3441},{"index":3414},{"index":3442},{"index":3415},{"index":3429},{"index":3433},{"index":3443},{"index":3432},{"index":3431},{"index":3430},{"index":3437},{"index":3436},{"index":3435},{"index":3434},{"index":3439},{"index":3480},{"index":3481},{"index":3482},{"index":3483},{"index":3476},{"index":3477},{"index":3478},{"index":3487},{"index":3479},{"index":3475},{"index":3461},{"index":3486},{"index":3460},{"index":3485},{"index":3459},{"index":3458},{"index":3465},{"index":3464},{"index":3463},{"index":3462},{"index":3457},{"index":3568},{"index":3584},{"index":3559},{"index":3491},{"index":3545},{"index":3563},{"index":3674},{"index":3634},{"index":3565},{"index":4015},{"index":4008},{"index":4021},{"index":4024},{"index":4023},{"index":3974},{"index":3979},{"index":3980},{"index":3981},{"index":3982},{"index":3975},{"index":3976},{"index":4002},{"index":3977},{"index":4003},{"index":3978},{"index":3992},{"index":3996},{"index":4004},{"index":3995},{"index":3994},{"index":3993},{"index":4000},{"index":3999},{"index":3998},{"index":3997},{"index":3956},{"index":3951},{"index":3952},{"index":3953},{"index":3954},{"index":3947},{"index":3948},{"index":3949},{"index":3960},{"index":3950},{"index":3946},{"index":3932},{"index":3959},{"index":3931},{"index":3958},{"index":3930},{"index":3929},{"index":3936},{"index":3935},{"index":3934},{"index":3933},{"index":3928},{"index":4035},{"index":3895},{"index":3887},{"index":3916},{"index":3496},{"index":3305},{"index":3129},{"index":3551},{"index":3909},{"index":4037},{"index":3918},{"index":3964},{"index":4014},{"index":4028},{"index":3680},{"index":3627},{"index":3360},{"index":3214},{"index":3543},{"index":3493},{"index":3351},{"index":3694},{"index":3735},{"index":3913},{"index":3899},{"index":3889},{"index":3917},{"index":3907},{"index":3893},{"index":3891},{"index":3896},{"index":3897},{"index":3911},{"index":3675},{"index":3586},{"index":3492},{"index":3905},{"index":3910},{"index":3915},{"index":3797},{"index":3542},{"index":3546},{"index":3128},{"index":3223},{"index":3792},{"index":4033},{"index":4031},{"index":4016},{"index":4010},{"index":4018},{"index":4027},{"index":4012},{"index":3963},{"index":4009},{"index":3908},{"index":3906},{"index":3927},{"index":3919},{"index":3920},{"index":3925},{"index":3926},{"index":3921},{"index":3922},{"index":3957},{"index":3923},{"index":3961},{"index":3924},{"index":3943},{"index":3942},{"index":3962},{"index":3941},{"index":3940},{"index":3939},{"index":3945},{"index":3944},{"index":3938},{"index":3937},{"index":3955},{"index":3983},{"index":3984},{"index":3990},{"index":3991},{"index":3985},{"index":3986},{"index":3987},{"index":4006},{"index":3988},{"index":3989},{"index":3970},{"index":4005},{"index":3969},{"index":4001},{"index":3968},{"index":3967},{"index":3972},{"index":3971},{"index":3966},{"index":3965},{"index":3973},{"index":4022},{"index":4025},{"index":3853},{"index":3751},{"index":3752},{"index":3854},{"index":3855},{"index":3753},{"index":3746},{"index":3848},{"index":3849},{"index":3747},{"index":3738},{"index":3748},{"index":3850},{"index":3800},{"index":3801},{"index":3739},{"index":3749},{"index":3851},{"index":3847},{"index":3745},{"index":3757},{"index":3859},{"index":3864},{"index":3762},{"index":3756},{"index":3858},{"index":3857},{"index":3755},{"index":3754},{"index":3856},{"index":3863},{"index":3761},{"index":3760},{"index":3862},{"index":3861},{"index":3759},{"index":3758},{"index":3860},{"index":3798},{"index":3736},{"index":3776},{"index":3878},{"index":3879},{"index":3777},{"index":3778},{"index":3880},{"index":3881},{"index":3779},{"index":3772},{"index":3874},{"index":3875},{"index":3773},{"index":3774},{"index":3876},{"index":3882},{"index":3780},{"index":3775},{"index":3877},{"index":3865},{"index":3763},{"index":3767},{"index":3869},{"index":3805},{"index":3743},{"index":3766},{"index":3868},{"index":3804},{"index":3742},{"index":3765},{"index":3867},{"index":3866},{"index":3764},{"index":3771},{"index":3873},{"index":3872},{"index":3770},{"index":3769},{"index":3871},{"index":3870},{"index":3768}]}],"num_expected_islands":2},{"index":54,"name":"DEF-Knee1.L"},{"index":55,"name":"DEF-Thigh1.L"},{"index":56,"name":"DEF-Thigh2.L"},{"index":57,"name":"DEF-Knee1.R"},{"index":58,"name":"DEF-Thigh1.R"},{"index":59,"name":"DEF-Thigh2.R"},{"index":60,"name":"DEF-Handkerchief_Back"},{"index":61,"name":"DEF-Handkerchief.L"},{"index":62,"name":"DEF-Handkerchief.R"},{"index":63,"name":"DEF-Handkerchief_Knot"},{"index":64,"name":"DEF-Sleeve1.L","islands":[{"vert_indicies":[{"index":909},{"index":1143},{"index":910},{"index":911},{"index":912},{"index":926},{"index":927},{"index":928},{"index":929},{"index":1033},{"index":1184},{"index":1643},{"index":1621},{"index":1613},{"index":1623},{"index":1680},{"index":1649},{"index":1660},{"index":1663},{"index":1630},{"index":1653},{"index":1641},{"index":1619},{"index":1678},{"index":1921},{"index":1506},{"index":1507},{"index":1508},{"index":1489},{"index":1509},{"index":1505},{"index":1504},{"index":1503},{"index":1497},{"index":1490},{"index":1496},{"index":1495},{"index":1494},{"index":1491},{"index":1492},{"index":1493},{"index":1488},{"index":1487},{"index":1498},{"index":1499},{"index":1500},{"index":1501},{"index":1502},{"index":1907},{"index":1904},{"index":1901},{"index":1923},{"index":1913},{"index":1668},{"index":1679},{"index":1662},{"index":1629},{"index":1627},{"index":1624},{"index":1618},{"index":1677},{"index":1659},{"index":1631},{"index":1616},{"index":1614},{"index":1670},{"index":1914},{"index":1918},{"index":1675},{"index":1908},{"index":1920},{"index":1902},{"index":1651},{"index":1661},{"index":1905},{"index":1906},{"index":1922},{"index":1919},{"index":1676},{"index":1617},{"index":1634},{"index":1620},{"index":1647},{"index":1912},{"index":1916},{"index":1671},{"index":1610},{"index":1633},{"index":1612},{"index":1672},{"index":1917},{"index":1910},{"index":1665},{"index":1903},{"index":1658},{"index":1626},{"index":1615},{"index":1669},{"index":1664},{"index":1632},{"index":1655},{"index":1637},{"index":1650},{"index":1628},{"index":1656},{"index":1909},{"index":1915},{"index":1911},{"index":1666},{"index":2366},{"index":1892},{"index":2310},{"index":1517},{"index":930},{"index":922},{"index":1513},{"index":1512},{"index":921},{"index":919},{"index":1144},{"index":916},{"index":1510},{"index":1530},{"index":1511},{"index":2312},{"index":1900},{"index":1898},{"index":2303},{"index":2311},{"index":1899},{"index":2367},{"index":2371},{"index":2372},{"index":2373},{"index":1878},{"index":2315},{"index":2304},{"index":1894},{"index":1897},{"index":2300},{"index":1514},{"index":915},{"index":917},{"index":1515},{"index":1516},{"index":1040},{"index":1057},{"index":924},{"index":923},{"index":918},{"index":937},{"index":939},{"index":940},{"index":1058},{"index":1062},{"index":948},{"index":947},{"index":944},{"index":951},{"index":954},{"index":955},{"index":1066},{"index":1070},{"index":1071},{"index":1067},{"index":1063},{"index":1059},{"index":1041},{"index":1038},{"index":1522},{"index":1529},{"index":1133},{"index":1037},{"index":1523},{"index":1524},{"index":1039},{"index":1043},{"index":1042},{"index":1134},{"index":1135},{"index":1060},{"index":1061},{"index":1096},{"index":1056},{"index":1049},{"index":1525},{"index":1528},{"index":1048},{"index":1052},{"index":1527},{"index":1526},{"index":1051},{"index":1050},{"index":1531},{"index":1532},{"index":1183},{"index":1178},{"index":933},{"index":1520},{"index":1521},{"index":2316},{"index":1896},{"index":1883},{"index":1888},{"index":2308},{"index":2317},{"index":2306},{"index":1882},{"index":1880},{"index":2301},{"index":2305},{"index":1895},{"index":1879},{"index":2298},{"index":2296},{"index":1889},{"index":1884},{"index":1881},{"index":2299},{"index":2307},{"index":2309},{"index":1890},{"index":1885},{"index":2297},{"index":2314},{"index":1887},{"index":2375},{"index":2370},{"index":2368},{"index":2369},{"index":2377},{"index":2378},{"index":2383},{"index":2379},{"index":2380},{"index":2382},{"index":2381},{"index":2364},{"index":2365},{"index":2385},{"index":2384},{"index":2386},{"index":1893},{"index":2295},{"index":2313},{"index":1891},{"index":1886},{"index":2302},{"index":1518},{"index":931},{"index":932},{"index":1519},{"index":994},{"index":993},{"index":942},{"index":938},{"index":934},{"index":920},{"index":1145},{"index":1146},{"index":935},{"index":936},{"index":941},{"index":943},{"index":950},{"index":949},{"index":946},{"index":945},{"index":1147},{"index":1148},{"index":952},{"index":953},{"index":957},{"index":958},{"index":1008},{"index":1002},{"index":996},{"index":997},{"index":998},{"index":995},{"index":1179},{"index":1180},{"index":1001},{"index":999},{"index":1003},{"index":1011},{"index":1005},{"index":1004},{"index":1007},{"index":1006},{"index":1097},{"index":1102},{"index":1103},{"index":1098},{"index":1093},{"index":1000},{"index":1181},{"index":1182},{"index":1092},{"index":1053},{"index":1054},{"index":1055},{"index":1094},{"index":1095},{"index":1099},{"index":1100},{"index":1101},{"index":1065},{"index":1064},{"index":1136},{"index":1137},{"index":1068},{"index":1069},{"index":1106},{"index":1112},{"index":1073},{"index":1072},{"index":1138},{"index":1113},{"index":1104},{"index":1105},{"index":1111},{"index":1110},{"index":1109},{"index":2376},{"index":2374},{"index":1603},{"index":1622},{"index":1611},{"index":1648},{"index":1644},{"index":1635},{"index":1814},{"index":1796},{"index":1795},{"index":1794},{"index":1793},{"index":1789},{"index":1788},{"index":1787},{"index":1806},{"index":1786},{"index":1790},{"index":1810},{"index":1813},{"index":1815},{"index":1831},{"index":1809},{"index":1826},{"index":1828},{"index":1827},{"index":1825},{"index":1928},{"index":1924},{"index":1944},{"index":1925},{"index":1926},{"index":1927},{"index":1931},{"index":1932},{"index":1933},{"index":1934},{"index":2027},{"index":1957},{"index":1958},{"index":1969},{"index":1968},{"index":1963},{"index":1964},{"index":1965},{"index":1962},{"index":1961},{"index":1960},{"index":1966},{"index":1959},{"index":1953},{"index":1952},{"index":1951},{"index":1947},{"index":1967},{"index":1948},{"index":1949},{"index":1950},{"index":1954},{"index":1955},{"index":1956},{"index":2026},{"index":2025},{"index":2024},{"index":2038},{"index":2033},{"index":2032},{"index":2037},{"index":2019},{"index":2018},{"index":2030},{"index":2036}]}]},{"index":65,"name":"DEF-Sleeve_Elbow.L","islands":[{"vert_indicies":[{"index":909},{"index":1143},{"index":910},{"index":911},{"index":912},{"index":926},{"index":927},{"index":928},{"index":929},{"index":1033},{"index":1635},{"index":1644},{"index":1623},{"index":1613},{"index":1680},{"index":1649},{"index":1660},{"index":1622},{"index":1603},{"index":1653},{"index":1630},{"index":1619},{"index":1632},{"index":1655},{"index":1641},{"index":1637},{"index":1650},{"index":1626},{"index":1615},{"index":1669},{"index":1658},{"index":1672},{"index":1612},{"index":1633},{"index":1610},{"index":1671},{"index":1665},{"index":1910},{"index":1505},{"index":1509},{"index":1489},{"index":1903},{"index":1917},{"index":2368},{"index":1894},{"index":2304},{"index":2300},{"index":2314},{"index":2370},{"index":2375},{"index":1656},{"index":1628},{"index":1648},{"index":1611},{"index":1814},{"index":1796},{"index":1795},{"index":1794},{"index":1793},{"index":1789},{"index":1788},{"index":1787},{"index":1806},{"index":1786},{"index":1790},{"index":1810},{"index":1813},{"index":1815},{"index":1831},{"index":1809},{"index":1826},{"index":1828},{"index":1827},{"index":1825},{"index":1928},{"index":1924},{"index":1944},{"index":1925},{"index":1926},{"index":1927},{"index":1931},{"index":1932},{"index":1933},{"index":1934},{"index":2027},{"index":1957},{"index":1958},{"index":2036},{"index":1956},{"index":1955},{"index":1954},{"index":1950},{"index":1949},{"index":1948},{"index":1967},{"index":1947},{"index":1951},{"index":1952},{"index":2030},{"index":2018},{"index":2019},{"index":2037},{"index":2032},{"index":2033},{"index":2038},{"index":2024},{"index":2025},{"index":2026}]}]},{"index":66,"name":"DEF-Sleeve2.L","islands":[{"vert_indicies":[{"index":909},{"index":913},{"index":914},{"index":925},{"index":1034},{"index":1132},{"index":1035},{"index":1036},{"index":1044},{"index":1047},{"index":1046},{"index":1045},{"index":1177},{"index":1184},{"index":1033},{"index":929},{"index":928},{"index":1648},{"index":1611},{"index":1623},{"index":1613},{"index":1668},{"index":1679},{"index":1621},{"index":1629},{"index":1627},{"index":1624},{"index":1604},{"index":1605},{"index":1652},{"index":1643},{"index":1635},{"index":1644},{"index":1640},{"index":1618},{"index":1677},{"index":1659},{"index":1631},{"index":1616},{"index":1614},{"index":1670},{"index":1914},{"index":1918},{"index":1675},{"index":1495},{"index":1494},{"index":1491},{"index":1492},{"index":1493},{"index":1488},{"index":1487},{"index":1922},{"index":1906},{"index":1662},{"index":1661},{"index":1651},{"index":1902},{"index":1905},{"index":1920},{"index":1908},{"index":1919},{"index":1676},{"index":1617},{"index":1634},{"index":1657},{"index":1639},{"index":1636},{"index":1638},{"index":1654},{"index":1645},{"index":1620},{"index":1647},{"index":1912},{"index":1503},{"index":1497},{"index":1490},{"index":2378},{"index":1881},{"index":2299},{"index":2307},{"index":2309},{"index":1890},{"index":2377},{"index":2369},{"index":1911},{"index":1666},{"index":1916},{"index":1671},{"index":1610},{"index":1633},{"index":1612},{"index":1672},{"index":1658},{"index":1626},{"index":1615},{"index":1637},{"index":910},{"index":1143},{"index":1650},{"index":1628},{"index":1656},{"index":1602},{"index":1815},{"index":1831},{"index":1787},{"index":1806},{"index":1786},{"index":1790},{"index":1791},{"index":1792},{"index":1798},{"index":1805},{"index":1799},{"index":1800},{"index":1801},{"index":1804},{"index":1803},{"index":1802},{"index":1807},{"index":1808},{"index":1797},{"index":1796},{"index":1795},{"index":1825},{"index":1814},{"index":1811},{"index":1819},{"index":1816},{"index":1824},{"index":1820},{"index":1812},{"index":1817},{"index":1822},{"index":1823},{"index":1818},{"index":1821},{"index":1830},{"index":1829},{"index":1810},{"index":1813},{"index":1933},{"index":1934},{"index":1935},{"index":1946},{"index":1945},{"index":1940},{"index":1941},{"index":1942},{"index":1939},{"index":1938},{"index":1937},{"index":1943},{"index":1936},{"index":1930},{"index":1929},{"index":1928},{"index":1924},{"index":1944},{"index":1925},{"index":2032},{"index":1948},{"index":1967},{"index":1947},{"index":1951},{"index":1952},{"index":1953},{"index":1959},{"index":1966},{"index":1960},{"index":1961},{"index":1962},{"index":1965},{"index":1964},{"index":1963},{"index":1968},{"index":1969},{"index":1958},{"index":1957},{"index":1956},{"index":2026},{"index":2027},{"index":2036},{"index":2029},{"index":2022},{"index":2023},{"index":2031},{"index":2028},{"index":2020},{"index":2021},{"index":2016},{"index":2017},{"index":2034},{"index":2035},{"index":2030},{"index":2018},{"index":2019},{"index":2037},{"index":911},{"index":1655},{"index":1665},{"index":1910},{"index":1680},{"index":1649},{"index":1923}]}]},{"index":67,"name":"DEF-Sleeve1.R","islands":[{"vert_indicies":[{"index":1211},{"index":1585},{"index":1599},{"index":1212},{"index":1214},{"index":1219},{"index":1220},{"index":1213},{"index":1591},{"index":1598},{"index":1327},{"index":1340},{"index":1341},{"index":1231},{"index":1230},{"index":1228},{"index":1235},{"index":1238},{"index":1239},{"index":1345},{"index":1349},{"index":1246},{"index":1245},{"index":1242},{"index":1429},{"index":1243},{"index":1236},{"index":1226},{"index":1216},{"index":1215},{"index":1425},{"index":1426},{"index":1427},{"index":1428},{"index":1582},{"index":1579},{"index":1583},{"index":1217},{"index":1218},{"index":1584},{"index":1592},{"index":1221},{"index":1222},{"index":1593},{"index":1594},{"index":1223},{"index":1224},{"index":1597},{"index":1596},{"index":1435},{"index":1436},{"index":1286},{"index":1285},{"index":1284},{"index":1233},{"index":1229},{"index":1225},{"index":1227},{"index":1232},{"index":1234},{"index":1241},{"index":1240},{"index":1237},{"index":1244},{"index":1248},{"index":1249},{"index":1299},{"index":1293},{"index":1287},{"index":1288},{"index":1289},{"index":1290},{"index":1294},{"index":1302},{"index":1296},{"index":1295},{"index":1292},{"index":1437},{"index":1438},{"index":1291},{"index":1376},{"index":1336},{"index":1375},{"index":1333},{"index":1334},{"index":1589},{"index":1588},{"index":1335},{"index":1331},{"index":1587},{"index":1590},{"index":1332},{"index":1326},{"index":1324},{"index":1600},{"index":1586},{"index":1415},{"index":1325},{"index":1595},{"index":2322},{"index":1844},{"index":2345},{"index":1873},{"index":1566},{"index":1572},{"index":1573},{"index":1574},{"index":1578},{"index":1558},{"index":1577},{"index":1576},{"index":1575},{"index":1571},{"index":1570},{"index":1569},{"index":1568},{"index":1567},{"index":1556},{"index":1557},{"index":1562},{"index":1561},{"index":1560},{"index":1563},{"index":1564},{"index":1565},{"index":1559},{"index":1858},{"index":2353},{"index":1835},{"index":2330},{"index":2319},{"index":1838},{"index":2342},{"index":1870},{"index":1872},{"index":1856},{"index":2351},{"index":1833},{"index":2328},{"index":2324},{"index":1849},{"index":2347},{"index":1875},{"index":1857},{"index":2352},{"index":1834},{"index":2329},{"index":2331},{"index":1836},{"index":1842},{"index":2334},{"index":1581},{"index":1580},{"index":1440},{"index":1439},{"index":2318},{"index":1837},{"index":2341},{"index":1869},{"index":1876},{"index":1865},{"index":2360},{"index":1847},{"index":2337},{"index":2325},{"index":1850},{"index":2348},{"index":2335},{"index":1845},{"index":1840},{"index":2333},{"index":2336},{"index":1846},{"index":1853},{"index":2349},{"index":1877},{"index":1864},{"index":2359},{"index":2356},{"index":1861},{"index":1863},{"index":2358},{"index":1867},{"index":2362},{"index":1852},{"index":2339},{"index":2340},{"index":1854},{"index":1832},{"index":2327},{"index":2323},{"index":1848},{"index":2346},{"index":1874},{"index":1855},{"index":2350},{"index":2363},{"index":1868},{"index":1866},{"index":2361},{"index":1851},{"index":2338},{"index":2320},{"index":1841},{"index":2343},{"index":1871},{"index":1860},{"index":2355},{"index":1839},{"index":2332},{"index":2326},{"index":1862},{"index":2357},{"index":2354},{"index":1859},{"index":2321},{"index":1601},{"index":1843},{"index":2344},{"index":1722},{"index":1686},{"index":1703},{"index":1689},{"index":1642},{"index":1712},{"index":1717},{"index":1673},{"index":1702},{"index":1681},{"index":1718},{"index":1704},{"index":1695},{"index":1684},{"index":1715},{"index":1710},{"index":1701},{"index":1747},{"index":1535},{"index":1536},{"index":1540},{"index":1541},{"index":1542},{"index":1543},{"index":1736},{"index":1727},{"index":1682},{"index":1692},{"index":1726},{"index":1646},{"index":1706},{"index":1709},{"index":1699},{"index":1745},{"index":1733},{"index":1688},{"index":1724},{"index":1713},{"index":1691},{"index":1674},{"index":1740},{"index":1714},{"index":1725},{"index":1690},{"index":1698},{"index":1696},{"index":1693},{"index":1687},{"index":1723},{"index":1705},{"index":1700},{"index":1685},{"index":1683},{"index":1716},{"index":1721},{"index":1697},{"index":1707},{"index":1708},{"index":1744},{"index":1775},{"index":1750},{"index":1743},{"index":1741},{"index":1739},{"index":1609},{"index":1608},{"index":1607},{"index":1760},{"index":1606},{"index":1625},{"index":1974},{"index":1970},{"index":1990},{"index":1971},{"index":1972},{"index":1973},{"index":1977},{"index":1978},{"index":1979},{"index":1980},{"index":2043},{"index":2003},{"index":2004},{"index":2015},{"index":2014},{"index":2009},{"index":2010},{"index":2011},{"index":2008},{"index":2007},{"index":2006},{"index":2012},{"index":2005},{"index":1999},{"index":1998},{"index":1997},{"index":1993},{"index":2013},{"index":1994},{"index":1995},{"index":1996},{"index":2000},{"index":2001},{"index":2002},{"index":2061},{"index":2060},{"index":2047},{"index":2048},{"index":2052},{"index":2044},{"index":2045},{"index":2049},{"index":2055},{"index":2046},{"index":2042},{"index":1774},{"index":1533},{"index":1537},{"index":1748},{"index":1720},{"index":1742},{"index":1729},{"index":1534},{"index":1553},{"index":1771},{"index":1768},{"index":1782},{"index":1779},{"index":1764},{"index":1785},{"index":1763},{"index":1719},{"index":1737},{"index":1773},{"index":1711},{"index":1328},{"index":1342},{"index":1346},{"index":1350},{"index":1354},{"index":1420},{"index":1355},{"index":1351},{"index":1419},{"index":1418},{"index":1347},{"index":1343},{"index":1329},{"index":1330},{"index":1339},{"index":1379},{"index":1344},{"index":1348},{"index":1352},{"index":1389},{"index":1384},{"index":1383},{"index":1382},{"index":1378},{"index":1337},{"index":1338},{"index":1377},{"index":1381},{"index":1380},{"index":1297},{"index":1298},{"index":1390},{"index":1392},{"index":1385},{"index":1386},{"index":1388},{"index":1387},{"index":1396},{"index":1394},{"index":1393},{"index":1395},{"index":1356},{"index":1416},{"index":1417}]},{"vert_indicies":[{"index":1762}]}]},{"index":68,"name":"DEF-Sleeve_Elbow.R","islands":[{"vert_indicies":[{"index":1533},{"index":1537},{"index":1748},{"index":1702},{"index":1673},{"index":1717},{"index":1711},{"index":1574},{"index":1578},{"index":1718},{"index":1681},{"index":1695},{"index":1684},{"index":1715},{"index":1710},{"index":1701},{"index":1747},{"index":1535},{"index":1536},{"index":1540},{"index":1541},{"index":1542},{"index":1543},{"index":1736},{"index":1692},{"index":1726},{"index":1646},{"index":1706},{"index":1709},{"index":1699},{"index":1745},{"index":1733},{"index":1688},{"index":1724},{"index":1713},{"index":1691},{"index":1674},{"index":1740},{"index":1775},{"index":1750},{"index":1743},{"index":1741},{"index":1739},{"index":1609},{"index":1608},{"index":1607},{"index":1760},{"index":1606},{"index":1625},{"index":1974},{"index":1970},{"index":1990},{"index":1971},{"index":1972},{"index":1973},{"index":1977},{"index":1978},{"index":1979},{"index":1980},{"index":2043},{"index":2003},{"index":2004},{"index":2042},{"index":2002},{"index":2001},{"index":2000},{"index":1996},{"index":1995},{"index":1994},{"index":2013},{"index":1993},{"index":1997},{"index":1998},{"index":2046},{"index":2055},{"index":2049},{"index":2045},{"index":2044},{"index":2052},{"index":2048},{"index":2047},{"index":2060},{"index":2061},{"index":1774},{"index":1771},{"index":1553},{"index":1534},{"index":1729},{"index":1742},{"index":1720},{"index":1768},{"index":1782},{"index":1779},{"index":1764},{"index":1785},{"index":1763},{"index":1704},{"index":1874},{"index":1855},{"index":1866},{"index":2361},{"index":2343},{"index":2346},{"index":1848},{"index":2323},{"index":2338},{"index":2320}]}]},{"index":69,"name":"DEF-Sleeve2.R","islands":[{"vert_indicies":[{"index":1533},{"index":1537},{"index":1538},{"index":1539},{"index":1545},{"index":1552},{"index":1546},{"index":1547},{"index":1548},{"index":1551},{"index":1550},{"index":1549},{"index":1554},{"index":1555},{"index":1544},{"index":1543},{"index":1542},{"index":1740},{"index":1674},{"index":1692},{"index":1682},{"index":1714},{"index":1725},{"index":1690},{"index":1698},{"index":1696},{"index":1693},{"index":1694},{"index":1667},{"index":1744},{"index":1735},{"index":1727},{"index":1736},{"index":1732},{"index":1687},{"index":1723},{"index":1705},{"index":1563},{"index":1564},{"index":1565},{"index":1559},{"index":1566},{"index":1572},{"index":1573},{"index":1574},{"index":1866},{"index":1871},{"index":1860},{"index":2355},{"index":2345},{"index":1844},{"index":1835},{"index":2330},{"index":2319},{"index":2322},{"index":2353},{"index":1858},{"index":1873},{"index":1870},{"index":1872},{"index":1856},{"index":1875},{"index":1560},{"index":1561},{"index":1562},{"index":1557},{"index":1556},{"index":1869},{"index":1862},{"index":1859},{"index":1857},{"index":1708},{"index":1707},{"index":1697},{"index":2342},{"index":1711},{"index":1702},{"index":1673},{"index":1717},{"index":1642},{"index":1689},{"index":1703},{"index":1749},{"index":1731},{"index":1686},{"index":1722},{"index":1716},{"index":1683},{"index":1685},{"index":1700},{"index":1746},{"index":1730},{"index":1728},{"index":1721},{"index":1712},{"index":1737},{"index":1719},{"index":1748},{"index":1720},{"index":1681},{"index":1718},{"index":1704},{"index":1695},{"index":1742},{"index":1729},{"index":1534},{"index":1553},{"index":1771},{"index":1760},{"index":1607},{"index":1608},{"index":1782},{"index":1535},{"index":1747},{"index":1768},{"index":1972},{"index":1971},{"index":1990},{"index":1970},{"index":1974},{"index":1975},{"index":1976},{"index":1982},{"index":1989},{"index":1983},{"index":1984},{"index":1985},{"index":1988},{"index":1987},{"index":1986},{"index":1991},{"index":1992},{"index":1981},{"index":1980},{"index":1979},{"index":1978},{"index":1741},{"index":1743},{"index":1750},{"index":1751},{"index":1762},{"index":1761},{"index":1756},{"index":1757},{"index":1758},{"index":1755},{"index":1754},{"index":1753},{"index":1759},{"index":1752},{"index":1738},{"index":1734},{"index":1625},{"index":1606},{"index":1774},{"index":1784},{"index":1765},{"index":1776},{"index":1777},{"index":1778},{"index":1767},{"index":1772},{"index":1781},{"index":1780},{"index":1769},{"index":1770},{"index":1783},{"index":1766},{"index":1773},{"index":1775},{"index":1763},{"index":2061},{"index":2002},{"index":2003},{"index":2004},{"index":2015},{"index":2014},{"index":2009},{"index":2010},{"index":2011},{"index":2008},{"index":2007},{"index":2006},{"index":2012},{"index":2005},{"index":1999},{"index":1998},{"index":1997},{"index":1993},{"index":2013},{"index":1994},{"index":2044},{"index":2045},{"index":2049},{"index":2055},{"index":2046},{"index":2039},{"index":2040},{"index":2053},{"index":2054},{"index":2056},{"index":2057},{"index":2050},{"index":2051},{"index":2058},{"index":2059},{"index":2041},{"index":2042},{"index":2043},{"index":1726},{"index":1646}]}]},{"index":70,"name":"DEF-Collar_Back.L","islands":[]}],"als":{},"blendlink_id":"9b78545b-96cb-478f-aefc-a895350c7176"},
-  "GEO-ellie_jacket_buttons001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"60a0baf6-8c2d-400f-82c8-00e4067365a8"},
-  "GEO-ellie_jacket_pin_1001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"d4e8683b-ed9e-4751-8e4a-e23600b97518"},
-  "GEO-ellie_jacket_pin_2001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"b0b08c41-79ca-40a1-9bf4-0c3f913ae2df"},
-  "GEO-ellie_jacket_pin_3001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"e45f0921-035e-49c1-978f-0e9a5e1c2da4"},
-  "GEO-ellie_jacket_pin_4001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"0d2850a1-77b4-457d-ad68-059b13ea7bb0"},
-  "GEO-ellie_jacket_pin_5001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"6432080f-4b1c-4f93-9859-45fa304340d0"},
-  "GEO-ellie_scrunchy001": {"tissue_tessellate":{"generator":{}},"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"a52aee30-2dcf-42fe-b374-e608a79e890b"},
-  "GEO-ellie_teeth_btm001": {"tissue_tessellate":{"generator":{}},"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"566383a8-35a8-45ac-b268-a28d3826da7b"},
-  "GEO-ellie_teeth_top001": {"tissue_tessellate":{"generator":{}},"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"292db733-fa70-47cd-82ad-dd89c18a2913"},
-  "GEO-ellie_tongue001": {"als":{},"blendlink_id":"6936214d-ec40-407b-ad54-24bef50cf936"},
-  "GEO-ellie_trousers001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"a093eddc-80f7-4c94-a4cf-c8d9a97a68af"},
-  "GEO-ellie_watch001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"d7d5533c-0597-4d0c-81e0-05e459dc89e4"},
+  Backdrop: {"blendlink_id":"0382b964-1f0a-4add-8c0f-f6f526022e15","blendlink_object_random":0.7245741953897695},
+  "GEO-ellie_body001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"e51daf0e-2ee7-403f-9759-1ae6a43b6fc8","blendlink_object_random":0.2510384480122101},
+  "GEO-ellie_boots001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"a6be9f99-29c3-40d6-81ab-46850c490aa2","blendlink_object_random":0.19486696696720715},
+  "GEO-ellie_earrings001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"5b3102ce-2a40-42a0-904c-850862f9deb7","blendlink_object_random":0.8561574592851469},
+  "GEO-ellie_eyeL001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"1f364126-2be6-4fa3-b373-d3ac9cf70c77","blendlink_object_random":0.08656004166383298},
+  "GEO-ellie_eyeR001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"3d69dc04-f8ed-4550-aaca-6d7d23c2a22d","blendlink_object_random":0.024102240806469284},
+  "GEO-ellie_eye_highlights001": {"highlight_strength":1,"als":{},"blendlink_id":"095fb967-d1a1-4c43-9031-78aa84a03b02","blendlink_object_random":0.31045500010029764},
+  "GEO-ellie_eyebrows001": {"als":{},"blendlink_id":"c02419d7-2ed7-4a3e-9698-dcaf81139fd5","blendlink_object_random":0.4670947206828498},
+  "GEO-ellie_eyelashes001": {"als":{},"blendlink_id":"dae6cbb7-8e8c-4af7-af0f-6ffca912c229","blendlink_object_random":0.9077941411891473},
+  "GEO-ellie_fannypack_buckle_ext001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"92c28718-e2aa-49ea-b119-7fcd131127b0","blendlink_object_random":0.8425554339407374},
+  "GEO-ellie_fannypack_buckle_int001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"ccc736dc-a779-4a7e-98d3-f834c8c7c901","blendlink_object_random":0.9177530926926418},
+  "GEO-ellie_fannypack_main001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"810da819-98e5-4724-bacf-5f1e9bd0cce4","blendlink_object_random":0.40477868761047225},
+  "GEO-ellie_fannypack_strap001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"cd5ff5fc-90e0-4c87-b75d-5be60c3e8f78","blendlink_object_random":0.48619943379568853},
+  "GEO-ellie_fannypack_strap_slide001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"39b3a849-5b37-4a72-a125-d2fc92e588f4","blendlink_object_random":0.5319512517964354},
+  "GEO-ellie_fannypack_zipper_pull001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"db9270f1-c8f1-4370-baf9-5e59c64a8786","blendlink_object_random":0.03585441900320687},
+  "GEO-ellie_fannypack_zipper_stop001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"031ef977-8859-46d8-8210-09db0f5db41d","blendlink_object_random":0.35874630216479914},
+  "GEO-ellie_hairgroom_base001": {"als":{},"blendlink_id":"4ee9acfe-bd3c-43b6-a974-d973c6572d05","blendlink_object_random":0.8584591743672404},
+  "GEO-ellie_hairscalp-back001": {"als":{},"blendlink_id":"eab661ef-d34b-43df-b8f0-59d4616feb9b","blendlink_object_random":0.3211751979126537},
+  "GEO-ellie_hairscalp-front001": {"als":{},"blendlink_id":"ce42eadf-64b9-467e-91c9-470ef740b2a9","blendlink_object_random":0.710190071424048},
+  "GEO-ellie_hairscalp-loose001": {"als":{},"blendlink_id":"769e9d3c-1b8b-4b58-8c17-29ab67ffbf57","blendlink_object_random":0.8350291316944708},
+  "GEO-ellie_hairscalp-ponytail001": {"als":{},"blendlink_id":"4e6a7997-54e3-4e8d-809b-90c8d594b06a","blendlink_object_random":0.8673264574881937},
+  "GEO-ellie_hairscalp001": {"als":{},"blendlink_id":"e32ed934-fd00-4a4b-8150-a454e6e97121","blendlink_object_random":0.597072525787417},
+  "GEO-ellie_hair_cutscalp-back001": {"als":{},"blendlink_id":"8d62ac7c-c304-473a-80bc-85c21d3ec5fa","blendlink_object_random":0.08188816557682309},
+  "GEO-ellie_hair_cutscalp-front001": {"als":{},"blendlink_id":"31f26802-6def-4f5d-81b7-ddcf70f3a726","blendlink_object_random":0.8582990266984094},
+  "GEO-ellie_hair_cutscalp-loose001": {"als":{},"blendlink_id":"1f0864c4-d68f-4d41-94d6-c7846c354447","blendlink_object_random":0.11419907657294513},
+  "GEO-ellie_handkerchief001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"4f45d11c-40c0-4983-a7a5-a6ec45352065","blendlink_object_random":0.9322246040525438},
+  "GEO-ellie_head001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"9a8bb7f2-5ea4-4e7e-b91a-303412c80b09","blendlink_object_random":0.49849808483815244},
+  "GEO-ellie_jacket001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"active_islands_index":27,"island_groups":[{"index":0,"name":"DEF-Belly","islands":[{"vert_indicies":[{"index":68},{"index":110},{"index":131},{"index":4322},{"index":2424},{"index":2398},{"index":4337},{"index":4338},{"index":2399},{"index":2397},{"index":2396},{"index":2423},{"index":2409},{"index":2411},{"index":4326},{"index":82},{"index":342},{"index":83},{"index":306},{"index":132},{"index":111},{"index":69},{"index":104},{"index":125},{"index":76},{"index":360},{"index":353},{"index":126},{"index":77},{"index":219},{"index":276},{"index":252},{"index":211},{"index":260},{"index":284},{"index":227},{"index":231},{"index":288},{"index":381},{"index":388},{"index":230},{"index":229},{"index":228},{"index":313},{"index":4121},{"index":4113},{"index":2193},{"index":2202},{"index":2184},{"index":2185},{"index":2200},{"index":2188},{"index":2189},{"index":2198},{"index":2178},{"index":2288},{"index":2180},{"index":2199},{"index":2191},{"index":2190},{"index":2201},{"index":2187},{"index":2186},{"index":2203},{"index":2195},{"index":2194},{"index":2294},{"index":2286},{"index":2293},{"index":2290},{"index":2284},{"index":2289},{"index":2292},{"index":2285},{"index":2291},{"index":4180},{"index":4176},{"index":4191},{"index":4128},{"index":319},{"index":234},{"index":233},{"index":318},{"index":317},{"index":232},{"index":301},{"index":312},{"index":682},{"index":606},{"index":607},{"index":683},{"index":684},{"index":608},{"index":665},{"index":641},{"index":592},{"index":591},{"index":640},{"index":664},{"index":663},{"index":639},{"index":590},{"index":631},{"index":746},{"index":748},{"index":744},{"index":598},{"index":655},{"index":656},{"index":599},{"index":600},{"index":657},{"index":633},{"index":632},{"index":4192},{"index":2225},{"index":2211},{"index":2210},{"index":2227},{"index":2219},{"index":2218},{"index":2281},{"index":2273},{"index":2217},{"index":2226},{"index":2208},{"index":2209},{"index":2224},{"index":2212},{"index":2213},{"index":2222},{"index":2204},{"index":2275},{"index":2206},{"index":2223},{"index":2215},{"index":2214},{"index":2279},{"index":2272},{"index":2278},{"index":2276},{"index":2271},{"index":2277},{"index":2280},{"index":4197},{"index":4198},{"index":4199},{"index":649},{"index":625},{"index":624},{"index":648},{"index":647},{"index":623},{"index":745},{"index":303},{"index":273},{"index":249},{"index":250},{"index":274},{"index":225},{"index":282},{"index":258},{"index":217},{"index":266},{"index":290},{"index":289},{"index":265},{"index":216},{"index":300},{"index":747},{"index":749},{"index":257},{"index":281},{"index":224},{"index":291},{"index":267},{"index":218},{"index":259},{"index":283},{"index":226},{"index":275},{"index":4123},{"index":4122},{"index":4131},{"index":4132},{"index":4125},{"index":4126},{"index":4130},{"index":4133},{"index":4134},{"index":4200},{"index":4212},{"index":619},{"index":643},{"index":594},{"index":651},{"index":627},{"index":586},{"index":635},{"index":659},{"index":602},{"index":678},{"index":4205},{"index":4210},{"index":4209},{"index":4208},{"index":4206},{"index":4204},{"index":4211},{"index":4215},{"index":4214},{"index":603},{"index":604},{"index":737},{"index":730},{"index":733},{"index":739},{"index":734},{"index":731},{"index":738},{"index":732},{"index":645},{"index":621},{"index":620},{"index":644},{"index":595},{"index":652},{"index":628},{"index":587},{"index":636},{"index":660},{"index":661},{"index":637},{"index":588},{"index":629},{"index":653},{"index":596},{"index":646},{"index":622},{"index":618},{"index":642},{"index":593},{"index":650},{"index":626},{"index":585},{"index":634},{"index":658},{"index":601},{"index":605},{"index":662},{"index":638},{"index":589},{"index":630},{"index":654},{"index":597},{"index":5126},{"index":2640},{"index":2644},{"index":2642},{"index":5128},{"index":5132},{"index":2639},{"index":2641},{"index":5133},{"index":5125},{"index":2643},{"index":2637},{"index":5131},{"index":512},{"index":464},{"index":505},{"index":486},{"index":711},{"index":710},{"index":504},{"index":485},{"index":701},{"index":484},{"index":503},{"index":462},{"index":510},{"index":491},{"index":4350},{"index":2460},{"index":2438},{"index":4362},{"index":456},{"index":497},{"index":4361},{"index":2437},{"index":2463},{"index":4358},{"index":517},{"index":470},{"index":4357},{"index":2450},{"index":2448},{"index":2452},{"index":2464},{"index":2439},{"index":4355},{"index":502},{"index":461},{"index":460},{"index":501},{"index":521},{"index":474},{"index":475},{"index":4353},{"index":4356},{"index":677},{"index":4352},{"index":522},{"index":473},{"index":472},{"index":674},{"index":4394},{"index":4400},{"index":2502},{"index":2505},{"index":4401},{"index":519},{"index":499},{"index":458},{"index":459},{"index":500},{"index":520},{"index":494},{"index":493},{"index":513},{"index":465},{"index":466},{"index":514},{"index":515},{"index":467},{"index":468},{"index":516},{"index":496},{"index":495},{"index":4373},{"index":2461},{"index":2440},{"index":4366},{"index":2436},{"index":2435},{"index":2462},{"index":2459},{"index":2441},{"index":2442},{"index":2446},{"index":2445},{"index":4372},{"index":4371},{"index":4359},{"index":509},{"index":508},{"index":489},{"index":488},{"index":507},{"index":506},{"index":4402},{"index":2503},{"index":2486},{"index":2483},{"index":2477},{"index":2478},{"index":2484},{"index":2469},{"index":2470},{"index":2485},{"index":2479},{"index":2480},{"index":2482},{"index":4470},{"index":2522},{"index":761},{"index":768},{"index":765},{"index":759},{"index":764},{"index":767},{"index":760},{"index":766},{"index":883},{"index":877},{"index":884},{"index":881},{"index":876},{"index":882},{"index":885},{"index":878},{"index":4464},{"index":2519},{"index":2520},{"index":2526},{"index":2517},{"index":2518},{"index":2527},{"index":2521},{"index":4485},{"index":4477},{"index":4476},{"index":4473},{"index":4472},{"index":4484},{"index":4482},{"index":4471},{"index":2525},{"index":2497},{"index":2498},{"index":2504},{"index":4396},{"index":4395},{"index":4393},{"index":4391},{"index":2499},{"index":2500},{"index":4392},{"index":2458},{"index":2432},{"index":2427},{"index":2456},{"index":2457},{"index":4368},{"index":4367},{"index":2444},{"index":2443},{"index":4351},{"index":4360},{"index":2429},{"index":699},{"index":471},{"index":518},{"index":498},{"index":457},{"index":492},{"index":511},{"index":463},{"index":713},{"index":709},{"index":5124},{"index":2649},{"index":2636},{"index":5123},{"index":5122},{"index":2634},{"index":2632},{"index":5121},{"index":5120},{"index":2635},{"index":2638},{"index":2633},{"index":5135},{"index":5137},{"index":2629},{"index":2666},{"index":2628},{"index":2653},{"index":2657},{"index":2655},{"index":2652},{"index":2630},{"index":2624},{"index":2651},{"index":2662},{"index":2650},{"index":2625},{"index":2631},{"index":2667},{"index":2665},{"index":2627},{"index":2623},{"index":2663},{"index":2622},{"index":2626},{"index":2654},{"index":2656},{"index":2664},{"index":698},{"index":705},{"index":702},{"index":697},{"index":703},{"index":706},{"index":704},{"index":5127},{"index":4179},{"index":4178},{"index":4217},{"index":4170},{"index":4169},{"index":4168},{"index":4141},{"index":4150},{"index":4151},{"index":4152},{"index":4202},{"index":4203},{"index":4196},{"index":4195},{"index":4193},{"index":4110},{"index":245},{"index":269},{"index":220},{"index":277},{"index":253},{"index":212},{"index":261},{"index":285},{"index":286},{"index":262},{"index":213},{"index":214},{"index":263},{"index":287},{"index":384},{"index":390},{"index":385},{"index":382},{"index":389},{"index":383},{"index":271},{"index":247},{"index":222},{"index":279},{"index":255},{"index":254},{"index":278},{"index":221},{"index":270},{"index":272},{"index":248},{"index":244},{"index":268},{"index":119},{"index":98},{"index":357},{"index":354},{"index":118},{"index":97},{"index":344},{"index":96},{"index":117},{"index":75},{"index":124},{"index":103},{"index":345},{"index":348},{"index":341},{"index":347},{"index":340},{"index":346},{"index":349},{"index":4344},{"index":2421},{"index":2420},{"index":2422},{"index":2401},{"index":2400},{"index":2425},{"index":4319},{"index":137},{"index":116},{"index":74},{"index":73},{"index":115},{"index":136},{"index":87},{"index":310},{"index":309},{"index":86},{"index":85},{"index":308},{"index":4431},{"index":4424},{"index":4415},{"index":4439},{"index":4446},{"index":4422},{"index":4419},{"index":4443},{"index":4437},{"index":4413},{"index":4418},{"index":4442},{"index":4445},{"index":4421},{"index":4414},{"index":4438},{"index":4444},{"index":4420},{"index":120},{"index":78},{"index":127},{"index":106},{"index":71},{"index":113},{"index":134},{"index":135},{"index":114},{"index":72},{"index":107},{"index":108},{"index":109},{"index":130},{"index":81},{"index":80},{"index":129},{"index":128},{"index":79},{"index":121},{"index":122},{"index":101},{"index":123},{"index":4325},{"index":2419},{"index":2393},{"index":2387},{"index":2417},{"index":2403},{"index":2402},{"index":2404},{"index":2405},{"index":4331},{"index":4330},{"index":2418},{"index":2389},{"index":4328},{"index":4343},{"index":2406},{"index":2407},{"index":4340},{"index":4339},{"index":4334},{"index":4333},{"index":4329},{"index":311},{"index":88},{"index":4320},{"index":2413},{"index":4327},{"index":223},{"index":280},{"index":256},{"index":215},{"index":264},{"index":4109},{"index":4118},{"index":4119},{"index":4116},{"index":4117},{"index":4111},{"index":4112},{"index":5118},{"index":2594},{"index":2598},{"index":2596},{"index":5110},{"index":5111},{"index":2593},{"index":2595},{"index":5117},{"index":5116},{"index":2597},{"index":2591},{"index":5115},{"index":5114},{"index":2603},{"index":2590},{"index":5106},{"index":5105},{"index":2588},{"index":2586},{"index":5104},{"index":5103},{"index":2589},{"index":2592},{"index":5102},{"index":5109},{"index":2587},{"index":356},{"index":2620},{"index":355},{"index":2607},{"index":2611},{"index":2609},{"index":2606},{"index":359},{"index":105},{"index":2605},{"index":2616},{"index":2604},{"index":112},{"index":361},{"index":2621},{"index":2619},{"index":352},{"index":84},{"index":2617},{"index":70},{"index":133},{"index":2608},{"index":2610},{"index":2618},{"index":5107}]},{"vert_indicies":[{"index":4839},{"index":4844},{"index":4845},{"index":4842},{"index":4880},{"index":4882},{"index":4878},{"index":4875},{"index":4954},{"index":4957},{"index":4956},{"index":4951},{"index":4950},{"index":4980},{"index":4987},{"index":4990},{"index":4994},{"index":4992}]},{"vert_indicies":[{"index":4919},{"index":4920},{"index":4924},{"index":4922},{"index":4938},{"index":4945},{"index":4949},{"index":5061},{"index":5057},{"index":5050},{"index":5034},{"index":5036},{"index":5032},{"index":5031},{"index":5056},{"index":5053},{"index":5052},{"index":4940},{"index":4941},{"index":4944}]}],"num_expected_islands":3},{"index":1,"name":"DEF-Chest","islands":[{"vert_indicies":[{"index":0},{"index":1},{"index":3},{"index":4530},{"index":3024},{"index":2996},{"index":2980},{"index":2965},{"index":3020},{"index":2955},{"index":2964},{"index":2963},{"index":2962},{"index":2979},{"index":2995},{"index":4524},{"index":142},{"index":143},{"index":145},{"index":294},{"index":146},{"index":299},{"index":531},{"index":668},{"index":530},{"index":528},{"index":527},{"index":532},{"index":397},{"index":398},{"index":400},{"index":525},{"index":2952},{"index":2493},{"index":4547},{"index":2902},{"index":2880},{"index":2919},{"index":2947},{"index":2877},{"index":2929},{"index":2869},{"index":2876},{"index":2875},{"index":2874},{"index":2873},{"index":2900},{"index":2889},{"index":2905},{"index":4518},{"index":4539},{"index":2909},{"index":2897},{"index":2891},{"index":2907},{"index":4517},{"index":4521},{"index":2901},{"index":2879},{"index":2932},{"index":2890},{"index":2906},{"index":2933},{"index":4537},{"index":4540},{"index":4523},{"index":2950},{"index":2951},{"index":4538},{"index":2910},{"index":2927},{"index":2903},{"index":2881},{"index":2868},{"index":2923},{"index":2928},{"index":2918},{"index":2899},{"index":2893},{"index":2913},{"index":2914},{"index":2894},{"index":2896},{"index":2916},{"index":2912},{"index":2888},{"index":2931},{"index":2849},{"index":2930},{"index":2886},{"index":2855},{"index":2895},{"index":2915},{"index":2934},{"index":2949},{"index":2922},{"index":2921},{"index":2851},{"index":2920},{"index":2948},{"index":2848},{"index":2946},{"index":3065},{"index":2770},{"index":2742},{"index":3029},{"index":2743},{"index":2744},{"index":2771},{"index":2737},{"index":2717},{"index":2768},{"index":3026},{"index":3033},{"index":3027},{"index":2752},{"index":2708},{"index":3055},{"index":3063},{"index":3048},{"index":2871},{"index":2858},{"index":2854},{"index":2885},{"index":2884},{"index":2856},{"index":2857},{"index":2883},{"index":2882},{"index":2852},{"index":2850},{"index":2924},{"index":2870},{"index":2867},{"index":2887},{"index":2926},{"index":2911},{"index":3047},{"index":2692},{"index":2746},{"index":2704},{"index":2705},{"index":2706},{"index":2707},{"index":2693},{"index":3036},{"index":2710},{"index":2753},{"index":2756},{"index":2734},{"index":2691},{"index":2698},{"index":2697},{"index":2696},{"index":2695},{"index":2722},{"index":2711},{"index":2727},{"index":4500},{"index":847},{"index":848},{"index":849},{"index":865},{"index":850},{"index":819},{"index":802},{"index":817},{"index":801},{"index":800},{"index":799},{"index":803},{"index":773},{"index":774},{"index":775},{"index":797},{"index":2866},{"index":4496},{"index":4512},{"index":2814},{"index":2790},{"index":2832},{"index":2861},{"index":2787},{"index":2842},{"index":2777},{"index":2786},{"index":2785},{"index":2784},{"index":2801},{"index":2817},{"index":4506},{"index":4507},{"index":2821},{"index":2809},{"index":2803},{"index":2819},{"index":4509},{"index":4544},{"index":2813},{"index":2789},{"index":2845},{"index":2802},{"index":2818},{"index":2846},{"index":4532},{"index":4514},{"index":4515},{"index":2864},{"index":2865},{"index":4510},{"index":2822},{"index":2812},{"index":2829},{"index":2808},{"index":2800},{"index":2844},{"index":2807},{"index":2828},{"index":2847},{"index":2825},{"index":2863},{"index":2835},{"index":2834},{"index":2938},{"index":2935},{"index":2942},{"index":2936},{"index":2843},{"index":2797},{"index":2862},{"index":2833},{"index":3078},{"index":3011},{"index":2760},{"index":3012},{"index":3013},{"index":3041},{"index":3006},{"index":2985},{"index":3038},{"index":2757},{"index":3040},{"index":2975},{"index":2764},{"index":2758},{"index":3022},{"index":2978},{"index":2986},{"index":3007},{"index":3003},{"index":3025},{"index":3005},{"index":2763},{"index":2974},{"index":2957},{"index":2767},{"index":3021},{"index":3082},{"index":3067},{"index":2779},{"index":2796},{"index":2941},{"index":2945},{"index":3074},{"index":3075},{"index":3083},{"index":3039},{"index":3010},{"index":2968},{"index":2992},{"index":3042},{"index":4533},{"index":3044},{"index":4494},{"index":4529},{"index":4534},{"index":4495},{"index":4452},{"index":4453},{"index":4427},{"index":2528},{"index":53},{"index":776},{"index":789},{"index":2554},{"index":4580},{"index":796},{"index":778},{"index":784},{"index":783},{"index":779},{"index":794},{"index":782},{"index":777},{"index":785},{"index":791},{"index":793},{"index":787},{"index":781},{"index":780},{"index":788},{"index":4553},{"index":2559},{"index":2558},{"index":4584},{"index":4585},{"index":2560},{"index":2557},{"index":4583},{"index":795},{"index":798},{"index":4451},{"index":2556},{"index":4582},{"index":786},{"index":792},{"index":811},{"index":808},{"index":807},{"index":813},{"index":812},{"index":810},{"index":805},{"index":806},{"index":815},{"index":804},{"index":816},{"index":818},{"index":4589},{"index":2565},{"index":2563},{"index":4588},{"index":4554},{"index":2564},{"index":2561},{"index":4586},{"index":4581},{"index":2555},{"index":2562},{"index":4587},{"index":4602},{"index":2580},{"index":2575},{"index":4598},{"index":864},{"index":866},{"index":853},{"index":858},{"index":4556},{"index":2577},{"index":2576},{"index":4599},{"index":4600},{"index":2578},{"index":2574},{"index":4597},{"index":855},{"index":861},{"index":859},{"index":856},{"index":834},{"index":840},{"index":838},{"index":836},{"index":829},{"index":830},{"index":843},{"index":831},{"index":827},{"index":833},{"index":839},{"index":841},{"index":835},{"index":832},{"index":828},{"index":844},{"index":846},{"index":4596},{"index":2573},{"index":2571},{"index":4595},{"index":4555},{"index":2572},{"index":2569},{"index":4593},{"index":4592},{"index":2568},{"index":851},{"index":824},{"index":825},{"index":826},{"index":845},{"index":2774},{"index":4491},{"index":4502},{"index":2724},{"index":2702},{"index":2741},{"index":2769},{"index":2699},{"index":2751},{"index":2754},{"index":2701},{"index":2723},{"index":2729},{"index":2713},{"index":2719},{"index":2731},{"index":4498},{"index":4499},{"index":4511},{"index":4545},{"index":2755},{"index":2728},{"index":2712},{"index":2773},{"index":2772},{"index":4504},{"index":4503},{"index":3058},{"index":3050},{"index":3056},{"index":4535},{"index":4492},{"index":3057},{"index":444},{"index":2904},{"index":757},{"index":2552},{"index":4578},{"index":769},{"index":753},{"index":756},{"index":754},{"index":772},{"index":755},{"index":771},{"index":758},{"index":752},{"index":763},{"index":766},{"index":883},{"index":880},{"index":869},{"index":875},{"index":888},{"index":872},{"index":889},{"index":871},{"index":873},{"index":870},{"index":886},{"index":4457},{"index":842},{"index":469},{"index":476},{"index":837},{"index":4463},{"index":4460},{"index":4461},{"index":4458},{"index":4459},{"index":4454},{"index":4456},{"index":4464},{"index":4462},{"index":4465},{"index":4591},{"index":2567},{"index":416},{"index":4455},{"index":874},{"index":2579},{"index":4601},{"index":4611},{"index":4488},{"index":2726},{"index":2570},{"index":4594},{"index":2519},{"index":2525},{"index":2513},{"index":2514},{"index":2515},{"index":2516},{"index":2510},{"index":2507},{"index":2508},{"index":2509},{"index":2511},{"index":4486},{"index":2473},{"index":2471},{"index":2472},{"index":2467},{"index":2468},{"index":2475},{"index":2476},{"index":2466},{"index":2465},{"index":2483},{"index":2477},{"index":4482},{"index":4471},{"index":4467},{"index":4475},{"index":4474},{"index":4479},{"index":4478},{"index":4481},{"index":4480},{"index":4483},{"index":2503},{"index":2486},{"index":4403},{"index":487},{"index":409},{"index":410},{"index":488},{"index":507},{"index":508},{"index":489},{"index":425},{"index":436},{"index":490},{"index":4354},{"index":2432},{"index":2431},{"index":4370},{"index":4369},{"index":447},{"index":442},{"index":446},{"index":445},{"index":4390},{"index":2494},{"index":2487},{"index":4388},{"index":2495},{"index":2496},{"index":4404},{"index":685},{"index":4070},{"index":4059},{"index":4060},{"index":4057},{"index":4234},{"index":413},{"index":687},{"index":404},{"index":435},{"index":451},{"index":433},{"index":429},{"index":414},{"index":427},{"index":718},{"index":399},{"index":423},{"index":430},{"index":434},{"index":690},{"index":448},{"index":722},{"index":449},{"index":455},{"index":438},{"index":691},{"index":693},{"index":692},{"index":728},{"index":720},{"index":717},{"index":719},{"index":4239},{"index":4061},{"index":4069},{"index":4068},{"index":4073},{"index":4237},{"index":4236},{"index":4238},{"index":4240},{"index":4067},{"index":4763},{"index":4098},{"index":2116},{"index":2132},{"index":2111},{"index":2109},{"index":2110},{"index":2125},{"index":2228},{"index":2234},{"index":4720},{"index":4721},{"index":4785},{"index":4784},{"index":4094},{"index":4103},{"index":4738},{"index":4722},{"index":554},{"index":418},{"index":417},{"index":419},{"index":721},{"index":443},{"index":406},{"index":484},{"index":503},{"index":704},{"index":504},{"index":485},{"index":407},{"index":696},{"index":701},{"index":714},{"index":408},{"index":486},{"index":505},{"index":642},{"index":618},{"index":546},{"index":545},{"index":622},{"index":735},{"index":740},{"index":544},{"index":621},{"index":645},{"index":732},{"index":646},{"index":644},{"index":620},{"index":543},{"index":542},{"index":619},{"index":643},{"index":4214},{"index":2222},{"index":2204},{"index":2205},{"index":2270},{"index":2207},{"index":2206},{"index":2223},{"index":2278},{"index":2275},{"index":4199},{"index":649},{"index":625},{"index":561},{"index":548},{"index":624},{"index":648},{"index":647},{"index":623},{"index":547},{"index":577},{"index":578},{"index":4667},{"index":2687},{"index":2173},{"index":2175},{"index":2176},{"index":2165},{"index":2157},{"index":2152},{"index":2156},{"index":2158},{"index":2154},{"index":2153},{"index":2168},{"index":2169},{"index":2170},{"index":2167},{"index":2164},{"index":2155},{"index":2151},{"index":2166},{"index":2159},{"index":2145},{"index":2174},{"index":2177},{"index":2171},{"index":2172},{"index":2146},{"index":2147},{"index":2148},{"index":2150},{"index":2149},{"index":2162},{"index":2163},{"index":2160},{"index":2161},{"index":2689},{"index":2671},{"index":2672},{"index":4669},{"index":203},{"index":210},{"index":191},{"index":166},{"index":332},{"index":155},{"index":189},{"index":206},{"index":187},{"index":183},{"index":167},{"index":181},{"index":373},{"index":144},{"index":176},{"index":184},{"index":188},{"index":335},{"index":202},{"index":377},{"index":379},{"index":337},{"index":338},{"index":336},{"index":375},{"index":372},{"index":374},{"index":4661},{"index":4678},{"index":4687},{"index":4620},{"index":4622},{"index":4296},{"index":2094},{"index":2093},{"index":2090},{"index":2079},{"index":2091},{"index":2092},{"index":2074},{"index":2062},{"index":2073},{"index":2075},{"index":2076},{"index":2102},{"index":2078},{"index":2100},{"index":2072},{"index":2070},{"index":2071},{"index":2087},{"index":2088},{"index":2089},{"index":2098},{"index":2096},{"index":2104},{"index":2265},{"index":2266},{"index":2262},{"index":2247},{"index":2259},{"index":2248},{"index":2253},{"index":2252},{"index":2067},{"index":2066},{"index":2099},{"index":2077},{"index":2101},{"index":2264},{"index":2256},{"index":2250},{"index":2251},{"index":2257},{"index":2263},{"index":2254},{"index":4273},{"index":4656},{"index":323},{"index":59},{"index":321},{"index":8},{"index":9},{"index":1480},{"index":1457},{"index":1463},{"index":1486},{"index":1484},{"index":1461},{"index":1277},{"index":1274},{"index":1270},{"index":1278},{"index":1279},{"index":1280},{"index":1459},{"index":1483},{"index":4649},{"index":4257},{"index":4256},{"index":4258},{"index":4276},{"index":4647},{"index":4638},{"index":4637},{"index":2269},{"index":2258},{"index":2268},{"index":2261},{"index":2260},{"index":2249},{"index":4293},{"index":4297},{"index":4291},{"index":4290},{"index":4632},{"index":171},{"index":172},{"index":376},{"index":197},{"index":158},{"index":246},{"index":270},{"index":271},{"index":247},{"index":159},{"index":391},{"index":386},{"index":383},{"index":272},{"index":248},{"index":160},{"index":161},{"index":244},{"index":268},{"index":119},{"index":98},{"index":16},{"index":362},{"index":357},{"index":354},{"index":118},{"index":97},{"index":15},{"index":339},{"index":14},{"index":96},{"index":117},{"index":347},{"index":344},{"index":4330},{"index":2418},{"index":2389},{"index":2390},{"index":2388},{"index":2387},{"index":2417},{"index":2419},{"index":4325},{"index":123},{"index":102},{"index":47},{"index":35},{"index":101},{"index":122},{"index":121},{"index":100},{"index":18},{"index":17},{"index":99},{"index":120},{"index":4444},{"index":4420},{"index":4417},{"index":4441},{"index":4429},{"index":4407},{"index":4412},{"index":4425},{"index":4448},{"index":4053},{"index":4042},{"index":4434},{"index":4409},{"index":29},{"index":322},{"index":25},{"index":39},{"index":19},{"index":140},{"index":4408},{"index":4433},{"index":4447},{"index":4423},{"index":4410},{"index":4435},{"index":4436},{"index":4411},{"index":4426},{"index":4449},{"index":326},{"index":42},{"index":38},{"index":20},{"index":138},{"index":36},{"index":13},{"index":12},{"index":46},{"index":63},{"index":44},{"index":40},{"index":23},{"index":37},{"index":366},{"index":2},{"index":33},{"index":41},{"index":45},{"index":327},{"index":60},{"index":370},{"index":61},{"index":67},{"index":49},{"index":22},{"index":324},{"index":325},{"index":43},{"index":31},{"index":30},{"index":4230},{"index":4231},{"index":4043},{"index":4040},{"index":4044},{"index":4229},{"index":4232},{"index":4052},{"index":4051},{"index":4233},{"index":4226},{"index":4056},{"index":4050},{"index":4054},{"index":4041},{"index":4219},{"index":28},{"index":26},{"index":27},{"index":170},{"index":4633},{"index":4292},{"index":4295},{"index":4277},{"index":4278},{"index":4625},{"index":4631},{"index":4289},{"index":4281},{"index":4282},{"index":4627},{"index":4615},{"index":4618},{"index":4287},{"index":4288},{"index":4630},{"index":4614},{"index":4279},{"index":4280},{"index":4626},{"index":4616},{"index":34},{"index":178},{"index":177},{"index":371},{"index":168},{"index":169},{"index":363},{"index":364},{"index":24},{"index":65},{"index":50},{"index":193},{"index":204},{"index":208},{"index":192},{"index":195},{"index":165},{"index":175},{"index":292},{"index":180},{"index":156},{"index":190},{"index":207},{"index":209},{"index":194},{"index":205},{"index":182},{"index":164},{"index":293},{"index":295},{"index":4567},{"index":2539},{"index":2537},{"index":4566},{"index":4550},{"index":2538},{"index":2535},{"index":4564},{"index":4559},{"index":2529},{"index":2530},{"index":4560},{"index":4549},{"index":52},{"index":21},{"index":32},{"index":51},{"index":66},{"index":64},{"index":48},{"index":62},{"index":141},{"index":139},{"index":4561},{"index":2531},{"index":2534},{"index":4563},{"index":4562},{"index":2532},{"index":2533},{"index":4493},{"index":4548},{"index":4432},{"index":4610},{"index":4609},{"index":4558},{"index":4603},{"index":2582},{"index":890},{"index":395},{"index":4382},{"index":822},{"index":2566},{"index":4590},{"index":823},{"index":820},{"index":821},{"index":4381},{"index":394},{"index":393},{"index":895},{"index":894},{"index":893},{"index":896},{"index":891},{"index":392},{"index":396},{"index":4383},{"index":4},{"index":4607},{"index":4385},{"index":2540},{"index":4568},{"index":892},{"index":900},{"index":898},{"index":899},{"index":4557},{"index":2581},{"index":897},{"index":4384},{"index":147},{"index":4525},{"index":2999},{"index":2987},{"index":2981},{"index":2997},{"index":2991},{"index":2967},{"index":3023},{"index":4528},{"index":4546},{"index":2536},{"index":4565},{"index":4579},{"index":2553},{"index":2548},{"index":4575},{"index":667},{"index":669},{"index":550},{"index":576},{"index":4552},{"index":2550},{"index":2549},{"index":4576},{"index":4577},{"index":2551},{"index":2547},{"index":4574},{"index":573},{"index":583},{"index":552},{"index":723},{"index":715},{"index":553},{"index":415},{"index":716},{"index":424},{"index":560},{"index":4729},{"index":4099},{"index":2128},{"index":2113},{"index":2105},{"index":2112},{"index":2114},{"index":2115},{"index":2133},{"index":2246},{"index":2141},{"index":2135},{"index":2134},{"index":2107},{"index":2138},{"index":2106},{"index":2231},{"index":2243},{"index":2229},{"index":2240},{"index":2244},{"index":4311},{"index":4835},{"index":4823},{"index":905},{"index":402},{"index":901},{"index":902},{"index":908},{"index":906},{"index":1173},{"index":1174},{"index":1176},{"index":903},{"index":904},{"index":1170},{"index":1169},{"index":403},{"index":4824},{"index":4312},{"index":2108},{"index":2137},{"index":2136},{"index":2131},{"index":2139},{"index":2245},{"index":2238},{"index":2242},{"index":2241},{"index":2230},{"index":4306},{"index":4832},{"index":4821},{"index":686},{"index":4305},{"index":4316},{"index":4313},{"index":4836},{"index":4826},{"index":4828},{"index":4318},{"index":4317},{"index":4314},{"index":4315},{"index":4837},{"index":4825},{"index":4827},{"index":4310},{"index":1172},{"index":1171},{"index":1155},{"index":1203},{"index":1204},{"index":4097},{"index":4104},{"index":4107},{"index":4807},{"index":4694},{"index":4108},{"index":4105},{"index":4765},{"index":4689},{"index":4106},{"index":4697},{"index":4715},{"index":453},{"index":439},{"index":574},{"index":579},{"index":4569},{"index":2541},{"index":2542},{"index":4570},{"index":4551},{"index":441},{"index":412},{"index":422},{"index":523},{"index":426},{"index":405},{"index":437},{"index":452},{"index":454},{"index":440},{"index":450},{"index":428},{"index":411},{"index":524},{"index":526},{"index":4573},{"index":2546},{"index":2544},{"index":4572},{"index":2545},{"index":2543},{"index":4571},{"index":4608},{"index":4399},{"index":2492},{"index":2489},{"index":2488},{"index":4386},{"index":4387},{"index":2491},{"index":2490},{"index":4389},{"index":689},{"index":431},{"index":432},{"index":688},{"index":421},{"index":420},{"index":4241},{"index":4235},{"index":4398},{"index":4605},{"index":2584},{"index":4490},{"index":2474},{"index":2583},{"index":4604},{"index":4612},{"index":4487},{"index":2585},{"index":2512},{"index":4468},{"index":4606},{"index":4405},{"index":725},{"index":563},{"index":551},{"index":565},{"index":569},{"index":727},{"index":724},{"index":726},{"index":4718},{"index":4713},{"index":4704},{"index":4706},{"index":4698},{"index":4690},{"index":4709},{"index":540},{"index":571},{"index":581},{"index":582},{"index":572},{"index":541},{"index":562},{"index":666},{"index":557},{"index":575},{"index":584},{"index":580},{"index":549},{"index":564},{"index":567},{"index":695},{"index":555},{"index":556},{"index":694},{"index":568},{"index":4668},{"index":2669},{"index":2668},{"index":2677},{"index":4671},{"index":297},{"index":173},{"index":174},{"index":333},{"index":186},{"index":185},{"index":334},{"index":751},{"index":742},{"index":298},{"index":741},{"index":750},{"index":4663},{"index":2675},{"index":2676},{"index":4664},{"index":2674},{"index":4670},{"index":4662},{"index":2673},{"index":2670},{"index":4660},{"index":4659},{"index":4762},{"index":4731},{"index":4730},{"index":4742},{"index":4743},{"index":4740},{"index":4741},{"index":4748},{"index":4749},{"index":4746},{"index":4744},{"index":4736},{"index":4732},{"index":4733},{"index":4737},{"index":4739},{"index":4735},{"index":4734},{"index":4747},{"index":4764},{"index":4766},{"index":4768},{"index":4810},{"index":4700},{"index":4716},{"index":4692},{"index":4691},{"index":4792},{"index":4789},{"index":4818},{"index":4812},{"index":4808},{"index":4701},{"index":4804},{"index":4769},{"index":4777},{"index":4772},{"index":4813},{"index":4750},{"index":4757},{"index":4751},{"index":4776},{"index":4201},{"index":4200},{"index":4699},{"index":4809},{"index":4767},{"index":4770},{"index":4778},{"index":4773},{"index":4814},{"index":4815},{"index":4774},{"index":4779},{"index":4816},{"index":4775},{"index":4207},{"index":4212},{"index":4817},{"index":4771},{"index":4759},{"index":4760},{"index":4805},{"index":4800},{"index":4758},{"index":4761},{"index":4802},{"index":4806},{"index":4801},{"index":4717},{"index":4714},{"index":4712},{"index":4624},{"index":4298},{"index":4284},{"index":4628},{"index":4283},{"index":4285},{"index":4286},{"index":4629},{"index":4617},{"index":4635},{"index":4299},{"index":4613},{"index":4621},{"index":369},{"index":55},{"index":4224},{"index":4046},{"index":4055},{"index":4078},{"index":4079},{"index":4080},{"index":4074},{"index":4049},{"index":4220},{"index":58},{"index":54},{"index":57},{"index":56},{"index":4223},{"index":4047},{"index":4048},{"index":4045},{"index":4075},{"index":4076},{"index":4218},{"index":4222},{"index":4430},{"index":4342},{"index":2395},{"index":2394},{"index":2392},{"index":4321},{"index":4348},{"index":4252},{"index":4251},{"index":4253},{"index":4349},{"index":4347},{"index":4225},{"index":4082},{"index":4323},{"index":4328},{"index":2391},{"index":2393},{"index":4324},{"index":4341},{"index":4221},{"index":4227},{"index":4228},{"index":328},{"index":330},{"index":329},{"index":378},{"index":368},{"index":365},{"index":367},{"index":269},{"index":245},{"index":157},{"index":200},{"index":4666},{"index":2685},{"index":4135},{"index":4088},{"index":4680},{"index":2182},{"index":2179},{"index":2178},{"index":2198},{"index":4112},{"index":4110},{"index":4114},{"index":4115},{"index":4684},{"index":2291},{"index":2199},{"index":2180},{"index":2181},{"index":2183},{"index":4127},{"index":196},{"index":199},{"index":163},{"index":250},{"index":274},{"index":275},{"index":251},{"index":179},{"index":4124},{"index":4122},{"index":4123},{"index":273},{"index":249},{"index":162},{"index":296},{"index":743},{"index":198},{"index":4673},{"index":2681},{"index":2680},{"index":2686},{"index":4677},{"index":4665},{"index":2679},{"index":4672},{"index":4675},{"index":2683},{"index":2688},{"index":4136},{"index":4089},{"index":4681},{"index":2283},{"index":2282},{"index":2288},{"index":4682},{"index":4090},{"index":4137},{"index":4683},{"index":745},{"index":303},{"index":2684},{"index":2682},{"index":4674},{"index":4676},{"index":4679},{"index":2678},{"index":4685},{"index":4619},{"index":4623},{"index":710},{"index":711},{"index":4368},{"index":2457},{"index":2429},{"index":4360},{"index":4374},{"index":2430},{"index":2428},{"index":2427},{"index":2456},{"index":2458},{"index":4359},{"index":509},{"index":2433},{"index":2426},{"index":4375},{"index":4376},{"index":4244},{"index":4063},{"index":4072},{"index":4242},{"index":4245},{"index":4058},{"index":4756},{"index":4095},{"index":4096},{"index":4803},{"index":4102},{"index":4705},{"index":4071},{"index":4077},{"index":4081},{"index":4087},{"index":4086},{"index":4066},{"index":4246},{"index":4378},{"index":4250},{"index":2434},{"index":4038},{"index":4039},{"index":4377},{"index":4243},{"index":4084},{"index":4249},{"index":4062},{"index":4065},{"index":4064},{"index":4247},{"index":4248},{"index":4085},{"index":4083},{"index":506},{"index":4402},{"index":3061},{"index":3060},{"index":3046},{"index":3059},{"index":860},{"index":862},{"index":857},{"index":854},{"index":863},{"index":852},{"index":867},{"index":868},{"index":809},{"index":814},{"index":790},{"index":3076},{"index":3070},{"index":3077},{"index":3080},{"index":3079},{"index":3064},{"index":3043},{"index":2860},{"index":4543},{"index":4501},{"index":4542},{"index":4497},{"index":4541},{"index":2725},{"index":2703},{"index":2690},{"index":2745},{"index":2750},{"index":2740},{"index":2721},{"index":2715},{"index":2735},{"index":2736},{"index":2716},{"index":2718},{"index":2738},{"index":3032},{"index":3034},{"index":3035},{"index":3030},{"index":3028},{"index":2748},{"index":2709},{"index":2733},{"index":3045},{"index":2747},{"index":2749},{"index":2732},{"index":4508},{"index":4505},{"index":3054},{"index":3053},{"index":3052},{"index":3051},{"index":3062},{"index":2925},{"index":4519},{"index":4536},{"index":4516},{"index":4522},{"index":4520},{"index":4526},{"index":4531},{"index":4527},{"index":3000},{"index":2990}]},{"vert_indicies":[{"index":4838},{"index":4839},{"index":4844},{"index":4845},{"index":4842},{"index":4843},{"index":4848},{"index":4862},{"index":4849},{"index":4883},{"index":4881},{"index":4847},{"index":4846},{"index":4880},{"index":4882},{"index":4851},{"index":4850},{"index":4841},{"index":4875},{"index":4878},{"index":4861},{"index":4840},{"index":4871},{"index":4856},{"index":4854},{"index":4855},{"index":4852},{"index":4853},{"index":4863},{"index":4864},{"index":4867},{"index":4866},{"index":4865},{"index":4858},{"index":4857},{"index":4859},{"index":4860},{"index":4873},{"index":4872},{"index":4870},{"index":4869},{"index":4879},{"index":4868},{"index":4874},{"index":4876},{"index":4877},{"index":4989},{"index":4984},{"index":4982},{"index":4981},{"index":4952},{"index":4973},{"index":4950},{"index":4951},{"index":4956},{"index":4957},{"index":4954},{"index":4955},{"index":4960},{"index":4974},{"index":4961},{"index":4995},{"index":4993},{"index":4959},{"index":4958},{"index":4992},{"index":4994},{"index":4963},{"index":4962},{"index":4953},{"index":4987},{"index":4990},{"index":4968},{"index":4983},{"index":4985},{"index":4972},{"index":4971},{"index":4966},{"index":4967},{"index":4964},{"index":4965},{"index":4975},{"index":4976},{"index":4979},{"index":4978},{"index":4977},{"index":4970},{"index":4969},{"index":5093},{"index":4997},{"index":4998},{"index":5094},{"index":5095},{"index":4999},{"index":5002},{"index":5098},{"index":5099},{"index":5003},{"index":4891},{"index":5089},{"index":5088},{"index":4890},{"index":4887},{"index":5085},{"index":5084},{"index":4886},{"index":4885},{"index":5083},{"index":5082},{"index":4884},{"index":4888},{"index":5086},{"index":5087},{"index":4889},{"index":4892},{"index":5090},{"index":5091},{"index":4893},{"index":5005},{"index":5101},{"index":5100},{"index":5004},{"index":5001},{"index":5097},{"index":5096},{"index":5000},{"index":4996},{"index":5092},{"index":4980},{"index":4991},{"index":4986},{"index":4988}]},{"vert_indicies":[{"index":4894},{"index":4910},{"index":4919},{"index":4920},{"index":4924},{"index":4900},{"index":4904},{"index":4906},{"index":4907},{"index":4912},{"index":4913},{"index":4911},{"index":4902},{"index":4897},{"index":4923},{"index":4922},{"index":4896},{"index":4901},{"index":4938},{"index":4945},{"index":4949},{"index":4925},{"index":4898},{"index":4946},{"index":4936},{"index":4943},{"index":5071},{"index":4948},{"index":4932},{"index":4929},{"index":4928},{"index":5069},{"index":5062},{"index":4927},{"index":4926},{"index":5065},{"index":4908},{"index":4909},{"index":4905},{"index":4895},{"index":4899},{"index":4903},{"index":4916},{"index":4915},{"index":4914},{"index":4921},{"index":4939},{"index":4935},{"index":4944},{"index":4941},{"index":4940},{"index":5052},{"index":5036},{"index":5012},{"index":5016},{"index":5018},{"index":5019},{"index":5024},{"index":5025},{"index":5023},{"index":5014},{"index":5009},{"index":5035},{"index":5034},{"index":5008},{"index":5013},{"index":5050},{"index":5057},{"index":5061},{"index":5037},{"index":5010},{"index":5058},{"index":5048},{"index":5055},{"index":5081},{"index":5060},{"index":5044},{"index":5041},{"index":5040},{"index":5079},{"index":5072},{"index":5039},{"index":5038},{"index":5075},{"index":5020},{"index":5021},{"index":5017},{"index":5007},{"index":5011},{"index":5015},{"index":5032},{"index":5031},{"index":5022},{"index":5006},{"index":5028},{"index":5027},{"index":5026},{"index":5033},{"index":5051},{"index":5047},{"index":5056},{"index":5053},{"index":5049},{"index":5046},{"index":5054},{"index":5029},{"index":5030},{"index":5078},{"index":5043},{"index":5045},{"index":5074},{"index":5080},{"index":5059},{"index":4947},{"index":4933},{"index":5064},{"index":4917},{"index":4918},{"index":5068},{"index":4931},{"index":4930},{"index":5063},{"index":5042},{"index":5073},{"index":4942},{"index":4934},{"index":4937},{"index":5070},{"index":5076},{"index":5077},{"index":5066},{"index":5067}]}],"num_expected_islands":3},{"index":2,"name":"DEF-Shoulder.L","islands":[{"vert_indicies":[{"index":156},{"index":180},{"index":292},{"index":175},{"index":165},{"index":295},{"index":293},{"index":164},{"index":182},{"index":298},{"index":742},{"index":751},{"index":695},{"index":567},{"index":564},{"index":549},{"index":666},{"index":562},{"index":541},{"index":540},{"index":571},{"index":581},{"index":569},{"index":565},{"index":551},{"index":563},{"index":725},{"index":529},{"index":558},{"index":566},{"index":570},{"index":727},{"index":724},{"index":726},{"index":4718},{"index":4713},{"index":4704},{"index":4706},{"index":4698},{"index":4690},{"index":4709},{"index":694},{"index":568},{"index":556},{"index":555},{"index":297},{"index":173},{"index":174},{"index":333},{"index":186},{"index":185},{"index":334},{"index":4663},{"index":2675},{"index":2148},{"index":2147},{"index":2676},{"index":2677},{"index":4671},{"index":4659},{"index":2668},{"index":2172},{"index":2171},{"index":2177},{"index":2174},{"index":4732},{"index":4736},{"index":4744},{"index":4746},{"index":4749},{"index":4748},{"index":4741},{"index":4740},{"index":4743},{"index":4742},{"index":4730},{"index":4731},{"index":4762},{"index":4806},{"index":4668},{"index":2669},{"index":4802},{"index":4761},{"index":4758},{"index":4760},{"index":4805},{"index":4800},{"index":4801},{"index":4717},{"index":4703},{"index":4711},{"index":4790},{"index":4787},{"index":4728},{"index":4724},{"index":4726},{"index":4721},{"index":4720},{"index":4784},{"index":4094},{"index":2125},{"index":2110},{"index":2109},{"index":2111},{"index":2132},{"index":2116},{"index":2133},{"index":2115},{"index":2114},{"index":2112},{"index":2105},{"index":2113},{"index":2128},{"index":2127},{"index":2117},{"index":2126},{"index":2129},{"index":2130},{"index":2237},{"index":2121},{"index":2120},{"index":2119},{"index":2124},{"index":2118},{"index":2140},{"index":2106},{"index":2138},{"index":2107},{"index":2134},{"index":2135},{"index":2141},{"index":2139},{"index":2131},{"index":2136},{"index":2137},{"index":2108},{"index":2123},{"index":2122},{"index":2234},{"index":2228},{"index":2230},{"index":2241},{"index":2242},{"index":2238},{"index":2245},{"index":2246},{"index":2244},{"index":2240},{"index":2229},{"index":2243},{"index":2231},{"index":2239},{"index":2235},{"index":2236},{"index":2233},{"index":2232},{"index":4752},{"index":4719},{"index":4725},{"index":4723},{"index":4727},{"index":4754},{"index":4755},{"index":4753},{"index":4780},{"index":4797},{"index":4708},{"index":4702},{"index":4707},{"index":4688},{"index":1154},{"index":1175},{"index":1166},{"index":1165},{"index":1164},{"index":1163},{"index":1162},{"index":1161},{"index":1160},{"index":1159},{"index":907},{"index":401},{"index":905},{"index":1157},{"index":1158},{"index":1189},{"index":1190},{"index":1191},{"index":1192},{"index":1193},{"index":1194},{"index":1195},{"index":1196},{"index":1197},{"index":1088},{"index":1142},{"index":1091},{"index":1185},{"index":1206},{"index":1199},{"index":1090},{"index":992},{"index":984},{"index":976},{"index":975},{"index":967},{"index":977},{"index":991},{"index":1201},{"index":1170},{"index":904},{"index":903},{"index":1176},{"index":1174},{"index":1173},{"index":906},{"index":908},{"index":902},{"index":901},{"index":1155},{"index":1171},{"index":1172},{"index":1203},{"index":988},{"index":981},{"index":973},{"index":980},{"index":982},{"index":1151},{"index":1152},{"index":983},{"index":986},{"index":987},{"index":979},{"index":1204},{"index":1205},{"index":1207},{"index":1153},{"index":974},{"index":990},{"index":989},{"index":1030},{"index":1025},{"index":1031},{"index":1187},{"index":1156},{"index":402},{"index":4837},{"index":4315},{"index":4314},{"index":4317},{"index":4318},{"index":4306},{"index":4832},{"index":4821},{"index":686},{"index":4305},{"index":4316},{"index":4313},{"index":4836},{"index":4824},{"index":403},{"index":538},{"index":537},{"index":1168},{"index":1167},{"index":1169},{"index":1200},{"index":1198},{"index":4795},{"index":4302},{"index":4301},{"index":4830},{"index":4312},{"index":4782},{"index":4798},{"index":4799},{"index":4783},{"index":4781},{"index":4794},{"index":4826},{"index":4828},{"index":4827},{"index":4825},{"index":4310},{"index":4311},{"index":4835},{"index":4834},{"index":4309},{"index":4300},{"index":4829},{"index":533},{"index":539},{"index":534},{"index":535},{"index":536},{"index":4796},{"index":4303},{"index":4304},{"index":4831},{"index":4833},{"index":4308},{"index":4307},{"index":4822},{"index":4823},{"index":1188},{"index":1186},{"index":1202},{"index":985},{"index":4093},{"index":4693},{"index":4695},{"index":4101},{"index":4100},{"index":4745},{"index":4696},{"index":4710},{"index":4092},{"index":4091},{"index":4099},{"index":4729},{"index":560},{"index":424},{"index":399},{"index":423},{"index":430},{"index":434},{"index":690},{"index":448},{"index":722},{"index":449},{"index":455},{"index":438},{"index":413},{"index":687},{"index":404},{"index":435},{"index":451},{"index":433},{"index":429},{"index":414},{"index":427},{"index":718},{"index":716},{"index":415},{"index":553},{"index":715},{"index":723},{"index":552},{"index":583},{"index":573},{"index":574},{"index":579},{"index":453},{"index":439},{"index":441},{"index":412},{"index":422},{"index":523},{"index":426},{"index":405},{"index":437},{"index":452},{"index":454},{"index":440},{"index":450},{"index":428},{"index":411},{"index":524},{"index":526},{"index":4573},{"index":2546},{"index":2544},{"index":4572},{"index":4551},{"index":2545},{"index":2542},{"index":4570},{"index":4569},{"index":2541},{"index":2547},{"index":4574},{"index":4552},{"index":576},{"index":550},{"index":557},{"index":575},{"index":584},{"index":582},{"index":572},{"index":580},{"index":669},{"index":667},{"index":750},{"index":741},{"index":4579},{"index":2553},{"index":2548},{"index":4575},{"index":4577},{"index":2551},{"index":2549},{"index":4576},{"index":2550},{"index":528},{"index":527},{"index":532},{"index":397},{"index":398},{"index":400},{"index":525},{"index":2952},{"index":2493},{"index":4547},{"index":2902},{"index":2880},{"index":2919},{"index":2947},{"index":2877},{"index":2929},{"index":2869},{"index":2876},{"index":2875},{"index":2874},{"index":2873},{"index":2900},{"index":2889},{"index":2905},{"index":4518},{"index":4539},{"index":2909},{"index":2897},{"index":2891},{"index":2907},{"index":4517},{"index":4521},{"index":2901},{"index":2879},{"index":2932},{"index":2890},{"index":2906},{"index":2933},{"index":4537},{"index":4540},{"index":4523},{"index":2950},{"index":2951},{"index":4538},{"index":2910},{"index":2927},{"index":2903},{"index":2881},{"index":2925},{"index":2923},{"index":2928},{"index":2918},{"index":2899},{"index":2893},{"index":2913},{"index":2914},{"index":2894},{"index":2896},{"index":2916},{"index":2912},{"index":2888},{"index":2931},{"index":2849},{"index":2930},{"index":2886},{"index":2855},{"index":2895},{"index":2915},{"index":2934},{"index":2949},{"index":2922},{"index":2921},{"index":2946},{"index":3060},{"index":2743},{"index":2744},{"index":2771},{"index":2737},{"index":2717},{"index":2768},{"index":3026},{"index":3029},{"index":2742},{"index":2770},{"index":2708},{"index":2752},{"index":2693},{"index":2707},{"index":2706},{"index":2705},{"index":3035},{"index":2715},{"index":2735},{"index":2696},{"index":2695},{"index":2722},{"index":2711},{"index":2727},{"index":4500},{"index":847},{"index":848},{"index":849},{"index":865},{"index":850},{"index":4497},{"index":4541},{"index":2725},{"index":2749},{"index":2732},{"index":4508},{"index":4505},{"index":2747},{"index":2745},{"index":2750},{"index":2740},{"index":2721},{"index":4542},{"index":4501},{"index":2575},{"index":4598},{"index":864},{"index":866},{"index":853},{"index":858},{"index":4556},{"index":2577},{"index":2576},{"index":4599},{"index":4600},{"index":2578},{"index":2574},{"index":4597},{"index":855},{"index":861},{"index":859},{"index":856},{"index":834},{"index":840},{"index":838},{"index":836},{"index":829},{"index":830},{"index":843},{"index":831},{"index":827},{"index":833},{"index":839},{"index":841},{"index":835},{"index":832},{"index":828},{"index":844},{"index":846},{"index":4596},{"index":2573},{"index":2571},{"index":4595},{"index":4555},{"index":2572},{"index":2569},{"index":4593},{"index":4592},{"index":2568},{"index":851},{"index":824},{"index":825},{"index":826},{"index":845},{"index":2774},{"index":4491},{"index":4502},{"index":2724},{"index":2702},{"index":2741},{"index":2769},{"index":2699},{"index":2751},{"index":2691},{"index":2698},{"index":2697},{"index":2719},{"index":2731},{"index":4498},{"index":4499},{"index":2729},{"index":2713},{"index":2701},{"index":2723},{"index":2755},{"index":2728},{"index":2712},{"index":2773},{"index":2772},{"index":4504},{"index":4503},{"index":4545},{"index":4511},{"index":2754},{"index":2736},{"index":2716},{"index":2718},{"index":2738},{"index":2734},{"index":2710},{"index":2753},{"index":2756},{"index":3027},{"index":3033},{"index":3036},{"index":3032},{"index":3034},{"index":3058},{"index":3050},{"index":3056},{"index":4535},{"index":4492},{"index":3057},{"index":444},{"index":2904},{"index":757},{"index":2552},{"index":4578},{"index":769},{"index":753},{"index":756},{"index":873},{"index":870},{"index":886},{"index":4457},{"index":842},{"index":469},{"index":476},{"index":837},{"index":4462},{"index":4465},{"index":4591},{"index":2567},{"index":416},{"index":4455},{"index":874},{"index":2579},{"index":4601},{"index":4611},{"index":4488},{"index":2726},{"index":2570},{"index":4594},{"index":2508},{"index":2509},{"index":2511},{"index":4486},{"index":2473},{"index":2471},{"index":2472},{"index":2467},{"index":2491},{"index":4387},{"index":431},{"index":689},{"index":420},{"index":421},{"index":688},{"index":432},{"index":4235},{"index":4060},{"index":4059},{"index":4070},{"index":4064},{"index":4247},{"index":445},{"index":446},{"index":442},{"index":447},{"index":4369},{"index":2434},{"index":2433},{"index":2428},{"index":2430},{"index":2426},{"index":4375},{"index":443},{"index":406},{"index":4374},{"index":696},{"index":407},{"index":714},{"index":408},{"index":546},{"index":545},{"index":740},{"index":544},{"index":543},{"index":4700},{"index":4716},{"index":4692},{"index":4691},{"index":554},{"index":418},{"index":417},{"index":419},{"index":721},{"index":4242},{"index":4072},{"index":4063},{"index":4244},{"index":4376},{"index":4039},{"index":4038},{"index":4250},{"index":4378},{"index":4246},{"index":4066},{"index":4062},{"index":4249},{"index":4248},{"index":4065},{"index":4085},{"index":4083},{"index":4057},{"index":4234},{"index":4239},{"index":4061},{"index":4069},{"index":4068},{"index":4073},{"index":4237},{"index":4236},{"index":4238},{"index":4240},{"index":4067},{"index":4763},{"index":4098},{"index":4102},{"index":4095},{"index":4096},{"index":4803},{"index":4756},{"index":4058},{"index":4071},{"index":4705},{"index":4077},{"index":4081},{"index":4087},{"index":4086},{"index":4084},{"index":4243},{"index":4377},{"index":4245},{"index":4738},{"index":4103},{"index":4722},{"index":4792},{"index":4789},{"index":4785},{"index":4788},{"index":4786},{"index":4793},{"index":4791},{"index":4819},{"index":4820},{"index":4811},{"index":4771},{"index":4759},{"index":4818},{"index":4747},{"index":4734},{"index":4735},{"index":4739},{"index":4737},{"index":4733},{"index":4767},{"index":4809},{"index":4816},{"index":4779},{"index":4774},{"index":4815},{"index":4751},{"index":4776},{"index":4757},{"index":4750},{"index":4813},{"index":4772},{"index":4773},{"index":4814},{"index":4778},{"index":4770},{"index":4768},{"index":4766},{"index":4808},{"index":4810},{"index":4812},{"index":4764},{"index":4097},{"index":4104},{"index":4107},{"index":4807},{"index":4694},{"index":4108},{"index":4105},{"index":4765},{"index":4689},{"index":4106},{"index":4697},{"index":4715},{"index":4390},{"index":2494},{"index":2495},{"index":2496},{"index":4404},{"index":4389},{"index":2490},{"index":4241},{"index":4386},{"index":2488},{"index":2489},{"index":2492},{"index":4399},{"index":4608},{"index":4405},{"index":2584},{"index":4490},{"index":2474},{"index":2583},{"index":4604},{"index":4612},{"index":4487},{"index":2585},{"index":2512},{"index":4468},{"index":4606},{"index":4605},{"index":2543},{"index":4571},{"index":4398},{"index":4480},{"index":4483},{"index":3061},{"index":860},{"index":862},{"index":857},{"index":854},{"index":863},{"index":852},{"index":867},{"index":868},{"index":3052},{"index":3053},{"index":2884},{"index":2856},{"index":2857},{"index":2854},{"index":2885},{"index":2871},{"index":2858},{"index":3048},{"index":3063},{"index":3055},{"index":3054},{"index":4519},{"index":668},{"index":530},{"index":4536},{"index":531},{"index":299},{"index":4516},{"index":4565},{"index":559},{"index":719},{"index":717},{"index":720},{"index":728},{"index":692},{"index":693},{"index":691},{"index":4664},{"index":4712},{"index":4714}]},{"vert_indicies":[{"index":4857},{"index":4858},{"index":4865},{"index":4866},{"index":4867},{"index":4864},{"index":4976},{"index":4975},{"index":4965},{"index":4977},{"index":4970},{"index":4969},{"index":4971},{"index":4972},{"index":4985},{"index":4984},{"index":4989},{"index":4877},{"index":4872},{"index":4873},{"index":4860},{"index":4859},{"index":5082},{"index":4884},{"index":4888},{"index":5086},{"index":5087},{"index":4889},{"index":4892},{"index":5090},{"index":5091},{"index":4893},{"index":5005},{"index":5101},{"index":5100},{"index":5004},{"index":5001},{"index":5097},{"index":5096},{"index":5000},{"index":4996},{"index":5092},{"index":5093},{"index":4997},{"index":4998},{"index":5094},{"index":5095},{"index":4999},{"index":5002},{"index":5098},{"index":4978},{"index":4979},{"index":5099},{"index":5003},{"index":4891},{"index":5089},{"index":5088},{"index":4890},{"index":4887},{"index":5085},{"index":5084},{"index":4886},{"index":4885},{"index":5083}]}],"num_expected_islands":2},{"index":3,"name":"DEF-Finger_Index_Carpal.L"},{"index":4,"name":"DEF-Finger_Index3.L"},{"index":5,"name":"DEF-Finger_Index2.L"},{"index":6,"name":"DEF-Finger_Index1.L"},{"index":7,"name":"DEF-Finger_Middle_Carpal.L"},{"index":8,"name":"DEF-Finger_Middle3.L"},{"index":9,"name":"DEF-Finger_Middle2.L"},{"index":10,"name":"DEF-Finger_Middle1.L"},{"index":11,"name":"DEF-Finger_Ring_Carpal.L"},{"index":12,"name":"DEF-Finger_Ring3.L"},{"index":13,"name":"DEF-Finger_Ring2.L"},{"index":14,"name":"DEF-Finger_Ring1.L"},{"index":15,"name":"DEF-Finger_Pinky_Carpal.L"},{"index":16,"name":"DEF-Finger_Pinky3.L"},{"index":17,"name":"DEF-Finger_Pinky2.L"},{"index":18,"name":"DEF-Finger_Pinky1.L"},{"index":19,"name":"DEF-Wrist.L"},{"index":20,"name":"DEF-Finger_Thumb3.L"},{"index":21,"name":"DEF-Finger_Thumb2.L"},{"index":22,"name":"DEF-Finger_Thumb1.L"},{"index":23,"name":"DEF-Forearm2.L"},{"index":24,"name":"DEF-Forearm1.L"},{"index":25,"name":"DEF-UpperArm1.L","islands":[{"vert_indicies":[{"index":399},{"index":423},{"index":430},{"index":434},{"index":690},{"index":448},{"index":722},{"index":728},{"index":720},{"index":433},{"index":429},{"index":414},{"index":427},{"index":718},{"index":716},{"index":415},{"index":424},{"index":560},{"index":559},{"index":529},{"index":558},{"index":4745},{"index":4100},{"index":2126},{"index":2117},{"index":2127},{"index":2128},{"index":2113},{"index":2105},{"index":2112},{"index":2114},{"index":2115},{"index":2133},{"index":2116},{"index":2132},{"index":2111},{"index":2109},{"index":2110},{"index":2125},{"index":2228},{"index":2123},{"index":2108},{"index":2137},{"index":2136},{"index":2131},{"index":2139},{"index":2141},{"index":2135},{"index":2134},{"index":2107},{"index":2138},{"index":2106},{"index":2140},{"index":2118},{"index":2124},{"index":2119},{"index":2120},{"index":2121},{"index":2237},{"index":2232},{"index":2233},{"index":2236},{"index":2235},{"index":2239},{"index":2231},{"index":2243},{"index":2229},{"index":2240},{"index":2244},{"index":2246},{"index":2245},{"index":2238},{"index":2242},{"index":2241},{"index":2230},{"index":4754},{"index":4727},{"index":4723},{"index":4725},{"index":4719},{"index":4752},{"index":2234},{"index":2122},{"index":4302},{"index":4301},{"index":4830},{"index":538},{"index":403},{"index":904},{"index":903},{"index":1176},{"index":1170},{"index":1169},{"index":1167},{"index":1168},{"index":1154},{"index":1175},{"index":1166},{"index":1165},{"index":1164},{"index":1163},{"index":1162},{"index":1161},{"index":1160},{"index":1159},{"index":907},{"index":401},{"index":905},{"index":1157},{"index":1158},{"index":1189},{"index":1028},{"index":1023},{"index":1021},{"index":1020},{"index":1019},{"index":1015},{"index":1010},{"index":1011},{"index":1005},{"index":999},{"index":1003},{"index":997},{"index":994},{"index":932},{"index":931},{"index":930},{"index":922},{"index":938},{"index":934},{"index":920},{"index":1145},{"index":918},{"index":923},{"index":924},{"index":940},{"index":939},{"index":937},{"index":944},{"index":947},{"index":948},{"index":1062},{"index":1058},{"index":1057},{"index":1041},{"index":1059},{"index":1063},{"index":1067},{"index":1071},{"index":1075},{"index":1081},{"index":1140},{"index":1080},{"index":1076},{"index":1139},{"index":1138},{"index":1072},{"index":1068},{"index":1137},{"index":1136},{"index":1064},{"index":1060},{"index":1135},{"index":1134},{"index":1061},{"index":1096},{"index":1094},{"index":1095},{"index":1093},{"index":1000},{"index":1181},{"index":1180},{"index":1179},{"index":995},{"index":998},{"index":1182},{"index":1092},{"index":1053},{"index":1054},{"index":1001},{"index":1004},{"index":1007},{"index":1006},{"index":1097},{"index":1102},{"index":1103},{"index":1098},{"index":1099},{"index":1100},{"index":1101},{"index":1065},{"index":1069},{"index":1106},{"index":1112},{"index":1073},{"index":1077},{"index":1078},{"index":1123},{"index":1122},{"index":1119},{"index":1113},{"index":1104},{"index":1105},{"index":1111},{"index":1110},{"index":1109},{"index":1107},{"index":1013},{"index":1012},{"index":1016},{"index":1017},{"index":1108},{"index":1022},{"index":1024},{"index":1029},{"index":1128},{"index":1124},{"index":1114},{"index":1115},{"index":1117},{"index":1118},{"index":1120},{"index":1116},{"index":1125},{"index":1126},{"index":1127},{"index":1131},{"index":1089},{"index":1084},{"index":1083},{"index":1082},{"index":1088},{"index":1087},{"index":1196},{"index":1197},{"index":1206},{"index":1142},{"index":1091},{"index":1086},{"index":1141},{"index":1085},{"index":1079},{"index":1074},{"index":1070},{"index":1066},{"index":955},{"index":954},{"index":951},{"index":959},{"index":960},{"index":961},{"index":969},{"index":968},{"index":965},{"index":967},{"index":975},{"index":976},{"index":977},{"index":991},{"index":984},{"index":992},{"index":985},{"index":978},{"index":1090},{"index":1199},{"index":1198},{"index":1200},{"index":1201},{"index":1207},{"index":1153},{"index":986},{"index":983},{"index":1152},{"index":1151},{"index":982},{"index":966},{"index":956},{"index":952},{"index":1148},{"index":1149},{"index":1150},{"index":1147},{"index":945},{"index":935},{"index":936},{"index":941},{"index":943},{"index":942},{"index":993},{"index":996},{"index":1002},{"index":950},{"index":949},{"index":946},{"index":953},{"index":957},{"index":958},{"index":1008},{"index":1009},{"index":964},{"index":963},{"index":962},{"index":971},{"index":970},{"index":972},{"index":1014},{"index":1018},{"index":974},{"index":973},{"index":980},{"index":979},{"index":981},{"index":990},{"index":989},{"index":988},{"index":987},{"index":1204},{"index":1173},{"index":906},{"index":908},{"index":902},{"index":901},{"index":1155},{"index":1171},{"index":1172},{"index":1203},{"index":1202},{"index":1186},{"index":1030},{"index":1025},{"index":1026},{"index":1027},{"index":1032},{"index":1031},{"index":1187},{"index":1156},{"index":402},{"index":4837},{"index":4315},{"index":4314},{"index":4317},{"index":4318},{"index":4306},{"index":4832},{"index":4821},{"index":686},{"index":1174},{"index":1205},{"index":4305},{"index":4316},{"index":4313},{"index":4836},{"index":4824},{"index":4312},{"index":4826},{"index":4828},{"index":4827},{"index":4825},{"index":4310},{"index":4311},{"index":4835},{"index":4834},{"index":4309},{"index":4300},{"index":4829},{"index":533},{"index":539},{"index":534},{"index":535},{"index":536},{"index":4796},{"index":4303},{"index":4304},{"index":4831},{"index":4833},{"index":4308},{"index":4307},{"index":4822},{"index":4780},{"index":4797},{"index":4708},{"index":4702},{"index":4707},{"index":4688},{"index":4798},{"index":4782},{"index":4783},{"index":4799},{"index":4794},{"index":4781},{"index":4795},{"index":537},{"index":4823},{"index":1188},{"index":1146},{"index":1185},{"index":1195},{"index":1194},{"index":1193},{"index":1130},{"index":1129},{"index":1192},{"index":1191},{"index":1190},{"index":1121},{"index":4720},{"index":4721},{"index":4726},{"index":4753},{"index":4755},{"index":4788},{"index":4785},{"index":4784},{"index":4094},{"index":4103},{"index":4738},{"index":4722},{"index":554},{"index":418},{"index":417},{"index":419},{"index":721},{"index":443},{"index":4244},{"index":4376},{"index":4039},{"index":2426},{"index":4375},{"index":2433},{"index":2434},{"index":4250},{"index":4038},{"index":4377},{"index":4378},{"index":4246},{"index":447},{"index":442},{"index":446},{"index":4248},{"index":4065},{"index":4062},{"index":4249},{"index":4083},{"index":4057},{"index":4234},{"index":413},{"index":687},{"index":404},{"index":435},{"index":451},{"index":693},{"index":455},{"index":438},{"index":691},{"index":4239},{"index":4061},{"index":4069},{"index":4087},{"index":4086},{"index":4238},{"index":452},{"index":437},{"index":405},{"index":426},{"index":523},{"index":422},{"index":440},{"index":454},{"index":450},{"index":441},{"index":412},{"index":526},{"index":524},{"index":411},{"index":428},{"index":431},{"index":689},{"index":420},{"index":421},{"index":688},{"index":432},{"index":4235},{"index":4060},{"index":4059},{"index":4070},{"index":4085},{"index":685},{"index":4404},{"index":2496},{"index":2495},{"index":2490},{"index":4389},{"index":4387},{"index":2491},{"index":2488},{"index":4386},{"index":4398},{"index":2489},{"index":2492},{"index":4399},{"index":4608},{"index":4405},{"index":2584},{"index":4490},{"index":2543},{"index":4571},{"index":4573},{"index":2546},{"index":2544},{"index":4572},{"index":525},{"index":2952},{"index":2493},{"index":4547},{"index":2902},{"index":2880},{"index":2919},{"index":2947},{"index":2877},{"index":2890},{"index":2906},{"index":2950},{"index":4523},{"index":4540},{"index":2951},{"index":2932},{"index":2879},{"index":2891},{"index":2915},{"index":2895},{"index":2946},{"index":2921},{"index":2922},{"index":2949},{"index":3061},{"index":2744},{"index":2771},{"index":2737},{"index":2717},{"index":2768},{"index":2743},{"index":3029},{"index":3026},{"index":3033},{"index":2708},{"index":2752},{"index":3063},{"index":2930},{"index":2886},{"index":2855},{"index":2849},{"index":2931},{"index":2848},{"index":2948},{"index":2920},{"index":2851},{"index":3046},{"index":3059},{"index":2742},{"index":2770},{"index":3065},{"index":3055},{"index":3060},{"index":2699},{"index":2751},{"index":2691},{"index":2701},{"index":2723},{"index":2729},{"index":2713},{"index":2731},{"index":2727},{"index":2711},{"index":2732},{"index":2755},{"index":2754},{"index":2712},{"index":2773},{"index":2769},{"index":2741},{"index":3058},{"index":4605},{"index":4604},{"index":2583},{"index":2473},{"index":2471},{"index":2472},{"index":2467},{"index":2468},{"index":2475},{"index":4480},{"index":4483},{"index":4486},{"index":4241},{"index":4369},{"index":4242},{"index":4072},{"index":4058},{"index":4756},{"index":4095},{"index":4096},{"index":4803},{"index":4102},{"index":4098},{"index":4763},{"index":4067},{"index":4240},{"index":4237},{"index":4073},{"index":4077},{"index":4071},{"index":4705},{"index":4715},{"index":4697},{"index":4104},{"index":4107},{"index":4807},{"index":4694},{"index":4108},{"index":4105},{"index":4765},{"index":4689},{"index":4106},{"index":4099},{"index":4729},{"index":4710},{"index":4092},{"index":4091},{"index":4696},{"index":4097},{"index":4245},{"index":4691},{"index":4692},{"index":4789},{"index":4792},{"index":4791},{"index":4819},{"index":4748},{"index":4747},{"index":4764},{"index":4812},{"index":4818},{"index":715},{"index":719},{"index":717}]}]},{"index":26,"name":"DEF-UpperArm2.L","islands":[{"vert_indicies":[{"index":918},{"index":923},{"index":924},{"index":940},{"index":939},{"index":937},{"index":944},{"index":947},{"index":948},{"index":1062},{"index":1058},{"index":1057},{"index":1041},{"index":1059},{"index":1063},{"index":1136},{"index":1064},{"index":1060},{"index":1135},{"index":1134},{"index":1061},{"index":1096},{"index":1094},{"index":1095},{"index":1093},{"index":1000},{"index":1181},{"index":1180},{"index":1179},{"index":995},{"index":994},{"index":932},{"index":931},{"index":930},{"index":922},{"index":938},{"index":934},{"index":920},{"index":1145},{"index":1146},{"index":935},{"index":936},{"index":941},{"index":943},{"index":942},{"index":993},{"index":996},{"index":1002},{"index":950},{"index":1003},{"index":999},{"index":998},{"index":997},{"index":945},{"index":1147},{"index":1182},{"index":1092},{"index":1053},{"index":1054},{"index":1099},{"index":1101},{"index":1065},{"index":1106}]}]},{"index":27,"name":"DEF-Shoulder.R","islands":[{"vert_indicies":[{"index":0},{"index":1},{"index":3},{"index":4530},{"index":3024},{"index":2996},{"index":2980},{"index":2965},{"index":3020},{"index":2955},{"index":2964},{"index":2963},{"index":2962},{"index":2979},{"index":2995},{"index":4524},{"index":142},{"index":143},{"index":145},{"index":294},{"index":146},{"index":299},{"index":4522},{"index":4520},{"index":4526},{"index":4531},{"index":4527},{"index":3000},{"index":2990},{"index":4516},{"index":2553},{"index":4579},{"index":750},{"index":741},{"index":549},{"index":667},{"index":4575},{"index":164},{"index":182},{"index":180},{"index":292},{"index":175},{"index":194},{"index":209},{"index":167},{"index":181},{"index":373},{"index":144},{"index":176},{"index":184},{"index":188},{"index":335},{"index":202},{"index":377},{"index":203},{"index":210},{"index":191},{"index":166},{"index":332},{"index":155},{"index":189},{"index":206},{"index":187},{"index":183},{"index":372},{"index":375},{"index":379},{"index":337},{"index":338},{"index":336},{"index":374},{"index":207},{"index":190},{"index":156},{"index":186},{"index":333},{"index":174},{"index":173},{"index":334},{"index":185},{"index":4664},{"index":2676},{"index":2147},{"index":2148},{"index":2150},{"index":2149},{"index":2162},{"index":2163},{"index":2160},{"index":2161},{"index":2169},{"index":2170},{"index":2167},{"index":2164},{"index":2155},{"index":2151},{"index":2166},{"index":2159},{"index":2157},{"index":2152},{"index":2156},{"index":2158},{"index":2154},{"index":2153},{"index":2168},{"index":2678},{"index":2682},{"index":2684},{"index":4676},{"index":197},{"index":158},{"index":159},{"index":391},{"index":160},{"index":161},{"index":16},{"index":362},{"index":15},{"index":339},{"index":14},{"index":55},{"index":369},{"index":28},{"index":26},{"index":27},{"index":170},{"index":171},{"index":172},{"index":376},{"index":4674},{"index":4679},{"index":4685},{"index":4619},{"index":4291},{"index":2089},{"index":2088},{"index":2087},{"index":2071},{"index":2070},{"index":2072},{"index":2100},{"index":2078},{"index":2102},{"index":2076},{"index":2075},{"index":2073},{"index":2062},{"index":2074},{"index":2092},{"index":2091},{"index":2079},{"index":2090},{"index":2093},{"index":2094},{"index":2104},{"index":2096},{"index":2098},{"index":2262},{"index":2097},{"index":2095},{"index":2103},{"index":2144},{"index":2082},{"index":2143},{"index":2086},{"index":2081},{"index":2080},{"index":2142},{"index":2069},{"index":2063},{"index":2064},{"index":2065},{"index":2101},{"index":2077},{"index":2099},{"index":2066},{"index":2067},{"index":2068},{"index":2085},{"index":2084},{"index":2083},{"index":2247},{"index":2259},{"index":2248},{"index":2253},{"index":2252},{"index":2254},{"index":2263},{"index":2257},{"index":2264},{"index":2256},{"index":2250},{"index":2251},{"index":2255},{"index":2267},{"index":2249},{"index":2260},{"index":2261},{"index":2268},{"index":2258},{"index":2269},{"index":2265},{"index":2266},{"index":4261},{"index":4651},{"index":151},{"index":152},{"index":153},{"index":10},{"index":9},{"index":8},{"index":321},{"index":59},{"index":323},{"index":7},{"index":6},{"index":5},{"index":11},{"index":1469},{"index":1444},{"index":1323},{"index":1319},{"index":1320},{"index":1411},{"index":1412},{"index":1413},{"index":1414},{"index":1372},{"index":1370},{"index":1371},{"index":1453},{"index":1478},{"index":201},{"index":320},{"index":1485},{"index":1462},{"index":1424},{"index":1374},{"index":1441},{"index":1466},{"index":1479},{"index":1455},{"index":1373},{"index":1283},{"index":1275},{"index":1282},{"index":1268},{"index":1433},{"index":1274},{"index":1273},{"index":1257},{"index":1262},{"index":1261},{"index":1271},{"index":1270},{"index":1272},{"index":1278},{"index":1277},{"index":1461},{"index":1484},{"index":1483},{"index":1460},{"index":1459},{"index":1482},{"index":1481},{"index":1458},{"index":1280},{"index":1321},{"index":1322},{"index":1443},{"index":1468},{"index":1467},{"index":1442},{"index":1486},{"index":1463},{"index":1434},{"index":1457},{"index":1480},{"index":1465},{"index":1456},{"index":1454},{"index":1464},{"index":1432},{"index":4657},{"index":4274},{"index":4260},{"index":4259},{"index":4650},{"index":331},{"index":1477},{"index":1452},{"index":1451},{"index":1476},{"index":1210},{"index":150},{"index":1209},{"index":1474},{"index":1449},{"index":1450},{"index":1475},{"index":1448},{"index":1473},{"index":1472},{"index":1447},{"index":1446},{"index":1471},{"index":1470},{"index":1445},{"index":1208},{"index":148},{"index":149},{"index":154},{"index":4645},{"index":4271},{"index":4268},{"index":4654},{"index":4644},{"index":4269},{"index":4272},{"index":4646},{"index":4254},{"index":4255},{"index":4648},{"index":4636},{"index":4641},{"index":4264},{"index":4263},{"index":4652},{"index":4643},{"index":4267},{"index":4266},{"index":4653},{"index":4655},{"index":4270},{"index":4273},{"index":4656},{"index":4647},{"index":4276},{"index":4258},{"index":4256},{"index":4257},{"index":4649},{"index":4637},{"index":4638},{"index":4658},{"index":4275},{"index":4265},{"index":4262},{"index":4640},{"index":4642},{"index":4639},{"index":4297},{"index":4293},{"index":4634},{"index":4620},{"index":4294},{"index":4296},{"index":4299},{"index":4635},{"index":4629},{"index":4286},{"index":4285},{"index":4298},{"index":4284},{"index":4628},{"index":178},{"index":34},{"index":2},{"index":33},{"index":41},{"index":45},{"index":327},{"index":60},{"index":370},{"index":61},{"index":67},{"index":49},{"index":22},{"index":324},{"index":12},{"index":46},{"index":63},{"index":44},{"index":40},{"index":23},{"index":37},{"index":366},{"index":364},{"index":24},{"index":169},{"index":363},{"index":371},{"index":168},{"index":208},{"index":192},{"index":193},{"index":204},{"index":65},{"index":50},{"index":52},{"index":21},{"index":32},{"index":138},{"index":36},{"index":13},{"index":48},{"index":64},{"index":66},{"index":51},{"index":62},{"index":38},{"index":20},{"index":139},{"index":141},{"index":4563},{"index":2534},{"index":2532},{"index":4562},{"index":4549},{"index":2533},{"index":2530},{"index":4560},{"index":4559},{"index":2529},{"index":2535},{"index":4564},{"index":4550},{"index":195},{"index":165},{"index":295},{"index":293},{"index":4565},{"index":2536},{"index":2539},{"index":4567},{"index":4566},{"index":2537},{"index":2538},{"index":205},{"index":147},{"index":4525},{"index":2999},{"index":2987},{"index":2981},{"index":2997},{"index":2991},{"index":2967},{"index":3023},{"index":4528},{"index":4546},{"index":2531},{"index":4561},{"index":4610},{"index":4432},{"index":4427},{"index":2528},{"index":53},{"index":776},{"index":789},{"index":2554},{"index":4580},{"index":796},{"index":778},{"index":784},{"index":783},{"index":779},{"index":794},{"index":782},{"index":777},{"index":785},{"index":791},{"index":793},{"index":787},{"index":781},{"index":780},{"index":788},{"index":4553},{"index":2559},{"index":2558},{"index":4584},{"index":4585},{"index":2560},{"index":2557},{"index":4583},{"index":795},{"index":798},{"index":4451},{"index":4452},{"index":4453},{"index":4494},{"index":4529},{"index":2992},{"index":2968},{"index":3010},{"index":3039},{"index":3041},{"index":3013},{"index":3012},{"index":3038},{"index":2985},{"index":3006},{"index":3025},{"index":3003},{"index":2978},{"index":3022},{"index":2758},{"index":3021},{"index":2975},{"index":2764},{"index":3075},{"index":2797},{"index":2843},{"index":2779},{"index":2796},{"index":2941},{"index":2808},{"index":2829},{"index":2786},{"index":2777},{"index":2789},{"index":2813},{"index":2819},{"index":2803},{"index":2809},{"index":2821},{"index":4507},{"index":803},{"index":773},{"index":774},{"index":775},{"index":797},{"index":2866},{"index":4496},{"index":4512},{"index":2814},{"index":2790},{"index":2832},{"index":2861},{"index":2787},{"index":2842},{"index":2847},{"index":2828},{"index":2807},{"index":2860},{"index":2834},{"index":2835},{"index":2863},{"index":3080},{"index":3079},{"index":3077},{"index":3070},{"index":3076},{"index":4534},{"index":4495},{"index":2938},{"index":2935},{"index":2942},{"index":2936},{"index":2945},{"index":2800},{"index":2844},{"index":2825},{"index":2862},{"index":2833},{"index":2845},{"index":2802},{"index":2818},{"index":2846},{"index":4532},{"index":4544},{"index":4509},{"index":4514},{"index":4515},{"index":2864},{"index":2865},{"index":2556},{"index":4582},{"index":786},{"index":792},{"index":811},{"index":808},{"index":807},{"index":813},{"index":812},{"index":810},{"index":805},{"index":806},{"index":815},{"index":804},{"index":816},{"index":818},{"index":4589},{"index":2565},{"index":2563},{"index":4588},{"index":4554},{"index":2564},{"index":2561},{"index":4586},{"index":4581},{"index":2555},{"index":799},{"index":800},{"index":801},{"index":817},{"index":802},{"index":819},{"index":850},{"index":4497},{"index":4542},{"index":4501},{"index":4543},{"index":2575},{"index":4598},{"index":864},{"index":866},{"index":863},{"index":852},{"index":867},{"index":868},{"index":4602},{"index":2580},{"index":2562},{"index":4587},{"index":4510},{"index":2822},{"index":2812},{"index":2801},{"index":2817},{"index":4506},{"index":2784},{"index":2785},{"index":809},{"index":814},{"index":790},{"index":3074},{"index":2974},{"index":2763},{"index":2986},{"index":3007},{"index":3005},{"index":2767},{"index":2957},{"index":3067},{"index":3082},{"index":3043},{"index":3042},{"index":4533},{"index":3044},{"index":4493},{"index":4548},{"index":900},{"index":821},{"index":820},{"index":823},{"index":4383},{"index":396},{"index":392},{"index":394},{"index":4381},{"index":4},{"index":896},{"index":39},{"index":25},{"index":322},{"index":29},{"index":4409},{"index":4434},{"index":4042},{"index":4043},{"index":4231},{"index":31},{"index":30},{"index":326},{"index":42},{"index":43},{"index":325},{"index":4436},{"index":4411},{"index":4426},{"index":4449},{"index":4410},{"index":4435},{"index":4447},{"index":4423},{"index":19},{"index":140},{"index":4408},{"index":4433},{"index":4609},{"index":4558},{"index":4603},{"index":2582},{"index":890},{"index":395},{"index":4382},{"index":822},{"index":2566},{"index":4590},{"index":4607},{"index":4385},{"index":2540},{"index":4568},{"index":4557},{"index":899},{"index":898},{"index":2581},{"index":897},{"index":4384},{"index":892},{"index":891},{"index":4230},{"index":4228},{"index":4040},{"index":4044},{"index":4229},{"index":4232},{"index":4052},{"index":4051},{"index":4233},{"index":4226},{"index":4056},{"index":4050},{"index":4054},{"index":4041},{"index":4219},{"index":4221},{"index":4055},{"index":4046},{"index":4079},{"index":4078},{"index":4080},{"index":4074},{"index":4049},{"index":4220},{"index":58},{"index":54},{"index":57},{"index":56},{"index":4223},{"index":4047},{"index":4048},{"index":4045},{"index":4075},{"index":4076},{"index":4053},{"index":4448},{"index":4425},{"index":4412},{"index":4430},{"index":4218},{"index":4222},{"index":4342},{"index":2395},{"index":2394},{"index":2388},{"index":2390},{"index":2392},{"index":4321},{"index":4348},{"index":4224},{"index":4225},{"index":4082},{"index":4347},{"index":4251},{"index":4253},{"index":4349},{"index":4252},{"index":4323},{"index":4625},{"index":4278},{"index":4277},{"index":4295},{"index":4292},{"index":4633},{"index":4632},{"index":4290},{"index":4621},{"index":4613},{"index":4289},{"index":4631},{"index":4615},{"index":4281},{"index":4282},{"index":4627},{"index":4618},{"index":4287},{"index":4288},{"index":4630},{"index":4614},{"index":4279},{"index":4280},{"index":4626},{"index":4616},{"index":4283},{"index":4227},{"index":895},{"index":177},{"index":4624},{"index":4617},{"index":367},{"index":365},{"index":368},{"index":378},{"index":329},{"index":330},{"index":328},{"index":4622},{"index":4623},{"index":4686},{"index":4687},{"index":4678},{"index":2689},{"index":2671},{"index":2672},{"index":4669},{"index":4660},{"index":2670},{"index":2673},{"index":2674},{"index":4670},{"index":4663},{"index":2675},{"index":4662},{"index":4661},{"index":157},{"index":200},{"index":4666},{"index":2685},{"index":4135},{"index":4088},{"index":4680},{"index":2182},{"index":2179},{"index":2282},{"index":2181},{"index":2183},{"index":4127},{"index":196},{"index":199},{"index":4672},{"index":2679},{"index":2681},{"index":4673},{"index":2683},{"index":4675},{"index":4683},{"index":4137},{"index":4090},{"index":4682},{"index":4681},{"index":4089},{"index":4136},{"index":2688},{"index":2283},{"index":179},{"index":4124},{"index":4114},{"index":4115},{"index":4684}]},{"vert_indicies":[{"index":753},{"index":756},{"index":754},{"index":772},{"index":755},{"index":771},{"index":758},{"index":875},{"index":888},{"index":872},{"index":889},{"index":871},{"index":873},{"index":870},{"index":886},{"index":769},{"index":4462},{"index":4463},{"index":837},{"index":4460},{"index":4461},{"index":4458},{"index":4459},{"index":2514},{"index":2515},{"index":2516},{"index":2510},{"index":2507},{"index":2508},{"index":2509},{"index":4480},{"index":4481},{"index":2467},{"index":2468},{"index":2475},{"index":2476},{"index":2466},{"index":4475},{"index":4474},{"index":4479},{"index":4478},{"index":2494}]},{"vert_indicies":[{"index":4901},{"index":4902},{"index":4911},{"index":4913},{"index":4912},{"index":4907},{"index":4906},{"index":4904},{"index":4908},{"index":4909},{"index":4918},{"index":4917},{"index":4942},{"index":5054},{"index":5029},{"index":5030},{"index":5021},{"index":5020},{"index":5018},{"index":5019},{"index":5024},{"index":5025},{"index":5023},{"index":5014},{"index":5009},{"index":5035},{"index":5037},{"index":5010},{"index":5058},{"index":5048},{"index":5055},{"index":5081},{"index":5060},{"index":5044},{"index":5041},{"index":5040},{"index":5079},{"index":5072},{"index":5039},{"index":5038},{"index":5075},{"index":5073},{"index":5042},{"index":5043},{"index":5045},{"index":5074},{"index":5080},{"index":5059},{"index":4947},{"index":4933},{"index":5064},{"index":5070},{"index":5068},{"index":4931},{"index":4930},{"index":5063},{"index":5065},{"index":4926},{"index":4927},{"index":5062},{"index":5069},{"index":4928},{"index":4929},{"index":4932},{"index":5067},{"index":5071},{"index":4943},{"index":4936},{"index":4948},{"index":5066},{"index":5078},{"index":5076},{"index":5077},{"index":5008},{"index":5012},{"index":5016},{"index":5013},{"index":5015},{"index":5011},{"index":5007},{"index":5017}]}]},{"index":28,"name":"DEF-Finger_Index_Carpal.R"},{"index":29,"name":"DEF-Finger_Index3.R"},{"index":30,"name":"DEF-Finger_Index2.R"},{"index":31,"name":"DEF-Finger_Index1.R"},{"index":32,"name":"DEF-Finger_Middle_Carpal.R"},{"index":33,"name":"DEF-Finger_Middle3.R"},{"index":34,"name":"DEF-Finger_Middle2.R"},{"index":35,"name":"DEF-Finger_Middle1.R"},{"index":36,"name":"DEF-Finger_Ring_Carpal.R"},{"index":37,"name":"DEF-Finger_Ring3.R"},{"index":38,"name":"DEF-Finger_Ring2.R"},{"index":39,"name":"DEF-Finger_Ring1.R"},{"index":40,"name":"DEF-Finger_Pinky_Carpal.R"},{"index":41,"name":"DEF-Finger_Pinky3.R"},{"index":42,"name":"DEF-Finger_Pinky2.R"},{"index":43,"name":"DEF-Finger_Pinky1.R"},{"index":44,"name":"DEF-Wrist.R"},{"index":45,"name":"DEF-Finger_Thumb3.R"},{"index":46,"name":"DEF-Finger_Thumb2.R"},{"index":47,"name":"DEF-Finger_Thumb1.R"},{"index":48,"name":"DEF-Forearm2.R"},{"index":49,"name":"DEF-Forearm1.R"},{"index":50,"name":"DEF-UpperArm1.R","islands":[{"vert_indicies":[{"index":5},{"index":6},{"index":7},{"index":323},{"index":59},{"index":321},{"index":8},{"index":9},{"index":10},{"index":153},{"index":152},{"index":151},{"index":320},{"index":201},{"index":331},{"index":1477},{"index":1452},{"index":1370},{"index":1366},{"index":1365},{"index":1363},{"index":1359},{"index":1421},{"index":1358},{"index":1354},{"index":1350},{"index":1346},{"index":1342},{"index":1328},{"index":1416},{"index":1329},{"index":1330},{"index":1339},{"index":1379},{"index":1344},{"index":1343},{"index":1417},{"index":1418},{"index":1347},{"index":1348},{"index":1352},{"index":1351},{"index":1419},{"index":1420},{"index":1355},{"index":1356},{"index":1395},{"index":1389},{"index":1384},{"index":1383},{"index":1382},{"index":1378},{"index":1376},{"index":1291},{"index":1438},{"index":1437},{"index":1436},{"index":1286},{"index":1285},{"index":1223},{"index":1224},{"index":1284},{"index":1233},{"index":1229},{"index":1232},{"index":1227},{"index":1226},{"index":1236},{"index":1428},{"index":1235},{"index":1228},{"index":1230},{"index":1231},{"index":1341},{"index":1345},{"index":1239},{"index":1238},{"index":1245},{"index":1242},{"index":1250},{"index":1251},{"index":1252},{"index":1246},{"index":1349},{"index":1353},{"index":1357},{"index":1260},{"index":1259},{"index":1256},{"index":1258},{"index":1266},{"index":1267},{"index":1268},{"index":1282},{"index":1275},{"index":1283},{"index":1276},{"index":1269},{"index":1362},{"index":1368},{"index":1373},{"index":1455},{"index":1479},{"index":1466},{"index":1441},{"index":1374},{"index":1369},{"index":1364},{"index":1422},{"index":1423},{"index":1424},{"index":1371},{"index":1453},{"index":1478},{"index":1485},{"index":1462},{"index":1464},{"index":1454},{"index":1456},{"index":1465},{"index":1480},{"index":1457},{"index":1463},{"index":1434},{"index":1277},{"index":1274},{"index":1433},{"index":1432},{"index":1273},{"index":1257},{"index":1247},{"index":1243},{"index":1429},{"index":1430},{"index":1431},{"index":1244},{"index":1237},{"index":1240},{"index":1241},{"index":1234},{"index":1287},{"index":1293},{"index":1299},{"index":1249},{"index":1248},{"index":1254},{"index":1253},{"index":1262},{"index":1261},{"index":1263},{"index":1255},{"index":1300},{"index":1305},{"index":1309},{"index":1265},{"index":1264},{"index":1271},{"index":1270},{"index":1272},{"index":1281},{"index":1280},{"index":1279},{"index":1278},{"index":1460},{"index":1483},{"index":1482},{"index":1459},{"index":1458},{"index":1481},{"index":1467},{"index":1442},{"index":1321},{"index":1316},{"index":1317},{"index":1310},{"index":1306},{"index":1301},{"index":1302},{"index":1296},{"index":1290},{"index":1294},{"index":1288},{"index":1289},{"index":1292},{"index":1295},{"index":1298},{"index":1297},{"index":1380},{"index":1385},{"index":1386},{"index":1381},{"index":1388},{"index":1387},{"index":1396},{"index":1394},{"index":1393},{"index":1392},{"index":1390},{"index":1304},{"index":1303},{"index":1307},{"index":1308},{"index":1391},{"index":1313},{"index":1312},{"index":1311},{"index":1318},{"index":1314},{"index":1315},{"index":1320},{"index":1319},{"index":1323},{"index":1322},{"index":1443},{"index":1468},{"index":1469},{"index":1444},{"index":1445},{"index":1470},{"index":1208},{"index":11},{"index":4652},{"index":4263},{"index":2069},{"index":2063},{"index":2064},{"index":2065},{"index":2101},{"index":2077},{"index":2099},{"index":2066},{"index":2067},{"index":2068},{"index":2085},{"index":2084},{"index":2083},{"index":2097},{"index":2095},{"index":2103},{"index":2144},{"index":2082},{"index":2143},{"index":2086},{"index":2081},{"index":2080},{"index":2142},{"index":2267},{"index":2249},{"index":2260},{"index":2261},{"index":2268},{"index":2258},{"index":2269},{"index":2265},{"index":2266},{"index":2262},{"index":2247},{"index":2089},{"index":2088},{"index":2087},{"index":2071},{"index":2070},{"index":2072},{"index":2100},{"index":2078},{"index":2102},{"index":2076},{"index":2256},{"index":2264},{"index":2257},{"index":2263},{"index":2254},{"index":2252},{"index":2253},{"index":2248},{"index":2259},{"index":2250},{"index":2251},{"index":2255},{"index":4287},{"index":4282},{"index":4627},{"index":327},{"index":45},{"index":4618},{"index":60},{"index":370},{"index":61},{"index":67},{"index":49},{"index":4229},{"index":4044},{"index":4052},{"index":4051},{"index":4233},{"index":4226},{"index":4227},{"index":4050},{"index":4054},{"index":4041},{"index":4219},{"index":28},{"index":369},{"index":55},{"index":14},{"index":4323},{"index":2390},{"index":2388},{"index":2391},{"index":2395},{"index":4342},{"index":58},{"index":54},{"index":35},{"index":47},{"index":4341},{"index":4218},{"index":4045},{"index":4049},{"index":4220},{"index":4225},{"index":4082},{"index":4046},{"index":4055},{"index":4078},{"index":4079},{"index":4080},{"index":4074},{"index":4221},{"index":4224},{"index":4348},{"index":4252},{"index":2392},{"index":4321},{"index":2394},{"index":4251},{"index":4253},{"index":4349},{"index":4347},{"index":339},{"index":4625},{"index":4278},{"index":4277},{"index":4295},{"index":4292},{"index":4633},{"index":170},{"index":27},{"index":4621},{"index":171},{"index":4632},{"index":4290},{"index":4291},{"index":4289},{"index":4631},{"index":4615},{"index":4281},{"index":4232},{"index":329},{"index":378},{"index":4264},{"index":4255},{"index":4648},{"index":148},{"index":149},{"index":154},{"index":1209},{"index":1474},{"index":1449},{"index":1413},{"index":1409},{"index":1403},{"index":1401},{"index":1400},{"index":1398},{"index":1397},{"index":1407},{"index":1411},{"index":1412},{"index":1408},{"index":1399},{"index":1448},{"index":1473},{"index":1472},{"index":1447},{"index":1446},{"index":1471},{"index":1402},{"index":1405},{"index":1360},{"index":1361},{"index":1406},{"index":1367},{"index":1372},{"index":1414},{"index":1410},{"index":1404},{"index":1450},{"index":1475},{"index":1476},{"index":1451},{"index":1210},{"index":150},{"index":4644},{"index":4269},{"index":4272},{"index":4259},{"index":4650},{"index":4639},{"index":4260},{"index":4274},{"index":4657},{"index":4651},{"index":4261},{"index":4262},{"index":4265},{"index":4275},{"index":4658},{"index":4649},{"index":4257},{"index":4256},{"index":4258},{"index":4276},{"index":4273},{"index":4656},{"index":4655},{"index":4270},{"index":4266},{"index":4653},{"index":4643},{"index":4267},{"index":4647},{"index":4638},{"index":4637},{"index":4642},{"index":4640},{"index":4646},{"index":4268},{"index":4654},{"index":4645},{"index":4271},{"index":4254},{"index":4636},{"index":4641},{"index":1484},{"index":1461},{"index":1486},{"index":1427},{"index":1439},{"index":1375},{"index":1336},{"index":1337},{"index":1338},{"index":1377}]},{"vert_indicies":[{"index":2695},{"index":2696},{"index":2711},{"index":2727},{"index":2732},{"index":2722},{"index":2747},{"index":2745},{"index":2750},{"index":2740},{"index":2721},{"index":2715},{"index":2735},{"index":3035},{"index":2705},{"index":3052},{"index":2749},{"index":2725}]},{"vert_indicies":[{"index":2702},{"index":2741},{"index":2773}]},{"vert_indicies":[{"index":2758},{"index":3022},{"index":2978},{"index":2986},{"index":3007},{"index":2964},{"index":2955},{"index":2967},{"index":2981},{"index":3023},{"index":3020},{"index":2965},{"index":3006},{"index":2985},{"index":3038},{"index":3041},{"index":3039},{"index":2764},{"index":2975},{"index":3021},{"index":2957},{"index":2767},{"index":2763},{"index":3067},{"index":2779},{"index":2796},{"index":2941},{"index":2808},{"index":2829},{"index":2786},{"index":2777},{"index":2789},{"index":2813},{"index":2819},{"index":2803},{"index":2821},{"index":2817},{"index":2801},{"index":2784},{"index":2812},{"index":2822},{"index":2846},{"index":2845},{"index":2802},{"index":2787},{"index":2842},{"index":2847},{"index":2828},{"index":2807},{"index":2860},{"index":2834},{"index":2835},{"index":2863},{"index":2861},{"index":2832},{"index":2790},{"index":2865},{"index":3077},{"index":3080},{"index":3079},{"index":2938},{"index":2935},{"index":2942},{"index":2936},{"index":2843},{"index":2797},{"index":2862},{"index":2833},{"index":3075},{"index":3082},{"index":2945},{"index":2800},{"index":2844},{"index":2825},{"index":3074},{"index":3025},{"index":3003}]},{"vert_indicies":[{"index":2857},{"index":2893},{"index":2913},{"index":2874},{"index":2873},{"index":2900},{"index":2889},{"index":2905},{"index":2910},{"index":2927},{"index":2903},{"index":2881},{"index":2925},{"index":2923},{"index":2928},{"index":2918},{"index":2899}]},{"vert_indicies":[{"index":2962},{"index":2979},{"index":2995},{"index":3000},{"index":2990}]},{"vert_indicies":[{"index":3011}]},{"vert_indicies":[{"index":4620}]},{"vert_indicies":[{"index":4894},{"index":4910},{"index":4919},{"index":4920},{"index":4899},{"index":4895},{"index":4905},{"index":4916},{"index":4903},{"index":4908},{"index":4909},{"index":5063},{"index":4930},{"index":4926},{"index":5065},{"index":5062},{"index":4927},{"index":4928},{"index":4929},{"index":4932},{"index":5067},{"index":4913},{"index":4912},{"index":4907},{"index":4906},{"index":4904},{"index":4900},{"index":4901},{"index":5069},{"index":5066},{"index":4943},{"index":5071},{"index":4948},{"index":5060},{"index":5044},{"index":5041},{"index":5040},{"index":5079},{"index":5019},{"index":5024},{"index":5025},{"index":5055},{"index":5081},{"index":5077},{"index":5076},{"index":5018},{"index":5016},{"index":5015},{"index":5011},{"index":5020},{"index":5075},{"index":5038},{"index":5039},{"index":5072},{"index":4944},{"index":4935},{"index":5056},{"index":4921}]},{"vert_indicies":[{"index":4933},{"index":4947},{"index":5070},{"index":5080},{"index":5059},{"index":5045},{"index":5074},{"index":5043}]}]},{"index":51,"name":"DEF-UpperArm2.R","islands":[{"vert_indicies":[{"index":1223},{"index":1224},{"index":1286},{"index":1285},{"index":1284},{"index":1233},{"index":1229},{"index":1232},{"index":1227},{"index":1226},{"index":1236},{"index":1428},{"index":1235},{"index":1228},{"index":1230},{"index":1231},{"index":1341},{"index":1345},{"index":1239},{"index":1238},{"index":1246},{"index":1349},{"index":1350},{"index":1346},{"index":1342},{"index":1328},{"index":1416},{"index":1329},{"index":1330},{"index":1339},{"index":1379},{"index":1344},{"index":1343},{"index":1417},{"index":1418},{"index":1347},{"index":1348},{"index":1384},{"index":1383},{"index":1377},{"index":1378},{"index":1376},{"index":1291},{"index":1438},{"index":1437},{"index":1436},{"index":1439},{"index":1375},{"index":1336},{"index":1337},{"index":1338},{"index":1289},{"index":1288},{"index":1287},{"index":1234},{"index":1241},{"index":1240},{"index":1237},{"index":1293},{"index":1294},{"index":1290},{"index":1380},{"index":1381},{"index":1387},{"index":1351},{"index":1419},{"index":1427}]}]},{"index":52,"name":"DEF-Neck","islands":[{"vert_indicies":[{"index":0},{"index":1},{"index":3},{"index":4530},{"index":3024},{"index":2996},{"index":2980},{"index":2965},{"index":3020},{"index":2955},{"index":2964},{"index":2963},{"index":2962},{"index":2961},{"index":2990},{"index":2979},{"index":2995},{"index":4524},{"index":142},{"index":143},{"index":145},{"index":294},{"index":146},{"index":299},{"index":531},{"index":668},{"index":530},{"index":528},{"index":527},{"index":532},{"index":397},{"index":398},{"index":400},{"index":525},{"index":2952},{"index":2493},{"index":4547},{"index":2902},{"index":2880},{"index":2919},{"index":2947},{"index":2877},{"index":2929},{"index":2869},{"index":2876},{"index":2875},{"index":2874},{"index":2873},{"index":2900},{"index":2889},{"index":2905},{"index":4518},{"index":4539},{"index":2909},{"index":2897},{"index":2891},{"index":2907},{"index":4517},{"index":4521},{"index":2901},{"index":2879},{"index":2932},{"index":2890},{"index":2906},{"index":2933},{"index":4537},{"index":4540},{"index":4523},{"index":2950},{"index":2951},{"index":4538},{"index":2910},{"index":2927},{"index":2903},{"index":2881},{"index":2868},{"index":2872},{"index":2958},{"index":2970},{"index":2994},{"index":2908},{"index":4516},{"index":4519},{"index":4536},{"index":4522},{"index":4520},{"index":2998},{"index":2982},{"index":2960},{"index":2954},{"index":3014},{"index":3019},{"index":3009},{"index":2989},{"index":2983},{"index":3004},{"index":3005},{"index":2984},{"index":2986},{"index":3007},{"index":3003},{"index":2978},{"index":3022},{"index":2758},{"index":3021},{"index":2975},{"index":2764},{"index":2985},{"index":3006},{"index":3025},{"index":3041},{"index":3013},{"index":3010},{"index":3039},{"index":3043},{"index":2968},{"index":2992},{"index":3042},{"index":4533},{"index":3044},{"index":4494},{"index":4529},{"index":4534},{"index":4495},{"index":4496},{"index":4512},{"index":2814},{"index":2790},{"index":2832},{"index":2861},{"index":2787},{"index":2842},{"index":2777},{"index":2786},{"index":2785},{"index":2784},{"index":2783},{"index":2812},{"index":2801},{"index":2817},{"index":4506},{"index":799},{"index":800},{"index":801},{"index":817},{"index":802},{"index":819},{"index":850},{"index":865},{"index":849},{"index":848},{"index":847},{"index":851},{"index":824},{"index":825},{"index":826},{"index":845},{"index":2774},{"index":4491},{"index":4502},{"index":2724},{"index":2702},{"index":2741},{"index":2769},{"index":2699},{"index":2751},{"index":2691},{"index":2698},{"index":2697},{"index":2696},{"index":2695},{"index":2722},{"index":2711},{"index":2727},{"index":4500},{"index":4498},{"index":2731},{"index":2719},{"index":2713},{"index":2729},{"index":4499},{"index":4511},{"index":2723},{"index":2701},{"index":2754},{"index":2712},{"index":2728},{"index":2755},{"index":4545},{"index":4503},{"index":4504},{"index":2772},{"index":2773},{"index":4508},{"index":2732},{"index":2749},{"index":2725},{"index":2703},{"index":2690},{"index":2694},{"index":2780},{"index":2792},{"index":2816},{"index":2730},{"index":2714},{"index":4497},{"index":4541},{"index":4505},{"index":4542},{"index":4501},{"index":2820},{"index":2804},{"index":2782},{"index":2776},{"index":2836},{"index":2841},{"index":2831},{"index":2811},{"index":2805},{"index":2826},{"index":2827},{"index":2806},{"index":2808},{"index":2829},{"index":2825},{"index":2800},{"index":2844},{"index":2807},{"index":2828},{"index":2847},{"index":2863},{"index":2835},{"index":2834},{"index":2938},{"index":2935},{"index":2942},{"index":2936},{"index":2843},{"index":2797},{"index":2862},{"index":2833},{"index":3078},{"index":3011},{"index":2760},{"index":3012},{"index":3038},{"index":2757},{"index":3040},{"index":3083},{"index":3075},{"index":3082},{"index":3067},{"index":2957},{"index":2767},{"index":2763},{"index":2974},{"index":2973},{"index":2765},{"index":2766},{"index":2972},{"index":2971},{"index":2761},{"index":2759},{"index":3015},{"index":2956},{"index":2775},{"index":2976},{"index":3017},{"index":2988},{"index":3008},{"index":3002},{"index":2977},{"index":2859},{"index":2959},{"index":2878},{"index":2853},{"index":2898},{"index":2917},{"index":2911},{"index":2887},{"index":2926},{"index":2899},{"index":2918},{"index":2928},{"index":2923},{"index":2925},{"index":2913},{"index":2893},{"index":2894},{"index":2914},{"index":2916},{"index":2896},{"index":2888},{"index":2931},{"index":2849},{"index":2930},{"index":2886},{"index":2855},{"index":2895},{"index":2915},{"index":2934},{"index":2912},{"index":2949},{"index":2922},{"index":2921},{"index":2851},{"index":2920},{"index":2948},{"index":2848},{"index":2946},{"index":3065},{"index":2770},{"index":2742},{"index":3029},{"index":2743},{"index":2744},{"index":2771},{"index":2737},{"index":2717},{"index":2768},{"index":3026},{"index":3033},{"index":3027},{"index":2752},{"index":2708},{"index":3055},{"index":3063},{"index":3048},{"index":2871},{"index":2858},{"index":2854},{"index":2885},{"index":2884},{"index":2856},{"index":2857},{"index":2883},{"index":2882},{"index":2852},{"index":2850},{"index":2924},{"index":2870},{"index":2867},{"index":3047},{"index":2692},{"index":2700},{"index":2781},{"index":3037},{"index":3031},{"index":2720},{"index":2739},{"index":2824},{"index":2799},{"index":2810},{"index":2830},{"index":2823},{"index":2798},{"index":2839},{"index":2937},{"index":2953},{"index":2940},{"index":2788},{"index":2778},{"index":2837},{"index":2793},{"index":2794},{"index":2795},{"index":2796},{"index":2779},{"index":2945},{"index":2941},{"index":2943},{"index":2944},{"index":2939},{"index":3074},{"index":3073},{"index":3072},{"index":3071},{"index":3081},{"index":3066},{"index":3069},{"index":2966},{"index":2762},{"index":3068},{"index":3049},{"index":2733},{"index":2709},{"index":2748},{"index":2721},{"index":2740},{"index":2750},{"index":2745},{"index":2747},{"index":2735},{"index":2715},{"index":2716},{"index":2736},{"index":2738},{"index":2718},{"index":2710},{"index":2753},{"index":2756},{"index":2734},{"index":3036},{"index":3032},{"index":3034},{"index":3035},{"index":3030},{"index":3028},{"index":2746},{"index":2704},{"index":2705},{"index":2706},{"index":2707},{"index":2693},{"index":3054},{"index":3053},{"index":3052},{"index":3051},{"index":3062},{"index":3045},{"index":3061},{"index":3060},{"index":3046},{"index":3059},{"index":3058},{"index":3050},{"index":3056},{"index":4535},{"index":4492},{"index":3057},{"index":444},{"index":2904},{"index":757},{"index":2552},{"index":4578},{"index":769},{"index":753},{"index":756},{"index":873},{"index":870},{"index":886},{"index":4457},{"index":842},{"index":469},{"index":476},{"index":837},{"index":832},{"index":828},{"index":843},{"index":831},{"index":827},{"index":833},{"index":839},{"index":841},{"index":835},{"index":830},{"index":829},{"index":836},{"index":4555},{"index":2572},{"index":2571},{"index":4595},{"index":4596},{"index":2573},{"index":2570},{"index":4594},{"index":844},{"index":846},{"index":4591},{"index":2567},{"index":416},{"index":4455},{"index":874},{"index":2579},{"index":4601},{"index":4611},{"index":4488},{"index":2726},{"index":2569},{"index":4593},{"index":834},{"index":840},{"index":859},{"index":856},{"index":855},{"index":861},{"index":860},{"index":858},{"index":853},{"index":854},{"index":863},{"index":852},{"index":867},{"index":868},{"index":864},{"index":866},{"index":4600},{"index":2578},{"index":2576},{"index":4599},{"index":4556},{"index":2577},{"index":2574},{"index":4597},{"index":4592},{"index":2568},{"index":2575},{"index":4598},{"index":4602},{"index":2580},{"index":2562},{"index":4587},{"index":816},{"index":818},{"index":805},{"index":810},{"index":4554},{"index":2564},{"index":2563},{"index":4588},{"index":4589},{"index":2565},{"index":2561},{"index":4586},{"index":807},{"index":813},{"index":811},{"index":808},{"index":786},{"index":792},{"index":790},{"index":788},{"index":780},{"index":781},{"index":794},{"index":782},{"index":777},{"index":785},{"index":787},{"index":793},{"index":783},{"index":779},{"index":795},{"index":798},{"index":4585},{"index":2560},{"index":2558},{"index":4584},{"index":4553},{"index":2559},{"index":2556},{"index":4582},{"index":4581},{"index":2555},{"index":803},{"index":773},{"index":774},{"index":775},{"index":797},{"index":2866},{"index":4515},{"index":2864},{"index":2818},{"index":2802},{"index":2865},{"index":2845},{"index":2789},{"index":2813},{"index":2819},{"index":2803},{"index":2809},{"index":2821},{"index":4507},{"index":4509},{"index":4544},{"index":4532},{"index":2846},{"index":4514},{"index":2557},{"index":4583},{"index":4580},{"index":2554},{"index":789},{"index":776},{"index":53},{"index":2528},{"index":4558},{"index":140},{"index":19},{"index":39},{"index":4410},{"index":4435},{"index":4447},{"index":4423},{"index":4408},{"index":4433},{"index":139},{"index":141},{"index":21},{"index":52},{"index":4549},{"index":2533},{"index":2532},{"index":4562},{"index":4563},{"index":2534},{"index":2531},{"index":4561},{"index":4610},{"index":4432},{"index":4427},{"index":4609},{"index":4453},{"index":4452},{"index":4451},{"index":4493},{"index":4548},{"index":2530},{"index":4560},{"index":50},{"index":65},{"index":204},{"index":193},{"index":192},{"index":208},{"index":205},{"index":195},{"index":165},{"index":295},{"index":293},{"index":750},{"index":667},{"index":669},{"index":550},{"index":576},{"index":4552},{"index":2550},{"index":2549},{"index":4576},{"index":4577},{"index":2551},{"index":2548},{"index":4575},{"index":4579},{"index":2553},{"index":2536},{"index":4565},{"index":4567},{"index":2539},{"index":2537},{"index":4566},{"index":4550},{"index":2538},{"index":2535},{"index":4564},{"index":4559},{"index":2529},{"index":147},{"index":4525},{"index":2999},{"index":2987},{"index":2981},{"index":2997},{"index":2991},{"index":2967},{"index":3023},{"index":4528},{"index":4546},{"index":2547},{"index":4574},{"index":573},{"index":583},{"index":579},{"index":574},{"index":439},{"index":453},{"index":415},{"index":427},{"index":414},{"index":429},{"index":717},{"index":719},{"index":423},{"index":718},{"index":452},{"index":437},{"index":405},{"index":404},{"index":432},{"index":426},{"index":523},{"index":422},{"index":440},{"index":454},{"index":450},{"index":441},{"index":412},{"index":526},{"index":524},{"index":411},{"index":428},{"index":431},{"index":4387},{"index":2491},{"index":2488},{"index":4386},{"index":4398},{"index":2489},{"index":2492},{"index":4399},{"index":4608},{"index":4405},{"index":2584},{"index":4490},{"index":2474},{"index":2583},{"index":4604},{"index":2473},{"index":2471},{"index":2472},{"index":2467},{"index":4480},{"index":2508},{"index":2509},{"index":2511},{"index":4486},{"index":4483},{"index":4612},{"index":4487},{"index":2585},{"index":2512},{"index":4468},{"index":4606},{"index":4605},{"index":2543},{"index":4571},{"index":4573},{"index":2546},{"index":2544},{"index":4572},{"index":4551},{"index":2545},{"index":2542},{"index":4570},{"index":4569},{"index":2541},{"index":580},{"index":584},{"index":575},{"index":557},{"index":666},{"index":562},{"index":541},{"index":540},{"index":571},{"index":581},{"index":569},{"index":565},{"index":582},{"index":572},{"index":568},{"index":694},{"index":556},{"index":555},{"index":695},{"index":567},{"index":564},{"index":549},{"index":298},{"index":182},{"index":180},{"index":156},{"index":155},{"index":189},{"index":206},{"index":187},{"index":183},{"index":207},{"index":190},{"index":194},{"index":209},{"index":338},{"index":336},{"index":191},{"index":166},{"index":332},{"index":333},{"index":186},{"index":185},{"index":334},{"index":173},{"index":297},{"index":751},{"index":742},{"index":4671},{"index":2677},{"index":2146},{"index":2147},{"index":2148},{"index":2150},{"index":2674},{"index":4670},{"index":4663},{"index":174},{"index":2675},{"index":2676},{"index":4664},{"index":4662},{"index":2673},{"index":2166},{"index":2159},{"index":2145},{"index":2172},{"index":2171},{"index":2669},{"index":4668},{"index":4659},{"index":2668},{"index":4709},{"index":62},{"index":66},{"index":51},{"index":32},{"index":138},{"index":36},{"index":13},{"index":48},{"index":38},{"index":20},{"index":896},{"index":394},{"index":4381},{"index":821},{"index":820},{"index":823},{"index":4383},{"index":396},{"index":392},{"index":891},{"index":892},{"index":4603},{"index":2582},{"index":890},{"index":395},{"index":4382},{"index":822},{"index":2566},{"index":4590},{"index":4607},{"index":4385},{"index":2540},{"index":4568},{"index":4557},{"index":899},{"index":796},{"index":778},{"index":784},{"index":900},{"index":898},{"index":2581},{"index":897},{"index":4384},{"index":4},{"index":393},{"index":895},{"index":812},{"index":814},{"index":809},{"index":806},{"index":815},{"index":804},{"index":857},{"index":862},{"index":838},{"index":4462},{"index":4465},{"index":3001},{"index":3079},{"index":3064},{"index":3080},{"index":3077},{"index":3070},{"index":3076},{"index":2860},{"index":2838},{"index":2791},{"index":2815},{"index":2840},{"index":2822},{"index":4510},{"index":4513},{"index":4543},{"index":3016},{"index":2969},{"index":2993},{"index":3018},{"index":3000},{"index":4527},{"index":4531},{"index":4526},{"index":2892}]}]},{"index":53,"name":"DEF-Spine","islands":[{"vert_indicies":[{"index":82},{"index":305},{"index":350},{"index":306},{"index":83},{"index":132},{"index":111},{"index":5103},{"index":2589},{"index":2592},{"index":5102},{"index":5109},{"index":2587},{"index":2600},{"index":2613},{"index":356},{"index":2620},{"index":2615},{"index":2602},{"index":5113},{"index":351},{"index":307},{"index":304},{"index":227},{"index":284},{"index":260},{"index":264},{"index":384},{"index":381},{"index":388},{"index":380},{"index":316},{"index":231},{"index":288},{"index":4149},{"index":239},{"index":235},{"index":91},{"index":358},{"index":90},{"index":343},{"index":89},{"index":4138},{"index":4153},{"index":243},{"index":4154},{"index":617},{"index":4139},{"index":4345},{"index":4182},{"index":2410},{"index":2411},{"index":2409},{"index":2408},{"index":2412},{"index":4327},{"index":311},{"index":88},{"index":87},{"index":310},{"index":309},{"index":86},{"index":85},{"index":308},{"index":4142},{"index":92},{"index":93},{"index":94},{"index":95},{"index":4145},{"index":4144},{"index":4143},{"index":4346},{"index":4183},{"index":2416},{"index":4332},{"index":2415},{"index":2414},{"index":4336},{"index":4181},{"index":4440},{"index":4416},{"index":4428},{"index":4450},{"index":4431},{"index":4424},{"index":4415},{"index":4439},{"index":4446},{"index":4422},{"index":134},{"index":135},{"index":136},{"index":137},{"index":4319},{"index":2425},{"index":2400},{"index":2396},{"index":2423},{"index":2424},{"index":2398},{"index":4337},{"index":110},{"index":131},{"index":4322},{"index":4326},{"index":4335},{"index":349},{"index":346},{"index":342},{"index":2413},{"index":4320},{"index":387},{"index":238},{"index":237},{"index":236},{"index":4120},{"index":2197},{"index":2287},{"index":2196},{"index":4129},{"index":242},{"index":241},{"index":240},{"index":302},{"index":614},{"index":615},{"index":616},{"index":4170},{"index":684},{"index":608},{"index":607},{"index":683},{"index":682},{"index":606},{"index":663},{"index":749},{"index":301},{"index":312},{"index":317},{"index":232},{"index":233},{"index":318},{"index":319},{"index":234},{"index":291},{"index":267},{"index":4130},{"index":2186},{"index":2203},{"index":2195},{"index":2194},{"index":2294},{"index":2192},{"index":2193},{"index":2202},{"index":2184},{"index":2290},{"index":2293},{"index":2286},{"index":4109},{"index":285},{"index":228},{"index":313},{"index":314},{"index":229},{"index":230},{"index":315},{"index":4148},{"index":4147},{"index":4146},{"index":4190},{"index":4121},{"index":4113},{"index":4175},{"index":4180},{"index":4176},{"index":4191},{"index":4128},{"index":4134},{"index":4133},{"index":4152},{"index":4151},{"index":4150},{"index":4141},{"index":4168},{"index":4169},{"index":4140},{"index":287},{"index":263},{"index":262},{"index":286},{"index":290},{"index":289},{"index":664},{"index":665},{"index":4196},{"index":2227},{"index":2210},{"index":4195},{"index":2219},{"index":2218},{"index":2281},{"index":2216},{"index":2217},{"index":2226},{"index":2280},{"index":2273},{"index":4209},{"index":659},{"index":602},{"index":678},{"index":679},{"index":603},{"index":604},{"index":680},{"index":729},{"index":737},{"index":730},{"index":733},{"index":662},{"index":605},{"index":681},{"index":670},{"index":601},{"index":658},{"index":5127},{"index":2644},{"index":2642},{"index":2655},{"index":2657},{"index":2653},{"index":2628},{"index":2660},{"index":2647},{"index":2648},{"index":5129},{"index":708},{"index":673},{"index":4159},{"index":479},{"index":609},{"index":613},{"index":736},{"index":612},{"index":611},{"index":610},{"index":4213},{"index":2221},{"index":2274},{"index":2220},{"index":4194},{"index":4217},{"index":4178},{"index":4179},{"index":4177},{"index":4216},{"index":4164},{"index":4165},{"index":4166},{"index":4155},{"index":4167},{"index":4156},{"index":4205},{"index":4210},{"index":4202},{"index":4203},{"index":712},{"index":478},{"index":700},{"index":477},{"index":4157},{"index":671},{"index":470},{"index":4357},{"index":2450},{"index":2449},{"index":4363},{"index":4379},{"index":4185},{"index":2453},{"index":4365},{"index":2454},{"index":2455},{"index":4186},{"index":2451},{"index":2452},{"index":2448},{"index":2447},{"index":4184},{"index":2462},{"index":2435},{"index":2439},{"index":2464},{"index":4352},{"index":522},{"index":475},{"index":4353},{"index":4356},{"index":677},{"index":676},{"index":474},{"index":473},{"index":675},{"index":674},{"index":472},{"index":519},{"index":520},{"index":500},{"index":501},{"index":521},{"index":4401},{"index":2505},{"index":2497},{"index":2502},{"index":2501},{"index":4394},{"index":4406},{"index":4188},{"index":2506},{"index":4397},{"index":480},{"index":481},{"index":482},{"index":483},{"index":4364},{"index":4380},{"index":4163},{"index":4162},{"index":4161},{"index":4160},{"index":2481},{"index":4469},{"index":2524},{"index":762},{"index":879},{"index":4174},{"index":887},{"index":878},{"index":885},{"index":768},{"index":761},{"index":770},{"index":2523},{"index":2522},{"index":2521},{"index":2527},{"index":4477},{"index":4485},{"index":2479},{"index":2480},{"index":2482},{"index":4187},{"index":4489},{"index":4189},{"index":4173},{"index":4466},{"index":4470},{"index":4400},{"index":2437},{"index":2463},{"index":4358},{"index":517},{"index":497},{"index":4361},{"index":703},{"index":498},{"index":518},{"index":471},{"index":672},{"index":707},{"index":699},{"index":706},{"index":4171},{"index":4158},{"index":4172},{"index":5130},{"index":2646},{"index":2633},{"index":5135},{"index":5137},{"index":2638},{"index":2635},{"index":2625},{"index":2650},{"index":2629},{"index":2659},{"index":2661},{"index":2666},{"index":2662},{"index":2664},{"index":2651},{"index":5136},{"index":5134},{"index":2645},{"index":2640},{"index":5126},{"index":2658},{"index":661},{"index":660},{"index":5110},{"index":2596},{"index":2598},{"index":2594},{"index":2599},{"index":5119},{"index":5118},{"index":5107},{"index":5112},{"index":2601},{"index":2614},{"index":355},{"index":2607},{"index":2612},{"index":2611},{"index":2609},{"index":105},{"index":2605},{"index":2616},{"index":2604},{"index":112},{"index":2618},{"index":5108}]},{"vert_indicies":[{"index":3084},{"index":3085},{"index":3090},{"index":3091},{"index":3086},{"index":3087},{"index":3122},{"index":3088},{"index":3126},{"index":3089},{"index":3108},{"index":3107},{"index":3127},{"index":3106},{"index":3105},{"index":3104},{"index":3110},{"index":3109},{"index":3103},{"index":3102},{"index":3120},{"index":3148},{"index":3149},{"index":3155},{"index":3156},{"index":3150},{"index":3151},{"index":3152},{"index":3171},{"index":3153},{"index":3154},{"index":3135},{"index":3170},{"index":3134},{"index":3166},{"index":3133},{"index":3132},{"index":3137},{"index":3136},{"index":3131},{"index":3130},{"index":3138},{"index":3224},{"index":3251},{"index":3252},{"index":3253},{"index":3254},{"index":3247},{"index":3248},{"index":3225},{"index":3249},{"index":3226},{"index":3250},{"index":3246},{"index":3258},{"index":3263},{"index":3257},{"index":3256},{"index":3255},{"index":3262},{"index":3261},{"index":3260},{"index":3259},{"index":3219},{"index":3241},{"index":3242},{"index":3243},{"index":3244},{"index":3237},{"index":3238},{"index":3239},{"index":3245},{"index":3240},{"index":3228},{"index":3232},{"index":3222},{"index":3231},{"index":3221},{"index":3230},{"index":3229},{"index":3236},{"index":3235},{"index":3234},{"index":3233},{"index":3220},{"index":3092},{"index":3894},{"index":3892},{"index":3901},{"index":3789},{"index":3691},{"index":3348},{"index":3211},{"index":3357},{"index":3624},{"index":3677},{"index":3302},{"index":3093},{"index":3098},{"index":3099},{"index":3100},{"index":3101},{"index":3094},{"index":3095},{"index":3123},{"index":3096},{"index":3124},{"index":3097},{"index":3111},{"index":3115},{"index":3125},{"index":3114},{"index":3113},{"index":3112},{"index":3119},{"index":3118},{"index":3117},{"index":3116},{"index":3121},{"index":3162},{"index":3163},{"index":3164},{"index":3165},{"index":3158},{"index":3159},{"index":3160},{"index":3169},{"index":3161},{"index":3157},{"index":3143},{"index":3168},{"index":3142},{"index":3167},{"index":3141},{"index":3140},{"index":3147},{"index":3146},{"index":3145},{"index":3144},{"index":3139},{"index":3566},{"index":3582},{"index":3552},{"index":3173},{"index":3309},{"index":3556},{"index":3578},{"index":3572},{"index":3306},{"index":3288},{"index":3661},{"index":3610},{"index":3388},{"index":3197},{"index":3333},{"index":3722},{"index":3834},{"index":3835},{"index":3723},{"index":3334},{"index":3198},{"index":3199},{"index":3335},{"index":3724},{"index":3836},{"index":3837},{"index":3725},{"index":3336},{"index":3200},{"index":3193},{"index":3329},{"index":3718},{"index":3830},{"index":3831},{"index":3719},{"index":3330},{"index":3194},{"index":3216},{"index":3362},{"index":3629},{"index":3682},{"index":3307},{"index":3285},{"index":3658},{"index":3607},{"index":3385},{"index":3384},{"index":3391},{"index":3390},{"index":3389},{"index":3611},{"index":3612},{"index":3613},{"index":3606},{"index":3657},{"index":3284},{"index":3291},{"index":3664},{"index":3663},{"index":3290},{"index":3289},{"index":3662},{"index":3286},{"index":3659},{"index":3608},{"index":3386},{"index":3195},{"index":3331},{"index":3720},{"index":3832},{"index":3795},{"index":3697},{"index":3354},{"index":3217},{"index":3363},{"index":3630},{"index":3683},{"index":3308},{"index":3287},{"index":3660},{"index":3609},{"index":3387},{"index":3196},{"index":3332},{"index":3721},{"index":3833},{"index":3829},{"index":3717},{"index":3328},{"index":3192},{"index":3204},{"index":3340},{"index":3729},{"index":3841},{"index":3846},{"index":3734},{"index":3345},{"index":3209},{"index":3203},{"index":3339},{"index":3728},{"index":3840},{"index":3839},{"index":3727},{"index":3338},{"index":3202},{"index":3201},{"index":3337},{"index":3726},{"index":3838},{"index":3845},{"index":3733},{"index":3344},{"index":3208},{"index":3207},{"index":3343},{"index":3732},{"index":3844},{"index":3843},{"index":3731},{"index":3342},{"index":3206},{"index":3205},{"index":3341},{"index":3730},{"index":3842},{"index":3788},{"index":3690},{"index":3347},{"index":3210},{"index":3356},{"index":3623},{"index":3676},{"index":3301},{"index":3296},{"index":3669},{"index":3618},{"index":3396},{"index":3397},{"index":3398},{"index":3399},{"index":3392},{"index":3393},{"index":3394},{"index":3400},{"index":3395},{"index":3383},{"index":3605},{"index":3617},{"index":3622},{"index":3616},{"index":3615},{"index":3614},{"index":3621},{"index":3620},{"index":3619},{"index":3670},{"index":3297},{"index":3298},{"index":3671},{"index":3672},{"index":3299},{"index":3292},{"index":3665},{"index":3666},{"index":3293},{"index":3294},{"index":3667},{"index":3673},{"index":3300},{"index":3295},{"index":3668},{"index":3656},{"index":3283},{"index":3278},{"index":3651},{"index":3600},{"index":3378},{"index":3187},{"index":3323},{"index":3712},{"index":3824},{"index":3825},{"index":3713},{"index":3324},{"index":3188},{"index":3189},{"index":3325},{"index":3714},{"index":3826},{"index":3827},{"index":3715},{"index":3326},{"index":3190},{"index":3183},{"index":3319},{"index":3708},{"index":3820},{"index":3821},{"index":3709},{"index":3320},{"index":3184},{"index":3185},{"index":3321},{"index":3710},{"index":3822},{"index":3828},{"index":3716},{"index":3327},{"index":3191},{"index":3186},{"index":3322},{"index":3711},{"index":3823},{"index":3811},{"index":3699},{"index":3310},{"index":3174},{"index":3178},{"index":3314},{"index":3703},{"index":3815},{"index":3791},{"index":3693},{"index":3350},{"index":3213},{"index":3359},{"index":3626},{"index":3679},{"index":3304},{"index":3269},{"index":3642},{"index":3591},{"index":3369},{"index":3365},{"index":3377},{"index":3382},{"index":3376},{"index":3375},{"index":3374},{"index":3381},{"index":3380},{"index":3379},{"index":3601},{"index":3602},{"index":3603},{"index":3596},{"index":3597},{"index":3598},{"index":3604},{"index":3599},{"index":3587},{"index":3638},{"index":3265},{"index":3277},{"index":3650},{"index":3655},{"index":3282},{"index":3276},{"index":3649},{"index":3648},{"index":3275},{"index":3274},{"index":3647},{"index":3654},{"index":3281},{"index":3280},{"index":3653},{"index":3652},{"index":3279},{"index":3268},{"index":3641},{"index":3590},{"index":3368},{"index":3177},{"index":3313},{"index":3702},{"index":3814},{"index":3790},{"index":3692},{"index":3349},{"index":3212},{"index":3358},{"index":3625},{"index":3678},{"index":3303},{"index":3267},{"index":3640},{"index":3589},{"index":3367},{"index":3176},{"index":3312},{"index":3701},{"index":3813},{"index":3812},{"index":3700},{"index":3311},{"index":3175},{"index":3182},{"index":3318},{"index":3707},{"index":3819},{"index":3818},{"index":3706},{"index":3317},{"index":3181},{"index":3180},{"index":3316},{"index":3705},{"index":3817},{"index":3816},{"index":3704},{"index":3315},{"index":3179},{"index":3370},{"index":3371},{"index":3372},{"index":3373},{"index":3366},{"index":3588},{"index":3595},{"index":3594},{"index":3593},{"index":3592},{"index":3643},{"index":3270},{"index":3271},{"index":3644},{"index":3645},{"index":3272},{"index":3273},{"index":3646},{"index":3639},{"index":3266},{"index":3794},{"index":3696},{"index":3353},{"index":3793},{"index":3695},{"index":3352},{"index":3215},{"index":3361},{"index":3628},{"index":3681},{"index":3688},{"index":3636},{"index":3574},{"index":3570},{"index":3573},{"index":3579},{"index":3557},{"index":3355},{"index":3218},{"index":3364},{"index":3631},{"index":3684},{"index":3687},{"index":3635},{"index":3558},{"index":3580},{"index":3637},{"index":3689},{"index":3576},{"index":3554},{"index":4029},{"index":3686},{"index":3633},{"index":3550},{"index":3495},{"index":3561},{"index":3564},{"index":3548},{"index":4017},{"index":4011},{"index":4019},{"index":4026},{"index":4030},{"index":3744},{"index":3782},{"index":3883},{"index":3562},{"index":3505},{"index":3490},{"index":4007},{"index":3172},{"index":3227},{"index":3555},{"index":3577},{"index":3571},{"index":3809},{"index":3784},{"index":3786},{"index":3783},{"index":3698},{"index":3796},{"index":3808},{"index":3810},{"index":4032},{"index":3806},{"index":4013},{"index":3567},{"index":3583},{"index":3553},{"index":4020},{"index":3560},{"index":3585},{"index":3569},{"index":3456},{"index":3448},{"index":3449},{"index":3454},{"index":3455},{"index":3450},{"index":3451},{"index":3484},{"index":3452},{"index":3488},{"index":3453},{"index":3472},{"index":3471},{"index":3489},{"index":3470},{"index":3469},{"index":3468},{"index":3474},{"index":3473},{"index":3467},{"index":3466},{"index":3438},{"index":3420},{"index":3421},{"index":3427},{"index":3428},{"index":3422},{"index":3423},{"index":3424},{"index":3445},{"index":3425},{"index":3426},{"index":3407},{"index":3444},{"index":3406},{"index":3440},{"index":3405},{"index":3404},{"index":3409},{"index":3408},{"index":3403},{"index":3402},{"index":3410},{"index":3498},{"index":3511},{"index":3512},{"index":3513},{"index":3514},{"index":3507},{"index":3508},{"index":3499},{"index":3509},{"index":3500},{"index":3510},{"index":3506},{"index":3518},{"index":3523},{"index":3517},{"index":3516},{"index":3515},{"index":3522},{"index":3521},{"index":3520},{"index":3519},{"index":3497},{"index":3537},{"index":3538},{"index":3539},{"index":3540},{"index":3533},{"index":3534},{"index":3535},{"index":3541},{"index":3536},{"index":3524},{"index":3528},{"index":3504},{"index":3527},{"index":3503},{"index":3526},{"index":3525},{"index":3532},{"index":3531},{"index":3530},{"index":3529},{"index":3502},{"index":3803},{"index":3741},{"index":3785},{"index":3884},{"index":3575},{"index":3581},{"index":3885},{"index":3787},{"index":5183},{"index":5182},{"index":5142},{"index":5168},{"index":5169},{"index":5170},{"index":5171},{"index":5164},{"index":5165},{"index":5143},{"index":5166},{"index":5144},{"index":5167},{"index":5163},{"index":5175},{"index":5180},{"index":5174},{"index":5173},{"index":5172},{"index":5179},{"index":5178},{"index":5177},{"index":5176},{"index":5138},{"index":5158},{"index":5159},{"index":5160},{"index":5161},{"index":5154},{"index":5155},{"index":5156},{"index":5162},{"index":5157},{"index":5145},{"index":5149},{"index":5141},{"index":5148},{"index":5140},{"index":5147},{"index":5146},{"index":5153},{"index":5152},{"index":5151},{"index":5150},{"index":5139},{"index":5184},{"index":5185},{"index":5181},{"index":3781},{"index":3912},{"index":3898},{"index":3737},{"index":3750},{"index":3852},{"index":3799},{"index":3900},{"index":3886},{"index":3888},{"index":4034},{"index":4036},{"index":3903},{"index":3346},{"index":3446},{"index":3501},{"index":3264},{"index":3902},{"index":3914},{"index":3807},{"index":3802},{"index":3740},{"index":3547},{"index":3494},{"index":3549},{"index":3632},{"index":3685},{"index":3544},{"index":3447},{"index":3401},{"index":3904},{"index":3890},{"index":3411},{"index":3416},{"index":3417},{"index":3418},{"index":3419},{"index":3412},{"index":3413},{"index":3441},{"index":3414},{"index":3442},{"index":3415},{"index":3429},{"index":3433},{"index":3443},{"index":3432},{"index":3431},{"index":3430},{"index":3437},{"index":3436},{"index":3435},{"index":3434},{"index":3439},{"index":3480},{"index":3481},{"index":3482},{"index":3483},{"index":3476},{"index":3477},{"index":3478},{"index":3487},{"index":3479},{"index":3475},{"index":3461},{"index":3486},{"index":3460},{"index":3485},{"index":3459},{"index":3458},{"index":3465},{"index":3464},{"index":3463},{"index":3462},{"index":3457},{"index":3568},{"index":3584},{"index":3559},{"index":3491},{"index":3545},{"index":3563},{"index":3674},{"index":3634},{"index":3565},{"index":4015},{"index":4008},{"index":4021},{"index":4024},{"index":4023},{"index":3974},{"index":3979},{"index":3980},{"index":3981},{"index":3982},{"index":3975},{"index":3976},{"index":4002},{"index":3977},{"index":4003},{"index":3978},{"index":3992},{"index":3996},{"index":4004},{"index":3995},{"index":3994},{"index":3993},{"index":4000},{"index":3999},{"index":3998},{"index":3997},{"index":3956},{"index":3951},{"index":3952},{"index":3953},{"index":3954},{"index":3947},{"index":3948},{"index":3949},{"index":3960},{"index":3950},{"index":3946},{"index":3932},{"index":3959},{"index":3931},{"index":3958},{"index":3930},{"index":3929},{"index":3936},{"index":3935},{"index":3934},{"index":3933},{"index":3928},{"index":4035},{"index":3895},{"index":3887},{"index":3916},{"index":3496},{"index":3305},{"index":3129},{"index":3551},{"index":3909},{"index":4037},{"index":3918},{"index":3964},{"index":4014},{"index":4028},{"index":3680},{"index":3627},{"index":3360},{"index":3214},{"index":3543},{"index":3493},{"index":3351},{"index":3694},{"index":3735},{"index":3913},{"index":3899},{"index":3889},{"index":3917},{"index":3907},{"index":3893},{"index":3891},{"index":3896},{"index":3897},{"index":3911},{"index":3675},{"index":3586},{"index":3492},{"index":3905},{"index":3910},{"index":3915},{"index":3797},{"index":3542},{"index":3546},{"index":3128},{"index":3223},{"index":3792},{"index":4033},{"index":4031},{"index":4016},{"index":4010},{"index":4018},{"index":4027},{"index":4012},{"index":3963},{"index":4009},{"index":3908},{"index":3906},{"index":3927},{"index":3919},{"index":3920},{"index":3925},{"index":3926},{"index":3921},{"index":3922},{"index":3957},{"index":3923},{"index":3961},{"index":3924},{"index":3943},{"index":3942},{"index":3962},{"index":3941},{"index":3940},{"index":3939},{"index":3945},{"index":3944},{"index":3938},{"index":3937},{"index":3955},{"index":3983},{"index":3984},{"index":3990},{"index":3991},{"index":3985},{"index":3986},{"index":3987},{"index":4006},{"index":3988},{"index":3989},{"index":3970},{"index":4005},{"index":3969},{"index":4001},{"index":3968},{"index":3967},{"index":3972},{"index":3971},{"index":3966},{"index":3965},{"index":3973},{"index":4022},{"index":4025},{"index":3853},{"index":3751},{"index":3752},{"index":3854},{"index":3855},{"index":3753},{"index":3746},{"index":3848},{"index":3849},{"index":3747},{"index":3738},{"index":3748},{"index":3850},{"index":3800},{"index":3801},{"index":3739},{"index":3749},{"index":3851},{"index":3847},{"index":3745},{"index":3757},{"index":3859},{"index":3864},{"index":3762},{"index":3756},{"index":3858},{"index":3857},{"index":3755},{"index":3754},{"index":3856},{"index":3863},{"index":3761},{"index":3760},{"index":3862},{"index":3861},{"index":3759},{"index":3758},{"index":3860},{"index":3798},{"index":3736},{"index":3776},{"index":3878},{"index":3879},{"index":3777},{"index":3778},{"index":3880},{"index":3881},{"index":3779},{"index":3772},{"index":3874},{"index":3875},{"index":3773},{"index":3774},{"index":3876},{"index":3882},{"index":3780},{"index":3775},{"index":3877},{"index":3865},{"index":3763},{"index":3767},{"index":3869},{"index":3805},{"index":3743},{"index":3766},{"index":3868},{"index":3804},{"index":3742},{"index":3765},{"index":3867},{"index":3866},{"index":3764},{"index":3771},{"index":3873},{"index":3872},{"index":3770},{"index":3769},{"index":3871},{"index":3870},{"index":3768}]}],"num_expected_islands":2},{"index":54,"name":"DEF-Knee1.L"},{"index":55,"name":"DEF-Thigh1.L"},{"index":56,"name":"DEF-Thigh2.L"},{"index":57,"name":"DEF-Knee1.R"},{"index":58,"name":"DEF-Thigh1.R"},{"index":59,"name":"DEF-Thigh2.R"},{"index":60,"name":"DEF-Handkerchief_Back"},{"index":61,"name":"DEF-Handkerchief.L"},{"index":62,"name":"DEF-Handkerchief.R"},{"index":63,"name":"DEF-Handkerchief_Knot"},{"index":64,"name":"DEF-Sleeve1.L","islands":[{"vert_indicies":[{"index":909},{"index":1143},{"index":910},{"index":911},{"index":912},{"index":926},{"index":927},{"index":928},{"index":929},{"index":1033},{"index":1184},{"index":1643},{"index":1621},{"index":1613},{"index":1623},{"index":1680},{"index":1649},{"index":1660},{"index":1663},{"index":1630},{"index":1653},{"index":1641},{"index":1619},{"index":1678},{"index":1921},{"index":1506},{"index":1507},{"index":1508},{"index":1489},{"index":1509},{"index":1505},{"index":1504},{"index":1503},{"index":1497},{"index":1490},{"index":1496},{"index":1495},{"index":1494},{"index":1491},{"index":1492},{"index":1493},{"index":1488},{"index":1487},{"index":1498},{"index":1499},{"index":1500},{"index":1501},{"index":1502},{"index":1907},{"index":1904},{"index":1901},{"index":1923},{"index":1913},{"index":1668},{"index":1679},{"index":1662},{"index":1629},{"index":1627},{"index":1624},{"index":1618},{"index":1677},{"index":1659},{"index":1631},{"index":1616},{"index":1614},{"index":1670},{"index":1914},{"index":1918},{"index":1675},{"index":1908},{"index":1920},{"index":1902},{"index":1651},{"index":1661},{"index":1905},{"index":1906},{"index":1922},{"index":1919},{"index":1676},{"index":1617},{"index":1634},{"index":1620},{"index":1647},{"index":1912},{"index":1916},{"index":1671},{"index":1610},{"index":1633},{"index":1612},{"index":1672},{"index":1917},{"index":1910},{"index":1665},{"index":1903},{"index":1658},{"index":1626},{"index":1615},{"index":1669},{"index":1664},{"index":1632},{"index":1655},{"index":1637},{"index":1650},{"index":1628},{"index":1656},{"index":1909},{"index":1915},{"index":1911},{"index":1666},{"index":2366},{"index":1892},{"index":2310},{"index":1517},{"index":930},{"index":922},{"index":1513},{"index":1512},{"index":921},{"index":919},{"index":1144},{"index":916},{"index":1510},{"index":1530},{"index":1511},{"index":2312},{"index":1900},{"index":1898},{"index":2303},{"index":2311},{"index":1899},{"index":2367},{"index":2371},{"index":2372},{"index":2373},{"index":1878},{"index":2315},{"index":2304},{"index":1894},{"index":1897},{"index":2300},{"index":1514},{"index":915},{"index":917},{"index":1515},{"index":1516},{"index":1040},{"index":1057},{"index":924},{"index":923},{"index":918},{"index":937},{"index":939},{"index":940},{"index":1058},{"index":1062},{"index":948},{"index":947},{"index":944},{"index":951},{"index":954},{"index":955},{"index":1066},{"index":1070},{"index":1071},{"index":1067},{"index":1063},{"index":1059},{"index":1041},{"index":1038},{"index":1522},{"index":1529},{"index":1133},{"index":1037},{"index":1523},{"index":1524},{"index":1039},{"index":1043},{"index":1042},{"index":1134},{"index":1135},{"index":1060},{"index":1061},{"index":1096},{"index":1056},{"index":1049},{"index":1525},{"index":1528},{"index":1048},{"index":1052},{"index":1527},{"index":1526},{"index":1051},{"index":1050},{"index":1531},{"index":1532},{"index":1183},{"index":1178},{"index":933},{"index":1520},{"index":1521},{"index":2316},{"index":1896},{"index":1883},{"index":1888},{"index":2308},{"index":2317},{"index":2306},{"index":1882},{"index":1880},{"index":2301},{"index":2305},{"index":1895},{"index":1879},{"index":2298},{"index":2296},{"index":1889},{"index":1884},{"index":1881},{"index":2299},{"index":2307},{"index":2309},{"index":1890},{"index":1885},{"index":2297},{"index":2314},{"index":1887},{"index":2375},{"index":2370},{"index":2368},{"index":2369},{"index":2377},{"index":2378},{"index":2383},{"index":2379},{"index":2380},{"index":2382},{"index":2381},{"index":2364},{"index":2365},{"index":2385},{"index":2384},{"index":2386},{"index":1893},{"index":2295},{"index":2313},{"index":1891},{"index":1886},{"index":2302},{"index":1518},{"index":931},{"index":932},{"index":1519},{"index":994},{"index":993},{"index":942},{"index":938},{"index":934},{"index":920},{"index":1145},{"index":1146},{"index":935},{"index":936},{"index":941},{"index":943},{"index":950},{"index":949},{"index":946},{"index":945},{"index":1147},{"index":1148},{"index":952},{"index":953},{"index":957},{"index":958},{"index":1008},{"index":1002},{"index":996},{"index":997},{"index":998},{"index":995},{"index":1179},{"index":1180},{"index":1001},{"index":999},{"index":1003},{"index":1011},{"index":1005},{"index":1004},{"index":1007},{"index":1006},{"index":1097},{"index":1102},{"index":1103},{"index":1098},{"index":1093},{"index":1000},{"index":1181},{"index":1182},{"index":1092},{"index":1053},{"index":1054},{"index":1055},{"index":1094},{"index":1095},{"index":1099},{"index":1100},{"index":1101},{"index":1065},{"index":1064},{"index":1136},{"index":1137},{"index":1068},{"index":1069},{"index":1106},{"index":1112},{"index":1073},{"index":1072},{"index":1138},{"index":1113},{"index":1104},{"index":1105},{"index":1111},{"index":1110},{"index":1109},{"index":2376},{"index":2374},{"index":1603},{"index":1622},{"index":1611},{"index":1648},{"index":1644},{"index":1635},{"index":1814},{"index":1796},{"index":1795},{"index":1794},{"index":1793},{"index":1789},{"index":1788},{"index":1787},{"index":1806},{"index":1786},{"index":1790},{"index":1810},{"index":1813},{"index":1815},{"index":1831},{"index":1809},{"index":1826},{"index":1828},{"index":1827},{"index":1825},{"index":1928},{"index":1924},{"index":1944},{"index":1925},{"index":1926},{"index":1927},{"index":1931},{"index":1932},{"index":1933},{"index":1934},{"index":2027},{"index":1957},{"index":1958},{"index":1969},{"index":1968},{"index":1963},{"index":1964},{"index":1965},{"index":1962},{"index":1961},{"index":1960},{"index":1966},{"index":1959},{"index":1953},{"index":1952},{"index":1951},{"index":1947},{"index":1967},{"index":1948},{"index":1949},{"index":1950},{"index":1954},{"index":1955},{"index":1956},{"index":2026},{"index":2025},{"index":2024},{"index":2038},{"index":2033},{"index":2032},{"index":2037},{"index":2019},{"index":2018},{"index":2030},{"index":2036}]}]},{"index":65,"name":"DEF-Sleeve_Elbow.L","islands":[{"vert_indicies":[{"index":909},{"index":1143},{"index":910},{"index":911},{"index":912},{"index":926},{"index":927},{"index":928},{"index":929},{"index":1033},{"index":1635},{"index":1644},{"index":1623},{"index":1613},{"index":1680},{"index":1649},{"index":1660},{"index":1622},{"index":1603},{"index":1653},{"index":1630},{"index":1619},{"index":1632},{"index":1655},{"index":1641},{"index":1637},{"index":1650},{"index":1626},{"index":1615},{"index":1669},{"index":1658},{"index":1672},{"index":1612},{"index":1633},{"index":1610},{"index":1671},{"index":1665},{"index":1910},{"index":1505},{"index":1509},{"index":1489},{"index":1903},{"index":1917},{"index":2368},{"index":1894},{"index":2304},{"index":2300},{"index":2314},{"index":2370},{"index":2375},{"index":1656},{"index":1628},{"index":1648},{"index":1611},{"index":1814},{"index":1796},{"index":1795},{"index":1794},{"index":1793},{"index":1789},{"index":1788},{"index":1787},{"index":1806},{"index":1786},{"index":1790},{"index":1810},{"index":1813},{"index":1815},{"index":1831},{"index":1809},{"index":1826},{"index":1828},{"index":1827},{"index":1825},{"index":1928},{"index":1924},{"index":1944},{"index":1925},{"index":1926},{"index":1927},{"index":1931},{"index":1932},{"index":1933},{"index":1934},{"index":2027},{"index":1957},{"index":1958},{"index":2036},{"index":1956},{"index":1955},{"index":1954},{"index":1950},{"index":1949},{"index":1948},{"index":1967},{"index":1947},{"index":1951},{"index":1952},{"index":2030},{"index":2018},{"index":2019},{"index":2037},{"index":2032},{"index":2033},{"index":2038},{"index":2024},{"index":2025},{"index":2026}]}]},{"index":66,"name":"DEF-Sleeve2.L","islands":[{"vert_indicies":[{"index":909},{"index":913},{"index":914},{"index":925},{"index":1034},{"index":1132},{"index":1035},{"index":1036},{"index":1044},{"index":1047},{"index":1046},{"index":1045},{"index":1177},{"index":1184},{"index":1033},{"index":929},{"index":928},{"index":1648},{"index":1611},{"index":1623},{"index":1613},{"index":1668},{"index":1679},{"index":1621},{"index":1629},{"index":1627},{"index":1624},{"index":1604},{"index":1605},{"index":1652},{"index":1643},{"index":1635},{"index":1644},{"index":1640},{"index":1618},{"index":1677},{"index":1659},{"index":1631},{"index":1616},{"index":1614},{"index":1670},{"index":1914},{"index":1918},{"index":1675},{"index":1495},{"index":1494},{"index":1491},{"index":1492},{"index":1493},{"index":1488},{"index":1487},{"index":1922},{"index":1906},{"index":1662},{"index":1661},{"index":1651},{"index":1902},{"index":1905},{"index":1920},{"index":1908},{"index":1919},{"index":1676},{"index":1617},{"index":1634},{"index":1657},{"index":1639},{"index":1636},{"index":1638},{"index":1654},{"index":1645},{"index":1620},{"index":1647},{"index":1912},{"index":1503},{"index":1497},{"index":1490},{"index":2378},{"index":1881},{"index":2299},{"index":2307},{"index":2309},{"index":1890},{"index":2377},{"index":2369},{"index":1911},{"index":1666},{"index":1916},{"index":1671},{"index":1610},{"index":1633},{"index":1612},{"index":1672},{"index":1658},{"index":1626},{"index":1615},{"index":1637},{"index":910},{"index":1143},{"index":1650},{"index":1628},{"index":1656},{"index":1602},{"index":1815},{"index":1831},{"index":1787},{"index":1806},{"index":1786},{"index":1790},{"index":1791},{"index":1792},{"index":1798},{"index":1805},{"index":1799},{"index":1800},{"index":1801},{"index":1804},{"index":1803},{"index":1802},{"index":1807},{"index":1808},{"index":1797},{"index":1796},{"index":1795},{"index":1825},{"index":1814},{"index":1811},{"index":1819},{"index":1816},{"index":1824},{"index":1820},{"index":1812},{"index":1817},{"index":1822},{"index":1823},{"index":1818},{"index":1821},{"index":1830},{"index":1829},{"index":1810},{"index":1813},{"index":1933},{"index":1934},{"index":1935},{"index":1946},{"index":1945},{"index":1940},{"index":1941},{"index":1942},{"index":1939},{"index":1938},{"index":1937},{"index":1943},{"index":1936},{"index":1930},{"index":1929},{"index":1928},{"index":1924},{"index":1944},{"index":1925},{"index":2032},{"index":1948},{"index":1967},{"index":1947},{"index":1951},{"index":1952},{"index":1953},{"index":1959},{"index":1966},{"index":1960},{"index":1961},{"index":1962},{"index":1965},{"index":1964},{"index":1963},{"index":1968},{"index":1969},{"index":1958},{"index":1957},{"index":1956},{"index":2026},{"index":2027},{"index":2036},{"index":2029},{"index":2022},{"index":2023},{"index":2031},{"index":2028},{"index":2020},{"index":2021},{"index":2016},{"index":2017},{"index":2034},{"index":2035},{"index":2030},{"index":2018},{"index":2019},{"index":2037},{"index":911},{"index":1655},{"index":1665},{"index":1910},{"index":1680},{"index":1649},{"index":1923}]}]},{"index":67,"name":"DEF-Sleeve1.R","islands":[{"vert_indicies":[{"index":1211},{"index":1585},{"index":1599},{"index":1212},{"index":1214},{"index":1219},{"index":1220},{"index":1213},{"index":1591},{"index":1598},{"index":1327},{"index":1340},{"index":1341},{"index":1231},{"index":1230},{"index":1228},{"index":1235},{"index":1238},{"index":1239},{"index":1345},{"index":1349},{"index":1246},{"index":1245},{"index":1242},{"index":1429},{"index":1243},{"index":1236},{"index":1226},{"index":1216},{"index":1215},{"index":1425},{"index":1426},{"index":1427},{"index":1428},{"index":1582},{"index":1579},{"index":1583},{"index":1217},{"index":1218},{"index":1584},{"index":1592},{"index":1221},{"index":1222},{"index":1593},{"index":1594},{"index":1223},{"index":1224},{"index":1597},{"index":1596},{"index":1435},{"index":1436},{"index":1286},{"index":1285},{"index":1284},{"index":1233},{"index":1229},{"index":1225},{"index":1227},{"index":1232},{"index":1234},{"index":1241},{"index":1240},{"index":1237},{"index":1244},{"index":1248},{"index":1249},{"index":1299},{"index":1293},{"index":1287},{"index":1288},{"index":1289},{"index":1290},{"index":1294},{"index":1302},{"index":1296},{"index":1295},{"index":1292},{"index":1437},{"index":1438},{"index":1291},{"index":1376},{"index":1336},{"index":1375},{"index":1333},{"index":1334},{"index":1589},{"index":1588},{"index":1335},{"index":1331},{"index":1587},{"index":1590},{"index":1332},{"index":1326},{"index":1324},{"index":1600},{"index":1586},{"index":1415},{"index":1325},{"index":1595},{"index":2322},{"index":1844},{"index":2345},{"index":1873},{"index":1566},{"index":1572},{"index":1573},{"index":1574},{"index":1578},{"index":1558},{"index":1577},{"index":1576},{"index":1575},{"index":1571},{"index":1570},{"index":1569},{"index":1568},{"index":1567},{"index":1556},{"index":1557},{"index":1562},{"index":1561},{"index":1560},{"index":1563},{"index":1564},{"index":1565},{"index":1559},{"index":1858},{"index":2353},{"index":1835},{"index":2330},{"index":2319},{"index":1838},{"index":2342},{"index":1870},{"index":1872},{"index":1856},{"index":2351},{"index":1833},{"index":2328},{"index":2324},{"index":1849},{"index":2347},{"index":1875},{"index":1857},{"index":2352},{"index":1834},{"index":2329},{"index":2331},{"index":1836},{"index":1842},{"index":2334},{"index":1581},{"index":1580},{"index":1440},{"index":1439},{"index":2318},{"index":1837},{"index":2341},{"index":1869},{"index":1876},{"index":1865},{"index":2360},{"index":1847},{"index":2337},{"index":2325},{"index":1850},{"index":2348},{"index":2335},{"index":1845},{"index":1840},{"index":2333},{"index":2336},{"index":1846},{"index":1853},{"index":2349},{"index":1877},{"index":1864},{"index":2359},{"index":2356},{"index":1861},{"index":1863},{"index":2358},{"index":1867},{"index":2362},{"index":1852},{"index":2339},{"index":2340},{"index":1854},{"index":1832},{"index":2327},{"index":2323},{"index":1848},{"index":2346},{"index":1874},{"index":1855},{"index":2350},{"index":2363},{"index":1868},{"index":1866},{"index":2361},{"index":1851},{"index":2338},{"index":2320},{"index":1841},{"index":2343},{"index":1871},{"index":1860},{"index":2355},{"index":1839},{"index":2332},{"index":2326},{"index":1862},{"index":2357},{"index":2354},{"index":1859},{"index":2321},{"index":1601},{"index":1843},{"index":2344},{"index":1722},{"index":1686},{"index":1703},{"index":1689},{"index":1642},{"index":1712},{"index":1717},{"index":1673},{"index":1702},{"index":1681},{"index":1718},{"index":1704},{"index":1695},{"index":1684},{"index":1715},{"index":1710},{"index":1701},{"index":1747},{"index":1535},{"index":1536},{"index":1540},{"index":1541},{"index":1542},{"index":1543},{"index":1736},{"index":1727},{"index":1682},{"index":1692},{"index":1726},{"index":1646},{"index":1706},{"index":1709},{"index":1699},{"index":1745},{"index":1733},{"index":1688},{"index":1724},{"index":1713},{"index":1691},{"index":1674},{"index":1740},{"index":1714},{"index":1725},{"index":1690},{"index":1698},{"index":1696},{"index":1693},{"index":1687},{"index":1723},{"index":1705},{"index":1700},{"index":1685},{"index":1683},{"index":1716},{"index":1721},{"index":1697},{"index":1707},{"index":1708},{"index":1744},{"index":1775},{"index":1750},{"index":1743},{"index":1741},{"index":1739},{"index":1609},{"index":1608},{"index":1607},{"index":1760},{"index":1606},{"index":1625},{"index":1974},{"index":1970},{"index":1990},{"index":1971},{"index":1972},{"index":1973},{"index":1977},{"index":1978},{"index":1979},{"index":1980},{"index":2043},{"index":2003},{"index":2004},{"index":2015},{"index":2014},{"index":2009},{"index":2010},{"index":2011},{"index":2008},{"index":2007},{"index":2006},{"index":2012},{"index":2005},{"index":1999},{"index":1998},{"index":1997},{"index":1993},{"index":2013},{"index":1994},{"index":1995},{"index":1996},{"index":2000},{"index":2001},{"index":2002},{"index":2061},{"index":2060},{"index":2047},{"index":2048},{"index":2052},{"index":2044},{"index":2045},{"index":2049},{"index":2055},{"index":2046},{"index":2042},{"index":1774},{"index":1533},{"index":1537},{"index":1748},{"index":1720},{"index":1742},{"index":1729},{"index":1534},{"index":1553},{"index":1771},{"index":1768},{"index":1782},{"index":1779},{"index":1764},{"index":1785},{"index":1763},{"index":1719},{"index":1737},{"index":1773},{"index":1711},{"index":1328},{"index":1342},{"index":1346},{"index":1350},{"index":1354},{"index":1420},{"index":1355},{"index":1351},{"index":1419},{"index":1418},{"index":1347},{"index":1343},{"index":1329},{"index":1330},{"index":1339},{"index":1379},{"index":1344},{"index":1348},{"index":1352},{"index":1389},{"index":1384},{"index":1383},{"index":1382},{"index":1378},{"index":1337},{"index":1338},{"index":1377},{"index":1381},{"index":1380},{"index":1297},{"index":1298},{"index":1390},{"index":1392},{"index":1385},{"index":1386},{"index":1388},{"index":1387},{"index":1396},{"index":1394},{"index":1393},{"index":1395},{"index":1356},{"index":1416},{"index":1417}]},{"vert_indicies":[{"index":1762}]}]},{"index":68,"name":"DEF-Sleeve_Elbow.R","islands":[{"vert_indicies":[{"index":1533},{"index":1537},{"index":1748},{"index":1702},{"index":1673},{"index":1717},{"index":1711},{"index":1574},{"index":1578},{"index":1718},{"index":1681},{"index":1695},{"index":1684},{"index":1715},{"index":1710},{"index":1701},{"index":1747},{"index":1535},{"index":1536},{"index":1540},{"index":1541},{"index":1542},{"index":1543},{"index":1736},{"index":1692},{"index":1726},{"index":1646},{"index":1706},{"index":1709},{"index":1699},{"index":1745},{"index":1733},{"index":1688},{"index":1724},{"index":1713},{"index":1691},{"index":1674},{"index":1740},{"index":1775},{"index":1750},{"index":1743},{"index":1741},{"index":1739},{"index":1609},{"index":1608},{"index":1607},{"index":1760},{"index":1606},{"index":1625},{"index":1974},{"index":1970},{"index":1990},{"index":1971},{"index":1972},{"index":1973},{"index":1977},{"index":1978},{"index":1979},{"index":1980},{"index":2043},{"index":2003},{"index":2004},{"index":2042},{"index":2002},{"index":2001},{"index":2000},{"index":1996},{"index":1995},{"index":1994},{"index":2013},{"index":1993},{"index":1997},{"index":1998},{"index":2046},{"index":2055},{"index":2049},{"index":2045},{"index":2044},{"index":2052},{"index":2048},{"index":2047},{"index":2060},{"index":2061},{"index":1774},{"index":1771},{"index":1553},{"index":1534},{"index":1729},{"index":1742},{"index":1720},{"index":1768},{"index":1782},{"index":1779},{"index":1764},{"index":1785},{"index":1763},{"index":1704},{"index":1874},{"index":1855},{"index":1866},{"index":2361},{"index":2343},{"index":2346},{"index":1848},{"index":2323},{"index":2338},{"index":2320}]}]},{"index":69,"name":"DEF-Sleeve2.R","islands":[{"vert_indicies":[{"index":1533},{"index":1537},{"index":1538},{"index":1539},{"index":1545},{"index":1552},{"index":1546},{"index":1547},{"index":1548},{"index":1551},{"index":1550},{"index":1549},{"index":1554},{"index":1555},{"index":1544},{"index":1543},{"index":1542},{"index":1740},{"index":1674},{"index":1692},{"index":1682},{"index":1714},{"index":1725},{"index":1690},{"index":1698},{"index":1696},{"index":1693},{"index":1694},{"index":1667},{"index":1744},{"index":1735},{"index":1727},{"index":1736},{"index":1732},{"index":1687},{"index":1723},{"index":1705},{"index":1563},{"index":1564},{"index":1565},{"index":1559},{"index":1566},{"index":1572},{"index":1573},{"index":1574},{"index":1866},{"index":1871},{"index":1860},{"index":2355},{"index":2345},{"index":1844},{"index":1835},{"index":2330},{"index":2319},{"index":2322},{"index":2353},{"index":1858},{"index":1873},{"index":1870},{"index":1872},{"index":1856},{"index":1875},{"index":1560},{"index":1561},{"index":1562},{"index":1557},{"index":1556},{"index":1869},{"index":1862},{"index":1859},{"index":1857},{"index":1708},{"index":1707},{"index":1697},{"index":2342},{"index":1711},{"index":1702},{"index":1673},{"index":1717},{"index":1642},{"index":1689},{"index":1703},{"index":1749},{"index":1731},{"index":1686},{"index":1722},{"index":1716},{"index":1683},{"index":1685},{"index":1700},{"index":1746},{"index":1730},{"index":1728},{"index":1721},{"index":1712},{"index":1737},{"index":1719},{"index":1748},{"index":1720},{"index":1681},{"index":1718},{"index":1704},{"index":1695},{"index":1742},{"index":1729},{"index":1534},{"index":1553},{"index":1771},{"index":1760},{"index":1607},{"index":1608},{"index":1782},{"index":1535},{"index":1747},{"index":1768},{"index":1972},{"index":1971},{"index":1990},{"index":1970},{"index":1974},{"index":1975},{"index":1976},{"index":1982},{"index":1989},{"index":1983},{"index":1984},{"index":1985},{"index":1988},{"index":1987},{"index":1986},{"index":1991},{"index":1992},{"index":1981},{"index":1980},{"index":1979},{"index":1978},{"index":1741},{"index":1743},{"index":1750},{"index":1751},{"index":1762},{"index":1761},{"index":1756},{"index":1757},{"index":1758},{"index":1755},{"index":1754},{"index":1753},{"index":1759},{"index":1752},{"index":1738},{"index":1734},{"index":1625},{"index":1606},{"index":1774},{"index":1784},{"index":1765},{"index":1776},{"index":1777},{"index":1778},{"index":1767},{"index":1772},{"index":1781},{"index":1780},{"index":1769},{"index":1770},{"index":1783},{"index":1766},{"index":1773},{"index":1775},{"index":1763},{"index":2061},{"index":2002},{"index":2003},{"index":2004},{"index":2015},{"index":2014},{"index":2009},{"index":2010},{"index":2011},{"index":2008},{"index":2007},{"index":2006},{"index":2012},{"index":2005},{"index":1999},{"index":1998},{"index":1997},{"index":1993},{"index":2013},{"index":1994},{"index":2044},{"index":2045},{"index":2049},{"index":2055},{"index":2046},{"index":2039},{"index":2040},{"index":2053},{"index":2054},{"index":2056},{"index":2057},{"index":2050},{"index":2051},{"index":2058},{"index":2059},{"index":2041},{"index":2042},{"index":2043},{"index":1726},{"index":1646}]}]},{"index":70,"name":"DEF-Collar_Back.L","islands":[]}],"als":{},"blendlink_id":"9b78545b-96cb-478f-aefc-a895350c7176","blendlink_object_random":0.5269196649377513},
+  "GEO-ellie_jacket_buttons001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"60a0baf6-8c2d-400f-82c8-00e4067365a8","blendlink_object_random":0.3208738333361395},
+  "GEO-ellie_jacket_pin_1001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"d4e8683b-ed9e-4751-8e4a-e23600b97518","blendlink_object_random":0.8541179191912799},
+  "GEO-ellie_jacket_pin_2001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"b0b08c41-79ca-40a1-9bf4-0c3f913ae2df","blendlink_object_random":0.7741016109413704},
+  "GEO-ellie_jacket_pin_3001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"e45f0921-035e-49c1-978f-0e9a5e1c2da4","blendlink_object_random":0.1174898983718571},
+  "GEO-ellie_jacket_pin_4001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"0d2850a1-77b4-457d-ad68-059b13ea7bb0","blendlink_object_random":0.4497230289154041},
+  "GEO-ellie_jacket_pin_5001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"6432080f-4b1c-4f93-9859-45fa304340d0","blendlink_object_random":0.9691795855688815},
+  "GEO-ellie_scrunchy001": {"tissue_tessellate":{"generator":{}},"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"a52aee30-2dcf-42fe-b374-e608a79e890b","blendlink_object_random":0.7903622914548876},
+  "GEO-ellie_teeth_btm001": {"tissue_tessellate":{"generator":{}},"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"566383a8-35a8-45ac-b268-a28d3826da7b","blendlink_object_random":0.2907293830743826},
+  "GEO-ellie_teeth_top001": {"tissue_tessellate":{"generator":{}},"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"head_UVmix":0.75,"distressed_STAGE":1,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"292db733-fa70-47cd-82ad-dd89c18a2913","blendlink_object_random":0.7063337808256814},
+  "GEO-ellie_tongue001": {"als":{},"blendlink_id":"6936214d-ec40-407b-ad54-24bef50cf936","blendlink_object_random":0.8582717920323535},
+  "GEO-ellie_trousers001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"a093eddc-80f7-4c94-a4cf-c8d9a97a68af","blendlink_object_random":0.7692304015553627},
+  "GEO-ellie_watch001": {"highlight_strength":1,"distressed_MASTER":0,"distressed_ripped":0,"distressed_dirt":0,"distressed_scratches":0,"distressed_bruises":0,"distressed_STAGE":1,"head_UVmix":0.75,"switch_hand_scratch":0,"switch_head_bruise":0,"switch_knee_bruise":0,"als":{},"blendlink_id":"d7d5533c-0597-4d0c-81e0-05e459dc89e4","blendlink_object_random":0.36461083762455054},
   "RIG-Ellie001": {"cloud_rig":{},"selection_sets":[{"name":"Body Main","bone_ids":[{"name":"Properties_Character_Rex"},{"name":"MSTR-Spine_Torso"},{"name":"FK-Spine"},{"name":"FK-Belly"},{"name":"FK-Chest"},{"name":"PRP-UpperArm.L"},{"name":"PRP-UpperArm.R"},{"name":"FK-Shoulder.L"},{"name":"FK-Shoulder.R"},{"name":"MSTR-Spine_Hips"},{"name":"PRP-Thigh.L"},{"name":"PRP-Thigh.R"},{"name":"PRP-Spine"},{"name":"MSTR-Spine_Chest"},{"name":"FK-Head"},{"name":"PRP-Head"},{"name":"FK-UpperArm.L"},{"name":"FK-Forearm.L"},{"name":"FK-Wrist.L"},{"name":"FK-UpperArm.R"},{"name":"FK-Forearm.R"},{"name":"FK-Wrist.R"},{"name":"FK-Neck"},{"name":"FK-Thigh.L"},{"name":"FK-Knee.L"},{"name":"FK-W-Foot.L"},{"name":"FK-Thigh.R"},{"name":"FK-Knee.R"},{"name":"FK-W-Foot.R"},{"name":"IK-MSTR-Wrist.L"},{"name":"IK-POLE-Arm.L"},{"name":"IK-MSTR-Wrist.R"},{"name":"IK-POLE-Arm.R"},{"name":"FK-Toes.L"},{"name":"IK-MSTR-Foot.L"},{"name":"ROLL-Foot.L"},{"name":"IK-POLE-Leg.L"},{"name":"FK-Toes.R"},{"name":"IK-MSTR-Foot.R"},{"name":"ROLL-Foot.R"},{"name":"IK-POLE-Leg.R"}]},{"name":"- Arm L","bone_ids":[{"name":"STR-Finger_Index3.L"},{"name":"STR-TIP-Finger_Index3.L"},{"name":"STR-Finger_Index2.L"},{"name":"STR-Finger_Index1.L"},{"name":"STR-Finger_Index_Carpal.L"},{"name":"STR-Finger_Middle3.L"},{"name":"STR-TIP-Finger_Middle3.L"},{"name":"STR-Finger_Middle2.L"},{"name":"STR-Finger_Middle1.L"},{"name":"STR-Finger_Middle_Carpal.L"},{"name":"STR-Finger_Ring3.L"},{"name":"STR-TIP-Finger_Ring3.L"},{"name":"STR-Finger_Ring2.L"},{"name":"STR-Finger_Ring1.L"},{"name":"STR-Finger_Ring_Carpal.L"},{"name":"STR-Finger_Pinky3.L"},{"name":"STR-TIP-Finger_Pinky3.L"},{"name":"STR-Finger_Pinky2.L"},{"name":"STR-Finger_Pinky1.L"},{"name":"STR-Finger_Pinky_Carpal.L"},{"name":"STR-Finger_Thumb3.L"},{"name":"STR-TIP-Finger_Thumb3.L"},{"name":"STR-Finger_Thumb2.L"},{"name":"STR-Finger_Thumb1.L"},{"name":"STR-Wrist.L"},{"name":"DEF-Wrist.L"},{"name":"ACT-Hand_Splay.L"},{"name":"PRP-UpperArm.L"},{"name":"FK-Finger_Index_Carpal.L"},{"name":"FK-Finger_Index1.L"},{"name":"FK-Finger_Index2.L"},{"name":"FK-Finger_Index3.L"},{"name":"FK-Finger_Middle_Carpal.L"},{"name":"FK-Finger_Middle1.L"},{"name":"FK-Finger_Middle2.L"},{"name":"FK-Finger_Middle3.L"},{"name":"FK-Finger_Pinky_Carpal.L"},{"name":"FK-Finger_Pinky1.L"},{"name":"FK-Finger_Pinky2.L"},{"name":"FK-Finger_Pinky3.L"},{"name":"FK-Finger_Ring_Carpal.L"},{"name":"FK-Finger_Ring1.L"},{"name":"FK-Finger_Ring2.L"},{"name":"FK-Finger_Ring3.L"},{"name":"FK-Finger_Thumb1.L"},{"name":"FK-Finger_Thumb2.L"},{"name":"FK-Finger_Thumb3.L"},{"name":"STR-Forearm2.L"},{"name":"STR-Forearm1.L"},{"name":"AutoRubberHose-Forearm.L"},{"name":"STR-UpperArm1.L"},{"name":"STR-UpperArm2.L"},{"name":"IK-UpperArm.L"},{"name":"FK-Shoulder.L"},{"name":"Tweak_Shoulder.L"},{"name":"STR-TIP-Shoulder.L"},{"name":"FK-UpperArm.L"},{"name":"FK-Forearm.L"},{"name":"FK-Wrist.L"},{"name":"IK-MSTR-Wrist.L"},{"name":"IK-POLE-Arm.L"}]},{"name":"- Fingers L","bone_ids":[{"name":"STR-Finger_Index3.L"},{"name":"STR-TIP-Finger_Index3.L"},{"name":"STR-Finger_Index2.L"},{"name":"STR-Finger_Index1.L"},{"name":"STR-Finger_Index_Carpal.L"},{"name":"STR-Finger_Middle3.L"},{"name":"STR-TIP-Finger_Middle3.L"},{"name":"STR-Finger_Middle2.L"},{"name":"STR-Finger_Middle1.L"},{"name":"STR-Finger_Middle_Carpal.L"},{"name":"STR-Finger_Ring3.L"},{"name":"STR-TIP-Finger_Ring3.L"},{"name":"STR-Finger_Ring2.L"},{"name":"STR-Finger_Ring1.L"},{"name":"STR-Finger_Ring_Carpal.L"},{"name":"STR-Finger_Pinky3.L"},{"name":"STR-TIP-Finger_Pinky3.L"},{"name":"STR-Finger_Pinky2.L"},{"name":"STR-Finger_Pinky1.L"},{"name":"STR-Finger_Pinky_Carpal.L"},{"name":"STR-Finger_Thumb3.L"},{"name":"STR-TIP-Finger_Thumb3.L"},{"name":"STR-Finger_Thumb2.L"},{"name":"STR-Finger_Thumb1.L"},{"name":"ACT-Hand_Splay.L"},{"name":"FK-Finger_Index_Carpal.L"},{"name":"FK-Finger_Index1.L"},{"name":"FK-Finger_Index2.L"},{"name":"FK-Finger_Index3.L"},{"name":"FK-Finger_Middle_Carpal.L"},{"name":"FK-Finger_Middle1.L"},{"name":"FK-Finger_Middle2.L"},{"name":"FK-Finger_Middle3.L"},{"name":"FK-Finger_Pinky_Carpal.L"},{"name":"FK-Finger_Pinky1.L"},{"name":"FK-Finger_Pinky2.L"},{"name":"FK-Finger_Pinky3.L"},{"name":"FK-Finger_Ring_Carpal.L"},{"name":"FK-Finger_Ring1.L"},{"name":"FK-Finger_Ring2.L"},{"name":"FK-Finger_Ring3.L"},{"name":"FK-Finger_Thumb1.L"},{"name":"FK-Finger_Thumb2.L"},{"name":"FK-Finger_Thumb3.L"}]},{"name":"- Leg L","bone_ids":[{"name":"STR-Toes.L"},{"name":"STR-TIP-Toes.L"},{"name":"PRP-Thigh.L"},{"name":"STR-Foot.L"},{"name":"STR-Knee2.L"},{"name":"STR-Knee1.L"},{"name":"AutoRubberHose-Knee.L"},{"name":"STR-Thigh2.L"},{"name":"IK-Thigh.L"},{"name":"FK-Thigh.L"},{"name":"FK-Knee.L"},{"name":"FK-W-Foot.L"},{"name":"FK-Toes.L"},{"name":"IK-MSTR-Foot.L"},{"name":"ROLL-Foot.L"},{"name":"IK-POLE-Leg.L"}]},{"name":"Face all","bone_ids":[{"name":"STR-Eyelid_Lower4.L"},{"name":"STR-TIP-Eyelid_Lower4.L"},{"name":"STR-Eyelid_Lower3.L"},{"name":"STR-Eyelid_Lower2.L"},{"name":"STR-Eyelid_Lower1.L"},{"name":"STR-Eyelid_Upper4.L"},{"name":"STR-TIP-Eyelid_Upper4.L"},{"name":"STR-Eyelid_Upper3.L"},{"name":"STR-Eyelid_Upper2.L"},{"name":"STR-Eyelid_Upper1.L"},{"name":"STR-Eyelid_Lower4.R"},{"name":"STR-TIP-Eyelid_Lower4.R"},{"name":"STR-Eyelid_Lower3.R"},{"name":"STR-Eyelid_Lower2.R"},{"name":"STR-Eyelid_Lower1.R"},{"name":"STR-Eyelid_Upper4.R"},{"name":"STR-TIP-Eyelid_Upper4.R"},{"name":"STR-Eyelid_Upper3.R"},{"name":"STR-Eyelid_Upper2.R"},{"name":"STR-Eyelid_Upper1.R"},{"name":"STR-Eye_Ring_Lower4.L"},{"name":"STR-TIP-Eye_Ring_Lower4.L"},{"name":"STR-Eye_Ring_Lower3.L"},{"name":"STR-Eye_Ring_Lower2.L"},{"name":"STR-Eye_Ring_Lower1.L"},{"name":"STR-Eye_Ring_Upper4.L"},{"name":"STR-TIP-Eye_Ring_Upper4.L"},{"name":"STR-Eye_Ring_Upper3.L"},{"name":"STR-Eye_Ring_Upper2.L"},{"name":"STR-Eye_Ring_Upper1.L"},{"name":"STR-Eye_Ring_Lower4.R"},{"name":"STR-TIP-Eye_Ring_Lower4.R"},{"name":"STR-Eye_Ring_Lower3.R"},{"name":"STR-Eye_Ring_Lower2.R"},{"name":"STR-Eye_Ring_Lower1.R"},{"name":"STR-Eye_Ring_Upper4.R"},{"name":"STR-TIP-Eye_Ring_Upper4.R"},{"name":"STR-Eye_Ring_Upper3.R"},{"name":"STR-Eye_Ring_Upper2.R"},{"name":"STR-Eye_Ring_Upper1.R"},{"name":"BrowRing4.L"},{"name":"BrowRing4.R"},{"name":"Eyebrow_Mid"},{"name":"ACT-Eyelid_Lower.L"},{"name":"ACT-Eyelid_Lower.R"},{"name":"ACT-Eyelid_Upper.L"},{"name":"ACT-Eyelid_Upper.R"},{"name":"CTR-Eye.L"},{"name":"CTR-Eye_Highlight.L"},{"name":"CTR-Eye.R"},{"name":"CTR-Eye_Highlight.R"},{"name":"MSTR-EyeRing_Lower.L"},{"name":"MSTR-EyeRing_Lower.R"},{"name":"MSTR-EyeRing_Upper.L"},{"name":"MSTR-EyeRing_Upper.R"},{"name":"MSTR-Eyebrow.L"},{"name":"Eyebrow4.L"},{"name":"Eyebrow5.L"},{"name":"Eyebrow1.L"},{"name":"Eyebrow3.L"},{"name":"Eyebrow2.L"},{"name":"MSTR-Eyebrow_Detached.L"},{"name":"MSTR-Eyebrow.R"},{"name":"Eyebrow4.R"},{"name":"Eyebrow5.R"},{"name":"Eyebrow1.R"},{"name":"Eyebrow3.R"},{"name":"Eyebrow2.R"},{"name":"MSTR-Eyebrow_Detached.R"},{"name":"ROOT-Line1_1.L"},{"name":"STR-Line1_2.L"},{"name":"STR-TIP-Line1_2.L"},{"name":"STR-Line1_1.L"},{"name":"ROOT-Line1_1.R"},{"name":"STR-Line1_2.R"},{"name":"STR-TIP-Line1_2.R"},{"name":"STR-Line1_1.R"},{"name":"ROOT-Line2_1.L"},{"name":"STR-Line2_2.L"},{"name":"STR-TIP-Line2_2.L"},{"name":"STR-Line2_1.L"},{"name":"ROOT-Line2_1.R"},{"name":"STR-Line2_2.R"},{"name":"STR-TIP-Line2_2.R"},{"name":"STR-Line2_1.R"},{"name":"ROOT-Line3_1.L"},{"name":"STR-Line3_2.L"},{"name":"STR-TIP-Line3_2.L"},{"name":"STR-Line3_1.L"},{"name":"ROOT-Line3_1.R"},{"name":"STR-Line3_2.R"},{"name":"STR-TIP-Line3_2.R"},{"name":"STR-Line3_1.R"},{"name":"Nose1"},{"name":"NoseBridge1"},{"name":"NoseBridge2"},{"name":"CTR-LipCorner.L"},{"name":"CTR-LipCorner.R"},{"name":"ACT-MouthCorner.L"},{"name":"ACT-MouthCorner.R"},{"name":"Nose5"},{"name":"CTR-CheekPuff.L"},{"name":"CTR-CheekRaise.L"},{"name":"CTR-Cheek_Mid.L"},{"name":"CTR-CheekPuff.R"},{"name":"CTR-CheekRaise.R"},{"name":"CTR-Cheek_Mid.R"},{"name":"Jaw"},{"name":"Chin_Main"},{"name":"MSTR-Mouth"},{"name":"Lip_Corner.L"},{"name":"Lip_Corner.R"},{"name":"MSTR-Lip_Lower"},{"name":"MSTR-Lip_Lower_Center"},{"name":"ACT-Lip_Lower_Roll"},{"name":"MSTR-Lip_Upper"},{"name":"MSTR-Lip_Upper_Center"},{"name":"ACT-Lip_Upper_Roll"},{"name":"STR-Lip_Top2.L"},{"name":"STR-TIP-Lip_Top2.L"},{"name":"STR-Lip_Top2.R"},{"name":"STR-TIP-Lip_Top2.R"},{"name":"STR-Lip_Bottom2.L"},{"name":"STR-Lip_Bottom1.L"},{"name":"STR-Lip_Bottom2.R"},{"name":"STR-Lip_Bottom1.R"},{"name":"STR-I-Lip_Top1"},{"name":"STR-I-Lip_Bottom1"},{"name":"ROOT-LTC-Cheek1.L"},{"name":"LTC-Cheek1.L"},{"name":"ROOT-LTC-Cheek1.R"},{"name":"LTC-Cheek1.R"},{"name":"ROOT-LTC-Lips"},{"name":"LTC-Lips"},{"name":"PRP-Head"},{"name":"CTR-DEF-Gum_Upper1.L"},{"name":"CTR-DEF-Gum_Upper2.L"},{"name":"CTR-DEF-Gum_Upper1.R"},{"name":"CTR-DEF-Gum_Upper2.R"},{"name":"CTR-DEF-Gum_Lower1.L"},{"name":"CTR-DEF-Gum_Lower2.L"},{"name":"CTR-DEF-Gum_Lower1.R"},{"name":"CTR-DEF-Gum_Lower2.R"}]},{"name":"- Eyemask","bone_ids":[{"name":"STR-Eyelid_Lower4.L"},{"name":"STR-TIP-Eyelid_Lower4.L"},{"name":"STR-Eyelid_Lower3.L"},{"name":"STR-Eyelid_Lower2.L"},{"name":"STR-Eyelid_Lower1.L"},{"name":"STR-Eyelid_Upper4.L"},{"name":"STR-TIP-Eyelid_Upper4.L"},{"name":"STR-Eyelid_Upper3.L"},{"name":"STR-Eyelid_Upper2.L"},{"name":"STR-Eyelid_Upper1.L"},{"name":"STR-Eyelid_Lower4.R"},{"name":"STR-TIP-Eyelid_Lower4.R"},{"name":"STR-Eyelid_Lower3.R"},{"name":"STR-Eyelid_Lower2.R"},{"name":"STR-Eyelid_Lower1.R"},{"name":"STR-Eyelid_Upper4.R"},{"name":"STR-TIP-Eyelid_Upper4.R"},{"name":"STR-Eyelid_Upper3.R"},{"name":"STR-Eyelid_Upper2.R"},{"name":"STR-Eyelid_Upper1.R"},{"name":"STR-Eye_Ring_Lower4.L"},{"name":"STR-TIP-Eye_Ring_Lower4.L"},{"name":"STR-Eye_Ring_Lower3.L"},{"name":"STR-Eye_Ring_Lower2.L"},{"name":"STR-Eye_Ring_Lower1.L"},{"name":"STR-Eye_Ring_Upper4.L"},{"name":"STR-TIP-Eye_Ring_Upper4.L"},{"name":"STR-Eye_Ring_Upper3.L"},{"name":"STR-Eye_Ring_Upper2.L"},{"name":"STR-Eye_Ring_Upper1.L"},{"name":"STR-Eye_Ring_Lower4.R"},{"name":"STR-TIP-Eye_Ring_Lower4.R"},{"name":"STR-Eye_Ring_Lower3.R"},{"name":"STR-Eye_Ring_Lower2.R"},{"name":"STR-Eye_Ring_Lower1.R"},{"name":"STR-Eye_Ring_Upper4.R"},{"name":"STR-TIP-Eye_Ring_Upper4.R"},{"name":"STR-Eye_Ring_Upper3.R"},{"name":"STR-Eye_Ring_Upper2.R"},{"name":"STR-Eye_Ring_Upper1.R"},{"name":"BrowRing4.L"},{"name":"BrowRing4.R"},{"name":"Eyebrow_Mid"},{"name":"ACT-Eyelid_Lower.L"},{"name":"ACT-Eyelid_Lower.R"},{"name":"ACT-Eyelid_Upper.L"},{"name":"ACT-Eyelid_Upper.R"},{"name":"CTR-Eye.L"},{"name":"CTR-Eye_Highlight.L"},{"name":"CTR-Eye.R"},{"name":"CTR-Eye_Highlight.R"},{"name":"MSTR-EyeRing_Lower.L"},{"name":"MSTR-EyeRing_Lower.R"},{"name":"MSTR-EyeRing_Upper.L"},{"name":"MSTR-EyeRing_Upper.R"},{"name":"MSTR-Eyebrow.L"},{"name":"Eyebrow4.L"},{"name":"Eyebrow5.L"},{"name":"Eyebrow1.L"},{"name":"Eyebrow3.L"},{"name":"Eyebrow2.L"},{"name":"MSTR-Eyebrow_Detached.L"},{"name":"MSTR-Eyebrow.R"},{"name":"Eyebrow4.R"},{"name":"Eyebrow5.R"},{"name":"Eyebrow1.R"},{"name":"Eyebrow3.R"},{"name":"Eyebrow2.R"},{"name":"MSTR-Eyebrow_Detached.R"},{"name":"ROOT-Line1_1.L"},{"name":"STR-Line1_2.L"},{"name":"STR-TIP-Line1_2.L"},{"name":"STR-Line1_1.L"},{"name":"ROOT-Line1_1.R"},{"name":"STR-Line1_2.R"},{"name":"STR-TIP-Line1_2.R"},{"name":"STR-Line1_1.R"},{"name":"ROOT-Line2_1.L"},{"name":"STR-Line2_2.L"},{"name":"STR-TIP-Line2_2.L"},{"name":"STR-Line2_1.L"},{"name":"ROOT-Line2_1.R"},{"name":"STR-Line2_2.R"},{"name":"STR-TIP-Line2_2.R"},{"name":"STR-Line2_1.R"},{"name":"ROOT-Line3_1.L"},{"name":"STR-Line3_2.L"},{"name":"STR-TIP-Line3_2.L"},{"name":"STR-Line3_1.L"},{"name":"ROOT-Line3_1.R"},{"name":"STR-Line3_2.R"},{"name":"STR-TIP-Line3_2.R"},{"name":"STR-Line3_1.R"},{"name":"Nose1"},{"name":"NoseBridge1"},{"name":"NoseBridge2"},{"name":"CTR-Cheek_Mid.L"},{"name":"CTR-Cheek_Mid.R"},{"name":"PRP-Head"}]},{"name":"- Mouth","bone_ids":[{"name":"CTR-LipCorner.L"},{"name":"CTR-LipCorner.R"},{"name":"ACT-MouthCorner.L"},{"name":"ACT-MouthCorner.R"},{"name":"Teeth_Top_Root"},{"name":"CTR-DEF-Gum_Upper1.R"},{"name":"CTR-DEF-Gum_Upper2.R"},{"name":"CTR-DEF-Gum_Upper1.L"},{"name":"CTR-DEF-Gum_Upper2.L"},{"name":"STR-I-Teeth_Upper2"},{"name":"STR-Teeth_Upper2.R"},{"name":"STR-Teeth_Upper1.R"},{"name":"STR-Teeth_Upper2.L"},{"name":"STR-Teeth_Upper1.L"},{"name":"Nose5"},{"name":"CTR-CheekPuff.L"},{"name":"CTR-CheekRaise.L"},{"name":"CTR-CheekPuff.R"},{"name":"CTR-CheekRaise.R"},{"name":"Jaw"},{"name":"Teeth_Bottom_Root"},{"name":"CTR-DEF-Gum_Lower1.L"},{"name":"CTR-DEF-Gum_Lower2.L"},{"name":"CTR-DEF-Gum_Lower1.R"},{"name":"CTR-DEF-Gum_Lower2.R"},{"name":"STR-Teeth_Lower2.L"},{"name":"STR-Teeth_Lower1.L"},{"name":"STR-I-Teeth_Lower2"},{"name":"STR-Teeth_Lower2.R"},{"name":"STR-Teeth_Lower1.R"},{"name":"Chin_Main"},{"name":"FK-Tongue1"},{"name":"FK-Tongue2"},{"name":"FK-Tongue3"},{"name":"FK-Tongue4"},{"name":"FK-Tongue5"},{"name":"MSTR-Mouth"},{"name":"Lip_Corner.L"},{"name":"Lip_Corner.R"},{"name":"MSTR-Lip_Lower"},{"name":"MSTR-Lip_Lower_Center"},{"name":"ACT-Lip_Lower_Roll"},{"name":"MSTR-Lip_Upper"},{"name":"MSTR-Lip_Upper_Center"},{"name":"ACT-Lip_Upper_Roll"},{"name":"STR-Lip_Top2.L"},{"name":"STR-TIP-Lip_Top2.L"},{"name":"STR-Lip_Top2.R"},{"name":"STR-TIP-Lip_Top2.R"},{"name":"STR-Lip_Bottom2.L"},{"name":"STR-Lip_Bottom1.L"},{"name":"STR-Lip_Bottom2.R"},{"name":"STR-Lip_Bottom1.R"},{"name":"STR-I-Lip_Top1"},{"name":"STR-I-Lip_Bottom1"},{"name":"ROOT-LTC-Cheek1.L"},{"name":"LTC-Cheek1.L"},{"name":"ROOT-LTC-Cheek1.R"},{"name":"LTC-Cheek1.R"},{"name":"ROOT-LTC-Lips"},{"name":"LTC-Lips"},{"name":"PRP-Head"}]},{"name":"Move","bone_ids":[{"name":"MSTR-Spine_Torso"},{"name":"IK-MSTR-Wrist.L"},{"name":"IK-POLE-Arm.L"},{"name":"IK-MSTR-Wrist.R"},{"name":"IK-POLE-Arm.R"},{"name":"IK-MSTR-Foot.L"},{"name":"IK-POLE-Leg.L"},{"name":"IK-MSTR-Foot.R"},{"name":"IK-POLE-Leg.R"},{"name":"MSTR-TGT-Eyes"}]},{"name":"Properties","bone_ids":[{"name":"Properties_Character_Rex"},{"name":"PRP-UpperArm.L"},{"name":"PRP-UpperArm.R"},{"name":"PRP-Thigh.L"},{"name":"PRP-Thigh.R"},{"name":"PRP-Spine"},{"name":"PRP-Head"},{"name":"Properties_Character_Ellie"}]},{"name":"start_hidden","bone_ids":[{"name":"root"},{"name":"Properties_Character_Ellie"},{"name":"PRP-Spine"},{"name":"PRP-UpperArm.L"},{"name":"IK-UpperArm.L"},{"name":"PRP-UpperArm.R"},{"name":"IK-UpperArm.R"},{"name":"PRP-Thigh.L"},{"name":"IK-Thigh.L"},{"name":"PRP-Thigh.R"},{"name":"IK-Thigh.R"},{"name":"MSTR-Spine_Chest"},{"name":"P-Grab.L"},{"name":"Grab.L"},{"name":"FK-UpperArm.L"},{"name":"FK-Forearm.L"},{"name":"FK-Wrist.L"},{"name":"P-Grab.R"},{"name":"Grab.R"},{"name":"FK-UpperArm.R"},{"name":"FK-Forearm.R"},{"name":"FK-Wrist.R"},{"name":"PRP-Head"},{"name":"FK-Thigh.L"},{"name":"FK-Knee.L"},{"name":"FK-W-Foot.L"},{"name":"FK-Thigh.R"},{"name":"FK-Knee.R"},{"name":"FK-W-Foot.R"},{"name":"MSTR-Eyebrow_Detached.L"},{"name":"MSTR-Eyebrow_Detached.R"}]},{"name":"Eye_direction","bone_ids":[{"name":"CTR-Eye.L"},{"name":"CTR-Eye_Highlight.L"},{"name":"CTR-Eye.R"},{"name":"CTR-Eye_Highlight.R"},{"name":"MSTR-TGT-Eyes"},{"name":"TGT-Eye.L"},{"name":"TGT-Eye.R"}]}],"active_selection_set":10,"blendlink_id":"c1cd0758-408a-4445-a4d4-98e39d06bb9c"},
   },
 } as const
@@ -2281,1874 +735,335 @@ export interface EllieAnimationGLTF {
   nodes: {
     Animation_Camera: THREE.Camera
     Backdrop: THREE.Mesh
+    "ROOT-LTC-ArmpitL": THREE.Object3D
+    "ROOT-LTC-ArmpitR": THREE.Object3D
+    "ROOT-LTC-Cheek1L": THREE.Object3D
+    "ROOT-LTC-Cheek1R": THREE.Object3D
+    "ROOT-LTC-Lips": THREE.Object3D
     "DEF-Bridge_Chin": THREE.Object3D
-    Bridge_Chin: THREE.Object3D
     "DEF-Bridge_Chin1_1L": THREE.Object3D
-    Bridge_Chin1_1L: THREE.Object3D
     "DEF-Bridge_Chin1_1R": THREE.Object3D
-    Bridge_Chin1_1R: THREE.Object3D
     "DEF-Bridge_Chin1_2L": THREE.Object3D
-    Bridge_Chin1_2L: THREE.Object3D
     "DEF-Bridge_Chin1_2R": THREE.Object3D
-    Bridge_Chin1_2R: THREE.Object3D
     "DEF-Bridge_Chin2_1L": THREE.Object3D
-    Bridge_Chin2_1L: THREE.Object3D
     "DEF-Bridge_Chin2_1R": THREE.Object3D
-    Bridge_Chin2_1R: THREE.Object3D
     "DEF-Bridge_Chin2_2L": THREE.Object3D
-    Bridge_Chin2_2L: THREE.Object3D
     "DEF-Bridge_Chin2_2R": THREE.Object3D
-    Bridge_Chin2_2R: THREE.Object3D
     "DEF-Bridge_Lower_Chin": THREE.Object3D
-    Bridge_Lower_Chin: THREE.Object3D
     "DEF-Cheek1_1L": THREE.Object3D
-    Cheek1_1L: THREE.Object3D
     "DEF-Cheek1_1R": THREE.Object3D
-    Cheek1_1R: THREE.Object3D
     "DEF-Cheek1_2L": THREE.Object3D
-    Cheek1_2L: THREE.Object3D
     "DEF-Cheek1_2R": THREE.Object3D
-    Cheek1_2R: THREE.Object3D
     "DEF-Cheek2_1L": THREE.Object3D
-    Cheek2_1L: THREE.Object3D
     "DEF-Cheek2_1R": THREE.Object3D
-    Cheek2_1R: THREE.Object3D
     "DEF-Cheek2_2L": THREE.Object3D
-    Cheek2_2L: THREE.Object3D
     "DEF-Cheek2_2R": THREE.Object3D
-    Cheek2_2R: THREE.Object3D
     "DEF-Cheek2_3L": THREE.Object3D
-    Cheek2_3L: THREE.Object3D
     "DEF-Cheek2_3R": THREE.Object3D
-    Cheek2_3R: THREE.Object3D
     "DEF-Cheek3_1L": THREE.Object3D
-    Cheek3_1L: THREE.Object3D
     "DEF-Cheek3_1R": THREE.Object3D
-    Cheek3_1R: THREE.Object3D
     "DEF-Cheek3_2L": THREE.Object3D
-    Cheek3_2L: THREE.Object3D
     "DEF-Cheek3_2R": THREE.Object3D
-    Cheek3_2R: THREE.Object3D
     "DEF-Chin": THREE.Object3D
-    Chin: THREE.Object3D
     "DEF-JawLine2L": THREE.Object3D
-    JawLine2L: THREE.Object3D
     "DEF-JawLine2R": THREE.Object3D
-    JawLine2R: THREE.Object3D
     "DEF-JawLine3L": THREE.Object3D
-    JawLine3L: THREE.Object3D
     "DEF-JawLine3R": THREE.Object3D
-    JawLine3R: THREE.Object3D
     "DEF-Chin_Main": THREE.Object3D
-    Chin_Main: THREE.Object3D
-    "CTR-Cheek_MidL": THREE.Object3D
-    "CTR-Cheek_MidR": THREE.Object3D
-    "CTR-CheekRaiseL": THREE.Object3D
-    "CTR-CheekRaiseR": THREE.Object3D
-    "ORG-STR-Lip_Bottom2L": THREE.Object3D
-    "ORG-STR-TIP-Lip_Top2L": THREE.Object3D
     "DEF-OuterLipL": THREE.Object3D
-    OuterLipL: THREE.Object3D
-    "P-Lip_CornerL": THREE.Object3D
-    "CTR-LipCornerL": THREE.Object3D
-    "ORG-STR-Lip_Bottom2R": THREE.Object3D
-    "ORG-STR-TIP-Lip_Top2R": THREE.Object3D
     "DEF-OuterLipR": THREE.Object3D
-    OuterLipR: THREE.Object3D
-    "P-Lip_CornerR": THREE.Object3D
-    "CTR-LipCornerR": THREE.Object3D
-    "DSP-AutoRubberHose-ForearmL": THREE.Object3D
-    "DSP-AutoRubberHose-ForearmR": THREE.Object3D
-    "DSP-AutoRubberHose-KneeL": THREE.Object3D
-    "DSP-AutoRubberHose-KneeR": THREE.Object3D
     "DEF-Eyebrow2L": THREE.Object3D
-    Eyebrow2L: THREE.Object3D
-    "DT-Eyebrow2L": THREE.Object3D
     "DEF-Eyebrow2R": THREE.Object3D
-    Eyebrow2R: THREE.Object3D
-    "DT-Eyebrow2R": THREE.Object3D
     "DEF-Eyebrow4L": THREE.Object3D
-    Eyebrow4L: THREE.Object3D
-    "DT-Eyebrow4L": THREE.Object3D
     "DEF-Eyebrow4R": THREE.Object3D
-    Eyebrow4R: THREE.Object3D
-    "DT-Eyebrow4R": THREE.Object3D
     "DEF-Eyebrow1L": THREE.Object3D
-    Eyebrow1L: THREE.Object3D
     "DEF-Eyebrow1R": THREE.Object3D
-    Eyebrow1R: THREE.Object3D
     "DEF-Eyebrow3L": THREE.Object3D
-    Eyebrow3L: THREE.Object3D
     "DEF-Eyebrow3R": THREE.Object3D
-    Eyebrow3R: THREE.Object3D
     "DEF-Eyebrow5L": THREE.Object3D
-    Eyebrow5L: THREE.Object3D
     "DEF-Eyebrow5R": THREE.Object3D
-    Eyebrow5R: THREE.Object3D
     "DEF-Eyebrow_Mid": THREE.Object3D
-    Eyebrow_Mid: THREE.Object3D
     "DEF-Eyelash5L": THREE.Object3D
-    Eyelash5L: THREE.Object3D
     "DEF-Eyelash5R": THREE.Object3D
-    Eyelash5R: THREE.Object3D
-    "FK-Head_Top": THREE.Object3D
-    "STR-TIP-Head_Top": THREE.Object3D
-    "MSTR-Head_Top": THREE.Object3D
-    "PRP-Head": THREE.Object3D
-    "FK-Head": THREE.Object3D
-    "FK-HNG-Head": THREE.Object3D
-    "FK-Neck": THREE.Object3D
-    "FK-HNG-Neck": THREE.Object3D
-    "FK-Ponytail1": THREE.Object3D
-    "FK-HNG-Ponytail1": THREE.Object3D
-    "FK-Ponytail6": THREE.Object3D
-    "FK-Ponytail5": THREE.Object3D
-    "FK-Ponytail4": THREE.Object3D
-    "FK-Ponytail3": THREE.Object3D
-    "FK-Ponytail2": THREE.Object3D
-    "FK-HNG-Ponytail2": THREE.Object3D
-    "FK-FootL": THREE.Object3D
-    "FK-W-FootL": THREE.Object3D
-    "FK-KneeL": THREE.Object3D
-    "FK-ThighL": THREE.Object3D
-    "FK-HNG-ThighL": THREE.Object3D
-    "FK-FootR": THREE.Object3D
-    "FK-W-FootR": THREE.Object3D
-    "FK-KneeR": THREE.Object3D
-    "FK-ThighR": THREE.Object3D
-    "FK-HNG-ThighR": THREE.Object3D
-    "FK-WristL": THREE.Object3D
-    "FK-ForearmL": THREE.Object3D
-    "FK-UpperArmL": THREE.Object3D
-    "FK-HNG-UpperArmL": THREE.Object3D
-    "FK-WristR": THREE.Object3D
-    "FK-ForearmR": THREE.Object3D
-    "FK-UpperArmR": THREE.Object3D
-    "FK-HNG-UpperArmR": THREE.Object3D
-    "FK-HipsL": THREE.Object3D
-    "FK-P-HipsL": THREE.Object3D
-    "FK-HipsR": THREE.Object3D
-    "FK-P-HipsR": THREE.Object3D
-    "FK-Watch": THREE.Object3D
-    "FK-P-Watch": THREE.Object3D
-    "FK-ToesL": THREE.Object3D
-    "FK-ToesR": THREE.Object3D
-    "FK-Tongue5": THREE.Object3D
-    "FK-Tongue4": THREE.Object3D
-    "FK-Tongue3": THREE.Object3D
-    "FK-Tongue2": THREE.Object3D
-    "FK-Tongue1": THREE.Object3D
     "DEF-HeadSide1L": THREE.Object3D
-    HeadSide1L: THREE.Object3D
     "DEF-HeadSide1R": THREE.Object3D
-    HeadSide1R: THREE.Object3D
     "DEF-Hip_Center": THREE.Object3D
-    Hip_Center: THREE.Object3D
-    "IK-POLE-P-Finger_Index1L": THREE.Object3D
-    "IK-POLE-P-Finger_Index1R": THREE.Object3D
-    "IK-POLE-P-Finger_Middle1L": THREE.Object3D
-    "IK-POLE-P-Finger_Middle1R": THREE.Object3D
-    "IK-POLE-P-Finger_Pinky1L": THREE.Object3D
-    "IK-POLE-P-Finger_Pinky1R": THREE.Object3D
-    "IK-POLE-P-Finger_Ring1L": THREE.Object3D
-    "IK-POLE-P-Finger_Ring1R": THREE.Object3D
-    "IK-POLE-P-Finger_Thumb1L": THREE.Object3D
-    "IK-POLE-P-Finger_Thumb1R": THREE.Object3D
-    "DSP-IK-POLE-ThighL": THREE.Object3D
-    "IK-POLE-LINE-ThighL": THREE.Object3D
-    "IK-POLE-LegL": THREE.Object3D
-    "IK-POLE-P-ThighL": THREE.Object3D
-    "DSP-IK-POLE-ThighR": THREE.Object3D
-    "IK-POLE-LINE-ThighR": THREE.Object3D
-    "IK-POLE-LegR": THREE.Object3D
-    "IK-POLE-P-ThighR": THREE.Object3D
-    "DSP-IK-POLE-UpperArmL": THREE.Object3D
-    "IK-POLE-LINE-UpperArmL": THREE.Object3D
-    "IK-POLE-ArmL": THREE.Object3D
-    "IK-POLE-P-UpperArmL": THREE.Object3D
-    "DSP-IK-POLE-UpperArmR": THREE.Object3D
-    "IK-POLE-LINE-UpperArmR": THREE.Object3D
-    "IK-POLE-ArmR": THREE.Object3D
-    "IK-POLE-P-UpperArmR": THREE.Object3D
     "DEF-JawLine4L": THREE.Object3D
-    JawLine4L: THREE.Object3D
     "DEF-JawLine4R": THREE.Object3D
-    JawLine4R: THREE.Object3D
     "DEF-Nose_Base": THREE.Object3D
     "DEF-Nose_Tip": THREE.Object3D
-    Nose_Tip: THREE.Object3D
     "DEF-NostrilL": THREE.Object3D
-    NostrilL: THREE.Object3D
     "DEF-NostrilR": THREE.Object3D
-    NostrilR: THREE.Object3D
-    Nose_Base: THREE.Object3D
     "DEF-Nose_Mid": THREE.Object3D
-    Nose_Mid: THREE.Object3D
     "DEF-NoseBridge1L": THREE.Object3D
-    NoseBridge1L: THREE.Object3D
     "DEF-NoseBridge1R": THREE.Object3D
-    NoseBridge1R: THREE.Object3D
-    "LTC-EyelashL": THREE.Object3D
     "ROOT-LTC-EyelashL": THREE.Object3D
-    "ORG-EyelashL": THREE.Object3D
-    "ORG-P-EyelashL": THREE.Object3D
-    "LTC-EyelashR": THREE.Object3D
     "ROOT-LTC-EyelashR": THREE.Object3D
-    "ORG-EyelashR": THREE.Object3D
-    "ORG-P-EyelashR": THREE.Object3D
-    "LTC-FannyPack_Bag": THREE.Object3D
     "ROOT-LTC-FannyPack_Bag": THREE.Object3D
-    "ORG-FannyPack_Bag": THREE.Object3D
-    "ORG-P-FannyPack_Bag": THREE.Object3D
-    "LTC-FannyPack_Bag_Top": THREE.Object3D
     "ROOT-LTC-FannyPack_Bag_Top": THREE.Object3D
-    "ORG-FannyPack_Bag_Top": THREE.Object3D
-    "ORG-P-FannyPack_Bag_Top": THREE.Object3D
-    "STR-TIP-TAN-ShortsL": THREE.Object3D
-    "STR-TIP-ShortsL": THREE.Object3D
-    "ORG-TIP-ShortsL": THREE.Object3D
     "DEF-ShortsL": THREE.Object3D
-    "STR-TAN-ShortsL": THREE.Object3D
-    "STR-ShortsL": THREE.Object3D
-    "ORG-ShortsL": THREE.Object3D
-    "ORG-P-ShortsL": THREE.Object3D
-    "STR-TIP-TAN-ShortsR": THREE.Object3D
-    "STR-TIP-ShortsR": THREE.Object3D
-    "ORG-TIP-ShortsR": THREE.Object3D
     "DEF-ShortsR": THREE.Object3D
-    "STR-TAN-ShortsR": THREE.Object3D
-    "STR-ShortsR": THREE.Object3D
-    "ORG-ShortsR": THREE.Object3D
-    "ORG-P-ShortsR": THREE.Object3D
     "DEF-OuterLip_Lower": THREE.Object3D
-    OuterLip_Lower: THREE.Object3D
     "DEF-OuterLip_Lower1L": THREE.Object3D
-    OuterLip_Lower1L: THREE.Object3D
     "DEF-OuterLip_Lower1R": THREE.Object3D
-    OuterLip_Lower1R: THREE.Object3D
     "DEF-OuterLip_Upper": THREE.Object3D
-    OuterLip_Upper: THREE.Object3D
     "DEF-OuterLip_Upper1L": THREE.Object3D
-    OuterLip_Upper1L: THREE.Object3D
     "DEF-OuterLip_Upper1R": THREE.Object3D
-    OuterLip_Upper1R: THREE.Object3D
     "DEF-OuterLip_Upper2L": THREE.Object3D
-    OuterLip_Upper2L: THREE.Object3D
     "DEF-OuterLip_Upper2R": THREE.Object3D
-    OuterLip_Upper2R: THREE.Object3D
-    "LTC-LipCornerL": THREE.Object3D
     "ROOT-LTC-LipCornerL": THREE.Object3D
-    "ORG-LipCornerL": THREE.Object3D
-    "ACT-MouthCornerL": THREE.Object3D
-    "P-ACT-MouthCornerL": THREE.Object3D
-    "ACT-MouthCornerR": THREE.Object3D
-    "P-ACT-MouthCornerR": THREE.Object3D
     "DEF-Button1": THREE.Object3D
-    Button1: THREE.Object3D
-    "P-Button1": THREE.Object3D
     "DEF-Button2": THREE.Object3D
-    Button2: THREE.Object3D
-    "P-Button2": THREE.Object3D
     "DEF-Button3": THREE.Object3D
-    Button3: THREE.Object3D
-    "P-Button3": THREE.Object3D
     "DEF-Collar_BackL": THREE.Object3D
-    Collar_BackL: THREE.Object3D
-    "P-Collar_BackL": THREE.Object3D
-    "CTR-CheekPuffL": THREE.Object3D
-    "P-CTR-CheekPuffL": THREE.Object3D
-    "CTR-CheekPuffR": THREE.Object3D
-    "P-CTR-CheekPuffR": THREE.Object3D
     "DEF-EarringL": THREE.Object3D
-    EarringL: THREE.Object3D
-    "P-EarringL": THREE.Object3D
     "DEF-EarringR": THREE.Object3D
-    EarringR: THREE.Object3D
-    "P-EarringR": THREE.Object3D
     "DEF-Eyelash1L": THREE.Object3D
-    Eyelash1L: THREE.Object3D
-    "P-Eyelash1L": THREE.Object3D
     "DEF-Eyelash1R": THREE.Object3D
-    Eyelash1R: THREE.Object3D
-    "P-Eyelash1R": THREE.Object3D
     "DEF-Eyelash2L": THREE.Object3D
-    Eyelash2L: THREE.Object3D
-    "P-Eyelash2L": THREE.Object3D
     "DEF-Eyelash2R": THREE.Object3D
-    Eyelash2R: THREE.Object3D
-    "P-Eyelash2R": THREE.Object3D
     "DEF-Eyelash3L": THREE.Object3D
-    Eyelash3L: THREE.Object3D
-    "P-Eyelash3L": THREE.Object3D
     "DEF-Eyelash3R": THREE.Object3D
-    Eyelash3R: THREE.Object3D
-    "P-Eyelash3R": THREE.Object3D
     "DEF-Eyelash4L": THREE.Object3D
-    Eyelash4L: THREE.Object3D
-    "P-Eyelash4L": THREE.Object3D
     "DEF-Eyelash4R": THREE.Object3D
-    Eyelash4R: THREE.Object3D
-    "P-Eyelash4R": THREE.Object3D
     "DEF-FannyPack7": THREE.Object3D
     "DEF-FannyPack_Buckle_Inner": THREE.Object3D
     "DEF-FannyPack_Buckle_Calmp_Bottom": THREE.Object3D
-    FannyPack_Buckle_Calmp_Bottom: THREE.Object3D
     "DEF-FannyPack_Buckle_Calmp_Top": THREE.Object3D
-    FannyPack_Buckle_Calmp_Top: THREE.Object3D
-    FannyPack_Buckle_Inner: THREE.Object3D
     "DEF-FannyPack_Strap_Ring_Inner": THREE.Object3D
-    FannyPack_Strap_Ring_Inner: THREE.Object3D
-    "STR-FannyPack7": THREE.Object3D
     "DEF-FannyPack_Buckle_Outer": THREE.Object3D
-    FannyPack_Buckle_Outer: THREE.Object3D
     "DEF-FannyPack_Strap_Ring_Outer": THREE.Object3D
-    FannyPack_Strap_Ring_Outer: THREE.Object3D
-    "STR-TIP-FannyPack5_2": THREE.Object3D
-    FannyPack_Buckle: THREE.Object3D
-    "P-FannyPack_Buckle": THREE.Object3D
     "DEF-Fannypack_Zipper_Slider": THREE.Object3D
     "DEF-Fannypack_Zipper_Tab": THREE.Object3D
-    Fannypack_Zipper_Tab: THREE.Object3D
-    Fannypack_Zipper_Slider: THREE.Object3D
-    "P-Fannypack_Zipper_Slider": THREE.Object3D
     "DEF-Handkerchief_Back": THREE.Object3D
-    Handkerchief_Back: THREE.Object3D
-    "P-Handkerchief_Back": THREE.Object3D
     "DEF-Handkerchief_Knot": THREE.Object3D
     "DEF-HandkerchiefL": THREE.Object3D
-    HandkerchiefL: THREE.Object3D
     "DEF-HandkerchiefR": THREE.Object3D
-    HandkerchiefR: THREE.Object3D
-    Handkerchief_Knot: THREE.Object3D
-    "P-Handkerchief_Knot": THREE.Object3D
-    "DSP-IK-MSTR-FootL": THREE.Object3D
-    "DSP-IK-MSTR-C-FootL": THREE.Object3D
-    "IK-STR-TGT-FootL": THREE.Object3D
-    "ROLL-FootL": THREE.Object3D
-    "FK-W-SNAP-FootL": THREE.Object3D
-    "IK-FootL": THREE.Object3D
-    "RIK-FootL": THREE.Object3D
-    "IK-ToesL": THREE.Object3D
-    "RIK-ToesL": THREE.Object3D
-    "IK-RollBackL": THREE.Object3D
-    "ROLL-MSTR-FootL": THREE.Object3D
-    "IK-MSTR-C-FootL": THREE.Object3D
-    "IK-MSTR-FootL": THREE.Object3D
-    "P-IK-MSTR-FootL": THREE.Object3D
-    "DSP-IK-MSTR-FootR": THREE.Object3D
-    "DSP-IK-MSTR-C-FootR": THREE.Object3D
-    "IK-STR-TGT-FootR": THREE.Object3D
-    "ROLL-FootR": THREE.Object3D
-    "FK-W-SNAP-FootR": THREE.Object3D
-    "IK-FootR": THREE.Object3D
-    "RIK-FootR": THREE.Object3D
-    "IK-ToesR": THREE.Object3D
-    "RIK-ToesR": THREE.Object3D
-    "IK-RollBackR": THREE.Object3D
-    "ROLL-MSTR-FootR": THREE.Object3D
-    "IK-MSTR-C-FootR": THREE.Object3D
-    "IK-MSTR-FootR": THREE.Object3D
-    "P-IK-MSTR-FootR": THREE.Object3D
-    "IK-STR-TGT-WristL": THREE.Object3D
-    "IK-WristL": THREE.Object3D
-    "IK-MSTR-C-WristL": THREE.Object3D
-    "IK-MSTR-WristL": THREE.Object3D
-    "P-IK-MSTR-WristL": THREE.Object3D
-    "IK-STR-TGT-WristR": THREE.Object3D
-    "IK-WristR": THREE.Object3D
-    "IK-MSTR-C-WristR": THREE.Object3D
-    "IK-MSTR-WristR": THREE.Object3D
-    "P-IK-MSTR-WristR": THREE.Object3D
-    "DSP-TGT-EyeL": THREE.Object3D
-    "TGT-EyeL": THREE.Object3D
-    "DSP-TGT-EyeR": THREE.Object3D
-    "TGT-EyeR": THREE.Object3D
-    "MSTR-TGT-Eyes": THREE.Object3D
-    "P-MSTR-TGT-Eyes": THREE.Object3D
-    Binoculars_Empty1: THREE.Object3D
-    "P-Binoculars_Empty1": THREE.Object3D
-    "P-P-Binoculars_Empty1": THREE.Object3D
-    Empty1L: THREE.Object3D
-    "P-Empty1L": THREE.Object3D
-    "P-P-Empty1L": THREE.Object3D
-    Empty1R: THREE.Object3D
-    "P-Empty1R": THREE.Object3D
-    "P-P-Empty1R": THREE.Object3D
-    Empty2L: THREE.Object3D
-    "P-Empty2L": THREE.Object3D
-    "P-P-Empty2L": THREE.Object3D
-    Empty2R: THREE.Object3D
-    "P-Empty2R": THREE.Object3D
-    "P-P-Empty2R": THREE.Object3D
-    GrabL: THREE.Object3D
-    "P-GrabL": THREE.Object3D
-    "P-P-GrabL": THREE.Object3D
-    GrabR: THREE.Object3D
-    "P-GrabR": THREE.Object3D
-    "P-P-GrabR": THREE.Object3D
-    "P-P-Pin4": THREE.Object3D
     "DEF-Pin1": THREE.Object3D
-    Pin1: THREE.Object3D
-    "P-Pin1": THREE.Object3D
     "DEF-Pin2": THREE.Object3D
-    Pin2: THREE.Object3D
-    "P-Pin2": THREE.Object3D
     "DEF-Pin3": THREE.Object3D
-    Pin3: THREE.Object3D
-    "P-Pin3": THREE.Object3D
     "DEF-Pin4": THREE.Object3D
-    Pin4: THREE.Object3D
-    "P-Pin4": THREE.Object3D
     "DEF-Pin5": THREE.Object3D
-    Pin5: THREE.Object3D
-    "P-Pin5": THREE.Object3D
-    action_props: THREE.Object3D
-    Elbow_AnchorL: THREE.Object3D
-    Elbow_AnchorR: THREE.Object3D
-    Knee_AnchorL: THREE.Object3D
-    Knee_AnchorR: THREE.Object3D
     "DEF-Chest": THREE.Object3D
-    "CTR-DEF-Chest": THREE.Object3D
-    "CTR-DEF-P-Chest": THREE.Object3D
-    "FK-ShoulderL": THREE.Object3D
-    "FK-ShoulderR": THREE.Object3D
-    "ORG-ArmpitL": THREE.Object3D
-    "ORG-ArmpitR": THREE.Object3D
-    ScarfPivotL: THREE.Object3D
-    "LTC-HandkerchiefL": THREE.Object3D
     "ROOT-LTC-HandkerchiefL": THREE.Object3D
-    "ORG-LTC-HandkerchiefL": THREE.Object3D
-    "IK-STR-UpperArmL": THREE.Object3D
-    "IK-ForearmL": THREE.Object3D
-    "IK-UpperArmL": THREE.Object3D
-    "AutoRubberHose-ForearmL": THREE.Object3D
-    "ACT-Hand_SplayL": THREE.Object3D
     "DEF-WristL": THREE.Object3D
-    "FK-Finger_Index_CarpalL": THREE.Object3D
-    "FK-Finger_Middle_CarpalL": THREE.Object3D
-    "FK-Finger_Pinky_CarpalL": THREE.Object3D
-    "FK-Finger_Ring_CarpalL": THREE.Object3D
-    "STR-TIP-TAN-Finger_Index_CarpalL": THREE.Object3D
-    "STR-TIP-Finger_Index_CarpalL": THREE.Object3D
-    "ORG-TIP-Finger_Index_CarpalL": THREE.Object3D
-    "IK-SW-Finger_Index1L": THREE.Object3D
-    "FK-Finger_Index3L": THREE.Object3D
-    "FK-Finger_Index2L": THREE.Object3D
-    "FK-Finger_Index1L": THREE.Object3D
-    "IK-Finger_Index3L": THREE.Object3D
-    "IK-Finger_Index2L": THREE.Object3D
-    "IK-Finger_Index1L": THREE.Object3D
-    "DSP-IK-POLE-Finger_Index1L": THREE.Object3D
-    "IK-POLE-LINE-Finger_Index1L": THREE.Object3D
-    "IK-POLE-Finger_Index1L": THREE.Object3D
-    "IK-STR-Finger_Index1L": THREE.Object3D
-    "DSP-IK-SW-Finger_Index1L": THREE.Object3D
-    "ORG-TIP-Finger_Index3L": THREE.Object3D
     "DEF-Finger_Index3L": THREE.Object3D
-    "STR-TAN-Finger_Index3L": THREE.Object3D
-    "STR-Finger_Index3L": THREE.Object3D
-    "STR-S-Finger_Index3L": THREE.Object3D
-    "STR-TIP-TAN-Finger_Index3L": THREE.Object3D
-    "STR-TIP-Finger_Index3L": THREE.Object3D
-    "STR-TIP-S-Finger_Index3L": THREE.Object3D
-    "XROT-Finger_Index3L": THREE.Object3D
-    "ORG-Finger_Index3L": THREE.Object3D
     "DEF-Finger_Index2L": THREE.Object3D
-    "STR-TAN-Finger_Index2L": THREE.Object3D
-    "STR-Finger_Index2L": THREE.Object3D
-    "STR-S-Finger_Index2L": THREE.Object3D
-    "TIP-ORG-Finger_Index3L": THREE.Object3D
-    "ORG-Finger_Index2L": THREE.Object3D
     "DEF-Finger_Index1L": THREE.Object3D
-    "STR-TAN-Finger_Index1L": THREE.Object3D
-    "STR-Finger_Index1L": THREE.Object3D
-    "ORG-Finger_Index1L": THREE.Object3D
-    "ROOT-Finger_Index1L": THREE.Object3D
     "DEF-Finger_Index_CarpalL": THREE.Object3D
-    "STR-TAN-Finger_Index_CarpalL": THREE.Object3D
-    "STR-Finger_Index_CarpalL": THREE.Object3D
-    "ORG-Finger_Index_CarpalL": THREE.Object3D
-    "STR-TIP-TAN-Finger_Middle_CarpalL": THREE.Object3D
-    "STR-TIP-Finger_Middle_CarpalL": THREE.Object3D
-    "ORG-TIP-Finger_Middle_CarpalL": THREE.Object3D
-    "IK-SW-Finger_Middle1L": THREE.Object3D
-    "FK-Finger_Middle3L": THREE.Object3D
-    "FK-Finger_Middle2L": THREE.Object3D
-    "FK-Finger_Middle1L": THREE.Object3D
-    "IK-Finger_Middle3L": THREE.Object3D
-    "IK-Finger_Middle2L": THREE.Object3D
-    "IK-Finger_Middle1L": THREE.Object3D
-    "DSP-IK-POLE-Finger_Middle1L": THREE.Object3D
-    "IK-POLE-LINE-Finger_Middle1L": THREE.Object3D
-    "IK-POLE-Finger_Middle1L": THREE.Object3D
-    "IK-STR-Finger_Middle1L": THREE.Object3D
-    "DSP-IK-SW-Finger_Middle1L": THREE.Object3D
-    "ORG-TIP-Finger_Middle3L": THREE.Object3D
     "DEF-Finger_Middle3L": THREE.Object3D
-    "STR-TAN-Finger_Middle3L": THREE.Object3D
-    "STR-Finger_Middle3L": THREE.Object3D
-    "STR-S-Finger_Middle3L": THREE.Object3D
-    "STR-TIP-TAN-Finger_Middle3L": THREE.Object3D
-    "STR-TIP-Finger_Middle3L": THREE.Object3D
-    "STR-TIP-S-Finger_Middle3L": THREE.Object3D
-    "XROT-Finger_Middle3L": THREE.Object3D
-    "ORG-Finger_Middle3L": THREE.Object3D
     "DEF-Finger_Middle2L": THREE.Object3D
-    "STR-TAN-Finger_Middle2L": THREE.Object3D
-    "STR-Finger_Middle2L": THREE.Object3D
-    "STR-S-Finger_Middle2L": THREE.Object3D
-    "TIP-ORG-Finger_Middle3L": THREE.Object3D
-    "ORG-Finger_Middle2L": THREE.Object3D
     "DEF-Finger_Middle1L": THREE.Object3D
-    "STR-TAN-Finger_Middle1L": THREE.Object3D
-    "STR-Finger_Middle1L": THREE.Object3D
-    "ORG-Finger_Middle1L": THREE.Object3D
-    "ROOT-Finger_Middle1L": THREE.Object3D
     "DEF-Finger_Middle_CarpalL": THREE.Object3D
-    "STR-TAN-Finger_Middle_CarpalL": THREE.Object3D
-    "STR-Finger_Middle_CarpalL": THREE.Object3D
-    "ORG-Finger_Middle_CarpalL": THREE.Object3D
-    "STR-TIP-TAN-Finger_Pinky_CarpalL": THREE.Object3D
-    "STR-TIP-Finger_Pinky_CarpalL": THREE.Object3D
-    "ORG-TIP-Finger_Pinky_CarpalL": THREE.Object3D
-    "IK-SW-Finger_Pinky1L": THREE.Object3D
-    "FK-Finger_Pinky3L": THREE.Object3D
-    "FK-Finger_Pinky2L": THREE.Object3D
-    "FK-Finger_Pinky1L": THREE.Object3D
-    "IK-Finger_Pinky3L": THREE.Object3D
-    "IK-Finger_Pinky2L": THREE.Object3D
-    "IK-Finger_Pinky1L": THREE.Object3D
-    "DSP-IK-POLE-Finger_Pinky1L": THREE.Object3D
-    "IK-POLE-LINE-Finger_Pinky1L": THREE.Object3D
-    "IK-POLE-Finger_Pinky1L": THREE.Object3D
-    "IK-STR-Finger_Pinky1L": THREE.Object3D
-    "DSP-IK-SW-Finger_Pinky1L": THREE.Object3D
-    "ORG-TIP-Finger_Pinky3L": THREE.Object3D
     "DEF-Finger_Pinky3L": THREE.Object3D
-    "STR-TAN-Finger_Pinky3L": THREE.Object3D
-    "STR-Finger_Pinky3L": THREE.Object3D
-    "STR-S-Finger_Pinky3L": THREE.Object3D
-    "STR-TIP-TAN-Finger_Pinky3L": THREE.Object3D
-    "STR-TIP-Finger_Pinky3L": THREE.Object3D
-    "STR-TIP-S-Finger_Pinky3L": THREE.Object3D
-    "XROT-Finger_Pinky3L": THREE.Object3D
-    "ORG-Finger_Pinky3L": THREE.Object3D
     "DEF-Finger_Pinky2L": THREE.Object3D
-    "STR-TAN-Finger_Pinky2L": THREE.Object3D
-    "STR-Finger_Pinky2L": THREE.Object3D
-    "STR-S-Finger_Pinky2L": THREE.Object3D
-    "TIP-ORG-Finger_Pinky3L": THREE.Object3D
-    "ORG-Finger_Pinky2L": THREE.Object3D
     "DEF-Finger_Pinky1L": THREE.Object3D
-    "STR-TAN-Finger_Pinky1L": THREE.Object3D
-    "STR-Finger_Pinky1L": THREE.Object3D
-    "ORG-Finger_Pinky1L": THREE.Object3D
-    "ROOT-Finger_Pinky1L": THREE.Object3D
     "DEF-Finger_Pinky_CarpalL": THREE.Object3D
-    "STR-TAN-Finger_Pinky_CarpalL": THREE.Object3D
-    "STR-Finger_Pinky_CarpalL": THREE.Object3D
-    "ORG-Finger_Pinky_CarpalL": THREE.Object3D
-    "STR-TIP-TAN-Finger_Ring_CarpalL": THREE.Object3D
-    "STR-TIP-Finger_Ring_CarpalL": THREE.Object3D
-    "ORG-TIP-Finger_Ring_CarpalL": THREE.Object3D
-    "IK-SW-Finger_Ring1L": THREE.Object3D
-    "FK-Finger_Ring3L": THREE.Object3D
-    "FK-Finger_Ring2L": THREE.Object3D
-    "FK-Finger_Ring1L": THREE.Object3D
-    "IK-Finger_Ring3L": THREE.Object3D
-    "IK-Finger_Ring2L": THREE.Object3D
-    "IK-Finger_Ring1L": THREE.Object3D
-    "DSP-IK-POLE-Finger_Ring1L": THREE.Object3D
-    "IK-POLE-LINE-Finger_Ring1L": THREE.Object3D
-    "IK-POLE-Finger_Ring1L": THREE.Object3D
-    "IK-STR-Finger_Ring1L": THREE.Object3D
-    "DSP-IK-SW-Finger_Ring1L": THREE.Object3D
-    "ORG-TIP-Finger_Ring3L": THREE.Object3D
     "DEF-Finger_Ring3L": THREE.Object3D
-    "STR-TAN-Finger_Ring3L": THREE.Object3D
-    "STR-Finger_Ring3L": THREE.Object3D
-    "STR-S-Finger_Ring3L": THREE.Object3D
-    "STR-TIP-TAN-Finger_Ring3L": THREE.Object3D
-    "STR-TIP-Finger_Ring3L": THREE.Object3D
-    "STR-TIP-S-Finger_Ring3L": THREE.Object3D
-    "XROT-Finger_Ring3L": THREE.Object3D
-    "ORG-Finger_Ring3L": THREE.Object3D
     "DEF-Finger_Ring2L": THREE.Object3D
-    "STR-TAN-Finger_Ring2L": THREE.Object3D
-    "STR-Finger_Ring2L": THREE.Object3D
-    "STR-S-Finger_Ring2L": THREE.Object3D
-    "TIP-ORG-Finger_Ring3L": THREE.Object3D
-    "ORG-Finger_Ring2L": THREE.Object3D
     "DEF-Finger_Ring1L": THREE.Object3D
-    "STR-TAN-Finger_Ring1L": THREE.Object3D
-    "STR-Finger_Ring1L": THREE.Object3D
-    "ORG-Finger_Ring1L": THREE.Object3D
-    "ROOT-Finger_Ring1L": THREE.Object3D
     "DEF-Finger_Ring_CarpalL": THREE.Object3D
-    "STR-TAN-Finger_Ring_CarpalL": THREE.Object3D
-    "STR-Finger_Ring_CarpalL": THREE.Object3D
-    "ORG-Finger_Ring_CarpalL": THREE.Object3D
-    "PRP-UpperArmL": THREE.Object3D
-    "IK-SW-Finger_Thumb1L": THREE.Object3D
-    "FK-Finger_Thumb3L": THREE.Object3D
-    "FK-Finger_Thumb2L": THREE.Object3D
-    "FK-Finger_Thumb1L": THREE.Object3D
-    "IK-Finger_Thumb3L": THREE.Object3D
-    "IK-Finger_Thumb2L": THREE.Object3D
-    "IK-Finger_Thumb1L": THREE.Object3D
-    "DSP-IK-POLE-Finger_Thumb1L": THREE.Object3D
-    "IK-POLE-LINE-Finger_Thumb1L": THREE.Object3D
-    "IK-POLE-Finger_Thumb1L": THREE.Object3D
-    "IK-STR-Finger_Thumb1L": THREE.Object3D
-    "DSP-IK-SW-Finger_Thumb1L": THREE.Object3D
-    "ORG-TIP-Finger_Thumb3L": THREE.Object3D
     "DEF-Finger_Thumb3L": THREE.Object3D
-    "STR-TAN-Finger_Thumb3L": THREE.Object3D
-    "STR-Finger_Thumb3L": THREE.Object3D
-    "STR-S-Finger_Thumb3L": THREE.Object3D
-    "STR-TIP-TAN-Finger_Thumb3L": THREE.Object3D
-    "STR-TIP-Finger_Thumb3L": THREE.Object3D
-    "STR-TIP-S-Finger_Thumb3L": THREE.Object3D
-    "XROT-Finger_Thumb3L": THREE.Object3D
-    "ORG-Finger_Thumb3L": THREE.Object3D
     "DEF-Finger_Thumb2L": THREE.Object3D
-    "STR-TAN-Finger_Thumb2L": THREE.Object3D
-    "STR-Finger_Thumb2L": THREE.Object3D
-    "STR-S-Finger_Thumb2L": THREE.Object3D
-    "TIP-ORG-Finger_Thumb3L": THREE.Object3D
-    "ORG-Finger_Thumb2L": THREE.Object3D
     "DEF-Finger_Thumb1L": THREE.Object3D
-    "STR-TAN-Finger_Thumb1L": THREE.Object3D
-    "STR-Finger_Thumb1L": THREE.Object3D
-    "ORG-Finger_Thumb1L": THREE.Object3D
-    "ROOT-Finger_Thumb1L": THREE.Object3D
-    "STR-TAN-WristL": THREE.Object3D
-    "STR-RI-WristL": THREE.Object3D
-    "STR-RO-WristL": THREE.Object3D
-    Track_WristL: THREE.Object3D
-    "STR-WristL": THREE.Object3D
-    "ORG-WristL": THREE.Object3D
     "DEF-Forearm2L": THREE.Object3D
-    "STR-Forearm2L": THREE.Object3D
-    "STR-TAN-Forearm2L": THREE.Object3D
-    "STR-H-Forearm2L": THREE.Object3D
-    "SKH-Forearm1L": THREE.Object3D
-    "SKP-Forearm1L": THREE.Object3D
     "DEF-Forearm1L": THREE.Object3D
-    "STR-RI-Forearm1L": THREE.Object3D
-    "STR-RO-Forearm1L": THREE.Object3D
-    "STR-Forearm1L": THREE.Object3D
-    "STR-S-Forearm1L": THREE.Object3D
-    "STR-TAN-Forearm1L": THREE.Object3D
-    "ORG-ForearmL": THREE.Object3D
-    "STR-TIP-TAN-Watch": THREE.Object3D
-    "STR-TIP-Watch": THREE.Object3D
-    "ORG-TIP-Watch": THREE.Object3D
     "DEF-Watch": THREE.Object3D
-    "STR-TAN-Watch": THREE.Object3D
-    "STR-Watch": THREE.Object3D
-    "ORG-Watch": THREE.Object3D
-    "STR-TAN-UpperArm2L": THREE.Object3D
-    "SKH-UpperArm2L": THREE.Object3D
-    "SKP-UpperArm2L": THREE.Object3D
     "DEF-UpperArm2L": THREE.Object3D
-    "STR-UpperArm2L": THREE.Object3D
-    "STR-H-UpperArm2L": THREE.Object3D
-    "STR-TAN-UpperArm1L": THREE.Object3D
-    "SKH-UpperArm1L": THREE.Object3D
-    "SKP-UpperArm1L": THREE.Object3D
     "DEF-UpperArm1L": THREE.Object3D
-    "STR-UpperArm1L": THREE.Object3D
-    "ORG-UpperArmL": THREE.Object3D
-    "ROOT-UpperArmL": THREE.Object3D
     "DEF-ShoulderL": THREE.Object3D
-    "STR-TAN-ShoulderL": THREE.Object3D
-    "STR-ShoulderL": THREE.Object3D
-    "ORG-ShoulderL": THREE.Object3D
-    ScarfPivotR: THREE.Object3D
-    "LTC-HandkerchiefR": THREE.Object3D
     "ROOT-LTC-HandkerchiefR": THREE.Object3D
-    "ORG-LTC-HandkerchiefR": THREE.Object3D
-    "IK-STR-UpperArmR": THREE.Object3D
-    "IK-ForearmR": THREE.Object3D
-    "IK-UpperArmR": THREE.Object3D
-    "AutoRubberHose-ForearmR": THREE.Object3D
-    "ACT-Hand_SplayR": THREE.Object3D
     "DEF-WristR": THREE.Object3D
-    "FK-Finger_Index_CarpalR": THREE.Object3D
-    "FK-Finger_Middle_CarpalR": THREE.Object3D
-    "FK-Finger_Pinky_CarpalR": THREE.Object3D
-    "FK-Finger_Ring_CarpalR": THREE.Object3D
-    "STR-TIP-TAN-Finger_Index_CarpalR": THREE.Object3D
-    "STR-TIP-Finger_Index_CarpalR": THREE.Object3D
-    "ORG-TIP-Finger_Index_CarpalR": THREE.Object3D
-    "IK-SW-Finger_Index1R": THREE.Object3D
-    "FK-Finger_Index3R": THREE.Object3D
-    "FK-Finger_Index2R": THREE.Object3D
-    "FK-Finger_Index1R": THREE.Object3D
-    "IK-Finger_Index3R": THREE.Object3D
-    "IK-Finger_Index2R": THREE.Object3D
-    "IK-Finger_Index1R": THREE.Object3D
-    "DSP-IK-POLE-Finger_Index1R": THREE.Object3D
-    "IK-POLE-LINE-Finger_Index1R": THREE.Object3D
-    "IK-POLE-Finger_Index1R": THREE.Object3D
-    "IK-STR-Finger_Index1R": THREE.Object3D
-    "DSP-IK-SW-Finger_Index1R": THREE.Object3D
-    "ORG-TIP-Finger_Index3R": THREE.Object3D
     "DEF-Finger_Index3R": THREE.Object3D
-    "STR-TAN-Finger_Index3R": THREE.Object3D
-    "STR-Finger_Index3R": THREE.Object3D
-    "STR-S-Finger_Index3R": THREE.Object3D
-    "STR-TIP-TAN-Finger_Index3R": THREE.Object3D
-    "STR-TIP-Finger_Index3R": THREE.Object3D
-    "STR-TIP-S-Finger_Index3R": THREE.Object3D
-    "XROT-Finger_Index3R": THREE.Object3D
-    "ORG-Finger_Index3R": THREE.Object3D
     "DEF-Finger_Index2R": THREE.Object3D
-    "STR-TAN-Finger_Index2R": THREE.Object3D
-    "STR-Finger_Index2R": THREE.Object3D
-    "STR-S-Finger_Index2R": THREE.Object3D
-    "TIP-ORG-Finger_Index3R": THREE.Object3D
-    "ORG-Finger_Index2R": THREE.Object3D
     "DEF-Finger_Index1R": THREE.Object3D
-    "STR-TAN-Finger_Index1R": THREE.Object3D
-    "STR-Finger_Index1R": THREE.Object3D
-    "ORG-Finger_Index1R": THREE.Object3D
-    "ROOT-Finger_Index1R": THREE.Object3D
     "DEF-Finger_Index_CarpalR": THREE.Object3D
-    "STR-TAN-Finger_Index_CarpalR": THREE.Object3D
-    "STR-Finger_Index_CarpalR": THREE.Object3D
-    "ORG-Finger_Index_CarpalR": THREE.Object3D
-    "STR-TIP-TAN-Finger_Middle_CarpalR": THREE.Object3D
-    "STR-TIP-Finger_Middle_CarpalR": THREE.Object3D
-    "ORG-TIP-Finger_Middle_CarpalR": THREE.Object3D
-    "IK-SW-Finger_Middle1R": THREE.Object3D
-    "FK-Finger_Middle3R": THREE.Object3D
-    "FK-Finger_Middle2R": THREE.Object3D
-    "FK-Finger_Middle1R": THREE.Object3D
-    "IK-Finger_Middle3R": THREE.Object3D
-    "IK-Finger_Middle2R": THREE.Object3D
-    "IK-Finger_Middle1R": THREE.Object3D
-    "DSP-IK-POLE-Finger_Middle1R": THREE.Object3D
-    "IK-POLE-LINE-Finger_Middle1R": THREE.Object3D
-    "IK-POLE-Finger_Middle1R": THREE.Object3D
-    "IK-STR-Finger_Middle1R": THREE.Object3D
-    "DSP-IK-SW-Finger_Middle1R": THREE.Object3D
-    "ORG-TIP-Finger_Middle3R": THREE.Object3D
     "DEF-Finger_Middle3R": THREE.Object3D
-    "STR-TAN-Finger_Middle3R": THREE.Object3D
-    "STR-Finger_Middle3R": THREE.Object3D
-    "STR-S-Finger_Middle3R": THREE.Object3D
-    "STR-TIP-TAN-Finger_Middle3R": THREE.Object3D
-    "STR-TIP-Finger_Middle3R": THREE.Object3D
-    "STR-TIP-S-Finger_Middle3R": THREE.Object3D
-    "XROT-Finger_Middle3R": THREE.Object3D
-    "ORG-Finger_Middle3R": THREE.Object3D
     "DEF-Finger_Middle2R": THREE.Object3D
-    "STR-TAN-Finger_Middle2R": THREE.Object3D
-    "STR-Finger_Middle2R": THREE.Object3D
-    "STR-S-Finger_Middle2R": THREE.Object3D
-    "TIP-ORG-Finger_Middle3R": THREE.Object3D
-    "ORG-Finger_Middle2R": THREE.Object3D
     "DEF-Finger_Middle1R": THREE.Object3D
-    "STR-TAN-Finger_Middle1R": THREE.Object3D
-    "STR-Finger_Middle1R": THREE.Object3D
-    "ORG-Finger_Middle1R": THREE.Object3D
-    "ROOT-Finger_Middle1R": THREE.Object3D
     "DEF-Finger_Middle_CarpalR": THREE.Object3D
-    "STR-TAN-Finger_Middle_CarpalR": THREE.Object3D
-    "STR-Finger_Middle_CarpalR": THREE.Object3D
-    "ORG-Finger_Middle_CarpalR": THREE.Object3D
-    "STR-TIP-TAN-Finger_Pinky_CarpalR": THREE.Object3D
-    "STR-TIP-Finger_Pinky_CarpalR": THREE.Object3D
-    "ORG-TIP-Finger_Pinky_CarpalR": THREE.Object3D
-    "IK-SW-Finger_Pinky1R": THREE.Object3D
-    "FK-Finger_Pinky3R": THREE.Object3D
-    "FK-Finger_Pinky2R": THREE.Object3D
-    "FK-Finger_Pinky1R": THREE.Object3D
-    "IK-Finger_Pinky3R": THREE.Object3D
-    "IK-Finger_Pinky2R": THREE.Object3D
-    "IK-Finger_Pinky1R": THREE.Object3D
-    "DSP-IK-POLE-Finger_Pinky1R": THREE.Object3D
-    "IK-POLE-LINE-Finger_Pinky1R": THREE.Object3D
-    "IK-POLE-Finger_Pinky1R": THREE.Object3D
-    "IK-STR-Finger_Pinky1R": THREE.Object3D
-    "DSP-IK-SW-Finger_Pinky1R": THREE.Object3D
-    "ORG-TIP-Finger_Pinky3R": THREE.Object3D
     "DEF-Finger_Pinky3R": THREE.Object3D
-    "STR-TAN-Finger_Pinky3R": THREE.Object3D
-    "STR-Finger_Pinky3R": THREE.Object3D
-    "STR-S-Finger_Pinky3R": THREE.Object3D
-    "STR-TIP-TAN-Finger_Pinky3R": THREE.Object3D
-    "STR-TIP-Finger_Pinky3R": THREE.Object3D
-    "STR-TIP-S-Finger_Pinky3R": THREE.Object3D
-    "XROT-Finger_Pinky3R": THREE.Object3D
-    "ORG-Finger_Pinky3R": THREE.Object3D
     "DEF-Finger_Pinky2R": THREE.Object3D
-    "STR-TAN-Finger_Pinky2R": THREE.Object3D
-    "STR-Finger_Pinky2R": THREE.Object3D
-    "STR-S-Finger_Pinky2R": THREE.Object3D
-    "TIP-ORG-Finger_Pinky3R": THREE.Object3D
-    "ORG-Finger_Pinky2R": THREE.Object3D
     "DEF-Finger_Pinky1R": THREE.Object3D
-    "STR-TAN-Finger_Pinky1R": THREE.Object3D
-    "STR-Finger_Pinky1R": THREE.Object3D
-    "ORG-Finger_Pinky1R": THREE.Object3D
-    "ROOT-Finger_Pinky1R": THREE.Object3D
     "DEF-Finger_Pinky_CarpalR": THREE.Object3D
-    "STR-TAN-Finger_Pinky_CarpalR": THREE.Object3D
-    "STR-Finger_Pinky_CarpalR": THREE.Object3D
-    "ORG-Finger_Pinky_CarpalR": THREE.Object3D
-    "STR-TIP-TAN-Finger_Ring_CarpalR": THREE.Object3D
-    "STR-TIP-Finger_Ring_CarpalR": THREE.Object3D
-    "ORG-TIP-Finger_Ring_CarpalR": THREE.Object3D
-    "IK-SW-Finger_Ring1R": THREE.Object3D
-    "FK-Finger_Ring3R": THREE.Object3D
-    "FK-Finger_Ring2R": THREE.Object3D
-    "FK-Finger_Ring1R": THREE.Object3D
-    "IK-Finger_Ring3R": THREE.Object3D
-    "IK-Finger_Ring2R": THREE.Object3D
-    "IK-Finger_Ring1R": THREE.Object3D
-    "DSP-IK-POLE-Finger_Ring1R": THREE.Object3D
-    "IK-POLE-LINE-Finger_Ring1R": THREE.Object3D
-    "IK-POLE-Finger_Ring1R": THREE.Object3D
-    "IK-STR-Finger_Ring1R": THREE.Object3D
-    "DSP-IK-SW-Finger_Ring1R": THREE.Object3D
-    "ORG-TIP-Finger_Ring3R": THREE.Object3D
     "DEF-Finger_Ring3R": THREE.Object3D
-    "STR-TAN-Finger_Ring3R": THREE.Object3D
-    "STR-Finger_Ring3R": THREE.Object3D
-    "STR-S-Finger_Ring3R": THREE.Object3D
-    "STR-TIP-TAN-Finger_Ring3R": THREE.Object3D
-    "STR-TIP-Finger_Ring3R": THREE.Object3D
-    "STR-TIP-S-Finger_Ring3R": THREE.Object3D
-    "XROT-Finger_Ring3R": THREE.Object3D
-    "ORG-Finger_Ring3R": THREE.Object3D
     "DEF-Finger_Ring2R": THREE.Object3D
-    "STR-TAN-Finger_Ring2R": THREE.Object3D
-    "STR-Finger_Ring2R": THREE.Object3D
-    "STR-S-Finger_Ring2R": THREE.Object3D
-    "TIP-ORG-Finger_Ring3R": THREE.Object3D
-    "ORG-Finger_Ring2R": THREE.Object3D
     "DEF-Finger_Ring1R": THREE.Object3D
-    "STR-TAN-Finger_Ring1R": THREE.Object3D
-    "STR-Finger_Ring1R": THREE.Object3D
-    "ORG-Finger_Ring1R": THREE.Object3D
-    "ROOT-Finger_Ring1R": THREE.Object3D
     "DEF-Finger_Ring_CarpalR": THREE.Object3D
-    "STR-TAN-Finger_Ring_CarpalR": THREE.Object3D
-    "STR-Finger_Ring_CarpalR": THREE.Object3D
-    "ORG-Finger_Ring_CarpalR": THREE.Object3D
-    "PRP-UpperArmR": THREE.Object3D
-    "IK-SW-Finger_Thumb1R": THREE.Object3D
-    "FK-Finger_Thumb3R": THREE.Object3D
-    "FK-Finger_Thumb2R": THREE.Object3D
-    "FK-Finger_Thumb1R": THREE.Object3D
-    "IK-Finger_Thumb3R": THREE.Object3D
-    "IK-Finger_Thumb2R": THREE.Object3D
-    "IK-Finger_Thumb1R": THREE.Object3D
-    "DSP-IK-POLE-Finger_Thumb1R": THREE.Object3D
-    "IK-POLE-LINE-Finger_Thumb1R": THREE.Object3D
-    "IK-POLE-Finger_Thumb1R": THREE.Object3D
-    "IK-STR-Finger_Thumb1R": THREE.Object3D
-    "DSP-IK-SW-Finger_Thumb1R": THREE.Object3D
-    "ORG-TIP-Finger_Thumb3R": THREE.Object3D
     "DEF-Finger_Thumb3R": THREE.Object3D
-    "STR-TAN-Finger_Thumb3R": THREE.Object3D
-    "STR-Finger_Thumb3R": THREE.Object3D
-    "STR-S-Finger_Thumb3R": THREE.Object3D
-    "STR-TIP-TAN-Finger_Thumb3R": THREE.Object3D
-    "STR-TIP-Finger_Thumb3R": THREE.Object3D
-    "STR-TIP-S-Finger_Thumb3R": THREE.Object3D
-    "XROT-Finger_Thumb3R": THREE.Object3D
-    "ORG-Finger_Thumb3R": THREE.Object3D
     "DEF-Finger_Thumb2R": THREE.Object3D
-    "STR-TAN-Finger_Thumb2R": THREE.Object3D
-    "STR-Finger_Thumb2R": THREE.Object3D
-    "STR-S-Finger_Thumb2R": THREE.Object3D
-    "TIP-ORG-Finger_Thumb3R": THREE.Object3D
-    "ORG-Finger_Thumb2R": THREE.Object3D
     "DEF-Finger_Thumb1R": THREE.Object3D
-    "STR-TAN-Finger_Thumb1R": THREE.Object3D
-    "STR-Finger_Thumb1R": THREE.Object3D
-    "ORG-Finger_Thumb1R": THREE.Object3D
-    "ROOT-Finger_Thumb1R": THREE.Object3D
-    "STR-TAN-WristR": THREE.Object3D
-    "STR-RI-WristR": THREE.Object3D
-    "STR-RO-WristR": THREE.Object3D
-    Track_WristR: THREE.Object3D
-    "STR-WristR": THREE.Object3D
-    "ORG-WristR": THREE.Object3D
     "DEF-Forearm2R": THREE.Object3D
-    "STR-Forearm2R": THREE.Object3D
-    "STR-TAN-Forearm2R": THREE.Object3D
-    "STR-H-Forearm2R": THREE.Object3D
-    "SKH-Forearm1R": THREE.Object3D
-    "SKP-Forearm1R": THREE.Object3D
     "DEF-Forearm1R": THREE.Object3D
-    "STR-RI-Forearm1R": THREE.Object3D
-    "STR-RO-Forearm1R": THREE.Object3D
-    "STR-Forearm1R": THREE.Object3D
-    "STR-S-Forearm1R": THREE.Object3D
-    "STR-TAN-Forearm1R": THREE.Object3D
-    "ORG-ForearmR": THREE.Object3D
-    "STR-TAN-UpperArm2R": THREE.Object3D
-    "SKH-UpperArm2R": THREE.Object3D
-    "SKP-UpperArm2R": THREE.Object3D
     "DEF-UpperArm2R": THREE.Object3D
-    "STR-UpperArm2R": THREE.Object3D
-    "STR-H-UpperArm2R": THREE.Object3D
-    "STR-TAN-UpperArm1R": THREE.Object3D
-    "SKH-UpperArm1R": THREE.Object3D
-    "SKP-UpperArm1R": THREE.Object3D
     "DEF-UpperArm1R": THREE.Object3D
-    "STR-UpperArm1R": THREE.Object3D
-    "ORG-UpperArmR": THREE.Object3D
-    "ROOT-UpperArmR": THREE.Object3D
     "DEF-ShoulderR": THREE.Object3D
-    "STR-TAN-ShoulderR": THREE.Object3D
-    "STR-ShoulderR": THREE.Object3D
-    "ORG-ShoulderR": THREE.Object3D
-    "ORG-TIP-Chest": THREE.Object3D
-    "STR-TIP-TAN-Neck": THREE.Object3D
-    "ORG-TIP-Neck": THREE.Object3D
-    "CEN-Eyes": THREE.Object3D
-    "ORG-Cheek1L": THREE.Object3D
-    "STR-TIP-TAN-Eye_Ring_Lower4L": THREE.Object3D
-    "ORG-TIP-Eye_Ring_Lower4L": THREE.Object3D
-    "STR-TAN-Eye_Ring_Lower4L": THREE.Object3D
-    "ORG-Eye_Ring_Lower4L": THREE.Object3D
-    "STR-TAN-Eye_Ring_Lower3L": THREE.Object3D
-    "ORG-Eye_Ring_Lower3L": THREE.Object3D
-    "STR-TAN-Eye_Ring_Lower2L": THREE.Object3D
-    "ORG-Eye_Ring_Lower2L": THREE.Object3D
-    "STR-TAN-Eye_Ring_Lower1L": THREE.Object3D
-    "ORG-Eye_Ring_Lower1L": THREE.Object3D
-    "STR-TIP-TAN-Eye_Ring_Lower4R": THREE.Object3D
-    "ORG-TIP-Eye_Ring_Lower4R": THREE.Object3D
-    "STR-TAN-Eye_Ring_Lower4R": THREE.Object3D
-    "ORG-Eye_Ring_Lower4R": THREE.Object3D
-    "STR-TAN-Eye_Ring_Lower3R": THREE.Object3D
-    "ORG-Eye_Ring_Lower3R": THREE.Object3D
-    "STR-TAN-Eye_Ring_Lower2R": THREE.Object3D
-    "ORG-Eye_Ring_Lower2R": THREE.Object3D
-    "STR-TAN-Eye_Ring_Lower1R": THREE.Object3D
-    "ORG-Eye_Ring_Lower1R": THREE.Object3D
-    "STR-TIP-TAN-Eye_Ring_Upper4L": THREE.Object3D
-    "ORG-TIP-Eye_Ring_Upper4L": THREE.Object3D
-    "STR-TAN-Eye_Ring_Upper4L": THREE.Object3D
-    "ORG-Eye_Ring_Upper4L": THREE.Object3D
-    "STR-TAN-Eye_Ring_Upper3L": THREE.Object3D
-    "ORG-Eye_Ring_Upper3L": THREE.Object3D
-    "STR-TAN-Eye_Ring_Upper2L": THREE.Object3D
-    "ORG-Eye_Ring_Upper2L": THREE.Object3D
-    "STR-TAN-Eye_Ring_Upper1L": THREE.Object3D
-    "ORG-Eye_Ring_Upper1L": THREE.Object3D
-    "STR-TIP-TAN-Eye_Ring_Upper4R": THREE.Object3D
-    "ORG-TIP-Eye_Ring_Upper4R": THREE.Object3D
-    "STR-TAN-Eye_Ring_Upper4R": THREE.Object3D
-    "ORG-Eye_Ring_Upper4R": THREE.Object3D
-    "STR-TAN-Eye_Ring_Upper3R": THREE.Object3D
-    "ORG-Eye_Ring_Upper3R": THREE.Object3D
-    "STR-TAN-Eye_Ring_Upper2R": THREE.Object3D
-    "ORG-Eye_Ring_Upper2R": THREE.Object3D
-    "STR-TAN-Eye_Ring_Upper1R": THREE.Object3D
-    "ORG-Eye_Ring_Upper1R": THREE.Object3D
-    "STR-TIP-TAN-Eyelid_Lower4L": THREE.Object3D
-    "ORG-TIP-Eyelid_Lower4L": THREE.Object3D
-    "STR-TAN-Eyelid_Lower4L": THREE.Object3D
-    "ORG-Eyelid_Lower4L": THREE.Object3D
-    "STR-TAN-Eyelid_Lower3L": THREE.Object3D
-    "ORG-Eyelid_Lower3L": THREE.Object3D
-    "STR-TAN-Eyelid_Lower2L": THREE.Object3D
-    "ORG-Eyelid_Lower2L": THREE.Object3D
-    "STR-TAN-Eyelid_Lower1L": THREE.Object3D
-    "ORG-Eyelid_Lower1L": THREE.Object3D
-    "STR-TIP-TAN-Eyelid_Lower4R": THREE.Object3D
-    "ORG-TIP-Eyelid_Lower4R": THREE.Object3D
-    "STR-TAN-Eyelid_Lower4R": THREE.Object3D
-    "ORG-Eyelid_Lower4R": THREE.Object3D
-    "STR-TAN-Eyelid_Lower3R": THREE.Object3D
-    "ORG-Eyelid_Lower3R": THREE.Object3D
-    "STR-TAN-Eyelid_Lower2R": THREE.Object3D
-    "ORG-Eyelid_Lower2R": THREE.Object3D
-    "STR-TAN-Eyelid_Lower1R": THREE.Object3D
-    "ORG-Eyelid_Lower1R": THREE.Object3D
-    "STR-TIP-TAN-Eyelid_Upper4L": THREE.Object3D
-    "ORG-TIP-Eyelid_Upper4L": THREE.Object3D
-    "STR-TAN-Eyelid_Upper4L": THREE.Object3D
-    "ORG-Eyelid_Upper4L": THREE.Object3D
-    "STR-TAN-Eyelid_Upper3L": THREE.Object3D
-    "ORG-Eyelid_Upper3L": THREE.Object3D
-    "STR-TAN-Eyelid_Upper2L": THREE.Object3D
-    "ORG-Eyelid_Upper2L": THREE.Object3D
-    "STR-TAN-Eyelid_Upper1L": THREE.Object3D
-    "ORG-Eyelid_Upper1L": THREE.Object3D
-    "STR-TIP-TAN-Eyelid_Upper4R": THREE.Object3D
-    "ORG-TIP-Eyelid_Upper4R": THREE.Object3D
-    "STR-TAN-Eyelid_Upper4R": THREE.Object3D
-    "ORG-Eyelid_Upper4R": THREE.Object3D
-    "STR-TAN-Eyelid_Upper3R": THREE.Object3D
-    "ORG-Eyelid_Upper3R": THREE.Object3D
-    "STR-TAN-Eyelid_Upper2R": THREE.Object3D
-    "ORG-Eyelid_Upper2R": THREE.Object3D
-    "STR-TAN-Eyelid_Upper1R": THREE.Object3D
-    "ORG-Eyelid_Upper1R": THREE.Object3D
-    "ORG-STR-Head_Top": THREE.Object3D
-    "ORG-TIP-Head_Top": THREE.Object3D
-    "ACT-Eyelid_LowerL": THREE.Object3D
-    "ACT-Eyelid_LowerR": THREE.Object3D
-    "ACT-Eyelid_UpperL": THREE.Object3D
-    "ACT-Eyelid_UpperR": THREE.Object3D
     "DEF-Cheek2_4L": THREE.Object3D
-    Cheek2_4L: THREE.Object3D
     "DEF-Cheek2_4R": THREE.Object3D
-    Cheek2_4R: THREE.Object3D
     "DEF-ForeheadRing": THREE.Object3D
-    ForeheadRing: THREE.Object3D
     "DEF-ForeheadRing1L": THREE.Object3D
-    ForeheadRing1L: THREE.Object3D
     "DEF-ForeheadRing1R": THREE.Object3D
-    ForeheadRing1R: THREE.Object3D
     "DEF-ForeheadRing2L": THREE.Object3D
-    ForeheadRing2L: THREE.Object3D
     "DEF-ForeheadRing2R": THREE.Object3D
-    ForeheadRing2R: THREE.Object3D
     "DEF-ForeheadRing3L": THREE.Object3D
-    ForeheadRing3L: THREE.Object3D
     "DEF-ForeheadRing3R": THREE.Object3D
-    ForeheadRing3R: THREE.Object3D
     "DEF-Hair_Cut_Back1": THREE.Object3D
-    Hair_Cut_Back1: THREE.Object3D
     "DEF-Hair_Cut_Back2": THREE.Object3D
-    Hair_Cut_Back2: THREE.Object3D
     "DEF-Hair_Cut_Back3": THREE.Object3D
-    Hair_Cut_Back3: THREE.Object3D
     "DEF-Hair_Cut_Front1": THREE.Object3D
-    Hair_Cut_Front1: THREE.Object3D
     "DEF-Hair_Cut_Front2": THREE.Object3D
-    Hair_Cut_Front2: THREE.Object3D
     "DEF-Hair_Cut_Front3": THREE.Object3D
-    Hair_Cut_Front3: THREE.Object3D
     "DEF-Hair_Cut_Front4": THREE.Object3D
-    Hair_Cut_Front4: THREE.Object3D
     "DEF-Hair_Cut_Front5": THREE.Object3D
-    Hair_Cut_Front5: THREE.Object3D
     "DEF-Hair_Cut_Side": THREE.Object3D
-    Hair_Cut_Side: THREE.Object3D
     "DEF-Hair_Cut_Top1": THREE.Object3D
-    Hair_Cut_Top1: THREE.Object3D
     "DEF-Hair_Front1": THREE.Object3D
-    Hair_Front1: THREE.Object3D
     "DEF-Hair_Front2": THREE.Object3D
-    Hair_Front2: THREE.Object3D
     "DEF-Hair_Front3": THREE.Object3D
-    Hair_Front3: THREE.Object3D
     "DEF-Hair_Front4": THREE.Object3D
-    Hair_Front4: THREE.Object3D
     "DEF-Hair_SideL": THREE.Object3D
-    Hair_SideL: THREE.Object3D
     "DEF-Hair_SideR": THREE.Object3D
-    Hair_SideR: THREE.Object3D
     "DEF-HeadSide2L": THREE.Object3D
-    HeadSide2L: THREE.Object3D
     "DEF-HeadSide2R": THREE.Object3D
-    HeadSide2R: THREE.Object3D
-    "LTC-Mask_Bottom": THREE.Object3D
-    "LTC-Mask_Top": THREE.Object3D
-    "LTC-Mask_Root": THREE.Object3D
     "DEF-BrowRing1L": THREE.Object3D
-    BrowRing1L: THREE.Object3D
     "DEF-BrowRing2L": THREE.Object3D
-    BrowRing2L: THREE.Object3D
     "DEF-BrowRing3L": THREE.Object3D
-    BrowRing3L: THREE.Object3D
-    "MSTR-Eyebrow_DetachedL": THREE.Object3D
-    "MSTR-EyebrowL": THREE.Object3D
     "DEF-BrowRing1R": THREE.Object3D
-    BrowRing1R: THREE.Object3D
     "DEF-BrowRing2R": THREE.Object3D
-    BrowRing2R: THREE.Object3D
     "DEF-BrowRing3R": THREE.Object3D
-    BrowRing3R: THREE.Object3D
-    "MSTR-Eyebrow_DetachedR": THREE.Object3D
-    "MSTR-EyebrowR": THREE.Object3D
-    "MSTR-EyeRing_LowerL": THREE.Object3D
-    "MSTR-EyeRing_LowerR": THREE.Object3D
-    "MSTR-EyeRing_UpperL": THREE.Object3D
-    "MSTR-EyeRing_UpperR": THREE.Object3D
     "DEF-NoseBridge1": THREE.Object3D
-    NoseBridge1: THREE.Object3D
-    "AIM-EyeL": THREE.Object3D
     "DEF-Eye_HighlightL": THREE.Object3D
-    "CTR-Eye_HighlightL": THREE.Object3D
     "DEF-EyeL": THREE.Object3D
-    "DSP-CTR-EyeL": THREE.Object3D
-    "CTR-EyeL": THREE.Object3D
-    "ORG-EyeL": THREE.Object3D
-    "ROOT-EyeL": THREE.Object3D
-    "AIM-EyeR": THREE.Object3D
     "DEF-Eye_HighlightR": THREE.Object3D
-    "CTR-Eye_HighlightR": THREE.Object3D
     "DEF-EyeR": THREE.Object3D
-    "DSP-CTR-EyeR": THREE.Object3D
-    "CTR-EyeR": THREE.Object3D
-    "ORG-EyeR": THREE.Object3D
-    "ROOT-EyeR": THREE.Object3D
-    "STR-TIP-Line1_2L": THREE.Object3D
-    "STR-TIP-TAN-Line1_2L": THREE.Object3D
-    "ORG-TIP-Line1_2L": THREE.Object3D
     "DEF-Line1_2L": THREE.Object3D
-    "STR-Line1_2L": THREE.Object3D
-    "STR-TAN-Line1_2L": THREE.Object3D
-    "ORG-Line1_2L": THREE.Object3D
     "DEF-Line1_1L": THREE.Object3D
-    "STR-Line1_1L": THREE.Object3D
-    "STR-TAN-Line1_1L": THREE.Object3D
-    "ORG-Line1_1L": THREE.Object3D
-    "ROOT-Line1L": THREE.Object3D
-    "STR-TIP-Line1_2R": THREE.Object3D
-    "STR-TIP-TAN-Line1_2R": THREE.Object3D
-    "ORG-TIP-Line1_2R": THREE.Object3D
     "DEF-Line1_2R": THREE.Object3D
-    "STR-Line1_2R": THREE.Object3D
-    "STR-TAN-Line1_2R": THREE.Object3D
-    "ORG-Line1_2R": THREE.Object3D
     "DEF-Line1_1R": THREE.Object3D
-    "STR-Line1_1R": THREE.Object3D
-    "STR-TAN-Line1_1R": THREE.Object3D
-    "ORG-Line1_1R": THREE.Object3D
-    "ROOT-Line1R": THREE.Object3D
-    "STR-TIP-Line2_2L": THREE.Object3D
-    "STR-TIP-TAN-Line2_2L": THREE.Object3D
-    "ORG-TIP-Line2_2L": THREE.Object3D
     "DEF-Line2_2L": THREE.Object3D
-    "STR-Line2_2L": THREE.Object3D
-    "STR-TAN-Line2_2L": THREE.Object3D
-    "ORG-Line2_2L": THREE.Object3D
     "DEF-Line2_1L": THREE.Object3D
-    "STR-Line2_1L": THREE.Object3D
-    "STR-TAN-Line2_1L": THREE.Object3D
-    "ORG-Line2_1L": THREE.Object3D
-    "ROOT-Line2L": THREE.Object3D
-    "STR-TIP-Line2_2R": THREE.Object3D
-    "STR-TIP-TAN-Line2_2R": THREE.Object3D
-    "ORG-TIP-Line2_2R": THREE.Object3D
     "DEF-Line2_2R": THREE.Object3D
-    "STR-Line2_2R": THREE.Object3D
-    "STR-TAN-Line2_2R": THREE.Object3D
-    "ORG-Line2_2R": THREE.Object3D
     "DEF-Line2_1R": THREE.Object3D
-    "STR-Line2_1R": THREE.Object3D
-    "STR-TAN-Line2_1R": THREE.Object3D
-    "ORG-Line2_1R": THREE.Object3D
-    "ROOT-Line2R": THREE.Object3D
-    "STR-TIP-Ponytail1": THREE.Object3D
-    "STR-TIP-TAN-Ponytail1": THREE.Object3D
-    "ORG-TIP-Ponytail1": THREE.Object3D
-    "STR-TIP-Ponytail6": THREE.Object3D
-    "STR-TIP-TAN-Ponytail6": THREE.Object3D
-    "ORG-TIP-Ponytail6": THREE.Object3D
     "DEF-Ponytail6": THREE.Object3D
-    "STR-Ponytail6": THREE.Object3D
-    "STR-TAN-Ponytail6": THREE.Object3D
-    "ORG-Ponytail6": THREE.Object3D
     "DEF-Ponytail5": THREE.Object3D
-    "STR-Ponytail5": THREE.Object3D
-    "STR-TAN-Ponytail5": THREE.Object3D
-    "ORG-Ponytail5": THREE.Object3D
     "DEF-Ponytail4": THREE.Object3D
-    "STR-Ponytail4": THREE.Object3D
-    "STR-TAN-Ponytail4": THREE.Object3D
-    "ORG-Ponytail4": THREE.Object3D
     "DEF-Ponytail3": THREE.Object3D
-    "STR-Ponytail3": THREE.Object3D
-    "STR-TAN-Ponytail3": THREE.Object3D
-    "ORG-Ponytail3": THREE.Object3D
     "DEF-Ponytail2": THREE.Object3D
-    "STR-Ponytail2": THREE.Object3D
-    "STR-TAN-Ponytail2": THREE.Object3D
-    "ORG-Ponytail2": THREE.Object3D
-    "ROOT-Ponytail2": THREE.Object3D
     "DEF-Ponytail1": THREE.Object3D
-    "STR-Ponytail1": THREE.Object3D
-    "STR-TAN-Ponytail1": THREE.Object3D
-    "ORG-Ponytail1": THREE.Object3D
-    "ROOT-Ponytail1": THREE.Object3D
     "DEF-Head_Top": THREE.Object3D
-    "STR-Head_Top": THREE.Object3D
-    "ORG-Head_Top": THREE.Object3D
     "DEF-Head_Bottom": THREE.Object3D
     "DEF-Jaw": THREE.Object3D
-    "ORG-FK-Tongue1": THREE.Object3D
-    "ORG-Lips": THREE.Object3D
-    "STR-TIP-TAN-Tongue5": THREE.Object3D
-    "STR-TIP-Tongue5": THREE.Object3D
-    "ORG-TIP-Tongue5": THREE.Object3D
-    "STR-TAN-Tongue5": THREE.Object3D
     "DEF-Tongue5": THREE.Object3D
-    "STR-Tongue5": THREE.Object3D
-    "ORG-Tongue5": THREE.Object3D
-    "STR-TAN-Tongue4": THREE.Object3D
     "DEF-Tongue4": THREE.Object3D
-    "STR-Tongue4": THREE.Object3D
-    "ORG-Tongue4": THREE.Object3D
-    "STR-TAN-Tongue3": THREE.Object3D
     "DEF-Tongue3": THREE.Object3D
-    "STR-Tongue3": THREE.Object3D
-    "ORG-Tongue3": THREE.Object3D
-    "STR-TAN-Tongue2": THREE.Object3D
     "DEF-Tongue2": THREE.Object3D
-    "STR-Tongue2": THREE.Object3D
-    "ORG-Tongue2": THREE.Object3D
-    "STR-TAN-Tongue1": THREE.Object3D
     "DEF-Tongue1": THREE.Object3D
-    "STR-Tongue1": THREE.Object3D
-    "ORG-Tongue1": THREE.Object3D
-    Jaw: THREE.Object3D
-    "CLONE-Lip_CornerL": THREE.Object3D
-    "CLONE-Lip_CornerR": THREE.Object3D
-    "CLONE-STR-I-Lip_Bottom1": THREE.Object3D
-    "CLONE-STR-I-Lip_Top1": THREE.Object3D
-    "CLONE-STR-Lip_Bottom1L": THREE.Object3D
-    "CLONE-STR-Lip_Bottom1R": THREE.Object3D
-    "CLONE-STR-Lip_Bottom2L": THREE.Object3D
-    "CLONE-STR-Lip_Bottom2R": THREE.Object3D
-    "CLONE-STR-Lip_Top2L": THREE.Object3D
-    "CLONE-STR-Lip_Top2R": THREE.Object3D
-    "CLONE-STR-TIP-Lip_Top2L": THREE.Object3D
-    "CLONE-STR-TIP-Lip_Top2R": THREE.Object3D
-    "DSP-MSTR-Mouth": THREE.Object3D
     "DEF-Lip_CornerL": THREE.Object3D
-    Lip_CornerL: THREE.Object3D
     "DEF-Lip_CornerR": THREE.Object3D
-    Lip_CornerR: THREE.Object3D
-    "ACT-Lip_Upper_Roll": THREE.Object3D
-    "MSTR-Lip_Upper_Center": THREE.Object3D
-    "ORG-TIP-Lip_Top2L": THREE.Object3D
-    "ORG-Lip_Top2L": THREE.Object3D
-    "ORG-Lip_Top1L": THREE.Object3D
-    "ORG-TIP-Lip_Top2R": THREE.Object3D
-    "ORG-Lip_Top2R": THREE.Object3D
-    "ORG-Lip_Top1R": THREE.Object3D
-    "ORG-STR-Lip_Top2L": THREE.Object3D
-    "ORG-STR-Lip_Top2R": THREE.Object3D
-    "MSTR-Lip_Upper": THREE.Object3D
-    "ACT-Lip_Lower_Roll": THREE.Object3D
-    "MSTR-Lip_Lower_Center": THREE.Object3D
-    "ORG-TIP-Lip_Bottom1L": THREE.Object3D
-    "ORG-Lip_Bottom1L": THREE.Object3D
-    "ORG-Lip_Bottom2L": THREE.Object3D
-    "ORG-TIP-Lip_Bottom1R": THREE.Object3D
-    "ORG-Lip_Bottom1R": THREE.Object3D
-    "ORG-Lip_Bottom2R": THREE.Object3D
-    "ORG-STR-Lip_Bottom1L": THREE.Object3D
-    "ORG-STR-Lip_Bottom1R": THREE.Object3D
-    "MSTR-Lip_Lower": THREE.Object3D
-    "MSTR-Mouth_Lower": THREE.Object3D
     "DEF-OuterLip_Lower2L": THREE.Object3D
-    OuterLip_Lower2L: THREE.Object3D
     "DEF-OuterLip_Lower2R": THREE.Object3D
-    OuterLip_Lower2R: THREE.Object3D
-    "STR-TIP-TAN-Lip_Bottom1L": THREE.Object3D
-    "STR-TIP-Lip_Bottom1L": THREE.Object3D
-    "STR-TIP-TAN-Lip_Bottom1R": THREE.Object3D
-    "STR-TIP-Lip_Bottom1R": THREE.Object3D
-    "STR-I-Lip_Bottom1": THREE.Object3D
     "DEF-Lip_Top1L": THREE.Object3D
-    "STR-TAN-Lip_Top1L": THREE.Object3D
-    "STR-Lip_Top1L": THREE.Object3D
     "DEF-Lip_Top1R": THREE.Object3D
-    "STR-TAN-Lip_Top1R": THREE.Object3D
-    "STR-Lip_Top1R": THREE.Object3D
-    "STR-I-Lip_Top1": THREE.Object3D
     "DEF-Lip_Bottom1L": THREE.Object3D
-    "STR-TAN-Lip_Bottom1L": THREE.Object3D
-    "STR-Lip_Bottom1L": THREE.Object3D
     "DEF-Lip_Bottom1R": THREE.Object3D
-    "STR-TAN-Lip_Bottom1R": THREE.Object3D
-    "STR-Lip_Bottom1R": THREE.Object3D
     "DEF-Lip_Bottom2L": THREE.Object3D
-    "STR-TAN-Lip_Bottom2L": THREE.Object3D
-    "STR-Lip_Bottom2L": THREE.Object3D
     "DEF-Lip_Bottom2R": THREE.Object3D
-    "STR-TAN-Lip_Bottom2R": THREE.Object3D
-    "STR-Lip_Bottom2R": THREE.Object3D
     "DEF-Lip_Top2L": THREE.Object3D
-    "STR-TAN-Lip_Top2L": THREE.Object3D
-    "STR-Lip_Top2L": THREE.Object3D
     "DEF-Lip_Top2R": THREE.Object3D
-    "STR-TAN-Lip_Top2R": THREE.Object3D
-    "STR-Lip_Top2R": THREE.Object3D
-    "STR-TIP-TAN-Lip_Top2L": THREE.Object3D
-    "STR-TIP-Lip_Top2L": THREE.Object3D
-    "STR-TIP-TAN-Lip_Top2R": THREE.Object3D
-    "STR-TIP-Lip_Top2R": THREE.Object3D
-    "MSTR-Mouth": THREE.Object3D
-    "MSTR-H-Head_Bottom": THREE.Object3D
-    "MSTR-Head_Bottom_Squash": THREE.Object3D
-    "MSTR-Head_Bottom": THREE.Object3D
-    "ORG-Cheek1R": THREE.Object3D
-    "LTC-LipCornerR": THREE.Object3D
     "ROOT-LTC-LipCornerR": THREE.Object3D
-    "ORG-LipCornerR": THREE.Object3D
-    Track_Nose: THREE.Object3D
     "DEF-Head": THREE.Object3D
     "ROOT-LTC-NeckHead": THREE.Object3D
-    "ORG-NeckHead": THREE.Object3D
-    "LTC-NeckHead": THREE.Object3D
-    "STR-TIP-Neck": THREE.Object3D
-    "STR-Head": THREE.Object3D
-    "ORG-Head": THREE.Object3D
-    "ROOT-Head": THREE.Object3D
     "DEF-Neck": THREE.Object3D
-    "STR-Neck": THREE.Object3D
-    "STR-TAN-Neck": THREE.Object3D
-    "ORG-Neck": THREE.Object3D
-    "ROOT-Neck": THREE.Object3D
-    "ORG-Chest": THREE.Object3D
-    "STR-TIP-TAN-Chest": THREE.Object3D
-    "STR-TIP-Chest": THREE.Object3D
-    "FK-Chest": THREE.Object3D
-    "STR-TAN-Chest": THREE.Object3D
-    "STR-Chest": THREE.Object3D
-    "FK-Belly": THREE.Object3D
     "DEF-Belly": THREE.Object3D
-    "CTR-DEF-Belly": THREE.Object3D
-    "CTR-DEF-P-Belly": THREE.Object3D
-    "STR-TAN-Belly": THREE.Object3D
-    "STR-Belly": THREE.Object3D
-    "ORG-Belly": THREE.Object3D
-    "FK-Spine": THREE.Object3D
-    "IK-CTR-Spine": THREE.Object3D
-    "IK-CTR-Belly": THREE.Object3D
-    "IK-CTR-Chest": THREE.Object3D
-    "IK-R-Belly": THREE.Object3D
-    "IK-R-Chest": THREE.Object3D
-    "MSTR-Spine_Chest": THREE.Object3D
-    "IK-Chest": THREE.Object3D
-    "IK-Belly": THREE.Object3D
-    "IK-Spine": THREE.Object3D
     "DEF-Spine": THREE.Object3D
-    "CTR-DEF-Spine": THREE.Object3D
-    "CTR-DEF-P-Spine": THREE.Object3D
-    FannyPack_Front: THREE.Object3D
-    FannyPack_Root: THREE.Object3D
-    "IK-STR-ROLL-ThighL": THREE.Object3D
-    "IK-STR-ThighL": THREE.Object3D
-    "IK-KneeL": THREE.Object3D
-    "IK-ThighL": THREE.Object3D
     "DEF-HipsL": THREE.Object3D
-    "CTR-DEF-HipsL": THREE.Object3D
-    "CTR-DEF-P-HipsL": THREE.Object3D
-    "ORG-TIP-HipsL": THREE.Object3D
-    "STR-TAN-HipsL": THREE.Object3D
-    "STR-HipsL": THREE.Object3D
-    "ORG-HipsL": THREE.Object3D
-    "AutoRubberHose-KneeL": THREE.Object3D
-    "ORG-HeelPivotL": THREE.Object3D
-    "STR-TIP-TAN-ToesL": THREE.Object3D
-    "STR-RI-TIP-ToesL": THREE.Object3D
-    "STR-RO-TIP-ToesL": THREE.Object3D
-    Track_Shoe_FrontL: THREE.Object3D
-    "STR-TIP-ToesL": THREE.Object3D
-    "ORG-TIP-ToesL": THREE.Object3D
-    "STR-TAN-ToesL": THREE.Object3D
     "DEF-ToesL": THREE.Object3D
-    "STR-RI-ToesL": THREE.Object3D
-    "STR-RO-ToesL": THREE.Object3D
-    "STR-ToesL": THREE.Object3D
-    "ORG-ToesL": THREE.Object3D
-    "PRP-ThighL": THREE.Object3D
-    "SKH-FootL": THREE.Object3D
-    "SKP-FootL": THREE.Object3D
     "DEF-FootL": THREE.Object3D
-    "STR-RI-FootL": THREE.Object3D
-    "STR-RO-FootL": THREE.Object3D
-    "STR-FootL": THREE.Object3D
-    "STR-S-FootL": THREE.Object3D
-    "STR-TAN-FootL": THREE.Object3D
-    "ORG-FootL": THREE.Object3D
-    "LTC-BootL": THREE.Object3D
     "ROOT-LTC-BootL": THREE.Object3D
-    "ORG-LTC-BootL": THREE.Object3D
-    "SKH-Knee2L": THREE.Object3D
-    "SKP-Knee2L": THREE.Object3D
     "DEF-Knee2L": THREE.Object3D
-    "STR-Knee2L": THREE.Object3D
-    "STR-TAN-Knee2L": THREE.Object3D
-    "STR-H-Knee2L": THREE.Object3D
-    "SKH-Knee1L": THREE.Object3D
-    "SKP-Knee1L": THREE.Object3D
     "DEF-Knee1L": THREE.Object3D
-    "STR-RI-Knee1L": THREE.Object3D
-    "STR-RO-Knee1L": THREE.Object3D
-    Track_KneeL: THREE.Object3D
-    "STR-Knee1L": THREE.Object3D
-    "STR-S-Knee1L": THREE.Object3D
-    "STR-TAN-Knee1L": THREE.Object3D
-    "ORG-KneeL": THREE.Object3D
-    "ORG-STR-TIP-HipsL": THREE.Object3D
-    "STR-TAN-Thigh2L": THREE.Object3D
-    "SKH-Thigh2L": THREE.Object3D
-    "SKP-Thigh2L": THREE.Object3D
     "DEF-Thigh2L": THREE.Object3D
-    "STR-Thigh2L": THREE.Object3D
-    "STR-H-Thigh2L": THREE.Object3D
-    "STR-TAN-Thigh1L": THREE.Object3D
-    "SKH-Thigh1L": THREE.Object3D
-    "SKP-Thigh1L": THREE.Object3D
     "DEF-Thigh1L": THREE.Object3D
-    "STR-Thigh1L": THREE.Object3D
-    "ORG-ThighL": THREE.Object3D
-    "ROOT-ThighL": THREE.Object3D
-    "IK-STR-ROLL-ThighR": THREE.Object3D
-    "IK-STR-ThighR": THREE.Object3D
-    "IK-KneeR": THREE.Object3D
-    "IK-ThighR": THREE.Object3D
     "DEF-HipsR": THREE.Object3D
-    "CTR-DEF-HipsR": THREE.Object3D
-    "CTR-DEF-P-HipsR": THREE.Object3D
-    "ORG-TIP-HipsR": THREE.Object3D
-    "STR-TAN-HipsR": THREE.Object3D
-    "STR-HipsR": THREE.Object3D
-    "ORG-HipsR": THREE.Object3D
-    "AutoRubberHose-KneeR": THREE.Object3D
-    "ORG-HeelPivotR": THREE.Object3D
-    "STR-TIP-TAN-ToesR": THREE.Object3D
-    "STR-RI-TIP-ToesR": THREE.Object3D
-    "STR-RO-TIP-ToesR": THREE.Object3D
-    Track_Shoe_FrontR: THREE.Object3D
-    "STR-TIP-ToesR": THREE.Object3D
-    "ORG-TIP-ToesR": THREE.Object3D
-    "STR-TAN-ToesR": THREE.Object3D
     "DEF-ToesR": THREE.Object3D
-    "STR-RI-ToesR": THREE.Object3D
-    "STR-RO-ToesR": THREE.Object3D
-    "STR-ToesR": THREE.Object3D
-    "ORG-ToesR": THREE.Object3D
-    "PRP-ThighR": THREE.Object3D
-    "SKH-FootR": THREE.Object3D
-    "SKP-FootR": THREE.Object3D
     "DEF-FootR": THREE.Object3D
-    "STR-RI-FootR": THREE.Object3D
-    "STR-RO-FootR": THREE.Object3D
-    "STR-FootR": THREE.Object3D
-    "STR-S-FootR": THREE.Object3D
-    "STR-TAN-FootR": THREE.Object3D
-    "ORG-FootR": THREE.Object3D
-    "LTC-BootR": THREE.Object3D
     "ROOT-LTC-BootR": THREE.Object3D
-    "ORG-LTC-BootR": THREE.Object3D
-    "SKH-Knee2R": THREE.Object3D
-    "SKP-Knee2R": THREE.Object3D
     "DEF-Knee2R": THREE.Object3D
-    "STR-Knee2R": THREE.Object3D
-    "STR-TAN-Knee2R": THREE.Object3D
-    "STR-H-Knee2R": THREE.Object3D
-    "SKH-Knee1R": THREE.Object3D
-    "SKP-Knee1R": THREE.Object3D
     "DEF-Knee1R": THREE.Object3D
-    "STR-RI-Knee1R": THREE.Object3D
-    "STR-RO-Knee1R": THREE.Object3D
-    Track_KneeR: THREE.Object3D
-    "STR-Knee1R": THREE.Object3D
-    "STR-S-Knee1R": THREE.Object3D
-    "STR-TAN-Knee1R": THREE.Object3D
-    "ORG-KneeR": THREE.Object3D
-    "ORG-STR-TIP-HipsR": THREE.Object3D
-    "STR-TAN-Thigh2R": THREE.Object3D
-    "SKH-Thigh2R": THREE.Object3D
-    "SKP-Thigh2R": THREE.Object3D
     "DEF-Thigh2R": THREE.Object3D
-    "STR-Thigh2R": THREE.Object3D
-    "STR-H-Thigh2R": THREE.Object3D
-    "STR-TAN-Thigh1R": THREE.Object3D
-    "SKH-Thigh1R": THREE.Object3D
-    "SKP-Thigh1R": THREE.Object3D
     "DEF-Thigh1R": THREE.Object3D
-    "STR-Thigh1R": THREE.Object3D
-    "ORG-ThighR": THREE.Object3D
-    "ROOT-ThighR": THREE.Object3D
-    "STR-TAN-Spine": THREE.Object3D
-    "STR-TIP-TAN-HipsL": THREE.Object3D
-    "STR-TIP-HipsL": THREE.Object3D
-    "STR-TIP-TAN-HipsR": THREE.Object3D
-    "STR-TIP-HipsR": THREE.Object3D
-    "STR-Spine": THREE.Object3D
-    "ORG-Spine": THREE.Object3D
-    "MSTR-Spine_Hips": THREE.Object3D
-    "PRP-Spine": THREE.Object3D
-    "MSTR-Spine_Torso": THREE.Object3D
-    "ORG-DEF-WristL": THREE.Object3D
-    "ORG-DEF-WristR": THREE.Object3D
-    "ORG-STR-TAN-FannyPack7": THREE.Object3D
-    "ORG-STR-FannyPack7": THREE.Object3D
-    "ORG-STR-TIP-TAN-FannyPack5_2": THREE.Object3D
-    "ORG-STR-TIP-FannyPack5_2": THREE.Object3D
-    "STR-TIP-TAN-FannyPack5_2": THREE.Object3D
-    "ORG-TIP-FannyPack5_2": THREE.Object3D
-    "STR-TAN-FannyPack5_2": THREE.Object3D
-    "ORG-FannyPack5_2": THREE.Object3D
-    "STR-TAN-FannyPack5": THREE.Object3D
-    "ORG-FannyPack5": THREE.Object3D
-    "STR-TAN-FannyPack4": THREE.Object3D
-    "ORG-FannyPack4": THREE.Object3D
-    "STR-TAN-FannyPack3": THREE.Object3D
-    "ORG-FannyPack3": THREE.Object3D
-    "STR-TAN-FannyPack2": THREE.Object3D
-    "ORG-FannyPack2": THREE.Object3D
-    "STR-TAN-FannyPack1": THREE.Object3D
-    "ORG-FannyPack1": THREE.Object3D
-    "STR-TAN-FannyPack7_2": THREE.Object3D
-    "ORG-FannyPack7_2": THREE.Object3D
-    "STR-TAN-FannyPack7": THREE.Object3D
-    "ORG-FannyPack7": THREE.Object3D
-    "ORG-STR-I-Lip_Bottom1": THREE.Object3D
-    "ORG-STR-I-Lip_Top1": THREE.Object3D
-    "HLP-ellie_settings001": THREE.Object3D
     Properties_Character_Ellie: THREE.Object3D
-    root: THREE.Object3D
-    "P-root": THREE.Object3D
     "DEF-ScarfL": THREE.Object3D
-    ScarfL: THREE.Object3D
-    "P-ScarfL": THREE.Object3D
     "DEF-ScarfR": THREE.Object3D
-    ScarfR: THREE.Object3D
-    "P-ScarfR": THREE.Object3D
     "DEF-Sleeve1L": THREE.Object3D
-    Sleeve1L: THREE.Object3D
-    "P-Sleeve1L": THREE.Object3D
     "DEF-Sleeve1R": THREE.Object3D
-    Sleeve1R: THREE.Object3D
-    "P-Sleeve1R": THREE.Object3D
     "DEF-Sleeve2L": THREE.Object3D
     "DEF-Sleeve_ElbowL": THREE.Object3D
-    Sleeve_ElbowL: THREE.Object3D
-    Sleeve2L: THREE.Object3D
-    "P-Sleeve2L": THREE.Object3D
     "DEF-Sleeve2R": THREE.Object3D
     "DEF-Sleeve_ElbowR": THREE.Object3D
-    Sleeve_ElbowR: THREE.Object3D
-    Sleeve2R: THREE.Object3D
-    "P-Sleeve2R": THREE.Object3D
-    "P-STR-I-Lip_Bottom1": THREE.Object3D
-    "P-STR-I-Lip_Top1": THREE.Object3D
-    "P-STR-Lip_Bottom1L": THREE.Object3D
-    "P-STR-Lip_Bottom1R": THREE.Object3D
-    "P-STR-Lip_Bottom2L": THREE.Object3D
-    "P-STR-Lip_Bottom2R": THREE.Object3D
-    "P-STR-Lip_Top2L": THREE.Object3D
-    "P-STR-Lip_Top2R": THREE.Object3D
-    "P-STR-TIP-Lip_Top2L": THREE.Object3D
-    "P-STR-TIP-Lip_Top2R": THREE.Object3D
-    "TIP-IK-Finger_Index3L": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Index3L": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Index3L": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Index3L": THREE.Object3D
-    "TIP-IK-Finger_Index3R": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Index3R": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Index3R": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Index3R": THREE.Object3D
-    "TIP-IK-Finger_Middle3L": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Middle3L": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Middle3L": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Middle3L": THREE.Object3D
-    "TIP-IK-Finger_Middle3R": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Middle3R": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Middle3R": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Middle3R": THREE.Object3D
-    "TIP-IK-Finger_Pinky3L": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Pinky3L": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Pinky3L": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Pinky3L": THREE.Object3D
-    "TIP-IK-Finger_Pinky3R": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Pinky3R": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Pinky3R": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Pinky3R": THREE.Object3D
-    "TIP-IK-Finger_Ring3L": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Ring3L": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Ring3L": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Ring3L": THREE.Object3D
-    "TIP-IK-Finger_Ring3R": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Ring3R": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Ring3R": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Ring3R": THREE.Object3D
-    "TIP-IK-Finger_Thumb3L": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Thumb3L": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Thumb3L": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Thumb3L": THREE.Object3D
-    "TIP-IK-Finger_Thumb3R": THREE.Object3D
-    "TIP-IK-STR-TGT-Finger_Thumb3R": THREE.Object3D
-    "TIP-IK-MSTR-Finger_Thumb3R": THREE.Object3D
-    "P-TIP-IK-MSTR-Finger_Thumb3R": THREE.Object3D
-    "CTR-EarL": THREE.Object3D
     "DEF-EarL": THREE.Object3D
-    "STR-TIP-Ear3L": THREE.Object3D
-    "STR-TIP-TAN-Ear3L": THREE.Object3D
-    "ORG-TIP-Ear3L": THREE.Object3D
-    "STR-TAN-Ear3L": THREE.Object3D
-    "ORG-Ear3L": THREE.Object3D
-    "STR-TAN-Ear2L": THREE.Object3D
-    "ORG-Ear2L": THREE.Object3D
     "DEF-Ear1L": THREE.Object3D
-    "STR-Ear1L": THREE.Object3D
-    "STR-TAN-Ear1L": THREE.Object3D
-    "ORG-Ear1L": THREE.Object3D
-    "ROOT-EarL": THREE.Object3D
-    "CTR-EarR": THREE.Object3D
     "DEF-EarR": THREE.Object3D
-    "STR-TIP-Ear3R": THREE.Object3D
-    "STR-TIP-TAN-Ear3R": THREE.Object3D
-    "ORG-TIP-Ear3R": THREE.Object3D
-    "STR-TAN-Ear3R": THREE.Object3D
-    "ORG-Ear3R": THREE.Object3D
-    "STR-TAN-Ear2R": THREE.Object3D
-    "ORG-Ear2R": THREE.Object3D
     "DEF-Ear1R": THREE.Object3D
-    "STR-Ear1R": THREE.Object3D
-    "STR-TAN-Ear1R": THREE.Object3D
-    "ORG-Ear1R": THREE.Object3D
-    "ROOT-EarR": THREE.Object3D
-    "LTC-ArmpitL": THREE.Object3D
-    "ROOT-LTC-ArmpitL": THREE.Object3D
-    "LTC-ArmpitR": THREE.Object3D
-    "ROOT-LTC-ArmpitR": THREE.Object3D
-    "LTC-Cheek1L": THREE.Object3D
-    "ROOT-LTC-Cheek1L": THREE.Object3D
-    "LTC-Cheek1R": THREE.Object3D
-    "ROOT-LTC-Cheek1R": THREE.Object3D
-    "LTC-Lips": THREE.Object3D
-    "ROOT-LTC-Lips": THREE.Object3D
-    Hook_Fannypack_End_00: THREE.Object3D
-    Hook_Fannypack_End_01: THREE.Object3D
-    Hook_Fannypack_End_02: THREE.Object3D
-    Hook_Fannypack_End_03: THREE.Object3D
-    Hook_Fannypack_End_04: THREE.Object3D
-    "ORG-Fannypack_End": THREE.Object3D
-    "ROOT-Fannypack_End": THREE.Object3D
-    "ROOT-P-Fannypack_End": THREE.Object3D
-    "STR-TIP-Teeth_Lower2L": THREE.Object3D
-    "STR-TIP-Teeth_Lower2R": THREE.Object3D
-    "STR-I-Teeth_Lower2": THREE.Object3D
-    "STR-TIP-TAN-Teeth_Lower2L": THREE.Object3D
-    "STR-TIP-TAN-Teeth_Lower2R": THREE.Object3D
-    "STR-I-P-Teeth_Lower2": THREE.Object3D
-    "STR-TIP-Teeth_Upper2L": THREE.Object3D
-    "STR-TIP-Teeth_Upper2R": THREE.Object3D
-    "STR-I-Teeth_Upper2": THREE.Object3D
-    "STR-TIP-TAN-Teeth_Upper2L": THREE.Object3D
-    "STR-TIP-TAN-Teeth_Upper2R": THREE.Object3D
-    "STR-I-P-Teeth_Upper2": THREE.Object3D
     "DEF-Ear2L": THREE.Object3D
-    "STR-Ear2L": THREE.Object3D
-    "STR-P-Ear2L": THREE.Object3D
     "DEF-Ear2R": THREE.Object3D
-    "STR-Ear2R": THREE.Object3D
-    "STR-P-Ear2R": THREE.Object3D
     "DEF-Ear3L": THREE.Object3D
-    "STR-Ear3L": THREE.Object3D
-    "STR-P-Ear3L": THREE.Object3D
     "DEF-Ear3R": THREE.Object3D
-    "STR-Ear3R": THREE.Object3D
-    "STR-P-Ear3R": THREE.Object3D
     "DEF-Eye_Ring_Lower1L": THREE.Object3D
-    "STR-Eye_Ring_Lower1L": THREE.Object3D
-    "STR-P-Eye_Ring_Lower1L": THREE.Object3D
     "DEF-Eye_Ring_Lower1R": THREE.Object3D
-    "STR-Eye_Ring_Lower1R": THREE.Object3D
-    "STR-P-Eye_Ring_Lower1R": THREE.Object3D
     "DEF-Eye_Ring_Lower2L": THREE.Object3D
-    "STR-Eye_Ring_Lower2L": THREE.Object3D
-    "STR-P-Eye_Ring_Lower2L": THREE.Object3D
     "DEF-Eye_Ring_Lower2R": THREE.Object3D
-    "STR-Eye_Ring_Lower2R": THREE.Object3D
-    "STR-P-Eye_Ring_Lower2R": THREE.Object3D
     "DEF-Eye_Ring_Lower3L": THREE.Object3D
-    "STR-Eye_Ring_Lower3L": THREE.Object3D
-    "STR-P-Eye_Ring_Lower3L": THREE.Object3D
     "DEF-Eye_Ring_Lower3R": THREE.Object3D
-    "STR-Eye_Ring_Lower3R": THREE.Object3D
-    "STR-P-Eye_Ring_Lower3R": THREE.Object3D
     "DEF-Eye_Ring_Lower4L": THREE.Object3D
-    "STR-Eye_Ring_Lower4L": THREE.Object3D
-    "STR-P-Eye_Ring_Lower4L": THREE.Object3D
     "DEF-Eye_Ring_Lower4R": THREE.Object3D
-    "STR-Eye_Ring_Lower4R": THREE.Object3D
-    "STR-P-Eye_Ring_Lower4R": THREE.Object3D
     "DEF-Eye_Ring_Upper1L": THREE.Object3D
-    "STR-Eye_Ring_Upper1L": THREE.Object3D
-    "STR-P-Eye_Ring_Upper1L": THREE.Object3D
     "DEF-Eye_Ring_Upper1R": THREE.Object3D
-    "STR-Eye_Ring_Upper1R": THREE.Object3D
-    "STR-P-Eye_Ring_Upper1R": THREE.Object3D
     "DEF-Eye_Ring_Upper2L": THREE.Object3D
-    "STR-Eye_Ring_Upper2L": THREE.Object3D
-    "STR-P-Eye_Ring_Upper2L": THREE.Object3D
     "DEF-Eye_Ring_Upper2R": THREE.Object3D
-    "STR-Eye_Ring_Upper2R": THREE.Object3D
-    "STR-P-Eye_Ring_Upper2R": THREE.Object3D
     "DEF-Eye_Ring_Upper3L": THREE.Object3D
-    "STR-Eye_Ring_Upper3L": THREE.Object3D
-    "STR-P-Eye_Ring_Upper3L": THREE.Object3D
     "DEF-Eye_Ring_Upper3R": THREE.Object3D
-    "STR-Eye_Ring_Upper3R": THREE.Object3D
-    "STR-P-Eye_Ring_Upper3R": THREE.Object3D
     "DEF-Eye_Ring_Upper4L": THREE.Object3D
-    "STR-Eye_Ring_Upper4L": THREE.Object3D
-    "STR-P-Eye_Ring_Upper4L": THREE.Object3D
     "DEF-Eye_Ring_Upper4R": THREE.Object3D
-    "STR-Eye_Ring_Upper4R": THREE.Object3D
-    "STR-P-Eye_Ring_Upper4R": THREE.Object3D
     "DEF-Eyelid_Lower1L": THREE.Object3D
-    "STR-Eyelid_Lower1L": THREE.Object3D
-    "STR-P-Eyelid_Lower1L": THREE.Object3D
     "DEF-Eyelid_Lower1R": THREE.Object3D
-    "STR-Eyelid_Lower1R": THREE.Object3D
-    "STR-P-Eyelid_Lower1R": THREE.Object3D
     "DEF-Eyelid_Lower2L": THREE.Object3D
-    "STR-Eyelid_Lower2L": THREE.Object3D
-    "STR-P-Eyelid_Lower2L": THREE.Object3D
     "DEF-Eyelid_Lower2R": THREE.Object3D
-    "STR-Eyelid_Lower2R": THREE.Object3D
-    "STR-P-Eyelid_Lower2R": THREE.Object3D
     "DEF-Eyelid_Lower3L": THREE.Object3D
-    "STR-Eyelid_Lower3L": THREE.Object3D
-    "STR-P-Eyelid_Lower3L": THREE.Object3D
     "DEF-Eyelid_Lower3R": THREE.Object3D
-    "STR-Eyelid_Lower3R": THREE.Object3D
-    "STR-P-Eyelid_Lower3R": THREE.Object3D
     "DEF-Eyelid_Lower4L": THREE.Object3D
-    "STR-Eyelid_Lower4L": THREE.Object3D
-    "STR-P-Eyelid_Lower4L": THREE.Object3D
     "DEF-Eyelid_Lower4R": THREE.Object3D
-    "STR-Eyelid_Lower4R": THREE.Object3D
-    "STR-P-Eyelid_Lower4R": THREE.Object3D
     "DEF-Eyelid_Upper1L": THREE.Object3D
-    "STR-Eyelid_Upper1L": THREE.Object3D
-    "STR-P-Eyelid_Upper1L": THREE.Object3D
     "DEF-Eyelid_Upper1R": THREE.Object3D
-    "STR-Eyelid_Upper1R": THREE.Object3D
-    "STR-P-Eyelid_Upper1R": THREE.Object3D
     "DEF-Eyelid_Upper2L": THREE.Object3D
-    "STR-Eyelid_Upper2L": THREE.Object3D
-    "STR-P-Eyelid_Upper2L": THREE.Object3D
     "DEF-Eyelid_Upper2R": THREE.Object3D
-    "STR-Eyelid_Upper2R": THREE.Object3D
-    "STR-P-Eyelid_Upper2R": THREE.Object3D
     "DEF-Eyelid_Upper3L": THREE.Object3D
-    "STR-Eyelid_Upper3L": THREE.Object3D
-    "STR-P-Eyelid_Upper3L": THREE.Object3D
     "DEF-Eyelid_Upper3R": THREE.Object3D
-    "STR-Eyelid_Upper3R": THREE.Object3D
-    "STR-P-Eyelid_Upper3R": THREE.Object3D
     "DEF-Eyelid_Upper4L": THREE.Object3D
-    "STR-Eyelid_Upper4L": THREE.Object3D
-    "STR-P-Eyelid_Upper4L": THREE.Object3D
     "DEF-Eyelid_Upper4R": THREE.Object3D
-    "STR-Eyelid_Upper4R": THREE.Object3D
-    "STR-P-Eyelid_Upper4R": THREE.Object3D
     "DEF-FannyPack1": THREE.Object3D
-    "STR-FannyPack1": THREE.Object3D
-    "STR-P-FannyPack1": THREE.Object3D
     "DEF-FannyPack2": THREE.Object3D
-    "STR-FannyPack2": THREE.Object3D
-    "STR-P-FannyPack2": THREE.Object3D
     "DEF-FannyPack3": THREE.Object3D
-    FannyPack_Bag_Shapes: THREE.Object3D
-    FannyPack_Bag_TopShapes: THREE.Object3D
-    "STR-FannyPack3": THREE.Object3D
-    "STR-P-FannyPack3": THREE.Object3D
     "DEF-FannyPack4": THREE.Object3D
-    "STR-FannyPack4": THREE.Object3D
-    "STR-P-FannyPack4": THREE.Object3D
     "DEF-FannyPack5": THREE.Object3D
-    "STR-FannyPack5": THREE.Object3D
-    "STR-P-FannyPack5": THREE.Object3D
     "DEF-FannyPack5_2": THREE.Object3D
-    "STR-FannyPack5_2": THREE.Object3D
-    "STR-P-FannyPack5_2": THREE.Object3D
     "DEF-FannyPack7_2": THREE.Object3D
-    "STR-FannyPack7_2": THREE.Object3D
-    "STR-P-FannyPack7_2": THREE.Object3D
     "DEF-Teeth_Lower1L": THREE.Object3D
-    "STR-Teeth_Lower1L": THREE.Object3D
-    "STR-P-Teeth_Lower1L": THREE.Object3D
     "DEF-Teeth_Lower1R": THREE.Object3D
-    "STR-Teeth_Lower1R": THREE.Object3D
-    "STR-P-Teeth_Lower1R": THREE.Object3D
     "DEF-Teeth_Lower2L": THREE.Object3D
-    "STR-Teeth_Lower2L": THREE.Object3D
-    "STR-P-Teeth_Lower2L": THREE.Object3D
     "DEF-Teeth_Lower2R": THREE.Object3D
-    "STR-Teeth_Lower2R": THREE.Object3D
-    "STR-P-Teeth_Lower2R": THREE.Object3D
     "DEF-Teeth_Upper1L": THREE.Object3D
-    "STR-Teeth_Upper1L": THREE.Object3D
-    "STR-P-Teeth_Upper1L": THREE.Object3D
     "DEF-Teeth_Upper1R": THREE.Object3D
-    "STR-Teeth_Upper1R": THREE.Object3D
-    "STR-P-Teeth_Upper1R": THREE.Object3D
     "DEF-Teeth_Upper2L": THREE.Object3D
-    "STR-Teeth_Upper2L": THREE.Object3D
-    "STR-P-Teeth_Upper2L": THREE.Object3D
     "DEF-Teeth_Upper2R": THREE.Object3D
-    "STR-Teeth_Upper2R": THREE.Object3D
-    "STR-P-Teeth_Upper2R": THREE.Object3D
-    "STR-TIP-Eye_Ring_Lower4L": THREE.Object3D
-    "STR-TIP-P-Eye_Ring_Lower4L": THREE.Object3D
-    "STR-TIP-Eye_Ring_Lower4R": THREE.Object3D
-    "STR-TIP-P-Eye_Ring_Lower4R": THREE.Object3D
-    "STR-TIP-Eye_Ring_Upper4L": THREE.Object3D
-    "STR-TIP-P-Eye_Ring_Upper4L": THREE.Object3D
-    "STR-TIP-Eye_Ring_Upper4R": THREE.Object3D
-    "STR-TIP-P-Eye_Ring_Upper4R": THREE.Object3D
-    "STR-TIP-Eyelid_Lower4L": THREE.Object3D
-    "STR-TIP-P-Eyelid_Lower4L": THREE.Object3D
-    "STR-TIP-Eyelid_Lower4R": THREE.Object3D
-    "STR-TIP-P-Eyelid_Lower4R": THREE.Object3D
-    "STR-TIP-Eyelid_Upper4L": THREE.Object3D
-    "STR-TIP-P-Eyelid_Upper4L": THREE.Object3D
-    "STR-TIP-Eyelid_Upper4R": THREE.Object3D
-    "STR-TIP-P-Eyelid_Upper4R": THREE.Object3D
     "DEF-Gum_Lower1L": THREE.Object3D
-    "CTR-DEF-Gum_Lower1L": THREE.Object3D
     "DEF-Gum_Lower1R": THREE.Object3D
-    "CTR-DEF-Gum_Lower1R": THREE.Object3D
     "DEF-Gum_Lower2L": THREE.Object3D
-    "CTR-DEF-Gum_Lower2L": THREE.Object3D
     "DEF-Gum_Lower2R": THREE.Object3D
-    "CTR-DEF-Gum_Lower2R": THREE.Object3D
-    "ORG-TIP-Teeth_Lower2L": THREE.Object3D
-    "STR-TAN-Teeth_Lower2L": THREE.Object3D
-    "ORG-Teeth_Lower2L": THREE.Object3D
-    "STR-TAN-Teeth_Lower1L": THREE.Object3D
-    "ORG-Teeth_Lower1L": THREE.Object3D
-    "ORG-TIP-Teeth_Lower2R": THREE.Object3D
-    "STR-TAN-Teeth_Lower2R": THREE.Object3D
-    "ORG-Teeth_Lower2R": THREE.Object3D
-    "STR-TAN-Teeth_Lower1R": THREE.Object3D
-    "ORG-Teeth_Lower1R": THREE.Object3D
-    Teeth_Bottom_Root: THREE.Object3D
     "DEF-Gum_Upper1L": THREE.Object3D
-    "CTR-DEF-Gum_Upper1L": THREE.Object3D
     "DEF-Gum_Upper1R": THREE.Object3D
-    "CTR-DEF-Gum_Upper1R": THREE.Object3D
     "DEF-Gum_Upper2L": THREE.Object3D
-    "CTR-DEF-Gum_Upper2L": THREE.Object3D
     "DEF-Gum_Upper2R": THREE.Object3D
-    "CTR-DEF-Gum_Upper2R": THREE.Object3D
-    "ORG-TIP-Teeth_Upper2L": THREE.Object3D
-    "STR-TAN-Teeth_Upper2L": THREE.Object3D
-    "ORG-Teeth_Upper2L": THREE.Object3D
-    "STR-TAN-Teeth_Upper1L": THREE.Object3D
-    "ORG-Teeth_Upper1L": THREE.Object3D
-    "ORG-TIP-Teeth_Upper2R": THREE.Object3D
-    "STR-TAN-Teeth_Upper2R": THREE.Object3D
-    "ORG-Teeth_Upper2R": THREE.Object3D
-    "STR-TAN-Teeth_Upper1R": THREE.Object3D
-    "ORG-Teeth_Upper1R": THREE.Object3D
-    Teeth_Top_Root: THREE.Object3D
     "GEO-ellie_body001": THREE.SkinnedMesh
     "GEO-ellie_boots001": THREE.Group
     "GEO-ellie_earrings001": THREE.Group
@@ -4164,7 +1079,6 @@ export interface EllieAnimationGLTF {
     "GEO-ellie_fannypack_strap_slide001": THREE.SkinnedMesh
     "GEO-ellie_fannypack_zipper_pull001": THREE.SkinnedMesh
     "GEO-ellie_fannypack_zipper_stop001": THREE.SkinnedMesh
-    "GEO-ellie_fannypack_zippers001": THREE.Mesh
     "GEO-ellie_hairgroom_base001": THREE.SkinnedMesh
     "GEO-ellie_hairscalp-back001": THREE.Object3D
     "GEO-ellie_hairscalp-front001": THREE.Object3D
@@ -4192,15 +1106,15 @@ export interface EllieAnimationGLTF {
     "RIG-Ellie001": THREE.Object3D
   }
   materials: {
-    "BLENDLINK_WEB.87afa5b3b6.ellie.skin": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.64c5753ebd.ellie.shoes_leather": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.b6454580e5.ellie.skin": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.1d46d99910.ellie.shoes_leather": THREE.MeshStandardMaterial
     "ellie.socks": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.ab42803a50.ellie.shoes_metal": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.b98feac9d5.ellie.shoes_loop": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.502b0abf75.ellie.shoes_laces": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.cc6e1bd002.ellie.shoes_soles_side": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.597a24b574.ellie.shoes_soles_underneath": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.0a317d35a9.ellie.shoes_seam": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.4c5773be16.ellie.shoes_metal": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.13c973cb36.ellie.shoes_loop": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.499ac21896.ellie.shoes_laces": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.62933303c3.ellie.shoes_soles_side": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.5adf27e095.ellie.shoes_soles_underneath": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.a8cd794a28.ellie.shoes_seam": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.94ed7f9378.ellie.shoes_inner": THREE.MeshStandardMaterial
     "ellie.earrings": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.63ac167acb.ellie.earrings_metal": THREE.MeshStandardMaterial
@@ -4210,38 +1124,38 @@ export interface EllieAnimationGLTF {
     "BLENDLINK_WEB.29be8c0476.ellie.eyebrows": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.288d32f49e.ellie.eyelashes": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.e8ab99c0ef.ellie.fanny_pack_buckle": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.05d5299ad9.ellie.fannypack_magenta": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.4b55f56e57.ellie.fannypack_green": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.352580623e.ellie.fannypack_magenta": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.fb7624aa45.ellie.fannypack_green": THREE.MeshStandardMaterial
     "ellie.fannypack_purple": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.7038dae22f.ellie.fanny_pack_black": THREE.MeshStandardMaterial
     "ellie.fannypack_zipper": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.cc30cabf2c.ellie.hair": THREE.MeshStandardMaterial
     "ellie.hair_particles": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.36c6c95a5e.ellie.handkerchief": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.5e5b9b5a83.ellie.head": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.11cb94cbd7.ellie.head_lips": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.419d53656e.ellie.handkerchief": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.dea77dca2a.ellie.head": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.30e8e22123.ellie.head_lips": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.f648ffde54.ellie.mouth_inner": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.4fe37d46e4.ellie.head_hair": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.0374bf573f.ellie.denim": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.0ded17c0cb.ellie.denim_inside": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.9bf49905db.ellie.buttons": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.9b1995d358.ellie.pins_blue": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.f2cc76b95e.ellie.denim": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.c2e6d2b4dc.ellie.denim_inside": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.2fc940137f.ellie.buttons": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.0d50deb2c2.ellie.pins_blue": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.ba04c9e045.ellie.pins_underside": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.f22eefdf3b.ellie.pins_gold": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.fb141fb627.ellie.pins_light": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.df9cc9c56a.ellie.pins_magenta": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.ab8bd94a01.ellie.pins_green": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.3b5e63db2c.ellie.pins_gold": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.81b21eba49.ellie.pins_light": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.1f7e72a465.ellie.pins_magenta": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.af176aab94.ellie.pins_green": THREE.MeshStandardMaterial
     "ellie.scrunchie": THREE.MeshStandardMaterial
     "ellie.teeth": THREE.MeshStandardMaterial
     "ellie.gums": THREE.MeshStandardMaterial
     "BLENDLINK_WEB.e3fdc84702.ellie.tongue": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.27930944f0.ellie.shorts": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.ca8530b654.ellie.watch_strap": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.073661cf16.ellie.watch_metal": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.83cbd40618.ellie.watch_rubber_guard": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.568b1a0f03.ellie.watch_gold": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.36c7d79622.ellie.shorts": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.7b0f9d29f5.ellie.watch_strap": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.416a62050c.ellie.watch_metal": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.bdd79d1d1d.ellie.watch_rubber_guard": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.daccdf6180.ellie.watch_gold": THREE.MeshStandardMaterial
     "ellie.watch_glass": THREE.MeshStandardMaterial
-    "BLENDLINK_WEB.f56766b3b6.ellie.watch_red": THREE.MeshStandardMaterial
+    "BLENDLINK_WEB.9a53c232c6.ellie.watch_red": THREE.MeshStandardMaterial
     "Blendlink Blender Default": THREE.MeshStandardMaterial
   }
   animations: THREE.AnimationClip[]
