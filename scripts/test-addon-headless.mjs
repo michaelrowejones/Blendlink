@@ -50,6 +50,9 @@ const componentBatch2Test = join(
 const legacyCurveSidecarTest = join(
   root, 'experiments', 'legacy-curve-sidecar-differential', 'run.py',
 )
+const scopedUvEditTest = join(
+  root, 'packages', 'blender-addon', 'tests', 'scoped_uv_edit_check.py',
+)
 const bakeLadderTest = join(
   root, 'packages', 'blender-addon', 'tests', 'bake_ladder_check.py',
 )
@@ -187,6 +190,10 @@ runHeadlessSuite(
 runHeadlessSuite(
   'linked legacy Curve sidecar diagnostic differential', legacyCurveSidecarTest,
   'BLENDLINK_LEGACY_CURVE_SIDECAR_DIFFERENTIAL_PASSED',
+)
+runHeadlessSuite(
+  'scoped UV editing seam contract', scopedUvEditTest,
+  'BLENDLINK_SCOPED_UV_EDIT_CHECK_PASSED',
 )
 runHeadlessSuite(
   'bake atlas resolution ladder contract', bakeLadderTest,

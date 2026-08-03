@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import base64
+import contextlib
 import atexit
 import hashlib
 import math
@@ -3122,15 +3123,129 @@ def _atlas_seed_layer(obj, log):
     return layer
 
 
+@contextlib.contextmanager
+def scoped_uv_edit(objects, uv_name=None, *, faces=None, sync=None,
+                   select_uvs=True, require_multi_object=False):
+    """Enter Blender Edit Mode with an exact, restorable UV operand.
+
+    THE seam for every ``bpy.ops.uv.*`` primitive in this module. Callers
+    say what to operate on; this owns the whole state contract, because
+    each part of it was learned the expensive way and none of it is
+    discoverable from the operator signatures:
+
+    * ``use_uv_select_sync`` decides what the operand even IS. With sync
+      ON the MESH selection is the operand and ``uv.select_all(SELECT)``
+      re-selects the whole mesh -- measured on 5.2 silently widening a
+      scoped projection back to every island. With sync OFF the UV
+      selection is the operand and must be established explicitly.
+    * Stale per-loop UV flags survive on faces the UV editor cannot
+      currently see, and the UV operators' pack phase moves every
+      UV-selected island -- measured as kept islands repacking while the
+      projection itself stayed correctly scoped. They must be cleared
+      while every face is visible, BEFORE scoping.
+    * Object-mode element flags are re-derived through select-mode
+      flushing on Edit-Mode entry, so a stale all-selected vertex state
+      widens the operand. Face scope is therefore established through
+      bmesh in FACE select mode, where vertex-sharing between kept and
+      operated islands cannot bleed.
+    * Multi-object entry can silently take for only the active object,
+      leaving other receivers stacked at the origin.
+
+    ``sync`` forces ``use_uv_select_sync`` (None leaves it); ``faces``
+    scopes to exact polygon indices of a single object (None means every
+    face); ``require_multi_object`` proves Edit Mode took for every
+    selected mesh. Blender state is restored on the way out even when the
+    body raises, and a restore failure is reported as the cause of, not a
+    replacement for, the body's error.
+    """
+    import bmesh
+
+    packable = list(objects)
+    if uv_name is not None:
+        for obj in packable:
+            obj.data.uv_layers.active = obj.data.uv_layers[uv_name]
+    select_only(packable)
+
+    tools = bpy.context.tool_settings
+    prior_sync = tools.use_uv_select_sync
+    prior_select_mode = tuple(tools.mesh_select_mode)
+    expected = {
+        obj.as_pointer() for obj in bpy.context.selected_objects
+        if obj.type == "MESH"
+    }
+
+    primary_error = None
+    cleanup_errors = []
+    try:
+        if sync is not None:
+            tools.use_uv_select_sync = bool(sync)
+        bpy.ops.object.mode_set(mode="EDIT")
+        if require_multi_object:
+            entered = {
+                obj.as_pointer()
+                for obj in bpy.context.objects_in_mode_unique_data
+                if obj.type == "MESH"
+            }
+            if entered != expected:
+                raise RuntimeError(
+                    "UV editing did not enter multi-object Edit Mode for "
+                    f"every selected receiver ({len(entered)}/{len(expected)})"
+                )
+        if faces is None:
+            bpy.ops.mesh.select_all(action="SELECT")
+        else:
+            if len(packable) != 1:
+                raise RuntimeError(
+                    "face-scoped UV editing operates on exactly one object; "
+                    f"got {len(packable)}"
+                )
+            bpy.ops.mesh.select_mode(type="FACE")
+            if not tools.use_uv_select_sync:
+                bpy.ops.mesh.select_all(action="SELECT")
+                bpy.ops.uv.select_all(action="DESELECT")
+            bpy.ops.mesh.select_all(action="DESELECT")
+            mesh = packable[0].data
+            wanted = set(faces)
+            bm = bmesh.from_edit_mesh(mesh)
+            bm.faces.ensure_lookup_table()
+            for face in bm.faces:
+                face.select_set(face.index in wanted)
+            bm.select_flush_mode()
+            bmesh.update_edit_mesh(mesh)
+        if select_uvs and not tools.use_uv_select_sync:
+            bpy.ops.uv.select_all(action="SELECT")
+        yield
+    except BaseException as error:
+        primary_error = error
+    finally:
+        if bpy.context.mode != "OBJECT":
+            try:
+                bpy.ops.object.mode_set(mode="OBJECT")
+            except BaseException as error:
+                cleanup_errors.append(f"Object Mode restore failed: {error}")
+        try:
+            tools.mesh_select_mode = prior_select_mode
+        except BaseException as error:
+            cleanup_errors.append(f"mesh select-mode restore failed: {error}")
+        try:
+            tools.use_uv_select_sync = prior_sync
+        except BaseException as error:
+            cleanup_errors.append(f"UV selection-sync restore failed: {error}")
+    if cleanup_errors:
+        cleanup_error = RuntimeError(
+            "scoped UV editing could not restore Blender state: "
+            + "; ".join(cleanup_errors)
+        )
+        if primary_error is not None:
+            raise cleanup_error from primary_error
+        raise cleanup_error
+    if primary_error is not None:
+        raise primary_error.with_traceback(primary_error.__traceback__)
+
+
 def _smart_project_private_uv_objects(objects, uv_name: str) -> None:
     """Run Blender's Smart Project on validated disposable/private objects."""
-    for obj in objects:
-        obj.data.uv_layers.active = obj.data.uv_layers[uv_name]
-    select_only(objects)
-    bpy.ops.object.mode_set(mode="EDIT")
-    try:
-        bpy.ops.mesh.select_all(action="SELECT")
-        bpy.ops.uv.select_all(action="SELECT")
+    with scoped_uv_edit(objects, uv_name):
         bpy.ops.uv.smart_project(
             angle_limit=math.radians(66.0),
             island_margin=0.0,
@@ -3139,65 +3254,17 @@ def _smart_project_private_uv_objects(objects, uv_name: str) -> None:
             # projected to preserve directional texel density.
             scale_to_bounds=False,
         )
-    finally:
-        if bpy.context.mode != "OBJECT":
-            bpy.ops.object.mode_set(mode="OBJECT")
-
-
-def _enter_edit_selecting_faces(mesh, polygon_indices) -> None:
-    """Enter Edit Mode with exactly the given faces selected.
-
-    Object-mode element flags are unreliable here: Blender re-derives the
-    selection on Edit-Mode entry through select-mode flushing, and a stale
-    all-selected vertex state silently widens the scoped operators back to
-    the whole mesh (measured: the scoped Smart Project reprojected every
-    island). Selecting through bmesh in FACE mode makes the scope
-    explicit, and vertex-sharing between kept and repaired islands cannot
-    bleed the selection."""
-    import bmesh
-
-    wanted = set(polygon_indices)
-    bpy.ops.object.mode_set(mode="EDIT")
-    bpy.ops.mesh.select_mode(type="FACE")
-    if not bpy.context.tool_settings.use_uv_select_sync:
-        # Stale per-loop UV selection flags survive on faces the UV editor
-        # cannot currently see, and the UV operators' pack phase moves
-        # every UV-selected island (measured: kept islands repacked while
-        # the projection itself stayed scoped). Clear them all while every
-        # face is visible, then scope.
-        bpy.ops.mesh.select_all(action="SELECT")
-        bpy.ops.uv.select_all(action="DESELECT")
-    bpy.ops.mesh.select_all(action="DESELECT")
-    bm = bmesh.from_edit_mesh(mesh)
-    bm.faces.ensure_lookup_table()
-    for face in bm.faces:
-        face.select_set(face.index in wanted)
-    bm.select_flush_mode()
-    bmesh.update_edit_mesh(mesh)
 
 
 def _smart_project_private_uv_faces(
         obj, uv_name: str, polygon_indices) -> None:
     """Smart Project ONLY the given faces of a private/disposable object.
 
-    The unselected islands keep their coordinates bit-for-bit; the UV
-    select-all inside Edit Mode only reaches the selected faces' UVs in
-    either sync mode. Projected islands may land over kept ones -- the
-    ordinary pack separates islands, exactly as after a margin-0
-    whole-object projection."""
-    mesh = obj.data
-    mesh.uv_layers.active = mesh.uv_layers[uv_name]
-    select_only([obj])
-    previous_select_mode = tuple(bpy.context.tool_settings.mesh_select_mode)
-    _enter_edit_selecting_faces(mesh, polygon_indices)
-    try:
-        # With UV sync ON, uv.select_all(SELECT) re-selects the whole
-        # MESH (measured: it silently widened this scoped projection back
-        # to every island). Sync mode needs no UV selection at all -- the
-        # face selection is the operand; only sync-off needs the visible
-        # (selected faces') UVs selected.
-        if not bpy.context.tool_settings.use_uv_select_sync:
-            bpy.ops.uv.select_all(action="SELECT")
+    The unselected islands keep their coordinates bit-for-bit. Projected
+    islands may land over kept ones -- the ordinary pack separates
+    islands, exactly as after a margin-0 whole-object projection."""
+    with scoped_uv_edit(
+            [obj], uv_name, faces=polygon_indices):
         bpy.ops.uv.smart_project(
             angle_limit=math.radians(66.0),
             island_margin=0.0,
@@ -3206,33 +3273,18 @@ def _smart_project_private_uv_faces(
             # projected to preserve directional texel density.
             scale_to_bounds=False,
         )
-    finally:
-        if bpy.context.mode != "OBJECT":
-            bpy.ops.object.mode_set(mode="OBJECT")
-        bpy.context.tool_settings.mesh_select_mode = previous_select_mode
 
 
 def _lightmap_pack_private_uv_faces(
         obj, uv_name: str, polygon_indices) -> None:
     """Per-face lightmap charts for ONLY the given faces (rescue-scoped)."""
-    mesh = obj.data
-    mesh.uv_layers.active = mesh.uv_layers[uv_name]
-    select_only([obj])
-    previous_select_mode = tuple(bpy.context.tool_settings.mesh_select_mode)
-    _enter_edit_selecting_faces(mesh, polygon_indices)
-    try:
-        # Same sync-mode hazard as the scoped Smart Project above.
-        if not bpy.context.tool_settings.use_uv_select_sync:
-            bpy.ops.uv.select_all(action="SELECT")
+    with scoped_uv_edit(
+            [obj], uv_name, faces=polygon_indices):
         bpy.ops.uv.lightmap_pack(
             PREF_CONTEXT="SEL_FACES",
             PREF_PACK_IN_ONE=True,
             PREF_MARGIN_DIV=0.2,
         )
-    finally:
-        if bpy.context.mode != "OBJECT":
-            bpy.ops.object.mode_set(mode="OBJECT")
-        bpy.context.tool_settings.mesh_select_mode = previous_select_mode
 
 
 def _lightmap_pack_private_uv_object(obj, uv_name: str) -> None:
@@ -3240,20 +3292,12 @@ def _lightmap_pack_private_uv_object(obj, uv_name: str) -> None:
 
     Injective by construction (every face gets its own chart), at the cost
     of a seam on every edge. Rescue-only: never a first choice."""
-    obj.data.uv_layers.active = obj.data.uv_layers[uv_name]
-    select_only([obj])
-    bpy.ops.object.mode_set(mode="EDIT")
-    try:
-        bpy.ops.mesh.select_all(action="SELECT")
-        bpy.ops.uv.select_all(action="SELECT")
+    with scoped_uv_edit([obj], uv_name):
         bpy.ops.uv.lightmap_pack(
             PREF_CONTEXT="ALL_FACES",
             PREF_PACK_IN_ONE=True,
             PREF_MARGIN_DIV=0.2,
         )
-    finally:
-        if bpy.context.mode != "OBJECT":
-            bpy.ops.object.mode_set(mode="OBJECT")
 
 
 def _projection_overlap_issues(obj, uv_name: str):
@@ -5859,12 +5903,8 @@ def average(objs) -> None:
     packable = [obj for obj in objs if len(obj.data.polygons) > 0]
     if not packable:
         return
-    select_only(packable)
-    bpy.ops.object.mode_set(mode="EDIT")
-    bpy.ops.mesh.select_all(action="SELECT")
-    bpy.ops.uv.select_all(action="SELECT")
-    bpy.ops.uv.average_islands_scale()
-    bpy.ops.object.mode_set(mode="OBJECT")
+    with scoped_uv_edit(packable):
+        bpy.ops.uv.average_islands_scale()
 
 
 def average_unpinned(objs, uv_name: str) -> dict:
@@ -5885,45 +5925,15 @@ def average_unpinned(objs, uv_name: str) -> dict:
     packable = [obj for obj in objs if len(obj.data.polygons) > 0]
     if not packable:
         return {}
-    tools = bpy.context.scene.tool_settings
-    prior_sync = tools.use_uv_select_sync
-    # The uv.select_* ops below act on UV selection, not mesh selection.
-    tools.use_uv_select_sync = False
-    primary_error = None
-    cleanup_errors = []
-    try:
-        select_only(packable)
-        bpy.ops.object.mode_set(mode="EDIT")
-        bpy.ops.mesh.select_all(action="SELECT")
+    # The uv.select_* ops below act on UV selection, not mesh selection,
+    # so this needs sync OFF and establishes its own UV selection.
+    with scoped_uv_edit(packable, sync=False, select_uvs=False):
         bpy.ops.uv.select_all(action="DESELECT")
         bpy.ops.uv.select_pinned()
         bpy.ops.uv.select_linked()
         bpy.ops.uv.pin(clear=False)
         bpy.ops.uv.select_all(action="INVERT")
         bpy.ops.uv.average_islands_scale()
-        bpy.ops.object.mode_set(mode="OBJECT")
-    except BaseException as error:
-        primary_error = error
-    finally:
-        if bpy.context.mode != "OBJECT":
-            try:
-                bpy.ops.object.mode_set(mode="OBJECT")
-            except BaseException as error:
-                cleanup_errors.append(f"Object Mode restore failed: {error}")
-        try:
-            tools.use_uv_select_sync = prior_sync
-        except BaseException as error:
-            cleanup_errors.append(f"UV selection-sync restore failed: {error}")
-    if cleanup_errors:
-        cleanup_error = RuntimeError(
-            "unpinned UV averaging could not restore Blender state: "
-            + "; ".join(cleanup_errors)
-        )
-        if primary_error is not None:
-            raise cleanup_error from primary_error
-        raise cleanup_error
-    if primary_error is not None:
-        raise primary_error.with_traceback(primary_error.__traceback__)
     held = {}
     for obj in packable:
         layer = obj.data.uv_layers.get(uv_name)
@@ -5957,6 +5967,10 @@ def required_bake_gutter_px(margin_px: int, *, guard_px: int = 4) -> int:
 def _pack_selected_uv_islands(
         *, margin: float, rotate: bool, scale: bool = True,
         shape_method: str = "CONCAVE") -> None:
+    # Deliberately NOT on scoped_uv_edit: this is the only UV operation
+    # that must set use_uv_select_sync AFTER entering Edit Mode (see the
+    # multi-object contract below), while the seam sets it before. Every
+    # other bpy.ops.uv.* primitive in this module goes through the seam.
     prior_sync = bpy.context.tool_settings.use_uv_select_sync
     expected = {
         obj.as_pointer() for obj in bpy.context.selected_objects
