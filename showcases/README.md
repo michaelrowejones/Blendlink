@@ -48,13 +48,50 @@ blender --background scene/cube_diorama.blend --python mark_fidelity.py
 node ../../packages/blendlink/dist/cli.js compile --force
 ```
 
-## ellie (scaffolded — needs Phase 4)
+## ellie (working — the Phase 4 acceptance scene)
 
-The Ellie character scene is scaffolded but deliberately not compiled:
-an animated, armature-deformed character cannot take the appearance
-atlas (deforming meshes), and her 27 paint-stroke Mix-Shader materials
-with 2048² textures are exactly the population the Phase 4 TSL runtime
-(Track C: texture_ref transport + tslMaterialRuntime application) is
-designed to carry. Shipping her through a lossy route today would
-contradict the fidelity gate this product is built on. She is the
-Phase 4 acceptance scene.
+The Ellie character scene compiles through the TSL program route: an
+animated, armature-deformed character cannot take the appearance atlas
+(deforming meshes), so her paint-stroke Mix-Shader materials ship as
+per-channel TSL IR programs in the `ellieAnimation.materials.json`
+sidecar — 36 of 49 materials lowered, the 2048² dirt map riding as an
+exact hash-pinned `texture_ref` image beside the sidecar. The measured
+Phase 2 verdict that picked this route over baking: 64 MiB delivered
+against the 201 MiB texture baseline, 8 draws at 130,810 triangles.
+
+`mark_fidelity.py` records the route decisions into the `.blend`
+headlessly: the program opt-ins, the extras-conflict resolution that
+precomputes install-time refusals (largest agreeing set per shared
+mesh), and the fannypack-zipper exclusion (its geometry waits on the
+Phase 3 runtime-deformer route). Run it with Blender's `--python`, then
+compile:
+
+```bash
+blender --background scene/ellie_animation.blend --python mark_fidelity.py
+node ../../packages/blendlink/dist/cli.js compile --force
+```
+
+## Scene provenance and licenses
+
+Both scenes derive from official Blender demo assets whose pristine
+source bytes are pinned in `docs/demo-corpus-inventory.json`; the
+committed working copies additionally carry Blendlink's saved fidelity
+marks (`blendlink_*` custom properties). Blender's `.blend1` backup
+files are not committed.
+
+- **cube-diorama** — `scene/cube_diorama.blend`, from the official
+  Blender 3.0 asset demo bundle
+  (`download.blender.org/demo/bundles/bundles-3.0/asset-demo-bundle-3.0-cube-diorama.zip`).
+  By **Blender Studio**. License: **CC0**, per the bundle's embedded
+  README and the listing at blender.org/download/demo-files.
+- **ellie** — `scene/ellie_animation.blend`, from the official Blender
+  3.0 asset demo bundle ("Ellie Pose Library",
+  `download.blender.org/demo/bundles/bundles-3.0/asset-demo-bundle-3.0-ellie-animation.zip`).
+  By **Blender Studio**. License: **CC-BY**, per the `.blend`'s embedded
+  `README Animation` / `README Pose Library` text blocks and the listing
+  at blender.org/download/demo-files (neither source states a CC-BY
+  version number). The compiled artifacts under `showcases/ellie/` are
+  derivatives of that work and carry the same attribution: *"Ellie Pose
+  Library" by Blender Studio, licensed CC-BY.* The showcase's marks and
+  compiled outputs are Blendlink's; the character, rig, animation, and
+  textures are Blender Studio's.

@@ -1,0 +1,15 @@
+# This is an Asset Catalog Definition file for Blender.
+#
+# Empty lines and lines starting with `#` will be ignored.
+# The first non-ignored line should be the version indicator.
+# Other lines are of the format "UUID:catalog/path/for/assets:simple catalog name"
+
+VERSION 1
+
+2a9a64ef-38e6-56c4-a20a-b5f76edb6b3c:Poses:Poses
+66a5ab5a-ed03-4be0-84a8-08099a7eb61b:Poses/Ellie:Poses-Ellie
+57044a09-7d5a-4505-9190-ecd761cf2bea:Poses/Ellie/Eyes:Poses-Ellie-Eyes
+1429514d-029f-4670-bd3f-0509362dcbce:Poses/Ellie/Face:Poses-Ellie-Face
+cc06288a-15e7-47ba-92e1-31fd0bb86759:Poses/Ellie/Full:Poses-Ellie-Full
+8ea7d1bf-61d4-442f-bb62-4d49564f889f:Poses/Ellie/Hands:Poses-Ellie-Hands
+dcfcbb93-9d7d-40fe-89e2-2b9d81d8d983:Poses/Ellie/Mouth:Poses-Ellie-Mouth
