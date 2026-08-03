@@ -8,13 +8,20 @@ const REVIEWED_ADVISORY = Object.freeze({
   range: '<0.35.0',
 })
 
+// Re-reviewed 2026-08-03: npm's audit rollup stopped listing the
+// @gltf-transform/functions edge for the same advisory (source 1124066,
+// sharp <0.35.0) while verifyReviewedDependencyChain proved the installed
+// lock records byte-identical to the reviewed snapshot — a reporting-shape
+// change over identical bytes, not a dependency change. The exact-names
+// check below now accepts only the two-entry rollup; the old three-entry
+// shape reappearing, or any other change, fails closed again.
 const REVIEWED_COUNTS = Object.freeze({
   info: 0,
   low: 0,
   moderate: 0,
-  high: 3,
+  high: 2,
   critical: 0,
-  total: 3,
+  total: 2,
 })
 
 const REVIEWED_CHAIN_FINGERPRINT =
@@ -96,7 +103,6 @@ export function verifyProductionAuditReport(report) {
   }
 
   const expectedNames = [
-    '@gltf-transform/functions',
     'ndarray-pixels',
     'sharp',
   ]
@@ -107,16 +113,6 @@ export function verifyProductionAuditReport(report) {
     auditFailure(`vulnerability packages were ${names.join(', ') || '(none)'}`)
   }
   assertExactCounts(root.metadata?.vulnerabilities, REVIEWED_COUNTS, auditFailure)
-
-  const functionsEntry = recordAt(
-    vulnerabilities['@gltf-transform/functions'],
-    'vulnerabilities.@gltf-transform/functions',
-    auditFailure,
-  )
-  if (functionsEntry.severity !== 'high' || functionsEntry.isDirect !== true) {
-    auditFailure('@gltf-transform/functions severity/directness changed')
-  }
-  assertStringVia(functionsEntry, 'ndarray-pixels', '@gltf-transform/functions')
 
   const ndarrayEntry = recordAt(
     vulnerabilities['ndarray-pixels'],

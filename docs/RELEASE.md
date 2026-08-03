@@ -33,9 +33,12 @@ licenses.
   installs the exact ZIP, compiles Vanilla/R3F consumers from the exact
   tarball, compares their add-on fingerprints, and writes `release-manifest.json`
   plus `SHA256SUMS`. The normal command refuses a dirty worktree.
-- A live production audit currently reports exactly three high-severity entries
+- A live production audit currently reports exactly two high-severity entries
   for one Sharp/libvips advisory, `GHSA-f88m-g3jw-g9cj`, through
-  `@gltf-transform/functions` -> `ndarray-pixels` -> `sharp`. Blendlink applies
+  `ndarray-pixels` -> `sharp` (until 2026-08 npm also rolled the same advisory
+  up to `@gltf-transform/functions`; that reporting change was re-reviewed on
+  2026-08-03 against an unchanged lock-chain fingerprint — identical installed
+  bytes, narrower rollup). Blendlink applies
   the advisory's official GIF/TIFF/VIPS loader blocks at every package-owned
   Sharp entry point, and behavioral tests prove those inputs are refused. npm
   still reports the advisory: this is a reviewed public-beta workaround, not a
@@ -46,8 +49,8 @@ licenses.
   loader snapshot. A changed/new finding—or an unexpectedly empty report while
   that vulnerable snapshot remains pinned—is a release blocker. Upgrading to a
   patched compatible dependency graph requires deliberate policy review rather
-  than inheriting this exception. Its policy tests passed 7/7 and the live gate
-  passed on 2026-07-25 with the reviewed-workaround sentinel.
+  than inheriting this exception. The policy tests and the live gate passed on
+  2026-08-03 with the reviewed-workaround sentinel.
 - The Blender source and retained ZIP embed the full GPL version 3 text in
   `LICENSE`; release assembly refuses a missing/wrong text. The npm artifact
   embeds the complete MIT and GPL texts, the Basis Apache notice, and its
@@ -88,12 +91,13 @@ failure, not an allowed skip.
 
 `audit:production` is a fail-closed policy gate, not a zero-vulnerability
 claim. For the current candidate it may accept only the reviewed
-`GHSA-f88m-g3jw-g9cj` three-entry chain plus the tested official loader blocks;
-zero findings fails while the reviewed vulnerable snapshot remains pinned
-because advisory omission is not proof that the installed bytes changed.
-Malformed output, registry failure, changed severity/range/path/content
-identity, or any additional advisory fails. Its current integrated pass
-succeeded live on 2026-07-25; npm still reports three high package entries and
+`GHSA-f88m-g3jw-g9cj` chain — reported by npm as the two-entry
+`ndarray-pixels` -> `sharp` rollup since 2026-08 — plus the tested official
+loader blocks; zero findings fails while the reviewed vulnerable snapshot
+remains pinned because advisory omission is not proof that the installed bytes
+changed. Malformed output, registry failure, changed severity/range/path/
+content identity, or any additional advisory fails. Its current integrated
+pass succeeded live on 2026-08-03; npm reports two high package entries and
 zero critical findings.
 
 `release:artifacts` writes the exact verified `.tgz`, `.zip`, manifest, and

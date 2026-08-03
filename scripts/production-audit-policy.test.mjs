@@ -10,11 +10,6 @@ function reviewedReport() {
   return {
     auditReportVersion: 2,
     vulnerabilities: {
-      '@gltf-transform/functions': {
-        severity: 'high',
-        isDirect: true,
-        via: ['ndarray-pixels'],
-      },
       'ndarray-pixels': {
         severity: 'high',
         isDirect: true,
@@ -34,7 +29,7 @@ function reviewedReport() {
     },
     metadata: {
       vulnerabilities: {
-        info: 0, low: 0, moderate: 0, high: 3, critical: 0, total: 3,
+        info: 0, low: 0, moderate: 0, high: 2, critical: 0, total: 2,
       },
     },
   }
@@ -52,6 +47,24 @@ describe('production audit release policy', () => {
       status: 'reviewed-workaround',
       advisory: 'GHSA-f88m-g3jw-g9cj',
     })
+  })
+
+  it('rejects the pre-2026-08 three-entry rollup if npm reintroduces it', () => {
+    // The 2026-08-03 re-review accepted npm's narrowed two-entry rollup for
+    // the same advisory over byte-identical lock records. The shape moving
+    // AGAIN — in either direction — must fail closed for a fresh review.
+    const report = reviewedReport()
+    report.vulnerabilities['@gltf-transform/functions'] = {
+      severity: 'high',
+      isDirect: true,
+      via: ['ndarray-pixels'],
+    }
+    report.metadata.vulnerabilities.high = 3
+    report.metadata.vulnerabilities.total = 3
+    assert.throws(
+      () => verifyProductionAuditReport(report),
+      /unreviewed production audit result/i,
+    )
   })
 
   it('rejects a new advisory even when its count looks unchanged', () => {
