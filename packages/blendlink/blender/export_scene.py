@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+﻿# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # blendlink export script. This file imports bpy and is therefore licensed
 # GPL-3.0-or-later, unlike the rest of the blendlink package (MIT). It runs
@@ -27,7 +27,7 @@ import time
 import bmesh
 import bpy
 
-# Shared bake primitives live in bakelib.py beside this script — the ONE
+# Shared bake primitives live in bakelib.py beside this script â€” the ONE
 # home for logic external pipelines also import. Never inline a copy here.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bakelib  # noqa: E402
@@ -1013,7 +1013,7 @@ def missing_libraries() -> list[str]:
 
 
 def yup(vector) -> list[float]:
-    """Blender Z-up world → glTF/three Y-up: (x, y, z) → (x, z, -y)."""
+    """Blender Z-up world â†’ glTF/three Y-up: (x, y, z) â†’ (x, z, -y)."""
     return [round(vector[0], 6), round(vector[2], 6), round(-vector[1], 6)]
 
 
@@ -1337,7 +1337,7 @@ def collect_sidecar(
 
     - timeline markers (scroll-scrub waypoints), scene fps
     - empty display types/sizes (collider primitives, anchor semantics)
-    - curves: bezier control points + handles, or evaluated points —
+    - curves: bezier control points + handles, or evaluated points â€”
       glTF has no curve primitive (spec gap open since 2018), so this is
       the data every studio re-derives with a pasted Python snippet.
     """
@@ -1647,7 +1647,7 @@ def has_volatile_external_dependencies() -> bool:
 # fixture cases lock all three parsers together now).
 NOIMP_PATTERN = re.compile(r"[-_]noimp(\.\d{3})?$", re.IGNORECASE)
 # Collision-only proxies ship in the GLB (physics needs the geometry) but
-# never render — keep them out of the atlas pack and the bake.
+# never render â€” keep them out of the atlas pack and the bake.
 COLONLY_PATTERN = re.compile(r"[-_](conv)?colonly(\.\d{3})?$", re.IGNORECASE)
 EXACT_ANCHOR_PATTERN = re.compile(r"^(?:SOCKET|HOTSPOT|AUDIO)[-_].+$")
 BLENDLINK_ROLE_VALUES = frozenset({
@@ -1849,7 +1849,7 @@ def rebuild_baked_materials(objects, baked_by_group, atlas_for=None) -> dict:
 
 def render_meshes(*, fixed_camera_appearance: bool = False) -> list:
     """The BAKED mesh set: everything the atlas pack and bake touch.
-    Dynamic (lit) meshes still export — they are simply not in here."""
+    Dynamic (lit) meshes still export â€” they are simply not in here."""
     return [
         obj for obj in bpy.context.scene.objects
         if obj.type == "MESH" and not obj.hide_render
@@ -1865,7 +1865,7 @@ def render_meshes(*, fixed_camera_appearance: bool = False) -> list:
 
 
 def visible_render_meshes(*, fixed_camera_appearance: bool = False) -> list:
-    """Render meshes excluding anything in a render-hidden collection —
+    """Render meshes excluding anything in a render-hidden collection â€”
     collection hide_render does not set obj.hide_render, and native bake
     receivers must respect state hideCollections (geometry states, not just
     lights)."""
@@ -1896,7 +1896,7 @@ def has_bakeable_meshes(*, fixed_camera_appearance: bool = False) -> bool:
 
 
 def camera_positions() -> list:
-    """World positions of EVERY scene camera — density and atlas assignment
+    """World positions of EVERY scene camera â€” density and atlas assignment
     both want the worst case over authored viewpoints, not just the active
     camera (a compact/portrait camera can approach closer than the main)."""
     return [
@@ -2022,7 +2022,7 @@ def rgba8_mip_chain_bytes(size: int) -> int:
 def atlas_config(bake: dict) -> dict:
     """Declared atlases, or the implicit single atlas 'main'. Each entry:
     {size, maxCameraDistance?}. Users configure ATLASES; objects are
-    auto-assigned by proximity and overridden per-object — never a
+    auto-assigned by proximity and overridden per-object â€” never a
     hand-maintained object list in the config."""
     atlases = bake.get("atlases")
     if not atlases:
@@ -2142,7 +2142,7 @@ def assign_atlases(meshes: list, atlases: dict) -> tuple:
             else:
                 warnings.append(
                     f"{obj.name}: blendlink_atlas '{override}' is not a declared "
-                    f"atlas ({', '.join(names)}) — auto-assigned instead"
+                    f"atlas ({', '.join(names)}) â€” auto-assigned instead"
                 )
         if group is None:
             group = catch_all
@@ -2159,7 +2159,7 @@ def assign_atlases(meshes: list, atlases: dict) -> tuple:
 
 
 def compute_texel_weights(meshes: list) -> dict:
-    """auto (camera-distance, median-normalized, clamped, quantized) × artist.
+    """auto (camera-distance, median-normalized, clamped, quantized) Ã— artist.
 
     The auto weight equalizes texels-per-SCREEN-pixel: required linear
     density is proportional to 1/distance, taken as the WORST CASE over
@@ -2185,7 +2185,7 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
     """Freeze, unwrap-fallback, then per-atlas average + weight + pack.
 
     Returns the layout: {group: {objects, size, margin}} at FINAL
-    resolution (bake-time images are ×supersample; the pack margin is a
+    resolution (bake-time images are Ã—supersample; the pack margin is a
     fraction, identical at both scales). The config margin is authored
     against the LARGEST declared atlas and scales down per group, so a
     small background atlas never spends 40% of itself on gutters.
@@ -2207,12 +2207,12 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
             "baked mode: every bakeable mesh evaluates to empty geometry at "
             f"frame {bpy.context.scene.frame_current}"
         )
-    # Unwrapped meshes get a real projection — Blender's default UV reset
+    # Unwrapped meshes get a real projection â€” Blender's default UV reset
     # maps every face to the full unit square, which shatters the pack.
     bakelib.ensure_authored_uvs(meshes)
     # Atlas workspace layer per mesh. Meshes carrying the artist's
     # BLENDLINK_ATLAS_AUTHORED layer (the addon's Materialize operator)
-    # contribute its islands and pin flags instead of the first UV layer —
+    # contribute its islands and pin flags instead of the first UV layer â€”
     # opt-in by presence.
     authored = set(bakelib.stage_atlas_layers(meshes))
     # Evaluated modifiers can create real faces whose inherited corner UVs
@@ -2256,7 +2256,7 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
                 except RuntimeError as error:
                     layout["_errors"].append(str(error))
         # Baseline: equalize px/m across THIS atlas (authored UV scales are
-        # arbitrary), then apply texel weights as island pre-scales —
+        # arbitrary), then apply texel weights as island pre-scales â€”
         # pack_islands(scale=True) preserves relative island scale, so the
         # pre-scale IS the weight (Unity Scale-in-Lightmap semantics).
         # Islands the artist PINNED in an authored layer sit this out
@@ -2370,7 +2370,15 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
                     f"the recipe's {entry['size']}px to prove the fixed-pixel "
                     f"bake gutter contract; the atlas grew to {atlas_size}px"
                 )
+                # The LAYOUT is the authoritative achieved size: the bake
+                # image allocation, the plan's group_size, and coverage all
+                # read it, while `atlases` is rebuilt from the recipe on
+                # every atlas_config() call. Recording the growth only on
+                # `entry` would pack UVs for the grown atlas while baking
+                # into the recipe-sized image -- halving every gutter this
+                # ladder just proved.
                 entry["size"] = atlas_size
+                layout[name]["size"] = atlas_size
             break
         layout["_held"].update(final_held)
         for repair in post_pack_repairs:
@@ -2446,7 +2454,7 @@ def bake_engine(samples: int) -> dict:
     scene.render.engine = "CYCLES"
     scene.cycles.samples = samples
     # Bake-time denoising darkens island margins (denoise runs before the
-    # margin fill — blender/blender#94573); adaptive samples instead.
+    # margin fill â€” blender/blender#94573); adaptive samples instead.
     scene.cycles.use_denoising = False
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.adaptive_threshold = 0.02
@@ -2888,7 +2896,7 @@ def bake_state(
     scene = bpy.context.scene
     # Light-group layers pass emit=False: surface self-emission already
     # lives in the base state, and mute_emission cannot reach node-driven
-    # (linked) emission — baking it into every layer would add N+1 copies
+    # (linked) emission â€” baking it into every layer would add N+1 copies
     # of the monitor glow at runtime.
     configure_atlas_bake(
         scene, margin_px, bake_output, emit=emit,
@@ -2954,7 +2962,7 @@ def _active_scene_collections_by_name() -> dict:
 
 
 def hide_collections(names: list) -> list:
-    """Render-hide the named collections, returning prior values — an
+    """Render-hide the named collections, returning prior values â€” an
     unconditional un-hide on restore would expose collections the artist
     authored hidden."""
     if not isinstance(names, list) or not all(isinstance(name, str) and name.strip() for name in names):
@@ -3206,13 +3214,13 @@ def density_balance_warnings(objects: list[dict], has_camera: bool) -> list[str]
                 )
                 warnings.append(
                     f"{entry['name']} sits {median / value:.1f}x below the median "
-                    f"{density_label} in atlas {atlas!r} — {consequence} "
+                    f"{density_label} in atlas {atlas!r} â€” {consequence} "
                     "(raise its texel_weight)"
                 )
             elif ratio > 2.0:
                 warnings.append(
                     f"{entry['name']} sits {ratio:.1f}x above the median "
-                    f"{density_label} in atlas {atlas!r} — it is taking detail from other "
+                    f"{density_label} in atlas {atlas!r} â€” it is taking detail from other "
                     "members (lower its texel_weight)"
                 )
     return warnings
@@ -3223,7 +3231,7 @@ def compute_bake_plan(settings: dict, recipe: dict | None = None) -> dict:
     """Everything an artist wants to know BEFORE the bake, computed from the
     UV pack alone (no Cycles work): per-object texel density, atlas share,
     occupancy, and the state list. The re-bake causes on record are density
-    discovered too late and one object hogging the atlas — this is the lint.
+    discovered too late and one object hogging the atlas â€” this is the lint.
     """
     bake = settings.get("bake", {})
     size = int(bake.get("size", 2048))
@@ -3297,7 +3305,7 @@ def compute_bake_plan(settings: dict, recipe: dict | None = None) -> dict:
     camera_position = cameras[0] if cameras else None
     total_uv = max(group_uv.values()) if group_uv else 0.0
 
-    # Worst perceived quality first — the offender list leads.
+    # Worst perceived quality first â€” the offender list leads.
     objects.sort(key=lambda entry: entry["screenDensity"] if entry["screenDensity"] is not None else entry["pxPerMeter"])
     warnings = density_balance_warnings(objects, camera_position is not None)
     errors = list(layout.get("_errors", []))
@@ -3429,7 +3437,7 @@ def compute_bake_plan(settings: dict, recipe: dict | None = None) -> dict:
                     errors.append(message)
                 else:
                     prefix = (
-                        "Preview only — Scale to Fit: "
+                        "Preview only â€” Scale to Fit: "
                         if bake.get("previewScaleToFit") else "Scale to Fit: "
                     )
                     warnings.append(prefix + message)
@@ -3603,9 +3611,9 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     size = int(bake.get("size", 2048))
     samples = int(bake.get("samples", 128))
     margin_px = int(bake.get("margin", 48))
-    # Cycles bakes have no edge anti-aliasing; baking at N× and box-resolving
-    # down (Blender's bilinear scale on an exact 2× grid IS a box filter) is
-    # the standard workaround — quality at zero runtime cost.
+    # Cycles bakes have no edge anti-aliasing; baking at NÃ— and box-resolving
+    # down (Blender's bilinear scale on an exact 2Ã— grid IS a box filter) is
+    # the standard workaround â€” quality at zero runtime cost.
     supersample = max(1, int(bake.get("supersample", 1)))
     denoise = bool(bake.get("denoise", False))
     bake_size = size * supersample
@@ -3801,7 +3809,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
 
     # Lights assigned to a Cycles Light Group become interactive: excluded
     # from the base/state bakes, then solo-baked as additive contribution
-    # layers (light adds linearly — Quake lightstyles' 30-year-old exploit).
+    # layers (light adds linearly â€” Quake lightstyles' 30-year-old exploit).
     grouped_lights = {}
     hidden_grouped_lights = []
     for obj in bpy.context.scene.objects:
@@ -4786,7 +4794,7 @@ def realizable_renderable_plan(objects) -> dict:
     GEO-EVAL-001: Grease Pencil, Hair Curves, and childless legacy HAIR/PATH
     particle parents realize to ordinary meshes through the depsgraph when
     their deterministic triangle estimate fits ``MAX_REALIZED_TRIANGLES``.
-    Everything else keeps the loud refusal — evaluated strand counts are
+    Everything else keeps the loud refusal â€” evaluated strand counts are
     unbounded by nature, and an over-budget scene must name its numbers
     instead of publishing a payload surprise.  This runs for plan-only and
     real exports alike and must never mutate the scene.
@@ -5736,7 +5744,7 @@ def gltf_export_contract(out_path: str, settings: dict) -> tuple[dict, list[str]
         # Ship only deforming joints. Control rigs (CloudRig et al.) carry
         # thousands of mechanism/control bones; exporting them wholesale
         # produced an 1867-joint skin whose matrix buffer (119KB) exceeds
-        # the 64KB uniform-block limit on BOTH web render backends — the
+        # the 64KB uniform-block limit on BOTH web render backends â€” the
         # character could never skin. Deform-only is the standard
         # game-export contract; the exporter keeps required parents.
         "export_def_bones": True,
@@ -5805,7 +5813,7 @@ def enforce_pointer_animation_policy(
     if private_authoring_preview:
         frame_label = f"{frame:g}"
         return [
-            "PRIVATE PREVIEW ONLY — unsupported property animation on "
+            "PRIVATE PREVIEW ONLY â€” unsupported property animation on "
             f'{item["object"]!r} is frozen at Blender frame {frame_label}: '
             f'{item["reason"]}. Final builds and connected-site previews remain '
             "blocked. Animate this value in website code, remove its property "
@@ -5965,12 +5973,12 @@ def main() -> None:
     settings, recipe = resolve_scene_recipe(settings)
 
     # The addon's checker override is viewport-only inspection, but freeze
-    # and glTF export evaluate the VIEWPORT depsgraph — strip leftovers
+    # and glTF export evaluate the VIEWPORT depsgraph â€” strip leftovers
     # before anything evaluates, or the checker material bakes and ships.
     stripped = bakelib.remove_checker_overrides(bpy.data.objects)
     strip_warnings = (
         [f"removed {stripped} leftover checker-override modifier(s) "
-         "(the addon's viewport UV inspection — never baked or exported)"]
+         "(the addon's viewport UV inspection â€” never baked or exported)"]
         if stripped else []
     )
 
@@ -6054,7 +6062,7 @@ def main() -> None:
             reasons = " ".join(material.get("reasons", [])[:2])
             warnings.append(
                 f"material {material.get('material', 'unnamed')!r}: "
-                f"{material.get('label', 'glTF approximation')} — {reasons}"
+                f"{material.get('label', 'glTF approximation')} â€” {reasons}"
             )
     pointer_blockers = procedural.pointer_animation_issues(
         bpy.context.scene,

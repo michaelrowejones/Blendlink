@@ -50,6 +50,15 @@ const componentBatch2Test = join(
 const legacyCurveSidecarTest = join(
   root, 'experiments', 'legacy-curve-sidecar-differential', 'run.py',
 )
+const bakeLadderTest = join(
+  root, 'packages', 'blender-addon', 'tests', 'bake_ladder_check.py',
+)
+const componentSchemaTest = join(
+  root, 'packages', 'blender-addon', 'tests', 'component_schema_check.py',
+)
+const presentationTest = join(
+  root, 'packages', 'blender-addon', 'tests', 'presentation_check.py',
+)
 
 console.log('BLENDLINK_FULL_TEST addon: discovering the supported local Blender installation')
 const discovery = spawnSync(process.execPath, [cli, 'discover'], {
@@ -178,6 +187,18 @@ runHeadlessSuite(
 runHeadlessSuite(
   'linked legacy Curve sidecar diagnostic differential', legacyCurveSidecarTest,
   'BLENDLINK_LEGACY_CURVE_SIDECAR_DIFFERENTIAL_PASSED',
+)
+runHeadlessSuite(
+  'bake atlas resolution ladder contract', bakeLadderTest,
+  'BLENDLINK_BAKE_LADDER_CHECK_PASSED',
+)
+runHeadlessSuite(
+  'component schema contract', componentSchemaTest,
+  'BLENDLINK_COMPONENT_SCHEMA_CHECK_PASSED',
+)
+runHeadlessSuite(
+  'responsive framing and reference capture contract', presentationTest,
+  'BLENDLINK_PRESENTATION_CHECK_PASSED',
 )
 runHeadlessSuite('registered addon suite', addonTest, 'BLENDLINK_ADDON_TESTS_PASSED')
 console.log('BLENDLINK_FULL_TEST addon: passed')
