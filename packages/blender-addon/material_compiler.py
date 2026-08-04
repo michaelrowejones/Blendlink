@@ -3039,13 +3039,6 @@ def _authored_uv_bounds(obj, uv_maps, uses_active):
     return (lo[0], lo[1], hi[0], hi[1])
 
 
-def _bounded_power_of_two(value: float, floor: int, ceiling: int) -> int:
-    result = floor
-    while result < ceiling and result < value:
-        result *= 2
-    return result
-
-
 def _synthesize_surface_routing(tree):
     """Channel routing for a surface-resolvable non-Principled material.
 
@@ -3515,7 +3508,7 @@ def _plan_material_bake(
                     max(float(target_pixels), 1.0)
                     / max(float(tile_area), 1.0)
                 )
-                candidate = _bounded_power_of_two(per_tile, 64, 2048)
+                candidate = bakelib._bounded_power_of_two(per_tile, 64, 2048)
                 tile_resolution = max(tile_resolution or 0, candidate)
                 bounds = _authored_uv_bounds(
                     obj, sorted(tile_uv_maps), tile_uses_active,

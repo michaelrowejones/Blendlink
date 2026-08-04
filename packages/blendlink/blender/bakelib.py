@@ -78,6 +78,14 @@ def capture_fixed_camera_card(
     shader baker. The caller owns source eligibility and the final decision to
     exclude it from glTF; this primitive owns isolation, render-state restore,
     alpha crop, packing, inverse projection, and canonical material creation.
+
+    STAGED CAPABILITY, no production caller yet. The transport it serves is
+    designed in docs/research-eevee-fixed-camera-appearance-transport-2026.md
+    and docs/research-fixed-camera-unlit-card-needle-2026.md; the exporter's
+    `fixedCameraAppearance` setting currently only governs which meshes count
+    as renderable, not card capture. Its private helpers are exercised by the
+    headless suite, so this is deliberately retained rather than dead code -
+    an architecture review already flagged it once as unreferenced.
     """
     if scene.camera is None:
         raise RuntimeError("fixed-camera capture needs the scene presentation camera")
@@ -2244,10 +2252,16 @@ def _material_binding_world_area_and_center(obj, slot_index: int) -> tuple[float
     return area, centre
 
 
-def _bounded_power_of_two(value: int, minimum: int, maximum: int) -> int:
+def _bounded_power_of_two(value: float, minimum: int, maximum: int) -> int:
+    """Smallest power of two at or above `value`, clamped to the bounds.
+
+    Ceils rather than truncates: every caller asks "how many texels do I
+    need", so 64.5 needed texels must round to 128, not down to 64. Both
+    in-module callers already pass integers, for which this is identical.
+    """
     if minimum <= 0 or maximum < minimum:
         raise ValueError("invalid power-of-two bounds")
-    target = max(1, int(value))
+    target = max(1, math.ceil(value))
     result = 1 << (target - 1).bit_length()
     return min(max(result, minimum), maximum)
 
@@ -3058,6 +3072,11 @@ def texel_weight_of(obj, keys=("blendlink_texel_weight", "texel_weight"), log=pr
     return 1.0
 
 
+# --------------------------------------------------------------------------
+# Atlas workspace layers and the scoped UV editing seam
+# --------------------------------------------------------------------------
+
+
 def stage_atlas_layers(objs, uv_name: str = ATLAS_UV,
                        authored_name: str = AUTHORED_UV, log=print) -> list:
     """Create the pack workspace layer on every mesh.
@@ -3672,7 +3691,10 @@ def smart_project_private_uvs(
     }
 
 
-# Pinned atlas UV validation -------------------------------------------------
+# --------------------------------------------------------------------------
+# UV island models: topological (seam-aware) vs packer-rigid (welded)
+# --------------------------------------------------------------------------
+
 
 _UV_CONNECT_EPSILON = 1e-7
 _UV_BOUNDS_EPSILON = 1e-6
@@ -3857,6 +3879,11 @@ def _exact_zero_world_area_triangle_indices(obj) -> list[int]:
         if double_area <= 0.0:
             indices.append(triangle.index)
     return indices
+
+
+# --------------------------------------------------------------------------
+# Collapsed and degenerate UV detection, and island-granular repair
+# --------------------------------------------------------------------------
 
 
 def _nonzero_geometry_zero_uv_triangles(obj, uv_name: str) -> list[int]:
@@ -4538,6 +4565,11 @@ def repair_evaluated_atlas_uvs(
             + "; authored UV layers were preserved"
         )
     return reports
+
+
+# --------------------------------------------------------------------------
+# UV geometry primitives: exact clipping, distance, BVH broad phase
+# --------------------------------------------------------------------------
 
 
 def _triangle_intersection_area(left, right) -> float:
@@ -5241,6 +5273,11 @@ def _bvh_pair_relation(left, right, minimum_gutter: float) -> tuple[bool, float]
     return visit(left, right), best_distance
 
 
+# --------------------------------------------------------------------------
+# Injectivity, bounds and gutter proofs over an authored layout
+# --------------------------------------------------------------------------
+
+
 def pinned_uv_layout_issues(objs, uv_name: str = ATLAS_UV,
                             held: dict | None = None,
                             minimum_gutter: float = 0.0) -> list[dict]:
@@ -5466,6 +5503,11 @@ def pinned_uv_layout_issues(objs, uv_name: str = ATLAS_UV,
         issue["object"], issue["island"], issue["kind"],
         issue.get("otherObject", ""), issue.get("otherIsland", 0),
     ))
+
+
+# --------------------------------------------------------------------------
+# Packed-UV evidence: encode, attest, and re-apply an exact layout
+# --------------------------------------------------------------------------
 
 
 _ATLAS_LAYOUT_VERSION = 1
@@ -5870,6 +5912,11 @@ def apply_packed_uv_evidence(scene_objects, evidence: dict,
             f"loading published atlas UVs failed: {type(error).__name__}: {error}{detail}"
         ) from error
     return {"applied": applied, "skipped": skipped}
+
+
+# --------------------------------------------------------------------------
+# Packing: island weights, receiver ownership, and the gutter contract
+# --------------------------------------------------------------------------
 
 
 def scale_islands(objs, uv_name: str, weight_for, held: dict | None = None) -> None:
