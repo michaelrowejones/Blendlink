@@ -343,7 +343,7 @@ export async function applyCompiledSceneReflectionProbes<
           if (!asset) {
             throw new Error(
               `Reflection probe "${definition.name}" uses ${source} source but its published texture is missing. ` +
-                'Re-run blendlink sync and publish the complete generated asset set.',
+                'Re-run blendlink compile and publish the complete generated asset set.',
             )
           }
           if (!options.loadTexture) {

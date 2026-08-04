@@ -25,6 +25,8 @@ export interface SceneConfig {
    * removing this compatibility setting.
    */
   bake?: BakeSettings
+  /** Curve sampling resolution for non-bezier splines. Default 64. */
+  curveSamples?: number
   /** Raw exporter kwargs, RNA-filtered in Blender (escape hatch). */
   exporterOverrides?: Record<string, unknown>
   /** GLB produced by an external pipeline (overrides the derived path). */
@@ -336,6 +338,7 @@ export function resolveConfig(
         imageFormat: scene.imageFormat ?? 'AUTO',
         ...(scene.mode ? { mode: scene.mode } : {}),
         ...(scene.bake ? { bake: scene.bake } : {}),
+        ...(scene.curveSamples ? { curveSamples: scene.curveSamples } : {}),
         ...(scene.exporterOverrides ? { exporterOverrides: scene.exporterOverrides } : {}),
       },
       external: scene.external ?? false,

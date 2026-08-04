@@ -395,7 +395,7 @@ function ktx2TranscoderSources(): Array<{ filename: string; sourcePath: string }
     } catch (error) {
       throw new Error(
         `Blendlink cannot publish ${filename} for KTX2 runtime decoding. Install the Three.js peer ` +
-          'dependency with its examples/jsm/libs/basis assets intact, then run `blendlink sync` again. ' +
+          'dependency with its examples/jsm/libs/basis assets intact, then run `blendlink compile` again. ' +
           `${error instanceof Error ? error.message : String(error)}`,
       )
     }
@@ -1837,7 +1837,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `missing generated manifest (${scene.manifestPath})`,
-        fix: 'Run `blendlink sync` and commit the generated files.',
+        fix: 'Run `blendlink compile` and commit the generated files.',
       })
       continue
     }
@@ -1847,7 +1847,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `missing generated module (${scene.modulePath})`,
-        fix: 'Run `blendlink sync` and commit the generated files.',
+        fix: 'Run `blendlink compile` and commit the generated files.',
       })
       continue
     }
@@ -1915,7 +1915,7 @@ async function verifyScenesWithPublicationLease(
         problem: `missing generated recipe (${recipePath})`,
         fix: scene.external
           ? 'Re-run `blendlink typegen`; the recipe is written once and remains yours to edit.'
-          : 'Run `blendlink sync` and commit the generated recipe.',
+          : 'Run `blendlink compile` and commit the generated recipe.',
       })
       continue
     }
@@ -1936,7 +1936,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: 'generated module bytes do not match the manifest',
-        fix: 'Run `blendlink sync` and commit the generated module + manifest together.',
+        fix: 'Run `blendlink compile` and commit the generated module + manifest together.',
       })
       continue
     }
@@ -1944,7 +1944,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: 'an unpacked Blender dependency changed after the last sync',
-        fix: 'Run `blendlink sync`; linked images/libraries/caches are compiler inputs too.',
+        fix: 'Run `blendlink compile`; linked images/libraries/caches are compiler inputs too.',
       })
       continue
     }
@@ -1961,7 +1961,7 @@ async function verifyScenesWithPublicationLease(
           problem: `KTX2 runtime transcoder integrity failed: ${problem}`,
           fix: scene.external
             ? 'Install the Three.js peer dependency, rerun the external build/typegen pipeline, and commit the complete blendlink-basis directory beside the GLB.'
-            : 'Install the Three.js peer dependency, run `blendlink sync`, and commit the complete blendlink-basis directory beside the GLB.',
+            : 'Install the Three.js peer dependency, run `blendlink compile`, and commit the complete blendlink-basis directory beside the GLB.',
         })
         continue
       }
@@ -1976,7 +1976,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `published HDR environment URL is outside the scene publication directory: ${manifest.environment.url}`,
-          fix: 'Run `blendlink sync`; compiler-owned asset URLs must stay relative to the generated GLB.',
+          fix: 'Run `blendlink compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
         })
         continue
       }
@@ -1984,7 +1984,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `published HDR environment is missing from ${environmentPath}`,
-          fix: 'Run `blendlink sync` and commit the generated environment asset.',
+          fix: 'Run `blendlink compile` and commit the generated environment asset.',
         })
         continue
       }
@@ -1994,7 +1994,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: 'published HDR environment bytes do not match the manifest',
-          fix: 'Run `blendlink sync` and commit source + artifacts together.',
+          fix: 'Run `blendlink compile` and commit source + artifacts together.',
         })
         continue
       }
@@ -2008,7 +2008,7 @@ async function verifyScenesWithPublicationLease(
           issues.push({
             scene: scene.name,
             problem: `optimized environment URL is outside the scene publication directory: ${manifest.environment.optimized.url}`,
-            fix: 'Run `blendlink sync`; compiler-owned asset URLs must stay relative to the generated GLB.',
+            fix: 'Run `blendlink compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
           })
           continue
         }
@@ -2016,7 +2016,7 @@ async function verifyScenesWithPublicationLease(
           issues.push({
             scene: scene.name,
             problem: `verified KTX2 environment is missing from ${optimizedPath}`,
-            fix: 'Run `blendlink sync` and commit both the source and optimized environment assets.',
+            fix: 'Run `blendlink compile` and commit both the source and optimized environment assets.',
           })
           continue
         }
@@ -2029,7 +2029,7 @@ async function verifyScenesWithPublicationLease(
           issues.push({
             scene: scene.name,
             problem: 'verified KTX2 environment bytes do not match the manifest',
-            fix: 'Run `blendlink sync` and commit source + optimized artifacts together.',
+            fix: 'Run `blendlink compile` and commit source + optimized artifacts together.',
           })
           continue
         }
@@ -2045,7 +2045,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `material programs URL is outside the scene publication directory: ${manifest.materialPrograms.url}`,
-          fix: 'Run `blendlink sync`; compiler-owned asset URLs must stay relative to the generated GLB.',
+          fix: 'Run `blendlink compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
         })
         continue
       }
@@ -2053,7 +2053,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `material programs sidecar is missing from ${programsPath}`,
-          fix: 'Run `blendlink sync` and commit the generated materials.json asset.',
+          fix: 'Run `blendlink compile` and commit the generated materials.json asset.',
         })
         continue
       }
@@ -2066,7 +2066,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: 'material programs sidecar bytes do not match the manifest',
-          fix: 'Run `blendlink sync` and commit source + artifacts together.',
+          fix: 'Run `blendlink compile` and commit source + artifacts together.',
         })
         continue
       }
@@ -2082,7 +2082,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `material programs sidecar references ${missingImage}, which is not published beside it`,
-          fix: 'Run `blendlink sync` and commit source + artifacts together.',
+          fix: 'Run `blendlink compile` and commit source + artifacts together.',
         })
         continue
       }
@@ -2107,7 +2107,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `reflection probe asset integrity failed: ${reflectionProbeFailure}`,
-        fix: 'Run `blendlink sync` and commit every generated reflection texture with its manifest.',
+        fix: 'Run `blendlink compile` and commit every generated reflection texture with its manifest.',
       })
       continue
     }
@@ -2138,7 +2138,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `texture variant integrity failed: ${textureVariantFailure}`,
-        fix: 'Run `blendlink sync` and commit every generated PNG/WebP resolution tier with its manifest.',
+        fix: 'Run `blendlink compile` and commit every generated PNG/WebP resolution tier with its manifest.',
       })
       continue
     }
@@ -2185,7 +2185,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `baked atlas integrity failed: ${bakedArtifactFailure}`,
-        fix: 'Run `blendlink sync` and commit every generated state/light-group atlas with its manifest.',
+        fix: 'Run `blendlink compile` and commit every generated state/light-group atlas with its manifest.',
       })
       continue
     }
@@ -2204,7 +2204,7 @@ async function verifyScenesWithPublicationLease(
           scene: scene.name,
           problem: 'a declared input file (e.g. the pipeline config) changed after the last sync',
           fix: scene.build
-            ? `Run \`${scene.build}\` (or \`blendlink sync\`) and commit.`
+            ? `Run \`${scene.build}\` (or \`blendlink compile\`) and commit.`
             : 'Re-run your export pipeline and commit.',
         })
         continue
@@ -2214,7 +2214,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `GLB missing from ${scene.glbPath} but listed in the manifest`,
-        fix: 'This file should be committed — check .gitignore for *.glb, or run `blendlink sync`.',
+        fix: 'This file should be committed — check .gitignore for *.glb, or run `blendlink compile`.',
       })
       continue
     }
@@ -2227,7 +2227,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: 'GLB on disk does not match the manifest hash',
-        fix: 'Run `blendlink sync` and commit source + artifacts together.',
+        fix: 'Run `blendlink compile` and commit source + artifacts together.',
       })
     } else {
       try {
@@ -2238,7 +2238,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `compiled GLB quality audit failed: ${error instanceof Error ? error.message : String(error)}`,
-          fix: 'Run `blendlink sync`; if the rebuilt artifact still fails, report the exact audit error.',
+          fix: 'Run `blendlink compile`; if the rebuilt artifact still fails, report the exact audit error.',
         })
       }
     }
@@ -2264,7 +2264,7 @@ async function verifyScenesWithPublicationLease(
             problem: `runtime asset graph integrity failed: ${problem}`,
             fix: scene.external
               ? 'Re-run the external build/typegen pipeline and commit its complete runtime asset graph.'
-              : 'Run `blendlink sync` and commit every generated runtime asset with its manifest.',
+              : 'Run `blendlink compile` and commit every generated runtime asset with its manifest.',
           })
           continue
         }
@@ -2295,7 +2295,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: 'generated manifest is missing the complete runtime asset graph',
-          fix: 'Run `blendlink sync` and commit every generated runtime asset with its manifest.',
+          fix: 'Run `blendlink compile` and commit every generated runtime asset with its manifest.',
         })
         continue
       }
@@ -2314,7 +2314,7 @@ async function verifyScenesWithPublicationLease(
           problem: `${scene.blendPath} changed after the last sync`,
           fix: scene.external
             ? 'Re-run your export pipeline, then `blendlink typegen <glb> --blend <file>`, and commit.'
-            : 'Run `blendlink sync` (requires Blender) and commit the regenerated artifacts.',
+            : 'Run `blendlink compile` (requires Blender) and commit the regenerated artifacts.',
         })
       }
     }

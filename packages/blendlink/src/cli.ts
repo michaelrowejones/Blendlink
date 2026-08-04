@@ -433,7 +433,28 @@ async function main(): Promise<number> {
       if (planFile) {
         const planPath = resolve(process.cwd(), planFile)
         if (existsSync(planPath)) {
-          bakePlan = JSON.parse(readFileSync(planPath, 'utf8')) as BakePlan
+          // Accept either a bare BakePlan or the envelope `plan --json`
+          // actually writes ({ scenes: [{ scene, quality, plan }] }). The
+          // flag used to accept only the bare shape, which nothing in
+          // Blendlink produced, so the one command that could feed it did
+          // not fit it.
+          const parsed = JSON.parse(readFileSync(planPath, 'utf8')) as
+            BakePlan | { scenes?: Array<{ scene?: string; plan?: BakePlan }> }
+          const envelope = (parsed as { scenes?: Array<{ scene?: string; plan?: BakePlan }> }).scenes
+          if (Array.isArray(envelope)) {
+            const entry = envelope.find((item) => item.scene === name) ?? envelope[0]
+            if (!entry?.plan) {
+              console.warn(
+                `! --plan ${planFile} is a plan envelope with no usable scene entry` +
+                `${envelope.length ? ` (has: ${envelope.map((item) => item.scene).join(', ')})` : ''}` +
+                ' — manifest stamped without a bake plan',
+              )
+            } else {
+              bakePlan = entry.plan
+            }
+          } else {
+            bakePlan = parsed as BakePlan
+          }
         } else {
           console.warn(`! --plan ${planFile} not found — manifest stamped without a bake plan`)
         }

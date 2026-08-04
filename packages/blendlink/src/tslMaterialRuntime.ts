@@ -163,7 +163,7 @@ async function fetchPrograms(pointer: {
   if (payload.byteLength !== pointer.bytes) {
     throw new Error(
       `Blendlink material programs at ${pointer.url} are ${payload.byteLength} bytes; ` +
-        `the descriptor pins ${pointer.bytes}. Re-run blendlink sync and republish together.`,
+        `the descriptor pins ${pointer.bytes}. Re-run blendlink compile and republish together.`,
     )
   }
   const digest = await crypto.subtle.digest(
@@ -174,7 +174,7 @@ async function fetchPrograms(pointer: {
   if (hash !== pointer.hash) {
     throw new Error(
       `Blendlink material programs at ${pointer.url} hash ${hash}; the descriptor pins ` +
-        `${pointer.hash}. Re-run blendlink sync and republish together.`,
+        `${pointer.hash}. Re-run blendlink compile and republish together.`,
     )
   }
   const document = JSON.parse(new TextDecoder().decode(payload)) as MaterialProgramsDocument
@@ -200,7 +200,7 @@ async function defaultProgramTexture(
   if (payload.byteLength !== entry.bytes) {
     throw new Error(
       `Blendlink program image at ${url} is ${payload.byteLength} bytes; the sidecar pins ` +
-        `${entry.bytes}. Re-run blendlink sync and republish together.`,
+        `${entry.bytes}. Re-run blendlink compile and republish together.`,
     )
   }
   const digest = await crypto.subtle.digest(

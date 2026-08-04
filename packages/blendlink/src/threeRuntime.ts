@@ -18,6 +18,12 @@ import {
 } from './gltfRuntimeCompatibility.js'
 export type { GltfRuntimeCapabilityProfile } from './gltfRuntimeCompatibility.js'
 export { collectThreeTextureEvidence } from './threeTextureEvidence.js'
+// The browser entry must reach every browser-side symbol. Fog and the
+// performance monitor were reachable only through the Node/CLI root
+// barrel, which is why the README told browsers to `import from
+// 'blendlink'` and pull node:child_process, node:fs and sharp with it.
+export { applyCompiledSceneFog } from './sceneFog.js'
+export { createRuntimePerformanceMonitor } from './runtimePerformance.js'
 export type {
   ThreeTextureDimensions,
   ThreeTextureDiscoveryEvidence,
@@ -499,7 +505,7 @@ interface LoadedWithBindings extends GLTF {
 
 export const BLENDLINK_KTX2_TRANSCODER_DIRECTORY = 'blendlink-basis'
 
-/** URL contract shared with internal `blendlink sync` publication. Query/hash
+/** URL contract shared with internal `blendlink compile` publication. Query/hash
  * cache keys belong to the GLB. A declared runtime graph owns the transcoder
  * at its graph root even when the GLB itself is nested; legacy/external
  * descriptors without a graph retain the sibling convention. */
@@ -983,7 +989,7 @@ function createThreePublishedReflectionLoader(
           (image.width !== asset.width || image.height !== asset.height)) {
         throw new Error(
           `Reflection probe "${context.definition.name}" decoded ${image.width}x${image.height}; ` +
-            `the manifest declares ${asset.width}x${asset.height}. Re-run blendlink sync.`,
+            `the manifest declares ${asset.width}x${asset.height}. Re-run blendlink compile.`,
         )
       }
       source.mapping = THREE.EquirectangularReflectionMapping
@@ -1637,7 +1643,7 @@ async function prepareThreeCompiledSceneAttempt(
         )
         throw new Error(
           `Blendlink could not load the KTX2 scene. Its automatic transcoder URL is "${path}". ` +
-            'Run `blendlink sync` and publish the generated blendlink-basis directory beside the GLB, ' +
+            'Run `blendlink compile` and publish the generated blendlink-basis directory beside the GLB, ' +
             `or pass an application-configured ktx2Loader. ${errorMessage(error)}`,
         )
       }

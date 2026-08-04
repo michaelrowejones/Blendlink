@@ -117,7 +117,7 @@ publication-rename fix have broken published artifacts: their
 `<scene>.materials.json` pins staging image basenames (`out.glb.tex.*`)
 that publication renamed on disk, so every `texture_ref` program image
 404s at scene install and the runtime's byte/hash verification refuses
-the scene. `blendlink sync verify` on current versions also reports the
+the scene. `blendlink verify` on current versions also reports the
 unresolvable references at publish time.
 
 Recompile each affected scene with the current compiler (a forced
@@ -160,7 +160,7 @@ A current runtime can still consume an older binding through its deprecated
 full-`sceneDiagnostics` fallback. The reverse is not supported: an older
 runtime does not know the new `runtimeDiagnostics` property and can therefore
 miss LOD or optional instancing behavior. Install the matching package first,
-then run `blendlink sync <scene> --force` for every generated scene and commit
+then run `blendlink compile <scene> --force` for every generated scene and commit
 the generated module and manifest together.
 
 If both contracts are supplied, the current versioned property is

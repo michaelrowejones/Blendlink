@@ -152,7 +152,7 @@ export async function doctor(root: string): Promise<DoctorLine[]> {
     }
     const manifest = readManifest(scene.manifestPath)
     if (!manifest) {
-      warn(`${label}: never synced — run \`blendlink sync\``)
+      warn(`${label}: never synced — run \`blendlink compile\``)
       continue
     }
     if (!existsSync(scene.glbPath)) {

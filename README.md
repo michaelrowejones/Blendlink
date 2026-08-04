@@ -289,7 +289,7 @@ artifacts after the build. A scene name scopes compilation and verification.
 `--assets-only` explicitly stops after deployable assets for a custom pipeline;
 Blendlink never infers permission to upload or deploy the website.
 
-`blendlink sync` remains an alias for `compile`. `compile --watch` rebuilds on
+`blendlink compile` remains an alias for `compile`. `compile --watch` rebuilds on
 Blender saves and changes to each scene's declared `inputs`. Editing
 `blendlink.config.mjs` reloads validated config, updates the watched paths, and
 rebuilds only affected scenes; an invalid edit is reported while the last
@@ -473,8 +473,10 @@ For measured browser evidence, wrap the one render that would normally happen
 in the frame loop; do not render once for Blendlink and again for measurement:
 
 ```ts
-import { createRuntimePerformanceMonitor } from 'blendlink'
-import { collectThreeTextureEvidence } from 'blendlink/three'
+import {
+  createRuntimePerformanceMonitor,
+  collectThreeTextureEvidence,
+} from 'blendlink/three'
 
 const performanceMonitor = createRuntimePerformanceMonitor()
 performanceMonitor.start()
@@ -699,7 +701,7 @@ import {
   applyCompiledSceneShadows,
   installCompiledSceneCamera,
   startCompiledScenePlayback,
-} from 'blendlink'
+} from 'blendlink/three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js'
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js'

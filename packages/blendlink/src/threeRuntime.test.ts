@@ -1678,7 +1678,7 @@ describe('official Three scene installation seam', () => {
           setKTX2Loader() {},
           async loadAsync() { throw new Error('basis_transcoder.wasm returned 404') },
         } as unknown as import('three/addons/loaders/GLTFLoader.js').GLTFLoader,
-      })).rejects.toThrow(/"\/scenes\/blendlink-basis\/".*blendlink sync.*basis_transcoder\.wasm returned 404/)
+      })).rejects.toThrow(/"\/scenes\/blendlink-basis\/".*blendlink compile.*basis_transcoder\.wasm returned 404/)
       expect(dispose).toHaveBeenCalledOnce()
     } finally {
       dispose.mockRestore()

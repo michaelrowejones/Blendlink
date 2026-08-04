@@ -425,7 +425,7 @@ export function parseManifest(json: string): SceneManifest | null {
   if (manifest.schemaVersion !== MANIFEST_SCHEMA_VERSION) {
     throw new Error(
       `Manifest schemaVersion ${String(manifest.schemaVersion)} is not the ` +
-        `supported version ${MANIFEST_SCHEMA_VERSION} — re-run blendlink sync ` +
+        `supported version ${MANIFEST_SCHEMA_VERSION} — re-run blendlink compile ` +
         `with a matching blendlink release.`,
     )
   }

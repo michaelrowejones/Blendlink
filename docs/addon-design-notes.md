@@ -220,7 +220,7 @@ registers the handlers; the offscreen test uses `gpu.init()` (5.2+).
 
 The original rule was "the addon never syncs". The refined rule: the addon
 never *implements* sync — but it may *invoke* the project's own CLI on an
-explicit user click. Blendlink's build actions run `npx blendlink sync` via
+explicit user click. Blendlink's build actions run `npx blendlink compile` via
 `subprocess.Popen` (never blocking the UI): a worker thread that touches no
 bpy forwards stdout into a `queue.Queue`, a `bpy.app.timers` pump drains it
 on the main thread — the exact thread pattern from the Blender docs. The

@@ -624,7 +624,7 @@ export async function exportBlend(options: {
         `${options.blendPath} was saved by Blender ${fileMajor}.${fileMinor}, ` +
           `newer than the discovered ${blender.version}. Opening it risks data ` +
           `loss. Install a matching Blender, or override with ` +
-          `\`blendlink sync --allow-newer\` (API: allowNewerFile).`,
+          `\`blendlink compile --allow-newer\` (API: allowNewerFile).`,
         { exitCode: null, stderrTail: '' },
       )
     }
