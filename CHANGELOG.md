@@ -9,8 +9,39 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-08-04
+
 ### Added
 
+- A shared registry of the web runtime's hard ceilings
+  (`web_runtime_limits.json`), read by both the Blender side and the
+  compiler. Each entry carries the measured symptom and the artist action,
+  not only the number, because crossing one of these produces a black
+  character or an invisible mesh with no runtime error at all.
+- A joint-budget refusal. Three's node-material renderers bind bone matrices
+  as a uniform buffer holding exactly 1024 joints (1024 x 64 bytes = 65536);
+  past that the character draws nothing and the failed pipeline retries every
+  frame. Blender warns during export with the deforming-bone count, the
+  compiled artifact records it, and installing on that renderer family
+  refuses by name. The classic WebGL renderer has no such ceiling and is not
+  refused.
+- Compiled-artifact conformance: a pure function of the finished GLB that
+  reports a texCoord above the bindable ceiling, a texCoord whose
+  `TEXCOORD_n` accessor is missing from a bound primitive, a material with no
+  base-colour carrier at all, primitives left on the stand-in for Blender's
+  default material, and a skin past the joint ceiling. It reports rather than
+  refuses, because it also runs on the Preview path; `verify` turns each into
+  a blocking publication issue.
+- Per-subject conformance waivers (`glbConformance.accept` in scene config).
+  A waiver names the exact code and the exact subjects - there is no wildcard
+  - and a waiver that no longer matches anything the artifact reports is
+  itself a publication error.
+- A post-export audit for objects parented to bones, and an export-scoped
+  promotion that keeps them publishable. Blender's exporter drops an object
+  whose parent bone has no deforming ancestor, together with its whole
+  subtree, with no log line - on a rig that is exactly where sockets and
+  hotspots live. The promotion is measured joint-set neutral: byte-identical
+  joints, inverse bind matrices, and skin weights.
 - Initial public-release candidate for the `blendlink` npm package and Blender
   Extension. Neither artifact has been published from this repository yet.
 - Artist-owned `preview`, `connect`, and `publish` workflow with website-owned
@@ -91,6 +122,13 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Changed
 
+- `docs/FEATURE_PARITY.md` is re-audited against the current tree: the TSL
+  material-program route, the additive WebGPU runtime, `bakeOutput: material`,
+  and the character/deformation route are recorded, and rows whose evidence
+  was measured on one renderer family now say which.
+- The compiled add-on and exporter derive their Python module set from the
+  import graph instead of a hand-written list, and ship every data registry
+  beside it.
 - Published scenes prune UV layers the output never samples and merge
   byte-identical emissive maps into one shared image; when no emissive
   image ships, the emissive factor is attested instead.
@@ -100,6 +138,25 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- The legacy hair refusal fires on hand-groomed systems. It read
+  `settings.count`, which is zero on every hand-groomed hair system while the
+  real parents number in the tens, so the strands vanished from the website
+  with no warning at all. Counts now come from the configured, authored, and
+  evaluated systems and the largest wins.
+- Material programs no longer discard the shipped carrier. Three's `copy()`
+  chain transfers node slots and generic render state only, so a channel the
+  emitter could not prove arrived white and fully rough instead of keeping
+  the material it shipped with. Every non-node property is now transferred,
+  derived from the source instance rather than from a list.
+- Blendlink owns `export_force_sampling` alongside `export_def_bones`,
+  because Blender silently turns deform-only export back off when sampling is
+  off - an override of one was an override of both.
+- Thirty-three double-encoded UTF-8 sequences in shipped source, several in
+  artist-facing refusal text, are repaired, and the source-hygiene gate now
+  refuses the whole class.
+- The atlas repair warning names a per-face lightmap rechart instead of
+  describing it as an ordinary reprojection, and says that shading can change
+  across the rescued region.
 - The declared Node 22 floor is now 22.15, the first Node 22 release whose
   built-in `node:zlib` can inspect Blender's Zstandard-compressed files. This
   replaces the untruthful 22.12 declaration that allowed installation but
@@ -163,4 +220,5 @@ pre-1.0; breaking changes must still be called out with a migration note.
   passed against the live reviewed graph. A compatible patched dependency
   upgrade remains follow-up.
 
-[Unreleased]: https://github.com/michaelrowejones/Blendlink/commits/main
+[Unreleased]: https://github.com/michaelrowejones/Blendlink/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/michaelrowejones/Blendlink/releases/tag/v0.9.0

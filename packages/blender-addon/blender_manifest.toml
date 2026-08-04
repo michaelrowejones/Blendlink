@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "blendlink"
-version = "0.8.0"
+version = "0.9.0"
 name = "Blendlink"
 tagline = "Publish artist-authored Blender scenes to Three.js"
 maintainer = "Michael Rowe Jones <michaelrowejones@gmail.com>"

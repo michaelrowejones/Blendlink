@@ -1,6 +1,6 @@
 {
   "name": "blendlink",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Artist-first Blender to Three.js scene compiler.",
   "keywords": [
     "blender",
