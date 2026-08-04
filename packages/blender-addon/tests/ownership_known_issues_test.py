@@ -111,4 +111,10 @@ class KnownIssueTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main(argv=[sys.argv[0]], verbosity=2)
+    # exit=False so the sentinel below is reached only on success.
+    result = unittest.main(
+        argv=[sys.argv[0]], verbosity=2, exit=False,
+    ).result
+    if not result.wasSuccessful():
+        raise SystemExit(1)
+    print("BLENDLINK_OWNERSHIP_KNOWN_ISSUES_PASSED")

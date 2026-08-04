@@ -105,5 +105,12 @@ class LintTests(unittest.TestCase):
 
 if __name__ == "__main__":
     # Explicit argv so this also runs under `blender --python` (whose sys.argv
-    # carries Blender's own flags, which unittest would choke on).
-    unittest.main(argv=[sys.argv[0]], verbosity=2)
+    # carries Blender's own flags, which unittest would choke on). exit=False
+    # so the headless runner's success sentinel is printed only after every
+    # case actually passed.
+    result = unittest.main(
+        argv=[sys.argv[0]], verbosity=2, exit=False,
+    ).result
+    if not result.wasSuccessful():
+        raise SystemExit(1)
+    print("BLENDLINK_VOCAB_TEST_PASSED")

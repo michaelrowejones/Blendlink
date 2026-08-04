@@ -1,4 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
+# blendlink-headless-suite: manual (needs a synced project directory and the
+# INSTALLED extension; it takes `-- <project_dir> <blend_name>` arguments the
+# discovered-suite runner does not supply)
 """End-to-end sync-status check against a real synced blendlink project.
 
 Run:  blender --background --python tests/sync_status_check.py --python-exit-code 1 -- <project_dir> <blend_name>

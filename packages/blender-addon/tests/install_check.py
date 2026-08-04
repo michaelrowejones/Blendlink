@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
+# blendlink-headless-suite: manual (requires a built extension ZIP; the
+# release gate installs the retained archive in scripts/test-addon-headless.mjs)
 """Install the built extension zip into the user's Blender and verify it
 registers through the real bl_ext package path, then persist preferences.
 
