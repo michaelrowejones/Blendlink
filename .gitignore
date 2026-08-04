@@ -25,9 +25,10 @@ CONTEXT.md
 .claude/
 .codex/
 
-# Session debris from local build/compile/test runs at the repo root
-/*.log
+# Session debris from local build/compile/test runs. Unanchored: a
+# redirect run from inside a package writes the log there, not at the root,
+# and no .log in this repository is ever source.
+*.log
 /e2e*.txt
 /compile_*.manifest.json
 /NUL
-showcases/*/*.log
