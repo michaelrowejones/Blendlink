@@ -1852,6 +1852,7 @@ class BLENDLINK_OT_set_export_inclusion(bpy.types.Operator):
 
     def execute(self, context):
         changed = 0
+        unchanged = 0
         skipped = []
         for obj in context.selected_editable_objects:
             if self.include:
@@ -1866,12 +1867,18 @@ class BLENDLINK_OT_set_export_inclusion(bpy.types.Operator):
                     del obj["blendlink_role"]
                     object_changed = True
                 changed += int(object_changed)
+                unchanged += int(not object_changed)
             elif obj.get("blendlink_role") != "noimp":
                 obj["blendlink_role"] = "noimp"
                 changed += 1
+            else:
+                unchanged += 1
         validation.mark_dirty()
+        # Both halves, like every sibling batch control: "Included 0 object(s)"
+        # on an already-included selection reads as a failure.
         action = "Included" if self.include else "Excluded"
-        message = f"{action} {changed} object(s) {'in' if self.include else 'from'} the web scene"
+        state = "included" if self.include else "excluded"
+        message = f"{action} {changed} object(s) · {unchanged} already {state}"
         if skipped:
             self.report({"WARNING"}, message + f"; skipped name collisions: {', '.join(skipped)}")
         else:
@@ -3889,6 +3896,30 @@ class BLENDLINK_OT_sync_now(bpy.types.Operator):
         ("PLAN", "Check Atlas Fit", "Validate final atlas capacity without running Cycles"),
         ("WATCH", "Auto-build on Save", "Build a preview whenever this .blend file is saved"),
     ), default="FINAL", options={"HIDDEN"})
+
+    @classmethod
+    def description(cls, context, properties):
+        """One operator draws three buttons, so the tooltip has to follow the
+        button rather than the class. Check Atlas Fit and Auto-build on Save
+        both showed the Publish docstring and so both claimed they would
+        publish the website."""
+        return {
+            "PLAN": (
+                "Measure whether every baked mesh still fits its atlas at the "
+                "minimum detail. Runs no Cycles bake and publishes nothing"
+            ),
+            "PREVIEW": (
+                "Compile this scene at Preview quality and open it in the "
+                "connected website"
+            ),
+            "WATCH": (
+                "Compile a Preview-quality build every time this .blend is "
+                "saved, without opening a browser session"
+            ),
+        }.get(
+            getattr(properties, "quality", "FINAL"),
+            "Save, validate, and publish the connected Three.js website",
+        )
 
     @classmethod
     def poll(cls, context):

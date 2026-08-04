@@ -119,10 +119,9 @@ class BlendlinkAtlasSettings(bpy.types.PropertyGroup):
             ),
             (
                 "MATERIAL", "Bake Material",
-                "Bake the surface channels only -- no lighting -- so "
-                "deforming objects can share the atlas and lightmaps can "
-                "compose on top (bake path lands with the material-atlas "
-                "route)",
+                "Bake the surface channels only, with no lighting, so "
+                "deforming objects can share one atlas and lighting stays "
+                "live on the website",
             ),
         ),
         # Existing .blend files have collection entries that predate this RNA

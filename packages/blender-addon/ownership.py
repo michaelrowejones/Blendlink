@@ -58,7 +58,7 @@ def decisions(project):
         (
             "Website Default preserves the renderer's existing tone mapping and exposure."
             if project.tone_mapping == "APPLICATION" else
-            "Website Look publishes the selected tone mapping and photographic exposure."
+            "Blendlink Web World publishes the selected tone mapping and photographic exposure."
         ),
     )
     fog_mode = getattr(project, "fog_mode", "APPLICATION")
@@ -68,24 +68,24 @@ def decisions(project):
         (
             "Website Default preserves the scene's existing fog."
             if fog_mode == "APPLICATION" else
-            "Website Look publishes whether fog is cleared or applies the selected distance recipe."
+            "Blendlink Web World publishes whether fog is cleared or applies the selected distance recipe."
         ),
     )
 
     if project.environment_background != "APPLICATION":
         background = _decision(
             "background", "Visible background", "BLEND",
-            "HDR Environment owns the backdrop choice; Website Look is handed back to Application Default.",
+            "HDR Environment owns the backdrop choice; the Blendlink Web World background returns to Page Controls It.",
         )
     elif project.background_mode != "APPLICATION":
         background = _decision(
             "background", "Visible background", "BLEND",
-            "Website Look publishes the transparent or solid background choice.",
+            "Blendlink Web World publishes the transparent or solid background choice.",
         )
     else:
         background = _decision(
             "background", "Visible background", "WEBSITE",
-            "Both background controls are Application Default, so the page remains untouched.",
+            "Both background controls leave the choice to the page, so it remains untouched.",
         )
 
     environment = _decision(

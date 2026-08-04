@@ -1092,8 +1092,15 @@ def _draw_catalog_entry(layout, context, project, component_type: str, definitio
     badges = box.row(align=True)
     badges.label(text=component_schema.target_badge(definition), icon="OBJECT_DATA")
     badges.label(text=component_schema.cost_badge(definition), icon="TIME")
-    badges.label(text=definition["support"], icon="CHECKMARK")
+    badges.label(
+        text=definition["support"],
+        icon=component_schema.support_icon(definition),
+    )
     _wrap(box, component_schema.support_badge(definition), icon="WORLD", width=72)
+    # The caveat that made it "Experimental Preview" belongs where the artist
+    # decides, not only on the card they see after adding it.
+    for note in (definition.get("fallbacks") or {}).values():
+        _wrap(box, str(note), icon="INFO", width=72)
     if target_mode == "SELECTION" and counts["selected"]:
         incompatible = counts["selected"] - counts["compatible"]
         status = []

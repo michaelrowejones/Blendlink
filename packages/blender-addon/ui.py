@@ -1605,7 +1605,7 @@ class BLENDLINK_PT_environment(_BlendlinkWorldPanelMixin, bpy.types.Panel):
         if project.background_mode != "APPLICATION":
             _draw_wrapped(
                 layout,
-                "The HDR backdrop is hidden because Website Look owns the background.",
+                "The HDR backdrop is hidden because Blendlink Web World owns the background.",
                 icon="INFO",
             )
 
@@ -2706,6 +2706,20 @@ def _draw_material_compatibility(layout, result):
         )
 
 
+# The compiler names its transports for itself; the artist should read a
+# sentence. The raw tokens (vertexColor, channels, program, frozen,
+# morphTarget) were being printed straight into the Material panel.
+_TRANSPORT_PHRASES = {
+    "vertexColor": "baked into vertex colors",
+    "image": "baked to an image texture",
+    "channels": "published as standard material channels",
+    "program": "compiled into a website shader program",
+    "frozen": "frozen into the exported mesh",
+    "morphTarget": "published as morph targets",
+    "skipped": "left to the stock exporter",
+}
+
+
 def _draw_web_material_source(layout, result):
     """Draw the compiler-owned selected-field contract from cached evidence."""
     compilation = result.get("materialCompilation") or {}
@@ -2725,7 +2739,7 @@ def _draw_web_material_source(layout, result):
         _draw_wrapped(
             box,
             f'{source.get("node", "Source")} / {source.get("socket", "Color")} '
-            f'\u2192 {compilation.get("transport", "compiler")}',
+            f'\u2192 {_TRANSPORT_PHRASES.get(compilation.get("transport"), "published by the compiler")}',
             icon="LINKED",
         )
     response = compilation.get("surfaceResponse")

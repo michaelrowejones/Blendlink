@@ -507,7 +507,7 @@ COMPONENT_DEFINITIONS = {
         ),
         "defaults": {"name": "surface", "colorTreatment": "display"},
         "cost": "One dynamic texture upload when application pixels change",
-        "consequence": "The target must be one dedicated Realtime mesh with one material and UV0; Blendlink owns restoration and the application owns pixels.",
+        "consequence": "Adding this switches the mesh to Realtime and clears its atlas assignment. The target must be one dedicated mesh with one material and ordinary 0..1 UV0; Blendlink owns restoration and the application owns pixels.",
         "compatibility": "Three.js WebGL / Vanilla and R3F demand rendering",
         "support": "Built-in",
         "docs_url": "https://threejs.org/docs/#api/en/textures/CanvasTexture",
@@ -642,6 +642,25 @@ _COST_BADGES = {
 
 def cost_badge(value) -> str:
     return _COST_BADGES.get(value.get("cost_level"), "Unmeasured cost")
+
+
+def support_icon(value) -> str:
+    """Icon for a component's support level, derived rather than assumed.
+
+    The catalog hardcoded a checkmark, so an Experimental Preview effect and
+    one that is unavailable on the artist's renderer both looked approved -
+    while the line directly beneath said otherwise.
+    """
+    levels = {
+        str(level).lower()
+        for level in (value.get("adapters", {}) or {}).values()
+    }
+    if not levels or levels == {"unavailable"}:
+        return "ERROR"
+    if str(value.get("support", "")).strip().lower() == "built-in" \
+            and levels <= {"production"}:
+        return "CHECKMARK"
+    return "INFO"
 
 
 def support_badge(value) -> str:
