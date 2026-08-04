@@ -207,6 +207,32 @@ def _draw_next_setup_step(layout, context, project) -> bool:
     return False
 
 
+class _PreviewSessionState:
+    """Derived Live Preview session flags for the panels that draw it.
+
+    `current` - the running preview belongs to THIS saved file.
+    `stale`   - a previous session is still lying around.
+    `starting`- this file's preview is spawning but not serving yet.
+    `updating`- this file's preview is mid-recompile.
+
+    Three panels answer these questions and used to derive them
+    independently, so they could disagree about the same session. They
+    render differently on purpose; only the answers are shared.
+    """
+
+    __slots__ = ("current", "stale", "starting", "updating")
+
+    def __init__(self):
+        self.current = previewrun.matches_current_file()
+        self.stale = previewrun.has_stale_session()
+        self.starting = (
+            self.current
+            and previewrun.is_running()
+            and not previewrun.is_ready()
+        )
+        self.updating = self.current and previewrun.is_updating()
+
+
 def _draw_handoff_alert(layout, context):
     handoff = syncstatus.website_handoff()
     if handoff is None or handoff.get("kind") not in {"missing", "unknown", "unreadable"}:
@@ -596,12 +622,11 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
         _draw_handoff_alert(layout, context)
         status, icon, status_label = syncstatus.status()
         busy = syncrun.is_running()
-        preview_current = previewrun.matches_current_file()
-        stale_preview = previewrun.has_stale_session()
-        starting_preview = (
-            preview_current and previewrun.is_running() and not previewrun.is_ready()
-        )
-        updating_preview = preview_current and previewrun.is_updating()
+        session = _PreviewSessionState()
+        preview_current = session.current
+        stale_preview = session.stale
+        starting_preview = session.starting
+        updating_preview = session.updating
         if busy:
             _fraction, running_label = syncrun.progress()
             headline = running_label or "Building website scene"
@@ -855,7 +880,7 @@ class BLENDLINK_MT_workspace_tools(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        preview_current = previewrun.matches_current_file()
+        preview_current = _PreviewSessionState().current
         if preview_current and previewrun.is_watching():
             layout.label(text="Live Preview is watching saves", icon="REC")
         else:
@@ -992,8 +1017,9 @@ class BLENDLINK_PT_project(_BlendlinkScenePanelMixin, bpy.types.Panel):
 
         preview = layout.box()
         preview.label(text="Website Preview", icon="WORLD")
-        preview_current = previewrun.matches_current_file()
-        stale_preview = previewrun.has_stale_session()
+        session = _PreviewSessionState()
+        preview_current = session.current
+        stale_preview = session.stale
         action = preview.column(align=True)
         action.scale_y = 1.35
         if not bpy.data.filepath:
@@ -1022,7 +1048,7 @@ class BLENDLINK_PT_project(_BlendlinkScenePanelMixin, bpy.types.Panel):
                     icon="FILE_REFRESH",
                 )
             progress.operator("blendlink.sync_cancel", text="", icon="X")
-        elif preview_current and previewrun.is_running() and not previewrun.is_ready():
+        elif session.starting:
             fraction, progress_label = previewrun.progress()
             progress = preview.row(align=True)
             if hasattr(progress, "progress"):
@@ -1037,7 +1063,7 @@ class BLENDLINK_PT_project(_BlendlinkScenePanelMixin, bpy.types.Panel):
                     icon="PLAY",
                 )
             progress.operator("blendlink.stop_preview", text="", icon="X")
-        elif preview_current and previewrun.is_updating():
+        elif session.updating:
             fraction, progress_label = previewrun.progress()
             progress = preview.row(align=True)
             if hasattr(progress, "progress"):
