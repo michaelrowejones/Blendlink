@@ -33,6 +33,11 @@ import {
 } from './sceneAssetGraph.js'
 import { auditCompiledSceneArtifact, type CompiledSceneAudit } from './compiledSceneAudit.js'
 import {
+  COMPILED_SCENE_CONFORMANCE_SEVERITY,
+  type CompiledSceneConformanceCode,
+  type CompiledSceneConformanceIssue,
+} from './compiledSceneConformance.js'
+import {
   publicationRootsForScene,
   withPublicationScopes,
   type PublicationScopesLease,
@@ -1796,6 +1801,95 @@ export function materialCollapseVerificationIssue(
   }
 }
 
+/**
+ * Turn artifact-conformance evidence into publication policy.
+ *
+ * The audit reports; this decides. Each code becomes one issue naming every
+ * affected subject, because a scene with six carrier-less materials is one
+ * decision an artist makes, not six. A waiver downgrades a code to a warning
+ * only for the exact subjects it names - there is no wildcard, because the
+ * point of the waiver is that somebody looked at those specific things.
+ *
+ * A waiver that no longer matches anything is itself an error. That is the
+ * repository's recurring bug class turned around: a hand-maintained list is
+ * safe exactly when it refuses to keep a dead member.
+ */
+export function glbConformanceVerificationIssues(
+  scene: Pick<ResolvedScene, 'name' | 'glbConformance'>,
+  audit: Pick<CompiledSceneAudit, 'conformance'>,
+): VerifyIssue[] {
+  const waivers = scene.glbConformance?.accept ?? []
+  const matched = new Set<string>()
+  const issues: VerifyIssue[] = []
+  const byCode = new Map<string, CompiledSceneConformanceIssue[]>()
+  for (const issue of audit.conformance.issues) {
+    byCode.set(issue.code, [...(byCode.get(issue.code) ?? []), issue])
+  }
+  for (const [code, group] of [...byCode].sort(([left], [right]) =>
+    left.localeCompare(right))) {
+    const waived: CompiledSceneConformanceIssue[] = []
+    const blocking: CompiledSceneConformanceIssue[] = []
+    for (const issue of group) {
+      const waiver = waivers.find((entry) =>
+        entry.code === code && entry.subjects.includes(issue.subject))
+      if (waiver) {
+        matched.add(`${waiver.code} ${issue.subject}`)
+        waived.push(issue)
+      } else {
+        blocking.push(issue)
+      }
+    }
+    const subjects = (list: CompiledSceneConformanceIssue[]): string =>
+      list.map((issue) => `"${issue.subject}"`).join(', ')
+    if (blocking.length) {
+      issues.push({
+        scene: scene.name,
+        severity:
+          COMPILED_SCENE_CONFORMANCE_SEVERITY[
+            code as CompiledSceneConformanceCode
+          ] === 'advisory' ? 'warning' : 'error',
+        problem:
+          `compiled artifact does not fit the supported runtime [${code}], affecting ` +
+          `${subjects(blocking)}: ${blocking[0]!.summary}` +
+          (waived.length
+            ? ` A waiver already covers ${subjects(waived)}; these are not covered.`
+            : ''),
+        fix: blocking[0]!.fix,
+      })
+      continue
+    }
+    const reasons = [...new Set(waivers
+      .filter((entry) => entry.code === code)
+      .map((entry) => entry.reason))].join('; ')
+    issues.push({
+      scene: scene.name,
+      severity: 'warning',
+      problem:
+        `compiled artifact does not fit the supported runtime [${code}] for ` +
+        `${subjects(waived)}, accepted by an explicit glbConformance waiver: ${reasons}`,
+      fix:
+        'Remove the waiver once the artifact carries what the runtime needs; it is ' +
+        'refused again the moment the waiver stops naming the exact subject.',
+    })
+  }
+  for (const waiver of waivers) {
+    for (const subject of waiver.subjects) {
+      if (matched.has(`${waiver.code} ${subject}`)) continue
+      issues.push({
+        scene: scene.name,
+        severity: 'error',
+        problem:
+          `glbConformance waiver for ${waiver.code} names "${subject}", which the published ` +
+          'artifact no longer reports.',
+        fix:
+          'Delete the stale waiver entry. A waiver that matches nothing hides the next ' +
+          'real failure of the same kind behind an accepted-looking configuration.',
+      })
+    }
+  }
+  return issues
+}
+
 /** Blender-free drift check for CI: sources vs committed artifacts. */
 export async function verifyAll(
   config: ResolvedConfig,
@@ -2234,6 +2328,7 @@ async function verifyScenesWithPublicationLease(
         const audit = await auditCompiledSceneArtifact({ manifest, glbBytes })
         const collapseIssue = materialCollapseVerificationIssue(scene, audit)
         if (collapseIssue) issues.push(collapseIssue)
+        issues.push(...glbConformanceVerificationIssues(scene, audit))
       } catch (error) {
         issues.push({
           scene: scene.name,

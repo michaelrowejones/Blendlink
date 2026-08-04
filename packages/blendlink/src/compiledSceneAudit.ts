@@ -14,6 +14,10 @@ import {
   BLENDLINK_THREE_R184_COMPILED_PROFILE,
   readGlbJson,
 } from './gltfRuntimeCompatibility.js'
+import {
+  type CompiledSceneConformance,
+  inspectCompiledSceneConformance,
+} from './compiledSceneConformance.js'
 import type { MaterialPortabilityDiagnostic } from './sceneDiagnostics.js'
 import type { SceneManifest } from './typegen.js'
 
@@ -136,6 +140,13 @@ export interface CompiledSceneAudit {
   materialBindings: readonly CompiledMaterialBindingEvidence[]
   materialPortability: CompiledMaterialPortabilityCoverage
   materialPayloadCollapse: MaterialPayloadCollapseEvidence
+  /**
+   * Whether the finished artifact fits the runtime Blendlink claims to
+   * support. Evidence only: this audit runs on the Preview path too, and
+   * refusing there would take away the loop an artist needs to fix it. `sync`
+   * turns these into blocking verify issues at publication.
+   */
+  conformance: CompiledSceneConformance
 }
 
 export interface AuditCompiledSceneArtifactInput {
@@ -356,6 +367,12 @@ export async function auditCompiledSceneArtifact(
     materialBindings: Object.freeze(materialBindings),
     materialPortability,
     materialPayloadCollapse,
+    conformance: inspectCompiledSceneConformance({
+      gltf: raw as unknown as Record<string, unknown>,
+      materialRenderedTriangles: bindingCounters.map(
+        (counter) => counter.renderedTriangles,
+      ),
+    }),
   }
 }
 

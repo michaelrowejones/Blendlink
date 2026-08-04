@@ -27,6 +27,32 @@ import type { PresentationCameraRecipe } from './sceneRecipe.js'
  * viewport shapes as the same authored composition. */
 export const CAMERA_ASPECT_RELATIVE_TOLERANCE = 0.001
 
+/**
+ * The private-UV repair strategies bakelib can publish.
+ *
+ * Composed from its two axes rather than written out, because the producer
+ * composes the string the same way (a base strategy plus optional rescue
+ * suffixes) and a hand-written union of whole strings had already lost four
+ * members: every `smart-project-degenerate-islands` variant was missing while
+ * the Python side was emitting them. Deriving the type means the next suffix
+ * cannot be forgotten here.
+ */
+type UvRepairBase =
+  /** The whole object was reprojected. */
+  | 'smart-project-whole-unpinned-object'
+  /** Only the degenerate islands were, leaving the rest of the layout alone. */
+  | 'smart-project-degenerate-islands'
+type UvRepairSuffix =
+  | ''
+  | '+planar-polygon-rescue'
+  /** The projection still self-overlapped, so the layout became per-face
+   * lightmap charts - injective, but one seam per edge. */
+  | '+lightmap-rescue'
+  | '+planar-polygon-rescue+lightmap-rescue'
+export type UvRepairStrategy =
+  | `${UvRepairBase}${UvRepairSuffix}`
+  | 'sampleable-regular-polygon-rescue'
+
 export interface TopologySnapshot {
   frame: number
   vertices: number
@@ -535,15 +561,7 @@ export interface MaterialCompilationEvidence {
       /** Bounded UV repair transactions after the initial candidate layout. */
       repairCount?: number
       /** Exact repair strategies; absent on older schema-1 producer output. */
-      uvRepairStrategies?: Array<
-        | 'smart-project-whole-unpinned-object'
-        | 'smart-project-whole-unpinned-object+planar-polygon-rescue'
-        /** The projection still self-overlapped, so the layout became
-         * per-face lightmap charts — injective, but one seam per edge. */
-        | 'smart-project-whole-unpinned-object+lightmap-rescue'
-        | 'smart-project-whole-unpinned-object+planar-polygon-rescue+lightmap-rescue'
-        | 'sampleable-regular-polygon-rescue'
-      >
+      uvRepairStrategies?: UvRepairStrategy[]
       ignoredZeroAreaTriangles: number
       zeroWorldAreaTriangleCount: number
       uvArea: number

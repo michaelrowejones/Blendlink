@@ -3,6 +3,10 @@ import { existsSync, readFileSync } from 'node:fs'
 import { basename, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import type { BakeSettings, ExportSettings } from './invoke.js'
+import {
+  COMPILED_SCENE_CONFORMANCE_CODES,
+  type CompiledSceneConformanceCode,
+} from './compiledSceneConformance.js'
 
 export interface SceneConfig {
   /** Path to the .blend, relative to the config file. */
@@ -57,12 +61,30 @@ export interface SceneConfig {
    * application names the adapter and acknowledges that browser proof owns
    * the material result. */
   applicationMaterialAdapter?: ApplicationMaterialAdapterConfig
+  /** Named acceptance of specific compiled-artifact conformance failures.
+   * Every entry names the exact code and the exact subjects, and verify
+   * refuses a waiver that no longer matches anything the artifact reports. */
+  glbConformance?: GlbConformanceConfig
 }
 
 export interface ApplicationMaterialAdapterConfig {
   acknowledgePayloadCollapse: true
   /** Human-readable module/strategy shown by verify and publish. */
   description: string
+}
+
+export interface GlbConformanceWaiver {
+  /** One `conformance.*` code from the compiled-scene audit. */
+  code: string
+  /** Exact material, mesh, or skin names. There is deliberately no wildcard:
+   * the value of a waiver is that somebody looked at these specific things. */
+  subjects: string[]
+  /** Why this is acceptable, shown verbatim by verify and publish. */
+  reason: string
+}
+
+export interface GlbConformanceConfig {
+  accept: GlbConformanceWaiver[]
 }
 
 export interface BlendlinkConfig {
@@ -129,6 +151,7 @@ export interface ResolvedScene {
   build?: string
   inputs?: string[]
   applicationMaterialAdapter?: ApplicationMaterialAdapterConfig
+  glbConformance?: GlbConformanceConfig
   /** Config root — cwd for external build commands. */
   root: string
   /** Present for scenes loaded from a config module; absent for deliberately
@@ -155,7 +178,7 @@ export function defineScene(scene: SceneConfig): SceneConfig {
 const SCENE_KEYS = new Set([
   'file', 'name', 'glb', 'url', 'collection', 'imageFormat', 'mode', 'bake',
   'curveSamples', 'exporterOverrides', 'external', 'build', 'inputs',
-  'applicationMaterialAdapter',
+  'applicationMaterialAdapter', 'glbConformance',
 ])
 const CONFIG_KEYS = new Set(['outDir', 'genDir', 'urlPrefix', 'blenderPath', 'website', 'scenes'])
 const WEBSITE_KEYS = new Set(['root', 'devCommand', 'url', 'browserSmoke'])
@@ -264,6 +287,45 @@ function validateConfig(config: BlendlinkConfig, root: string): void {
         )
       }
     }
+    if (scene.glbConformance) {
+      for (const key of Object.keys(scene.glbConformance)) {
+        if (key !== 'accept') {
+          problems.push(
+            `scene ${label}: glbConformance unknown key "${key}" — known: accept`,
+          )
+        }
+      }
+      const accept = scene.glbConformance.accept
+      if (!Array.isArray(accept) || accept.length === 0) {
+        problems.push(
+          `scene ${label}: glbConformance.accept must be a non-empty array of waivers`,
+        )
+      } else {
+        accept.forEach((waiver, index) => {
+          const at = `scene ${label}: glbConformance.accept[${index}]`
+          if (!COMPILED_SCENE_CONFORMANCE_CODES.includes(
+            waiver?.code as CompiledSceneConformanceCode,
+          )) {
+            problems.push(
+              `${at}.code must be one of: ${COMPILED_SCENE_CONFORMANCE_CODES.join(', ')}`,
+            )
+          }
+          if (!Array.isArray(waiver?.subjects) || waiver.subjects.length === 0
+              || waiver.subjects.some((subject) =>
+                typeof subject !== 'string' || !subject.trim())) {
+            problems.push(
+              `${at}.subjects must name the exact material, mesh, or skin names being ` +
+                'accepted; there is no wildcard',
+            )
+          }
+          if (typeof waiver?.reason !== 'string' || !waiver.reason.trim()) {
+            problems.push(
+              `${at}.reason must say why shipping this is acceptable; verify prints it verbatim`,
+            )
+          }
+        })
+      }
+    }
     if (scene.bake && scene.mode !== 'baked') {
       problems.push(`scene ${label}: has bake settings but mode is not 'baked' — the bake would silently not run; add mode: 'baked'`)
     }
@@ -351,6 +413,17 @@ export function resolveConfig(
             applicationMaterialAdapter: {
               acknowledgePayloadCollapse: true as const,
               description: scene.applicationMaterialAdapter.description.trim(),
+            },
+          }
+        : {}),
+      ...(scene.glbConformance
+        ? {
+            glbConformance: {
+              accept: scene.glbConformance.accept.map((waiver) => ({
+                code: waiver.code.trim(),
+                subjects: [...waiver.subjects].map((subject) => subject.trim()).sort(),
+                reason: waiver.reason.trim(),
+              })),
             },
           }
         : {}),
