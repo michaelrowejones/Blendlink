@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 /** The owned baked-composition recipe (shadcn model): written ONCE into the
- * user's genDir beside the generated module, then it is THEIRS â€” sync never
+ * user's genDir beside the generated module, then it is THEIRS — sync never
  * overwrites it. */
 
 export const BAKED_RECIPE_TEMPLATE_VERSION = 11
@@ -66,7 +66,7 @@ export function updateBakedRecipeTemplateFile(
 }
 
 export function renderBakedRecipe(exportName: string): string {
-  return `/* Generated once by blendlink â€” this file is YOURS to edit and will not
+  return `/* Generated once by blendlink — this file is YOURS to edit and will not
  * be overwritten. Runtime contract: blendlink docs/MANIFEST.md.
  *
  * Composes a baked scene: base state atlas + additive light-group layers in
