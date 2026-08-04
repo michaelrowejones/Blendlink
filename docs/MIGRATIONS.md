@@ -55,7 +55,7 @@ migration strategy.
 
 ## First public release
 
-The planned 0.8.0 artifacts are an initial public-release candidate, not an
+The planned 0.9.0 artifacts are an initial public-release candidate, not an
 upgrade from an npm or Blender Extensions release. Before publishing, replace
 this paragraph with the exact installation instructions and any migration from
 local/file-linked development installs.
@@ -69,7 +69,7 @@ Blender's optional file compression uses Zstandard, whose required built-in
 Node API first exists in Node 22.15. No `.blend`, generated scene, manifest, or
 website migration is required. Run `node --version` and `blendlink doctor`
 after upgrading. Rollback means using the previous local development commit;
-there is no published 0.8.0 package to downgrade.
+there is no published 0.9.0 package to downgrade.
 
 ### Local development: React helpers use the React subpath
 

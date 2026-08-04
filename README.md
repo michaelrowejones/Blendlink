@@ -525,6 +525,32 @@ scenes: [{
 }]
 ```
 
+Verification separately checks that the finished GLB fits the runtime
+Blendlink claims to support, because several ways of getting that wrong
+produce no error at all in a browser: a material that samples a UV set the
+loader never binds renders from the gutter and can disappear entirely, a
+material with no base-colour carrier renders pure white, and a skin past the
+1024-joint uniform-buffer ceiling draws nothing on the WebGPU family. Those
+are reported on every compile, including Preview, and block publication.
+
+A specific finding can be accepted by name. There is deliberately no
+wildcard, and a waiver that stops matching the artifact is itself an error,
+so an accepted list cannot quietly outlive what it was written for.
+
+```js
+scenes: [{
+  name: 'hero',
+  file: 'assets/hero.blend',
+  glbConformance: {
+    accept: [{
+      code: 'conformance.base-color-carrier-missing',
+      subjects: ['eyes', 'gums'],
+      reason: 'the website assigns these two materials at runtime',
+    }],
+  },
+}]
+```
+
 `textureEvidence` reports the live Three transcode target family (including
 ASTC, BC7/BC6H, ETC2/EAC, S3TC, and uncompressed formats), material/environment
 roles, explicit or generated mips, and block-aware standard format payload.

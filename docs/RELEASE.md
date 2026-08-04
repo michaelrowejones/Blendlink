@@ -16,12 +16,16 @@ licenses.
 ## Current release status
 
 - `npm view blendlink name version --json` returned registry `E404` on
-  2026-07-25; no public unscoped `blendlink` package was visible to this
-  client at that check.
+  2026-07-25 and again on 2026-08-04; no public unscoped `blendlink` package
+  was visible to this client at either check.
 - No approved Blender Extensions release is recorded by this repository.
 - Local packaging and toolchain gates exist.
-- Node GitHub Actions and a reusable application-owned Playwright matrix are
-  defined under `.github/workflows/` but have not yet produced hosted evidence.
+- The Node contract workflow (`ci.yml`) has produced hosted evidence: run
+  30891723434 passed exact Node 22.15.0, latest Node 22, and Node 24 on
+  commit `a3b8c68`. The tagged release workflow
+  (`blender-contract.yml`) and the reusable application-owned Playwright
+  matrix are defined but have never executed, so every claim that depends on
+  them remains unproven.
 - Exact Blender 4.2.0/5.2.0 Linux/Windows archive acquisition is defined and
   checksum-pinned, but has not run on hosted workers. The tagged workflow now
   defines same-run candidate attestation, numeric-ID transfer, OIDC-only npm
@@ -207,10 +211,10 @@ npm currently requires a package to exist before its trusted publisher can be
 configured, while `blendlink` returned `E404` on 2026-07-25. Therefore the
 first registry write is an explicit external blocker, not a hidden fallback.
 If the package is still absent, make one separately reviewed, protected
-bootstrap publication of a lower prerelease such as `0.8.0-bootstrap.0` under
+bootstrap publication of a lower prerelease such as `0.9.0-bootstrap.0` under
 a non-default `bootstrap` dist-tag, using that tag's exact retained tarball and
 a short-lived granular token. Then configure trust, revoke the token, disallow
-token publication after OIDC succeeds, and leave `0.8.0` available for the
+token publication after OIDC succeeds, and leave `0.9.0` available for the
 first trusted publication. The repository intentionally contains no permanent
 token branch in the production job.
 
