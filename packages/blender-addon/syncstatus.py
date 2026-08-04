@@ -64,7 +64,13 @@ def _read_local_path_provenance(key: str, cache_root: Path | None = None) -> Pat
         return None
 
 _state = {
-    "status": "NO_FILE",  # NO_FILE | NO_MANIFEST | IN_SYNC | NEEDS_SYNC | UNSAVED_EDITS
+    # CHECKING until the first timer tick runs. register() deliberately does
+    # not refresh - it can run in Blender's restricted context - so for the
+    # first second after the add-on is enabled the status is simply not known
+    # yet. Starting at NO_FILE made a saved, connected, published scene
+    # announce "Save the file to track sync" and "No website is connected yet"
+    # before anything had looked.
+    "status": "CHECKING",  # CHECKING | NO_FILE | NO_MANIFEST | IN_SYNC | NEEDS_SYNC | UNSAVED_EDITS
     "detail": "",
     "hint": "",  # manifest syncHint: the command that regenerates the artifacts
     "plan": {},  # manifest bakePlan objects keyed by object name
@@ -108,6 +114,7 @@ _state = {
 }
 
 STATUS_UI = {
+    "CHECKING": ("TIME", "Checking website status"),
     "NO_FILE": ("FILE_BLEND", "Save the file to track sync"),
     "NO_MANIFEST": ("GHOST_DISABLED", "No published website build yet"),
     "IN_SYNC": ("CHECKMARK", "Published export artifacts are current"),

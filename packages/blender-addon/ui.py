@@ -715,6 +715,7 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             headline_icon = "ERROR"
         else:
             headline = {
+                "CHECKING": "Checking website status…",
                 "IN_SYNC": "Website scene is current",
                 "NEEDS_SYNC": "Scene has unpublished changes",
                 "UNSAVED_EDITS": "Scene has unpublished changes",
@@ -726,7 +727,9 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
         heading.label(text=_shorten(headline, context, reserve=5), icon=headline_icon)
         heading.operator("blendlink.refresh_sync", text="", icon="FILE_REFRESH")
         root = syncstatus.project_root()
-        if root is None and not busy and not starting_preview and not updating_preview:
+        # Nothing has looked for a project yet during the first tick, so do
+        # not announce that there is no website connected.
+        if root is None and status != "CHECKING"                 and not busy and not starting_preview and not updating_preview:
             _draw_wrapped(
                 publish,
                 "No website is connected yet. Preview Website creates a private, reusable "
@@ -800,8 +803,12 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
                 last_message = (
                     previewrun.last_message() if preview_failed else syncrun.last_message()
                 )
-                if last_message:
-                    _draw_wrapped(failure, last_message)
+                _draw_wrapped(
+                    failure,
+                    last_message or
+                    "The website tool reported an error with no message. "
+                    "Open Log for the full output.",
+                )
 
             if preview_current and previewrun.update_error():
                 failure = publish.box()
@@ -3839,7 +3846,15 @@ class BLENDLINK_PT_fidelity(_BlendlinkPanelMixin, bpy.types.Panel):
             "Cache": "TIME",
             "Block": "ERROR",
         }
-        ordered = sorted(items, key=lambda item: (item.route == "Preserve", item.object_name))
+        # Blocking routes first, like Web Checks. Sorting only on route meant a
+        # Block could be pushed out of the eight visible rows AND out of the
+        # ordered[0] detail fallback by ordinary Preserve entries.
+        ordered = sorted(
+            items,
+            key=lambda item: (
+                not item.blocking, item.route == "Preserve", item.object_name,
+            ),
+        )
         visible = ordered[:8]
         for item in visible:
             row = layout.row(align=True)
@@ -3851,7 +3866,13 @@ class BLENDLINK_PT_fidelity(_BlendlinkPanelMixin, bpy.types.Panel):
             select = row.operator("blendlink.select_issue", text="", icon="RESTRICT_SELECT_OFF")
             select.object_name = item.object_name
         if len(ordered) > len(visible):
-            layout.label(text=f"+ {len(ordered) - len(visible)} more routes", icon="THREE_DOTS")
+            hidden = ordered[len(visible):]
+            blocked = sum(1 for item in hidden if item.blocking)
+            layout.label(
+                text=f"+ {len(hidden)} more routes"
+                     + (f" ({blocked} blocking)" if blocked else ""),
+                icon="THREE_DOTS",
+            )
 
         active_name = getattr(getattr(context, "active_object", None), "name", None)
         detail = next(

@@ -143,8 +143,22 @@ def last_log_path() -> str:
 
 
 def last_message() -> str:
-    """Last non-protocol process line, for concise in-panel failure evidence."""
-    return str(_state["tail"][-1]) if _state["tail"] else ""
+    """The most explanatory line the process produced, for the failure box.
+
+    The last line is often the least useful one - a stack frame, a progress
+    remnant, or an internal diagnostic - and it was being drawn verbatim as
+    the explanation under "Website task failed". Prefer the most recent line
+    that actually names an error, and never return an empty string as the
+    body of an alert.
+    """
+    tail = [str(line).strip() for line in _state["tail"] if str(line).strip()]
+    if not tail:
+        return ""
+    for line in reversed(tail):
+        lowered = line.lower()
+        if "error" in lowered or "failed" in lowered or "blocked" in lowered                 or lowered.startswith("refus"):
+            return line
+    return tail[-1]
 
 
 def was_canceled() -> bool:
