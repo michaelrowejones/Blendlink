@@ -8,7 +8,7 @@
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test:unit",
     "test:unit": "npm run test --workspaces --if-present && npm run test:release-policy",
-    "test:release-policy": "node --test scripts/production-audit-policy.test.mjs scripts/package-license-contract.test.mjs scripts/verify-retained-release.test.mjs scripts/release-workflow-policy.test.mjs",
+    "test:release-policy": "node --test scripts/source-hygiene.test.mjs scripts/production-audit-policy.test.mjs scripts/package-license-contract.test.mjs scripts/verify-retained-release.test.mjs scripts/release-workflow-policy.test.mjs",
     "audit:production": "node scripts/verify-production-audit.mjs",
     "test:consumer": "npm run build && node scripts/test-consumer-builds.mjs",
     "test:examples": "npm run build && node scripts/test-examples.mjs",

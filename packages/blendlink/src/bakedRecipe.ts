@@ -1,4 +1,4 @@
-﻿import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 /** The owned baked-composition recipe (shadcn model): written ONCE into the
  * user's genDir beside the generated module, then it is THEIRS â€” sync never

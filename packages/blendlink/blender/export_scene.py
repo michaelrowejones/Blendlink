@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # blendlink export script. This file imports bpy and is therefore licensed
 # GPL-3.0-or-later, unlike the rest of the blendlink package (MIT). It runs
@@ -3629,7 +3629,24 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     previous_light_variants = incremental.get("lightGroupVariants") or {}
     fingerprint_settings = {key: value for key, value in bake.items() if key != "states"}
     pipeline_digest = hashlib.sha256()
-    for module_path in (os.path.abspath(__file__), os.path.abspath(bakelib.__file__)):
+    # Every module in the Blender-side package, not a hand-maintained pair:
+    # a new pipeline module that nobody remembered to add here would let an
+    # algorithm change silently reuse baked pixels it no longer produces.
+    pipeline_modules = sorted(
+        os.path.join(directory, name)
+        for directory in {
+            os.path.dirname(os.path.abspath(__file__)),
+            os.path.dirname(os.path.abspath(bakelib.__file__)),
+        }
+        for name in os.listdir(directory)
+        if name.endswith(".py")
+    )
+    if not pipeline_modules:
+        raise SystemExit(
+            "bake cache: no pipeline modules found to fingerprint; refusing "
+            "to reuse baked pixels against an unknown pipeline"
+        )
+    for module_path in pipeline_modules:
         with open(module_path, "rb") as module_file:
             pipeline_digest.update(module_file.read())
     fingerprint_settings["pipelineSignature"] = pipeline_digest.hexdigest()[:16]
