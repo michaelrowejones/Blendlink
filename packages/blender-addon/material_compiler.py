@@ -6604,6 +6604,27 @@ def _bake_material_channels(
 _EXHAUSTIVE_BAKE_GATES = os.environ.get("BLENDLINK_EXHAUSTIVE_BAKE_GATES") == "1"
 
 
+def _constant_channel_value(result, *, tolerance: float = 1.0e-4):
+    """The one value every COVERED texel carries, or None if it varies.
+
+    rgbMin/rgbMax are already measured over the coverage mask, so an
+    uncovered background (which save_channel_png fills deliberately) can
+    never make a varying channel look constant, and a constant channel is
+    detected without a second pass over the pixels.
+    """
+    low = result.get("rgbMin")
+    high = result.get("rgbMax")
+    if not low or not high or len(low) != len(high):
+        return None
+    if any(
+        not math.isfinite(float(lo)) or not math.isfinite(float(hi))
+        or float(hi) - float(lo) > tolerance
+        for lo, hi in zip(low, high)
+    ):
+        return None
+    return tuple(float(value) for value in low)
+
+
 def _bake_material_channels_inner(
     decision: MaterialDecision,
     binding: MaterialBinding,
@@ -6639,6 +6660,9 @@ def _bake_material_channels_inner(
     wrap_window = plan.get("wrapGateWindow")
     uv_evidence = None
     gates = {}
+    # Channels that baked to one value everywhere: shipped as a factor
+    # rather than a texture nobody can distinguish from it.
+    constants = {}
     # One determinism re-bake proves the variant. The sampled channel is
     # the first in sorted order: stable across compiles, and predictable
     # for fixtures that assert the gate.
@@ -6925,19 +6949,59 @@ def _bake_material_channels_inner(
         if peak > 1.0 + 1.0e-6:
             strength = peak
             pixels = pixels / strength
-        saved = bakelib.save_channel_png(
-            pixels, result["coverage"],
-            os.path.join(temporary_directory, f"channel-{token}-emissive.png"),
-            colorspace="srgb",
-            label=f"{decision.material_name} emissive channel",
-        )
-        images["emissive"] = {
-            "saved": saved,
-            "image": load_image(saved, "emissive", "srgb"),
-            "uv": emission_record.get("uv"),
-            "uvMaps": emission_record.get("uvMaps") or [],
-            "strength": strength,
-        }
+        emissive_constant = _constant_channel_value(result)
+        # BLACK ONLY, deliberately. glTF MULTIPLIES emissiveFactor by the
+        # emissive texture, so a carrier that drops its image and keeps a
+        # non-black factor does not stop emitting - it emits that colour
+        # everywhere. The attestation below (_attest_material_bake_channels)
+        # enforces "no planned emissive image => black factor" and its
+        # comment names this elision as the exact hole it guards. Folding a
+        # NON-zero constant into the factor is legitimate, but it has to
+        # record the expected value on the plan and teach that branch to
+        # compare against it; widening it silently would give the hole
+        # back. Black needs none of that - it is already the attested
+        # invariant - and on the ellie character black is 26 of the 38
+        # constant textures.
+        if emissive_constant is not None and any(
+            abs(component) > 1.0e-6 for component in emissive_constant[:3]
+        ):
+            emissive_constant = None
+        if emissive_constant is not None:
+            # Indistinguishable from the texture it replaces, and the
+            # carrier already knows how to take a value here.
+            # A black channel never normalizes (that only fires above
+            # 1.0), so strength is the identity and no
+            # KHR_materials_emissive_strength ships - which the attestation
+            # also requires when no emissive texture was planned.
+            assert strength == 1.0, (
+                f"{decision.material_name}: black emissive normalized to "
+                f"{strength}"
+            )
+            constants["emissive"] = {
+                "value": (0.0, 0.0, 0.0),
+                "strength": 1.0,
+            }
+            log(
+                f"blendlink: {decision.material_name} emits nothing across "
+                "every covered texel; shipping no emissive texture instead "
+                "of a black one"
+            )
+        else:
+            saved = bakelib.save_channel_png(
+                pixels, result["coverage"],
+                os.path.join(
+                    temporary_directory, f"channel-{token}-emissive.png",
+                ),
+                colorspace="srgb",
+                label=f"{decision.material_name} emissive channel",
+            )
+            images["emissive"] = {
+                "saved": saved,
+                "image": load_image(saved, "emissive", "srgb"),
+                "uv": emission_record.get("uv"),
+                "uvMaps": emission_record.get("uvMaps") or [],
+                "strength": strength,
+            }
 
     normal_record = records.get("Normal")
     if normal_record is not None and normal_record.get("route") == "bake":
@@ -6964,6 +7028,7 @@ def _bake_material_channels_inner(
     return {
         "token": token,
         "images": images,
+        "constants": constants,
         "gates": gates,
         "uvEvidence": uv_evidence,
     }
@@ -7328,6 +7393,15 @@ def _generated_material_bake(
         )
         principled.inputs["Emission Strength"].default_value = float(
             emissive_entry.get("strength", 1.0),
+        )
+    elif (products.get("constants") or {}).get("emissive") is not None:
+        emissive_constant = products["constants"]["emissive"]
+        value = emissive_constant["value"]
+        principled.inputs["Emission Color"].default_value = (
+            float(value[0]), float(value[1]), float(value[2]), 1.0,
+        )
+        principled.inputs["Emission Strength"].default_value = float(
+            emissive_constant.get("strength", 1.0),
         )
     else:
         record = plan_records.get("Emission")

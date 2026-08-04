@@ -38,6 +38,7 @@ const SUITE_LABELS = new Map([
   ['scoped_uv_edit_check.py', 'scoped UV editing seam contract'],
   ['scene_state_transaction_check.py', 'scene-state transaction contract'],
   ['uvgeometry_check.py', 'pure UV/atlas geometry contract'],
+  ['constant_channel_check.py', 'constant-channel elision contract'],
   ['tsl_ir_ops_check.py', 'TSL IR op vocabulary conformance'],
   ['bake_ladder_check.py', 'bake atlas resolution ladder contract'],
   ['component_schema_check.py', 'component schema contract'],
