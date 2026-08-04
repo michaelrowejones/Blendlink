@@ -27,6 +27,9 @@
     { "name": "Crate-col", "extras": { "blendlink_role": "rigid" }, "expect": { "kind": "rigid" }, "$comment": "property beats name" },
     { "name": "RefGrid-noimp", "extras": { "blendlink_role": "rigid" }, "expect": { "kind": "rigid" }, "$comment": "a recognized property suppresses the exporter noimp suffix filter" },
     { "name": "Wall-colonly", "extras": { "blendlink_role": "rigid" }, "expect": { "kind": "rigid" }, "$comment": "a recognized property suppresses the exporter collision-only suffix filter" },
-    { "name": "PlainMesh", "expect": { "kind": "none" } }
+    { "name": "PlainMesh", "expect": { "kind": "none" } },
+    { "name": "Crate-colonly", "extras": { "blendlink_role": "colonly" }, "expect": { "kind": "collider", "shape": "trimesh", "proxyOnly": true, "base": "Crate" }, "$comment": "the property decides the shape, the NAME still decides the logical base - both parsers strip the token" },
+    { "name": "Crate-col.001", "extras": { "blendlink_role": "convcol" }, "expect": { "kind": "collider", "shape": "convex", "proxyOnly": false, "base": "Crate.001" }, "$comment": "role branch keeps Blender duplicate numbering on the stripped base" },
+    { "name": "Anything", "extras": { "blendlink_role": "colonly" }, "expect": { "kind": "collider", "shape": "trimesh", "proxyOnly": true, "base": "Anything" }, "$comment": "no name token to strip: the base is the object name unchanged" }
   ]
 }
