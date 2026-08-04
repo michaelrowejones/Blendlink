@@ -9,6 +9,7 @@ fixed-pixel gutter contract saturating at a too-small atlas -- were
 learned that way. These are the invariants the bake depends on, asserted
 as ordinary numbers in and ordinary numbers out.
 """
+import re
 import sys
 from pathlib import Path
 
@@ -18,9 +19,20 @@ sys.path.insert(0, str(BLENDER_DIR))
 
 import uvgeometry  # noqa: E402
 
-assert "bpy" not in sys.modules, (
-    "uvgeometry imported Blender; its whole purpose is being provable "
-    "without it"
+# The property is that uvgeometry does not DEPEND on Blender, not that the
+# host process lacks it -- this module is also run by the discovered-suite
+# runner inside Blender, where bpy is always loaded. Assert against the
+# module itself and its source.
+assert "bpy" not in vars(uvgeometry), (
+    "uvgeometry bound bpy into its namespace; its whole purpose is being "
+    "provable without Blender"
+)
+# An actual import statement, not the word appearing in prose -- the
+# module's own docstring explains why it no longer sits behind one.
+_source = (BLENDER_DIR / "uvgeometry.py").read_text(encoding="utf-8")
+_bpy_import = re.search(r"^\s*(?:import bpy|from bpy\b)", _source, re.MULTILINE)
+assert _bpy_import is None, (
+    "uvgeometry.py imports bpy; it must stay provable without Blender"
 )
 
 

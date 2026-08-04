@@ -82,10 +82,15 @@ for (const entry of readdirSync(addonSource)) {
   ) continue
   copyFileSync(join(addonSource, entry), join(addonOut, entry))
 }
-// The addon imports the same canonical bake module as the exporter. This is
-// a generated distribution copy, never a second authored implementation.
-copyFileSync(
-  join(root, 'blender', 'bakelib.py'),
-  join(addonOut, 'bakelib.py'),
-)
+// The addon imports the same canonical bake modules as the exporter. These
+// are generated distribution copies, never a second authored
+// implementation. EVERY .py in blender/ is copied for the same reason the
+// dist/blender loop above does it: bakelib.py imports its siblings, so a
+// hand-named list silently ships an addon that cannot import itself (the
+// pure-geometry module was missing exactly that way, caught only by the
+// isolated extension install check).
+for (const entry of readdirSync(join(root, 'blender'))) {
+  if (!entry.endsWith('.py')) continue
+  copyFileSync(join(root, 'blender', entry), join(addonOut, entry))
+}
 console.log('assets copied')

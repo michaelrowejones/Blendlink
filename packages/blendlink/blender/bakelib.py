@@ -3161,6 +3161,75 @@ def _atlas_seed_layer(obj, log):
     return layer
 
 
+def _restore_object_mode() -> None:
+    if bpy.context.mode != "OBJECT":
+        bpy.ops.object.mode_set(mode="OBJECT")
+
+
+class SceneStateTransaction:
+    """Registrar for restore steps; see :func:`scene_state_transaction`."""
+
+    def __init__(self, label: str):
+        self._label = label
+        self._steps = []
+
+    def on_restore(self, description: str, restore) -> None:
+        """Register a restore step. Steps run in REVERSE registration order
+        so nested acquisitions unwind the way they were taken."""
+        self._steps.append((description, restore))
+
+    def _release(self) -> list[str]:
+        failures = []
+        for description, restore in reversed(self._steps):
+            try:
+                restore()
+            except BaseException as error:  # noqa: BLE001 - reported, not swallowed
+                failures.append(f"{description}: {error}")
+        return failures
+
+
+@contextlib.contextmanager
+def scene_state_transaction(label: str):
+    """Acquire Blender scene state and guarantee it is released.
+
+    Blender's Python API is a pile of global mutable state - modes,
+    selections, tool settings, world and render assignments - and every
+    bake primitive borrows some of it. What makes that survivable is not
+    the borrowing but the RELEASE, and specifically release on the failure
+    path, which no test reaches on any individual copy of the protocol.
+
+    Restore steps run in reverse registration order. A step that raises
+    does NOT prevent the others from running: the failures are collected
+    and reported together, and the resulting error is raised FROM the
+    body's error rather than replacing it, so a bake that failed for one
+    reason and then failed to clean up still reports the original cause.
+
+        with scene_state_transaction("unpinned UV averaging") as state:
+            prior = tools.use_uv_select_sync
+            state.on_restore(
+                "UV selection-sync", lambda: setattr(
+                    tools, "use_uv_select_sync", prior))
+            ...
+    """
+    transaction = SceneStateTransaction(label)
+    primary_error = None
+    try:
+        yield transaction
+    except BaseException as error:  # noqa: BLE001 - re-raised below
+        primary_error = error
+    finally:
+        failures = transaction._release()
+    if failures:
+        cleanup_error = RuntimeError(
+            f"{label} could not restore Blender state: " + "; ".join(failures)
+        )
+        if primary_error is not None:
+            raise cleanup_error from primary_error
+        raise cleanup_error
+    if primary_error is not None:
+        raise primary_error.with_traceback(primary_error.__traceback__)
+
+
 @contextlib.contextmanager
 def scoped_uv_edit(objects, uv_name=None, *, faces=None, sync=None,
                    select_uvs=True, require_multi_object=False):
@@ -3212,9 +3281,16 @@ def scoped_uv_edit(objects, uv_name=None, *, faces=None, sync=None,
         if obj.type == "MESH"
     }
 
-    primary_error = None
-    cleanup_errors = []
-    try:
+    with scene_state_transaction("scoped UV editing") as state:
+        state.on_restore(
+            "UV selection-sync",
+            lambda: setattr(tools, "use_uv_select_sync", prior_sync),
+        )
+        state.on_restore(
+            "mesh select-mode",
+            lambda: setattr(tools, "mesh_select_mode", prior_select_mode),
+        )
+        state.on_restore("Object Mode", _restore_object_mode)
         if sync is not None:
             tools.use_uv_select_sync = bool(sync)
         bpy.ops.object.mode_set(mode="EDIT")
@@ -3253,32 +3329,6 @@ def scoped_uv_edit(objects, uv_name=None, *, faces=None, sync=None,
         if select_uvs and not tools.use_uv_select_sync:
             bpy.ops.uv.select_all(action="SELECT")
         yield
-    except BaseException as error:
-        primary_error = error
-    finally:
-        if bpy.context.mode != "OBJECT":
-            try:
-                bpy.ops.object.mode_set(mode="OBJECT")
-            except BaseException as error:
-                cleanup_errors.append(f"Object Mode restore failed: {error}")
-        try:
-            tools.mesh_select_mode = prior_select_mode
-        except BaseException as error:
-            cleanup_errors.append(f"mesh select-mode restore failed: {error}")
-        try:
-            tools.use_uv_select_sync = prior_sync
-        except BaseException as error:
-            cleanup_errors.append(f"UV selection-sync restore failed: {error}")
-    if cleanup_errors:
-        cleanup_error = RuntimeError(
-            "scoped UV editing could not restore Blender state: "
-            + "; ".join(cleanup_errors)
-        )
-        if primary_error is not None:
-            raise cleanup_error from primary_error
-        raise cleanup_error
-    if primary_error is not None:
-        raise primary_error.with_traceback(primary_error.__traceback__)
 
 
 def _smart_project_private_uv_objects(objects, uv_name: str) -> None:
