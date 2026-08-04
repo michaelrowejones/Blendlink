@@ -4293,6 +4293,10 @@ class BLENDLINK_OT_refresh_checks(bpy.types.Operator):
 
     def execute(self, context):
         validation.recompute(context.scene)
+        # The list the panel renders is session data, not the scan result, so
+        # an explicit refresh has to republish it rather than wait a second
+        # for the shared timer.
+        validation.sync_check_rows(context)
         return {"FINISHED"}
 
 

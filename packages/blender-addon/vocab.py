@@ -57,10 +57,29 @@ class Classification:
 
 @dataclass
 class LintIssue:
-    severity: str  # 'WARNING' | 'INFO'
+    # ERROR blocks publishing, WARNING is worth correcting before publishing,
+    # INFO is an observation. The rank exists because sorting on the string
+    # put ERROR after WARNING, which pushed genuinely blocking issues to the
+    # bottom of a truncated list.
+    severity: str  # 'ERROR' | 'WARNING' | 'INFO'
     message: str
     object_name: str | None = None
     fixable_numbered: bool = False
+    # Whether publishing is actually refused. The producers know this; without
+    # it the panel hedged every issue with "may be blocked", including ones
+    # that block nothing and ones where the button is already disabled.
+    blocking: bool = False
+    # The next action, in the producer's words. Empty means the panel falls
+    # back to its generic advice.
+    remedy: str = ""
+
+
+SEVERITY_RANK = {"ERROR": 0, "WARNING": 1, "INFO": 2}
+
+
+def severity_rank(severity: str) -> int:
+    """Sort key for one severity; an unknown severity sorts last, not first."""
+    return SEVERITY_RANK.get(str(severity).upper(), len(SEVERITY_RANK))
 
 
 def classify(name: str, extras: dict | None = None) -> Classification | None:

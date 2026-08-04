@@ -1330,6 +1330,23 @@ class BlendlinkBakeRow(bpy.types.PropertyGroup):
     pinned: bpy.props.BoolProperty()
 
 
+class BlendlinkCheckRow(bpy.types.PropertyGroup):
+    """One Web Checks row.
+
+    The panel used to render a slice of the issue list and pick its detail
+    from the active object, so an issue with no object - a duplicate atlas
+    name, a lighting state pointing at a deleted collection - could never be
+    inspected, and anything past the eighth row was unreachable. A real list
+    needs real rows: this is what template_list scrolls and selects.
+    """
+    severity: bpy.props.StringProperty()
+    message: bpy.props.StringProperty()
+    object_name: bpy.props.StringProperty()
+    fixable_numbered: bpy.props.BoolProperty()
+    blocking: bpy.props.BoolProperty()
+    remedy: bpy.props.StringProperty()
+
+
 def _select_row_object(self, context):
     obj = context.scene.objects.get(self.name)
     if obj is None:
@@ -1386,6 +1403,8 @@ class BlendlinkSessionSettings(bpy.types.PropertyGroup):
     )
     bake_rows: bpy.props.CollectionProperty(type=BlendlinkBakeRow)
     bake_row_index: bpy.props.IntProperty(default=-1, update=_row_index_update)
+    check_rows: bpy.props.CollectionProperty(type=BlendlinkCheckRow)
+    check_row_index: bpy.props.IntProperty(default=-1)
     derived_asset_path: bpy.props.StringProperty(options={"SKIP_SAVE"})
     derived_asset_label: bpy.props.StringProperty(options={"SKIP_SAVE"})
     derived_asset_atlas: bpy.props.StringProperty(default="main", options={"SKIP_SAVE"})
@@ -3133,5 +3152,6 @@ classes = (
     BlendlinkComponentSettings,
     BlendlinkProjectSettings,
     BlendlinkBakeRow,
+    BlendlinkCheckRow,
     BlendlinkSessionSettings,
 )

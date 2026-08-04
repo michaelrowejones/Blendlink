@@ -9171,6 +9171,44 @@ def main():
     expect(any(issue.object_name == procedural.name and "Geometry Conversion" in issue.message
                for issue in validation.result().issues),
            "blocking Geometry Nodes route did not reach Web Checks")
+
+    # --- Web Checks is a list/detail surface, and it sorts by what blocks ---
+    # Before this contract the panel drew a slice of eight labels sorted with
+    # ERROR after WARNING, and picked its detail from the ACTIVE OBJECT: a
+    # blocking issue could sort out of view, and an issue with no object could
+    # never be inspected at all.
+    ordered = validation.ordered_issues()
+    ranks = [vocab.severity_rank(issue.severity) for issue in ordered]
+    expect(ranks == sorted(ranks),
+           f"Web Checks did not order blocking issues first: "
+           f"{[(issue.severity, issue.message[:40]) for issue in ordered]}")
+    counts = validation.issue_counts()
+    expect(counts["total"] == len(ordered)
+           and counts["blocking"] + counts["advisory"] == counts["total"],
+           f"Web Checks counts do not add up: {counts}")
+    expect(counts["blocking"] >= 1,
+           f"the blocked Geometry Nodes route was not counted as blocking: {counts}")
+    expect(validation.sync_check_rows(bpy.context),
+           "the first check-row sync reported no change")
+    session_rows = bpy.context.window_manager.blendlink.check_rows
+    expect(len(session_rows) == len(ordered),
+           f"check rows {len(session_rows)} != issues {len(ordered)}; the list is "
+           "not allowed to truncate")
+    expect([row.message for row in session_rows] == [issue.message for issue in ordered],
+           "check rows drifted from the ordered issue list")
+    expect(any(row.blocking for row in session_rows),
+           "no check row carries the blocking flag the detail box reads")
+    expect(not validation.sync_check_rows(bpy.context),
+           "an unchanged issue list still rewrote the session rows")
+    # A row with no object must still be selectable; that is the whole reason
+    # the rows exist.
+    scene_level = [row for row in session_rows if not row.object_name]
+    if scene_level:
+        bpy.context.window_manager.blendlink.check_row_index = list(session_rows).index(
+            scene_level[0],
+        )
+        expect(bpy.context.window_manager.blendlink.check_row_index >= 0,
+               "a scene-level check could not be selected")
     procedural_module = __import__(
         f"{PACKAGE}.procedural", fromlist=["analyze_scene"]
     )

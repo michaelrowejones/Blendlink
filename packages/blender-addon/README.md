@@ -294,10 +294,17 @@ name is editable in the addon preferences.
 
 ## Install
 
-Build and install from this directory (Blender 4.2+):
+This directory is the add-on **source**. It is not a buildable extension root
+on its own: the canonical `bakelib.py` is authored once under
+`packages/blendlink/blender/` and staged beside the add-on modules at build
+time, so a zip built from here fails to enable with a `ModuleNotFoundError`
+before anything registers.
+
+Stage the package first, then build from the staged tree (Blender 4.2+):
 
 ```
-blender --command extension build --output-filepath blendlink-addon.zip
+npm run build
+blender --command extension build --source-dir ../blendlink/dist/addon --output-filepath blendlink-addon.zip
 ```
 
 then Blender → Preferences → Get Extensions → Install from Disk, or headless:

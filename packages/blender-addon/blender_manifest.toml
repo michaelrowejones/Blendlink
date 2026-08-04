@@ -20,6 +20,12 @@ copyright = ["2026 Michael Rowe Jones"]
 [permissions]
 files = "Read manifests and write requested project captures"
 clipboard = "Copy preview, connect, publish, and website instructions"
+# Preview and Publish run the Blendlink command-line tool. When a website
+# project already provides it, nothing is fetched; with no project connected,
+# the first preview downloads that tool from npm on the artist's request. That
+# is a network access, and declaring it is the honest thing to do even though
+# Blender itself makes no request.
+network = "Fetch the Blendlink command-line tool when a preview needs it"
 
 [build]
 paths_exclude_pattern = [

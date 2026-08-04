@@ -357,6 +357,7 @@ def _tick():
         ("material previews", ui.prepare_active_material_previews),
         ("reflection-probe status", probe_status),
         ("scene validation", consume_validation),
+        ("check rows", validation.sync_check_rows),
         ("presentation cache", presentation_ui.prepare_cache),
         ("website sync status", syncstatus.refresh),
         ("saved asset reconciliation", ops.reconcile_saved_asset_override),

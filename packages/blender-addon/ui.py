@@ -593,6 +593,48 @@ class BLENDLINK_PT_web_light(_BlendlinkLightPanelMixin, bpy.types.Panel):
             _draw_wrapped(action, remedy)
 
 
+def _preview_action_label(context, preview_current: bool, preview_failed: bool) -> str:
+    """The dominant action's label, in a form that fits the sidebar it is in.
+
+    Both spellings say the same thing; the short one exists because a clipped
+    primary action is worse than a terse one.
+    """
+    compact = _is_compact(context)
+    if preview_current and previewrun.is_watching():
+        return "Save & Update" if compact else "Save & Update Live Preview"
+    if preview_current and previewrun.url() and not previewrun.owns_server():
+        return "Check & Update" if compact else "Check & Update Website"
+    if preview_current and previewrun.url():
+        return "Update Preview" if compact else "Update Website Preview"
+    if preview_failed:
+        return "Retry Preview" if compact else "Retry Website Preview"
+    return "Preview Website"
+
+
+def _last_run_failed(preview_current: bool) -> tuple[bool, bool]:
+    """(a run failed, that run was the preview) for the most recent runner.
+
+    The state card and its failure box both need this, and they used to
+    compute it in different places - the box knew about the failure while the
+    headline above it did not.
+    """
+    latest_preview_finished = previewrun.last_finished_at() if preview_current else 0
+    latest_runner = max(syncrun.last_finished_at(), latest_preview_finished)
+    sync_failed = (
+        syncrun.last_finished_at() == latest_runner
+        and syncrun.last_exit_code() not in (None, 0)
+        and not syncrun.was_canceled()
+    )
+    preview_failed = (
+        preview_current
+        and previewrun.last_finished_at() == latest_runner
+        and previewrun.last_exit_code() not in (None, 0)
+        and not previewrun.was_canceled()
+        and not previewrun.url()
+    )
+    return bool(sync_failed or preview_failed), bool(preview_failed)
+
+
 class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
     bl_idname = "BLENDLINK_PT_main"
     bl_label = "Blendlink"
@@ -649,6 +691,17 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
                 else "Live preview — updates when you save"
             )
             headline_icon = "REC"
+        elif _last_run_failed(preview_current)[0]:
+            # The headline's whole job is to say what state the scene is in.
+            # It read only the sync status, and a failed Publish on a file
+            # that is already saved leaves that status IN_SYNC - so the card
+            # said "Website scene is current" with a green checkmark directly
+            # above its own red failure box.
+            headline = (
+                "Website preview failed"
+                if _last_run_failed(preview_current)[1] else "Last website build failed"
+            )
+            headline_icon = "ERROR"
         else:
             headline = {
                 "IN_SYNC": "Website scene is current",
@@ -666,8 +719,9 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             _draw_wrapped(
                 publish,
                 "No website is connected yet. Preview Website creates a private, reusable "
-                "Three.js studio without adding files beside this .blend. Connect a website "
-                "when you are ready to publish it.",
+                "Three.js studio without adding files beside this .blend. It needs Node.js, "
+                "and the first preview downloads the Blendlink tool from npm into a private "
+                "cache. Connect a website when you are ready to publish it.",
                 icon="INFO",
             )
 
@@ -717,25 +771,9 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
                 )
             progress.operator("blendlink.stop_preview", text="", icon="X")
         else:
-            latest_preview_finished = (
-                previewrun.last_finished_at() if preview_current else 0
-            )
-            latest_runner = max(
-                syncrun.last_finished_at(), latest_preview_finished,
-            )
-            sync_failed = (
-                syncrun.last_finished_at() == latest_runner
-                and syncrun.last_exit_code() not in (None, 0)
-                and not syncrun.was_canceled()
-            )
-            preview_failed = (
-                preview_current
-                and previewrun.last_finished_at() == latest_runner
-                and previewrun.last_exit_code() not in (None, 0)
-                and not previewrun.was_canceled()
-                and not previewrun.url()
-            )
-            if sync_failed or preview_failed:
+            any_failed, preview_failed = _last_run_failed(preview_current)
+            sync_failed = any_failed and not preview_failed
+            if any_failed:
                 failure = publish.box()
                 failure_header = failure.row(align=True)
                 failure_header.alert = True
@@ -774,10 +812,11 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             else:
                 dominant.operator(
                     "blendlink.browser_preview",
-                    text=("Save & Update Live Preview" if preview_current and previewrun.is_watching() else
-                          "Check & Update Website" if preview_current and previewrun.url() and not previewrun.owns_server() else
-                          "Update Website Preview" if preview_current and previewrun.url() else
-                          "Retry Website Preview" if preview_failed else "Preview Website"),
+                    # The dominant action is the longest label in the panel and
+                    # was the only one that ignored sidebar width, so at the
+                    # width most artists keep the N-panel it clipped mid-word
+                    # while every secondary label around it shortened.
+                    text=_preview_action_label(context, preview_current, preview_failed),
                     icon="FILE_REFRESH" if preview_current and previewrun.url() else "TRIA_RIGHT",
                 )
 
@@ -805,7 +844,6 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             plan.quality = "PLAN"
             final = actions.operator("blendlink.sync_now", text="Publish Website", icon="EXPORT")
             final.quality = "FINAL"
-            publish.menu("BLENDLINK_MT_workspace_tools", text="More Tools", icon="DOWNARROW_HLT")
         else:
             handoff = publish.row(align=True)
             handoff.operator(
@@ -813,6 +851,13 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             )
             guide = handoff.operator("wm.url_open", text="Guide", icon="HELP")
             guide.url = "https://github.com/michaelrowejones/Blendlink#quick-start"
+        # More Tools carries the logs, Stop Website Preview, Auto-build on Save
+        # and the route to the other Properties contexts. It used to be drawn
+        # only when a website was connected - which is exactly the state the
+        # private Preview Studio is FOR, so the documented first-run path had
+        # no log, no stop control and no way back. Every entry in the menu
+        # polls for itself and explains why it is disabled.
+        publish.menu("BLENDLINK_MT_workspace_tools", text="More Tools", icon="DOWNARROW_HLT")
 
         integrity = syncstatus.integrity_failures()
         if integrity:
@@ -939,6 +984,34 @@ class BLENDLINK_UL_atlases(bpy.types.UIList):
         else:
             row.label(text=output)
             row.label(text=f"{item.size}px{occupancy}")
+
+
+class BLENDLINK_UL_checks(bpy.types.UIList):
+    """Web Checks rows: severity, subject, consequence, and a row action.
+
+    A UIList scrolls, so no issue is unreachable, and its selection drives the
+    detail box - which is what makes an issue with no object (a duplicate
+    atlas name, a lighting state pointing at a deleted collection)
+    inspectable at all.
+    """
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_prop):
+        blocking = item.blocking or item.severity == "ERROR"
+        row = layout.row(align=True)
+        row.alert = blocking
+        subject = f"{item.object_name}: " if item.object_name else ""
+        row.label(
+            text=_shorten(subject + item.message, context, reserve=6),
+            icon="ERROR" if blocking else "INFO",
+        )
+        if item.object_name:
+            select = row.operator(
+                "blendlink.select_issue", text="", icon="RESTRICT_SELECT_OFF",
+            )
+            select.object_name = item.object_name
+        if item.fixable_numbered and item.object_name:
+            fix = row.operator("blendlink.fix_numbered", text="", icon="AUTO")
+            fix.object_name = item.object_name
 
 
 class BLENDLINK_UL_states(bpy.types.UIList):
@@ -3608,66 +3681,78 @@ class BLENDLINK_PT_checks(_BlendlinkPanelMixin, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        issues = validation.result().issues
+        session = context.window_manager.blendlink
+        rows = session.check_rows
+        counts = validation.issue_counts()
         checking = validation.is_dirty()
         header = layout.row(align=True)
-        if checking and not issues:
+        if checking and not counts["total"]:
             header.label(text="Checking scene…", icon="TIME")
-        elif issues:
-            header.label(text=f"{len(issues)} to review", icon="ERROR")
+        elif counts["blocking"] and counts["advisory"]:
+            header.label(
+                text=f"{counts['blocking']} blocking · {counts['advisory']} to review",
+                icon="ERROR",
+            )
+        elif counts["blocking"]:
+            header.label(text=f"{counts['blocking']} blocking", icon="ERROR")
+        elif counts["advisory"]:
+            # Not an error icon: a scene whose only finding is "has no
+            # lod_distance" is not a scene with a problem.
+            header.label(text=f"{counts['advisory']} to review", icon="INFO")
         else:
             header.label(text="Vocabulary looks good", icon="CHECKMARK")
         header.operator("blendlink.refresh_checks", text="", icon="FILE_REFRESH")
-        if checking and not issues:
+        if not counts["total"]:
             return
-        if not issues:
+        if len(rows) == 0:
+            layout.label(text="Preparing the check list…", icon="TIME")
             return
-        ordered = sorted(
-            issues,
-            key=lambda issue: (issue.severity != "WARNING", issue.object_name or "", issue.message),
-        )
-        visible = ordered[:8]
-        for issue in visible:
-            row = layout.row(align=True)
-            row.alert = issue.severity == "WARNING"
-            icon = "ERROR" if issue.severity == "WARNING" else "INFO"
-            subject = f"{issue.object_name}: " if issue.object_name else ""
-            row.label(text=_shorten(subject + issue.message, context, reserve=8), icon=icon)
-            if issue.object_name:
-                op = row.operator(
-                    "blendlink.select_issue", text="", icon="RESTRICT_SELECT_OFF",
-                )
-                op.object_name = issue.object_name
-            if issue.fixable_numbered and issue.object_name:
-                fix = row.row(align=True)
-                candidate = context.scene.objects.get(issue.object_name)
-                fix.enabled = candidate is not None and getattr(candidate, "is_editable", True)
-                op = fix.operator("blendlink.fix_numbered", text="", icon="AUTO")
-                op.object_name = issue.object_name
-        if len(ordered) > len(visible):
-            layout.label(text=f"+ {len(ordered) - len(visible)} more checks", icon="THREE_DOTS")
 
-        active_name = getattr(getattr(context, "active_object", None), "name", None)
-        detail = next(
-            (issue for issue in ordered if issue.object_name == active_name), ordered[0],
+        layout.template_list(
+            "BLENDLINK_UL_checks", "", session, "check_rows",
+            session, "check_row_index", rows=min(8, max(3, len(rows))),
         )
+        if not 0 <= session.check_row_index < len(rows):
+            layout.label(text="Choose a check to see what to do about it", icon="INFO")
+            return
+        detail = rows[session.check_row_index]
+        blocking = detail.blocking or detail.severity == "ERROR"
         box = layout.box()
-        box.alert = detail.severity == "WARNING"
+        box.alert = blocking
+        subject = detail.object_name or "This scene setting"
         box.label(
-            text="Needs correction" if detail.severity == "WARNING" else "Review before publishing",
-            icon="ERROR" if detail.severity == "WARNING" else "INFO",
+            text=_shorten(
+                f"{'Blocks publishing' if blocking else 'Worth reviewing'} · {subject}",
+                context, reserve=4,
+            ),
+            icon="ERROR" if blocking else "INFO",
         )
         _draw_wrapped(box, detail.message)
-        consequence = (
-            "The web build may be blocked or interpret this object differently than intended."
-            if detail.severity == "WARNING" else
-            "The export can continue, but its generated contract is less explicit."
+        _draw_wrapped(
+            box,
+            "Publishing is refused until this is corrected."
+            if blocking else
+            "Publishing continues; this is an observation about the generated contract.",
+            icon="WORLD",
         )
-        _draw_wrapped(box, consequence, icon="WORLD")
+        actions = box.row(align=True)
+        if detail.object_name:
+            select = actions.operator(
+                "blendlink.select_issue", text="Select Object",
+                icon="RESTRICT_SELECT_OFF",
+            )
+            select.object_name = detail.object_name
+        if detail.fixable_numbered and detail.object_name:
+            fix = actions.operator(
+                "blendlink.fix_numbered", text="Fix Numbering", icon="AUTO",
+            )
+            fix.object_name = detail.object_name
         detail_object = (
             context.scene.objects.get(detail.object_name) if detail.object_name else None
         )
-        if detail.fixable_numbered and detail_object is not None \
+        if detail.remedy:
+            remedy = detail.remedy
+        elif detail.fixable_numbered and detail_object is not None \
                 and not getattr(detail_object, "is_editable", True):
             remedy = "Make the linked object local, or rename it in its source .blend."
         elif detail.fixable_numbered:
@@ -3739,6 +3824,7 @@ class BLENDLINK_PT_fidelity(_BlendlinkPanelMixin, bpy.types.Panel):
 classes = (
     BLENDLINK_MT_workspace_tools,
     BLENDLINK_UL_atlases,
+    BLENDLINK_UL_checks,
     BLENDLINK_UL_states,
     BLENDLINK_UL_compositions,
     BLENDLINK_UL_reflection_probes,

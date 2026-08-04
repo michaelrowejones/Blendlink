@@ -74,6 +74,12 @@ class ScanResult:
     material_compatibility: dict[str, dict] = field(default_factory=dict)
     light_diagnostics: dict[str, dict] = field(default_factory=dict)
     consequence_gizmo_counts: dict[str, int] = field(default_factory=dict)
+    # Component issues by component id, so a card can render its own state
+    # without re-running a validator that walks meshes.
+    component_issues: dict[str, tuple] = field(default_factory=dict)
+    # False until the first scan completes, so a card can say "Checking" and
+    # never present an unscanned component as clean.
+    scanned: bool = False
 
 
 _state = {"dirty": True, "result": ScanResult(), "rendering_revision": 0}
@@ -604,19 +610,30 @@ def recompute(scene) -> bool:
     fidelity.extend(_instance_fidelity(group) for group in diagnostics["instances"])
     fidelity.extend(_lod_fidelity(lod_groups))
     issues = vocab.lint(nodes)
+    component_issues: dict[str, tuple] = {}
     if project is not None and project.configured:
-        issues.extend(
-            vocab.LintIssue(
-                severity="WARNING" if issue.blocking else "INFO",
+        # Validated ONCE per scan and cached by component id. The component
+        # cards used to call the validator from draw(), so an expanded
+        # Website Surface card re-triangulated its mesh and summed every loop
+        # triangle's area on every repaint - three times over when Scene
+        # Properties, Object Properties and the sidebar were all open.
+        for issue in component_validation.validate_project(project, scene=scene):
+            component_issues.setdefault(issue.component_id, []).append(issue)
+            issues.append(vocab.LintIssue(
+                severity="ERROR" if issue.blocking else "INFO",
                 message=(
                     f"Website Component {issue.component_label}: {issue.message}"
                 ),
                 object_name=issue.object_name,
-            )
-            for issue in component_validation.validate_project(
-                project, scene=scene,
-            )
-        )
+                blocking=issue.blocking,
+                remedy=(
+                    "Open Website Effects & Behaviors and correct this card."
+                    if issue.blocking else ""
+                ),
+            ))
+        component_issues = {
+            key: tuple(value) for key, value in component_issues.items()
+        }
     issues.extend(
         vocab.LintIssue(
             severity="WARNING",
@@ -628,6 +645,7 @@ def recompute(scene) -> bool:
     diagnostic_by_name = {
         item.object_name: item for item in light_analysis.diagnostics
     }
+    light_issue_objects = set()
     for warning in light_analysis.warnings:
         diagnostic = diagnostic_by_name[warning.object_name]
         fidelity.append(FidelityItem(
@@ -641,7 +659,13 @@ def recompute(scene) -> bool:
             severity=warning.severity,
             message=warning.message,
             object_name=warning.object_name,
+            blocking=warning.blocking,
+            remedy=(
+                "Open this light's Data Properties and review Blendlink Web "
+                "Light; an Area light also has a Website Area Light mode there."
+            ),
         ))
+        light_issue_objects.add(warning.object_name)
     identity_counts = {}
     for obj in scene.objects:
         identity = obj.get("blendlink_id")
@@ -779,12 +803,30 @@ def recompute(scene) -> bool:
                     object_name=node.name,
                 ))
     for item in fidelity:
-        if item.blocking:
-            issues.append(vocab.LintIssue(
-                severity="WARNING",
-                message=f"Geometry Conversion {item.route}: {item.detail}",
-                object_name=item.object_name,
-            ))
+        if not item.blocking:
+            continue
+        # Lights already appended their own issue above, in the light's own
+        # words. Re-emitting them here counted every refused light twice and
+        # described it as a geometry conversion.
+        if item.object_name in light_issue_objects:
+            continue
+        # The prefix routes the artist to the panel that explains the issue.
+        # "Geometry Conversion" is right for a geometry route and was wrong
+        # for everything else: a material or World animation block was
+        # announced as a geometry conversion.
+        source = str(item.source or "")
+        if "animation" in source.lower():
+            subject = f"{source[0].upper()}{source[1:]}"
+        elif "Material" in source and "Mesh" not in source:
+            subject = "Material"
+        else:
+            subject = "Geometry Conversion"
+        issues.append(vocab.LintIssue(
+            severity="ERROR",
+            message=f"{subject} {item.route}: {item.detail}",
+            object_name=item.object_name,
+            blocking=True,
+        ))
     previous_rendering = _state["result"].rendering_analysis
     _state["result"] = ScanResult(
         issues=issues, overlay=overlay, counts=counts, fidelity=fidelity,
@@ -792,6 +834,8 @@ def recompute(scene) -> bool:
         material_compatibility=material_compatibility,
         light_diagnostics=light_diagnostics,
         consequence_gizmo_counts=gizmos.counts,
+        component_issues=component_issues,
+        scanned=True,
     )
     if rendering_analysis != previous_rendering:
         _state["rendering_revision"] += 1
@@ -808,3 +852,75 @@ def consume_if_dirty() -> bool:
     if scene is None:
         return False
     return recompute(scene)
+
+
+def ordered_issues() -> tuple:
+    """Every issue, blocking first. One ordering for the panel and its counts."""
+    return tuple(sorted(
+        result().issues,
+        key=lambda issue: (
+            vocab.severity_rank(issue.severity),
+            issue.object_name or "",
+            issue.message,
+        ),
+    ))
+
+
+def issue_counts() -> dict:
+    """How many issues block publishing, and how many are worth reading."""
+    issues = result().issues
+    blocking = sum(
+        1 for issue in issues
+        if issue.blocking or str(issue.severity).upper() == "ERROR"
+    )
+    return {"blocking": blocking, "advisory": len(issues) - blocking, "total": len(issues)}
+
+
+def sync_check_rows(context=None) -> bool:
+    """Mirror the issue list into the session rows the panel lists.
+
+    Populated here, on the shared timer, rather than in draw(): a panel that
+    writes RNA while drawing re-enters the draw loop. The rows exist at all
+    because a template_list scrolls and selects, which a sliced label list
+    cannot - issues past the eighth were unreachable, and an issue with no
+    object could never become the detail.
+    """
+    context = context or bpy.context
+    window_manager = getattr(context, "window_manager", None)
+    session = getattr(window_manager, "blendlink", None) if window_manager else None
+    if session is None:
+        return False
+    issues = ordered_issues()
+    rows = session.check_rows
+    signature = tuple(
+        (issue.severity, issue.message, issue.object_name or "",
+         issue.fixable_numbered, issue.blocking, issue.remedy)
+        for issue in issues
+    )
+    current = tuple(
+        (row.severity, row.message, row.object_name,
+         row.fixable_numbered, row.blocking, row.remedy)
+        for row in rows
+    )
+    if signature == current:
+        return False
+    selected = None
+    if 0 <= session.check_row_index < len(current):
+        selected = current[session.check_row_index]
+    rows.clear()
+    for issue in issues:
+        row = rows.add()
+        row.severity = issue.severity
+        row.message = issue.message
+        row.object_name = issue.object_name or ""
+        row.fixable_numbered = bool(issue.fixable_numbered)
+        row.blocking = bool(issue.blocking)
+        row.remedy = issue.remedy or ""
+    # Keep the artist on the issue they were reading if it survived the rescan;
+    # otherwise select the first, so the detail pane is never empty while rows
+    # exist.
+    session.check_row_index = (
+        signature.index(selected) if selected in signature
+        else (0 if signature else -1)
+    )
+    return True

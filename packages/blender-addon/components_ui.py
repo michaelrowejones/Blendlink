@@ -709,10 +709,27 @@ def run_component_action(
 
 
 def _component_issues(project, component):
-    scene = getattr(bpy.context, "scene", None)
-    return component_validation.validate_component(
-        project, component, scene=scene,
+    """This component's issues from the cached scan - never a live validation.
+
+    The card draws from the same scan Web Checks reads. Calling the validator
+    here re-walked the target mesh on every repaint (a Website Surface
+    triangulates its mesh and sums every loop triangle's area), once per open
+    panel showing the same card. Publish preflight still validates live: that
+    is a one-shot explicit action where the mesh scan is the point.
+    """
+    from . import validation
+
+    scan = validation.result()
+    return scan.component_issues.get(
+        str(getattr(component, "component_id", "") or ""), (),
     )
+
+
+def _component_issues_ready() -> bool:
+    """Whether a card may present itself as clean, or must say it is checking."""
+    from . import validation
+
+    return bool(validation.result().scanned)
 
 
 def _component_icon(component_type: str) -> str:
@@ -936,6 +953,8 @@ def _draw_component_card(layout, context, project, component, index: int):
             )
             select.object_name = target.name
 
+    if not _component_issues_ready():
+        content.label(text="Checking this component…", icon="TIME")
     for issue in _component_issues(project, component):
         warning = content.box()
         warning.alert = issue.blocking
