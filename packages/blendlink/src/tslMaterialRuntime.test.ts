@@ -34,6 +34,58 @@ function sceneWith(
 
 const pointer = { url: 'https://scene.test/x.materials.json', bytes: 1, hash: 'x', materials: 1 }
 
+describe('program clone construction', () => {
+  /**
+   * The promise this pins is "channels the emitter cannot prove keep the
+   * shipped carrier". three's copy() chain transfers node slots and generic
+   * render state only, so before this was fixed a proven Base Color arrived
+   * on a material that had silently lost its roughness, metalness and every
+   * map - white and fully rough instead of the artist's surface.
+   */
+  it('keeps every carrier property the program does not replace', async () => {
+    const { installProgramIntoMaterial } = await import('./tslMaterialRuntime.js')
+    const source = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(0.25, 0.5, 0.75),
+      roughness: 0.375,
+      metalness: 0.625,
+      emissiveIntensity: 2,
+      aoMapIntensity: 0.5,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.8,
+    })
+    source.map = new THREE.Texture()
+    source.normalMap = new THREE.Texture()
+    source.normalScale = new THREE.Vector2(0.5, 0.5)
+
+    const marker = {}
+    const clone = installProgramIntoMaterial(source, { colorNode: marker })
+
+    expect((clone as unknown as Record<string, unknown>).colorNode).toBe(marker)
+    expect(clone.roughness).toBe(0.375)
+    expect(clone.metalness).toBe(0.625)
+    expect(clone.color.getHex()).toBe(source.color.getHex())
+    expect(clone.map).toBe(source.map)
+    expect(clone.normalMap).toBe(source.normalMap)
+    expect(clone.normalScale).toBe(source.normalScale)
+    expect(clone.emissiveIntensity).toBe(2)
+    expect(clone.aoMapIntensity).toBe(0.5)
+    expect(clone.side).toBe(THREE.DoubleSide)
+    expect(clone.opacity).toBe(0.8)
+    // Identity and shader selection stay the clone's own.
+    expect(clone.uuid).not.toBe(source.uuid)
+    expect(clone.type).toBe('MeshStandardNodeMaterial')
+  })
+
+  it('leaves the constructor null-slot contract intact', async () => {
+    const { installProgramIntoMaterial } = await import('./tslMaterialRuntime.js')
+    const clone = installProgramIntoMaterial(new THREE.MeshStandardMaterial(), {})
+    // NodeMaterial.setup() distinguishes null from undefined; an undefined
+    // fragmentNode throws on the first shader build.
+    expect((clone as unknown as Record<string, unknown>).fragmentNode).toBeNull()
+  })
+})
+
 describe('installTslMaterials', () => {
   it('is inert without a programs pointer', async () => {
     const installed = await installTslMaterials({

@@ -115,6 +115,15 @@ export interface InstalledTslMaterials {
  * read off a freshly constructed clone (Object.keys on an already-copied
  * material finds no nulls), so the builder can only ever hand back nodes.
  */
+/**
+ * Bookkeeping the clone must keep for itself. `type` decides which shader
+ * three builds, `uuid`/`id` are identity, `version` drives recompilation, and
+ * `_listeners` belongs to the source's own disposal wiring.
+ */
+const CLONE_IDENTITY_KEYS = new Set([
+  'uuid', 'id', 'type', 'version', 'name', 'userData', '_listeners', 'isMaterial',
+])
+
 export function installProgramIntoMaterial(
   source: THREE.Material,
   nodes: Partial<Record<MaterialNodeSlot, unknown>>,
@@ -138,6 +147,26 @@ export function installProgramIntoMaterial(
   for (const key of nullNodeSlots) {
     const record = clone as unknown as Record<string, unknown>
     if (record[key] === undefined) record[key] = null
+  }
+  // ...and copy() is exactly the problem for everything that is NOT a node.
+  // The three chain (MeshStandardNodeMaterial.copy -> NodeMaterial.copy ->
+  // Material.copy) transfers node slots plus generic render state, and
+  // nothing else: color, map, roughness, metalness, normalMap and the rest
+  // keep the fresh clone's constructor defaults. A material whose Base Color
+  // program was proven but whose Roughness was refused would therefore ship
+  // white and fully rough instead of keeping its shipped carrier - the exact
+  // opposite of what "refused channels keep their carrier" promises.
+  //
+  // The transferred set is DERIVED from the source instance rather than
+  // listed, because a list here would fall behind three the first time
+  // MeshStandardMaterial grows a property, and the symptom would again be a
+  // silently wrong surface.
+  const sourceRecord = source as unknown as Record<string, unknown>
+  const cloneRecord = clone as unknown as Record<string, unknown>
+  for (const key of Object.keys(sourceRecord)) {
+    if (CLONE_IDENTITY_KEYS.has(key) || key.endsWith('Node')) continue
+    if (!(key in cloneRecord)) continue
+    cloneRecord[key] = sourceRecord[key]
   }
   // After copy: Material.copy overwrites both name and userData.
   clone.name = source.name
