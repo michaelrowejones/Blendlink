@@ -1448,23 +1448,28 @@ class BLENDLINK_OT_add_component(bpy.types.Operator):
             except (AttributeError, RuntimeError, TypeError, ValueError) as error:
                 failures.append(f"{obj.name}: {error}")
         props._project_changed(project, context)
+        # One summary for every branch. The failure branch used to drop the
+        # already-had and incompatible counts entirely, so a partially applied
+        # batch - the case where the artist most needs the numbers - reported
+        # only what succeeded and what failed, and truncated the failures with
+        # no sign it had.
+        notes = [f"{added} added"]
+        if duplicates:
+            notes.append(f"{duplicates} already had it")
+        if incompatible:
+            notes.append(f"{incompatible} incompatible skipped")
         if failures:
-            self.report(
-                {"WARNING"},
-                f"Added to {added}; failed {len(failures)}: {'; '.join(failures[:3])}",
-            )
+            notes.append(f"{len(failures)} failed")
+        summary = f"{definition['label']}: " + " · ".join(notes)
+        if failures:
+            detail = "; ".join(failures[:3])
+            if len(failures) > 3:
+                detail += f" (+{len(failures) - 3} more)"
+            self.report({"WARNING"}, f"{summary}. {detail}")
         elif added:
-            notes = []
-            if duplicates:
-                notes.append(f"{duplicates} already had it")
-            if incompatible:
-                notes.append(f"{incompatible} incompatible selection(s) skipped")
-            note = f"; {'; '.join(notes)}" if notes else ""
-            self.report(
-                {"INFO"}, f"Added {definition['label']} to {added} object(s){note}",
-            )
+            self.report({"INFO"}, summary)
         else:
-            self.report({"WARNING"}, f"Every compatible object already has {definition['label']}")
+            self.report({"WARNING"}, f"{summary}. Nothing was changed.")
             return {"CANCELLED"}
         return {"FINISHED"}
 

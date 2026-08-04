@@ -146,7 +146,7 @@ def _draw_export_setup(layout, context, project) -> bool:
         actions = box.row(align=True)
         actions.operator(
             "blendlink.copy_connect_command",
-            text="Copy: npx blendlink connect",
+            text="Copy Connect Command",
             icon="COPYDOWN",
         )
         guide = actions.operator("wm.url_open", text="Connect Guide", icon="HELP")
@@ -253,7 +253,7 @@ def _draw_handoff_alert(layout, context):
             "blendlink.copy_connect_command", text="Copy Connect Command", icon="COPYDOWN",
         )
     else:
-        actions.operator("blendlink.copy_website_handoff", text="Copy Website Hookup", icon="COPYDOWN")
+        actions.operator("blendlink.copy_website_handoff", text="Copy Hookup", icon="COPYDOWN")
     actions.operator("blendlink.open_workspace", text="Open Website Folder", icon="FILE_FOLDER")
 
 
@@ -273,7 +273,7 @@ def _draw_website_handoff(layout):
     actions = box.row(align=True)
     if handoff.get("kind") in {"missing", "unknown"}:
         actions.operator(
-            "blendlink.copy_connect_command", text="Copy: npx blendlink connect", icon="COPYDOWN",
+            "blendlink.copy_connect_command", text="Copy Connect Command", icon="COPYDOWN",
         )
     else:
         actions.operator(
@@ -871,7 +871,28 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
                 "Publish Website again before deploying the site.",
             )
             warning.operator("blendlink.open_sync_log", text="Open Build Log", icon="TEXT")
-        rejected = syncstatus.manifest_rejections()
+        read_failure = syncstatus.manifest_read_failure()
+        if read_failure:
+            # Its own box, with its own remedy. This used to be folded into
+            # the published-asset integrity list, so a manifest written by a
+            # newer Blendlink accused the artist's website files of having
+            # been changed outside Blendlink.
+            unreadable = layout.box()
+            unreadable_header = unreadable.row(align=True)
+            unreadable_header.alert = True
+            unreadable_header.label(
+                text="Blendlink cannot read the last published result", icon="ERROR",
+            )
+            _draw_wrapped(unreadable, read_failure)
+            _draw_wrapped(
+                unreadable,
+                "Publish Website again to rewrite it. If it was written by a newer "
+                "Blendlink, update this add-on to match.",
+            )
+        # Only genuine problems reach this box. A sibling scene's manifest is
+        # an ordinary discovery outcome in a multi-scene website, and reporting
+        # it here told artists their output was unusable when nothing was wrong.
+        rejected = syncstatus.manifest_problems()
         if status == "NO_MANIFEST" and rejected:
             warning = layout.box()
             warning_header = warning.row(align=True)
@@ -1079,7 +1100,7 @@ class BLENDLINK_PT_project(_BlendlinkScenePanelMixin, bpy.types.Panel):
             layout.operator("blendlink.setup_website_export", icon="ADD")
             return
 
-        layout.prop(project, "presentation", text="Publishing Mode")
+        layout.prop(project, "presentation")
         consequence = {
             "HYBRID": "Static art bakes; motion and transparency stay realtime.",
             "REALTIME": "Everything keeps realtime materials and lighting.",

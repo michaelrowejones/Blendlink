@@ -95,6 +95,7 @@ _state = {
     "handoff_cache": {},
     "manifest_rejections": [],
     "manifest_read_failure": "",
+    "manifest_problems": [],
     "manifest_content_hash": "",
     "plan_signature": "",
     "asset_signature": "",
@@ -379,6 +380,20 @@ def manifest_rejections() -> list[str]:
     return list(_state.get("manifest_rejections", []))
 
 
+def manifest_problems() -> list[str]:
+    """Rejections that are actually wrong, rather than ordinary discovery.
+
+    A sibling scene's manifest is not a problem; an unreadable, malformed, or
+    unsupported one is.
+    """
+    return list(_state.get("manifest_problems", []))
+
+
+def manifest_read_failure() -> str:
+    """Why the matched manifest could not be read, if that is what happened."""
+    return str(_state.get("manifest_read_failure", "") or "")
+
+
 def _asset_candidates(root: Path | None, url: str) -> list[Path]:
     """Deterministic local paths for a public URL.
 
@@ -543,7 +558,7 @@ def reset():
         manifest_mtime=0, blend_hash=None, blend_mtime=0, searched_for=None,
         root=None, website_handoff=None,
         handoff_cache={},
-        manifest_rejections=[], manifest_read_failure="",
+        manifest_rejections=[], manifest_problems=[], manifest_read_failure="",
         manifest_content_hash="", plan_signature="", asset_signature="",
         change_token=next_token,
         ui_token=next_ui_token,
@@ -900,13 +915,24 @@ def _find_manifest(blend_path: Path) -> Path | None:
         directory = directory.parent
     _state["root"] = root
     _state["manifest_rejections"] = []
+    _state["manifest_problems"] = []
     if root is None:
         return None
 
     def reject(path: Path, reason: str, *, loud: bool = True):
+        """Record why a candidate manifest was not used.
+
+        `loud` also decides whether this is a PROBLEM. A manifest belonging to
+        another scene of the same multi-scene website is an ordinary discovery
+        outcome, and recording it as a rejection made the panel announce
+        "Last published result was rejected - Blendlink found website output
+        it could not safely use" the first time an artist opened the second
+        scene of their own project, when nothing was wrong at all.
+        """
         message = f"{path}: {reason}"
         _state["manifest_rejections"].append(message)
         if loud:
+            _state["manifest_problems"].append(message)
             print(f"blendlink addon: rejected manifest {message}")
 
     matches = []
@@ -1097,9 +1123,11 @@ def refresh(
         # restoring a missing artifact heals the UI without touching manifest.
         _state["derived_assets"] = _collect_derived_assets(manifest)
     else:
-        _state["asset_failures"] = [
-            _state.get("manifest_read_failure") or "manifest is unreadable or unsupported"
-        ]
+        # Keep "we cannot read the manifest" out of the published-asset
+        # integrity list. Mixing them made an unreadable or newer-schema
+        # manifest accuse the artist's website files of having changed
+        # outside Blendlink, and never mentioned the real cause or remedy.
+        _state["asset_failures"] = []
         _state["derived_assets"] = []
     _update_asset_signature()
     _clear_unverified_selection()

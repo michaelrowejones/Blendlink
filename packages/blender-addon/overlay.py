@@ -249,7 +249,16 @@ def _composition_guide_state(context, region, rv3d):
         f"{composition.name}  {composition.width}x{composition.height} CSS px  "
         f"@ {reference.device_pixel_ratio:g}x = {backing_width}x{backing_height} px"
     )
-    if rv3d.view_perspective != "CAMERA" or context.scene.camera != project.main_camera:
+    if rv3d.view_perspective != "CAMERA":
+        # The guide's own tooltip promises it appears in camera view. Drawing
+        # it everywhere pinned two lines of orange text into every viewport
+        # during modelling, UV work and weight painting, from the moment a
+        # Website Camera existed, with no way to dismiss it but a checkbox in
+        # Scene Properties.
+        return None
+    if context.scene.camera != project.main_camera:
+        # In camera view through the WRONG camera the message is genuinely
+        # about what the artist is looking at, so it stays.
         return {
             "exact": False,
             "label": label,

@@ -721,6 +721,7 @@ class BLENDLINK_OT_remove_atlas(bpy.types.Operator):
 
 
 class BLENDLINK_OT_add_state(bpy.types.Operator):
+    """Add a named lighting state; new states start as Full scene"""
     bl_idname = "blendlink.add_state"
     bl_label = "Add Lighting State"
     bl_options = {"REGISTER", "UNDO"}
@@ -946,6 +947,7 @@ class BLENDLINK_OT_select_state_collection_objects(bpy.types.Operator):
 
 
 class BLENDLINK_OT_remove_state(bpy.types.Operator):
+    """Remove the active lighting state and the hidden-collection list it owns"""
     bl_idname = "blendlink.remove_state"
     bl_label = "Remove Lighting State"
     bl_options = {"REGISTER", "UNDO"}
@@ -1650,9 +1652,13 @@ class BLENDLINK_OT_tag_collider(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        tagged, skipped = 0, []
+        tagged, skipped, incompatible = 0, [], 0
         for obj in context.selected_editable_objects:
             if obj.type not in ("MESH", "EMPTY"):
+                # Counted, not silently passed over: a report of "Tagged 1"
+                # from a three-object selection told the artist nothing about
+                # the two that were ignored.
+                incompatible += 1
                 continue
             base = vocab.strip_structural(obj.name)
             if _rename(obj, f"{base}{_SEP}{self.kind}"):
@@ -1661,16 +1667,22 @@ class BLENDLINK_OT_tag_collider(bpy.types.Operator):
             else:
                 skipped.append(obj.name)
         validation.mark_dirty()
+        label = {
+            "col": "Trimesh Collider",
+            "convcol": "Convex Collider",
+            "colonly": "Trimesh Proxy",
+            "convcolonly": "Convex Proxy",
+        }[self.kind]
+        message = f"Tagged {tagged} object(s) as {label}"
+        if incompatible:
+            message += f" · {incompatible} non-mesh/empty skipped"
         if skipped:
-            self.report({"WARNING"}, f"Tagged {tagged}, skipped name collisions: {', '.join(skipped)}")
+            self.report(
+                {"WARNING"},
+                f"{message}; skipped name collisions: {', '.join(skipped)}",
+            )
         else:
-            label = {
-                "col": "Trimesh Collider",
-                "convcol": "Convex Collider",
-                "colonly": "Trimesh Proxy",
-                "convcolonly": "Convex Proxy",
-            }[self.kind]
-            self.report({"INFO"}, f"Tagged {tagged} object(s) as {label}")
+            self.report({"INFO"}, message)
         return {"FINISHED"}
 
 
@@ -1700,9 +1712,10 @@ class BLENDLINK_OT_tag_rigid(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        tagged, skipped = 0, []
+        tagged, skipped, incompatible = 0, [], 0
         for obj in context.selected_editable_objects:
             if obj.type != "MESH":
+                incompatible += 1
                 continue
             base = vocab.strip_structural(obj.name)
             if not _rename(obj, f"{base}{_SEP}rigid"):
@@ -1721,14 +1734,16 @@ class BLENDLINK_OT_tag_rigid(bpy.types.Operator):
             )
             tagged += 1
         validation.mark_dirty()
+        message = f"Tagged {tagged} rigid bod{'y' if tagged == 1 else 'ies'}"
+        if incompatible:
+            message += f" · {incompatible} non-mesh skipped"
         if skipped:
             self.report(
                 {"WARNING"},
-                f"Tagged {tagged} rigid bod{'y' if tagged == 1 else 'ies'}; "
-                f"skipped name collisions: {', '.join(skipped)}",
+                f"{message}; skipped name collisions: {', '.join(skipped)}",
             )
         else:
-            self.report({"INFO"}, f"Tagged {tagged} rigid bod{'y' if tagged == 1 else 'ies'}")
+            self.report({"INFO"}, message)
         return {"FINISHED"}
 
 
@@ -1755,9 +1770,10 @@ class BLENDLINK_OT_set_lod(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        tagged, skipped = 0, []
+        tagged, skipped, incompatible = 0, [], 0
         for obj in context.selected_editable_objects:
             if obj.type != "MESH":
+                incompatible += 1
                 continue
             base = vocab.strip_structural(obj.name)
             if not _rename(obj, f"{base}_LOD{self.level}"):
@@ -1776,6 +1792,8 @@ class BLENDLINK_OT_set_lod(bpy.types.Operator):
         validation.mark_dirty()
         distance = f" at {self.distance:g}m" if self.distance > 0.0 else " with distance unset"
         message = f"Set {tagged} object(s) to LOD{self.level}{distance}"
+        if incompatible:
+            message += f" · {incompatible} non-mesh skipped"
         if skipped:
             self.report({"WARNING"}, message + f"; skipped name collisions: {', '.join(skipped)}")
         else:
@@ -4242,7 +4260,11 @@ class BLENDLINK_OT_copy_sync_hint(bpy.types.Operator):
 
 
 class BLENDLINK_OT_copy_connect_command(bpy.types.Operator):
-    """Copy the safe website-connection command for a terminal in the site root"""
+    """Copy `npx blendlink connect` to run in a terminal at your website's root
+
+    The command names this .blend, so the website is connected to this exact
+    scene. Blendlink never edits your repository itself
+    """
     bl_idname = "blendlink.copy_connect_command"
     bl_label = "Copy Website Connect Command"
     bl_options = {"INTERNAL"}
