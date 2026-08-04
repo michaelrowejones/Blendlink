@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   BLENDLINK_THREE_R184_COMPILED_PROFILE,
   inspectGltfRuntimeCompatibility,
+  THREE_NODE_MAX_SKIN_JOINTS,
   type GltfRuntimeCapabilityProfile,
 } from './gltfRuntimeCompatibility.js'
 
@@ -199,5 +200,64 @@ describe('glTF runtime compatibility', () => {
     },
   ])('fails loudly when $label', ({ document, message }) => {
     expect(() => inspectGltfRuntimeCompatibility(document, profile)).toThrow(message)
+  })
+
+  /**
+   * The joint ceiling belongs to the renderer, not to the artifact. three's
+   * node-material renderers bind bone matrices as a uniform buffer that holds
+   * exactly 1024; the classic WebGLRenderer uploads them through a texture and
+   * has no limit at all. A profile that states no ceiling must therefore
+   * accept a skin that would be unrenderable elsewhere - otherwise Blendlink
+   * would refuse a scene that renders perfectly well.
+   */
+  describe('skin joint budget', () => {
+    const rig = (joints: number, name = 'RIG'): Record<string, unknown> => ({
+      asset: { version: '2.0' },
+      skins: [{ name, joints: Array.from({ length: joints }, (_, index) => index) }],
+    })
+
+    it('reports joint counts even when no ceiling applies', () => {
+      const report = inspectGltfRuntimeCompatibility(rig(1867), profile)
+      expect(report.compatible).toBe(true)
+      expect(report.skins).toEqual([
+        { skin: 0, name: 'RIG', joints: 1867, boneMatrixBytes: 1867 * 64 },
+      ])
+    })
+
+    it('refuses a skin past a stated ceiling and names both symptoms', () => {
+      const report = inspectGltfRuntimeCompatibility(rig(1867), {
+        ...profile,
+        maxSkinJoints: THREE_NODE_MAX_SKIN_JOINTS,
+      })
+      expect(report.compatible).toBe(false)
+      const issue = report.issues[0]
+      expect(issue?.code).toBe('runtime.skin-joint-budget-exceeded')
+      expect(issue?.location).toBe('/skins/0/joints')
+      expect(issue?.skin?.joints).toBe(1867)
+      expect(issue?.summary).toContain('65536')
+      expect(issue?.fix).toContain('no pixels')
+    })
+
+    it('accepts exactly the ceiling', () => {
+      const report = inspectGltfRuntimeCompatibility(
+        rig(THREE_NODE_MAX_SKIN_JOINTS),
+        { ...profile, maxSkinJoints: THREE_NODE_MAX_SKIN_JOINTS },
+      )
+      expect(report.compatible).toBe(true)
+    })
+
+    it('treats a malformed joint list as an inspection failure, never a pass', () => {
+      expect(() => inspectGltfRuntimeCompatibility({
+        asset: { version: '2.0' },
+        skins: [{ name: 'RIG', joints: [] }],
+      }, profile)).toThrow('/skins/0/joints must be a non-empty array')
+    })
+
+    it('refuses a nonsense ceiling rather than silently ignoring it', () => {
+      expect(() => inspectGltfRuntimeCompatibility(rig(4), {
+        ...profile,
+        maxSkinJoints: 0,
+      })).toThrow('maxSkinJoints must be a positive integer')
+    })
   })
 })

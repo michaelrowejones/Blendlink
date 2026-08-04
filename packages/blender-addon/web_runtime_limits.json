@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "policy": "Hard ceilings of the pinned web runtime that no artist authoring choice can raise. Each entry exists because a scene crossed it and the result was silent - a black character, an invisible mesh - rather than an error. An entry may be added only with a named symptom, an artist action, and evidence naming the runtime source or the measurement. Blendlink refuses before publishing rather than shipping the silence.",
+  "runtime": "three@0.184.0",
+  "limits": [
+    {
+      "id": "skin-joints",
+      "measure": "joints per skin",
+      "maximum": 1024,
+      "summary": "three's node-material system binds skeleton bone matrices as a uniform buffer, so one skin can carry at most 1024 joints on the WebGPU renderer and on its WebGL2 fallback alike.",
+      "symptom": "Past the limit the character renders nothing at all. On the WebGPU backend the pipeline fails to compile with no page error; on the WebGL2 fallback the console reports that the uniform block exceeds GL_MAX_UNIFORM_BLOCK_SIZE (65536). three never refuses, and a failed pipeline retries every frame, so the page also degrades to single-digit frames per second.",
+      "action": "Ship deforming joints only - Blendlink already asks the exporter for them - and reduce the rig's deforming bone count, or split the character across more than one armature. A full control rig (CloudRig and similar) exports its mechanism and control bones too and will cross this on its own.",
+      "evidence": [
+        "three r184 SkinningNode.js binds referenceBuffer('skeleton.boneMatrices', 'mat4', bones.length); BufferNode resolves to a uniform binding in both WGSLNodeBuilder and GLSLNodeBuilder.",
+        "computeBoneTexture's only caller is the classic WebGLRenderer, which cannot render a NodeMaterial, so the node system has no bone-texture path to fall back to.",
+        "Measured in this repository: 1024 joints render; 1025 joints render zero pixels.",
+        "1024 joints x 64 bytes per mat4 is exactly 65536 bytes. maxUniformBufferBindingSize is the adapter maximum and requestDevice(131072) is rejected, so the ceiling cannot be raised by asking for a larger device.",
+        "Measured on a production character: the full control rig exported 1867 joints (119KB of bone matrices) and could never skin; deform-only export brought the same character to 329 joints and it rendered."
+      ]
+    },
+    {
+      "id": "texture-coordinate-index",
+      "measure": "glTF texCoord index",
+      "maximum": 3,
+      "summary": "three's GLTFLoader binds TEXCOORD_0..TEXCOORD_3 to the geometry attributes uv, uv1, uv2 and uv3. A higher index is loaded onto the geometry under a name no material can sample.",
+      "symptom": "The mesh is invisible. assignTexture sets the material's texCoord channel without a cap, the node system then looks for an attribute that is not there, warns once, and substitutes vec2(0,0) - which samples the gutter outside every UV island. Where that gutter is transparent the whole primitive disappears while the scene reports no error.",
+      "action": "Reduce the mesh to at most four UV maps before the compiled atlas or channel layer is added, or remove the utility UV maps the material does not sample. Blendlink refuses the bake rather than allocating a layer it cannot bind.",
+      "evidence": [
+        "three r184 GLTFLoader ATTRIBUTES stops at TEXCOORD_3 -> 'uv3'; a higher index falls through to the lowercase raw name (texcoord_4 and up).",
+        "GLTFLoader assignTexture sets texture.channel from the glTF texCoord with no upper bound, so the material can reference a set the geometry does not expose under that name.",
+        "three r184 AttributeNode reports the missing attribute and returns a zero vector rather than failing.",
+        "Measured on a production character: 16 primitives bound texCoord 4 or above and 56.4% of the rendered character was invisible; the baked pixels themselves were correct at the declared set."
+      ]
+    }
+  ]
+}

@@ -14,6 +14,7 @@ import {
 import {
   assertGltfRuntimeCompatibility,
   loadedThreeRuntimeProfile,
+  THREE_NODE_MAX_SKIN_JOINTS,
   type GltfRuntimeCapabilityProfile,
 } from './gltfRuntimeCompatibility.js'
 export type { GltfRuntimeCapabilityProfile } from './gltfRuntimeCompatibility.js'
@@ -1702,9 +1703,24 @@ export async function prepareLoadedThreeCompiledScene(
     loaded.parser,
     options.gltfRuntimeCapabilities,
   )
+  // The joint ceiling is a property of the renderer, not of the parser or the
+  // artifact: the classic WebGLRenderer uploads bone matrices through a
+  // texture and has no limit, while the node-material renderers (WebGPU and
+  // its WebGL2 fallback alike) bind a uniform buffer that holds 1024. Deciding
+  // it here is the only place both the artifact and the renderer are known.
+  // An application that has measured its own ceiling can still state one.
+  const nodeMaterialRenderer = Boolean(
+    (options.renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer,
+  )
   assertGltfRuntimeCompatibility(
     runtimeCompatibility.json,
-    runtimeCompatibility.profile,
+    nodeMaterialRenderer &&
+      options.gltfRuntimeCapabilities?.maxSkinJoints === undefined
+      ? {
+          ...runtimeCompatibility.profile,
+          maxSkinJoints: THREE_NODE_MAX_SKIN_JOINTS,
+        }
+      : runtimeCompatibility.profile,
   )
   if (loaded.scene.parent) {
     throw new Error(

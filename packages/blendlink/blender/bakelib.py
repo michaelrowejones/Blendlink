@@ -4543,7 +4543,7 @@ def repair_evaluated_atlas_uvs(
                 log=log,
                 world_linear=world_linear,
             )
-            lightmap_rescued = bool(projection.get("rescuedNonInjective"))
+            lightmap_rescued = int(projection.get("rescuedNonInjective") or 0)
 
         remaining = _nonzero_geometry_zero_uv_triangles(obj, uv_name)
         rescued_polygons = []
@@ -4579,6 +4579,11 @@ def repair_evaluated_atlas_uvs(
             report["totalIslands"] = scoped["totalIslands"]
         if rescued_polygons:
             report["rescuePolygonCount"] = len(rescued_polygons)
+        if lightmap_rescued:
+            # The count travels with the report so every consumer can name
+            # the size of the change; a bare strategy suffix let the atlas
+            # warning describe a per-face rechart as an ordinary reprojection.
+            report["lightmapRescuedFaces"] = int(lightmap_rescued)
         reports.append(report)
         if scoped is not None:
             projected_how = (
@@ -7650,12 +7655,18 @@ def bake_channel_field_pixels(
         log(
             f"blendlink: {label}: channel field range {minimum!r}.."
             f"{maximum!r} exceeds the 8-bit carrier; clamping the carrier "
-            "to 0..1"
+            "to 0..1. Values above 1 are not representable in a glTF 8-bit "
+            "channel, so the shipped texture is darker than the Blender "
+            "field wherever it exceeded 1. Reduce the channel's range in "
+            "Blender if that difference matters; a TSL program can carry the "
+            "exact field on the WebGPU runtime, but only where the emitter "
+            "proved that channel and only for viewers on that renderer."
         )
         np.clip(result["pixels"], 0.0, 1.0, out=result["pixels"])
-        # The measured range stays the truth the evidence publishes; the
-        # clamp is recorded beside it so nothing reads a clamped carrier as
-        # a faithful one.
+        # The measured range stays the truth beside the clamped carrier. The
+        # artist-facing report is the log line above; this record is here for
+        # a caller that publishes structured evidence, and today none does -
+        # do not read its absence as "no clamp happened".
         result["clampedToCarrier"] = {
             "measuredRgbMin": list(minimum),
             "measuredRgbMax": list(maximum),

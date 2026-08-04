@@ -14,6 +14,7 @@
 #   the result JSON (the glTF exporter's signature churns across versions;
 #   passing a stale kwarg raises TypeError and aborts the export).
 
+import contextlib
 import hashlib
 import json
 import math
@@ -27,7 +28,7 @@ import time
 import bmesh
 import bpy
 
-# Shared bake primitives live in bakelib.py beside this script â€” the ONE
+# Shared bake primitives live in bakelib.py beside this script — the ONE
 # home for logic external pipelines also import. Never inline a copy here.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bakelib  # noqa: E402
@@ -38,6 +39,7 @@ try:
     import probe_authoring  # noqa: E402
     import procedural  # noqa: E402
     import tsl_ir  # noqa: E402
+    import web_runtime_limits  # noqa: E402
     import weblights  # noqa: E402
 except ModuleNotFoundError:
     # Source-tree convenience. Published builds place the canonical addon
@@ -52,6 +54,7 @@ except ModuleNotFoundError:
     import probe_authoring  # noqa: E402
     import procedural  # noqa: E402
     import tsl_ir  # noqa: E402
+    import web_runtime_limits  # noqa: E402
     import weblights  # noqa: E402
 
 
@@ -1013,7 +1016,7 @@ def missing_libraries() -> list[str]:
 
 
 def yup(vector) -> list[float]:
-    """Blender Z-up world â†’ glTF/three Y-up: (x, y, z) â†’ (x, z, -y)."""
+    """Blender Z-up world → glTF/three Y-up: (x, y, z) → (x, z, -y)."""
     return [round(vector[0], 6), round(vector[2], 6), round(-vector[1], 6)]
 
 
@@ -1337,7 +1340,7 @@ def collect_sidecar(
 
     - timeline markers (scroll-scrub waypoints), scene fps
     - empty display types/sizes (collider primitives, anchor semantics)
-    - curves: bezier control points + handles, or evaluated points â€”
+    - curves: bezier control points + handles, or evaluated points —
       glTF has no curve primitive (spec gap open since 2018), so this is
       the data every studio re-derives with a pasted Python snippet.
     """
@@ -1647,7 +1650,7 @@ def has_volatile_external_dependencies() -> bool:
 # fixture cases lock all three parsers together now).
 NOIMP_PATTERN = re.compile(r"[-_]noimp(\.\d{3})?$", re.IGNORECASE)
 # Collision-only proxies ship in the GLB (physics needs the geometry) but
-# never render â€” keep them out of the atlas pack and the bake.
+# never render — keep them out of the atlas pack and the bake.
 COLONLY_PATTERN = re.compile(r"[-_](conv)?colonly(\.\d{3})?$", re.IGNORECASE)
 EXACT_ANCHOR_PATTERN = re.compile(r"^(?:SOCKET|HOTSPOT|AUDIO)[-_].+$")
 BLENDLINK_ROLE_VALUES = frozenset({
@@ -1849,7 +1852,7 @@ def rebuild_baked_materials(objects, baked_by_group, atlas_for=None) -> dict:
 
 def render_meshes(*, fixed_camera_appearance: bool = False) -> list:
     """The BAKED mesh set: everything the atlas pack and bake touch.
-    Dynamic (lit) meshes still export â€” they are simply not in here."""
+    Dynamic (lit) meshes still export — they are simply not in here."""
     return [
         obj for obj in bpy.context.scene.objects
         if obj.type == "MESH" and not obj.hide_render
@@ -1865,7 +1868,7 @@ def render_meshes(*, fixed_camera_appearance: bool = False) -> list:
 
 
 def visible_render_meshes(*, fixed_camera_appearance: bool = False) -> list:
-    """Render meshes excluding anything in a render-hidden collection â€”
+    """Render meshes excluding anything in a render-hidden collection —
     collection hide_render does not set obj.hide_render, and native bake
     receivers must respect state hideCollections (geometry states, not just
     lights)."""
@@ -1896,7 +1899,7 @@ def has_bakeable_meshes(*, fixed_camera_appearance: bool = False) -> bool:
 
 
 def camera_positions() -> list:
-    """World positions of EVERY scene camera â€” density and atlas assignment
+    """World positions of EVERY scene camera — density and atlas assignment
     both want the worst case over authored viewpoints, not just the active
     camera (a compact/portrait camera can approach closer than the main)."""
     return [
@@ -2022,7 +2025,7 @@ def rgba8_mip_chain_bytes(size: int) -> int:
 def atlas_config(bake: dict) -> dict:
     """Declared atlases, or the implicit single atlas 'main'. Each entry:
     {size, maxCameraDistance?}. Users configure ATLASES; objects are
-    auto-assigned by proximity and overridden per-object â€” never a
+    auto-assigned by proximity and overridden per-object — never a
     hand-maintained object list in the config."""
     atlases = bake.get("atlases")
     if not atlases:
@@ -2142,7 +2145,7 @@ def assign_atlases(meshes: list, atlases: dict) -> tuple:
             else:
                 warnings.append(
                     f"{obj.name}: blendlink_atlas '{override}' is not a declared "
-                    f"atlas ({', '.join(names)}) â€” auto-assigned instead"
+                    f"atlas ({', '.join(names)}) — auto-assigned instead"
                 )
         if group is None:
             group = catch_all
@@ -2159,7 +2162,7 @@ def assign_atlases(meshes: list, atlases: dict) -> tuple:
 
 
 def compute_texel_weights(meshes: list) -> dict:
-    """auto (camera-distance, median-normalized, clamped, quantized) Ã— artist.
+    """auto (camera-distance, median-normalized, clamped, quantized) × artist.
 
     The auto weight equalizes texels-per-SCREEN-pixel: required linear
     density is proportional to 1/distance, taken as the WORST CASE over
@@ -2185,7 +2188,7 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
     """Freeze, unwrap-fallback, then per-atlas average + weight + pack.
 
     Returns the layout: {group: {objects, size, margin}} at FINAL
-    resolution (bake-time images are Ã—supersample; the pack margin is a
+    resolution (bake-time images are ×supersample; the pack margin is a
     fraction, identical at both scales). The config margin is authored
     against the LARGEST declared atlas and scales down per group, so a
     small background atlas never spends 40% of itself on gutters.
@@ -2207,12 +2210,12 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
             "baked mode: every bakeable mesh evaluates to empty geometry at "
             f"frame {bpy.context.scene.frame_current}"
         )
-    # Unwrapped meshes get a real projection â€” Blender's default UV reset
+    # Unwrapped meshes get a real projection — Blender's default UV reset
     # maps every face to the full unit square, which shatters the pack.
     bakelib.ensure_authored_uvs(meshes)
     # Atlas workspace layer per mesh. Meshes carrying the artist's
     # BLENDLINK_ATLAS_AUTHORED layer (the addon's Materialize operator)
-    # contribute its islands and pin flags instead of the first UV layer â€”
+    # contribute its islands and pin flags instead of the first UV layer —
     # opt-in by presence.
     authored = set(bakelib.stage_atlas_layers(meshes))
     # Evaluated modifiers can create real faces whose inherited corner UVs
@@ -2256,7 +2259,7 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
                 except RuntimeError as error:
                     layout["_errors"].append(str(error))
         # Baseline: equalize px/m across THIS atlas (authored UV scales are
-        # arbitrary), then apply texel weights as island pre-scales â€”
+        # arbitrary), then apply texel weights as island pre-scales —
         # pack_islands(scale=True) preserves relative island scale, so the
         # pre-scale IS the weight (Unity Scale-in-Lightmap semantics).
         # Islands the artist PINNED in an authored layer sit this out
@@ -2419,11 +2422,29 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
                     "Smart Projected the fully unpinned derived atlas layer "
                     "and repacked the complete atlas"
                 )
+            # The strategy string is COMPOSED from a base plus optional
+            # rescue suffixes, so the suffix is read independently of which
+            # branch above produced the base sentence. Writing a fifth branch
+            # for it is what left this warning silent about the largest
+            # quality change of the three.
+            if repair["strategy"].endswith("+lightmap-rescue") or \
+                    "+lightmap-rescue" in repair["strategy"]:
+                action += (
+                    f", then replacing the still-folded island(s) with per-face "
+                    f"lightmap charts ({repair.get('lightmapRescuedFaces', 0)} "
+                    "face(s)) because no projection angle made them injective"
+                )
+                preserved = (
+                    "Authored UV layers were preserved, but the derived layer "
+                    "now carries one seam per face across the rescued region, "
+                    "so shading can change there"
+                )
+            else:
+                preserved = "Authored UV layers were preserved"
             layout["_warnings"].append(
                 f"{repair['object']}: atlas packing collapsed "
                 f"{repair['triangleCount']} evaluated surface triangle(s) at "
-                f"float32 UV precision; Blendlink {action}. Authored UV layers "
-                "were preserved"
+                f"float32 UV precision; Blendlink {action}. {preserved}"
             )
     layout["_errors"].extend(packed_atlas_coverage_errors(layout))
     return layout
@@ -2454,7 +2475,7 @@ def bake_engine(samples: int) -> dict:
     scene.render.engine = "CYCLES"
     scene.cycles.samples = samples
     # Bake-time denoising darkens island margins (denoise runs before the
-    # margin fill â€” blender/blender#94573); adaptive samples instead.
+    # margin fill — blender/blender#94573); adaptive samples instead.
     scene.cycles.use_denoising = False
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.adaptive_threshold = 0.02
@@ -2896,7 +2917,7 @@ def bake_state(
     scene = bpy.context.scene
     # Light-group layers pass emit=False: surface self-emission already
     # lives in the base state, and mute_emission cannot reach node-driven
-    # (linked) emission â€” baking it into every layer would add N+1 copies
+    # (linked) emission — baking it into every layer would add N+1 copies
     # of the monitor glow at runtime.
     configure_atlas_bake(
         scene, margin_px, bake_output, emit=emit,
@@ -2962,7 +2983,7 @@ def _active_scene_collections_by_name() -> dict:
 
 
 def hide_collections(names: list) -> list:
-    """Render-hide the named collections, returning prior values â€” an
+    """Render-hide the named collections, returning prior values — an
     unconditional un-hide on restore would expose collections the artist
     authored hidden."""
     if not isinstance(names, list) or not all(isinstance(name, str) and name.strip() for name in names):
@@ -3214,13 +3235,13 @@ def density_balance_warnings(objects: list[dict], has_camera: bool) -> list[str]
                 )
                 warnings.append(
                     f"{entry['name']} sits {median / value:.1f}x below the median "
-                    f"{density_label} in atlas {atlas!r} â€” {consequence} "
+                    f"{density_label} in atlas {atlas!r} — {consequence} "
                     "(raise its texel_weight)"
                 )
             elif ratio > 2.0:
                 warnings.append(
                     f"{entry['name']} sits {ratio:.1f}x above the median "
-                    f"{density_label} in atlas {atlas!r} â€” it is taking detail from other "
+                    f"{density_label} in atlas {atlas!r} — it is taking detail from other "
                     "members (lower its texel_weight)"
                 )
     return warnings
@@ -3231,7 +3252,7 @@ def compute_bake_plan(settings: dict, recipe: dict | None = None) -> dict:
     """Everything an artist wants to know BEFORE the bake, computed from the
     UV pack alone (no Cycles work): per-object texel density, atlas share,
     occupancy, and the state list. The re-bake causes on record are density
-    discovered too late and one object hogging the atlas â€” this is the lint.
+    discovered too late and one object hogging the atlas — this is the lint.
     """
     bake = settings.get("bake", {})
     size = int(bake.get("size", 2048))
@@ -3305,7 +3326,7 @@ def compute_bake_plan(settings: dict, recipe: dict | None = None) -> dict:
     camera_position = cameras[0] if cameras else None
     total_uv = max(group_uv.values()) if group_uv else 0.0
 
-    # Worst perceived quality first â€” the offender list leads.
+    # Worst perceived quality first — the offender list leads.
     objects.sort(key=lambda entry: entry["screenDensity"] if entry["screenDensity"] is not None else entry["pxPerMeter"])
     warnings = density_balance_warnings(objects, camera_position is not None)
     errors = list(layout.get("_errors", []))
@@ -3437,7 +3458,7 @@ def compute_bake_plan(settings: dict, recipe: dict | None = None) -> dict:
                     errors.append(message)
                 else:
                     prefix = (
-                        "Preview only â€” Scale to Fit: "
+                        "Preview only — Scale to Fit: "
                         if bake.get("previewScaleToFit") else "Scale to Fit: "
                     )
                     warnings.append(prefix + message)
@@ -3611,9 +3632,9 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
     size = int(bake.get("size", 2048))
     samples = int(bake.get("samples", 128))
     margin_px = int(bake.get("margin", 48))
-    # Cycles bakes have no edge anti-aliasing; baking at NÃ— and box-resolving
-    # down (Blender's bilinear scale on an exact 2Ã— grid IS a box filter) is
-    # the standard workaround â€” quality at zero runtime cost.
+    # Cycles bakes have no edge anti-aliasing; baking at N× and box-resolving
+    # down (Blender's bilinear scale on an exact 2× grid IS a box filter) is
+    # the standard workaround — quality at zero runtime cost.
     supersample = max(1, int(bake.get("supersample", 1)))
     denoise = bool(bake.get("denoise", False))
     bake_size = size * supersample
@@ -3826,7 +3847,7 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
 
     # Lights assigned to a Cycles Light Group become interactive: excluded
     # from the base/state bakes, then solo-baked as additive contribution
-    # layers (light adds linearly â€” Quake lightstyles' 30-year-old exploit).
+    # layers (light adds linearly — Quake lightstyles' 30-year-old exploit).
     grouped_lights = {}
     hidden_grouped_lights = []
     for obj in bpy.context.scene.objects:
@@ -4669,6 +4690,158 @@ def diagnostic_export_objects(
     return tuple(sorted(objects.values(), key=lambda obj: obj.name.casefold()))
 
 
+@contextlib.contextmanager
+def promoted_bone_parents(scene, *, view_layer=None, export_kwargs=None,
+                          log=print):
+    """Keep bone-parented objects exportable, then restore the artist's rig.
+
+    Blender gathers an object parented to a bone only when that bone resolves
+    to a joint reachable from the deform-filtered root set, so under
+    ``export_def_bones`` a socket hung off a control bone disappears. Turning
+    Deform on for the duration of the export is enough to publish it.
+
+    This is safe because it is joint-set NEUTRAL, which is measured rather
+    than argued: such a bone is already retained as a joint (the exporter
+    keeps a non-deform bone that parents an object), so ``use_deform`` decides
+    only whether the object is gathered.
+    ``tests/bone_parent_export_check.py`` asserts byte-identical joints,
+    inverse bind matrices, and skin weights across the promotion.
+
+    The promotion is reported, never silent: an artist who sees their socket
+    survive should also learn that its parent bone is not a deforming bone.
+    """
+    promoted = []
+    for obj in diagnostic_export_objects(
+        scene, view_layer=view_layer, export_kwargs=export_kwargs,
+    ):
+        if getattr(obj, "parent_type", None) != "BONE":
+            continue
+        bone_name = getattr(obj, "parent_bone", "")
+        armature = getattr(getattr(obj, "parent", None), "data", None)
+        bone = getattr(getattr(armature, "bones", None), "get", lambda _name: None)(
+            bone_name,
+        )
+        if bone is None or getattr(bone, "use_deform", True):
+            continue
+        promoted.append((armature, bone, obj.name))
+    if not promoted:
+        yield
+        return
+    with bakelib.scene_state_transaction(
+        "deform promotion for bone-parented objects",
+    ) as state:
+        for armature, bone, _object_name in promoted:
+            state.on_restore(
+                f"Deform on {armature.name}/{bone.name}",
+                lambda target=bone: setattr(target, "use_deform", False),
+            )
+            bone.use_deform = True
+        log(
+            "enabled Deform for the export on "
+            f"{len(promoted)} non-deforming bone(s) so the objects parented to "
+            "them could publish: "
+            + ", ".join(
+                f"{obj_name!r} on {armature.name}/{bone.name}"
+                for armature, bone, obj_name in promoted[:8]
+            )
+            + (f" (+{len(promoted) - 8} more)" if len(promoted) > 8 else "")
+            + ". Blendlink exports deforming joints only; the rig itself is "
+            "unchanged."
+        )
+        yield
+
+
+def bone_parented_export_audit(scene, node_names, *, view_layer=None,
+                               export_kwargs=None) -> None:
+    """Refuse a finished GLB that dropped an object parented to a bone.
+
+    Blender's exporter keeps a non-deform BONE that parents an object, but it
+    gathers the OBJECT only if that bone resolves to a joint reachable from the
+    deform-filtered root set. A control bone with no deforming ancestor
+    therefore deletes the object and its entire subtree, with no log line and
+    no error - and on a rig that is exactly where an artist puts sockets,
+    hotspots, and props. Blendlink owns ``export_def_bones``, so this is
+    Blendlink's loss to name.
+
+    Scope is deliberately narrow. This does not assert that every Blender
+    object appears as a node: realized renderables, instance sources, and
+    legitimately scoped-out objects would make that a false-positive machine.
+    Objects inside Collection Instances are not in ``scene.objects`` and are
+    outside this audit.
+    """
+    missing = []
+    for obj in diagnostic_export_objects(
+        scene, view_layer=view_layer, export_kwargs=export_kwargs,
+    ):
+        if getattr(obj, "parent_type", None) != "BONE":
+            continue
+        bone_name = getattr(obj, "parent_bone", "")
+        if not bone_name:
+            continue
+        if obj.name in node_names:
+            continue
+        parent = getattr(obj, "parent", None)
+        missing.append((
+            obj.name,
+            getattr(parent, "name", "?"),
+            bone_name,
+        ))
+    if not missing:
+        return
+    raise RuntimeError(
+        "finished GLB is missing objects parented to bones. Blendlink exports "
+        "deforming joints only, and their parent bone has no deforming "
+        "ancestor, so Blender's exporter dropped each object together with "
+        "every child beneath it:\n  - "
+        + "\n  - ".join(
+            f"{name!r} is parented to bone {bone!r} of {rig!r}"
+            for name, rig, bone in sorted(missing)
+        )
+        + "\nEnable Deform on that bone (Bone Properties > Deform) or on one of "
+        "its ancestors, or parent the object to the armature object instead of "
+        "to the bone."
+    )
+
+
+def skin_joint_budget_issues(objects) -> list[dict]:
+    """Armatures whose deforming bones cannot fit a web skin's uniform buffer.
+
+    This is a lower bound and says so: the exporter also retains non-deform
+    bones that parent an object, and fabricates a neutral joint for vertices
+    with no valid influence, so the finished artifact is the authority. What
+    this catches is the case worth catching early - a full control rig, minutes
+    before a bake that would take hours to discover the same thing.
+    """
+    budget = web_runtime_limits.maximum("skin-joints")
+    seen = {}
+    for obj in objects:
+        for modifier in getattr(obj, "modifiers", ()):
+            if getattr(modifier, "type", None) != "ARMATURE":
+                continue
+            rig = getattr(modifier, "object", None)
+            bones = getattr(getattr(rig, "data", None), "bones", None)
+            if rig is None or bones is None:
+                continue
+            entry = seen.setdefault(rig.name, {
+                "code": "skin.joint-budget-exceeded",
+                "armature": rig.name,
+                "deformBones": sum(
+                    1 for bone in bones if getattr(bone, "use_deform", True)
+                ),
+                "totalBones": len(bones),
+                "budget": budget,
+                "objects": [],
+            })
+            entry["objects"].append(obj.name)
+    issues = []
+    for entry in seen.values():
+        if entry["deformBones"] <= budget:
+            continue
+        entry["objects"] = sorted(set(entry["objects"]))
+        issues.append(entry)
+    return sorted(issues, key=lambda item: item["armature"])
+
+
 def _grease_pencil_stroke_evidence(obj) -> dict:
     """Count stored drawings without pretending they are stock-glTF meshes.
 
@@ -4737,6 +4910,48 @@ def _hair_curves_evidence(obj, depsgraph) -> dict:
     }
 
 
+def _particle_parent_counts(obj, particle_system, settings, depsgraph) -> dict:
+    """Parent-strand counts for one legacy HAIR system, from every source.
+
+    ``settings.count`` is the *configured* emission count and is the obvious
+    field to read.  It is also zero on every hand-groomed system: combing hair
+    in Particle Edit mode writes parents onto the system and leaves the
+    emission count alone.  A refusal that trusts it therefore stays silent on
+    exactly the artwork an artist spent the longest making, and the strands
+    disappear from the website with no warning at all (measured on a
+    production character: configured 0, authored 19-82).
+
+    The authored and evaluated systems are read too, and the largest count
+    wins.  Taking the maximum rather than preferring one source keeps the
+    refusal conservative in both directions: a configured-but-unevaluated
+    system still blocks, and a hand-groomed system finally does.
+    """
+    configured = int(getattr(settings, "count", 0) or 0)
+    authored = len(getattr(particle_system, "particles", ()) or ())
+    evaluated = 0
+    evaluated_get = getattr(obj, "evaluated_get", None)
+    if callable(evaluated_get):
+        try:
+            evaluated_object = evaluated_get(depsgraph())
+            evaluated_system = next((
+                item for item in getattr(
+                    evaluated_object, "particle_systems", (),
+                )
+                if getattr(item, "name", None) == particle_system.name
+            ), None)
+            evaluated = len(getattr(evaluated_system, "particles", ()) or ())
+        except (AttributeError, ReferenceError, RuntimeError, TypeError):
+            # An unevaluable object is not evidence of absence; the authored
+            # and configured counts still decide, and they are never silent.
+            evaluated = 0
+    return {
+        "particleCount": max(configured, authored, evaluated),
+        "configuredParticleCount": configured,
+        "authoredParticleCount": authored,
+        "evaluatedParticleCount": evaluated,
+    }
+
+
 def unsupported_renderable_issues(objects) -> list[dict]:
     """Return proven renderable data that Blender's stock glTF drops.
 
@@ -4751,14 +4966,20 @@ def unsupported_renderable_issues(objects) -> list[dict]:
     """
     issues = []
     depsgraph = None
+
+    def evaluated_depsgraph():
+        nonlocal depsgraph
+        if depsgraph is None:
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+        return depsgraph
+
     for obj in objects:
         object_type = getattr(obj, "type", None)
         for particle_system in getattr(obj, "particle_systems", ()):
             settings = getattr(particle_system, "settings", None)
             if settings is None \
                     or getattr(settings, "type", None) != "HAIR" \
-                    or getattr(settings, "render_type", None) != "PATH" \
-                    or int(getattr(settings, "count", 0)) <= 0:
+                    or getattr(settings, "render_type", None) != "PATH":
                 continue
             modifier = next((
                 item for item in getattr(obj, "modifiers", ())
@@ -4767,6 +4988,10 @@ def unsupported_renderable_issues(objects) -> list[dict]:
             ), None)
             if modifier is not None and not getattr(modifier, "show_render", True):
                 continue
+            counts = _particle_parent_counts(obj, particle_system, settings,
+                                             evaluated_depsgraph)
+            if counts["particleCount"] <= 0:
+                continue
             issues.append({
                 "code": "geometry.legacy-particle-path-unsupported",
                 "object": obj.name,
@@ -4774,7 +4999,7 @@ def unsupported_renderable_issues(objects) -> list[dict]:
                 "system": particle_system.name,
                 "particleType": settings.type,
                 "renderType": settings.render_type,
-                "particleCount": int(settings.count),
+                **counts,
                 "hairSteps": int(getattr(settings, "hair_step", 5)),
                 "childType": str(getattr(settings, "child_type", "NONE")),
             })
@@ -4811,7 +5036,7 @@ def realizable_renderable_plan(objects) -> dict:
     GEO-EVAL-001: Grease Pencil, Hair Curves, and childless legacy HAIR/PATH
     particle parents realize to ordinary meshes through the depsgraph when
     their deterministic triangle estimate fits ``MAX_REALIZED_TRIANGLES``.
-    Everything else keeps the loud refusal â€” evaluated strand counts are
+    Everything else keeps the loud refusal — evaluated strand counts are
     unbounded by nature, and an over-budget scene must name its numbers
     instead of publishing a payload surprise.  This runs for plan-only and
     real exports alike and must never mutate the scene.
@@ -4892,9 +5117,13 @@ def enforce_supported_renderable_transport(objects) -> None:
     ]
     details = []
     if particle_paths:
-        configured_particles = sum(
+        total_particles = sum(
             item["particleCount"] for item in particle_paths
         )
+        groomed = [
+            item for item in particle_paths
+            if item["particleCount"] > item.get("configuredParticleCount", 0)
+        ]
         examples = ", ".join(
             f"{item['object']!r}/{item['system']!r}"
             for item in particle_paths[:8]
@@ -4902,10 +5131,16 @@ def enforce_supported_renderable_transport(objects) -> None:
         remainder = len(particle_paths) - 8
         if remainder > 0:
             examples += f" (+{remainder} more)"
+        groomed_note = (
+            f" {len(groomed)} of them carry hand-groomed parents that the "
+            "system's emission count does not report, so the count you see in "
+            "Particle Properties is not the artwork at risk."
+            if groomed else ""
+        )
         details.append(
             f"  - {len(particle_paths)} render-visible legacy HAIR/PATH "
-            f"particle system(s) are configured for {configured_particles} "
-            f"parent particle(s): {examples}. Blender's stock glTF exporter "
+            f"particle system(s) carry {total_particles} "
+            f"parent particle(s): {examples}.{groomed_note} Blender's stock glTF exporter "
             "can expand object/collection particle instances, but it does not "
             "serialize legacy particle paths as renderable primitives; the "
             "emitter mesh can survive while this artwork disappears. Convert "
@@ -5746,6 +5981,46 @@ def gltf_export_contract(out_path: str, settings: dict) -> tuple[dict, list[str]
             "matches the stock GLB."
         )
 
+    # Ship only deforming joints. Control rigs (CloudRig et al.) carry
+    # thousands of mechanism/control bones; exporting them wholesale produced
+    # an 1867-joint skin whose matrix buffer (119KB) exceeds the 64KB
+    # uniform-block limit on both web render backends, and the character could
+    # never skin. Deform-only is the standard game-export contract.
+    #
+    # Force sampling belongs to the same contract rather than beside it:
+    # Blender turns gltf_def_bones back off, silently, whenever sampling is
+    # off (io_scene_gltf2/__init__.py, inside `if self.export_animations`), so
+    # an override of one is an override of both.
+    #
+    # These two are owned rather than merely set because a dropped or
+    # overridden flag here is invisible: it produces a complete-looking GLB
+    # whose character renders nothing at all.
+    joint_budget_owned = {
+        "export_def_bones": True,
+        "export_force_sampling": True,
+    }
+    missing_joint_budget = sorted(set(joint_budget_owned) - supported)
+    if missing_joint_budget:
+        raise RuntimeError(
+            "This Blender glTF exporter cannot enforce Blendlink's joint-budget "
+            "contract; missing exporter option(s): "
+            + ", ".join(missing_joint_budget)
+            + ". Without it a control rig exports every mechanism bone and the "
+            "skin's matrix buffer exceeds the 64KB uniform-block limit on both "
+            "web render backends."
+        )
+    conflicting_joint_budget = sorted(
+        key for key, expected in joint_budget_owned.items()
+        if key in overrides and overrides[key] != expected
+    )
+    if conflicting_joint_budget:
+        raise ValueError(
+            "exporterOverrides cannot replace Blendlink's joint-budget contract "
+            f"({', '.join(conflicting_joint_budget)}). Blendlink owns deform-only "
+            "joint export and animation force-sampling together, because Blender "
+            "silently disables deform-only export when force sampling is off."
+        )
+
     desired = {
         "filepath": out_path,
         "export_format": "GLB",
@@ -5758,13 +6033,12 @@ def gltf_export_contract(out_path: str, settings: dict) -> tuple[dict, list[str]
         "export_cameras": True,
         "export_animations": True,
         "export_morph": True,
-        # Ship only deforming joints. Control rigs (CloudRig et al.) carry
-        # thousands of mechanism/control bones; exporting them wholesale
-        # produced an 1867-joint skin whose matrix buffer (119KB) exceeds
-        # the 64KB uniform-block limit on BOTH web render backends â€” the
-        # character could never skin. Deform-only is the standard
-        # game-export contract; the exporter keeps required parents.
-        "export_def_bones": True,
+        # Deform-only joints and their force-sampling dependency; see the
+        # contract above. The exporter keeps a required parent BONE, but it
+        # does NOT keep an OBJECT parented to a bone that has no deforming
+        # ancestor - that object and its whole subtree are dropped with no
+        # log line, which is why bone_parented_export_audit exists.
+        **joint_budget_owned,
         # Compression happens post-export in Node where the library version is
         # controlled; the exporter's Draco path has a history of UV corruption.
         "export_draco_mesh_compression_enable": False,
@@ -5830,7 +6104,7 @@ def enforce_pointer_animation_policy(
     if private_authoring_preview:
         frame_label = f"{frame:g}"
         return [
-            "PRIVATE PREVIEW ONLY â€” unsupported property animation on "
+            "PRIVATE PREVIEW ONLY — unsupported property animation on "
             f'{item["object"]!r} is frozen at Blender frame {frame_label}: '
             f'{item["reason"]}. Final builds and connected-site previews remain '
             "blocked. Animate this value in website code, remove its property "
@@ -5864,6 +6138,18 @@ def plan_export_materials(
         export_kwargs=export_kwargs,
     )
     enforce_supported_renderable_transport(export_objects)
+    for issue in skin_joint_budget_issues(export_objects):
+        # Early, and deliberately not fatal: the classic WebGL runtime renders
+        # a skin this large, so refusing here would block a scene that works.
+        # The finished artifact carries the authoritative refusal for the
+        # runtimes that cannot, and the browser install refuses outright.
+        print(
+            f"WARNING: armature {issue['armature']!r} has {issue['deformBones']} "
+            f"deforming bones of {issue['totalBones']}, above the "
+            f"{issue['budget']}-joint ceiling of the web runtime's uniform "
+            "buffer. " + web_runtime_limits.consequence("skin-joints")
+            + f" Skinned meshes: {', '.join(issue['objects'][:8])}"
+        )
     realization_plan = realizable_renderable_plan(export_objects)
     if realization_plan["realize"]:
         sidecar["diagnostics"]["realizedGeometry"] = realization_plan
@@ -5990,12 +6276,12 @@ def main() -> None:
     settings, recipe = resolve_scene_recipe(settings)
 
     # The addon's checker override is viewport-only inspection, but freeze
-    # and glTF export evaluate the VIEWPORT depsgraph â€” strip leftovers
+    # and glTF export evaluate the VIEWPORT depsgraph — strip leftovers
     # before anything evaluates, or the checker material bakes and ships.
     stripped = bakelib.remove_checker_overrides(bpy.data.objects)
     strip_warnings = (
         [f"removed {stripped} leftover checker-override modifier(s) "
-         "(the addon's viewport UV inspection â€” never baked or exported)"]
+         "(the addon's viewport UV inspection — never baked or exported)"]
         if stripped else []
     )
 
@@ -6079,7 +6365,7 @@ def main() -> None:
             reasons = " ".join(material.get("reasons", [])[:2])
             warnings.append(
                 f"material {material.get('material', 'unnamed')!r}: "
-                f"{material.get('label', 'glTF approximation')} â€” {reasons}"
+                f"{material.get('label', 'glTF approximation')} — {reasons}"
             )
     pointer_blockers = procedural.pointer_animation_issues(
         bpy.context.scene,
@@ -6278,7 +6564,11 @@ def main() -> None:
                 export_kwargs=kwargs,
             )
             progress(0.82, "writing glTF")
-            return emit_gltf(filepath)
+            with promoted_bone_parents(
+                bpy.context.scene, view_layer=bpy.context.view_layer,
+                export_kwargs=kwargs, log=warnings.append,
+            ):
+                return emit_gltf(filepath)
 
         if material_plan.lowerings:
             _export_result, material_compilation = material_compiler.with_compiled_materials(
@@ -6315,6 +6605,13 @@ def main() -> None:
         bpy.context.scene,
         view_layer=bpy.context.view_layer,
         export_kwargs=kwargs,
+    )
+    # The node-name set the light pass already built is exactly what proves
+    # nothing was dropped, so this costs one set lookup per bone-parented
+    # object rather than a second read of the GLB.
+    bone_parented_export_audit(
+        bpy.context.scene, exported_node_names,
+        view_layer=bpy.context.view_layer, export_kwargs=kwargs,
     )
     material_defaults = normalize_materialless_glb(out_path)
     if material_defaults["patchedPrimitiveCount"]:

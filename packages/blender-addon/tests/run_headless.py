@@ -276,9 +276,62 @@ def run_unsupported_renderable_export_test(exporter):
             "particleType": "HAIR",
             "renderType": "PATH",
             "particleCount": 8,
+            "configuredParticleCount": 8,
+            "authoredParticleCount": particle_issues[0]["authoredParticleCount"],
+            "evaluatedParticleCount": particle_issues[0]["evaluatedParticleCount"],
             "hairSteps": int(particle_settings.hair_step),
             "childType": "NONE",
         }], f"legacy PATH particle evidence was incomplete: {particle_issues}")
+        # A hand-groomed system leaves the emission count at zero and writes
+        # its parents onto the system instead. Reading settings.count alone
+        # made the refusal silent on exactly that artwork - the strands simply
+        # vanished from the website. The counts must come from every source
+        # and the largest must win.
+        groomed_host = SimpleNamespace(
+            name="Blendlink Groomed Hair", type="MESH", modifiers=(),
+            particle_systems=[SimpleNamespace(
+                name="Groomed", particles=tuple(object() for _ in range(24)),
+                settings=SimpleNamespace(
+                    type="HAIR", render_type="PATH", count=0, hair_step=5,
+                    child_type="NONE",
+                ),
+            )],
+        )
+        groomed_issues = exporter.unsupported_renderable_issues([groomed_host])
+        expect(
+            len(groomed_issues) == 1
+            and groomed_issues[0]["particleCount"] == 24
+            and groomed_issues[0]["configuredParticleCount"] == 0
+            and groomed_issues[0]["authoredParticleCount"] == 24
+            and groomed_issues[0]["evaluatedParticleCount"] == 0,
+            "a hand-groomed HAIR system with emission count 0 must still block "
+            f"with its real parent count: {groomed_issues}",
+        )
+        groomed_plan = exporter.realizable_renderable_plan([groomed_host])
+        expect(
+            [item["kind"] for item in groomed_plan["realize"]]
+            == ["particleStrands"]
+            and groomed_plan["realize"][0]["estimatedTriangles"] > 0,
+            "in-budget hand-groomed parents must plan a realization with a "
+            f"nonzero triangle estimate: {groomed_plan}",
+        )
+        # Children keep the refusal, and the refusal must explain that the
+        # emission count in Particle Properties is not the artwork at risk.
+        groomed_host.particle_systems[0].settings.child_type = "SIMPLE"
+        try:
+            exporter.enforce_supported_renderable_transport([groomed_host])
+        except SystemExit as error:
+            groomed_refusal = str(error)
+        else:
+            raise AssertionError(
+                "hand-groomed HAIR/PATH particles with children silently passed"
+            )
+        expect(
+            "hand-groomed" in groomed_refusal
+            and "24 parent particle(s)" in groomed_refusal,
+            "the hand-groomed refusal must name the real parent count and why "
+            f"the emission count disagrees: {groomed_refusal}",
+        )
         # GEO-EVAL-001: a childless in-budget PATH system realizes instead of
         # refusing; the gate stays silent and the plan names the route.
         exporter.enforce_supported_renderable_transport([particle_host])
@@ -4832,11 +4885,16 @@ def main():
     # to ship (this path has no post-pack injectivity proof); the fold rescue
     # now replaces it with per-face charts and, since this repair is a large
     # visible quality change, says so in the strategy.
+    # The rescued face count travels with the report so every consumer can
+    # state the size of the change: without it the atlas warning described a
+    # per-face rechart as an ordinary reprojection.
     expect(repairs == [{
         "object": solidified_unpinned.name,
         "triangleCount": len(unpinned_bad),
         "strategy": "smart-project-whole-unpinned-object+lightmap-rescue",
-    }], f"unexpected evaluated UV repair report: {repairs}")
+        "lightmapRescuedFaces": repairs[0].get("lightmapRescuedFaces"),
+    }] and repairs[0].get("lightmapRescuedFaces", 0) > 0,
+        f"unexpected evaluated UV repair report: {repairs}")
     expect(not bakelib._nonzero_geometry_zero_uv_triangles(
         solidified_unpinned, bakelib.ATLAS_UV,
     ), "Smart Project left non-zero evaluated triangles with zero UV area")
@@ -5872,7 +5930,9 @@ def main():
         "object": solidified_unpinned.name,
         "triangleCount": len(post_pack_bad),
         "strategy": "smart-project-whole-unpinned-object+lightmap-rescue",
-    }], f"unexpected post-pack repair report: {post_pack_repairs}")
+        "lightmapRescuedFaces": post_pack_repairs[0].get("lightmapRescuedFaces"),
+    }] and post_pack_repairs[0].get("lightmapRescuedFaces", 0) > 0,
+        f"unexpected post-pack repair report: {post_pack_repairs}")
     expect(final_held == {},
            f"post-pack repair invented pinned ownership: {final_held}")
     expect(not bakelib._nonzero_geometry_zero_uv_triangles(

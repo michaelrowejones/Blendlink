@@ -4,7 +4,33 @@ export interface GltfRuntimeCapabilityProfile {
   readonly supportedRequiredExtensions: ReadonlySet<string>
   /** Omit while KHR_animation_pointer playback is unsupported. */
   supportsAnimationPointer?(pointer: string): boolean
+  /**
+   * Joints one skin may carry. Omit for a runtime with no ceiling: the classic
+   * WebGLRenderer uploads bone matrices through a texture and has none, so a
+   * scene that is unrenderable on one runtime is fine on another and the
+   * ceiling belongs to the profile rather than to the artifact.
+   */
+  readonly maxSkinJoints?: number
+  /**
+   * Highest glTF `texCoord` index the runtime binds to a geometry attribute.
+   * Unlike the joint ceiling this is a property of the loader rather than the
+   * renderer, so it applies to every three runtime and the compiled profile
+   * carries it.
+   */
+  readonly maxTextureCoordinateIndex?: number
 }
+
+/**
+ * Mirrors `web_runtime_limits.json`, which carries the measurement and the
+ * artist-facing consequence for both numbers. They are repeated here as plain
+ * constants on purpose: this module is bundled into the browser runtime, and
+ * reading the registry would drag `node:fs` in with it. `webRuntimeLimits.test.ts`
+ * asserts the two agree, so the duplication cannot drift silently.
+ */
+export const THREE_NODE_MAX_SKIN_JOINTS = 1024
+export const THREE_MAX_TEXTURE_COORDINATE_INDEX = 3
+
+const BONE_MATRIX_BYTES = 64
 
 const THREE_R184_PACKAGE_REQUIRED_EXTENSIONS = new Set([
   'EXT_materials_bump',
@@ -38,6 +64,10 @@ export const BLENDLINK_THREE_R184_COMPILED_PROFILE: GltfRuntimeCapabilityProfile
   Object.freeze({
     id: 'Blendlink Three r184 compiled runtime',
     supportedRequiredExtensions: THREE_R184_PACKAGE_REQUIRED_EXTENSIONS,
+    // No ceilings on the compile-time profile. The joint ceiling belongs to
+    // the node-material renderers and is applied where the renderer is known;
+    // the UV ceiling is reported as artifact conformance evidence by
+    // compiledSceneAudit, because it must not throw on the Preview path.
   })
 
 const GLB_MAGIC = 0x46546c67
@@ -50,13 +80,23 @@ export interface GltfAnimationPointerEvidence {
   readonly family: 'material' | 'camera' | 'light' | 'node' | 'other'
 }
 
+export interface GltfSkinJointEvidence {
+  readonly skin: number
+  readonly name?: string
+  readonly joints: number
+  readonly boneMatrixBytes: number
+}
+
 export interface GltfRuntimeCompatibilityIssue {
   readonly code:
     | 'runtime.required-extension-unsupported'
     | 'runtime.animation-pointer-unsupported'
-  readonly extension: string
+    | 'runtime.skin-joint-budget-exceeded'
+  /** Absent for issues that are not about a glTF extension. */
+  readonly extension?: string
   readonly location: string
   readonly pointer?: string
+  readonly skin?: GltfSkinJointEvidence
   readonly summary: string
   readonly fix: string
 }
@@ -66,6 +106,7 @@ export interface GltfRuntimeCompatibilityReport {
   readonly extensionsUsed: readonly string[]
   readonly extensionsRequired: readonly string[]
   readonly animationPointers: readonly GltfAnimationPointerEvidence[]
+  readonly skins: readonly GltfSkinJointEvidence[]
   readonly issues: readonly GltfRuntimeCompatibilityIssue[]
   readonly compatible: boolean
 }
@@ -96,7 +137,33 @@ export function inspectGltfRuntimeCompatibility(
     '/extensionsRequired',
   )
   const animationPointers = animationPointerEvidence(document.animations)
+  const skins = skinJointEvidence(document.skins)
   const issues: GltfRuntimeCompatibilityIssue[] = []
+  if (profile.maxSkinJoints !== undefined) {
+    const budget = profile.maxSkinJoints
+    if (!Number.isInteger(budget) || budget <= 0) {
+      throw new Error(
+        `glTF runtime capability profile maxSkinJoints must be a positive integer; got ${budget}.`,
+      )
+    }
+    for (const skin of skins) {
+      if (skin.joints <= budget) continue
+      issues.push(Object.freeze({
+        code: 'runtime.skin-joint-budget-exceeded',
+        location: `/skins/${skin.skin}/joints`,
+        skin,
+        summary:
+          `Skin ${skin.name ? `"${skin.name}" ` : ''}carries ${skin.joints} joints, but ` +
+          `${profile.id} binds bone matrices through a uniform buffer that holds ${budget}. ` +
+          `Its ${skin.boneMatrixBytes} bytes of bone matrices exceed the 65536-byte limit.`,
+        fix:
+          'Nothing renders past this ceiling and the runtime reports no error of its own: ' +
+          'the mesh draws no pixels while the failed pipeline retries every frame. Export ' +
+          'deforming joints only, reduce the rig\'s deforming bone count, or split the ' +
+          'character across more than one armature.',
+      }))
+    }
+  }
   for (const [index, extension] of extensionsRequired.entries()) {
     if (profile.supportedRequiredExtensions.has(extension)) continue
     issues.push(Object.freeze({
@@ -125,6 +192,7 @@ export function inspectGltfRuntimeCompatibility(
     extensionsUsed: Object.freeze(extensionsUsed),
     extensionsRequired: Object.freeze(extensionsRequired),
     animationPointers: Object.freeze(animationPointers),
+    skins: Object.freeze(skins),
     issues: Object.freeze(issues),
     compatible: issues.length === 0,
   })
@@ -185,6 +253,11 @@ export function loadedThreeRuntimeProfile(
         ? `configured Three r184 loaded parser + ${applicationCapabilities.id}`
         : 'configured Three r184 loaded parser',
       supportedRequiredExtensions: supported,
+      // An application that has measured its own renderer's ceiling states it;
+      // the parser cannot know one, so nothing is invented here.
+      ...(applicationCapabilities?.maxSkinJoints !== undefined
+        ? { maxSkinJoints: applicationCapabilities.maxSkinJoints }
+        : {}),
       ...(pointerRegistered && supportsAnimationPointer
         ? {
             supportsAnimationPointer: (pointer: string) =>
@@ -266,6 +339,33 @@ function stringArray(value: unknown, location: string): string[] {
     throw new Error(`glTF ${location} must be an array of non-empty strings.`)
   }
   return [...value]
+}
+
+/**
+ * Joint counts for every skin, gathered whether or not a ceiling applies, so
+ * the report carries the number even for a runtime that has no limit. A skin
+ * with a malformed joint list is an inspection error rather than a pass: the
+ * whole point of this report is that nothing downstream has to guess.
+ */
+function skinJointEvidence(value: unknown): GltfSkinJointEvidence[] {
+  if (value === undefined) return []
+  const skins = recordArray(value, '/skins')
+  return skins.map((skin, index) => {
+    const joints = skin.joints
+    if (!Array.isArray(joints) || joints.length === 0 ||
+        !joints.every((joint) => Number.isSafeInteger(joint) && (joint as number) >= 0)) {
+      throw new Error(
+        `glTF /skins/${index}/joints must be a non-empty array of node indices.`,
+      )
+    }
+    const name = typeof skin.name === 'string' && skin.name ? skin.name : undefined
+    return Object.freeze({
+      skin: index,
+      ...(name ? { name } : {}),
+      joints: joints.length,
+      boneMatrixBytes: joints.length * BONE_MATRIX_BYTES,
+    })
+  })
 }
 
 function animationPointerEvidence(value: unknown): GltfAnimationPointerEvidence[] {
