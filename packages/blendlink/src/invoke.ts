@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync, renameSync, existsSyn
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createStagedPublication, renameOrCopy } from './stagedPublication.js'
 import { discoverBlender, type BlenderInstall } from './discover.js'
 import { readBlendHeader } from './blendHeader.js'
 import { ProgressEcho, progressEnabled } from './progress.js'
@@ -737,27 +738,10 @@ export async function exportBlend(options: {
     renameSync(staging, options.outPath)
 
     // Baked-mode state/light textures are written beside the temp GLB; move
-    // them out before the temp dir is destroyed. Python names every file as
-    // <temp glb> + suffix, so the final path is the same suffix on the real
-    // GLB path — shape-agnostic across single- and multi-atlas scenes.
-    const outBase = options.outPath.replace(/\.glb$/i, '')
-    const relocate = (tempPath: string): string => {
-      if (!existsSync(tempPath)) {
-        throw new Error(`Declared export sidecar disappeared before publication: ${tempPath}`)
-      }
-      const resolvedTemp = resolve(tempPath)
-      const resolvedPrefix = resolve(tempGlb) + '.'
-      if (!resolvedTemp.startsWith(resolvedPrefix)) {
-        throw new Error(`Refusing to relocate an export sidecar outside the owned Blender output set: ${tempPath}`)
-      }
-      const suffix = tempPath
-        .slice(tempGlb.length)
-        .replace(/^\.glb/i, '')
-        .replace(/^\.state\./, '.')
-      const finalPath = outBase + suffix
-      renameOrCopy(tempPath, finalPath)
-      return finalPath
-    }
+    // them out before the temp dir is destroyed. The publication module owns
+    // the name-family rewrite and the sidecar's basename contract.
+    const publication = createStagedPublication({ tempGlb, outPath: options.outPath })
+    const relocate = publication.relocate
     const bakedStates: Record<string, Record<string, string>> = {}
     for (const [state, byGroup] of Object.entries(result.baked?.states ?? {})) {
       for (const [group, tempPath] of Object.entries(byGroup ?? {})) {
@@ -796,61 +780,7 @@ export async function exportBlend(options: {
         })()
       : null
     const materialPrograms = result.materialPrograms
-      ? (() => {
-          const programs = result.materialPrograms
-          const finalPath = relocate(programs.path)
-          const tempTexturePaths = programs.texturePaths ?? []
-          if (!tempTexturePaths.length) {
-            return { ...programs, path: finalPath }
-          }
-          // The sidecar references its texture_ref images BY BASENAME (the
-          // runtime resolves them against the sidecar URL), so relocating
-          // the images out of the temp GLB's name family must rewrite those
-          // references and re-pin the document — publication rewrites, then
-          // attests, exactly as the GLB itself does. The rewrite is exact
-          // byte surgery on the `"file":"<staged basename>"` spans, never a
-          // parse-and-reserialize: everything else stays byte-for-byte in
-          // the Python writer's canonical form (float spellings, key order,
-          // ASCII escapes — and non-standard tokens never reach a parser).
-          // Both basename families are config-sanitized ASCII, and a `"`
-          // inside a JSON string value is escaped as `\"`, so the search
-          // span cannot match inside embedded IR content.
-          const renamedFiles = new Map<string, string>()
-          const texturePaths = tempTexturePaths.map((tempPath) => {
-            const relocated = relocate(tempPath)
-            renamedFiles.set(basename(tempPath), basename(relocated))
-            return relocated
-          })
-          let sidecar = readFileSync(finalPath, 'utf8')
-          for (const [stagedName, publishedName] of renamedFiles) {
-            const search = `"file":${JSON.stringify(stagedName)}`
-            const replacement = `"file":${JSON.stringify(publishedName)}`
-            const occurrences = sidecar.split(search).length - 1
-            if (occurrences !== 1) {
-              throw new Error(
-                `material programs sidecar references ${stagedName} ` +
-                `${occurrences} times; publication expected exactly one ` +
-                'image entry per relocated texture',
-              )
-            }
-            sidecar = sidecar.replace(search, replacement)
-          }
-          if (sidecar.includes(`"file":"${basename(tempGlb)}.`)) {
-            throw new Error(
-              'material programs sidecar still references the staging name ' +
-              `family after publication rewrote ${renamedFiles.size} image(s)`,
-            )
-          }
-          const payload = Buffer.from(sidecar, 'utf8')
-          writeFileSync(finalPath, payload)
-          return {
-            ...programs,
-            path: finalPath,
-            texturePaths,
-            bytes: payload.byteLength,
-            hash: createHash('sha256').update(payload).digest('hex').slice(0, 16),
-          }
-        })()
+      ? publication.publishMaterialPrograms(result.materialPrograms)
       : null
     const reflectionProbeAssets = Object.fromEntries(
       Object.entries(result.reflectionProbeAssets ?? {}).map(([id, asset]) => [
@@ -892,15 +822,6 @@ export async function exportBlend(options: {
     }
   } finally {
     rmSync(work, { recursive: true, force: true })
-  }
-}
-
-function renameOrCopy(from: string, to: string) {
-  try {
-    renameSync(from, to)
-  } catch {
-    // Cross-device rename (temp dir on another volume): fall back to copy.
-    writeFileSync(to, readFileSync(from))
   }
 }
 

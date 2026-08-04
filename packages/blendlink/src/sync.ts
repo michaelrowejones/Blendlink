@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import { materialProgramsImageReferences } from './stagedPublication.js'
 import { createRequire } from 'node:module'
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync,
@@ -2070,15 +2071,13 @@ async function verifyScenesWithPublicationLease(
         continue
       }
       // The runtime resolves every texture_ref image BY BASENAME against
-      // the sidecar URL, so each `"file":"..."` reference must exist
-      // beside the published sidecar. Scanned textually rather than
-      // parsed: a `"` inside a JSON string value is escaped as `\"`, so
-      // the pattern only matches real image entries, and non-standard
-      // number tokens never reach a parser.
-      const sidecarText = programsBytes.toString('utf8')
-      const missingImage = [...sidecarText.matchAll(/"file":"([^"\\]+)"/g)]
-        .map((match) => match[1])
-        .find((file) => !existsSync(join(dirname(programsPath), file)))
+      // the sidecar URL, so each reference must exist beside the
+      // published sidecar. Publication and verification read those
+      // references through the SAME function - restating the contract
+      // in two places is what let it ship broken once.
+      const missingImage = materialProgramsImageReferences(
+        programsBytes.toString('utf8'),
+      ).find((file) => !existsSync(join(dirname(programsPath), file)))
       if (missingImage) {
         issues.push({
           scene: scene.name,
