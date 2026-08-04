@@ -677,7 +677,20 @@ class BLENDLINK_OT_capture_reference_matrix(bpy.types.Operator):
         return True
 
     def invoke(self, context, event):
-        return context.window_manager.invoke_confirm(self, event)
+        # An empty confirmation dialog asks the artist to agree to nothing.
+        # This one names the cost: Cycles renders every cell, and Blender is
+        # unresponsive for the duration.
+        settings = context.scene.blendlink_reference
+        count = int(getattr(settings, "last_reference_count", 0) or 0)
+        return context.window_manager.invoke_confirm(
+            self, event,
+            title="Capture Blender References",
+            message=(
+                f"Render {count} reference image(s) with Cycles."
+                if count else "Render the Blender reference images with Cycles."
+            ) + " Blender stays unresponsive until it finishes.",
+            confirm_text="Render References",
+        )
 
     def execute(self, context):
         settings = context.scene.blendlink_reference

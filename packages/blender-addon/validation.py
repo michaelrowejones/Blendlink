@@ -73,6 +73,9 @@ class ScanResult:
     rendering_analysis: dict[str, RenderingAnalysis] = field(default_factory=dict)
     material_compatibility: dict[str, dict] = field(default_factory=dict)
     light_diagnostics: dict[str, dict] = field(default_factory=dict)
+    # Light data-block name -> the objects using it, so a panel never has to
+    # walk the scene to answer that.
+    light_users: dict[str, list] = field(default_factory=dict)
     consequence_gizmo_counts: dict[str, int] = field(default_factory=dict)
     # Component issues by component id, so a card can render its own state
     # without re-running a validator that walks meshes.
@@ -578,6 +581,19 @@ def recompute(scene) -> bool:
     light_diagnostics = {
         item.object_name: item.as_dict() for item in light_analysis.diagnostics
     }
+    # Which light objects share one light data-block. The Light Properties
+    # panel needs this to show every user of the active light, and was
+    # walking the whole scene to find them on every redraw.
+    light_users: dict[str, list[str]] = {}
+    for obj in getattr(scene, "objects", ()):
+        if getattr(obj, "type", None) != "LIGHT":
+            continue
+        data = getattr(obj, "data", None)
+        if data is None:
+            continue
+        light_users.setdefault(data.name, []).append(obj.name)
+    for names in light_users.values():
+        names.sort(key=str.casefold)
     selected_objects = (
         tuple(getattr(bpy.context, "selected_objects", ()) or ())
         if bpy.context.scene is scene else ()
@@ -833,6 +849,7 @@ def recompute(scene) -> bool:
         rendering_analysis=rendering_analysis,
         material_compatibility=material_compatibility,
         light_diagnostics=light_diagnostics,
+        light_users=light_users,
         consequence_gizmo_counts=gizmos.counts,
         component_issues=component_issues,
         scanned=True,

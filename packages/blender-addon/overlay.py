@@ -189,16 +189,28 @@ def _draw_pixel():
     font_id = 0
     blf.size(font_id, 11.0)
     label_rows = {}
+    # Every anchor and every interaction target in the scene contributes a
+    # label, and an interaction label carries its object name, each behaviour
+    # with its accessible label, and the picking rule. Unbounded, a busy scene
+    # paints the viewport solid with text. Draw the ones nearest the centre of
+    # the region and say how many were left out.
+    projected = []
+    centre = (region.width / 2.0, region.height / 2.0)
     for item in validation.result().overlay:
         if not item.label:
             continue
         matrix = _resolved_matrix(item)
         if matrix is None:
             continue
-        world = matrix.translation
-        screen = view3d_utils.location_3d_to_region_2d(region, rv3d, world)
+        screen = view3d_utils.location_3d_to_region_2d(
+            region, rv3d, matrix.translation,
+        )
         if screen is None:
             continue
+        distance = (screen.x - centre[0]) ** 2 + (screen.y - centre[1]) ** 2
+        projected.append((distance, screen, item))
+    projected.sort(key=lambda entry: entry[0])
+    for _distance, screen, item in projected[:_MAX_OVERLAY_LABELS]:
         # Different consequences on the same selected object share a world
         # anchor. Stack by a small screen-space bucket so labels remain legible
         # without component-specific layout rules in the draw loop.
@@ -209,7 +221,21 @@ def _draw_pixel():
             font_id, screen.x + 8.0, screen.y + 4.0 + row * 15.0, 0.0,
         )
         blf.color(font_id, *item.color)
-        blf.draw(font_id, item.label)
+        label = item.label
+        if len(label) > _MAX_OVERLAY_LABEL_CHARS:
+            label = label[: _MAX_OVERLAY_LABEL_CHARS - 1].rstrip() + "…"
+        blf.draw(font_id, label)
+    hidden = len(projected) - _MAX_OVERLAY_LABELS
+    if hidden > 0:
+        blf.position(font_id, 12.0, 12.0, 0.0)
+        blf.color(font_id, 1.0, 1.0, 1.0, 0.7)
+        blf.draw(font_id, f"+{hidden} more Blendlink label(s)")
+
+
+# Bounds for the label pass. Chosen so a dense scene stays readable rather
+# than measured: raise them if a real scene proves them too tight.
+_MAX_OVERLAY_LABELS = 24
+_MAX_OVERLAY_LABEL_CHARS = 64
 
 
 def _camera_frame_rect(context, camera):

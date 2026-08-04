@@ -421,6 +421,30 @@ def _validate_clipboard_payload(payload) -> dict:
     return payload
 
 
+_clipboard_cache: dict = {"text": None, "payload": None, "error": ""}
+
+
+def cached_component_clipboard(context) -> tuple[dict | None, str]:
+    """The parsed clipboard, re-parsed only when the clipboard text changes.
+
+    Reading and JSON-parsing the OS clipboard is real work, and the panels
+    did it from draw() - twice per redraw in the sidebar, for every repaint,
+    on every mouse move. Reading the text is unavoidable to know whether it
+    changed; parsing and validating it is what this avoids.
+    """
+    # The key includes the in-process fallback, because background Blender has
+    # no system clipboard and would otherwise cache the first payload forever.
+    text = (
+        str(getattr(context.window_manager, "clipboard", "") or ""),
+        _component_clipboard_text if bpy.app.background else "",
+    )
+    if text == _clipboard_cache["text"]:
+        return _clipboard_cache["payload"], _clipboard_cache["error"]
+    payload, error = _read_component_clipboard(context)
+    _clipboard_cache.update(text=text, payload=payload, error=error)
+    return payload, error
+
+
 def _read_component_clipboard(context) -> tuple[dict | None, str]:
     clipboard = str(getattr(context.window_manager, "clipboard", "") or "")
     if not clipboard and bpy.app.background and _component_clipboard_text:
@@ -595,7 +619,7 @@ def run_component_action(
 
     payload, clipboard_error = (
         (copied_payload, "") if copied_payload is not None
-        else _read_component_clipboard(context)
+        else cached_component_clipboard(context)
     )
     if payload is None:
         result.add("errors", "Clipboard", "invalid", clipboard_error)
@@ -1576,7 +1600,7 @@ class BLENDLINK_PT_scene_components(_BlendlinkSceneComponentsMixin, bpy.types.Pa
             "blendlink.browse_components", text="Add Scene Effect", icon="ADD",
         )
         browse.target_mode = "SCENE"
-        clipboard, _ = _read_component_clipboard(context)
+        clipboard, _ = cached_component_clipboard(context)
         if clipboard is not None and clipboard["targetKind"] == "SCENE":
             row.operator(
                 "blendlink.paste_component_as_new", text="Paste as New", icon="PASTEDOWN",
@@ -1648,7 +1672,7 @@ class BLENDLINK_PT_object_components(_BlendlinkObjectComponentsMixin, bpy.types.
             "blendlink.browse_components", text="Add Behavior to Selection", icon="ADD",
         )
         browse.target_mode = "SELECTION"
-        clipboard, _ = _read_component_clipboard(context)
+        clipboard, _ = cached_component_clipboard(context)
         if clipboard is not None and clipboard["targetKind"] == "OBJECT":
             actions.operator(
                 "blendlink.paste_component_as_new", text="Paste as New", icon="PASTEDOWN",
@@ -1693,7 +1717,7 @@ class BLENDLINK_PT_components_sidebar(bpy.types.Panel):
             "blendlink.browse_components", text=SCENE_CATALOG_ACTION_LABEL, icon="ADD",
         )
         browse.target_mode = "SCENE"
-        clipboard, _ = _read_component_clipboard(context)
+        clipboard, _ = cached_component_clipboard(context)
         if clipboard is not None and clipboard["targetKind"] == "SCENE":
             actions.operator("blendlink.paste_component_as_new", text="", icon="PASTEDOWN")
         _draw_cards(
@@ -1719,7 +1743,7 @@ class BLENDLINK_PT_components_sidebar(bpy.types.Panel):
             "blendlink.browse_components", text=BEHAVIOR_CATALOG_ACTION_LABEL, icon="ADD",
         )
         browse.target_mode = "SELECTION"
-        clipboard, _ = _read_component_clipboard(context)
+        clipboard, _ = cached_component_clipboard(context)
         if clipboard is not None and clipboard["targetKind"] == "OBJECT":
             object_actions.operator(
                 "blendlink.paste_component_as_new", text="", icon="PASTEDOWN",

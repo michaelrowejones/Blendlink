@@ -390,11 +390,22 @@ def _web_light_objects(context) -> list:
     scene = getattr(context, "scene", None)
     if light is None or scene is None:
         return []
+    # Read the cached data-block -> users map rather than walking every object
+    # in the scene on every redraw of this panel.
+    names = validation.result().light_users.get(getattr(light, "name", ""), ())
     objects = [
-        obj for obj in getattr(scene, "objects", ())
-        if getattr(obj, "type", None) == "LIGHT" and getattr(obj, "data", None) is light
+        obj for obj in (scene.objects.get(name) for name in names)
+        if obj is not None and getattr(obj, "data", None) is light
     ]
-    objects.sort(key=lambda obj: str(getattr(obj, "name", "Light")).casefold())
+    if not objects:
+        # Before the first scan, or for a light the scan has not seen yet, fall
+        # back to the direct answer rather than showing an empty panel.
+        objects = [
+            obj for obj in getattr(scene, "objects", ())
+            if getattr(obj, "type", None) == "LIGHT"
+            and getattr(obj, "data", None) is light
+        ]
+        objects.sort(key=lambda obj: str(getattr(obj, "name", "Light")).casefold())
     if active in objects:
         objects.remove(active)
         objects.insert(0, active)

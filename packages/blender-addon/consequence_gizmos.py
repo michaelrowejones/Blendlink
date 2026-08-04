@@ -134,6 +134,18 @@ def _target(scene, component):
     )
 
 
+def _visible_in_viewport(obj) -> bool:
+    """Whether the artist can currently see this object in the 3D viewport."""
+    visible_get = getattr(obj, "visible_get", None)
+    if not callable(visible_get):
+        return True
+    try:
+        return bool(visible_get())
+    except (RuntimeError, TypeError):
+        # An object outside the active view layer raises rather than answering.
+        return False
+
+
 def _finite_nonnegative(value) -> float | None:
     try:
         number = float(value)
@@ -186,6 +198,11 @@ def _interaction_target_gizmos(
             continue
         target = _target(scene, component)
         if target is None:
+            continue
+        if not _visible_in_viewport(target):
+            # An object the artist has hidden should not paint a marker and a
+            # label over their work. The rest of the scan already filters on
+            # visibility; this one did not.
             continue
         key = _pointer(target)
         entry = grouped.setdefault(key, {

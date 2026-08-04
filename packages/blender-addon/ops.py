@@ -369,7 +369,7 @@ class BLENDLINK_OT_use_website_camera(bpy.types.Operator):
     """Designate an existing Blender camera as the website's authored view"""
     bl_idname = "blendlink.use_website_camera"
     bl_label = "Use Website Camera"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     camera_name: bpy.props.StringProperty(options={"HIDDEN", "SKIP_SAVE"})
 
@@ -1848,7 +1848,10 @@ class BLENDLINK_OT_set_export_inclusion(bpy.types.Operator):
         if context.mode != "OBJECT":
             cls.poll_message_set("Switch to Object Mode")
             return False
-        return bool(context.selected_editable_objects)
+        if not context.selected_editable_objects:
+            cls.poll_message_set("Select one or more objects")
+            return False
+        return True
 
     def execute(self, context):
         changed = 0
@@ -1984,7 +1987,7 @@ class BLENDLINK_OT_set_texture_max_size(bpy.types.Operator):
     """Limit the published dimensions of one Blender image"""
     bl_idname = "blendlink.set_texture_max_size"
     bl_label = "Set Published Texture Size"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     image_name: bpy.props.StringProperty(options={"HIDDEN"})
     max_size: bpy.props.EnumProperty(items=(
@@ -2025,7 +2028,7 @@ class BLENDLINK_OT_set_texture_compression(bpy.types.Operator):
     """Choose an artistic texture outcome, not encoder flags"""
     bl_idname = "blendlink.set_texture_compression"
     bl_label = "Set GPU Texture Compression"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     image_name: bpy.props.StringProperty(options={"HIDDEN"})
     mode: bpy.props.EnumProperty(items=(
@@ -2419,7 +2422,10 @@ class BLENDLINK_OT_set_atlas(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return any(obj.type == "MESH" for obj in context.selected_editable_objects)
+        if not any(obj.type == "MESH" for obj in context.selected_editable_objects):
+            cls.poll_message_set("Select one or more meshes")
+            return False
+        return True
 
     def execute(self, context):
         from . import handlers
@@ -2505,7 +2511,10 @@ class BLENDLINK_OT_set_shading(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return any(obj.type == "MESH" for obj in context.selected_editable_objects)
+        if not any(obj.type == "MESH" for obj in context.selected_editable_objects):
+            cls.poll_message_set("Select one or more meshes")
+            return False
+        return True
 
     def execute(self, context):
         from . import handlers, validation
@@ -3805,10 +3814,10 @@ def rebuild_bake_table(context) -> int:
 
 
 class BLENDLINK_OT_refresh_bake_table(bpy.types.Operator):
-    """Immediately rebuild the otherwise automatically maintained bake table."""
+    """Rescan the scene now instead of waiting for the automatic update"""
     bl_idname = "blendlink.refresh_bake_table"
     bl_label = "Refresh Bake Table"
-    bl_options = {"REGISTER"}
+    bl_options = {"REGISTER", "INTERNAL"}
 
     def execute(self, context):
         try:
