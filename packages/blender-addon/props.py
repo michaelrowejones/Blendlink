@@ -1255,7 +1255,16 @@ class BlendlinkProjectSettings(bpy.types.PropertyGroup):
         update=_project_changed,
     )
     environment_lighting_rotation: bpy.props.FloatProperty(
-        name="Lighting Rotation", default=0.0, min=-360.0, max=360.0,
+        name="Lighting Rotation",
+        description=(
+            "Rotate the environment's illumination around Z without rotating "
+            "the visible background"
+        ),
+        # An ANGLE float stores RADIANS. Writing 360 here let the widget reach
+        # about 20,600 degrees, and the recipe writer converts to degrees on
+        # the way out - so a drag past one turn wrote a recipe this same module
+        # then refused to load, and the scene reopened as never configured.
+        default=0.0, min=-2.0 * math.pi, max=2.0 * math.pi,
         subtype="ANGLE", unit="ROTATION", update=_project_changed,
     )
     environment_background_intensity: bpy.props.FloatProperty(
@@ -1263,7 +1272,13 @@ class BlendlinkProjectSettings(bpy.types.PropertyGroup):
         update=_project_changed,
     )
     environment_background_rotation: bpy.props.FloatProperty(
-        name="Background Rotation", default=0.0, min=-360.0, max=360.0,
+        name="Background Rotation",
+        description=(
+            "Rotate the visible background around Z without rotating the "
+            "illumination it casts"
+        ),
+        # Radians, for the same reason as Lighting Rotation above.
+        default=0.0, min=-2.0 * math.pi, max=2.0 * math.pi,
         subtype="ANGLE", unit="ROTATION", update=_project_changed,
     )
     environment_background_blur: bpy.props.FloatProperty(
@@ -1736,6 +1751,64 @@ _BAKE_OUTPUT_RECIPE_VALUES = {
     "APPEARANCE": "appearance",
     "MATERIAL": "material",
 }
+
+# What each Bake Output is called and what it means, for every artist-facing
+# surface. Here for the same reason the recipe spelling above is here: the UI
+# used the same two-way ternary the recipe used, so an atlas set to Bake
+# Material was labelled "Appearance" in the atlas list, described as
+# "Finished appearance" in its consequence box, and reported as "uses Bake
+# Appearance" in the per-object rendering reason -- three lies about one
+# setting the artist had just chosen. Adding a Bake Output means adding a row
+# here; the add-on suite asserts this table covers the enum.
+BAKE_OUTPUT_UI = {
+    "LIGHTING": {
+        "short": "Lighting",
+        "headline": "Baked lighting, live materials",
+        "icon": "LIGHT",
+        "consequence": (
+            "Preserves material detail and reflections while capturing "
+            "indirect light and grounding."
+        ),
+        "phrase": "Bake Lighting, preserving PBR while baking indirect GI",
+    },
+    "APPEARANCE": {
+        "short": "Appearance",
+        "headline": "Finished appearance",
+        "icon": "IMAGE_DATA",
+        "consequence": (
+            "Captures the final stylized look when realtime PBR cannot "
+            "reproduce it faithfully."
+        ),
+        "phrase": "Bake Appearance to capture the final stylized look",
+    },
+    "MATERIAL": {
+        "short": "Material",
+        "headline": "Baked surface, no lighting",
+        "icon": "MATERIAL",
+        "consequence": (
+            "Stores the surface channels only, so lighting stays live and "
+            "deforming objects can share one atlas."
+        ),
+        "phrase": "Bake Material to store surface channels with live lighting",
+    },
+}
+
+
+def bake_output_ui(value: str) -> dict:
+    """Presentation for one Bake Output, or a loud unknown rather than a guess."""
+    known = BAKE_OUTPUT_UI.get(value)
+    if known is not None:
+        return known
+    return {
+        "short": "Unknown",
+        "headline": f"Unknown Bake Output {value!r}",
+        "icon": "ERROR",
+        "consequence": (
+            "This atlas was authored by a newer Blendlink. Update the add-on "
+            "before publishing, or choose a Bake Output this version knows."
+        ),
+        "phrase": f"an unknown Bake Output ({value})",
+    }
 
 
 def _recipe_bake_output(atlas_name: str, value: str) -> str:

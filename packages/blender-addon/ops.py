@@ -1391,7 +1391,10 @@ class BLENDLINK_OT_bake_reflection_probe(bpy.types.Operator):
     """Render and atomically publish the active Blender Bake reflection probe"""
     bl_idname = "blendlink.bake_reflection_probe"
     bl_label = "Bake Reflection Probe"
-    bl_options = {"REGISTER"}
+    # Writes the probe's baked image, hashes and dimensions into the .blend
+    # and creates an Image datablock, so it belongs on the undo stack. Without
+    # UNDO an unrelated Ctrl+Z later reverts the bake with nothing to redo.
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -1443,7 +1446,7 @@ class BLENDLINK_OT_bake_all_reflection_probes(bpy.types.Operator):
     """Bake every Blender Bake probe; commit none unless every render succeeds"""
     bl_idname = "blendlink.bake_all_reflection_probes"
     bl_label = "Bake All Reflection Probes"
-    bl_options = {"REGISTER"}
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -3854,7 +3857,10 @@ class BLENDLINK_OT_sync_now(bpy.types.Operator):
     """Save, validate, and publish the connected Three.js website"""
     bl_idname = "blendlink.sync_now"
     bl_label = "Publish Website"
-    bl_options = {"REGISTER"}
+    # Stamps a persistent blendlink_id onto every editable object and writes
+    # the scene recipe before it saves; that is .blend data and has to be an
+    # undo step like any other.
+    bl_options = {"REGISTER", "UNDO"}
 
     quality: bpy.props.EnumProperty(items=(
         (
@@ -3951,7 +3957,7 @@ class BLENDLINK_OT_browser_preview(bpy.types.Operator):
     """Update the real website with Preview quality and open it"""
     bl_idname = "blendlink.browser_preview"
     bl_label = "Preview Website"
-    bl_options = {"REGISTER"}
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):

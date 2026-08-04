@@ -325,27 +325,65 @@ def _sync_active_if_changed(context=None) -> bool:
 
 
 def _tick():
-    changed = _hydrate_recipe_if_needed()
+    """Prepare every cached UI snapshot, and survive any one of them failing.
+
+    Blender unregisters a timer that raises. This timer is the only thing that
+    refreshes validation, sync status, previews, probe status and the bake
+    table, so a single exception anywhere in it used to stop all of them for
+    the rest of the session - the panels then showed stale state with no
+    error, because a panel cannot tell the difference between "nothing changed"
+    and "nothing is updating any more". Each step is isolated, its failure is
+    printed once per occurrence, and the timer keeps running.
+    """
     from . import ops, presentation_ui, probe_authoring, ui
-    # Capture selection changes before consuming validation, so cached guides
-    # update this tick rather than one timer interval later.
-    changed = _sync_active_if_changed() or changed
-    changed = ops.prime_checker_mode() or changed
-    changed = ui.prepare_active_material_previews() or changed
-    probe_status_changed = probe_authoring.prepare_status_cache()
-    if probe_status_changed:
+
+    def probe_status():
+        if not probe_authoring.prepare_status_cache():
+            return False
         # Probe status is embedded in the cached viewport-guide label.
         validation.mark_dirty()
-        changed = True
-    if validation.is_dirty():
-        changed = validation.consume_if_dirty() or changed
-    changed = presentation_ui.prepare_cache() or changed
-    changed = syncstatus.refresh() or changed
-    changed = ops.reconcile_saved_asset_override() or changed
-    changed = _rebuild_bake_table_if_needed() or changed
+        return True
+
+    def consume_validation():
+        return validation.consume_if_dirty() if validation.is_dirty() else False
+
+    changed = False
+    # Selection changes are captured before validation is consumed, so cached
+    # guides update this tick rather than one interval later.
+    for label, step in (
+        ("recipe hydration", _hydrate_recipe_if_needed),
+        ("active-object sync", _sync_active_if_changed),
+        ("atlas checker priming", ops.prime_checker_mode),
+        ("material previews", ui.prepare_active_material_previews),
+        ("reflection-probe status", probe_status),
+        ("scene validation", consume_validation),
+        ("presentation cache", presentation_ui.prepare_cache),
+        ("website sync status", syncstatus.refresh),
+        ("saved asset reconciliation", ops.reconcile_saved_asset_override),
+        ("bake table", _rebuild_bake_table_if_needed),
+    ):
+        try:
+            changed = bool(step()) or changed
+        except Exception as error:  # noqa: BLE001 - reported, never swallowed
+            _report_tick_failure(label, error)
     if changed:
         _tag_redraw_ui()
     return 1.0
+
+
+_reported_tick_failures: set[str] = set()
+
+
+def _report_tick_failure(label: str, error: BaseException) -> None:
+    """Print each distinct background failure once; never spam every second."""
+    signature = f"{label}: {type(error).__name__}: {error}"
+    if signature in _reported_tick_failures:
+        return
+    _reported_tick_failures.add(signature)
+    print(
+        f"blendlink addon: background {signature}. That panel keeps its last "
+        "known state; the rest of the add-on continues."
+    )
 
 
 def register():

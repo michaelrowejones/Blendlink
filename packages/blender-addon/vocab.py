@@ -74,7 +74,23 @@ def classify(name: str, extras: dict | None = None) -> Classification | None:
         role = role.lower().strip()
         if role in _COLLIDER_ROLES:
             shape, proxy_only = _COLLIDER_ROLES[role]
-            return Classification("collider", name, shape=shape, proxy_only=proxy_only)
+            # The property decides the SHAPE, but the logical name is still
+            # the name with its collider token removed, exactly as the name
+            # branch below does it and exactly as vocabulary.ts does it
+            # (`nameCollider ? matchName.replace(COLLIDER, '') + dup : name`).
+            # Returning the raw name here promised a collider called
+            # "Crate-colonly" while the pipeline produced one called "Crate",
+            # so the proxy never paired with its render mesh.
+            numbered = NUMBERED_RE.match(name)
+            stem, dup = (
+                (numbered.group("stem"), numbered.group("dup"))
+                if numbered else (name, "")
+            )
+            token = COLLIDER_RE.search(stem)
+            base = stem[: token.start()] + dup if token else name
+            return Classification(
+                "collider", base, shape=shape, proxy_only=proxy_only,
+            )
         return Classification(role, name)
 
     match = SOCKET_RE.match(name)

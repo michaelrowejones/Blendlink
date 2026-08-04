@@ -333,10 +333,23 @@ def _clipboard_value(value):
 
 
 def _component_values_for_clipboard(component) -> dict:
-    """Capture an editor, including incomplete drafts and extension fields."""
+    """Capture an editor, including incomplete drafts and extension fields.
+
+    Values are captured in the SAME portable units the recipe publishes, not
+    raw RNA. Two fields differ between the two - Chromatic Aberration
+    Direction and Tilt Shift Angle are RNA angles in radians and portable
+    values in degrees - and reading RNA directly meant Copy Values wrote
+    radians into a payload the paste path read as degrees. A 90 degree
+    direction came back as 1.57, the action still reported "1 changed",
+    and every repeat paste shrank it again.
+    """
     values = _raw_component_values(component)
+    portable = props.component_values(component, require_complete=False)
     for json_key, attribute in _DEFAULT_BINDINGS.get(component.component_type, {}).items():
-        values[json_key] = _clipboard_value(getattr(component, attribute))
+        if json_key in portable:
+            values[json_key] = _clipboard_value(portable[json_key])
+        else:
+            values[json_key] = _clipboard_value(getattr(component, attribute))
 
     reference = getattr(component, "reference_object", None)
     if reference is not None:
@@ -1716,3 +1729,13 @@ classes = (
     BLENDLINK_PT_object_components,
     BLENDLINK_PT_components_sidebar,
 )
+
+
+def sidebar_panels() -> tuple:
+    """The panels this module contributes to the 3D View sidebar tab.
+
+    ui.re_register_category() asks for these so that moving the tab moves the
+    whole sidebar, including panels declared outside ui.py. Contributing here
+    is what keeps a child panel attached to its parent across the rebuild.
+    """
+    return (BLENDLINK_PT_components_sidebar,)

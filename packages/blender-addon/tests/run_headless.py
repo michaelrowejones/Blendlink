@@ -9894,6 +9894,20 @@ def main():
     expect(set(props._BAKE_OUTPUT_RECIPE_VALUES) == atlas_enum_identifiers,
            "Bake Output enum and its portable spelling drifted apart; extend "
            f"props._BAKE_OUTPUT_RECIPE_VALUES to cover {atlas_enum_identifiers}")
+    # The same drift, one layer up: the UI used a two-way ternary, so an atlas
+    # set to a third Bake Output was labelled, described AND explained as
+    # Appearance.
+    expect(set(props.BAKE_OUTPUT_UI) == atlas_enum_identifiers,
+           "Bake Output enum and its artist-facing presentation drifted apart; "
+           f"extend props.BAKE_OUTPUT_UI to cover {atlas_enum_identifiers}")
+    for identifier, output_ui in props.BAKE_OUTPUT_UI.items():
+        expect(set(output_ui) == {"short", "headline", "icon", "consequence", "phrase"},
+               f"Bake Output {identifier} presentation is missing a field: {output_ui}")
+        expect(all(str(value).strip() for value in output_ui.values()),
+               f"Bake Output {identifier} presentation has an empty field: {output_ui}")
+    unknown = props.bake_output_ui("SURFACE")
+    expect("SURFACE" in unknown["headline"] and unknown["icon"] == "ERROR",
+           f"an unmapped Bake Output must present as loudly unknown: {unknown}")
     try:
         props._recipe_bake_output("Main", "SURFACE")
     except ValueError as error:

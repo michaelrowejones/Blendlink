@@ -447,7 +447,48 @@ def validate_component(project, component, *, scene=None) -> tuple[ComponentIssu
                 "The chosen object does not have an enabled Audio Source.", target=target,
                 blocking=active,
             ))
+
+    issues.extend(_out_of_range_issues(component, component_type, blocking=active))
     return tuple(issues)
+
+
+def _out_of_range_issues(component, component_type: str, *, blocking: bool):
+    """Values the publish step will refuse, named here instead of at publish.
+
+    Several components share one RNA property, so a slider's range is the
+    widest any component needs: Vignette and Bloom both drive `intensity`,
+    whose widget goes to 4 while Vignette publishes only 0..1. Without this
+    the artist authors a value Blender accepts, sees nothing wrong, and is
+    refused minutes later by a compile step that names a field they have
+    already stopped looking at. The ranges come from the same table the
+    recipe writer enforces, so the two cannot disagree.
+    """
+    from . import props
+
+    ranges = props._COMPONENT_NUMBER_FIELDS.get(component_type, {})
+    if not ranges:
+        return ()
+    try:
+        values = props.component_values(component, require_complete=False)
+    except (ValueError, TypeError, AttributeError):
+        # Malformed storage is already reported above; do not report it twice.
+        return ()
+    found = []
+    for key, (minimum, maximum) in sorted(ranges.items()):
+        value = values.get(key)
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            continue
+        if minimum <= float(value) <= maximum:
+            continue
+        label = key[0].upper() + key[1:]
+        found.append(_issue(
+            component, "value_out_of_range",
+            f"{label} is {float(value):g}, outside the {minimum:g} to "
+            f"{maximum:g} this effect publishes. Bring it back into range; "
+            "the slider is shared with another effect that allows more.",
+            blocking=blocking,
+        ))
+    return tuple(found)
 
 
 def validate_project(project, *, scene=None) -> tuple[ComponentIssue, ...]:

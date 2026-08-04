@@ -470,6 +470,21 @@ def prepare_status_cache(scene=None, *, force: bool = False) -> bool:
             str(probe.object_id): _status_error(mode_of(probe), message)
             for probe in probes
         }
+    # Blender generates an Image's preview lazily, and asking for it is real
+    # work, so the panel cannot do it from draw(). Requesting it here means the
+    # probe thumbnail is ready by the time the panel next redraws.
+    for status in statuses.values():
+        image = getattr(status, "image", None)
+        preview_ensure = getattr(image, "preview_ensure", None)
+        if callable(preview_ensure):
+            try:
+                preview_ensure()
+            except (AttributeError, ReferenceError, RuntimeError) as error:
+                print(
+                    "blendlink addon: could not prepare the reflection preview "
+                    f"for {getattr(image, 'name', '?')!r}: "
+                    f"{type(error).__name__}: {error}"
+                )
     status_token = tuple(sorted(
         (
             key, status.code, status.label, status.detail, status.severity,

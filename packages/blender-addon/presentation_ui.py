@@ -631,6 +631,8 @@ class BLENDLINK_OT_build_reference_matrix(bpy.types.Operator):
     """Write the exact Blender/browser capture matrix without rendering images"""
     bl_idname = "blendlink.build_reference_matrix"
     bl_label = "Build Comparison Plan"
+    # Writes the matrix manifest and its signature onto scene.blendlink_reference.
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -664,6 +666,7 @@ class BLENDLINK_OT_capture_reference_matrix(bpy.types.Operator):
     """Render every clean Blender source reference in the comparison matrix"""
     bl_idname = "blendlink.capture_reference_matrix"
     bl_label = "Capture Blender References"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -696,6 +699,8 @@ class BLENDLINK_OT_open_reference_folder(bpy.types.Operator):
     """Open the visual-reference output folder"""
     bl_idname = "blendlink.open_reference_folder"
     bl_label = "Open Current Reference Folder"
+    # Opens a folder; changes no data, so it registers without an undo step.
+    bl_options = {"REGISTER"}
 
     @classmethod
     def poll(cls, context):
