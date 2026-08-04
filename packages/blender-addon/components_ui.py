@@ -829,14 +829,9 @@ def _draw_known_fields(layout, component, definition):
         controls.prop(component, "contact_shadows_occlude_below_ground")
         controls.prop(component, "contact_shadows_backface_shadows")
         controls.prop(component, "contact_shadows_update_policy")
-        if (not component.contact_shadows_auto_fit
-                and component.target_kind == "SCENE"):
-            note = controls.box()
-            note.alert = True
-            note.label(
-                text="Manual placement needs an Empty target.",
-                icon="ERROR",
-            )
+        # The shared validator already reports this condition on the same
+        # card, so an inline alert here drew the same warning twice - once
+        # with a remedy and once without.
         return
 
     if component_type == "blendlink.outline":

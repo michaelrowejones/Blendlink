@@ -332,7 +332,9 @@ def validate_component(project, component, *, scene=None) -> tuple[ComponentIssu
         ):
             issues.append(_issue(
                 component, "manual_contact_shadows_need_empty",
-                "Manual Contact Shadows need an Empty target; enable Fit to Scene or move this component.",
+                "Manual Contact Shadows need an Empty target. Re-enable Fit to "
+                "Scene, or select an Empty, add Contact Shadows to it, and "
+                "remove this scene record.",
             ))
         elif target is not None and getattr(target, "type", "") == "MESH":
             issues.append(_issue(
