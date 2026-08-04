@@ -118,8 +118,9 @@ describe('portable components', () => {
       cardinality: 'one-per-scene',
       requires: ['post-pipeline', 'hdr-color'],
       cost: 'medium',
-      adapters: { webgl: 'preview', tsl: 'unavailable' },
-      fallbacks: { tsl: expect.stringContaining('WebGL') },
+      // Bloom runs on the TSL post pipeline; the registry used to claim
+      // otherwise and the artist-facing badge said so out loud.
+      adapters: { webgl: 'preview', tsl: 'preview' },
       consequence: expect.stringContaining('render'),
     })
     expect(componentDefinition('blendlink.open-url')).toMatchObject({
@@ -128,7 +129,7 @@ describe('portable components', () => {
     })
     expect(componentDefinition('blendlink.ambient-occlusion')).toMatchObject({
       phase: 'post-depth', requires: ['post-pipeline', 'depth', 'normals', 'camera'],
-      cost: 'high', adapters: { webgl: 'preview', tsl: 'unavailable' },
+      cost: 'high', adapters: { webgl: 'preview', tsl: 'preview' },
     })
     expect(componentDefinition('blendlink.shadow-catcher')).toMatchObject({
       targets: ['object'], phase: 'initial', cardinality: 'one-per-target',
@@ -142,7 +143,7 @@ describe('portable components', () => {
     })
     expect(componentDefinition('blendlink.kuwahara')).toMatchObject({
       phase: 'post-ldr', cost: 'very-high',
-      adapters: { webgl: 'preview', tsl: 'unavailable' },
+      adapters: { webgl: 'preview', tsl: 'preview' },
       fallbacks: { webgl: expect.stringContaining('Experimental Preview') },
       consequence: expect.stringContaining('sample count and filter radius'),
     })

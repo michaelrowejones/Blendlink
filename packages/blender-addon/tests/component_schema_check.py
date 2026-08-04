@@ -48,7 +48,10 @@ expect(
 )
 expect(
     SCHEMA.support_badge(SCHEMA.definition("blendlink.bloom"))
-    == "WebGL Preview · WebGPU/TSL Unavailable"
+    # Bloom is implemented on the TSL post pipeline
+    # (threeWebgpuPostPipeline.ts); the badge said Unavailable, which is the
+    # sentence an artist actually reads in Blender.
+    == "WebGL Preview · WebGPU/TSL Preview"
     and SCHEMA.cost_badge(SCHEMA.definition("blendlink.bloom"))
     == "Medium GPU cost"
     and SCHEMA.target_badge(SCHEMA.definition("blendlink.bloom"))
@@ -58,7 +61,7 @@ expect(
 expect(
     "blendlink.bloom" in {
         item[0] for item in SCHEMA.search_catalog(
-            "webgpu unavailable", target_mode="SCENE",
+            "webgpu preview", target_mode="SCENE",
         )
     },
     "catalog search did not include adapter support",
@@ -92,7 +95,7 @@ expect(
     and SCHEMA.definition("blendlink.ambient-occlusion")["phase"] == "post-depth"
     and SCHEMA.definition("blendlink.ambient-occlusion")["cost_level"] == "high"
     and SCHEMA.definition("blendlink.kuwahara")["adapters"]
-    == {"webgl": "preview", "tsl": "unavailable"}
+    == {"webgl": "preview", "tsl": "preview"}
     and "Experimental Preview approximation"
     in SCHEMA.definition("blendlink.kuwahara")["fallbacks"]["webgl"],
     "Batch 1 capability, cost, or preview support metadata drifted",

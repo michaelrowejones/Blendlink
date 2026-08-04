@@ -933,14 +933,29 @@ _CHANNEL_VIEW_NODES = {
 
 
 def _matching_socket(sockets, reference):
-    """Find the socket matching another socket's name, then identifier."""
+    """Find the socket matching another socket's IDENTIFIER, then name.
+
+    Identifiers are unique per node interface; display names are not --
+    Blender permits two group sockets both shown as "Shader". Matching by
+    name first therefore returns whichever duplicate comes earlier, which
+    is a silently wrong socket rather than an error. This ordering is the
+    canonical one, stated in tsl_ir._matching_socket and shared by
+    material_compiler._matching_socket; this copy used to match by name
+    first and could disagree with the other two about the same graph.
+    """
+    identifier = getattr(reference, "identifier", None)
+    if identifier:
+        matched = next(
+            (item for item in sockets if item.identifier == identifier),
+            None,
+        )
+        if matched is not None:
+            return matched
     named = sockets.get(reference.name)
     if named is not None:
         return named
-    identifier = getattr(reference, "identifier", None)
     return next(
-        (item for item in sockets
-         if item.name == reference.name or item.identifier == identifier),
+        (item for item in sockets if item.name == reference.name),
         None,
     )
 
