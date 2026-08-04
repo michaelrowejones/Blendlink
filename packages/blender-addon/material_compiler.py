@@ -6599,6 +6599,11 @@ def _bake_material_channels(
             _remove_split_receiver(split_state["receiver"])
 
 
+# Release verification sets this to gate every channel rather than one per
+# variant; see _bake_material_channels_inner.
+_EXHAUSTIVE_BAKE_GATES = os.environ.get("BLENDLINK_EXHAUSTIVE_BAKE_GATES") == "1"
+
+
 def _bake_material_channels_inner(
     decision: MaterialDecision,
     binding: MaterialBinding,
@@ -6611,9 +6616,17 @@ def _bake_material_channels_inner(
 ) -> dict:
     """Execute every planned channel bake for one variant.
 
-    Gates per baked channel: an exact same-resolution determinism re-bake,
-    and — for tiling past 0..1 — the integer-window wrap probe that refuses
-    a graph that is not period-1 instead of publishing a wrong repeat.
+    Gates: an exact same-resolution determinism re-bake, and — for tiling
+    past 0..1 — the integer-window wrap probe that refuses a graph that is
+    not period-1 instead of publishing a wrong repeat.
+
+    The determinism re-bake doubles the cost of every channel it guards, so
+    by default it runs once per VARIANT rather than once per channel: the
+    Cycles sampler settings it protects against are shared by every channel
+    of a variant, and the re-bake is the same measurement each time. The
+    evidence records the scope, so a reader can tell a proved channel from
+    a sampled one. BLENDLINK_EXHAUSTIVE_BAKE_GATES=1 restores per-channel
+    gating; the wrap probe is unaffected and still runs wherever it applies.
     """
     plan = decision.channel_plan or {}
     records = {
@@ -6626,6 +6639,25 @@ def _bake_material_channels_inner(
     wrap_window = plan.get("wrapGateWindow")
     uv_evidence = None
     gates = {}
+    # One determinism re-bake proves the variant. The sampled channel is
+    # the first in sorted order: stable across compiles, and predictable
+    # for fixtures that assert the gate.
+    baked_channels = sorted(
+        record["channel"] for record in records.values()
+        if (record.get("route") or record.get("transport")) != "factor"
+    ) or sorted(records)
+    determinism_gated = (
+        set(baked_channels) if _EXHAUSTIVE_BAKE_GATES
+        else {baked_channels[0]} if baked_channels else set()
+    )
+    determinism_proof = {
+        "channel": baked_channels[0] if baked_channels else None,
+        "stats": None,
+    }
+    # Coverage is a property of (receiver set, size, margin, uv layer), so
+    # every channel of this variant - and every determinism re-bake - can
+    # share one proved mask instead of paying for its own Cycles pass.
+    coverage_cache = {}
 
     def ensure_unique_uv():
         nonlocal uv_evidence
@@ -6690,28 +6722,45 @@ def _bake_material_channels_inner(
                         return bakelib.bake_tangent_normal_field_pixels(
                             targets, size=size, margin_px=margin,
                             uv_layer=uv_layer, label=label, log=log,
+                            coverage_cache=coverage_cache,
                         )
                     return bakelib.bake_channel_field_pixels(
                         targets, size=size, margin_px=margin,
                         uv_layer=uv_layer, label=label,
                         allow_hdr=allow_hdr, clamp_ldr=True, log=log,
+                        coverage_cache=coverage_cache,
                     )
                 finally:
                     if window_proxy is not None:
                         bakelib.remove_uv_tile_proxy(window_proxy)
 
             main = run(resolution)
-            repeat = run(resolution)
-            determinism = _channel_probe_stats(
-                main["pixels"], repeat["pixels"],
-            )
-            if determinism["maxAbs"] > 1.0e-5:
-                raise MaterialCompileError(
-                    f"{label}: two identical bakes disagreed by "
-                    f"{determinism['maxAbs']:.6g}; the channel bake is not "
-                    "deterministic and cannot be attested."
+            if record["channel"] in determinism_gated:
+                repeat = run(resolution)
+                determinism = _channel_probe_stats(
+                    main["pixels"], repeat["pixels"],
                 )
-            channel_gates = {"determinism": determinism}
+                if determinism["maxAbs"] > 1.0e-5:
+                    raise MaterialCompileError(
+                        f"{label}: two identical bakes disagreed by "
+                        f"{determinism['maxAbs']:.6g}; the channel bake is "
+                        "not deterministic and cannot be attested."
+                    )
+                determinism_proof["stats"] = determinism
+                channel_gates = {
+                    "determinism": determinism,
+                    "determinismScope": (
+                        "channel" if _EXHAUSTIVE_BAKE_GATES else "variant"
+                    ),
+                }
+            else:
+                # Not re-baked: this channel inherits the variant's proof.
+                # Naming the source keeps the attestation honest rather
+                # than implying a measurement that did not happen.
+                channel_gates = {
+                    "determinismScope": "variant",
+                    "determinismSampledFrom": determinism_proof["channel"],
+                }
             if record.get("uv") == "tile" and record.get("wrapGate") \
                     and wrap_window and record.get("pass") != "NORMAL":
                 probe = run(resolution, window=tuple(wrap_window))

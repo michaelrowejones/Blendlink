@@ -7326,7 +7326,7 @@ def _bake_isolated_field_pixels(
         objs, *, size: int, margin_px: int, uv_layer: str,
         label: str, log=print, bake_type: str = "EMIT",
         view_from: str = "ABOVE_SURFACE",
-        configure=None) -> dict:
+        configure=None, coverage_cache=None) -> dict:
     """Coverage-proved isolated bake to float pixels with exact restoration.
 
     Callers own graph semantics and must install their private material
@@ -7335,6 +7335,13 @@ def _bake_isolated_field_pixels(
     validation, and cleanup.  It returns float RGB pixels plus the proved
     coverage so composed channel packs (ORM) can bake several scalars and
     save once.
+
+    ``coverage_cache`` is an optional caller-owned dict.  The coverage mask
+    is a property of (objects, resolution, margin, uv layer) alone - it
+    cannot vary with the installed channel material - so a caller baking
+    several channels onto one receiver may share it instead of paying for
+    an extra Cycles pass per channel.  Every bake still reports a proved
+    coverage; a cache hit reports the SAME proved coverage.
     """
     objects = list(objs or ())
     resolution = int(size)
@@ -7369,34 +7376,49 @@ def _bake_isolated_field_pixels(
             scene, log=log, restore_state=device_state, purpose=label,
         )
 
-        coverage_target = bpy.data.images.new(
-            "BLENDLINK_CHANNEL_FIELD_COVERAGE",
-            width=resolution, height=resolution,
-            alpha=True, float_buffer=True,
+        coverage_key = (
+            tuple(sorted(obj.name for obj in objects)),
+            resolution, margin, uv_layer,
         )
-        coverage_target.generated_color = (0.0, 0.0, 0.0, 0.0)
-        coverage_material = bpy.data.materials.new(
-            "BLENDLINK_CHANNEL_FIELD_COVERAGE"
+        cached_coverage = (
+            coverage_cache.get(coverage_key)
+            if isinstance(coverage_cache, dict) else None
         )
-        tree = ensure_shader_node_tree(coverage_material)
-        tree.nodes.clear()
-        output_node = tree.nodes.new("ShaderNodeOutputMaterial")
-        emission = tree.nodes.new("ShaderNodeEmission")
-        emission.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
-        emission.inputs["Strength"].default_value = 1.0
-        tree.links.new(
-            emission.outputs["Emission"], output_node.inputs["Surface"],
-        )
-        for obj in objects:
-            for slot in obj.material_slots:
-                slots.append((slot, slot.link, slot.material))
-                slot.link = "DATA"
-                slot.material = coverage_material
-        bake_objects_to_image(
-            objects, coverage_target, bake_type="EMIT",
-            margin_px=margin, uv_layer=uv_layer, log=log,
-        )
-        coverage = image_signal_coverage(coverage_target, f"{label} coverage")
+        if cached_coverage is not None:
+            coverage = cached_coverage
+        else:
+            coverage_target = bpy.data.images.new(
+                "BLENDLINK_CHANNEL_FIELD_COVERAGE",
+                width=resolution, height=resolution,
+                alpha=True, float_buffer=True,
+            )
+            coverage_target.generated_color = (0.0, 0.0, 0.0, 0.0)
+            coverage_material = bpy.data.materials.new(
+                "BLENDLINK_CHANNEL_FIELD_COVERAGE"
+            )
+            tree = ensure_shader_node_tree(coverage_material)
+            tree.nodes.clear()
+            output_node = tree.nodes.new("ShaderNodeOutputMaterial")
+            emission = tree.nodes.new("ShaderNodeEmission")
+            emission.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
+            emission.inputs["Strength"].default_value = 1.0
+            tree.links.new(
+                emission.outputs["Emission"], output_node.inputs["Surface"],
+            )
+            for obj in objects:
+                for slot in obj.material_slots:
+                    slots.append((slot, slot.link, slot.material))
+                    slot.link = "DATA"
+                    slot.material = coverage_material
+            bake_objects_to_image(
+                objects, coverage_target, bake_type="EMIT",
+                margin_px=margin, uv_layer=uv_layer, log=log,
+            )
+            coverage = image_signal_coverage(
+                coverage_target, f"{label} coverage",
+            )
+            if isinstance(coverage_cache, dict):
+                coverage_cache[coverage_key] = coverage
         for slot, link, material in reversed(slots):
             slot.link = link
             slot.material = material
@@ -7591,7 +7613,7 @@ def bake_channel_field_pixels(
         objs, *, size: int, margin_px: int, uv_layer: str = ATLAS_UV,
         label: str = "material channel field", allow_hdr: bool = False,
         clamp_ldr: bool = False, view_from: str = "ABOVE_SURFACE",
-        log=print) -> dict:
+        log=print, coverage_cache=None) -> dict:
     """Bake one caller-installed private EMIT channel to float pixels.
 
     The Material bake composes several scalar channels into one packed PNG,
@@ -7612,6 +7634,7 @@ def bake_channel_field_pixels(
     result = _bake_isolated_field_pixels(
         objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
         label=label, log=log, view_from=view_from,
+        coverage_cache=coverage_cache,
     )
     minimum = result["rgbMin"]
     maximum = result["rgbMax"]
@@ -7684,7 +7707,8 @@ def bake_channel_field_to_png(
 
 def bake_tangent_normal_field_pixels(
         objs, *, size: int, margin_px: int, uv_layer: str = ATLAS_UV,
-        label: str = "material normal channel", log=print) -> dict:
+        label: str = "material normal channel", log=print,
+        coverage_cache=None) -> dict:
     """Tangent-space +Y NORMAL bake to float pixels.
 
     Unlike every other channel this pass evaluates the caller's installed
@@ -7697,6 +7721,7 @@ def bake_tangent_normal_field_pixels(
         objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
         label=label, log=log,
         bake_type="NORMAL", configure=configure_normal_bake,
+        coverage_cache=coverage_cache,
     )
 
 
