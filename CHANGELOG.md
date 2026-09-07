@@ -9,6 +9,25 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ## [Unreleased]
 
+### Fixed
+
+- Local archives now include the pinned WebGPU ambient-occlusion runtime and
+  its notices. An isolated website build previously failed to resolve
+  `n8ao-webgpu`; monorepo consumer builds hid the missing dependency. Packed
+  runtime import checks now reject undeclared dependencies and missing modules.
+- Environment export refuses PNG or other mismatched bytes behind an HDR/EXR
+  filename, with a Blender reload/repack remedy. The baked end-to-end fixture
+  now saves a real HDR, and its test uses the browser's HDR decoder.
+- Website connection instructions describe both supported renderer families
+  and the Three frame-loop calls. The R3F example preserves authored playback
+  and lighting choices. Both examples include mobile viewport metadata.
+
+### Added
+
+- A first-scene guide for private source/local archive installation, Blender
+  preparation, Preview Studio, and existing Three.js/R3F website integration.
+- A dated first-user audit with measured gaps and remaining public-beta work.
+
 ## [0.9.0] - 2026-08-04
 
 ### Added

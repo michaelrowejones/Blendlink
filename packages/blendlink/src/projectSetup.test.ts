@@ -77,7 +77,8 @@ describe('artist-first website setup', () => {
     expect(component).not.toContain('useFrame')
     expect(component).not.toContain('installThreeCompiledScene')
     expect(component).not.toContain('value.dispose()')
-    expect(result.nextActions.join('\n')).toContain('WebGL R3F Canvas with <HeroScene />')
+    expect(result.nextActions.join('\n')).toContain('inside your existing R3F Canvas with <HeroScene />')
+    expect(result.nextActions.join('\n')).toContain('initialized WebGPURenderer')
     expect(result.nextActions.join('\n')).toContain('blendlink:publish')
     expect(result.nextActions.findIndex((action) => action.includes('<HeroScene />')))
       .toBeLessThan(result.nextActions.findIndex((action) => action.includes('blendlink:preview')))
@@ -138,8 +139,10 @@ describe('artist-first website setup', () => {
     const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
     expect(pkg.devDependencies['@types/three']).toBe('^0.184.0')
     expect(result.nextActions.join('\n')).toContain(
-      'Three WebGLRenderer with await installHeroScene({ renderer, scene }) from src/blendlink/HeroScene.ts',
+      'await installHeroScene({ renderer, scene }) from src/blendlink/HeroScene.ts',
     )
+    expect(result.nextActions.join('\n')).toContain('existing WebGLRenderer or an initialized WebGPURenderer')
+    expect(result.nextActions.join('\n')).toContain('installed.update(delta) and installed.render(delta)')
   })
 
   it('preserves conflicting package scripts and reports the exact ownership boundary', async () => {

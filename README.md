@@ -2,6 +2,12 @@
 
 > Make the scene in Blender. Ship it beautifully in Three.js.
 
+This is currently private source work, not a public installable release.
+Start with [your first scene on a website](docs/FIRST_SCENE.md) for local
+installation, Blender preparation, preview, and an existing Three.js/R3F site.
+The [September first-user audit](docs/FIRST_USER_AUDIT_2026-09-07.md) records
+what was actually run and what remains before a public beta.
+
 Blendlink is a Blender-to-Three.js scene compiler for artists and small web
 teams. It turns a `.blend` into portable GLB/textures, a validated manifest,
 and typed bindings—without introducing an engine, cloud service, visual
@@ -21,7 +27,7 @@ only — on WebGL those materials keep their portable glTF form.
 
 ## The artist workflow
 
-1. Install Blendlink and run `npx blendlink addon install`, then open the
+1. Follow the [local installation steps](docs/FIRST_SCENE.md#build-and-install-the-local-tools), then open the
    `.blend` and choose
    **Set Up Blendlink Scene**. This creates the scene-owned publishing recipe
    that **Website Readiness** evaluates; then follow that card until it is green.
@@ -246,9 +252,20 @@ reports capture cost without inventing hidden overlap or shared-material behavio
 
 ## Quick start
 
+From this checkout, build the CLI and install its matching Blender add-on:
+
+```sh
+npm ci
+npm run build
+node packages/blendlink/dist/cli.js addon install
+node packages/blendlink/dist/cli.js preview --blend "/absolute/path/to/hero.blend"
+```
+
+Prepare and save the scene in Blender before previewing. To attach a website,
+use the [local archive workflow](docs/FIRST_SCENE.md#attach-your-existing-website).
+Once that site has the local package installed, these commands are available:
+
 ```bash
-npm install blendlink
-npx blendlink addon install      # install + enable the Blender workspace
 npx blendlink preview --blend assets/hero.blend  # private Live Preview Studio
 npx blendlink connect . --blend assets/hero.blend # attach this site; scaffold if empty
 npx blendlink compile --preview  # fast iteration profile
@@ -289,7 +306,7 @@ artifacts after the build. A scene name scopes compilation and verification.
 `--assets-only` explicitly stops after deployable assets for a custom pipeline;
 Blendlink never infers permission to upload or deploy the website.
 
-`blendlink compile` remains an alias for `compile`. `compile --watch` rebuilds on
+`compile --watch` rebuilds on
 Blender saves and changes to each scene's declared `inputs`. Editing
 `blendlink.config.mjs` reloads validated config, updates the watched paths, and
 rebuilds only affected scenes; an invalid edit is reported while the last

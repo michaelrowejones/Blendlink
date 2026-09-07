@@ -631,10 +631,10 @@ export async function setupWebsiteProject(
       ...(dependencyInstallRequired ? ['install the declared website dependencies with your package manager'] : []),
       `open ${sceneFile} and click Blendlink > Set Up Blendlink Scene`,
       ...r3fIntegrations.map((integration) =>
-        `render the exported scene in a WebGL R3F Canvas with <${basename(integration, '.ts')} /> from ${integration}`),
+        `render the exported scene inside your existing R3F Canvas with <${basename(integration, '.ts')} /> from ${integration}; keep its renderer (WebGLRenderer or an initialized WebGPURenderer)`),
       ...threeIntegrations.slice(stack === 'new-three-vite' || existingStarter ? 1 : 0).map((integration) => {
         const integrationName = basename(integration, '.ts')
-        return `load the exported scene in a Three WebGLRenderer with await install${integrationName}({ renderer, scene }) from ${integration}`
+        return `load the exported scene with await install${integrationName}({ renderer, scene }) from ${integration}; pass your existing WebGLRenderer or an initialized WebGPURenderer, then call installed.update(delta) and installed.render(delta) in your frame loop`
       }),
       `run ${run('blendlink:preview')} to compile Preview quality and open the real site`,
       `run ${run('blendlink:publish')} when the scene is approved; it compiles Final, verifies it, and runs the website build`,

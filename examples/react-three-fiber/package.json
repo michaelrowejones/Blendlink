@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@react-three/fiber": "^9.6.1",
-    "blendlink": "^0.8.0",
+    "blendlink": "^0.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "0.184.0"

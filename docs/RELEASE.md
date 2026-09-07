@@ -9,11 +9,17 @@ installable artifacts from one tagged source revision:
 
 The npm package metadata uses `SEE LICENSE IN LICENSES.md`; its ordinary
 Node/compiler/runtime files are MIT, its Blender-dependent Python/add-on files
-are GPL-3.0-or-later, and its Basis notices are Apache-2.0. Version equality
+are GPL-3.0-or-later, its Basis notices are Apache-2.0, and the bundled
+`n8ao-webgpu` runtime is CC0-1.0 with its original license and notices. Version equality
 does not merge the artifacts' distribution systems or erase those file-level
 licenses.
 
 ## Current release status
+
+The [2026-09-07 first-user audit](FIRST_USER_AUDIT_2026-09-07.md) adds local
+installation, Blender, browser and isolated-consumer evidence. It is not a
+release approval. The status items below retain their original dated evidence;
+this audit did not recheck remote repository settings or registry ownership.
 
 - `npm view blendlink name version --json` returned registry `E404` on
   2026-07-25 and again on 2026-08-04; no public unscoped `blendlink` package

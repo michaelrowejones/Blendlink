@@ -5,16 +5,24 @@ publishing intent lives in the `.blend`; the website receives ordinary GLB,
 textures, a readable manifest, typed bindings, and a small user-owned baked
 composition recipe.
 
+This is a private development build. Install an archive supplied by the
+maintainer into your website, then connect it. The source checkout's
+`docs/FIRST_SCENE.md` explains how to build that archive locally.
+
 ```bash
-npm install blendlink
+npm install "/absolute/path/to/blendlink-0.9.0-<hash>.tgz"
 npx blendlink addon install
 npx blendlink preview --blend assets/hero.blend  # private cached Live Preview Studio
-npx blendlink plan --preview # inspect its atlas plan without running Cycles
 npx blendlink connect . --blend assets/hero.blend # attach the real website
 npm install                  # connect declares site dependencies; you keep ownership
+npx blendlink plan --preview # inspect the connected scene's atlas plan without Cycles
 npx blendlink preview        # open + watch the connected website
 npx blendlink publish        # Final + verify + site build + verify
 ```
+
+Before previewing, open the saved scene in Blender, choose **Set Up Blendlink
+Scene**, and save. In an existing website, mount the generated integration
+before running its Preview command; connect prints the import and call to add.
 
 Requires Node 22.15+ on the Node 22 line, or Node 24. The generated starter
 uses Vite 7 and the same tested runtime floor.

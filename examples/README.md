@@ -10,6 +10,21 @@ by the CLI, not hand-written.
 | [`vanilla-three`](vanilla-three) | TypeScript + Vite + three | [`src/main.ts`](vanilla-three/src/main.ts) |
 | [`react-three-fiber`](react-three-fiber) | React 19 + @react-three/fiber 9 | [`src/main.tsx`](react-three-fiber/src/main.tsx) |
 
+## Try one with your own scene
+
+Copy one example folder to a separate directory and save your scene as
+`assets/hero.blend` there. These example imports expect the scene name `hero`.
+Follow [the first-scene guide](../docs/FIRST_SCENE.md) to install the local
+compiler/add-on, prepare the scene, connect that folder, and install the local
+archive. Do this before running `npm install` in the copied example; the
+declared registry version is a release placeholder while the project is private.
+Then run `npx blendlink compile --preview` and `npm run dev` from your copy.
+
+Both examples use WebGPURenderer. An existing WebGL site can keep its renderer;
+the R3F example's `gl` prop is optional for that case. The R3F component uses
+the scene's authored playback and lighting instead of assuming particular clip,
+state, or light-group names.
+
 ## How the CI gate works
 
 ```bash

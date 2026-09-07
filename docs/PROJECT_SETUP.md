@@ -65,12 +65,13 @@ their own `use client` boundary, so they are also safe entry points from a
 Next.js App Router Server Component. If two otherwise-valid scene names would
 collapse to the same integration filename (for example `hero` and
 `heroScene`), connect rejects the ambiguity before writing either integration.
-The printed action connects that integration before Preview: a Vanilla site
-passes its Three `WebGLRenderer`, while R3F mounts the component inside a WebGL
-Canvas. This requirement applies to previewing inside that connected site, not
-to the private Preview Studio. The standard installer deliberately rejects
-`WebGPURenderer`; WebGPU sites keep the portable assets but own their renderer
-adapter.
+The printed action connects that integration before Preview. A Vanilla site
+passes its existing `WebGLRenderer` or an initialized `WebGPURenderer`; R3F
+mounts the component inside its existing Canvas using either renderer family.
+This requirement applies to previewing inside that connected site, not to the
+private Preview Studio. Compiled TSL material programs apply on the WebGPU
+renderer family. WebGL keeps their portable glTF material representation.
+The empty-directory starter uses an initialized `WebGPURenderer`.
 
 ## Empty directory
 
