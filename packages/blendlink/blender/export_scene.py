@@ -32,6 +32,7 @@ import bpy
 # home for logic external pipelines also import. Never inline a copy here.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bakelib  # noqa: E402
+import preparation_cache  # noqa: E402
 try:
     import glblib  # noqa: E402
     import material_compiler  # noqa: E402
@@ -674,7 +675,7 @@ def resolve_scene_recipe(config_settings: dict) -> tuple[dict, dict | None]:
         key: config_settings[key]
         for key in (
             "collection", "imageFormat", "curveSamples", "exporterOverrides",
-            "planOnly", "draft", "authoringPreview", "incremental",
+            "planOnly", "draft", "authoringPreview", "incremental", "preparationCachePath",
         )
         if key in config_settings
     }
@@ -2208,7 +2209,7 @@ def compute_texel_weights(meshes: list) -> dict:
     return weights
 
 
-def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
+def bake_prepare_geometry(bake: dict, supersample: int = 1, *, cache_path=None) -> dict:
     """Freeze, unwrap-fallback, then per-atlas average + weight + pack.
 
     Returns the layout: {group: {objects, size, margin}} at FINAL
@@ -2242,6 +2243,16 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
     # contribute its islands and pin flags instead of the first UV layer —
     # opt-in by presence.
     authored = set(bakelib.stage_atlas_layers(meshes))
+    cache_key = None
+    if cache_path:
+        progress(0.06, 'Checking validated atlas preparation cache')
+        cache_key = preparation_cache.fingerprint(
+            meshes, bake, supersample, camera_positions(), compute_texel_weights(meshes),
+        )
+        cached = preparation_cache.restore(cache_path, cache_key, meshes)
+        if cached is not None:
+            progress(0.06, 'Reusing validated atlas preparation')
+            return cached
     # Evaluated modifiers can create real faces whose inherited corner UVs
     # collapse to a line. Repair each fully unpinned derived workspace. Keep
     # pinned failures as plan errors so the island validator below can still
@@ -2471,6 +2482,8 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1) -> dict:
                 f"float32 UV precision; Blendlink {action}. {preserved}"
             )
     layout["_errors"].extend(packed_atlas_coverage_errors(layout))
+    if cache_path and cache_key:
+        preparation_cache.store(cache_path, cache_key, layout)
     return layout
 
 
@@ -6517,7 +6530,10 @@ def main() -> None:
             return
         progress(0.06, "Preparing and validating bake atlases")
         bake = settings.get("bake", {})
-        layout = bake_prepare_geometry(bake, max(1, int(bake.get("supersample", 1))))
+        layout = bake_prepare_geometry(
+            bake, max(1, int(bake.get("supersample", 1))),
+            cache_path=settings.get('preparationCachePath'),
+        )
         plan = compute_bake_plan(settings, recipe, prepared_layout=layout)
         if plan.get("errors"):
             raise SystemExit(

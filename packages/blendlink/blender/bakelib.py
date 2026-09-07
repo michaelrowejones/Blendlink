@@ -523,7 +523,9 @@ def _fingerprint_rna_scalars(digest, value, skip=()) -> None:
     """
     for prop in sorted(value.bl_rna.properties, key=lambda item: item.identifier):
         key = prop.identifier
-        if key in skip or key == "rna_type" or prop.type in {"POINTER", "COLLECTION"}:
+        # A datablock receives a new session ID when its file is reopened.
+        # Its render inputs are hashed below; this process identity is not one.
+        if key in skip or key in {"rna_type", "session_uid"} or prop.type in {"POINTER", "COLLECTION"}:
             continue
         digest.update(key.encode("utf8"))
         try:

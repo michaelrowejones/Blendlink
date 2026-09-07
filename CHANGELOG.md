@@ -11,6 +11,12 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Repeated baked compiles reuse validated atlas preparation when evaluated
+  geometry, UVs, pins, cameras and layout settings match. Lighting, material,
+  sample-count and denoise edits can reuse the layout while rebuilding pixels.
+  Corrupt or incompatible local cache files fall back to preparation.
+- Bake dependency fingerprints exclude Blender's temporary datablock session
+  IDs, so reopening unchanged inputs does not invalidate lighting by itself.
 - Mesh attribute hashing reads numeric properties in bulk, including color and
   matrix fields, while retaining scalar handling for strings and unsupported
   bulk access. UV island analysis also uses bulk reads; gutter validation skips

@@ -1220,9 +1220,13 @@ async function syncSceneWithPublicationLease(
   // Presence of prior bake fingerprints is the authoritative cache signal;
   // realtime exports simply ignore the additive incremental payload.
   const incremental = incrementalBakeCache(existing, scene)
-  const exportSettings: ExportSettings = incremental
-    ? { ...settings, incremental }
-    : settings
+  const exportSettings: ExportSettings = {
+    ...settings,
+    ...(incremental ? { incremental } : {}),
+    preparationCachePath: join(scene.root, '.blendlink-cache', 'preparation',
+      createHash('sha256').update(scene.blendPath).digest('hex').slice(0, 24)
+        + (options.draft ? '.preview.json' : '.final.json')),
+  }
   const exported = await exportBlend({
     blendPath: scene.blendPath,
     outPath: buildGlbPath,

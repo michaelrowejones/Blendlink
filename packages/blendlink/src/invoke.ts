@@ -78,6 +78,8 @@ export interface ExportSettings {
   /** Internal, conservative atlas-job cache supplied by sync. Public callers
    * may omit it; missing/stale files and incompatible fingerprints rebuild. */
   incremental?: IncrementalBakeCache
+  /** Internal local preparation cache. Never published with runtime assets. */
+  preparationCachePath?: string
 }
 
 export interface BakeFingerprints {

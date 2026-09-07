@@ -295,3 +295,64 @@ validated layouts across eligible saves is the next quality-preserving step;
 an explicit Preview subdivision limit could reduce this workload further when
 the artist accepts a geometry tradeoff. Neither feature is implemented in this
 pass, and the source `.blend` was not edited.
+
+## Persistent atlas preparation and quality checks
+
+The compiler now retains successful atlas preparation under the project's
+private `.blendlink-cache/preparation` directory, with one entry per source
+path and Preview/Final profile. Runtime assets do not carry the cache path or
+contents. Exact staged evaluated meshes, transforms, UVs, pins, layer order,
+camera positions, weights, atlas declaration order, layout settings, Blender
+build and Python pipeline sources determine reuse. Sampling, denoising and
+lighting-state settings remain bake dependencies but do not change this layout
+key. A hit restores packed coordinates, pin/selection attributes and layout
+metadata before the normal plan and bake path continues.
+
+The cache uses compressed float32 coordinates and a checksummed payload,
+bounded decompression, complete preflight and atomic replacement. Invalid or
+incompatible files rebuild normally; unsuccessful layouts never replace a
+validated entry. Injected Blender write failures restore the original staged
+mesh data before propagating the error. The UI reports when it reuses validated
+atlas preparation.
+
+Testing found two invalidations that coordinate-only checks missed. UV packing
+changes optional Boolean selection/pin attributes, so restoration must preserve
+their values and presence. Blender's temporary datablock `session_uid` also
+changes when a file is reopened. Bake fingerprints now exclude that process
+identity while continuing to hash the datablock's render inputs.
+
+The generated woodland scene (580 triangles, 512px atlas, 16 samples, denoising)
+took **16.9 seconds cold and 2.5 seconds on a forced unchanged compile** with the
+final build. The latter explicitly reused preparation and its one atlas bake.
+A saved light-energy edit also reused preparation and rebuilt its atlas. That
+run took 22.5 seconds while other verification work was active; it demonstrates
+correct invalidation, not a measured lighting-edit speedup. These are single
+runs with uncontrolled background load and driver caches.
+
+The large diorama remains a limiting case. A private copy took **310.5 seconds**
+for a cold two-sample compile, retaining 2,314,974 triangles. A subsequent fresh
+Blender process missed the preparation cache. Two isolated input probes found
+different evaluated UV bytes on 17 meshes, including Bevel-affected furniture
+and beams; their reported changed attributes were source UVs and the staged
+atlas layer. Blendlink retains exact matching and falls back to preparation.
+No cache speedup is claimed for this file. The earlier 398.1-second run is not
+a controlled comparison against this cold run.
+
+On the private copy, increasing Preview from two samples without denoising to
+16 samples with denoising produced a substantially cleaner wall, floor and
+furniture render. That compile took **394.9 seconds**, used OptiX at 1024px,
+retained 2,314,974 triangles and reached browser-verified Ready without browser
+errors. `diorama-16-samples-denoised.png` and `diorama-16-status.json` retain the
+result; `second-diorama-ready.png` retains the earlier two-sample view. The
+timings include a fresh layout and differ in background load, so their
+difference is not an isolated cost measurement for sampling or denoising.
+The scene's existing material, World and display-transform limitations remain.
+Its original source file was not edited.
+
+The cache regression performs real exports on Blender 5.1 and 5.2. It checks
+unchanged bake identity, new identities after material/light/quality edits,
+geometry/UV/camera/padding/supersample invalidation, pinned layouts, atlas order,
+corrupt payloads, rollback and refusal to cache failed layouts. The build,
+794 unit tests with two codec skips, 19 release-policy checks and the baked
+end-to-end suite passed. The full headless/release matrix was not repeated.
+Logs and input probes remain under `artifacts/verification-performance/`.
