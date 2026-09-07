@@ -1,11 +1,33 @@
 // The in-Blender Python ships beside the compiled JS under the file-level
 // licenses mapped in LICENSES.md. EVERY .py in blender/ is copied so a new
 // module can never be silently missing from dist (bakelib.py was, once).
-import { copyFileSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs'
+import { copyFileSync, cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+// The measured WebGPU AO implementation is a build input, not a website
+// dependency. Its published peer range requests a different Three release.
+// Include its exact runtime bytes and notices so consumers use their own
+// audited Three instance without needing our monorepo's npm override.
+const aoRoot = join(dirname(fileURLToPath(import.meta.resolve('n8ao-webgpu'))), '..')
+const aoPackage = JSON.parse(readFileSync(join(aoRoot, 'package.json'), 'utf8'))
+if (aoPackage.name !== 'n8ao-webgpu' || aoPackage.version !== '0.1.0'
+    || aoPackage.license !== 'CC0-1.0') {
+  throw new Error('Review the WebGPU AO runtime and notices before changing its bundled version.')
+}
+const aoTarget = join(root, 'dist', 'vendor', 'n8ao-webgpu')
+cpSync(join(aoRoot, 'dist'), aoTarget, { recursive: true })
+for (const notice of ['LICENSE', 'NOTICE.md', 'package.json']) {
+  copyFileSync(join(aoRoot, notice), join(aoTarget, notice))
+}
+const pipelinePath = join(root, 'dist', 'threeWebgpuPostPipeline.js')
+const pipeline = readFileSync(pipelinePath, 'utf8')
+const aoImport = "import('n8ao-webgpu')"
+if (pipeline.split(aoImport).length !== 2) {
+  throw new Error('Expected one WebGPU AO import to redirect into the packaged runtime.')
+}
+writeFileSync(pipelinePath, pipeline.replace(aoImport, "import('./vendor/n8ao-webgpu/index.js')"))
 const packageVersion = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version
 const addonManifestText = readFileSync(
   join(root, '..', 'blender-addon', 'blender_manifest.toml'),

@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 import { verifyPackedBlendlinkLicenseContract } from './package-license-contract.mjs'
+import { verifyPackedRuntimeImports } from './package-runtime-contract.mjs'
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const packageRoot = join(repoRoot, 'packages', 'blendlink')
@@ -121,6 +122,15 @@ try {
   }
 
   verifyPackedBlendlinkLicenseContract(installed)
+  verifyPackedRuntimeImports(installed)
+  const aoRoot = resolve(dirname(fileURLToPath(import.meta.resolve('n8ao-webgpu'))), '..')
+  for (const name of ['LICENSE', 'NOTICE.md', 'package.json',
+    'dist/index.js', 'dist/N8AONode.js', 'dist/BlueNoise.js', 'dist/math.js',
+    'dist/createN8AOScenePass.js']) {
+    const source = readFileSync(join(aoRoot, name))
+    const packed = readFileSync(join(installed, 'dist', 'vendor', 'n8ao-webgpu', name.replace(/^dist\//, '')))
+    if (!source.equals(packed)) throw new Error(`Packed WebGPU AO ${name} differs from the pinned build input.`)
+  }
   const publishedManifest = JSON.parse(readFileSync(join(installed, 'package.json'), 'utf8'))
   const publishedAddonVersion = readFileSync(
     join(installed, 'dist', 'addon', 'blender_manifest.toml'),

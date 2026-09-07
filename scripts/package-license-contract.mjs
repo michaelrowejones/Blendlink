@@ -6,6 +6,7 @@ const FILE_LICENSES = Object.freeze([
   'MIT',
   'GPL-3.0-or-later',
   'Apache-2.0',
+  'CC0-1.0',
 ])
 
 function readRequiredText(packageRoot, relativePath, label) {
@@ -97,6 +98,13 @@ export function verifyPackedBlendlinkLicenseContract(packageRoot) {
     ],
     'Packed Blendlink must embed the complete Apache-2.0 license text',
   )
+
+  const cc0Text = readRequiredText(
+    packageRoot, 'dist/vendor/n8ao-webgpu/LICENSE', 'WebGPU AO CC0 license text',
+  )
+  requireFragments(cc0Text, ['CC0 1.0 Universal', 'Statement of Purpose', 'Limitations and Disclaimers'],
+    'Packed Blendlink must embed the complete CC0 license text')
+  readRequiredText(packageRoot, 'dist/vendor/n8ao-webgpu/NOTICE.md', 'WebGPU AO upstream notice')
 
   return {
     license: PACKAGE_LICENSE,

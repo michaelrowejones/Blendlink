@@ -19,6 +19,10 @@ function packedFixture() {
   owned.push(root)
   mkdirSync(join(root, 'assets'), { recursive: true })
   mkdirSync(join(root, 'dist', 'addon'), { recursive: true })
+  mkdirSync(join(root, 'dist', 'vendor', 'n8ao-webgpu'), { recursive: true })
+  writeFileSync(join(root, 'dist', 'vendor', 'n8ao-webgpu', 'LICENSE'),
+    'CC0 1.0 Universal\nStatement of Purpose\nLimitations and Disclaimers')
+  writeFileSync(join(root, 'dist', 'vendor', 'n8ao-webgpu', 'NOTICE.md'), 'Upstream notice')
   writeFileSync(
     join(root, 'package.json'),
     JSON.stringify({ license: 'SEE LICENSE IN LICENSES.md' }),
@@ -29,6 +33,7 @@ function packedFixture() {
       'MIT',
       'GPL-3.0-or-later',
       'Apache-2.0',
+      'CC0-1.0',
       'dist/addon/LICENSE',
       'assets/basis-apache-2.0.txt',
     ].join('\n'),
@@ -64,7 +69,7 @@ describe('packed Blendlink license contract', () => {
     assert.deepEqual(verifyPackedBlendlinkLicenseContract(root), {
       license: 'SEE LICENSE IN LICENSES.md',
       licenseMap: 'LICENSES.md',
-      fileLicenses: ['MIT', 'GPL-3.0-or-later', 'Apache-2.0'],
+      fileLicenses: ['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'CC0-1.0'],
     })
   })
 
@@ -79,5 +84,10 @@ describe('packed Blendlink license contract', () => {
       () => verifyPackedBlendlinkLicenseContract(root),
       /complete Apache-2\.0 license text/i,
     )
+  })
+  it('rejects a missing bundled WebGPU AO notice', () => {
+    const root = packedFixture()
+    rmSync(join(root, 'dist', 'vendor', 'n8ao-webgpu', 'NOTICE.md'))
+    assert.throws(() => verifyPackedBlendlinkLicenseContract(root), /WebGPU AO upstream notice/)
   })
 })
