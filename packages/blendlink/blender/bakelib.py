@@ -54,6 +54,7 @@ from uvgeometry import (  # noqa: E402
     _receiver_rectangles_intersect,
     _uv_bounds_tuple_distance,
     allocate_receiver_rectangles,
+    nearby_uv_bounds_pairs,
 )
 
 
@@ -672,6 +673,49 @@ def _fingerprint_material(digest, material, visited) -> None:
         _fingerprint_node_tree(digest, tree, visited)
 
 
+def _fingerprint_mesh_attribute(digest, attribute) -> None:
+    """Hash numeric RNA columns in bulk, retaining all exposed scalar fields.
+
+    Inspect the homogeneous element schema once. Strings or unsupported bulk
+    access fall back to the conservative record reader. Encoding is versioned
+    and framed so property boundaries, widths and element counts participate.
+    Float64 buffers retain the values returned by RNA, including computed
+    color properties; this does not quantize shader inputs for cache identity.
+    """
+    data = attribute.data
+    _fingerprint_value(digest, ('mesh-attribute-columns-v1', len(data)))
+    if not data:
+        return
+    properties = [
+        prop for prop in sorted(data[0].bl_rna.properties, key=lambda p: p.identifier)
+        if prop.identifier != 'rna_type' and prop.type not in {'POINTER', 'COLLECTION'}
+    ]
+    codes = {'FLOAT': 'd', 'INT': 'i', 'BOOLEAN': 'b'}
+    if all(prop.type in codes for prop in properties):
+        columns = hashlib.sha256()
+        try:
+            for prop in properties:
+                width = max(1, prop.array_length)
+                values = array(codes[prop.type], [0]) * (len(data) * width)
+                data.foreach_get(prop.identifier, values)
+                if sys.byteorder != 'little':
+                    values.byteswap()
+                _fingerprint_value(columns, (
+                    prop.identifier, prop.type, prop.array_length, len(values),
+                ))
+                columns.update(values.tobytes())
+        except (AttributeError, TypeError, ValueError, RuntimeError, OverflowError):
+            # Nothing from a partial bulk read has entered the outer digest.
+            pass
+        else:
+            digest.update(b'COLUMNS')
+            digest.update(columns.digest())
+            return
+    digest.update(b'RECORDS')
+    for item in data:
+        _fingerprint_rna_scalars(digest, item)
+
+
 def _fingerprint_mesh(digest, mesh, include_atlas=False) -> None:
     digest.update(b"MESH")
     for collection, prop, code in (
@@ -701,8 +745,7 @@ def _fingerprint_mesh(digest, mesh, include_atlas=False) -> None:
         if attribute.name == ATLAS_UV and not include_atlas:
             digest.update(b"ATLAS_ATTRIBUTE_OUTSIDE_JOB")
             continue
-        for item in attribute.data:
-            _fingerprint_rna_scalars(digest, item)
+        _fingerprint_mesh_attribute(digest, attribute)
     for layer in sorted(mesh.uv_layers, key=lambda item: item.name):
         if layer.name == ATLAS_UV and not include_atlas:
             continue
@@ -3767,6 +3810,15 @@ def _uv_close(left, right, epsilon: float = _UV_CONNECT_EPSILON) -> bool:
             and abs(float(left[1]) - float(right[1])) <= epsilon)
 
 
+def _uv_loop_inputs(mesh, layer):
+    """Read immutable inputs for one island analysis, without per-loop RNA."""
+    vertices = array('i', [0]) * len(mesh.loops)
+    mesh.loops.foreach_get('vertex_index', vertices)
+    coordinates = array('f', [0]) * (len(layer.data) * 2)
+    layer.data.foreach_get('uv', coordinates)
+    return vertices, list(zip(coordinates[0::2], coordinates[1::2]))
+
+
 def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
     """Resolve UV islands without changing Blender selection or edit mode.
 
@@ -3794,20 +3846,22 @@ def _uv_polygon_islands(mesh, layer) -> tuple[list[int], dict[int, int]]:
         if left_root != right_root:
             parents[max(left_root, right_root)] = min(left_root, right_root)
 
+    loop_vertices, uv = _uv_loop_inputs(mesh, layer)
+    loop_edges = array('i', [0]) * len(mesh.loops)
+    mesh.loops.foreach_get('edge_index', loop_edges)
+    seams = array('b', [0]) * len(mesh.edges)
+    mesh.edges.foreach_get('use_seam', seams)
     edge_uses = {}
     for polygon in mesh.polygons:
         indices = list(polygon.loop_indices)
         for offset, loop_index in enumerate(indices):
             next_index = indices[(offset + 1) % len(indices)]
-            loop = mesh.loops[loop_index]
-            edge = mesh.edges[loop.edge_index]
-            if edge.use_seam:
+            if seams[loop_edges[loop_index]]:
                 continue
-            next_loop = mesh.loops[next_index]
-            vertices = (loop.vertex_index, next_loop.vertex_index)
+            vertices = (loop_vertices[loop_index], loop_vertices[next_index])
             coordinates = {
-                vertices[0]: tuple(layer.data[loop_index].uv),
-                vertices[1]: tuple(layer.data[next_index].uv),
+                vertices[0]: uv[loop_index],
+                vertices[1]: uv[next_index],
             }
             key = tuple(sorted(vertices))
             edge_uses.setdefault(key, []).append((polygon.index, coordinates))
@@ -3870,19 +3924,19 @@ def _uv_welded_island_pairs(mesh, layer, roots) -> dict:
         if left_root != right_root:
             parents[max(left_root, right_root)] = min(left_root, right_root)
 
+    loop_vertices, uv = _uv_loop_inputs(mesh, layer)
     edge_uses = {}
     for polygon in mesh.polygons:
         indices = list(polygon.loop_indices)
         for offset, loop_index in enumerate(indices):
             next_index = indices[(offset + 1) % len(indices)]
-            loop = mesh.loops[loop_index]
-            next_loop = mesh.loops[next_index]
-            key = tuple(sorted((loop.vertex_index, next_loop.vertex_index)))
+            vertex, next_vertex = loop_vertices[loop_index], loop_vertices[next_index]
+            key = tuple(sorted((vertex, next_vertex)))
             edge_uses.setdefault(key, []).append((
                 polygon.index,
                 {
-                    loop.vertex_index: tuple(layer.data[loop_index].uv),
-                    next_loop.vertex_index: tuple(layer.data[next_index].uv),
+                    vertex: uv[loop_index],
+                    next_vertex: uv[next_index],
                 },
             ))
 
@@ -6326,12 +6380,10 @@ def _receiver_intra_gutter_shortfall(
     for obj in objs:
         progress_stage(f"Checking UV chart spacing: {obj.name}")
         islands = _receiver_island_bounds(obj)
-        for index, (_left_number, left) in enumerate(islands):
-            for _right_number, right in islands[index + 1:]:
-                distance = _uv_bounds_tuple_distance(left, right)
-                if distance + epsilon < required and (
-                        worst is None or distance < worst):
-                    worst = distance
+        for left_index, right_index in nearby_uv_bounds_pairs([item[1] for item in islands], required):
+            distance = _uv_bounds_tuple_distance(islands[left_index][1], islands[right_index][1])
+            if distance + epsilon < required and (worst is None or distance < worst):
+                worst = distance
     if worst is None:
         return None
     return worst, required
@@ -6527,16 +6579,15 @@ def validate_receiver_group_spacing(
                 f"{obj.name} leaves {edge * size:.3g}px at the atlas edge; "
                 f"needs {inner * size:.3g}px"
             )
-        for index, (left_number, left) in enumerate(islands):
-            for right_number, right in islands[index + 1:]:
-                distance = _uv_bounds_tuple_distance(left, right)
-                if distance + epsilon < inner:
-                    failures.append(
-                        f"{obj.name} islands {left_number}/{right_number} leave "
-                        f"{distance * size:.3g}px; need {inner * size:.3g}px"
-                    )
-                    break
-            if failures and failures[-1].startswith(f"{obj.name} islands"):
+        for left_index, right_index in nearby_uv_bounds_pairs([item[1] for item in islands], inner):
+            left_number, left = islands[left_index]
+            right_number, right = islands[right_index]
+            distance = _uv_bounds_tuple_distance(left, right)
+            if distance + epsilon < inner:
+                failures.append(
+                    f"{obj.name} islands {left_number}/{right_number} leave "
+                    f"{distance * size:.3g}px; need {inner * size:.3g}px"
+                )
                 break
 
     for index, (left_name, left) in enumerate(receiver_bounds):

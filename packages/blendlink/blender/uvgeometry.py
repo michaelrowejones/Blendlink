@@ -317,3 +317,38 @@ def _uv_bounds_tuple_distance(left, right) -> float:
     dx = max(left[0] - right[2], right[0] - left[2], 0.0)
     dy = max(left[1] - right[3], right[1] - left[3], 0.0)
     return math.hypot(dx, dy)
+
+
+def nearby_uv_bounds_pairs(bounds, max_distance):
+    """Yield original index pairs whose axis gaps could violate a gutter.
+
+    Sweep the less crowded axis, keeping only overlapping/nearby intervals.
+    The caller retains its exact Euclidean distance and epsilon test. Compare
+    coordinate differences, rather than expanded bounds, to keep rounding at
+    the threshold identical to _uv_bounds_tuple_distance. Dense overlapping
+    charts still require exhaustive pairs; sparse layouts avoid that cost.
+    """
+    if not math.isfinite(max_distance) or max_distance < 0:
+        raise ValueError('Gutter search distance must be finite and non-negative')
+    boxes = list(bounds)
+    if any(len(box) != 4 or not all(math.isfinite(value) for value in box)
+           or box[0] > box[2] or box[1] > box[3] for box in boxes):
+        raise ValueError('Gutter search requires finite ordered bounds')
+    if len(boxes) < 2:
+        return
+
+    def crowding(axis):
+        extent = max(box[axis + 2] for box in boxes) - min(box[axis] for box in boxes)
+        return sum(box[axis + 2] - box[axis] for box in boxes) / extent if extent else math.inf
+
+    axis = min((0, 1), key=crowding)
+    other = 1 - axis
+    active = []
+    for index in sorted(range(len(boxes)), key=lambda i: (boxes[i][axis], i)):
+        box = boxes[index]
+        active = [i for i in active if box[axis] - boxes[i][axis + 2] <= max_distance]
+        for previous in active:
+            left = boxes[previous]
+            if max(left[other] - box[other + 2], box[other] - left[other + 2], 0.0) <= max_distance:
+                yield min(previous, index), max(previous, index)
+        active.append(index)

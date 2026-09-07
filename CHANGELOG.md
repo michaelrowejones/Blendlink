@@ -11,6 +11,10 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Mesh attribute hashing reads numeric properties in bulk, including color and
+  matrix fields, while retaining scalar handling for strings and unsupported
+  bulk access. UV island analysis also uses bulk reads; gutter validation skips
+  distant chart pairs without changing its distance tolerances.
 - Baked exports share one validated geometry/UV preparation between the plan and
   bake. Atlas normalization, placement and rollback use bulk UV transfers while
   preserving the scalar results and artist pins.

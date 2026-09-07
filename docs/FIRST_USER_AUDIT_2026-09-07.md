@@ -232,3 +232,66 @@ through all retries and verifies recovery on the next heartbeat. Build outcome
 publication retains its existing error behavior. The rebuilt woodland viewer
 reached Ready without browser errors, reusing its valid bake in a 3.6-second
 compile check.
+
+## Bulk hashing and UV validation follow-up
+
+The next pass replaces per-element RNA inspection of numeric mesh attributes
+with bulk reads. It inspects each attribute's exposed scalar-property schema
+once, frames the field names/types/widths and element count, and hashes numeric
+columns using explicit little-endian encoding. Float64 buffers retain the RNA
+values, including computed color fields. String attributes and unsupported bulk
+reads keep the conservative scalar path. The compiler's existing pipeline
+signature invalidates bakes made with the earlier hash encoding.
+
+A real 12,000-vertex attribute fixture fell from 1.097 seconds and 200,000 scalar
+property inspections to 0.036 seconds and zero scalar inspections. Edits to
+floats, integers, booleans, vectors, both color types, quaternions, matrices and
+strings all invalidated the hash. Restoring numeric values restored the hash;
+an intentionally unsupported bulk reader still detected edits through fallback.
+
+Direct old/new hashing of the unchanged diorama's evaluated meshes took
+**116.21 seconds versus 3.87 seconds**, about 30x faster for this operation.
+The Floor accounted for 101.21 seconds of the old result and has 4,194,304
+evaluated face corners. This comparison excludes mesh evaluation, materials,
+packing, baking and export; it is not a whole-compile speedup.
+
+UV island analysis now snapshots loop vertices, coordinates, edge references
+and seam flags with bulk reads. A connected 2,500-quad fixture fell from 0.089
+to 0.031 seconds, eliminating 90,000 individual RNA reads. Direct comparisons
+on evaluated Curtains, Potted Plant - Bracken and Wooden_Chair retained exactly
+the same island roots, display numbering and welded components. Those checks
+took 1.58/0.70, 0.61/0.29 and 0.081/0.049 seconds respectively. Regression cases
+also distinguish seam-aware tolerance from exact UV welding. Numeric hashing
+and island checks passed on Blender 5.1 and 5.2.
+
+Gutter validation now sweeps nearby chart bounds before applying the existing
+Euclidean distance and epsilon test. Randomized, overlapping, degenerate and
+threshold-boundary cases match an exhaustive search. A grid of 1,600 separated
+charts produces zero candidate pairs instead of 1,279,200 distance tests.
+Crowded overlapping layouts can still require quadratic work. With several
+violations, the first reported pair may change with spatial traversal; the
+gutter requirement and rejection decision are unchanged.
+
+The build, 794 unit tests (two codec skips), 19 release-policy checks, focused
+bake-ladder/evaluated-geometry/preparation checks, and baked end-to-end suite
+passed. The latter verifies reuse of unchanged jobs and invalidation after real
+edits. Logs and direct comparisons remain in `artifacts/verification-performance/`.
+
+The forced diorama compile completed in **398.1 seconds (6m 38s)**, versus
+821.6 seconds in the preceding pass, about 52% less elapsed time in these local
+runs. It rebuilt its atlas (`reused 0/1; rebuilt 1`), exported the same 2,314,974
+triangles, and reached browser-verified Ready without browser errors. OptiX,
+two samples, atlas resolution and authored geometry settings were unchanged.
+`second-diorama-ready.png` records the render, and `second-diorama-stages.json`
+records stage transitions. Preparation/plan now occupies roughly 5.5 minutes;
+the observed dependency-hashing stage takes roughly six seconds. These runs
+do not control every OS/driver cache or background load, so the paired mesh
+benchmark remains the narrower evidence for hashing's gain.
+
+The remaining preparation cost is concentrated in the Floor and repeated UV
+coverage/packing checks. The Floor starts with 4,096 quads and uses a Simple
+Subdivision modifier at four viewport levels (five render levels). Caching
+validated layouts across eligible saves is the next quality-preserving step;
+an explicit Preview subdivision limit could reduce this workload further when
+the artist accepts a geometry tradeoff. Neither feature is implemented in this
+pass, and the source `.blend` was not edited.
