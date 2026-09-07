@@ -31,6 +31,8 @@ const SUITE_LABELS = new Map([
   ['material_channel_bake_check.py', 'isolated channel-bake primitives contract'],
   ['material_bake_check.py', 'per-channel Material bake contract'],
   ['material_tsl_ir_check.py', 'per-channel TSL IR evidence contract'],
+  ['automatic_material_translation_check.py', 'automatic live material and static channel export'],
+  ['compositor_graph_check.py', 'connected compositor graph structure and animation refusals'],
   ['evaluated_geometry_check.py', 'budgeted evaluated-geometry realization contract'],
   ['external_dependency_check.py', 'external dependency reachability contract'],
   ['pip_refusal_check.py', 'Pip animated-material refusal contract'],

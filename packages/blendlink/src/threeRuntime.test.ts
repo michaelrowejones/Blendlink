@@ -1317,6 +1317,39 @@ describe('official Three scene installation seam', () => {
     installed.dispose()
   })
 
+  it.each(['preview', 'website', 'application', 'excluded', 'source-default', 'source-opt-out'] as const)('respects active camera ownership in %s installations', async mode => {
+    const root = new THREE.Group()
+    const camera = new THREE.OrthographicCamera(-3, 3, 2, -2, 0.1, 100)
+    camera.name = 'Authored_Camera'
+    camera.userData.blendlink_id = 'source-camera'
+    root.add(camera)
+    const appCamera = new THREE.PerspectiveCamera()
+    const result = await installThreeCompiledScene({
+      descriptor: descriptor({
+        objectsById: mode === 'excluded' ? {} : { 'source-camera': camera.name },
+        ...(mode.startsWith('source-') ? { sourcePresentation: { url: '/scene.presentation.json', bytes: 1, hash: 'unused-on-classic-renderer' } } : {}),
+        authoringPreview: {
+          look: { toneMapping: 'none', exposure: 0, sourceViewTransform: 'Standard', exact: true },
+          shadows: { enabled: false },
+          camera: {
+            objectId: 'source-camera', objectName: 'Authored Camera', behavior: 'fixed', framing: 'authored',
+            compositions: [{ name: 'Render', width: 900, height: 600, safeMargin: 0 }],
+          },
+        },
+      }),
+      renderer: renderer() as unknown as THREE.WebGLRenderer,
+      scene: new THREE.Scene(),
+      loader: loader(root) as unknown as GLTFLoader,
+      useAuthoringPreview: mode !== 'website' && !mode.startsWith('source-'),
+      ...(mode === 'source-opt-out' ? { useSourcePresentation: false } : {}),
+      ...(mode === 'application' ? { fallbackCamera: appCamera } : {}),
+    })
+    if (mode === 'preview' || mode === 'source-default') expect(result.camera).toBe(camera)
+    else if (mode === 'application') expect(result.camera).toBe(appCamera)
+    else expect(result.camera).not.toBe(camera)
+    result.dispose()
+  })
+
   it('accepts a WebGPU renderer through the structural acceptance', async () => {
     // The WebGPU renderer surface: no getContextAttributes(), transparency
     // reported through the public alpha flag instead.

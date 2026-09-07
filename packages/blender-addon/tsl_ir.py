@@ -450,7 +450,7 @@ def _matching_socket(sockets, reference):
     )
 
 
-def find_principled_root(tree):
+def find_principled_root(tree, target="CYCLES"):
     """(principled, group_stack) for the material's single Principled surface.
 
     The stack is the chain of group-instance nodes enclosing the Principled,
@@ -459,6 +459,11 @@ def find_principled_root(tree):
     shader roots, or one reachable through multiple instance paths) instead
     of guessing.
     """
+    if target != "CYCLES":
+        node, _socket, stack = _active_surface_link(tree, target)
+        if node.bl_idname != "ShaderNodeBsdfPrincipled":
+            _refuse("no single Principled surface for " + target)
+        return node, stack
     procedural = _import_procedural()
 
     nodes = procedural.reachable_surface_nodes(tree)
@@ -720,7 +725,7 @@ def _leaf_channels(leaf):
     _refuse(f"surface leaf {kind!r} has no channel projection")
 
 
-def resolve_surface(tree):
+def _active_surface_link(tree, target):
     """The material's Cycles-visible surface expression.
 
     Cycles renders the output targeted at CYCLES when one exists, then
@@ -734,7 +739,7 @@ def resolve_surface(tree):
     ]
     output = next(
         (node for node in actives
-         if str(getattr(node, "target", "ALL")) == "CYCLES"),
+         if str(getattr(node, "target", "ALL")) == target),
         None,
     ) or next(
         (node for node in actives
@@ -742,11 +747,15 @@ def resolve_surface(tree):
         None,
     )
     if output is None:
-        _refuse("material has no Cycles-visible active Material Output")
+        _refuse("material has no " + target + "-visible active Material Output")
     resolved = _resolve_shader_link(output.inputs["Surface"], ())
     if resolved is None:
         _refuse("material output has no linked Surface")
-    return _surface_expression(*resolved)
+    return resolved
+
+
+def resolve_surface(tree, target="CYCLES"):
+    return _surface_expression(*_active_surface_link(tree, target))
 
 
 def _lerp_scalar(a, b, factor):
@@ -834,6 +843,8 @@ def _channel_document(expression):
     encoded = _json.dumps(expression)
     if '"view_cos"' in encoded:
         document["viewDependent"] = True
+    if '"normal_map"' in encoded or '"normal_view"' in encoded:
+        document["geometryDependent"] = True
     if '"ambient_occlusion"' in encoded:
         # Scene occlusion is not carried: the runtime evaluates the
         # unoccluded algebra unless a baked occlusion source is wired
@@ -846,7 +857,11 @@ def _channel_document(expression):
     return document
 
 
-def emit_surface(tree):
+def emit_normal_channel(socket, stack=()):
+    return _channel_document({"op": "normal_view", "input": emit_input(socket, stack, as_vector=True)})
+
+
+def emit_surface(tree, target="CYCLES"):
     """Per-channel IR documents for a mixed surface expression.
 
     The documented projection model: a Mix Shader closure lerp becomes a
@@ -855,7 +870,7 @@ def emit_surface(tree):
     is nonlinear under lighting), Transparent branches contribute only
     coverage, Diffuse/Glossy canonicalize onto the Principled channel
     vector, and emission always ships as radiance with strength 1."""
-    channels = _fold_surface(resolve_surface(tree))
+    channels = _fold_surface(resolve_surface(tree, target))
     if channels is None:
         channels = {
             "Base Color": _const_color(0.0, 0.0, 0.0),
@@ -991,8 +1006,16 @@ def _texture_vector(socket, stack, node=None):
     }
 
 
+def _require_static_tree(node):
+    tree = getattr(node, "id_data", None)
+    animation = getattr(tree, "animation_data", None)
+    if animation and (animation.action or len(animation.drivers) or len(animation.nla_tracks)):
+        _refuse(f"node tree {tree.name!r} has animation or drivers; live curve transport is required")
+
+
 def emit_input(socket, stack=(), *, as_vector=False):
     """IR for one input socket: its link's expression or its constant."""
+    _require_static_tree(socket.node)
     source = _socket_source(socket)
     if source is None:
         value = _constant_value(socket)
@@ -1036,6 +1059,7 @@ def emit_output(node, from_socket, stack=()):
     ``stack`` is the enclosing group-instance chain, outermost first; the
     walk crosses group walls in both directions with it.
     """
+    _require_static_tree(node)
     idname = node.bl_idname
     socket_name = from_socket.name
 
@@ -2140,6 +2164,21 @@ def emit_output(node, from_socket, stack=()):
             ]
         return expression
 
+    if idname == "ShaderNodeNormalMap":
+        if node.space != 'TANGENT':
+            _refuse('Normal Map currently supports Tangent space')
+        if node.uv_map:
+            _refuse('Normal Map with a named tangent UV basis is not supported yet')
+        convention = str(getattr(node, 'convention', 'OPENGL'))
+        if convention not in {'OPENGL', 'DIRECTX'}:
+            _refuse('Unknown Normal Map convention: ' + convention)
+        return {
+            "op": "normal_map",
+            "convention": convention,
+            "color": emit_input(node.inputs['Color'], stack=stack, as_vector=True),
+            "strength": emit_input(node.inputs['Strength'], stack=stack),
+        }
+
     if idname == "ShaderNodeFresnel":
         if node.inputs["Normal"].is_linked:
             _refuse("Fresnel with a linked Normal has no cell yet")
@@ -2259,6 +2298,7 @@ def emit_channel(socket, stack=()) -> dict:
     (from ``find_principled_root``), so channels fed through Group Input
     sockets resolve against the right instance.
     """
+    _require_static_tree(socket.node)
     source = _socket_source(socket)
     if source is None:
         value = _constant_value(socket)

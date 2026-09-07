@@ -10,6 +10,12 @@ import {
 } from './config.js'
 
 describe('scene output identity', () => {
+  it('preserves the automatic material opt-out and rejects ambiguous values', () => {
+    const root = resolve('C:/blendlink-automatic-config')
+    const config = resolveConfig({ scenes: [{ file: 'scene.blend', external: true, automaticMaterials: false }] }, root)
+    expect(config.scenes[0]!.settings.automaticMaterials).toBe(false)
+    expect(() => resolveConfig({ scenes: [{ file: 'scene.blend', external: true, automaticMaterials: 'false' as never }] }, root)).toThrow(/automaticMaterials must be a boolean/)
+  })
   it('canonicalizes natural explicit and inferred labels to one safe binding/path segment', () => {
     expect(sceneIdentifier('Hero (Final).blend')).toBe('HeroFinalBlend')
     expect(sceneIdentifier('../Night: Interior/CON')).toBe('NightInteriorCON')

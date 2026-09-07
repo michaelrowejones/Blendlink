@@ -204,7 +204,7 @@ def main():
     stuck_tree.links.new(
         stuck_coord.outputs["UV"], stuck_voronoi.inputs["Vector"],
     )
-    for channel in ("Base Color", "Roughness", "Metallic", "Alpha"):
+    for channel in ("Base Color", "Roughness", "Metallic", "Alpha", "Emission Color", "IOR"):
         stuck_tree.links.new(
             stuck_voronoi.outputs["Distance"],
             stuck_principled.inputs[channel],
@@ -254,8 +254,8 @@ def main():
     emission = channel_record(evidence, "Emission")
     expect(
         emission is not None
-        and "merged Emission record" in emission.get("tslIrRefusal", ""),
-        "merged Emission record must refuse IR by name",
+        and emission.get("tslIr", {}).get("output", {}).get("op") == "vector_scale",
+        "merged Emission must transport color multiplied by strength",
     )
 
     refused = decision_for(plan, "TSL Refused")

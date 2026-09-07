@@ -27,6 +27,34 @@ before running its Preview command; connect prints the import and call to add.
 Requires Node 22.15+ on the Node 22 line, or Node 24. The generated starter
 uses Vite 7 and the same tested runtime floor.
 
+EEVEE scene transfer now automatically translates supported procedural material
+channels into live Three node materials. Static channels that cannot translate
+can use texture bakes alongside those live channels. Explicit Web Color,
+Material Bake and TSL Program choices still take precedence. Set
+`automaticMaterials: false` on a scene in `blendlink.config.ts` to opt out, or
+set the material custom property `blendlink_live_translation` to false.
+
+Preview Studio uses Three's WebGPU renderer, including its WebGL2 fallback.
+The node renderer imports supported Blender display transforms and connected
+compositor graphs, and adopts the active source camera where the website has
+not supplied one. Website presentation choices retain ownership;
+`useSourcePresentation: false` disables automatic source presentation.
+The classic `WebGLRenderer` keeps its existing presentation path and reports
+source node features it cannot apply.
+
+Use **Compare** in Preview Studio to load a Blender render of the saved frame.
+The slider reveals Blender and Three.js views; **Difference view** highlights
+screen-space differences. This is a visual comparison, not a numerical image
+metric. A shader failure keeps the last working preview available.
+
+Current compositor support includes color adjustments, selected Math/Mix modes,
+Alpha Over, separable Gaussian Blur, Glare Bloom, and Combined/Alpha/Depth inputs.
+Unsupported branches report their source node and bypass the complete compositor
+while retaining the scene and supported display transform. Fog Glow, arbitrary
+shader AOVs, shader/compositor animation curves and procedural World graphs still
+need dedicated transport. The source-checkout differential suite documents the
+tested modes and numerical limits in `experiments/eevee-look-differential/README.md`.
+
 CLI commands do not import a renderer. The npm package also carries the lazy
 post-processing implementations used by the standard WebGL adapter, so npm may
 resolve their compatible `three` peer even in a CLI-only install. A connected

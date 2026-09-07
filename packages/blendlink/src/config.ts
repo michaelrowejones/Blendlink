@@ -31,6 +31,8 @@ export interface SceneConfig {
   bake?: BakeSettings
   /** Curve sampling resolution for non-bezier splines. Default 64. */
   curveSamples?: number
+  /** Automatically translate supported shader graphs and cache safe static channels. Default true. */
+  automaticMaterials?: boolean
   /** Raw exporter kwargs, RNA-filtered in Blender (escape hatch). */
   exporterOverrides?: Record<string, unknown>
   /** GLB produced by an external pipeline (overrides the derived path). */
@@ -177,7 +179,7 @@ export function defineScene(scene: SceneConfig): SceneConfig {
 
 const SCENE_KEYS = new Set([
   'file', 'name', 'glb', 'url', 'collection', 'imageFormat', 'mode', 'bake',
-  'curveSamples', 'exporterOverrides', 'external', 'build', 'inputs',
+  'curveSamples', 'automaticMaterials', 'exporterOverrides', 'external', 'build', 'inputs',
   'applicationMaterialAdapter', 'glbConformance',
 ])
 const CONFIG_KEYS = new Set(['outDir', 'genDir', 'urlPrefix', 'blenderPath', 'website', 'scenes'])
@@ -262,6 +264,9 @@ function validateConfig(config: BlendlinkConfig, root: string): void {
     }
     if (scene.mode !== undefined && scene.mode !== 'standard' && scene.mode !== 'baked') {
       problems.push(`scene ${label}: mode "${String(scene.mode)}" is not 'standard' | 'baked'`)
+    }
+    if (scene.automaticMaterials !== undefined && typeof scene.automaticMaterials !== 'boolean') {
+      problems.push(`scene ${label}: automaticMaterials must be a boolean`)
     }
     if (scene.name !== undefined && (typeof scene.name !== 'string' || !scene.name.trim())) {
       problems.push(`scene ${label}: name must be a non-empty string`)
@@ -401,6 +406,7 @@ export function resolveConfig(
         ...(scene.mode ? { mode: scene.mode } : {}),
         ...(scene.bake ? { bake: scene.bake } : {}),
         ...(scene.curveSamples ? { curveSamples: scene.curveSamples } : {}),
+        ...(scene.automaticMaterials !== undefined ? { automaticMaterials: scene.automaticMaterials } : {}),
         ...(scene.exporterOverrides ? { exporterOverrides: scene.exporterOverrides } : {}),
       },
       external: scene.external ?? false,

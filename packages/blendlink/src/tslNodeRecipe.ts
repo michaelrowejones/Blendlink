@@ -220,6 +220,8 @@ const tslNormalLocal = (
 const tslNormalWorld = normalWorld as unknown as TslExpression
 
 export interface BuildTslOptions {
+  /** Geometry contract for tangent-space normal programs. */
+  normalMapBasis?: 'attribute' | 'derivative' | 'missing'
   /** Harness override: an analytic view cosine (dot(N, V)) computed from
    * a known camera contract, replacing the runtime camera builtins so the
    * dielectric formulas gate independently of screen-space rendering. */
@@ -694,6 +696,32 @@ function build(expression: TslIrExpression): TslExpression {
       return (tslNormalWorld as unknown as {
         dot(v: TslExpression): TslExpression
       }).dot(view as unknown as TslExpression)
+    }
+    case 'normal_map': {
+      if (activeOptions.normalMapBasis === 'missing') return fail('Normal Map needs an exported UV map and tangent basis')
+      const color = build(child(expression, 'color'))
+      const strength = tslMax(build(child(expression, 'strength')), 0)
+      // EEVEE blends the tangent Z component towards 1 below unit strength;
+      // Three's normalMap scale alone only changes XY.
+      const z = tslMix(tslFloat(1), color.z.mul(2).sub(1), tslClamp(strength, 0, 1))
+      const encoded = tslVec3(color.x, expression.convention === 'DIRECTX' ? tslFloat(1).sub(color.y) : color.y, z.add(1).mul(0.5))
+      const nodeApi = TSLX as unknown as Record<string, unknown>
+      const normalMap = nodeApi.normalMap as (color: TslExpression, scale: TslExpression) => TslExpression
+      const transform = nodeApi.transformDirection as (normal: TslExpression, matrix: unknown) => TslExpression
+      const determinant = nodeApi.determinant as (matrix: unknown) => TslExpression
+      // Exported glTF UVs flip V. Derivative reconstruction includes the
+      // object transform already; tangent attributes need its determinant.
+      const handedness = activeOptions.normalMapBasis === 'derivative'
+        ? tslFloat(-1) : tslSign(determinant(nodeApi.modelWorldMatrix))
+      const world = transform(normalMap(encoded, tslVec2(strength, strength.mul(handedness))), nodeApi.cameraViewMatrix)
+      // IR vectors use Blender world axes; glTF world is Y-up.
+      return tslVec3(world.x, world.z.negate(), world.y)
+    }
+    case 'normal_view': {
+      const normal = build(child(expression, 'input'))
+      const api = TSLX as unknown as Record<string, unknown>
+      const transform = api.transformDirection as (normal: TslExpression, matrix: unknown) => TslExpression
+      return transform(tslVec3(normal.x, normal.z, normal.y.negate()), api.cameraWorldMatrix)
     }
     case 'fresnel': {
       // Cycles Fresnel node, front face: eta = max(ior, 1e-5).
@@ -2162,7 +2190,7 @@ function buildColorRamp(
  * channel comparisons run on the same float values both engines computed,
  * so the branch decisions agree except on exact ties (equal channels),
  * where s = 0 hides the hue anyway. */
-function blenderRgbToHsv(rgb: TslExpression): TslExpression {
+export function blenderRgbToHsv(rgb: TslExpression): TslExpression {
   const r = rgb.x
   const g = rgb.y
   const b = rgb.z
@@ -2190,7 +2218,7 @@ function blenderRgbToHsv(rgb: TslExpression): TslExpression {
 
 /** Cycles hsv_to_rgb: the sextant switch (i = floor(6h), h == 1 wraps to
  * 0 first) picked with scalar selects; s = 0 short-circuits to gray. */
-function blenderHsvToRgb(hsv: TslExpression): TslExpression {
+export function blenderHsvToRgb(hsv: TslExpression): TslExpression {
   const s = hsv.y
   const v = hsv.z
   const h = tslSelect(hsv.x.equal(1.0), tslFloat(0.0), hsv.x).mul(6.0)

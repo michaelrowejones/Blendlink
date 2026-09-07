@@ -112,6 +112,7 @@ export interface ThreeComponentAdapterContext {
 }
 
 export interface InstallThreeComponentsOptions {
+  sourcePresentation?: import('./sourceDisplay.js').SourcePresentation
   components?: readonly Readonly<PortableComponentRecord>[] | null
   root: THREE.Object3D
   scene: THREE.Scene
@@ -254,11 +255,11 @@ export async function installThreeComponents(
   options: InstallThreeComponentsOptions,
 ): Promise<InstalledThreeComponents> {
   const enabled = (options.components ?? []).filter((component) => component.enabled)
-  if (enabled.length === 0) return inertComponents(
+  if (enabled.length === 0 && !options.sourcePresentation?.display && !options.sourcePresentation?.compositor) return inertComponents(
     options.renderer, options.scene, options.camera, options.requestFrame,
   )
 
-  const needsPost = enabled.some((component) =>
+  const needsPost = !!options.sourcePresentation?.display || !!options.sourcePresentation?.compositor || enabled.some((component) =>
     componentDefinition(component.type)?.requires.includes('post-pipeline') === true)
   let pipeline: BlendlinkPostPipeline | null = null
   let lifecycle: InstalledRuntimeComponents | null = null

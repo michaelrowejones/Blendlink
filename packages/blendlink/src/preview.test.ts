@@ -293,6 +293,8 @@ describe('website preview contract', () => {
     expect(gate.accept(ack('generation-a', 'failed', 'runtime'))).toBe('failed')
     expect(gate.accept(ack('generation-a', 'failed', 'runtime'))).toBe('ignore')
     expect(gate.accept(ack('generation-a', 'ready'))).toBe('ignore')
+    expect(gate.accept({ ...ack('generation-a', 'ready'), recovery: true })).toBe('ready')
+    expect(gate.accept({ ...ack('generation-a', 'ready'), recovery: true })).toBe('ignore')
     expect(gate.accept(ack('stale-generation', 'failed', 'runtime'))).toBe('ignore')
 
     gate.beginBuild()

@@ -15,7 +15,7 @@ export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
 export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
 export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
-export const PREVIEW_STUDIO_HOST_VERSION = 9
+export const PREVIEW_STUDIO_HOST_VERSION = 15
 export const PREVIEW_STUDIO_MAIN_MARKER =
   '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
@@ -75,6 +75,8 @@ export interface PreviewStudioClientAck {
   sessionId: string
   generation: string
   phase: 'ready' | 'failed'
+  /** A newly installed renderer, not an old tab's periodic ready heartbeat. */
+  recovery?: true
   failureKind?: 'validation' | 'runtime'
   retainedGeneration?: string
   error?: string
@@ -133,18 +135,26 @@ export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PR
 </head>
 <body>
   <main id="studio" data-background="dark" data-viewport="fill">
-    <section id="viewport" aria-label="Blendlink Web Presentation"></section>
+    <section id="viewport" aria-label="Blendlink Web Presentation"><img id="reference-image" alt="Blender reference render" hidden></section>
     <header class="studio-bar">
       <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Blendlink</span><span class="muted">Preview Studio</span></div>
       <div id="status-chip" class="status-chip" role="status"><span class="status-dot"></span><span id="status-label">Opening preview…</span></div>
       <nav class="toolbar" aria-label="Preview controls">
         <button id="pause" type="button" title="Pause animation" aria-pressed="false">Pause</button>
         <button id="reset" type="button" title="Reset authored camera">Reset view</button>
+        <button id="compare" type="button" title="Compare with a Blender render">Compare</button>
         <button id="background" type="button" title="Background: dark. Cycle dark, checker, and light." aria-label="Background: dark">Background</button>
         <button id="fullscreen" type="button" title="Enter fullscreen">Fullscreen</button>
         <button id="details" type="button" aria-expanded="false" aria-controls="drawer">Details</button>
       </nav>
     </header>
+    <input id="reference-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+    <section id="comparison-controls" class="comparison-controls" hidden aria-label="Render comparison">
+      <span id="reference-name"></span>
+      <label>Blender <input id="comparison-split" type="range" min="0" max="100" value="50" aria-label="Blender reference coverage"> Three.js</label>
+      <label><input id="comparison-difference" type="checkbox"> Difference view</label>
+      <button id="comparison-close" type="button">Close comparison</button>
+    </section>
     <section id="first-load" class="first-load" aria-live="polite">
       <div class="loader-mark" aria-hidden="true"></div>
       <p id="first-load-title">Preparing your Web Presentation</p>
@@ -200,6 +210,10 @@ button:focus-visible { outline: 2px solid #6ee7c7; outline-offset: 2px; }
 #studio[data-viewport="mobile"] #viewport { width: min(88vw, 430px); height: min(82vh, 860px); border-radius: 18px; }
 .scene-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; pointer-events: none; }
 .scene-canvas.active { opacity: 1; pointer-events: auto; }
+#reference-image { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+.comparison-controls { position: fixed; z-index: 22; left: 18px; bottom: 18px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; max-width: calc(100vw - 36px); background: rgba(10,13,18,.94); border-radius: 10px; padding: 12px; font-size: 12px; }
+.comparison-controls[hidden], #reference-image[hidden] { display: none; }
+.comparison-controls label { display: flex; align-items: center; gap: 6px; }
 .studio-bar { position: fixed; z-index: 20; top: 14px; left: 14px; right: 14px; min-height: 44px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; pointer-events: none; }
 .brand, .status-chip, .toolbar { pointer-events: auto; }
 .brand { justify-self: start; display: flex; gap: 8px; align-items: center; padding: 9px 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 11px; background: rgba(10,13,18,.7); backdrop-filter: blur(18px); font-size: 12px; font-weight: 650; }
@@ -329,7 +343,8 @@ function previewControlPlugin() {
               response.end('Preview status identity mismatch')
               return
             }
-            const retryingValidation = status.phase === 'failed' && status.failureKind === 'validation'
+            const retryingValidation = status.phase === 'failed' &&
+              (status.failureKind === 'validation' || status.failureKind === 'runtime')
             if (!generation || status.generation !== generation ||
                 (status.phase !== 'published' && status.phase !== 'ready' && !retryingValidation)) {
               response.statusCode = 409
@@ -341,6 +356,7 @@ function previewControlPlugin() {
               sessionId: control.sessionId,
               generation,
               phase: payload.phase,
+              ...(payload.phase === 'ready' && payload.recovery === true ? { recovery: true } : {}),
               ...(payload.failureKind ? { failureKind: payload.failureKind } : {}),
               ...(payload.retainedGeneration && payload.retainedGeneration === status.retainedGeneration
                 ? { retainedGeneration: String(payload.retainedGeneration) }
@@ -379,6 +395,7 @@ export function previewStudioMainSource(plan: PreviewStudioHostPlan): string {
   return `${PREVIEW_STUDIO_MAIN_MARKER}
 ${PREVIEW_STUDIO_MAIN_VERSION_MARKER} ${PREVIEW_STUDIO_HOST_VERSION}
 import * as THREE from 'three'
+import { WebGPURenderer } from 'three/webgpu'
 import { installThreeCompiledScene } from 'blendlink/three'
 import { bindPreviewDescriptor, createBakedScene } from './previewBaked'
 import './style.css'
@@ -411,7 +428,7 @@ type StudioStatus = {
 type Presentation = {
   generation: string
   canvas: HTMLCanvasElement
-  renderer: THREE.WebGLRenderer
+  renderer: WebGPURenderer
   world: THREE.Scene
   installed: Awaited<ReturnType<typeof installThreeCompiledScene>>
   cameraSnapshot: { position: THREE.Vector3; quaternion: THREE.Quaternion; scale: THREE.Vector3; zoom?: number }
@@ -514,10 +531,10 @@ function renderCompileProgress(): void {
 
 function updateRecoveryControls(): void {
   const failure = failedLoad || latestStatus
-  const retryable = failure?.phase === 'failed' && failure.failureKind === 'validation'
+  const retryable = failure?.phase === 'failed' && (failure.failureKind === 'validation' || failure.failureKind === 'runtime')
     && failure.generation === latestStatus?.generation
     && (latestStatus?.phase === 'published' || latestStatus?.phase === 'ready'
-      || (latestStatus?.phase === 'failed' && latestStatus.failureKind === 'validation'))
+      || (latestStatus?.phase === 'failed' && (latestStatus.failureKind === 'validation' || latestStatus.failureKind === 'runtime')))
   retryButton.hidden = !retryable
   retryButton.disabled = Boolean(loadingGeneration) || !retryable
   retryButton.textContent = loadingGeneration ? 'Retrying…' : 'Retry preview'
@@ -656,6 +673,7 @@ async function acknowledge(payload: {
   phase: 'ready' | 'failed'
   failureKind?: 'validation' | 'runtime'
   retainedGeneration?: string
+  recovery?: true
   error?: string
 }): Promise<boolean> {
   const token = await control()
@@ -670,14 +688,15 @@ async function acknowledge(payload: {
 }
 
 function reportRuntimeFailure(error: unknown, source = 'Scene runtime'): void {
-  if (!active || runtimeFailedGeneration === active.generation) return
+  if (disposed || !active || runtimeFailedGeneration === active.generation) return
   const generation = active.generation
   const message = source + ': ' + errorText(error)
   runtimeFailedGeneration = generation
   runtimeFailureMessage = message
+  failedLoad = { ...active.sourceStatus, phase: 'failed', failureKind: 'runtime', error: message }
   updateRecoveryControls()
-  setPhase('failed', 'Runtime paused · save again to retry')
-  showNotice('The scene runtime stopped safely. Preview is still watching Blender saves; open Details for diagnostics.', true)
+  setPhase('failed', 'Runtime paused · retry preview')
+  showNotice('The scene runtime stopped safely. Retry preview to recreate the renderer, or open Details for diagnostics.', true)
   errorSection.hidden = false
   errorDetail.textContent = message
   generationElement.textContent = 'Generation ' + generation.slice(0, 12) + ' · runtime failed'
@@ -716,12 +735,70 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
   })
   viewport.append(canvas)
   const shaderErrors: string[] = []
+  const shaderChecks: Promise<void>[] = []
   const world = new THREE.Scene()
-  let renderer: THREE.WebGLRenderer | null = null
+  let renderer: WebGPURenderer | null = null
+  let deviceLoss: string | null = null
+  let validationDevice: { pushErrorScope(type: 'validation'): void; popErrorScope(): Promise<{ message: string } | null> } | undefined
+  let validationScopeOpen = false
   let installed: Awaited<ReturnType<typeof installThreeCompiledScene>> | null = null
   const runtimeWarnings = [...(status.warnings || [])]
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
+    renderer = new WebGPURenderer({ canvas, antialias: true, alpha: true,
+      forceWebGL: new URLSearchParams(location.search).get('backend') === 'webgl2' })
+    renderer.onDeviceLost = info => {
+      deviceLoss = info.message || 'Graphics device was lost'
+      if (active?.canvas === canvas) reportRuntimeFailure(new Error(deviceLoss), 'Renderer')
+    }
+    await renderer.init()
+    validationDevice = (renderer.backend as unknown as { device?: typeof validationDevice }).device
+    if (validationDevice) {
+      validationDevice.pushErrorScope('validation')
+      validationScopeOpen = true
+    }
+    // Three owns inner GPU validation scopes and logs some pipeline failures
+    // without rejecting compileAsync. Inspect each module's public compilation
+    // result as well, before allowing this candidate to replace the live view.
+    const shaderDevice = validationDevice as unknown as {
+      createShaderModule(descriptor: unknown): {
+        getCompilationInfo(): Promise<{ messages: { type: string; message: string; lineNum: number }[] }>
+      }
+      createRenderPipeline(descriptor: unknown): unknown
+      createRenderPipelineAsync(descriptor: unknown): Promise<unknown>
+    } | undefined
+    if (shaderDevice) {
+      const recordShaderError = (detail: string): void => {
+        shaderErrors.push(detail)
+        if (active?.canvas === canvas) reportRuntimeFailure(new Error(detail), 'Shader')
+      }
+      const createModule = shaderDevice.createShaderModule.bind(shaderDevice)
+      shaderDevice.createShaderModule = descriptor => {
+        const module = createModule(descriptor)
+        shaderChecks.push(module.getCompilationInfo().then(info => {
+          for (const message of info.messages) {
+            if (message.type !== 'error') continue
+            const detail = 'Line ' + message.lineNum + ': ' + message.message
+            recordShaderError(detail)
+          }
+        }).catch(error => recordShaderError(error instanceof Error ? error.message : String(error))))
+        return module
+      }
+      const createPipeline = shaderDevice.createRenderPipeline.bind(shaderDevice)
+      shaderDevice.createRenderPipeline = descriptor => {
+        validationDevice!.pushErrorScope('validation')
+        try { return createPipeline(descriptor) }
+        finally {
+          shaderChecks.push(validationDevice!.popErrorScope().then(error => {
+            if (error) recordShaderError(error.message)
+          }).catch(error => recordShaderError(error instanceof Error ? error.message : String(error))))
+        }
+      }
+      const createPipelineAsync = shaderDevice.createRenderPipelineAsync.bind(shaderDevice)
+      shaderDevice.createRenderPipelineAsync = descriptor => createPipelineAsync(descriptor).catch(error => {
+        recordShaderError(error instanceof Error ? error.message : String(error))
+        throw error
+      })
+    }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.debug.onShaderError = (gl, program, vertexShader, fragmentShader) => {
       shaderErrors.push([
@@ -755,8 +832,15 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
     installed.update(0)
     if ('compileAsync' in renderer) await renderer.compileAsync(world, installed.camera)
     installed.render(0)
+    await Promise.all(shaderChecks)
+    shaderChecks.length = 0
+    if (validationScopeOpen) {
+      validationScopeOpen = false
+      const validationError = await validationDevice!.popErrorScope()
+      if (validationError) throw new Error('GPU shader or render validation failed: ' + validationError.message)
+    }
     await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
-    if (renderer.getContext().isContextLost()) throw new Error('WebGL context was lost while validating the scene')
+    if (deviceLoss) throw new Error(deviceLoss)
     if (shaderErrors.length > 0) throw new Error('A material shader did not compile:\\n' + shaderErrors.join('\\n\\n'))
     const camera = installed.camera
     return {
@@ -769,6 +853,10 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
       warnings: [...new Set(runtimeWarnings)], lastWidth: width, lastHeight: height,
     }
   } catch (error) {
+    if (validationScopeOpen) {
+      validationScopeOpen = false
+      try { await validationDevice!.popErrorScope() } catch { /* retain the original failure */ }
+    }
     try { installed?.dispose() }
     catch (disposeError) { console.warn('Blendlink Preview Studio install cleanup failed:', disposeError) }
     try { renderer?.dispose() }
@@ -806,7 +894,9 @@ async function promote(status: StudioStatus): Promise<void> {
     // A retained generation represents the last successfully published files
     // after the current Blender save failed. It is useful to show, but must
     // not turn that invalid save into a false ready acknowledgement.
-    if (!retainedAfterFailure && !await acknowledge({ generation, phase: 'ready' })) {
+    if (!retainedAfterFailure && !await acknowledge({ generation, phase: 'ready',
+      ...(status.failureKind === 'runtime' ? { recovery: true as const } : {}),
+    })) {
       disposePresentation(candidate)
       candidate = null
       return
@@ -931,12 +1021,12 @@ function applyStatus(status: StudioStatus): void {
     desiredGeneration = active?.generation || ''
     queuedPromotion = null
     setPhase('failed', activeRuntimeFailure
-      ? 'Runtime paused · save again to retry'
+      ? 'Runtime paused · retry preview'
       : active ? 'Update failed · showing last good scene' : 'Preview needs attention')
     showNotice(activeRuntimeFailure
-      ? 'The scene runtime stopped safely. Preview is still watching Blender saves.'
+      ? 'The scene runtime stopped safely. Retry preview to recreate the renderer.'
       : active ? 'Update failed. The last good scene is still active.'
-      : status.failureKind === 'validation'
+      : status.failureKind === 'validation' || status.failureKind === 'runtime'
         ? 'The scene could not load in this browser. Retry preview, or open the error details.'
         : 'Fix the reported issue in Blender and save. Preview will update automatically.', true)
     if (!active && status.retainedGeneration) {
@@ -945,7 +1035,7 @@ function applyStatus(status: StudioStatus): void {
     if (!active) {
       firstLoad.hidden = false
       firstLoad.dataset.state = 'failed'
-      firstLoadTitle.textContent = status.failureKind === 'validation' ? 'Preview could not load' : 'The saved scene needs attention'
+      firstLoadTitle.textContent = status.failureKind === 'validation' || status.failureKind === 'runtime' ? 'Preview could not load' : 'The saved scene needs attention'
       firstLoadDetail.textContent = status.error || status.label
     }
     return
@@ -1049,6 +1139,59 @@ element<HTMLButtonElement>('reset').addEventListener('click', () => {
   if (active.cameraSnapshot.zoom !== undefined && 'zoom' in camera) camera.zoom = active.cameraSnapshot.zoom
   camera.updateProjectionMatrix()
 })
+
+const referenceImage = element<HTMLImageElement>('reference-image')
+const referenceFile = element<HTMLInputElement>('reference-file')
+const comparisonSplit = element<HTMLInputElement>('comparison-split')
+const comparisonDifference = element<HTMLInputElement>('comparison-difference')
+let referenceUrl: string | null = null
+function resizeReference(): void {
+  if (referenceImage.hidden || !referenceImage.naturalWidth) return
+  const ratio = referenceImage.naturalWidth / referenceImage.naturalHeight
+  const width = Math.min(window.innerWidth * .92, window.innerHeight * .82 * ratio)
+  viewport.style.width = width + 'px'
+  viewport.style.height = (width / ratio) + 'px'
+}
+function updateComparison(): void {
+  referenceImage.style.clipPath = comparisonDifference.checked ? 'none' : 'inset(0 ' + (100 - Number(comparisonSplit.value)) + '% 0 0)'
+  referenceImage.style.mixBlendMode = comparisonDifference.checked ? 'difference' : 'normal'
+  comparisonSplit.disabled = comparisonDifference.checked
+}
+function closeComparison(): void {
+  referenceImage.onload = null
+  referenceImage.onerror = null
+  referenceImage.hidden = true
+  referenceImage.removeAttribute('src')
+  element<HTMLElement>('comparison-controls').hidden = true
+  viewport.style.removeProperty('width')
+  viewport.style.removeProperty('height')
+  if (referenceUrl) URL.revokeObjectURL(referenceUrl)
+  referenceUrl = null
+  referenceFile.value = ''
+}
+element<HTMLButtonElement>('compare').addEventListener('click', () => referenceFile.click())
+referenceFile.addEventListener('change', () => {
+  const file = referenceFile.files?.[0]
+  if (!file) return
+  closeComparison()
+  referenceUrl = URL.createObjectURL(file)
+  referenceImage.onload = () => {
+    referenceImage.hidden = false
+    element<HTMLElement>('comparison-controls').hidden = false
+    element<HTMLElement>('reference-name').textContent = file.name + ' · use the same saved frame'
+    if (!paused) element<HTMLButtonElement>('pause').click()
+    element<HTMLButtonElement>('reset').click()
+    resizeReference()
+    updateComparison()
+  }
+  referenceImage.onerror = () => { closeComparison(); showNotice('The reference image could not be decoded.', true) }
+  referenceImage.src = referenceUrl
+})
+comparisonSplit.addEventListener('input', updateComparison)
+comparisonDifference.addEventListener('change', updateComparison)
+element<HTMLButtonElement>('comparison-close').addEventListener('click', closeComparison)
+window.addEventListener('resize', resizeReference)
+window.addEventListener('beforeunload', closeComparison)
 element<HTMLButtonElement>('background').addEventListener('click', event => {
   const modes = ['dark', 'checker', 'light']
   const current = modes.indexOf(studio.dataset.background || 'dark')
@@ -1077,7 +1220,7 @@ retryButton.addEventListener('click', () => {
   const failure = failedLoad || latestStatus
   if (loadingGeneration || retryButton.hidden || retryButton.disabled || !failure) return
   // Reinstall this compiled generation. No Blender save or bake is needed.
-  // A compile/runtime failure must never be relabeled as successful loading.
+  // Only browser validation/runtime failures can retry; compile failures need a new save.
   showNotice('Retrying browser loading and validation…')
   setPhase('published', 'Retrying preview…')
   void promote({ ...failure, phase: 'published' })
@@ -1263,6 +1406,7 @@ export function watchPreviewStudioAcknowledgements(
         sessionId: plan.sessionId,
         generation: value.generation,
         phase: value.phase,
+        ...(value.phase === 'ready' && value.recovery === true ? { recovery: true as const } : {}),
         ...(value.failureKind ? { failureKind: value.failureKind } : {}),
         ...(typeof value.retainedGeneration === 'string'
           ? { retainedGeneration: value.retainedGeneration }

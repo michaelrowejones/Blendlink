@@ -55,6 +55,8 @@ export interface BakeSettings {
 }
 
 export interface ExportSettings {
+  /** Automatically translate connected EEVEE shader fields. Defaults to true. */
+  automaticMaterials?: boolean
   /** Export only this collection (and children); omit for the whole file. */
   collection?: string
   /** 'AUTO' embeds textures; 'NONE' skips image export (fast dev loops). */
@@ -420,6 +422,7 @@ export interface ExportResult {
   /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
    * transport); absent when no lowered material carries IR. texturePaths
    * are the published texture_ref source-image assets riding beside it. */
+  sourcePresentation?: { path: string; bytes: number; hash: string } | null
   materialPrograms?: {
     path: string
     bytes: number
@@ -784,6 +787,9 @@ export async function exportBlend(options: {
     const materialPrograms = result.materialPrograms
       ? publication.publishMaterialPrograms(result.materialPrograms)
       : null
+    const sourcePresentation = result.sourcePresentation
+      ? { ...result.sourcePresentation, path: relocate(result.sourcePresentation.path) }
+      : null
     const reflectionProbeAssets = Object.fromEntries(
       Object.entries(result.reflectionProbeAssets ?? {}).map(([id, asset]) => [
         id,
@@ -818,6 +824,7 @@ export async function exportBlend(options: {
       incrementalBake: result.baked?.incremental,
       environment,
       materialPrograms,
+      sourcePresentation,
       reflectionProbeAssets,
       glbPath: options.outPath,
       durationMs: Date.now() - started,

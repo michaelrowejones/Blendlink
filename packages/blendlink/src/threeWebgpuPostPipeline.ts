@@ -18,6 +18,9 @@
  * three/webgpu into WebGL-only bundles.
  */
 import * as THREE from 'three'
+import { buildSourceDisplay } from './tslSourceDisplay.js'
+import { buildSourceDepth } from './tslSourcePasses.js'
+import { buildSourceCompositor, SourceCompositorUnsupported } from './tslSourceCompositor.js'
 import { RenderPipeline } from 'three/webgpu'
 import {
   Fn,
@@ -131,6 +134,8 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   private readonly options: InstallThreeComponentsOptions
   private readonly n8aoModule: N8AOWebgpuModule | null
   private pipeline: InstanceType<typeof RenderPipeline> | null = null
+  private sourceDisplay: ReturnType<typeof buildSourceDisplay> | null = null
+  private sourceCompositor: ReturnType<typeof buildSourceCompositor> | null = null
   private scenePass: TslEffectNode = null
   private edgeAntialiasingPresetState: PostEdgeAntialiasingPreset = 'off'
   private edgeAntialiasingActive = false
@@ -237,11 +242,41 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       registration.build(context)
       this.resolvedOrder.push(registration.id)
     }
+    if (this.options.sourcePresentation?.compositor) {
+      const graph = this.options.sourcePresentation.compositor
+      try {
+        if (new Set(graph.passes.map(pass => `${pass.scene}/${pass.viewLayer}`)).size > 1) {
+          throw new SourceCompositorUnsupported('Multiple Blender view layers require separate runtime scene passes')
+        }
+        this.sourceCompositor = buildSourceCompositor(graph, request => {
+          if (request.aov) return null
+          if (request.pass === 'Image') return context.color
+          if (request.pass === 'Alpha') return context.color.a
+          if (request.pass === 'Depth') {
+            const renderer = this.options.renderer as unknown as { logarithmicDepthBuffer?: boolean; reversedDepthBuffer?: boolean }
+            if (renderer.logarithmicDepthBuffer || renderer.reversedDepthBuffer) return null
+            return buildSourceDepth(scenePass.getTextureNode('depth'), () => this.options.camera)
+          }
+          return null
+        })
+        context.color = this.sourceCompositor.node
+        this.resolvedOrder.push('blender-compositor')
+      } catch (error) {
+        if (!(error instanceof SourceCompositorUnsupported)) throw error
+        ;(this.options.onWarning ?? console.warn)(`${error.message}. The complete compositor is bypassed; the scene and display transform remain active.`)
+      }
+    }
     // The HDR→LDR boundary: renderOutput applies the renderer's authored
     // tone mapping and output color space in-shader. Unlike the WebGL
     // pipeline, no renderer property is mutated and no synthetic
     // 'tone-mapping' order entry exists — the boundary is structural.
-    context.color = renderOutput(context.color)
+    if (this.options.sourcePresentation?.display) {
+      this.sourceDisplay = buildSourceDisplay(this.options.sourcePresentation.display, context.color)
+      context.color = this.sourceDisplay.node
+      this.resolvedOrder.push('blender-display-transform')
+    } else {
+      context.color = renderOutput(context.color)
+    }
     for (const registration of afterTone) {
       registration.build(context)
       this.resolvedOrder.push(registration.id)
@@ -323,6 +358,8 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
     }
     try { this.pipeline?.dispose() } catch (error) { errors.push(error) }
     try { this.scenePass?.dispose?.() } catch (error) { errors.push(error) }
+    try { this.sourceDisplay?.dispose() } catch (error) { errors.push(error) }
+    try { this.sourceCompositor?.dispose() } catch (error) { errors.push(error) }
     if (errors.length > 0) {
       throw new Error(
         `Blendlink post-pipeline disposal failed: ${errors

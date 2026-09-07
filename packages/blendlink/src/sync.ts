@@ -225,6 +225,7 @@ function addressedTypegenAssetFields(
     textureVariants?: SceneManifest['textureVariants']
     environment?: SceneManifest['environment']
     materialPrograms?: SceneManifest['materialPrograms']
+    sourcePresentation?: SceneManifest['sourcePresentation']
     reflectionProbeAssets?: SceneManifest['reflectionProbeAssets']
     states?: SceneManifest['states']
     lightGroups?: SceneManifest['lightGroups']
@@ -275,6 +276,9 @@ function addressedTypegenAssetFields(
   const materialPrograms = fields.materialPrograms
     ? { ...fields.materialPrograms, url: address(fields.materialPrograms.url) }
     : undefined
+  const sourcePresentation = fields.sourcePresentation
+    ? { ...fields.sourcePresentation, url: address(fields.sourcePresentation.url) }
+    : undefined
   const reflectionProbeAssets = fields.reflectionProbeAssets
     ? Object.fromEntries(Object.entries(fields.reflectionProbeAssets).map(
         ([id, asset]) => [id, { ...asset, url: address(asset.url) }],
@@ -322,6 +326,7 @@ function addressedTypegenAssetFields(
     ...(textureVariants ? { textureVariants } : {}),
     ...(environment ? { environment } : {}),
     ...(materialPrograms ? { materialPrograms } : {}),
+    ...(sourcePresentation ? { sourcePresentation } : {}),
     ...(reflectionProbeAssets ? { reflectionProbeAssets } : {}),
     ...(states ? { states } : {}),
     ...(lightGroups ? { lightGroups } : {}),
@@ -1410,6 +1415,9 @@ async function syncSceneWithPublicationLease(
         materials: exported.materialPrograms.materials,
       }
     : undefined
+  const sourcePresentation = exported.sourcePresentation
+    ? { url: toUrl(exported.sourcePresentation.path), bytes: exported.sourcePresentation.bytes, hash: exported.sourcePresentation.hash }
+    : undefined
   // texture_ref source images publish BESIDE the sidecar and the runtime
   // resolves them by basename against the sidecar URL -- they are never
   // URL-addressed here, so toUrl() never sees them, and without an
@@ -1499,6 +1507,7 @@ async function syncSceneWithPublicationLease(
     ...(exported.incrementalBake ? { incrementalBake: exported.incrementalBake } : {}),
     ...(environment ? { environment } : {}),
     ...(materialPrograms ? { materialPrograms } : {}),
+    ...(sourcePresentation ? { sourcePresentation } : {}),
     ...(Object.keys(reflectionProbeAssets).length > 0
       ? { reflectionProbeAssets }
       : {}),
@@ -1550,6 +1559,7 @@ async function syncSceneWithPublicationLease(
       ...(Object.keys(textureVariants).length > 0 ? { textureVariants } : {}),
       ...(environment ? { environment } : {}),
       ...(materialPrograms ? { materialPrograms } : {}),
+      ...(sourcePresentation ? { sourcePresentation } : {}),
       ...(Object.keys(reflectionProbeAssets).length > 0
         ? { reflectionProbeAssets }
         : {}),
@@ -1660,9 +1670,9 @@ async function syncSceneWithPublicationLease(
   }
   if (!sceneRecipe) {
     warnings.unshift(
-      'No Blendlink scene recipe is saved in this .blend. The generated starter can only use a ' +
-        'diagnostic fallback camera/look, which may frame the wrong subject. In Blender, run Set Up ' +
-        'Blendlink Scene, choose the Website Camera and rendering ownership, save, then rebuild.',
+      'No Blendlink scene recipe is saved in this .blend. Supported Blender presentation settings ' +
+        'provide the initial view. For responsive framing and explicit website ownership, run Set Up ' +
+        'Blendlink Scene, choose the Website Camera, save, then rebuild.',
     )
   }
   // The public manifest deliberately replaces outside-project locations with
@@ -2131,6 +2141,15 @@ async function verifyScenesWithPublicationLease(
           })
           continue
         }
+      }
+    }
+    if (manifest.sourcePresentation) {
+      const asset = manifest.sourcePresentation
+      const path = publishedAssetPath(scene, asset.url, manifest)
+      const payload = path && existsSync(path) ? readFileSync(path) : null
+      if (!payload || payload.byteLength !== asset.bytes || createHash('sha256').update(payload).digest('hex').slice(0, 16) !== asset.hash) {
+        issues.push({ scene: scene.name, problem: 'Source presentation asset is missing or differs from the manifest.', fix: 'Run `blendlink compile` and commit the presentation.json asset with its manifest.' })
+        continue
       }
     }
     if (manifest.materialPrograms) {

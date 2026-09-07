@@ -43,6 +43,8 @@ export interface Object3DLike {
  * opt into a best-effort preview. It never changes a website's published
  * presentation policy by itself. */
 export interface AuthoringPreview {
+  /** Active render camera, used by authoring tools when no website camera owns the view. */
+  camera?: DeepReadonly<PresentationCameraRecipe>
   look: Readonly<{
     toneMapping: 'agx' | 'neutral' | 'aces' | 'none'
     /** Blender exposure in stops. */
@@ -186,6 +188,8 @@ export interface CompiledSceneDescriptor {
   /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
    * transport): fetch by url, pin content by hash. Absent when no compiled
    * material carries IR. */
+  /** Authored Blender display/compositor graph. Explicit website look wins. */
+  sourcePresentation?: Readonly<import('./sourceDisplay.js').SourcePresentationAsset> | null
   materialPrograms?: DeepReadonly<{
     url: string
     bytes: number

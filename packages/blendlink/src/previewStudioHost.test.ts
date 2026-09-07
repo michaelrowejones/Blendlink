@@ -95,7 +95,7 @@ describe('Preview Studio host protocol', () => {
       rmSync(plan.workspace, { recursive: true, force: true })
     }
   })
-  it('accepts a fresh browser validation retry, but rejects compile failures and stale or runtime evidence', async () => {
+  it('accepts fresh browser validation/runtime retries, but rejects compile failures and stale evidence', async () => {
     const plan = tempPlan()
     const control = ensurePreviewStudioControl(plan)
     let handler: (request: PassThrough, response: any, next: () => void) => void
@@ -124,7 +124,8 @@ describe('Preview Studio host protocol', () => {
       writer.write({ phase: 'failed', label: 'compile failed' })
       expect(await send('current')).toBe(409)
       writer.write({ phase: 'failed', label: 'runtime failed', generation: 'current', failureKind: 'runtime' })
-      expect(await send('current')).toBe(409)
+      expect(await send('current')).toBe(204)
+      expect(await send('stale')).toBe(409)
       writer.write({ phase: 'published', label: 'saved again', generation: 'current' })
       expect(await send('current')).toBe(204)
     } finally {
@@ -157,13 +158,12 @@ describe('Preview Studio host protocol', () => {
       writeFileSync(join(plan.workspace, 'public', PREVIEW_STUDIO_ACK), JSON.stringify({ ...ack, phase: 'ready' }))
       await eventually(() => received.length === 3)
       expect(dispositions[2]).toBe('ignore')
-      gate.beginBuild()
-      gate.publish('current')
       writeFileSync(join(plan.workspace, 'public', PREVIEW_STUDIO_ACK), JSON.stringify({
-        ...ack, phase: 'ready', updatedAt: 'after-new-save',
+        ...ack, phase: 'ready', recovery: true, updatedAt: 'after-renderer-retry',
       }))
       await eventually(() => received.length === 4)
       expect(dispositions[3]).toBe('ready')
+      expect(received[3]).toMatchObject({ recovery: true })
     } finally {
       watcher.close()
       rmSync(plan.workspace, { recursive: true, force: true })
@@ -298,7 +298,7 @@ describe('Preview Studio host protocol', () => {
       expect(server).toContain("payload.failureKind !== 'runtime'")
 
       const client = previewStudioMainSource(plan)
-      const acknowledge = client.indexOf("await acknowledge({ generation, phase: 'ready' })")
+      const acknowledge = client.indexOf("await acknowledge({ generation, phase: 'ready',")
       const promoteCanvas = client.indexOf("candidate.canvas.classList.add('active')")
       expect(acknowledge).toBeGreaterThan(0)
       expect(promoteCanvas).toBeGreaterThan(acknowledge)

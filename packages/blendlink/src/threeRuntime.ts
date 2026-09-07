@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { loadSourcePresentation } from './sourceDisplay.js'
 import { FlyControls } from 'three/addons/controls/FlyControls.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js'
@@ -342,6 +343,10 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
   /** Preview Studio opt-in. Uses Blender authoring evidence only where the
    * published recipe deliberately leaves presentation application-owned. */
   useAuthoringPreview?: boolean
+  /** Default true: use exported Blender camera, World and shadows where the
+   * application/website recipe has no owner, plus display/compositor on node
+   * renderers unless an explicit website tone-mapping policy overrides it. */
+  useSourcePresentation?: boolean
   /** Default true: upload known textures and compile reachable shaders after
    * all scene policies and components are installed. */
   prewarm?: boolean
@@ -618,6 +623,7 @@ interface PreviewMeshShadowInstallation {
 function resolveAuthoringPreview(
   descriptor: CompiledSceneDescriptor,
   enabled: boolean,
+  hasApplicationCamera = false,
 ): ResolvedAuthoringPreview {
   const preview = descriptor.authoringPreview
   if (!enabled || !preview) {
@@ -631,6 +637,9 @@ function resolveAuthoringPreview(
   }
 
   const publishedLook = descriptor.look
+  const sourceCamera = !descriptor.camera && !hasApplicationCamera
+    && preview.camera && descriptor.objectsById?.[preview.camera.objectId]
+    ? preview.camera : null
   const useLook = !publishedLook || publishedLook.toneMapping === 'application'
   const publishedShadows = descriptor.shadows
   const useShadows = preview.shadows.enabled
@@ -656,7 +665,7 @@ function resolveAuthoringPreview(
     : null
   const needsWorldWarning = !!preview.worldWarning
     && (sourceOwnsWorldBackground || sourceOwnsWorldLighting)
-  if (!useLook && !useShadows && !world && !needsWorldWarning) {
+  if (!useLook && !useShadows && !world && !needsWorldWarning && !sourceCamera) {
     return {
       descriptor,
       defaultMeshShadows: false,
@@ -686,6 +695,7 @@ function resolveAuthoringPreview(
   return {
     descriptor: {
       ...descriptor,
+      ...(sourceCamera ? { camera: sourceCamera } : {}),
       ...(useLook
         ? {
             look: {
@@ -1774,7 +1784,10 @@ export async function prepareLoadedThreeCompiledScene(
     try {
       const resolvedPreview = resolveAuthoringPreview(
         options.descriptor,
-        options.useAuthoringPreview === true,
+        options.useAuthoringPreview === true || (
+          options.useSourcePresentation !== false && !!options.descriptor.sourcePresentation
+        ),
+        !!options.fallbackCamera,
       )
       const descriptor = resolvedPreview.descriptor
       if (resolvedPreview.warnings.length > 0) {
@@ -1884,6 +1897,8 @@ export async function prepareLoadedThreeCompiledScene(
           // application-owned unless the caller explicitly opts in.
           resizeRenderer: options.resizeRenderer === true,
           useAuthoringPreview: false,
+          useSourcePresentation: options.useSourcePresentation !== false
+            && (!options.descriptor.look || options.descriptor.look.toneMapping === 'application'),
           signal: context.signal,
           requestFrame: bufferedRequestFrame,
         },
@@ -2108,7 +2123,10 @@ async function installLoadedThreeCompiledSceneNow(
   throwIfInstallationAborted(options.signal)
   const resolvedPreview = resolveAuthoringPreview(
     options.descriptor,
-    options.useAuthoringPreview === true,
+    options.useAuthoringPreview === true || (
+      options.useSourcePresentation !== false && !!options.descriptor.sourcePresentation
+    ),
+    !!options.fallbackCamera,
   )
   const descriptor = resolvedPreview.descriptor
   const { scene } = options
@@ -2628,7 +2646,18 @@ async function installLoadedThreeCompiledSceneNow(
     }
     if (viewport && !mode.deferInitialResize) resize(viewport.width, viewport.height)
 
+    let sourcePresentation: import('./sourceDisplay.js').SourcePresentation | undefined
+    if (descriptor.sourcePresentation && options.useSourcePresentation !== false
+      && (!options.descriptor.look || options.descriptor.look.toneMapping === 'application')) {
+      if ((renderer as THREE.WebGLRenderer & { isWebGPURenderer?: boolean }).isWebGPURenderer) {
+        sourcePresentation = await loadSourcePresentation(descriptor.sourcePresentation, options.signal)
+        for (const warning of sourcePresentation.warnings) warnThreeInstallation(options, warning)
+      } else {
+        warnThreeInstallation(options, 'The authored Blender display/compositor needs WebGPURenderer (WebGPU or WebGL2 backend). Native tone mapping remains active.')
+      }
+    }
     components = await installThreeComponents({
+      ...(sourcePresentation ? { sourcePresentation } : {}),
       // Generated descriptors are `as const`; the component installer never
       // mutates them, but accepts the canonical portable record shape.
       components: descriptor.components as unknown as readonly PortableComponentRecord[] | undefined,

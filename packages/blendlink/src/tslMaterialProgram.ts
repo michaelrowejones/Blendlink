@@ -45,6 +45,8 @@ export type MaterialNodeSlot =
   | 'roughnessNode'
   | 'metalnessNode'
   | 'opacityNode'
+  | 'normalNode' | 'clearcoatNode' | 'clearcoatRoughnessNode' | 'clearcoatNormalNode'
+  | 'transmissionNode' | 'iorNode' | 'sheenNode' | 'sheenRoughnessNode'
 
 export interface ChannelNodeMapping {
   node: MaterialNodeSlot
@@ -64,6 +66,14 @@ export const MATERIAL_CHANNEL_NODES: Record<string, ChannelNodeMapping> = {
   Roughness: { node: 'roughnessNode', kind: 'scalar' },
   Metallic: { node: 'metalnessNode', kind: 'scalar' },
   Alpha: { node: 'opacityNode', kind: 'scalar' },
+  Normal: { node: 'normalNode', kind: 'color' },
+  'Coat Weight': { node: 'clearcoatNode', kind: 'scalar' },
+  'Coat Roughness': { node: 'clearcoatRoughnessNode', kind: 'scalar' },
+  'Coat Normal': { node: 'clearcoatNormalNode', kind: 'color' },
+  'Transmission Weight': { node: 'transmissionNode', kind: 'scalar' },
+  IOR: { node: 'iorNode', kind: 'scalar' },
+  Sheen: { node: 'sheenNode', kind: 'color' },
+  'Sheen Roughness': { node: 'sheenRoughnessNode', kind: 'scalar' },
 }
 
 /** A named non-application from the builder. The installer decorates

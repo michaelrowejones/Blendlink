@@ -113,11 +113,13 @@ export class PreviewStudioGenerationGate {
   accept(ack: PreviewStudioClientAck): PreviewStudioAckDisposition {
     if (!this.currentGeneration || ack.generation !== this.currentGeneration) return 'ignore'
     if (ack.phase === 'ready') {
-      if (this.readyGeneration === ack.generation || this.runtimeFailedGeneration === ack.generation) {
+      if (this.readyGeneration === ack.generation ||
+          (this.runtimeFailedGeneration === ack.generation && !ack.recovery)) {
         return 'ignore'
       }
       this.readyGeneration = ack.generation
       this.failedGeneration = undefined
+      this.runtimeFailedGeneration = undefined
       return 'ready'
     }
     if (this.failedGeneration === ack.generation) {

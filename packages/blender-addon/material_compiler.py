@@ -311,6 +311,7 @@ class MaterialPlan:
     source_fingerprint: str
     decisions: tuple[MaterialDecision, ...]
     objects: tuple[object, ...]
+    automatic_programs: bool = False
 
     @property
     def errors(self) -> tuple[MaterialIssue, ...]:
@@ -2343,7 +2344,7 @@ def _infer_surface_response(material, color_link):
 
 
 def _plan_selected_material(
-    material, raw_bindings, binding_issues=(), *, purpose: str,
+    material, raw_bindings, binding_issues=(), *, purpose: str, automatic_programs=False,
 ) -> MaterialDecision:
     object_names = tuple(sorted({obj.name for obj, _slot in raw_bindings}))
     markers = marker_nodes(material)
@@ -2360,6 +2361,47 @@ def _plan_selected_material(
             return _plan_tsl_program(
                 material, raw_bindings, binding_issues, purpose=purpose,
             )
+        if automatic_programs and material.get('blendlink_live_translation', True):
+            tree = bakelib.active_shader_node_tree(material)
+            if tree is not None:
+                try:
+                    root, _stack = tsl_ir.find_principled_root(tree, target='EEVEE')
+                    needs_program = any(socket.is_linked and any(
+                        link.from_node.bl_idname != 'ShaderNodeTexImage'
+                        for link in socket.links
+                    ) for socket in root.inputs)
+                except (tsl_ir.TslIrRefusal, RecursionError):
+                    needs_program = True
+                if needs_program:
+                    program = _plan_tsl_program(material, raw_bindings, binding_issues, purpose=purpose, target='EEVEE', automatic=True)
+                    live_plan = program.channel_plan or {}
+                    # Reuse the proven static channel baker only for a shared
+                    # EEVEE/Cycles Principled root. EEVEE-only lighting graphs
+                    # must never be flattened by a Cycles field bake.
+                    try:
+                        eevee_root, _ = tsl_ir.find_principled_root(tree, target='EEVEE')
+                        # The legacy classifier can select a tree-order root;
+                        # the fallback must compare the actual engine outputs.
+                        cycles_root, _, _ = tsl_ir._active_surface_link(tree, 'CYCLES')
+                        shared_root = eevee_root == cycles_root
+                        translated = {entry['channel'] for entry in live_plan.get('channels', ()) if 'tslIr' in entry}
+                        bakeable = {'Base Color', 'Metallic', 'Roughness', 'Alpha', 'Emission', 'Normal'}
+                        aliases = {'Emission Color': 'Emission', 'Emission Strength': 'Emission',
+                                   'Sheen Tint': 'Sheen', 'Sheen Weight': 'Sheen'}
+                        shared_root = shared_root and all(
+                            not socket.is_linked or aliases.get(socket.name, socket.name) in translated | bakeable
+                            for socket in eevee_root.inputs
+                        )
+                    except (tsl_ir.TslIrRefusal, RecursionError):
+                        shared_root = False
+                    if shared_root and any(entry.get('route') == 'refused'
+                                           for entry in live_plan.get('channels', ())):
+                        hybrid = _plan_material_bake(material, raw_bindings, binding_issues,
+                                                     purpose=purpose, live_plan=live_plan)
+                        if hybrid.outcome != 'blocked' and any(entry.get('route') == 'bake'
+                                                              for entry in (hybrid.channel_plan or {}).get('channels', ())):
+                            return hybrid
+                    return program
         return MaterialDecision(
             material.name, "automatic", "preserved", "stock", "full-surface", None,
             tuple(MaterialBinding(obj.name, slot) for obj, slot in raw_bindings),
@@ -2746,7 +2788,7 @@ def set_tsl_ir(material, enabled: bool) -> None:
         del material[TSL_IR_PROPERTY]
 
 
-def _attach_tsl_ir(tree, channels, *, surface_resolved: bool = False) -> None:
+def _attach_tsl_ir(tree, channels, *, surface_resolved: bool = False, target="CYCLES") -> None:
     """Additive per-channel TSL IR for an opted-in material's channel plan.
 
     Every channel record — bake, factor, and refused alike — gains either
@@ -2764,20 +2806,20 @@ def _attach_tsl_ir(tree, channels, *, surface_resolved: bool = False) -> None:
     tsl_ir.set_texture_ref_emission(True)
     try:
         if surface_resolved:
-            _attach_surface_tsl_ir(tree, channels, hashlib, _json)
+            _attach_surface_tsl_ir(tree, channels, hashlib, _json, target)
         else:
-            _attach_tsl_ir_documents(tree, channels, hashlib, _json)
+            _attach_tsl_ir_documents(tree, channels, hashlib, _json, target)
     finally:
         tsl_ir.set_texture_ref_emission(False)
 
 
-def _attach_surface_tsl_ir(tree, channels, hashlib, _json) -> None:
+def _attach_surface_tsl_ir(tree, channels, hashlib, _json, target="CYCLES") -> None:
     """Per-channel IR for a surface-resolved plan: the fold's documents
     keyed onto the plan records (the merged Emission record carries the
     radiance document, strength ships as 1)."""
     tsl_ir.drain_approximations()
     try:
-        emitted = tsl_ir.emit_surface(tree)
+        emitted = tsl_ir.emit_surface(tree, target=target)
     except (tsl_ir.TslIrRefusal, RecursionError) as refusal:
         tsl_ir.drain_approximations()
         for entry in channels:
@@ -2847,12 +2889,12 @@ def _collect_texture_ref_images(value, names) -> None:
             _collect_texture_ref_images(item, names)
 
 
-def _attach_tsl_ir_documents(tree, channels, hashlib, _json) -> None:
+def _attach_tsl_ir_documents(tree, channels, hashlib, _json, target="CYCLES") -> None:
     # Residue guard: a prior emission that refused midway may have
     # declared approximations that never drained; they belong to nobody.
     tsl_ir.drain_approximations()
     try:
-        root, stack = tsl_ir.find_principled_root(tree)
+        root, stack = tsl_ir.find_principled_root(tree, target=target)
     except tsl_ir.TslIrRefusal as refusal:
         for entry in channels:
             entry["tslIrRefusal"] = str(refusal)
@@ -2865,20 +2907,22 @@ def _attach_tsl_ir_documents(tree, channels, hashlib, _json) -> None:
         return
     for entry in channels:
         channel_name = entry.get("channel")
-        if channel_name == "Emission":
-            # The plan merges Emission Color + Strength into one record;
-            # per-socket radiance IR lands with the runtime consumer.
-            entry["tslIrRefusal"] = (
-                "merged Emission record; per-socket IR lands with the "
-                "runtime consumer"
-            )
-            continue
-        socket = procedural._node_input(root, channel_name)
+        socket = procedural._node_input(root, {
+            'Emission': 'Emission Color', 'Sheen': 'Sheen Tint',
+        }.get(channel_name, channel_name))
         if socket is None:
             entry["tslIrRefusal"] = f"channel {channel_name!r} not found"
             continue
         try:
-            document = tsl_ir.emit_channel(socket, stack)
+            document = (tsl_ir.emit_normal_channel(socket, stack)
+                        if channel_name in {'Normal', 'Coat Normal'}
+                        else tsl_ir.emit_channel(socket, stack))
+            if channel_name in {'Emission', 'Sheen'}:
+                weight = root.inputs['Emission Strength' if channel_name == 'Emission' else 'Sheen Weight']
+                document = tsl_ir._channel_document({
+                    'op': 'vector_scale', 'input': tsl_ir.emit_input(socket, stack, as_vector=True),
+                    'scale': tsl_ir.emit_input(weight, stack),
+                })
         except tsl_ir.TslIrRefusal as refusal:
             tsl_ir.drain_approximations()
             entry["tslIrRefusal"] = str(refusal)
@@ -3141,7 +3185,7 @@ def _object_attribute_names(tree) -> tuple[str, ...]:
 
 
 def _plan_tsl_program(
-    material, raw_bindings, binding_issues=(), *, purpose: str,
+    material, raw_bindings, binding_issues=(), *, purpose: str, target="CYCLES", automatic=False,
 ) -> MaterialDecision:
     """The standalone TSL-program route: translate, never bake.
 
@@ -3171,7 +3215,7 @@ def _plan_tsl_program(
     # the surface fold, exactly like the bake's IR attachment.
     surface_resolved = False
     try:
-        tsl_ir.find_principled_root(tree)
+        tsl_ir.find_principled_root(tree, target=target)
     except (tsl_ir.TslIrRefusal, RecursionError):
         surface_resolved = True
     channels = [
@@ -3180,11 +3224,29 @@ def _plan_tsl_program(
             "Base Color", "Metallic", "Roughness", "Alpha", "Emission",
         )
     ]
-    _attach_tsl_ir(tree, channels, surface_resolved=surface_resolved)
+    if not surface_resolved:
+        root, _stack = tsl_ir.find_principled_root(tree, target=target)
+        for name in ('Normal', 'Coat Weight', 'Coat Roughness', 'Coat Normal',
+                     'Transmission Weight', 'IOR', 'Sheen', 'Sheen Roughness'):
+            socket = root.inputs.get('Sheen Tint' if name == 'Sheen' else name)
+            if socket is None or (name in {'Normal', 'Coat Normal'} and not socket.is_linked):
+                continue
+            if name.startswith('Coat') and not root.inputs['Coat Weight'].is_linked \
+                    and root.inputs['Coat Weight'].default_value == 0:
+                continue
+            if name.startswith('Sheen') and not root.inputs['Sheen Weight'].is_linked \
+                    and root.inputs['Sheen Weight'].default_value == 0:
+                continue
+            if name == 'Transmission Weight' and not socket.is_linked and socket.default_value == 0:
+                continue
+            channels.append({'channel': name})
+    _attach_tsl_ir(tree, channels, surface_resolved=surface_resolved, target=target)
     for entry in channels:
         entry["route"] = "program" if "tslIr" in entry else "refused"
     channel_plan = {
         "model": TSL_PROGRAM_PLAN_MODEL,
+        "sourceTarget": target,
+        "automatic": automatic,
         "channels": channels,
         **({"surfaceResolved": True} if surface_resolved else {}),
     }
@@ -3210,7 +3272,7 @@ def _plan_tsl_program(
 
 
 def _plan_material_bake(
-    material, raw_bindings, binding_issues=(), *, purpose: str,
+    material, raw_bindings, binding_issues=(), *, purpose: str, live_plan=None,
 ) -> MaterialDecision:
     """Route every Principled channel of one opted-in material."""
     object_names = tuple(sorted({obj.name for obj, _slot in raw_bindings}))
@@ -3258,6 +3320,10 @@ def _plan_material_bake(
             )
 
     routed = {entry["channel"]: entry for entry in routing["channels"]}
+    live_channels = {
+        entry['channel']: entry for entry in (live_plan or {}).get('channels', ())
+        if 'tslIr' in entry
+    }
     channels = []
     needs_unique = False
     needs_tile = False
@@ -3287,6 +3353,9 @@ def _plan_material_bake(
     def route_bake(channel_name, entry, colorspace, pack=None,
                    bake_pass="EMIT"):
         nonlocal needs_unique, needs_tile, tile_uses_active
+        if channel_name in live_channels:
+            channels.append(dict(live_channels[channel_name]))
+            return None
         if entry.get("animated"):
             refuse(
                 channel_name, entry,
@@ -3578,10 +3647,19 @@ def _plan_material_bake(
         if binding.distinct_material
     )
     surface_resolved = bool(routing.get("surfaceResolved"))
-    if tsl_ir_requested(material):
+    if live_plan is not None:
+        by_channel = {entry['channel']: entry for entry in channels}
+        for name, live in live_channels.items():
+            if name in by_channel:
+                by_channel[name].update({key: value for key, value in live.items() if key.startswith('tslIr')})
+            else:
+                channels.append(dict(live))
+        limitations.append('Unsupported static channels use texture bakes; proven channels remain live.')
+    elif tsl_ir_requested(material):
         _attach_tsl_ir(tree, channels, surface_resolved=surface_resolved)
     channel_plan = {
         "model": CHANNEL_PLAN_MODEL,
+        **({'automatic': True, 'sourceTarget': 'EEVEE'} if live_plan is not None else {}),
         "channels": channels,
         **({"surfaceResolved": True} if surface_resolved else {}),
         "consolidation": {
@@ -3874,7 +3952,7 @@ def atlas_channel_tap(source, kind: str, created_materials: list):
     return material
 
 
-def plan_materials(objects, *, purpose: str = "inspect") -> MaterialPlan:
+def plan_materials(objects, *, purpose: str = "inspect", automatic_programs=False) -> MaterialPlan:
     """Plan every used material binding in an already resolved export scope."""
     if purpose not in {"inspect", "preview", "final"}:
         raise ValueError(f"material compiler purpose must be inspect, preview, or final, not {purpose!r}")
@@ -3885,6 +3963,7 @@ def plan_materials(objects, *, purpose: str = "inspect") -> MaterialPlan:
             entry["bindings"],
             entry["issues"],
             purpose=purpose,
+            automatic_programs=automatic_programs,
         )
         for _pointer, entry in sorted(
             _binding_map(scoped_objects).items(),
@@ -3894,6 +3973,7 @@ def plan_materials(objects, *, purpose: str = "inspect") -> MaterialPlan:
     encoded = json.dumps(
         {
             "planVersion": PLAN_VERSION,
+            "automaticPrograms": automatic_programs,
             "purpose": purpose,
             "decisions": [decision.fingerprint_dict() for decision in decisions],
         },
@@ -3905,6 +3985,7 @@ def plan_materials(objects, *, purpose: str = "inspect") -> MaterialPlan:
         hashlib.sha256(encoded).hexdigest(),
         decisions,
         scoped_objects,
+        automatic_programs,
     )
 
 
@@ -6668,8 +6749,8 @@ def _bake_material_channels_inner(
     # for fixtures that assert the gate.
     baked_channels = sorted(
         record["channel"] for record in records.values()
-        if (record.get("route") or record.get("transport")) != "factor"
-    ) or sorted(records)
+        if record.get("route") == "bake"
+    )
     determinism_gated = (
         set(baked_channels) if _EXHAUSTIVE_BAKE_GATES
         else {baked_channels[0]} if baked_channels else set()
@@ -7311,6 +7392,18 @@ def _generated_material_bake(
     principled = tree.nodes.new("ShaderNodeBsdfPrincipled")
     tree.links.new(principled.outputs["BSDF"], output.inputs["Surface"])
 
+    # A generated channel carrier must retain unrelated physical constants.
+    # Linked physical channels on the automatic route have proven live IR.
+    _source_tree, source_root = _principled_root_of(source_material)
+    managed = {'Base Color', 'Metallic', 'Roughness', 'Alpha', 'Normal',
+               'Emission Color', 'Emission Strength'}
+    if source_root is not None:
+        for socket in source_root.inputs:
+            destination = principled.inputs.get(socket.name)
+            if socket.name not in managed and not socket.is_linked and destination is not None \
+                    and hasattr(socket, 'default_value'):
+                destination.default_value = socket.default_value
+
     def image_node(entry, name):
         node = tree.nodes.new("ShaderNodeTexImage")
         node.name = name
@@ -7457,7 +7550,7 @@ def with_compiled_materials(
     """Install private lowerings for one export, attest, then restore."""
     if plan.errors:
         raise MaterialCompileError("Website material compilation blocked:\n" + format_plan_errors(plan))
-    fresh = plan_materials(plan.objects, purpose=plan.purpose)
+    fresh = plan_materials(plan.objects, purpose=plan.purpose, automatic_programs=plan.automatic_programs)
     if fresh.source_fingerprint != plan.source_fingerprint:
         raise MaterialCompileError(
             "Material graph, marker, attribute, or export scope changed after planning; run Preview again."

@@ -35,6 +35,23 @@ function sceneWith(
 const pointer = { url: 'https://scene.test/x.materials.json', bytes: 1, hash: 'x', materials: 1 }
 
 describe('program clone construction', () => {
+  it('retains the carrier normal when exported geometry has no UV map', async () => {
+    const material = new THREE.MeshStandardMaterial()
+    material.userData.blendlink_source_material = 'Paint'
+    const { root, mesh } = sceneWith(material)
+    mesh.geometry.deleteAttribute('uv')
+    const installed = await installTslMaterials({
+      root, descriptor: { materialPrograms: pointer },
+      loadPrograms: async () => programs({ Paint: { channels: { Normal: { tslIr: {
+        schemaVersion: 1, model: 'blendlink-tsl-ir-v1', output: {
+          op: 'normal_map', convention: 'OPENGL', color: { op: 'const_vec3', value: [0.5, 0.5, 1] }, strength: { op: 'const_float', value: 1 },
+        },
+      } } } } }),
+    })
+    expect(mesh.material).toBe(material)
+    expect(installed.skipped.some(item => /Normal Map needs an exported UV map/.test(item.reason))).toBe(true)
+    installed.dispose()
+  })
   /**
    * The promise this pins is "channels the emitter cannot prove keep the
    * shipped carrier". three's copy() chain transfers node slots and generic
@@ -83,6 +100,28 @@ describe('program clone construction', () => {
     // NodeMaterial.setup() distinguishes null from undefined; an undefined
     // fragmentNode throws on the first shader build.
     expect((clone as unknown as Record<string, unknown>).fragmentNode).toBeNull()
+  })
+
+  it('retains physical carrier maps and settings when adding a live channel', async () => {
+    const { installProgramIntoMaterial } = await import('./tslMaterialRuntime.js')
+    const source = new THREE.MeshPhysicalMaterial({ transmission: 0.6, thickness: 0.4, ior: 1.4, clearcoat: 0.7, sheen: 0.8 })
+    source.transmissionMap = new THREE.Texture()
+    source.clearcoatNormalMap = new THREE.Texture()
+    const clone = installProgramIntoMaterial(source, { roughnessNode: {} }) as THREE.MeshPhysicalMaterial
+    expect(clone.type).toBe('MeshPhysicalNodeMaterial')
+    expect(clone.transmissionMap).toBe(source.transmissionMap)
+    expect(clone.clearcoatNormalMap).toBe(source.clearcoatNormalMap)
+    expect([clone.transmission, clone.thickness, clone.ior, clone.clearcoat, clone.sheen]).toEqual([0.6, 0.4, 1.4, 0.7, 0.8])
+  })
+
+  it('promotes a standard carrier only when a physical slot needs it', async () => {
+    const { installProgramIntoMaterial } = await import('./tslMaterialRuntime.js')
+    const source = new THREE.MeshStandardMaterial({ roughness: 0.3 })
+    const marker = {}
+    const clone = installProgramIntoMaterial(source, { transmissionNode: marker })
+    expect(clone.type).toBe('MeshPhysicalNodeMaterial')
+    expect(clone.roughness).toBe(0.3)
+    expect((clone as unknown as { transmissionNode: unknown }).transmissionNode).toBe(marker)
   })
 })
 

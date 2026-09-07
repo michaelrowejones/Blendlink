@@ -23,6 +23,8 @@
     "math",
     "mix_color",
     "noise",
+    "normal_map",
+    "normal_view",
     "object_coords",
     "ramp_alpha",
     "ramp_lut",

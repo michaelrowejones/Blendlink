@@ -189,6 +189,7 @@ export function compiledSceneAssetUrls(descriptor: CompiledSceneDescriptor): rea
   add(descriptor.environmentAsset?.url)
   add(descriptor.environmentAsset?.optimized?.url)
   add(descriptor.materialPrograms?.url)
+  add(descriptor.sourcePresentation?.url)
   for (const asset of Object.values(descriptor.reflectionProbeAssets ?? {})) add(asset.url)
   for (const state of Object.values(descriptor.states ?? {})) {
     if (typeof state === 'string') add(state)

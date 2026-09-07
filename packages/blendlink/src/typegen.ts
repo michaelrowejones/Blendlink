@@ -358,6 +358,7 @@ export interface SceneManifest {
   }
   /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
    * transport). Absent when no compiled material carries IR. */
+  sourcePresentation?: import('./sourceDisplay.js').SourcePresentationAsset
   materialPrograms?: {
     url: string
     bytes: number
@@ -761,6 +762,7 @@ export async function generateSceneModule(options: {
   incrementalBake?: SceneManifest['incrementalBake']
   environment?: SceneManifest['environment']
   materialPrograms?: SceneManifest['materialPrograms']
+  sourcePresentation?: SceneManifest['sourcePresentation']
   reflectionProbeAssets?: SceneManifest['reflectionProbeAssets']
   recipe?: SceneRecipe
   optimization?: OptimizationReport
@@ -1147,6 +1149,7 @@ export async function generateSceneModule(options: {
     ...(options.materialPrograms
       ? { materialPrograms: options.materialPrograms }
       : {}),
+    ...(options.sourcePresentation ? { sourcePresentation: options.sourcePresentation } : {}),
     ...(options.reflectionProbeAssets
       ? { reflectionProbeAssets: options.reflectionProbeAssets }
       : {}),
@@ -1375,6 +1378,9 @@ ${identityEntries}
     : null)},
   /** The per-channel TSL IR programs sidecar (Phase 4 material runtime
    * transport): fetch by url, pin by hash. IR bodies never inline here. */
+  sourcePresentation: ${constJson(manifest.sourcePresentation
+    ? { ...manifest.sourcePresentation, url: versionedAssetUrl(manifest.sourcePresentation.url, manifest.sourcePresentation.hash) }
+    : null)},
   materialPrograms: ${constJson(manifest.materialPrograms
     ? {
         ...manifest.materialPrograms,

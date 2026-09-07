@@ -919,7 +919,14 @@ def publish_material_programs(material_plan, out_path: str) -> dict | None:
                 "tslIrBytes": item.get("tslIrBytes"),
             }
         if channels:
-            materials[decision.material_name] = {"channels": channels}
+            materials[decision.material_name] = {
+                "channels": channels,
+                "skipped": [
+                    {"channel": item.get('channel'), "reason": item['tslIrRefusal']}
+                    for item in (decision.channel_plan or {}).get('channels', ())
+                    if item.get('tslIrRefusal')
+                ],
+            }
     if not materials:
         return None
     image_names = set()
@@ -1268,6 +1275,19 @@ def collect_authoring_preview(
         "warnings": warnings,
         **({"world": world} if world is not None else {}),
     }
+    camera = scene.camera
+    if camera is not None and camera.type == "CAMERA" and camera.get("blendlink_id"):
+        preview["camera"] = {
+            "objectId": camera["blendlink_id"],
+            "objectName": camera.name,
+            "behavior": "fixed", "framing": "authored",
+            "compositions": [{
+                "name": "Blender render",
+                "width": scene.render.resolution_x,
+                "height": scene.render.resolution_y,
+                "safeMargin": 0,
+            }],
+        }
     if world_reason:
         preview["worldWarning"] = "Blender World preview omitted: " + world_reason
     return preview
@@ -6268,6 +6288,8 @@ def plan_export_materials(
                 surviving.append(obj)
                 continue
             if not _material_intent_marked(obj):
+                if settings.get('automaticMaterials', True) and _owned_output(obj) == 'lighting':
+                    surviving.append(obj)
                 continue
             output = _owned_output(obj)
             if output == "lighting":
@@ -6290,6 +6312,7 @@ def plan_export_materials(
         compile_objects = tuple(surviving)
     material_plan = material_compiler.plan_materials(
         compile_objects, purpose=purpose,
+        automatic_programs=settings.get('automaticMaterials', True),
     )
     material_compiler.merge_diagnostics(
         sidecar["diagnostics"].setdefault("materials", []), material_plan,
@@ -6318,6 +6341,20 @@ def main() -> None:
     with open(settings_path, "r", encoding="utf-8") as handle:
         settings = json.load(handle)
     settings, recipe = resolve_scene_recipe(settings)
+    # The worker never saves the source .blend. An unconfigured active camera
+    # still needs an unambiguous identity in this export and its preview recipe.
+    source_camera = bpy.context.scene.camera
+    source_camera_warnings = []
+    if source_camera is not None and not source_camera.get("blendlink_id"):
+        try:
+            source_camera["blendlink_id"] = "blendlink-source-camera-" + hashlib.sha256(
+                (bpy.context.scene.name + "/" + source_camera.name).encode("utf-8")
+            ).hexdigest()[:24]
+        except (TypeError, RuntimeError) as error:
+            source_camera_warnings.append(
+                f'Active camera "{source_camera.name}" cannot receive an export identity: {error}. '
+                "Automatic source-camera framing is unavailable; an explicit application camera still works."
+            )
     progress(0.02, "Analyzing scene and materials")
 
     # The addon's checker override is viewport-only inspection, but freeze
@@ -6329,6 +6366,7 @@ def main() -> None:
          "(the addon's viewport UV inspection — never baked or exported)"]
         if stripped else []
     )
+    strip_warnings.extend(source_camera_warnings)
 
     if settings.get("planOnly"):
         kwargs, dropped = gltf_export_contract(out_path, settings)
@@ -6393,6 +6431,11 @@ def main() -> None:
                 continue
             compilation = material.get("materialCompilation") or {}
             if compilation.get("outcome") == "lowered":
+                if compilation.get('intent') in {'tslProgram', 'materialBake'}:
+                    # Channel translation is reported per channel in the
+                    # material plan and runtime. Web Color warnings below
+                    # describe a different, artist-selected lowering.
+                    continue
                 surface_response = compilation.get(
                     "surfaceResponse", "explicit",
                 )
@@ -6401,8 +6444,8 @@ def main() -> None:
                     f"Blendlink Web Color will compile through "
                     f"{compilation.get('transport', 'stock glTF')} as a selected field; "
                     f"its website response is {surface_response}. Exact downstream "
-                    "Shader-to-RGB or AO shading, authored shadow appearance, view "
-                    "transform, grain, and compositor effects are not transported"
+                    "Shader-to-RGB or AO shading and authored shadow appearance "
+                    "depend on the runtime lighting contract"
                 )
                 continue
             if material.get("status") == "exact":
@@ -6730,6 +6773,16 @@ def main() -> None:
         item["message"]
         for item in sidecar.get("lightDiagnostics", {}).get("warnings", [])
     )
+    source_presentation_asset = None
+    try:
+        import source_presentation
+        source_presentation_asset = source_presentation.export_source_presentation(bpy.context.scene, out_path)
+    except ImportError as error:
+        warnings.append('Blender display transport unavailable: ' + str(error))
+    if source_presentation_asset and source_presentation_asset.get('displayAvailable'):
+        # The node renderer applies authored OCIO operations, so warnings about
+        # substituting native AgX/ACES/gamma are no longer relevant to Preview.
+        sidecar['authoringPreview']['warnings'] = []
     if settings.get("authoringPreview"):
         warnings.extend(
             "Authoring preview: " + message
@@ -6752,6 +6805,7 @@ def main() -> None:
         "presentation": recipe.get("presentation") if recipe else None,
         "environment": environment_asset,
         "materialPrograms": material_programs_asset,
+        "sourcePresentation": source_presentation_asset,
         "reflectionProbeAssets": reflection_probe_assets,
         "lightContract": light_contract,
         "materialDefaults": material_defaults,

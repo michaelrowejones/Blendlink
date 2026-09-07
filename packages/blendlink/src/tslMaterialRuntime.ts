@@ -13,7 +13,7 @@
  * WebGL-only applications never bundle the node system.
  */
 import * as THREE from 'three'
-import { MeshStandardNodeMaterial } from 'three/webgpu'
+import { MeshStandardNodeMaterial, MeshPhysicalNodeMaterial } from 'three/webgpu'
 import { uniform } from 'three/tsl'
 import {
   createTslBuildResources,
@@ -58,7 +58,7 @@ export interface MaterialProgramImage {
 export interface MaterialProgramsDocument {
   schemaVersion: 1
   model: 'blendlink-material-programs-v1'
-  materials: Record<string, { channels: Record<string, MaterialProgramChannel> }>
+  materials: Record<string, { channels: Record<string, MaterialProgramChannel>; skipped?: { channel?: string; reason: string }[] }>
   /** texture_ref source images published beside the sidecar. */
   images?: Record<string, MaterialProgramImage>
 }
@@ -128,7 +128,10 @@ export function installProgramIntoMaterial(
   source: THREE.Material,
   nodes: Partial<Record<MaterialNodeSlot, unknown>>,
 ): MeshStandardNodeMaterial {
-  const clone = new MeshStandardNodeMaterial()
+  const physical = (source as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial
+    || Object.keys(nodes).some(key => ['clearcoatNode', 'clearcoatRoughnessNode',
+      'clearcoatNormalNode', 'transmissionNode', 'iorNode', 'sheenNode', 'sheenRoughnessNode'].includes(key))
+  const clone = physical ? new MeshPhysicalNodeMaterial() : new MeshStandardNodeMaterial()
   // NodeMaterial.copy reads node slots off the source; copying from
   // a plain shipped MeshStandardMaterial turns every null default
   // (fragmentNode, vertexNode, mrtNode, ...) into UNDEFINED — and
@@ -430,7 +433,10 @@ export async function installTslMaterials(
         if (typeof source !== 'string') return
         const program = programs.materials[source]
         if (!program) return
-        matchedSources.add(source)
+        if (!matchedSources.has(source)) {
+          for (const item of program.skipped ?? []) skipped.push({ material: source, ...item })
+          matchedSources.add(source)
+        }
         const channels = Object.entries(program.channels ?? {})
         if (channels.length === 0) return
         if ((material as THREE.MeshStandardMaterial).isMeshStandardMaterial !== true) {
@@ -461,7 +467,9 @@ export async function installTslMaterials(
         // one clone would make createBakedScene refuse ("shared by atlas
         // groups"). Meshes sharing one loaded material still share one
         // clone per runtime-extras variant.
-        const variantKey = `${material.uuid} ${JSON.stringify(extras ?? null)}`
+        const normalMapBasis = !mesh.geometry.hasAttribute('uv') ? 'missing'
+          : mesh.geometry.hasAttribute('tangent') ? 'attribute' : 'derivative'
+        const variantKey = `${material.uuid} ${normalMapBasis} ${JSON.stringify(extras ?? null)}`
         let variant = variants.get(variantKey)
         if (!variant) {
           const resources = createTslBuildResources()
@@ -471,10 +479,10 @@ export async function installTslMaterials(
           // never allocates a material at all.
           const program = buildMaterialProgram(
             Object.fromEntries(channels),
-            buildOptionsFor(
+            { ...buildOptionsFor(
               extras, resources, source, programTextures?.resolver,
               objectAttribute,
-            ),
+            ), normalMapBasis },
           )
           for (const item of program.skipped) {
             skipped.push({ material: source, ...item })
