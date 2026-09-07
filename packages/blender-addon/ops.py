@@ -69,6 +69,24 @@ def _preview_cli_package_candidates(blend_path: Path):
 
 def _local_preview_cli(blend_path: Path, release_version: str) -> Path | None:
     """Find a built local CLI compatible with the installed Blender addon."""
+    from .prefs import get_prefs
+    preferences = get_prefs()
+    configured = str(getattr(preferences, "preview_package", "") or "").strip()
+    if configured:
+        package_root = Path(os.path.expanduser(configured))
+        if not package_root.is_absolute():
+            raise RuntimeError("Local Preview Package must be an absolute folder path in Blendlink preferences")
+        package_root = package_root.resolve()
+        try:
+            descriptor = json.loads((package_root / "package.json").read_text(encoding="utf8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            raise RuntimeError(f"Cannot read Local Preview Package at {package_root}: {error}") from error
+        if not isinstance(descriptor, dict) or descriptor.get("name") != "blendlink" or descriptor.get("version") != release_version:
+            raise RuntimeError(f"Local Preview Package must be blendlink {release_version}; update the folder in Blendlink preferences")
+        cli_path = package_root / "dist" / "cli.js"
+        if not cli_path.is_file():
+            raise RuntimeError(f"Local Preview Package has no dist/cli.js at {package_root}; run npm run build")
+        return cli_path
     for package_root in _preview_cli_package_candidates(blend_path):
         descriptor_path = package_root / "package.json"
         if not descriptor_path.is_file():

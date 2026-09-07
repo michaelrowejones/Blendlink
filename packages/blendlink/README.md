@@ -34,6 +34,11 @@ Material Bake and TSL Program choices still take precedence. Set
 `automaticMaterials: false` on a scene in `blendlink.config.ts` to opt out, or
 set the material custom property `blendlink_live_translation` to false.
 
+To test an unpublished local build with scenes saved anywhere, set the Blender
+addon's **Local Preview Package** preference to the absolute `packages/blendlink`
+folder after running `npm run build`. The package must match the addon version.
+Clear the preference to restore automatic discovery and the paired npm release.
+
 Preview Studio uses Three's WebGPU renderer, including its WebGL2 fallback.
 The node renderer imports supported Blender display transforms and connected
 compositor graphs, and adopts the active source camera where the website has

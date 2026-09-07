@@ -24,6 +24,12 @@ class BlendlinkPreferences(bpy.types.AddonPreferences):
         description="Draw vocabulary overlays through geometry instead of depth-tested",
         default=False,
     )
+    preview_package: bpy.props.StringProperty(
+        name="Local Preview Package",
+        description="Optional built Blendlink package folder (containing package.json and dist/cli.js), used for scenes anywhere on this computer",
+        subtype="DIR_PATH",
+        default="",
+    )
 
     def draw(self, context):
         layout = self.layout
@@ -31,6 +37,7 @@ class BlendlinkPreferences(bpy.types.AddonPreferences):
         layout.use_property_decorate = False
         layout.prop(self, "category")
         layout.prop(self, "overlay_xray")
+        layout.prop(self, "preview_package")
 
 
 def get_prefs() -> BlendlinkPreferences | None:
