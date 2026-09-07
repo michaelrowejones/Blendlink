@@ -159,9 +159,19 @@ environment_image = bpy.data.images.new(
 )
 environment_image.use_fake_user = True
 environment_image.generated_color = (0.04, 0.08, 0.16, 1.0)
+# Realize the lazy generated buffer before choosing the encoder. Otherwise
+# first access during save can reset file_format to PNG in Blender 5.2.
+_ = environment_image.pixels[0]
 environment_image.filepath_raw = os.path.join(os.path.dirname(out_path), "studio-environment.hdr")
 environment_image.file_format = "HDR"
 environment_image.save()
+# Packing a GENERATED image can encode PNG regardless of file_format. Reload
+# the saved Radiance file so packing preserves the HDR payload the browser uses.
+environment_path = environment_image.filepath_raw
+bpy.data.images.remove(environment_image)
+environment_image = bpy.data.images.load(environment_path, check_existing=False)
+environment_image.name = "Studio Environment"
+environment_image.use_fake_user = True
 environment_image.pack()
 
 camera_data = bpy.data.cameras.new("Camera")

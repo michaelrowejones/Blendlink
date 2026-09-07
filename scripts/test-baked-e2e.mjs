@@ -6,6 +6,7 @@ import {
 import { tmpdir } from 'node:os'
 import { basename, join, resolve } from 'node:path'
 import { sceneRuntimePublicationDirectory } from '../packages/blendlink/dist/scenePublication.js'
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js'
 
 const root = resolve(import.meta.dirname, '..')
 const cli = join(root, 'packages', 'blendlink', 'dist', 'cli.js')
@@ -133,6 +134,15 @@ if (manifest.environment?.format !== 'hdr' || manifest.environment?.source !== '
 const environmentPath = join(work, 'public', 'models', basename(manifest.environment.url))
 if (!existsSync(environmentPath) || readFileSync(environmentPath).length !== manifest.environment.bytes) {
   throw new Error(`published HDR bytes are missing or truncated: ${environmentPath}`)
+}
+// Byte counts and hashes alone previously accepted PNG packed under an HDR
+// filename. Exercise the browser's actual decoder before calling this usable.
+const environmentBytes = readFileSync(environmentPath)
+const decodedEnvironment = new HDRLoader().parse(environmentBytes.buffer.slice(
+  environmentBytes.byteOffset, environmentBytes.byteOffset + environmentBytes.byteLength,
+))
+if (decodedEnvironment.width !== 64 || decodedEnvironment.height !== 32) {
+  throw new Error('published environment did not decode to the authored dimensions')
 }
 const posterTransform = manifest.textureTransforms?.find((entry) => entry.name === 'Hero Poster')
 if (posterTransform?.publishedWidth !== 16 || posterTransform?.publishedHeight !== 8) {

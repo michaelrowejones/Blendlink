@@ -740,6 +740,27 @@ def parse_argv() -> tuple[str, str, str]:
     return args[0], args[1], args[2]
 
 
+def _assert_environment_encoding(prefix: bytes, image_name: str, extension: str) -> None:
+    # A generated float Image can retain an HDR filepath while lazy pixel
+    # initialization resets its encoding to PNG before saving/packing.
+    # The filename cannot select the
+    # browser decoder until we have checked the bytes we will actually ship.
+    actual = (
+        ".hdr" if prefix.startswith((b"#?RADIANCE", b"#?RGBE")) else
+        ".exr" if prefix.startswith(b"\x76\x2f\x31\x01") else
+        "PNG" if prefix.startswith(b"\x89PNG\r\n\x1a\n") else
+        "an unknown encoding"
+    )
+    if actual != extension:
+        raise SystemExit(
+            f"HDR environment {image_name!r} is labeled {extension} but contains {actual} bytes. "
+            "Save the intended image as Radiance HDR or OpenEXR, reload that saved file "
+            "as an image in Blender, select it in HDR Environment, and pack it again if needed. "
+            "Generated images can pack as PNG even when their filename ends in .hdr. "
+            "Blendlink will not reinterpret or color-convert these bytes."
+        )
+
+
 def publish_environment(recipe: dict | None, out_path: str) -> dict | None:
     """Copy authored HDR bytes unchanged beside the GLB.
 
@@ -778,6 +799,7 @@ def publish_environment(recipe: dict | None, out_path: str) -> dict | None:
         payload = packed_payloads[0][1]
         if not payload:
             raise SystemExit(f"packed HDR environment {image.name!r} contains no bytes")
+        _assert_environment_encoding(payload[:16], image.name, extension)
         with open(published_path, "wb") as handle:
             handle.write(payload)
     else:
@@ -786,6 +808,8 @@ def publish_environment(recipe: dict | None, out_path: str) -> dict | None:
                 f"HDR environment {image.name!r} points to missing file {raw_path!r}; "
                 "relink it or pack it into the .blend"
             )
+        with open(raw_path, "rb") as handle:
+            _assert_environment_encoding(handle.read(16), image.name, extension)
         shutil.copyfile(raw_path, published_path)
     with open(published_path, "rb") as handle:
         content_hash = hashlib.sha256(handle.read()).hexdigest()[:16]
