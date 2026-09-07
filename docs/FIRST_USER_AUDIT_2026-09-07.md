@@ -131,3 +131,39 @@ reproduced and fixed.
 Start with [your first scene on a website](FIRST_SCENE.md). Keep the pilot
 focused on getting authored scenes into ordinary sites before adding more
 features.
+
+## Preview refinement follow-up
+
+The next pass prioritized a stylized environment. Preview Studio now opens its
+loading screen before the initial compile finishes. Browser load failures offer
+a retry without another export, including when another tab already validated
+the generation. The viewer shows initial errors directly and clears them after
+recovery. Runtime failures now reach the CLI through the acknowledgement watcher;
+a later save recreates a broken renderer even when compiled output is unchanged.
+Status publication also retries brief Windows replacement locks while preserving
+the previous complete JSON snapshot.
+
+Verification on this Windows/Blender 5.2 setup:
+
+- `npm run build` and `npm run test:unit` passed: 92 test files, 791 tests passed,
+  two codec tests skipped, and 19 release-policy checks passed.
+- Real browser checks covered blocked GLB downloads, retry after repeated failure,
+  retaining an older scene during an unsuccessful update, per-tab recovery,
+  graphics-context loss, and recovery on a save with unchanged compiled output.
+- An intentionally invalid first `.blend` displayed Blender's error in the open
+  viewer. Replacing it with a valid saved scene reached Ready without restarting.
+- The new `scripts/make-preview-diorama.py` produces a self-contained woodland
+  scene with 580 triangles and a 512px Appearance atlas. Its current Preview GLB
+  is approximately 92kB. It rendered with authored colors at desktop and phone
+  widths. Phone framing crops the island edges; responsive composition remains
+  an artist decision. This static fixture does not cover animation or TSL.
+- Logs, the generated `.blend`, and screenshots remain locally under
+  `artifacts/verification-polish/`. `woodland-desktop.png` and
+  `woodland-mobile.png` record the visual check.
+
+The existing `showcases/cube-diorama/scene/cube_diorama.blend` did not finish its
+initial compile after more than 20 minutes. Blender remained active; the run was
+stopped deliberately. It is neither a successful validation nor a diagnosed
+hang. Profiling that scene and surfacing detailed bake progress are still needed
+before calling large-environment iteration convenient. The authored showcase
+file was not edited.

@@ -8,7 +8,11 @@ import {
 } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { PassThrough } from 'node:stream'
+import { runInNewContext } from 'node:vm'
+import * as fs from 'node:fs'
+import { describe, expect, it, vi } from 'vitest'
+import { PreviewStudioGenerationGate } from './preview.js'
 import {
   PREVIEW_STUDIO_ACK,
   PREVIEW_STUDIO_STATUS,
@@ -21,6 +25,21 @@ import {
   type PreviewStudioClientAck,
   type PreviewStudioHostPlan,
 } from './previewStudioHost.js'
+
+const renameControl = vi.hoisted(() => ({ failures: 0 }))
+vi.mock('node:fs', async importOriginal => {
+  const actual = await importOriginal<typeof import('node:fs')>()
+  return {
+    ...actual,
+    renameSync(...args: Parameters<typeof actual.renameSync>) {
+      if (renameControl.failures > 0) {
+        renameControl.failures--
+        throw Object.assign(new Error('File temporarily locked by reader'), { code: 'EPERM' })
+      }
+      return actual.renameSync(...args)
+    },
+  }
+})
 
 function tempPlan(): PreviewStudioHostPlan {
   const workspace = mkdtempSync(join(tmpdir(), 'blendlink-preview-host-'))
@@ -41,6 +60,99 @@ async function eventually(predicate: () => boolean, timeoutMs = 1_000): Promise<
 }
 
 describe('Preview Studio host protocol', () => {
+  it('retries a transient status-file lock while preserving atomic snapshots', () => {
+    const plan = tempPlan()
+    try {
+      const writer = new PreviewStudioStatusWriter(plan)
+      writer.write({ phase: 'building', label: 'compiling' })
+      renameControl.failures = 2
+      writer.write({ phase: 'published', label: 'compiled', generation: 'current' })
+      expect(JSON.parse(readFileSync(writer.path, 'utf8'))).toMatchObject({ phase: 'published', generation: 'current' })
+      expect(readdirSync(join(plan.workspace, 'public')).some(name => name.endsWith('.tmp'))).toBe(false)
+      renameControl.failures = 100
+      expect(() => writer.write({ phase: 'building', label: 'locked permanently' })).toThrow('File temporarily locked')
+      expect(JSON.parse(readFileSync(writer.path, 'utf8')).phase).toBe('published')
+      expect(readdirSync(join(plan.workspace, 'public')).some(name => name.endsWith('.tmp'))).toBe(false)
+    } finally {
+      renameControl.failures = 0
+      rmSync(plan.workspace, { recursive: true, force: true })
+    }
+  })
+  it('accepts a fresh browser validation retry, but rejects compile failures and stale or runtime evidence', async () => {
+    const plan = tempPlan()
+    const control = ensurePreviewStudioControl(plan)
+    let handler: (request: PassThrough, response: any, next: () => void) => void
+    const context: any = { ...fs, resolve: (path: string) => join(plan.workspace, path),
+      process, console }
+    // Run the emitted middleware, adapting only module imports/exports for
+    // the VM. Real files and request streams exercise the browser/CLI boundary.
+    runInNewContext(previewStudioViteConfigSource()
+      .replace(/^import .* from 'node:[^']+'\r?\n/gm, '')
+      .replace('export default', 'globalThis.config ='), context)
+    context.config.plugins[0].configureServer({ middlewares: {
+      use(_path: string, callback: typeof handler) { handler = callback },
+    } })
+    const send = (generation: string, token = control.token) => new Promise<number>(resolve => {
+      const request = Object.assign(new PassThrough(), { method: 'POST' })
+      const response = { statusCode: 200, end() { resolve(this.statusCode) } }
+      handler(request, response, () => { throw new Error('unexpected next') })
+      request.end(JSON.stringify({ token, sessionId: plan.sessionId, generation, phase: 'ready' }))
+    })
+    try {
+      const writer = new PreviewStudioStatusWriter(plan)
+      writer.write({ phase: 'failed', label: 'loading failed', generation: 'current', failureKind: 'validation' })
+      expect(await send('current')).toBe(204)
+      expect(await send('stale')).toBe(409)
+      expect(await send('current', 'wrong-token')).toBe(403)
+      writer.write({ phase: 'failed', label: 'compile failed' })
+      expect(await send('current')).toBe(409)
+      writer.write({ phase: 'failed', label: 'runtime failed', generation: 'current', failureKind: 'runtime' })
+      expect(await send('current')).toBe(409)
+      writer.write({ phase: 'published', label: 'saved again', generation: 'current' })
+      expect(await send('current')).toBe(204)
+    } finally {
+      rmSync(plan.workspace, { recursive: true, force: true })
+    }
+  })
+
+  it('carries runtime failures through the file watcher so they revoke Ready', async () => {
+    const plan = tempPlan()
+    const gate = new PreviewStudioGenerationGate()
+    gate.publish('current')
+    const dispositions: string[] = []
+    const received: PreviewStudioClientAck[] = []
+    mkdirSync(join(plan.workspace, 'public'), { recursive: true })
+    const watcher = watchPreviewStudioAcknowledgements(plan, ack => {
+      received.push(ack)
+      dispositions.push(gate.accept(ack))
+    }, 5)
+    try {
+      const ack = { schemaVersion: 1 as const, sessionId: plan.sessionId,
+        generation: 'current', updatedAt: new Date().toISOString() }
+      writeFileSync(join(plan.workspace, 'public', PREVIEW_STUDIO_ACK), JSON.stringify({ ...ack, phase: 'ready' }))
+      await eventually(() => received.length === 1)
+      writeFileSync(join(plan.workspace, 'public', PREVIEW_STUDIO_ACK), JSON.stringify({
+        ...ack, phase: 'failed', failureKind: 'runtime', error: 'WebGL context was lost',
+      }))
+      await eventually(() => received.length === 2)
+      expect(dispositions).toEqual(['ready', 'failed'])
+      expect(received[1]).toMatchObject({ failureKind: 'runtime' })
+      writeFileSync(join(plan.workspace, 'public', PREVIEW_STUDIO_ACK), JSON.stringify({ ...ack, phase: 'ready' }))
+      await eventually(() => received.length === 3)
+      expect(dispositions[2]).toBe('ignore')
+      gate.beginBuild()
+      gate.publish('current')
+      writeFileSync(join(plan.workspace, 'public', PREVIEW_STUDIO_ACK), JSON.stringify({
+        ...ack, phase: 'ready', updatedAt: 'after-new-save',
+      }))
+      await eventually(() => received.length === 4)
+      expect(dispositions[3]).toBe('ready')
+    } finally {
+      watcher.close()
+      rmSync(plan.workspace, { recursive: true, force: true })
+    }
+  })
+
   it('publishes parseable status snapshots and retains the last ready generation across restarts', () => {
     const plan = tempPlan()
     try {

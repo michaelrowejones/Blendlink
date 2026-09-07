@@ -88,6 +88,7 @@ describe('live Preview status contract', () => {
         authoringPreview: true,
         initialBuild: 'force',
       })
+      expect(receivedOptions?.initialBuildExecution).toBeUndefined()
       expect(receivedOptions?.onStart).toBeTypeOf('function')
       expect(warn).toHaveBeenCalledWith(
         '  ! Realtime-only Hybrid scene: atlas baking was skipped.',
@@ -202,6 +203,18 @@ describe('live Preview status contract', () => {
 
     const handle = await startPreviewAutoUpdate(config, { owned: false }, { watch })
     expect(receivedOptions?.initialBuild).toBe('if-needed')
+    await handle.close()
+  })
+
+  it('lets the private Studio open while its first build runs', async () => {
+    const config = resolveConfig({ scenes: [] }, process.cwd())
+    const watch = vi.fn(async () => ({ close: async () => {} }))
+    const handle = await startPreviewAutoUpdate(config, { owned: false }, {
+      recoverInitialFailure: true, watch,
+    })
+    expect(watch).toHaveBeenCalledWith(config, expect.any(Function), expect.objectContaining({
+      initialBuild: 'if-needed', initialBuildExecution: 'background', initialBuildFailure: 'report',
+    }))
     await handle.close()
   })
 })

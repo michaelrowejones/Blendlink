@@ -243,6 +243,38 @@ describe('scene watch dependencies', () => {
     }
   })
 
+  it('opens a background preview watcher before compilation finishes and still reports failures', async () => {
+    const root = mkdtempSync(resolve(tmpdir(), 'blendlink-watch-background-'))
+    writeFileSync(resolve(root, 'hero.blend'), 'blend-v1')
+    const config = resolveConfig({
+      scenes: [{ file: 'hero.blend', name: 'hero', external: true }],
+    }, root)
+    const build = deferred<SyncOutcome>()
+    const outcomes = outcomeLog()
+    syncControl.implementation = vi.fn(() => build.promise)
+    const opening = watchScenes(config, outcomes.callback, {
+      initialBuild: 'if-needed',
+      initialBuildExecution: 'background',
+    })
+    try {
+      const handle = await within(opening, 500)
+      expect(outcomes.values).toEqual([])
+      expect(fakeChokidar.instances[0]!.closed).toBe(false)
+      build.reject(new Error('material could not be baked'))
+      await expect(within(outcomes.next(entry => 'error' in entry))).resolves.toEqual({
+        scene: 'hero', error: 'material could not be baked',
+      })
+      expect(fakeChokidar.instances[0]!.closed).toBe(false)
+      await handle.close()
+      expect(fakeChokidar.instances[0]!.closed).toBe(true)
+    } finally {
+      build.resolve({ scene: 'hero', action: 'skipped', durationMs: 1, warnings: [] })
+      await (await opening).close()
+      syncControl.implementation = undefined
+      rmSync(root, { recursive: true, force: true })
+    }
+  })
+
   it('can report an invalid first revision and recover on a later save', async () => {
     const root = mkdtempSync(resolve(tmpdir(), 'blendlink-watch-initial-recovery-'))
     const blendPath = resolve(root, 'hero.blend')

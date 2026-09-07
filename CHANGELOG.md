@@ -11,6 +11,18 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Preview Studio opens its loading screen while the first scene compiles,
+  including during a lengthy environment bake. Initial compile failures appear
+  in the open viewer and recover on the next save.
+- Status publication retries brief Windows file locks while keeping the previous
+  complete snapshot available. A viewer reading status during publication could
+  previously stop Preview with an `EPERM` error.
+- Preview Studio carries runtime failures back to Blender instead of leaving
+  its status at Ready. Saving again recovers even when scene output is unchanged.
+- Failed browser loads show the error and offer **Retry preview** without another
+  export. Recovery works independently in each tab; controls stay disabled until
+  a working scene is available. First-load errors no longer claim a good scene
+  was retained.
 - Local archives now include the pinned WebGPU ambient-occlusion runtime and
   its notices. An isolated website build previously failed to resolve
   `n8ao-webgpu`; monorepo consumer builds hid the missing dependency. Packed
@@ -24,6 +36,8 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Added
 
+- A small woodland diorama generator for repeatable Blender-to-browser preview
+  checks, with a cabin, trees, camera and baked Appearance atlas.
 - A first-scene guide for private source/local archive installation, Blender
   preparation, Preview Studio, and existing Three.js/R3F website integration.
 - A dated first-user audit with measured gaps and remaining public-beta work.

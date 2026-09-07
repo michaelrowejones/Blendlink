@@ -892,7 +892,9 @@ function announcePreviewUpdate(
       ? 'Preview updated — watching saves'
       : 'Preview scene compiled — starting website',
     failed: endpoint.url
-      ? 'Preview update failed — last good preview kept'
+      ? extra.retainedGeneration
+        ? 'Preview update failed — last good preview kept'
+        : 'Preview needs attention — open the browser for details'
       : 'Preview scene could not be compiled',
   }[update]
   console.log(`##blendlink ${JSON.stringify({
@@ -943,7 +945,10 @@ export async function startPreviewAutoUpdate(
     draft: true,
     ...(options.authoringPreview ? { authoringPreview: true } : {}),
     initialBuild: options.force ? 'force' : 'if-needed',
-    ...(options.recoverInitialFailure ? { initialBuildFailure: 'report' as const } : {}),
+    ...(options.recoverInitialFailure ? {
+      initialBuildFailure: 'report' as const,
+      initialBuildExecution: 'background' as const,
+    } : {}),
     onStart: (scene) => {
       options.onBuildEvent?.({ type: 'building', scene })
       announcePreviewUpdate(endpoint, 'building')
@@ -1359,6 +1364,7 @@ export async function runPreviewStudio(options: PreviewStudioOptions): Promise<n
       const disposition = generationGate.accept(ack)
       if (disposition === 'ignore') return
       if (disposition === 'ready') {
+        lastBuildError = ''
         const published = latestPublished
         status.write({
           phase: 'ready',
@@ -1384,7 +1390,9 @@ export async function runPreviewStudio(options: PreviewStudioOptions): Promise<n
         phase: 'failed',
         label: runtimeFailure
           ? 'Browser runtime failed - fix the scene and save again to retry'
-          : 'Browser validation failed - the last good scene was retained',
+          : ack.retainedGeneration
+            ? 'Browser validation failed - the last good scene was retained'
+            : 'Browser validation failed - open Preview Studio for the error and retry',
         generation: ack.generation,
         ...(ack.failureKind ? { failureKind: ack.failureKind } : {}),
         ...(ack.retainedGeneration ? { retainedGeneration: ack.retainedGeneration } : {}),
@@ -1405,7 +1413,7 @@ export async function runPreviewStudio(options: PreviewStudioOptions): Promise<n
     endpoint.url = reusableUrl
     endpoint.owned = false
     if (lastBuildError) announcePreviewUpdate(endpoint, 'failed', { error: lastBuildError })
-    else announcePreviewUpdate(endpoint, 'loading', {
+    else announcePreviewUpdate(endpoint, generationGate.currentGeneration ? 'loading' : 'building', {
       ...(generationGate.currentGeneration
         ? { generation: generationGate.currentGeneration }
         : {}),
@@ -1453,7 +1461,7 @@ export async function runPreviewStudio(options: PreviewStudioOptions): Promise<n
     endpoint.url = url
     endpoint.owned = true
     if (lastBuildError) announcePreviewUpdate(endpoint, 'failed', { error: lastBuildError })
-    else announcePreviewUpdate(endpoint, 'loading', {
+    else announcePreviewUpdate(endpoint, generationGate.currentGeneration ? 'loading' : 'building', {
       ...(generationGate.currentGeneration
         ? { generation: generationGate.currentGeneration }
         : {}),

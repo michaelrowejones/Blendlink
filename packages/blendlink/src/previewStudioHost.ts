@@ -14,7 +14,7 @@ export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
 export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
 export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
-export const PREVIEW_STUDIO_HOST_VERSION = 6
+export const PREVIEW_STUDIO_HOST_VERSION = 7
 export const PREVIEW_STUDIO_MAIN_MARKER =
   '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
@@ -95,7 +95,19 @@ function writeTextAtomic(path: string, contents: string): void {
   const temporaryPath = `${path}.${process.pid}.${++atomicWriteSequence}.tmp`
   try {
     writeFileSync(temporaryPath, contents)
-    renameSync(temporaryPath, path)
+    // Windows readers (including the live viewer) can briefly prevent a
+    // replacement. Keep the previous complete snapshot available throughout
+    // a bounded retry; never unlink it or expose a partially written status.
+    for (let attempt = 0; ; attempt++) {
+      try {
+        renameSync(temporaryPath, path)
+        break
+      } catch (error) {
+        const code = (error as NodeJS.ErrnoException).code
+        if (!['EPERM', 'EACCES', 'EBUSY'].includes(code ?? '') || attempt === 6) throw error
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 20 * 2 ** attempt)
+      }
+    }
   } catch (error) {
     if (existsSync(temporaryPath)) unlinkSync(temporaryPath)
     throw error
@@ -136,7 +148,13 @@ export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PR
       <p id="first-load-title">Preparing your Web Presentation</p>
       <p id="first-load-detail">The preview opens now and updates whenever you save in Blender.</p>
     </section>
-    <section id="notice" class="notice" hidden aria-live="assertive"></section>
+    <section id="notice" class="notice" hidden aria-live="assertive">
+      <p id="notice-message"></p>
+      <div id="notice-actions" class="notice-actions" hidden>
+        <button id="retry-preview" type="button" hidden>Retry preview</button>
+        <button id="failure-details" type="button">View error details</button>
+      </div>
+    </section>
     <aside id="drawer" class="drawer" hidden>
       <div class="drawer-heading"><div><strong id="scene-name">Scene</strong><div id="generation" class="muted">Waiting for first generation</div></div><button id="close-details" type="button" aria-label="Close details">×</button></div>
       <div class="viewport-presets" aria-label="Responsive viewport">
@@ -193,6 +211,13 @@ button:focus-visible { outline: 2px solid #6ee7c7; outline-offset: 2px; }
 .loader-mark { width: 42px; height: 42px; border-radius: 14px 25px 25px 14px; background: #6ee7c7; box-shadow: 0 0 55px rgba(110,231,199,.28); animation: breathe 1.5s ease-in-out infinite alternate; }
 .notice { position: fixed; z-index: 24; left: 50%; bottom: 18px; transform: translateX(-50%); max-width: min(680px,calc(100vw - 30px)); padding: 11px 14px; border: 1px solid rgba(255,255,255,.12); border-radius: 11px; background: rgba(10,13,18,.88); box-shadow: 0 18px 60px rgba(0,0,0,.3); backdrop-filter: blur(18px); font-size: 12px; line-height: 1.45; }
 .notice.error { border-color: rgba(255,141,134,.42); }
+.notice { width: max-content; }
+.notice p { margin: 0; }
+.notice-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.notice-actions[hidden], .notice-actions button[hidden] { display: none; }
+button:disabled { opacity: .45; cursor: default; }
+.first-load[data-state="failed"] .loader-mark { animation: none; background: #ff8d86; box-shadow: none; }
+.first-load[data-state="failed"] #first-load-detail { max-height: 30vh; overflow: auto; white-space: pre-wrap; text-align: left; color: #ffc1bd; overflow-wrap: anywhere; }
 .drawer { position: fixed; z-index: 30; top: 70px; right: 14px; bottom: 14px; width: min(390px,calc(100vw - 28px)); overflow: auto; padding: 16px; border: 1px solid rgba(255,255,255,.11); border-radius: 14px; background: rgba(11,14,19,.92); box-shadow: 0 24px 90px rgba(0,0,0,.46); backdrop-filter: blur(22px); }
 .drawer-heading { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
 .drawer-heading strong { font-size: 16px; }
@@ -294,8 +319,9 @@ function previewControlPlugin() {
               response.end('Preview status identity mismatch')
               return
             }
+            const retryingValidation = status.phase === 'failed' && status.failureKind === 'validation'
             if (!generation || status.generation !== generation ||
-                (status.phase !== 'published' && status.phase !== 'ready')) {
+                (status.phase !== 'published' && status.phase !== 'ready' && !retryingValidation)) {
               response.statusCode = 409
               response.end('Preview generation is no longer current')
               return
@@ -398,6 +424,9 @@ const firstLoadDetail = element<HTMLElement>('first-load-detail')
 const statusChip = element<HTMLElement>('status-chip')
 const statusLabel = element<HTMLElement>('status-label')
 const notice = element<HTMLElement>('notice')
+const noticeMessage = element<HTMLElement>('notice-message')
+const noticeActions = element<HTMLElement>('notice-actions')
+const retryButton = element<HTMLButtonElement>('retry-preview')
 const drawer = element<HTMLElement>('drawer')
 const warningsElement = element<HTMLElement>('warnings')
 const statsElement = element<HTMLElement>('stats')
@@ -412,6 +441,7 @@ let loadingGeneration = ''
 let desiredGeneration = ''
 let queuedPromotion: StudioStatus | null = null
 let latestStatus: StudioStatus | null = null
+let failedLoad: StudioStatus | null = null
 let lastSequence = -1
 let paused = false
 let updateNoticeTimer = 0
@@ -423,6 +453,7 @@ let runtimeFailedGeneration = ''
 let runtimeFailureMessage = ''
 let statusPollFailures = 0
 let statusConnectionLost = false
+let loadAttempt = 0
 
 function errorText(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
@@ -434,7 +465,8 @@ function setPhase(phase: StudioStatus['phase'], label: string): void {
 }
 
 function showNotice(message: string, error = false): void {
-  notice.textContent = message
+  noticeMessage.textContent = message
+  noticeActions.hidden = !error
   notice.classList.toggle('error', error)
   notice.hidden = false
 }
@@ -442,6 +474,20 @@ function showNotice(message: string, error = false): void {
 function hideNotice(): void {
   notice.hidden = true
   notice.classList.remove('error')
+}
+
+function updateRecoveryControls(): void {
+  const failure = failedLoad || latestStatus
+  const retryable = failure?.phase === 'failed' && failure.failureKind === 'validation'
+    && failure.generation === latestStatus?.generation
+    && (latestStatus?.phase === 'published' || latestStatus?.phase === 'ready'
+      || (latestStatus?.phase === 'failed' && latestStatus.failureKind === 'validation'))
+  retryButton.hidden = !retryable
+  retryButton.disabled = Boolean(loadingGeneration) || !retryable
+  retryButton.textContent = loadingGeneration ? 'Retrying…' : 'Retry preview'
+  const usable = Boolean(active && runtimeFailedGeneration !== active.generation)
+  element<HTMLButtonElement>('pause').disabled = !usable
+  element<HTMLButtonElement>('reset').disabled = !usable
 }
 
 function renderChecks(messages: readonly string[]): void {
@@ -593,6 +639,7 @@ function reportRuntimeFailure(error: unknown, source = 'Scene runtime'): void {
   const message = source + ': ' + errorText(error)
   runtimeFailedGeneration = generation
   runtimeFailureMessage = message
+  updateRecoveryControls()
   setPhase('failed', 'Runtime paused · save again to retry')
   showNotice('The scene runtime stopped safely. Preview is still watching Blender saves; open Details for diagnostics.', true)
   errorSection.hidden = false
@@ -647,7 +694,7 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
         gl.getShaderInfoLog(fragmentShader),
       ].filter(Boolean).join('\\n'))
     }
-    const generated = await import(/* @vite-ignore */ GENERATED_MODULE + '?generation=' + encodeURIComponent(generation))
+    const generated = await import(/* @vite-ignore */ GENERATED_MODULE + '?generation=' + encodeURIComponent(generation) + '&attempt=' + (++loadAttempt))
     const descriptor = generated[SCENE_NAME]
     if (!descriptor || typeof descriptor.url !== 'string') throw new Error('Generated scene descriptor is missing')
     bindPreviewDescriptor(descriptor)
@@ -697,7 +744,7 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
 
 async function promote(status: StudioStatus): Promise<void> {
   const generation = status.generation
-  if (!generation || active?.generation === generation) return
+  if (!generation || (active?.generation === generation && runtimeFailedGeneration !== generation)) return
   desiredGeneration = generation
   if (loadingGeneration) {
     queuedPromotion = status
@@ -705,6 +752,9 @@ async function promote(status: StudioStatus): Promise<void> {
   }
   const retainedAfterFailure = status.phase === 'failed'
   loadingGeneration = generation
+  failedLoad = null
+  firstLoad.dataset.state = 'loading'
+  updateRecoveryControls()
   let candidate: Presentation | null = null
   if (!active) {
     firstLoadTitle.textContent = 'Loading your Web Presentation'
@@ -746,7 +796,11 @@ async function promote(status: StudioStatus): Promise<void> {
     generationElement.textContent = 'Generation ' + generation.slice(0, 12) +
       (retainedAfterFailure ? ' · last good scene retained' : ' · browser verified')
     firstLoad.hidden = true
-    if (!retainedAfterFailure) hideNotice()
+    if (!retainedAfterFailure) {
+      hideNotice()
+      errorSection.hidden = true
+      errorDetail.textContent = ''
+    }
     if (previous) {
       try { disposePresentation(previous) }
       catch (error) { console.warn('Blendlink Preview Studio could not completely release the previous scene:', error) }
@@ -764,16 +818,24 @@ async function promote(status: StudioStatus): Promise<void> {
     }
     if (desiredGeneration !== generation) return
     const message = errorText(error)
-    setPhase('failed', active ? 'Update failed · showing last good scene' : 'Preview could not render')
-    showNotice(active ? 'Update failed — the last good scene is still active. Open Details for the exact error.' : 'The scene could not render. Open Details for the exact error.', true)
+    const retained = active && runtimeFailedGeneration !== active.generation ? active : null
+    if (!retainedAfterFailure) failedLoad = { ...status, phase: 'failed', failureKind: 'validation', error: message }
+    setPhase('failed', retained ? 'Update failed · showing last good scene' : 'Preview could not render')
+    showNotice(retained ? 'Update failed — the last good scene is still active. Open Details for the exact error.' : 'The scene could not render. Open Details for the exact error.', true)
     errorSection.hidden = false
     errorDetail.textContent = message
+    if (!active) {
+      firstLoad.hidden = false
+      firstLoad.dataset.state = 'failed'
+      firstLoadTitle.textContent = 'Preview could not load'
+      firstLoadDetail.textContent = message
+    }
     try {
       await acknowledge({
         generation,
         phase: 'failed',
         failureKind: 'validation',
-        ...(active ? { retainedGeneration: active.generation } : {}),
+        ...(retained ? { retainedGeneration: retained.generation } : {}),
         error: message,
       })
     } catch (ackError) {
@@ -781,9 +843,11 @@ async function promote(status: StudioStatus): Promise<void> {
     }
   } finally {
     loadingGeneration = ''
+    updateRecoveryControls()
     const queued = queuedPromotion
     queuedPromotion = null
-    if (queued?.generation && queued.generation === desiredGeneration && active?.generation !== queued.generation) {
+    if (queued?.generation && queued.generation === desiredGeneration &&
+        (active?.generation !== queued.generation || runtimeFailedGeneration === queued.generation)) {
       void promote(queued)
     }
   }
@@ -791,6 +855,10 @@ async function promote(status: StudioStatus): Promise<void> {
 
 function applyStatus(status: StudioStatus): void {
   latestStatus = status
+  if (status.phase === 'preparing' || status.phase === 'building'
+      || status.generation !== failedLoad?.generation
+      || (status.phase === 'failed' && status.failureKind !== 'validation')) failedLoad = null
+  updateRecoveryControls()
   const keepActiveDetails = active && (
     status.phase === 'preparing' || status.phase === 'building' || status.phase === 'failed'
   )
@@ -804,6 +872,7 @@ function applyStatus(status: StudioStatus): void {
     errorDetail.textContent = ''
   }
   if (status.phase === 'preparing' || status.phase === 'building') {
+    firstLoad.dataset.state = 'loading'
     desiredGeneration = ''
     queuedPromotion = null
     setPhase('building', status.label)
@@ -819,27 +888,32 @@ function applyStatus(status: StudioStatus): void {
   window.clearTimeout(updateNoticeTimer)
   if (status.phase === 'failed') {
     const activeRuntimeFailure = Boolean(
-      active && status.generation === active.generation && runtimeFailedGeneration === active.generation,
+      active && runtimeFailedGeneration === active.generation,
     )
     desiredGeneration = active?.generation || ''
     queuedPromotion = null
     setPhase('failed', activeRuntimeFailure
       ? 'Runtime paused · save again to retry'
-      : active ? 'Update failed · showing last good scene' : status.label)
+      : active ? 'Update failed · showing last good scene' : 'Preview needs attention')
     showNotice(activeRuntimeFailure
       ? 'The scene runtime stopped safely. Preview is still watching Blender saves.'
-      : active ? 'Update failed — the last good scene is still active.' : status.label, true)
+      : active ? 'Update failed. The last good scene is still active.'
+      : status.failureKind === 'validation'
+        ? 'The scene could not load in this browser. Retry preview, or open the error details.'
+        : 'Fix the reported issue in Blender and save. Preview will update automatically.', true)
     if (!active && status.retainedGeneration) {
       void promote({ ...status, generation: status.retainedGeneration })
     }
     if (!active) {
       firstLoad.hidden = false
-      firstLoadTitle.textContent = 'The saved scene needs attention'
-      firstLoadDetail.textContent = 'Preview is still running. Fix the issue in Blender and save again to recover automatically.'
+      firstLoad.dataset.state = 'failed'
+      firstLoadTitle.textContent = status.failureKind === 'validation' ? 'Preview could not load' : 'The saved scene needs attention'
+      firstLoadDetail.textContent = status.error || status.label
     }
     return
   }
-  if (status.generation && active?.generation !== status.generation) {
+  if (status.generation && (active?.generation !== status.generation ||
+      (status.phase === 'published' && runtimeFailedGeneration === status.generation))) {
     setPhase('published', 'Validating scene in browser…')
     void promote(status)
   } else if (active) {
@@ -957,6 +1031,19 @@ function setDrawer(open: boolean): void {
   drawer.hidden = !open
   element<HTMLButtonElement>('details').setAttribute('aria-expanded', String(open))
 }
+element<HTMLButtonElement>('failure-details').addEventListener('click', () => {
+  setDrawer(true)
+  errorSection.scrollIntoView({ block: 'nearest' })
+})
+retryButton.addEventListener('click', () => {
+  const failure = failedLoad || latestStatus
+  if (loadingGeneration || retryButton.hidden || retryButton.disabled || !failure) return
+  // Reinstall this compiled generation. No Blender save or bake is needed.
+  // A compile/runtime failure must never be relabeled as successful loading.
+  showNotice('Retrying browser loading and validation…')
+  setPhase('published', 'Retrying preview…')
+  void promote({ ...failure, phase: 'published' })
+})
 element<HTMLButtonElement>('details').addEventListener('click', () => setDrawer(drawer.hidden))
 element<HTMLButtonElement>('close-details').addEventListener('click', () => setDrawer(false))
 for (const button of document.querySelectorAll<HTMLButtonElement>('button[data-viewport]')) {
@@ -984,6 +1071,7 @@ window.addEventListener('beforeunload', () => {
   if (active) disposePresentation(active)
 }, { once: true })
 
+updateRecoveryControls()
 void pollStatus()
 animationFrame = requestAnimationFrame(frame)
 `
@@ -1113,13 +1201,16 @@ export function watchPreviewStudioAcknowledgements(
       const value = JSON.parse(bytes) as Partial<PreviewStudioClientAck>
       if (value.schemaVersion !== 1 || value.sessionId !== plan.sessionId
           || typeof value.generation !== 'string' || value.generation.length === 0
-          || (value.phase !== 'ready' && value.phase !== 'failed')) return
+          || (value.phase !== 'ready' && value.phase !== 'failed')
+          || (value.failureKind !== undefined && value.failureKind !== 'validation' && value.failureKind !== 'runtime')
+          || (value.phase === 'ready' && value.failureKind !== undefined)) return
       lastBytes = bytes
       onAck({
         schemaVersion: 1,
         sessionId: plan.sessionId,
         generation: value.generation,
         phase: value.phase,
+        ...(value.failureKind ? { failureKind: value.failureKind } : {}),
         ...(typeof value.retainedGeneration === 'string'
           ? { retainedGeneration: value.retainedGeneration }
           : {}),

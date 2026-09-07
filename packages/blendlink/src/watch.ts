@@ -23,6 +23,10 @@ export interface WatchOptions {
    * subscription; later failures are reported through onOutcome and recover.
    */
   initialBuild?: 'if-needed' | 'force'
+  /** Open the watcher before the initial build finishes so a private viewer
+   * can show its loading shell. Background failures always use onOutcome;
+   * close still waits for active builds. Defaults to blocking. */
+  initialBuildExecution?: 'blocking' | 'background'
   /** Private Preview Studio keeps its shell and watcher alive when the first
    * saved revision is invalid. The artist can then fix the scene and save
    * again without restarting Preview. Ordinary compile/watch callers retain
@@ -217,13 +221,16 @@ export async function watchScenes(
 
   watcher = await createWatcher(currentScenes)
   if (options.initialBuild) {
+    const background = options.initialBuildExecution === 'background'
+    const builds = Promise.all([...currentScenes.keys()].map((name) =>
+      run(
+        name,
+        options.initialBuild === 'force',
+        !background && options.initialBuildFailure !== 'report',
+      )))
     try {
-      await Promise.all([...currentScenes.keys()].map((name) =>
-        run(
-          name,
-          options.initialBuild === 'force',
-          options.initialBuildFailure !== 'report',
-        )))
+      if (background) void builds.catch(error => reportError('watch', error))
+      else await builds
     } catch (error) {
       closed = true
       dirty.clear()

@@ -1,9 +1,9 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   BAKED_RECIPE_TEMPLATE_MARKER,
   BAKED_RECIPE_TEMPLATE_VERSION,
@@ -37,9 +37,14 @@ import {
   scaffoldPreviewStudio,
 } from './preview.js'
 
+const temporaryProjects: string[] = []
+afterEach(() => {
+  for (const root of temporaryProjects.splice(0)) rmSync(root, { recursive: true, force: true })
+})
+
 function tempProject(name: string): string {
-  const root = join(tmpdir(), `blendlink-preview-${process.pid}-${name}`)
-  mkdirSync(root, { recursive: true })
+  const root = mkdtempSync(join(tmpdir(), `blendlink-preview-${name}-`))
+  temporaryProjects.push(root)
   return root
 }
 

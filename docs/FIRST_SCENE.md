@@ -71,12 +71,31 @@ absolute path to your saved scene:
 node packages/blendlink/dist/cli.js preview --blend "/path/to/site/assets/hero.blend"
 ```
 
-The first run installs a disposable local viewer. Leave the command running.
+The first run installs a disposable local viewer, then opens its loading screen
+while Blender compiles. Large environments can take several minutes on their
+first bake. Leave the command running.
 Wait for **Ready**, which requires browser installation and a completed render.
 Save in Blender to rebuild. Unsaved viewport edits do not appear in the browser.
-Use **Details** for warnings and the exact error when a preview fails. A failed
-update retains an existing good scene; a first failed load has no good scene yet.
+Use **Details** for warnings. Failed initial loads show the exact error on screen;
+**View error details** opens the full error. If browser loading fails, **Retry
+preview** reloads the compiled scene without another Blender save or bake.
+A failed update retains an existing good scene. A first failed load has no good
+scene yet, so playback and camera controls stay disabled until loading succeeds.
+Compile errors require fixing the scene and saving. A runtime failure pauses the
+broken renderer; saving again recreates it even when the compiled scene is unchanged.
 Stop the command with Ctrl+C when finished.
+
+For a repeatable stylized test scene, the checkout includes a small woodland
+diorama generator. Substitute your Blender executable if it is not on PATH:
+
+```sh
+blender --background --factory-startup --python scripts/make-preview-diorama.py -- artifacts/verification-diorama/woodland.blend
+node packages/blendlink/dist/cli.js preview --blend artifacts/verification-diorama/woodland.blend
+```
+
+It authors a cabin, trees, stone path, camera and lighting with a 512px Appearance
+atlas. It has no external image dependencies. The desktop camera crops the outer
+island on a narrow phone; use it to practice authoring Responsive Frames too.
 
 ## Attach your existing website
 
