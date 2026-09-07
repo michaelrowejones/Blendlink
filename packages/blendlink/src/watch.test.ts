@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { loadConfig, resolveConfig } from './config.js'
 import type { SyncOutcome } from './sync.js'
 import { watchScenes } from './watch.js'
+import { emitProgress } from './progress.js'
 
 type SyncSceneImplementation = typeof import('./sync.js')['syncScene']
 
@@ -251,14 +252,20 @@ describe('scene watch dependencies', () => {
     }, root)
     const build = deferred<SyncOutcome>()
     const outcomes = outcomeLog()
-    syncControl.implementation = vi.fn(() => build.promise)
+    syncControl.implementation = vi.fn(() => {
+      emitProgress(0.1, 'Packing Main')
+      return build.promise
+    })
+    const progress = vi.fn()
     const opening = watchScenes(config, outcomes.callback, {
       initialBuild: 'if-needed',
       initialBuildExecution: 'background',
+      onProgress: progress,
     })
     try {
       const handle = await within(opening, 500)
       expect(outcomes.values).toEqual([])
+      expect(progress).toHaveBeenCalledWith('hero', { fraction: 0.1, label: 'Packing Main' })
       expect(fakeChokidar.instances[0]!.closed).toBe(false)
       build.reject(new Error('material could not be baked'))
       await expect(within(outcomes.next(entry => 'error' in entry))).resolves.toEqual({

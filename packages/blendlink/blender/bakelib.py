@@ -977,6 +977,7 @@ def fingerprint_bake_dependencies(scene, layout: dict, bake: dict, group: str, m
         # changes the digest because its complete OBJECT record disappears.
         if obj.type == "CAMERA" or obj.hide_render:
             continue
+        progress_stage(f"Hashing bake dependencies ({group}, {mode}): {obj.name}")
         _fingerprint_object_contributor(
             digest, obj, depsgraph, visited, include_atlas=obj in group_objects,
         )
@@ -1147,13 +1148,18 @@ def ensure_progress_heartbeat(interval_seconds: float = 20.0) -> None:
     atexit.register(stopped.set)
 
 
-def progress(fraction: float, label: str) -> None:
+def progress(fraction: float, label: str, **details) -> None:
     """Machine-readable progress line, only when a wrapper asks for it."""
     if os.environ.get("BLENDLINK_PROGRESS") != "1":
         return
-    _PROGRESS_STATE.update({"fraction": round(fraction, 4), "label": label})
+    _PROGRESS_STATE.update({"fraction": round(fraction, 4), "label": label, **details})
     payload = json.dumps(_PROGRESS_STATE)
     print(f"##blendlink {payload}", flush=True)
+
+
+def progress_stage(label: str) -> None:
+    """Name host-side work without inventing a percentage for its duration."""
+    progress(_PROGRESS_STATE["fraction"], label)
 
 
 # --------------------------------------------------------------------------
@@ -1245,6 +1251,13 @@ def configure_cycles_compute_device(
     if cycles is None:
         raise RuntimeError("Cycles settings are unavailable in this Blender build")
     cycles.device = "CPU"
+    def selected(device, backend):
+        label = "CPU" if device == "cpu" else f"{backend.upper()} GPU"
+        progress(
+            _PROGRESS_STATE["fraction"], f"Cycles configured: {label}",
+            device=device, backend=backend,
+        )
+        return {"deviceClass": device, "backend": backend}
     try:
         preferences = bpy.context.preferences.addons["cycles"].preferences
         _remember_cycles_preferences(restore_state, preferences)
@@ -1253,7 +1266,7 @@ def configure_cycles_compute_device(
             f"blendlink {purpose}: Cycles device discovery failed; using CPU — "
             f"{type(error).__name__}: {error}"
         )
-        return {"deviceClass": "cpu", "backend": "cpu"}
+        return selected("cpu", "cpu")
 
     attempts = []
     for backend in _CYCLES_GPU_BACKENDS:
@@ -1288,13 +1301,13 @@ def configure_cycles_compute_device(
                 f"blendlink {purpose}: using {backend} on "
                 + ", ".join(f"{backend}: {device.name}" for device in gpus)
             )
-            return {"deviceClass": "gpu", "backend": backend.lower()}
+            return selected("gpu", backend.lower())
         attempts.append(f"{backend}: no compatible GPU device")
     log(
         f"blendlink {purpose}: no compatible GPU backend; using CPU — "
         + "; ".join(attempts)
     )
-    return {"deviceClass": "cpu", "backend": "cpu"}
+    return selected("cpu", "cpu")
 
 
 def restore_cycles_compute_state(snapshot: dict) -> None:
@@ -4494,6 +4507,7 @@ def repair_evaluated_atlas_uvs(
     """
     affected = []
     for obj in sorted(objs, key=lambda item: item.name):
+        progress_stage(f"Validating bake UVs: {obj.name}")
         if not obj.data.polygons:
             continue
         layer = obj.data.uv_layers.get(uv_name)
@@ -5980,6 +5994,7 @@ def scale_islands(objs, uv_name: str, weight_for, held: dict | None = None) -> N
     per-loop mask from average_unpinned — held (pinned-island) loops keep
     their authored scale."""
     for obj in objs:
+        progress_stage(f"Scaling bake UVs: {obj.name}")
         final = float(weight_for(obj))
         if final != 1.0:
             layer = obj.data.uv_layers.get(uv_name)
@@ -6142,6 +6157,29 @@ def _active_uv_bounds(obj) -> tuple[float, float, float, float]:
     )
 
 
+def _uv_coordinates(layer):
+    import numpy as np
+    coordinates = np.empty(len(layer.data) * 2, dtype=np.float32)
+    layer.data.foreach_get("uv", coordinates)
+    return coordinates.reshape((-1, 2))
+
+
+def _transform_uv_layer(layer, scale, *, source_origin=None, target_origin=None):
+    """Apply the scalar packer's math with one Blender read and write.
+
+    Use float64 arithmetic like Python's scalar expressions, rounding only
+    when writing each resulting float32 UV. Pins and other UV data stay intact.
+    """
+    import numpy as np
+    coordinates = _uv_coordinates(layer).astype(np.float64)
+    if source_origin is not None:
+        coordinates -= source_origin
+    coordinates *= scale
+    if target_origin is not None:
+        coordinates += target_origin
+    layer.data.foreach_set("uv", coordinates.astype(np.float32).ravel())
+
+
 def _pack_receiver_groups_mutating(
         objs, margin_px: int, size: int, *, guard_px: int = 4,
         local_margin_scale: float = 1.0) -> bool:
@@ -6193,13 +6231,12 @@ def _pack_receiver_groups_mutating(
     normalization = math.sqrt(0.25 / total_area)
     for obj in objects:
         layer = obj.data.uv_layers.active
-        for loop in layer.data:
-            loop.uv.x *= normalization
-            loop.uv.y *= normalization
+        _transform_uv_layer(layer, (normalization, normalization))
 
     receiver_bounds = {}
     inner_guard = float(guard_px)
     for obj in sorted(objects, key=lambda item: item.name):
+        progress_stage(f"Packing UV charts: {obj.name}")
         expected_area = target_areas[obj.as_pointer()] * normalization * normalization
         # The caller's fixed-point loop scales this request until the
         # DELIVERED gutter (this local charge times the outer allocation's
@@ -6259,13 +6296,10 @@ def _pack_receiver_groups_mutating(
                 f"({scale_u:.8g} by {scale_v:.8g})"
             )
         layer = obj.data.uv_layers.active
-        for loop in layer.data:
-            loop.uv.x = packed_bounds[0] + (
-                loop.uv.x - source_bounds[0]
-            ) * scale_u
-            loop.uv.y = packed_bounds[1] + (
-                loop.uv.y - source_bounds[1]
-            ) * scale_v
+        _transform_uv_layer(
+            layer, (scale_u, scale_v),
+            source_origin=source_bounds[:2], target_origin=packed_bounds[:2],
+        )
     select_only(objects)
     return True
 
@@ -6290,6 +6324,7 @@ def _receiver_intra_gutter_shortfall(
     epsilon = 2e-6
     worst = None
     for obj in objs:
+        progress_stage(f"Checking UV chart spacing: {obj.name}")
         islands = _receiver_island_bounds(obj)
         for index, (_left_number, left) in enumerate(islands):
             for _right_number, right in islands[index + 1:]:
@@ -6317,7 +6352,7 @@ def _pack_receiver_groups(
         if layer is None:
             raise RuntimeError(f"{obj.name}: receiver packing needs an active UV layer")
         snapshots.append((
-            obj, layer.name, [tuple(loop.uv) for loop in layer.data],
+            obj, layer.name, _uv_coordinates(layer),
         ))
     def restore_snapshots() -> list:
         failures = []
@@ -6337,8 +6372,7 @@ def _pack_receiver_groups(
                     f"{len(coordinates)} to {len(layer.data)} loops"
                 )
                 continue
-            for loop, coordinate in zip(layer.data, coordinates):
-                loop.uv = coordinate
+            layer.data.foreach_set("uv", coordinates.ravel())
         return failures
 
     try:
@@ -6476,6 +6510,7 @@ def validate_receiver_group_spacing(
     receiver_bounds = []
     failures = []
     for obj in sorted(objs, key=lambda item: item.name):
+        progress_stage(f"Validating atlas gutters: {obj.name}")
         islands = _receiver_island_bounds(obj)
         if not islands:
             continue
@@ -6813,6 +6848,7 @@ def pack_with_evaluated_uv_repair(
 
     remaining = []
     for obj in sorted(objects, key=lambda item: item.name):
+        progress_stage(f"Checking bake texel coverage: {obj.name}")
         triangles = sorted(set(
             _precision_sliver_unsampleable_uv_triangles(
                 obj, uv_name, resolved_delivery_size,
@@ -6829,6 +6865,7 @@ def pack_with_evaluated_uv_repair(
         ))
         remaining = []
         for obj in sorted(objects, key=lambda item: item.name):
+            progress_stage(f"Checking repaired texel coverage: {obj.name}")
             triangles = _precision_sliver_unsampleable_uv_triangles(
                 obj, uv_name, resolved_delivery_size,
             )

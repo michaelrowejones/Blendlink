@@ -72,8 +72,11 @@ node packages/blendlink/dist/cli.js preview --blend "/path/to/site/assets/hero.b
 ```
 
 The first run installs a disposable local viewer, then opens its loading screen
-while Blender compiles. Large environments can take several minutes on their
-first bake. Leave the command running.
+while Blender compiles. The loading screen and **Details** show the current
+stage, elapsed time, and Cycles backend/sample count once selected. The bar
+tracks compiler stages, not estimated time remaining. Geometry and UV preparation
+run on the CPU even when Cycles later bakes on the GPU. Large environments can
+take several minutes on their first bake. Leave the command running.
 Wait for **Ready**, which requires browser installation and a completed render.
 Save in Blender to rebuild. Unsaved viewport edits do not appear in the browser.
 Use **Details** for warnings. Failed initial loads show the exact error on screen;

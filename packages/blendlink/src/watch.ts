@@ -4,6 +4,7 @@ import chokidar, { type FSWatcher } from 'chokidar'
 import { loadConfig, type ResolvedConfig, type ResolvedScene } from './config.js'
 import { discoverBlender, type BlenderInstall } from './discover.js'
 import { syncScene, type SyncOutcome } from './sync.js'
+import { withProgressListener, type CompileProgress } from './progress.js'
 
 export interface WatchHandle {
   /** Stop accepting changes, discard queued reruns, and await active builds. */
@@ -34,6 +35,7 @@ export interface WatchOptions {
   initialBuildFailure?: 'reject' | 'report'
   /** Report every actual sync attempt, including initial and queued reruns. */
   onStart?: (scene: string) => void
+  onProgress?: (scene: string, progress: CompileProgress) => void
 }
 
 type WatchOutcome = SyncOutcome | { scene: string; error: string }
@@ -94,12 +96,14 @@ export async function watchScenes(
         if (!scene) return
         options.onStart?.(name)
         try {
-          onOutcome(await syncScene(scene, currentBlender, {
+          onOutcome(await withProgressListener(
+            progress => options.onProgress?.(name, progress),
+            () => syncScene(scene, currentBlender, {
             ...(nextForce ? { force: true } : {}),
             ...(options.draft ? { draft: true } : {}),
             ...(options.authoringPreview ? { authoringPreview: true } : {}),
             ...(options.allowNewerFile ? { allowNewerFile: true } : {}),
-          }))
+          })))
         } catch (error) {
           reportError(name, error)
           if (rejectOnError) throw error

@@ -3272,7 +3272,7 @@ def density_balance_warnings(objects: list[dict], has_camera: bool) -> list[str]
 
 
 
-def compute_bake_plan(settings: dict, recipe: dict | None = None) -> dict:
+def compute_bake_plan(settings: dict, recipe: dict | None = None, *, prepared_layout=None) -> dict:
     """Everything an artist wants to know BEFORE the bake, computed from the
     UV pack alone (no Cycles work): per-object texel density, atlas share,
     occupancy, and the state list. The re-bake causes on record are density
@@ -3285,7 +3285,8 @@ def compute_bake_plan(settings: dict, recipe: dict | None = None) -> dict:
     supersample = max(1, int(bake.get("supersample", 1)))
     # Match the final bake pack. The four-pixel dilation guard means a 1x
     # preview is not byte-for-byte layout evidence for a 2x final bake.
-    layout = bake_prepare_geometry(bake, supersample)
+    layout = (prepared_layout if prepared_layout is not None
+              else bake_prepare_geometry(bake, supersample))
 
     cameras = camera_positions()
     fixed_camera_appearance = bool(bake.get("fixedCameraAppearance"))
@@ -3649,7 +3650,7 @@ def bake_light_groups(
     return layers
 
 
-def run_baked_mode(settings: dict, out_glb: str) -> dict:
+def run_baked_mode(settings: dict, out_glb: str, *, prepared_layout=None) -> dict:
     bake_started = time.perf_counter()
     bake = settings.get("bake", {})
     fixed_camera_appearance = bool(bake.get("fixedCameraAppearance"))
@@ -3777,8 +3778,10 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
             })
         return published
 
-    progress(0.10, "preparing and packing bake atlas charts")
-    layout = bake_prepare_geometry(bake, supersample)
+    progress(0.10, "Checking prepared bake atlas charts" if prepared_layout is not None
+             else "Preparing and packing bake atlas charts")
+    layout = (prepared_layout if prepared_layout is not None
+              else bake_prepare_geometry(bake, supersample))
     if layout.get("_errors"):
         raise RuntimeError(
             "Atlas layout validation blocked before baking:\n  - "
@@ -3817,6 +3820,10 @@ def run_baked_mode(settings: dict, out_glb: str) -> dict:
         raise RuntimeError(output_issue)
     progress(0.11, "selecting the Cycles compute backend")
     bake_device = bake_engine(samples)
+    progress(
+        0.11, "Cycles compute device selected",
+        device=bake_device["deviceClass"], backend=bake_device["backend"], samples=samples,
+    )
 
     warnings = list(layout.get("_warnings", []))
     non_mesh = sorted(
@@ -6298,6 +6305,7 @@ def main() -> None:
     with open(settings_path, "r", encoding="utf-8") as handle:
         settings = json.load(handle)
     settings, recipe = resolve_scene_recipe(settings)
+    progress(0.02, "Analyzing scene and materials")
 
     # The addon's checker override is viewport-only inspection, but freeze
     # and glTF export evaluate the VIEWPORT depsgraph — strip leftovers
@@ -6502,19 +6510,21 @@ def main() -> None:
         # artist's, so the irradiance bake sees the same bounce light;
         # a materialBake carrier is the same surface baked. The plan
         # rides along on every real sync so the manifest can carry
-        # per-object density; its UV prep is idempotent and the bake
-        # re-runs it.
+        # per-object density. Prepare once within this transaction and share
+        # the validated layout with the bake. It never survives this export.
         nonlocal baked_report, plan
         if settings.get("mode") != "baked":
             return
-        plan = compute_bake_plan(settings, recipe)
+        progress(0.06, "Preparing and validating bake atlases")
+        bake = settings.get("bake", {})
+        layout = bake_prepare_geometry(bake, max(1, int(bake.get("supersample", 1))))
+        plan = compute_bake_plan(settings, recipe, prepared_layout=layout)
         if plan.get("errors"):
             raise SystemExit(
                 "bake plan blocked:\n  - " + "\n  - ".join(plan["errors"])
             )
-        baked_report = run_baked_mode(settings, out_path)
-        # The inspectable UVs must describe the actual second/final pack,
-        # never rely on the plan pass merely being deterministic.
+        baked_report = run_baked_mode(settings, out_path, prepared_layout=layout)
+        # Retain evidence captured at the actual bake boundary.
         plan["atlasLayout"] = baked_report.pop("atlasLayout")
         warnings.extend(baked_report.pop("warnings", []))
 
@@ -6595,6 +6605,7 @@ def main() -> None:
                 return emit_gltf(filepath)
 
         if material_plan.lowerings:
+            progress(0.04, "Preparing compiled materials")
             _export_result, material_compilation = material_compiler.with_compiled_materials(
                 material_plan,
                 out_path,

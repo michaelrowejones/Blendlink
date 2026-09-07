@@ -35,6 +35,7 @@ import {
 } from './previewStudioHost.js'
 import { syncAll, type SyncOutcome } from './sync.js'
 import { watchScenes, type WatchHandle, type WatchOptions } from './watch.js'
+import type { CompileProgress } from './progress.js'
 
 export { websitePackageRunner } from './packageRunner.js'
 
@@ -81,6 +82,7 @@ export interface PreviewEndpoint {
 
 export type PreviewBuildEvent =
   | { type: 'building'; scene: string }
+  | { type: 'progress'; scene: string; progress: CompileProgress }
   | { type: 'published'; scene: string; outcome: SyncOutcome }
   | { type: 'failed'; scene: string; error: string }
 
@@ -953,6 +955,7 @@ export async function startPreviewAutoUpdate(
       options.onBuildEvent?.({ type: 'building', scene })
       announcePreviewUpdate(endpoint, 'building')
     },
+    onProgress: (scene, progress) => options.onBuildEvent?.({ type: 'progress', scene, progress }),
     ...(options.only ? { only: options.only } : {}),
     ...(options.allowNewerFile ? { allowNewerFile: true } : {}),
   }
@@ -1306,6 +1309,8 @@ export async function runPreviewStudio(options: PreviewStudioOptions): Promise<n
   let latestPublished: PreviewStudioStatus | undefined
   const generationGate = new PreviewStudioGenerationGate()
   let lastBuildError = ''
+  let compileProgress: PreviewStudioStatus['compileProgress']
+  let compiling = false
   let live: WatchHandle
   try {
     live = await startPreviewAutoUpdate(previewStudioConfig(plan), endpoint, {
@@ -1314,6 +1319,9 @@ export async function runPreviewStudio(options: PreviewStudioOptions): Promise<n
       recoverInitialFailure: true,
       onBuildEvent(event) {
         if (event.type === 'building') {
+          compiling = true
+          const startedAt = Date.now()
+          compileProgress = { fraction: 0, label: 'Preparing saved scene', startedAt, stageStartedAt: startedAt }
           lastBuildError = ''
           // An acknowledgement for the prior generation may arrive while a
           // newer Blender save is compiling. It must not make that in-flight
@@ -1323,15 +1331,30 @@ export async function runPreviewStudio(options: PreviewStudioOptions): Promise<n
           status.write({
             phase: 'building',
             label: 'Compiling Preview quality from the saved Blender scene',
+            compileProgress,
           })
           return
         }
+        if (event.type === 'progress') {
+          if (!compiling || !compileProgress) return
+          compileProgress = {
+            ...compileProgress,
+            ...event.progress,
+            fraction: Math.max(compileProgress.fraction, event.progress.fraction),
+            stageStartedAt: event.progress.label === compileProgress.label
+              ? compileProgress.stageStartedAt : Date.now(),
+          }
+          status.writeProgress(compileProgress)
+          return
+        }
+        compiling = false
         if (event.type === 'failed') {
           lastBuildError = event.error
           status.write({
             phase: 'failed',
             label: 'The saved scene could not be compiled - fix it and save again',
             error: event.error,
+            compileProgress,
           })
           return
         }
@@ -1349,6 +1372,7 @@ export async function runPreviewStudio(options: PreviewStudioOptions): Promise<n
           label: 'Scene compiled - waiting for browser validation',
           generation,
           ...report,
+          compileProgress,
         })
       },
       ...(options.force ? { force: true } : {}),

@@ -167,3 +167,68 @@ stopped deliberately. It is neither a successful validation nor a diagnosed
 hang. Profiling that scene and surfacing detailed bake progress are still needed
 before calling large-environment iteration convenient. The authored showcase
 file was not edited.
+
+## Compile performance and progress follow-up
+
+The cube diorama's saved Preview recipe uses two samples, a 1024px atlas,
+1x supersampling and no denoise. Final uses 16 samples and denoise. A real
+Blender 5.2 probe selected the NVIDIA RTX 5080 through OptiX and set Cycles to
+GPU. These settings were retained; excessive samples and CPU Cycles were not
+the cause of the observed preparation delay on this machine.
+
+Stack samples from the original exporter placed the wait in UV packing,
+triangle validation, texel coverage and gutter checks. The export prepared
+the geometry once for its plan and then again for its bake. The baseline
+was stopped after more than 14 minutes, during the second preparation and
+before Cycles baking. This is a lower bound, not a completed compile time.
+
+The exporter now shares one validated layout within the existing material
+transaction. Standalone plans still prepare their own layout. UV normalization,
+placement and rollback use bulk Blender transfers. A 12,000-loop check measured
+0.015–0.020 seconds for scalar transforms versus 0.00048–0.00052 seconds for
+bulk transforms on Blender 5.2, with byte-identical float32 UVs and unchanged
+pins. This 30–40x improvement applies to those transfers, not the full compile.
+The same coordinate contract passed on Blender 5.1.
+
+Preview Studio receives progress even when console progress is disabled. It
+shows object/stage labels, total and stage elapsed time, and the actual selected
+Cycles backend and sample count. Heartbeats keep the last stage visible without
+resetting its clock. The bar represents compiler stages rather than an ETA.
+Real browser checks observed both CPU preparation and OptiX GPU / two-sample
+metadata from the large scene. Local logs and screenshots are retained under
+`artifacts/verification-performance/`.
+
+The real-export regression failed before the change with two preparation calls
+and passed afterward with one, a valid plan and a GLB. Bake ladder, evaluated
+geometry, saved bake output, GPU preference restoration and the full baked
+end-to-end script passed. That script covers baked materials, lighting states,
+incremental reuse and output contracts. The full headless Blender/release matrix
+has not been rerun for this pass.
+
+The final unit run passed 794 tests across 93 files with two codec skips when
+limited to two workers; all 19 release-policy checks passed. An unrestricted
+parallel run during the large compile hit three five-second test timeouts. The
+bounded rerun retained the same assertions and timeout settings.
+
+The optimized large-scene compile completed in **821.6 seconds (13m 42s)**,
+exporting 2,314,974 triangles and an approximately 11 MB GLB. The browser reached
+Ready and reported no errors. Preparation/plan occupied roughly 8.5 minutes;
+dependency hashing occupied roughly three more minutes before the GPU atlas
+bake. Because the baseline was stopped, no exact end-to-end speedup ratio is
+claimed. Expensive UV coverage/gutter proofs and dependency hashing remain
+priorities for the next performance pass.
+
+The two-sample render in `diorama-ready.png` is visibly noisy and dark. Browser
+Ready proves loading and rendering, not visual equivalence or acceptable final
+quality. The source also reports missing historical file references, approximate
+Filmic/World handling, and material/light limitations. This run neither changed
+those settings nor repaired the source artwork.
+
+A later browser run exposed an `EPERM` progress-file replacement lock beyond
+the existing bounded retry. Progress publication now retains the last complete
+snapshot and lets the next stage/heartbeat try again, instead of throwing from
+Blender's stdout callback and terminating Preview. A regression holds the lock
+through all retries and verifies recovery on the next heartbeat. Build outcome
+publication retains its existing error behavior. The rebuilt woodland viewer
+reached Ready without browser errors, reusing its valid bake in a 3.6-second
+compile check.

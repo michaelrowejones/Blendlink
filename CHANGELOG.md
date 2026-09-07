@@ -11,6 +11,11 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Baked exports share one validated geometry/UV preparation between the plan and
+  bake. Atlas normalization, placement and rollback use bulk UV transfers while
+  preserving the scalar results and artist pins.
+- A Windows reader lock on a compile-progress snapshot no longer interrupts
+  Blender's output callback. The next stage or heartbeat retries the display.
 - Preview Studio opens its loading screen while the first scene compiles,
   including during a lengthy environment bake. Initial compile failures appear
   in the open viewer and recover on the next save.
@@ -36,6 +41,9 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Added
 
+- Preview Studio shows the current compile stage and object, total and stage
+  elapsed time, and the selected Cycles backend and sample count. Progress
+  reaches the viewer without enabling console progress output.
 - A small woodland diorama generator for repeatable Blender-to-browser preview
   checks, with a cabin, trees, camera and baked Appearance atlas.
 - A first-scene guide for private source/local archive installation, Blender

@@ -60,6 +60,23 @@ async function eventually(predicate: () => boolean, timeoutMs = 1_000): Promise<
 }
 
 describe('Preview Studio host protocol', () => {
+  it('retains the previous progress during a lock and accepts the next heartbeat', () => {
+    const plan = tempPlan()
+    try {
+      const writer = new PreviewStudioStatusWriter(plan)
+      writer.write({ phase: 'building', label: 'Starting' })
+      const progress = { fraction: 0.2, label: 'Packing', startedAt: 1, stageStartedAt: 2 }
+      renameControl.failures = 7
+      expect(writer.writeProgress(progress)).toBe(false)
+      expect(JSON.parse(readFileSync(writer.path, 'utf8')).label).toBe('Starting')
+      expect(writer.writeProgress({ ...progress, heartbeat: true })).toBe(true)
+      expect(JSON.parse(readFileSync(writer.path, 'utf8')).compileProgress).toMatchObject(progress)
+      expect(readdirSync(join(plan.workspace, 'public')).some(name => name.endsWith('.tmp'))).toBe(false)
+    } finally {
+      renameControl.failures = 0
+      rmSync(plan.workspace, { recursive: true, force: true })
+    }
+  })
   it('retries a transient status-file lock while preserving atomic snapshots', () => {
     const plan = tempPlan()
     try {

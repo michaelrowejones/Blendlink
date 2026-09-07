@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { createStagedPublication, renameOrCopy } from './stagedPublication.js'
 import { discoverBlender, type BlenderInstall } from './discover.js'
 import { readBlendHeader } from './blendHeader.js'
-import { ProgressEcho, progressEnabled } from './progress.js'
+import { ProgressEcho } from './progress.js'
 import type { PresentationMode, SceneRecipe } from './sceneRecipe.js'
 import type { BlenderSceneDiagnostics } from './sceneDiagnostics.js'
 import type { AuthoringPreview } from './runtime.js'
@@ -836,8 +836,8 @@ function run(
       windowsHide: true,
       // Always enable the internal protocol so legitimate silent Cycles work
       // can keep the inactivity watchdog alive. Direct CLI runs still stay
-      // quiet because ProgressEcho only forwards records for an opted-in
-      // wrapper such as the Blender add-on.
+      // quiet because ProgressEcho prints only for an opted-in wrapper.
+      // Preview's scoped listener receives those records independently.
       env: blenderProcessEnvironment(),
     })
     let stdout = ''
@@ -866,10 +866,10 @@ function run(
     }
     // Blender's stdout is captured for the sentinel contract, but progress
     // lines from the export script must stream live to whoever is watching.
-    const echo = progressEnabled() ? new ProgressEcho() : null
+    const echo = new ProgressEcho()
     child.stdout.on('data', (data) => {
       stdout += data
-      echo?.push(String(data))
+      echo.push(String(data))
       arm()
     })
     child.stderr.on('data', (data) => {

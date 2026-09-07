@@ -9,12 +9,13 @@ import {
 } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { renderBakedRecipe } from './bakedRecipe.js'
+import type { CompileProgress } from './progress.js'
 
 export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
 export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
 export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
-export const PREVIEW_STUDIO_HOST_VERSION = 7
+export const PREVIEW_STUDIO_HOST_VERSION = 9
 export const PREVIEW_STUDIO_MAIN_MARKER =
   '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
@@ -48,6 +49,7 @@ export interface PreviewStudioStatus {
   blendPath: string
   phase: PreviewStudioPhase
   label: string
+  compileProgress?: CompileProgress & { startedAt: number; stageStartedAt: number }
   generation?: string
   retainedGeneration?: string
   warnings: string[]
@@ -162,6 +164,11 @@ export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PR
         <button type="button" data-viewport="desktop" aria-pressed="false">Desktop</button>
         <button type="button" data-viewport="mobile" aria-pressed="false">Mobile</button>
       </div>
+      <section id="compile-progress" class="drawer-section" hidden>
+        <h2>Compile progress</h2><p id="compile-stage" aria-live="polite"></p>
+        <progress id="compile-meter" max="1" aria-label="Compile stages completed"></progress>
+        <p id="compile-timing" class="muted"></p><p id="compile-device" class="muted"></p>
+      </section>
       <dl id="stats" class="stats"></dl>
       <section id="scene-controls" class="drawer-section"></section>
       <section class="drawer-section"><h2>Web Checks</h2><div id="warnings" class="checks"><p class="muted">No warnings reported.</p></div></section>
@@ -213,6 +220,9 @@ button:focus-visible { outline: 2px solid #6ee7c7; outline-offset: 2px; }
 .notice.error { border-color: rgba(255,141,134,.42); }
 .notice { width: max-content; }
 .notice p { margin: 0; }
+#compile-meter { width: 100%; accent-color: #6ee7c7; }
+#compile-progress p { font-size: 12px; line-height: 1.45; }
+.first-load #first-load-detail { white-space: pre-line; }
 .notice-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .notice-actions[hidden], .notice-actions button[hidden] { display: none; }
 button:disabled { opacity: .45; cursor: default; }
@@ -387,6 +397,7 @@ type StudioStatus = {
   sceneName: string
   phase: 'preparing' | 'building' | 'published' | 'ready' | 'failed'
   label: string
+  compileProgress?: { fraction: number; label: string; startedAt: number; stageStartedAt: number; device?: 'cpu' | 'gpu'; backend?: string; samples?: number }
   generation?: string
   retainedGeneration?: string
   warnings: string[]
@@ -474,6 +485,31 @@ function showNotice(message: string, error = false): void {
 function hideNotice(): void {
   notice.hidden = true
   notice.classList.remove('error')
+}
+
+function renderCompileProgress(): void {
+  if (statusConnectionLost) return
+  const progress = latestStatus?.compileProgress
+  const building = latestStatus?.phase === 'building'
+  element<HTMLElement>('compile-progress').hidden = !progress || !building
+  if (!progress || !building) return
+  const seconds = (start: number) => Math.max(0, Math.floor((Date.now() - start) / 1000))
+  const duration = (value: number) => value < 60 ? value + 's' : Math.floor(value / 60) + 'm ' + value % 60 + 's'
+  const elapsed = seconds(progress.startedAt)
+  const timing = duration(elapsed) + ' elapsed · ' + duration(seconds(progress.stageStartedAt)) + ' in this stage'
+  const device = progress.device
+    ? 'Cycles: ' + (progress.device === 'cpu' ? 'CPU' : (progress.backend ? progress.backend.toUpperCase() + ' GPU' : 'GPU'))
+      + (progress.samples ? ' · ' + progress.samples + ' samples' : '')
+    : 'Preparing on CPU · Cycles device not selected yet'
+  element<HTMLElement>('compile-stage').textContent = progress.label
+  element<HTMLProgressElement>('compile-meter').value = progress.fraction
+  element<HTMLElement>('compile-timing').textContent = timing
+  element<HTMLElement>('compile-device').textContent = device
+  statusLabel.textContent = 'Compiling · ' + duration(elapsed)
+  if (!active) {
+    firstLoadTitle.textContent = progress.label
+    firstLoadDetail.textContent = timing + '\\n' + device
+  }
 }
 
 function updateRecoveryControls(): void {
@@ -855,6 +891,7 @@ async function promote(status: StudioStatus): Promise<void> {
 
 function applyStatus(status: StudioStatus): void {
   latestStatus = status
+  element<HTMLElement>('compile-progress').hidden = status.phase !== 'building'
   if (status.phase === 'preparing' || status.phase === 'building'
       || status.generation !== failedLoad?.generation
       || (status.phase === 'failed' && status.failureKind !== 'validation')) failedLoad = null
@@ -883,6 +920,7 @@ function applyStatus(status: StudioStatus): void {
       firstLoadTitle.textContent = status.phase === 'building' ? 'Compiling Preview quality' : 'Preparing Preview Studio'
       firstLoadDetail.textContent = status.label
     }
+    renderCompileProgress()
     return
   }
   window.clearTimeout(updateNoticeTimer)
@@ -1072,6 +1110,8 @@ window.addEventListener('beforeunload', () => {
 }, { once: true })
 
 updateRecoveryControls()
+const compileClock = window.setInterval(renderCompileProgress, 1000)
+window.addEventListener('beforeunload', () => window.clearInterval(compileClock), { once: true })
 void pollStatus()
 animationFrame = requestAnimationFrame(frame)
 `
@@ -1151,6 +1191,19 @@ export class PreviewStudioStatusWriter {
     if (prior) {
       this.sequence = Number.isInteger(prior.sequence) ? Number(prior.sequence) : 0
       this.activeGeneration = prior.phase === 'ready' ? prior.generation : prior.retainedGeneration
+    }
+  }
+
+  /** Progress is replaceable telemetry. A reader lock must not escape a child
+   * stdout callback and kill the compile; the next stage/heartbeat retries it.
+   * Build outcomes still use write() and keep its failure contract. */
+  writeProgress(compileProgress: NonNullable<PreviewStudioStatus['compileProgress']>): boolean {
+    try {
+      this.write({ phase: 'building', label: compileProgress.label, compileProgress })
+      return true
+    } catch (error) {
+      if (!['EPERM', 'EACCES', 'EBUSY'].includes((error as NodeJS.ErrnoException).code ?? '')) throw error
+      return false
     }
   }
 

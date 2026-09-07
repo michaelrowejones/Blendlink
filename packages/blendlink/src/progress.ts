@@ -1,3 +1,26 @@
+import { AsyncLocalStorage } from 'node:async_hooks'
+
+export interface CompileProgress {
+  fraction: number
+  label: string
+  heartbeat?: boolean
+  device?: 'cpu' | 'gpu'
+  backend?: string
+  samples?: number
+}
+
+const listeners = new AsyncLocalStorage<(progress: CompileProgress) => void>()
+
+/** Scope child-process and compiler progress to one scene's async work. */
+export function withProgressListener<T>(listener: (progress: CompileProgress) => void, work: () => T): T {
+  return listeners.run(listener, work)
+}
+
+function report(progress: CompileProgress): void {
+  listeners.getStore()?.(progress)
+  if (progressEnabled()) console.log(`##blendlink ${JSON.stringify(progress)}`)
+}
+
 /**
  * Machine-readable progress protocol.
  *
@@ -12,9 +35,8 @@ export function progressEnabled(): boolean {
 }
 
 export function emitProgress(fraction: number, label: string): void {
-  if (!progressEnabled()) return
   const clamped = Math.min(1, Math.max(0, fraction))
-  console.log(`##blendlink ${JSON.stringify({ fraction: clamped, label })}`)
+  report({ fraction: clamped, label })
 }
 
 /** Incremental line splitter that re-emits ##blendlink lines from a child
@@ -24,12 +46,23 @@ export class ProgressEcho {
 
   push(chunk: string): void {
     this.buffer += chunk
-    let index = this.buffer.indexOf('\n')
-    while (index >= 0) {
+    for (let index; (index = this.buffer.indexOf('\n')) >= 0;) {
       const line = this.buffer.slice(0, index).trimEnd()
       this.buffer = this.buffer.slice(index + 1)
-      if (line.startsWith('##blendlink ')) console.log(line)
-      index = this.buffer.indexOf('\n')
+      if (line.startsWith('##blendlink ')) {
+        let value: Partial<CompileProgress>
+        try { value = JSON.parse(line.slice('##blendlink '.length)) }
+        catch { continue }
+        if (!value || typeof value.fraction !== 'number' || !Number.isFinite(value.fraction)
+            || typeof value.label !== 'string') continue
+        report({
+          fraction: Math.min(1, Math.max(0, value.fraction)), label: value.label,
+          ...(value.heartbeat === true ? { heartbeat: true } : {}),
+          ...(value.device === 'cpu' || value.device === 'gpu' ? { device: value.device } : {}),
+          ...(typeof value.backend === 'string' ? { backend: value.backend } : {}),
+          ...(Number.isInteger(value.samples) && Number(value.samples) > 0 ? { samples: value.samples } : {}),
+        })
+      }
     }
   }
 }
