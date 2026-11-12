@@ -55,6 +55,7 @@ async function runCli(args) {
   return output
 }
 const launchOptions = { headless: true, ...(process.env.CI ? { args: ['--enable-unsafe-swiftshader'] } : {}) }
+const softwareDisplay = process.env.BLENDLINK_TEST_SOFTWARE_DISPLAY === '1'
 
 try {
   execFileSync(blender, ['--background', '--factory-startup', '--python-exit-code', '1', '--python-expr',
@@ -138,7 +139,12 @@ try {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
   const hostedUrl = `http://127.0.0.1:${server.address().port}/nested/site/`
   for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
-    browser = await engine.launch(name === 'chromium' ? launchOptions : { headless: true })
+    // Linux software WebGL needs a display for Firefox. CI provides Xvfb;
+    // this is software-renderer evidence, not a physical GPU benchmark.
+    browser = await engine.launch(name === 'chromium' ? launchOptions : {
+      headless: !softwareDisplay,
+      ...(name === 'firefox' && softwareDisplay ? { firefoxUserPrefs: { 'webgl.force-enabled': true } } : {}),
+    })
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
     const errors = [], failedAssets = [], external = []
     page.on('pageerror', error => errors.push(error.message))
@@ -146,7 +152,11 @@ try {
     page.on('response', response => { if (response.status() >= 400) failedAssets.push(response.url()) })
     page.on('request', request => { if (new URL(request.url()).origin !== new URL(hostedUrl).origin) external.push(request.url()) })
     await page.goto(hostedUrl)
-    await page.waitForSelector('body[data-ready="true"]', { timeout: 45000 })
+    await page.waitForFunction(() => document.body.dataset.ready === 'true' || !document.querySelector('#retry')?.hidden, null, { timeout: 45000 })
+    if (await page.locator('body').getAttribute('data-ready') !== 'true') {
+      await page.screenshot({ path: join(evidence, `website-${name}-failed.png`) })
+      throw new Error(`${name} website failed: ${await page.locator('#status').innerText()}\n${errors.join('\n')}`)
+    }
     assert.deepEqual(errors, []); assert.deepEqual(failedAssets, []); assert.deepEqual(external, [])
     const screenshot = await page.screenshot({ path: join(evidence, `website-${name}.png`) })
     assert.ok((await sharp(screenshot).stats()).channels.some(channel => channel.stdev > 5), 'Exported website is blank')

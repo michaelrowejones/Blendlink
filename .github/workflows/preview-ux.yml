@@ -42,7 +42,10 @@ jobs:
           tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
           echo "BLENDLINK_BLENDER=$RUNNER_TEMP/blender/blender" >> "$GITHUB_ENV"
       - name: Verify preview and standalone publishing
-        run: npm run test:preview-ux
+        env:
+          BLENDLINK_TEST_SOFTWARE_DISPLAY: '1'
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: xvfb-run -a npm run test:preview-ux
       - name: Retain browser evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
