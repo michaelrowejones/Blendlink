@@ -38,6 +38,9 @@ normalize_color_operation = _sibling("compositor_color").normalize_color_operati
 native_color_band = _sibling("native_color_band").native_color_band
 normalize_utility = _sibling("compositor_utilities").normalize_utility
 normalize_transform = _sibling("compositor_transform").normalize_transform
+normalize_affine = _sibling("compositor_affine").normalize_affine
+translation_only_transform = _sibling("compositor_affine").is_translation_only
+multiply_image_affine = _sibling("compositor_affine").multiply_affine
 transform_origin_conflict = _sibling("compositor_transform").origin_conflict
 validate_math_domain = _sibling("compositor_math").validate_math_domain
 native_gpu_profile = _sibling("compositor_gpu").native_gpu_profile
@@ -101,6 +104,8 @@ TYPES = {
     "CompositorNodeBlur": "blur",
     "CompositorNodeTranslate": "translate",
     "CompositorNodeTransform": "translate",
+    "CompositorNodeRotate": "image-affine",
+    "CompositorNodeScale": "image-affine",
     "CompositorNodeFlip": "flip",
     "CompositorNodeFilter": "filter",
     "CompositorNodeNormal": "normal-direction",
@@ -508,10 +513,14 @@ def extract(scene):
                     normalize_blur(node, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
                         lambda incoming, message: fail("unsupported-blur-mode", path, node, incoming, message))
-                elif node.bl_idname in ("CompositorNodeTranslate", "CompositorNodeTransform"):
-                    normalize_transform(node, op, scene, lambda incoming: input_value(incoming, ctx),
-                        _sibling("compositor_math").numeric_socket_bounds,
-                        lambda incoming, message: fail("unsupported-transform-mode", path, node, incoming, message))
+                elif node.bl_idname in ("CompositorNodeTranslate", "CompositorNodeTransform", "CompositorNodeRotate", "CompositorNodeScale"):
+                    bounds = _sibling("compositor_math").numeric_socket_bounds
+                    if node.bl_idname == "CompositorNodeTranslate" or translation_only_transform(node, bounds):
+                        normalize_transform(node, op, scene, lambda incoming: input_value(incoming, ctx), bounds,
+                            lambda incoming, message: fail("unsupported-transform-mode", path, node, incoming, message))
+                    else:
+                        normalize_affine(node, op, scene, lambda incoming: input_value(incoming, ctx),
+                            lambda incoming, message: fail("unsupported-affine-transform-mode", path, node, incoming, message))
                 elif TYPES[node.bl_idname] in ("curves", "hue-correct"):
                     try:
                         op["properties"].update(curve_tables(node))
@@ -793,8 +802,8 @@ def extract(scene):
             sink = sinks[0]
             terminal = sink.inputs.get("Image")
         result["output"] = input_value(terminal, ctx)
-        if any(op["kind"] == "translate" for op in result["ops"]):
-            conflict = transform_origin_conflict(result, single_values)
+        if any(op["kind"] in ("translate", "image-affine") for op in result["ops"]):
+            conflict = transform_origin_conflict(result, single_values, multiply_image_affine)
             if conflict:
                 op, message = conflict
                 result["diagnostics"].append({"code": "unsupported-image-domain", "path": op["source"]["path"],

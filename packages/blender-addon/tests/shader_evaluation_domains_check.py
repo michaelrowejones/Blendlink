@@ -17,7 +17,7 @@ assert stage(curve) == "shader"
 assert stage(curve, cycles=True) == "constant"
 # Procedural functions can fold in modern material MF preprocessing while
 # remaining SVM operations in the legacy Cycles graph.
-for operation in ["noise", "noise_fractal", "noise_varying", "noise_normalized"]:
+for operation in ["noise", "noise_fractal", "noise_varying", "noise_varying_native", "noise_normalized"]:
     expression = {**noise, "op": operation}
     assert stage(expression) == "constant"
     assert stage(expression, cycles=True) == "shader"

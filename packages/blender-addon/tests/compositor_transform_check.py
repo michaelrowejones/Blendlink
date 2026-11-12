@@ -169,7 +169,8 @@ def main(output):
             rows.append({"case": document["case"]})
 
     # A bounded slice must refuse native semantics that it has not implemented.
-    for feature in ("dynamic-offset", "bicubic", "relative-or-extend", "rotate", "scale", "cross-origin", "render-border"):
+    for feature in (("dynamic-offset", "bicubic", "relative-or-extend", "cross-origin", "render-border")
+                    + (("rotate", "scale") if bpy.app.version < (4, 5, 0) else ())):
         sink, source = oracle.reset()
         node = translate(source.outputs["Image"], kind="CompositorNodeTransform" if feature in ("rotate", "scale") else "CompositorNodeTranslate")
         tree.links.new(node.outputs[0], sink.inputs[0])

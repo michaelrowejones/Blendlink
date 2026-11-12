@@ -947,6 +947,9 @@ def emit_normal_channel(socket, stack=(), *, evaluation_engine=None):
         from . import bump_ir
     else:
         import bump_ir
+    if (get_evaluation_engine() == 'EEVEE' and expression.get('op') == 'geometry_context'
+            and expression.get('output') == 'normal' and expression.get('sourceEngine') == 'EEVEE'):
+        return _channel_document({"op": "normal_view_native", "input": expression})
     if bump_ir.contains(expression):
         if not bump_ir.unit_normal(expression):
             _refuse('No-height Bump normal channels need a direct verified unit-normal source; linked zero/nonunit or transformed vectors remain unproved')
@@ -2331,7 +2334,10 @@ def emit_output(node, from_socket, stack=()):
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
-        normalized_native = normalize_output and roughness_expression is None
+        native_varying = normalize_output and roughness_expression is not None and get_evaluation_engine() == 'EEVEE'
+        if native_varying and bpy.context.preferences.system.gpu_backend not in {'METAL','OPENGL'}:
+            _refuse('Native varying Noise has no verified EEVEE GPU backend profile')
+        normalized_native = normalize_output and (roughness_expression is None or native_varying)
         precise_fractal = not normalize_output or roughness_expression is not None or normalized_native
         if roughness_expression is not None and detail_value > 2:
             _refuse('Noise varying Roughness requires static Detail <= 2 in the proven domain')
@@ -2394,7 +2400,7 @@ def emit_output(node, from_socket, stack=()):
         scale_magnitude = abs(float(scale_expression["value"])) * prescale
         # Keep explicitly measured legacy high-scale approximations separate
         # from the versioned native normalized capability.
-        if normalized_native and scale_magnitude > _NOISE_SCALE_BOUND + 1e-9:
+        if normalized_native and not native_varying and scale_magnitude > _NOISE_SCALE_BOUND + 1e-9:
             normalized_native = False
             precise_fractal = False
         normalized_source_profile = None
@@ -2479,7 +2485,9 @@ def emit_output(node, from_socket, stack=()):
                 expression.update(offset=offset_value, gain=gain_value, amplitudeBound=amplitude_bound)
         if normalized_native:
             expression.update({"op": "noise_normalized", 'noiseType': 'FBM'})
-        if roughness_expression is not None:
+        if native_varying:
+            expression.update({"op": "noise_varying_native", 'sourceEngine': 'EEVEE', 'nativeGpuBackend': bpy.context.preferences.system.gpu_backend, 'noiseType': 'FBM', 'roughnessNode': roughness_expression})
+        elif roughness_expression is not None:
             expression.update({"op": "noise_varying", 'noiseType': noise_type, 'roughnessNode': roughness_expression})
         if precise_fractal and bpy.app.version >= (5, 0, 0):
             if __package__:
@@ -2530,6 +2538,8 @@ def emit_output(node, from_socket, stack=()):
                 distortion_value = folded
             else:
                 distortion_value = float(distortion_socket.default_value)
+        if native_varying and distortion_value != 0:
+            _refuse('Native normalized live Roughness requires Distortion = 0; nonzero Distortion needs source baking')
         if precise_fractal and (not math.isfinite(distortion_value) or abs(distortion_value) > 1):
             _refuse('Unnormalized Noise Distortion exceeds its proven finite [-1,1] domain')
         if native_shader_fused and dimensions in {'3D', '4D'} and (detail_value > 1 or distortion_value != 0):

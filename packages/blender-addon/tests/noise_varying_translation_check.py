@@ -25,7 +25,7 @@ try:
         for normalize in ([True, False] if kind == 'FBM' else [False]):
             node.normalize = normalize
             result = tsl_ir.emit_output(node, node.outputs['Fac'])
-            assert result['op'] == 'noise_varying' and result['noiseType'] == kind and result['normalize'] == normalize
+            assert result['op'] == ('noise_varying_native' if normalize and tsl_ir.get_evaluation_engine() == 'EEVEE' else 'noise_varying') and result['noiseType'] == kind and result['normalize'] == normalize
             assert result['roughness'] == 1 and unit_roughness(result['roughnessNode'])
             assert stage(result) == 'shader'
     node.inputs['Detail'].default_value = 3

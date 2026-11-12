@@ -8,6 +8,7 @@ if (!blender)
   throw new Error('Set BLENDLINK_NORMAL_NODE_BLENDER to an actual native Blender executable')
 const built = process.argv.includes('--built')
 const bumpOnly = process.argv.includes('--bump')
+const geometryOnly = process.argv.includes('--geometry-normal')
 const argument = process.argv.indexOf('--profiles')
 const profiles = (argument < 0 ? 'shared' : process.argv[argument + 1]).split(',')
 if (profiles.some((value) => !['shared', 'single', 'flat', 'hq', 'cycles-zero'].includes(value)))
@@ -27,6 +28,7 @@ for (const profile of profiles) {
     BLENDLINK_NORMAL_NODE_BLENDER: blender,
     BLENDLINK_NORMAL_NODE_BUILT: built ? '1' : '0',
     BLENDLINK_NORMAL_NODE_BUMP_ONLY: bumpOnly ? '1' : '0',
+    BLENDLINK_NORMAL_NODE_GEOMETRY_ONLY: geometryOnly ? '1' : '0',
     BLENDLINK_NORMAL_NODE_CYCLES_ZERO: profile === 'cycles-zero' ? '1' : '0',
     BLENDLINK_NORMAL_NODE_SINGLE_OWNER: profile === 'single' ? '1' : '0',
     BLENDLINK_NORMAL_NODE_FLAT: profile === 'flat' ? '1' : '0',
@@ -64,7 +66,7 @@ for (const profile of profiles) {
 }
 writeFileSync(
   join(destination, 'results.json'),
-  JSON.stringify({ built, bumpOnly, profiles: results }, null, 2),
+  JSON.stringify({ built, bumpOnly, geometryOnly, profiles: results }, null, 2),
 )
 console.log(
   'BLENDLINK_NORMAL_NODE_SUITE_PASSED ' +

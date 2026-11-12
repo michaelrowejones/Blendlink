@@ -58,6 +58,7 @@ def references(directory):
                 cases.append({'space':space,'strength':strength,'color':[.8,.6,.9],'convention':'DIRECTX','base':'ORIGINAL'})
     for space in ['OBJECT','WORLD','BLENDER_OBJECT','BLENDER_WORLD']:
         for strength in [.5,1]:cases.append({'space':space,'strength':strength,'color':[.8,.6,.9],'slot':'normal'})
+    geometry_only=os.environ.get('BLENDLINK_NORMAL_NODE_GEOMETRY_ONLY')=='1'
     bump_only=os.environ.get('BLENDLINK_NORMAL_NODE_BUMP_ONLY')=='1'
     if bump_only:
         cases=[{'kind':'default'}, {'kind':'default','invert':True,'inactive':True},
@@ -67,9 +68,11 @@ def references(directory):
                {'kind':'nested','slot':'normal'}, {'kind':'normal-map','slot':'normal'},
                {'kind':'normal-map'}, {'kind':'default','slot':'coat-normal'},
                {'kind':'normal-map','slot':'coat-normal'}]
+    if geometry_only:
+        cases=[{'kind':'geometry'}, {'kind':'geometry','slot':'normal'}, {'kind':'geometry','slot':'coat-normal'}]
     cycles_zero=os.environ.get('BLENDLINK_NORMAL_NODE_CYCLES_ZERO')=='1'
     if cycles_zero:cases=[{'space':'WORLD','strength':amount,'color':[.5,.5,.5]} for amount in [-1,0,.25,.5,1,2]]
-    for index,case in enumerate(cases):case.update({'output':('bump-' if bump_only else 'normal-map-')+str(index),'scale':.2})
+    for index,case in enumerate(cases):case.update({'output':('geometry-normal-' if geometry_only else 'bump-' if bump_only else 'normal-map-')+str(index),'scale':.2})
     cases.append({'output':'control','scale':1})
     columns=8;rows_count=math.ceil(len(cases)/columns)
     vertices=[];faces=[]
@@ -91,7 +94,9 @@ def references(directory):
         if case['output']=='control':
             value=tree.nodes.new('ShaderNodeRGB');value.outputs[0].default_value=(.3333333,.1234567,1.234567,1);field=value.outputs[0]
         else:
-            if bump_only:
+            if geometry_only:
+                source=tree.nodes.new('ShaderNodeNewGeometry')
+            elif bump_only:
                 source=tree.nodes.new('ShaderNodeBump');source.invert=case.get('invert',False)
                 source.inputs['Height'].default_value=-123
                 if case.get('inactive'):
@@ -167,7 +172,7 @@ def references(directory):
                     camera.location=(.3*min(frame,3),-4,60 if face=='front' else -60)
                     camera.rotation_euler=(-camera.location).to_track_quat('-Z','Y').to_euler()
                     camera.keyframe_insert(data_path='location',frame=frame);camera.keyframe_insert(data_path='rotation_euler',frame=frame)
-                for engine in ([eevee] if bump_only else ['CYCLES'] if cycles_zero else ['CYCLES',eevee]):
+                for engine in ([eevee] if bump_only or geometry_only else ['CYCLES'] if cycles_zero else ['CYCLES',eevee]):
                     scene.render.engine=engine
                     label=('cycles' if engine=='CYCLES' else 'eevee')+'_'+projection.lower()+'_'+face
                     for frame in frames:

@@ -33,7 +33,7 @@ The complete GNU General Public License version 3 text is in
 ## Third-party notice
 
 `dist/tslSpectralNodes.js`, `dist/tslBrickNodes.js`, `dist/tslColorConversion.js`,
-`dist/tslSharedUtilities.js`, `dist/tslFractalNoise.js`, `dist/tslVaryingNoise.js`,
+`dist/tslSharedUtilities.js`, `dist/tslFractalNoise.js`, `dist/tslVaryingNoise.js`, `dist/staticNoise4d.js`,
 `dist/tslGeometryContext.js`, `dist/tslNormalNodes.js`, `dist/tslNodeRecipe.js` and their source TypeScript include spectral color,
 color conversion, image sampling, integer utility, fractal Noise/Wave, packed-normal, normal-map and Brick mathematics adapted from Apache-2.0 Cycles
 code. The coefficient/CIE data in
@@ -46,7 +46,7 @@ The separate Blender extension also carries these texts as
 `spectral-NOTICE.txt` and `spectral-LICENSE.txt` beside its GPL aggregate license.
 
 The Perlin gradient, fade and interpolation primitives in `tslNodeRecipe.ts`
-and `tslNativeNoisePrecision.ts`, and their emitted JavaScript are separately adapted from Cycles/Open Shading
+`tslNativeNoisePrecision.ts` and `staticNoise4d.ts`, and their emitted JavaScript are separately adapted from Cycles/Open Shading
 Language `noise.h` under BSD-3-Clause, copyright 2009-2010 Sony Pictures
 Imageworks Inc., et al., and 2011-2022 Blender Foundation. Complete copyright,
 redistribution conditions and disclaimer are retained in

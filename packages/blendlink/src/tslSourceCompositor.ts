@@ -17,7 +17,7 @@ import { buildCompositorMathPrecision } from './tslCompositorMath.js'
 import { buildCompositorHueCorrect } from './tslCompositorHueCorrect.js'
 import { buildCompositorWhitePoint } from './tslCompositorWhitePoint.js'
 import { buildNativeCompositorBlur, ownBlurRtt } from './tslCompositorBlur.js'
-import { mergeImageOrigins, translatedImageOrigin, translatedCompositorField, realizeCompositorOrigin, type CompositorImageOrigin } from './tslCompositorImageDomain.js'
+import { mergeImageOrigins, translatedImageOrigin, affineImageOrigin, translatedCompositorField, realizeCompositorOrigin, type CompositorImageOrigin } from './tslCompositorImageDomain.js'
 import { buildSharedBoolean, buildSharedInteger, buildSharedCompare, sharedTypedConstant, sharedTypedConversion } from './tslSharedUtilities.js'
 
 const {
@@ -482,7 +482,10 @@ export function buildSourceCompositor(
     }
     const nodes = new Map<string, TslEffectNode>()
     const origins = new Map<string, CompositorImageOrigin | null>()
-    const usesImageDomains = program.ops.some(op => op.kind === 'translate')
+    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine')
+    if (program.ops.some(op => op.kind === 'image-affine') && program.ops.some(op => op.kind === 'translate'
+      && op.properties.image_domain_model === 'deferred-integer-origin-v1'))
+      throw new SourceCompositorUnsupported('Affine transform chains require freshly exported native translation metadata')
     const origin = (v: CompositorValue): CompositorImageOrigin | null =>
       v.kind === 'ref' ? origins.get(v.node ?? '') ?? null : v.kind === 'convert' && v.input ? origin(v.input) : null
     const singleValues = new Set<string>()
@@ -529,12 +532,15 @@ export function buildSourceCompositor(
       }
       throw new SourceCompositorUnsupported(`Unsupported compositor value type ${v.type}`)
     }
-    const nativeDomain = program.ops.find(op => op.kind === 'translate' && op.properties.image_domain_model === 'native-translation-v2')
+    const nativeDomain = program.ops.find(op => op.kind === 'image-affine'
+      || op.kind === 'translate' && op.properties.image_domain_model === 'native-translation-v2')
     for (const op of program.ops) {
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
       const single = op.kind !== 'render-pass' && Object.values(op.inputs).every(input => isSingleValue(input.value))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
+      if (!['translate', 'image-affine'].includes(op.kind) && incoming.some(input => input.domain?.affineMatrix))
+        domainFail('Intermediate affine image consumers require native resized data/display-window realization; this model supports terminal transform chains')
       const selectedDomain = op.properties.image_domain_input
       let domain: CompositorImageOrigin | null = null
       if (usesImageDomains && !single && op.kind !== 'render-pass') {
@@ -565,6 +571,10 @@ export function buildSourceCompositor(
       let node: TslEffectNode
       try {
         switch (op.kind) {
+          case 'image-affine':
+            affineImageOrigin(op, domain, domainFail)
+            node = input('Image')
+            break
           case 'translate':
             node = translatedCompositorField(op, input('Image'), domain, resources, domainFail)
             break
@@ -1090,11 +1100,12 @@ export function buildSourceCompositor(
           ...(nativeDomain ? { sampling: { model: nativeDomain.properties.image_sampling_model,
             interpolation: 'Bilinear' } as NonNullable<CompositorImageOrigin['sampling']> } : {}) }
         if (op.kind === 'translate') domain = translatedImageOrigin(op, domain, domainFail)
+        if (op.kind === 'image-affine') domain = affineImageOrigin(op, domain, domainFail)
         origins.set(op.id, domain)
       }
     }
     const output = value(program.output), domain = origin(program.output)
-    const transformSource = program.ops.find(op => op.kind === 'translate')?.source
+    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine')?.source
     return { node: usesImageDomains && domain ? realizeCompositorOrigin(output, domain, [0, 0], resources,
       message => { throw new SourceCompositorUnsupported(transformSource
         ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output, dispose }

@@ -30,6 +30,56 @@ def source_qualified_roughness_refusal(case, engine, varying, reason, source_pro
             and reason == expected)
 
 
+def native_live_distortion_refusal(case, engine, varying, reason):
+    return (varying and engine in {'BLENDER_EEVEE','BLENDER_EEVEE_NEXT'} and case.get('kind') == 'noise'
+            and case.get('normalize') is True and case.get('type','FBM') == 'FBM'
+            and bool(case.get('roughnessStage')) and case.get('Distortion',0) != 0
+            and reason == 'Native normalized live Roughness requires Distortion = 0; nonzero Distortion needs source baking')
+
+
+def authored_graph_state(material):
+    def properties(value, depth=0):
+        result = {}
+        for prop in value.bl_rna.properties:
+            if prop.is_readonly or prop.identifier == 'rna_type': continue
+            item = getattr(value,prop.identifier)
+            if prop.type in {'BOOLEAN','INT','FLOAT','STRING','ENUM'}:
+                result[prop.identifier] = sorted(item) if isinstance(item,set) else list(item) if getattr(prop,'is_array',False) else item
+            elif prop.type == 'POINTER' and item is not None:
+                if isinstance(item,bpy.types.ID): result[prop.identifier]={'idType':item.bl_rna.identifier,'name':item.name}
+                elif depth < 3: result[prop.identifier]=properties(item,depth+1)
+        return result
+    def sockets(values):
+        return [{'identifier':socket.identifier,'name':socket.name,
+                 **({'value':list(socket.default_value) if hasattr(socket.default_value,'__len__') and not isinstance(socket.default_value,str) else socket.default_value}
+                    if hasattr(socket,'default_value') else {})} for socket in values]
+    return {'material':material.name,'nodes':[{'name':node.name,'type':node.bl_idname,'properties':properties(node),
+        'inputs':sockets(node.inputs),'outputs':sockets(node.outputs)} for node in material.node_tree.nodes],
+        'links':[[link.from_node.name,link.from_socket.identifier,link.to_node.name,link.to_socket.identifier] for link in material.node_tree.links]}
+
+
+def retain_refused_native_graph(material, case, engine, temporary):
+    directory=OUTPUT/'refused';directory.mkdir(exist_ok=True)
+    graph=authored_graph_state(material)
+    images={}
+    for node in material.node_tree.nodes:
+        image=getattr(node,'image',None)
+        if image is None or image.name in images: continue
+        values=np.empty(len(image.pixels),np.float32);image.pixels.foreach_get(values)
+        data=values.astype('<f4').tobytes();digest=hashlib.sha256(data).hexdigest()
+        image_file='image-'+digest[:16]+'.f32';(directory/image_file).write_bytes(data)
+        images[image.name]={'file':image_file,'hash':digest,'size':list(image.size),'channels':image.channels,
+            'colorSpace':image.colorspace_settings.name,'alphaMode':image.alpha_mode,'source':image.source,'halfPrecision':image.use_half_precision}
+    graph.update(engine=engine,case=case,images=images)
+    graph_file=case['id']+'.graph.json';graph_bytes=json.dumps(graph,allow_nan=False).encode();(directory/graph_file).write_bytes(graph_bytes)
+    raw=native_pixels(material,temporary,case['id']+'-refused')
+    assert np.isfinite(raw).all(),case['id']
+    pixels=raw.astype('<f4').tobytes();pixel_file=case['id']+'.f32';(directory/pixel_file).write_bytes(pixels)
+    assert authored_graph_state(material)=={key:graph[key] for key in ['material','nodes','links']},'Refusal or native rendering changed the authored graph'
+    return {'graph':{'file':'refused/'+graph_file,'hash':hashlib.sha256(graph_bytes).hexdigest()},
+            'nativePixels':{'file':'refused/'+pixel_file,'hash':hashlib.sha256(pixels).hexdigest(),'components':3,'size':SIZE}}
+
+
 OUTPUT = Path(os.environ['BLENDLINK_NOISE_REFERENCES']).resolve()
 OUTPUT.mkdir(parents=True, exist_ok=True)
 (OUTPUT / 'ir').mkdir(exist_ok=True)
@@ -131,7 +181,9 @@ def make_material(case):
         node.noise_dimensions = case['dimensions']
         for key, default in [('Scale', 1), ('Detail', 2), ('Roughness', .5), ('Lacunarity', 2), ('Distortion', 0), ('Offset', 0), ('Gain', 1)]:
             socket = node.inputs.get(key)
-            if socket is not None: socket.default_value = case.get(key, default)
+            if socket is not None:
+                socket.default_value = case.get(key, default)
+                assert socket.default_value == float(np.float32(case.get(key,default))), ('Native socket changed authored scalar',key,case.get(key,default),socket.default_value)
         if case.get('roughnessStage'):
             if case['roughnessStage'] == 'constant-function':
                 rough_coordinates = tree.nodes.new('ShaderNodeCombineXYZ')
@@ -146,6 +198,10 @@ def make_material(case):
                 rough_components = tree.nodes.new('ShaderNodeSeparateXYZ')
                 tree.links.new(exact_inputs(tree), rough_components.inputs[0])
                 rough = rough_components.outputs[0]
+            if 'roughnessTransform' in case:
+                transform=tree.nodes.new('ShaderNodeMath');transform.operation='MULTIPLY_ADD'
+                transform.inputs[1].default_value,transform.inputs[2].default_value=case['roughnessTransform']
+                tree.links.new(rough,transform.inputs[0]);rough=transform.outputs[0]
             rough_clamp = tree.nodes.new('ShaderNodeClamp')
             tree.links.new(rough, rough_clamp.inputs['Value'])
             tree.links.new(rough_clamp.outputs[0], node.inputs['Roughness'])
@@ -228,12 +284,14 @@ def add_residual_control(material, emission, coarse, scale, amplification):
 records = []
 refusals = []
 source_qualified_refusal_ids = set()
+native_distortion_refusal_ids = set()
 requested_count = 0
-varying = bool(os.environ.get('BLENDLINK_NOISE_VARYING'))
+native_varying = bool(os.environ.get('BLENDLINK_NOISE_NATIVE_VARYING'))
+varying = bool(os.environ.get('BLENDLINK_NOISE_VARYING')) or native_varying
 coordinate_probes = bool(os.environ.get('BLENDLINK_NOISE_COORDINATES'))
 normalized = bool(os.environ.get('BLENDLINK_NOISE_NORMALIZED')) or coordinate_probes
 assert not (varying and normalized)
-requested_types = json.loads(os.environ.get('BLENDLINK_NOISE_TYPES', json.dumps(['FBM', *sorted(FRACTAL_TYPES)]) if varying else '["FBM"]'))
+requested_types = json.loads(os.environ.get('BLENDLINK_NOISE_TYPES', json.dumps(['FBM', *sorted(FRACTAL_TYPES)]) if varying and not native_varying else '["FBM"]'))
 assert requested_types and all(kind in {'FBM', *FRACTAL_TYPES} for kind in requested_types)
 parameters = [
     {'Detail': 0, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 1},
@@ -250,6 +308,8 @@ parameters = [
 with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
     only = os.environ.get('BLENDLINK_NOISE_ENGINE')
     if only == 'EEVEE': only = EEVEE
+    if native_varying and only is None: only = EEVEE
+    if native_varying: assert only == EEVEE, 'Native live Roughness is EEVEE-only'
     for engine in ([only] if only else ['CYCLES', EEVEE]):
         scene.render.engine = engine
         if engine != 'CYCLES': scene.eevee.taa_render_samples = 1
@@ -352,6 +412,38 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             for case in boundaries:
                 case.update(roughnessStage='constant-function' if case['stage'] == 'constant' else 'image', Roughness=1)
                 cases.append(case)
+        if native_varying:
+            cases = [case for case in cases if case['kind'] in {'constant','image-control'} or case.get('normalize') is True]
+            for dimension in ['1D','2D','3D','4D']:
+                for output in ['Fac','Color']:
+                    for stage in ['constant','image']:
+                        for index,(scale,bias) in enumerate([(0,0),(0,1),(-2,.25),(4,-1)]):
+                            cases.append({'id':f'{engine.lower()}-native-varying-control-{dimension.lower()}-{output.lower()}-{stage}-{index}',
+                                'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':output,
+                                'stage':stage,'roughnessStage':'constant-function' if stage=='constant' else 'image',
+                                'roughnessTransform':[scale,bias],'Detail':-.5 if index==0 else 2,'Scale':1,'Lacunarity':-2 if index==2 else 1.7})
+            control_settings=[{'Scale':0},{'Scale':-1,'Lacunarity':1.7},{'Scale':40},{'Scale':80},
+                {'Lacunarity':0},{'Distortion':-1},{'Distortion':1,'Lacunarity':-2},
+                {'Scale':40,'Distortion':.37,'Lacunarity':1.7}]
+            for dimension in ['1D','2D','3D','4D']:
+                for output in ['Fac','Color']:
+                    for stage in ['constant','image']:
+                        for index,settings in enumerate(control_settings):
+                            cases.append({'id':f'{engine.lower()}-native-varying-kernel-{dimension.lower()}-{output.lower()}-{stage}-{index}',
+                                'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':output,'stage':stage,
+                                'roughnessStage':'constant-function' if stage=='constant' else 'image','Detail':2,**settings})
+            for dimension in ['1D','2D','3D','4D']:
+                for stage in ['constant','image']:
+                    cases.append({'id':f'{engine.lower()}-native-varying-residual-warp-{dimension.lower()}-{stage}',
+                        'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':'Color','stage':stage,
+                        'roughnessStage':'constant-function' if stage=='constant' else 'image','Detail':2,'Scale':40,'Lacunarity':1.7,'Distortion':.37,'residual':True})
+            for label,settings in [('no-warp',{'Scale':40,'Lacunarity':1.7,'Distortion':0}),
+                                   ('small-warp',{'Scale':1,'Lacunarity':2,'Distortion':.37})]:
+                for dimension in ['1D','2D','3D','4D']:
+                    for stage in ['constant','image']:
+                        cases.append({'id':f'{engine.lower()}-native-varying-residual-{label}-{dimension.lower()}-{stage}',
+                            'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':'Color','stage':stage,
+                            'roughnessStage':'constant-function' if stage=='constant' else 'image','Detail':2,'residual':True,**settings})
         if normalized:
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('type', 'FBM') == 'FBM']
             for case in cases:
@@ -420,11 +512,18 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('residual')]
         if os.environ.get('BLENDLINK_NOISE_BOUNDARY_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or '-hybrid-cutoff-' in case['id'] or '-ridged-floor-' in case['id']]
+        if os.environ.get('BLENDLINK_NOISE_STATIC_4D_ONLY'):
+            cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}
+                     or (case.get('dimensions') == '4D' and case.get('output') == 'Color'
+                         and case.get('stage') == 'constant')]
         requested_count += len(cases)
         source_profile = tsl_ir._normalized_noise_source_profile(engine, sys.platform, platform.machine(), scene.cycles.device)
         expected_source_refusals = {case['id'] for case in cases if varying and engine == 'CYCLES'
             and source_profile is None and case.get('roughnessStage') == 'constant-function'}
         observed_source_refusals = set()
+        expected_native_distortion_refusals = {case['id'] for case in cases if varying and engine != 'CYCLES' and case.get('kind') == 'noise'
+            and case.get('normalize') is True and case.get('type','FBM') == 'FBM' and case.get('roughnessStage') and case.get('Distortion',0) != 0}
+        observed_native_distortion_refusals = set()
         assert len({case['id'] for case in cases}) == len(cases), 'Native reference case IDs must be unique'
         for case in cases:
             if case.get('roughnessStage') and case.get('type', 'FBM') == 'FBM':
@@ -451,7 +550,8 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 # These are declared Cycles source/cost limits, not hidden
                 # omissions from the primary EEVEE numerical corpus.
                 qualified = source_qualified_roughness_refusal(case, engine, varying, str(error), source_profile)
-                if not (qualified or normalized and engine == 'CYCLES' and (
+                native_distortion = native_live_distortion_refusal(case,engine,varying,str(error))
+                if not (native_distortion or qualified or normalized and engine == 'CYCLES' and (
                         'no verified live source precision profile' in str(error)
                         or 'Normalized Noise Cycles SIMD 3D/4D' in str(error))): raise
                 assert before == (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
@@ -459,6 +559,10 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 if qualified:
                     refusal['sourceQualification'] = 'unmeasured-cycles-normalized-roughness'
                     observed_source_refusals.add(case['id']);source_qualified_refusal_ids.add(case['id'])
+                if native_distortion:
+                    refusal['capabilityLimit']='native-live-roughness-distortion-zero'
+                    refusal.update(retain_refused_native_graph(material,case,engine,temporary))
+                    observed_native_distortion_refusals.add(case['id']);native_distortion_refusal_ids.add(case['id'])
                 refusals.append(refusal)
                 bpy.data.materials.remove(material, do_unlink=True)
                 for image in list(bpy.data.images):
@@ -468,20 +572,21 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             if case['kind'] == 'noise':
                 def collect(value):
                     if isinstance(value, dict):
-                        return ([value] if value.get('op') in {'noise_fractal', 'noise_normalized', 'noise_varying'} else []) + [item for child in value.values() for item in collect(child)]
+                        return ([value] if value.get('op') in {'noise_fractal', 'noise_normalized', 'noise_varying', 'noise_varying_native'} else []) + [item for child in value.values() for item in collect(child)]
                     if isinstance(value, list): return [item for child in value for item in collect(child)]
                     return []
                 all_expressions = collect(document)
                 # The authored Roughness subtree deliberately contains a
                 # separately qualified normalized child. Validate the outer
                 # capability without assigning its mode/stage to that child.
-                expressions = [item for item in all_expressions if item['op'] == 'noise_varying'] if varying else all_expressions
+                expected_varying_op = 'noise_varying_native' if engine != 'CYCLES' and case.get('normalize') is True else 'noise_varying'
+                expressions = [item for item in all_expressions if item['op'] == expected_varying_op] if varying else all_expressions
                 if varying and case.get('roughnessStage') == 'constant-function':
                     nested = [item for item in all_expressions if item['op'] == 'noise_normalized']
                     assert nested and all(item['normalize'] is True for item in nested), case['id']
                 assert expressions and all(expression['normalize'] == (case.get('type', 'FBM') == 'FBM' and case.get('normalize', False)) for expression in expressions), case['id']
                 if normalized: assert all(expression['op'] == 'noise_normalized' for expression in expressions)
-                if case.get('roughnessStage'): assert all(expression['op'] == 'noise_varying' for expression in expressions)
+                if case.get('roughnessStage'): assert all(expression['op'] == expected_varying_op for expression in expressions)
                 expected_model = 'shader-mf' if bpy.app.version >= (5, 0, 0) and case['stage'] == 'constant' else 'shader'
                 assert all(expression['evaluationModel'] == expected_model for expression in expressions), case['id']
                 case['evaluationModel'] = expected_model
@@ -496,6 +601,7 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             bpy.data.materials.remove(material, do_unlink=True)
             for image in list(bpy.data.images):
                 if image.name.startswith('Exact Noise') and not image.users: bpy.data.images.remove(image)
+        assert observed_native_distortion_refusals == expected_native_distortion_refusals,(engine,sorted(expected_native_distortion_refusals),sorted(observed_native_distortion_refusals))
         assert observed_source_refusals == expected_source_refusals, (engine, sorted(expected_source_refusals), sorted(observed_source_refusals))
         if 'RIDGED_MULTIFRACTAL' in requested_types and not os.environ.get('BLENDLINK_NOISE_RESIDUAL_ONLY'):
             for stage in ['constant', 'image']:
@@ -510,7 +616,7 @@ assert len(records) + len(refusals) == requested_count, 'Native corpus cases dis
 (OUTPUT / 'index.json').write_text(json.dumps({'blender': bpy.app.version_string, 'buildHash': bpy.app.build_hash.decode(),
     'gpuBackend': bpy.context.preferences.system.gpu_backend, 'gpuRenderer': tsl_ir._noise_gpu_renderer(),
     'platform': sys.platform, 'architecture': platform.machine(), 'cyclesDevice': 'CPU', 'size': SIZE, 'cases': records, 'refusals': refusals,
-    'requestedCases': requested_count, 'sourceQualifiedRefusalIds': sorted(source_qualified_refusal_ids),
+    'requestedCases': requested_count, 'sourceQualifiedRefusalIds': sorted(source_qualified_refusal_ids), 'nativeDistortionRefusalIds': sorted(native_distortion_refusal_ids),
     'nativeModuleHashes': {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in Path(native).iterdir()
                            if path.suffix in {'.py', '.json'}} if native else {}}, indent=2))
 print('BLENDLINK_NOISE_REFERENCES_PASSED ' + str(len(records)))

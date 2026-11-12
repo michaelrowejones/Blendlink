@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "77720bfe103ea9b997d632e698eb94350fbe1ce4231f52a848745c6082b86119",
+  "capabilityMapSha256": "8fc84b1c0bedabe2dd0531ca09cd91ccf890e751cca03c2dcf682e02d806c0fd",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T20:22:12.083916+00:00",
+  "generatedAt": "2026-11-12T21:08:00.101854+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -60,15 +60,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 20,
+            "partial": 22,
             "structural": 6,
             "supported": 24,
-            "unsupported": 137
+            "unsupported": 135
           },
           "enumValueCounts": {
-            "partial": 8,
+            "partial": 17,
+            "structural": 3,
             "supported": 218,
-            "unsupported": 706
+            "unsupported": 694
           },
           "nodes": [
             {
@@ -1835,70 +1836,112 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Extension X": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Extension Y": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
-                  "Nearest": "unsupported"
+                  "Bilinear": "partial",
+                  "Nearest": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
+                }
+              ],
               "id": "CompositorNodeRotate",
               "label": "Rotate",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Modern Blender 5.2/5.3 terminal Color-image transform chains, fixed unlinked parameters, Nearest/Bilinear and Clip. Authored angle magnitude<=2pi, positive scales .125..8 and translations within +/-8192; composed coefficients and inverse coefficients remain bounded by 64, origins within 8192. CPU has explicit Float32 matrix/window/sampler stages; GPU sampling requires calibrated native Metal. Extents 1..8192, responsive resize/HiDPI, changed input content, caller state and resource recovery are checked. Intermediate affine image consumers require resized data/display-window realization and remain refused. Linked parameters, non-Relative Scale, zero/negative scales, other filters/extensions, render borders and unmeasured GPU profiles refuse. Legacy 4.2 nonzero affine modes remain unqualified.",
+              "runtimeOps": [
+                "image-affine"
+              ],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Extension X": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Extension Y": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Frame Type": {
-                  "Crop": "unsupported",
-                  "Fit": "unsupported",
-                  "Stretch": "unsupported"
+                  "Crop": "structural",
+                  "Fit": "structural",
+                  "Stretch": "structural"
                 },
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
-                  "Nearest": "unsupported"
+                  "Bilinear": "partial",
+                  "Nearest": "partial"
                 },
                 "inputs:Type": {
                   "Absolute": "unsupported",
-                  "Relative": "unsupported",
+                  "Relative": "partial",
                   "Render Size": "unsupported",
                   "Scene Size": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
+                }
+              ],
               "id": "CompositorNodeScale",
               "label": "Scale",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Modern Blender 5.2/5.3 terminal Color-image transform chains, fixed unlinked parameters, Nearest/Bilinear and Clip. Authored angle magnitude<=2pi, positive scales .125..8 and translations within +/-8192; composed coefficients and inverse coefficients remain bounded by 64, origins within 8192. CPU has explicit Float32 matrix/window/sampler stages; GPU sampling requires calibrated native Metal. Extents 1..8192, responsive resize/HiDPI, changed input content, caller state and resource recovery are checked. Intermediate affine image consumers require resized data/display-window realization and remain refused. Linked parameters, non-Relative Scale, zero/negative scales, other filters/extensions, render borders and unmeasured GPU profiles refuse. Legacy 4.2 nonzero affine modes remain unqualified.",
+              "runtimeOps": [
+                "image-affine"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -2201,13 +2244,32 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_resample_check.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
                 }
               ],
               "id": "CompositorNodeTransform",
               "label": "Transform",
-              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. The translation-only route accepts Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior. Blender 5.2/5.3 also accepts nonzero-angle/scale terminal Color-image affine chains with fixed unlinked parameters, Nearest/Bilinear and Clip. Authored angle magnitude<=2pi, positive scales .125..8 and translations within +/-8192; composed coefficients and inverse coefficients remain bounded by 64, origins within 8192. CPU has explicit Float32 matrix/window/sampler stages; GPU sampling requires calibrated native Metal. Extents 1..8192, responsive resize/HiDPI, changed input content, caller state and resource recovery are checked. Intermediate affine image consumers require resized data/display-window realization and remain refused. Linked parameters, non-Relative Scale, zero/negative scales, other filters/extensions, render borders and unmeasured GPU profiles refuse. Legacy 4.2 nonzero affine modes remain unqualified.",
               "runtimeOps": [
-                "translate"
+                "translate",
+                "image-affine"
               ],
               "unreviewedCapability": false
             },
@@ -6301,11 +6363,14 @@
                 },
                 {
                   "path": "experiments/geometry-context-differential/suite.mjs"
+                },
+                {
+                  "path": "packages/blender-addon/tests/geometry_normal_channel_check.py"
                 }
               ],
               "id": "ShaderNodeNewGeometry",
               "label": "Geometry",
-              "limits": "Primary triangle Position/Normal/True Normal/Incoming/Backfacing outputs are live with actual owner/camera matrices and explicit Y-up/Z-up bases. Cycles float/OCT16 and shared/single-owner interpolation plus EEVEE SNORM10/HQ16 vertex normalization are modeled separately. Unit authored normals require outward triangle cosine>0.05; finite invertible object matrices require linear/inverse components<=1e8 and Frobenius condition bound<=100. No modifiers, skin/morph, animated mesh-data, material displacement, Simplify Normals, secondary-ray/strand/volume or generated/GPU-instance context. Cycles normal routes refuse mixed flat/smooth topology, mixed shared/single-owner bindings, SSS/displacement geometry-key exceptions, motion blur and animated render visibility. View outputs refuse reflected/sheared and shifted/cropped authored camera projections. Parametric, Tangent, Pointiness and Random Per Island remain unsupported. Named refusals preserve source graphs and prohibit an automatic UV-ray capture from masquerading as the primary field. These are channel functions, not full lighting/BSDF pixel parity.",
+              "limits": "Primary triangle Position/Normal/True Normal/Incoming/Backfacing outputs are live with actual owner/camera matrices and explicit Y-up/Z-up bases. Cycles float/OCT16 and shared/single-owner interpolation plus EEVEE SNORM10/HQ16 vertex normalization are modeled separately. Unit authored normals require outward triangle cosine>0.05; finite invertible object matrices require linear/inverse components<=1e8 and Frobenius condition bound<=100. No modifiers, skin/morph, animated mesh-data, material displacement, Simplify Normals, secondary-ray/strand/volume or generated/GPU-instance context. Cycles normal routes refuse mixed flat/smooth topology, mixed shared/single-owner bindings, SSS/displacement geometry-key exceptions, motion blur and animated render visibility. View outputs refuse reflected/sheared and shifted/cropped authored camera projections. Parametric, Tangent, Pointiness and Random Per Island remain unsupported. Named refusals preserve source graphs and prohibit an automatic UV-ray capture from masquerading as the primary field. These are channel functions, not full lighting/BSDF pixel parity. Fresh EEVEE direct Geometry Normal feeding material Normal/Coat Normal uses the verified native view adapter; rotated/nonuniform cameras are checked through actual Final export. Legacy serialized normal_view and Cycles extraction are unchanged.",
               "runtimeOps": [
                 "geometry_context"
               ],
@@ -7363,16 +7428,32 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNoiseCoordinates.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeVaryingNoise.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_native_varying_translation_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/staticNoise4d.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/staticNoise4d.test.ts"
+                },
+                {
+                  "path": "experiments/static-noise-fbm/README.md"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields. Fresh EEVEE normalized FBM also supports independently unit-bounded live scalar Roughness at static Detail<=2, Scale magnitude<=80 and zero Distortion, with explicit Metal/OpenGL source models. Nonzero Distortion in this new capability takes a named source-bake path; existing serialized noise_varying behavior remains unchanged. No exact output-unit range is inferred for the new live-amplitude opcode. Fixed 4D Color FBM can evaluate to a CPU literal when its executable constant-input subset, zero Distortion, qualified standard/periodic kernel model and every seeded octave coordinate within 90000 are independently verified. Other graphs retain their GPU path. This bounded constant optimization does not imply hosted software-driver certification.",
               "runtimeOps": [
                 "noise",
                 "noise_fractal",
                 "noise_varying",
-                "noise_normalized"
+                "noise_normalized",
+                "noise_varying_native"
               ],
               "unreviewedCapability": false
             },
@@ -8049,15 +8130,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 18,
+            "partial": 20,
             "structural": 6,
             "supported": 23,
-            "unsupported": 121
+            "unsupported": 119
           },
           "enumValueCounts": {
-            "partial": 3,
+            "partial": 12,
+            "structural": 3,
             "supported": 176,
-            "unsupported": 510
+            "unsupported": 498
           },
           "nodes": [
             {
@@ -9690,70 +9772,112 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Extension X": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Extension Y": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
-                  "Nearest": "unsupported"
+                  "Bilinear": "partial",
+                  "Nearest": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
+                }
+              ],
               "id": "CompositorNodeRotate",
               "label": "Rotate",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Modern Blender 5.2/5.3 terminal Color-image transform chains, fixed unlinked parameters, Nearest/Bilinear and Clip. Authored angle magnitude<=2pi, positive scales .125..8 and translations within +/-8192; composed coefficients and inverse coefficients remain bounded by 64, origins within 8192. CPU has explicit Float32 matrix/window/sampler stages; GPU sampling requires calibrated native Metal. Extents 1..8192, responsive resize/HiDPI, changed input content, caller state and resource recovery are checked. Intermediate affine image consumers require resized data/display-window realization and remain refused. Linked parameters, non-Relative Scale, zero/negative scales, other filters/extensions, render borders and unmeasured GPU profiles refuse. Legacy 4.2 nonzero affine modes remain unqualified.",
+              "runtimeOps": [
+                "image-affine"
+              ],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Extension X": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Extension Y": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Frame Type": {
-                  "Crop": "unsupported",
-                  "Fit": "unsupported",
-                  "Stretch": "unsupported"
+                  "Crop": "structural",
+                  "Fit": "structural",
+                  "Stretch": "structural"
                 },
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
-                  "Nearest": "unsupported"
+                  "Bilinear": "partial",
+                  "Nearest": "partial"
                 },
                 "inputs:Type": {
                   "Absolute": "unsupported",
-                  "Relative": "unsupported",
+                  "Relative": "partial",
                   "Render Size": "unsupported",
                   "Scene Size": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
+                }
+              ],
               "id": "CompositorNodeScale",
               "label": "Scale",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Modern Blender 5.2/5.3 terminal Color-image transform chains, fixed unlinked parameters, Nearest/Bilinear and Clip. Authored angle magnitude<=2pi, positive scales .125..8 and translations within +/-8192; composed coefficients and inverse coefficients remain bounded by 64, origins within 8192. CPU has explicit Float32 matrix/window/sampler stages; GPU sampling requires calibrated native Metal. Extents 1..8192, responsive resize/HiDPI, changed input content, caller state and resource recovery are checked. Intermediate affine image consumers require resized data/display-window realization and remain refused. Linked parameters, non-Relative Scale, zero/negative scales, other filters/extensions, render borders and unmeasured GPU profiles refuse. Legacy 4.2 nonzero affine modes remain unqualified.",
+              "runtimeOps": [
+                "image-affine"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -10056,13 +10180,32 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_resample_check.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
                 }
               ],
               "id": "CompositorNodeTransform",
               "label": "Transform",
-              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. The translation-only route accepts Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior. Blender 5.2/5.3 also accepts nonzero-angle/scale terminal Color-image affine chains with fixed unlinked parameters, Nearest/Bilinear and Clip. Authored angle magnitude<=2pi, positive scales .125..8 and translations within +/-8192; composed coefficients and inverse coefficients remain bounded by 64, origins within 8192. CPU has explicit Float32 matrix/window/sampler stages; GPU sampling requires calibrated native Metal. Extents 1..8192, responsive resize/HiDPI, changed input content, caller state and resource recovery are checked. Intermediate affine image consumers require resized data/display-window realization and remain refused. Linked parameters, non-Relative Scale, zero/negative scales, other filters/extensions, render borders and unmeasured GPU profiles refuse. Legacy 4.2 nonzero affine modes remain unqualified.",
               "runtimeOps": [
-                "translate"
+                "translate",
+                "image-affine"
               ],
               "unreviewedCapability": false
             },
@@ -13287,11 +13430,14 @@
                 },
                 {
                   "path": "experiments/geometry-context-differential/suite.mjs"
+                },
+                {
+                  "path": "packages/blender-addon/tests/geometry_normal_channel_check.py"
                 }
               ],
               "id": "ShaderNodeNewGeometry",
               "label": "Geometry",
-              "limits": "Primary triangle Position/Normal/True Normal/Incoming/Backfacing outputs are live with actual owner/camera matrices and explicit Y-up/Z-up bases. Cycles float/OCT16 and shared/single-owner interpolation plus EEVEE SNORM10/HQ16 vertex normalization are modeled separately. Unit authored normals require outward triangle cosine>0.05; finite invertible object matrices require linear/inverse components<=1e8 and Frobenius condition bound<=100. No modifiers, skin/morph, animated mesh-data, material displacement, Simplify Normals, secondary-ray/strand/volume or generated/GPU-instance context. Cycles normal routes refuse mixed flat/smooth topology, mixed shared/single-owner bindings, SSS/displacement geometry-key exceptions, motion blur and animated render visibility. View outputs refuse reflected/sheared and shifted/cropped authored camera projections. Parametric, Tangent, Pointiness and Random Per Island remain unsupported. Named refusals preserve source graphs and prohibit an automatic UV-ray capture from masquerading as the primary field. These are channel functions, not full lighting/BSDF pixel parity.",
+              "limits": "Primary triangle Position/Normal/True Normal/Incoming/Backfacing outputs are live with actual owner/camera matrices and explicit Y-up/Z-up bases. Cycles float/OCT16 and shared/single-owner interpolation plus EEVEE SNORM10/HQ16 vertex normalization are modeled separately. Unit authored normals require outward triangle cosine>0.05; finite invertible object matrices require linear/inverse components<=1e8 and Frobenius condition bound<=100. No modifiers, skin/morph, animated mesh-data, material displacement, Simplify Normals, secondary-ray/strand/volume or generated/GPU-instance context. Cycles normal routes refuse mixed flat/smooth topology, mixed shared/single-owner bindings, SSS/displacement geometry-key exceptions, motion blur and animated render visibility. View outputs refuse reflected/sheared and shifted/cropped authored camera projections. Parametric, Tangent, Pointiness and Random Per Island remain unsupported. Named refusals preserve source graphs and prohibit an automatic UV-ray capture from masquerading as the primary field. These are channel functions, not full lighting/BSDF pixel parity. Fresh EEVEE direct Geometry Normal feeding material Normal/Coat Normal uses the verified native view adapter; rotated/nonuniform cameras are checked through actual Final export. Legacy serialized normal_view and Cycles extraction are unchanged.",
               "runtimeOps": [
                 "geometry_context"
               ],
@@ -14338,16 +14484,32 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNoiseCoordinates.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeVaryingNoise.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_native_varying_translation_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/staticNoise4d.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/staticNoise4d.test.ts"
+                },
+                {
+                  "path": "experiments/static-noise-fbm/README.md"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields. Fresh EEVEE normalized FBM also supports independently unit-bounded live scalar Roughness at static Detail<=2, Scale magnitude<=80 and zero Distortion, with explicit Metal/OpenGL source models. Nonzero Distortion in this new capability takes a named source-bake path; existing serialized noise_varying behavior remains unchanged. No exact output-unit range is inferred for the new live-amplitude opcode. Fixed 4D Color FBM can evaluate to a CPU literal when its executable constant-input subset, zero Distortion, qualified standard/periodic kernel model and every seeded octave coordinate within 90000 are independently verified. Other graphs retain their GPU path. This bounded constant optimization does not imply hosted software-driver certification.",
               "runtimeOps": [
                 "noise",
                 "noise_fractal",
                 "noise_varying",
-                "noise_normalized"
+                "noise_normalized",
+                "noise_varying_native"
               ],
               "unreviewedCapability": false
             },
@@ -16799,11 +16961,32 @@
                   "NEAREST": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
+                }
+              ],
               "id": "CompositorNodeRotate",
               "label": "Rotate",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Legacy immediate affine canvases remain unqualified; extraction records a named refusal.",
+              "runtimeOps": [
+                "image-affine"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -16822,11 +17005,32 @@
                   "SCENE_SIZE": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
+                }
+              ],
               "id": "CompositorNodeScale",
               "label": "Scale",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Legacy immediate affine canvases remain unqualified; extraction records a named refusal.",
+              "runtimeOps": [
+                "image-affine"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -17228,13 +17432,32 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_resample_check.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_affine.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCoordinateFma.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorAffine.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_affine_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-affine/README.md"
                 }
               ],
               "id": "CompositorNodeTransform",
               "label": "Transform",
-              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. The translation-only route accepts Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior. Blender 5.2/5.3 also accepts nonzero-angle/scale terminal Color-image affine chains with fixed unlinked parameters, Nearest/Bilinear and Clip. Authored angle magnitude<=2pi, positive scales .125..8 and translations within +/-8192; composed coefficients and inverse coefficients remain bounded by 64, origins within 8192. CPU has explicit Float32 matrix/window/sampler stages; GPU sampling requires calibrated native Metal. Extents 1..8192, responsive resize/HiDPI, changed input content, caller state and resource recovery are checked. Intermediate affine image consumers require resized data/display-window realization and remain refused. Linked parameters, non-Relative Scale, zero/negative scales, other filters/extensions, render borders and unmeasured GPU profiles refuse. Legacy 4.2 nonzero affine modes remain unqualified.",
               "runtimeOps": [
-                "translate"
+                "translate",
+                "image-affine"
               ],
               "unreviewedCapability": false
             },
@@ -18728,11 +18951,14 @@
                 },
                 {
                   "path": "experiments/geometry-context-differential/suite.mjs"
+                },
+                {
+                  "path": "packages/blender-addon/tests/geometry_normal_channel_check.py"
                 }
               ],
               "id": "ShaderNodeNewGeometry",
               "label": "Geometry",
-              "limits": "Primary triangle Position/Normal/True Normal/Incoming/Backfacing outputs are live with actual owner/camera matrices and explicit Y-up/Z-up bases. Cycles float/OCT16 and shared/single-owner interpolation plus EEVEE SNORM10/HQ16 vertex normalization are modeled separately. Unit authored normals require outward triangle cosine>0.05; finite invertible object matrices require linear/inverse components<=1e8 and Frobenius condition bound<=100. No modifiers, skin/morph, animated mesh-data, material displacement, Simplify Normals, secondary-ray/strand/volume or generated/GPU-instance context. Cycles normal routes refuse mixed flat/smooth topology, mixed shared/single-owner bindings, SSS/displacement geometry-key exceptions, motion blur and animated render visibility. View outputs refuse reflected/sheared and shifted/cropped authored camera projections. Parametric, Tangent, Pointiness and Random Per Island remain unsupported. Named refusals preserve source graphs and prohibit an automatic UV-ray capture from masquerading as the primary field. These are channel functions, not full lighting/BSDF pixel parity.",
+              "limits": "Primary triangle Position/Normal/True Normal/Incoming/Backfacing outputs are live with actual owner/camera matrices and explicit Y-up/Z-up bases. Cycles float/OCT16 and shared/single-owner interpolation plus EEVEE SNORM10/HQ16 vertex normalization are modeled separately. Unit authored normals require outward triangle cosine>0.05; finite invertible object matrices require linear/inverse components<=1e8 and Frobenius condition bound<=100. No modifiers, skin/morph, animated mesh-data, material displacement, Simplify Normals, secondary-ray/strand/volume or generated/GPU-instance context. Cycles normal routes refuse mixed flat/smooth topology, mixed shared/single-owner bindings, SSS/displacement geometry-key exceptions, motion blur and animated render visibility. View outputs refuse reflected/sheared and shifted/cropped authored camera projections. Parametric, Tangent, Pointiness and Random Per Island remain unsupported. Named refusals preserve source graphs and prohibit an automatic UV-ray capture from masquerading as the primary field. These are channel functions, not full lighting/BSDF pixel parity. Fresh EEVEE direct Geometry Normal feeding material Normal/Coat Normal uses the verified native view adapter; rotated/nonuniform cameras are checked through actual Final export. Legacy serialized normal_view and Cycles extraction are unchanged.",
               "runtimeOps": [
                 "geometry_context"
               ],
@@ -19768,16 +19994,32 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNoiseCoordinates.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeVaryingNoise.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_native_varying_translation_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/staticNoise4d.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/staticNoise4d.test.ts"
+                },
+                {
+                  "path": "experiments/static-noise-fbm/README.md"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields. Fresh EEVEE normalized FBM also supports independently unit-bounded live scalar Roughness at static Detail<=2, Scale magnitude<=80 and zero Distortion, with explicit Metal/OpenGL source models. Nonzero Distortion in this new capability takes a named source-bake path; existing serialized noise_varying behavior remains unchanged. No exact output-unit range is inferred for the new live-amplitude opcode. Fixed 4D Color FBM can evaluate to a CPU literal when its executable constant-input subset, zero Distortion, qualified standard/periodic kernel model and every seeded octave coordinate within 90000 are independently verified. Other graphs retain their GPU path. This bounded constant optimization does not imply hosted software-driver certification.",
               "runtimeOps": [
                 "noise",
                 "noise_fractal",
                 "noise_varying",
-                "noise_normalized"
+                "noise_normalized",
+                "noise_varying_native"
               ],
               "unreviewedCapability": false
             },
@@ -20455,14 +20697,14 @@
   "sourceSha256": {
     "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
     "packages/blender-addon/bump_ir.py": "438d0422d6106a489bb001ad65904e26f4861dd699f00eed559fa38d2ee19590",
-    "packages/blender-addon/color_ir.py": "ac64166cc78946dfb23b0cfee2a4bf0362998d593986f3d04d6f5036da7c7130",
+    "packages/blender-addon/color_ir.py": "18ad25be3e7013cb2efc6e9ec7f65bb1a00ae01d176643c8838122a62aeaf0cf",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
     "packages/blender-addon/engine_fallback.py": "a451ac01e8f82b0052fd92abec63afdb7342b9fc0a5d85755bb5699edbc428ee",
     "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
     "packages/blender-addon/material_compiler.py": "47c6dd49555276d85f19be84a48118d5084089494650ceb76c7dea981f9a8e63",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
-    "packages/blender-addon/noise_varying_ir.py": "4fa29403724cbbd3389d6cb17d262296e2db0d3a4532fcb5cf87040ffb12347b",
+    "packages/blender-addon/noise_varying_ir.py": "83cfbf42b5d4a7a266661157dd0d93f229c2e83a1106b2fed1ac95047c82a379",
     "packages/blender-addon/normal_direction_ir.py": "0aa3b1b0226320b6b92fce63b06d7e5202bd012ce9820085d3fc26c426b3857f",
     "packages/blender-addon/normal_input_bounds.py": "dfce5f6beb7c5666de460d01173d41679733308424fde2f183eafec413430d41",
     "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
@@ -20473,18 +20715,19 @@
     "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-    "packages/blender-addon/tsl_ir.py": "4e7088c6a0479278073555a32ccc284a8d5cab6f12d1343cb0090084b001a494",
+    "packages/blender-addon/tsl_ir.py": "805fbe86122d115b4fb5992c89d145421d306ae458bcd2fbe24302bc2c2df6c0",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
     "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
+    "packages/blendlink/blender/compositor_affine.py": "a29c7ab3a8bbb6d6f17ebc26e5e1dfafaa547ed4171a549498977e49c9b8766c",
     "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
     "packages/blendlink/blender/compositor_blur.py": "916b300583cfcf06c3c1add69fa24396cea43d3bf699c32dea4f314a45661b66",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
-    "packages/blendlink/blender/compositor_graph.py": "54de5b3e41b10c02571a6ca70ec14ae3d5f4e198a76144bc16463ad5ae92257e",
+    "packages/blendlink/blender/compositor_graph.py": "750371d17919be4ffeb5276a57381564a91512e5cac98359fe1cea312f3bf761",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
-    "packages/blendlink/blender/compositor_transform.py": "dac6fb38d8b952b17483eac5672497fd31b1f4c3324766250584cf4e40a69b23",
+    "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
     "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
@@ -20494,27 +20737,31 @@
     "packages/blendlink/src/compiledSceneAudit.ts": "e50ccf4daee1f7ea17cad4ec7a1f4828dfa401b1f8627a829b3de4d9e2857760",
     "packages/blendlink/src/materialProgramDocument.ts": "206848c38e558345eaca873a95080d602d12353ac7036d4a445b1398558f8bc1",
     "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
+    "packages/blendlink/src/staticNoise4d.ts": "a9aea91d42ba1cd3edbfa3eebf9601aa8a7cc8fdd8509a066fbb4cc9c23346b9",
     "packages/blendlink/src/threeRuntime.ts": "225b3dd29834a6f2adfea60f8e6122545ddc3f0bbc74204568b9993f04d45c2b",
     "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
     "packages/blendlink/src/tslBumpPassthrough.ts": "3472a92b05155496885b00e3515dbd6537cd1b44dfd5f14cca152efff664aa04",
-    "packages/blendlink/src/tslColorConversion.ts": "e23a466e67d3d2a8b26213e96626bb5e3de91aac78bd583f62ac344b4341487c",
+    "packages/blendlink/src/tslColorConversion.ts": "dab1c34326c1e3da91d598444062205b0ad2016172f7278121cdab007fd59e80",
+    "packages/blendlink/src/tslCompositorAffine.ts": "8b2ce8dbe3468882fbbf9f5077d8c2d4bb3dfc0cb48e221b1a36d4688045b2e3",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
     "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
+    "packages/blendlink/src/tslCompositorCoordinateFma.ts": "6916359803b825eecd65595d1fa694a8b3db0800be78db0568b9168e20b55d88",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
-    "packages/blendlink/src/tslCompositorImageDomain.ts": "1f3735c9df93c78ce993451e97f488af722093e04ae27fe132e98921c9363534",
-    "packages/blendlink/src/tslCompositorResampling.ts": "e5d36d86bf9e40b2b6843bdf2db3c0ed5e48ab08a8448f0f11f4b6efa5ae7d19",
+    "packages/blendlink/src/tslCompositorImageDomain.ts": "8b4314dedfd42eb038ff70ffecca4afe028d2254164f796e200c93467777eb57",
+    "packages/blendlink/src/tslCompositorResampling.ts": "6ff79d9bb5f31bee831e2491fe5cfb89582584c80026b1a3c0c302985377a1d6",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
     "packages/blendlink/src/tslGeometryContext.ts": "736a1849bc49b15d9b67b71bc29519c8d643ac6ee2b2ab862cfc363279efcc23",
     "packages/blendlink/src/tslMaterialProgram.ts": "0970970ce89e4e913e2b75ec0d4b342b6c929fe3b61e13a07e4f52497a966d68",
-    "packages/blendlink/src/tslMaterialRuntime.ts": "3640d11197e09728e3ab89f0de6d29a47ee9a3431317cf5fcb0d0d0be85b5fd3",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "412416f4a5b05cfb8e97af1fa4401be67a665bbcc618177226b0e67e83947754",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "95614a5d2f97400665d05861e1e648874ae1feddc30c1144549cdd16e84764b0",
-    "packages/blendlink/src/tslNodeRecipe.ts": "a53a3e73530c9c68382577343877a1138fa95c9ce08361a512928021d3f88288",
+    "packages/blendlink/src/tslNativeVaryingNoise.ts": "f73b4bd8ec3b8bc7382a02240f6331a2fda6ca68071fe529b302e061848a7a99",
+    "packages/blendlink/src/tslNodeRecipe.ts": "f6db803aba49b64d032c5d9b9cd5292465e56af71905dd73a116bd51450275c6",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "c3cd1a2b5549dd7edf83937dfeb1b57d8e564c6fce8dd15ad36c17a222760b1f",
     "packages/blendlink/src/tslNormalInputBounds.ts": "0d27d4e7806d7450c90709c1577ac64796419152bb85a21c8c895be54c8a5832",
     "packages/blendlink/src/tslNormalNodes.ts": "a2505eff8008f6f99f53909759dde91aa8cb02a8299f557351a0757761c6fa03",
@@ -20522,11 +20769,11 @@
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "cd713b094ca9462d403d452b96e4fc13fd76544f312b235a7823ef7f92e4597e",
+    "packages/blendlink/src/tslSourceCompositor.ts": "143976bf82463560486e51bb2854fe7289520846890792f579388ce07891c3ac",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
     "packages/blendlink/src/tslTangentNodes.ts": "517c0e9d33d838d381fafb311d6289282860f8fe6fcae3b1b6bd10c59b424831",
     "packages/blendlink/src/tslTangentNormalMap.ts": "ac9b769015f51c282bd5b6bf3a98bb52f7cf950befa86c6042ec2eb79de9030d",
-    "packages/blendlink/src/tslVaryingNoise.ts": "b53ad4b7f308bbe2d4f5318f5bd86586c58c5c2ddfa9ff8cadb8bd00124f7078",
+    "packages/blendlink/src/tslVaryingNoise.ts": "e9e5f20f2121772543facf20641d6b80e90516281a8fe199bcb8b3cb278a4cff",
     "packages/blendlink/src/tslVectorTransform.ts": "5f5210b22de500e1d48faabbf86b19bee9c7d246a380658c845fb2ab7959fb66"
   }
 }

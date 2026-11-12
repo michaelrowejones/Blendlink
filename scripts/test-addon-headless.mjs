@@ -21,7 +21,7 @@ const installedNodeFamilies = [
   ['ShaderNodeObjectInfo', 'object_info'], ['ShaderNodeCombineColor', 'color_convert'],
   ['ShaderNodeClamp', 'clamp_minmax'], ['ShaderNodeValToRGB', 'ramp_lut'],
   ['ShaderNodeVectorTransform', 'vector_transform'], ['ShaderNodeTexWave', 'tex_wave'],
-  ['ShaderNodeTexNoise', 'noise_fractal'], ['ShaderNodeTexNoise', 'noise_normalized'], ['ShaderNodeNormalMap', 'normal_map_native'],
+  ['ShaderNodeTexNoise', 'noise_fractal'], ['ShaderNodeTexNoise', 'noise_normalized'], ['ShaderNodeTexNoise', 'noise_varying_native'], ['ShaderNodeNormalMap', 'normal_map_native'],
   ['ShaderNodeNormalMap', 'normal_map_tangent_native'], ['ShaderNodeNormalMap', 'noise_normalized'],
   ['ShaderNodeBump', 'bump_passthrough_native'],
   ['ShaderNodeTangent', 'tangent_native'],
@@ -309,7 +309,7 @@ for node_type, expected in families:
         tree.links.new(child_noise.outputs["Fac"], node.inputs["Strength"])
     if node_type == "ShaderNodeClamp": node.clamp_type = "RANGE"
     if node_type == "ShaderNodeTexNoise":
-        if expected == "noise_normalized":
+        if expected in {"noise_normalized", "noise_varying_native"}:
             engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties["engine"].enum_items}
             bpy.context.scene.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
             node.noise_type = "FBM"
@@ -319,6 +319,12 @@ for node_type, expected in families:
             node.noise_type = "MULTIFRACTAL"
         coordinate = tree.nodes.new("ShaderNodeTexCoord")
         tree.links.new(coordinate.outputs["UV"], node.inputs["Vector"])
+        if expected == "noise_varying_native":
+            live_roughness = tree.nodes.new("ShaderNodeSeparateXYZ")
+            roughness_clamp = tree.nodes.new("ShaderNodeClamp")
+            tree.links.new(coordinate.outputs["UV"], live_roughness.inputs[0])
+            tree.links.new(live_roughness.outputs[0], roughness_clamp.inputs["Value"])
+            tree.links.new(roughness_clamp.outputs[0], node.inputs["Roughness"])
     if node_type == "ShaderNodeValToRGB":
         node.color_ramp.interpolation = "B_SPLINE"
         coordinate = tree.nodes.new("ShaderNodeTexCoord")
@@ -342,7 +348,11 @@ for node_type, expected in families:
     if node_type == "ShaderNodeValToRGB":
         tree.nodes.remove(separate)
         tree.nodes.remove(coordinate)
-    if node_type == "ShaderNodeTexNoise": tree.nodes.remove(coordinate)
+    if node_type == "ShaderNodeTexNoise":
+        tree.nodes.remove(coordinate)
+        if expected == "noise_varying_native":
+            tree.nodes.remove(live_roughness)
+            tree.nodes.remove(roughness_clamp)
     if node_type == "ShaderNodeNormalMap" and expected == "noise_normalized": tree.nodes.remove(child_noise)
 bpy.data.objects.remove(owner, do_unlink=True)
 bpy.data.meshes.remove(mesh)

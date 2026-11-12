@@ -13,6 +13,7 @@
  * WebGL-only applications never bundle the node system.
  */
 import * as THREE from 'three'
+import { trackMaterialDrawOrientation } from './tslMaterialDrawOrientation.js'
 import { MeshStandardNodeMaterial, MeshPhysicalNodeMaterial } from 'three/webgpu'
 import { uniform } from 'three/tsl'
 import { collectVectorTransformRequirements, validateVectorTransformBinding, type VectorTransformRequirement } from './tslVectorTransform.js'
@@ -398,8 +399,10 @@ export async function installTslMaterials(
   }>()
   const matchedSources = new Set<string>()
   let disposed = false
+  const releaseDrawCallbacks: Array<() => void> = []
 
   const rollback = (): void => {
+    for (const release of releaseDrawCallbacks.splice(0).reverse()) release()
     for (const item of installed.slice().reverse()) {
       if (item.slot === null) {
         if (item.mesh.material === item.clone) item.mesh.material = item.original
@@ -587,6 +590,14 @@ export async function installTslMaterials(
         }
       })
     })
+    const drawMaterials = new Map<THREE.Mesh, Set<THREE.Material>>()
+    for (const { mesh, clone } of installed) {
+      let materials = drawMaterials.get(mesh)
+      if (!materials) drawMaterials.set(mesh, materials = new Set())
+      materials.add(clone)
+    }
+    for (const [mesh, materials] of drawMaterials)
+      releaseDrawCallbacks.push(trackMaterialDrawOrientation(mesh, materials))
   } catch (error) {
     rollback()
     throw error

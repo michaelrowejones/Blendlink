@@ -53,6 +53,7 @@ export function isUnitBoundedExpression(expression: TslIrExpression | undefined)
       typeof expression.roughness === 'number' && Number.isFinite(expression.roughness) && expression.roughness >= 0 && expression.roughness <= 1 &&
       (expression.lacunarity === undefined || typeof expression.lacunarity === 'number' && Number.isFinite(expression.lacunarity) && expression.lacunarity > 0)
     case 'noise_fractal': return false // Signed/HDR family, regardless of an untrusted normalize annotation.
+    case 'noise_varying_native': return false // No exact dynamic-output unit proof; an authored Clamp restores it.
     case 'noise_varying': return expression.normalize === true &&
       ['noiseType', 'noise_type', 'type'].every(key => expression[key] === undefined || expression[key] === 'FBM') &&
       typeof expression.dimensions === 'number' && [1, 2].includes(expression.dimensions) &&

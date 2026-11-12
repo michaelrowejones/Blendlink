@@ -58,14 +58,14 @@ def normalize_transform(node, op, scene, read, bounds, fail):
     op["inputs"]["Image"] = {"name": "Image", "socketType": "RGBA", "value": image}
 
 
-def origin_conflict(program, single_values):
+def origin_conflict(program, single_values, affine_multiply=None):
     """Track finite windows without premature cropping; qualify known consumers.
 
     Alpha Over chooses background, foreground, then factor, matching native
     declarations/legacy canvas selection. Other unequal-domain consumers remain
     refused until their native domain priorities and typed sampling are proved.
     """
-    origins = {}
+    origins, affine_matrices = {}, {}
 
     def origin(value):
         if value.get("kind") == "constant":
@@ -73,6 +73,11 @@ def origin_conflict(program, single_values):
         if value.get("kind") == "convert":
             return origin(value["input"])
         return origins.get(value.get("node"))
+
+    def affine(value):
+        if value.get("kind") == "convert":
+            return affine(value["input"])
+        return affine_matrices.get(value.get("node")) if value.get("kind") == "ref" else None
 
     for op in program["ops"]:
         if op["id"] in single_values:
@@ -90,6 +95,8 @@ def origin_conflict(program, single_values):
         if op["kind"] == "render-pass":
             origins[op["id"]] = (0, 0)
             continue
+        if op["kind"] not in ("translate", "image-affine") and any(affine(value["value"]) is not None for value in op["inputs"].values()):
+            return op, "Intermediate affine image consumers require native resized data/display-window realization; this model supports terminal transform chains"
         incoming = {origin(value["value"]) for value in op["inputs"].values()} - {None}
         if len(incoming) > 1 and op["kind"] != "alpha-over":
             return op, "Inputs with different image origins require a verified native cross-domain input priority"
@@ -116,5 +123,24 @@ def origin_conflict(program, single_values):
             inherited = tuple(_f32(inherited[axis] + (math.trunc(delta[axis]) if legacy_cpu else delta[axis])) for axis in (0, 1))
             if any(abs(value) > 8192 for value in inherited):
                 return op, "Composed Translate offsets must remain between -8192 and 8192 pixels"
+        if op["kind"] in ("translate", "image-affine") and inherited is not None:
+            previous = affine(op["inputs"]["Image"]["value"])
+            if op["kind"] == "image-affine" or previous is not None:
+                if affine_multiply is None:
+                    return op, "Affine image domains require their native matrix composition helper"
+                base_origin = origin(op["inputs"]["Image"]["value"])
+                base = previous or [1, 0, base_origin[0], 0, 1, base_origin[1], 0, 0, 1]
+                delta = op["properties"].get("image_translation", [0, 0])
+                local = op["properties"]["image_affine_matrix"] if op["kind"] == "image-affine" else [1, 0, delta[0], 0, 1, delta[1], 0, 0, 1]
+                matrix = affine_multiply(local, base)
+                inherited = (matrix[2], matrix[5])
+                determinant = _f32(_f32(matrix[0] * matrix[4]) - _f32(matrix[1] * matrix[3]))
+                if determinant == 0 or max(abs(value) for value in inherited) > 8192 or any(abs(matrix[index]) > 64 for index in (0, 1, 3, 4)):
+                    return op, "Composed affine transforms exceed the bounded native matrix domain"
+                reciprocal = _f32(1 / determinant)
+                if any(abs(_f32(matrix[index] * reciprocal)) > 64 for index in (0, 1, 3, 4)):
+                    return op, "Composed affine inverse exceeds the bounded native matrix domain"
+                if [matrix[index] for index in (0, 1, 3, 4)] != [1, 0, 0, 1]:
+                    affine_matrices[op["id"]] = matrix
         origins[op["id"]] = inherited
     return None

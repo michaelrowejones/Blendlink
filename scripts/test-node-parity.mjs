@@ -54,6 +54,25 @@ for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvail
 const references = []
 const referenceSets = []
 const inapplicableFamilies = []
+function recordAffineUnavailable(directory, family, device, rows) {
+  const file = join(directory, 'not-applicable.json')
+  if (!existsSync(file)) return false
+  const qualification = JSON.parse(readFileSync(file, 'utf8'))
+  assert.equal(qualification.status, 'unsupported-native-affine-model')
+  assert.equal(qualification.cases, 0); assert.equal(rows.length, 0)
+  assert.equal(qualification.refusals, 3); assert.equal(qualification.device, device)
+  assert.ok(Array.isArray(qualification.version) && qualification.version.length === 3)
+  assert.ok(qualification.legacy || device === 'GPU' && qualification.backend !== 'METAL')
+  assert.equal(qualification.legacy, qualification.version[0] < 4 || qualification.version[0] === 4 && qualification.version[1] < 5)
+  const reason = qualification.legacy ? 'legacy immediate canvases' : 'calibrated native Metal model'
+  assert.ok(qualification.diagnostics?.some(item => item.message.includes(reason)))
+  const refusals = JSON.parse(readFileSync(join(directory, 'refusals.json'), 'utf8'))
+  assert.equal(refusals.length, 3)
+  assert.deepEqual(refusals.map(item => item.case).sort(), ['CompositorNodeRotate', 'CompositorNodeScale', 'CompositorNodeTransform'])
+  assert.ok(refusals.every(item => item.diagnostics?.some(diagnostic => diagnostic.message.includes(reason))))
+  inapplicableFamilies.push({ family, directory, ...qualification })
+  return true
+}
 const compositorFamilies = [
   ['math', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES'],
   ['blur', 'compositor_blur_check.py', 'BLENDLINK_COMPOSITOR_BLUR_REFERENCES'],
@@ -62,6 +81,7 @@ const compositorFamilies = [
   ['normal-direction', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES'],
   ['transform', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES'],
   ['resample', 'compositor_resample_check.py', 'BLENDLINK_COMPOSITOR_RESAMPLE_REFERENCES'],
+  ['affine', 'compositor_affine_check.py', 'BLENDLINK_COMPOSITOR_AFFINE_REFERENCES'],
   ['switch', 'compositor_switch_check.py', 'BLENDLINK_COMPOSITOR_SWITCH_REFERENCES'],
   ['blur-interop', 'compositor_blur_interop_check.py', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES'],
   ['blur-kernel', 'compositor_blur_kernel_check.py', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_REFERENCES'],
@@ -101,16 +121,18 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
-    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_AFFINE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MATH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BALANCE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE: 'CPU',
   }))
   if (complete) {
+    const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
+    if (family === 'affine' && recordAffineUnavailable(directory, family, 'CPU', rows)) continue
+    assert.ok(rows.length > 0, `${family}: native CPU generator produced no cases`)
     references.push(directory)
-    referenceSets.push({ family, device: 'CPU', directory,
-      cases: JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8')).length })
+    referenceSets.push({ family, device: 'CPU', directory, cases: rows.length })
   }
 }
 let nativeCompositorGpu
@@ -125,6 +147,7 @@ if (!plan.compositor) {
     ['normal-direction-gpu', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES', 'BLENDLINK_COMPOSITOR_NORMAL_DEVICE'],
     ['transform-gpu', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES', 'BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE'],
     ['resample-gpu', 'compositor_resample_check.py', 'BLENDLINK_COMPOSITOR_RESAMPLE_REFERENCES', 'BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE'],
+    ['affine-gpu', 'compositor_affine_check.py', 'BLENDLINK_COMPOSITOR_AFFINE_REFERENCES', 'BLENDLINK_COMPOSITOR_AFFINE_DEVICE'],
     ['switch-gpu', 'compositor_switch_check.py', 'BLENDLINK_COMPOSITOR_SWITCH_REFERENCES', 'BLENDLINK_COMPOSITOR_SWITCH_DEVICE'],
     ['blur-interop-gpu', 'compositor_blur_interop_check.py', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE'],
     ['blur-kernel-gpu', 'compositor_blur_kernel_check.py', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE'],
@@ -155,6 +178,7 @@ if (!plan.compositor) {
     run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
       '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory, [deviceVariable]: 'GPU' })
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
+    if (family === 'affine-gpu' && recordAffineUnavailable(directory, family, 'GPU', rows)) return
     const unavailable = join(directory, 'not-applicable.json')
     if (family === 'resample-gpu' && existsSync(unavailable)) {
       const qualification = JSON.parse(readFileSync(unavailable, 'utf8'))
@@ -286,6 +310,12 @@ if (plan.geometry) attempt('tangent', () => run('tangent', process.execPath,
 if (plan.geometry) attempt('tangent-normal', () => run('tangent-normal', process.execPath,
   ['experiments/tangent-normal-differential/suite.mjs', '--built', '--profiles', 'shared,named,hq,flat'],
   { BLENDLINK_TANGENT_NORMAL_BLENDER: blender, BLENDLINK_TANGENT_NORMAL_NATIVE: join(evidence, 'tangent-normal') }, 1_800_000))
+if (plan.geometry) attempt('geometry-normal', () => run('geometry-normal', process.execPath,
+  ['experiments/normal-node-differential/suite.mjs', '--built', '--geometry-normal', '--profiles', 'shared'],
+  { BLENDLINK_NORMAL_NODE_BLENDER: blender, BLENDLINK_NORMAL_NODE_NATIVE: join(evidence, 'geometry-normal') }, 1_800_000))
+if (plan.geometry) attempt('renderer-sign', () => run('renderer-sign', process.execPath,
+  ['experiments/renderer-sign-differential/run.mjs'],
+  { BLENDLINK_RENDERER_SIGN_BLENDER: blender, BLENDLINK_RENDERER_SIGN_NATIVE: join(evidence, 'renderer-sign') }, 1_800_000))
 if (plan.geometry) attempt('normal-dot', () => run('normal-dot', process.execPath,
   ['experiments/geometry-context-differential/suite.mjs', '--built', '--profiles', 'shared'],
   { BLENDLINK_GEOMETRY_NORMAL_DOT: '1', BLENDLINK_GEOMETRY_ENGINE: 'EEVEE',
@@ -310,6 +340,11 @@ if (plan.noiseTypes) attempt('noise-varying', () => run('noise-varying', process
   ['experiments/noise-fractal-differential/run.mjs', '--built'],
   { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-varying'),
     BLENDLINK_NOISE_VARYING: '1', BLENDLINK_NOISE_TYPES: '["FBM","MULTIFRACTAL","HETERO_TERRAIN","HYBRID_MULTIFRACTAL","RIDGED_MULTIFRACTAL"]' }, 1_800_000))
+if (plan.noiseTypes) attempt('noise-native-varying', () => run('noise-native-varying', process.execPath,
+  ['experiments/noise-fractal-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-native-varying'),
+    BLENDLINK_NOISE_NATIVE_VARYING: '1', BLENDLINK_NOISE_ENGINE: 'EEVEE',
+    BLENDLINK_NOISE_NORMALIZED: '', BLENDLINK_NOISE_VARYING: '', BLENDLINK_NOISE_TYPES: '["FBM"]' }, 1_800_000))
 let browser = []
 try { browser = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 'utf8')) } catch { /* Failed families are recorded above. */ }
 writeFileSync(join(evidence, 'report.json'), JSON.stringify({
@@ -320,8 +355,8 @@ writeFileSync(join(evidence, 'report.json'), JSON.stringify({
     maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
   shaderFamilies: [...(plan.shaders ? ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'color-conversions',
     ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])] : []),
-    ...(plan.geometry ? ['geometry', 'active-uv', 'normal-map', 'tangent', 'tangent-normal', 'normal-dot'] : []), ...(plan.shaders ? ['normal-input'] : []),
-    ...(plan.noiseFbm ? ['noise-fractal', 'noise-normalized'] : []), ...(plan.noiseTypes ? ['noise-types', 'noise-varying'] : [])],
+    ...(plan.geometry ? ['geometry', 'active-uv', 'normal-map', 'tangent', 'tangent-normal', 'geometry-normal', 'renderer-sign', 'normal-dot'] : []), ...(plan.shaders ? ['normal-input'] : []),
+    ...(plan.noiseFbm ? ['noise-fractal', 'noise-normalized'] : []), ...(plan.noiseTypes ? ['noise-types', 'noise-varying', 'noise-native-varying'] : [])],
   builtRuntime: true, failures,
 }, null, 2) + '\n')
 assert.deepEqual(failures, [], 'Native node parity failed; all independent family logs were retained')

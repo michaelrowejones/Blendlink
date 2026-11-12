@@ -32,6 +32,8 @@ import { buildMetalShaderNoiseCoordinate, buildExactNoiseCoordinate } from './ts
 import { nativeCpuPerlinFade, buildNativeNoiseFma } from './tslNativeNoisePrecision.js'
 import { buildTslFractalNoise } from './tslFractalNoise.js'
 import { buildTslVaryingFbm, isUnitRoughnessExpression } from './tslVaryingNoise.js'
+import { validateNativeVaryingNoise, buildNativeVaryingFbm } from './tslNativeVaryingNoise.js'
+import { foldStaticNoise4dColor } from './staticNoise4d.js'
 import {
   abs,
   attribute,
@@ -599,7 +601,7 @@ function build(expression: TslIrExpression): TslExpression {
       // A Blender scalar feeding all three channels is one field evaluation.
       // The serialized tree repeats that source; share it within this Combine
       // scope so large Perlin graphs do not compile three independent copies.
-      if (['noise', 'noise_fractal', 'noise_normalized', 'noise_varying'].includes(x.op) && x.output === 'fac'
+      if (['noise', 'noise_fractal', 'noise_normalized', 'noise_varying', 'noise_varying_native'].includes(x.op) && x.output === 'fac'
         && sameIrValue(x, y) && sameIrValue(x, z))
         return tslVec3(build(x).toVar())
       return tslVec3(
@@ -648,7 +650,7 @@ function build(expression: TslIrExpression): TslExpression {
       if (typeof factorOp === 'string' && (vectorProducers.has(factorOp)
         || (factorOp === 'tex_checker' && curveFactor?.output !== 'fac')
         || (factorOp === 'curve_native' && curveFactor?.kind !== 'float')
-        || (['noise', 'noise_fractal', 'noise_normalized', 'noise_varying'].includes(factorOp) && curveFactor?.output === 'color'))) {
+        || (['noise', 'noise_fractal', 'noise_normalized', 'noise_varying', 'noise_varying_native'].includes(factorOp) && curveFactor?.output === 'color'))) {
         fail(
           `IR mix_color factor is vector-typed (${factorOp}); the emitter `
           + 'must wrap colour sources in rgb_to_bw',
@@ -936,14 +938,17 @@ function build(expression: TslIrExpression): TslExpression {
     case 'noise':
     case 'noise_fractal':
     case 'noise_normalized':
-    case 'noise_varying': {
+    case 'noise_varying':
+    case 'noise_varying_native': {
       const dimensions = scalar(expression, 'dimensions')
       if (![1, 2, 3, 4].includes(dimensions)) return fail('IR Noise has an unsupported dimension')
       // The legacy opcode keeps its normalized interpretation. New signed
       // capabilities use a distinct opcode so older runtimes fail closed.
-      const varyingRoughness = expression.op === 'noise_varying'
-      const nativeNormalized = expression.op === 'noise_normalized'
-      if (nativeNormalized && (expression.normalize !== true || expression.roughnessNode !== undefined ||
+      const nativeVarying = expression.op === 'noise_varying_native'
+      if (nativeVarying) validateNativeVaryingNoise(expression, fail)
+      const varyingRoughness = expression.op === 'noise_varying' || nativeVarying
+      const nativeNormalized = expression.op === 'noise_normalized' || nativeVarying
+      if (nativeNormalized && (expression.normalize !== true || !nativeVarying && expression.roughnessNode !== undefined ||
         expression.noiseType !== undefined && expression.noiseType !== 'FBM'))
         return fail('IR native normalized Noise requires static FBM and explicit normalize true')
       const cpuPerlin = nativeNormalized && expression.perlinModel === 'cycles-neon-fma'
@@ -975,6 +980,8 @@ function build(expression: TslIrExpression): TslExpression {
       if (varyingRoughness && (scalar(expression, 'detail') > 2 || expression.roughness !== 1 || !isUnitRoughnessExpression(roughnessIr)))
         return fail('IR varying Noise needs static Detail <=2 and an independently proven [0,1] Roughness input')
       const roughnessNode = roughnessIr ? build(roughnessIr) : undefined
+      const staticColor = foldStaticNoise4dColor(expression)
+      if (staticColor) return tslVec3(...staticColor)
       let position = build(child(expression, 'input'))
       if (dimensions === 4) {
         // Blender scales the WHOLE float4(co, w), so w joins before the
@@ -1012,7 +1019,7 @@ function build(expression: TslIrExpression): TslExpression {
       // One SIGNED single octave per component — tslNoise, not the fBM —
       // sampled at the emitter-folded low hash offsets. Verbatim from
       // noisetex.h and gpu_shader_material_tex_noise.glsl, which agree.
-      if (typeof expression.distortion === 'number') {
+      if (typeof expression.distortion === 'number' && (!nativeVarying || expression.distortion !== 0)) {
         const offsets = expression.distortionOffsets as number[][]
         // Lane count follows the dimension, and the lane noise is the SAME
         // dimension's snoise — perlin1d/perlin4d where MaterialX has no
@@ -1040,7 +1047,8 @@ function build(expression: TslIrExpression): TslExpression {
       const lacunarity = typeof expression.lacunarity === 'number'
         ? expression.lacunarity : 2.0
       const fractal = (point: TslExpression): TslExpression => noiseType === 'FBM'
-        ? nativeNormalized ? buildTslVaryingFbm(point, detail, lacunarity, tslFloat(Math.max(0, Math.fround(roughness))), true, octaveForDimension)
+        ? nativeVarying ? buildNativeVaryingFbm(point, detail, lacunarity, roughnessNode!, octaveForDimension)
+          : nativeNormalized ? buildTslVaryingFbm(point, detail, lacunarity, tslFloat(Math.max(0, Math.fround(roughness))), true, octaveForDimension)
           : roughnessNode ? buildTslVaryingFbm(point, detail, lacunarity, roughnessNode, normalizeOutput, octaveForDimension)
           : blenderNoiseFac(point, detail, roughness, lacunarity, octaveForDimension, normalizeOutput)
         : buildTslFractalNoise(point, { type: noiseType, detail, roughness, lacunarity,

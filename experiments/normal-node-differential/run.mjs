@@ -20,6 +20,9 @@ const { provenance } = await captureRuntimeSnapshot({
   destination: snapshot,
   label: 'Primary normal',
 })
+provenance.browserHarnessSha256 = Object.fromEntries(await Promise.all(
+  ['browser.js', 'index.html', 'run.mjs'].map(async file => [file, hash(await readFile(join(import.meta.dirname, file)))]),
+))
 provenance.nativeFixtureSha256 = hash(
   await readFile(join(root, 'packages/blender-addon/tests/normal_nodes_check.py')),
 )
@@ -60,7 +63,10 @@ const rows = [],
   failures = []
 try {
   await server.listen()
+  const channel = process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL || null
+  assert.ok(channel === null || channel === 'chromium', 'Only the bundled Chromium channel is allowed')
   browser = await chromium.launch({
+    ...(channel ? { channel } : {}),
     headless: true,
     args: [
       '--enable-unsafe-webgpu',
@@ -86,7 +92,7 @@ try {
   }
   await writeFile(
     join(native, 'browser-report.json'),
-    JSON.stringify({ built, provenance, rows, failures }, null, 2),
+    JSON.stringify({ built, browserVersion: browser.version(), browserChannel: channel, provenance, rows, failures }, null, 2),
   )
   assert.deepEqual(failures, [], 'Native geometry contexts differ; see browser-report.json')
   console.log(

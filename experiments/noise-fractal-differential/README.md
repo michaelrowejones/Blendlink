@@ -431,3 +431,59 @@ match the previous SDK exactly on both APIs and physical/software browser
 profiles: 131,072 Float32-word comparisons. This is runtime compatibility
 evidence, separately labelled from native numerical oracle evidence. Immutable
 snapshots and actual initialized adapters are retained with each report.
+
+## Native normalized live Roughness
+
+Fresh EEVEE normalized FBM with a linked, independently certified scalar
+Roughness uses `noise_varying_native`. The new opcode keeps previously saved
+`noise_varying` programs on their original primitive and arithmetic. Cycles,
+signed FBM and other fractal modes retain that existing capability.
+
+This batch supports Detail <=2, finite static abs(Scale)<=80 and
+abs(Lacunarity)<=2, and **Distortion =0**. The actual Roughness expression must
+prove both scalar shape and [0,1] range; a label such as `roughnessRange` grants
+nothing. Negative Detail uses the native zero clamp. Metal/OpenGL source
+backend and compatible Perlin model are explicit. Metal periodic and native-MF
+models reuse the qualified coordinate helpers; the OpenGL spatial model keeps
+its existing finite coordinate band. This local native evidence is Metal;
+OpenGL-native parity remains a separate hosted qualification.
+
+The new opcode does not acquire an exact output-unit proof from Normalize.
+An authored Clamp restores a downstream unit/HSL/Roughness contract. This
+conservative decision leaves previously earned static 1D/2D bounds intact.
+
+Nonzero Distortion receives the same exact named refusal independently from
+the source compiler and runtime. The ordinary renders initially passed, but
+amplified actual shader-stage controls exposed errors in coupled distorted
+fields. Their FMA/offset investigation is separate from this shipped batch;
+no error budget is expanded and no production input graph is rewritten.
+
+The native corpus requests 259 actual graphs per Blender 4.2/5.2/5.3: 193
+admitted graphs and 66 declared Distortion refusals. It covers all four
+dimensions, Fac/Color, MF-eligible and image Roughness, mixed stage
+compositions, negative/fractional Detail, Scale 0/-1/40/80, zero/negative/
+nonbinary Lacunarity, real Clamp endpoints and amplified residuals. Independent
+constant/image controls remain included. Both physical and software browser
+backends replay the exact same retained native pixels: all 2,316 built
+readbacks pass, with all 122 runtime modules covered by the semantic build
+guard. No browser/shader errors or device losses occurred in this batch.
+
+Every refused graph is retained under `reference/refused/`: actual RNA
+properties, input/output defaults and links, pinned original image float32
+pixels, and a native render of the unaltered graph. These are source snapshots,
+not replacement shaders or successful runtime comparisons. Manifest IDs and
+exact reasons distinguish the refused scope; requested counts must equal
+admitted plus refused counts, and expected/observed refusal sets must match.
+
+```sh
+BLENDLINK_NOISE_NATIVE_VARYING=1 \
+BLENDLINK_BLENDER=/absolute/path/to/blender \
+BLENDLINK_NOISE_EVIDENCE=artifacts/verification-native-live-roughness \
+node experiments/noise-fractal-differential/run.mjs --built
+```
+
+`BLENDLINK_NOISE_RESIDUAL_ONLY=1` selects the focused amplification subset.
+Use the same `--reuse-reference` and browser-channel controls described above
+for physical versus software runtime replay. This test exercises
+WebGPURenderer through its WebGPU and WebGL2 backends; it does not certify
+legacy WebGLRenderer TSL support.

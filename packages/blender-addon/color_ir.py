@@ -51,6 +51,7 @@ def _unit_bounded(expression):
                 and isinstance(expression.get('roughness'), (int, float)) and math.isfinite(expression['roughness']) and 0 <= expression['roughness'] <= 1
                 and math.isfinite(expression.get('lacunarity', 2)) and expression.get('lacunarity', 2) > 0)
     if op == 'noise_fractal': return False  # Signed/HDR family; no normalized bounds can be inherited.
+    if op == 'noise_varying_native': return False  # Dynamic-output unit bound requires an authored Clamp.
     if op == 'noise_varying':
         return (expression.get('normalize') is True
                 and all(expression.get(key, 'FBM') == 'FBM' for key in ['noiseType', 'noise_type', 'type'])

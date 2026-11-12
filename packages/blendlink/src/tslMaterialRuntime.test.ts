@@ -447,3 +447,36 @@ describe('installTslMaterials', () => {
     resources.dispose()
   })
 })
+
+it('owns the render-orientation callback only while its installed material variants are active', async () => {
+  const source = new THREE.MeshStandardMaterial()
+  source.userData.blendlink_source_material = 'Orientation'
+  const { root, mesh } = sceneWith(source)
+  const user = vi.fn()
+  mesh.onBeforeRender = user
+  const loadPrograms = async () => programs({ Orientation: { channels: {
+    'Base Color': { tslIr: UV_X_DOCUMENT },
+  } } })
+  const render = (material: THREE.Material) => mesh.onBeforeRender(
+    { backend: { isWebGPUBackend: true } } as any,
+    new THREE.Scene(), new THREE.Camera(), mesh.geometry, material, null as any,
+  )
+  const installed = await installTslMaterials({ root, descriptor: { materialPrograms: pointer }, loadPrograms })
+  const clone = mesh.material as THREE.Material
+  expect(mesh.onBeforeRender).not.toBe(user)
+  render(clone)
+  const initial = clone.version
+  mesh.matrixWorld.makeScale(-1, 1, 1)
+  render(clone); render(clone)
+  expect(clone.version).toBe(initial + 1)
+  expect(user).toHaveBeenCalledTimes(3)
+  installed.dispose(); installed.dispose()
+  expect(mesh.material).toBe(source)
+  expect(mesh.onBeforeRender).toBe(user)
+  const again = await installTslMaterials({ root, descriptor: { materialPrograms: pointer }, loadPrograms })
+  const next = mesh.material as THREE.Material
+  render(next)
+  expect(next.version).toBe(0)
+  again.dispose()
+  expect(mesh.onBeforeRender).toBe(user)
+})

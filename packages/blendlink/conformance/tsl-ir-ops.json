@@ -30,6 +30,7 @@
     "noise_fractal",
     "noise_normalized",
     "noise_varying",
+    "noise_varying_native",
     "normal_map",
     "normal_map_native",
     "normal_map_tangent_native",

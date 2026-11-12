@@ -171,3 +171,28 @@ Focused regressions:
 node packages/blendlink/scripts/run-vitest.mjs \
   packages/blendlink/src/tslBumpPassthrough.test.ts
 ```
+
+## Direct EEVEE Geometry Normal channels
+
+`--geometry-normal` selects direct Geometry Normal data and the actual material
+Normal/Coat Normal slots. Fresh EEVEE direct unit geometry normals use the
+verified native camera-space adapter. The prior route applied the camera-world
+transform instead of the required view conversion: the retained Blender 5.3
+baseline fails 192 sampled comparisons, with an encoded error of 0.03217 in a
+representative rotated-camera case. Existing serialized `normal_view` and
+Cycles extraction keep their prior semantics. No arbitrary downstream normal
+graph is newly certified.
+
+Run `suite.mjs --built --geometry-normal --profiles shared,single,flat,hq` in a
+separate evidence directory. All three native versions pass 96 actual Final
+GLBs and 4,032 field/control readbacks per browser environment. Independent
+physical runs record the actual Apple Metal adapter on both APIs. The fixed
+2e-5 raster allowance and native final-half ULP are unchanged; maximum encoded
+error is 0.000483573. Owner/camera animation, reflections, both coordinate bases,
+front/back views and positive nonuniform camera scale remain part of the
+fixture. Source graphs remain unchanged.
+
+`geometry_normal_channel_check.py` checks both source slots and preserves the
+separate Cycles route. Reports are under
+`artifacts/verification-geometry-normal{42,52,53}-{final,physical}`; the baseline
+log and original producer are retained under `artifacts/geometry-normal-counterexample`.
