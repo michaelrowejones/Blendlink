@@ -94,6 +94,10 @@ export interface CompiledSceneConformanceInput {
    * look wrong, so it is evidence rather than a defect.
    */
   readonly materialRenderedTriangles?: readonly number[]
+  /** Produced only from manifest-pinned shipped bytes plus production-builder
+   * validation for every bound primitive. These colors require WebGPURenderer,
+   * including its WebGL2 fallback; legacy WebGLRenderer must retain a carrier. */
+  readonly validatedBaseColorProgramMaterials?: ReadonlySet<number>
 }
 
 const BLENDER_DEFAULT_MATERIAL_MARKER = 'blender-default-material'
@@ -160,7 +164,7 @@ function referencedTexCoords(material: Record<string, unknown>): Map<number, str
  * colours count as present, because Blendlink itself lowers a proven colour
  * attribute to `COLOR_0` and that surface is fully decided.
  */
-function hasBaseColorCarrier(
+export function hasBaseColorCarrier(
   material: Record<string, unknown>,
   attributeSets: readonly Set<string>[],
 ): boolean {
@@ -271,6 +275,7 @@ export function inspectCompiledSceneConformance(
     if (bindings.length) {
       checked['conformance.base-color-carrier-missing'] += 1
       if (!hasBaseColorCarrier(material, bindings.map((binding) => binding.attributes)) &&
+          !input.validatedBaseColorProgramMaterials?.has(index) &&
           (renderedTriangles === undefined || renderedTriangles > 0)) {
         issues.push(Object.freeze({
           code: 'conformance.base-color-carrier-missing',
@@ -279,11 +284,12 @@ export function inspectCompiledSceneConformance(
           affects: Object.freeze([...new Set(bindings.map((binding) => binding.mesh))].sort()),
           summary:
             `Material "${name}" reaches the runtime with neither a base-colour texture nor a ` +
-            'base-colour factor.',
+            'base-colour factor, and has no validated shipped Base Color program.',
           fix:
             "glTF's default base colour is opaque white, so this surface renders pure white " +
             'with no warning of any kind. Give the material a colour Blendlink can carry, or ' +
-            'route it through a bake so the compiled artifact carries one.',
+            'route it through a bake so the compiled artifact carries one. A live Base Color ' +
+            'program must ship with its verified sidecar and use WebGPURenderer (including its WebGL2 fallback).',
         }))
       }
 

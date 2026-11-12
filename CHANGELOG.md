@@ -11,6 +11,17 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Final export accepts a live-only base color when its exact shipped program and
+  mesh dependencies validate. Missing or invalid program evidence still blocks;
+  legacy renderers explain the required renderer instead of showing white.
+- Shader Math rounding follows native Cycles at negative half values; greater-than
+  excludes equality. Negative integer powers preserve their sign, and inactive
+  invalid power branches no longer fail WebGPU shader compilation.
+- The material panel reports automatic live programs and static channel routes
+  without requiring a Website Color marker. Appearance-owned surfaces retain
+  their deliberate static-capture explanation.
+- Unported Film Like RGB Curves and legacy premultiplied Brightness/Contrast
+  settings refuse their live route with a named diagnostic.
 - Play starts authored manual animations in Preview Studio and exported sites.
   Paused/reduced-motion scenes retain camera navigation; finished clips can replay.
 - Comparison mode pauses inspection correctly, closes when choosing a viewport
@@ -78,6 +89,17 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Added
 
+- Live XYZ Mapping transforms for Point, Texture and Vector; scalar/vector Mix;
+  scalar/vector Map Range including verified stepped interpolation domains.
+- Native compositor Color Balance (Lift/Gamma/Gain and ASC-CDL) with separate
+  legacy and modern color models, plus all 41 scalar Math operations.
+- Native compositor Separate/Combine Color in RGB, HSV and HSL, including
+  alpha, legacy RGBA aliases, and version/device-specific color conversions.
+- HSV/HSL ColorRamp shading preserves all four hue directions and five
+  interpolation settings using the native Cycles table and live factor input.
+- A versioned native node/mode/socket inventory, explicit capability map, and
+  native-float-versus-browser gate for both node-renderer backends. Deliberate
+  bakes and partial modes remain separately classified.
 - **Check Atlas Fit** works without a connected site, using
   `blendlink plan --blend <saved-scene.blend>`. Measurements reach Blender's
   atlas panel without publishing assets; later edits mark old measurements stale.

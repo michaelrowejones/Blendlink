@@ -17,8 +17,8 @@ from __future__ import annotations
 IR_MODEL = "blendlink-tsl-ir-v1"
 
 # Blender Math operations with proven differential cells.  The builder maps
-# DIVIDE/MODULO/POWER to Blender's safe-math wrappers.  ABSOLUTE, CEIL,
-# FRACT, ROUND, and SQRT are one-cell-each additions once celled.
+# DIVIDE/MODULO/POWER to Blender's safe-math wrappers; the full declared
+# scalar enum sweep is covered by native-node differential cells.
 _MATH_OPERATIONS = {
     "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "MULTIPLY_ADD",
     "POWER", "MINIMUM", "MAXIMUM", "LESS_THAN", "GREATER_THAN",
@@ -342,6 +342,7 @@ def drain_approximations() -> list:
     global _approximations
     drained, _approximations = _approximations, []
     return drained
+
 
 
 # Production opt-in (Phase 4 Track C): over-budget images emit texture_ref
@@ -912,9 +913,13 @@ def _fold_vector_prescale(expression):
             break
         op = current.get("op")
         if op == "mapping":
-            factor *= max(
-                abs(float(v)) for v in current.get("scale", [1.0])
-            )
+            scales = [abs(float(v)) for v in current.get("scale", [1.0])]
+            if current.get("vectorType") == "TEXTURE":
+                # Texture Mapping is the inverse transform. Safe divide
+                # collapses zero-scale axes, while a small nonzero scale
+                # increases frequency instead of reducing it.
+                scales = [1.0 / value if value != 0.0 else 0.0 for value in scales]
+            factor *= max(scales)
             current = current.get("input")
             continue
         if op == "vector_scale":
@@ -1043,6 +1048,11 @@ def _convert_link(expression, from_socket, to_socket):
     average) refuses by name until a cell exists."""
     from_type = str(getattr(from_socket, "type", ""))
     to_type = str(getattr(to_socket, "type", ""))
+    if to_type == "VECTOR" and from_type == "VALUE":
+        # An explicit broadcast survives group boundaries and later vector
+        # component reads. Relying on arithmetic broadcasting alone can leave
+        # a Vector socket represented by one scalar expression.
+        return {"op": "combine", "x": expression, "y": expression, "z": expression}
     if to_type == "VALUE" and from_type == "RGBA":
         return {"op": "rgb_to_bw", "input": expression}
     if to_type == "VALUE" and from_type == "VECTOR":
@@ -1391,19 +1401,18 @@ def emit_output(node, from_socket, stack=()):
 
     if idname == "ShaderNodeMapping":
         vector_type = str(getattr(node, "vector_type", "POINT"))
-        if vector_type not in {"POINT", "TEXTURE"}:
+        if vector_type not in {"POINT", "TEXTURE", "VECTOR"}:
             _refuse(f"Mapping type {vector_type!r} has no cell yet")
-        for name in ("Location", "Rotation", "Scale"):
+        transform_inputs = ("Rotation", "Scale") if vector_type == "VECTOR" \
+            else ("Location", "Rotation", "Scale")
+        for name in transform_inputs:
             if node.inputs[name].is_linked:
                 _refuse(f"Mapping with linked {name} has no cell yet")
-        rotation = node.inputs["Rotation"].default_value
-        if abs(float(rotation[0])) > 1e-9 or abs(float(rotation[1])) > 1e-9:
-            _refuse("Mapping X/Y rotation has no cell yet (Z only)")
         return {
             "op": "mapping",
             "vectorType": vector_type,
             "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
-            "location": [
+            "location": [0.0, 0.0, 0.0] if vector_type == "VECTOR" else [
                 float(item) for item in node.inputs["Location"].default_value
             ],
             "rotation": [
@@ -1416,9 +1425,37 @@ def emit_output(node, from_socket, stack=()):
 
     if idname == "ShaderNodeValToRGB":
         ramp = node.color_ramp
+        color_mode = str(getattr(ramp, "color_mode", "RGB"))
         interpolation = str(ramp.interpolation)
         if socket_name not in {"Color", "Alpha"}:
             _refuse(f"ColorRamp output {socket_name!r} unsupported")
+        if color_mode in {"HSV", "HSL"}:
+            hue_interpolation = str(ramp.hue_interpolation)
+            if hue_interpolation not in {"NEAR", "FAR", "CW", "CCW"}:
+                _refuse(f"ColorRamp hue direction {hue_interpolation!r} has no cell")
+            if interpolation not in {"LINEAR", "CONSTANT", "EASE", "B_SPLINE", "CARDINAL"}:
+                _refuse(f"ColorRamp interpolation {interpolation!r} has no cell")
+            # Cycles' colorramp_to_array exports RAMP_TABLE_SIZE+1=257
+            # samples of the native evaluator. Its shader uses a floor lookup
+            # for CONSTANT and linear lookup otherwise. This preserves the
+            # actual shader's sampling, rather than approximating its continuous
+            # evaluator with a denser but visibly different function at kinks.
+            samples = 257
+            values = [float(item) for index in range(samples)
+                      for item in ramp.evaluate(index / (samples - 1))]
+            lookup = "FLOOR" if interpolation == "CONSTANT" else "LINEAR"
+            return {
+                "op": "ramp_lut",
+                "channel": "alpha" if socket_name == "Alpha" else "rgb",
+                "samples": samples, "values": values, "lookup": lookup,
+                "sourceColorMode": color_mode,
+                "sourceHueInterpolation": hue_interpolation,
+                "sourceInterpolation": interpolation,
+                "sampling": {"method": "native-cycles-257-table", "lookup": lookup},
+                "input": emit_input(node.inputs["Fac"], stack=stack),
+            }
+        if color_mode != "RGB":
+            _refuse(f"ColorRamp color mode {color_mode!r} has no cell")
         if interpolation in _RAMP_INTERPOLATIONS:
             expression = {
                 "op": "color_ramp",
@@ -1436,9 +1473,9 @@ def emit_output(node, from_socket, stack=()):
                 expression = {"op": "ramp_alpha", "input": expression}
             return expression
         # B_SPLINE / CARDINAL / EASE: sample Blender's own evaluator into a
-        # LUT; the builder interpolates between exact texels.  257 samples
-        # bound the reconstruction error of any smooth colorband well below
-        # cell tolerance.
+        # LUT; the builder interpolates between exact texels. Existing RGB
+        # B_SPLINE/CARDINAL cells gate this fixed 257-sample route; no universal
+        # bound is inferred for arbitrarily narrow native stop intervals.
         samples = 257
         values = []
         for index in range(samples):
@@ -1904,6 +1941,8 @@ def emit_output(node, from_socket, stack=()):
         if socket_name != "Color":
             _refuse(f"RGB Curves output {socket_name!r} unsupported")
         mapping = node.mapping
+        if str(getattr(mapping, "tone", "STANDARD")) != "STANDARD":
+            _refuse("RGB Curves Film Like tone has no proven channel-coupled mapping")
         if not bool(getattr(mapping, "use_clip", True)):
             _refuse("RGB Curves without clipping has no cell yet")
         if (abs(float(mapping.clip_min_x)) > 1e-6
@@ -1934,7 +1973,30 @@ def emit_output(node, from_socket, stack=()):
 
     if idname in {"ShaderNodeMix", "ShaderNodeMixRGB"}:
         if idname == "ShaderNodeMix":
-            if str(getattr(node, "data_type", "")) != "RGBA":
+            data_type = str(getattr(node, "data_type", ""))
+            if data_type in {"FLOAT", "VECTOR"}:
+                is_vector = data_type == "VECTOR"
+                suffix = "Vector" if is_vector else "Float"
+                if str(getattr(from_socket, "identifier", "")) != f"Result_{suffix}":
+                    _refuse(f"Mix {data_type} inactive output has no cell")
+                factor_mode = str(getattr(node, "factor_mode", "UNIFORM"))
+                if factor_mode not in {"UNIFORM", "NON_UNIFORM"}:
+                    _refuse(f"Mix factor mode {factor_mode!r} has no cell yet")
+                factor_id = "Factor_Vector" if is_vector and factor_mode == "NON_UNIFORM" \
+                    else "Factor_Float"
+                sockets = {item.identifier: item for item in node.inputs}
+                factor = emit_input(sockets[factor_id], stack=stack,
+                                    as_vector=factor_id == "Factor_Vector")
+                if bool(getattr(node, "clamp_factor", True)):
+                    factor = {"op": "clamp01", "input": factor}
+                # Native Float/Vector Mix ignores the color-only blend and
+                # result-clamp properties. No color-space conversion applies.
+                return _lerp_scalar(
+                    emit_input(sockets[f"A_{suffix}"], stack=stack, as_vector=is_vector),
+                    emit_input(sockets[f"B_{suffix}"], stack=stack, as_vector=is_vector),
+                    factor,
+                )
+            if data_type != "RGBA":
                 _refuse(f"Mix data type {node.data_type!r} has no cell yet")
             blend = str(getattr(node, "blend_type", "MIX"))
             factor = next(
@@ -2063,7 +2125,7 @@ def emit_output(node, from_socket, stack=()):
                 "2D": "tsl.noise-2d-scale-above-exact",
                 "3D": "tsl.noise-3d-scale-above-exact",
             }[dimensions])
-        elif abs(float(scale_expression["value"])) > _NOISE_SCALE_BOUND + 1e-9:
+        elif scale_magnitude > _NOISE_SCALE_BOUND + 1e-9:
             # Sub-texel sample-position differences between the two
             # rasterizers (~3e-5 in UV) multiply by the scale. Measured
             # 2026-07-30, maxAbs against a 0.01 gate: scale 16 7.2e-4,
@@ -2260,23 +2322,55 @@ def emit_output(node, from_socket, stack=()):
         _refuse(f"Attribute output {socket_name!r} has no cell yet")
 
     if idname == "ShaderNodeMapRange":
-        if str(getattr(node, "data_type", "FLOAT")) != "FLOAT":
+        data_type = str(getattr(node, "data_type", "FLOAT"))
+        if data_type not in {"FLOAT", "FLOAT_VECTOR"}:
             _refuse(f"Map Range data type {node.data_type!r} has no cell yet")
+        is_vector = data_type == "FLOAT_VECTOR"
+        expected_output = "Vector" if is_vector else "Result"
+        if str(getattr(from_socket, "identifier", socket_name)) != expected_output:
+            _refuse(f"Map Range {data_type} inactive output has no cell")
         interpolation = str(getattr(node, "interpolation_type", "LINEAR"))
-        if interpolation not in {"LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"}:
+        if interpolation not in {"LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"}:
             _refuse(
                 f"Map Range interpolation {interpolation!r} has no cell yet"
             )
-        return {
+        sockets = {item.identifier: item for item in node.inputs}
+        keys = {
+            "value": "Vector", "fromMin": "From_Min_FLOAT3", "fromMax": "From_Max_FLOAT3",
+            "toMin": "To_Min_FLOAT3", "toMax": "To_Max_FLOAT3", "steps": "Steps_FLOAT3",
+        } if is_vector else {
+            "value": "Value", "fromMin": "From Min", "fromMax": "From Max",
+            "toMin": "To Min", "toMax": "To Max", "steps": "Steps",
+        }
+        expression = {
             "op": "map_range",
+            "dataType": data_type,
             "interpolation": interpolation,
             "clamp": bool(getattr(node, "clamp", True)),
-            "value": emit_input(node.inputs["Value"], stack=stack),
-            "fromMin": emit_input(node.inputs["From Min"], stack=stack),
-            "fromMax": emit_input(node.inputs["From Max"], stack=stack),
-            "toMin": emit_input(node.inputs["To Min"], stack=stack),
-            "toMax": emit_input(node.inputs["To Max"], stack=stack),
+            **{key: emit_input(sockets[keys[key]], stack=stack, as_vector=is_vector)
+               for key in ("value", "fromMin", "fromMax", "toMin", "toMax")},
         }
+        if interpolation == "STEPPED":
+            # Negative vector steps differ between Cycles and EEVEE. Admit
+            # only finite nonnegative static values until that context has
+            # an explicit engine contract; dynamic Steps keeps its bake route.
+            import math
+            steps = emit_input(sockets[keys["steps"]], stack=stack, as_vector=is_vector)
+            if not is_vector:
+                values = [_fold_constant_scalar(steps)]
+            elif steps.get("op") == "const_vec3":
+                values = steps.get("value", [])
+            elif steps.get("op") == "combine":
+                values = [_fold_constant_scalar(steps.get(axis)) for axis in ("x", "y", "z")]
+            else:
+                values = []
+            if len(values) != (3 if is_vector else 1) or any(value is None for value in values):
+                _refuse("Map Range STEPPED with dynamic Steps has no bounded cell yet")
+            if any(not math.isfinite(value) or value < 0 for value in values):
+                _refuse("Map Range STEPPED requires finite nonnegative Steps")
+            expression["steps"] = {"op": "const_vec3", "value": [float(value) for value in values]} \
+                if is_vector else {"op": "const_float", "value": float(values[0])}
+        return expression
 
     if idname == "ShaderNodeClamp":
         if str(getattr(node, "clamp_type", "MINMAX")) != "MINMAX":

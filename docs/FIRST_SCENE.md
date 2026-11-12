@@ -68,10 +68,11 @@ checkout replaces `dist`, which a source-based preview still uses.
    captures the complete baked look as unlit pixels. It is useful when flattening
    a stylized material is intentional. Fully Realtime avoids lighting bakes for
    scenes whose materials and lights already have portable representations.
-5. Check **Blendlink Web Material** for unsupported shader branches. A `.blend`
-   can render correctly in Blender while containing shader logic glTF cannot
-   carry. Choose the named bake/material route before expecting the browser to
-   match it. TSL programs require the WebGPU renderer family.
+5. Check **Blendlink Web Material** for the per-channel live, portable, bake,
+   or refused route. Supported nodes translate automatically; you can still
+   choose a specific bake/material route. Preview and export use the node-capable
+   renderer, including its WebGL2 fallback. See [Blender node translation](NODE_TRANSLATION.md)
+   for compositing, version differences, and current coverage limits.
 6. Run **Check Atlas Fit** before an expensive bake. An oversized Final atlas
    blocks with a remedy; Preview may scale it down and report the detail loss.
 

@@ -1374,6 +1374,39 @@ describe('official Three scene installation seam', () => {
     installed.dispose()
   })
 
+  it.each(['live-only', 'portable-factor', 'portable-texture', 'roughness-only'] as const)(
+    'checks actual shipped Base Color evidence before legacy rendering: %s', async kind => {
+      const material = new THREE.MeshStandardMaterial()
+      material.name = 'Artist Checker'
+      material.userData.blendlink_source_material = 'Paint'
+      if (kind === 'portable-factor') material.color.setRGB(0.8, 0.2, 0.1)
+      if (kind === 'portable-texture') material.map = new THREE.Texture()
+      const root = new THREE.Group()
+      root.add(new THREE.Mesh(new THREE.BoxGeometry(), material))
+      const loadMaterialPrograms = vi.fn(async () => ({
+        schemaVersion: 1 as const, model: 'blendlink-material-programs-v1' as const,
+        materials: { Paint: { channels: { [kind === 'roughness-only' ? 'Roughness' : 'Base Color']: {
+          tslIr: { schemaVersion: 1 as const, model: 'blendlink-tsl-ir-v1' as const,
+            output: { op: 'const_vec3', value: [0.1, 0.8, 0.2] } },
+        } } } },
+      }))
+      const install = installThreeCompiledScene({
+        descriptor: descriptor({ materialPrograms: { url: '/scene.materials.json', bytes: 1, hash: 'x', materials: 1 } }),
+        renderer: renderer() as unknown as THREE.WebGLRenderer, scene: new THREE.Scene(),
+        loader: loader(root) as unknown as GLTFLoader, loadMaterialPrograms,
+      })
+      if (kind === 'live-only') {
+        await expect(install).rejects.toThrow(/Legacy WebGLRenderer.*Artist Checker.*WebGPURenderer/s)
+      } else {
+        const installed = await install
+        expect(installed.tslMaterials).toBeNull()
+        installed.dispose()
+      }
+      if (kind.startsWith('portable-')) expect(loadMaterialPrograms).not.toHaveBeenCalled()
+      else expect(loadMaterialPrograms).toHaveBeenCalledOnce()
+    },
+  )
+
   it('applies shipped material programs automatically on the WebGPU family', async () => {
     const webgpu = renderer() as ReturnType<typeof renderer> & {
       isWebGPURenderer?: boolean

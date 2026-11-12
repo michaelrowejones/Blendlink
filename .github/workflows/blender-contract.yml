@@ -141,6 +141,27 @@ jobs:
       - name: Verify installed extension and managed desktop tools
         run: npm run build && node scripts/test-addon-headless.mjs --desktop-smoke
 
+      - name: Install the version-matched node parity browser
+        run: npx --no-install playwright install --with-deps chromium
+
+      - name: Compare native node pixels with both built browser backends
+        run: node scripts/test-node-parity.mjs
+
+      - name: Retain native and browser node evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: native-node-parity-${{ matrix.version }}
+          path: |
+            artifacts/verification-native-node-gate
+            artifacts/verification-mapping
+            artifacts/verification-mix-math
+            artifacts/verification-map-range
+            artifacts/verification-math-boundary
+            artifacts/verification-shader-math
+            artifacts/verification-hue-ramp
+          if-no-files-found: warn
+
       - name: Check patch whitespace
         run: git diff --check
 

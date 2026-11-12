@@ -22,9 +22,13 @@ before committing to a final bake.
 
 The generated one-call integration accepts Three's `WebGLRenderer` or an
 initialized `WebGPURenderer`; environment, shadow, probe, KTX2, and lifecycle
-behavior are renderer-family-aware. Compiled TSL material programs shipped in
-a scene's material-programs sidecar apply automatically on the WebGPU family
-only — on WebGL those materials keep their portable glTF form.
+behavior are renderer-family-aware. Compiled TSL material programs apply
+automatically through `WebGPURenderer`, using either WebGPU or its WebGL2
+backend. Legacy `WebGLRenderer` retains portable glTF materials. Preview Studio
+and exported website folders use the node-capable renderer automatically.
+See [Blender node translation](docs/NODE_TRANSLATION.md) for artist-facing
+behavior and the [versioned node inventory](docs/node-coverage/README.md) for
+supported modes, approximations, deliberate bake routes, and remaining gaps.
 
 ## Start in Blender
 

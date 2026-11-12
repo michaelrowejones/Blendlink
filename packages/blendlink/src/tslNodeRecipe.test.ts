@@ -20,6 +20,41 @@ const documentOf = (output: Record<string, unknown>): TslIrDocument => ({
 })
 
 describe('buildTslColorNode', () => {
+  it('builds vector Map Range and refuses unbounded step documents', () => {
+    const fields = {
+      op: 'map_range', dataType: 'FLOAT_VECTOR', clamp: true,
+      value: { op: 'uv' }, fromMin: { op: 'const_vec3', value: [0, 1, 0.5] },
+      fromMax: { op: 'const_vec3', value: [1, -1, 0.5] }, toMin: { op: 'const_vec3', value: [0.2, 0.8, 0.3] },
+      toMax: { op: 'const_vec3', value: [0.9, 0.1, 0.7] }, steps: { op: 'const_vec3', value: [4, 0, 2.5] },
+    }
+    for (const interpolation of ['LINEAR', 'STEPPED', 'SMOOTHSTEP', 'SMOOTHERSTEP']) {
+      expect(buildTslColorNode(documentOf({ ...fields, interpolation }))).toBeTruthy()
+    }
+    expect(() => buildTslColorNode(documentOf({ ...fields, interpolation: 'STEPPED', steps: { op: 'uv' } })))
+      .toThrow(/static Steps/)
+    expect(() => buildTslColorNode(documentOf({ ...fields, interpolation: 'STEPPED', steps: { op: 'const_vec3', value: [-1, 0, 2] } })))
+      .toThrow(/nonnegative/)
+    expect(() => buildTslColorNode(documentOf({ ...fields, interpolation: 'UNKNOWN' })))
+      .toThrow(/interpolation UNKNOWN/)
+  })
+
+  it('builds all proven static Mapping modes with combined rotations and safe zero scale', () => {
+    for (const vectorType of ['POINT', 'TEXTURE', 'VECTOR']) {
+      expect(buildTslColorNode(documentOf({
+        op: 'mapping', vectorType, input: { op: 'uv' },
+        location: [0.17, -0.23, 0.31], rotation: [0.47, -0.81, 1.13], scale: [0, -0.65, 2.1],
+      }))).toBeTruthy()
+    }
+    expect(() => buildTslColorNode(documentOf({
+      op: 'mapping', vectorType: 'NORMAL', input: { op: 'uv' },
+      location: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1],
+    }))).toThrow(/mapping type NORMAL/)
+    expect(() => buildTslColorNode(documentOf({
+      op: 'mapping', vectorType: 'POINT', input: { op: 'uv' },
+      location: [0, 0], rotation: [0, 0, 0], scale: [1, 1, 1],
+    }))).toThrow(/three location/)
+  })
+
   it('builds proven-op documents into TSL nodes', () => {
     const node = buildTslColorNode(documentOf({
       op: 'mix_color',
@@ -103,6 +138,20 @@ describe('buildTslColorNode', () => {
       .toThrow(/BuildTslOptions\.textures/)
     expect(() => buildTslColorNode(reference, { textures: () => null }))
       .toThrow(/resolved no texture/)
+  })
+
+  it('builds native hue floor tables and refuses unknown lookup modes', () => {
+    const ramp = {
+      op: 'ramp_lut', lookup: 'FLOOR', samples: 2,
+      values: [0.9, 0.1, 0.3, 0.2, 0.1, 0.8, 0.4, 0.9],
+      input: { op: 'const_float', value: 0.5 },
+    }
+    const resources = createTslBuildResources()
+    expect(buildTslColorNode(documentOf(ramp), { resources })).toBeTruthy()
+    expect(resources.textures).toHaveLength(1)
+    resources.dispose()
+    expect(() => buildTslColorNode(documentOf({ ...ramp, lookup: 'UNKNOWN' })))
+      .toThrow(/lookup UNKNOWN/)
   })
 
   it('collects build-allocated textures into a disposable resource handle', () => {

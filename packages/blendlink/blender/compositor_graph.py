@@ -6,12 +6,19 @@ import bpy
 TYPES = {
     "CompositorNodeRGB": "rgb",
     "ShaderNodeValue": "value",
+    "CompositorNodeValue": "value",
     "ShaderNodeMath": "math",
+    "CompositorNodeMath": "math",
     "ShaderNodeMixRGB": "mix-rgb",
     "ShaderNodeMix": "mix",
     "CompositorNodeAlphaOver": "alpha-over",
     "CompositorNodeExposure": "exposure",
     "CompositorNodeBrightContrast": "brightness-contrast",
+    "CompositorNodeColorBalance": "color-balance",
+    "CompositorNodeSeparateColor": "separate-color",
+    "CompositorNodeCombineColor": "combine-color",
+    "CompositorNodeSepRGBA": "separate-color",
+    "CompositorNodeCombRGBA": "combine-color",
     "ShaderNodeGamma": "gamma",
     "CompositorNodeInvert": "invert",
     "CompositorNodeHueSat": "hue-saturation-value",
@@ -233,8 +240,112 @@ def extract(scene):
                     },
                     "inputs": {},
                 }
-                if node.bl_idname in ("CompositorNodeRGB", "ShaderNodeValue"):
+                if node.bl_idname in ("ShaderNodeMath", "CompositorNodeMath") and node.operation == "POWER":
+                    first, second = node.inputs[0], node.inputs[1]
+                    if not first.is_linked and not second.is_linked \
+                            and first.default_value == 0 and second.default_value < 0:
+                        fail("non-finite-math-domain", path, node, first,
+                             "Zero raised to a negative power produces non-finite compositor pixels in Blender")
+                    for incoming in node.inputs:
+                        if not incoming.enabled or getattr(incoming, "is_unavailable", False):
+                            continue
+                        op["inputs"][incoming.identifier] = {
+                            "name": incoming.name, "socketType": incoming.type,
+                            "value": input_value(incoming, ctx),
+                        }
+                elif node.bl_idname in ("CompositorNodeRGB", "ShaderNodeValue", "CompositorNodeValue"):
                     op["value"] = value(socket.default_value)
+                elif node.bl_idname == "CompositorNodeMath" and node.operation == "LOGARITHM":
+                    base = node.inputs[1]
+                    if base.is_linked or base.default_value == 1:
+                        fail("legacy-logarithm-domain", path, node, base,
+                             "Legacy compositor Logarithm requires a fixed base other than 1; Blender can produce non-finite pixels")
+                    for incoming in node.inputs:
+                        if not incoming.enabled or getattr(incoming, "is_unavailable", False):
+                            continue
+                        op["inputs"][incoming.identifier] = {
+                            "name": incoming.name, "socketType": incoming.type,
+                            "value": input_value(incoming, ctx),
+                        }
+                elif node.bl_idname in ("CompositorNodeSeparateColor", "CompositorNodeCombineColor",
+                                       "CompositorNodeSepRGBA", "CompositorNodeCombRGBA"):
+                    mode = getattr(node, "mode", "RGB")
+                    if mode not in ("RGB", "HSV", "HSL"):
+                        fail("unsupported-color-channel-mode", path, node, socket,
+                             "Separate/Combine Color supports RGB, HSV and HSL; YUV/YCC need verified color-model mappings")
+                    op["properties"]["mode"] = mode
+                    op["properties"]["color_conversion_device"] = getattr(
+                        scene.render, "compositor_device", "CPU")
+                    op["properties"]["legacy_hsv_clamp"] = bpy.app.version < (4, 5, 0)
+                    op["properties"]["legacy_hsl_clamp"] = bpy.app.version < (4, 5, 0)
+                    if TYPES[node.bl_idname] == "separate-color":
+                        incoming = node.inputs["Image"]
+                        op["inputs"]["Image"] = {"name": incoming.name,
+                                                    "socketType": incoming.type,
+                                                    "value": input_value(incoming, ctx)}
+                    else:
+                        aliases = ("R", "G", "B", "A") if node.bl_idname == "CompositorNodeCombRGBA" else (
+                            "Red", "Green", "Blue", "Alpha")
+                        for name, identifier in zip(("Red", "Green", "Blue", "Alpha"), aliases):
+                            incoming = node.inputs[identifier]
+                            op["inputs"][name] = {"name": incoming.name,
+                                                  "socketType": incoming.type,
+                                                  "value": input_value(incoming, ctx)}
+                elif node.bl_idname == "CompositorNodeBrightContrast" and bool(getattr(node, "use_premultiply", False)):
+                    fail("legacy-bright-contrast-premultiply", path, node, socket,
+                         "Legacy Brightness/Contrast with Convert Premultiplied enabled needs a verified alpha-aware mapping; disable it or use a supported compositor route")
+                elif node.bl_idname == "CompositorNodeColorBalance":
+                    # Older nodes grade lift/gain in sRGB; the new socket-based
+                    # node grades directly in scene-linear. Preserve the model
+                    # as well as the controls when normalizing the graph.
+                    modern_balance = node.inputs.get("Type") is not None
+                    op["properties"]["color_balance_model"] = (
+                        "linear" if modern_balance else "legacy-srgb"
+                    )
+                    if modern_balance:
+                        type_socket = node.inputs["Type"]
+                        if any(link.is_valid and not getattr(link, "is_muted", False)
+                               for link in type_socket.links):
+                            fail("dynamic-color-balance-mode", path, node, type_socket,
+                                 "Color Balance requires a fixed Lift/Gamma/Gain or ASC-CDL mode")
+                        mode = type_socket.default_value
+                    else:
+                        mode = {"LIFT_GAMMA_GAIN": "Lift/Gamma/Gain",
+                                "OFFSET_POWER_SLOPE": "Offset/Power/Slope (ASC-CDL)"}.get(
+                            getattr(node, "correction_method", ""))
+                    if mode not in ("Lift/Gamma/Gain", "Offset/Power/Slope (ASC-CDL)"):
+                        fail("unsupported-color-balance-mode", path, node,
+                             node.inputs.get("Type"),
+                             "Color Balance supports Lift/Gamma/Gain and ASC-CDL; White Point needs a verified chromatic-adaptation mapping")
+
+                    def balance_constant(name, socket_type, setting):
+                        op["inputs"][name] = {
+                            "name": name, "socketType": socket_type,
+                            "value": {"kind": "constant", "type": socket_type,
+                                      "value": value(setting)},
+                        }
+
+                    for name in ("Image", "Fac"):
+                        incoming = node.inputs[name]
+                        op["inputs"][name] = {"name": incoming.name,
+                                              "socketType": incoming.type,
+                                              "value": input_value(incoming, ctx)}
+                    balance_constant("Type", "MENU", mode)
+                    parameters = ("Lift", "Gamma", "Gain") if mode == "Lift/Gamma/Gain" else (
+                        "Offset", "Power", "Slope")
+                    for parameter in parameters:
+                        if modern_balance:
+                            for name in ("Base " + parameter, "Color " + parameter):
+                                incoming = node.inputs[name]
+                                op["inputs"][name] = {"name": incoming.name,
+                                                      "socketType": incoming.type,
+                                                      "value": input_value(incoming, ctx)}
+                        else:
+                            base = (getattr(node, "offset_basis", 0.0) if parameter == "Offset"
+                                    else 0.0 if parameter == "Lift" else 1.0)
+                            balance_constant("Base " + parameter, "VALUE", base)
+                            balance_constant("Color " + parameter, "RGBA",
+                                             [*getattr(node, parameter.lower()), 1.0])
                 elif node.bl_idname == "CompositorNodeRLayers":
                     source_scene = node.scene or scene
                     layer = source_scene.view_layers.get(node.layer)

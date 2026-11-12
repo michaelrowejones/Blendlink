@@ -247,6 +247,152 @@ def build_mapping_texture_mode(tree, emission):
     tree.links.new(combine.outputs["Color"], emission.inputs["Color"])
 
 
+def make_mapping_sweep_builder(spec):
+    """Native static Mapping: all three output components retain their field."""
+    def build(tree, emission):
+        coord = tree.nodes.new("ShaderNodeTexCoord")
+        scaled_input = tree.nodes.new("ShaderNodeVectorMath")
+        scaled_input.operation = "MULTIPLY"
+        scaled_input.inputs[1].default_value = (1.3, -0.8, 0.6)
+        tree.links.new(coord.outputs["UV"], scaled_input.inputs[0])
+        shifted_input = tree.nodes.new("ShaderNodeVectorMath")
+        shifted_input.operation = "ADD"
+        shifted_input.inputs[1].default_value = (-0.5, 0.2, -0.3)
+        tree.links.new(scaled_input.outputs["Vector"], shifted_input.inputs[0])
+        mapping = tree.nodes.new("ShaderNodeMapping")
+        mapping.vector_type = spec["vectorType"]
+        mapping.inputs["Rotation"].default_value = spec["rotation"]
+        mapping.inputs["Scale"].default_value = spec["scale"]
+        if "Location" in mapping.inputs:
+            mapping.inputs["Location"].default_value = spec["location"]
+        tree.links.new(shifted_input.outputs["Vector"], mapping.inputs["Vector"])
+        scale = tree.nodes.new("ShaderNodeVectorMath")
+        scale.operation = "SCALE"
+        scale.inputs["Scale"].default_value = 0.05
+        tree.links.new(mapping.outputs["Vector"], scale.inputs[0])
+        bias = tree.nodes.new("ShaderNodeVectorMath")
+        bias.operation = "ADD"
+        bias.inputs[1].default_value = (0.5, 0.5, 0.5)
+        tree.links.new(scale.outputs["Vector"], bias.inputs[0])
+        tree.links.new(bias.outputs["Vector"], emission.inputs["Color"])
+    return build
+
+
+def make_generic_mix_builder(spec):
+    """Native Float/Vector Mix, including scalar broadcast across a group."""
+    def build(tree, emission):
+        u, v = _uv_channel(tree, "u"), _uv_channel(tree, "v")
+
+        def vector(values):
+            combined = tree.nodes.new("ShaderNodeCombineXYZ")
+            for name, value in zip(("X", "Y", "Z"), values):
+                if hasattr(value, "node"):
+                    tree.links.new(value, combined.inputs[name])
+                else:
+                    combined.inputs[name].default_value = value
+            return combined.outputs["Vector"]
+
+        mix = tree.nodes.new("ShaderNodeMix")
+        mix.data_type = spec["dataType"]
+        mix.factor_mode = spec.get("factorMode", "UNIFORM")
+        mix.clamp_factor = spec["clampFactor"]
+        # These color-only settings must not change Float/Vector arithmetic.
+        mix.clamp_result = True
+        mix.blend_type = "MULTIPLY"
+        sockets = {socket.identifier: socket for socket in mix.inputs}
+        factor = _affine(tree, u, 3.0, -1.0)
+        if mix.data_type == "FLOAT":
+            tree.links.new(factor, sockets["Factor_Float"])
+            tree.links.new(_affine(tree, u, 1.25, -0.4), sockets["A_Float"])
+            tree.links.new(_affine(tree, v, -0.75, 0.8), sockets["B_Float"])
+            result = next(socket for socket in mix.outputs if socket.identifier == "Result_Float")
+        else:
+            if spec.get("broadcastGroup"):
+                group = bpy.data.node_groups.new("Mix Broadcast Boundary", "ShaderNodeTree")
+                group.interface.new_socket(name="Value", in_out="INPUT", socket_type="NodeSocketFloat")
+                group.interface.new_socket(name="Vector", in_out="OUTPUT", socket_type="NodeSocketVector")
+                group_input = group.nodes.new("NodeGroupInput")
+                group_output = group.nodes.new("NodeGroupOutput")
+                group.links.new(group_input.outputs["Value"], group_output.inputs["Vector"])
+                instance = tree.nodes.new("ShaderNodeGroup")
+                instance.node_tree = group
+                tree.links.new(_affine(tree, u, 1.25, -0.4), instance.inputs["Value"])
+                tree.links.new(instance.outputs["Vector"], sockets["A_Vector"])
+                tree.links.new(_affine(tree, v, -0.75, 0.8), sockets["B_Vector"])
+            else:
+                tree.links.new(vector((_affine(tree, u, 1.25, -0.4), _affine(tree, v, -0.75, 0.8), -0.2)), sockets["A_Vector"])
+                tree.links.new(vector((-0.4, _affine(tree, u, 0.6, 0.15), _affine(tree, v, 1.1, -0.2))), sockets["B_Vector"])
+            if mix.factor_mode == "NON_UNIFORM":
+                tree.links.new(vector((factor, _affine(tree, v, 3.0, -1.0), 1.6)), sockets["Factor_Vector"])
+            else:
+                tree.links.new(factor, sockets["Factor_Float"])
+            result = next(socket for socket in mix.outputs if socket.identifier == "Result_Vector")
+            if spec.get("broadcastGroup"):
+                separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+                tree.links.new(result, separate.inputs["Vector"])
+                result = separate.outputs["Y"]
+        if result.type == "VALUE":
+            tree.links.new(_affine(tree, result, 0.2, 0.5), emission.inputs["Color"])
+        else:
+            scaled = tree.nodes.new("ShaderNodeVectorMath")
+            scaled.operation = "SCALE"
+            scaled.inputs["Scale"].default_value = 0.2
+            tree.links.new(result, scaled.inputs[0])
+            bias = tree.nodes.new("ShaderNodeVectorMath")
+            bias.operation = "ADD"
+            bias.inputs[1].default_value = (0.5, 0.5, 0.5)
+            tree.links.new(scaled.outputs["Vector"], bias.inputs[0])
+            tree.links.new(bias.outputs["Vector"], emission.inputs["Color"])
+    return build
+
+
+def make_map_range_builder(spec):
+    """Native range modes, with degenerate/reversed ranges in the oracle."""
+    def build(tree, emission):
+        u, v = _uv_channel(tree, "u"), _uv_channel(tree, "v")
+        node = tree.nodes.new("ShaderNodeMapRange")
+        node.data_type = spec["dataType"]
+        node.interpolation_type = spec["interpolation"]
+        node.clamp = spec.get("clamp", True)
+        sockets = {socket.identifier: socket for socket in node.inputs}
+        if node.data_type == "FLOAT_VECTOR":
+            combined = tree.nodes.new("ShaderNodeCombineXYZ")
+            tree.links.new(_affine(tree, u, 1.8, -0.4), combined.inputs["X"])
+            tree.links.new(_affine(tree, v, -2.0, 1.5), combined.inputs["Y"])
+            combined.inputs["Z"].default_value = 0.7
+            tree.links.new(combined.outputs["Vector"], sockets["Vector"])
+            for key, value in {
+                "From_Min_FLOAT3": (0.0, 1.0, 0.5), "From_Max_FLOAT3": (1.0, -1.0, 0.5),
+                "To_Min_FLOAT3": (0.2, 0.8, 0.3), "To_Max_FLOAT3": (0.9, 0.1, 0.7),
+                "Steps_FLOAT3": (4.0, 0.0, 2.5),
+            }.items():
+                sockets[key].default_value = value
+            result = next(socket for socket in node.outputs if socket.identifier == "Vector")
+            scaled = tree.nodes.new("ShaderNodeVectorMath")
+            scaled.operation = "SCALE"
+            scaled.inputs["Scale"].default_value = 0.2
+            tree.links.new(result, scaled.inputs[0])
+            bias = tree.nodes.new("ShaderNodeVectorMath")
+            bias.operation = "ADD"
+            bias.inputs[1].default_value = (0.4, 0.4, 0.4)
+            tree.links.new(scaled.outputs["Vector"], bias.inputs[0])
+            tree.links.new(bias.outputs["Vector"], emission.inputs["Color"])
+        else:
+            if not spec.get("default"):
+                tree.links.new(_affine(tree, u, 1.8, -0.4), sockets["Value"])
+                sockets["From Min"].default_value = 1.0 if spec.get("reversed") else 0.0
+                sockets["From Max"].default_value = 0.0 if spec.get("reversed") else 1.0
+                sockets["To Min"].default_value = 0.8 if spec.get("reversed") else 0.2
+                sockets["To Max"].default_value = 0.2 if spec.get("reversed") else 0.9
+                sockets["Steps"].default_value = 0.0 if spec.get("zeroSteps") else 4.5
+                if spec.get("degenerate"):
+                    sockets["From Min"].default_value = 0.5
+                    sockets["From Max"].default_value = 0.5
+            result = next(socket for socket in node.outputs if socket.identifier == "Result")
+            tree.links.new(_affine(tree, result, 0.2, 0.4), emission.inputs["Color"])
+    return build
+
+
 def build_noise_fractal_detail(tree, emission):
     coord = tree.nodes.new("ShaderNodeTexCoord")
     noise = tree.nodes.new("ShaderNodeTexNoise")
@@ -1772,6 +1918,34 @@ def ensure_view_camera():
     bpy.context.scene.camera = camera
 
 
+
+def make_hue_ramp_builder(spec):
+    """Native hue-ramp evaluator, including alpha and ignored interpolation UI."""
+    def build(tree, emission):
+        node = tree.nodes.new("ShaderNodeValToRGB")
+        ramp = node.color_ramp
+        ramp.color_mode = spec["colorMode"]
+        ramp.hue_interpolation = spec["hueInterpolation"]
+        ramp.interpolation = spec["interpolation"]
+        stops = ((0.07, (0.92, 0.12, 0.37, 0.18)),
+                 (0.43, (0.14, 0.81, 0.38, 0.83)),
+                 (0.91, (0.22, 0.31, 0.95, 0.41)))
+        for element, (position, color) in zip(ramp.elements, (stops[0], stops[-1])):
+            element.position = position
+            element.color = color
+        middle = ramp.elements.new(stops[1][0])
+        middle.color = stops[1][1]
+        if "factor" in spec:
+            node.inputs["Fac"].default_value = float(spec["factor"])
+        else:
+            # Keep moving CONSTANT factors off exact bin boundaries: the
+            # rasterizers' independently calibrated UVs differ by ~3e-5.
+            # Separate fixed-factor cells prove the exact boundary itself.
+            tree.links.new(_affine(tree, _uv_channel(tree, "u"), 1.273, -0.137), node.inputs["Fac"])
+        tree.links.new(node.outputs["Alpha" if spec.get("alpha") else "Color"], emission.inputs["Color"])
+    return build
+
+
 def make_sweep_builder(spec):
     """A spec-driven Math cell: each input is a constant or an affine map
     of u/v, the swept operation runs once, and a post affine folds the
@@ -2414,12 +2588,20 @@ def main():
         cell_id = cell["id"]
         pipeline = cell.get("pipeline", "ir")
         builder = BUILDERS.get(cell_id)
+        if builder is None and "hueRamp" in cell:
+            builder = make_hue_ramp_builder(cell["hueRamp"])
         if builder is None and "sweep" in cell:
             builder = make_sweep_builder(cell["sweep"])
         if builder is None and "mixSweep" in cell:
             builder = make_mix_sweep_builder(cell["mixSweep"])
         if builder is None and "vectorSweep" in cell:
             builder = make_vector_sweep_builder(cell["vectorSweep"])
+        if builder is None and "mappingSweep" in cell:
+            builder = make_mapping_sweep_builder(cell["mappingSweep"])
+        if builder is None and "genericMix" in cell:
+            builder = make_generic_mix_builder(cell["genericMix"])
+        if builder is None and "mapRange" in cell:
+            builder = make_map_range_builder(cell["mapRange"])
         if builder is None and "eeveeLight" not in cell:
             raise SystemExit(f"reference builder missing for cell {cell_id!r}")
         if "eeveeLight" in cell:

@@ -15,7 +15,7 @@ export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
 export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
 export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
-export const PREVIEW_STUDIO_HOST_VERSION = 19
+export const PREVIEW_STUDIO_HOST_VERSION = 20
 export const PREVIEW_STUDIO_MAIN_MARKER =
   '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
@@ -868,6 +868,9 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
     await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
     if (deviceLoss) throw new Error(deviceLoss)
     if (shaderErrors.length > 0) throw new Error('A material shader did not compile:\\n' + shaderErrors.join('\\n\\n'))
+    canvas.dataset.tslMaterialsApplied = String(installed.tslMaterials?.applied ?? 0)
+    canvas.dataset.tslMaterialsSkipped = String(installed.tslMaterials?.skipped.length ?? 0)
+    canvas.dataset.postprocessingOrder = JSON.stringify(installed.components.postprocessingOrder)
     const camera = installed.camera
     return {
       generation, canvas, renderer, world, installed, descriptor,

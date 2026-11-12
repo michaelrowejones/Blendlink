@@ -2186,8 +2186,9 @@ async function installLoadedThreeCompiledSceneNow(
 
     // Phase 4 Track C: a shipped materialPrograms pointer is the artist's
     // compile-time opt-in, so the programs apply automatically on the
-    // WebGPU renderer family. The WebGL family has no node materials to
-    // apply them with — its shipped carriers already render faithfully.
+    // WebGPURenderer family, including its WebGL2 backend. Legacy
+    // WebGLRenderer can retain a portable carrier, but must refuse live-only
+    // base colors rather than silently render the default white surface.
     let tslMaterials:
       | import('./tslMaterialRuntime.js').InstalledTslMaterials
       | null = null
@@ -2211,6 +2212,17 @@ async function installLoadedThreeCompiledSceneNow(
           : {}),
       })
       register(() => tslMaterials?.dispose())
+    } else if (descriptor.materialPrograms) {
+      const { assertLegacyMaterialCarriers } = await import('./materialProgramDocument.js')
+      await assertLegacyMaterialCarriers({
+        root,
+        descriptor: { materialPrograms: {
+          ...descriptor.materialPrograms,
+          url: options.assetBaseUrl === undefined ? descriptor.materialPrograms.url
+            : resolveCompiledAssetUrl(descriptor.materialPrograms.url, options.assetBaseUrl),
+        } },
+        ...(options.loadMaterialPrograms ? { loadPrograms: options.loadMaterialPrograms } : {}),
+      })
     }
 
     const hasBakedAssets = Object.keys(descriptor.states ?? {}).length > 0

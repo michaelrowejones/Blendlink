@@ -2621,8 +2621,104 @@ def prepare_active_material_previews(context=None) -> bool:
     return prepared
 
 
+def _draw_automatic_material_graph(layout, compilation):
+    """Show the cached compiler's native-node routes, with named refusals."""
+    box = layout.box()
+    channels = (compilation.get("channels") or {}).get("channels", ())
+    refused = [entry for entry in channels if entry.get("route") == "refused"]
+    needs_attention = compilation.get("outcome") == "blocked" or bool(refused)
+    box.alert = needs_attention
+    box.label(
+        text="Native shader inputs need attention" if needs_attention else "Native shader graph · automatic",
+        icon="ERROR" if needs_attention else "NODETREE",
+    )
+    _draw_wrapped(
+        box,
+        "Blendlink reads your existing Blender nodes. Supported channels translate "
+        "automatically; static fallback channels bake without rebuilding the graph.",
+    )
+    for entry in channels:
+        route = entry.get("route")
+        if route == "program":
+            detail = "Live node translation"
+        elif route == "bake":
+            resolution = entry.get("resolution")
+            detail = "Texture bake" + (f" · {resolution}px" if isinstance(resolution, int) else "")
+        elif route in {"factor", "factor-over-carrier"}:
+            detail = "Portable material value"
+        elif route == "passthrough":
+            detail = "Portable material input"
+        else:
+            detail = "Unsupported · review before publishing"
+        _draw_wrapped(
+            box, f'{entry.get("channel", "?")}: {detail}',
+            icon="ERROR" if route == "refused" else "DOT",
+        )
+        if route == "refused":
+            reason = entry.get("tslIrRefusal") or "; ".join(entry.get("reasons") or ())
+            if reason:
+                _draw_wrapped(box, reason, icon="INFO")
+    for issue in compilation.get("issues", ()):
+        _draw_wrapped(box, issue.get("problem", "This material input needs attention."), icon="ERROR")
+        # Automatic translation has no explicit TSL intent to clear. Preserve
+        # useful authored-route remedies, but do not offer a nonexistent switch.
+        if issue.get("code") != "material.tsl-program-unproven" and issue.get("fix"):
+            _draw_wrapped(box, issue["fix"], icon="LIGHT")
+    _draw_wrapped(
+        box,
+        "Live node materials need the node renderer; it can use WebGPU or WebGL2. "
+        "Older website renderers use portable or baked materials, which can differ. "
+        "Supported graph translation does not guarantee identical Blender lighting or shading.",
+        icon="INFO",
+    )
+
+
+def _draw_appearance_material_capture(layout, result):
+    captured = set(result.get("appearanceBakeObjects") or ())
+    used = set(result.get("usedBy") or ())
+    if not captured or not used.issubset(captured):
+        return False
+    cycles = result.get("cyclesAppearance") or {}
+    blocked = cycles.get("status") == "blocked"
+    box = layout.box()
+    box.alert = blocked
+    box.label(
+        text="Appearance bake needs attention" if blocked else "Native shader surface · Appearance bake",
+        icon="ERROR" if blocked else "TEXTURE",
+    )
+    if blocked:
+        for blocker in cycles.get("blockers", ()):
+            _draw_wrapped(box, blocker, icon="ERROR")
+        _draw_wrapped(
+            box,
+            "The current Cycles Appearance route cannot evaluate this native graph. "
+            "Use a supported live route or a proven EEVEE materialization route "
+            "before publishing.",
+        )
+    else:
+        _draw_wrapped(
+            box,
+            "The scene's Appearance atlas captures this native Blender surface "
+            "into an image. No separate node graph or Material Bake switch is needed.",
+        )
+        _draw_wrapped(
+            box,
+            "Save changes to rebake. The website uses this static appearance "
+            "capture instead of a live shader-node graph.",
+            icon="INFO",
+        )
+    _draw_wrapped(box, "Appearance objects: " + ", ".join(sorted(captured)), icon="OBJECT_DATA")
+    return True
+
+
 def _draw_material_compatibility(layout, result):
     """Draw the cached, non-mutating stock glTF material contract."""
+    if _draw_appearance_material_capture(layout, result):
+        return
+    compilation = result.get("materialCompilation") or {}
+    if (compilation.get("channels") or {}).get("automatic"):
+        _draw_automatic_material_graph(layout, compilation)
+        return
     status = result.get("status", "approximated")
     box = layout.box()
     box.alert = status == "needsBake"
@@ -2638,7 +2734,6 @@ def _draw_material_compatibility(layout, result):
     _draw_wrapped(box, result.get("summary", ""))
     for reason in result.get("reasons", [])[:4]:
         _draw_wrapped(box, reason, icon="DOT")
-    compilation = result.get("materialCompilation") or {}
     if compilation.get("intent") == "tslProgram":
         program_box = box.box()
         program_box.alert = compilation.get("outcome") == "blocked"
@@ -2765,6 +2860,8 @@ _TRANSPORT_PHRASES = {
 def _draw_web_material_source(layout, result):
     """Draw the compiler-owned selected-field contract from cached evidence."""
     compilation = result.get("materialCompilation") or {}
+    if compilation.get("intent") != "webColor":
+        compilation = {}
     outcome = compilation.get("outcome", "preserved")
     box = layout.box()
     box.alert = outcome == "blocked"
@@ -2773,10 +2870,17 @@ def _draw_web_material_source(layout, result):
         text={
             "lowered": "Website Color ready to compile",
             "blocked": "Website Color needs attention",
-        }.get(outcome, "Website Color (optional)"),
+        }.get(outcome, "Website Color override (optional)"),
         icon={"lowered": "CHECKMARK", "blocked": "ERROR"}.get(outcome, "NODE_MATERIAL"),
     )
     source = compilation.get("colorSource") or {}
+    if not compilation:
+        _draw_wrapped(
+            box,
+            "Most materials need no setup here. Use this optional override only "
+            "to publish one chosen Color or Alpha output instead of following "
+            "the native material surface.",
+        )
     if source:
         _draw_wrapped(
             box,

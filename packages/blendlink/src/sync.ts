@@ -136,7 +136,7 @@ function artifactHashOf(path: string): string {
   return createHash('sha256').update(readFileSync(path)).digest('hex').slice(0, 16)
 }
 
-function publishedAssetPath(
+export function publishedAssetPath(
   scene: Pick<ResolvedScene, 'glbPath' | 'url'>,
   assetUrl: string,
   manifest?: Pick<
@@ -1587,6 +1587,7 @@ async function syncSceneWithPublicationLease(
   await auditCompiledSceneArtifact({
     manifest,
     glbBytes: readFileSync(buildGlbPath),
+    ...(exported.materialPrograms ? { materialProgramsBytes: readFileSync(exported.materialPrograms.path) } : {}),
   })
   const sealed = sealScenePublication({
     sourceDirectory: stageDirectory,
@@ -2152,6 +2153,7 @@ async function verifyScenesWithPublicationLease(
         continue
       }
     }
+    let materialProgramsBytes: Uint8Array | undefined
     if (manifest.materialPrograms) {
       const programsPath = publishedAssetPath(
         scene,
@@ -2187,6 +2189,7 @@ async function verifyScenesWithPublicationLease(
         })
         continue
       }
+      materialProgramsBytes = programsBytes
       // The runtime resolves every texture_ref image BY BASENAME against
       // the sidecar URL, so each reference must exist beside the
       // published sidecar. Publication and verification read those
@@ -2348,7 +2351,7 @@ async function verifyScenesWithPublicationLease(
       })
     } else {
       try {
-        const audit = await auditCompiledSceneArtifact({ manifest, glbBytes })
+        const audit = await auditCompiledSceneArtifact({ manifest, glbBytes, materialProgramsBytes })
         const collapseIssue = materialCollapseVerificationIssue(scene, audit)
         if (collapseIssue) issues.push(collapseIssue)
         issues.push(...glbConformanceVerificationIssues(scene, audit))

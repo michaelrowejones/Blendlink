@@ -24,6 +24,68 @@ const blender = execFileSync(process.execPath, [cli, 'discover'], { encoding: 'u
 let preview, server, browser, currentPage
 let previewLog = ''
 const report = []
+const nodeProgramErrors = []
+
+function trackNodePrograms(page) {
+  const documents = []
+  const captureErrors = []
+  const onResponse = response => {
+    if (/\.(?:materials|presentation)\.json(?:\?|$)/.test(response.url())) {
+      // Attach rejection handling when the response arrives, before readiness
+      // polling or a failed startup can leave a rejected body promise unobserved.
+      documents.push(response.json().catch(error => {
+        const failure = { url: response.url(), error: String(error) }
+        captureErrors.push(failure)
+        nodeProgramErrors.push(failure)
+        return null
+      }))
+    }
+  }
+  page.on('response', onResponse)
+  return async canvas => {
+    try {
+      const loaded = await Promise.all(documents)
+      assert.deepEqual(captureErrors, [], 'A browser node-program response could not be read')
+      const materials = loaded.find(document => document?.model === 'blendlink-material-programs-v1')
+      assert.ok(materials, 'The browser did not fetch the live material programs')
+      const program = JSON.stringify(materials.materials['Live Artist Checker'])
+      assert.match(program, /"op":"mapping"/)
+      assert.match(program, /"op":"tex_checker"/)
+      const presentation = loaded.find(document => document?.model === 'blendlink-source-presentation-v1')
+      assert.equal(presentation?.compositor?.status, 'extracted')
+      assert.ok(presentation.compositor.ops.some(op => op.kind === 'color-balance'),
+        'The browser did not receive the authored Color Balance graph')
+      assert.match(JSON.stringify(presentation.compositor), /Offset\/Power\/Slope/)
+      const installed = await canvas.evaluate(element => ({
+        applied: element.dataset.tslMaterialsApplied,
+        skipped: element.dataset.tslMaterialsSkipped,
+        order: JSON.parse(element.dataset.postprocessingOrder || 'null'),
+      }))
+      assert.ok(Number(installed.applied) > 0, 'Fetched live material programs were not applied to the installed scene')
+      assert.equal(installed.skipped, '0', 'The installed scene skipped a live material program')
+      assert.ok(installed.order?.includes('blender-compositor'),
+        `The actual resolved postprocessing pipeline omitted Blender compositing: ${JSON.stringify(installed)}`)
+    } finally { page.off('response', onResponse) }
+  }
+}
+
+async function assertCompositorEffect(canvas) {
+  const { data, info } = await sharp(await canvas.screenshot()).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const size = Math.min(12, info.width, info.height)
+  const corners = [[0, 0], [info.width - size, 0],
+    [0, info.height - size], [info.width - size, info.height - size]]
+  const samples = corners.map(([left, top]) => {
+    const rgba = [0, 0, 0, 0]
+    for (let y = top; y < top + size; y++) for (let x = left; x < left + size; x++)
+      for (let channel = 0; channel < 4; channel++) rgba[channel] += data[(y * info.width + x) * 4 + channel]
+    return rgba.map(value => value / (size * size))
+  })
+  // The authored world is neutral gray. Only the ASC-CDL red offset can make
+  // its unobstructed corners red; a fetched but omitted graph cannot pass.
+  assert.ok(samples.every(([r, g, b, a]) => r - Math.max(g, b) > 12 && a > 250),
+    `The paused scene did not visibly apply the authored red offset: ${JSON.stringify(samples)}`)
+  return samples
+}
 
 async function imageDelta(left, right) {
   const a = await sharp(left).removeAlpha().raw().toBuffer()
@@ -156,15 +218,18 @@ try {
   page.setDefaultTimeout(15000)
   const errors = []
   page.on('pageerror', error => errors.push(error.message))
+  const verifyNodePrograms = trackNodePrograms(page)
   await page.goto(url)
   const ready = () => page.waitForFunction(() => document.querySelector('#status-chip')?.dataset.phase === 'ready', null, { timeout: 45000 })
   await ready()
+  await verifyNodePrograms(page.locator('canvas.active'))
   console.log('BLENDLINK_PREVIEW_UX_STEP preview ready')
   assert.deepEqual(errors, [])
   await assertPlayback(page.locator('canvas.active'), true)
   await page.locator('#pause').click()
   assert.equal(await page.locator('#pause').innerText(), 'Play')
   await assertPlayback(page.locator('canvas.active'), false)
+  const compositorPixels = await assertCompositorEffect(page.locator('canvas.active'))
   await page.screenshot({ path: join(evidence, 'preview-desktop.png') })
   await page.locator('#inspect').click()
   assert.equal(await page.locator('#pause').isDisabled(), true)
@@ -280,7 +345,9 @@ try {
   await replaceSavedScene(page, saved)
   assert.deepEqual(errors, [])
   assert.equal(await page.locator('#status-chip').getAttribute('data-phase'), 'ready')
-  report.push({ flow: 'preview', animationPixels: true, pausedPixels: true, manualPlayback: true,
+  report.push({ flow: 'preview', liveMappingAndChecker: true, authoredColorBalance: true,
+    installedNodeReports: true, compositorPixels,
+    animationPixels: true, pausedPixels: true, manualPlayback: true,
     comparison: true, narrowViewport: true, reducedMotion: true, inspection: true,
     phoneRatio: phone.width / phone.height, nonblankCapture: true, keyboard: true, retry: true, savedFailureRecovery: true })
   await browser.close(); browser = null
@@ -291,8 +358,10 @@ try {
     page.setDefaultTimeout(15000)
     const errors = []
     page.on('pageerror', error => errors.push(error.message))
+    const verifyNodePrograms = trackNodePrograms(page)
     await page.goto(url)
     await page.waitForFunction(() => document.querySelector('#status-chip')?.dataset.phase === 'ready', null, { timeout: 45000 })
+    await verifyNodePrograms(page.locator('canvas.active'))
     await activate(page, '#inspect', name)
     assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'CANVAS')
     await page.locator('#reference-file').setInputFiles(capture)
@@ -349,6 +418,7 @@ try {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, hasTouch: inputMode(name) === 'touch' })
     currentPage = page
     const errors = [], failedAssets = [], external = []
+    const verifyNodePrograms = trackNodePrograms(page)
     page.on('pageerror', error => errors.push(error.message))
     page.on('requestfailed', request => failedAssets.push(request.url()))
     page.on('response', response => { if (response.status() >= 400) failedAssets.push(response.url()) })
@@ -360,15 +430,19 @@ try {
       throw new Error(`${name} website failed: ${await page.locator('#status').innerText()}\n${errors.join('\n')}`)
     }
     assert.deepEqual(errors, []); assert.deepEqual(failedAssets, []); assert.deepEqual(external, [])
+    await verifyNodePrograms(page.locator('canvas'))
     await assertPlayback(page.locator('canvas'), true)
     await activate(page, '#pause', name)
     assert.equal(await page.locator('#pause').innerText(), 'Play')
     await assertPlayback(page.locator('canvas'), false)
+    const compositorPixels = await assertCompositorEffect(page.locator('canvas'))
     assert.deepEqual(errors, []); assert.deepEqual(failedAssets, []); assert.deepEqual(external, [])
     assert.equal(await page.locator('body').getAttribute('data-ready'), 'true')
     const screenshot = await page.screenshot({ path: join(evidence, `website-${name}.png`) })
     assert.ok((await sharp(screenshot).stats()).channels.some(channel => channel.stdev > 5), 'Exported website is blank')
     report.push({ flow: 'standalone website', browser: name, input: inputMode(name), subfolder: true, nonblank: true,
+      liveMappingAndChecker: true, authoredColorBalance: true,
+      installedNodeReports: true, compositorPixels,
       animationPixels: true, pausedPixels: true, errors: [...errors], failedAssets: [...failedAssets], external: [...external] })
     if (name === 'chromium') {
       await page.goto('about:blank')
@@ -434,7 +508,9 @@ try {
 } catch (error) {
   if (currentPage && !currentPage.isClosed()) {
     await currentPage.screenshot({ path: join(evidence, 'failed-step.png') }).catch(() => {})
-    writeFileSync(join(evidence, 'failed-step.txt'), await currentPage.locator('body').innerText().catch(() => 'Page unavailable'))
+    writeFileSync(join(evidence, 'failed-step.txt'),
+      String(error) + '\n\n' + await currentPage.locator('body').innerText().catch(() => 'Page unavailable') +
+      '\n\nNode-program response errors:\n' + JSON.stringify(nodeProgramErrors, null, 2))
   }
   throw error
 } finally {

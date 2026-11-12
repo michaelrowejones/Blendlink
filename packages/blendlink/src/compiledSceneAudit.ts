@@ -20,6 +20,7 @@ import {
 } from './compiledSceneConformance.js'
 import type { MaterialPortabilityDiagnostic } from './sceneDiagnostics.js'
 import type { SceneManifest } from './typegen.js'
+import { validatedBaseColorProgramMaterials } from './compiledMaterialPrograms.js'
 
 type RawRecord = Record<string, unknown>
 
@@ -152,6 +153,8 @@ export interface CompiledSceneAudit {
 export interface AuditCompiledSceneArtifactInput {
   manifest: SceneManifest
   glbBytes: Uint8Array
+  /** Exact shipped sidecar bytes; the audit validates the manifest pin itself. */
+  materialProgramsBytes?: Uint8Array
 }
 
 /**
@@ -188,6 +191,9 @@ export async function auditCompiledSceneArtifact(
   }
 
   const raw = readGlbJson(glbBytes, 'Compiled scene') as RawGltf
+  const baseColorPrograms = await validatedBaseColorProgramMaterials(
+    raw as unknown as Record<string, unknown>, manifest, input.materialProgramsBytes,
+  )
   assertGltfRuntimeCompatibility(raw, BLENDLINK_THREE_R184_COMPILED_PROFILE)
   await MeshoptDecoder.ready
   const document = await new NodeIO()
@@ -369,6 +375,7 @@ export async function auditCompiledSceneArtifact(
     materialPayloadCollapse,
     conformance: inspectCompiledSceneConformance({
       gltf: raw as unknown as Record<string, unknown>,
+      validatedBaseColorProgramMaterials: baseColorPrograms,
       materialRenderedTriangles: bindingCounters.map(
         (counter) => counter.renderedTriangles,
       ),

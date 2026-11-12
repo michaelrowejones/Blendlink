@@ -6,7 +6,7 @@ import type {
   SourceCompositorProgram,
 } from './sourceDisplay.js'
 import type { TslEffectNode } from './tslPostEffects.js'
-import { blenderRgbToHsv, blenderHsvToRgb } from './tslNodeRecipe.js'
+import { blenderRgbToHsv, blenderHsvToRgb, buildTslMathOperation } from './tslNodeRecipe.js'
 import { buildBlenderBloom } from './tslBlenderBloom.js'
 
 const {
@@ -14,6 +14,7 @@ const {
   clamp,
   dot,
   float,
+  floor,
   fract,
   max,
   min,
@@ -35,6 +36,7 @@ const {
       | 'clamp'
       | 'dot'
       | 'float'
+      | 'floor'
       | 'fract'
       | 'max'
       | 'min'
@@ -72,6 +74,43 @@ export function blenderGaussianWeights(radius: number): number[] {
   )
   const total = weights[0]! + 2 * weights.slice(1).reduce((sum, weight) => sum + weight, 0)
   return weights.map((weight) => weight / total)
+}
+
+function hueBasis(hue: TslEffectNode): TslEffectNode {
+  const phase = hue.mul(6)
+  return vec3(clamp(abs(phase.sub(3)).sub(1), 0, 1),
+    clamp(float(2).sub(abs(phase.sub(2))), 0, 1),
+    clamp(float(2).sub(abs(phase.sub(4))), 0, 1))
+}
+
+function compositorRgbToHsl(color: TslEffectNode, device: unknown): TslEffectNode {
+  const high = max(color.r, max(color.g, color.b))
+  const low = min(color.r, min(color.g, color.b))
+  const delta = high.sub(low)
+  const gray = high.equal(low)
+  const safeDelta = select(gray, 1, delta)
+  const lightness = min(high.add(low).mul(0.5), 1)
+  // Blender's GPU compiler groups the extrema sum; this matters near the
+  // saturation singularity even though the two formulas are algebraically equal.
+  const upperDivisor = device === 'GPU' ? float(2).sub(high.add(low)) : float(2).sub(high).sub(low)
+  const divisor = select(lightness.greaterThan(0.5), upperDivisor, high.add(low))
+  const saturation = select(gray, 0, delta.div(select(gray, 1, divisor)))
+  const hue = select(high.equal(color.r),
+    color.g.sub(color.b).div(safeDelta).add(select(color.g.lessThan(color.b), 6, 0)),
+    select(high.equal(color.g), color.b.sub(color.r).div(safeDelta).add(2),
+      color.r.sub(color.g).div(safeDelta).add(4))).div(6)
+  return vec3(select(gray, 0, hue), saturation, lightness)
+}
+
+function compositorHsvToRgb(color: TslEffectNode, device: unknown): TslEffectNode {
+  if (device === 'CPU') return hueBasis(color.x).sub(1).mul(color.y).add(1).mul(color.z)
+  if (device !== 'GPU') throw new SourceCompositorUnsupported('HSV combination has no verified compositor device')
+  // Blender's GPU sextant default also handles negative Hue. The shared
+  // shader helper's ordinary0..1 hue path remains the same.
+  const ordinary = blenderHsvToRgb(color) as TslEffectNode
+  const p = color.z.mul(float(1).sub(color.y))
+  const q = color.z.mul(float(1).sub(color.y.mul(fract(color.x.mul(6)))))
+  return select(color.x.lessThan(0), vec3(color.z, p, q), ordinary)
 }
 
 /** A complete graph builds or refuses; a partial branch never replaces Combined. */
@@ -308,6 +347,88 @@ export function buildSourceCompositor(
             node = vec4(color.rgb.mul(slope).add(offset), color.a)
             break
           }
+          case 'separate-color': {
+            const color = input('Image')
+            if (!['RGB', 'HSV', 'HSL'].includes(String(op.properties.mode)))
+              throw new SourceCompositorUnsupported('Separate Color supports RGB, HSV and HSL; YUV/YCC need verified color-model mappings')
+            const channel = ({ Red: 'x', Green: 'y', Blue: 'z', Alpha: 'w',
+              R: 'x', G: 'y', B: 'z', A: 'w' } as Record<string, string>)[op.source.output]
+            if (!channel) throw new SourceCompositorUnsupported('Separate Color has an unknown output channel')
+            if (channel === 'w') { node = color.a; break }
+            if (op.properties.mode === 'RGB') node = color[channel]
+            else if (op.properties.mode === 'HSV') node = (blenderRgbToHsv(color.rgb) as TslEffectNode)[channel]
+            else if (op.properties.mode === 'HSL') {
+              if (!['CPU', 'GPU'].includes(String(op.properties.color_conversion_device)))
+                throw new SourceCompositorUnsupported('HSL separation has no verified compositor device')
+              node = compositorRgbToHsl(color.rgb, isSingleValue(op.inputs.Image!.value)
+                ? 'CPU' : op.properties.color_conversion_device)[channel]
+            }
+            else throw new SourceCompositorUnsupported('Separate Color supports RGB, HSV and HSL; YUV/YCC need verified color-model mappings')
+            break
+          }
+          case 'combine-color': {
+            const channels = vec3(input('Red'), input('Green'), input('Blue'))
+            let color: TslEffectNode
+            if (op.properties.mode === 'RGB') color = channels
+            else if (op.properties.mode === 'HSV') {
+              if (!['CPU', 'GPU'].includes(String(op.properties.color_conversion_device)))
+                throw new SourceCompositorUnsupported('HSV combination has no verified compositor device')
+              const single = Object.values(op.inputs).every(input => isSingleValue(input.value))
+              color = compositorHsvToRgb(channels, single ? 'CPU' : op.properties.color_conversion_device)
+              if (typeof op.properties.legacy_hsv_clamp !== 'boolean')
+                throw new SourceCompositorUnsupported('HSV combination has no verified clamp model')
+              if (op.properties.legacy_hsv_clamp) color = max(color, 0)
+            } else if (op.properties.mode === 'HSL') {
+              if (!['CPU', 'GPU'].includes(String(op.properties.color_conversion_device)))
+                throw new SourceCompositorUnsupported('HSL combination has no verified compositor device')
+              if (typeof op.properties.legacy_hsl_clamp !== 'boolean')
+                throw new SourceCompositorUnsupported('HSL combination has no verified clamp model')
+              const chroma = float(1).sub(abs(channels.z.mul(2).sub(1))).mul(channels.y)
+              color = hueBasis(channels.x).sub(0.5).mul(chroma).add(channels.z)
+              const single = Object.values(op.inputs).every(input => isSingleValue(input.value))
+              if (op.properties.legacy_hsl_clamp || (!single && op.properties.color_conversion_device === 'GPU'))
+                color = max(color, 0)
+            } else throw new SourceCompositorUnsupported('Combine Color supports RGB, HSV and HSL; YUV/YCC need verified color-model mappings')
+            node = vec4(color, input('Alpha'))
+            break
+          }
+          case 'color-balance': {
+            const model = op.properties.color_balance_model
+            if (model !== 'linear' && model !== 'legacy-srgb')
+              throw new SourceCompositorUnsupported('Color Balance has no verified color model')
+            const color = input('Image')
+            const mode = constant('Type')
+            const product = (name: string): TslEffectNode => input('Color ' + name).rgb.mul(input('Base ' + name))
+            const offset = (name: string): TslEffectNode => input('Color ' + name).rgb.add(input('Base ' + name))
+            let balanced: TslEffectNode
+            if (mode === 'Lift/Gamma/Gain') {
+              // TSL select is scalar control flow, so transfer-function branch
+              // decisions must be made independently for each color channel.
+              const toSrgb = (linear: TslEffectNode): TslEffectNode => vec3(...['r', 'g', 'b'].map(c => select(
+                linear[c].lessThan(0.0031308), max(linear[c], 0).mul(12.92),
+                pow(max(linear[c], 0), 1 / 2.4).mul(1.055).sub(0.055),
+              )))
+              const toLinear = (srgb: TslEffectNode): TslEffectNode => vec3(...['r', 'g', 'b'].map(c => select(
+                srgb[c].lessThan(0.04045), max(srgb[c], 0).div(12.92),
+                pow(max(srgb[c].add(0.055).div(1.055), 0), 2.4),
+              )))
+              const source = model === 'legacy-srgb' ? toSrgb(color.rgb) : color.rgb
+              const lifted = source.sub(1).mul(vec3(2).sub(offset('Lift'))).add(1)
+              const gained = max(lifted.mul(product('Gain')), 0)
+              const gamma = product('Gamma')
+              const safeGamma = model === 'legacy-srgb'
+                ? vec3(...['r', 'g', 'b'].map(c => select(gamma[c].equal(0), 1e-6, gamma[c])))
+                : max(gamma, 1e-6)
+              balanced = pow(model === 'legacy-srgb' ? toLinear(gained) : gained, vec3(1).div(safeGamma))
+            } else if (mode === 'Offset/Power/Slope (ASC-CDL)') {
+              balanced = pow(max(color.rgb.mul(product('Slope')).add(offset('Offset')), 0), product('Power'))
+            } else {
+              throw new SourceCompositorUnsupported('Color Balance supports Lift/Gamma/Gain and ASC-CDL; White Point needs a verified chromatic-adaptation mapping')
+            }
+            // Blender caps only the upper factor bound and preserves input alpha.
+            node = vec4(mix(color.rgb, balanced, min(input('Fac'), 1)), color.a)
+            break
+          }
           case 'hue-saturation-value': {
             const color = input('Image'),
               hsv = blenderRgbToHsv(color.rgb) as TslEffectNode
@@ -376,43 +497,36 @@ export function buildSourceCompositor(
             break
           }
           case 'math': {
-            const a = input('Value'),
-              b = op.inputs.Value_001 ? input('Value_001') : float(0)
-            switch (op.properties.operation) {
-              case 'ADD':
-                node = a.add(b)
-                break
-              case 'SUBTRACT':
-                node = a.sub(b)
-                break
-              case 'MULTIPLY':
-                node = a.mul(b)
-                break
-              case 'DIVIDE':
-                node = select(b.equal(0), 0, a.div(select(b.equal(0), 1, b)))
-                break
-              case 'MINIMUM':
-                node = min(a, b)
-                break
-              case 'MAXIMUM':
-                node = max(a, b)
-                break
-              case 'ABSOLUTE':
-                node = abs(a)
-                break
-              case 'MULTIPLY_ADD':
-                node = a.mul(b).add(input('Value_002'))
-                break
-              case 'LESS_THAN':
-                node = select(a.lessThan(b), 1, 0)
-                break
-              case 'GREATER_THAN':
-                node = select(a.greaterThan(b), 1, 0)
-                break
-              default:
-                throw new SourceCompositorUnsupported(
-                  `Math operation ${String(op.properties.operation)} is unsupported`,
-                )
+            if (op.properties.operation === 'POWER') {
+              const first = op.inputs.Value?.value, second = op.inputs.Value_001?.value
+              if (first?.kind === 'constant' && first.value === 0 && second?.kind === 'constant'
+                  && typeof second.value === 'number' && second.value < 0) {
+                throw new SourceCompositorUnsupported('Zero raised to a negative power produces non-finite compositor pixels in Blender')
+              }
+            }
+            if (op.source.nodeType === 'CompositorNodeMath' && op.properties.operation === 'LOGARITHM') {
+              const base = constant('Value_001')
+              if (typeof base !== 'number' || !Number.isFinite(base) || base === 1) {
+                throw new SourceCompositorUnsupported('Legacy compositor Logarithm requires a fixed base other than 1; Blender can produce non-finite pixels')
+              }
+            }
+            try {
+              node = buildTslMathOperation(
+                String(op.properties.operation), input('Value'),
+                () => input('Value_001'), () => input('Value_002'),
+              )
+            } catch (error) {
+              throw new SourceCompositorUnsupported(error instanceof Error ? error.message : String(error))
+            }
+            const legacyMath = op.source.nodeType === 'CompositorNodeMath'
+            if (op.properties.operation === 'ROUND') {
+              const a = input('Value')
+              // Legacy compositor roundf uses half-away; modern shared Math
+              // uses floor(x + .5). Preserve the authored Blender model.
+              const magnitude = floor(abs(a).add(.5))
+              node = legacyMath ? select(a.lessThan(0), magnitude.negate(), magnitude) : floor(a.add(.5))
+            } else if (legacyMath && ['ARCSINE', 'ARCCOSINE'].includes(String(op.properties.operation))) {
+              node = select(abs(input('Value')).greaterThan(1), 0, node)
             }
             if (op.properties.use_clamp) node = clamp(node, 0, 1)
             break

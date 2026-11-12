@@ -6,6 +6,7 @@ import {
   draftSettings,
   isBlockingVerifyIssue,
   publishKtx2RuntimeAssets,
+  publishedAssetPath,
   syncAll,
   verifyAll,
 } from './sync.js'
@@ -350,9 +351,12 @@ async function main(): Promise<number> {
           reports.push({ scene: scene.name, error: `missing GLB ${scene.glbPath}; run blendlink compile` })
           continue
         }
+        const programsPath = manifest.materialPrograms
+          ? publishedAssetPath(scene, manifest.materialPrograms.url, manifest) : null
         const audit = await auditCompiledSceneArtifact({
           manifest,
           glbBytes: readFileSync(scene.glbPath),
+          ...(programsPath && existsSync(programsPath) ? { materialProgramsBytes: readFileSync(programsPath) } : {}),
         })
         reports.push({
           scene: scene.name,

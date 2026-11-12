@@ -84,6 +84,9 @@ let previous = performance.now()
 function releaseResources(): void {
   const scene = installed, graphics = renderer
   installed = null; renderer = null
+  delete canvas.dataset.tslMaterialsApplied
+  delete canvas.dataset.tslMaterialsSkipped
+  delete canvas.dataset.postprocessingOrder
   try { scene?.dispose() } catch (error) { console.warn('Scene cleanup failed:', error) }
   try { graphics?.dispose() } catch (error) { console.warn('Renderer cleanup failed:', error) }
 }
@@ -122,6 +125,9 @@ async function load(): Promise<void> {
     resize()
     installed.update(0); installed.render(0)
     if (disposed || failed) return
+    canvas.dataset.tslMaterialsApplied = String(installed.tslMaterials?.applied ?? 0)
+    canvas.dataset.tslMaterialsSkipped = String(installed.tslMaterials?.skipped.length ?? 0)
+    canvas.dataset.postprocessingOrder = JSON.stringify(installed.components.postprocessingOrder)
     status.hidden = true
     pause.disabled = false
     pause.hidden = !installed.animation || installed.animation.availableClips.length === 0

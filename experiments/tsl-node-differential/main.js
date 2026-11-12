@@ -38,7 +38,8 @@ async function init() {
     canvas.width = SIZE
     canvas.height = SIZE
     document.body.appendChild(canvas)
-    const renderer = new WebGPURenderer({ canvas, antialias: false })
+    const renderer = new WebGPURenderer({ canvas, antialias: false,
+      forceWebGL: new URLSearchParams(location.search).get('backend') === 'webgl2' })
     renderer.setPixelRatio(1)
     renderer.setSize(SIZE, SIZE, false)
     renderer.toneMapping = THREE.NoToneMapping

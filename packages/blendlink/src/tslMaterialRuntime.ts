@@ -44,24 +44,9 @@ export {
   type TslRuntimeMeshExtras,
 } from './tslMaterialProgram.js'
 
-export interface MaterialProgramImage {
-  /** Basename beside the sidecar; resolved against the sidecar URL. */
-  file: string
-  bytes: number
-  hash: string
-  mime: string
-  width: number
-  height: number
-  colorSpace: string
-}
-
-export interface MaterialProgramsDocument {
-  schemaVersion: 1
-  model: 'blendlink-material-programs-v1'
-  materials: Record<string, { channels: Record<string, MaterialProgramChannel>; skipped?: { channel?: string; reason: string }[] }>
-  /** texture_ref source images published beside the sidecar. */
-  images?: Record<string, MaterialProgramImage>
-}
+export type { MaterialProgramImage, MaterialProgramsDocument } from './materialProgramDocument.js'
+import { fetchMaterialPrograms } from './materialProgramDocument.js'
+import type { MaterialProgramImage, MaterialProgramsDocument } from './materialProgramDocument.js'
 
 export interface InstallTslMaterialsOptions {
   root: THREE.Object3D
@@ -180,45 +165,6 @@ export function installProgramIntoMaterial(
   return clone
 }
 
-async function fetchPrograms(pointer: {
-  url: string
-  bytes: number
-  hash: string
-}): Promise<MaterialProgramsDocument> {
-  const response = await fetch(pointer.url)
-  if (!response.ok) {
-    throw new Error(
-      `Blendlink material programs fetch failed (${response.status}) for ${pointer.url}`,
-    )
-  }
-  const payload = new Uint8Array(await response.arrayBuffer())
-  if (payload.byteLength !== pointer.bytes) {
-    throw new Error(
-      `Blendlink material programs at ${pointer.url} are ${payload.byteLength} bytes; ` +
-        `the descriptor pins ${pointer.bytes}. Re-run blendlink compile and republish together.`,
-    )
-  }
-  const digest = await crypto.subtle.digest(
-    'SHA-256', payload.buffer.slice(payload.byteOffset, payload.byteOffset + payload.byteLength),
-  )
-  const hash = [...new Uint8Array(digest)]
-    .map((item) => item.toString(16).padStart(2, '0')).join('').slice(0, 16)
-  if (hash !== pointer.hash) {
-    throw new Error(
-      `Blendlink material programs at ${pointer.url} hash ${hash}; the descriptor pins ` +
-        `${pointer.hash}. Re-run blendlink compile and republish together.`,
-    )
-  }
-  const document = JSON.parse(new TextDecoder().decode(payload)) as MaterialProgramsDocument
-  if (document?.schemaVersion !== 1
-    || document.model !== 'blendlink-material-programs-v1') {
-    throw new Error(
-      `Blendlink material programs at ${pointer.url} use unsupported model ` +
-        `${JSON.stringify({ schemaVersion: document?.schemaVersion, model: document?.model })}.`,
-    )
-  }
-  return document
-}
 
 async function defaultProgramTexture(
   entry: MaterialProgramImage,
@@ -372,7 +318,7 @@ export async function installTslMaterials(
   }
   const programs = options.loadPrograms
     ? await options.loadPrograms()
-    : await fetchPrograms(pointer)
+    : await fetchMaterialPrograms(pointer)
   const programTextures = await loadProgramTextures(programs, pointer.url, options)
   const objectAttribute = objectAttributeResolver()
   // Per-material attribute needs, computed once: applied meshes must ship

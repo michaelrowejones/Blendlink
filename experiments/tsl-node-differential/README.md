@@ -165,9 +165,12 @@ beyond ±1, all four atan2 quadrants, the snap/wrap zero-range guards).
 Measured: every cell sits at float-rounding noise — means 1e-5 class,
 maxima under 5.6e-4 (the inverse-sqrt pole texel) — and the discrete
 cells (CEIL, TRUNC, ROUND, SIGN, COMPARE) are byte-exact. Two semantics
-the mapping must carry: Blender rounds half away from zero while WGSL's
-native `round` is half-to-even (the mapping uses sign·floor(|x|+0.5)),
-and COMPARE's epsilon has a 1e-5 floor inside Cycles.
+the mapping must carry: WGSL's native `round` is half-to-even, while
+native Blender 5.3 Cycles shader Math uses `floor(x + 0.5)`. The original
+sweep never landed on exact half-integers and therefore did not establish
+tie behavior. The later fixed-input boundary cells prove `ROUND(-0.5)=0`
+and `ROUND(+0.5)=1`; they replaced the incorrect half-away mapping.
+COMPARE's epsilon has a 1e-5 floor inside Cycles.
 
 One cell-design finding the harness produced: the first compare sweep
 used a factor slope of exactly 0.2, which put 13 texel rows on exact
@@ -290,3 +293,74 @@ belongs with Phase 4's material application, not a lossy hack here.
   stage, then bounded random-graph composition over the proven allowlist.
 - Evidence is valid for the exact (Blender 5.2.0, three 0.184.0) pair and
   re-runs when either pin moves.
+
+
+## Focused native mode proofs — 2026-11-11
+
+`run-mapping.mjs` runs focused source proofs without rebuilding the shared
+package. It uses actual Blender Cycles CPU node graphs, the production
+Python emitter, the production TypeScript builder through Vite, and both
+WebGPURenderer backends: WebGPU and its WebGL2 fallback. The latter is not
+legacy `WebGLRenderer`, whose portable glTF/material carriers do not install
+these live TSL expressions. Each backend independently calibrates constant
+linear values and UV orientation before measuring node cells. Source and
+emitter hashes must remain stable throughout a run.
+
+```sh
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --mix
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --map-range
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --hue-ramp
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --boundary
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --math
+```
+
+`BLENDLINK_BLENDER_PATH` (or `BLENDLINK_BLENDER`) selects a native Blender
+executable; `BLENDLINK_TSL_DIFF_ARTIFACTS` selects a separate evidence
+directory when testing another version. `BLENDLINK_TEST_CHROMIUM_ARGS`
+accepts a JSON array of extra Chromium flags, including CI software GPU
+flags. Backend initialization must still prove the requested backend.
+
+Add `--built` after a coordinated package build to verify the shipping
+JavaScript module. That flag refuses an older build. Reports and native
+float buffers live in `artifacts/verification-{mapping,mix-math,map-range,
+hue-ramp,math-boundary,shader-math}`. The report records the actual Blender
+version; a run with one Blender version does not establish other versions.
+
+| Family | Live translation earned by the focused cells | Explicit boundary |
+| --- | --- | --- |
+| Mapping | Static POINT, TEXTURE, VECTOR; combined XYZ rotations, nonuniform/negative scale, safe inverse and zero-scale TEXTURE | Linked transforms and NORMAL refuse. Noise frequency accounting includes inverse texture scale. |
+| Mix | FLOAT and VECTOR; uniform/per-component factor, clamp and extrapolation, scalar-to-vector broadcasts | RGBA behavior stays in its existing path; inactive outputs and unsupported future types refuse. |
+| Map Range | FLOAT and FLOAT_VECTOR; LINEAR, STEPPED, SMOOTHSTEP, SMOOTHERSTEP, reversed ranges, zero Steps and collapsed source ranges | STEPPED requires finite nonnegative static Steps; dynamic/negative Steps refuse. Scalar and vector collapsed-range semantics differ natively and are preserved. |
+| ColorRamp | HSV/HSL × NEAR/FAR/CW/CCW; all five interpolation settings, RGB and alpha outputs | Native Cycles' 257-entry evaluator table is preserved: floor lookup for CONSTANT, linear lookup otherwise. RGB LINEAR/CONSTANT keep their analytic path. |
+| Math boundary | Exact half-integer ROUND and out-of-domain ASIN/ACOS under native shader Cycles | These are shader semantics; legacy compositor node semantics can differ. |
+
+“Exact” is the gated native-shader comparison in the cell's declared
+numeric tolerance, including calibrated rasterizer interpolation differences.
+The ColorRamp table is the native shader algorithm itself; it does not
+claim exact evaluation of the continuous `ColorRamp.evaluate()` function.
+A denser table can disagree more with Blender's rendered shader near hue
+kinks, so it is not substituted. The source color space, hue direction,
+interpolation setting and native table/lookup provenance travel in the IR.
+The factor stays live. This is a sampled node function, not a UV surface
+bake, and it introduces no additional approximation relative to the native
+Cycles table. EEVEE parity needs separate native-render evidence.
+
+Approximate/decorrelated texture cells retain their separately declared
+budgets and algorithm proofs in `cells.json`; these focused exact-node
+proofs do not widen those bands or establish whole-scene pixel parity.
+
+Measured in the 2026-11-11 focused source batch on Blender 5.3:
+Mapping's four new cells maxAbs ≤1.97e-6, Mix's seven new cells ≤2.40e-5,
+and Map Range's seventeen new cells ≤8.20e-6. Fifty new ColorRamp cells
+cover forty color mode/direction/interpolation combinations, eight alpha
+outputs and two exact constant-factor bin boundaries. Smooth ramp
+maxAbs ≤1.50e-4; every CONSTANT cell is byte-exact on both backends.
+The maximum native hue-table derivative 7.495 × factor slope 1.273 ×
+independently calibrated UV max 3.1233e-5 predicts less than 2.99e-4;
+the corresponding moving-color gate is mean 4e-5, p99 1.8e-4, max 3.2e-4.
+This accounts for known rasterizer interpolation and does not relax the
+native algorithm. Full scalar Math's 38 cells pass; its inverse-square-root
+pole is the existing maximum 5.65e-4. Native Blender 4.2 also passes the
+focused Math boundary and full hue-ramp families with the same tolerances.
+These source reports still require `--built` verification for shipping.

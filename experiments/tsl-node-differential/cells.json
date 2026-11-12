@@ -572,7 +572,7 @@
     "maxAbs": 0.005
    },
    "failureClass": "Math-enum sweep (rounding family)",
-   "notes": "Blender rounds half away from zero; WGSL's native round is half-to-even, so the mapping uses sign(x)*floor(|x|+0.5). Texel centers never sit on half-integers at this size.",
+   "notes": "Native Blender5.3 Cycles shader ROUND uses floor(x+0.5); WGSL native round is half-to-even. This moving sweep avoids half-integers; separate fixed-input boundary cells prove ROUND(-0.5)=0 and ROUND(+0.5)=1.",
    "claim": "exact"
   },
   {
@@ -2789,6 +2789,1483 @@
    "failureClass": "disagreeing noise implementations \u2014 measured NOT to apply to this pairing",
    "notes": "Blender Noise Texture (scale 4, detail 0, 3D at z=0) versus three's mx_noise_float remapped 0.5+0.5x. Planned as the negative control for the published 'a slightly different hash produces a completely different pattern' class \u2014 but measured 2026-07-27 at meanAbs 4.1e-5 / maxAbs 1.2e-4 over a real 0.67-span field: the base Perlin octave SHARES an implementation lineage between Cycles and MaterialX. Now a gated regression. The bounded claim covers exactly this configuration; fractal detail octaves, roughness, lacunarity, distortion, 4D, and Voronoi remain unproven and need their own cells.",
    "claim": "exact"
+  },
+  {
+   "id": "mapping-point-xyz",
+   "gate": true,
+   "claim": "exact",
+   "mappingSweep": {
+    "vectorType": "POINT",
+    "rotation": [
+     0.47,
+     -0.81,
+     1.13
+    ],
+    "scale": [
+     -1.4,
+     0.65,
+     2.1
+    ],
+    "location": [
+     0.17,
+     -0.23,
+     0.31
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Mapping XYZ transform order, nonuniform/negative scale and inverse safe divide",
+   "notes": "Production IR from a native Blender Mapping graph, compared to raw linear Cycles channel pixels on all three components; output bias avoids clipping negative coordinates. VECTOR ignores translation; TEXTURE inverts the rotation and scale, with zero-scale axes collapsing to zero."
+  },
+  {
+   "id": "mapping-texture-xyz",
+   "gate": true,
+   "claim": "exact",
+   "mappingSweep": {
+    "vectorType": "TEXTURE",
+    "rotation": [
+     -0.62,
+     0.39,
+     -1.07
+    ],
+    "scale": [
+     -0.75,
+     1.6,
+     0.45
+    ],
+    "location": [
+     0.17,
+     -0.23,
+     0.31
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Mapping XYZ transform order, nonuniform/negative scale and inverse safe divide",
+   "notes": "Production IR from a native Blender Mapping graph, compared to raw linear Cycles channel pixels on all three components; output bias avoids clipping negative coordinates. VECTOR ignores translation; TEXTURE inverts the rotation and scale, with zero-scale axes collapsing to zero."
+  },
+  {
+   "id": "mapping-vector-xyz",
+   "gate": true,
+   "claim": "exact",
+   "mappingSweep": {
+    "vectorType": "VECTOR",
+    "rotation": [
+     0.47,
+     -0.81,
+     1.13
+    ],
+    "scale": [
+     -1.4,
+     0.65,
+     2.1
+    ],
+    "location": [
+     123,
+     -456,
+     789
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Mapping XYZ transform order, nonuniform/negative scale and inverse safe divide",
+   "notes": "Production IR from a native Blender Mapping graph, compared to raw linear Cycles channel pixels on all three components; output bias avoids clipping negative coordinates. VECTOR ignores translation; TEXTURE inverts the rotation and scale, with zero-scale axes collapsing to zero."
+  },
+  {
+   "id": "mapping-texture-zero-scale",
+   "gate": true,
+   "claim": "exact",
+   "mappingSweep": {
+    "vectorType": "TEXTURE",
+    "rotation": [
+     0.47,
+     -0.81,
+     1.13
+    ],
+    "scale": [
+     0,
+     -0.7,
+     1.3
+    ],
+    "location": [
+     0.17,
+     -0.23,
+     0.31
+    ]
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Mapping XYZ transform order, nonuniform/negative scale and inverse safe divide",
+   "notes": "Production IR from a native Blender Mapping graph, compared to raw linear Cycles channel pixels on all three components; output bias avoids clipping negative coordinates. VECTOR ignores translation; TEXTURE inverts the rotation and scale, with zero-scale axes collapsing to zero."
+  },
+  {
+   "id": "mix-float-uniform-clamped",
+   "gate": true,
+   "claim": "exact",
+   "genericMix": {
+    "dataType": "FLOAT",
+    "factorMode": "UNIFORM",
+    "clampFactor": true
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Float/Vector Mix factor domains and implicit conversions",
+   "notes": "Linked varying fields, with factors below0 and above1, clamp on/off and ignored color-only result clamp/blend settings; post bias retains unclipped arithmetic."
+  },
+  {
+   "id": "mix-float-uniform-extrapolated",
+   "gate": true,
+   "claim": "exact",
+   "genericMix": {
+    "dataType": "FLOAT",
+    "factorMode": "UNIFORM",
+    "clampFactor": false
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Float/Vector Mix factor domains and implicit conversions",
+   "notes": "Linked varying fields, with factors below0 and above1, clamp on/off and ignored color-only result clamp/blend settings; post bias retains unclipped arithmetic."
+  },
+  {
+   "id": "mix-vector-uniform-clamped",
+   "gate": true,
+   "claim": "exact",
+   "genericMix": {
+    "dataType": "VECTOR",
+    "factorMode": "UNIFORM",
+    "clampFactor": true
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Float/Vector Mix factor domains and implicit conversions",
+   "notes": "Linked varying fields, with factors below0 and above1, clamp on/off and ignored color-only result clamp/blend settings; post bias retains unclipped arithmetic."
+  },
+  {
+   "id": "mix-vector-uniform-extrapolated",
+   "gate": true,
+   "claim": "exact",
+   "genericMix": {
+    "dataType": "VECTOR",
+    "factorMode": "UNIFORM",
+    "clampFactor": false
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Float/Vector Mix factor domains and implicit conversions",
+   "notes": "Linked varying fields, with factors below0 and above1, clamp on/off and ignored color-only result clamp/blend settings; post bias retains unclipped arithmetic."
+  },
+  {
+   "id": "mix-vector-non_uniform-clamped",
+   "gate": true,
+   "claim": "exact",
+   "genericMix": {
+    "dataType": "VECTOR",
+    "factorMode": "NON_UNIFORM",
+    "clampFactor": true
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Float/Vector Mix factor domains and implicit conversions",
+   "notes": "Linked varying fields, with factors below0 and above1, clamp on/off and ignored color-only result clamp/blend settings; post bias retains unclipped arithmetic."
+  },
+  {
+   "id": "mix-vector-non_uniform-extrapolated",
+   "gate": true,
+   "claim": "exact",
+   "genericMix": {
+    "dataType": "VECTOR",
+    "factorMode": "NON_UNIFORM",
+    "clampFactor": false
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Native Float/Vector Mix factor domains and implicit conversions",
+   "notes": "Linked varying fields, with factors below0 and above1, clamp on/off and ignored color-only result clamp/blend settings; post bias retains unclipped arithmetic."
+  },
+  {
+   "id": "mix-vector-group-broadcast",
+   "gate": true,
+   "claim": "exact",
+   "genericMix": {
+    "dataType": "VECTOR",
+    "factorMode": "UNIFORM",
+    "clampFactor": false,
+    "broadcastGroup": true
+   },
+   "tolerance": {
+    "meanAbs": 1e-05,
+    "p99Abs": 5e-05,
+    "maxAbs": 0.0001
+   },
+   "failureClass": "Scalar-to-vector conversion across group boundaries",
+   "notes": "Float field linked through a group Vector output and a direct Float-to-Vector input; Separate XYZ reads the Y lane after native Vector Mix, proving explicit broadcast rather than accidental scalar arithmetic."
+  },
+  {
+   "id": "map-range-vector-linear-clamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT_VECTOR",
+    "interpolation": "LINEAR",
+    "clamp": true
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-vector-linear-unclamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT_VECTOR",
+    "interpolation": "LINEAR",
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-vector-stepped-clamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT_VECTOR",
+    "interpolation": "STEPPED",
+    "clamp": true
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-vector-stepped-unclamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT_VECTOR",
+    "interpolation": "STEPPED",
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-vector-smoothstep-unclamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT_VECTOR",
+    "interpolation": "SMOOTHSTEP",
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-vector-smootherstep-unclamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT_VECTOR",
+    "interpolation": "SMOOTHERSTEP",
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-stepped-clamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "STEPPED",
+    "clamp": true
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-stepped-unclamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "STEPPED",
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-degenerate-linear",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "LINEAR",
+    "degenerate": true,
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-degenerate-stepped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "STEPPED",
+    "degenerate": true,
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-degenerate-smoothstep",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "SMOOTHSTEP",
+    "degenerate": true,
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-degenerate-smootherstep",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "SMOOTHERSTEP",
+    "degenerate": true,
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-degenerate-clamped",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "LINEAR",
+    "degenerate": true,
+    "clamp": true
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-default",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "LINEAR",
+    "default": true
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-zero-steps",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "STEPPED",
+    "zeroSteps": true,
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-reversed-smoothstep",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "SMOOTHSTEP",
+    "reversed": true,
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "map-range-float-reversed-smootherstep",
+   "gate": true,
+   "claim": "exact",
+   "mapRange": {
+    "dataType": "FLOAT",
+    "interpolation": "SMOOTHERSTEP",
+    "reversed": true,
+    "clamp": false
+   },
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native scalar/vector Map Range, zero/reversed source and target ranges, factor shaping and static step bounds",
+   "notes": "Native node with linked varying inputs below/above source bounds. Vector lanes include reversed input/target ranges, a collapsed source axis and zero/fractional Steps; scalar cells distinguish collapsed-range zero from vector ToMin behavior. Post bias retains unclipped outputs."
+  },
+  {
+   "id": "math-boundary-round-negative-half",
+   "gate": true,
+   "sweep": {
+    "operation": "ROUND",
+    "a": -0.5,
+    "post": {
+     "offset": 2
+    }
+   },
+   "boundaryProof": true,
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Math exact native domain boundary",
+   "notes": "Real native ShaderNodeMath under Cycles CPU; positive emission offset avoids negative radiance clipping.",
+   "claim": "exact"
+  },
+  {
+   "id": "math-boundary-round-positive-half",
+   "gate": true,
+   "sweep": {
+    "operation": "ROUND",
+    "a": 0.5,
+    "post": {
+     "offset": 2
+    }
+   },
+   "boundaryProof": true,
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Math exact native domain boundary",
+   "notes": "Real native ShaderNodeMath under Cycles CPU; positive emission offset avoids negative radiance clipping.",
+   "claim": "exact"
+  },
+  {
+   "id": "math-boundary-asin-negative-outside",
+   "gate": true,
+   "sweep": {
+    "operation": "ARCSINE",
+    "a": -2,
+    "post": {
+     "offset": 2
+    }
+   },
+   "boundaryProof": true,
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Math exact native domain boundary",
+   "notes": "Real native ShaderNodeMath under Cycles CPU; positive emission offset avoids negative radiance clipping.",
+   "claim": "exact"
+  },
+  {
+   "id": "math-boundary-acos-negative-outside",
+   "gate": true,
+   "sweep": {
+    "operation": "ARCCOSINE",
+    "a": -2,
+    "post": {
+     "offset": 2
+    }
+   },
+   "boundaryProof": true,
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Math exact native domain boundary",
+   "notes": "Real native ShaderNodeMath under Cycles CPU; positive emission offset avoids negative radiance clipping.",
+   "claim": "exact"
+  },
+  {
+   "id": "colorramp-hsv-near-linear",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "NEAR",
+    "interpolation": "LINEAR"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-near-ease",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "NEAR",
+    "interpolation": "EASE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-near-constant",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "NEAR",
+    "interpolation": "CONSTANT"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsv-near-b-spline",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "NEAR",
+    "interpolation": "B_SPLINE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-near-cardinal",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "NEAR",
+    "interpolation": "CARDINAL"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-near-alpha",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "NEAR",
+    "interpolation": "LINEAR",
+    "alpha": true
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native hue ColorRamp sampled alpha",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsv-far-linear",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "FAR",
+    "interpolation": "LINEAR"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-far-ease",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "FAR",
+    "interpolation": "EASE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-far-constant",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "FAR",
+    "interpolation": "CONSTANT"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsv-far-b-spline",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "FAR",
+    "interpolation": "B_SPLINE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-far-cardinal",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "FAR",
+    "interpolation": "CARDINAL"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-far-alpha",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "FAR",
+    "interpolation": "LINEAR",
+    "alpha": true
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native hue ColorRamp sampled alpha",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsv-cw-linear",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CW",
+    "interpolation": "LINEAR"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-cw-ease",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CW",
+    "interpolation": "EASE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-cw-constant",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CW",
+    "interpolation": "CONSTANT"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsv-cw-b-spline",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CW",
+    "interpolation": "B_SPLINE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-cw-cardinal",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CW",
+    "interpolation": "CARDINAL"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-cw-alpha",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CW",
+    "interpolation": "LINEAR",
+    "alpha": true
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native hue ColorRamp sampled alpha",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsv-ccw-linear",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CCW",
+    "interpolation": "LINEAR"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-ccw-ease",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CCW",
+    "interpolation": "EASE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-ccw-constant",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CCW",
+    "interpolation": "CONSTANT"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsv-ccw-b-spline",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CCW",
+    "interpolation": "B_SPLINE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-ccw-cardinal",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CCW",
+    "interpolation": "CARDINAL"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsv-ccw-alpha",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "CCW",
+    "interpolation": "LINEAR",
+    "alpha": true
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native hue ColorRamp sampled alpha",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-near-linear",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "NEAR",
+    "interpolation": "LINEAR"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-near-ease",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "NEAR",
+    "interpolation": "EASE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-near-constant",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "NEAR",
+    "interpolation": "CONSTANT"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-near-b-spline",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "NEAR",
+    "interpolation": "B_SPLINE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-near-cardinal",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "NEAR",
+    "interpolation": "CARDINAL"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-near-alpha",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "NEAR",
+    "interpolation": "LINEAR",
+    "alpha": true
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native hue ColorRamp sampled alpha",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-far-linear",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "FAR",
+    "interpolation": "LINEAR"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-far-ease",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "FAR",
+    "interpolation": "EASE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-far-constant",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "FAR",
+    "interpolation": "CONSTANT"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-far-b-spline",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "FAR",
+    "interpolation": "B_SPLINE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-far-cardinal",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "FAR",
+    "interpolation": "CARDINAL"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-far-alpha",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "FAR",
+    "interpolation": "LINEAR",
+    "alpha": true
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native hue ColorRamp sampled alpha",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-cw-linear",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CW",
+    "interpolation": "LINEAR"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-cw-ease",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CW",
+    "interpolation": "EASE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-cw-constant",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CW",
+    "interpolation": "CONSTANT"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-cw-b-spline",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CW",
+    "interpolation": "B_SPLINE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-cw-cardinal",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CW",
+    "interpolation": "CARDINAL"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-cw-alpha",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CW",
+    "interpolation": "LINEAR",
+    "alpha": true
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native hue ColorRamp sampled alpha",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-ccw-linear",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CCW",
+    "interpolation": "LINEAR"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-ccw-ease",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CCW",
+    "interpolation": "EASE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-ccw-constant",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CCW",
+    "interpolation": "CONSTANT"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-ccw-b-spline",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CCW",
+    "interpolation": "B_SPLINE"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-ccw-cardinal",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CCW",
+    "interpolation": "CARDINAL"
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 4e-05,
+    "p99Abs": 0.00018,
+    "maxAbs": 0.00032
+   },
+   "failureClass": "Native hue ColorRamp sampled node function",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them. Maximum native table slope7.495 \u00d7 factor slope1.273 \u00d7 independently calibrated maxUV3.1233e-5 is below0.000299; maxAbs bar0.00032 includes float arithmetic. The initial generic1e-4p99 bar did not account for hue derivatives; no native-algorithm mismatch is relaxed."
+  },
+  {
+   "id": "colorramp-hsl-ccw-alpha",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "CCW",
+    "interpolation": "LINEAR",
+    "alpha": true
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 2e-05,
+    "p99Abs": 0.0001,
+    "maxAbs": 0.0002
+   },
+   "failureClass": "Native hue ColorRamp sampled alpha",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsv-near-constant-half",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSV",
+    "hueInterpolation": "NEAR",
+    "interpolation": "CONSTANT",
+    "factor": 0.5
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ramp exact lookup bin boundary",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
+  },
+  {
+   "id": "colorramp-hsl-far-constant-half",
+   "gate": true,
+   "hueRamp": {
+    "colorMode": "HSL",
+    "hueInterpolation": "FAR",
+    "interpolation": "CONSTANT",
+    "factor": 0.5
+   },
+   "claim": "exact",
+   "tolerance": {
+    "meanAbs": 1e-06,
+    "p99Abs": 1e-06,
+    "maxAbs": 1e-06
+   },
+   "failureClass": "Native hue ramp exact lookup bin boundary",
+   "notes": "Native HSV/HSL257-entry table, interpolated except CONSTANT floor lookup. Factor remains live; no surface bake. Exact here refers to the native Cycles shader algorithm, not the continuous ColorRamp.evaluate function. Moving factors avoid exact lookup-bin boundaries; separate fixed-factor cells prove them."
   }
  ]
 }

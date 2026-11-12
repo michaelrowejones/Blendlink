@@ -1,0 +1,95 @@
+import * as THREE from 'three'
+import { WebGPURenderer, NodeMaterial, QuadMesh } from 'three/webgpu'
+import { textureLoad, uv, vec2, ivec2 } from 'three/tsl'
+import { buildSourceCompositor } from 'blendlink-compositor-under-test'
+
+const reports: unknown[] = []
+const result = document.querySelector('#results')!
+let renderer: WebGPURenderer | undefined
+try {
+  const webgl = new URLSearchParams(location.search).get('backend') === 'webgl2'
+  renderer = new WebGPURenderer({ forceWebGL: webgl })
+  await renderer.init()
+  renderer.outputColorSpace = THREE.LinearSRGBColorSpace
+  renderer.toneMapping = THREE.NoToneMapping
+  const backend = (renderer.backend as any).isWebGLBackend ? 'webgl2' : 'webgpu'
+  if (backend !== (webgl ? 'webgl2' : 'webgpu')) throw new Error('Requested renderer backend was not available')
+  const shaderErrors: string[] = []
+  renderer.debug.onShaderError = (gl, program, vertex, fragment) => shaderErrors.push([
+    gl.getProgramInfoLog(program), gl.getShaderInfoLog(vertex), gl.getShaderInfoLog(fragment),
+  ].filter(Boolean).join('\n'))
+  const device = (renderer.backend as any).device as GPUDevice | undefined
+  const cases: { file: string }[] = await (await fetch('/references/index.json')).json()
+  for (const entry of cases) {
+    const test = await (await fetch('/references/' + entry.file)).json()
+    const { width, height } = test
+    renderer.setSize(width, height)
+    const texture = new THREE.DataTexture(new Float32Array(test.input), width, height, THREE.RGBAFormat, THREE.FloatType)
+    texture.needsUpdate = true
+    const source = textureLoad(texture, ivec2(uv().mul(vec2(width, height))))
+    const material = new NodeMaterial()
+    const quad = new QuadMesh(material)
+    const target = new THREE.RenderTarget(width, height, { type: THREE.FloatType })
+    const row: any = { case: test.case, blenderVersion: test.blenderVersion, blenderHash: test.blenderHash,
+      exactAlpha: test.exactAlpha === true, backend }
+    const shaderStart = shaderErrors.length
+    device?.pushErrorScope('validation')
+    const render = async (node: any) => {
+      material.fragmentNode = node
+      material.needsUpdate = true
+      renderer!.setRenderTarget(target)
+      quad.render(renderer!)
+      return await renderer!.readRenderTargetPixelsAsync(target, 0, 0, width, height) as Float32Array
+    }
+    const errorFor = (actual: Float32Array, expected: number[], flip: boolean) => {
+      // Three aligns WebGPU rows to256 bytes but omits trailing padding on the
+      // final row. Total array length therefore cannot determine the stride.
+      const stride = webgl ? width : Math.ceil(width * 16 / 256) * 256 / 16
+      if (actual.length < ((height - 1) * stride + width) * 4) throw new Error('Unexpected GPU readback layout')
+      const channels = [0, 0, 0, 0]
+      let worst: unknown
+      for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) for (let c = 0; c < 4; c++) {
+        const value = actual[(y * stride + x) * 4 + c]!
+        if (!Number.isFinite(value)) throw new Error('GPU produced a non-finite compositor pixel')
+        const reference = expected[((flip ? height - y - 1 : y) * width + x) * 4 + c]!
+        const error = Math.abs(value - reference)
+        if (error > Math.max(...channels)) worst = { x, y, channel: c, actual: value, expected: reference }
+        channels[c] = Math.max(channels[c]!, error)
+      }
+      return { max: Math.max(...channels), channels, worst }
+    }
+    try {
+      // Establish row orientation with unchanged HDR/alpha input, independently
+      // of the color grade. Never pick a different orientation to fit a case.
+      const control = await render(source)
+      const forward = errorFor(control, test.input, false)
+      const reverse = errorFor(control, test.input, true)
+      const flip = reverse.max < forward.max
+      const calibration = flip ? reverse : forward
+      row.readback = { arrayType: control.constructor.name, arrayLength: control.length,
+        width, height, stridePixels: webgl ? width : Math.ceil(width / 16) * 16,
+        firstValues: Array.from(control.slice(0, 16)) }
+      row.rowFlip = flip
+      row.calibration = calibration.max
+      if (calibration.max > 1e-6) throw new Error('Unmodified HDR input did not survive the browser render target')
+      const built = buildSourceCompositor(test.program, () => source)
+      try {
+        const actual = await render(built.node)
+        Object.assign(row, errorFor(actual, test.expected, flip))
+      } finally { built.dispose() }
+    } catch (error) { row.error = String(error) }
+    finally {
+      texture.dispose(); material.dispose(); target.dispose()
+      const validation = await device?.popErrorScope()
+      row.shaderErrors = shaderErrors.slice(shaderStart)
+      if (validation) row.shaderErrors.push(validation.message)
+      if (row.shaderErrors.length) row.error = 'Shader validation failed: ' + row.shaderErrors.join('\n')
+      reports.push(row)
+    }
+  }
+  result.textContent = JSON.stringify(reports, null, 2)
+  ;(window as any).__compositorResults = reports
+} catch (error) {
+  result.textContent = String(error)
+  ;(window as any).__compositorFailure = String(error)
+} finally { renderer?.dispose() }

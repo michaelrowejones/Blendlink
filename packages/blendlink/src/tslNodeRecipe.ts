@@ -160,9 +160,9 @@ function tslTrunc(value: TslExpression): TslExpression {
   return tslSign(value).mul(tslFloor(tslAbs(value)))
 }
 
-/** Blender roundf: half away from zero — WGSL's round is half-to-even. */
+/** Cycles shader Math rounds ties toward positive infinity; WGSL uses ties-to-even. */
 function blenderRound(value: TslExpression): TslExpression {
-  return tslSign(value).mul(tslFloor(tslAbs(value).add(0.5)))
+  return tslFloor(value.add(0.5))
 }
 
 function tslTan(value: TslExpression): TslExpression {
@@ -355,8 +355,11 @@ export function blenderPower(
   base: TslExpression, exponent: TslExpression,
 ): TslExpression {
   const isInteger = tslFloor(exponent).equal(exponent)
-  const magnitude = tslPow(tslAbs(base), exponent)
-  const oddExponent = blenderModulo(exponent, tslFloat(2.0)).equal(1.0)
+  // WGSL evaluates constant expressions even in inactive select branches.
+  // Guard the operand itself so negative fractional powers and zero raised
+  // to a negative exponent cannot invalidate an otherwise safe shader.
+  const magnitude = tslPow(tslSelect(base.equal(0.0), tslFloat(1.0), tslAbs(base)), exponent)
+  const oddExponent = tslAbs(blenderModulo(exponent, tslFloat(2.0))).equal(1.0)
   const signedMagnitude = tslSelect(
     oddExponent, magnitude.negate(), magnitude,
   )
@@ -366,7 +369,7 @@ export function blenderPower(
   )
   return tslSelect(
     base.lessThan(0.0), negativeBase,
-    tslSelect(base.equal(0.0), zeroBase, tslPow(base, exponent)),
+    tslSelect(base.equal(0.0), zeroBase, magnitude),
   )
 }
 
@@ -528,33 +531,56 @@ function build(expression: TslIrExpression): TslExpression {
       return buildMixColor(expression)
     }
     case 'map_range': {
-      // Cycles map range with safe divide; SMOOTHSTEP applies the cubic
-      // ease to the clamped factor; the clamp option clamps the result to
-      // the ordered target range.
+      const vector = expression.dataType === 'FLOAT_VECTOR'
+      if (expression.dataType !== undefined && expression.dataType !== 'FLOAT' && !vector) {
+        return fail(`IR map_range data type ${String(expression.dataType)} has no proven mapping`)
+      }
+      const interpolation = expression.interpolation ?? 'LINEAR'
+      if (!['LINEAR', 'STEPPED', 'SMOOTHSTEP', 'SMOOTHERSTEP'].includes(String(interpolation))) {
+        return fail(`IR map_range interpolation ${String(interpolation)} has no proven mapping`)
+      }
       const value = build(child(expression, 'value'))
       const fromMin = build(child(expression, 'fromMin'))
       const fromMax = build(child(expression, 'fromMax'))
       const toMin = build(child(expression, 'toMin'))
       const toMax = build(child(expression, 'toMax'))
-      let factor = blenderDivide(
-        value.sub(fromMin), fromMax.sub(fromMin),
-      )
-      if (expression.interpolation === 'SMOOTHSTEP') {
-        const clamped = tslClamp(factor, 0.0, 1.0)
-        factor = clamped.mul(clamped)
-          .mul(tslFloat(3.0).sub(clamped.mul(2.0)))
-      } else if (expression.interpolation === 'SMOOTHERSTEP') {
-        // Quintic ease: t^3 (t (6t - 15) + 10).
-        const t = tslClamp(factor, 0.0, 1.0)
-        factor = t.mul(t).mul(t).mul(
-          t.mul(t.mul(6.0).sub(15.0)).add(10.0),
-        )
+      let steps: TslExpression | undefined
+      if (interpolation === 'STEPPED') {
+        const source = child(expression, 'steps')
+        const values = vector && source.op === 'const_vec3' ? source.value
+          : !vector && source.op === 'const_float' ? [source.value] : []
+        if (!Array.isArray(values) || values.length !== (vector ? 3 : 1)
+          || values.some(value => typeof value !== 'number' || !Number.isFinite(value) || value < 0)) {
+          return fail('IR map_range STEPPED requires finite nonnegative static Steps')
+        }
+        steps = build(source)
       }
-      const result = toMin.add(factor.mul(toMax.sub(toMin)))
-      if (expression.clamp === false) return result
-      return tslClamp(
-        result, tslMin(toMin, toMax), tslMax(toMin, toMax),
-      )
+      const component = (axis?: 'x' | 'y' | 'z'): TslExpression => {
+        const part = (node: TslExpression): TslExpression => axis ? node[axis] : node
+        const low = part(fromMin), high = part(fromMax)
+        const targetLow = part(toMin), targetHigh = part(toMax)
+        let factor = blenderDivide(part(value).sub(low), high.sub(low))
+        if (interpolation === 'STEPPED') {
+          const count = part(steps!)
+          factor = tslSelect(count.greaterThan(0),
+            blenderDivide(tslFloor(factor.mul(count.add(1))), count), tslFloat(0))
+        } else if (interpolation === 'SMOOTHSTEP') {
+          const t = tslClamp(factor, 0.0, 1.0)
+          factor = t.mul(t).mul(tslFloat(3).sub(t.mul(2)))
+        } else if (interpolation === 'SMOOTHERSTEP') {
+          const t = tslClamp(factor, 0.0, 1.0)
+          factor = t.mul(t).mul(t).mul(t.mul(t.mul(6).sub(15)).add(10))
+        }
+        let result = targetLow.add(factor.mul(targetHigh.sub(targetLow)))
+        // Native scalar Map Range returns zero for a collapsed source range.
+        // Vector Map Range instead retains To Min on each collapsed axis.
+        if (!vector) result = tslSelect(high.equal(low), tslFloat(0), result)
+        if (expression.clamp !== false && (interpolation === 'LINEAR' || interpolation === 'STEPPED')) {
+          result = tslClamp(result, tslMin(targetLow, targetHigh), tslMax(targetLow, targetHigh))
+        }
+        return result
+      }
+      return vector ? tslVec3(component('x'), component('y'), component('z')) : component()
     }
     case 'clamp_minmax':
       // Blender's Clamp node in Min Max mode: min(max(value, min), max).
@@ -566,13 +592,14 @@ function build(expression: TslIrExpression): TslExpression {
         build(child(expression, 'max')),
       )
     case 'ramp_lut': {
-      // A sampled colorband (B_SPLINE / CARDINAL / EASE): Blender's own
-      // evaluate() filled the LUT, and the shader interpolates between
-      // exact texels manually — nearest sampling avoids depending on the
-      // optional float32-filterable WebGPU feature.
+      // Blender's own evaluate() fills smooth RGB and HSV/HSL tables.
+      // Hue CONSTANT matches Cycles' 257-entry floor lookup. Manual sampling
+      // avoids depending on the optional float32-filterable WebGPU feature.
+      const lookup = expression.lookup ?? 'LINEAR'
+      if (lookup !== 'LINEAR' && lookup !== 'FLOOR') fail(`IR ramp_lut lookup ${String(lookup)} unsupported`)
       const { lut, samples } = buildLutTexture(expression)
       const factor = tslClamp(build(child(expression, 'input')), 0.0, 1.0)
-      const mixed = sampleLut(lut, samples, factor)
+      const mixed = sampleLut(lut, samples, factor, lookup !== 'FLOOR')
       if (expression.channel === 'alpha') {
         return (mixed as unknown as { w: TslExpression }).w
       }
@@ -1848,7 +1875,7 @@ function buildLutTexture(
 /** Manual two-texel lerp over a nearest-filtered LUT row; the factor must
  * already be clamped to [0, 1]. */
 function sampleLut(
-  lut: DataTexture, samples: number, factor: TslExpression,
+  lut: DataTexture, samples: number, factor: TslExpression, interpolate = true,
 ): TslExpression {
   const scaled = factor.mul(samples - 1)
   const index = tslFloor(scaled)
@@ -1857,6 +1884,7 @@ function sampleLut(
     index.add(offset + 0.5).div(samples), 0.5,
   )
   const low = tslTexture(lut, coordinate(0))
+  if (!interpolate) return low
   const high = tslTexture(lut, coordinate(1))
   return tslMix(low, high, blend)
 }
@@ -1989,22 +2017,29 @@ function buildVectorMath(expression: TslIrExpression): TslExpression {
 }
 
 function buildMath(expression: TslIrExpression): TslExpression {
-  const operation = String(expression.operation)
-  const a = build(child(expression, 'a'))
-  const b = () => build(child(expression, 'b'))
+  return buildTslMathOperation(
+    String(expression.operation), build(child(expression, 'a')),
+    () => build(child(expression, 'b')), () => build(child(expression, 'c')),
+  )
+}
+
+/** Shared scalar arithmetic for native shader and compositor Math nodes.
+ * Lazy operands preserve unary/binary socket availability in either editor. */
+export function buildTslMathOperation(
+  operation: string, a: TslExpression,
+  b: () => TslExpression, c: () => TslExpression,
+): TslExpression {
   switch (operation) {
     case 'ADD': return a.add(b())
     case 'SUBTRACT': return a.sub(b())
     case 'MULTIPLY': return a.mul(b())
     case 'DIVIDE': return blenderDivide(a, b())
     case 'MULTIPLY_ADD':
-      return a.mul(b()).add(build(child(expression, 'c')))
+      return a.mul(b()).add(c())
     case 'POWER': return blenderPower(a, b())
     case 'MINIMUM': return tslMin(a, b())
     case 'MAXIMUM': return tslMax(a, b())
-    // step treats exact equality as >=; Blender's comparisons are strict.
-    // The difference is measure-zero and never lands on cell texels.
-    case 'GREATER_THAN': return tslStep(b(), a)
+    case 'GREATER_THAN': return tslSelect(a.greaterThan(b()), tslFloat(1), tslFloat(0))
     case 'LESS_THAN': return tslOneMinus(tslStep(b(), a))
     case 'MODULO': return blenderModulo(a, b())
     case 'FLOORED_MODULO': {
@@ -2067,7 +2102,7 @@ function buildMath(expression: TslIrExpression): TslExpression {
       // wrapf(value, max, min): range = max - min;
       // range != 0 ? value - range * floor((value - min) / range) : min.
       const maxValue = b()
-      const minValue = build(child(expression, 'c'))
+      const minValue = c()
       const range = maxValue.sub(minValue)
       const wrapped = a.sub(
         range.mul(tslFloor(a.sub(minValue).div(guardedDivisor(range)))),
@@ -2079,7 +2114,7 @@ function buildMath(expression: TslIrExpression): TslExpression {
       // x >= edge, exactly the inclusive comparison with args swapped.
       return tslStep(
         tslAbs(a.sub(b())),
-        tslMax(build(child(expression, 'c')), 1e-5),
+        tslMax(c(), 1e-5),
       )
     case 'SMOOTH_MIN':
     case 'SMOOTH_MAX': {
@@ -2088,7 +2123,7 @@ function buildMath(expression: TslIrExpression): TslExpression {
       const sign = operation === 'SMOOTH_MAX' ? -1 : 1
       const first = a.mul(sign)
       const second = b().mul(sign)
-      const smoothing = build(child(expression, 'c'))
+      const smoothing = c()
       const h = tslMax(smoothing.sub(tslAbs(first.sub(second))), 0.0)
         .div(guardedDivisor(smoothing))
       const smoothed = tslMin(first, second)
@@ -2118,21 +2153,35 @@ function buildMapping(expression: TslIrExpression): TslExpression {
   const location = numbers(expression, 'location')
   const rotation = numbers(expression, 'rotation')
   const scale = numbers(expression, 'scale')
-  if (Math.abs(rotation[0]!) > 1e-9 || Math.abs(rotation[1]!) > 1e-9) {
-    fail('IR mapping supports Z rotation only (the proven cell)')
+  if (location.length !== 3 || rotation.length !== 3 || scale.length !== 3) {
+    return fail('IR mapping requires three location, rotation and scale components')
   }
-  const cosine = Math.cos(rotation[2]!)
-  const sine = Math.sin(rotation[2]!)
-  if (expression.vectorType === 'POINT') {
-    // Proven order: scale, then rotate, then translate.
+  // Blender uses extrinsic XYZ: forward is Rz * Ry * Rx. The inverse
+  // applies the transpose in the opposite order. Mapping cells exercise
+  // combined rotations, negative/nonuniform scale and the zero-scale case.
+  const rotateX = (v: TslExpression, angle: number): TslExpression => {
+    const c = Math.cos(angle), s = Math.sin(angle)
+    return tslVec3(v.x, v.y.mul(c).sub(v.z.mul(s)), v.y.mul(s).add(v.z.mul(c)))
+  }
+  const rotateY = (v: TslExpression, angle: number): TslExpression => {
+    const c = Math.cos(angle), s = Math.sin(angle)
+    return tslVec3(v.x.mul(c).add(v.z.mul(s)), v.y, v.z.mul(c).sub(v.x.mul(s)))
+  }
+  const rotateZ = (v: TslExpression, angle: number): TslExpression => {
+    const c = Math.cos(angle), s = Math.sin(angle)
+    return tslVec3(v.x.mul(c).sub(v.y.mul(s)), v.x.mul(s).add(v.y.mul(c)), v.z)
+  }
+  const forward = (v: TslExpression): TslExpression => rotateZ(
+    rotateY(rotateX(v, rotation[0]!), rotation[1]!), rotation[2]!,
+  )
+  if (expression.vectorType === 'POINT' || expression.vectorType === 'VECTOR') {
     const scaled = tslVec3(
       input.x.mul(scale[0]!), input.y.mul(scale[1]!), input.z.mul(scale[2]!),
     )
-    return tslVec3(
-      scaled.x.mul(cosine).sub(scaled.y.mul(sine)).add(location[0]!),
-      scaled.x.mul(sine).add(scaled.y.mul(cosine)).add(location[1]!),
-      scaled.z.add(location[2]!),
-    )
+    const rotated = forward(scaled)
+    return expression.vectorType === 'POINT'
+      ? rotated.add(tslVec3(location[0]!, location[1]!, location[2]!))
+      : rotated
   }
   if (expression.vectorType === 'TEXTURE') {
     // Proven inverse: subtract, inverse-rotate, then divide by scale.
@@ -2140,14 +2189,13 @@ function buildMapping(expression: TslIrExpression): TslExpression {
       input.x.sub(location[0]!), input.y.sub(location[1]!),
       input.z.sub(location[2]!),
     )
-    const rotated = tslVec3(
-      moved.x.mul(cosine).add(moved.y.mul(sine)),
-      moved.x.mul(-sine).add(moved.y.mul(cosine)),
-      moved.z,
+    const rotated = rotateX(
+      rotateY(rotateZ(moved, -rotation[2]!), -rotation[1]!), -rotation[0]!,
     )
     return tslVec3(
-      rotated.x.div(scale[0]!), rotated.y.div(scale[1]!),
-      rotated.z.div(scale[2]!),
+      blenderDivide(rotated.x, tslFloat(scale[0]!)),
+      blenderDivide(rotated.y, tslFloat(scale[1]!)),
+      blenderDivide(rotated.z, tslFloat(scale[2]!)),
     )
   }
   return fail(`IR mapping type ${String(expression.vectorType)}`)

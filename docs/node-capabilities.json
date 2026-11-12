@@ -1,0 +1,2654 @@
+{
+  "schemaVersion": 1,
+  "scope": "Explicit reviewed implementation routes, not blanket pixel parity; static fallback never counts as live.",
+  "entries": {
+    "shader:ShaderNodeValue": {
+      "category": "supported",
+      "limits": "Static value; keyed/driven node inputs refuse.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_float"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_float':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeRGB": {
+      "category": "supported",
+      "limits": "RGB constant output; keyed/driven node inputs refuse.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeSeparateXYZ": {
+      "category": "supported",
+      "limits": "X/Y/Z component extraction from supported vector inputs.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "separate"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'separate':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeCombineXYZ": {
+      "category": "supported",
+      "limits": "X/Y/Z components from supported scalar inputs.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "combine"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'combine':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeGamma": {
+      "category": "supported",
+      "limits": "Declared Blender safe gamma formula on supported color inputs.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "gamma"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'gamma':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeInvert": {
+      "category": "supported",
+      "limits": "Color inversion and factor; output alpha is subject to the material channel contract.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "invert"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'invert':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeBrightContrast": {
+      "category": "supported",
+      "limits": "Brightness/contrast pointwise algebra; renderer lighting remains separate.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "bright_contrast"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'bright_contrast':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeRGBToBW": {
+      "category": "supported",
+      "limits": "RGB-to-luminance conversion under exported working-space contract.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "rgb_to_bw"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'rgb_to_bw':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeHueSaturation": {
+      "category": "supported",
+      "limits": "Hue/saturation/value color algebra on supported graph inputs.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "hue_sat"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'hue_sat':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeMath": {
+      "category": "supported",
+      "limits": "All declared scalar operations; Blender safe math and optional clamp; nonfinite/animated inputs are not blanket supported.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "math"
+      ],
+      "modes": {
+        "operation": {
+          "sourceSet": "packages/blender-addon/tsl_ir.py:_MATH_OPERATIONS"
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'math':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeVectorMath": {
+      "category": "partial",
+      "limits": "Declared vector operations only; Reflect/Refract/Faceforward/Project and newly introduced modes remain gaps.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "vector_math",
+        "vector_scale"
+      ],
+      "modes": {
+        "operation": {
+          "sourceSet": "packages/blender-addon/tsl_ir.py:_VECTOR_MATH_OPERATIONS"
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'vector_math':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeMapping": {
+      "category": "partial",
+      "limits": "POINT/TEXTURE/VECTOR static XYZ transforms, including rotation and zero-scale-safe inverse; NORMAL and linked transform settings refuse.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "mapping"
+      ],
+      "modes": {
+        "vector_type": {
+          "supported": [
+            "POINT",
+            "TEXTURE",
+            "VECTOR"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'mapping':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/mapping_translation_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeVectorRotate": {
+      "category": "partial",
+      "limits": "Axis Angle and fixed X/Y/Z axes; Invert/Euler and linked Center refuse.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "vector_rotate"
+      ],
+      "modes": {
+        "rotation_type": {
+          "supported": [
+            "AXIS_ANGLE",
+            "X_AXIS",
+            "Y_AXIS",
+            "Z_AXIS"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'vector_rotate':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeCombineColor": {
+      "category": "partial",
+      "limits": "RGB/HSV only; HSL and Alpha output semantics are not broadly ported.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "combine",
+        "hsv_to_rgb"
+      ],
+      "modes": {
+        "mode": {
+          "supported": [
+            "RGB",
+            "HSV"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'combine':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeSeparateColor": {
+      "category": "partial",
+      "limits": "RGB/HSV components only; HSL and Alpha outputs are not broadly ported.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "separate",
+        "rgb_to_hsv"
+      ],
+      "modes": {
+        "mode": {
+          "supported": [
+            "RGB",
+            "HSV"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'separate':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeCombineRGB": {
+      "category": "supported",
+      "limits": "Legacy RGB component combiner.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "combine"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'combine':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeSeparateRGB": {
+      "category": "supported",
+      "limits": "Legacy RGB component separator.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "separate"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'separate':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeMixRGB": {
+      "category": "partial",
+      "limits": "Declared blend modes, factor/result clamping; unlisted native blend modes refuse.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "mix_color"
+      ],
+      "modes": {
+        "blend_type": {
+          "sourceSet": "packages/blender-addon/tsl_ir.py:_MIX_BLEND_TYPES"
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'mix_color':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeMix": {
+      "category": "partial",
+      "limits": "FLOAT and VECTOR mix, uniform/nonuniform vector factors; RGBA declared blend modes; Rotation is not a valid shader-tree mode in inventoried versions.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "mix_color",
+        "math",
+        "clamp01"
+      ],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "FLOAT",
+            "VECTOR",
+            "RGBA"
+          ],
+          "partial": []
+        },
+        "blend_type": {
+          "sourceSet": "packages/blender-addon/tsl_ir.py:_MIX_BLEND_TYPES"
+        },
+        "factor_mode": {
+          "supported": [
+            "UNIFORM",
+            "NON_UNIFORM"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'mix_color':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/mix_translation_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeMapRange": {
+      "category": "partial",
+      "limits": "FLOAT/FLOAT_VECTOR LINEAR/STEPPED/SMOOTHSTEP/SMOOTHERSTEP, constant finite nonnegative Steps for STEPPED; dynamic/negative Steps refuse. Both node-renderer backends have native differential evidence.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "map_range"
+      ],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "FLOAT",
+            "FLOAT_VECTOR"
+          ]
+        },
+        "interpolation_type": {
+          "supported": [
+            "LINEAR",
+            "STEPPED",
+            "SMOOTHSTEP",
+            "SMOOTHERSTEP"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'map_range':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeClamp": {
+      "category": "partial",
+      "limits": "MINMAX only; RANGE is a named refusal.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "clamp_minmax"
+      ],
+      "modes": {
+        "clamp_type": {
+          "supported": [
+            "MINMAX"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'clamp_minmax':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexCoord": {
+      "category": "partial",
+      "limits": "UV/Object/Generated outputs only; no Object override, instancer, Camera/Window/Reflection/Normal coordinates.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "uv",
+        "object_coords",
+        "generated"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'uv':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeUVMap": {
+      "category": "partial",
+      "limits": "Named or active UV binding; exported channel/attribute binding must exist; instancer semantics are not a general port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "uv"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'uv':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexChecker": {
+      "category": "partial",
+      "limits": "Color/Factor and supported 3D coordinate expressions; input graph and discontinuity tolerances still apply.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "tex_checker"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'tex_checker':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexGradient": {
+      "category": "supported",
+      "limits": "All seven declared gradient forms; supported input coordinate expressions only.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "tex_gradient"
+      ],
+      "modes": {
+        "gradient_type": {
+          "supported": [
+            "LINEAR",
+            "QUADRATIC",
+            "EASING",
+            "DIAGONAL",
+            "RADIAL",
+            "SPHERICAL",
+            "QUADRATIC_SPHERE"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'tex_gradient':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexMagic": {
+      "category": "partial",
+      "limits": "Color/Factor with native turbulence depth; numerical tolerances and upstream coordinate bounds apply.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "tex_magic"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'tex_magic':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexWave": {
+      "category": "partial",
+      "limits": "Bands/Rings and declared profiles; Distortion constant; nonzero distortion uses static Detail<=2 and static Detail Roughness.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "tex_wave"
+      ],
+      "modes": {
+        "wave_type": {
+          "supported": [
+            "BANDS",
+            "RINGS"
+          ],
+          "partial": []
+        },
+        "bands_direction": {
+          "supported": [
+            "X",
+            "Y",
+            "Z",
+            "DIAGONAL"
+          ],
+          "partial": []
+        },
+        "rings_direction": {
+          "supported": [
+            "X",
+            "Y",
+            "Z",
+            "SPHERICAL"
+          ],
+          "partial": []
+        },
+        "wave_profile": {
+          "supported": [
+            "SIN",
+            "SAW",
+            "TRI"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'tex_wave':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexNoise": {
+      "category": "partial",
+      "limits": "Normalized FBM, 1D/2D/3D/4D; Detail<=6 and static fractal controls; exact effective-scale band <= 80, additional dimension-specific approximation bands are declared.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "noise"
+      ],
+      "modes": {
+        "noise_dimensions": {
+          "supported": [
+            "1D",
+            "2D",
+            "3D",
+            "4D"
+          ],
+          "partial": []
+        },
+        "noise_type": {
+          "supported": [
+            "FBM"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'noise':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexWhiteNoise": {
+      "category": "partial",
+      "limits": "1D/2D/3D/4D Value/Color hash algebra; continuous UV sampling is a declared approximation, not per-texel parity.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "tex_white_noise"
+      ],
+      "modes": {
+        "noise_dimensions": {
+          "supported": [
+            "1D",
+            "2D",
+            "3D",
+            "4D"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'tex_white_noise':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexVoronoi": {
+      "category": "partial",
+      "limits": "2D/3D F1/SMOOTH_F1 Euclidean; no normalization or fractal Detail; constant scale <= 40 exact band, named approximate bands for selected outputs.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "tex_voronoi"
+      ],
+      "modes": {
+        "voronoi_dimensions": {
+          "supported": [
+            "2D",
+            "3D"
+          ],
+          "partial": []
+        },
+        "feature": {
+          "supported": [
+            "F1",
+            "SMOOTH_F1"
+          ],
+          "partial": []
+        },
+        "distance": {
+          "supported": [
+            "EUCLIDEAN"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'tex_voronoi':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexImage": {
+      "category": "partial",
+      "limits": "Linear/Closest/Cubic; Repeat/Extend; Flat or sharp Box; straight alpha and known color spaces. Embedded IR<=128x128; larger nonfloat Flat textures use referenced bytes. Smart/Clip/Mirror/spherical/tube and blended Box refuse.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "tex_image",
+        "texture_ref"
+      ],
+      "modes": {
+        "interpolation": {
+          "supported": [
+            "Linear",
+            "Closest",
+            "Cubic"
+          ],
+          "partial": []
+        },
+        "extension": {
+          "supported": [
+            "REPEAT",
+            "EXTEND"
+          ],
+          "partial": []
+        },
+        "projection": {
+          "supported": [
+            "FLAT",
+            "BOX"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'tex_image':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeValToRGB": {
+      "category": "partial",
+      "limits": "RGB LINEAR/CONSTANT use analytic stops; other RGB modes use a native 257-sample LUT with remaining narrow-stop bounds. HSV/HSL, all four hue directions and five interpolation settings, Color/Alpha: native Cycles 257-entry table, linear lookup except CONSTANT floor; factor stays live, no surface bake. Both 4.2/5.3 Cycles CPU and both node-renderer backends tested; EEVEE pixel parity is not claimed.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "color_ramp",
+        "ramp_alpha",
+        "ramp_lut"
+      ],
+      "modes": {
+        "color_ramp.interpolation": {
+          "supported": [
+            "LINEAR",
+            "CONSTANT"
+          ],
+          "partial": [
+            "EASE",
+            "CARDINAL",
+            "B_SPLINE"
+          ]
+        },
+        "color_ramp.color_mode": {
+          "supported": [
+            "RGB",
+            "HSV",
+            "HSL"
+          ]
+        },
+        "color_ramp.hue_interpolation": {
+          "supported": [
+            "NEAR",
+            "FAR",
+            "CW",
+            "CCW"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'color_ramp':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/color_ramp_translation_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "blenderVersions": [
+          "4.2.0",
+          "5.3.0"
+        ],
+        "nativeEngine": "Cycles CPU",
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "cellsPerVersion": 54,
+        "constantMaxAbs": 0,
+        "smoothMaxAbs": 0.000149072,
+        "remainingLimits": "RGB non-linear narrow-stop domain and whole-scene lighting are not blanket parity claims."
+      }
+    },
+    "shader:ShaderNodeRGBCurve": {
+      "category": "partial",
+      "limits": "STANDARD tone only, native 257-sample independent RGB/composite curve LUT with clipping and unit X range; FILMLIKE explicitly refuses because channel-coupled behavior is unproven. Bounded sampling/extrapolation limits remain.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "curve_rgb"
+      ],
+      "modes": {
+        "mapping.tone": {
+          "supported": [
+            "STANDARD"
+          ],
+          "unsupported": [
+            "FILMLIKE"
+          ]
+        },
+        "mapping.extend": {
+          "partial": [
+            "EXTRAPOLATED",
+            "HORIZONTAL"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'curve_rgb':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/node_mode_refusal_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeNormalMap": {
+      "category": "partial",
+      "limits": "Tangent space only; exported tangent/normal basis and decoded input conventions apply.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "normal_map"
+      ],
+      "modes": {
+        "space": {
+          "supported": [
+            "TANGENT"
+          ],
+          "partial": []
+        },
+        "base": {
+          "partial": [
+            "ORIGINAL",
+            "DISPLACED"
+          ]
+        },
+        "convention": {
+          "supported": [
+            "OPENGL",
+            "DIRECTX"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'normal_map':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeFresnel": {
+      "category": "partial",
+      "limits": "Dielectric IOR/view cosine algebra; linked Normal refuses; renderer BSDF integration is separate.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "fresnel",
+        "view_cos"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'fresnel':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeLayerWeight": {
+      "category": "partial",
+      "limits": "Facing/Fresnel formula with unlinked Normal; node renderer camera/normal conventions apply.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "layer_weight",
+        "view_cos"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'layer_weight':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeVertexColor": {
+      "category": "partial",
+      "limits": "Color output and an exported matching color attribute; Alpha output not a blanket port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "vertex_color"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'vertex_color':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeAttribute": {
+      "category": "partial",
+      "limits": "GEOMETRY color/Fac via exported color attributes and OBJECT Color/Vector/Fac custom properties; other types/outputs refuse.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "vertex_color",
+        "attribute_object"
+      ],
+      "modes": {
+        "attribute_type": {
+          "supported": [
+            "GEOMETRY",
+            "OBJECT"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'vertex_color':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeObjectInfo": {
+      "category": "partial",
+      "limits": "Random output only, as exporter-stamped per-object uniform; other outputs are gaps.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "attribute_object"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'attribute_object':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeAmbientOcclusion": {
+      "category": "partial",
+      "limits": "AO/Color algebra with runtime AO hook defaulting to unoccluded 1; not native ray-traced occlusion. Inside/Only Local/linked Normal refuse.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "ambient_occlusion"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'ambient_occlusion':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeShaderToRGB": {
+      "category": "partial",
+      "limits": "EEVEE Diffuse closure subset under fixed-light contract; not a general closure/light evaluation port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "shader_to_rgb_diffuse"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'shader_to_rgb_diffuse':"
+        },
+        {
+          "path": "experiments/tsl-node-differential/cells.json"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeBsdfPrincipled": {
+      "category": "partial",
+      "limits": "Surface closure is projected to supported Principled/PBR channels; this is not full native BSDF/path-tracer parity. Mix requires both linked branches; Transparent is constant white only; Principled physical inputs have per-channel refusals.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3",
+        "math"
+      ],
+      "modes": {
+        "distribution": {
+          "partial": [
+            "GGX",
+            "MULTI_GGX"
+          ]
+        },
+        "subsurface_method": {
+          "unsupported": [
+            "BURLEY",
+            "RANDOM_WALK",
+            "RANDOM_WALK_LEGACY",
+            "RANDOM_WALK_SKIN"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def _surface_expression"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        },
+        {
+          "path": "packages/blender-addon/tests/material_tsl_ir_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeBsdfDiffuse": {
+      "category": "partial",
+      "limits": "Surface closure is projected to supported Principled/PBR channels; this is not full native BSDF/path-tracer parity. Mix requires both linked branches; Transparent is constant white only; Principled physical inputs have per-channel refusals.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3",
+        "math"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def _surface_expression"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        },
+        {
+          "path": "packages/blender-addon/tests/material_tsl_ir_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeBsdfAnisotropic": {
+      "category": "partial",
+      "limits": "Surface closure is projected to supported Principled/PBR channels; this is not full native BSDF/path-tracer parity. Mix requires both linked branches; Transparent is constant white only; Principled physical inputs have per-channel refusals.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3",
+        "math"
+      ],
+      "modes": {
+        "distribution": {
+          "partial": [
+            "ASHIKHMIN_SHIRLEY",
+            "BECKMANN",
+            "GGX",
+            "MULTI_GGX"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def _surface_expression"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        },
+        {
+          "path": "packages/blender-addon/tests/material_tsl_ir_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeBsdfGlossy": {
+      "category": "partial",
+      "limits": "Surface closure is projected to supported Principled/PBR channels; this is not full native BSDF/path-tracer parity. Mix requires both linked branches; Transparent is constant white only; Principled physical inputs have per-channel refusals.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3",
+        "math"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def _surface_expression"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        },
+        {
+          "path": "packages/blender-addon/tests/material_tsl_ir_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeEmission": {
+      "category": "partial",
+      "limits": "Surface closure is projected to supported Principled/PBR channels; this is not full native BSDF/path-tracer parity. Mix requires both linked branches; Transparent is constant white only; Principled physical inputs have per-channel refusals.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3",
+        "math"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def _surface_expression"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        },
+        {
+          "path": "packages/blender-addon/tests/material_tsl_ir_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeMixShader": {
+      "category": "partial",
+      "limits": "Surface closure is projected to supported Principled/PBR channels; this is not full native BSDF/path-tracer parity. Mix requires both linked branches; Transparent is constant white only; Principled physical inputs have per-channel refusals.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3",
+        "math"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def _surface_expression"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        },
+        {
+          "path": "packages/blender-addon/tests/material_tsl_ir_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeBsdfTransparent": {
+      "category": "partial",
+      "limits": "Surface closure is projected to supported Principled/PBR channels; this is not full native BSDF/path-tracer parity. Mix requires both linked branches; Transparent is constant white only; Principled physical inputs have per-channel refusals.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3",
+        "math"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def _surface_expression"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        },
+        {
+          "path": "packages/blender-addon/tests/material_tsl_ir_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTexBrick": {
+      "category": "bake-only",
+      "limits": "No audited live IR handler. Static channel graphs may use the native Cycles channel baker only under proven coordinate/UV and shared-engine-root rules; animation/view/light dependencies refuse. Not live ported.",
+      "runtimeOps": [],
+      "evidence": [
+        {
+          "path": "packages/blender-addon/procedural.py",
+          "anchor": "_TEXTURE_DEFAULT_SPACES"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "def _plan_material_bake"
+        }
+      ]
+    },
+    "shader:ShaderNodeVectorCurve": {
+      "category": "bake-only",
+      "limits": "No audited live IR handler. Static channel graphs may use the native Cycles channel baker only under proven coordinate/UV and shared-engine-root rules; animation/view/light dependencies refuse. Not live ported.",
+      "runtimeOps": [],
+      "evidence": [
+        {
+          "path": "packages/blender-addon/procedural.py",
+          "anchor": "_CHANNEL_NEUTRAL_NODES"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "def _plan_material_bake"
+        }
+      ]
+    },
+    "shader:ShaderNodeFloatCurve": {
+      "category": "bake-only",
+      "limits": "No audited live IR handler. Static channel graphs may use the native Cycles channel baker only under proven coordinate/UV and shared-engine-root rules; animation/view/light dependencies refuse. Not live ported.",
+      "runtimeOps": [],
+      "evidence": [
+        {
+          "path": "packages/blender-addon/procedural.py",
+          "anchor": "_CHANNEL_NEUTRAL_NODES"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "def _plan_material_bake"
+        }
+      ]
+    },
+    "shader:ShaderNodeBlackbody": {
+      "category": "bake-only",
+      "limits": "No audited live IR handler. Static channel graphs may use the native Cycles channel baker only under proven coordinate/UV and shared-engine-root rules; animation/view/light dependencies refuse. Not live ported.",
+      "runtimeOps": [],
+      "evidence": [
+        {
+          "path": "packages/blender-addon/procedural.py",
+          "anchor": "_CHANNEL_NEUTRAL_NODES"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "def _plan_material_bake"
+        }
+      ]
+    },
+    "shader:ShaderNodeWavelength": {
+      "category": "bake-only",
+      "limits": "No audited live IR handler. Static channel graphs may use the native Cycles channel baker only under proven coordinate/UV and shared-engine-root rules; animation/view/light dependencies refuse. Not live ported.",
+      "runtimeOps": [],
+      "evidence": [
+        {
+          "path": "packages/blender-addon/procedural.py",
+          "anchor": "_CHANNEL_NEUTRAL_NODES"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "def _plan_material_bake"
+        }
+      ]
+    },
+    "shader:ShaderNodeBump": {
+      "category": "bake-only",
+      "limits": "No audited live IR handler. Static channel graphs may use the native Cycles channel baker only under proven coordinate/UV and shared-engine-root rules; animation/view/light dependencies refuse. Not live ported.",
+      "runtimeOps": [],
+      "evidence": [
+        {
+          "path": "packages/blender-addon/procedural.py",
+          "anchor": "_CHANNEL_NEUTRAL_NODES"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "def _plan_material_bake"
+        }
+      ]
+    },
+    "shader:NodeFrame": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:NodeReroute": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:NodeGroupInput": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:NodeGroupOutput": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeGroup": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeOutputMaterial": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "def emit_output"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:NodeFrame": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:NodeReroute": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:NodeGroupInput": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:NodeGroupOutput": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeGroup": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeComposite": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeViewer": {
+      "category": "structural",
+      "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeRGB": {
+      "category": "supported",
+      "limits": "Constant RGBA color.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "rgb"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'rgb':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:ShaderNodeValue": {
+      "category": "supported",
+      "limits": "Constant scalar value.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "value"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeValue": {
+      "category": "supported",
+      "limits": "Legacy constant scalar value.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "value"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:ShaderNodeMath": {
+      "category": "supported",
+      "limits": "41 scalar operations and clamp on modern compositor values/images; Blender-safe finite domains, alpha and scalar/image broadcasts follow the compositor contract. Constant Power zero-to-negative domains refuse; dynamic nonfinite domains are outside the audited finite-input contract.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "math"
+      ],
+      "modes": {
+        "operation": {
+          "sourceSet": "packages/blender-addon/tsl_ir.py:_MATH_OPERATIONS"
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'math':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_math_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeMath": {
+      "category": "partial",
+      "limits": "Legacy 4.2 Math alias uses the same 41 formula handlers with version-specific Round and inverse-trig domains. Logarithm requires a constant base other than 1; linked/base-1 refuses. Constant Power zero-to-negative domains refuse; dynamic nonfinite domains are outside the audited finite-input contract.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "math"
+      ],
+      "modes": {
+        "operation": {
+          "sourceSet": "packages/blender-addon/tsl_ir.py:_MATH_OPERATIONS"
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'math':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_math_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:ShaderNodeMixRGB": {
+      "category": "partial",
+      "limits": "MIX/ADD/SUBTRACT/MULTIPLY/SCREEN/DIFFERENCE only; factor/clamp/alpha conventions are explicit.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "mix-rgb"
+      ],
+      "modes": {
+        "blend_type": {
+          "supported": [
+            "MIX",
+            "ADD",
+            "SUBTRACT",
+            "MULTIPLY",
+            "SCREEN",
+            "DIFFERENCE"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'mix-rgb':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:ShaderNodeMix": {
+      "category": "partial",
+      "limits": "FLOAT or RGBA, scalar factor; RGBA six declared blend modes. VECTOR/ROTATION and unsupported blend modes refuse.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "mix"
+      ],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "FLOAT",
+            "RGBA"
+          ],
+          "partial": []
+        },
+        "blend_type": {
+          "supported": [
+            "MIX",
+            "ADD",
+            "SUBTRACT",
+            "MULTIPLY",
+            "SCREEN",
+            "DIFFERENCE"
+          ],
+          "partial": []
+        },
+        "factor_mode": {
+          "supported": [
+            "UNIFORM"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'mix':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeAlphaOver": {
+      "category": "partial",
+      "limits": "Standard Alpha Over only; premultiplication conversion modes are not general support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "alpha-over"
+      ],
+      "modes": {
+        "inputs:Type": {
+          "supported": [
+            "Over"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'alpha-over':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "versionOverrides": {
+        "4.2.0": {
+          "category": "unsupported",
+          "limits": "Legacy 4.2 socket/property schema is not normalized to the implemented modern runtime inputs. A class/type mapping is insufficient; no audited live legacy route."
+        }
+      }
+    },
+    "compositor:CompositorNodeExposure": {
+      "category": "supported",
+      "limits": "Pointwise exposure, linked image/scalar input under image broadcast rules.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "exposure"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'exposure':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeBrightContrast": {
+      "category": "supported",
+      "limits": "Brightness/contrast formula with declared premultiplication behavior.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "brightness-contrast"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'brightness-contrast':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/node_mode_refusal_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "versionOverrides": {
+        "4.2.0": {
+          "category": "partial",
+          "limits": "Legacy 4.2 Convert Premultiplied=true explicitly refuses; false uses implemented pointwise math. Native translucent-pixel guard evidence proves the missing alpha-aware mode changes RGB; alpha preserved."
+        }
+      }
+    },
+    "compositor:CompositorNodeColorBalance": {
+      "category": "partial",
+      "limits": "LGG and ASC-CDL, linked grade/factor inputs. Legacy 4.2 LGG uses sRGB adaptation; modern socket form is scene-linear. White Point/linked mode selectors refuse; alpha preserved.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "color-balance"
+      ],
+      "modes": {
+        "correction_method": {
+          "supported": [
+            "LIFT_GAMMA_GAIN",
+            "OFFSET_POWER_SLOPE"
+          ],
+          "partial": []
+        },
+        "inputs:Type": {
+          "supported": [
+            "Lift/Gamma/Gain",
+            "Offset/Power/Slope (ASC-CDL)"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'color-balance':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_color_balance_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:ShaderNodeGamma": {
+      "category": "supported",
+      "limits": "Pointwise gamma with Blender safe domain behavior; alpha preserved.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "gamma"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'gamma':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeInvert": {
+      "category": "supported",
+      "limits": "Color/alpha toggle domains and linked factor.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "invert"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'invert':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "versionOverrides": {
+        "4.2.0": {
+          "category": "unsupported",
+          "limits": "Legacy 4.2 socket/property schema is not normalized to the implemented modern runtime inputs. A class/type mapping is insufficient; no audited live legacy route."
+        }
+      }
+    },
+    "compositor:CompositorNodeHueSat": {
+      "category": "supported",
+      "limits": "Pointwise HSV transform and factor.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "hue-saturation-value"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'hue-saturation-value':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeBlur": {
+      "category": "partial",
+      "limits": "Modern socket schema: separable Gaussian only, constant pixel radius 0..128 per axis, no Extend Bounds. Legacy property schema is not blanket supported.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "blur"
+      ],
+      "modes": {
+        "inputs:Type": {
+          "supported": [
+            "Gaussian"
+          ],
+          "partial": []
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'blur':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "versionOverrides": {
+        "4.2.0": {
+          "category": "unsupported",
+          "limits": "Legacy 4.2 socket/property schema is not normalized to the implemented modern runtime inputs. A class/type mapping is insufficient; no audited live legacy route."
+        }
+      }
+    },
+    "compositor:CompositorNodeGlare": {
+      "category": "partial",
+      "limits": "Modern Bloom and Highlights output; quality High/Medium/Low, constant Size 0..1. Streaks/Ghosts/Simple Star and legacy property schema are not full support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "glare"
+      ],
+      "modes": {
+        "inputs:Type": {
+          "supported": [
+            "Bloom"
+          ],
+          "partial": []
+        },
+        "inputs:Quality": {
+          "supported": [
+            "High",
+            "Medium",
+            "Low"
+          ],
+          "partial": []
+        },
+        "inputs:Kernel Data Type": {
+          "supported": [
+            "Float",
+            "Color"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'glare':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "versionOverrides": {
+        "4.2.0": {
+          "category": "unsupported",
+          "limits": "Legacy 4.2 socket/property schema is not normalized to the implemented modern runtime inputs. A class/type mapping is insufficient; no audited live legacy route."
+        }
+      }
+    },
+    "compositor:CompositorNodeRLayers": {
+      "category": "partial",
+      "limits": "Single scene/view layer Image/Alpha/Depth available through runtime resolver; AOVs, other passes/layers/cryptomatte are refused.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "render-pass"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'render-pass':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeSeparateColor": {
+      "category": "partial",
+      "limits": "RGB/HSV/HSL, including alpha and linked scalar/image channels; device-aware native CPU/GPU and constant-fold conversion rules. YUV/YCC explicitly refuse; no legacy HSVA/YUVA/YCCA aliases.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "separate-color"
+      ],
+      "modes": {
+        "mode": {
+          "supported": [
+            "RGB",
+            "HSV",
+            "HSL"
+          ]
+        },
+        "ycc_mode": {
+          "unsupported": [
+            "ITUBT601",
+            "ITUBT709",
+            "JFIF"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'separate-color':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_color_channels_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorColorChannels.test.ts"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.3.0"
+        ],
+        "nativeDevices": [
+          "4.2 CPU",
+          "5.3 CPU",
+          "5.3 GPU"
+        ],
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "nativeGraphs": 123,
+        "maxAbs": 1.9073486e-06,
+        "alphaExact": true
+      }
+    },
+    "compositor:CompositorNodeCombineColor": {
+      "category": "partial",
+      "limits": "RGB/HSV/HSL, including alpha and linked scalar/image channels; device-aware native CPU/GPU and constant-fold conversion rules. YUV/YCC explicitly refuse; no legacy HSVA/YUVA/YCCA aliases.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "combine-color"
+      ],
+      "modes": {
+        "mode": {
+          "supported": [
+            "RGB",
+            "HSV",
+            "HSL"
+          ]
+        },
+        "ycc_mode": {
+          "unsupported": [
+            "ITUBT601",
+            "ITUBT709",
+            "JFIF"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'combine-color':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_color_channels_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorColorChannels.test.ts"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.3.0"
+        ],
+        "nativeDevices": [
+          "4.2 CPU",
+          "5.3 CPU",
+          "5.3 GPU"
+        ],
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "nativeGraphs": 123,
+        "maxAbs": 1.9073486e-06,
+        "alphaExact": true
+      }
+    },
+    "compositor:CompositorNodeSepRGBA": {
+      "category": "supported",
+      "limits": "Legacy 4.2 RGBA component alias, including independent alpha and linked scalar/image channels; no HSV/YUV/YCC alias inference.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "separate-color"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'separate-color':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_color_channels_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorColorChannels.test.ts"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.3.0"
+        ],
+        "nativeDevices": [
+          "4.2 CPU",
+          "5.3 CPU",
+          "5.3 GPU"
+        ],
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "nativeGraphs": 123,
+        "maxAbs": 1.9073486e-06,
+        "alphaExact": true
+      }
+    },
+    "compositor:CompositorNodeCombRGBA": {
+      "category": "supported",
+      "limits": "Legacy 4.2 RGBA component alias, including independent alpha and linked scalar/image channels; no HSV/YUV/YCC alias inference.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "combine-color"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'combine-color':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_color_channels_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorColorChannels.test.ts"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.3.0"
+        ],
+        "nativeDevices": [
+          "4.2 CPU",
+          "5.3 CPU",
+          "5.3 GPU"
+        ],
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "nativeGraphs": 123,
+        "maxAbs": 1.9073486e-06,
+        "alphaExact": true
+      }
+    }
+  },
+  "knownUnsupported": [
+    "compositor:CompositorNodeAntiAliasing",
+    "compositor:CompositorNodeBilateralblur",
+    "compositor:CompositorNodeBlankImage",
+    "compositor:CompositorNodeBokehBlur",
+    "compositor:CompositorNodeBokehImage",
+    "compositor:CompositorNodeBoxMask",
+    "compositor:CompositorNodeChannelMatte",
+    "compositor:CompositorNodeChromaMatte",
+    "compositor:CompositorNodeColorCorrection",
+    "compositor:CompositorNodeColorMatte",
+    "compositor:CompositorNodeColorSpill",
+    "compositor:CompositorNodeCombHSVA",
+    "compositor:CompositorNodeCombYCCA",
+    "compositor:CompositorNodeCombYUVA",
+    "compositor:CompositorNodeCombineXYZ",
+    "compositor:CompositorNodeConvertColorSpace",
+    "compositor:CompositorNodeConvertToDisplay",
+    "compositor:CompositorNodeConvolve",
+    "compositor:CompositorNodeCornerPin",
+    "compositor:CompositorNodeCrop",
+    "compositor:CompositorNodeCryptomatte",
+    "compositor:CompositorNodeCryptomatteV2",
+    "compositor:CompositorNodeCurveRGB",
+    "compositor:CompositorNodeCurveVec",
+    "compositor:CompositorNodeDBlur",
+    "compositor:CompositorNodeDefocus",
+    "compositor:CompositorNodeDenoise",
+    "compositor:CompositorNodeDespeckle",
+    "compositor:CompositorNodeDiffMatte",
+    "compositor:CompositorNodeDilateErode",
+    "compositor:CompositorNodeDisplace",
+    "compositor:CompositorNodeDistanceMatte",
+    "compositor:CompositorNodeDoubleEdgeMask",
+    "compositor:CompositorNodeEllipseMask",
+    "compositor:CompositorNodeFilter",
+    "compositor:CompositorNodeFlip",
+    "compositor:CompositorNodeGamma",
+    "compositor:CompositorNodeHueCorrect",
+    "compositor:CompositorNodeIDMask",
+    "compositor:CompositorNodeImage",
+    "compositor:CompositorNodeImageCoordinates",
+    "compositor:CompositorNodeImageInfo",
+    "compositor:CompositorNodeInpaint",
+    "compositor:CompositorNodeKeying",
+    "compositor:CompositorNodeKeyingScreen",
+    "compositor:CompositorNodeKuwahara",
+    "compositor:CompositorNodeLensdist",
+    "compositor:CompositorNodeLevels",
+    "compositor:CompositorNodeLumaMatte",
+    "compositor:CompositorNodeMapRange",
+    "compositor:CompositorNodeMapUV",
+    "compositor:CompositorNodeMapValue",
+    "compositor:CompositorNodeMask",
+    "compositor:CompositorNodeMaskToSDF",
+    "compositor:CompositorNodeMixRGB",
+    "compositor:CompositorNodeMovieClip",
+    "compositor:CompositorNodeMovieDistortion",
+    "compositor:CompositorNodeNormal",
+    "compositor:CompositorNodeNormalize",
+    "compositor:CompositorNodeOutputFile",
+    "compositor:CompositorNodePixelate",
+    "compositor:CompositorNodePlaneTrackDeform",
+    "compositor:CompositorNodePosterize",
+    "compositor:CompositorNodePremulKey",
+    "compositor:CompositorNodeRGBToBW",
+    "compositor:CompositorNodeRelativeToPixel",
+    "compositor:CompositorNodeRotate",
+    "compositor:CompositorNodeScale",
+    "compositor:CompositorNodeSceneTime",
+    "compositor:CompositorNodeSepHSVA",
+    "compositor:CompositorNodeSepYCCA",
+    "compositor:CompositorNodeSepYUVA",
+    "compositor:CompositorNodeSeparateXYZ",
+    "compositor:CompositorNodeSequencerStripInfo",
+    "compositor:CompositorNodeSetAlpha",
+    "compositor:CompositorNodeSplit",
+    "compositor:CompositorNodeStabilize",
+    "compositor:CompositorNodeStringToImage",
+    "compositor:CompositorNodeSunBeams",
+    "compositor:CompositorNodeSwitch",
+    "compositor:CompositorNodeSwitchView",
+    "compositor:CompositorNodeTexture",
+    "compositor:CompositorNodeTime",
+    "compositor:CompositorNodeTonemap",
+    "compositor:CompositorNodeTrackPos",
+    "compositor:CompositorNodeTransform",
+    "compositor:CompositorNodeTranslate",
+    "compositor:CompositorNodeValToRGB",
+    "compositor:CompositorNodeVecBlur",
+    "compositor:CompositorNodeZcombine",
+    "compositor:ShaderNodeBlackbody",
+    "compositor:ShaderNodeClamp",
+    "compositor:ShaderNodeCombineXYZ",
+    "compositor:ShaderNodeFloatCurve",
+    "compositor:ShaderNodeMapRange",
+    "compositor:ShaderNodeRGBCurve",
+    "compositor:ShaderNodeRadialTiling",
+    "compositor:ShaderNodeSeparateXYZ",
+    "compositor:ShaderNodeTexBrick",
+    "compositor:ShaderNodeTexChecker",
+    "compositor:ShaderNodeTexGabor",
+    "compositor:ShaderNodeTexGradient",
+    "compositor:ShaderNodeTexMagic",
+    "compositor:ShaderNodeTexNoise",
+    "compositor:ShaderNodeTexVoronoi",
+    "compositor:ShaderNodeTexWave",
+    "compositor:ShaderNodeTexWhiteNoise",
+    "compositor:ShaderNodeValToRGB",
+    "compositor:ShaderNodeVectorCurve",
+    "compositor:ShaderNodeVectorMath",
+    "compositor:ShaderNodeVectorRotate",
+    "shader:ShaderNodeAddShader",
+    "shader:ShaderNodeBackground",
+    "shader:ShaderNodeBevel",
+    "shader:ShaderNodeBsdfGlass",
+    "shader:ShaderNodeBsdfHair",
+    "shader:ShaderNodeBsdfHairPrincipled",
+    "shader:ShaderNodeBsdfMetallic",
+    "shader:ShaderNodeBsdfRayPortal",
+    "shader:ShaderNodeBsdfRefraction",
+    "shader:ShaderNodeBsdfSheen",
+    "shader:ShaderNodeBsdfToon",
+    "shader:ShaderNodeBsdfTranslucent",
+    "shader:ShaderNodeCameraData",
+    "shader:ShaderNodeCombineHSV",
+    "shader:ShaderNodeDisplacement",
+    "shader:ShaderNodeEeveeSpecular",
+    "shader:ShaderNodeHairInfo",
+    "shader:ShaderNodeHoldout",
+    "shader:ShaderNodeLightAccumulation",
+    "shader:ShaderNodeLightEvaluation",
+    "shader:ShaderNodeLightFalloff",
+    "shader:ShaderNodeLightInfo",
+    "shader:ShaderNodeLightIterInternalInput",
+    "shader:ShaderNodeLightIterInternalOutput",
+    "shader:ShaderNodeLightPath",
+    "shader:ShaderNodeNewGeometry",
+    "shader:ShaderNodeNormal",
+    "shader:ShaderNodeOutputAOV",
+    "shader:ShaderNodeOutputLight",
+    "shader:ShaderNodeOutputLineStyle",
+    "shader:ShaderNodeOutputWorld",
+    "shader:ShaderNodeParticleInfo",
+    "shader:ShaderNodePointInfo",
+    "shader:ShaderNodeRadialTiling",
+    "shader:ShaderNodeRaycast",
+    "shader:ShaderNodeScript",
+    "shader:ShaderNodeSeparateHSV",
+    "shader:ShaderNodeShadowRaycast",
+    "shader:ShaderNodeSqueeze",
+    "shader:ShaderNodeSubsurfaceScattering",
+    "shader:ShaderNodeTangent",
+    "shader:ShaderNodeTexEnvironment",
+    "shader:ShaderNodeTexGabor",
+    "shader:ShaderNodeTexIES",
+    "shader:ShaderNodeTexPointDensity",
+    "shader:ShaderNodeTexSky",
+    "shader:ShaderNodeUVAlongStroke",
+    "shader:ShaderNodeVectorDisplacement",
+    "shader:ShaderNodeVectorTransform",
+    "shader:ShaderNodeVolumeAbsorption",
+    "shader:ShaderNodeVolumeCoefficients",
+    "shader:ShaderNodeVolumeInfo",
+    "shader:ShaderNodeVolumePrincipled",
+    "shader:ShaderNodeVolumeScatter",
+    "shader:ShaderNodeWireframe"
+  ],
+  "prioritizedBatches": [
+    {
+      "name": "1. Common compositor pointwise graph operations",
+      "scope": "Bridge remaining proven shader algebra into image graphs: RGB-to-BW, Clamp, Map Range, ColorRamp and curves; extend color conversion to YUV/YCC and legacy aliases only with version-specific native evidence."
+    },
+    {
+      "name": "2. Close modes and parameter domains of existing live nodes",
+      "scope": "Remaining Vector Math modes, Mapping Normal/linked transforms, vector rotation Euler/Invert, image sampling/projection/alpha domains and remaining parameter restrictions. New modes stay refused until compiler and both-backend numerical gates pass."
+    },
+    {
+      "name": "3. Procedural textures and coordinate/geometry inputs",
+      "scope": "Brick/Gabor/Sky/IES, remaining Noise/Voronoi features and scales, vector transforms/tangents/geometry attributes, bump/displacement conventions; distinguish exact, bounded approximation and static capture."
+    },
+    {
+      "name": "4. Spatial compositor and render-pass pipeline",
+      "scope": "Additional Blur/Glare kernels, transforms/crop/scale, masks, dilation/erosion, lens distortion, defocus/vector blur, denoise, multilayer/AOV/cryptomatte sources. These need image-domain sampling, buffers or temporal integration, not class-name aliases."
+    },
+    {
+      "name": "5. Full surface/light/volume behavior",
+      "scope": "Additional BSDFs, anisotropy/subsurface/hair/volumes, ray queries and Blender 5.3 light-evaluation nodes; preserve lighting/geometry dependencies and state explicitly where browser rendering cannot reproduce native path-traced semantics."
+    },
+    {
+      "name": "6. Time, file/media, color-management and graph execution",
+      "scope": "Driven/animated graph parameters, image/movie/sequence inputs, OSL/custom nodes, OCIO conversions and full graph combinations; add dependency tracking, lifecycle, diagnostics and versioned evidence before calling them live supported."
+    }
+  ]
+}

@@ -40,6 +40,7 @@
     "prototype:r3f-atomic-presentation": "node experiments/r3f-atomic-presentation-prototype/run.mjs",
     "prototype:content-addressed-bundle": "node --test experiments/content-addressed-bundle-prototype/publisher.test.mjs",
     "test:preview-ux": "npm run build && node scripts/test-preview-ux.mjs",
+    "test:node-parity": "npm run build && node scripts/test-node-parity.mjs",
     "test:fresh-install": "node scripts/test-fresh-install.mjs"
   },
   "devDependencies": {

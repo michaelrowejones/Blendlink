@@ -17,6 +17,7 @@ function visitor(options: { reducedMotion?: boolean; manual?: boolean; delayed?:
   const document = { body: { dataset: {} as Record<string, string> }, activeElement: null as unknown, hidden: false,
     querySelector: (selector: string) => elements[selector] }
   class Element extends EventTarget {
+    dataset: Record<string, string> = {}
     hidden = false
     disabled = false
     textContent = ''
@@ -34,6 +35,8 @@ function visitor(options: { reducedMotion?: boolean; manual?: boolean; delayed?:
   const animation = { state, availableClips: [{ name: 'Turn', duration: 1 }],
     play: vi.fn(() => { state.phase = 'playing' }), pause: vi.fn(() => { state.phase = 'paused' }) }
   const scene = { update: vi.fn(), render: vi.fn(), resize: vi.fn(), dispose: vi.fn(), animation,
+    tslMaterials: { applied: 2, skipped: [] },
+    components: { postprocessingOrder: ['blender-compositor', 'tone-mapping', 'output-color-space'] },
     cameraController: { interactive: true, behavior: options.freeCamera ? 'free' : 'orbit', update: vi.fn(), reset: vi.fn() } }
   const graphics: Array<{ dispose: ReturnType<typeof vi.fn>; onDeviceLost?: (info: { message: string }) => void }> = []
   class Renderer {
@@ -69,6 +72,21 @@ function visitor(options: { reducedMotion?: boolean; manual?: boolean; delayed?:
 }
 
 describe('standalone website visitor lifecycle', () => {
+  it('reports the successfully rendered installation and clears its diagnostics on failure', async () => {
+    const host = visitor({ delayed: true })
+    await settle()
+    expect(host.elements.canvas!.dataset).toEqual({})
+    host.pending.resolve(host.scene)
+    await settle()
+    expect(host.scene.render).toHaveBeenCalledWith(0)
+    expect(host.elements.canvas!.dataset).toEqual({
+      tslMaterialsApplied: '2', tslMaterialsSkipped: '0',
+      postprocessingOrder: '["blender-compositor","tone-mapping","output-color-space"]',
+    })
+    host.scene.render.mockImplementationOnce(() => { throw new Error('lost scene renderer') })
+    host.frame(50)
+    expect(host.elements.canvas!.dataset).toEqual({})
+  })
   it('starts manual playback on Play, pauses it, and can replay a finished clip', async () => {
     const host = visitor({ manual: true })
     await settle()
@@ -152,6 +170,7 @@ describe('standalone website visitor lifecycle', () => {
     expect(host.scene.dispose).toHaveBeenCalledTimes(1)
     expect(host.graphics[0]!.dispose).toHaveBeenCalledTimes(1)
     expect(host.frames.size).toBe(0)
+    expect(host.elements.canvas!.dataset).toEqual({})
   })
 
   it('keeps a cached page intact for Back and Forward navigation', async () => {
