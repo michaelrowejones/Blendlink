@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "All actually creatable registered Node subclasses in shader/compositor contexts, including FunctionNode/GeometryNode/closure/bundle families. Explicit reviewed implementation routes, not blanket pixel parity; static fallback never counts as live.",
+  "scope": "All actually creatable registered Node subclasses in shader/compositor contexts, including FunctionNode/GeometryNode/closure/bundle families. Explicit reviewed implementation routes, not blanket pixel parity; static fallback never counts as live. EEVEE is the live fidelity reference where applicable; Cycles generally uses baking, while existing engine-specific ports retain their declared limits.",
   "entries": {
     "shader:ShaderNodeValue": {
       "category": "supported",
@@ -5231,6 +5231,83 @@
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:ShaderNodeTangent": {
+      "category": "partial",
+      "limits": "EEVEE UV_MAP only: active-render or explicit named UV among the first four channels, one Mikk basis per mesh. Exact Float32 native tangent/handedness transport is preserved before welding and through lossless optimization. SNORM10/SNORM16 vertex packing, inverse-transpose vertex normalization, fragment interpolation and live owner/view matrices are explicit. Smooth finite nondegenerate geometry/UV triangles, unit vectors, exact +/-1 handedness and nonzero frame cones are required. Existing primary-geometry camera/condition/deformation/instance limits apply. Cycles requires triangulated native-normal Mikk inputs; authored mesh Mikk frames are not certified equivalents and refuse. RADIAL remains unported. This does not certify the separate legacy tangent-space Normal Map path or whole BSDF/lighting parity.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "tangent_native",
+        "normal_view_native"
+      ],
+      "modes": {
+        "direction_type": {
+          "partial": [
+            "UV_MAP"
+          ],
+          "unsupported": [
+            "RADIAL"
+          ]
+        },
+        "axis": {
+          "partial": [
+            "X",
+            "Y",
+            "Z"
+          ]
+        }
+      },
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tangent_ir.py",
+          "anchor": "def emit_tangent"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'tangent_native':"
+        },
+        {
+          "path": "packages/blendlink/src/tslTangentNodes.ts"
+        },
+        {
+          "path": "packages/blendlink/blender/tangent_export.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/tangent_export_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/tangent_domain_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslTangentNodes.test.ts"
+        },
+        {
+          "path": "experiments/tangent-node-differential/README.md"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "sourceRenderer": "EEVEE Metal",
+        "profiles": [
+          "shared",
+          "single",
+          "named",
+          "hq"
+        ],
+        "finalScenesPerVersion": 32,
+        "fieldReadbacksPerBackendPerVersion": 504,
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "sourcePreserved": true,
+        "loadedMikkBytesExact": true
+      }
     }
   },
   "knownUnsupported": [
@@ -5449,7 +5526,6 @@
     "shader:ShaderNodeShadowRaycast",
     "shader:ShaderNodeSqueeze",
     "shader:ShaderNodeSubsurfaceScattering",
-    "shader:ShaderNodeTangent",
     "shader:ShaderNodeTexEnvironment",
     "shader:ShaderNodeTexGabor",
     "shader:ShaderNodeTexIES",

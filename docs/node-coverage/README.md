@@ -13,11 +13,11 @@ Counts are node **types**, not node instances or percentages of all shader looks
 | Blender | Context | Types | Supported | Partial | Bake-only | Unsupported | Structural |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 5.3.0 | compositor | 187 | 24 | 17 | 0 | 140 | 6 |
-| 5.3.0 | shader | 145 | 22 | 35 | 1 | 81 | 6 |
+| 5.3.0 | shader | 145 | 22 | 36 | 1 | 80 | 6 |
 | 5.2.0 LTS | compositor | 168 | 23 | 15 | 0 | 124 | 6 |
-| 5.2.0 LTS | shader | 118 | 21 | 34 | 1 | 56 | 6 |
+| 5.2.0 LTS | shader | 118 | 21 | 35 | 1 | 55 | 6 |
 | 4.2.0 | compositor | 104 | 25 | 11 | 0 | 61 | 7 |
-| 4.2.0 | shader | 103 | 19 | 35 | 1 | 42 | 6 |
+| 4.2.0 | shader | 103 | 19 | 36 | 1 | 41 | 6 |
 
 The former prefix-only inventory missed 36 shader-context and 69 compositor-context types in Blender 5.3, including shared FunctionNode and GeometryNode classes and graph-composition types. The corrected all-subclasses catalogs are authoritative; newly discovered types remain unsupported until an explicit measured implementation is reviewed.
 
@@ -146,6 +146,7 @@ All remaining native type IDs and every observed enum value are listed in `cover
 | shader / `ShaderNodeSeparateRGB` | not available | not available | supported | Legacy RGB component separator. |
 | shader / `ShaderNodeSeparateXYZ` | supported | supported | supported | X/Y/Z component extraction from supported vector inputs. |
 | shader / `ShaderNodeShaderToRGB` | partial | partial | partial | EEVEE Diffuse closure subset under fixed-light contract; not a general closure/light evaluation port. |
+| shader / `ShaderNodeTangent` | partial | partial | partial | EEVEE UV_MAP only: active-render or explicit named UV among the first four channels, one Mikk basis per mesh. Exact Float32 native tangent/handedness transport is preserved before welding and through lossless optimization. SNORM10/SNORM16 vertex packing, inverse-transpose vertex normalization, fragment interpolation and live owner/view matrices are explicit. Smooth finite nondegenerate geometry/UV triangles, unit vectors, exact +/-1 handedness and nonzero frame cones are required. Existing primary-geometry camera/condition/deformation/instance limits apply. Cycles requires triangulated native-normal Mikk inputs; authored mesh Mikk frames are not certified equivalents and refuse. RADIAL remains unported. This does not certify the separate legacy tangent-space Normal Map path or whole BSDF/lighting parity. |
 | shader / `ShaderNodeTexBrick` | partial | partial | partial | Live scale/bias/colors/mortar/size/smoothing and native brick-row properties. Brick Width/Row Height need provably positive finite dimensions (literal or supported positive bounds); zero/unbounded dimensions explicitly refuse. Not a surface texture bake. |
 | shader / `ShaderNodeTexChecker` | partial | partial | partial | Color/Factor and supported 3D coordinate expressions; input graph and discontinuity tolerances still apply. |
 | shader / `ShaderNodeTexCoord` | partial | partial | partial | All7 ordinary UV/Object/Generated/Camera/Normal/Window/Reflection outputs now have live routes. New Camera/Normal/Window/Reflection routes share the measured primary-triangle context and limits of ShaderNodeNewGeometry: explicit bases, per-draw actual matrices, native normal storage/interpolation, no modifiers/deformation/generated or GPU instances, and named reflected/sheared/shifted/cropped source-camera limits. Object override and instancer coordinate domains remain unported. Native EEVEE proof is Metal; browser WebGPU and WebGL2 both pass. No automatic primary-field-to-UV-ray capture or complete Blender lighting/BSDF parity claim. |

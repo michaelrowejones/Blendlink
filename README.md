@@ -30,6 +30,10 @@ See [Blender node translation](docs/NODE_TRANSLATION.md) for artist-facing
 behavior and the [versioned node inventory](docs/node-coverage/README.md) for
 supported modes, approximations, deliberate bake routes, and remaining gaps.
 
+EEVEE is the reference for live node fidelity where applicable. Cycles scenes
+generally use material or appearance baking to preserve their authored look.
+Existing live Cycles ports retain their documented limits.
+
 ## Start in Blender
 
 With a matching extension ZIP supplied by the maintainer, use **Preferences →

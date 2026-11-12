@@ -40,6 +40,7 @@
     "separate",
     "shader_to_rgb_diffuse",
     "spectral",
+    "tangent_native",
     "tex_brick",
     "tex_checker",
     "tex_gradient",

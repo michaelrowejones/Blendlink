@@ -104,8 +104,6 @@ def normalize_blur(node, op, scene, read, bounds, fail):
     if device == "GPU" and precision not in {"FULL", "AUTO"}:
         fail(None, "Blur currently requires Full or final-render Automatic compositor precision")
     if legacy:
-        if node.use_relative:
-            fail(node.inputs["Size"], "Relative Blur requires an image-extent and resize-aware native radius model")
         if node.use_variable_size:
             fail(node.inputs["Size"], "Variable-size legacy Blur requires its native per-pixel filter model")
         if node.use_bokeh:
@@ -119,7 +117,23 @@ def normalize_blur(node, op, scene, read, bounds, fail):
         multiplier = max(domain[0], 0)
         if device == "GPU":
             multiplier = min(multiplier, 1)
-        radii = [float(np.float32(multiplier) * np.float32(radius)) for radius in (node.size_x, node.size_y)]
+        if node.use_relative:
+            if mode == "Gaussian":
+                fail(node.inputs["Image"], "Relative Gaussian Blur requires a verified resize-time native C filter table model")
+            if node.aspect_correction not in {"NONE", "X", "Y"}:
+                fail(node.inputs["Image"], "Relative Blur requires a verified native aspect correction mode")
+            percent = [float(np.float32(value)) for value in (node.factor_x, node.factor_y)]
+            if any(not math.isfinite(value) or value < 0 or value > 100 for value in percent):
+                fail(node.inputs["Size"], "Relative Blur requires finite percentages between 0 and 100")
+            op["properties"].update({"blur_relative_model": "legacy-percent-f32-v1",
+                                     "blur_relative_percent": percent,
+                                     "blur_relative_aspect": node.aspect_correction,
+                                     "blur_relative_multiplier": float(np.float32(multiplier))})
+            # Radius is resolved from the live input image extent, not frozen
+            # from the Blender render settings at export time.
+            radii = [0.0, 0.0]
+        else:
+            radii = [float(np.float32(multiplier) * np.float32(radius)) for radius in (node.size_x, node.size_y)]
     else:
         for name in ("Type", "Extend Bounds", "Separable", "Size"):
             if node.inputs[name].is_linked:

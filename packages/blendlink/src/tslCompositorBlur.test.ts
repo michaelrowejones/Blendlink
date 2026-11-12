@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { DataTexture, RenderTarget } from 'three'
+import { Color, DataTexture, RenderTarget, Vector4 } from 'three'
 import { NodeMaterial } from 'three/webgpu'
 import * as TSL from 'three/tsl'
 import { buildNativeCompositorBlur } from './tslCompositorBlur.js'
@@ -127,5 +127,64 @@ describe('native compositor Blur lifecycle and contracts', () => {
     expect(() => buildNativeCompositorBlur(operation, TSL.vec4(1), false, resources, fail))
       .toThrow(/verified native output sampling model/)
     expect(resources).toHaveLength(0)
+  })
+
+  it.each([
+    { blur_relative_model: 'future-relative' },
+    { blur_relative_percent: [NaN, 25] },
+    { blur_relative_aspect: 'AUTO' },
+    { blur_relative_multiplier: -1 },
+  ])('refuses malformed relative contracts before allocating resources: %s', override => {
+    const operation = op(), resources: { dispose(): void }[] = []
+    Object.assign(operation.properties, { blur_relative_model: 'legacy-percent-f32-v1',
+      blur_relative_percent: [12.5, 25], blur_relative_aspect: 'NONE', blur_relative_multiplier: 1 }, override)
+    operation.inputs.Type = constant('MENU', 'Tent')
+    expect(() => buildNativeCompositorBlur(operation, TSL.vec4(1), false, resources, fail))
+      .toThrow(/Relative Blur requires verified/)
+    expect(resources).toHaveLength(0)
+  })
+
+  it.each([{ percent: [0, 0], multiplier: 1 }, { percent: [12.5, 25], multiplier: 0 }])(
+    'keeps guaranteed relative identities free of intermediate GPU resources: %s', ({ percent, multiplier }) => {
+      const operation = op(), resources: { dispose(): void }[] = [], input = TSL.vec4(-.5, 1, .25, .5)
+      Object.assign(operation.properties, { blur_relative_model: 'legacy-percent-f32-v1',
+        blur_relative_percent: percent, blur_relative_aspect: 'NONE', blur_relative_multiplier: multiplier })
+      operation.inputs.Type = constant('MENU', 'Tent')
+      expect(buildNativeCompositorBlur(operation, input, false, resources, fail)).toBe(input)
+      operation.properties.blur_gamma_model = 'legacy-gpu-square-v1'
+      expect(buildNativeCompositorBlur(operation, input, false, resources, fail)).toBe(input)
+      operation.properties.blur_model = 'legacy-cpu-f32-v1'; operation.properties.blur_gamma_model = 'legacy-cpu-square-v1'
+      expect(buildNativeCompositorBlur(operation, input, false, resources, fail)).not.toBe(input)
+      expect(resources).toHaveLength(0)
+    })
+
+  it('restores caller state when a live input extent exceeds the relative radius contract', () => {
+    const operation = op(), resources: { dispose(): void }[] = []
+    Object.assign(operation.properties, { blur_relative_model: 'legacy-percent-f32-v1',
+      blur_relative_percent: [50, 0], blur_relative_aspect: 'NONE', blur_relative_multiplier: 1,
+      blur_model: 'legacy-cpu-f32-v1', blur_weights: [[1], [1]] })
+    operation.inputs.Type = constant('MENU', 'Tent'); operation.inputs.Size = constant('VECTOR', [0, 0])
+    const texture = new DataTexture(new Float32Array(258 * 4 * 4), 258, 4)
+    const built = buildNativeCompositorBlur(operation, TSL.texture(texture), false, resources, fail)
+    const target = {}, mrt = {}, renderObject = () => {}, viewport = new Vector4(3, 4, 6, 7), scissor = new Vector4(1, 2, 8, 9)
+    const renderer: any = { target, mrt, autoClear: false, clearAlpha: .37,
+      toneMapping: 0, toneMappingExposure: 1, outputColorSpace: '', renderObject, pixelRatio: 2, scissorTest: true,
+      getRenderTarget: () => renderer.target, setRenderTarget: (value: unknown) => { renderer.target = value },
+      getMRT: () => renderer.mrt, setMRT: (value: unknown) => { renderer.mrt = value },
+      getActiveCubeFace: () => 0, getActiveMipmapLevel: () => 0,
+      getRenderObjectFunction: () => renderer.renderObject, setRenderObjectFunction: (value: unknown) => { renderer.renderObject = value },
+      getPixelRatio: () => renderer.pixelRatio, setPixelRatio: (value: number) => { renderer.pixelRatio = value },
+      getClearColor: (out: Color) => out.setRGB(.1, .2, .3),
+      getClearAlpha: () => renderer.clearAlpha, setClearColor: (_color: Color, alpha: number) => { renderer.clearAlpha = alpha },
+      getScissorTest: () => renderer.scissorTest, setScissorTest: (value: boolean) => { renderer.scissorTest = value },
+      getViewport: (out: Vector4) => out.copy(viewport), setViewport: (value: Vector4) => viewport.copy(value),
+      getScissor: (out: Vector4) => out.copy(scissor), setScissor: (value: Vector4) => scissor.copy(value) }
+    try {
+      expect(() => built.updateBefore({ renderer })).toThrow(/Artist Blur.*between 0 and 128.*258×4/)
+      expect(renderer.target).toBe(target); expect(renderer.mrt).toBe(mrt)
+      expect(renderer.autoClear).toBe(false); expect(renderer.clearAlpha).toBe(.37)
+      expect(renderer.renderObject).toBe(renderObject); expect(renderer.pixelRatio).toBe(2); expect(renderer.scissorTest).toBe(true)
+      expect(viewport.toArray()).toEqual([3, 4, 6, 7]); expect(scissor.toArray()).toEqual([1, 2, 8, 9])
+    } finally { for (const resource of resources) resource.dispose(); texture.dispose() }
   })
 })

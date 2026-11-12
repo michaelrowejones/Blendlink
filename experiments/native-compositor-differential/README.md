@@ -487,11 +487,10 @@ those targets/materials. Borrowed render-pass textures retain caller ownership;
 the shared quad geometry stays alive. Older schema1 Gaussian programs keep
 their numerical path and receive the same ownership fix.
 
-Relative sizing, variable/per-pixel radii, linked modern settings, nonseparable
+Variable/per-pixel radii, linked modern settings, nonseparable
 filters, legacy Bokeh, Extend Bounds, and recursive Fast
-Gaussian refuse with named diagnostics. Relative radii need a resize-aware
-image-domain model: native 4.2 CPU rounds the percentage-derived radius before
-the Size multiplier while GPU retains the fractional radius. Expanded domains
+Gaussian refuse with named diagnostics. The bounded legacy relative sizing
+extension below retains the different CPU and GPU radius models. Expanded domains
 and automatic viewport half precision are not claimed by this batch.
 Nonfinite reconstructed tables also refuse explicitly, including subnormal
 radii whose float32 reciprocal overflows; no NaN table is labeled extracted.
@@ -643,4 +642,74 @@ the actual Linux scalar-library path is certified by the next native kernel gate
 The final built checkpoint combines the 880 retained references with the 36
 native kernel graphs; all 916 pass on both browser backends at the same maxima,
 with every kernel word exact and every cleanup/state/shader-cost check passing.
+
+## Legacy relative Blur
+
+`compositor_blur_relative_check.py` covers the actual 4.2 property-based relative
+settings for Flat, Tent, Quadratic, Cubic, Catrom and Mitch. Percentages, X/Y
+aspect correction and a constant Size multiplier remain live with respect to
+the input image extent. CPU uses float32 `percent * .01 * extent`, rounds with
+`floorf(value + .5f)`, then multiplies Size. GPU uses
+`extent * (percent / 100) * clamp(Size,0,1)` and retains fractional radii.
+The exported graph carries this versioned model rather than a radius frozen
+from Blender's render settings. See the native
+[CPU radius calculation](https://github.com/blender/blender/blob/v4.2.0/source/blender/compositor/operations/COM_BlurBaseOperation.cc)
+and [GPU radius calculation](https://github.com/blender/blender/blob/v4.2.0/source/blender/nodes/composite/nodes/node_composite_blur.cc).
+
+The live domain remains 0–128 pixels per axis. Both new coefficient tables are
+computed and checked before an update is applied. Out-of-bound or nonfinite
+radii produce a named artist-node diagnostic, preserve caller state, and recover
+when the image returns to a supported extent. Relative Gaussian remains a
+named refusal: the scalar native C `expf` used by static kernels is unavailable
+to a browser resize callback, and JavaScript `Math.exp` is not assumed equivalent.
+5.2/5.3 no longer expose these legacy settings and this fixture reports explicit
+not-applicable status with 0 cases there. Modern linked/per-pixel sizing is a
+separate unclaimed model.
+
+Guaranteed identities (both percentages zero or a constant zero Size) allocate
+no convolution targets; CPU gamma still applies its native pointwise transfer.
+Two fixed-size coefficient textures and uniform loop counts otherwise retain one shader
+structure across resizes, including zero-to-nonzero CPU radii. Unchanged tables
+are not reuploaded. Physical texture extents and recognized render-pass/RTT
+extents are followed through texture clones and relative Blur cascades; gamma's
+temporary image follows the same domain. Ordinary pointwise expressions are
+materialized at the renderer's physical drawing-buffer extent, as with the
+existing compositor RTT pipeline. This does not add a general Blender image
+domain/transform engine. Each owned RTT restores target/MRT/clear/viewport/scissor
+state in `finally`, including failed renders, and disposes its target/material
+and coefficient textures without taking ownership of borrowed source textures.
+
+```sh
+BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE=CPU \
+BLENDLINK_COMPOSITOR_BLUR_RELATIVE_REFERENCES="$PWD/artifacts/native/relative-cpu" \
+"$BLENDLINK_BLENDER_42" --background --factory-startup --python-exit-code 1 -t 1 \
+  --python packages/blender-addon/tests/compositor_blur_relative_check.py
+# Repeat with DEVICE=GPU and a separate output directory.
+npm run build --workspace blendlink
+node experiments/native-compositor-differential/run.mjs --built \
+  artifacts/native/relative-cpu artifacts/native/relative-gpu \
+  --out artifacts/verification-compositor-relative-blur/final-built
+```
+
+Per device the fixture performs 324 native graph renders and adds 9 grouped
+same-compiled-graph browser sequences (333 manifest rows). The sequences change
+13×7→31×9→7×13→4×4, repeat an unchanged frame, exercise pixel ratio 2, reject a
+synthetic 2200×16 (or 16×600 for the identity cascade) frame outside the supported
+radius, then recover to 13×7. The
+rejected frame has `nativeOracle:false`; it supplies no native pixel claim.
+The native in-bound controls include 12 entire Float32-word kernel comparisons,
+fractional and rounding-boundary radii, negative/HDR RGBA and zero/signed alpha,
+gamma, Exposure inputs, Posterize/Alpha Over consumers, and absolute/relative
+filter cascades. Shader/pass budgets and zero retained GPU textures are required;
+the gamma→Blur cascade accounts for its seven actual render passes.
+
+The macOS checkpoint used native Blender 4.2.0 `a51f293548ad` on CPU and Metal
+GPU. All 666 rows passed the built-package guard and both browser backends with
+maximum absolute error `1.1920928955078125e-6`. All 24 kernel word controls were
+exact; all 18 live compiled sequences passed, including repeated-table upload
+checks, HiDPI, rejected sizes and recovery. The separate source-mode live check
+also passed all 18 sequences (maximum `4.76837158203125e-7`). The matched native
+CPU/GPU Tent canary differs by `.1120211482`, establishing the device-specific
+radius behavior. These are native Metal results, not a claim of Linux OpenGL
+certification; the hosted gate must generate and test that backend separately.
 Evidence is in `artifacts/verification-blur-gamma-linux42/final-built`.

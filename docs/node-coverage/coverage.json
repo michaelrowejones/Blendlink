@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "da2ea410bcc3569826ee1079c996f80cfb55cf3c3e8768c71102791bb23804fb",
+  "capabilityMapSha256": "f8e0d05577dcdb5b2fc602a44b6a43a0a11aef6e93dc3ae76d1d96a113fafb33",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T16:07:49.691864+00:00",
+  "generatedAt": "2026-11-12T16:32:05.142763+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -4277,16 +4277,16 @@
         "shader": {
           "counts": {
             "bake-only": 1,
-            "partial": 35,
+            "partial": 36,
             "structural": 6,
             "supported": 22,
-            "unsupported": 81
+            "unsupported": 80
           },
           "enumValueCounts": {
-            "partial": 20,
+            "partial": 24,
             "structural": 3,
             "supported": 241,
-            "unsupported": 177
+            "unsupported": 173
           },
           "nodes": [
             {
@@ -6739,24 +6739,54 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "axis": {
-                  "X": "unsupported",
-                  "Y": "unsupported",
-                  "Z": "unsupported"
+                  "X": "partial",
+                  "Y": "partial",
+                  "Z": "partial"
                 },
                 "direction_type": {
                   "RADIAL": "unsupported",
-                  "UV_MAP": "unsupported"
+                  "UV_MAP": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_tangent",
+                  "path": "packages/blender-addon/tangent_ir.py"
+                },
+                {
+                  "anchor": "case 'tangent_native':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslTangentNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/tangent_export.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/tangent_export_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/tangent_domain_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslTangentNodes.test.ts"
+                },
+                {
+                  "path": "experiments/tangent-node-differential/README.md"
+                }
+              ],
               "id": "ShaderNodeTangent",
               "label": "Tangent",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "EEVEE UV_MAP only: active-render or explicit named UV among the first four channels, one Mikk basis per mesh. Exact Float32 native tangent/handedness transport is preserved before welding and through lossless optimization. SNORM10/SNORM16 vertex packing, inverse-transpose vertex normalization, fragment interpolation and live owner/view matrices are explicit. Smooth finite nondegenerate geometry/UV triangles, unit vectors, exact +/-1 handedness and nonzero frame cones are required. Existing primary-geometry camera/condition/deformation/instance limits apply. Cycles requires triangulated native-normal Mikk inputs; authored mesh Mikk frames are not certified equivalents and refuse. RADIAL remains unported. This does not certify the separate legacy tangent-space Normal Map path or whole BSDF/lighting parity.",
+              "runtimeOps": [
+                "tangent_native",
+                "normal_view_native"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -11468,16 +11498,16 @@
         "shader": {
           "counts": {
             "bake-only": 1,
-            "partial": 34,
+            "partial": 35,
             "structural": 6,
             "supported": 21,
-            "unsupported": 56
+            "unsupported": 55
           },
           "enumValueCounts": {
-            "partial": 18,
+            "partial": 22,
             "structural": 3,
             "supported": 216,
-            "unsupported": 126
+            "unsupported": 122
           },
           "nodes": [
             {
@@ -13472,24 +13502,54 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "axis": {
-                  "X": "unsupported",
-                  "Y": "unsupported",
-                  "Z": "unsupported"
+                  "X": "partial",
+                  "Y": "partial",
+                  "Z": "partial"
                 },
                 "direction_type": {
                   "RADIAL": "unsupported",
-                  "UV_MAP": "unsupported"
+                  "UV_MAP": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_tangent",
+                  "path": "packages/blender-addon/tangent_ir.py"
+                },
+                {
+                  "anchor": "case 'tangent_native':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslTangentNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/tangent_export.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/tangent_export_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/tangent_domain_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslTangentNodes.test.ts"
+                },
+                {
+                  "path": "experiments/tangent-node-differential/README.md"
+                }
+              ],
               "id": "ShaderNodeTangent",
               "label": "Tangent",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "EEVEE UV_MAP only: active-render or explicit named UV among the first four channels, one Mikk basis per mesh. Exact Float32 native tangent/handedness transport is preserved before welding and through lossless optimization. SNORM10/SNORM16 vertex packing, inverse-transpose vertex normalization, fragment interpolation and live owner/view matrices are explicit. Smooth finite nondegenerate geometry/UV triangles, unit vectors, exact +/-1 handedness and nonzero frame cones are required. Existing primary-geometry camera/condition/deformation/instance limits apply. Cycles requires triangulated native-normal Mikk inputs; authored mesh Mikk frames are not certified equivalents and refuse. RADIAL remains unported. This does not certify the separate legacy tangent-space Normal Map path or whole BSDF/lighting parity.",
+              "runtimeOps": [
+                "tangent_native",
+                "normal_view_native"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -16910,16 +16970,16 @@
         "shader": {
           "counts": {
             "bake-only": 1,
-            "partial": 35,
+            "partial": 36,
             "structural": 6,
             "supported": 19,
-            "unsupported": 42
+            "unsupported": 41
           },
           "enumValueCounts": {
-            "partial": 16,
+            "partial": 20,
             "structural": 3,
             "supported": 211,
-            "unsupported": 99
+            "unsupported": 95
           },
           "nodes": [
             {
@@ -18675,24 +18735,54 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "axis": {
-                  "X": "unsupported",
-                  "Y": "unsupported",
-                  "Z": "unsupported"
+                  "X": "partial",
+                  "Y": "partial",
+                  "Z": "partial"
                 },
                 "direction_type": {
                   "RADIAL": "unsupported",
-                  "UV_MAP": "unsupported"
+                  "UV_MAP": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_tangent",
+                  "path": "packages/blender-addon/tangent_ir.py"
+                },
+                {
+                  "anchor": "case 'tangent_native':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslTangentNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/tangent_export.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/tangent_export_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/tangent_domain_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslTangentNodes.test.ts"
+                },
+                {
+                  "path": "experiments/tangent-node-differential/README.md"
+                }
+              ],
               "id": "ShaderNodeTangent",
               "label": "Tangent",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "EEVEE UV_MAP only: active-render or explicit named UV among the first four channels, one Mikk basis per mesh. Exact Float32 native tangent/handedness transport is preserved before welding and through lossless optimization. SNORM10/SNORM16 vertex packing, inverse-transpose vertex normalization, fragment interpolation and live owner/view matrices are explicit. Smooth finite nondegenerate geometry/UV triangles, unit vectors, exact +/-1 handedness and nonzero frame cones are required. Existing primary-geometry camera/condition/deformation/instance limits apply. Cycles requires triangulated native-normal Mikk inputs; authored mesh Mikk frames are not certified equivalents and refuse. RADIAL remains unported. This does not certify the separate legacy tangent-space Normal Map path or whole BSDF/lighting parity.",
+              "runtimeOps": [
+                "tangent_native",
+                "normal_view_native"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -19730,23 +19820,24 @@
     "packages/blender-addon/color_ir.py": "5bd0bf8b360f5b5a7007e4766e6d6ca9aff44b22199d168b16d0f37126d5a385",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
     "packages/blender-addon/engine_fallback.py": "6ebf95de3ea78fb2a94293d903c513c8ae56ceb855c4076ab92ed26876819a02",
-    "packages/blender-addon/geometry_ir.py": "0c019c96dd010ef0196e4c3d1c2a34c6063f64b8cf7181c31afba3822ae6eda6",
+    "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
-    "packages/blender-addon/material_compiler.py": "f1065b97d55b97899b6e7baa8a085077ed0ff4d6317ae2c6b377bde5f9ba5860",
+    "packages/blender-addon/material_compiler.py": "8c0d14d3ed871c048144eedfdfc6b73397b553f8191b0fa96c23070fdc0066ae",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
     "packages/blender-addon/noise_varying_ir.py": "3fb30ae5e7ddd9b23193f8d6ce9f2a4ebfd3e38903a24f41a0f37ef9e5e3e34e",
-    "packages/blender-addon/normal_ir.py": "d7e1da19ac55e11a3c4bc05ecca89d3712a63bf651698cbc7102bd5d9fb6bced",
+    "packages/blender-addon/normal_ir.py": "55ec20ba884c3f2582bf31ff95c1e8815d6394c05af753d7b2f9c8b1d18b52c3",
     "packages/blender-addon/procedural.py": "12f6fcaaa46f8a398d13482e421c20d3cd342a4a57962634f48595469170ef59",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
-    "packages/blender-addon/tsl_ir.py": "06f44363208c930384044403f14ce4f6a99b2a1fbcd9c727b55f763f08d81c35",
+    "packages/blender-addon/tangent_ir.py": "9241c930d968e4a54637d89e9a6d709c711550ac2f216bf78458df47f65f6abf",
+    "packages/blender-addon/tsl_ir.py": "606e50234eda6baab1115b7817b6ea8e46c8390f6462762ed279f21d0cab38a2",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
     "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
     "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
-    "packages/blendlink/blender/compositor_blur.py": "b29f572b52f571f2b7ba231d4e43f2a6f99bc0662704040b295bf5c88209f8d3",
+    "packages/blendlink/blender/compositor_blur.py": "916b300583cfcf06c3c1add69fa24396cea43d3bf699c32dea4f314a45661b66",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_graph.py": "88bfd0d6fcd62f3d86f0b367d6c3c147412d2a38276d33851a962589493c0f40",
@@ -19754,15 +19845,16 @@
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
-    "packages/blendlink/src/compiledMaterialPrograms.ts": "bd2d86419c266f7986dcbbf8c54e7df6551800ee4b5dc202b998ef99c22a686f",
-    "packages/blendlink/src/compiledSceneAudit.ts": "a75bd3c5b3980d29c995226bb8c2ab7e1718df63b0464b4187af314a11aaeec8",
-    "packages/blendlink/src/materialProgramDocument.ts": "812f4ac41d1c3bb3aff63cb143efd44a073b28e72788ddf0d3dc7224bed6067a",
+    "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
+    "packages/blendlink/src/compiledMaterialPrograms.ts": "6efc801fcd59cea58be8c930d965efea8d5f476164ddcabd7b6136dbfb2bcb66",
+    "packages/blendlink/src/compiledSceneAudit.ts": "e50ccf4daee1f7ea17cad4ec7a1f4828dfa401b1f8627a829b3de4d9e2857760",
+    "packages/blendlink/src/materialProgramDocument.ts": "30f2aa408cd62092a0337be3b5ee243d8a4958313afc51f890d2a9a888281f04",
     "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
     "packages/blendlink/src/threeRuntime.ts": "225b3dd29834a6f2adfea60f8e6122545ddc3f0bbc74204568b9993f04d45c2b",
     "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
     "packages/blendlink/src/tslColorConversion.ts": "547b70ed682a123a2d23da3bbf95bd801a3958044d15e82c810be81837ca097c",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
-    "packages/blendlink/src/tslCompositorBlur.ts": "7f2bd72e5e6835e8005c98289268b802674615089ab7332579ed661df8544803",
+    "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
@@ -19771,16 +19863,17 @@
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
     "packages/blendlink/src/tslGeometryContext.ts": "736a1849bc49b15d9b67b71bc29519c8d643ac6ee2b2ab862cfc363279efcc23",
-    "packages/blendlink/src/tslMaterialProgram.ts": "56fa7f0524b2f9421568c04e18e0a18e84dfcf770bc27bc077a3777a13535e22",
-    "packages/blendlink/src/tslMaterialRuntime.ts": "1f50695abad019151d01828a14c8dc405e7929325d9da4100285c553268ba249",
+    "packages/blendlink/src/tslMaterialProgram.ts": "0d30f83ba8eef057b9a96a0e751c2d1937755734064169b03a2c5f2a075cbad0",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "07ba45c196310b434ed046b6cada07e2530d49a6c3b20e7a5b59bf6ae1c1e81f",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
-    "packages/blendlink/src/tslNodeRecipe.ts": "5ce6ba68d5df10e326ba473b7095a6b49f88876d90a020621246e6ca51c51fd8",
+    "packages/blendlink/src/tslNodeRecipe.ts": "18d339c4f066133d0c073fa64f02c6a0b716beda2f14799eb81918babbbe1c9d",
     "packages/blendlink/src/tslNormalNodes.ts": "a2505eff8008f6f99f53909759dde91aa8cb02a8299f557351a0757761c6fa03",
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
     "packages/blendlink/src/tslSourceCompositor.ts": "d871797bd16541abacaf3916895176d9fb4357a5251e09468caeee6752088bdc",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
+    "packages/blendlink/src/tslTangentNodes.ts": "85af45271a6cd9f6a4265e32fddc1101dfe40052d21e4564ee429d586e4cd69d",
     "packages/blendlink/src/tslVaryingNoise.ts": "d1ef701abe02214af94e951136638bf1d2ff5cf4ec2df4059524fbd311deb77c",
     "packages/blendlink/src/tslVectorTransform.ts": "5f5210b22de500e1d48faabbf86b19bee9c7d246a380658c845fb2ab7959fb66"
   }

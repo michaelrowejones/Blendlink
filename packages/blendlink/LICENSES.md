@@ -54,6 +54,10 @@ redistribution conditions and disclaimer are retained in
 The Blender Extension carries the same license as `noise-LICENSE.txt`;
 standalone website exports include it in their third-party notices.
 
+The first-party native UV tangent runtime `dist/tslTangentNodes.js` and its
+source TypeScript are also Apache-2.0, as marked by their file-level headers.
+They use the same complete Apache license text linked above.
+
 `dist/vendor/n8ao-webgpu/` contains the unchanged runtime from
 `n8ao-webgpu@0.1.0`, licensed CC0-1.0. Its complete `LICENSE`, upstream
 `NOTICE.md`, and original package metadata ship in that directory. The build

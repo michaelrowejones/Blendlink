@@ -15,7 +15,7 @@ mechanics remain in canonical ``bakelib.py``.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 import heapq
 import hashlib
 import json
@@ -3247,7 +3247,7 @@ def _plan_tsl_program(
     for entry in channels:
         if 'tslIr' not in entry and normal_ir.channel_has_native_normal(root,entry.get('channel'),procedural._walk_channel_upstream):
             object_info_issues.append(MaterialIssue('material.normal-map-program-unproven',material.name,
-                'Native Normal Map channel '+entry.get('channel','?')+' has no proven program: '+entry.get('tslIrRefusal','unknown input domain'),
+                'Native normal/tangent channel '+entry.get('channel','?')+' has no proven program: '+entry.get('tslIrRefusal','unknown input domain'),
                 'Keep this channel within a verified native normal domain; its source nodes remain intact.',object_names))
     for entry in channels:
         outputs = set()
@@ -3286,8 +3286,11 @@ def _plan_tsl_program(
                 ))
     if __package__:
         from . import geometry_ir
+        from . import tangent_ir
     else:
         import geometry_ir
+        import tangent_ir
+    tangent_uv_choices = {}
     for entry in channels:
         outputs = set()
         geometry_ir.collect_outputs(entry.get("tslIr"), outputs)
@@ -3295,6 +3298,7 @@ def _plan_tsl_program(
             try:
                 for obj, _slot in raw_bindings: geometry_ir.validate_owner(obj, outputs)
                 geometry_ir.bind_normal_model(entry['tslIr'], [obj for obj, _slot in raw_bindings])
+                tangent_ir.bind_owners(entry['tslIr'],[obj for obj,_slot in raw_bindings],tangent_uv_choices)
                 if __package__:
                     from . import normal_ir
                 else:
@@ -4081,6 +4085,17 @@ def _plan_materials_uncached(objects, *, purpose: str = "inspect", automatic_pro
             key=lambda item: item[1]["material"].name.casefold(),
         )
     )
+    if __package__:
+        from . import tangent_ir
+    else:
+        import tangent_ir
+    tangent_conflicts=tangent_ir.conflicting_meshes(decisions)
+    decisions=tuple(replace(decision,outcome='blocked',issues=decision.issues+(MaterialIssue(
+        'material.tangent-basis-conflict',decision.material_name,
+        'One mesh requests multiple UV tangent bases: '+', '.join(sorted(tangent_conflicts[decision.material_name])),
+        'Use one explicit tangent UV basis per mesh; authored UV maps remain intact.',
+        tuple(binding.object_name for binding in decision.bindings)),))
+        if decision.material_name in tangent_conflicts else decision for decision in decisions)
     encoded = json.dumps(
         {
             "planVersion": PLAN_VERSION,
@@ -5596,6 +5611,9 @@ def _ir_runtime_needs(value, needs) -> None:
             if "OBJECT" in {value.get("from"), value.get("to")}:
                 needs["vectorTransformOwner"] = True
         if op == "geometry_context": needs["geometryContext"].add(value.get("output"))
+        if op == "tangent_native":
+            needs["tangentFrames"].add(value.get("uvMap"))
+            needs["uvMaps"].add(value.get("uvMap"))
         if op in ("generated", "object_coords", "geometry_context"):
             needs["objectSpace"] = True
         if op == "generated":
@@ -5622,7 +5640,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
     needs = {
         "uvMaps": set(), "colorLayers": set(), "objectAttributes": set(), "objectInfo": set(),
         "texspace": False, "objectSpace": False, "vectorTransformOwner": False,
-        "geometryContext": set(),
+        "geometryContext": set(),"tangentFrames": set(),
     }
     for item in (decision.channel_plan or {}).get("channels", ()):
         ir = item.get("tslIr")
@@ -5641,6 +5659,9 @@ def _tsl_runtime_mesh_entry(decision, obj):
     entry = {"schemaVersion": 1}
     if needs["vectorTransformOwner"]: entry["vectorTransformOwner"] = True
     if needs["geometryContext"]: entry["geometryContext"] = sorted(needs["geometryContext"])
+    if needs["tangentFrames"]:
+        if len(needs["tangentFrames"])!=1:raise MaterialCompileError('One mesh requests multiple native UV tangent frames')
+        entry['tangentFrame']={'schemaVersion':1,'model':'blender-mikk-uv-v1','uvMap':next(iter(needs['tangentFrames']))}
     if needs["objectAttributes"]:
         entry["objectAttributes"] = sorted(needs["objectAttributes"])
     if needs["objectInfo"]:

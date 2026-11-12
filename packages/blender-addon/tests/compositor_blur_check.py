@@ -126,7 +126,7 @@ def main(output):
     save("blur-cascade-gaussian-mitch", source)
     for feature in (("extended", "recursive", "nonseparable", "field") if modern else
                     ("extended", "recursive", "bokeh", "relative", "variable", "field")):
-        node, source, _ = graph("FAST_GAUSS" if feature == "recursive" else "FLAT", (2, 3))
+        node, source, _ = graph("FAST_GAUSS" if feature == "recursive" else "GAUSS" if feature == "relative" else "FLAT", (2, 3))
         if feature == "field":
             tree.links.new(oracle.separate(source.outputs["Image"]).outputs["Red"], node.inputs["Size"])
         elif modern:

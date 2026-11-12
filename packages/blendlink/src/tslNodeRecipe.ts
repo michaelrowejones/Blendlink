@@ -23,6 +23,7 @@ import { buildTslBrickNode } from './tslBrickNodes.js'
 import { buildTslVectorTransformNode } from './tslVectorTransform.js'
 import { buildGeometryContext } from './tslGeometryContext.js'
 import { buildTslNativeNormalMap, buildNativeNormalView } from './tslNormalNodes.js'
+import {buildTslNativeTangent} from './tslTangentNodes.js'
 import { buildSharedUtilityIr } from './tslSharedUtilities.js'
 import { buildPortableSine } from './tslPortableTrig.js'
 import { buildTslFractalNoise } from './tslFractalNoise.js'
@@ -870,8 +871,10 @@ function build(expression: TslIrExpression): TslExpression {
     }
     case 'normal_map_native':
       return buildTslNativeNormalMap(expression, build(child(expression,'color')),build(child(expression,'strength')),build(child(expression,'normal')),activeOptions.objectSpace?.basis)
+    case 'tangent_native':
+      return buildTslNativeTangent(expression,activeOptions.objectSpace?.basis)
     case 'normal_view_native':
-      if(child(expression,'input').op!=='normal_map_native')return fail('Native Normal Map normal channels require a direct verified unit-normal output')
+      if(!['normal_map_native','tangent_native'].includes(child(expression,'input').op))return fail('Native normal channels require a direct verified unit-normal output')
       return buildNativeNormalView(build(child(expression,'input')),activeOptions.objectSpace?.basis)
     case 'normal_view': {
       const normal = build(child(expression, 'input'))

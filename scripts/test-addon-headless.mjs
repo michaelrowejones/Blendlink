@@ -22,6 +22,7 @@ const installedNodeFamilies = [
   ['ShaderNodeClamp', 'clamp_minmax'], ['ShaderNodeValToRGB', 'ramp_lut'],
   ['ShaderNodeVectorTransform', 'vector_transform'], ['ShaderNodeTexWave', 'tex_wave'],
   ['ShaderNodeTexNoise', 'noise_fractal'], ['ShaderNodeNormalMap', 'normal_map_native'],
+  ['ShaderNodeTangent', 'tangent_native'],
   ['ShaderNodeNewGeometry', 'geometry_context'], ['ShaderNodeTexCoord', 'geometry_context'],
 ]
 
@@ -289,6 +290,12 @@ for node_type, expected in families:
     node = tree.nodes.new(node_type)
     if node_type == "ShaderNodeCombineColor": node.mode = "HSL"
     if node_type == "ShaderNodeNormalMap": node.space = "WORLD"
+    previous_engine = bpy.context.scene.render.engine
+    if node_type == "ShaderNodeTangent":
+        node.direction_type = "UV_MAP"
+        engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties["engine"].enum_items}
+        bpy.context.scene.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
+        for polygon in mesh.polygons: polygon.use_smooth = True
     if node_type == "ShaderNodeClamp": node.clamp_type = "RANGE"
     if node_type == "ShaderNodeTexNoise":
         node.noise_type = "MULTIFRACTAL"
@@ -306,7 +313,10 @@ for node_type, expected in families:
         output = node.outputs["Color"] if node_type == "ShaderNodeObjectInfo" else node.outputs[0]
     tree.links.new(output, root.inputs["Base Color"])
     before = len(tree.nodes), len(tree.links), len(bpy.data.node_groups)
-    decision = module.material_compiler.plan_materials([owner], automatic_programs=True).decisions[0]
+    try:
+        decision = module.material_compiler.plan_materials([owner], automatic_programs=True).decisions[0]
+    finally:
+        bpy.context.scene.render.engine = previous_engine
     channel = next(item for item in decision.channel_plan["channels"] if item["channel"] == "Base Color")
     assert channel["route"] == "program" and contains_op(channel.get("tslIr"), expected), (node_type, channel)
     assert before == (len(tree.nodes), len(tree.links), len(bpy.data.node_groups)), node_type

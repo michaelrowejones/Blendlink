@@ -6651,7 +6651,14 @@ def main() -> None:
                 )
                 stamped_random.append(stamped_obj)
             try:
-                with geometry_export.exact_normals(material_plan):
+                import tangent_ir
+                import tangent_export
+                tangent_bindings=tangent_ir.export_bindings(material_plan)
+                if tangent_bindings:
+                    if (settings.get('exporterOverrides') or {}).get('export_tangents') is False:
+                        raise ValueError('Native UV Tangent programs require export_tangents; exporterOverrides cannot disable their exact frame')
+                    export_kwargs['export_tangents']=True
+                with geometry_export.exact_normals(material_plan),tangent_export.exact_tangents(tangent_bindings):
                     result = bpy.ops.export_scene.gltf(**export_kwargs)
                 if "FINISHED" in result:
                     camera_axes.canonicalize_camera_axes(

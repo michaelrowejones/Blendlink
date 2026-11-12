@@ -43,7 +43,9 @@ report["sharedVectorCompositorAvailable"] = supported
 report["sharedVectorCompositorDiagnostics"] = failures
 tree = bpy.data.node_groups.new("Blendlink White Point Capability", "CompositorNodeTree")
 try:
-    report["blurGammaCompositorAvailable"] = hasattr(tree.nodes.new("CompositorNodeBlur"), "use_gamma_correction")
+    blur = tree.nodes.new("CompositorNodeBlur")
+    report["blurGammaCompositorAvailable"] = hasattr(blur, "use_gamma_correction")
+    report["blurRelativeCompositorAvailable"] = hasattr(blur, "use_relative")
     node = tree.nodes.new("CompositorNodeColorBalance")
     selector = node.inputs.get("Type")
     report["whitePointCompositorAvailable"] = False

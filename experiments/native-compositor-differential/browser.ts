@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { WebGPURenderer, NodeMaterial, QuadMesh } from 'three/webgpu'
 import { textureLoad, uv, vec2, ivec2, mrt, output, vec4 } from 'three/tsl'
 import { buildSourceCompositor } from 'blendlink-compositor-under-test'
+import { relativeResizeProof } from './relative-resize.js'
 
 const reports: unknown[] = []
 const result = document.querySelector('#results')!
@@ -24,6 +25,19 @@ try {
   for (const entry of cases) {
     ;(window as any).__compositorProgress = { completed: reports.length, total: cases.length, case: entry.file, phase: 'loading' }
     const test = await (await fetch('/references/' + entry.file)).json()
+    if (test.resizeFrames) {
+      const row: any = { case: test.case, blenderVersion: test.blenderVersion, blenderHash: test.blenderHash, backend }
+      const shaderStart = shaderErrors.length
+      device?.pushErrorScope('validation')
+      try { Object.assign(row, await relativeResizeProof(test, renderer, webgl)) }
+      catch (error) { row.error = String(error) }
+      const validation = await device?.popErrorScope()
+      row.shaderErrors = shaderErrors.slice(shaderStart)
+      if (validation) row.shaderErrors.push(validation.message)
+      if (row.shaderErrors.length) row.error = 'Shader validation failed: ' + row.shaderErrors.join('\n')
+      reports.push(row)
+      continue
+    }
     const { width, height } = test
     renderer.setSize(width, height)
     const texture = new THREE.DataTexture(new Float32Array(test.input), width, height, THREE.RGBAFormat, THREE.FloatType)

@@ -177,6 +177,8 @@ def capture_refusal(root, channel, walk_channel):
         socket = root.inputs.get(name)
         if socket is None: continue
         for node, output in walk_channel(socket):
+            if node.bl_idname == 'ShaderNodeTangent':
+                return 'cannot automatically replace an owner-dependent UV Tangent with UV-bake ray context; keep this channel live or review an explicit capture'
             if node.bl_idname == 'ShaderNodeNormalMap' and node.space != 'TANGENT':
                 return 'cannot automatically replace a primary Object/World Normal Map with UV-bake ray context; keep this channel live or review an explicit capture'
             table = GEOMETRY_OUTPUTS if node.bl_idname == "ShaderNodeNewGeometry" else TEXTURE_OUTPUTS if node.bl_idname == "ShaderNodeTexCoord" else {}

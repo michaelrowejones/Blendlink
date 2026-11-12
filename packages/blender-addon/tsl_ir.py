@@ -892,9 +892,9 @@ def _channel_document(expression):
     encoded = _json.dumps(expression)
     if '"view_cos"' in encoded:
         document["viewDependent"] = True
-    if any(('"'+name+'"') in encoded for name in ('normal_map_native','normal_view_native')):
+    if any(('"'+name+'"') in encoded for name in ('normal_map_native','normal_view_native','tangent_native')):
         document['viewDependent'] = True
-    if any(('"'+name+'"') in encoded for name in ('normal_map','normal_view','normal_map_native','normal_view_native')):
+    if any(('"'+name+'"') in encoded for name in ('normal_map','normal_view','normal_map_native','normal_view_native','tangent_native')):
         document["geometryDependent"] = True
     if '"ambient_occlusion"' in encoded:
         # Scene occlusion is not carried: the runtime evaluates the
@@ -918,9 +918,14 @@ def emit_normal_channel(socket, stack=(), *, evaluation_engine=None):
     else:
         import normal_ir
     normals=[];normal_ir.requirements(expression,normals)
-    if normals and expression.get('op')!='normal_map_native':
+    if __package__:
+        from . import tangent_ir
+    else:
+        import tangent_ir
+    tangents=[];tangent_ir.requirements(expression,tangents)
+    if (normals or tangents) and expression.get('op') not in {'normal_map_native','tangent_native'}:
         _refuse('Native Normal Map normal channels currently require a direct unit-normal output; downstream vector normalization is not certified yet')
-    if normals: return _channel_document({"op": "normal_view_native", "input": expression})
+    if normals or tangents: return _channel_document({"op": "normal_view_native", "input": expression})
     return _channel_document({"op": "normal_view", "input": expression})
 
 
@@ -2504,6 +2509,13 @@ def emit_output(node, from_socket, stack=()):
                                      native_shader_f32=shader_offset_profile is not None) for seed in seeds
             ]
         return expression
+
+    if idname == "ShaderNodeTangent":
+        if __package__:
+            from .tangent_ir import emit_tangent
+        else:
+            from tangent_ir import emit_tangent
+        return emit_tangent(node,engine=get_evaluation_engine(),refuse=_refuse)
 
     if idname == "ShaderNodeNormalMap":
         if node.space != 'TANGENT':

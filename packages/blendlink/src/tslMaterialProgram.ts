@@ -39,6 +39,7 @@ export interface TslRuntimeMeshExtras {
   objectSpace?: string
   objectAttributes?: readonly string[]
   geometryContext?: readonly string[]
+  tangentFrame?: {schemaVersion?: number;model?: string;uvMap?: string}
 }
 
 export type MaterialNodeSlot =

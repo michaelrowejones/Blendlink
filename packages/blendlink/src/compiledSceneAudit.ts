@@ -210,7 +210,13 @@ export async function auditCompiledSceneArtifact(
       throw new Error('Compiled scene primitive evidence drifted while decoding.')
     mesh.listPrimitives().forEach((primitive,part)=>{
     const position=primitive.getAttribute('POSITION')?.getArray(),normal=primitive.getAttribute('NORMAL')?.getArray(),indices=primitive.getIndices()?.getArray()
+    const tangent=primitive.getAttribute('TANGENT')?.getArray(),uvs=new Map<string,Float32Array>()
+    primitive.listSemantics().forEach(semantic=>{
+      const values=primitive.getAttribute(semantic)?.getArray()
+      if(/^TEXCOORD_\d+$/.test(semantic)&&values instanceof Float32Array)uvs.set(semantic,values)
+    })
     geometryData.set(`${index}:${part}`,{position:position instanceof Float32Array?position:null,normal:normal instanceof Float32Array?normal:null,
+      tangent:tangent instanceof Float32Array?tangent:null,uvs,
       indices:indices instanceof Uint8Array||indices instanceof Uint16Array||indices instanceof Uint32Array?indices:null})
     })
   })

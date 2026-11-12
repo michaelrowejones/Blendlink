@@ -1033,9 +1033,9 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
         + `quantizing it would replace an authored attachment or insert a correction child.`,
     )
   }
-  if(nativeGeometryContext)refusePass('POSITION/NORMAL quantization was skipped because live geometry inputs require authored float32 surface data.')
+  if(nativeGeometryContext)refusePass('POSITION/NORMAL/TANGENT quantization was skipped because live geometry inputs require authored float32 surface data.')
   const quantizedSemantics = nativeGeometryContext
-    ? /^(?!(?:POSITION|NORMAL|TEXCOORD(?:_\d+)?)$).*$/
+    ? /^(?!(?:POSITION|NORMAL|TANGENT|TEXCOORD(?:_\d+)?)$).*$/
     : positionQuantizationRisk
     ? /^(?!(?:POSITION|TEXCOORD(?:_\d+)?)$).*$/
     : /^(?!TEXCOORD(?:_\d+)?$).*$/

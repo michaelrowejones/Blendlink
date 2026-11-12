@@ -1,4 +1,4 @@
-Blendlink spectral color, color conversion, image sampling, integer utility, Noise/Wave, Brick, packed-normal and normal-map mathematics and tables
+Blendlink spectral color, color conversion, image sampling, integer utility, Noise/Wave, Brick, packed-normal, normal-map and UV tangent mathematics and tables
 
 Copyright 2011-2026 Blender Foundation
 Copyright 2026 Blendlink contributors
@@ -39,3 +39,7 @@ source evaluation models. The complete BSD-3-Clause license accompanies
 this notice in blender-noise-bsd-3-clause.txt (noise-LICENSE.txt in the
 standalone Blender Extension). This attribution does not replace the
 Apache-2.0 license for fractal_noise.h and the other sources listed above.
+
+The first-party UV tangent runtime tslTangentNodes.ts is also distributed
+under Apache-2.0. It implements explicit native packed-attribute, vertex-transform
+and fragment-interpolation contracts with independently constructed Three TSL.

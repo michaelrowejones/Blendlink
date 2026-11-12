@@ -49,7 +49,7 @@ run('native-capabilities', blender, ['--background', '--factory-startup', '--pyt
 const capabilities = JSON.parse(readFileSync(capabilitiesFile, 'utf8'))
 assert.equal(typeof capabilities.offlineGpuAvailable, 'boolean', 'Native GPU capability was not reported')
 assert.equal(typeof capabilities.gpuParityVersionSupported, 'boolean', 'Native GPU parity version support was not reported')
-for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvailable', 'whitePointCompositorAvailable', 'blurGammaCompositorAvailable', 'sharedVectorCompositorAvailable'])
+for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvailable', 'whitePointCompositorAvailable', 'blurGammaCompositorAvailable', 'blurRelativeCompositorAvailable', 'sharedVectorCompositorAvailable'])
   assert.equal(typeof capabilities[key], 'boolean', `Native utility capability ${key} was not reported`)
 const references = []
 const referenceSets = []
@@ -79,6 +79,10 @@ if (capabilities.blurGammaCompositorAvailable) compositorFamilies.push(
   ['blur-gamma', 'compositor_blur_gamma_check.py', 'BLENDLINK_COMPOSITOR_BLUR_GAMMA_REFERENCES'])
 else if (plan.compositor) inapplicableFamilies.push({ family: 'compositor-blur-gamma',
   reason: 'Native Blur creation probe exposes no legacy gamma correction property' })
+if (capabilities.blurRelativeCompositorAvailable) compositorFamilies.push(
+  ['blur-relative', 'compositor_blur_relative_check.py', 'BLENDLINK_COMPOSITOR_BLUR_RELATIVE_REFERENCES'])
+else if (plan.compositor) inapplicableFamilies.push({ family: 'compositor-blur-relative',
+  reason: 'Native Blur creation probe exposes no legacy relative sizing property' })
 if (capabilities.whitePointCompositorAvailable) compositorFamilies.push(
   ['white-point', 'compositor_whitepoint_check.py', 'BLENDLINK_COMPOSITOR_WHITEPOINT_REFERENCES'])
 else if (plan.compositor) inapplicableFamilies.push({ family: 'compositor-white-point',
@@ -95,7 +99,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
     '--python', join(root, 'packages/blender-addon/tests', file)], {
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU',
-    BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MATH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BALANCE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE: 'CPU',
@@ -131,6 +135,8 @@ if (!plan.compositor) {
     ['vectors-gpu', 'compositor_vector_check.py', 'BLENDLINK_COMPOSITOR_VECTOR_REFERENCES', 'BLENDLINK_COMPOSITOR_VECTOR_DEVICE'])
   if (capabilities.blurGammaCompositorAvailable) gpuFamilies.push(
     ['blur-gamma-gpu', 'compositor_blur_gamma_check.py', 'BLENDLINK_COMPOSITOR_BLUR_GAMMA_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE'])
+  if (capabilities.blurRelativeCompositorAvailable) gpuFamilies.push(
+    ['blur-relative-gpu', 'compositor_blur_relative_check.py', 'BLENDLINK_COMPOSITOR_BLUR_RELATIVE_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE'])
   if (capabilities.whitePointCompositorAvailable) gpuFamilies.push(
     ['white-point-gpu', 'compositor_whitepoint_check.py', 'BLENDLINK_COMPOSITOR_WHITEPOINT_REFERENCES', 'BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE'])
   if (capabilities.sharedUtilityCompositorAvailable) gpuFamilies.push(
@@ -252,6 +258,9 @@ if (plan.geometry) attempt('geometry', () => run('geometry', process.execPath,
 if (plan.geometry) attempt('normal-map', () => run('normal-map', process.execPath,
   ['experiments/normal-node-differential/suite.mjs', '--built', '--profiles', 'shared,cycles-zero'],
   { BLENDLINK_NORMAL_NODE_BLENDER: blender, BLENDLINK_NORMAL_NODE_NATIVE: join(evidence, 'normal-map') }, 1_800_000))
+if (plan.geometry) attempt('tangent', () => run('tangent', process.execPath,
+  ['experiments/tangent-node-differential/suite.mjs', '--built', '--profiles', 'shared,named,hq'],
+  { BLENDLINK_TANGENT_NODE_BLENDER: blender, BLENDLINK_TANGENT_NODE_NATIVE: join(evidence, 'tangent') }, 1_800_000))
 if (plan.noiseFbm) attempt('noise-fractal', () => run('noise-fractal', process.execPath,
   ['experiments/noise-fractal-differential/run.mjs', '--built'],
   { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-fractal'),
@@ -274,7 +283,7 @@ writeFileSync(join(evidence, 'report.json'), JSON.stringify({
     maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
   shaderFamilies: [...(plan.shaders ? ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'color-conversions',
     ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])] : []),
-    ...(plan.geometry ? ['geometry', 'normal-map'] : []), ...(plan.noiseFbm ? ['noise-fractal'] : []), ...(plan.noiseTypes ? ['noise-types', 'noise-varying'] : [])],
+    ...(plan.geometry ? ['geometry', 'normal-map', 'tangent'] : []), ...(plan.noiseFbm ? ['noise-fractal'] : []), ...(plan.noiseTypes ? ['noise-types', 'noise-varying'] : [])],
   builtRuntime: true, failures,
 }, null, 2) + '\n')
 assert.deepEqual(failures, [], 'Native node parity failed; all independent family logs were retained')

@@ -4,7 +4,13 @@ The target is to preserve the artist's authored shading and compositing while
 making Blender-to-web publishing automatic. Complete Blender node parity is
 not implemented. The [native coverage inventory](node-coverage/README.md)
 records available node types, modes, socket schemas, implementation limits,
-and remaining work separately for Blender 4.2 and 5.3.
+and remaining work separately for Blender 4.2, 5.2 and 5.3.
+
+EEVEE is the visual reference for new live shading ports where applicable.
+Cycles generally uses material/channel baking or Bake Appearance, according to
+the intended result. Existing verified Cycles ports remain available within
+their documented domains. Compositor CPU/GPU differences are tested separately
+from the scene renderer. See the [live fidelity decision](adr/0007-eevee-live-fidelity-and-cycles-baking.md).
 
 ## What happens when you preview or export
 
@@ -77,8 +83,10 @@ remain visible until reviewed; their names alone do not imply support.
 Numerical gates compare actual native float pixels with the production Three.js
 builder on both WebGPU and WebGL2. They check negative/HDR values, alpha,
 boundaries, zero ranges, clamping, and named refusals where applicable. Native
-references are kept separate from browser results. CPU Cycles reference tests
-are labeled as CPU evidence.
+references are kept separate from browser results. EEVEE material evaluation,
+including its constant and shader stages, is the live fidelity target. Existing
+CPU Cycles reference tests remain labeled as CPU evidence; additional
+Cycles-only behavior generally belongs to the bake workflow.
 
 Some functions use sampled lookup tables. A port that reproduces Blender's own
 native table is distinguished from an additional sampling approximation.

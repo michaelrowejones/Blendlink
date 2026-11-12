@@ -12,6 +12,8 @@ export type MaterialProgramImageBytes = ReadonlyMap<string, Uint8Array>
 export interface MaterialProgramPrimitiveData {
   position: Float32Array | null
   normal: Float32Array | null
+  tangent?: Float32Array | null
+  uvs?: ReadonlyMap<string,Float32Array>
   indices: Uint8Array | Uint16Array | Uint32Array | null
 }
 export type MaterialProgramGeometryData = ReadonlyMap<string, MaterialProgramPrimitiveData>
@@ -23,7 +25,7 @@ function record(value: unknown): value is Record<string, unknown> {
 function hasNativeNormal(value:unknown):boolean {
   if(Array.isArray(value))return value.some(hasNativeNormal)
   if(!record(value))return false
-  return value.op==='normal_map_native'||Object.values(value).some(hasNativeNormal)
+  return value.op==='normal_map_native'||value.op==='normal_view_native'||Object.values(value).some(hasNativeNormal)
 }
 
 function imageFile(value: unknown): string {
@@ -200,6 +202,7 @@ export async function validatedBaseColorProgramMaterials(
   const { collectVectorTransformRequirements, validateVectorTransformBinding } = await import('./tslVectorTransform.js')
   const { collectGeometryContextOutputs, validateGeometryContextMatrix } = await import('./tslGeometryContext.js')
   const { collectNormalMapRequirements,validateNormalMapBinding } = await import('./tslNormalNodes.js')
+  const {collectTangentRequirements,validateTangentBinding}=await import('./tslTangentNodes.js')
   const THREE = await import('three')
   const objectForBinding = (binding: PrimitiveBinding): import('three').Object3D => {
     if (binding.hierarchyIssue || !binding.nodeChain?.length) throw new TslIrError('Vector Transform needs actual default-scene object matrices: ' + (binding.hierarchyIssue ?? 'node hierarchy is missing'))
@@ -252,6 +255,8 @@ export async function validatedBaseColorProgramMaterials(
       collectGeometryContextOutputs(record(program)?program.channels:null,geometry)
       const normalMaps:import('./tslNodeRecipe.js').TslIrExpression[]=[]
       collectNormalMapRequirements(record(program)?program.channels:null,normalMaps)
+      const tangents:import('./tslNodeRecipe.js').TslIrExpression[]=[]
+      collectTangentRequirements(record(program)?program.channels:null,tangents)
       const material = materials[index]
       const materialInfo = record(material) && record(material.extras) ? material.extras.blendlink_tsl_material : null
       for (const binding of bindings) {
@@ -276,7 +281,7 @@ export async function validatedBaseColorProgramMaterials(
                 throw new TslIrError('Geometry context requires actual triangle position/normal attributes without skin, morph or GPU instances')
               validateGeometryContextMatrix(objectForBinding(binding),extras?.objectSpace)
             }
-            if(normalMaps.length){
+            if(normalMaps.length||tangents.length){
               if(!extras?.geometryContext?.includes('normal'))throw new TslIrError('Native Normal Map requires its exported primary-normal context declaration')
               const owner=objectForBinding(binding),data=geometryData?.get(`${binding.meshIndex}:${binding.primitiveIndex}`)
               let bound:import('three').Object3D=owner
@@ -284,9 +289,18 @@ export async function validatedBaseColorProgramMaterials(
                 const actual=new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(data.position,3))
                   .setAttribute('normal',new THREE.BufferAttribute(data.normal,3))
                 if(data.indices)actual.setIndex(new THREE.BufferAttribute(data.indices,1))
+                if(data.tangent)actual.setAttribute('tangent',new THREE.BufferAttribute(data.tangent,4))
+                data.uvs?.forEach((values,semantic)=>{
+                  const match=/^TEXCOORD_(\d+)$/.exec(semantic)
+                  if(match)actual.setAttribute(match[1]==='0'?'uv':'uv'+match[1],new THREE.BufferAttribute(values,2))
+                })
                 const mesh=new THREE.Mesh(actual);owner.add(mesh);bound=mesh
               }
               validateNormalMapBinding(normalMaps,bound,extras?.objectSpace)
+              if(tangents.length){
+                if(!(bound as import('three').Mesh).isMesh)throw new TslIrError('UV Tangent needs actual decoded primitive geometry')
+                validateTangentBinding(tangents,bound as import('three').Mesh,extras?.objectSpace,extras)
+              }
             }
             if (transforms.length) {
               const objectNeeded = transforms.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')

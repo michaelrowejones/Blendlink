@@ -18,6 +18,7 @@ import { uniform } from 'three/tsl'
 import { collectVectorTransformRequirements, validateVectorTransformBinding, type VectorTransformRequirement } from './tslVectorTransform.js'
 import { collectGeometryContextOutputs, validateGeometryContextBinding, type GeometryContextOutput } from './tslGeometryContext.js'
 import { collectNormalMapRequirements, validateNormalMapBinding } from './tslNormalNodes.js'
+import {collectTangentRequirements,validateTangentBinding} from './tslTangentNodes.js'
 import type { TslIrExpression } from './tslNodeRecipe.js'
 import {
   createTslBuildResources,
@@ -362,11 +363,14 @@ export async function installTslMaterials(
 
   const geometryContexts = new Map<string, Set<GeometryContextOutput>>()
   const normalMapContexts = new Map<string,TslIrExpression[]>()
+  const tangentContexts=new Map<string,TslIrExpression[]>()
   for(const [name,program] of Object.entries(programs.materials)){
     const outputs=new Set<GeometryContextOutput>();collectGeometryContextOutputs(program.channels,outputs)
     if(outputs.size)geometryContexts.set(name,outputs)
     const normalMaps:TslIrExpression[]=[];collectNormalMapRequirements(program.channels,normalMaps)
     if(normalMaps.length)normalMapContexts.set(name,normalMaps)
+    const tangents:TslIrExpression[]=[];collectTangentRequirements(program.channels,tangents)
+    if(tangents.length)tangentContexts.set(name,tangents)
   }
   const skipped: TslMaterialSkip[] = []
   interface InstalledSwap {
@@ -451,6 +455,14 @@ export async function installTslMaterials(
           catch(error){
             if(!(error instanceof TslIrError))throw error
             skipped.push({material:source,reason:`mesh "${mesh.name}" Normal Map refused: ${error.message}; its carrier stays`});return
+          }
+        }
+        const tangents=tangentContexts.get(source)
+        if(tangents){
+          try{validateTangentBinding(tangents,mesh,extras?.objectSpace,extras)}
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" UV Tangent refused: ${error.message}; its carrier stays`});return
           }
         }
         const objectTransform = transforms?.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')
