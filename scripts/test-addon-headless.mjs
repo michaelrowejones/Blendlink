@@ -13,6 +13,7 @@ const addonTest = join(testsDir, 'run_headless.py')
 const legacyCurveSidecarTest = join(
   root, 'experiments', 'legacy-curve-sidecar-differential', 'run.py',
 )
+const desktopSmoke = process.argv.includes('--desktop-smoke')
 
 // Human labels for discovered modules. A missing label degrades the console
 // line to a derived one; it can never make a suite silently not run, which
@@ -162,39 +163,44 @@ function runHeadlessSuite(label, testPath, sentinel) {
   }
 }
 
-const suites = discoverSuites()
-const only = process.env.BLENDLINK_HEADLESS_ONLY
-const selected = only
-  ? suites.filter((suite) =>
-      only.split(',').some((needle) => suite.file.includes(needle.trim())))
-  : suites
-if (only && !selected.length) {
-  throw new Error(
-    `BLENDLINK_HEADLESS_ONLY=${only} matched no discovered suite. ` +
-      `Available: ${suites.map((suite) => suite.file).join(', ')}`,
+if (!desktopSmoke) {
+  const suites = discoverSuites()
+  const only = process.env.BLENDLINK_HEADLESS_ONLY
+  const selected = only
+    ? suites.filter((suite) =>
+        only.split(',').some((needle) => suite.file.includes(needle.trim())))
+    : suites
+  if (only && !selected.length) {
+    throw new Error(
+      `BLENDLINK_HEADLESS_ONLY=${only} matched no discovered suite. ` +
+        `Available: ${suites.map((suite) => suite.file).join(', ')}`,
+    )
+  }
+  if (only) {
+    console.log(
+      `BLENDLINK_FULL_TEST addon: BLENDLINK_HEADLESS_ONLY is set - running ` +
+        `${selected.length}/${suites.length} suites. This is a focused rerun, ` +
+        'not the gate.',
+    )
+  } else {
+    console.log(`BLENDLINK_FULL_TEST addon: ${suites.length} discovered suites`)
+  }
+  runHeadlessSuite(
+    'linked legacy Curve sidecar diagnostic differential', legacyCurveSidecarTest,
+    'BLENDLINK_LEGACY_CURVE_SIDECAR_DIFFERENTIAL_PASSED',
   )
-}
-if (only) {
-  console.log(
-    `BLENDLINK_FULL_TEST addon: BLENDLINK_HEADLESS_ONLY is set - running ` +
-      `${selected.length}/${suites.length} suites. This is a focused rerun, ` +
-      'not the gate.',
-  )
+  for (const suite of selected) {
+    runHeadlessSuite(suite.label, suite.path, suite.sentinel)
+  }
+  console.log('BLENDLINK_FULL_TEST addon: passed')
 } else {
-  console.log(`BLENDLINK_FULL_TEST addon: ${suites.length} discovered suites`)
+  console.log('BLENDLINK_DESKTOP_SMOKE: installation and managed tools only; not the full material gate')
 }
-runHeadlessSuite(
-  'linked legacy Curve sidecar diagnostic differential', legacyCurveSidecarTest,
-  'BLENDLINK_LEGACY_CURVE_SIDECAR_DIFFERENTIAL_PASSED',
-)
-for (const suite of selected) {
-  runHeadlessSuite(suite.label, suite.path, suite.sentinel)
-}
-console.log('BLENDLINK_FULL_TEST addon: passed')
 
 const installRoot = mkdtempSync(join(tmpdir(), 'blendlink-addon-install-'))
 const resources = join(installRoot, 'resources')
 const archive = join(installRoot, 'blendlink.zip')
+const savedScene = join(installRoot, 'Scene With Spaces.blend')
 const installEnvironment = { ...process.env, BLENDER_USER_RESOURCES: resources }
 mkdirSync(resources, { recursive: true })
 
@@ -235,11 +241,15 @@ repo = next(item for item in bpy.context.preferences.extensions.repos if item.mo
 manifest = Path(repo.directory) / "blendlink" / "blender_manifest.toml"
 version = tomllib.loads(manifest.read_text(encoding="utf8"))["version"]
 module = importlib.import_module(module_name)
+${desktopSmoke ? `assert len(bpy.data.objects) > 0, "Expected Blender's default scene"
+bpy.ops.wm.save_as_mainfile(filepath=${JSON.stringify(savedScene)})` : ''}
 print("##blendlink-addon-install " + json.dumps({
     "enabled": module_name in bpy.context.preferences.addons,
     "operator": hasattr(bpy.ops.blendlink, "setup_website_export"),
     "package": bool(module.__file__),
     "version": version,
+    "exportOperator": bpy.ops.blendlink.export_website.get_rna_type().identifier,
+    "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
 }, sort_keys=True))
 `
   const probeOutput = runInstallStep('isolated extension verification', [
@@ -250,10 +260,37 @@ print("##blendlink-addon-install " + json.dumps({
   )
   if (!sentinel) throw new Error('Installed extension did not emit its verification sentinel')
   const status = JSON.parse(sentinel.slice('##blendlink-addon-install '.length))
-  if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package) {
+  if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
+      status.exportOperator !== 'BLENDLINK_OT_export_website') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }
   console.log('BLENDLINK_FULL_TEST addon: isolated install passed')
+  if (desktopSmoke) {
+    // Exercise the exact installed Python entry point with global Node/npm
+    // removed. The local compiler override lets an unpublished revision run.
+    const cache = join(installRoot, 'Private Tools With Spaces')
+    const systemPath = process.platform === 'win32'
+      ? [join(process.env.SystemRoot ?? 'C:\\Windows', 'System32'), process.env.SystemRoot ?? 'C:\\Windows'].join(';')
+      : '/usr/bin:/bin'
+    installEnvironment.PATH = systemPath
+    installEnvironment.XDG_CACHE_HOME = join(installRoot, 'cache')
+    if (process.platform === 'win32') installEnvironment.LOCALAPPDATA = join(installRoot, 'cache')
+    const base = ['--background', '--factory-startup', '--python-exit-code', '1', '--python', status.bootstrap, '--',
+      '--cache', cache, '--version', packageVersion, '--cli', cli, '--blender', blender]
+    const website = join(installRoot, 'Website With Spaces')
+    const exported = runInstallStep('fresh managed runtime + website export', [
+      ...base, '--', 'export', '--blend', savedScene, '--out', website,
+    ])
+    if (!exported.includes('downloading Node 24.22.3') ||
+        !existsSync(join(website, 'index.html')) || !existsSync(join(website, 'THIRD_PARTY_NOTICES.txt'))) {
+      throw new Error(`Desktop bootstrap did not download tools and export a complete website:\n${exported}`)
+    }
+    const cached = runInstallStep('offline cached runtime execution', [...base, '--offline', '--', 'discover'])
+    if (cached.includes('downloading Node') || !cached.includes(blender)) {
+      throw new Error(`Desktop tools did not reuse the verified runtime offline:\n${cached}`)
+    }
+    console.log('BLENDLINK_DESKTOP_SMOKE_PASSED installed extension, fresh tools, website export and offline reuse')
+  }
 } finally {
   const owned = resolve(installRoot)
   if (resolve(tmpdir()) !== resolve(owned, '..') || !owned.includes('blendlink-addon-install-')) {

@@ -27,6 +27,12 @@ this audit did not recheck remote repository settings or registry ownership.
 - No approved Blender Extensions release is recorded by this repository.
 - The repository is public; the npm package and GitHub release remain unpublished.
 - Local packaging and toolchain gates exist.
+- Source pull requests run the full pinned Blender 5.2/KTX gate and the
+  Linux/Windows 4.2/5.2 desktop installation checks. Desktop checks install the
+  extension ZIP in a clean profile, acquire the private Node runtime with global
+  Node/npm removed from PATH, export a website, and reuse the tools offline.
+  They are installation/scene-export evidence, not the full material fixture
+  suite on every Blender version. Distribution jobs remain restricted to tags.
 - `npm run test:preview-ux` now exercises actual browser rendering, orbit
   inspection, portrait framing, nonblank PNG capture, keyboard focus, load
   retry, failed-save recovery, and standalone export in a hosting subfolder.

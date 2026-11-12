@@ -12,6 +12,20 @@ function job(name, nextName) {
   return workflow.slice(start, end)
 }
 
+test('pull requests run platform checks while distribution stays tag-only', () => {
+  assert.match(workflow, /\n  pull_request:\n/)
+  assert.match(job('full-contract', 'linux'), /run: npm run test:full/)
+  assert.match(job('linux', 'windows'), /test-addon-headless\.mjs --desktop-smoke/)
+  assert.match(job('windows', 'release-candidate'), /test-addon-headless\.mjs --desktop-smoke/)
+  for (const [name, next] of [
+    ['release-candidate', 'publish-npm'],
+    ['publish-npm', 'publish-github-release'],
+    ['publish-github-release', undefined],
+  ]) {
+    assert.match(job(name, next), /if: \$\{\{ startsWith\(github\.ref, 'refs\/tags\/v'\) \}\}/)
+  }
+})
+
 test('release candidate attests and retains one exact carrier', () => {
   const candidate = job('release-candidate', 'publish-npm')
   assert.match(candidate, /verify-retained-release\.mjs retained/)

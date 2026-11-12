@@ -5,6 +5,7 @@ import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync, existsSync
 import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { extname, join, resolve, sep } from 'node:path'
+import { stripVTControlCharacters } from 'node:util'
 import { chromium, firefox, webkit } from '@playwright/test'
 import sharp from '../packages/blendlink/dist/sharpSecurity.js'
 
@@ -51,7 +52,7 @@ try {
   preview.stderr.on('data', chunk => { previewLog += chunk })
   let url
   await until(() => {
-    url = previewLog.match(/Local:\s+(http:\/\/127\.0\.0\.1:\d+\/)/)?.[1]
+    url = stripVTControlCharacters(previewLog).match(/Local:\s+(http:\/\/127\.0\.0\.1:\d+\/)/)?.[1]
     if (preview.exitCode !== null) throw new Error(previewLog)
     return !!url
   })
