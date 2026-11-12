@@ -135,8 +135,8 @@ describe('website preview contract', () => {
     expect(style).toContain(
       `${PREVIEW_STUDIO_STYLE_VERSION_MARKER} ${PREVIEW_STUDIO_HOST_VERSION} */`,
     )
-    expect(style).toContain('.toolbar button { display: block;')
-    expect(style).not.toContain('.toolbar button:not(#details) { display: none;')
+    // Actual control visibility, pointer reachability and 44px touch targets
+    // are checked by test:preview-ux across desktop and narrow viewports.
     expect(existsSync(join(plan.workspace, 'public', '.blendlink-preview-control.json'))).toBe(true)
     expect(readFileSync(join(plan.workspace, 'blendlink.config.mjs'), 'utf8'))
       .toContain('artist-scene.blend')
