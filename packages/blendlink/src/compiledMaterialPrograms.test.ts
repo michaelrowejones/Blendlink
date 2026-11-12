@@ -1,8 +1,18 @@
 import { createHash } from 'node:crypto'
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { Document, NodeIO } from '@gltf-transform/core'
+import sharp from 'sharp'
+import { DataTexture, Group, Mesh } from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { describe, expect, it } from 'vitest'
 import { inspectCompiledSceneConformance } from './compiledSceneConformance.js'
-import { validatedBaseColorProgramMaterials } from './compiledMaterialPrograms.js'
+import { readMaterialProgramImageBytes, validatedBaseColorProgramMaterials } from './compiledMaterialPrograms.js'
+import { auditCompiledSceneArtifact } from './compiledSceneAudit.js'
+import { installTslMaterials, objectAttributeResolver } from './tslMaterialRuntime.js'
 import type { SceneManifest } from './typegen.js'
+import type { MaterialProgramsDocument } from './materialProgramDocument.js'
 
 const checker = {
   schemaVersion: 1, model: 'blendlink-tsl-ir-v1',
@@ -101,5 +111,228 @@ describe('validated live Base Color carrier evidence', () => {
     published.manifest.materialPrograms!.bytes = bytes.length
     published.manifest.materialPrograms!.hash = createHash('sha256').update(bytes).digest('hex').slice(0, 16)
     await expect(inspect(fixture(), published)).rejects.toThrow(/schema\/model/)
+  })
+})
+
+async function realPublication(values: unknown[] = [[0.8, 0.35, 0.1], 0.6], primitives = 1, ownerVersion?: number) {
+  const document = new Document()
+  const buffer = document.createBuffer()
+  const material = document.createMaterial('Artist.BLENDLINK_TSL').setExtras({ blendlink_source_material: 'Artist' })
+  const position = document.createAccessor().setType('VEC3').setBuffer(buffer)
+    .setArray(new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]))
+  const uv = document.createAccessor().setType('VEC2').setBuffer(buffer)
+    .setArray(new Float32Array([0, 0, 1, 0, 0, 1]))
+  const mesh = document.createMesh('Artist geometry')
+  for (let i = 0; i < primitives; i++) mesh.addPrimitive(document.createPrimitive().setMaterial(material)
+    .setAttribute('POSITION', position).setAttribute('TEXCOORD_0', uv))
+  const scene = document.createScene('Published scene')
+  document.getRoot().setDefaultScene(scene)
+  values.forEach((tint, i) => scene.addChild(document.createNode(`Artist object ${i}`).setMesh(mesh)
+    .setExtras({ ...(tint === undefined ? {} : { tint }), ...(ownerVersion === undefined ? {} : {
+      blendlink_tsl_object: { schemaVersion: ownerVersion, objectName: `Artist object ${i}` },
+    }) })))
+  const glbBytes = await new NodeIO().writeBinary(document)
+  const imageBytes = await sharp({ create: { width: 129, height: 129, channels: 4,
+    background: { r: 200, g: 100, b: 25, alpha: 0.75 } } }).png().toBuffer()
+  const image = { file: 'scene.tex.ink.png', bytes: imageBytes.length,
+    hash: createHash('sha256').update(imageBytes).digest('hex').slice(0, 16),
+    mime: 'image/png', width: 129, height: 129, colorSpace: 'sRGB' }
+  const sidecar = { schemaVersion: 1, model: 'blendlink-material-programs-v1', images: { ink: image },
+    materials: { Artist: { channels: { 'Base Color': { tslIr: { schemaVersion: 1, model: 'blendlink-tsl-ir-v1', output: {
+      op: 'mix_color', blendType: 'MULTIPLY', clampFactor: true, clampResult: false,
+      factor: { op: 'const_float', value: 1 },
+      a: { op: 'texture_ref', ref: { image: 'ink', interpolation: 'Linear', extension: 'REPEAT' },
+        image: { name: 'ink', width: 129, height: 129, colorSpace: 'sRGB' }, output: 'color', vector: { op: 'uv' } },
+      b: { op: 'attribute_object', name: 'tint', output: 'color' },
+    } } } } } } }
+  const fixture = { glbBytes, sidecar, imageBytes, bytes: new Uint8Array(), manifest: {} as SceneManifest }
+  repin(fixture)
+  return fixture
+}
+
+function repin(fixture: Awaited<ReturnType<typeof realPublication>>) {
+  fixture.bytes = new TextEncoder().encode(JSON.stringify(fixture.sidecar))
+  fixture.manifest = { generator: 'blendlink', schemaVersion: 3, url: '/scene.glb',
+    hash: createHash('sha256').update(fixture.glbBytes).digest('hex').slice(0, 16),
+    stats: { bytes: fixture.glbBytes.length, triangles: 2, meshes: 1, texturesBytes: 0 },
+    materialPrograms: { url: '/scene.materials.json', materials: 1, bytes: fixture.bytes.length,
+      hash: createHash('sha256').update(fixture.bytes).digest('hex').slice(0, 16) },
+  } as unknown as SceneManifest
+}
+
+async function auditReal(fixture: Awaited<ReturnType<typeof realPublication>>, payload = fixture.imageBytes) {
+  return auditCompiledSceneArtifact({ manifest: fixture.manifest, glbBytes: fixture.glbBytes,
+    materialProgramsBytes: fixture.bytes, materialProgramImageBytes: new Map([[fixture.sidecar.images.ink.file, payload]]) })
+}
+
+describe('exact external image and per-object program evidence', () => {
+  it('audits real shared-mesh GLB nodes, pinned PNG bytes, and the same production resolvers used by the installer', async () => {
+    const fixture = await realPublication()
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+    const loaded = await new GLTFLoader().parseAsync(fixture.glbBytes.slice().buffer, '')
+    const meshes: Mesh[] = []
+    loaded.scene.traverse(object => { if ((object as Mesh).isMesh) meshes.push(object as Mesh) })
+    expect(meshes.map(mesh => mesh.userData.tint)).toEqual([[0.8, 0.35, 0.1], 0.6])
+    const resolver = objectAttributeResolver()
+    const uniform = resolver('tint') as unknown as { update(frame: unknown): void; value: { toArray(): number[] } }
+    uniform.update({ object: meshes[0] })
+    expect(uniform.value.toArray()).toEqual([0.8, 0.35, 0.1])
+    uniform.update({ object: meshes[1] })
+    expect(uniform.value.toArray()).toEqual([0.6, 0.6, 0.6])
+    const decoded = await sharp(fixture.imageBytes).ensureAlpha().raw().toBuffer()
+    const installed = await installTslMaterials({ root: loaded.scene,
+      descriptor: { materialPrograms: fixture.manifest.materialPrograms },
+      loadPrograms: async () => fixture.sidecar as unknown as MaterialProgramsDocument,
+      loadProgramTexture: async () => new DataTexture(decoded, 129, 129),
+    })
+    expect(installed.applied).toBe(2)
+    expect(installed.skipped).toEqual([])
+    installed.dispose()
+  })
+
+  it.each([undefined, '0.4', [1, 2], [1, null, 3]])('keeps Final blocked when one rendered object has missing/malformed data: %j', async value => {
+    const fixture = await realPublication([[1, 0.5, 0.25], value])
+    expect((await auditReal(fixture)).conformance.issues.map(issue => issue.code)).toContain(missing)
+    const loaded = await new GLTFLoader().parseAsync(fixture.glbBytes.slice().buffer, '')
+    const decoded = await sharp(fixture.imageBytes).ensureAlpha().raw().toBuffer()
+    const installed = await installTslMaterials({ root: loaded.scene,
+      descriptor: { materialPrograms: fixture.manifest.materialPrograms },
+      loadPrograms: async () => fixture.sidecar as unknown as MaterialProgramsDocument,
+      loadProgramTexture: async () => new DataTexture(decoded, 129, 129),
+    })
+    expect(installed.applied).toBe(1)
+    expect(installed.skipped.some(skip => /per-object attribute/.test(skip.reason))).toBe(true)
+    installed.dispose()
+  })
+
+  it('does not invent inherited node properties for multi-primitive GLTFLoader child meshes', async () => {
+    const fixture = await realPublication([[0.8, 0.35, 0.1]], 2)
+    const loaded = await new GLTFLoader().parseAsync(fixture.glbBytes.slice().buffer, '')
+    const tints: unknown[] = []
+    loaded.scene.traverse(object => { if ((object as Mesh).isMesh) tints.push(object.userData.tint) })
+    expect(tints).toEqual([undefined, undefined])
+    expect((await auditReal(fixture)).conformance.issues.map(issue => issue.code)).toContain(missing)
+    const application = new Group()
+    application.userData = { tint: [1, 0, 0], blendlink_tsl_object: { schemaVersion: 1, objectName: 'Unrelated application ancestor' } }
+    application.add(loaded.scene)
+    const decoded = await sharp(fixture.imageBytes).ensureAlpha().raw().toBuffer()
+    const installed = await installTslMaterials({ root: application,
+      descriptor: { materialPrograms: fixture.manifest.materialPrograms },
+      loadPrograms: async () => fixture.sidecar as unknown as MaterialProgramsDocument,
+      loadProgramTexture: async () => new DataTexture(decoded, 129, 129),
+    })
+    expect(installed.applied).toBe(0)
+    expect(installed.skipped.some(skip => /per-object attribute/.test(skip.reason))).toBe(true)
+    installed.dispose()
+  })
+
+  it('resolves marked multi-primitive owners independently, including live mutation of actual installed uniforms', async () => {
+    const fixture = await realPublication([[0.8, 0.35, 0.1], [0.1, 0.6, 0.9]], 2, 1)
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+    const loaded = await new GLTFLoader().parseAsync(fixture.glbBytes.slice().buffer, '')
+    const owners = loaded.scene.children
+    const meshes = owners.flatMap(owner => owner.children) as Mesh[]
+    expect(meshes).toHaveLength(4)
+    expect(meshes[0].geometry).toBe(meshes[2].geometry)
+    const decoded = await sharp(fixture.imageBytes).ensureAlpha().raw().toBuffer()
+    const installed = await installTslMaterials({ root: loaded.scene,
+      descriptor: { materialPrograms: fixture.manifest.materialPrograms },
+      loadPrograms: async () => fixture.sidecar as unknown as MaterialProgramsDocument,
+      loadProgramTexture: async () => new DataTexture(decoded, 129, 129),
+    })
+    expect(installed.applied).toBe(4)
+    expect(installed.skipped).toEqual([])
+    expect(meshes[0].material).toBe(meshes[1].material)
+    expect(meshes[2].material).toBe(meshes[3].material)
+    expect(meshes[0].material).not.toBe(meshes[2].material)
+    type Uniform = { update(frame: unknown): void; value: { toArray(): number[] } }
+    const uniforms = (mesh: Mesh): Uniform[] => {
+      const found: Uniform[] = []
+      const material = mesh.material as unknown as { colorNode: { traverse(callback: (node: Record<string, unknown>) => void): void } }
+      material.colorNode.traverse(node => {
+        if (node.isUniformNode && node.updateType === 'object') found.push(node as unknown as Uniform)
+      })
+      return found
+    }
+    const [a] = uniforms(meshes[0]), [b] = uniforms(meshes[2])
+    expect(a).toBeTruthy()
+    expect(b).toBeTruthy()
+    expect(a).not.toBe(b)
+    a.update({ object: meshes[0] }); b.update({ object: meshes[2] })
+    expect(a.value.toArray()).toEqual([0.8, 0.35, 0.1])
+    expect(b.value.toArray()).toEqual([0.1, 0.6, 0.9])
+    owners[0].userData.tint = [0.25, 0.5, 0.75]
+    a.update({ object: meshes[1] }); b.update({ object: meshes[3] })
+    expect(a.value.toArray()).toEqual([0.25, 0.5, 0.75])
+    expect(b.value.toArray()).toEqual([0.1, 0.6, 0.9])
+    owners[0].userData.tint = 'invalid live mutation'
+    expect(() => a.update({ object: meshes[0] })).toThrow(/finite scalar or RGB\/vector/)
+    b.update({ object: meshes[2] })
+    expect(b.value.toArray()).toEqual([0.1, 0.6, 0.9])
+    installed.dispose()
+  })
+
+  it('refuses unknown ownership marker versions instead of inheriting their properties', async () => {
+    const fixture = await realPublication([[0.8, 0.35, 0.1]], 2, 2)
+    expect((await auditReal(fixture)).conformance.issues.map(issue => issue.code)).toContain(missing)
+  })
+
+  it('checks required per-object properties in other channels before exempting Base Color', async () => {
+    const fixture = await realPublication()
+    Object.assign(fixture.sidecar.materials.Artist.channels, { Roughness: { tslIr: {
+      ...checker, output: { op: 'attribute_object', name: 'absent-roughness', output: 'fac' },
+    } } })
+    repin(fixture)
+    expect((await auditReal(fixture)).conformance.issues.map(issue => issue.code)).toContain(missing)
+  })
+
+  it('requires image payload evidence even with a correctly pinned sidecar', async () => {
+    const fixture = await realPublication()
+    const audit = await auditCompiledSceneArtifact({ manifest: fixture.manifest,
+      glbBytes: fixture.glbBytes, materialProgramsBytes: fixture.bytes })
+    expect(audit.conformance.issues.map(issue => issue.code)).toContain(missing)
+  })
+
+  it.each(['tamper', 'missing'])('rejects %s image bytes', async kind => {
+    const fixture = await realPublication()
+    const imageBytes = kind === 'missing' ? new Map<string, Uint8Array>()
+      : new Map([[fixture.sidecar.images.ink.file, new Uint8Array(fixture.imageBytes.length).fill(1)]])
+    await expect(auditCompiledSceneArtifact({ manifest: fixture.manifest, glbBytes: fixture.glbBytes,
+      materialProgramsBytes: fixture.bytes, materialProgramImageBytes: imageBytes })).rejects.toThrow(/image.*byte\/hash pin/)
+  })
+
+  it.each(['width', 'height', 'mime', 'colorSpace'])('checks decoded image %s even when the sidecar is re-pinned', async field => {
+    const fixture = await realPublication()
+    Object.assign(fixture.sidecar.images.ink, { [field]: field === 'mime' ? 'image/jpeg' : field === 'colorSpace' ? 'unknown-space' : 128 })
+    repin(fixture)
+    await expect(auditReal(fixture)).rejects.toThrow(/format\/dimensions\/color-space metadata/)
+  })
+
+  it('refuses a texture_ref whose metadata disagrees with its verified source bytes', async () => {
+    const fixture = await realPublication()
+    fixture.sidecar.materials.Artist.channels['Base Color'].tslIr.output.a.image.width = 128
+    repin(fixture)
+    expect((await auditReal(fixture)).conformance.issues.map(issue => issue.code)).toContain(missing)
+  })
+
+  it('refuses unsupported external Cubic sampling instead of approving a linear substitution', async () => {
+    const fixture = await realPublication()
+    fixture.sidecar.materials.Artist.channels['Base Color'].tslIr.output.a.ref.interpolation = 'Cubic'
+    repin(fixture)
+    expect((await auditReal(fixture)).conformance.issues.map(issue => issue.code)).toContain(missing)
+  })
+
+  it('reads exact published companions by basename and rejects a different URL/path contract', async () => {
+    const fixture = await realPublication()
+    const directory = mkdtempSync(join(tmpdir(), 'blendlink-program-images-'))
+    try {
+      const path = join(directory, 'scene.materials.json')
+      writeFileSync(path, fixture.bytes)
+      writeFileSync(join(directory, fixture.sidecar.images.ink.file), fixture.imageBytes)
+      expect([...readMaterialProgramImageBytes(fixture.bytes, path).values()]).toEqual([fixture.imageBytes])
+      fixture.sidecar.images.ink.file = '../outside.png'
+      repin(fixture)
+      expect(() => readMaterialProgramImageBytes(fixture.bytes, path)).toThrow(/basename beside/)
+    } finally { rmSync(directory, { recursive: true, force: true }) }
   })
 })

@@ -70,7 +70,8 @@ function discoverSuites() {
     if (manual) continue
     // The sentinel need not be the whole literal: several modules append
     // measured counts after it (`print("BLENDLINK_X_PASSED " f"n={n}")`).
-    const sentinel = [...source.matchAll(/print\(\s*f?["'](BLENDLINK_[A-Z0-9_]+)/g)]
+    // Shared native compositor fixtures publish through oracle.finish().
+    const sentinel = [...source.matchAll(/(?:print|oracle\.finish)\(\s*f?["'](BLENDLINK_[A-Z0-9_]+)/g)]
       .map((match) => match[1]).at(-1)
     if (!sentinel) {
       unregistered.push(file)
@@ -241,6 +242,39 @@ repo = next(item for item in bpy.context.preferences.extensions.repos if item.mo
 manifest = Path(repo.directory) / "blendlink" / "blender_manifest.toml"
 version = tomllib.loads(manifest.read_text(encoding="utf8"))["version"]
 module = importlib.import_module(module_name)
+# Exercise package-qualified compiler imports from the actual installed ZIP.
+# Registering classes alone cannot catch a helper that imports successfully
+# only when the source checkout is injected into sys.path.
+mesh = bpy.data.meshes.new("Installed Node Translation Probe")
+mesh.from_pydata([(0,0,0),(1,0,0),(1,1,0),(0,1,0)], [], [(0,1,2,3)])
+owner = bpy.data.objects.new("Installed Node Translation Probe", mesh)
+bpy.context.scene.collection.objects.link(owner)
+material = bpy.data.materials.new("Installed Native Node Families")
+material.use_nodes = True
+owner.data.materials.append(material)
+tree = material.node_tree
+root = next(node for node in tree.nodes if node.bl_idname == "ShaderNodeBsdfPrincipled")
+families = [("ShaderNodeBlackbody", "spectral"), ("ShaderNodeWavelength", "spectral"),
+    ("ShaderNodeRGBCurve", "curve_native"), ("ShaderNodeFloatCurve", "curve_native"),
+    ("ShaderNodeVectorCurve", "curve_native"), ("ShaderNodeTexBrick", "tex_brick"),
+    ("ShaderNodeObjectInfo", "object_info")]
+def contains_op(value, expected):
+    if isinstance(value, dict):
+        return value.get("op") == expected or any(contains_op(child, expected) for child in value.values())
+    return isinstance(value, list) and any(contains_op(child, expected) for child in value)
+for node_type, expected in families:
+    node = tree.nodes.new(node_type)
+    output = node.outputs["Color"] if node_type == "ShaderNodeObjectInfo" else node.outputs[0]
+    tree.links.new(output, root.inputs["Base Color"])
+    before = len(tree.nodes), len(tree.links), len(bpy.data.node_groups)
+    decision = module.material_compiler.plan_materials([owner], automatic_programs=True).decisions[0]
+    channel = next(item for item in decision.channel_plan["channels"] if item["channel"] == "Base Color")
+    assert channel["route"] == "program" and contains_op(channel.get("tslIr"), expected), (node_type, channel)
+    assert before == (len(tree.nodes), len(tree.links), len(bpy.data.node_groups)), node_type
+    tree.nodes.remove(node)
+bpy.data.objects.remove(owner, do_unlink=True)
+bpy.data.meshes.remove(mesh)
+bpy.data.materials.remove(material)
 ${desktopSmoke ? `assert len(bpy.data.objects) > 0, "Expected Blender's default scene"
 bpy.ops.wm.save_as_mainfile(filepath=${JSON.stringify(savedScene)})` : ''}
 print("##blendlink-addon-install " + json.dumps({
@@ -251,6 +285,7 @@ print("##blendlink-addon-install " + json.dumps({
     "exportOperator": bpy.ops.blendlink.export_website.get_rna_type().identifier,
     "atlasOperator": bpy.ops.blendlink.check_atlas_fit.get_rna_type().identifier,
     "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
+    "nodeFamilies": len(families),
 }, sort_keys=True))
 `
   const probeOutput = runInstallStep('isolated extension verification', [
@@ -262,6 +297,7 @@ print("##blendlink-addon-install " + json.dumps({
   if (!sentinel) throw new Error('Installed extension did not emit its verification sentinel')
   const status = JSON.parse(sentinel.slice('##blendlink-addon-install '.length))
   if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
+      status.nodeFamilies !== 7 ||
       status.exportOperator !== 'BLENDLINK_OT_export_website' || status.atlasOperator !== 'BLENDLINK_OT_check_atlas_fit') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }

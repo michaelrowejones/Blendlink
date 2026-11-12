@@ -3,6 +3,7 @@
 
 import sys
 import tempfile
+from unittest.mock import patch
 from pathlib import Path
 
 import bpy
@@ -115,4 +116,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # A real channel-size limit continues to exercise automatic fallback as
+    # node coverage grows. Brick itself is now a supported live program.
+    with patch.object(compiler, "TSL_IR_BYTE_BUDGET", 512):
+        main()

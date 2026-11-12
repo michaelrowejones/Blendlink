@@ -37,6 +37,7 @@ export interface TslRuntimeMeshExtras {
   colorLayers?: Record<string, string>
   texspace?: { location: number[]; size: number[] }
   objectSpace?: string
+  objectAttributes?: readonly string[]
 }
 
 export type MaterialNodeSlot =
@@ -158,8 +159,8 @@ export function buildOptionsFor(
       size: [...extras.texspace.size] as [number, number, number],
     }
   }
-  if (extras?.objectSpace === 'gltf-y-up') {
-    options.objectSpace = { basis: 'gltf-y-up' }
+  if (extras?.objectSpace === 'gltf-y-up' || extras?.objectSpace === 'blender-z-up') {
+    options.objectSpace = { basis: extras.objectSpace }
   }
   return options
 }

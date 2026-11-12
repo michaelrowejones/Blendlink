@@ -8,7 +8,7 @@ instead of describing every file as MIT.
 
 The Node/TypeScript compiler, CLI, Three.js runtime adapters, generated
 JavaScript and declarations, package documentation, and sample assets are
-licensed under the MIT License, except for the third-party runtime copy listed
+licensed under the MIT License, except for the third-party portions listed
 below. The complete text is in [`LICENSE`](LICENSE).
 
 `blender/bakelib.py`, `dist/blender/bakelib.py`, and
@@ -31,6 +31,17 @@ The complete GNU General Public License version 3 text is in
 `GPL-3.0-or-later`.
 
 ## Third-party notice
+
+`dist/tslSpectralNodes.js`, `dist/tslBrickNodes.js` and their source TypeScript
+include spectral color and Brick mathematics adapted from Apache-2.0 Cycles
+code. The coefficient/CIE data in
+`dist/addon/spectral_tables.json` and `dist/blender/spectral_tables.json` has the
+same license. Complete attribution and modification notices are in
+[`assets/blender-spectral-NOTICE.txt`](assets/blender-spectral-NOTICE.txt);
+the complete license is in
+[`assets/blender-spectral-apache-2.0.txt`](assets/blender-spectral-apache-2.0.txt).
+The separate Blender extension also carries these texts as
+`spectral-NOTICE.txt` and `spectral-LICENSE.txt` beside its GPL aggregate license.
 
 `dist/vendor/n8ao-webgpu/` contains the unchanged runtime from
 `n8ao-webgpu@0.1.0`, licensed CC0-1.0. Its complete `LICENSE`, upstream

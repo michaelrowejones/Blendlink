@@ -6693,6 +6693,7 @@ def main() -> None:
                 emit_pipeline,
                 emit_replaces_mesh_data=(settings.get("mode") == "baked"),
                 preserve_custom_attributes=preserve_custom_attributes,
+                object_space="gltf-y-up" if kwargs.get("export_yup", True) else "blender-z-up",
             )
         else:
             emit_pipeline()

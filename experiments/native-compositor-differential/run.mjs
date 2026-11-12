@@ -2,7 +2,7 @@
 // more reference directories here. Tests import the actual runtime source.
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { mkdir, readFile, writeFile, copyFile, stat } from 'node:fs/promises'
+import { mkdir, readFile, writeFile, copyFile, stat, readdir, rm } from 'node:fs/promises'
 import { resolve, join } from 'node:path'
 import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
@@ -29,30 +29,90 @@ const configuration = ts.readConfigFile(join(root, 'packages/blendlink/tsconfig.
 if (configuration.error) throw new Error(ts.flattenDiagnosticMessageText(configuration.error.messageText, '\n'))
 const parsed = ts.parseJsonConfigFileContent(configuration.config, ts.sys, join(root, 'packages/blendlink'))
 const provenance = { mode: built ? 'built' : 'source', typescript: ts.version, modules: [] }
-for (const name of ['tslSourceCompositor', 'tslNodeRecipe']) {
-  const source = join(root, 'packages/blendlink/src', name + '.ts')
+// Reviewed package build rewrites from scripts/copy-assets.mjs. Reproduce the
+// exact transformation in memory; never ignore the remainder of that module.
+const postEmitRules = [{ module: 'threeWebgpuPostPipeline',
+  from: "import('n8ao-webgpu')", to: "import('./vendor/n8ao-webgpu/index.js')" }]
+const sourceDirectory = join(root, 'packages/blendlink/src')
+const sourceRecords = await Promise.all((await readdir(sourceDirectory)).sort()
+  .filter(name => name.endsWith('.ts') && !name.endsWith('.test.ts') && !name.endsWith('.d.ts'))
+  .map(async filename => {
+    const source = join(sourceDirectory, filename)
+    return { name: filename.slice(0, -3), source, contents: await readFile(source, 'utf8'),
+      sourceTime: (await stat(source)).mtimeMs }
+  }))
+const expectedOutputs = new Map()
+if (built) {
+  // Whole-program emission preserves semantic type-only reexports and const
+  // enum lowering. All output stays in memory; this never builds or writes dist.
+  const options = { ...parsed.options, declaration: false, sourceMap: false, noEmit: false }
+  const host = ts.createCompilerHost(options)
+  const originalReadFile = host.readFile.bind(host)
+  const capturedSources = new Map(sourceRecords.map(record => [record.source, record.contents]))
+  host.readFile = filename => capturedSources.get(resolve(filename)) ?? originalReadFile(filename)
+  const program = ts.createProgram({ rootNames: parsed.fileNames, options, host })
+  const emitted = program.emit(undefined, (filename, contents) => {
+    if (filename.endsWith('.js')) expectedOutputs.set(resolve(filename), normalizeEmit(contents))
+  })
+  assert.equal(emitted.emitSkipped, false, 'Could not derive current production JavaScript for --built verification')
+}
+for (const { name, source, contents, sourceTime } of sourceRecords) {
   const emitted = join(root, 'packages/blendlink/dist', name + '.js')
-  const contents = await readFile(source, 'utf8')
-  // These package modules are ESM. Transpile independently and compare emitted
-  // bytes, so a recently touched but stale dist file cannot satisfy the gate.
-  const expected = normalizeEmit(ts.transpileModule(contents, { fileName: source,
+  let expected = built ? expectedOutputs.get(emitted) : normalizeEmit(ts.transpileModule(contents, { fileName: source,
     compilerOptions: { ...parsed.options, module: ts.ModuleKind.ESNext,
       moduleResolution: ts.ModuleResolutionKind.Bundler, sourceMap: false, declaration: false } }).outputText)
+  assert.notEqual(expected, undefined, `Missing independently emitted JavaScript for ${name}`)
+  const rule = postEmitRules.find(rule => rule.module === name)
+  if (rule) {
+    assert.equal(expected.split(rule.from).length, 2, `${name} no longer matches its reviewed package post-emit rule`)
+    expected = expected.replace(rule.from, rule.to)
+  }
   let actual, emittedTime
   try { actual = normalizeEmit(await readFile(emitted, 'utf8')); emittedTime = (await stat(emitted)).mtimeMs }
   catch (error) { if (built) throw new Error(`Missing built compositor module ${name}; run npm run build first`, { cause: error }) }
-  const sourceTime = (await stat(source)).mtimeMs
   const record = { name, sourceSha256: hash(contents), expectedEmitterSha256: hash(expected),
     emitterSha256: actual === undefined ? null : hash(actual),
     sourceMtimeMs: sourceTime, emitterMtimeMs: emittedTime ?? null,
-    emitterMatchesSource: actual === expected }
+    emitterMatchesSource: actual === expected, postEmitTransform: rule ?? null }
   provenance.modules.push(record)
   if (built) {
     assert.ok(emittedTime >= sourceTime, `${name} dist predates source; rebuild before --built verification`)
     assert.ok(actual === expected, `${name} emitted JavaScript differs from current source; rebuild before --built verification`)
   }
 }
+provenance.postEmitRules = postEmitRules
+provenance.copyAssetsSha256 = hash(await readFile(join(root, 'packages/blendlink/scripts/copy-assets.mjs')))
 provenance.extractorSha256 = hash(await readFile(join(root, 'packages/blendlink/blender/compositor_graph.py')))
+const snapshot = join(evidence, 'module-snapshot')
+const moduleDirectory = join(root, 'packages/blendlink', built ? 'dist' : 'src')
+const extension = built ? '.js' : '.ts'
+await rm(snapshot, { recursive: true, force: true })
+await mkdir(snapshot, { recursive: true })
+provenance.snapshot = { directory: snapshot, mode: provenance.mode, files: [], sourceMaps: [] }
+for (const entry of (await readdir(moduleDirectory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
+  if (!entry.isFile() || !entry.name.endsWith(extension) || entry.name.endsWith('.test.ts')) continue
+  const contents = await readFile(join(moduleDirectory, entry.name))
+  await writeFile(join(snapshot, entry.name), contents)
+  const record = { name: entry.name, sha256: hash(contents) }
+  provenance.snapshot.files.push(record)
+  if (built) {
+    const name = entry.name + '.map'
+    try {
+      const map = await readFile(join(moduleDirectory, name))
+      await writeFile(join(snapshot, name), map)
+      provenance.snapshot.sourceMaps.push({ name, sha256: hash(map) })
+    } catch (error) { if (error.code !== 'ENOENT') throw error }
+  }
+  const guarded = provenance.modules.find(module => entry.name === module.name + extension)
+  if (built) assert.ok(guarded, `Built snapshot module ${entry.name} has no guarded production source`)
+  if (guarded) {
+    const tested = built ? hash(normalizeEmit(contents.toString('utf8'))) : record.sha256
+    assert.equal(tested, built ? guarded.emitterSha256 : guarded.sourceSha256,
+      `${entry.name} changed while the immutable test snapshot was prepared; retry the run`)
+    guarded.testedSnapshotSha256 = record.sha256
+  }
+}
+assert.ok(provenance.modules.every(module => module.testedSnapshotSha256), 'The snapshot is missing an entry module')
 const publicDir = join(evidence, 'browser-input')
 const references = join(publicDir, 'references')
 await mkdir(references, { recursive: true })
@@ -75,9 +135,8 @@ assert.ok(cases.length, 'No native compositor references were supplied')
 await writeFile(join(references, 'index.json'), JSON.stringify(cases))
 const server = await createServer({ configFile: false, root: import.meta.dirname, publicDir,
   cacheDir: join(evidence, 'vite-cache'),
-  resolve: { dedupe: ['three'], alias: { 'blendlink-compositor-under-test': join(root,
-    built ? 'packages/blendlink/dist/tslSourceCompositor.js' : 'packages/blendlink/src/tslSourceCompositor.ts') } },
-  server: { host: '127.0.0.1', port: 0, fs: { allow: [root] } } })
+  resolve: { dedupe: ['three'], alias: { 'blendlink-compositor-under-test': join(snapshot, 'tslSourceCompositor' + extension) } },
+  server: { host: '127.0.0.1', port: 0, watch: null, hmr: false, fs: { allow: [root, evidence] } } })
 let browser
 const results = []
 const failures = []
@@ -95,7 +154,8 @@ try {
     page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()) })
     try {
       await page.goto(server.resolvedUrls.local[0] + '?backend=' + backend)
-      await page.waitForFunction(() => window.__compositorResults || window.__compositorFailure, null, { timeout: 60000 })
+      await page.waitForFunction(() => window.__compositorResults || window.__compositorFailure, null,
+        { timeout: Math.max(120000, cases.length * 250) })
       const report = await page.evaluate(() => ({ rows: window.__compositorResults, failure: window.__compositorFailure }))
       results.push({ backend, ...report, pageErrors: errors, consoleErrors })
       await writeFile(join(evidence, 'results.json'), JSON.stringify(results, null, 2))
@@ -116,4 +176,27 @@ try {
     } finally { await page.close() }
   }
   assert.equal(failures.length, 0, failures.join('\n'))
-} finally { await browser?.close(); await server.close() }
+} finally {
+  await browser?.close()
+  await server.close()
+  // The proof names the immutable copied bytes. Changes made by another agent
+  // during the run are recorded separately; they cannot hot-reload the test.
+  provenance.workspaceChangesDuringRun = []
+  for (const record of [...provenance.snapshot.files, ...provenance.snapshot.sourceMaps]) {
+    let current = null
+    try { current = hash(await readFile(join(moduleDirectory, record.name))) } catch { /* removed after capture */ }
+    if (current !== record.sha256) provenance.workspaceChangesDuringRun.push({
+      name: record.name, testedSha256: record.sha256, currentSha256: current,
+    })
+  }
+  provenance.workspaceSourceChangesDuringRun = []
+  for (const record of sourceRecords) {
+    let current = null
+    try { current = hash(await readFile(record.source)) } catch { /* removed after capture */ }
+    const captured = hash(record.contents)
+    if (current !== captured) provenance.workspaceSourceChangesDuringRun.push({
+      name: record.name + '.ts', testedSha256: captured, currentSha256: current,
+    })
+  }
+  await writeFile(join(evidence, 'provenance.json'), JSON.stringify(provenance, null, 2))
+}

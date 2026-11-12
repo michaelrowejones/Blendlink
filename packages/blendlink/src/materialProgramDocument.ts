@@ -1,6 +1,22 @@
 import type * as THREE from 'three'
 import type { MaterialProgramChannel } from './tslMaterialProgram.js'
 
+/** Exporter-owned glTF object node; geometry children may read this exact
+ * direct owner, never an arbitrary application/scene ancestor. */
+export function materialProgramObjectOwner(value: unknown): { schemaVersion: 1; objectName: string } | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null
+  const marker = value as Record<string, unknown>
+  return marker.schemaVersion === 1 && typeof marker.objectName === 'string' && marker.objectName.length > 0
+    ? marker as { schemaVersion: 1; objectName: string } : null
+}
+
+export function materialProgramObjectOwnerNode(object: THREE.Object3D): THREE.Object3D {
+  if (materialProgramObjectOwner(object.userData?.blendlink_tsl_object)) return object
+  const parent = object.parent
+  if (parent && !(parent as THREE.Mesh).isMesh && materialProgramObjectOwner(parent.userData?.blendlink_tsl_object)) return parent
+  return object
+}
+
 export interface MaterialProgramImage {
   /** Basename beside the sidecar; resolved against the sidecar URL. */
   file: string

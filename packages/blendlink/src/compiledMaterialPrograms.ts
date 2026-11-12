@@ -1,24 +1,136 @@
 import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import type { SceneManifest } from './typegen.js'
 import type { TslIrDocument } from './tslNodeRecipe.js'
 import type { TslRuntimeMeshExtras } from './tslMaterialProgram.js'
 import { hasBaseColorCarrier } from './compiledSceneConformance.js'
+import { materialProgramObjectOwner } from './materialProgramDocument.js'
+
+/** Exact image companions, keyed by their published basename, not by an IR name. */
+export type MaterialProgramImageBytes = ReadonlyMap<string, Uint8Array>
 
 function record(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
+function imageFile(value: unknown): string {
+  if (typeof value !== 'string' || !value || value === '.' || value === '..' || /[\\/\u0000?#:%]/.test(value)) {
+    throw new Error('Compiled material program image must name a basename beside its sidecar.')
+  }
+  return value
+}
+
+/** Read exactly the companions the browser resolves beside this sidecar. */
+export function readMaterialProgramImageBytes(bytes: Uint8Array, sidecarPath: string): MaterialProgramImageBytes {
+  const document: unknown = JSON.parse(new TextDecoder().decode(bytes))
+  if (!record(document) || document.images === undefined) return new Map()
+  if (!record(document.images)) throw new Error('Compiled material program images must be an object.')
+  const result = new Map<string, Uint8Array>()
+  for (const image of Object.values(document.images)) {
+    if (!record(image)) throw new Error('Compiled material program image metadata is invalid.')
+    const file = imageFile(image.file)
+    result.set(file, readFileSync(join(dirname(sidecarPath), file)))
+  }
+  return result
+}
+
+interface PrimitiveBinding {
+  primitive: Record<string, unknown>
+  extras: Record<string, unknown>
+  runtime: TslRuntimeMeshExtras | null
+  instanced: boolean
+}
+
+/** Match GLTFLoader r184: mesh extras live on each primitive Mesh; node
+ * extras overlay that Mesh only when the node has a single mesh attachment.
+ * Multi-primitive/camera/light/bone nodes put node extras on a parent Group.
+ * The material installer reads the actual Mesh, never inherited properties.
+ */
+function primitiveBindings(gltf: Record<string, unknown>): PrimitiveBinding[] {
+  const meshes = Array.isArray(gltf.meshes) ? gltf.meshes : []
+  const nodes = Array.isArray(gltf.nodes) ? gltf.nodes : null
+  const bindings: PrimitiveBinding[] = []
+  const joints = new Set((Array.isArray(gltf.skins) ? gltf.skins : []).flatMap(skin =>
+    record(skin) && Array.isArray(skin.joints) ? skin.joints : []))
+  const add = (mesh: unknown, node?: Record<string, unknown>, index?: number): void => {
+    if (!record(mesh) || !Array.isArray(mesh.primitives)) return
+    const nodeOnMesh = mesh.primitives.length === 1 && node?.camera === undefined &&
+      !(record(node?.extensions) && Object.hasOwn(node.extensions, 'KHR_lights_punctual')) && !joints.has(index)
+    const meshExtras = { ...(record(mesh.extras) ? mesh.extras : {}),
+      ...(nodeOnMesh && record(node?.extras) ? node.extras : {}) }
+    const runtime = record(meshExtras.blendlink_tsl_runtime) ? meshExtras.blendlink_tsl_runtime as TslRuntimeMeshExtras : null
+    // A marked single-attachment node is the direct parent of primitive
+    // Mesh children. Camera/light/bone plus multi-primitive combinations
+    // introduce another unmarked Group and therefore earn no inheritance.
+    const directParent = mesh.primitives.length === 1 || (node?.camera === undefined &&
+      !(record(node?.extensions) && Object.hasOwn(node.extensions, 'KHR_lights_punctual')) && !joints.has(index))
+    const extras = !materialProgramObjectOwner(meshExtras.blendlink_tsl_object) && directParent &&
+      record(node?.extras) && materialProgramObjectOwner(node.extras.blendlink_tsl_object)
+      ? { ...meshExtras, ...node.extras } : meshExtras
+    const instanced = record(node?.extensions) && Object.hasOwn(node.extensions, 'EXT_mesh_gpu_instancing')
+    for (const primitive of mesh.primitives) if (record(primitive)) bindings.push({ primitive, extras, runtime, instanced })
+  }
+  if (!nodes) { meshes.forEach(mesh => add(mesh)); return bindings }
+  const scenes = Array.isArray(gltf.scenes) ? gltf.scenes : []
+  const scene = scenes[typeof gltf.scene === 'number' ? gltf.scene : 0]
+  const seen = new Set<number>()
+  const visit = (index: unknown): void => {
+    if (typeof index !== 'number' || !Number.isInteger(index) || seen.has(index)) return
+    seen.add(index)
+    const node = nodes[index]
+    if (!record(node)) return
+    if (typeof node.mesh === 'number') add(meshes[node.mesh], node, index)
+    if (Array.isArray(node.children)) node.children.forEach(visit)
+  }
+  if (record(scene) && Array.isArray(scene.nodes)) scene.nodes.forEach(visit)
+  return bindings
+}
+
+async function verifiedImages(document: Record<string, unknown>, bytes: MaterialProgramImageBytes) {
+  if (document.images !== undefined && !record(document.images)) throw new Error('Compiled material program images must be an object.')
+  const decoded = new Map<string, { data: Uint8Array; width: number; height: number; colorSpace: string }>()
+  const images = record(document.images) ? document.images : {}
+  if (!Object.keys(images).length) return decoded
+  const { default: sharp } = await import('sharp')
+  for (const [name, image] of Object.entries(images)) {
+    if (!record(image)) throw new Error(`Compiled material program image ${JSON.stringify(name)} has invalid metadata.`)
+    const file = imageFile(image.file)
+    const payload = bytes.get(file)
+    if (!payload || payload.byteLength !== image.bytes || typeof image.hash !== 'string' ||
+        !/^[a-f0-9]{16}$/.test(image.hash) || createHash('sha256').update(payload).digest('hex').slice(0, 16) !== image.hash) {
+      throw new Error(`Compiled material program image ${JSON.stringify(name)} bytes do not match its byte/hash pin.`)
+    }
+    const source = sharp(payload, { animated: false, failOn: 'error' })
+    const metadata = await source.metadata()
+    const formats: Record<string, string> = { png: 'image/png', jpeg: 'image/jpeg', webp: 'image/webp' }
+    const mime = formats[metadata.format ?? '']
+    if (!mime || image.mime !== mime || image.width !== metadata.width || image.height !== metadata.height ||
+        !metadata.width || !metadata.height || (metadata.pages ?? 1) !== 1 || (metadata.orientation ?? 1) !== 1 ||
+        !['sRGB', 'Non-Color', 'Raw', 'Linear Rec.709'].includes(String(image.colorSpace))) {
+      throw new Error(`Compiled material program image ${JSON.stringify(name)} format/dimensions/color-space metadata do not match a supported static image.`)
+    }
+    const rgba = await source.ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+    if (rgba.info.channels !== 4 || rgba.info.width !== metadata.width || rgba.info.height !== metadata.height) {
+      throw new Error(`Compiled material program image ${JSON.stringify(name)} could not decode to its declared RGBA dimensions.`)
+    }
+    decoded.set(name, { data: rgba.data, width: metadata.width, height: metadata.height, colorSpace: String(image.colorSpace) })
+  }
+  return decoded
 }
 
 /** Evidence for the node-renderer family, never inferred from a class marker.
  * Only exact manifest-pinned sidecar bytes and a Base Color expression that
  * the production builder accepts for every bound primitive can supply it.
  * Already portable colors do not import the optional Three.js peer dependency.
- * A program needing external texture_ref or per-object data without a verified
- * resolver does not earn an exemption; its portable carrier remains accepted.
+ * External images and object properties must resolve from exact companion
+ * bytes and actual rendered GLB bindings; missing data earns no exemption.
  */
 export async function validatedBaseColorProgramMaterials(
   gltf: Record<string, unknown>,
   manifest: Pick<SceneManifest, 'materialPrograms'>,
   bytes?: Uint8Array,
+  imageBytes?: MaterialProgramImageBytes,
 ): Promise<ReadonlySet<number>> {
   const accepted = new Set<number>()
   if (!bytes) return accepted
@@ -34,93 +146,113 @@ export async function validatedBaseColorProgramMaterials(
       document.model !== 'blendlink-material-programs-v1' || !record(document.materials)) {
     throw new Error('Compiled material programs use an unsupported document schema/model.')
   }
-  // The runtime loads all sidecar images before applying any material.
-  // Without verified image bytes/resolvers this audit cannot establish that
-  // installation succeeds, even when Base Color itself uses no texture_ref.
-  if (document.images !== undefined &&
-      (!record(document.images) || Object.keys(document.images).length > 0)) return accepted
+  if (document.images !== undefined && !record(document.images)) throw new Error('Compiled material program images must be an object.')
+  if (record(document.images) && Object.keys(document.images).length > 0 && !imageBytes) return accepted
+  const decoded = await verifiedImages(document, imageBytes ?? new Map())
   const programs = document.materials
-  const needsObjectAttribute = (value: unknown): boolean => {
-    if (Array.isArray(value)) return value.some(needsObjectAttribute)
-    return record(value) && (value.op === 'attribute_object' || Object.values(value).some(needsObjectAttribute))
-  }
   const materials = Array.isArray(gltf.materials) ? gltf.materials : []
-  const meshes = Array.isArray(gltf.meshes) ? gltf.meshes : []
+  const bindings = primitiveBindings(gltf)
   const candidates = materials.flatMap((material, index) => {
     if (!record(material) || !record(material.extras)) return []
-    const attributes = meshes.flatMap(mesh => record(mesh) && Array.isArray(mesh.primitives)
-      ? mesh.primitives.flatMap(primitive => record(primitive) && primitive.material === index
-        ? [new Set(Object.keys(record(primitive.attributes) ? primitive.attributes : {}))] : []) : [])
+    const attributes = bindings.filter(binding => binding.primitive.material === index)
+      .map(({ primitive }) => new Set(Object.keys(record(primitive.attributes) ? primitive.attributes : {})))
     if (hasBaseColorCarrier(material, attributes)) return []
     const source = material.extras.blendlink_source_material
     if (typeof source !== 'string' || !Object.hasOwn(programs, source)) return []
     const program = programs[source]
-    // The installer checks object attributes across every channel and skips
-    // the entire material if one is missing. Base Color alone is insufficient
-    // evidence until this audit has a verified per-object property resolver.
-    if (record(program) && needsObjectAttribute(program.channels)) return []
     const channel = record(program) && record(program.channels) ? program.channels['Base Color'] : null
     if (!record(channel) || !record(channel.tslIr)) return []
     // GLTFLoader creates MeshBasicMaterial for an unlit carrier; the actual
     // program installer only swaps MeshStandardMaterial-compatible carriers.
     if (record(material.extensions) && Object.hasOwn(material.extensions, 'KHR_materials_unlit')) return []
-    return [{ index, ir: channel.tslIr as unknown as TslIrDocument }]
+    return [{ index, ir: channel.tslIr as unknown as TslIrDocument, program }]
   })
   if (!candidates.length) return accepted
   const { buildTslColorNode, createTslBuildResources, TslIrError } = await import('./tslNodeRecipe.js')
-  const { buildOptionsFor } = await import('./tslMaterialProgram.js')
-  for (const { index, ir } of candidates) {
-    let bindings = 0
-    let valid = true
-    for (const mesh of meshes) {
-      if (!record(mesh) || !Array.isArray(mesh.primitives)) continue
-      const rawExtras = record(mesh.extras) ? mesh.extras.blendlink_tsl_runtime : null
-      const extras = record(rawExtras) ? rawExtras as TslRuntimeMeshExtras : null
-      for (const primitive of mesh.primitives) {
-        if (!record(primitive) || primitive.material !== index) continue
-        bindings++
-        const attributes = record(primitive.attributes) ? primitive.attributes : {}
-        const resources = createTslBuildResources()
-        try {
-          const options = buildOptionsFor(extras, resources, `materials[${index}]`)
-          options.normalMapBasis = !Object.hasOwn(attributes, 'TEXCOORD_0') ? 'missing'
-            : Object.hasOwn(attributes, 'TANGENT') ? 'attribute' : 'derivative'
-          // The expression builder validates its operations. These checks also
-          // establish that its vertex inputs exist on this exact primitive,
-          // rather than relying on the renderer's silent zero-attribute fallbacks.
-          const inspect = (value: unknown): void => {
-            if (typeof value === 'number' && !Number.isFinite(value)) throw new TslIrError('Nonfinite material program value')
-            if (Array.isArray(value)) { value.forEach(inspect); return }
-            if (!record(value)) return
-            if (value.op === 'uv') {
-              const name = typeof value.uvMap === 'string' ? value.uvMap : ''
-              const channel = name ? extras?.uvChannels?.[name] : 0
-              if (!Number.isInteger(channel) || channel! < 0 || channel! > 3 ||
-                  !Object.hasOwn(attributes, `TEXCOORD_${channel}`)) {
-                throw new TslIrError('Base Color program requires an unavailable UV attribute')
-              }
+  const { buildOptionsFor, collectObjectAttributeNames } = await import('./tslMaterialProgram.js')
+  const { objectAttributeResolver, objectAttributeValue, loadProgramTextures } = await import('./tslMaterialRuntime.js')
+  const { collectObjectInfoOutputs, createObjectInfoResolver, validateObjectInfoBinding } = await import('./tslObjectInfo.js')
+  const THREE = await import('three')
+  const textures = await loadProgramTextures(document as unknown as import('./materialProgramDocument.js').MaterialProgramsDocument, pointer.url, {
+    loadProgramTexture: async name => {
+      const image = decoded.get(name)!
+      const texture = new THREE.DataTexture(image.data, image.width, image.height)
+      texture.flipY = false
+      texture.colorSpace = image.colorSpace === 'sRGB' ? THREE.SRGBColorSpace : THREE.NoColorSpace
+      texture.needsUpdate = true
+      return texture
+    },
+  })
+  try {
+    for (const { index, ir, program } of candidates) {
+      let bindingCount = 0
+      let valid = true
+      const names = new Set<string>()
+      const info = new Set<string>()
+      collectObjectAttributeNames(record(program) ? program.channels : null, names)
+      collectObjectInfoOutputs(record(program) ? program.channels : null, info)
+      const material = materials[index]
+      const materialInfo = record(material) && record(material.extras) ? material.extras.blendlink_tsl_material : null
+      for (const { primitive, extras: properties, runtime: extras, instanced } of bindings) {
+          if (!record(primitive) || primitive.material !== index) continue
+          bindingCount++
+          const attributes = record(primitive.attributes) ? primitive.attributes : {}
+          const resources = createTslBuildResources()
+          try {
+            if ((primitive.mode !== undefined && ![4, 5, 6].includes(Number(primitive.mode))) ||
+                [...names].some(name => !Object.hasOwn(properties, name) || !objectAttributeValue(properties[name]))) {
+              throw new TslIrError('Material program requires unavailable per-object properties or a non-mesh binding')
             }
-            if (value.op === 'vertex_color') {
-              const name = typeof value.layer === 'string' ? value.layer : ''
-              const attribute = name ? extras?.colorLayers?.[name] : 'color'
-              const semantic = attribute === 'color' ? 'COLOR_0' : attribute?.match(/^color_(\d+)$/)?.[1]
-              if (!semantic || !Object.hasOwn(attributes, semantic === 'COLOR_0' ? semantic : `COLOR_${semantic}`)) {
-                throw new TslIrError('Base Color program requires an unavailable color attribute')
+            const options = buildOptionsFor(extras, resources, `materials[${index}]`, textures?.resolver, objectAttributeResolver())
+            validateObjectInfoBinding(info, properties.blendlink_tsl_object, materialInfo, instanced)
+            if (info.size) options.objectInfo = createObjectInfoResolver(properties.blendlink_tsl_object, materialInfo)
+            options.normalMapBasis = !Object.hasOwn(attributes, 'TEXCOORD_0') ? 'missing'
+              : Object.hasOwn(attributes, 'TANGENT') ? 'attribute' : 'derivative'
+            // The expression builder validates its operations. These checks also
+            // establish that its vertex inputs exist on this exact primitive,
+            // rather than relying on the renderer's silent zero-attribute fallbacks.
+            const inspect = (value: unknown): void => {
+              if (typeof value === 'number' && !Number.isFinite(value)) throw new TslIrError('Nonfinite material program value')
+              if (Array.isArray(value)) { value.forEach(inspect); return }
+              if (!record(value)) return
+              if (value.op === 'texture_ref') {
+                const ref = record(value.ref) ? value.ref : null
+                const image = ref && typeof ref.image === 'string' ? decoded.get(ref.image) : null
+                if (!ref || !image || !record(value.image) || value.image.name !== ref.image ||
+                    value.image.width !== image.width || value.image.height !== image.height || value.image.colorSpace !== image.colorSpace ||
+                    !['Linear', 'Closest'].includes(String(ref.interpolation ?? 'Linear')) || !['REPEAT', 'EXTEND'].includes(String(ref.extension ?? 'REPEAT'))) {
+                  throw new TslIrError('Material program texture_ref does not match its verified image metadata/sampling')
+                }
               }
+              if (value.op === 'uv') {
+                const name = typeof value.uvMap === 'string' ? value.uvMap : ''
+                const channel = name ? extras?.uvChannels?.[name] : 0
+                if (!Number.isInteger(channel) || channel! < 0 || channel! > 3 ||
+                    !Object.hasOwn(attributes, `TEXCOORD_${channel}`)) {
+                  throw new TslIrError('Base Color program requires an unavailable UV attribute')
+                }
+              }
+              if (value.op === 'vertex_color') {
+                const name = typeof value.layer === 'string' ? value.layer : ''
+                const attribute = name ? extras?.colorLayers?.[name] : 'color'
+                const semantic = attribute === 'color' ? 'COLOR_0' : attribute?.match(/^color_(\d+)$/)?.[1]
+                if (!semantic || !Object.hasOwn(attributes, semantic === 'COLOR_0' ? semantic : `COLOR_${semantic}`)) {
+                  throw new TslIrError('Base Color program requires an unavailable color attribute')
+                }
+              }
+              if (value.op === 'generated' && !extras?.texspace) throw new TslIrError('Base Color program has no Generated texspace')
+              if ((value.op === 'object_coords' || value.op === 'generated') && !['gltf-y-up', 'blender-z-up'].includes(String(extras?.objectSpace))) throw new TslIrError('Base Color program has no exported object-space basis')
+              Object.values(value).forEach(inspect)
             }
-            if (value.op === 'generated' && !extras?.texspace) throw new TslIrError('Base Color program has no Generated texspace')
-            if ((value.op === 'object_coords' || value.op === 'generated') && extras?.objectSpace !== 'gltf-y-up') throw new TslIrError('Base Color program has no exported object-space basis')
-            Object.values(value).forEach(inspect)
-          }
-          inspect(ir)
-          buildTslColorNode(ir, options)
-        } catch (error) {
-          if (!(error instanceof TslIrError)) throw error
-          valid = false
-        } finally { resources.dispose() }
+            inspect(record(program) ? program.channels : ir)
+            buildTslColorNode(ir, options)
+          } catch (error) {
+            if (!(error instanceof TslIrError)) throw error
+            valid = false
+          } finally { resources.dispose() }
       }
+      if (valid && bindingCount > 0) accepted.add(index)
     }
-    if (valid && bindings > 0) accepted.add(index)
-  }
+  } finally { textures?.dispose() }
   return accepted
 }

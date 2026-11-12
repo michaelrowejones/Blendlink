@@ -313,6 +313,7 @@ npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-m
 npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --hue-ramp
 npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --boundary
 npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --math
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --vectors
 ```
 
 `BLENDLINK_BLENDER_PATH` (or `BLENDLINK_BLENDER`) selects a native Blender
@@ -329,7 +330,9 @@ version; a run with one Blender version does not establish other versions.
 
 | Family | Live translation earned by the focused cells | Explicit boundary |
 | --- | --- | --- |
-| Mapping | Static POINT, TEXTURE, VECTOR; combined XYZ rotations, nonuniform/negative scale, safe inverse and zero-scale TEXTURE | Linked transforms and NORMAL refuse. Noise frequency accounting includes inverse texture scale. |
+| Mapping | POINT/TEXTURE/VECTOR/NORMAL; static and linked XYZ transforms, nonuniform/negative scale, safe inverse and zero scale | NORMAL and varying transforms feeding frequency-bounded Noise require a separate coordinate-frequency proof and refuse. Inverse texture scale is included in static Noise bounds. |
+| Vector Rotate | AXIS_ANGLE/X_AXIS/Y_AXIS/Z_AXIS/EULER_XYZ; inverse, linked center/axis/angle/rotation, zero-axis no-op and inverse round trips | Varying transforms feeding frequency-bounded Noise refuse. |
+| Vector Math | All native operation enums: 27 in Blender 4.2, 30 in Blender 5.3, including PROJECT/REFLECT/REFRACT/FACEFORWARD and newer ROUND/POWER/SIGN | Before 5.2 Reflect/Refract require a provably nonzero normal; static POWER zero-base/negative-exponent refuses. New geometric/nonlinear transforms feeding frequency-bounded Noise refuse. |
 | Mix | FLOAT and VECTOR; uniform/per-component factor, clamp and extrapolation, scalar-to-vector broadcasts | RGBA behavior stays in its existing path; inactive outputs and unsupported future types refuse. |
 | Map Range | FLOAT and FLOAT_VECTOR; LINEAR, STEPPED, SMOOTHSTEP, SMOOTHERSTEP, reversed ranges, zero Steps and collapsed source ranges | STEPPED requires finite nonnegative static Steps; dynamic/negative Steps refuse. Scalar and vector collapsed-range semantics differ natively and are preserved. |
 | ColorRamp | HSV/HSL × NEAR/FAR/CW/CCW; all five interpolation settings, RGB and alpha outputs | Native Cycles' 257-entry evaluator table is preserved: floor lookup for CONSTANT, linear lookup otherwise. RGB LINEAR/CONSTANT keep their analytic path. |
@@ -364,3 +367,47 @@ native algorithm. Full scalar Math's 38 cells pass; its inverse-square-root
 pole is the existing maximum 5.65e-4. Native Blender 4.2 also passes the
 focused Math boundary and full hue-ramp families with the same tolerances.
 These source reports still require `--built` verification for shipping.
+
+
+The 2026-11-12 vector batch adds complete Mapping and Vector Rotate modes,
+and all remaining Vector Math enums. The focused `--vectors` gate passed
+63 cells per browser backend on Blender 5.3 and 57 on Blender 4.2. Its report
+explicitly identifies native configurations that are unavailable: four cells
+requiring ROUND/SIGN/POWER in 4.2, and two zero-normal cases requiring the
+safe native normalization introduced by the 5.2 source contract. Such cases
+are not counted as passes. Native refusal tests establish the older finite
+domain and reject zero-base negative powers. Largest error among the new
+cases is below 5.40e-5; the existing tangent/trigonometric sweep remains the
+family maximum 1.34e-4. Local Blender 5.2 also passes all 63 cells on both
+browser backends. Shader proof
+servers disable file watching/HMR, and source hashes remain part of every
+report. Oversized Cubic image transport now refuses explicitly because its
+runtime resolver has no proven cubic sampler; embedded Cubic stays live.
+
+## Brick textures
+
+`node experiments/tsl-node-differential/run-mapping.mjs --brick --built`
+checks 124 native Cycles graphs on both browser backends. Local source proofs
+pass on Blender 4.2, 5.2 and 5.3. Eighty fixed-input kernel cases differ by at
+most 5.96e-8. The spatial cases cover both outputs, signed coordinates,
+offset/squash frequencies, zero scale/mortar, bias extremes, linked colors,
+scale, mortar size/smoothing, and dimensions bounded positively by Math Maximum.
+
+Nearest-sampled float coordinate images provide identical inputs to both
+evaluators. This isolates the node from the independent bake UV nudge, which
+the unchanged UV calibration fixture still measures. Negative color probes
+encode their signal after the native node so the production bake can retain it.
+
+Two sharp spatial variants amplify float32 partition/remainder rounding at
+mortar edges. Their maximum-error allowance uses independently compared
+pre-Brick position carriers, eight rounded float operations at the measured
+coordinate magnitude, and the analytic smoothstep derivative bound
+`1.5 / (mortarSize * mortarSmooth)`. Their strict mean and p99 budgets stay
+unchanged. Measured worst error is 3.58e-4; this precision allowance does not
+apply to hard/discontinuous mortar or the fixed-input algorithm probes.
+
+The exporter requires provably positive brick dimensions and effective squash
+width, preserving live bounded dimensions while refusing undefined zero
+division. Animated inputs still follow the material animation transport limits.
+These fixtures do not certify arbitrary frequency, parameter, or whole-scene
+pixel equivalence.

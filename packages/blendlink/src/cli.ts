@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { discoverBlender } from './discover.js'
+import { readMaterialProgramImageBytes } from './compiledMaterialPrograms.js'
 import { loadConfig, resolveConfig } from './config.js'
 import {
   commitPublishedFiles,
@@ -353,10 +354,12 @@ async function main(): Promise<number> {
         }
         const programsPath = manifest.materialPrograms
           ? publishedAssetPath(scene, manifest.materialPrograms.url, manifest) : null
+        const programsBytes = programsPath && existsSync(programsPath) ? readFileSync(programsPath) : null
         const audit = await auditCompiledSceneArtifact({
           manifest,
           glbBytes: readFileSync(scene.glbPath),
-          ...(programsPath && existsSync(programsPath) ? { materialProgramsBytes: readFileSync(programsPath) } : {}),
+          ...(programsBytes && programsPath ? { materialProgramsBytes: programsBytes,
+            materialProgramImageBytes: readMaterialProgramImageBytes(programsBytes, programsPath) } : {}),
         })
         reports.push({
           scene: scene.name,

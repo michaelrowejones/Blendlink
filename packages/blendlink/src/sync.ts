@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { materialProgramsImageReferences } from './stagedPublication.js'
+import { readMaterialProgramImageBytes, type MaterialProgramImageBytes } from './compiledMaterialPrograms.js'
 import { createRequire } from 'node:module'
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync,
@@ -1584,10 +1585,14 @@ async function syncSceneWithPublicationLease(
   // optimizers can all turn an apparently non-empty .blend into an empty
   // default glTF scene. Plan-only inspection intentionally never reaches this
   // publication gate, so helper and asset-library files remain inspectable.
+  const programsForAudit = exported.materialPrograms ? readFileSync(exported.materialPrograms.path) : null
   await auditCompiledSceneArtifact({
     manifest,
     glbBytes: readFileSync(buildGlbPath),
-    ...(exported.materialPrograms ? { materialProgramsBytes: readFileSync(exported.materialPrograms.path) } : {}),
+    ...(programsForAudit && exported.materialPrograms ? {
+      materialProgramsBytes: programsForAudit,
+      materialProgramImageBytes: readMaterialProgramImageBytes(programsForAudit, exported.materialPrograms.path),
+    } : {}),
   })
   const sealed = sealScenePublication({
     sourceDirectory: stageDirectory,
@@ -2154,6 +2159,7 @@ async function verifyScenesWithPublicationLease(
       }
     }
     let materialProgramsBytes: Uint8Array | undefined
+    let materialProgramImageBytes: MaterialProgramImageBytes | undefined
     if (manifest.materialPrograms) {
       const programsPath = publishedAssetPath(
         scene,
@@ -2203,6 +2209,15 @@ async function verifyScenesWithPublicationLease(
           scene: scene.name,
           problem: `material programs sidecar references ${missingImage}, which is not published beside it`,
           fix: 'Run `blendlink compile` and commit source + artifacts together.',
+        })
+        continue
+      }
+      try {
+        materialProgramImageBytes = readMaterialProgramImageBytes(programsBytes, programsPath)
+      } catch (error) {
+        issues.push({ scene: scene.name,
+          problem: `material program image companions could not be read: ${error instanceof Error ? error.message : String(error)}`,
+          fix: 'Run `blendlink compile` and commit the material sidecar and its exact image companions together.',
         })
         continue
       }
@@ -2351,7 +2366,7 @@ async function verifyScenesWithPublicationLease(
       })
     } else {
       try {
-        const audit = await auditCompiledSceneArtifact({ manifest, glbBytes, materialProgramsBytes })
+        const audit = await auditCompiledSceneArtifact({ manifest, glbBytes, materialProgramsBytes, materialProgramImageBytes })
         const collapseIssue = materialCollapseVerificationIssue(scene, audit)
         if (collapseIssue) issues.push(collapseIssue)
         issues.push(...glbConformanceVerificationIssues(scene, audit))

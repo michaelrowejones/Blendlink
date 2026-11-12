@@ -20,7 +20,7 @@ import { describe, expect, it } from 'vitest'
 const here = dirname(fileURLToPath(import.meta.url))
 const fixture = JSON.parse(
   readFileSync(join(here, '..', 'conformance', 'tsl-ir-ops.json'), 'utf8'),
-) as { ops: string[] }
+) as { ops: string[], legacyBuilderOps?: string[] }
 
 /** The builder expresses its vocabulary as the case labels of one switch,
  * so the vocabulary is read from the source it is expressed in. A regex
@@ -41,7 +41,7 @@ describe('TSL IR op vocabulary conformance', () => {
   it('builds exactly the declared ops — no more, no fewer', () => {
     const built = builderOps()
     expect(built.size).toBeGreaterThan(30)
-    const declared = new Set(fixture.ops)
+    const declared = new Set([...fixture.ops, ...(fixture.legacyBuilderOps ?? [])])
     const missing = [...declared].filter((op) => !built.has(op)).sort()
     const extra = [...built].filter((op) => !declared.has(op)).sort()
     expect({ missing, extra }).toEqual({ missing: [], extra: [] })

@@ -66,7 +66,7 @@ try:
     ).decisions[0].as_dict()
     assert expected["channels"]["automatic"]
     routes = {entry["channel"]: entry["route"] for entry in expected["channels"]["channels"]}
-    assert routes["Base Color"] == "bake", routes
+    assert routes["Base Color"] == "program", routes
     assert routes["Roughness"] == "program", routes
     addon.validation.recompute(bpy.context.scene)
     record = addon.validation.result().material_compatibility[material.name]
@@ -82,7 +82,7 @@ try:
         addon.ui._draw_web_material_source(layout, record)
     text = " ".join(event[-1] for event in layout.events)
     assert "Native shader graph" in text and "automatic" in text
-    assert "Base Color: Texture bake" in text
+    assert "Base Color: Live node translation" in text
     assert "Roughness: Live node translation" in text
     assert "WebGPU or WebGL2" in text
     assert "Website Color override (optional)" in text
@@ -130,6 +130,21 @@ try:
     assert "Appearance bake needs attention" in text and "EEVEE-only" in text
     assert "cannot evaluate" in text and "No separate node graph" not in text
     assert (len(tree.nodes), len(tree.links), tuple(material.keys())) == original
+    # Exercise Object Info through the installed package namespace as well
+    # as standalone headless imports. Its helper and animation inspection
+    # must resolve siblings without relying on the addon folder in sys.path.
+    project.atlases[0].bake_output = "LIGHTING"
+    object_info = tree.nodes.new("ShaderNodeObjectInfo")
+    tree.links.new(object_info.outputs["Color"], principled.inputs["Base Color"])
+    addon.validation.recompute(bpy.context.scene)
+    planned = addon.material_compiler.plan_materials([obj], purpose="inspect", automatic_programs=True)
+    decision = planned.decisions[0]
+    assert decision.outcome == "lowered", decision.as_dict()
+    entry = addon.material_compiler._tsl_runtime_mesh_entry(decision, obj)
+    assert entry["objectInfoOwner"]["color"] == list(obj.color), entry
+    obj.keyframe_insert("color", frame=1)
+    refused = addon.material_compiler.plan_materials([obj], purpose="inspect", automatic_programs=True)
+    assert any(issue.code == "material.object-info-context-unproven" for issue in refused.errors), refused.as_dict()
 finally:
     addon.unregister()
 

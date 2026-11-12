@@ -8,14 +8,15 @@ function program(kind: 'separate-color' | 'combine-color', mode: string, output 
   return { version: 1, status: 'extracted', passes: [], diagnostics: [],
     ops: [{ id: 'channels', kind, type: kind === 'separate-color' ? 'VALUE' : 'RGBA',
       source: { path: ['Compositor'], node: 'Artist channels', nodeType: kind, output },
-      properties: { mode, color_conversion_device: 'CPU', legacy_hsv_clamp: false, legacy_hsl_clamp: false },
+      properties: { mode, color_conversion_device: 'CPU', legacy_hsv_clamp: false, legacy_hsl_clamp: false,
+        ycc_mode: 'ITUBT601' },
       inputs: { Image: input('RGBA', [0.2, 0.4, 1.2, 0.3]),
         Red: input('VALUE', 0.2), Green: input('VALUE', 0.4), Blue: input('VALUE', 1.2), Alpha: input('VALUE', 0.3) } }],
     output: { kind: 'ref', node: 'channels', type: kind === 'separate-color' ? 'VALUE' : 'RGBA' } }
 }
 
 describe('native compositor color channels', () => {
-  it.each(['RGB', 'HSV', 'HSL'])('builds separate/combine %s, including independent Alpha', mode => {
+  it.each(['RGB', 'HSV', 'HSL', 'YUV', 'YCC'])('builds separate/combine %s, including independent Alpha', mode => {
     for (const kind of ['separate-color', 'combine-color'] as const) {
       for (const output of kind === 'separate-color' ? ['Red', 'Green', 'Blue', 'Alpha'] : ['Image']) {
         const built = buildSourceCompositor(program(kind, mode, output), () => null)
@@ -25,10 +26,10 @@ describe('native compositor color channels', () => {
     }
   })
 
-  it.each(['YUV', 'YCC'])('names the unverified %s mapping instead of treating it as RGB', mode => {
+  it.each(['LAB', 'UNKNOWN'])('refuses the unknown %s mapping instead of treating it as RGB', mode => {
     for (const kind of ['separate-color', 'combine-color'] as const)
       expect(() => buildSourceCompositor(program(kind, mode), () => null))
-        .toThrow(/Artist channels.*YUV\/YCC need verified color-model mappings/)
+        .toThrow(/Artist channels.*unknown color model/)
   })
 
   it('accepts legacy RGBA output identifiers without changing alpha semantics', () => {
@@ -55,5 +56,11 @@ describe('native compositor color channels', () => {
     input.ops[0]!.properties.color_conversion_device = 'CPU'
     delete input.ops[0]!.properties.legacy_hsl_clamp
     expect(() => buildSourceCompositor(input, () => null)).toThrow(/no verified clamp model/)
+  })
+
+  it('refuses unknown YCC standards', () => {
+    const input = program('combine-color', 'YCC')
+    input.ops[0]!.properties.ycc_mode = 'UNKNOWN'
+    expect(() => buildSourceCompositor(input, () => null)).toThrow(/YCC requires/)
   })
 })

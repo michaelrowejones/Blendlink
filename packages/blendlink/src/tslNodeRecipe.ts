@@ -12,6 +12,9 @@
  * the dividend), and pow with a negative base is defined only for integer
  * exponents.
  */
+import { buildTslSpectralNode } from './tslSpectralNodes.js'
+import { buildTslCurveNode } from './tslCurveNodes.js'
+import { buildTslBrickNode } from './tslBrickNodes.js'
 import {
   abs,
   attribute,
@@ -263,6 +266,8 @@ export interface BuildTslOptions {
    * The runtime supplies a per-object uniform reading exported extras;
    * the harness supplies the fixture constant. Refuses without it. */
   objectAttribute?: (name: string) => TslExpression
+  /** Authored Object Info fields from explicit object/material ownership. */
+  objectInfo?: (output: string) => TslExpression
   /** The ambient-occlusion factor for this draw (e.g. a sampled baked
    * aoMap). Absent, AO nodes evaluate unoccluded (factor 1.0) -- the
    * declared geometryDependent non-carriage. */
@@ -500,6 +505,11 @@ function build(expression: TslIrExpression): TslExpression {
         .mul(build(child(expression, 'scale')))
     case 'vector_math':
       return buildVectorMath(expression)
+    case 'spectral':
+      return buildTslSpectralNode(expression, build(child(expression, 'input')), index => {
+        const { lut, samples } = buildLutTexture(expression)
+        return tslTexture(lut, tslVec2(index.add(0.5).div(samples), 0.5))
+      }, fail)
     case 'vector_rotate':
       return buildVectorRotate(expression)
     case 'mapping':
@@ -522,7 +532,9 @@ function build(expression: TslIrExpression): TslExpression {
         'vertex_color', 'tex_checker', 'hsv_to_rgb', 'object_coords',
         'generated', 'uv', 'mapping', 'attribute_object', 'vector_rotate',
       ])
-      if (typeof factorOp === 'string' && vectorProducers.has(factorOp)) {
+      const curveFactor = expression.factor as TslIrExpression | undefined
+      if (typeof factorOp === 'string' && (vectorProducers.has(factorOp)
+        || (factorOp === 'curve_native' && curveFactor?.kind !== 'float'))) {
         fail(
           `IR mix_color factor is vector-typed (${factorOp}); the emitter `
           + 'must wrap colour sources in rgb_to_bw',
@@ -605,6 +617,11 @@ function build(expression: TslIrExpression): TslExpression {
       }
       return tslVec3(mixed.x, mixed.y, mixed.z)
     }
+    case 'curve_native': {
+      const { lut, samples } = buildLutTexture(expression)
+      return buildTslCurveNode(expression, build(child(expression, 'input')), build(child(expression, 'factor')),
+        index => tslTexture(lut, tslVec2(index.add(0.5).div(samples), 0.5)), fail)
+    }
     case 'curve_rgb': {
       // RGB Curves through the same sampled-LUT route Cycles itself uses:
       // the emitter filled the table with channel(composite(x)) via
@@ -633,6 +650,12 @@ function build(expression: TslIrExpression): TslExpression {
       const occlusion = activeOptions.ambientOcclusion?.() ?? tslFloat(1.0)
       if (expression.output === 'ao') return occlusion
       return build(child(expression, 'color')).mul(occlusion)
+    }
+    case 'object_info': {
+      if (!activeOptions.objectInfo || typeof expression.output !== 'string') {
+        return fail('IR object_info needs an explicit object/material owner resolver')
+      }
+      return activeOptions.objectInfo(expression.output)
     }
     case 'attribute_object': {
       // A per-object custom property. Cycles reads obj["name"]; the
@@ -903,6 +926,8 @@ function build(expression: TslIrExpression): TslExpression {
         tslFloat(0.0),
       )
     }
+    case 'tex_brick':
+      return buildTslBrickNode(expression, build, fail)
     case 'tex_checker': {
       // Cycles svm_checker: epsilon-nudged cell parity in all three axes.
       const p = build(child(expression, 'vector'))
@@ -1889,6 +1914,33 @@ function sampleLut(
   return tslMix(low, high, blend)
 }
 
+/** Cycles safe_normalize preserves a zero vector. Guard the divisor even
+ * in a branch that a GPU compiler may evaluate speculatively. */
+function blenderNormalizeVector(vector: TslExpression): TslExpression {
+  return vector.div(guardedDivisor(tslLength(vector)))
+}
+
+/** Blender's Euler XYZ matrix is Rz * Ry * Rx; inverse uses its transpose. */
+function rotateEulerVector(
+  vector: TslExpression, rotation: TslExpression, inverse = false,
+): TslExpression {
+  const rotateX = (v: TslExpression, angle: TslExpression): TslExpression => {
+    const c = tslCos(angle), s = tslSin(angle)
+    return tslVec3(v.x, v.y.mul(c).sub(v.z.mul(s)), v.y.mul(s).add(v.z.mul(c)))
+  }
+  const rotateY = (v: TslExpression, angle: TslExpression): TslExpression => {
+    const c = tslCos(angle), s = tslSin(angle)
+    return tslVec3(v.x.mul(c).add(v.z.mul(s)), v.y, v.z.mul(c).sub(v.x.mul(s)))
+  }
+  const rotateZ = (v: TslExpression, angle: TslExpression): TslExpression => {
+    const c = tslCos(angle), s = tslSin(angle)
+    return tslVec3(v.x.mul(c).sub(v.y.mul(s)), v.x.mul(s).add(v.y.mul(c)), v.z)
+  }
+  return inverse
+    ? rotateX(rotateY(rotateZ(vector, rotation.z.mul(-1)), rotation.y.mul(-1)), rotation.x.mul(-1))
+    : rotateZ(rotateY(rotateX(vector, rotation.x), rotation.y), rotation.z)
+}
+
 /** Blender's Vector Rotate for every fixed-axis mode.
  *
  * Transcribed term by term from `rotate_around_axis` in
@@ -1906,14 +1958,24 @@ function sampleLut(
  * Center is applied by the node, not the helper: subtract before, add after.
  */
 function buildVectorRotate(expression: TslIrExpression): TslExpression {
-  const center = expression.center as number[]
-  const centered = build(child(expression, 'input'))
-    .sub(tslVec3(center[0], center[1], center[2]))
-  const angle = build(child(expression, 'angle'))
+  const input = build(child(expression, 'input'))
+  const mode = expression.rotationType ?? 'AXIS_ANGLE'
+  if (!['AXIS_ANGLE', 'X_AXIS', 'Y_AXIS', 'Z_AXIS', 'EULER_XYZ'].includes(String(mode))) {
+    return fail(`IR vector rotate type ${String(mode)} unsupported`)
+  }
+  const center = expression.centerNode !== undefined ? build(child(expression, 'centerNode')) : (() => {
+    const values = numbers(expression, 'center')
+    if (values.length !== 3) return fail('IR vector rotate requires three center components')
+    return tslVec3(values[0]!, values[1]!, values[2]!)
+  })()
+  const centered = input.sub(center)
+  if (mode === 'EULER_XYZ') {
+    return rotateEulerVector(centered, build(child(expression, 'rotation')), expression.invert === true).add(center)
+  }
+  const rawAngle = build(child(expression, 'angle'))
+  const angle = expression.invert === true ? rawAngle.mul(-1) : rawAngle
   const rawAxis = build(child(expression, 'axis'))
-  // A literal axis is already unit length; only a linked one needs the
-  // normalize, and Blender leaves the vector untouched when it is zero.
-  const axis = expression.normalizeAxis === true ? tslNormalize(rawAxis) : rawAxis
+  const axis = expression.normalizeAxis === true ? blenderNormalizeVector(rawAxis) : rawAxis
   const cosTheta = tslCos(angle)
   const sinTheta = tslSin(angle)
   const oneMinus = tslFloat(1.0).sub(cosTheta)
@@ -1939,13 +2001,20 @@ function buildVectorRotate(expression: TslIrExpression): TslExpression {
       cosTheta.add(oneMinus.mul(axis.z).mul(axis.z)).mul(centered.z),
     ),
   )
-  return rotated.add(tslVec3(center[0], center[1], center[2]))
+  const result = rotated.add(center)
+  // A zero arbitrary axis is a no-op in Cycles, including linked centers.
+  return expression.normalizeAxis === true
+    ? tslSelect(tslLength(rawAxis).equal(0), input, result) : result
 }
 
 function buildVectorMath(expression: TslIrExpression): TslExpression {
   const operation = String(expression.operation)
   const a = build(child(expression, 'a'))
   const b = () => build(child(expression, 'b'))
+  if ((operation === 'REFLECT' || operation === 'REFRACT') && expression.normalMode !== undefined &&
+      expression.normalMode !== 'safe-zero' && expression.normalMode !== 'nonzero-required') {
+    return fail(`IR vector math normal model ${String(expression.normalMode)} unsupported`)
+  }
   // Anything with a per-component branch is built with scalar selects: a
   // vector-condition select collapses to one lane (measured 2026-07-27).
   const perChannel = (
@@ -1985,18 +2054,35 @@ function buildVectorMath(expression: TslIrExpression): TslExpression {
         channel(a.z, bv.z, cv.z),
       )
     }
+    case 'PROJECT': {
+      const bv = b()
+      return bv.mul(blenderDivide(tslDot(a, bv), tslDot(bv, bv)))
+    }
+    case 'REFLECT': {
+      const normal = blenderNormalizeVector(b())
+      return a.sub(normal.mul(tslDot(a, normal).mul(2)))
+    }
+    case 'REFRACT': {
+      const normal = blenderNormalizeVector(b())
+      const ior = build(child(expression, 'ior'))
+      const dot = tslDot(normal, a)
+      const discriminant = tslFloat(1).sub(ior.mul(ior).mul(tslFloat(1).sub(dot.mul(dot))))
+      const refracted = a.mul(ior).sub(normal.mul(ior.mul(dot).add(tslSqrt(tslMax(discriminant, 0)))))
+      return tslSelect(discriminant.lessThan(0), tslVec3(0, 0, 0), refracted)
+    }
+    case 'FACEFORWARD': {
+      const incident = b()
+      const reference = build(child(expression, 'c'))
+      return tslSelect(tslDot(reference, incident).lessThan(0), a, a.mul(-1))
+    }
+    case 'POWER': return perChannel(blenderPower)
+    case 'ROUND': return tslVec3(blenderRound(a.x), blenderRound(a.y), blenderRound(a.z))
+    case 'SIGN': return tslSign(a)
     case 'CROSS_PRODUCT': return tslCross(a, b())
     case 'DOT_PRODUCT': return tslDot(a, b())
     case 'DISTANCE': return tslLength(a.sub(b()))
     case 'LENGTH': return tslLength(a)
-    case 'NORMALIZE': {
-      // Cycles safe_normalize: a zero-length vector stays zero.
-      const magnitude = tslLength(a)
-      return tslSelect(
-        magnitude.equal(0.0), tslVec3(0.0, 0.0, 0.0),
-        a.div(guardedDivisor(magnitude)),
-      )
-    }
+    case 'NORMALIZE': return blenderNormalizeVector(a)
     case 'MINIMUM': return tslMin(a, b())
     case 'MAXIMUM': return tslMax(a, b())
     case 'ABSOLUTE': return tslAbs(a)
@@ -2150,53 +2236,25 @@ export function buildTslMathOperation(
 
 function buildMapping(expression: TslIrExpression): TslExpression {
   const input = build(child(expression, 'input'))
-  const location = numbers(expression, 'location')
-  const rotation = numbers(expression, 'rotation')
-  const scale = numbers(expression, 'scale')
-  if (location.length !== 3 || rotation.length !== 3 || scale.length !== 3) {
-    return fail('IR mapping requires three location, rotation and scale components')
+  const transform = (name: 'location' | 'rotation' | 'scale'): TslExpression => {
+    if (expression[`${name}Node`] !== undefined) return build(child(expression, `${name}Node`))
+    const values = numbers(expression, name)
+    if (values.length !== 3) return fail('IR mapping requires three location, rotation and scale components')
+    return tslVec3(values[0]!, values[1]!, values[2]!)
   }
-  // Blender uses extrinsic XYZ: forward is Rz * Ry * Rx. The inverse
-  // applies the transpose in the opposite order. Mapping cells exercise
-  // combined rotations, negative/nonuniform scale and the zero-scale case.
-  const rotateX = (v: TslExpression, angle: number): TslExpression => {
-    const c = Math.cos(angle), s = Math.sin(angle)
-    return tslVec3(v.x, v.y.mul(c).sub(v.z.mul(s)), v.y.mul(s).add(v.z.mul(c)))
-  }
-  const rotateY = (v: TslExpression, angle: number): TslExpression => {
-    const c = Math.cos(angle), s = Math.sin(angle)
-    return tslVec3(v.x.mul(c).add(v.z.mul(s)), v.y, v.z.mul(c).sub(v.x.mul(s)))
-  }
-  const rotateZ = (v: TslExpression, angle: number): TslExpression => {
-    const c = Math.cos(angle), s = Math.sin(angle)
-    return tslVec3(v.x.mul(c).sub(v.y.mul(s)), v.x.mul(s).add(v.y.mul(c)), v.z)
-  }
-  const forward = (v: TslExpression): TslExpression => rotateZ(
-    rotateY(rotateX(v, rotation[0]!), rotation[1]!), rotation[2]!,
-  )
+  const location = transform('location'), rotation = transform('rotation'), scale = transform('scale')
   if (expression.vectorType === 'POINT' || expression.vectorType === 'VECTOR') {
-    const scaled = tslVec3(
-      input.x.mul(scale[0]!), input.y.mul(scale[1]!), input.z.mul(scale[2]!),
-    )
-    const rotated = forward(scaled)
-    return expression.vectorType === 'POINT'
-      ? rotated.add(tslVec3(location[0]!, location[1]!, location[2]!))
-      : rotated
+    const rotated = rotateEulerVector(input.mul(scale), rotation)
+    return expression.vectorType === 'POINT' ? rotated.add(location) : rotated
   }
+  const divide = (vector: TslExpression): TslExpression => tslVec3(
+    blenderDivide(vector.x, scale.x), blenderDivide(vector.y, scale.y), blenderDivide(vector.z, scale.z),
+  )
   if (expression.vectorType === 'TEXTURE') {
-    // Proven inverse: subtract, inverse-rotate, then divide by scale.
-    const moved = tslVec3(
-      input.x.sub(location[0]!), input.y.sub(location[1]!),
-      input.z.sub(location[2]!),
-    )
-    const rotated = rotateX(
-      rotateY(rotateZ(moved, -rotation[2]!), -rotation[1]!), -rotation[0]!,
-    )
-    return tslVec3(
-      blenderDivide(rotated.x, tslFloat(scale[0]!)),
-      blenderDivide(rotated.y, tslFloat(scale[1]!)),
-      blenderDivide(rotated.z, tslFloat(scale[2]!)),
-    )
+    return divide(rotateEulerVector(input.sub(location), rotation, true))
+  }
+  if (expression.vectorType === 'NORMAL') {
+    return blenderNormalizeVector(rotateEulerVector(divide(input), rotation))
   }
   return fail(`IR mapping type ${String(expression.vectorType)}`)
 }
@@ -2311,8 +2369,17 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
   // inside a laid-out Fn instead (see blenderOverlayChannel).
   const a = build(child(expression, 'a'))
   const b = build(child(expression, 'b'))
+  const blended = buildTslBlendOperation(String(expression.blendType), a, b, factor)
+  return expression.clampResult === true ? tslClamp(blended, 0.0, 1.0) : blended
+}
+
+/** RGB blend algebra shared with compositor nodes after their native context
+ * selects factor, color-conversion, alpha and output-clamp behavior. */
+export function buildTslBlendOperation(
+  blendType: string, a: TslExpression, b: TslExpression, factor: TslExpression,
+): TslExpression {
   let blended: TslExpression
-  switch (expression.blendType) {
+  switch (blendType) {
     case 'MIX': blended = tslMix(a, b, factor); break
     case 'MULTIPLY': blended = tslMix(a, a.mul(b), factor); break
     case 'ADD': blended = tslMix(a, a.add(b), factor); break
@@ -2461,10 +2528,7 @@ function buildMixColor(expression: TslIrExpression): TslExpression {
       break
     }
     default:
-      return fail(`IR mix blend ${String(expression.blendType)}`)
-  }
-  if (expression.clampResult === true) {
-    blended = tslClamp(blended, 0.0, 1.0)
+      return fail(`IR mix blend ${blendType}`)
   }
   return blended
 }

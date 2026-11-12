@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -22,8 +23,8 @@ import bpy
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-sys.path.insert(0, str(REPO / "packages" / "blendlink" / "blender"))
-sys.path.insert(0, str(REPO / "packages" / "blender-addon"))
+sys.path.insert(0, os.environ.get("BLENDLINK_TSL_NATIVE_MODULES") or str(REPO / "packages" / "blendlink" / "blender"))
+sys.path.insert(0, os.environ.get("BLENDLINK_TSL_NATIVE_MODULES") or str(REPO / "packages" / "blender-addon"))
 
 import bakelib  # noqa: E402
 import tsl_ir  # noqa: E402
@@ -1862,7 +1863,8 @@ def render_eevee_reference(material, light_contract):
     output_path = Path(tempfile.mkdtemp()) / "tsl_eevee_reference.exr"
     try:
         scene.camera = camera
-        scene.render.engine = "BLENDER_EEVEE"
+        engines = {item.identifier for item in scene.render.bl_rna.properties['engine'].enum_items}
+        scene.render.engine = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT'
         scene.eevee.taa_render_samples = 1
         scene.render.resolution_x = SIZE
         scene.render.resolution_y = SIZE
@@ -1917,6 +1919,67 @@ def ensure_view_camera():
         camera.rotation_euler = (0.0, 0.0, 0.0)
     bpy.context.scene.camera = camera
 
+
+
+
+def _vector_probe_field(tree, values):
+    node = tree.nodes.new("ShaderNodeCombineXYZ")
+    for socket, value in zip(("X", "Y", "Z"), values):
+        if isinstance(value, (int, float)):
+            node.inputs[socket].default_value = value
+        else:
+            source = _uv_channel(tree, value.get("axis", "u"))
+            source = _affine(tree, source, value.get("scale", 1), value.get("offset", 0))
+            tree.links.new(source, node.inputs[socket])
+    return node.outputs["Vector"]
+
+
+def _emit_vector_probe(tree, emission, vector, post):
+    scale = tree.nodes.new("ShaderNodeVectorMath")
+    scale.operation = "SCALE"
+    scale.inputs["Scale"].default_value = post.get("scale", 0.2)
+    tree.links.new(vector, scale.inputs[0])
+    offset = tree.nodes.new("ShaderNodeVectorMath")
+    offset.operation = "ADD"
+    offset.inputs[1].default_value = (post.get("offset", 0.5),) * 3
+    tree.links.new(scale.outputs["Vector"], offset.inputs[0])
+    tree.links.new(offset.outputs["Vector"], emission.inputs["Color"])
+
+
+def make_vector_transform_builder(spec):
+    def build(tree, emission):
+        point = _vector_probe_field(tree, spec.get("input", [{"axis": "u", "scale": 1.3, "offset": -0.4},
+                                                            {"axis": "v", "scale": 0.8, "offset": -0.3}, -0.2]))
+        def transform(inverse=False):
+            mapping = spec["node"] == "Mapping"
+            node = tree.nodes.new("ShaderNodeMapping" if mapping else "ShaderNodeVectorRotate")
+            if mapping:
+                node.vector_type = spec["mode"]
+            else:
+                node.rotation_type = spec["mode"]
+                node.invert = not spec.get("invert", False) if inverse else spec.get("invert", False)
+            for name in ("Location", "Scale", "Rotation", "Center", "Axis", "Angle"):
+                if name not in node.inputs or name.lower() not in spec:
+                    continue
+                value = spec[name.lower()]
+                if name in spec.get("linked", []):
+                    if name == "Angle":
+                        source = _affine(tree, _uv_channel(tree, value.get("axis", "u")), value.get("scale", 1), value.get("offset", 0))
+                    else:
+                        source = _vector_probe_field(tree, value)
+                    tree.links.new(source, node.inputs[name])
+                else:
+                    node.inputs[name].default_value = value
+            return node
+        node = transform()
+        tree.links.new(point, node.inputs["Vector"])
+        result = node.outputs["Vector"]
+        if spec.get("roundTrip"):
+            inverse = transform(True)
+            tree.links.new(result, inverse.inputs["Vector"])
+            result = inverse.outputs["Vector"]
+        _emit_vector_probe(tree, emission, result, spec.get("post", {}))
+    return build
 
 
 def make_hue_ramp_builder(spec):
@@ -2077,12 +2140,21 @@ def make_vector_sweep_builder(spec):
                 tree.links.new(
                     combine_xyz.outputs["Vector"], node.inputs[index],
                 )
+            if "ior" in entry:
+                ior = entry["ior"]
+                if isinstance(ior, (int, float)):
+                    node.inputs["Scale"].default_value = ior
+                else:
+                    tree.links.new(scalar_socket(ior), node.inputs["Scale"])
             return node
 
         entries = spec["entries"]
         if len(entries) == 1 and entries[0].get("full"):
             node = vector_math_node(entries[0])
-            tree.links.new(node.outputs["Vector"], emission.inputs["Color"])
+            if entries[0].get("post"):
+                _emit_vector_probe(tree, emission, node.outputs["Vector"], entries[0]["post"])
+            else:
+                tree.links.new(node.outputs["Vector"], emission.inputs["Color"])
             return
         combine = tree.nodes.new("ShaderNodeCombineColor")
         combine.mode = "RGB"
@@ -2585,9 +2657,15 @@ def main():
     ir_output.mkdir(parents=True, exist_ok=True)
     manifest = {"schemaVersion": 1, "size": SIZE, "cells": {}}
     for cell in CELLS["cells"]:
+        # Match the graph's evaluation context to the actual native oracle,
+        # before extracting engine-specific shader tables or folded values.
+        engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties['engine'].enum_items}
+        bpy.context.scene.render.engine = ('BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT') if 'eeveeLight' in cell else 'CYCLES'
         cell_id = cell["id"]
         pipeline = cell.get("pipeline", "ir")
         builder = BUILDERS.get(cell_id)
+        if builder is None and "vectorTransform" in cell:
+            builder = make_vector_transform_builder(cell["vectorTransform"])
         if builder is None and "hueRamp" in cell:
             builder = make_hue_ramp_builder(cell["hueRamp"])
         if builder is None and "sweep" in cell:
@@ -2600,6 +2678,9 @@ def main():
             builder = make_mapping_sweep_builder(cell["mappingSweep"])
         if builder is None and "genericMix" in cell:
             builder = make_generic_mix_builder(cell["genericMix"])
+        if builder is None and "brickSweep" in cell:
+            from brick_reference import make_brick_builder
+            builder = make_brick_builder(cell["brickSweep"])
         if builder is None and "mapRange" in cell:
             builder = make_map_range_builder(cell["mapRange"])
         if builder is None and "eeveeLight" not in cell:

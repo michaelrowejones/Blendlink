@@ -20,6 +20,25 @@ const documentOf = (output: Record<string, unknown>): TslIrDocument => ({
 })
 
 describe('buildTslColorNode', () => {
+  it('builds the remaining vector operations and complete transform modes', () => {
+    const vector = { op: 'const_vec3', value: [0.2, -0.3, 0.7] }
+    for (const operation of ['PROJECT', 'REFLECT', 'REFRACT', 'FACEFORWARD', 'ROUND', 'POWER', 'SIGN']) {
+      expect(buildTslColorNode(documentOf({ op: 'vector_math', operation, a: vector, b: vector,
+        c: vector, ior: { op: 'const_float', value: 0.7 } }))).toBeTruthy()
+    }
+    for (const rotationType of ['AXIS_ANGLE', 'X_AXIS', 'Y_AXIS', 'Z_AXIS', 'EULER_XYZ']) {
+      expect(buildTslColorNode(documentOf({ op: 'vector_rotate', rotationType, invert: true,
+        input: vector, centerNode: { op: 'uv' }, axis: vector, normalizeAxis: true,
+        angle: { op: 'const_float', value: 0.9 }, rotation: vector }))).toBeTruthy()
+    }
+    for (const vectorType of ['POINT', 'TEXTURE', 'VECTOR', 'NORMAL']) {
+      expect(buildTslColorNode(documentOf({ op: 'mapping', vectorType, input: vector,
+        locationNode: vector, rotationNode: { op: 'uv' }, scaleNode: vector }))).toBeTruthy()
+    }
+    expect(() => buildTslColorNode(documentOf({ op: 'vector_rotate', rotationType: 'UNKNOWN', input: vector })))
+      .toThrow(/vector rotate type UNKNOWN/)
+  })
+
   it('builds vector Map Range and refuses unbounded step documents', () => {
     const fields = {
       op: 'map_range', dataType: 'FLOAT_VECTOR', clamp: true,
@@ -39,16 +58,16 @@ describe('buildTslColorNode', () => {
   })
 
   it('builds all proven static Mapping modes with combined rotations and safe zero scale', () => {
-    for (const vectorType of ['POINT', 'TEXTURE', 'VECTOR']) {
+    for (const vectorType of ['POINT', 'TEXTURE', 'VECTOR', 'NORMAL']) {
       expect(buildTslColorNode(documentOf({
         op: 'mapping', vectorType, input: { op: 'uv' },
         location: [0.17, -0.23, 0.31], rotation: [0.47, -0.81, 1.13], scale: [0, -0.65, 2.1],
       }))).toBeTruthy()
     }
     expect(() => buildTslColorNode(documentOf({
-      op: 'mapping', vectorType: 'NORMAL', input: { op: 'uv' },
+      op: 'mapping', vectorType: 'UNKNOWN', input: { op: 'uv' },
       location: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1],
-    }))).toThrow(/mapping type NORMAL/)
+    }))).toThrow(/mapping type UNKNOWN/)
     expect(() => buildTslColorNode(documentOf({
       op: 'mapping', vectorType: 'POINT', input: { op: 'uv' },
       location: [0, 0], rotation: [0, 0, 0], scale: [1, 1, 1],

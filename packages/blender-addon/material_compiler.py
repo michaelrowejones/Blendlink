@@ -2374,6 +2374,8 @@ def _plan_selected_material(
                     needs_program = True
                 if needs_program:
                     program = _plan_tsl_program(material, raw_bindings, binding_issues, purpose=purpose, target='EEVEE', automatic=True)
+                    if program.outcome == "blocked":
+                        return program
                     live_plan = program.channel_plan or {}
                     # Reuse the proven static channel baker only for a shared
                     # EEVEE/Cycles Principled root. EEVEE-only lighting graphs
@@ -2805,10 +2807,11 @@ def _attach_tsl_ir(tree, channels, *, surface_resolved: bool = False, target="CY
     # against published assets; the harness contract stays embedded-only.
     tsl_ir.set_texture_ref_emission(True)
     try:
-        if surface_resolved:
-            _attach_surface_tsl_ir(tree, channels, hashlib, _json, target)
-        else:
-            _attach_tsl_ir_documents(tree, channels, hashlib, _json, target)
+        with tsl_ir.emission_context(tree=tree, target=target):
+            if surface_resolved:
+                _attach_surface_tsl_ir(tree, channels, hashlib, _json, target)
+            else:
+                _attach_tsl_ir_documents(tree, channels, hashlib, _json, target)
     finally:
         tsl_ir.set_texture_ref_emission(False)
 
@@ -3241,6 +3244,29 @@ def _plan_tsl_program(
                 continue
             channels.append({'channel': name})
     _attach_tsl_ir(tree, channels, surface_resolved=surface_resolved, target=target)
+    if __package__:
+        from . import tsl_object_info
+    else:
+        import tsl_object_info
+    object_info_issues = []
+    for entry in channels:
+        outputs = set()
+        tsl_object_info.collect_outputs(entry.get("tslIr"), outputs)
+        if not outputs:
+            continue
+        try:
+            tsl_object_info.material_metadata(material, outputs)
+            for obj, _slot in raw_bindings:
+                tsl_object_info.owner_metadata(obj, outputs)
+        except ValueError as error:
+            message = str(error)
+            for key in ("tslIr", "tslIrHash", "tslIrBytes", "tslIrApproximations"):
+                entry.pop(key, None)
+            entry["tslIrRefusal"] = message
+            object_info_issues.append(MaterialIssue(
+                "material.object-info-context-unproven", material.name, message,
+                "Use supported object owners and property timelines; the graph remains authored in Blender.", object_names,
+            ))
     for entry in channels:
         entry["route"] = "program" if "tslIr" in entry else "refused"
     channel_plan = {
@@ -3250,6 +3276,11 @@ def _plan_tsl_program(
         "channels": channels,
         **({"surfaceResolved": True} if surface_resolved else {}),
     }
+    if object_info_issues:
+        return MaterialDecision(
+            material.name, "tslProgram", "blocked", "program", "per-channel", None,
+            bindings, issues=tuple(issues + object_info_issues), channel_plan=channel_plan,
+        )
     if not any("tslIr" in entry for entry in channels):
         issues.append(MaterialIssue(
             "material.tsl-program-unproven", material.name,
@@ -5476,6 +5507,10 @@ def _ir_runtime_needs(value, needs) -> None:
             needs["uvMaps"].add(str(value["uvMap"]))
         if op == "vertex_color" and value.get("layer"):
             needs["colorLayers"].add(str(value["layer"]))
+        if op == "attribute_object" and value.get("name"):
+            needs["objectAttributes"].add(str(value["name"]))
+        if op == "object_info":
+            needs["objectInfo"].add(value.get("output"))
         if op in ("generated", "object_coords"):
             needs["objectSpace"] = True
         if op == "generated":
@@ -5500,7 +5535,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
     the ground-truth gate for staleness.
     """
     needs = {
-        "uvMaps": set(), "colorLayers": set(),
+        "uvMaps": set(), "colorLayers": set(), "objectAttributes": set(), "objectInfo": set(),
         "texspace": False, "objectSpace": False,
     }
     for item in (decision.channel_plan or {}).get("channels", ()):
@@ -5508,7 +5543,8 @@ def _tsl_runtime_mesh_entry(decision, obj):
         if ir:
             _ir_runtime_needs(ir, needs)
     if not needs["uvMaps"] and not needs["colorLayers"] \
-            and not needs["texspace"] and not needs["objectSpace"]:
+            and not needs["texspace"] and not needs["objectSpace"] \
+            and not needs["objectAttributes"] and not needs["objectInfo"]:
         return None
     mesh = getattr(obj, "data", None)
     if mesh is None:
@@ -5517,6 +5553,20 @@ def _tsl_runtime_mesh_entry(decision, obj):
             f'data on "{getattr(obj, "name", "?")}", which has none.'
         )
     entry = {"schemaVersion": 1}
+    if needs["objectAttributes"]:
+        entry["objectAttributes"] = sorted(needs["objectAttributes"])
+    if needs["objectInfo"]:
+        if __package__:
+            from . import tsl_object_info
+        else:
+            import tsl_object_info
+        try:
+            entry["objectInfoOwner"] = tsl_object_info.owner_metadata(obj, needs["objectInfo"])
+            entry["objectInfoMaterial"] = tsl_object_info.material_metadata(
+                bpy.data.materials[decision.material_name], needs["objectInfo"],
+            )
+        except ValueError as error:
+            raise MaterialCompileError(str(error)) from error
     if needs["uvMaps"]:
         layers = getattr(mesh, "uv_layers", None)
         uv_channels = {}
@@ -5556,7 +5606,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
     return entry
 
 
-def _stamp_tsl_runtime_extras(path: str, generated_facts: dict) -> None:
+def _stamp_tsl_runtime_extras(path: str, generated_facts: dict, object_space="gltf-y-up") -> None:
     """Stamp mesh-level TSL runtime extras onto every exported mesh whose
     material's channel IR needs them (uvName->TEXCOORD map, COLOR_0
     layer map, Generated texspace, geometry basis). Mesh extras ride the
@@ -5579,6 +5629,28 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict) -> None:
     changed = False
     for _generated_name, fact in sorted(staged.items()):
         for object_name, entry in sorted(fact["tslRuntimeMeshes"].items()):
+            mesh_entry = {key: value for key, value in entry.items()
+                          if key not in {"objectInfoOwner", "objectInfoMaterial"}}
+            if "objectSpace" in mesh_entry:
+                mesh_entry["objectSpace"] = object_space
+            if entry.get("objectAttributes") or entry.get("objectInfoOwner"):
+                # GLTFLoader puts a multi-primitive object's node extras on
+                # a Group above its Mesh children. Mark that exact authored
+                # owner; the runtime must not search arbitrary ancestors or
+                # mistake shared geometry for shared per-object properties.
+                for node in nodes:
+                    if node.get("name") == object_name and "mesh" in node:
+                        node.setdefault("extras", {})["blendlink_tsl_object"] = {
+                            "schemaVersion": 1, "objectName": object_name,
+                            **({"objectInfo": {**entry["objectInfoOwner"], "coordinateBasis": object_space}}
+                               if entry.get("objectInfoOwner") else {}),
+                        }
+                        changed = True
+            if entry.get("objectInfoMaterial"):
+                for material in document.get("materials", []):
+                    if material.get("extras", {}).get("blendlink_source_material") == fact["source"]:
+                        material["extras"]["blendlink_tsl_material"] = entry["objectInfoMaterial"]
+                        changed = True
             mesh_indices = {
                 int(node["mesh"]) for node in nodes
                 if node.get("name") == object_name and "mesh" in node
@@ -5598,7 +5670,21 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict) -> None:
                     )
                 extras = meshes[mesh_index].setdefault("extras", {})
                 existing = extras.get("blendlink_tsl_runtime")
-                if existing is not None and existing != entry:
+                merged = dict(existing or {})
+                conflict = False
+                for key, value in mesh_entry.items():
+                    if key not in merged or merged[key] == value:
+                        merged[key] = value
+                    elif key == "objectAttributes":
+                        merged[key] = sorted(set(merged[key]) | set(value))
+                    elif key in {"uvChannels", "colorLayers"} and all(
+                        name not in merged[key] or merged[key][name] == target
+                        for name, target in value.items()
+                    ):
+                        merged[key] = {**merged[key], **value}
+                    else:
+                        conflict = True
+                if conflict:
                     raise MaterialCompileError(
                         f'TSL runtime extras conflict on mesh {mesh_index} '
                         f'("{fact["source"]}" via {object_name}): two '
@@ -5606,7 +5692,7 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict) -> None:
                         "for one shared mesh. Give the objects separate "
                         "mesh data."
                     )
-                extras["blendlink_tsl_runtime"] = entry
+                extras["blendlink_tsl_runtime"] = merged
                 changed = True
     if not changed:
         return
@@ -7546,6 +7632,7 @@ def with_compiled_materials(
     *,
     emit_replaces_mesh_data: bool = False,
     preserve_custom_attributes: bool = False,
+    object_space: str = "gltf-y-up",
 ) -> tuple[object, MaterialCompilation]:
     """Install private lowerings for one export, attest, then restore."""
     if plan.errors:
@@ -8507,7 +8594,7 @@ def with_compiled_materials(
         _rewrite_factorized_shared_textures(staged_glb, generated_facts)
         # Runtime extras go in BEFORE attestation so the evidence hashes the
         # bytes the runtime will actually load.
-        _stamp_tsl_runtime_extras(staged_glb, generated_facts)
+        _stamp_tsl_runtime_extras(staged_glb, generated_facts, object_space)
         gltf_evidence = _attest_generated_materials(staged_glb, generated_facts)
         compilation = MaterialCompilation(
             plan.source_fingerprint,

@@ -36,6 +36,8 @@ function packedFixture() {
       'CC0-1.0',
       'dist/addon/LICENSE',
       'assets/basis-apache-2.0.txt',
+      'assets/blender-spectral-NOTICE.txt',
+      'assets/blender-spectral-apache-2.0.txt',
     ].join('\n'),
   )
   writeFileSync(
@@ -59,6 +61,12 @@ function packedFixture() {
       'limitations under the License.',
     ].join('\n'),
   )
+  writeFileSync(join(root, 'assets', 'blender-spectral-NOTICE.txt'),
+    'Blender Foundation\nApache-2.0\nBlendlink modifications')
+  writeFileSync(join(root, 'assets', 'blender-spectral-apache-2.0.txt'),
+    'Apache License\nVersion 2.0\nEND OF TERMS AND CONDITIONS')
+  writeFileSync(join(root, 'dist', 'addon', 'spectral-NOTICE.txt'), 'Blender Foundation\nApache')
+  writeFileSync(join(root, 'dist', 'addon', 'spectral-LICENSE.txt'), 'Apache License\nEND OF TERMS AND CONDITIONS')
   return root
 }
 
@@ -89,5 +97,10 @@ describe('packed Blendlink license contract', () => {
     const root = packedFixture()
     rmSync(join(root, 'dist', 'vendor', 'n8ao-webgpu', 'NOTICE.md'))
     assert.throws(() => verifyPackedBlendlinkLicenseContract(root), /WebGPU AO upstream notice/)
+  })
+  it('rejects a missing spectral port attribution', () => {
+    const root = packedFixture()
+    rmSync(join(root, 'assets', 'blender-spectral-NOTICE.txt'))
+    assert.throws(() => verifyPackedBlendlinkLicenseContract(root), /spectral node attribution/)
   })
 })

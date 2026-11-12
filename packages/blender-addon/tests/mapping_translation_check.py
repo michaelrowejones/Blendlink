@@ -35,19 +35,18 @@ tree.links.new(mapping.outputs["Vector"], emission.inputs["Color"])
 mapping.inputs["Location"].default_value = (0.17, -0.23, 0.31)
 mapping.inputs["Rotation"].default_value = (0.47, -0.81, 1.13)
 mapping.inputs["Scale"].default_value = (-1.4, 0.65, 2.1)
-for kind in ("POINT", "TEXTURE", "VECTOR"):
+for kind in ("POINT", "TEXTURE", "VECTOR", "NORMAL"):
     mapping.vector_type = kind
     document = tsl_ir.emit_channel(emission.inputs["Color"])
     expect(document["output"]["op"] == "mapping", f"{kind} did not remain a live Mapping expression")
     expect(document["output"]["vectorType"] == kind, "Mapping mode was lost")
     expect(abs(document["output"]["rotation"][1] + 0.81) < 1e-6, "Mapping Y rotation was lost")
 
-mapping.vector_type = "NORMAL"
-refusal(lambda: tsl_ir.emit_channel(emission.inputs["Color"]), "Mapping type 'NORMAL'")
 mapping.vector_type = "POINT"
 for name in ("Location", "Rotation", "Scale"):
     link = tree.links.new(coord.outputs["UV"], mapping.inputs[name])
-    refusal(lambda: tsl_ir.emit_channel(emission.inputs["Color"]), f"linked {name}")
+    document = tsl_ir.emit_channel(emission.inputs["Color"])
+    expect(document["output"][name.lower() + "Node"]["op"] == "uv", f"Linked {name} was flattened")
     tree.links.remove(link)
 
 noise = tree.nodes.new("ShaderNodeTexNoise")
@@ -73,5 +72,14 @@ expect(not tsl_ir.drain_approximations(), "A collapsed texture axis invented hig
 expect(abs(tsl_ir._fold_vector_prescale({"op": "mapping", "vectorType": "TEXTURE", "scale": [0, -0.02, 2]}) - 50) < 1e-6,
        "Texture inverse scale did not bound the surviving coordinate axes")
 
+# Newly admitted coordinate transforms must not bypass the existing
+# Noise frequency limit through normalization or a varying transform.
+mapping.vector_type = "NORMAL"
+refusal(lambda: tsl_ir.emit_channel(emission.inputs["Color"]), "coordinate-frequency bound")
+mapping.vector_type = "POINT"
+for name in ("Location", "Rotation", "Scale"):
+    link = tree.links.new(coord.outputs["UV"], mapping.inputs[name])
+    refusal(lambda: tsl_ir.emit_channel(emission.inputs["Color"]), "coordinate-frequency bound")
+    tree.links.remove(link)
 bpy.data.materials.remove(material)
-print("BLENDLINK_MAPPING_TRANSLATION_PASSED native XYZ modes, static refusals, inverse scales and Noise bounds")
+print("BLENDLINK_MAPPING_TRANSLATION_PASSED native XYZ/NORMAL modes, live transforms, inverse scales and Noise bounds")

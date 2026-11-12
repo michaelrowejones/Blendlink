@@ -42,9 +42,10 @@ Final validation checks shipped program bytes against their manifest identity
 and validates the live base-color expression against the actual mesh inputs.
 A material name or marker alone cannot excuse a missing color carrier. Programs
 whose required dependencies cannot be validated still need a portable/baked
-carrier for publication. Live-only colors in programs with external images or
-per-object property dependencies currently need verified artifact resolvers
-before they can use this exemption.
+carrier for publication. External images are resolved against the shipped
+bytes, manifest identity, decoded dimensions and color space. Per-object
+properties resolve against the actual exported scene owner; shared geometry
+does not make distinct objects inherit each other's properties.
 
 ## Shading and compositing have different contracts
 
@@ -86,6 +87,17 @@ accepted table or channel budget refuse that live route.
 The [shader differential experiment](../experiments/tsl-node-differential/README.md)
 and [native compositor experiment](../experiments/native-compositor-differential/README.md)
 document the reproducible gates.
+
+Blackbody and Wavelength have separate Cycles and EEVEE evaluation models.
+Their exported working-space matrices follow the source OCIO configuration.
+Legacy Cycles can use different transforms for constant-folded and shader
+inputs; EEVEE uses a native color table when an input cannot be folded. Material
+tables use half-float storage before Blender 5.3 and full-float storage in 5.3.
+These are node semantics, separate from render-target quantization. The
+[spectral differential experiment](../experiments/spectral-node-differential/README.md)
+checks native 4.2, 5.2 and 5.3 graphs on both browser backends, including linked
+inputs, endpoints, and constant procedural inputs. Unknown native folding
+semantics refuse instead of silently choosing a different color function.
 
 Run `npm run test:node-parity` with Blender and the version-matched Playwright
 Chromium installed to regenerate native CPU references and compare the built

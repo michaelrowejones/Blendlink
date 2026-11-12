@@ -16,7 +16,7 @@ npm run build
 BLENDLINK_BLENDER=/path/to/blender npm run test:node-parity
 ```
 
-The gate discovers Blender, generates the three native compositor families, and
+The gate discovers Blender, generates the native compositor families, and
 tests the built package on both browser backends. Evidence is retained under
 `artifacts/verification-native-node-gate/`. CI runs this gate against Blender 4.2
 and 5.2; a successful run is required before claiming parity for that installed
@@ -44,6 +44,18 @@ BLENDLINK_COLOR_CHANNEL_REFERENCES="$PWD/artifacts/native/channels" \
   "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
   --python packages/blender-addon/tests/compositor_color_channels_check.py
 
+BLENDLINK_COMPOSITOR_POINTWISE_REFERENCES="$PWD/artifacts/native/pointwise" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_pointwise_check.py
+
+BLENDLINK_COMPOSITOR_ALPHA_REFERENCES="$PWD/artifacts/native/alpha" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_alpha_check.py
+
+BLENDLINK_COMPOSITOR_MIX_REFERENCES="$PWD/artifacts/native/mix" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_mix_check.py
+
 BLENDLINK_COLOR_CHANNEL_REFERENCES="$PWD/artifacts/native/channels-gpu" \
 BLENDLINK_COMPOSITOR_CHANNEL_DEVICE=GPU \
   "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
@@ -69,11 +81,22 @@ node experiments/native-compositor-differential/run.mjs --built \
 ```
 
 `--built` rejects stale output using both modification times and an independent
-TypeScript emission byte comparison for `tslSourceCompositor` and `tslNodeRecipe`.
+whole-program TypeScript emission byte comparison for every production module.
+Emission uses captured source text and writes only to memory. This catches stale
+dependencies even when the two compositor entry modules have not changed, while
+preserving semantic type-only reexports and const-enum lowering.
 `provenance.json` records source, expected emission, emitted module and extractor
 SHA-256 hashes, plus the TypeScript version. Each reference records its Blender
 version/build hash. A fresh output directory is generated when `--out` is omitted,
 so simultaneous independent runs cannot overwrite each other's fixtures.
+
+Each run copies production modules into its own `module-snapshot`: source `.ts`
+files for a source run, or emitted `.js` files for `--built`. The browser entry
+and its relative imports resolve inside that snapshot. Watching and hot reload
+are disabled. Provenance records the exact SHA-256 of every copied module;
+workspace edits made during a run are listed separately and cannot change its
+tested bytes. Backend timeouts scale with corpus size, with a two-minute minimum.
+The final built gate must still run against the intended shipping revision.
 
 ## Pixel contract and evidence
 
@@ -114,15 +137,75 @@ the repeatable CI gate rather than inferred from a 5.3 result.
   4.2/5.3 batch contains 581 cases, including explicit lower/upper/unchanged
   clamp probes; both browser backends matched within `2.4e-7`.
   Counts are version-dependent and the generated `index.json` is authoritative.
-- **Separate/Combine Color:** 45 legacy CPU, 39 modern CPU and 39 modern GPU
-  references cover RGB/HSV/HSL, every separate output, alpha, roundtrips,
+- **Separate/Combine Color:** 127 legacy CPU, 91 modern CPU and 91 modern GPU
+  references cover RGB/HSV/HSL/YUV/YCC, every separate output, alpha, roundtrips,
   constant and spatial combinations, out-of-range Hue, negative/HDR values,
-  and legacy RGBA aliases. Both browser backends matched all 123 references
+  and legacy RGBA/HSVA/YUVA/YCCA aliases. YCC covers ITU BT.601, ITU BT.709 and
+  JPEG/JFIF. YUV uses BT.709. Both browser backends matched all 309 references
   within `1.91e-6`, with exact alpha and no shader validation errors.
-  YUV/YCC and old HSVA/YUVA/YCCA aliases remain outside
-  this port. Native HSL can be singular for some HDR inputs; these tests assert
+  Native HSL can be singular for some HDR inputs; these tests assert
   finite native references and do not claim meaningful results for non-finite
   native domains.
+- **Pointwise numeric nodes:** RGB to BW, Clamp Min Max/Range, every scalar and
+  vector Map Range interpolation, and the legacy Gamma/Map Range aliases.
+  The initial 201-case native batch matched both browser backends within
+  `2.03e-6`, with exact alpha. Reversed/collapsed ranges, positive/zero/negative
+  Steps, scalar/vector conversion and HDR/negative inputs are covered. Modern
+  CPU Map Range returns To Min for collapsed ranges; spatial GPU scalar Map
+  Range returns zero before its optional output clamp; the legacy compositor
+  returns zero even when that clamp is enabled.
+- **Color Ramp and curves:** the pointwise generator also covers all RGB ramp
+  interpolations, HSV/HSL hue directions, Color/Alpha outputs, narrow and
+  duplicate stops, modern and legacy ramp schemas, compositor RGB Curves,
+  modern RGB/Float/Vector Curves and legacy Vector Curves. Curve cases include
+  Standard/Film Like tone where applicable, non-unit X ranges, horizontal and
+  extrapolated endpoints, black/white levels, clipping, partial/spatial factors,
+  and authored input alpha. Native lookup data are extracted using an owned
+  temporary node-tree copy; tests assert no authored-curve changes or leaked
+  temporary IDs.
+- **Alpha-aware utilities:** 315 native graphs (107 legacy CPU, 104 modern CPU,
+  104 modern GPU) cover Invert flags, dynamic numeric-to-boolean flags, legacy
+  Brightness/Contrast Convert Premultiplied, legacy Alpha Over premultiply-slider
+  precedence and modern Over/Disjoint Over/Conjoint Over. Zero, negative and
+  greater-than-one alpha and negative/extrapolated factors are included. Both
+  browser backends matched within `1.91e-6`, with no shader/browser errors.
+- **Mix:** 998 native graphs (190 legacy CPU, 404 modern CPU, 404 modern GPU)
+  cover all 19 RGB blend enums for legacy MixRGB, shared Shader MixRGB and modern
+  Mix Color; Float/Vector Mix, uniform/nonuniform factors, alpha and clamp rules
+  are included. Both browser backends matched within `1.91e-6`, with no
+  shader/browser errors. Rotation is still a named refusal until its quaternion
+  transport and interpolation are proved separately.
+
+The complete pointwise corpus, including ramps and curves, contains 672 native
+graphs (140 legacy CPU, 266 modern CPU, 266 modern GPU). Both browser backends
+matched within `2.03e-6`, with no shader/browser errors. Alpha is exact for
+passthrough fixtures; calculated alpha uses the numeric tolerance above.
+
+Color Ramp's CPU path evaluates stop interpolation analytically. Its spatial
+GPU path uses Blender's native 257-entry table except for native two-stop RGB
+optimizations. Curves use Blender's native 257-entry tables and endpoint slopes,
+including CPU compositor `Combined(Channel(x))` premultiplied tables and spatial
+GPU `Channel(Combined(x))` evaluation. These orders can produce different colors.
+Compositor RGB Curves preserve alpha; modern shader RGB Curves in a CPU compositor
+return opaque alpha, while their spatial GPU path preserves source alpha.
+
+Native Metal linear table filtering rounds sub-texel interpolation to eight
+fraction bits. The exporter records this proven precision model and the runtime
+reproduces it on either browser backend. Other native GPU filter models remain
+explicit runtime refusals for interpolated ramp/curve lookup until measured;
+CPU-authored graphs and supported analytic ramp paths do not require this GPU
+metadata. `BLENDLINK_COMPOSITOR_POINTWISE_DEVICE=GPU` generates the additional
+native GPU corpus on a supported Blender installation.
+
+Mix preserves several native historical behaviors rather than applying a single
+shader formula to every class. Legacy MixRGB permits unclamped factors and its
+Divide zero-divisor lane returns zero. Shared Shader MixRGB ignores the old Use
+Alpha flag; its CPU Mix mode interpolates alpha while its spatial GPU Mix mode
+preserves A alpha. In Blender 5.3's spatial GPU Shader MixRGB, Clamp Output produces
+zero alpha; the fixture records that native behavior. Modern Mix Color interpolates
+alpha in Mix mode and applies output clamping to RGBA. Native compositor alpha
+composition is emitted through laid-out TSL functions so shared input expressions
+are evaluated before conditional branches.
 
 Device and version metadata are part of the conversion contract, not cosmetic
 labels. Blender's CPU HSV conversion uses a triangular Hue basis while spatial

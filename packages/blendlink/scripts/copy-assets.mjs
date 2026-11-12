@@ -92,6 +92,10 @@ const addonSource = join(root, '..', 'blender-addon')
 const addonOut = join(root, 'dist', 'addon')
 rmSync(addonOut, { recursive: true, force: true })
 mkdirSync(addonOut, { recursive: true })
+// The extension is a separate carrier from npm. Keep the Apache coefficient
+// table attribution/license with it as well as with the browser runtime.
+copyFileSync(join(root, 'assets', 'blender-spectral-NOTICE.txt'), join(addonOut, 'spectral-NOTICE.txt'))
+copyFileSync(join(root, 'assets', 'blender-spectral-apache-2.0.txt'), join(addonOut, 'spectral-LICENSE.txt'))
 for (const entry of readdirSync(addonSource)) {
   // Every .py and every .json: the addon's evidence registries are data its
   // own modules read at import time, so naming them one by one shipped an

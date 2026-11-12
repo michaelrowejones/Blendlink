@@ -10,7 +10,7 @@
     "combine",
     "const_float",
     "const_vec3",
-    "curve_rgb",
+    "curve_native",
     "fresnel",
     "gamma",
     "generated",
@@ -26,12 +26,15 @@
     "normal_map",
     "normal_view",
     "object_coords",
+    "object_info",
     "ramp_alpha",
     "ramp_lut",
     "rgb_to_bw",
     "rgb_to_hsv",
     "separate",
     "shader_to_rgb_diffuse",
+    "spectral",
+    "tex_brick",
     "tex_checker",
     "tex_gradient",
     "tex_image",
@@ -46,5 +49,8 @@
     "vector_scale",
     "vertex_color",
     "view_cos"
+  ],
+  "legacyBuilderOps": [
+    "curve_rgb"
   ]
 }

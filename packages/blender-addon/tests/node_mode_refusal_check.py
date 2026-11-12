@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Refuse unported curve tone and legacy alpha math instead of changing the look."""
+"""Preserve native shader curve tone and legacy compositor alpha behavior."""
 import json
 from pathlib import Path
 import sys
@@ -21,15 +21,16 @@ def main(output):
     material.use_nodes = True
     curve = material.node_tree.nodes.new('ShaderNodeRGBCurve')
     curve.mapping.tone = 'STANDARD'
-    assert tsl_ir.emit_output(curve, curve.outputs['Color'])['op'] == 'curve_rgb'
+    standard = tsl_ir.emit_output(curve, curve.outputs['Color'])
+    assert standard['op'] == 'curve_native'
     curve.mapping.tone = 'FILMLIKE'
-    try:
-        tsl_ir.emit_output(curve, curve.outputs['Color'])
-        raise AssertionError('Film Like silently became a separable RGB curve')
-    except tsl_ir.TslIrRefusal as error:
-        assert 'Film Like' in str(error), str(error)
+    filmlike = tsl_ir.emit_output(curve, curve.outputs['Color'])
+    assert filmlike['op'] == 'curve_native' and filmlike['sourceTone'] == 'FILMLIKE'
+    # The native shader nodes ignore tone; the compositor implements coupled
+    # Film Like separately. Native Cycles/EEVEE differential graphs prove this.
+    assert standard['values'] == filmlike['values']
     curve.mapping.tone = 'STANDARD'
-    assert tsl_ir.emit_output(curve, curve.outputs['Color'])['op'] == 'curve_rgb'
+    assert tsl_ir.emit_output(curve, curve.outputs['Color'])['op'] == 'curve_native'
 
     scene = bpy.context.scene
     modern = hasattr(scene, 'compositing_node_group')
@@ -49,14 +50,16 @@ def main(output):
     grade.inputs['Contrast'].default_value = 30
     tree.links.new(layers.outputs['Image'], grade.inputs['Image'])
     tree.links.new(grade.outputs['Image'], sink.inputs[0])
-    report = {'version': bpy.app.version_string, 'filmLikeRefused': True}
+    report = {'version': bpy.app.version_string, 'shaderCurveToneTransported': True}
     if hasattr(grade, 'use_premultiply'):
         grade.use_premultiply = True
-        refused = compositor_graph.extract(scene)
-        assert refused['status'] == 'unsupported', refused
-        assert refused['diagnostics'][-1]['code'] == 'legacy-bright-contrast-premultiply', refused
+        normalized = compositor_graph.extract(scene)
+        assert normalized['status'] == 'extracted', normalized
+        assert any(op['kind'] == 'brightness-contrast' and op['properties']['use_premultiply'] is True for op in normalized['ops']), normalized
         grade.use_premultiply = False
-        assert compositor_graph.extract(scene)['status'] == 'extracted'
+        normalized = compositor_graph.extract(scene)
+        assert normalized['status'] == 'extracted'
+        assert any(op['kind'] == 'brightness-contrast' and op['properties']['use_premultiply'] is False for op in normalized['ops']), normalized
         # Real pixels prove the legacy flag changes translucent image behavior.
         scene.render.engine = 'CYCLES'
         scene.cycles.device = 'CPU'
@@ -100,7 +103,7 @@ def main(output):
         assert delta > 0.01, f'Premultiply flag did not affect this native alpha fixture: {delta}'
         assert np.array_equal(results[0][..., 3], pixels[..., 3])
         assert np.array_equal(results[1][..., 3], pixels[..., 3])
-        report.update(legacyPremultiplyRefused=True, nativeRgbDifference=delta, alphaPreserved=True)
+        report.update(legacyPremultiplyNormalized=True, nativeRgbDifference=delta, alphaPreserved=True)
     else:
         assert compositor_graph.extract(scene)['status'] == 'extracted'
         report['modernBrightContrastUnchanged'] = True

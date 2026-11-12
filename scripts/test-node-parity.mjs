@@ -6,7 +6,7 @@ import { mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
 const root = resolve(import.meta.dirname, '..')
-const evidence = join(root, 'artifacts/verification-native-node-gate')
+const evidence = resolve(process.env.BLENDLINK_NATIVE_NODE_EVIDENCE || join(root, 'artifacts/verification-native-node-gate'))
 mkdirSync(evidence, { recursive: true })
 rmSync(join(evidence, 'report.json'), { force: true })
 function run(label, executable, args, extraEnv = {}) {
@@ -32,6 +32,9 @@ for (const [family, file, variable] of [
   ['math', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES'],
   ['color-balance', 'compositor_color_balance_check.py', 'BLENDLINK_COLOR_BALANCE_REFERENCES'],
   ['color-channels', 'compositor_color_channels_check.py', 'BLENDLINK_COLOR_CHANNEL_REFERENCES'],
+  ['pointwise', 'compositor_pointwise_check.py', 'BLENDLINK_COMPOSITOR_POINTWISE_REFERENCES'],
+  ['alpha', 'compositor_alpha_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_REFERENCES'],
+  ['mix', 'compositor_mix_check.py', 'BLENDLINK_COMPOSITOR_MIX_REFERENCES'],
 ]) {
   const directory = join(evidence, family)
   rmSync(directory, { recursive: true, force: true })
@@ -39,6 +42,8 @@ for (const [family, file, variable] of [
   run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU',
   })
   references.push(directory)
 }
@@ -47,16 +52,23 @@ run('compositor-browser', process.execPath, ['experiments/native-compositor-diff
 for (const [family, flag] of [
   ['mapping', null], ['mix', '--mix'], ['map-range', '--map-range'],
   ['math', '--math'], ['math-boundary', '--boundary'], ['hue-ramp', '--hue-ramp'],
+  ['vectors', '--vectors'],
+  ['brick', '--brick'],
 ]) {
   run('shader-' + family, process.execPath, ['experiments/tsl-node-differential/run-mapping.mjs',
-    '--built', ...(flag ? [flag] : [])], { BLENDLINK_BLENDER: blender })
+    '--built', ...(flag ? [flag] : [])], { BLENDLINK_BLENDER: blender,
+      BLENDLINK_TSL_DIFF_ARTIFACTS: join(evidence, 'shader-' + family) })
 }
+run('spectral', process.execPath, ['experiments/spectral-node-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_SPECTRAL_EVIDENCE: join(evidence, 'spectral') })
+run('curves', process.execPath, ['experiments/curve-node-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_CURVE_EVIDENCE: join(evidence, 'curves') })
 const browser = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 'utf8'))
 writeFileSync(join(evidence, 'report.json'), JSON.stringify({
   nativeCompositorDevice: 'CPU', references,
   compositor: browser.map(({ backend, rows }) => ({ backend, cases: rows.length,
     maximumAbsoluteError: Math.max(...rows.map(row => row.max)) })),
-  shaderFamilies: ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp'],
+  shaderFamilies: ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'spectral', 'curves'],
   builtRuntime: true,
 }, null, 2) + '\n')
 console.log('BLENDLINK_NATIVE_NODE_GATE_PASSED native CPU references and built runtime on both browser backends')

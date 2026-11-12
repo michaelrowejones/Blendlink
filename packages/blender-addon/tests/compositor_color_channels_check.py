@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Native RGB/HSV/HSL channel references, including the legacy RGBA aliases."""
+"""Native color-channel references, including YUV/YCC standards and old aliases."""
 import json
 import os
 import sys
@@ -52,6 +52,7 @@ def main(output):
     pixels[..., :3] *= pixels[..., 3, None]
     pixels[0, :5] = [[0, 0, 0, 0], [1, 1, 1, 1], [0.5, 0.5, 0.5, 0.5],
                      [2.2, 0.5, 0.2, 1], [-0.2, 0.01, 0.8, 0.125]]
+    pixels[0, 5] = [-1e-20, 0, -0.5e-20, 0.5]
     image = bpy.data.images.new("Premultiplied channel input", width=8, height=8, alpha=True, float_buffer=True)
     image.alpha_mode = "PREMUL"
     image.colorspace_settings.name = "Linear Rec.709"
@@ -59,7 +60,8 @@ def main(output):
     constants = [(0.2, 0.4, 0.8, 0.3), (-0.2, 1.4, 2, 0.125),
                  (1.2, 0.8, 1, 0), (0.5, 0, -0.5, 1)]
     cases = []
-    for mode in ("RGB", "HSV", "HSL"):
+    modes = ("RGB", "HSV", "HSL", "YUV", "YCC-ITUBT601", "YCC-ITUBT709", "YCC-JFIF")
+    for mode in modes:
         cases += [("separate-" + mode.lower() + "-" + channel.lower(), "separate", mode, channel, None)
                   for channel in ("Red", "Green", "Blue", "Alpha")]
         cases += [("roundtrip-" + mode.lower(), "roundtrip", mode, None, None)]
@@ -68,27 +70,37 @@ def main(output):
         cases += [("spatial-combine-" + mode.lower() + "-" + str(index), "combine-spatial", mode, None, values)
                   for index, values in enumerate(constants)]
     if not modern:
-        cases += [("legacy-separate-" + channel.lower(), "legacy-separate", "RGB", channel, None)
-                  for channel in ("R", "G", "B", "A")]
-        cases += [("legacy-roundtrip", "legacy-roundtrip", "RGB", None, None),
-                  ("legacy-combine", "legacy-combine", "RGB", None, constants[1])]
+        for mode in ("RGB", "HSV", "YUV", "YCC-ITUBT601", "YCC-ITUBT709", "YCC-JFIF"):
+            family = mode.split("-")[0]
+            channels = {"RGB": ("R", "G", "B", "A"), "HSV": ("H", "S", "V", "A"),
+                        "YUV": ("Y", "U", "V", "A"), "YCC": ("Y", "Cb", "Cr", "A")}[family]
+            cases += [("legacy-" + mode.lower() + "-separate-" + channel.lower(), "legacy-separate", mode, channel, None)
+                      for channel in channels]
+            cases += [("legacy-" + mode.lower() + "-roundtrip", "legacy-roundtrip", mode, None, None),
+                      ("legacy-" + mode.lower() + "-combine", "legacy-combine", mode, None, constants[1])]
     rows = []
     prefix = "blender-" + str(bpy.app.version[0]) + "-" + str(bpy.app.version[1]) + "-" + device.lower()
     for label, kind, mode, channel, values in cases:
+        family, _, standard = mode.partition("-")
+        alias = {"RGB": "RGBA", "HSV": "HSVA", "YUV": "YUVA", "YCC": "YCCA"}.get(family)
         tree.nodes.clear()
         sink = tree.nodes.new("NodeGroupOutput" if modern else "CompositorNodeComposite")
         source = tree.nodes.new("CompositorNodeRLayers")
         if "separate" in kind or "roundtrip" in kind:
-            separate = tree.nodes.new("CompositorNodeSepRGBA" if kind.startswith("legacy") else "CompositorNodeSeparateColor")
+            separate = tree.nodes.new("CompositorNodeSep" + alias if kind.startswith("legacy") else "CompositorNodeSeparateColor")
             if hasattr(separate, "mode"):
-                separate.mode = mode
+                separate.mode = standard if kind.startswith("legacy") and family == "YCC" else family
+            if hasattr(separate, "ycc_mode") and standard:
+                separate.ycc_mode = standard
             tree.links.new(source.outputs["Image"], separate.inputs["Image"])
             if "separate" in kind:
                 tree.links.new(separate.outputs[channel], sink.inputs[0])
         if "combine" in kind or "roundtrip" in kind:
-            combine = tree.nodes.new("CompositorNodeCombRGBA" if kind.startswith("legacy") else "CompositorNodeCombineColor")
+            combine = tree.nodes.new("CompositorNodeComb" + alias if kind.startswith("legacy") else "CompositorNodeCombineColor")
             if hasattr(combine, "mode"):
-                combine.mode = mode
+                combine.mode = standard if kind.startswith("legacy") and family == "YCC" else family
+            if hasattr(combine, "ycc_mode") and standard:
+                combine.ycc_mode = standard
             if kind == "combine-spatial":
                 alpha = tree.nodes.new("CompositorNodeSeparateColor")
                 tree.links.new(source.outputs["Image"], alpha.inputs["Image"])
@@ -134,8 +146,8 @@ def main(output):
             node = tree.nodes.new(kind)
             node.mode = mode
             tree.links.new(node.outputs[0], sink.inputs[0])
-            refused = compositor_graph.extract(scene)
-            assert refused["status"] == "unsupported" and refused["diagnostics"][-1]["code"] == "unsupported-color-channel-mode", refused
+            translated = compositor_graph.extract(scene)
+            assert translated["status"] == "extracted", translated
             tree.nodes.remove(node)
     (output / "index.json").write_text(json.dumps(rows, indent=2))
     print("BLENDLINK_COLOR_CHANNELS_CHECK_PASSED " + json.dumps({"blender": bpy.app.version_string,

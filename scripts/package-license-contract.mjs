@@ -57,6 +57,8 @@ export function verifyPackedBlendlinkLicenseContract(packageRoot) {
       ...FILE_LICENSES,
       'dist/addon/LICENSE',
       'assets/basis-apache-2.0.txt',
+      'assets/blender-spectral-NOTICE.txt',
+      'assets/blender-spectral-apache-2.0.txt',
     ],
     'Packed Blendlink license map is incomplete',
   )
@@ -105,6 +107,17 @@ export function verifyPackedBlendlinkLicenseContract(packageRoot) {
   requireFragments(cc0Text, ['CC0 1.0 Universal', 'Statement of Purpose', 'Limitations and Disclaimers'],
     'Packed Blendlink must embed the complete CC0 license text')
   readRequiredText(packageRoot, 'dist/vendor/n8ao-webgpu/NOTICE.md', 'WebGPU AO upstream notice')
+
+  const spectralNotice = readRequiredText(packageRoot, 'assets/blender-spectral-NOTICE.txt', 'spectral node attribution')
+  requireFragments(spectralNotice, ['Blender Foundation', 'Apache', 'modifications'],
+    'Packed spectral mathematics must retain upstream attribution and modification notices')
+  const spectralLicense = readRequiredText(packageRoot, 'assets/blender-spectral-apache-2.0.txt', 'spectral Apache license')
+  requireFragments(spectralLicense, ['Apache License', 'Version 2.0', 'END OF TERMS AND CONDITIONS'],
+    'Packed spectral mathematics must retain the complete Apache license')
+  const extensionSpectralNotice = readRequiredText(packageRoot, 'dist/addon/spectral-NOTICE.txt', 'extension spectral attribution')
+  const extensionSpectralLicense = readRequiredText(packageRoot, 'dist/addon/spectral-LICENSE.txt', 'extension spectral license')
+  requireFragments(extensionSpectralNotice, ['Blender Foundation', 'Apache'], 'Extension spectral attribution is incomplete')
+  requireFragments(extensionSpectralLicense, ['Apache License', 'END OF TERMS AND CONDITIONS'], 'Extension spectral license is incomplete')
 
   return {
     license: PACKAGE_LICENSE,

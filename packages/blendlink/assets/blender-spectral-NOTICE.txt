@@ -1,0 +1,18 @@
+Blendlink spectral color and Brick node mathematics and tables
+
+Copyright 2011-2022 Blender Foundation
+Copyright 2026 Blendlink contributors
+
+Portions are adapted from the Apache-2.0 licensed Blender Cycles sources:
+https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/math_util.h
+https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/tables.h
+https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/brick.h
+
+Blendlink modifications: Three.js expression construction, explicit source
+engine evaluation models, serialized working-space matrices, resource ownership,
+integer Brick noise and mortar calculations, and browser/native differential
+checks. Native EEVEE sampler behavior is modeled
+separately from the Cycles analytical functions.
+
+The complete Apache License, Version 2.0 accompanies this notice in
+blender-spectral-apache-2.0.txt.

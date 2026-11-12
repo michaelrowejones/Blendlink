@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Read-only extraction of the authored compositor output graph."""
 
+import math
+from contextlib import contextmanager
+
 import bpy
 
 TYPES = {
@@ -10,6 +13,7 @@ TYPES = {
     "ShaderNodeMath": "math",
     "CompositorNodeMath": "math",
     "ShaderNodeMixRGB": "mix-rgb",
+    "CompositorNodeMixRGB": "mix-rgb",
     "ShaderNodeMix": "mix",
     "CompositorNodeAlphaOver": "alpha-over",
     "CompositorNodeExposure": "exposure",
@@ -19,7 +23,25 @@ TYPES = {
     "CompositorNodeCombineColor": "combine-color",
     "CompositorNodeSepRGBA": "separate-color",
     "CompositorNodeCombRGBA": "combine-color",
+    "CompositorNodeSepHSVA": "separate-color",
+    "CompositorNodeCombHSVA": "combine-color",
+    "CompositorNodeSepYUVA": "separate-color",
+    "CompositorNodeCombYUVA": "combine-color",
+    "CompositorNodeSepYCCA": "separate-color",
+    "CompositorNodeCombYCCA": "combine-color",
+    "CompositorNodeRGBToBW": "rgb-to-bw",
+    "ShaderNodeClamp": "clamp",
+    "ShaderNodeMapRange": "map-range",
+    "CompositorNodeMapRange": "map-range",
+    "ShaderNodeValToRGB": "color-ramp",
+    "CompositorNodeValToRGB": "color-ramp",
+    "CompositorNodeCurveRGB": "curves",
+    "ShaderNodeRGBCurve": "curves",
+    "ShaderNodeFloatCurve": "curves",
+    "ShaderNodeVectorCurve": "curves",
+    "CompositorNodeCurveVec": "curves",
     "ShaderNodeGamma": "gamma",
+    "CompositorNodeGamma": "gamma",
     "CompositorNodeInvert": "invert",
     "CompositorNodeHueSat": "hue-saturation-value",
     "CompositorNodeBlur": "blur",
@@ -49,6 +71,67 @@ def value(v):
 
 class Unsupported(Exception):
     pass
+
+
+@contextmanager
+def copied_curve_mapping(node):
+    """Yield an initialized owned copy for context-specific native evaluation.
+
+    The caller controls clipping and sampling domains on this copy. The authored
+    mapping is never changed, and the temporary ID is removed even on refusal.
+    """
+    temporary = node.id_data.copy()
+    try:
+        mapping = temporary.nodes[node.name].mapping
+        mapping.initialize()
+        mapping.update()
+        yield mapping
+    finally:
+        bpy.data.node_groups.remove(temporary)
+
+
+def curve_tables(node):
+    """Sample Blender's own tables without changing the authored CurveMapping.
+
+    The public evaluator clips output while the compositor's internal evaluator
+    does not. Disable that flag on an owned temporary ID copy only.
+    """
+    temporary = node.id_data.copy()
+    try:
+        mapping = temporary.nodes[node.name].mapping
+        clip = bool(mapping.use_clip)
+        mapping.use_clip = False
+        mapping.initialize()
+        mapping.update()
+        curves = list(mapping.curves)
+        ranges, values, slopes = [], [], []
+        for curve in curves:
+            low = min(float(mapping.clip_min_x), *(float(point.location[0]) for point in curve.points))
+            high = max(float(mapping.clip_max_x), *(float(point.location[0]) for point in curve.points))
+            extent = high - low
+            if extent <= 0:
+                raise Unsupported("Curve Mapping requires a nonzero finite horizontal range")
+            samples = [float(mapping.evaluate(curve, low + extent * index / 256)) for index in range(257)]
+            start = (samples[0] - mapping.evaluate(curve, low - extent)) / extent
+            end = (mapping.evaluate(curve, high + extent) - samples[-1]) / extent
+            ranges.append([low, high])
+            values.append(samples)
+            slopes.append([start, end])
+        premultiplied = None
+        if len(curves) == 4:
+            premultiplied = [[float(mapping.evaluate(curves[3], item)) for item in channel]
+                             for channel in values[:3]]
+        numbers = [item for row in ranges + values + slopes for item in row]
+        if premultiplied:
+            numbers += [item for row in premultiplied for item in row]
+        if not all(math.isfinite(item) for item in numbers):
+            raise Unsupported("Curve Mapping produces non-finite native samples")
+        return {"curve_ranges": ranges, "curve_values": values, "curve_slopes": slopes,
+                "curve_premultiplied": premultiplied,
+                "curve_tone": getattr(mapping, "tone", "STANDARD"),
+                "curve_clip": clip, "curve_clip_y": [float(mapping.clip_min_y), float(mapping.clip_max_y)]}
+    finally:
+        bpy.data.node_groups.remove(temporary)
 
 
 def extract(scene):
@@ -255,6 +338,101 @@ def extract(scene):
                         }
                 elif node.bl_idname in ("CompositorNodeRGB", "ShaderNodeValue", "CompositorNodeValue"):
                     op["value"] = value(socket.default_value)
+                elif node.bl_idname in ("ShaderNodeMapRange", "CompositorNodeMapRange"):
+                    vector = getattr(node, "data_type", "FLOAT") == "FLOAT_VECTOR"
+                    interpolation = getattr(node, "interpolation_type", "LINEAR")
+                    if interpolation not in ("LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"):
+                        fail("unsupported-map-range-interpolation", path, node, socket,
+                             "Map Range requires a verified interpolation mode")
+                    if node.bl_idname == "ShaderNodeMapRange" and socket.identifier != ("Vector" if vector else "Result"):
+                        fail("inactive-map-range-output", path, node, socket,
+                             "The requested Map Range output is inactive")
+                    op["properties"].update({"data_type": "FLOAT_VECTOR" if vector else "FLOAT",
+                                             "interpolation_type": interpolation,
+                                             "clamp": bool(getattr(node, "clamp", getattr(node, "use_clamp", False))),
+                                             "map_range_model": "legacy" if node.bl_idname == "CompositorNodeMapRange" else getattr(scene.render, "compositor_device", "CPU")})
+                    identifiers = ("Vector", "From_Min_FLOAT3", "From_Max_FLOAT3", "To_Min_FLOAT3", "To_Max_FLOAT3", "Steps_FLOAT3") if vector else (
+                        "Value", "From Min", "From Max", "To Min", "To Max", "Steps")
+                    for name, identifier in zip(("Value", "From Min", "From Max", "To Min", "To Max", "Steps"), identifiers):
+                        if name == "Steps" and interpolation != "STEPPED":
+                            continue
+                        incoming = next(item for item in node.inputs if item.identifier == identifier)
+                        op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
+                                              "value": input_value(incoming, ctx)}
+                elif node.bl_idname == "ShaderNodeClamp":
+                    op["properties"]["clamp_type"] = node.clamp_type
+                    for incoming in node.inputs:
+                        op["inputs"][incoming.identifier] = {"name": incoming.name,
+                            "socketType": incoming.type, "value": input_value(incoming, ctx)}
+                elif node.bl_idname == "CompositorNodeGamma":
+                    for name, identifier in (("Color", "Image"), ("Gamma", "Gamma")):
+                        incoming = node.inputs[identifier]
+                        op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
+                                              "value": input_value(incoming, ctx)}
+                elif node.bl_idname in ("ShaderNodeValToRGB", "CompositorNodeValToRGB"):
+                    ramp = node.color_ramp
+                    op["properties"].update({
+                        "color_mode": ramp.color_mode, "interpolation": ramp.interpolation,
+                        "hue_interpolation": ramp.hue_interpolation,
+                        "color_conversion_device": getattr(scene.render, "compositor_device", "CPU"),
+                        "gpu_filter_fraction_bits": 8 if getattr(bpy.context.preferences.system, "gpu_backend", "") == "METAL" else None,
+                        "stops": [{"position": float(element.position),
+                                   "color": list(element.color)} for element in ramp.elements],
+                        "samples": 257,
+                        "values": [float(channel) for index in range(257)
+                                   for channel in ramp.evaluate(index / 256)],
+                    })
+                    incoming = node.inputs["Fac"]
+                    op["inputs"]["Fac"] = {"name": incoming.name, "socketType": incoming.type,
+                                            "value": input_value(incoming, ctx)}
+                elif TYPES[node.bl_idname] == "curves":
+                    try:
+                        op["properties"].update(curve_tables(node))
+                    except Unsupported as error:
+                        fail("unsupported-curve-mapping", path, node, socket, str(error))
+                    op["properties"]["color_conversion_device"] = getattr(scene.render, "compositor_device", "CPU")
+                    op["properties"]["gpu_filter_fraction_bits"] = 8 if getattr(bpy.context.preferences.system, "gpu_backend", "") == "METAL" else None
+                    for incoming in node.inputs:
+                        name = {"Factor": "Fac", "Color": "Image"}.get(incoming.identifier, incoming.identifier)
+                        op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
+                                              "value": input_value(incoming, ctx)}
+                elif node.bl_idname in ("ShaderNodeMix", "ShaderNodeMixRGB", "CompositorNodeMixRGB"):
+                    op["properties"]["color_conversion_device"] = getattr(scene.render, "compositor_device", "CPU")
+                    if node.bl_idname == "ShaderNodeMix":
+                        data_type = node.data_type
+                        if data_type not in ("FLOAT", "VECTOR", "RGBA"):
+                            fail("unsupported-mix-data-type", path, node, socket,
+                                 "Mix Rotation needs a verified quaternion socket/interpolation mapping")
+                        suffix = {"FLOAT": "Float", "VECTOR": "Vector", "RGBA": "Color"}[data_type]
+                        factor = "Factor_Vector" if data_type == "VECTOR" and node.factor_mode == "NON_UNIFORM" else "Factor_Float"
+                        identifiers = (factor, "A_" + suffix, "B_" + suffix)
+                        aliases = identifiers
+                    elif node.bl_idname == "CompositorNodeMixRGB":
+                        identifiers, aliases = ("Fac", "Image", "Image_001"), ("Fac", "Color1", "Color2")
+                    else:
+                        identifiers = aliases = ("Fac", "Color1", "Color2")
+                    for name, identifier in zip(aliases, identifiers):
+                        incoming = next(item for item in node.inputs if item.identifier == identifier)
+                        op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
+                                              "value": input_value(incoming, ctx)}
+                elif node.bl_idname == "CompositorNodeInvert":
+                    for incoming in node.inputs:
+                        op["inputs"][incoming.identifier] = {"name": incoming.name, "socketType": incoming.type,
+                                                             "value": input_value(incoming, ctx)}
+                    for name, attribute in (("Invert Color", "invert_rgb"), ("Invert Alpha", "invert_alpha")):
+                        if name not in op["inputs"]:
+                            op["inputs"][name] = {"name": name, "socketType": "BOOLEAN",
+                                "value": {"kind": "constant", "type": "BOOLEAN", "value": bool(getattr(node, attribute))}}
+                elif node.bl_idname == "CompositorNodeAlphaOver":
+                    legacy = node.inputs.get("Type") is None
+                    op["properties"]["alpha_over_model"] = "legacy" if legacy else "modern"
+                    if legacy:
+                        op["properties"]["legacy_premul"] = float(node.premul)
+                        op["properties"]["legacy_straight"] = bool(node.use_premultiply)
+                    for incoming in node.inputs:
+                        name = {"Image": "Background", "Image_001": "Foreground"}.get(incoming.identifier, incoming.identifier) if legacy else incoming.identifier
+                        op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
+                                              "value": input_value(incoming, ctx)}
                 elif node.bl_idname == "CompositorNodeMath" and node.operation == "LOGARITHM":
                     base = node.inputs[1]
                     if base.is_linked or base.default_value == 1:
@@ -267,13 +445,16 @@ def extract(scene):
                             "name": incoming.name, "socketType": incoming.type,
                             "value": input_value(incoming, ctx),
                         }
-                elif node.bl_idname in ("CompositorNodeSeparateColor", "CompositorNodeCombineColor",
-                                       "CompositorNodeSepRGBA", "CompositorNodeCombRGBA"):
-                    mode = getattr(node, "mode", "RGB")
-                    if mode not in ("RGB", "HSV", "HSL"):
+                elif TYPES[node.bl_idname] in ("separate-color", "combine-color"):
+                    legacy_mode = {"CompositorNodeSepHSVA": "HSV", "CompositorNodeCombHSVA": "HSV",
+                                   "CompositorNodeSepYUVA": "YUV", "CompositorNodeCombYUVA": "YUV",
+                                   "CompositorNodeSepYCCA": "YCC", "CompositorNodeCombYCCA": "YCC"}.get(node.bl_idname)
+                    mode = legacy_mode or getattr(node, "mode", "RGB")
+                    if mode not in ("RGB", "HSV", "HSL", "YUV", "YCC"):
                         fail("unsupported-color-channel-mode", path, node, socket,
-                             "Separate/Combine Color supports RGB, HSV and HSL; YUV/YCC need verified color-model mappings")
+                             "Separate/Combine Color has an unknown color model")
                     op["properties"]["mode"] = mode
+                    op["properties"]["ycc_mode"] = getattr(node, "mode", "ITUBT601") if legacy_mode == "YCC" else getattr(node, "ycc_mode", "ITUBT601")
                     op["properties"]["color_conversion_device"] = getattr(
                         scene.render, "compositor_device", "CPU")
                     op["properties"]["legacy_hsv_clamp"] = bpy.app.version < (4, 5, 0)
@@ -284,16 +465,21 @@ def extract(scene):
                                                     "socketType": incoming.type,
                                                     "value": input_value(incoming, ctx)}
                     else:
-                        aliases = ("R", "G", "B", "A") if node.bl_idname == "CompositorNodeCombRGBA" else (
-                            "Red", "Green", "Blue", "Alpha")
+                        aliases = {"CompositorNodeCombRGBA": ("R", "G", "B", "A"),
+                                   "CompositorNodeCombHSVA": ("H", "S", "V", "A"),
+                                   "CompositorNodeCombYUVA": ("Y", "U", "V", "A"),
+                                   "CompositorNodeCombYCCA": ("Y", "Cb", "Cr", "A")}.get(
+                            node.bl_idname, ("Red", "Green", "Blue", "Alpha"))
                         for name, identifier in zip(("Red", "Green", "Blue", "Alpha"), aliases):
                             incoming = node.inputs[identifier]
                             op["inputs"][name] = {"name": incoming.name,
                                                   "socketType": incoming.type,
                                                   "value": input_value(incoming, ctx)}
-                elif node.bl_idname == "CompositorNodeBrightContrast" and bool(getattr(node, "use_premultiply", False)):
-                    fail("legacy-bright-contrast-premultiply", path, node, socket,
-                         "Legacy Brightness/Contrast with Convert Premultiplied enabled needs a verified alpha-aware mapping; disable it or use a supported compositor route")
+                elif node.bl_idname == "CompositorNodeBrightContrast":
+                    op["properties"]["use_premultiply"] = bool(getattr(node, "use_premultiply", False))
+                    for incoming in node.inputs:
+                        op["inputs"][incoming.identifier] = {"name": incoming.name, "socketType": incoming.type,
+                                                             "value": input_value(incoming, ctx)}
                 elif node.bl_idname == "CompositorNodeColorBalance":
                     # Older nodes grade lift/gain in sRGB; the new socket-based
                     # node grades directly in scene-linear. Preserve the model

@@ -46,7 +46,16 @@ expect(
 # The emitter expresses its vocabulary as `"op": "<name>"` literals in the
 # documents it builds. A regex that stops matching fails this check loudly
 # rather than silently shrinking the compared set.
-emitted = set(re.findall(r'"op":\s*"([a-z0-9_]+)"', EMITTER.read_text(encoding="utf-8")))
+emitter_source = EMITTER.read_text(encoding="utf-8")
+# Delegated emitter modules follow the same suffix/import convention. Follow
+# real imports rather than planting unused op strings in the central emitter.
+delegates = re.findall(r'^\s*from ([a-z0-9_]+_ir) import ', emitter_source, re.M)
+sources = [emitter_source]
+for name in delegates:
+    path = EMITTER.with_name(name + ".py")
+    expect(path.is_file(), "Missing delegated IR emitter " + name)
+    sources.append(path.read_text(encoding="utf-8"))
+emitted = set(re.findall(r'"op":\s*"([a-z0-9_]+)"', "\n".join(sources)))
 expect(
     len(emitted) > 30,
     f"only {len(emitted)} ops parsed out of the emitter; the op-literal "

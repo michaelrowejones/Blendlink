@@ -14,7 +14,44 @@ auditability first, optimization later.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
+
 IR_MODEL = "blendlink-tsl-ir-v1"
+
+_evaluation_engine = ContextVar("blendlink_tsl_evaluation_engine", default=None)
+
+
+def _normalize_evaluation_engine(engine):
+    engine = str(engine)
+    return "EEVEE" if engine in {"EEVEE", "BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"} else engine
+
+
+def get_evaluation_engine():
+    """Effective source engine, scoped to the selected material output."""
+    import bpy
+    engine = _evaluation_engine.get()
+    return _normalize_evaluation_engine(engine if engine is not None else bpy.context.scene.render.engine)
+
+
+@contextmanager
+def emission_context(*, tree=None, target=None, evaluation_engine=None):
+    """Explicit output targets win; an ALL output follows the source scene.
+
+    Reset on every exit so a refused channel, nested surface emission or a
+    later material cannot inherit another root's evaluation semantics.
+    """
+    if evaluation_engine is None and tree is not None and target is not None:
+        import bpy
+        output = _active_material_output(tree, target)
+        selected = str(getattr(output, "target", "ALL"))
+        evaluation_engine = selected if selected != "ALL" else bpy.context.scene.render.engine
+    engine = get_evaluation_engine() if evaluation_engine is None else _normalize_evaluation_engine(evaluation_engine)
+    token = _evaluation_engine.set(engine)
+    try:
+        yield engine
+    finally:
+        _evaluation_engine.reset(token)
 
 # Blender Math operations with proven differential cells.  The builder maps
 # DIVIDE/MODULO/POWER to Blender's safe-math wrappers; the full declared
@@ -42,14 +79,15 @@ _VECTOR_MATH_OPERATIONS = {
     "CROSS_PRODUCT", "DOT_PRODUCT", "DISTANCE", "LENGTH", "NORMALIZE",
     "ABSOLUTE", "MINIMUM", "MAXIMUM", "FLOOR", "CEIL", "FRACTION",
     "MODULO", "WRAP", "SNAP", "SINE", "COSINE", "TANGENT",
+    "PROJECT", "REFLECT", "REFRACT", "FACEFORWARD", "ROUND", "POWER", "SIGN",
 }
-# REFLECT / REFRACT / FACEFORWARD / PROJECT stay named refusals until a
-# geometric cell batch earns them.
+# ROUND/POWER/SIGN are available in newer native Blender versions; the
+# differential runner records actual native operation availability.
 _VECTOR_MATH_UNARY = {
     "NORMALIZE", "FLOOR", "CEIL", "FRACTION", "ABSOLUTE", "LENGTH",
-    "SINE", "COSINE", "TANGENT",
+    "SINE", "COSINE", "TANGENT", "ROUND", "SIGN",
 }
-_VECTOR_MATH_TERNARY = {"MULTIPLY_ADD", "WRAP"}
+_VECTOR_MATH_TERNARY = {"MULTIPLY_ADD", "WRAP", "FACEFORWARD"}
 _VECTOR_MATH_VALUE_OUTPUT = {"DOT_PRODUCT", "DISTANCE", "LENGTH"}
 
 _MIX_BLEND_TYPES = {
@@ -456,45 +494,16 @@ def find_principled_root(tree, target="CYCLES"):
 
     The stack is the chain of group-instance nodes enclosing the Principled,
     outermost first — the context `emit_channel` needs to resolve channel
-    inputs fed through Group Input sockets.  Refuses ambiguity (several
-    shader roots, or one reachable through multiple instance paths) instead
-    of guessing.
+    inputs fed through Group Input sockets. The selected output's actual
+    shader-link path owns the instance context; unrelated output targets or
+    unused group instances cannot change which graph gets compiled.
     """
-    if target != "CYCLES":
-        node, _socket, stack = _active_surface_link(tree, target)
-        if node.bl_idname != "ShaderNodeBsdfPrincipled":
-            _refuse("no single Principled surface for " + target)
-        return node, stack
-    procedural = _import_procedural()
-
-    nodes = procedural.reachable_surface_nodes(tree)
-    root = procedural._single_principled_surface_root(nodes)
-    if root is None:
-        _refuse("no root-level single Principled surface")
-    if root.id_data.as_pointer() == tree.as_pointer():
-        return root, ()
-
-    paths = []
-
-    def locate(current, stack, seen):
-        pointer = current.as_pointer()
-        if pointer in seen:
-            return
-        seen = seen | {pointer}
-        for node in current.nodes:
-            if node.as_pointer() == root.as_pointer():
-                paths.append(stack)
-            nested = getattr(node, "node_tree", None)
-            if node.bl_idname == "ShaderNodeGroup" and nested is not None:
-                locate(nested, stack + (node,), seen)
-
-    locate(tree, (), frozenset())
-    if len(paths) != 1:
-        _refuse(
-            f"Principled surface reachable through {len(paths)} group "
-            "instance paths"
-        )
-    return root, paths[0]
+    if tree is None:
+        _refuse("material has no shader node tree")
+    node, _socket, stack = _active_surface_link(tree, target)
+    if node.bl_idname != "ShaderNodeBsdfPrincipled":
+        _refuse("no single Principled surface for " + target)
+    return node, stack
 
 
 _SURFACE_MODEL = "blendlink-tsl-surface-v1"
@@ -726,19 +735,20 @@ def _leaf_channels(leaf):
     _refuse(f"surface leaf {kind!r} has no channel projection")
 
 
-def _active_surface_link(tree, target):
-    """The material's Cycles-visible surface expression.
-
-    Cycles renders the output targeted at CYCLES when one exists, then
-    the ALL-target output — measured on 5.2 with an EEVEE/CYCLES output
-    pair (selecting by tree order compiled the branch Cycles never
-    renders). Returns the parsed closure expression; refuses by name."""
+def _active_material_output(tree, target):
+    """One shared selection for shader traversal and evaluation context."""
+    # The active flag is global, not one flag per renderer. Native Blender
+    # can select a unique engine-targeted output even when another engine's
+    # output carries that flag. Its read-only API is authoritative here.
+    native = getattr(tree, "get_output_node", None)
+    if callable(native):
+        return native(target)
     actives = [
         node for node in tree.nodes
         if node.bl_idname == "ShaderNodeOutputMaterial"
         and getattr(node, "is_active_output", True)
     ]
-    output = next(
+    return next(
         (node for node in actives
          if str(getattr(node, "target", "ALL")) == target),
         None,
@@ -747,6 +757,11 @@ def _active_surface_link(tree, target):
          if str(getattr(node, "target", "ALL")) == "ALL"),
         None,
     )
+
+
+def _active_surface_link(tree, target):
+    """Resolve the requested engine output, falling back to ALL by name."""
+    output = _active_material_output(tree, target)
     if output is None:
         _refuse("material has no " + target + "-visible active Material Output")
     resolved = _resolve_shader_link(output.inputs["Surface"], ())
@@ -858,11 +873,20 @@ def _channel_document(expression):
     return document
 
 
-def emit_normal_channel(socket, stack=()):
+def emit_normal_channel(socket, stack=(), *, evaluation_engine=None):
+    if evaluation_engine is not None:
+        with emission_context(evaluation_engine=evaluation_engine):
+            return emit_normal_channel(socket, stack)
     return _channel_document({"op": "normal_view", "input": emit_input(socket, stack, as_vector=True)})
 
 
 def emit_surface(tree, target="CYCLES"):
+    """Emit one selected surface without leaking its engine to another root."""
+    with emission_context(tree=tree, target=target):
+        return _emit_surface(tree, target)
+
+
+def _emit_surface(tree, target="CYCLES"):
     """Per-channel IR documents for a mixed surface expression.
 
     The documented projection model: a Mix Shader closure lerp becomes a
@@ -895,6 +919,31 @@ def emit_surface(tree, target="CYCLES"):
     }
 
 
+
+def _fold_constant_vector(expression):
+    if not isinstance(expression, dict):
+        return None
+    if expression.get("op") == "const_vec3":
+        values = expression.get("value")
+        return [float(item) for item in values] if isinstance(values, list) and len(values) == 3 else None
+    if expression.get("op") == "combine":
+        values = [_fold_constant_scalar(expression.get(axis)) for axis in ("x", "y", "z")]
+        return values if all(item is not None for item in values) else None
+    return None
+
+
+
+def _vector_provably_nonzero(expression):
+    import math
+    constant = _fold_constant_vector(expression)
+    if constant is not None:
+        return all(math.isfinite(item) for item in constant) and any(item != 0 for item in constant)
+    if isinstance(expression, dict) and expression.get("op") == "combine":
+        components = [_fold_constant_scalar(expression.get(axis)) for axis in ("x", "y", "z")]
+        return any(item is not None and math.isfinite(item) and item != 0 for item in components)
+    return False
+
+
 def _fold_vector_prescale(expression):
     """Conservative max-axis multiplier applied to a coordinate BEFORE
     a texture's Scale socket. Wooden_Bars multiplies Object coords by
@@ -913,6 +962,8 @@ def _fold_vector_prescale(expression):
             break
         op = current.get("op")
         if op == "mapping":
+            if current.get("vectorType") == "NORMAL" or any(key in current for key in ("locationNode", "rotationNode", "scaleNode")):
+                _refuse("Mapping NORMAL or varying transforms feeding a frequency-bounded texture have no proven coordinate-frequency bound")
             scales = [abs(float(v)) for v in current.get("scale", [1.0])]
             if current.get("vectorType") == "TEXTURE":
                 # Texture Mapping is the inverse transform. Safe divide
@@ -922,6 +973,20 @@ def _fold_vector_prescale(expression):
             factor *= max(scales)
             current = current.get("input")
             continue
+        if op == "vector_rotate":
+            center = current.get("centerNode")
+            varying = center is not None and _fold_constant_vector(center) is None
+            if current.get("rotationType") == "EULER_XYZ":
+                varying = varying or _fold_constant_vector(current.get("rotation")) is None
+            else:
+                varying = varying or _fold_constant_scalar(current.get("angle")) is None \
+                    or _fold_constant_vector(current.get("axis")) is None
+            if varying:
+                _refuse("Vector Rotate varying transforms feeding a frequency-bounded texture have no proven coordinate-frequency bound")
+            current = current.get("input")
+            continue
+        if op == "vector_math" and current.get("operation") in {"PROJECT", "REFLECT", "REFRACT", "FACEFORWARD", "ROUND", "POWER", "SIGN"}:
+            _refuse("Vector Math geometric/nonlinear transforms feeding a frequency-bounded texture have no proven coordinate-frequency bound")
         if op == "vector_scale":
             scale = current.get("scale")
             folded = _fold_constant_scalar(scale) if scale else None
@@ -1319,10 +1384,14 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeObjectInfo":
         output_id = getattr(from_socket, "identifier", socket_name)
         if output_id != "Random":
-            # Location/Color/Alpha/Index/Material Index are all per-object
-            # uniforms too, but nothing in the corpus reaches them yet and a
-            # cell must exist first.
-            _refuse(f"Object Info output {socket_name!r} has no cell yet")
+            if __package__:
+                from . import tsl_object_info
+            else:
+                import tsl_object_info
+            output = tsl_object_info.OUTPUTS.get(output_id)
+            if output is None:
+                _refuse(f"Object Info output {socket_name!r} has no verified mapping")
+            return {"op": "object_info", "output": output}
         # A per-object constant, so it rides the proven attribute_object
         # seam: the exporter stamps OBJECT_RANDOM_PROPERTY on every exported
         # mesh object (export_scene.emit_gltf), GLTFLoader lands it in
@@ -1336,49 +1405,48 @@ def emit_output(node, from_socket, stack=()):
             "output": "fac",
         }
 
-    if idname == "ShaderNodeVectorRotate":
-        # One Rodrigues path serves every fixed-axis mode. Verbatim from
-        # `rotate_around_axis` in intern/cycles/util/math_float3.h, which
-        # takes the already-centred vector; the node subtracts Center before
-        # the call and adds it back after, and Cycles applies invert as
-        # `angle = node.invert ? -angle : angle`. X/Y/Z_AXIS are the same
-        # formula with a literal axis, so they ride the axis-angle cell
-        # rather than needing three more of their own.
-        rotation_type = str(getattr(node, "rotation_type", "AXIS_ANGLE"))
-        if rotation_type == "EULER_XYZ":
-            _refuse("Vector Rotate EULER_XYZ has no cell yet (needs a matrix)")
-        if bool(getattr(node, "invert", False)):
-            # One negated angle, but unexercised by the corpus and unproven
-            # by a cell, so it refuses rather than shipping on inspection.
-            _refuse("Vector Rotate with Invert has no cell yet")
-        center_socket = node.inputs["Center"]
-        if center_socket.is_linked:
-            _refuse("Vector Rotate with a linked Center has no cell yet")
-        axis_literal = {
-            "X_AXIS": [1.0, 0.0, 0.0],
-            "Y_AXIS": [0.0, 1.0, 0.0],
-            "Z_AXIS": [0.0, 0.0, 1.0],
-        }.get(rotation_type)
-        if axis_literal is not None:
-            axis = {"op": "const_vec3", "value": axis_literal}
+    if idname in {"ShaderNodeBlackbody", "ShaderNodeWavelength"}:
+        if __package__:
+            from .spectral_ir import emit_spectral
         else:
-            axis_socket = node.inputs["Axis"]
-            axis = emit_input(axis_socket, stack=stack, as_vector=True)
-        return {
-            "op": "vector_rotate",
+            from spectral_ir import emit_spectral
+        return emit_spectral(node, from_socket,
+                             emit_input=lambda socket: emit_input(socket, stack=stack), refuse=_refuse,
+                             evaluation_engine=get_evaluation_engine(),
+                             fold_scalar=_fold_constant_scalar)
+
+    if idname == "ShaderNodeVectorRotate":
+        rotation_type = str(getattr(node, "rotation_type", "AXIS_ANGLE"))
+        if rotation_type not in {"AXIS_ANGLE", "X_AXIS", "Y_AXIS", "Z_AXIS", "EULER_XYZ"}:
+            _refuse(f"Vector Rotate type {rotation_type!r} has no cell")
+        center_socket = node.inputs["Center"]
+        expression = {
+            "op": "vector_rotate", "rotationType": rotation_type,
+            "invert": bool(getattr(node, "invert", False)),
             "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
             "center": [float(item) for item in center_socket.default_value],
-            "axis": axis,
-            "angle": emit_input(node.inputs["Angle"], stack=stack),
-            # A literal axis is already unit-length, so the runtime skips the
-            # normalize and its zero-length guard.
-            "normalizeAxis": axis_literal is None,
         }
+        if _socket_source(center_socket) is not None:
+            expression["centerNode"] = emit_input(center_socket, stack=stack, as_vector=True)
+        if rotation_type == "EULER_XYZ":
+            expression["rotation"] = emit_input(node.inputs["Rotation"], stack=stack, as_vector=True)
+        else:
+            axis_literal = {"X_AXIS": [1.0, 0.0, 0.0], "Y_AXIS": [0.0, 1.0, 0.0],
+                            "Z_AXIS": [0.0, 0.0, 1.0]}.get(rotation_type)
+            expression["axis"] = {"op": "const_vec3", "value": axis_literal} if axis_literal is not None \
+                else emit_input(node.inputs["Axis"], stack=stack, as_vector=True)
+            expression["angle"] = emit_input(node.inputs["Angle"], stack=stack)
+            expression["normalizeAxis"] = axis_literal is None
+        return expression
 
     if idname == "ShaderNodeVectorMath":
         operation = str(node.operation)
         if operation not in _VECTOR_MATH_OPERATIONS:
             _refuse(f"Vector Math operation {operation!r} has no cell yet")
+        output_id = getattr(from_socket, "identifier", socket_name)
+        expected_output = "Value" if operation in _VECTOR_MATH_VALUE_OUTPUT else "Vector"
+        if output_id != expected_output:
+            _refuse(f"Vector Math {operation} inactive output {output_id!r}")
         if operation == "SCALE":
             return {
                 "op": "vector_scale",
@@ -1394,6 +1462,23 @@ def emit_output(node, from_socket, stack=()):
             expression["b"] = emit_input(node.inputs[1], stack=stack, as_vector=True)
         if operation in _VECTOR_MATH_TERNARY:
             expression["c"] = emit_input(node.inputs[2], stack=stack, as_vector=True)
+        if operation in {"REFLECT", "REFRACT"}:
+            import bpy
+            # Older Cycles normalizes zero unsafely, yielding nonfinite values.
+            # Do not imitate downstream render sanitization. 5.2+ uses the
+            # explicitly safe-zero native contract proved by its own cells.
+            safe_zero = bpy.app.version >= (5, 2, 0)
+            if not safe_zero and not _vector_provably_nonzero(expression["b"]):
+                _refuse("Vector Math " + operation + " before Blender 5.2 requires a provably nonzero normal; zero normalization has no finite native value")
+            expression["normalMode"] = "safe-zero" if safe_zero else "nonzero-required"
+        if operation == "POWER":
+            bases = _fold_constant_vector(expression["a"])
+            exponents = _fold_constant_vector(expression["b"])
+            if bases is not None and exponents is not None and any(
+                    base == 0.0 and exponent < 0.0 for base, exponent in zip(bases, exponents)):
+                _refuse("Vector Math POWER zero base with a negative exponent has no finite native value")
+        if operation == "REFRACT":
+            expression["ior"] = emit_input(node.inputs["Scale"], stack=stack)
         if operation in _VECTOR_MATH_VALUE_OUTPUT:
             # The node's scalar "Value" output is the linked one for these.
             expression["scalar"] = True
@@ -1401,27 +1486,26 @@ def emit_output(node, from_socket, stack=()):
 
     if idname == "ShaderNodeMapping":
         vector_type = str(getattr(node, "vector_type", "POINT"))
-        if vector_type not in {"POINT", "TEXTURE", "VECTOR"}:
+        if vector_type not in {"POINT", "TEXTURE", "VECTOR", "NORMAL"}:
             _refuse(f"Mapping type {vector_type!r} has no cell yet")
-        transform_inputs = ("Rotation", "Scale") if vector_type == "VECTOR" \
-            else ("Location", "Rotation", "Scale")
-        for name in transform_inputs:
-            if node.inputs[name].is_linked:
-                _refuse(f"Mapping with linked {name} has no cell yet")
-        return {
-            "op": "mapping",
-            "vectorType": vector_type,
+        expression = {
+            "op": "mapping", "vectorType": vector_type,
             "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
-            "location": [0.0, 0.0, 0.0] if vector_type == "VECTOR" else [
-                float(item) for item in node.inputs["Location"].default_value
-            ],
-            "rotation": [
-                float(item) for item in node.inputs["Rotation"].default_value
-            ],
-            "scale": [
-                float(item) for item in node.inputs["Scale"].default_value
-            ],
+            "location": [0.0, 0.0, 0.0],
         }
+        names = ("Rotation", "Scale") if vector_type in {"VECTOR", "NORMAL"} else ("Location", "Rotation", "Scale")
+        for name in names:
+            socket = node.inputs[name]
+            key = name.lower()
+            expression[key] = [float(item) for item in socket.default_value]
+            if _socket_source(socket) is not None:
+                linked = emit_input(socket, stack=stack, as_vector=True)
+                folded = _fold_constant_vector(linked)
+                if folded is not None:
+                    expression[key] = folded
+                else:
+                    expression[key + "Node"] = linked
+        return expression
 
     if idname == "ShaderNodeValToRGB":
         ramp = node.color_ramp
@@ -1523,6 +1607,17 @@ def emit_output(node, from_socket, stack=()):
                 source_node.inputs["Color"], source_stack, as_vector=True,
             ),
         }
+
+    if idname == "ShaderNodeTexBrick":
+        if __package__:
+            from .brick_ir import emit_brick
+        else:
+            from brick_ir import emit_brick
+        return emit_brick(node, from_socket,
+                          emit_scalar=lambda socket: emit_input(socket, stack=stack),
+                          emit_vector=lambda socket: _texture_vector(socket, stack, node) if socket == node.inputs["Vector"]
+                          else emit_input(socket, stack=stack, as_vector=True),
+                          refuse=_refuse, fold_scalar=_fold_constant_scalar)
 
     if idname == "ShaderNodeTexChecker":
         # Blender 5.2 displays "Fac" as "Factor"; match the identifier.
@@ -1668,6 +1763,8 @@ def emit_output(node, from_socket, stack=()):
                     f"Image {width}x{height} exceeds the embedded-IR bound "
                     "(128x128); the texture transport carries it"
                 )
+            if interpolation == "Cubic":
+                _refuse("Image Cubic interpolation with the texture transport has no proven cubic sampler (embedded Cubic only)")
             if projection == "BOX":
                 _refuse(
                     "Image BOX projection with the texture transport has "
@@ -1934,42 +2031,14 @@ def emit_output(node, from_socket, stack=()):
                 expression["smoothness"] = smoothness
         return expression
 
-    if idname == "ShaderNodeRGBCurve":
-        # Cycles itself bakes RGB Curves into a sampled table
-        # (curvemapping_color_to_array with the composite C curve applied
-        # before each channel curve) — the LUT route IS the faithful port.
-        if socket_name != "Color":
-            _refuse(f"RGB Curves output {socket_name!r} unsupported")
-        mapping = node.mapping
-        if str(getattr(mapping, "tone", "STANDARD")) != "STANDARD":
-            _refuse("RGB Curves Film Like tone has no proven channel-coupled mapping")
-        if not bool(getattr(mapping, "use_clip", True)):
-            _refuse("RGB Curves without clipping has no cell yet")
-        if (abs(float(mapping.clip_min_x)) > 1e-6
-                or abs(float(mapping.clip_max_x) - 1.0) > 1e-6):
-            _refuse("RGB Curves with a non-unit X range has no cell yet")
-        mapping.initialize()
-        curves = mapping.curves
-        samples = 257
-        values = []
-        for index in range(samples):
-            position = index / (samples - 1)
-            composite = mapping.evaluate(curves[3], position)
-            values.extend((
-                float(mapping.evaluate(curves[0], composite)),
-                float(mapping.evaluate(curves[1], composite)),
-                float(mapping.evaluate(curves[2], composite)),
-                1.0,
-            ))
-        return {
-            "op": "curve_rgb",
-            "samples": samples,
-            "values": values,
-            "factor": _scalar_input(node.inputs["Fac"], stack),
-            "input": emit_input(
-                node.inputs["Color"], stack=stack, as_vector=True,
-            ),
-        }
+    if idname in {"ShaderNodeFloatCurve", "ShaderNodeVectorCurve", "ShaderNodeRGBCurve"}:
+        if __package__:
+            from .curves_ir import emit_curve
+        else:
+            from curves_ir import emit_curve
+        return emit_curve(node, from_socket,
+                          emit_input=lambda socket, as_vector=False: emit_input(socket, stack=stack, as_vector=as_vector),
+                          refuse=_refuse, evaluation_engine=get_evaluation_engine())
 
     if idname in {"ShaderNodeMix", "ShaderNodeMixRGB"}:
         if idname == "ShaderNodeMix":
@@ -2385,13 +2454,16 @@ def emit_output(node, from_socket, stack=()):
     _refuse(f"{idname} has no proven TSL mapping")
 
 
-def emit_channel(socket, stack=()) -> dict:
+def emit_channel(socket, stack=(), *, evaluation_engine=None) -> dict:
     """Complete IR document for one channel input socket.
 
     ``stack`` is the group-instance chain enclosing the socket's node
     (from ``find_principled_root``), so channels fed through Group Input
     sockets resolve against the right instance.
     """
+    if evaluation_engine is not None:
+        with emission_context(evaluation_engine=evaluation_engine):
+            return emit_channel(socket, stack)
     _require_static_tree(socket.node)
     source = _socket_source(socket)
     if source is None:
