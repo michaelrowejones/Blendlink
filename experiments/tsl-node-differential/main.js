@@ -29,7 +29,7 @@ const HANDWRITTEN_CELLS = {
 
 const state = {
   ready: false, renderer: null, scene: null, camera: null,
-  mesh: null, target: null, resources: null, error: null, deviceLoss: null,
+  mesh: null, target: null, resources: null, error: null, deviceLoss: null, gpu: null,
 }
 
 async function init() {
@@ -47,6 +47,14 @@ async function init() {
     // read back as the sentinel, never as the previous cell's pixels.
     renderer.setClearColor(new THREE.Color(1.0, 0.0, 1.0), 1.0)
     await renderer.init()
+    const adapter = renderer.backend?.device?.adapterInfo
+    if (adapter) state.gpu = { api: 'WebGPU', vendor: adapter.vendor, architecture: adapter.architecture,
+      device: adapter.device, description: adapter.description }
+    else if (renderer.backend?.gl) {
+      const gl = renderer.backend.gl, info = gl.getExtension('WEBGL_debug_renderer_info')
+      state.gpu = { api: 'WebGL2', vendor: gl.getParameter(info?.UNMASKED_VENDOR_WEBGL ?? gl.VENDOR),
+        renderer: gl.getParameter(info?.UNMASKED_RENDERER_WEBGL ?? gl.RENDERER) }
+    }
     renderer.backend?.device?.lost.then(info => { state.deviceLoss = { reason: info.reason, message: info.message } })
     const scene = new THREE.Scene()
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1)
@@ -75,7 +83,7 @@ async function init() {
 
 window.__tslDiffInit = init
 window.__tslDiffReady = () => state.ready
-window.__tslDiffEnvironment = () => ({ memory: { ...state.renderer?.info.memory }, deviceLoss: state.deviceLoss })
+window.__tslDiffEnvironment = () => ({ memory: { ...state.renderer?.info.memory }, deviceLoss: state.deviceLoss, gpu: state.gpu })
 
 function ensureQuadVertexColors() {
   // Mirror the reference proxy's corner colors: linear in UV, so any

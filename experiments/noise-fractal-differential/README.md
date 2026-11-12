@@ -169,3 +169,20 @@ also run the requested engines' independent constant and image controls, in
 native manifest order, so row orientation and render precision remain calibrated.
 Reports distinguish requested IDs, implicitly included control IDs, and total
 completed cases. Constant-only harness retention probes keep their explicit scope.
+
+Driver diagnostics retain the Chromium version, explicit launch arguments,
+channel, and the actual initialized WebGPU adapter or WebGL renderer. Set
+`DEBUG=pw:browser` to retain browser-process stderr. The optional
+`BLENDLINK_TEST_CHROMIUM_CHANNEL=chromium` uses Playwright's bundled full browser
+in its newer headless mode; the default remains the separate headless shell.
+The harness supplies a blank favicon so full-browser resource checks stay strict.
+
+A focused Linux CI diagnostic repeats the previously terminating 4D image case
+with `--disable-gpu-watchdog` and a 12-minute outer deadline. This is isolated
+from the ordinary full FBM gate, which retains default launch behavior. Its
+reported scope is one case plus independent controls, and it is not full-corpus
+or production performance certification. The same retained Linux native case
+passed both full-browser Metal backends locally with the default watchdog:
+130 ms on WebGPU and 33 ms on WebGL2 for first render/readback on the measured
+Apple M5 Pro setup, versus seconds in software rendering. Those observations
+are device-specific, not a browser-wide timing guarantee.

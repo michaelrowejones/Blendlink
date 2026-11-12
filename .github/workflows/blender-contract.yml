@@ -107,6 +107,12 @@ jobs:
           - version: "5.2.0"
             series: "5.2"
             sha256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
+        include:
+          - suite: noise-watchdog-diagnostic
+            blender:
+              version: "5.2.0"
+              series: "5.2"
+              sha256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
 
     steps:
       - name: Check out the repository
@@ -151,9 +157,22 @@ jobs:
         run: npx --no-install playwright install --with-deps chromium
 
       - name: Compare native node pixels with both built browser backends
+        if: matrix.suite != 'noise-watchdog-diagnostic'
         run: xvfb-run --auto-servernum node scripts/test-node-parity.mjs --suite "${{ matrix.suite }}"
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
+          DEBUG: ${{ startsWith(matrix.suite, 'noise-') && 'pw:browser' || '' }}
+
+      # This focused diagnostic changes no pixel budgets or production launch
+      # settings. The ordinary FBM shard above keeps Chromium's default watchdog.
+      - name: Diagnose expensive 4D software GPU termination
+        if: matrix.suite == 'noise-watchdog-diagnostic'
+        run: timeout 12m xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built --ids cycles-fbm-raw-4d-fac-image-4
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          DEBUG: pw:browser
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-native-node-gate/noise-watchdog-diagnostic
+          BLENDLINK_TEST_CHROMIUM_ARGS: '["--disable-gpu-watchdog"]'
 
       - name: Retain native and browser node evidence
         if: always()

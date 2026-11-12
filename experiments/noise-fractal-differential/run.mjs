@@ -60,7 +60,10 @@ const server = await createServer({ configFile: false, root: frozenHarness.direc
   cacheDir: join(evidence, 'vite-cache'), logLevel: 'warn', optimizeDeps: { noDiscovery: true },
   resolve: { alias: { '@blendlink-tsl-recipe': join(snapshot, 'tslNodeRecipe.' + (built ? 'js' : 'ts')) } },
   server: { host: '127.0.0.1', port: 0, watch: null, hmr: false, fs: { allow: [root] } } })
+const browserChannel = process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL || null
+assert.ok(browserChannel === null || browserChannel === 'chromium', 'Only the bundled chromium channel is allowed')
 let browser
+let browserVersion = null, browserLaunchArgs = []
 const rows = [], failures = [], executionFailures = []
 function retainReport(finished = false) {
   const stable = sources.every(file => sourceHashes[file] === hash(file))
@@ -68,7 +71,7 @@ function retainReport(finished = false) {
     built, elapsedMs: Date.now() - started, nativeGpuBackend: manifest.gpuBackend, cyclesDevice: manifest.cyclesDevice,
     sourceHashes, harnessSha256, testedHarnessHashes: frozenHarness.hashes, provenance, snapshot, testedModuleHashes: copied, refusals: manifest.refusals ?? [],
     nativeModuleHashes: manifest.nativeModuleHashes, workspaceStable: stable,
-    finished, completedAllCases: rows.length === cases.length * 2, expectedCasesPerBackend: cases.length, nativeCases: manifest.cases.length, requestedIds, implicitControlIds,
+    finished, completedAllCases: rows.length === cases.length * 2, expectedCasesPerBackend: cases.length, nativeCases: manifest.cases.length, requestedIds, implicitControlIds, browserVersion, browserLaunchArgs, browserChannel,
     rows, failures, executionFailures }, null, 2))
 }
 
@@ -76,7 +79,9 @@ try {
   await server.listen()
   const args = JSON.parse(process.env.BLENDLINK_TEST_CHROMIUM_ARGS || '[]')
   assert.ok(Array.isArray(args) && args.every(value => typeof value === 'string'))
-  browser = await chromium.launch({ headless: true, args: ['--enable-unsafe-webgpu', '--enable-unsafe-swiftshader', ...args] })
+  browserLaunchArgs = ['--enable-unsafe-webgpu', '--enable-unsafe-swiftshader', ...args]
+  browser = await chromium.launch({ headless: true, args: browserLaunchArgs, ...(browserChannel ? { channel: browserChannel } : {}) })
+  browserVersion = browser.version()
   for (const backend of ['webgpu', 'webgl2']) {
     const page = await browser.newPage()
     const errors = []
@@ -91,6 +96,7 @@ try {
     let flip = false
     for (const cell of cases) {
       currentCase = cell.id
+      if (requestedIds) retainReport()
       const renderStarted = Date.now()
       const rendered = await page.evaluate(({ id, path, attributes }) => window.__tslDiffRun(id, 'ir', path, false, null, attributes),
         { id: cell.id, path: '/@fs/' + join(references, 'ir', cell.id + '.json'), attributes: cell.objectAttributes })
