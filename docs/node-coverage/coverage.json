@@ -1,7 +1,7 @@
 {
   "capabilityMapSha256": "7164d981608d97c51103c4525a37f280f54d756da532a11c1ed265db36b5d35a",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T08:10:47.501420+00:00",
+  "generatedAt": "2026-11-12T10:06:17.205224+00:00",
   "nativeAvailabilityChanges": [],
   "reports": [
     {
@@ -2335,6 +2335,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeBlackbody",
@@ -2855,6 +2858,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeFloatCurve",
@@ -3619,6 +3625,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeRGBCurve",
@@ -4433,6 +4442,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeVectorCurve",
@@ -4679,6 +4691,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeWavelength",
@@ -8415,6 +8430,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeBlackbody",
@@ -8921,6 +8939,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeFloatCurve",
@@ -9693,6 +9714,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeRGBCurve",
@@ -10476,6 +10500,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeVectorCurve",
@@ -10752,6 +10779,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeWavelength",
@@ -15318,6 +15348,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeBlackbody",
@@ -15824,6 +15857,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeFloatCurve",
@@ -16656,6 +16692,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeRGBCurve",
@@ -17450,6 +17489,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCurveNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeVectorCurve",
@@ -17728,6 +17770,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
               "id": "ShaderNodeWavelength",
@@ -17766,7 +17811,7 @@
     "packages/blender-addon/tsl_ir.py": "a85d45491a4f891272852e81d0581a5df9c269f741fbd265051d9afcf1d3220f",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blendlink/blender/compositor_graph.py": "7405ea7a11e4360c23db68ec585e507972b0d7aa68ac0fa97208b4de812298c2",
-    "packages/blendlink/blender/native_color_band.py": "7810bbba440de1a561684172aab3f526d8027f4f926773fb6c481013534e56a6",
+    "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/src/compiledMaterialPrograms.ts": "354cb1fc7156f1f7eaddb28cac9c2aa0f2868f96557d576632f256c7308f9df8",
     "packages/blendlink/src/materialProgramDocument.ts": "8e07d6aac8e565d15139dabd8257bf82faa700e564da09dd24b50ddf87797380",
     "packages/blendlink/src/threeRuntime.ts": "225b3dd29834a6f2adfea60f8e6122545ddc3f0bbc74204568b9993f04d45c2b",

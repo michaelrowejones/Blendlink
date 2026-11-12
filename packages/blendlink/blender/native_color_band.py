@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Native material GPUColorBand upload and sampling metadata.
 
-This is separate from compositor tables. Native references cover Metal on
-4.2/5.2/5.3; the release gate exercises its OpenGL counterparts on Linux.
+Shader and compositor GPU nodes share this table mechanism. Native references
+cover Metal on 4.2/5.2/5.3 and software OpenGL on Linux 4.2/5.2.
 """
 import bpy
 import numpy as np
@@ -18,9 +18,9 @@ def native_color_band(values):
         if np.any(np.abs(source) > 65504):
             raise ValueError("Native half-float color band exceeds its finite range")
         encoded = source.astype(np.float16)
-        # Before 5.0 Metal uploads through a texture-write conversion; current
-        # versions explicitly convert on CPU using round-to-nearest-even.
-        truncate = backend == "METAL" and bpy.app.version < (5, 0, 0)
+        # Legacy native texture conversion truncates on both verified backends.
+        # From 5.0 Blender explicitly converts on CPU with nearest-even rounding.
+        truncate = bpy.app.version < (5, 0, 0)
         if truncate:
             away = np.abs(encoded.astype(np.float32)) > np.abs(source)
             encoded = np.where(away, np.nextafter(encoded, np.float16(0)), encoded)

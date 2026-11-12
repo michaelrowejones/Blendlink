@@ -25,7 +25,9 @@ try:
             assert result['filterFractionBits'] == (8 if backend == 'METAL' else 0)
             assert result['sampleRounding'] == ('nearest-away' if version < (5, 3, 0) and backend == 'METAL' else 'none')
             if version < (5, 3, 0):
-                assert result['values'][0] == (1.0 if backend == 'METAL' and version < (5, 0, 0) else 1.0009765625)
+                assert result['values'][0] == (1.0 if version < (5, 0, 0) else 1.0009765625)
+                negative = shader_color_band.native_color_band([-1.0008, 0, 0, 1])
+                assert negative['values'][0] == (-1.0 if version < (5, 0, 0) else -1.0009765625)
             else:
                 assert abs(result['values'][0] - 1.0008) < 1e-7
             try:
