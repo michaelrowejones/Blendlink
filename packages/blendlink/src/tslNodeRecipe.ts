@@ -1917,13 +1917,21 @@ function nativePerlin3d(p: TslExpression, fade = nativePerlinFade, cpuMix = fals
 }
 
 const perlinGrad4 = tslFn(([hash, x, y, z, w]) => {
-  const h = hash!.bitAnd(tslUintOf(31))
-  const u = tslSelect(h.lessThan(tslUintOf(24)), x!, y!)
-  const v = tslSelect(h.lessThan(tslUintOf(16)), y!, z!)
-  const s = tslSelect(h.lessThan(tslUintOf(8)), z!, w!)
-  return tslSelect(h.bitAnd(tslUintOf(1)).equal(tslUintOf(0)), u, u.negate())
-    .add(tslSelect(h.bitAnd(tslUintOf(2)).equal(tslUintOf(0)), v, v.negate()))
-    .add(tslSelect(h.bitAnd(tslUintOf(4)).equal(tslUintOf(0)), s, s.negate()))
+  const h = hash!.bitAnd(tslUintOf(31)).toVar()
+  const u = tslSelect(h.lessThan(tslUintOf(24)), x!, y!).toVar()
+  const v = tslSelect(h.lessThan(tslUintOf(16)), y!, z!).toVar()
+  const s = tslSelect(h.lessThan(tslUintOf(8)), z!, w!).toVar()
+  const a = tslSelect(h.bitAnd(tslUintOf(1)).equal(tslUintOf(0)), u, u.negate()).toVar()
+  const b = tslSelect(h.bitAnd(tslUintOf(2)).equal(tslUintOf(0)), v, v.negate()).toVar()
+  const c = tslSelect(h.bitAnd(tslUintOf(4)).equal(tslUintOf(0)), s, s.negate()).toVar()
+  // Every gradient choice is finite in the admitted coordinate domain.
+  // Eager ternaries avoid nested branch expansion in software compilers.
+  // Stage each choice before unary/add operations: Three's GLSL ternary
+  // formatter does not parenthesize a nested conditional expression.
+  const result = a.add(b).add(c)
+  return (result as TslExpression & {
+    context(value: Record<string, unknown>): TslExpression
+  }).context({ uniformFlow: true })
 }).setLayout({
   // Same rationale as perlinGrad1's layout, and this is the function where
   // the hazard was actually caught: run-debug1d.mjs measured the inline-DAG
@@ -1946,8 +1954,8 @@ const perlinGrad4 = tslFn(([hash, x, y, z, w]) => {
  * the nested tslMix form is the same polynomial up to fp reassociation.
  * `hashUint4` is the already-proven arity (white-noise 4D gates it), so
  * unlike hashUint1 there is no const-fold trap: every operand mixes in a
- * runtime key. `snoise_4d`'s |p| >= 1e6 fmod precision guard is deliberately
- * omitted — corpus coordinates are orders of magnitude below it.
+ * runtime key. This primitive is unwrapped; qualified normalized callers
+ * apply their versioned coordinate reduction before invoking it.
  * Four unsigned-vector groups evaluate the sixteen lattice hashes with the
  * same uint32 arithmetic. This reduces shader compiler work without changing
  * the scalar gradient or interpolation order.

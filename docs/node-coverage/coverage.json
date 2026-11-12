@@ -1,24 +1,24 @@
 {
   "capabilityMapSha256": "238c3d5791194104b00d5d85cb5042bcd2260a14f1ebf1d544b1451c67447a53",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T19:32:00.408238+00:00",
+  "generatedAt": "2026-11-12T19:44:53.815134+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
       "acknowledged": true,
-      "blenderVersion": "4.2.0",
+      "blenderVersion": "5.3.0",
       "node": "compositor:CompositorNodeChannelMatte",
       "reason": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
       "stateCount": 16,
-      "transitions": 250
+      "transitions": 480
     },
     {
       "acknowledged": true,
-      "blenderVersion": "4.2.0",
+      "blenderVersion": "5.3.0",
       "node": "compositor:CompositorNodeConvertColorSpace",
       "reason": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
       "stateCount": 16,
-      "transitions": 704
+      "transitions": 4128
     },
     {
       "acknowledged": true,
@@ -38,19 +38,19 @@
     },
     {
       "acknowledged": true,
-      "blenderVersion": "5.3.0",
+      "blenderVersion": "4.2.0",
       "node": "compositor:CompositorNodeChannelMatte",
       "reason": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
       "stateCount": 16,
-      "transitions": 480
+      "transitions": 250
     },
     {
       "acknowledged": true,
-      "blenderVersion": "5.3.0",
+      "blenderVersion": "4.2.0",
       "node": "compositor:CompositorNodeConvertColorSpace",
       "reason": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
       "stateCount": 16,
-      "transitions": 4128
+      "transitions": 704
     }
   ],
   "reports": [
@@ -370,7 +370,7 @@
               ],
               "id": "CompositorNodeColorBalance",
               "label": "Color Balance",
-              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
+              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint±150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
               "runtimeOps": [
                 "color-balance"
               ],
@@ -7864,7 +7864,7 @@
               ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "All 27 World/Object/Camera \u00d7 Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
               "runtimeOps": [
                 "vector_transform"
               ],
@@ -8342,7 +8342,7 @@
               ],
               "id": "CompositorNodeColorBalance",
               "label": "Color Balance",
-              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
+              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint±150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
               "runtimeOps": [
                 "color-balance"
               ],
@@ -14820,7 +14820,7 @@
               ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "All 27 World/Object/Camera \u00d7 Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
               "runtimeOps": [
                 "vector_transform"
               ],
@@ -15267,7 +15267,7 @@
               ],
               "id": "CompositorNodeColorBalance",
               "label": "Color Balance",
-              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
+              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint±150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
               "runtimeOps": [
                 "color-balance"
               ],
@@ -20264,7 +20264,7 @@
               ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "All 27 World/Object/Camera \u00d7 Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
               "runtimeOps": [
                 "vector_transform"
               ],
@@ -20460,7 +20460,7 @@
     "packages/blendlink/src/tslMaterialRuntime.ts": "3640d11197e09728e3ab89f0de6d29a47ee9a3431317cf5fcb0d0d0be85b5fd3",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "95614a5d2f97400665d05861e1e648874ae1feddc30c1144549cdd16e84764b0",
-    "packages/blendlink/src/tslNodeRecipe.ts": "3b172a4c29e54d358520e2d9e12fa33bd511d14cc500741a3d7bcce6ee686dba",
+    "packages/blendlink/src/tslNodeRecipe.ts": "3ab4b3fe216f1f3958d04caa855f099e1546ecc67d8e24a126d1ef0252add4c0",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "c3cd1a2b5549dd7edf83937dfeb1b57d8e564c6fce8dd15ad36c17a222760b1f",
     "packages/blendlink/src/tslNormalInputBounds.ts": "a6c6e45fc65f49a5e2386d286df01686415be4c0c677b2a2eb3be6cd2db3ae06",
     "packages/blendlink/src/tslNormalNodes.ts": "a2505eff8008f6f99f53909759dde91aa8cb02a8299f557351a0757761c6fa03",

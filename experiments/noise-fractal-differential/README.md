@@ -405,3 +405,29 @@ Clamp Result on a Mix Color node; a scalar Clamp converts a color to a scalar
 and is appropriate for scalar Roughness fields. HSL admission and live
 Roughness validate the executable graph rather than trusting a claimed range.
 Native output is never silently clipped by these validation changes.
+
+### Finite 4D gradient selection
+
+The 4D gradient stages each selected coordinate and signed term, then requests
+eager conditional selection inside the existing named function. This removes
+nested branch expansion while preserving the native signed-gradient sum order.
+Separate variables also avoid Three's GLSL nested-ternary precedence defect;
+all alternatives are finite within the admitted coordinate domain. No parameter
+limits, kernels, amplitude recurrence or native numerical budgets change.
+
+All 334 retained raw-FBM graphs per native version pass both physical browser
+APIs on Blender 4.2/5.2/5.3 (2,004 readbacks), with every output byte identical
+to the previous staged-sum SDK. Focused 4D periodic/MF graphs add 434 physical
+readbacks, including independent controls. All 668 retained Linux 5.2 raw-FBM
+readbacks pass in local software browsers and retain their prior pixel bytes.
+A further 45 retained Linux EEVEE normalized 4D graphs and controls pass both
+local software APIs (90 readbacks), including the high-detail Color workloads.
+The problematic constant 4D Color program changes from 22,670 to 22,606 total
+WebGPU program bytes and 21,212 to 21,136 WebGL2 bytes; these small size changes
+are not a performance guarantee or proof the hosted driver failure is fixed.
+
+Two retained serialized legacy 4D programs (Fac and Color with Distortion) also
+match the previous SDK exactly on both APIs and physical/software browser
+profiles: 131,072 Float32-word comparisons. This is runtime compatibility
+evidence, separately labelled from native numerical oracle evidence. Immutable
+snapshots and actual initialized adapters are retained with each report.
