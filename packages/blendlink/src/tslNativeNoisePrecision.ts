@@ -6,7 +6,9 @@
 /** Bounded float32 arithmetic for the native Cycles SIMD Perlin kernel.
  * Uses Dekker's exact product residual and TwoSum to emulate fused multiply-add
  * through WebGL2 as well as WebGPU. Operands come from finite fade/gradient
- * ranges; this is not a general overflow/subnormal FMA contract. */
+ * ranges or the measured integer-quotient *100000 subtraction used by
+ * Metal Noise coordinate reduction. This is not a general overflow/subnormal
+ * FMA contract. */
 import { bitcast, uint, float, select, Fn } from 'three/tsl'
 import type { TslExpression, TslExprLike } from './tslNodeRecipe.js'
 const cast = bitcast as unknown as (value: TslExprLike, type: string) => TslExpression

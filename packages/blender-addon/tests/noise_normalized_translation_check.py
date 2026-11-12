@@ -50,7 +50,8 @@ try:
             assert expression['noiseType'] == 'FBM' and expression['dimensions'] == int(dimensions[0])
             assert expression['scale']['value'] == noise.inputs['Scale'].default_value
             assert expression['evaluationModel'] == ('shader-mf' if bpy.app.version >= (5, 0, 0) else 'shader')
-            assert _unit_bounded(expression)
+            assert expression['perlinModel'] == ('mf-periodic-f32' if bpy.app.version >= (5,0,0) else 'eevee-metal-periodic-f32' if bpy.context.preferences.system.gpu_backend == 'METAL' else 'native-standard-f32')
+            assert _unit_bounded(expression) == (dimensions in {'1D', '2D'})
             assert not _unit_bounded({**expression, 'normalize': False})
             assert not _unit_bounded({**expression, 'roughnessNode': {'op': 'const_float', 'value': .5}})
             assert native_shader_input_evaluation(expression) == 'constant'

@@ -59,7 +59,7 @@ export async function compositorResizeProof(test: any, renderer: WebGPURenderer,
       const uploads: { texture: string, version: number }[] = []
       const backend: any = renderer.backend, updateTexture = backend.updateTexture
       backend.updateTexture = function (texture: THREE.Texture, ...arguments_: any[]) {
-        if ((texture as THREE.DataTexture).isDataTexture && texture.image?.width === 129 && texture.image?.height === 1)
+        if ((texture as THREE.DataTexture).isDataTexture && (texture.image?.width === 129 && texture.image?.height === 1 || texture.image?.width === 256 && texture.image?.height === 32))
           uploads.push({ texture: texture.uuid, version: texture.version })
         return updateTexture.call(this, texture, ...arguments_)
       }
@@ -81,7 +81,7 @@ export async function compositorResizeProof(test: any, renderer: WebGPURenderer,
       }
       if (failure) throw failure
       const extent = width + '×' + height
-      if (extent === previousExtent && uploads.length) throw new Error('Compositor reuploaded unchanged coefficient tables')
+      if (extent === previousExtent && uploads.length) throw new Error('Compositor reuploaded unchanged lookup tables')
       previousExtent = extent
       const error = errorFor(actual!, frame.expected, flip)
       row.max = Math.max(row.max, error.max)

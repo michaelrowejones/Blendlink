@@ -43,18 +43,19 @@ export function isUnitBoundedExpression(expression: TslIrExpression | undefined)
       ((index % 4 === 3) === (expression.channel === 'alpha')) ? finiteUnit(value) : true)
     case 'tex_image': return Array.isArray(expression.pixels) && expression.pixels.length > 0 && expression.pixels.every((value, index) =>
       ((index % 4 === 3) === (expression.output === 'alpha')) ? finiteUnit(value) : true)
+    // Native 3D/4D normalized Noise can escape [0,1]; Normalize is statistical scaling.
     case 'noise_normalized':
-      if (expression.normalize !== true || expression.roughnessNode !== undefined || !['native-standard-f32', 'cycles-neon-fma'].includes(String(expression.perlinModel))) return false
+      if (expression.normalize !== true || expression.roughnessNode !== undefined || !['native-standard-f32', 'cycles-neon-fma', 'eevee-metal-periodic-f32', 'mf-periodic-f32'].includes(String(expression.perlinModel))) return false
       // Shared normalized bounds below; the builder independently validates its domain.
-    case 'noise': return expression.normalize !== false && (expression.normalize === undefined || expression.normalize === true) &&
+    case 'noise': return !(expression.op === 'noise' && expression.dimensions === 1) && expression.normalize !== false && (expression.normalize === undefined || expression.normalize === true) &&
       ['noiseType', 'noise_type', 'type'].every(key => expression[key] === undefined || expression[key] === 'FBM') &&
-      typeof expression.dimensions === 'number' && [1, 2, 3, 4].includes(expression.dimensions) && typeof expression.detail === 'number' && Number.isFinite(expression.detail) && expression.detail >= 0 && expression.detail <= 6 &&
+      typeof expression.dimensions === 'number' && [1, 2].includes(expression.dimensions) && typeof expression.detail === 'number' && Number.isFinite(expression.detail) && expression.detail >= 0 && expression.detail <= 6 &&
       typeof expression.roughness === 'number' && Number.isFinite(expression.roughness) && expression.roughness >= 0 && expression.roughness <= 1 &&
       (expression.lacunarity === undefined || typeof expression.lacunarity === 'number' && Number.isFinite(expression.lacunarity) && expression.lacunarity > 0)
     case 'noise_fractal': return false // Signed/HDR family, regardless of an untrusted normalize annotation.
     case 'noise_varying': return expression.normalize === true &&
       ['noiseType', 'noise_type', 'type'].every(key => expression[key] === undefined || expression[key] === 'FBM') &&
-      typeof expression.dimensions === 'number' && [1, 2, 3, 4].includes(expression.dimensions) &&
+      typeof expression.dimensions === 'number' && [1, 2].includes(expression.dimensions) &&
       typeof expression.detail === 'number' && Number.isFinite(expression.detail) && expression.detail >= 0 && expression.detail <= 2 &&
       (expression.lacunarity === undefined || typeof expression.lacunarity === 'number' && expression.lacunarity > 0 && expression.lacunarity <= 2) &&
       unit('roughnessNode')

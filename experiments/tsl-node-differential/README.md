@@ -470,3 +470,23 @@ Half Precision message. Media/tile/viewer sources refuse before reading their
 current frame as a static image. Source pixels and precision settings are
 never changed by extraction. External image transport retains its separate
 pinned-byte/decoded-dimension contract, and currently refuses Cubic/Mirror/Clip.
+
+### Smart image filtering
+
+Fresh embedded Image Texture graphs accept the authored Smart selector and
+canonicalize it to Cubic. Native Blender routes both selectors through the
+same cubic B-spline path. The large-image sidecar transport continues to refuse
+Cubic/Smart; it does not substitute a linear hardware sampler.
+
+The image family now contains 300 graphs per Blender 4.2/5.2/5.3. Its 80 new
+Smart graphs have byte-identical native pixels and canonical IR to their Cubic
+counterparts on every version. All 1,800 graph/backend readbacks pass the
+existing budgets on WebGPU and WebGL2. Coverage includes Color/Alpha, signed
+multi-tile coordinates, all four extensions, exact boundaries and native half/
+full image storage. This does not certify general Linear mipmapped minification
+or new color/alpha-association domains.
+
+Reproduce with `run-mapping.mjs --images --built` and `BLENDLINK_BLENDER` plus
+`BLENDLINK_TSL_DIFF_ARTIFACTS`. Native admission checks include all four selectors
+and refuse oversized Smart/Cubic images before sidecar export. Source pixels,
+precision settings and users stay unchanged.

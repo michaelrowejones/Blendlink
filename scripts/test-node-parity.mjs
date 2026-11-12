@@ -2,7 +2,7 @@
 // Requires a supported Node runtime, built package, Blender and Chromium.
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { NODE_PARITY_SUITES, nodeParityPlan } from './lib/node-parity-plan.mjs'
 
@@ -61,6 +61,7 @@ const compositorFamilies = [
   ['filter', 'compositor_filter_check.py', 'BLENDLINK_COMPOSITOR_FILTER_REFERENCES'],
   ['normal-direction', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES'],
   ['transform', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES'],
+  ['resample', 'compositor_resample_check.py', 'BLENDLINK_COMPOSITOR_RESAMPLE_REFERENCES'],
   ['switch', 'compositor_switch_check.py', 'BLENDLINK_COMPOSITOR_SWITCH_REFERENCES'],
   ['blur-interop', 'compositor_blur_interop_check.py', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES'],
   ['blur-kernel', 'compositor_blur_kernel_check.py', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_REFERENCES'],
@@ -100,7 +101,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
-    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MATH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BALANCE_DEVICE: 'CPU',
@@ -123,6 +124,7 @@ if (!plan.compositor) {
     ['filter-gpu', 'compositor_filter_check.py', 'BLENDLINK_COMPOSITOR_FILTER_REFERENCES', 'BLENDLINK_COMPOSITOR_FILTER_DEVICE'],
     ['normal-direction-gpu', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES', 'BLENDLINK_COMPOSITOR_NORMAL_DEVICE'],
     ['transform-gpu', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES', 'BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE'],
+    ['resample-gpu', 'compositor_resample_check.py', 'BLENDLINK_COMPOSITOR_RESAMPLE_REFERENCES', 'BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE'],
     ['switch-gpu', 'compositor_switch_check.py', 'BLENDLINK_COMPOSITOR_SWITCH_REFERENCES', 'BLENDLINK_COMPOSITOR_SWITCH_DEVICE'],
     ['blur-interop-gpu', 'compositor_blur_interop_check.py', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE'],
     ['blur-kernel-gpu', 'compositor_blur_kernel_check.py', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE'],
@@ -153,6 +155,18 @@ if (!plan.compositor) {
     run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
       '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory, [deviceVariable]: 'GPU' })
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
+    const unavailable = join(directory, 'not-applicable.json')
+    if (family === 'resample-gpu' && existsSync(unavailable)) {
+      const qualification = JSON.parse(readFileSync(unavailable, 'utf8'))
+      assert.equal(rows.length, 0)
+      assert.equal(qualification.cases, 0)
+      assert.equal(qualification.device, 'GPU')
+      assert.equal(qualification.status, 'unsupported-backend-model')
+      assert.notEqual(qualification.backend, 'METAL')
+      assert.ok(qualification.diagnostics?.some(item => item.message.includes('verified native GPU sampler')))
+      inapplicableFamilies.push({ family, device: 'GPU', directory, ...qualification })
+      return
+    }
     assert.ok(rows.length > 0, `${family}: native GPU generator produced no cases`)
     for (const row of rows) {
       const fixture = JSON.parse(readFileSync(join(directory, row.case + '.json'), 'utf8'))

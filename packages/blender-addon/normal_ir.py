@@ -16,15 +16,21 @@ SPACES = {'OBJECT', 'WORLD', 'BLENDER_OBJECT', 'BLENDER_WORLD'}
 EPSILON = 1e-3
 
 
-def channel_has_native_normal(root, channel, walk_channel):
-    if root is None: return False
+def channel_native_normal_nodes(root, channel, walk_channel, *, group_stack=()):
+    if root is None: return ()
+    result=[]
     names=('Emission Color','Emission Strength') if channel=='Emission' else (channel,)
     for name in names:
         socket=root.inputs.get(name)
-        if socket is not None and any(node.bl_idname in {'ShaderNodeNormalMap','ShaderNodeTangent'}
-                                      for node,output in walk_channel(socket)):
-            return True
-    return False
+        if socket is None:continue
+        upstream=walk_channel(socket,group_stack=group_stack) if group_stack else walk_channel(socket)
+        result.extend(node for node,output in upstream
+                      if node.bl_idname in {'ShaderNodeNormalMap','ShaderNodeTangent','ShaderNodeBump'})
+    return tuple(result)
+
+
+def channel_has_native_normal(root, channel, walk_channel, *, group_stack=()):
+    return bool(channel_native_normal_nodes(root,channel,walk_channel,group_stack=group_stack))
 
 
 def scalar_literal(value):

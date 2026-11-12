@@ -16,13 +16,23 @@ def fused(a, b, c):
     return number(selected)
 rng = random.Random(0xF32A)
 records = []
-for group in ['fade-first', 'fade-second', 'mix']:
+for group in ['fade-first', 'fade-second', 'mix', 'coordinate-modulo']:
     pixels, expected = [], []
     for index in range(4096):
         t = f32(index / 4095) if index < 2048 else f32(rng.random())
         if group == 'fade-first': a, b, c = t, 6., -15.
         elif group == 'fade-second': a, b, c = t, fused(t, 6., -15.), 10.
-        else: a, b, c = t, f32(rng.uniform(-6, 6)), f32(rng.uniform(-3, 3))
+        elif group == 'mix': a, b, c = t, f32(rng.uniform(-6, 6)), f32(rng.uniform(-3, 3))
+        else:
+            # Metal compatible_mod lowers division to an f32 reciprocal and
+            # contracts the integer-quotient product/subtraction. Preserve
+            # that cancellation over its measured finite int32 domain.
+            c = f32([1074099968.,1074100096.,-1074099968.,-1074100096.,
+                     ((1<<31)-4096)*100000.,-((1<<31)-4096)*100000.,2**40,-(2**40)][index]) if index < 8 else f32(
+                (-1 if index & 1 else 1) * (rng.randrange(1, (1 << 31)-256) * 100000 + rng.randrange(-200000, 200001)))
+            quotient = int(f32(c * f32(1 / 100000)))
+            a, b = -f32(quotient), 100000.
+
         pixels.extend([a, b, c, 1.]); expected.extend([fused(a,b,c)] * 3)
     image = {'op':'tex_image','width':64,'height':64,'pixels':pixels,'interpolation':'Closest',
              'extension':'REPEAT','output':'color','vector':{'op':'uv'}}

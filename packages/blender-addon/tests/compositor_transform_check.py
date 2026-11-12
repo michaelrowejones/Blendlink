@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+import bpy
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from compositor_reference import NativeCompositorReference, compositor_graph
@@ -16,7 +17,7 @@ def main(output):
     pixels = np.random.default_rng(981731).uniform(-.4, 2, (7, 13, 4)).astype(np.float32)
     pixels[..., 3] = np.resize(np.asarray([0, .125, .5, 1, 1.5, -.5, .25, .75], np.float32), (7, 13))
     device = os.environ.get("BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE", "CPU")
-    rows = []
+    rows, refusals = [], []
 
     def new_oracle(data):
         result = NativeCompositorReference(output, pixels=data, device=device, name="Native integer transforms")
@@ -84,7 +85,41 @@ def main(output):
         sink, source = oracle.reset()
         node = translate(oracle.color((.25, -.5, 1.5, .35)), 3, -2, kind)
         tree.links.new(node.outputs[0], sink.inputs[0])
-        save("transform-" + kind.lower() + "-constant-color", source)
+        if kind == "CompositorNodeTransform" and bpy.app.version < (4, 5, 0) and device == "CPU":
+            result = compositor_graph.extract(oracle.scene)
+            assert result["status"] == "unsupported", result
+            assert any("constant-image canvases" in item["message"] for item in result["diagnostics"]), result
+            refusals.append({"case": "transform-compositornodetransform-constant-color", "diagnostics": result["diagnostics"]})
+        else:
+            save("transform-" + kind.lower() + "-constant-color", source)
+    # Qualify both forms of native single-value Color input and both samplers.
+    # Neither an identity transform nor unlinked defaults establishes a finite
+    # CPU image canvas. The same restriction must be read-only and artist-named.
+    if bpy.app.version < (4, 5, 0) and device == "CPU":
+        for linked in (False, True):
+            for interpolation in ("NEAREST", "BILINEAR"):
+                for offset in (0, 3):
+                    sink, source = oracle.reset()
+                    node = tree.nodes.new("CompositorNodeTransform")
+                    node.filter_type = interpolation
+                    node.inputs["X"].default_value = offset
+                    node.inputs["Y"].default_value = -2 if offset else 0
+                    if linked:
+                        tree.links.new(oracle.color((.25, -.5, 1.5, .35)), node.inputs["Image"])
+                    else:
+                        node.inputs["Image"].default_value = (.25, -.5, 1.5, .35)
+                    tree.links.new(node.outputs[0], sink.inputs[0])
+                    before = (node.filter_type, tuple(node.inputs["Image"].default_value), node.inputs["X"].default_value,
+                              node.inputs["Y"].default_value, len(tree.nodes), len(tree.links))
+                    result = compositor_graph.extract(oracle.scene)
+                    assert result["status"] == "unsupported", result
+                    assert any("constant-image canvases" in item["message"] and item["node"] == node.name
+                               for item in result["diagnostics"]), result
+                    assert before == (node.filter_type, tuple(node.inputs["Image"].default_value), node.inputs["X"].default_value,
+                                      node.inputs["Y"].default_value, len(tree.nodes), len(tree.links))
+                    refusals.append({"case": f"constant-transform-{int(linked)}-{interpolation.lower()}-{offset}",
+                                     "diagnostics": result["diagnostics"]})
+
     for consumer in ("exposure", "posterize", "blur", "after-blur", "flip", "inverse-after-exposure", "over-constant", "over-same-origin"):
         sink, source = oracle.reset()
         first = translate(source.outputs["Image"])
@@ -134,17 +169,17 @@ def main(output):
             rows.append({"case": document["case"]})
 
     # A bounded slice must refuse native semantics that it has not implemented.
-    for feature in ("fraction", "bilinear", "relative-or-extend", "rotate", "scale", "cross-origin", "render-border"):
+    for feature in ("dynamic-offset", "bicubic", "relative-or-extend", "rotate", "scale", "cross-origin", "render-border"):
         sink, source = oracle.reset()
         node = translate(source.outputs["Image"], kind="CompositorNodeTransform" if feature in ("rotate", "scale") else "CompositorNodeTranslate")
         tree.links.new(node.outputs[0], sink.inputs[0])
-        if feature == "fraction":
-            node.inputs["X"].default_value = .25
-        elif feature == "bilinear":
+        if feature == "dynamic-offset":
+            tree.links.new(source.outputs["Image"], node.inputs["X"])
+        elif feature == "bicubic":
             if oracle.modern:
-                node.inputs["Interpolation"].default_value = "Bilinear"
+                node.inputs["Interpolation"].default_value = "Bicubic"
             else:
-                node.interpolation = "Bilinear"
+                node.interpolation = "Bicubic"
         elif feature == "relative-or-extend":
             if oracle.modern:
                 node.inputs["Extension X"].default_value = "Extend"
@@ -155,9 +190,9 @@ def main(output):
         elif feature == "render-border":
             oracle.scene.render.use_border = True
         else:
-            over = tree.nodes.new("CompositorNodeAlphaOver")
-            tree.links.new(source.outputs["Image"], over.inputs["Background"] if oracle.modern else over.inputs["Image"])
-            tree.links.new(node.outputs[0], over.inputs["Foreground"] if oracle.modern else over.inputs["Image_001"])
+            over = tree.nodes.new("CompositorNodeExposure")
+            tree.links.new(source.outputs["Image"], over.inputs["Exposure"])
+            tree.links.new(node.outputs[0], over.inputs["Image"])
             tree.links.new(over.outputs[0], sink.inputs[0])
         result = compositor_graph.extract(oracle.scene)
         assert result["status"] == "unsupported", (feature, result)
@@ -204,9 +239,10 @@ def main(output):
         (output / (case + ".json")).write_text(json.dumps(first, separators=(",", ":")))
         rows.append({"case": case})
     (output / "index.json").write_text(json.dumps(rows, indent=2))
-    import bpy
+    (output / "refusals.json").write_text(json.dumps(refusals, indent=2))
+    assert len(refusals) == (9 if bpy.app.version < (4, 5, 0) and device == "CPU" else 0), refusals
     print("BLENDLINK_COMPOSITOR_TRANSFORM_CHECK_PASSED " + json.dumps({"blender": bpy.app.version_string,
-        "device": device, "cases": len(rows), "sceneEngine": oracle.scene.render.engine}))
+        "device": device, "cases": len(rows), "refusals": len(refusals), "sceneEngine": oracle.scene.render.engine}))
 
 
 destination = os.environ.get("BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES")

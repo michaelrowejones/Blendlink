@@ -1,24 +1,24 @@
 {
-  "capabilityMapSha256": "d9d5a7196a5ac5bc03926d0f6386afb16d9ea9c762229fd7a8ea2cf294608d2f",
+  "capabilityMapSha256": "238c3d5791194104b00d5d85cb5042bcd2260a14f1ebf1d544b1451c67447a53",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T18:01:57.834323+00:00",
+  "generatedAt": "2026-11-12T19:32:00.408238+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
       "acknowledged": true,
-      "blenderVersion": "5.3.0",
+      "blenderVersion": "4.2.0",
       "node": "compositor:CompositorNodeChannelMatte",
       "reason": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
       "stateCount": 16,
-      "transitions": 480
+      "transitions": 250
     },
     {
       "acknowledged": true,
-      "blenderVersion": "5.3.0",
+      "blenderVersion": "4.2.0",
       "node": "compositor:CompositorNodeConvertColorSpace",
       "reason": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
       "stateCount": 16,
-      "transitions": 4128
+      "transitions": 704
     },
     {
       "acknowledged": true,
@@ -38,19 +38,19 @@
     },
     {
       "acknowledged": true,
-      "blenderVersion": "4.2.0",
+      "blenderVersion": "5.3.0",
       "node": "compositor:CompositorNodeChannelMatte",
       "reason": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
       "stateCount": 16,
-      "transitions": 250
+      "transitions": 480
     },
     {
       "acknowledged": true,
-      "blenderVersion": "4.2.0",
+      "blenderVersion": "5.3.0",
       "node": "compositor:CompositorNodeConvertColorSpace",
       "reason": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
       "stateCount": 16,
-      "transitions": 704
+      "transitions": 4128
     }
   ],
   "reports": [
@@ -66,9 +66,9 @@
             "unsupported": 137
           },
           "enumValueCounts": {
-            "partial": 6,
+            "partial": 8,
             "supported": 218,
-            "unsupported": 708
+            "unsupported": 706
           },
           "nodes": [
             {
@@ -99,7 +99,7 @@
               ],
               "id": "CompositorNodeAlphaOver",
               "label": "Alpha Over",
-              "limits": "Modern Over/Disjoint/Conjoint and legacy premultiply slider/Convert Premultiplied precedence. Dynamic Straight/Boolean inputs supported; Type selector must remain a known constant; animated compositor trees refuse.",
+              "limits": "Modern Over/Disjoint/Conjoint and legacy premultiply slider/Convert Premultiplied precedence. Dynamic Straight/Boolean inputs supported; Type selector must remain a known constant; animated compositor trees refuse. Qualified differing-origin Color inputs now realize on the native-priority domain (background, foreground, then factor), at matching extents and within measured CPU/Metal sampler models. Uncalibrated GPU and other unequal-domain consumers remain refused.",
               "runtimeOps": [
                 "alpha-over"
               ],
@@ -370,7 +370,7 @@
               ],
               "id": "CompositorNodeColorBalance",
               "label": "Color Balance",
-              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint±150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
+              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
               "runtimeOps": [
                 "color-balance"
               ],
@@ -2168,7 +2168,7 @@
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
+                  "Bilinear": "partial",
                   "Nearest": "supported"
                 }
               },
@@ -2192,11 +2192,20 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_resample_check.py"
                 }
               ],
               "id": "CompositorNodeTransform",
               "label": "Transform",
-              "limits": "Absolute integer translation within +/-8192 pixels, Nearest interpolation and Clip on both axes. Transform additionally requires Angle0/Scale1. Deferred origins preserve off-canvas fields through pointwise operations, Blur/Flip and same-origin merges before one final realization. Typed pass extents support full-frame postprocessing expressions and live resize/HiDPI. Fractional/default Bilinear, other interpolation/extensions, relative/wrapped/cropped windows, rotation/scale, differing-origin merges and unequal extents remain named refusals. Native EEVEE-context scene with independent CPU/GPU compositing on Blender4.2/5.2/5.3; both built browser backends, strict copy checks, state/disposal and error recovery.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior.",
               "runtimeOps": [
                 "translate"
               ],
@@ -2219,7 +2228,7 @@
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
+                  "Bilinear": "partial",
                   "Nearest": "supported"
                 }
               },
@@ -2243,11 +2252,20 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_resample_check.py"
                 }
               ],
               "id": "CompositorNodeTranslate",
               "label": "Translate",
-              "limits": "Absolute integer translation within +/-8192 pixels, Nearest interpolation and Clip on both axes. Transform additionally requires Angle0/Scale1. Deferred origins preserve off-canvas fields through pointwise operations, Blur/Flip and same-origin merges before one final realization. Typed pass extents support full-frame postprocessing expressions and live resize/HiDPI. Fractional/default Bilinear, other interpolation/extensions, relative/wrapped/cropped windows, rotation/scale, differing-origin merges and unequal extents remain named refusals. Native EEVEE-context scene with independent CPU/GPU compositing on Blender4.2/5.2/5.3; both built browser backends, strict copy checks, state/disposal and error recovery.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate.",
               "runtimeOps": [
                 "translate"
               ],
@@ -4351,8 +4369,8 @@
           "enumValueCounts": {
             "partial": 25,
             "structural": 3,
-            "supported": 240,
-            "unsupported": 173
+            "supported": 241,
+            "unsupported": 172
           },
           "nodes": [
             {
@@ -6754,11 +6772,17 @@
                 },
                 {
                   "path": "experiments/color-conversion-differential/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_normalized_range_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseUnitBounds.test.ts"
                 }
               ],
               "id": "ShaderNodeSeparateColor",
               "label": "Separate Color",
-              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently.",
+              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently. Normalize is not a unit-range guarantee: native3D/4D Noise can be negative or above1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
               "runtimeOps": [
                 "color_convert"
               ],
@@ -7137,7 +7161,7 @@
                   "Closest": "supported",
                   "Cubic": "supported",
                   "Linear": "supported",
-                  "Smart": "unsupported"
+                  "Smart": "supported"
                 },
                 "projection": {
                   "BOX": "supported",
@@ -7201,7 +7225,7 @@
               ],
               "id": "ShaderNodeTexImage",
               "label": "Image Texture",
-              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. External Cubic/Mirror/Clip, Smart, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
+              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic/Smart and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. Smart canonicalizes to the verified cubic path for embedded images; external Cubic/Smart/Mirror/Clip, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
               "runtimeOps": [
                 "tex_image",
                 "texture_ref",
@@ -7310,11 +7334,23 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeNormalizedNoise.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_normalized_range_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseUnitBounds.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseCoordinates.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseCoordinates.test.ts"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Native periodic coordinate reduction beyond the verified coordinate band remains unported.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
               "runtimeOps": [
                 "noise",
                 "noise_fractal",
@@ -7828,7 +7864,7 @@
               ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "limits": "All 27 World/Object/Camera \u00d7 Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
               "runtimeOps": [
                 "vector_transform"
               ],
@@ -8002,9 +8038,9 @@
             "unsupported": 121
           },
           "enumValueCounts": {
-            "partial": 1,
+            "partial": 3,
             "supported": 176,
-            "unsupported": 512
+            "unsupported": 510
           },
           "nodes": [
             {
@@ -8035,7 +8071,7 @@
               ],
               "id": "CompositorNodeAlphaOver",
               "label": "Alpha Over",
-              "limits": "Modern Over/Disjoint/Conjoint and legacy premultiply slider/Convert Premultiplied precedence. Dynamic Straight/Boolean inputs supported; Type selector must remain a known constant; animated compositor trees refuse.",
+              "limits": "Modern Over/Disjoint/Conjoint and legacy premultiply slider/Convert Premultiplied precedence. Dynamic Straight/Boolean inputs supported; Type selector must remain a known constant; animated compositor trees refuse. Qualified differing-origin Color inputs now realize on the native-priority domain (background, foreground, then factor), at matching extents and within measured CPU/Metal sampler models. Uncalibrated GPU and other unequal-domain consumers remain refused.",
               "runtimeOps": [
                 "alpha-over"
               ],
@@ -8306,7 +8342,7 @@
               ],
               "id": "CompositorNodeColorBalance",
               "label": "Color Balance",
-              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint±150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
+              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
               "runtimeOps": [
                 "color-balance"
               ],
@@ -9970,7 +10006,7 @@
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
+                  "Bilinear": "partial",
                   "Nearest": "supported"
                 }
               },
@@ -9994,11 +10030,20 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_resample_check.py"
                 }
               ],
               "id": "CompositorNodeTransform",
               "label": "Transform",
-              "limits": "Absolute integer translation within +/-8192 pixels, Nearest interpolation and Clip on both axes. Transform additionally requires Angle0/Scale1. Deferred origins preserve off-canvas fields through pointwise operations, Blur/Flip and same-origin merges before one final realization. Typed pass extents support full-frame postprocessing expressions and live resize/HiDPI. Fractional/default Bilinear, other interpolation/extensions, relative/wrapped/cropped windows, rotation/scale, differing-origin merges and unequal extents remain named refusals. Native EEVEE-context scene with independent CPU/GPU compositing on Blender4.2/5.2/5.3; both built browser backends, strict copy checks, state/disposal and error recovery.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior.",
               "runtimeOps": [
                 "translate"
               ],
@@ -10021,7 +10066,7 @@
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
+                  "Bilinear": "partial",
                   "Nearest": "supported"
                 }
               },
@@ -10045,11 +10090,20 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_resample_check.py"
                 }
               ],
               "id": "CompositorNodeTranslate",
               "label": "Translate",
-              "limits": "Absolute integer translation within +/-8192 pixels, Nearest interpolation and Clip on both axes. Transform additionally requires Angle0/Scale1. Deferred origins preserve off-canvas fields through pointwise operations, Blur/Flip and same-origin merges before one final realization. Typed pass extents support full-frame postprocessing expressions and live resize/HiDPI. Fractional/default Bilinear, other interpolation/extensions, relative/wrapped/cropped windows, rotation/scale, differing-origin merges and unequal extents remain named refusals. Native EEVEE-context scene with independent CPU/GPU compositing on Blender4.2/5.2/5.3; both built browser backends, strict copy checks, state/disposal and error recovery.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate.",
               "runtimeOps": [
                 "translate"
               ],
@@ -11731,8 +11785,8 @@
           "enumValueCounts": {
             "partial": 23,
             "structural": 3,
-            "supported": 215,
-            "unsupported": 122
+            "supported": 216,
+            "unsupported": 121
           },
           "nodes": [
             {
@@ -13687,11 +13741,17 @@
                 },
                 {
                   "path": "experiments/color-conversion-differential/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_normalized_range_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseUnitBounds.test.ts"
                 }
               ],
               "id": "ShaderNodeSeparateColor",
               "label": "Separate Color",
-              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently.",
+              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently. Normalize is not a unit-range guarantee: native3D/4D Noise can be negative or above1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
               "runtimeOps": [
                 "color_convert"
               ],
@@ -14059,7 +14119,7 @@
                   "Closest": "supported",
                   "Cubic": "supported",
                   "Linear": "supported",
-                  "Smart": "unsupported"
+                  "Smart": "supported"
                 },
                 "projection": {
                   "BOX": "supported",
@@ -14123,7 +14183,7 @@
               ],
               "id": "ShaderNodeTexImage",
               "label": "Image Texture",
-              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. External Cubic/Mirror/Clip, Smart, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
+              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic/Smart and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. Smart canonicalizes to the verified cubic path for embedded images; external Cubic/Smart/Mirror/Clip, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
               "runtimeOps": [
                 "tex_image",
                 "texture_ref",
@@ -14232,11 +14292,23 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeNormalizedNoise.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_normalized_range_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseUnitBounds.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseCoordinates.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseCoordinates.test.ts"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Native periodic coordinate reduction beyond the verified coordinate band remains unported.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
               "runtimeOps": [
                 "noise",
                 "noise_fractal",
@@ -14748,7 +14820,7 @@
               ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "limits": "All 27 World/Object/Camera \u00d7 Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
               "runtimeOps": [
                 "vector_transform"
               ],
@@ -14922,8 +14994,9 @@
             "unsupported": 58
           },
           "enumValueCounts": {
+            "partial": 2,
             "supported": 136,
-            "unsupported": 170
+            "unsupported": 168
           },
           "nodes": [
             {
@@ -15194,7 +15267,7 @@
               ],
               "id": "CompositorNodeColorBalance",
               "label": "Color Balance",
-              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint±150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
+              "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
               "runtimeOps": [
                 "color-balance"
               ],
@@ -17088,7 +17161,7 @@
               "enumCoverage": {
                 "filter_type": {
                   "BICUBIC": "unsupported",
-                  "BILINEAR": "unsupported",
+                  "BILINEAR": "partial",
                   "NEAREST": "supported"
                 }
               },
@@ -17112,11 +17185,20 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_resample_check.py"
                 }
               ],
               "id": "CompositorNodeTransform",
               "label": "Transform",
-              "limits": "Absolute integer translation within +/-8192 pixels, Nearest interpolation and Clip on both axes. Transform additionally requires Angle0/Scale1. Deferred origins preserve off-canvas fields through pointwise operations, Blur/Flip and same-origin merges before one final realization. Typed pass extents support full-frame postprocessing expressions and live resize/HiDPI. Fractional/default Bilinear, other interpolation/extensions, relative/wrapped/cropped windows, rotation/scale, differing-origin merges and unequal extents remain named refusals. Native EEVEE-context scene with independent CPU/GPU compositing on Blender4.2/5.2/5.3; both built browser backends, strict copy checks, state/disposal and error recovery.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate. Fresh legacy CPU constant-input Transform also refuses because retained Linux and macOS native outputs disagree; existing integer-v1 documents keep their prior behavior.",
               "runtimeOps": [
                 "translate"
               ],
@@ -17128,7 +17210,7 @@
               "enumCoverage": {
                 "interpolation": {
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
+                  "Bilinear": "partial",
                   "Nearest": "supported"
                 },
                 "wrap_axis": {
@@ -17158,11 +17240,20 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_resample_check.py"
                 }
               ],
               "id": "CompositorNodeTranslate",
               "label": "Translate",
-              "limits": "Absolute integer translation within +/-8192 pixels, Nearest interpolation and Clip on both axes. Transform additionally requires Angle0/Scale1. Deferred origins preserve off-canvas fields through pointwise operations, Blur/Flip and same-origin merges before one final realization. Typed pass extents support full-frame postprocessing expressions and live resize/HiDPI. Fractional/default Bilinear, other interpolation/extensions, relative/wrapped/cropped windows, rotation/scale, differing-origin merges and unequal extents remain named refusals. Native EEVEE-context scene with independent CPU/GPU compositing on Blender4.2/5.2/5.3; both built browser backends, strict copy checks, state/disposal and error recovery.",
+              "limits": "Absolute finite pixel translation within +/-8192, with Nearest or Bilinear sampling and Clip on both axes. Transform additionally requires Angle 0/Scale 1. Native deferred origins and explicit sampling models preserve off-canvas fields, pointwise operations, Blur/Flip, and qualified differing-origin Color Alpha Over. Responsive tiled lookup textures keep a fixed shader shape through resize/HiDPI and recover from rejected extents; each axis is bounded 1..8192 with matching source/render extents. Existing integer-v1 documents retain their behavior. New fractional/filtered GPU sampling requires measured Metal; OpenGL remains a named refusal. Legacy 4.2 CPU rejects 68 area-of-interest/data-window compositions, including shifted intermediate Bilinear and nonzero Transform Bilinear; direct Translate and qualified Nearest remain available. Relative/wrapped/cropped windows, other interpolation/extensions, rotation/scale, unequal extents and other cross-domain consumers remain unported. Native EEVEE-context CPU/GPU compositing proof spans all 3 versions; strict copies, resize/resource/state and error-recovery checks remain separate.",
               "runtimeOps": [
                 "translate"
               ],
@@ -17362,8 +17453,8 @@
           "enumValueCounts": {
             "partial": 21,
             "structural": 3,
-            "supported": 210,
-            "unsupported": 95
+            "supported": 211,
+            "unsupported": 94
           },
           "nodes": [
             {
@@ -19044,11 +19135,17 @@
                 },
                 {
                   "path": "experiments/color-conversion-differential/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_normalized_range_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseUnitBounds.test.ts"
                 }
               ],
               "id": "ShaderNodeSeparateColor",
               "label": "Separate Color",
-              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently.",
+              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently. Normalize is not a unit-range guarantee: native3D/4D Noise can be negative or above1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
               "runtimeOps": [
                 "color_convert"
               ],
@@ -19435,7 +19532,7 @@
                   "Closest": "supported",
                   "Cubic": "supported",
                   "Linear": "supported",
-                  "Smart": "unsupported"
+                  "Smart": "supported"
                 },
                 "projection": {
                   "BOX": "supported",
@@ -19499,7 +19596,7 @@
               ],
               "id": "ShaderNodeTexImage",
               "label": "Image Texture",
-              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. External Cubic/Mirror/Clip, Smart, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
+              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic/Smart and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. Smart canonicalizes to the verified cubic path for embedded images; external Cubic/Smart/Mirror/Clip, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
               "runtimeOps": [
                 "tex_image",
                 "texture_ref",
@@ -19608,11 +19705,23 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeNormalizedNoise.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_normalized_range_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseUnitBounds.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseCoordinates.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNoiseCoordinates.test.ts"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Native periodic coordinate reduction beyond the verified coordinate band remains unported.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields.",
               "runtimeOps": [
                 "noise",
                 "noise_fractal",
@@ -20155,7 +20264,7 @@
               ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "limits": "All 27 World/Object/Camera \u00d7 Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
               "runtimeOps": [
                 "vector_transform"
               ],
@@ -20294,24 +20403,24 @@
   "schemaVersion": 1,
   "sourceSha256": {
     "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
-    "packages/blender-addon/color_ir.py": "930c365d22d2de7e17da14ae2418bc7a58366484f219ccb6f233d83b4a4583b6",
+    "packages/blender-addon/color_ir.py": "ac64166cc78946dfb23b0cfee2a4bf0362998d593986f3d04d6f5036da7c7130",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
     "packages/blender-addon/engine_fallback.py": "a451ac01e8f82b0052fd92abec63afdb7342b9fc0a5d85755bb5699edbc428ee",
     "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
-    "packages/blender-addon/material_compiler.py": "533d34b0d13abf4b3478217357b2955be9913d203879e8ab3c49a859d9c61056",
+    "packages/blender-addon/material_compiler.py": "47c6dd49555276d85f19be84a48118d5084089494650ceb76c7dea981f9a8e63",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
     "packages/blender-addon/noise_varying_ir.py": "4fa29403724cbbd3389d6cb17d262296e2db0d3a4532fcb5cf87040ffb12347b",
     "packages/blender-addon/normal_direction_ir.py": "0aa3b1b0226320b6b92fce63b06d7e5202bd012ce9820085d3fc26c426b3857f",
     "packages/blender-addon/normal_input_bounds.py": "b849e9f396bd5d847b63be632224d524eb20a8aaa9199ac77caa47f1e1bf1be5",
-    "packages/blender-addon/normal_ir.py": "3fc7541d5b45a29faa201dc4c57f90ad798da194fcc8cc456221c7578da0de8c",
+    "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
     "packages/blender-addon/normal_map_tangent_ir.py": "bb70a1d0917c27cf7516824cec4d045da615cb8dec3fb69e31d9136a603b13c3",
-    "packages/blender-addon/procedural.py": "12f6fcaaa46f8a398d13482e421c20d3cd342a4a57962634f48595469170ef59",
+    "packages/blender-addon/procedural.py": "3b11e948ed00f91b9af23736cc958db3e22a243f23f9874de686479c0521afe7",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/tangent_ir.py": "253185ff3965b526e6eacbc8734bbd82ba4f2b8dc4d3a15ace83d10eb79131af",
-    "packages/blender-addon/tsl_ir.py": "01a002e90382e64a2809d6d062e848a4dd97b3a2a33791e1d392c33213cf5e05",
+    "packages/blender-addon/tsl_ir.py": "ae864a056fadb2ba00ae0294f2c446332462fe14321080a0e237d0c84f0475d4",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
@@ -20322,7 +20431,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_graph.py": "54de5b3e41b10c02571a6ca70ec14ae3d5f4e198a76144bc16463ad5ae92257e",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
-    "packages/blendlink/blender/compositor_transform.py": "afce390171f21aa6496b0ebfbcaa721309ad150b947493d7306454a328085bfc",
+    "packages/blendlink/blender/compositor_transform.py": "dac6fb38d8b952b17483eac5672497fd31b1f4c3324766250584cf4e40a69b23",
     "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
@@ -20334,13 +20443,14 @@
     "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
     "packages/blendlink/src/threeRuntime.ts": "225b3dd29834a6f2adfea60f8e6122545ddc3f0bbc74204568b9993f04d45c2b",
     "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
-    "packages/blendlink/src/tslColorConversion.ts": "b00932046878cbbc77f8523af8df70061148f4d425ff3c61181002afc46d12de",
+    "packages/blendlink/src/tslColorConversion.ts": "e23a466e67d3d2a8b26213e96626bb5e3de91aac78bd583f62ac344b4341487c",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
     "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
-    "packages/blendlink/src/tslCompositorImageDomain.ts": "10683de3346bfca7e7fe707231809bb552ab3e5e563932b271754b9bbf00f061",
+    "packages/blendlink/src/tslCompositorImageDomain.ts": "1f3735c9df93c78ce993451e97f488af722093e04ae27fe132e98921c9363534",
+    "packages/blendlink/src/tslCompositorResampling.ts": "e5d36d86bf9e40b2b6843bdf2db3c0ed5e48ab08a8448f0f11f4b6efa5ae7d19",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
@@ -20349,14 +20459,15 @@
     "packages/blendlink/src/tslMaterialProgram.ts": "0970970ce89e4e913e2b75ec0d4b342b6c929fe3b61e13a07e4f52497a966d68",
     "packages/blendlink/src/tslMaterialRuntime.ts": "3640d11197e09728e3ab89f0de6d29a47ee9a3431317cf5fcb0d0d0be85b5fd3",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
-    "packages/blendlink/src/tslNativeNoisePrecision.ts": "e993aaaf7eca347634b9fc730fb56714f932617d42acd44747624b21e91e1597",
-    "packages/blendlink/src/tslNodeRecipe.ts": "92f8202d6e6efff72b3697ff1db5270ed74046fdafd1b66455da96d67012c3d5",
+    "packages/blendlink/src/tslNativeNoisePrecision.ts": "95614a5d2f97400665d05861e1e648874ae1feddc30c1144549cdd16e84764b0",
+    "packages/blendlink/src/tslNodeRecipe.ts": "3b172a4c29e54d358520e2d9e12fa33bd511d14cc500741a3d7bcce6ee686dba",
+    "packages/blendlink/src/tslNoiseCoordinates.ts": "c3cd1a2b5549dd7edf83937dfeb1b57d8e564c6fce8dd15ad36c17a222760b1f",
     "packages/blendlink/src/tslNormalInputBounds.ts": "a6c6e45fc65f49a5e2386d286df01686415be4c0c677b2a2eb3be6cd2db3ae06",
     "packages/blendlink/src/tslNormalNodes.ts": "a2505eff8008f6f99f53909759dde91aa8cb02a8299f557351a0757761c6fa03",
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "7b4b3f9a3ae429e59be0e204ae4ff574460ca9ea0e76ce4deeb4a0aa1bad203a",
+    "packages/blendlink/src/tslSourceCompositor.ts": "cd713b094ca9462d403d452b96e4fc13fd76544f312b235a7823ef7f92e4597e",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
     "packages/blendlink/src/tslTangentNodes.ts": "517c0e9d33d838d381fafb311d6289282860f8fe6fcae3b1b6bd10c59b424831",
     "packages/blendlink/src/tslTangentNormalMap.ts": "3762e17e19fd31d4d2fa07ff9143eabd9de30c3f04d71791e2ed5e381b79198e",

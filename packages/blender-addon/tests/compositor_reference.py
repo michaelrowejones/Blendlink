@@ -13,10 +13,11 @@ import compositor_graph
 
 
 class NativeCompositorReference:
-    def __init__(self, output, *, device="CPU", name="Native Compositor", pixels=None):
+    def __init__(self, output, *, device="CPU", name="Native Compositor", pixels=None, node_previews=True):
         self.output = Path(output)
         self.output.mkdir(parents=True, exist_ok=True)
         self.device = device
+        self.node_previews = node_previews
         self.rows = []
         bpy.ops.wm.read_factory_settings(use_empty=False)
         self.scene = scene = bpy.context.scene
@@ -91,6 +92,12 @@ class NativeCompositorReference:
         assert program["status"] == "extracted", program
         replacement = self.tree.nodes.new("CompositorNodeImage")
         replacement.image = self.image
+        if not self.node_previews:
+            # Blender 4.2's GPU Image preview can allocate a zero-height target
+            # for very wide/thin images. Preview flags do not affect the native
+            # compositor output; keep this opt-in and leave other fixtures alone.
+            for node in self.tree.nodes:
+                node.show_preview = False
         for link in list(source.outputs["Image"].links):
             self.tree.links.new(replacement.outputs["Image"], link.to_socket)
         self.scene.render.filepath = str(self.output / "native.exr")

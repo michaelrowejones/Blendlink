@@ -14223,6 +14223,1518 @@
       "claim": "exact",
       "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
       "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "image-repeat-smart-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-repeat-smart-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-repeat-smart-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-repeat-smart-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-repeat-smart-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-repeat-smart-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-repeat-smart-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-repeat-smart-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-extend-smart-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-extend-smart-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-extend-smart-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-extend-smart-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-extend-smart-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-extend-smart-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-extend-smart-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-extend-smart-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-mirror-smart-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-mirror-smart-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-mirror-smart-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-mirror-smart-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-mirror-smart-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-mirror-smart-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-mirror-smart-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-mirror-smart-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-clip-smart-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-clip-smart-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-clip-smart-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-clip-smart-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-clip-smart-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-clip-smart-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-clip-smart-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "image-clip-smart-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path."
+    },
+    {
+      "id": "eevee-image-repeat-smart-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-boundary1-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-smart-boundary4-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-boundary1-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-smart-boundary4-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-boundary1-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-smart-boundary4-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-boundary1-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-smart-boundary4-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Smart",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply. Native authored Smart selector; independent capture, canonical cubic runtime path.",
+      "nativeEngine": "EEVEE"
     }
   ]
 }

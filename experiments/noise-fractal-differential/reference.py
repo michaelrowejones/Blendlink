@@ -20,6 +20,16 @@ import bakelib
 import tsl_ir
 from noise_fractal_ir import fractal_amplitude_bound, FRACTAL_TYPES
 
+def source_qualified_roughness_refusal(case, engine, varying, reason, source_profile):
+    """Only the actual unmeasured Cycles normalized child qualification."""
+    expected = ('Normalized Noise has no verified live source precision profile for '
+                'CYCLES on ' + sys.platform + '/' + platform.machine()
+                + '; use source baking for this Cycles profile')
+    return (varying and engine == 'CYCLES' and source_profile is None
+            and case.get('kind') == 'noise' and case.get('roughnessStage') == 'constant-function'
+            and reason == expected)
+
+
 OUTPUT = Path(os.environ['BLENDLINK_NOISE_REFERENCES']).resolve()
 OUTPUT.mkdir(parents=True, exist_ok=True)
 (OUTPUT / 'ir').mkdir(exist_ok=True)
@@ -87,13 +97,33 @@ def make_material(case):
         return material, emission
     if case.get('coordinateStage', case['stage']) == 'constant':
         source = tree.nodes.new('ShaderNodeCombineXYZ')
-        for index, value in enumerate([.173, -.375, .625]): source.inputs[index].default_value = value
+        for index, value in enumerate(case.get('coordinates', [.173, -.375, .625])):
+            source.inputs[index].default_value = value
+            assert source.inputs[index].default_value == float(np.float32(value)), 'Coordinate socket changed the authored test value'
         incoming = source.outputs[0]
     else:
         incoming = exact_inputs(tree, case.get('inputPrecision', 'half'))
+    if 'coordinateOffset' in case:
+        translated = tree.nodes.new('ShaderNodeVectorMath'); translated.operation = 'ADD'
+        tree.links.new(incoming, translated.inputs[0]); translated.inputs[1].default_value = case['coordinateOffset']
+        incoming = translated.outputs[0]
     if case['kind'] == 'image-control':
         factor, bias = .25, .5
         raw = incoming
+    elif case['kind'] == 'coordinate-quotient':
+        component = tree.nodes.new('ShaderNodeSeparateXYZ'); tree.links.new(incoming, component.inputs[0])
+        divide = tree.nodes.new('ShaderNodeMath'); divide.operation = 'DIVIDE'
+        tree.links.new(component.outputs[0], divide.inputs[0]); divide.inputs[1].default_value = 100000
+        floor = tree.nodes.new('ShaderNodeMath'); floor.operation = 'FLOOR'
+        tree.links.new(divide.outputs[0], floor.inputs[0])
+        subtract = tree.nodes.new('ShaderNodeMath'); subtract.operation = 'SUBTRACT'
+        tree.links.new(floor.outputs[0], subtract.inputs[0]); subtract.inputs[1].default_value = 10740
+        raw = subtract.outputs[0]; factor, bias = .25, .5
+    elif case['kind'] == 'coordinate-control':
+        component = tree.nodes.new('ShaderNodeSeparateXYZ'); tree.links.new(incoming, component.inputs[0])
+        modulo = tree.nodes.new('ShaderNodeMath'); modulo.operation = 'MODULO'
+        tree.links.new(component.outputs[0], modulo.inputs[0]); modulo.inputs[1].default_value = 100000
+        raw = modulo.outputs[0]; factor, bias = (1 if case['coordinateOffset'][0] > 0 else -1)/128, .5
     else:
         node = tree.nodes.new('ShaderNodeTexNoise')
         node.noise_type = case.get('type', 'FBM')
@@ -126,7 +156,9 @@ def make_material(case):
         components = tree.nodes.new('ShaderNodeSeparateXYZ')
         tree.links.new(incoming, components.inputs[0])
         if case['dimensions'] != '1D': tree.links.new(incoming, node.inputs['Vector'])
-        if case['dimensions'] in {'1D', '4D'}:
+        if case['dimensions'] in {'1D', '4D'} and case.get('coordinateProbe'):
+            tree.links.new(components.outputs[0], node.inputs['W'])
+        elif case['dimensions'] in {'1D', '4D'}:
             w = tree.nodes.new('ShaderNodeMath')
             w.operation = 'MULTIPLY_ADD'
             w.inputs[1].default_value = .5
@@ -195,8 +227,11 @@ def add_residual_control(material, emission, coarse, scale, amplification):
 
 records = []
 refusals = []
+source_qualified_refusal_ids = set()
+requested_count = 0
 varying = bool(os.environ.get('BLENDLINK_NOISE_VARYING'))
-normalized = bool(os.environ.get('BLENDLINK_NOISE_NORMALIZED'))
+coordinate_probes = bool(os.environ.get('BLENDLINK_NOISE_COORDINATES'))
+normalized = bool(os.environ.get('BLENDLINK_NOISE_NORMALIZED')) or coordinate_probes
 assert not (varying and normalized)
 requested_types = json.loads(os.environ.get('BLENDLINK_NOISE_TYPES', json.dumps(['FBM', *sorted(FRACTAL_TYPES)]) if varying else '["FBM"]'))
 assert requested_types and all(kind in {'FBM', *FRACTAL_TYPES} for kind in requested_types)
@@ -339,12 +374,58 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                                       'stage': 'image', 'output': output, 'Scale': .15, 'Detail': 1,
                                       'Roughness': .5, 'Lacunarity': 2, 'Distortion': distortion, 'oracleScale': 1,
                                       'inputPrecision': 'float32'})
+        if coordinate_probes:
+            cases = cases[:3]
+            endpoints = []
+            for boundary in [100000., 1000000.]:
+                value = np.float32(boundary)
+                for side, point in [('before', np.nextafter(value, np.float32(-math.inf))),
+                                    ('equal', value), ('after', np.nextafter(value, np.float32(math.inf)))]:
+                    for sign in [1, -1]: endpoints.append((f'{int(boundary)}-{side}-{sign}', float(point) * sign))
+            large = np.float32(10741*100000)
+            endpoints.extend((label, sign*float(point)) for label,sign,point in [
+                ('large-positive',1,large),('large-negative',-1,large),
+                ('large-positive-after',1,np.nextafter(large,np.float32(math.inf))),
+                ('large-negative-after',-1,np.nextafter(large,np.float32(math.inf)))])
+            # Independent diagnostic of native compiler lowering. Large
+            # ShaderMath modulo has its own source-profile contract; these
+            # controls are opt-in rather than counted as Noise translations.
+            if os.environ.get('BLENDLINK_NOISE_COORDINATE_ARITHMETIC_CONTROLS') or os.environ.get('BLENDLINK_NOISE_COORDINATE_CONTROLS_ONLY'):
+                cases.append({'id':f'{engine.lower()}-coordinate-quotient-control', 'kind':'coordinate-quotient',
+                              'stage':'image','coordinateOffset':[float(large),0,0]})
+                for point in [float(large),float(np.nextafter(large,np.float32(math.inf))),-float(large)]:
+                    cases.append({'id':f'{engine.lower()}-coordinate-mod-control-{int(point)}', 'kind':'coordinate-control',
+                                  'stage':'image','coordinateOffset':[point,0,0]})
+            for dimension in ['1D','2D','3D','4D']:
+                for output in ['Fac','Color']:
+                    for stage in ['constant','image']:
+                        for label, point in endpoints:
+                            settings = {'coordinates': [point, -point, point*.5]} if stage == 'constant' else {'coordinateOffset': [point, -point, point*.5]}
+                            cases.append({'id': f'{engine.lower()}-coordinate-{dimension.lower()}-{output.lower()}-{stage}-{label}',
+                                          'kind':'noise','type':'FBM','normalize':True,'dimensions':dimension,'output':output,
+                                          'stage':stage,'Detail':0,'Scale':1,'oracleScale':1,'coordinateProbe':True, **settings})
+            if bpy.app.version >= (5,0,0):
+                for point in [float(np.float32(2**28)), float(np.float32(-(2**35))), float(np.float32(2**80)), float(np.finfo(np.float32).max)]:
+                    for dimension in ['1D','2D','3D','4D']:
+                        for output in ['Fac','Color']:
+                            cases.append({'id':f'{engine.lower()}-coordinate-mf-large-{dimension.lower()}-{output.lower()}-{len(cases)}',
+                                          'kind':'noise','type':'FBM','normalize':True,'dimensions':dimension,'output':output,
+                                          'stage':'constant','Detail':0,'Scale':1,'oracleScale':1,'coordinateProbe':True,
+                                          'coordinates':[point,-point,point*.5]})
+        if os.environ.get('BLENDLINK_NOISE_COORDINATE_CONTROLS_ONLY'):
+            cases = [case for case in cases if case['kind'] in {'constant','image-control','coordinate-control','coordinate-quotient'}]
         if os.environ.get('BLENDLINK_NOISE_ARTIST_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant','image-control'} or '-artist-' in case['id']]
         if os.environ.get('BLENDLINK_NOISE_RESIDUAL_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('residual')]
         if os.environ.get('BLENDLINK_NOISE_BOUNDARY_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or '-hybrid-cutoff-' in case['id'] or '-ridged-floor-' in case['id']]
+        requested_count += len(cases)
+        source_profile = tsl_ir._normalized_noise_source_profile(engine, sys.platform, platform.machine(), scene.cycles.device)
+        expected_source_refusals = {case['id'] for case in cases if varying and engine == 'CYCLES'
+            and source_profile is None and case.get('roughnessStage') == 'constant-function'}
+        observed_source_refusals = set()
+        assert len({case['id'] for case in cases}) == len(cases), 'Native reference case IDs must be unique'
         for case in cases:
             if case.get('roughnessStage') and case.get('type', 'FBM') == 'FBM':
                 bound = 1 if case.get('normalize') else 9
@@ -369,11 +450,16 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             except tsl_ir.TslIrRefusal as error:
                 # These are declared Cycles source/cost limits, not hidden
                 # omissions from the primary EEVEE numerical corpus.
-                if not (normalized and engine == 'CYCLES' and (
+                qualified = source_qualified_roughness_refusal(case, engine, varying, str(error), source_profile)
+                if not (qualified or normalized and engine == 'CYCLES' and (
                         'no verified live source precision profile' in str(error)
                         or 'Normalized Noise Cycles SIMD 3D/4D' in str(error))): raise
                 assert before == (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
-                refusals.append({'id': case['id'], 'engine': engine, 'reason': str(error)})
+                refusal = {'id': case['id'], 'engine': engine, 'reason': str(error)}
+                if qualified:
+                    refusal['sourceQualification'] = 'unmeasured-cycles-normalized-roughness'
+                    observed_source_refusals.add(case['id']);source_qualified_refusal_ids.add(case['id'])
+                refusals.append(refusal)
                 bpy.data.materials.remove(material, do_unlink=True)
                 for image in list(bpy.data.images):
                     if image.name.startswith('Exact Noise') and not image.users: bpy.data.images.remove(image)
@@ -385,7 +471,14 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                         return ([value] if value.get('op') in {'noise_fractal', 'noise_normalized', 'noise_varying'} else []) + [item for child in value.values() for item in collect(child)]
                     if isinstance(value, list): return [item for child in value for item in collect(child)]
                     return []
-                expressions = collect(document)
+                all_expressions = collect(document)
+                # The authored Roughness subtree deliberately contains a
+                # separately qualified normalized child. Validate the outer
+                # capability without assigning its mode/stage to that child.
+                expressions = [item for item in all_expressions if item['op'] == 'noise_varying'] if varying else all_expressions
+                if varying and case.get('roughnessStage') == 'constant-function':
+                    nested = [item for item in all_expressions if item['op'] == 'noise_normalized']
+                    assert nested and all(item['normalize'] is True for item in nested), case['id']
                 assert expressions and all(expression['normalize'] == (case.get('type', 'FBM') == 'FBM' and case.get('normalize', False)) for expression in expressions), case['id']
                 if normalized: assert all(expression['op'] == 'noise_normalized' for expression in expressions)
                 if case.get('roughnessStage'): assert all(expression['op'] == 'noise_varying' for expression in expressions)
@@ -403,14 +496,21 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             bpy.data.materials.remove(material, do_unlink=True)
             for image in list(bpy.data.images):
                 if image.name.startswith('Exact Noise') and not image.users: bpy.data.images.remove(image)
+        assert observed_source_refusals == expected_source_refusals, (engine, sorted(expected_source_refusals), sorted(observed_source_refusals))
         if 'RIDGED_MULTIFRACTAL' in requested_types and not os.environ.get('BLENDLINK_NOISE_RESIDUAL_ONLY'):
             for stage in ['constant', 'image']:
                 first = OUTPUT / f'{engine.lower()}-ridged-floor-{stage}-1.f32'
                 fractional = OUTPUT / f'{engine.lower()}-ridged-floor-{stage}-1_75.f32'
-                assert first.read_bytes() == fractional.read_bytes(), 'Native Ridged fractional-detail semantics changed'
+                first_id = first.stem;fractional_id = fractional.stem
+                if first_id in observed_source_refusals or fractional_id in observed_source_refusals:
+                    assert {first_id,fractional_id} <= observed_source_refusals
+                else:
+                    assert first.read_bytes() == fractional.read_bytes(), 'Native Ridged fractional-detail semantics changed'
+assert len(records) + len(refusals) == requested_count, 'Native corpus cases disappeared without a qualified refusal'
 (OUTPUT / 'index.json').write_text(json.dumps({'blender': bpy.app.version_string, 'buildHash': bpy.app.build_hash.decode(),
     'gpuBackend': bpy.context.preferences.system.gpu_backend, 'gpuRenderer': tsl_ir._noise_gpu_renderer(),
     'platform': sys.platform, 'architecture': platform.machine(), 'cyclesDevice': 'CPU', 'size': SIZE, 'cases': records, 'refusals': refusals,
+    'requestedCases': requested_count, 'sourceQualifiedRefusalIds': sorted(source_qualified_refusal_ids),
     'nativeModuleHashes': {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in Path(native).iterdir()
                            if path.suffix in {'.py', '.json'}} if native else {}}, indent=2))
 print('BLENDLINK_NOISE_REFERENCES_PASSED ' + str(len(records)))

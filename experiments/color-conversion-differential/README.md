@@ -83,3 +83,15 @@ separately proven by retained native spectral and curve references and the
 central release gate; this does not claim parity for every native GPU driver.
 The live program requires WebGPURenderer, with either of its tested backends;
 legacy WebGLRenderer cannot consume TSL programs.
+
+### Authored ranges and source profiles
+
+The composed Noise→HSL fixture authors Mix Color Clamp Result before HSL:
+Normalize alone cannot prove a 3D Noise color stays in [0,1]. The normalized
+Noise child remains intact. Only that declared composed case may record the
+exact unmeasured-Cycles-profile refusal; expected refusal-set equality and
+case-count conservation keep every other case mandatory. The measured macOS
+Blender 5.2 checkpoint passes all 489 graphs on both built browser backends.
+`composed_noise_profile_check.py` exercises the real emitter on Blender
+4.2/5.2/5.3, checks source preservation, rejects unrelated qualifications, and
+proves removing the authored RGB clamp restores the HSL refusal.

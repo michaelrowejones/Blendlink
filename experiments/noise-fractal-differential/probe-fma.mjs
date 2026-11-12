@@ -35,7 +35,7 @@ try{await server.listen();browser=await chromium.launch({headless:true,args:['--
 for(const backend of ['webgpu','webgl2']){
  const page=await browser.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));page.on('console',message=>{if(message.type()==='error')errors.push(message.text())})
  await page.goto(server.resolvedUrls.local[0]+(backend==='webgl2'?'?backend=webgl2':''));const initialized=await page.evaluate(()=>window.__tslDiffInit());assert.equal(initialized.error,null);assert.equal(initialized.backend,backend==='webgpu')
- for(const group of ['fade-first','fade-second','mix']){
+ for(const group of JSON.parse(readFileSync(join(reference,'index.json'),'utf8')).cases){
   const rendered=await page.evaluate(path=>window.__tslDiffRun('fma-probe','ir',path,false,null),'/@fs/'+join(reference,group+'.json'));assert.ok(rendered.ok,rendered.error)
   const bytes=Buffer.from(rendered.base64,'base64');writeFileSync(join(evidence,backend+'-'+group+'.encoded.f32'),bytes)
   const actual=floats(bytes),expected=floats(readFileSync(join(reference,group+'.f32')))
@@ -50,4 +50,4 @@ for(const backend of ['webgpu','webgl2']){
 const hash=source=>createHash('sha256').update(source).digest('hex')
 writeFileSync(join(evidence,'report.json'),JSON.stringify({oracle:'exact-rational nearest-even float32',encoding:'uint32 float bits split into exact positive 11/11/10-bit RGB lanes',built,channel,browserVersion,browserLaunchArgs:['--enable-unsafe-webgpu','--enable-unsafe-swiftshader',...args],provenance,facadeSha256:hash(facadeSource),runnerSha256:hash(readFileSync(import.meta.filename)),oracleSha256:hash(readFileSync(join(import.meta.dirname,'fma_reference.py'))),rows},null,2))
 assert.ok(rows.every(row=>row.maximum===0),JSON.stringify(rows))
-console.log('BLENDLINK_NOISE_FMA_PASSED',4096*3,'exact float32 controls on both backends')
+console.log('BLENDLINK_NOISE_FMA_PASSED',4096*4,'exact float32 controls on both backends')

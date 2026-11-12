@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Native material color conversion pixels; the native node is the numeric oracle."""
 import json
+import platform
 import hashlib
 import os
 import sys
@@ -68,6 +69,14 @@ def exact_image(tree, unit, value=None):
     return source.outputs['Color']
 
 
+def source_qualified_noise_refusal(engine, uses_noise, reason, source_profile):
+    """Accept only the declared unmeasured Cycles child-profile refusal."""
+    expected = ('Normalized Noise has no verified live source precision profile for '
+                'CYCLES on ' + sys.platform + '/' + platform.machine()
+                + '; use source baking for this Cycles profile')
+    return engine == 'CYCLES' and uses_noise and source_profile is None and reason == expected
+
+
 def make_material(case):
     material = bpy.data.materials.new('Native Color ' + case['id'])
     tree = bakelib.ensure_shader_node_tree(material)
@@ -110,7 +119,13 @@ def make_material(case):
             bounded.inputs['Scale'].default_value = 1
             bounded.inputs['Detail'].default_value = 0
             tree.links.new(incoming, bounded.inputs['Vector'])
-            incoming = bounded.outputs['Color']
+            # Normalize does not prove RGB stays in [0,1]. This graph
+            # intentionally authors a color clamp before its HSL consumer.
+            clamp = tree.nodes.new('ShaderNodeMixRGB')
+            clamp.blend_type = 'MIX'; clamp.use_clamp = True
+            clamp.inputs['Fac'].default_value = 0
+            tree.links.new(bounded.outputs['Color'], clamp.inputs['Color1'])
+            incoming = clamp.outputs['Color']
         elif composition in {'ramp-linear', 'ramp-cardinal'}:
             bounded = tree.nodes.new('ShaderNodeValToRGB')
             bounded.color_ramp.interpolation = 'LINEAR' if composition == 'ramp-linear' else 'CARDINAL'
@@ -304,11 +319,24 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-color-conversion-') as
                     assert 'HSL' in str(error)
                     refusals.append({**case, 'reason': str(error)})
                 finally: bpy.data.materials.remove(material, do_unlink=True)
+        source_profile = tsl_ir._normalized_noise_source_profile(engine, sys.platform, platform.machine(), scene.cycles.device)
+        expected_source_refusals = {case['id'] for case in cases
+            if engine == 'CYCLES' and source_profile is None and case.get('composition') == 'noise'}
+        observed_source_refusals = set()
+        completed_cases = 0
         for case in cases:
             material, emission = make_material(case)
             proxy.data.materials.clear()
             proxy.data.materials.append(material)
-            document = tsl_ir.emit_channel(emission.inputs['Color'])
+            try:
+                document = tsl_ir.emit_channel(emission.inputs['Color'])
+            except tsl_ir.TslIrRefusal as error:
+                if not source_qualified_noise_refusal(engine, case.get('composition') == 'noise', str(error), source_profile): raise
+                observed_source_refusals.add(case['id'])
+                refusals.append({**case, 'engine': engine, 'reason': str(error),
+                                 'sourceQualification': 'unmeasured-cycles-normalized-child'})
+                bpy.data.materials.remove(material, do_unlink=True)
+                continue
             if case.get('consumer'):
                 def collect(value):
                     if isinstance(value, dict):
@@ -343,9 +371,12 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-color-conversion-') as
             case['maximum'] = pixels.max(axis=(0, 1)).tolist()
             if case.get('stage') == 'attribute': case['objectAttributes'] = {'color_input': case['value']}
             records.append(case)
+            completed_cases += 1
             bpy.data.materials.remove(material, do_unlink=True)
             for image in list(bpy.data.images):
                 if image.name.startswith('Exact color-conversion inputs') and not image.users: bpy.data.images.remove(image)
+        assert observed_source_refusals == expected_source_refusals, (observed_source_refusals, expected_source_refusals)
+        assert completed_cases + len(observed_source_refusals) == len(cases)
 (OUTPUT / 'index.json').write_text(json.dumps({'blender': bpy.app.version_string, 'buildHash': bpy.app.build_hash.decode(),
     'gpuBackend': bpy.context.preferences.system.gpu_backend, 'cyclesDevice': 'CPU', 'size': SIZE, 'cases': records, 'refusals': refusals,
     'nativeModuleHashes': {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in Path(native).iterdir()

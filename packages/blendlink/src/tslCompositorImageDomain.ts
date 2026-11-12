@@ -4,6 +4,7 @@ import * as TSL from 'three/tsl'
 import type { SourceCompositorOperation } from './sourceDisplay.js'
 import type { TslEffectNode } from './tslPostEffects.js'
 import { ownBlurRtt } from './tslCompositorBlur.js'
+import { resampleCompositorField, type CompositorSampling } from './tslCompositorResampling.js'
 
 const { Fn, clamp, ivec2, rtt, select, textureSize, uv, vec4 } = TSL as unknown as Record<
   'Fn' | 'clamp' | 'ivec2' | 'rtt' | 'select' | 'textureSize' | 'uv' | 'vec4',
@@ -13,6 +14,7 @@ const { Fn, clamp, ivec2, rtt, select, textureSize, uv, vec4 } = TSL as unknown 
 export interface CompositorImageOrigin {
   x: number
   y: number
+  sampling?: CompositorSampling
   roots: { node: TslEffectNode, extent?: (renderer: TslEffectNode) => readonly [number, number] }[]
 }
 
@@ -22,22 +24,83 @@ export function mergeImageOrigins(origins: (CompositorImageOrigin | null)[], fai
   const first = fields[0]!
   if (fields.some(value => value.x !== first.x || value.y !== first.y))
     fail('Inputs with different image origins require native cross-domain realization')
-  return { x: first.x, y: first.y, roots: [...new Set(fields.flatMap(value => value.roots))] }
+  return { ...first, roots: [...new Set(fields.flatMap(value => value.roots))] }
 }
 
 export function translatedImageOrigin(op: SourceCompositorOperation, input: CompositorImageOrigin | null,
   fail: (message: string) => never): CompositorImageOrigin | null {
   const delta = op.properties.image_translation
-  if (op.type !== 'RGBA' || op.inputs.Image?.value.type !== 'RGBA'
-    || op.properties.image_domain_model !== 'deferred-integer-origin-v1'
+  const model = op.properties.image_domain_model
+  if (model === 'deferred-integer-origin-v1') {
+    if (op.type !== 'RGBA' || op.inputs.Image?.value.type !== 'RGBA'
+      || !Array.isArray(delta) || delta.length !== 2
+      || delta.some(value => !Number.isInteger(value) || Math.abs(value) > 8192))
+      fail('Translate requires its bounded deferred integer-origin model')
+  } else if (model !== 'native-translation-v2' || op.type !== 'RGBA' || op.inputs.Image?.value.type !== 'RGBA'
     || !Array.isArray(delta) || delta.length !== 2
-    || delta.some(value => !Number.isInteger(value) || Math.abs(value) > 8192))
-    fail('Translate requires its bounded deferred integer-origin model')
+    || delta.some(value => typeof value !== 'number' || !Number.isFinite(value) || Math.abs(value) > 8192)
+    || !['Nearest', 'Bilinear'].includes(String(op.properties.image_interpolation))
+    || !['modern-cpu-v1', 'modern-metal-v1', 'legacy-cpu-v1', 'legacy-metal-v1'].includes(String(op.properties.image_sampling_model)))
+    fail('Translate requires a verified bounded native sampling model')
   if (input === null) return null
-  const x = input.x + delta[0], y = input.y + delta[1]
+  if (model === 'native-translation-v2' && op.properties.image_sampling_model === 'legacy-cpu-v1'
+    && op.properties.image_interpolation === 'Bilinear'
+    && (input.x !== 0 || input.y !== 0 || op.source.nodeType === 'CompositorNodeTransform' && delta.some(value => value !== 0)))
+    fail('Legacy CPU Bilinear sampling of shifted/intermediate Transform canvases requires native area-of-interest/data-window transport')
+  const legacyCpu = model === 'native-translation-v2' && op.properties.image_sampling_model === 'legacy-cpu-v1'
+  const offset = (axis: number): number => legacyCpu ? Math.trunc(delta[axis]) : delta[axis]
+  const sum = (a: number, b: number): number => model === 'deferred-integer-origin-v1' ? a + b : Math.fround(a + b)
+  const x = sum(input.x, offset(0)), y = sum(input.y, offset(1))
   if (Math.abs(x) > 8192 || Math.abs(y) > 8192)
     fail('Composed Translate offsets must remain between -8192 and 8192 pixels')
-  return { x, y, roots: input.roots }
+  const sampling = model === 'deferred-integer-origin-v1' ? undefined : {
+    model: op.properties.image_sampling_model, interpolation: legacyCpu ? 'Nearest' : op.properties.image_interpolation,
+  } as CompositorSampling
+  return { x, y, roots: input.roots, ...(sampling ? { sampling } : {}) }
+}
+
+export function validateCompositorExtent(origin: CompositorImageOrigin, renderer: TslEffectNode,
+  width: number, height: number, fail: (message: string) => never): void {
+  if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1)
+    fail('Translate requires a finite nonempty compositing image extent')
+  for (const root of origin.roots) {
+    let rootWidth: number, rootHeight: number
+    if (root.extent) [rootWidth, rootHeight] = root.extent(renderer)
+    else {
+      let source = root.node
+      if (source.isPassNode) source = source.getTextureNode()
+      while (source.referenceNode && source.referenceNode !== source) source = source.referenceNode
+      const pass = source.passNode
+      if (source.isRTTNode && source.autoResize || pass) {
+        const scale = pass?.getResolutionScale?.() ?? 1
+        rootWidth = Math.floor(width * scale); rootHeight = Math.floor(height * scale)
+      } else { rootWidth = source.value?.image?.width; rootHeight = source.value?.image?.height }
+    }
+    if (rootWidth !== width || rootHeight !== height)
+      fail('Translate requires matching source/render image extents; arbitrary data/display windows need native domain realization')
+  }
+}
+
+export function realizeCompositorOrigin(input: TslEffectNode, from: CompositorImageOrigin,
+  to: readonly [number, number], resources: { dispose(): void }[], fail: (message: string) => never): TslEffectNode {
+  const dx = from.x - to[0], dy = from.y - to[1]
+  if ((!from.sampling || from.sampling.interpolation === 'Nearest') && Number.isInteger(dx) && Number.isInteger(dy)
+    || dx === 0 && dy === 0)
+    return realizeIntegerImageOrigin(input, { ...from, x: dx, y: dy }, resources, fail)
+  if (!from.sampling) return fail('Fractional image realization requires a native sampling model')
+  return resampleCompositorField(input, [from.x, from.y], to, from.sampling, resources,
+    (renderer, width, height) => validateCompositorExtent(from, renderer, width, height, fail), fail)
+}
+
+export function translatedCompositorField(op: SourceCompositorOperation, input: TslEffectNode,
+  domain: CompositorImageOrigin | null, resources: { dispose(): void }[], fail: (message: string) => never): TslEffectNode {
+  translatedImageOrigin(op, domain, fail)
+  if (!domain || op.properties.image_domain_model !== 'native-translation-v2'
+    || op.properties.image_sampling_model !== 'legacy-cpu-v1') return input
+  const delta = op.properties.image_translation as number[]
+  if (!delta.some(value => !Number.isInteger(value))) return input
+  return resampleCompositorField(input, [0, 0], [0, 0], { model: 'legacy-cpu-v1', interpolation: op.properties.image_interpolation as 'Nearest' | 'Bilinear' }, resources,
+    (renderer, width, height) => validateCompositorExtent(domain, renderer, width, height, fail), fail, [delta[0]!, delta[1]!])
 }
 
 /** Realize once, after neighborhood/pointwise processing, preserving off-canvas
@@ -55,29 +118,7 @@ export function realizeIntegerImageOrigin(input: TslEffectNode, origin: Composit
     try {
       renderer.getDrawingBufferSize(size)
       const width = size.x, height = size.y
-      if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1)
-        fail('Translate requires a finite nonempty compositing image extent')
-      for (const root of origin.roots) {
-        if (root.extent) {
-          const [rootWidth, rootHeight] = root.extent(renderer)
-          if (rootWidth !== width || rootHeight !== height)
-            fail('Translate requires matching source/render image extents; arbitrary data/display windows need native domain realization')
-          continue
-        }
-        let source = root.node
-        if (source.isPassNode) source = source.getTextureNode()
-        while (source.referenceNode && source.referenceNode !== source) source = source.referenceNode
-        const pass = source.passNode
-        let rootWidth: number, rootHeight: number
-        if (source.isRTTNode && source.autoResize || pass) {
-          const scale = pass?.getResolutionScale?.() ?? 1
-          rootWidth = Math.floor(width * scale); rootHeight = Math.floor(height * scale)
-        } else {
-          rootWidth = source.value?.image?.width; rootHeight = source.value?.image?.height
-        }
-        if (rootWidth !== width || rootHeight !== height)
-          fail('Translate requires matching source/render image extents; arbitrary data/display windows need native domain realization')
-      }
+      validateCompositorExtent(origin, renderer, width, height, fail)
       if (image.renderTarget.width !== width || image.renderTarget.height !== height) image.setSize(width, height)
       updateBefore(frame)
     } finally {

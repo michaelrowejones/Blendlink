@@ -38,11 +38,15 @@ def _unit_bounded(expression):
         alpha = expression.get('output') == 'alpha'
         return all(0 <= value <= 1 for index, value in enumerate(expression['pixels'])
                    if (index % 4 == 3) == alpha)
-    if op == 'noise_normalized' and (expression.get('normalize') is not True or 'roughnessNode' in expression or expression.get('perlinModel') not in {'native-standard-f32', 'cycles-neon-fma'}): return False
+    if op == 'noise_normalized' and (expression.get('normalize') is not True or 'roughnessNode' in expression or expression.get('perlinModel') not in {'native-standard-f32', 'cycles-neon-fma', 'eevee-metal-periodic-f32', 'mf-periodic-f32'}): return False
+    # Native 3D/4D normalized Noise can escape [0,1]; Normalize is statistical scaling.
+    # Legacy JS-double amplitudes/denominator can push a 1D peak above1
+    # after shader float32 rounding, even though the native octave is bounded.
+    if op == 'noise' and expression.get('dimensions') == 1: return False
     if op in {'noise', 'noise_normalized'}:
         return (expression.get('normalize', True) is True
                 and all(expression.get(key, 'FBM') == 'FBM' for key in ['noiseType', 'noise_type', 'type'])
-                and expression.get('dimensions') in {1, 2, 3, 4}
+                and expression.get('dimensions') in {1, 2}
                 and isinstance(expression.get('detail'), (int, float)) and math.isfinite(expression['detail']) and 0 <= expression['detail'] <= 6
                 and isinstance(expression.get('roughness'), (int, float)) and math.isfinite(expression['roughness']) and 0 <= expression['roughness'] <= 1
                 and math.isfinite(expression.get('lacunarity', 2)) and expression.get('lacunarity', 2) > 0)
@@ -50,7 +54,7 @@ def _unit_bounded(expression):
     if op == 'noise_varying':
         return (expression.get('normalize') is True
                 and all(expression.get(key, 'FBM') == 'FBM' for key in ['noiseType', 'noise_type', 'type'])
-                and expression.get('dimensions') in {1, 2, 3, 4}
+                and expression.get('dimensions') in {1, 2}
                 and isinstance(expression.get('detail'), (int, float)) and math.isfinite(expression['detail']) and 0 <= expression['detail'] <= 2
                 and 0 < expression.get('lacunarity', 2) <= 2
                 and _unit_bounded(expression.get('roughnessNode', {})))
@@ -100,7 +104,7 @@ def emit_color_conversion(node, socket, *, emit_input, refuse, evaluation_engine
         elif _unit_bounded(incoming):
             domain = 'unit-bounded-live'
         else:
-            refuse('Separate HSL requires a proven unit RGB range or verified nonsingular static RGB; live HDR bounds are unknown')
+            refuse('Separate HSL requires a proven unit RGB range or verified nonsingular static RGB; live HDR bounds are unknown; for RGB enable Clamp Result on Mix Color, or use Clamp for a scalar field')
     expression = {"op": "color_convert", 'mode': mode, 'direction': 'separate' if separate else 'combine',
                   'model': 'eevee-gpu' if gpu else 'cycles', 'sourceEngine': evaluation_engine,
                   'input': incoming, 'hslUpperDivisor': association, 'inputDomain': domain,

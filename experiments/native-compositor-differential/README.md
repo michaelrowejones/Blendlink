@@ -32,8 +32,10 @@ version and platform.
 ## Generate native references separately
 
 All generators support the old Blender 4.2 scene node tree and the modern scene
-compositor group API. They use Cycles CPU for the scene render, disable view
-processing of the EXR, and select full compositor precision where available.
+compositor group API. Most select Cycles CPU for the scene context; the transform/resampling fixtures
+select EEVEE. Injected Image data can allow Blender to omit scene rendering.
+These are independent compositor references, with view processing disabled on
+the EXR and full compositor precision selected where available.
 Their default compositor device is CPU. The channel generator also accepts
 `BLENDLINK_COMPOSITOR_CHANNEL_DEVICE=GPU` on versions with an offline GPU
 compositor. A requested unavailable GPU device fails instead of substituting CPU.
@@ -715,24 +717,26 @@ radius behavior. These are native Metal results, not a claim of Linux OpenGL
 certification; the hosted gate must generate and test that backend separately.
 Evidence is in `artifacts/verification-compositor-relative-blur/optimized-final-built`.
 
-## Deferred integer image translations
+## Compatibility checkpoint: deferred integer image translations
 
 `compositor_transform_check.py` tests an earned subset of native Translate and
-Transform on the 4.2 property schema and the 5.2/5.3 menu-socket schemas. This
+Transform on the 4.2 property schema and the 5.2/5.3 menu-socket schemas. The original v1
 model supports absolute integer X/Y offsets from −8192 through 8192, Nearest
 interpolation and Clip extension. Transform additionally requires Angle=0 and
 Scale=1. Relative/wrapped coordinates, fractional offsets, other interpolation,
 rotation/scale, active render-border/crop windows, differing-origin merges and unequal source/render image windows
-remain named refusals. Rotate and Scale nodes are not claimed by this batch.
+were named refusals in that checkpoint. The v2 extension below earns Bilinear,
+fractional offsets and selected cross-domain branches. Rotate and Scale nodes
+remain separate work.
 
 Transforms carry a separate finite image origin through the compiled graph.
 Pointwise expressions and neighborhood filters operate on the original pixel
 window; the translated origin is realized only at the compositor output. This
 preserves off-canvas pixels through inverse translations and Blur/Flip/Posterize
 consumers, rather than cropping after every Translate. Constants have no finite
-window. Equal-origin branches may merge; unequal origins require a later native
-domain-realization model and currently refuse during extraction and runtime
-validation. Origin composition is also bounded to ±8192 pixels.
+window. This v1 format only merges equal-origin branches; it still refuses
+unequal origins during runtime validation. Fresh v2 exports below provide a
+qualified native-priority domain realization model. Origin composition is also bounded to ±8192 pixels.
 
 The native contracts come from
 [4.2 TranslateCanvasOperation](https://github.com/blender/blender/blob/v4.2.0/source/blender/compositor/operations/COM_TranslateOperation.cc),
@@ -754,9 +758,10 @@ metadata, not an assumption that arbitrary field expressions expose texture
 storage. Full data/display-window transport and rotated/scaled intermediate
 bounding boxes remain separate work.
 
-The fixture renders EEVEE scenes on each native version while independently
-selecting CPU or GPU compositing. Injected scene-linear float Image data isolates
-the compositor contract from scene-renderer differences. It includes strict
+The fixture selects an EEVEE scene context on each native version while
+independently selecting CPU or GPU compositing. Injected scene-linear float Image
+data isolates the compositor contract and can let Blender omit scene rendering;
+these pixel checks do not certify EEVEE scene-renderer pixels. It includes strict
 Float32 copies, signed/HDR RGBA and zero/negative alpha, entire-image off-canvas
 inverse translations, pointwise and Blur/Flip consumers, constant and
 same-origin Alpha Over branches, explicit full-frame field providers, and reused
@@ -779,7 +784,7 @@ node experiments/native-compositor-differential/run.mjs --built \
 ```
 
 The macOS checkpoint used native Blender 4.2.0 `a51f293548ad`, 5.2.0
-`fbe6228777e7` and 5.3.0 `02f0899d78e3`, each with EEVEE scene rendering and
+`fbe6228777e7` and 5.3.0 `02f0899d78e3`, each with an EEVEE-selected scene context and
 CPU/Metal compositing. All 372 built-package rows passed on WebGL2 and WebGPU
 (maximum absolute error `4.76837158203125e-7`), including 138 exact Float32-word
 copy checks and 24 live compiled sequences. Shader validation and retained GPU
@@ -789,3 +794,152 @@ also verifies read-only render-border refusal; adding that guard left supported
 input/expected Float32 words and programs unchanged. Evidence is retained in
 `artifacts/verification-compositor-transforms/reviewed-final-built`. Linux OpenGL
 requires its own fresh native generation and replay before certification.
+
+
+## Native fractional translation and default interpolation
+
+Fresh exports use `native-translation-v2`; old integer-v1 documents retain their
+previous behavior. Translate supports fixed absolute X/Y in ±8192 pixels,
+Nearest or Bilinear sampling, and Clip on both axes. Transform uses the same
+translation path with Angle=0 and Scale=1, subject to the legacy CPU qualification
+below. Dynamic offsets/menus, relative/wrapped coordinates, Bicubic/Anisotropic,
+rotation/scale, active render borders and unequal source/render windows remain
+named refusals. New fractional/filtered GPU exports currently require the proved
+Metal sampler; an uncalibrated OpenGL backend refuses instead of adopting Metal
+precision. Previously supported integer Nearest behavior remains portable.
+
+Modern Blender carries a Float32 origin and realization options through the
+finite field. Consecutive transforms compose that origin before sampling;
+pointwise/Blur/Flip consumers preserve the raw pixel domain. Alpha Over chooses
+its native domain in background→foreground→factor order. Its other Color fields
+are realized on that chosen domain before compositing. Equal-origin inputs
+share their pixels and retain the selected domain's sampling options. Other consumers with unequal origins and
+cross-domain scalar/vector/integer fields remain explicitly unqualified.
+Constants have no finite image domain.
+
+Blender 4.2 CPU differs: it resamples each Translate immediately and truncates its
+canvas displacement. Nearest first rounds displacement away from zero. Modern
+Nearest instead applies Blender's corrective matrix translation before its
+normalized-coordinate floor; 4.2 Metal has its separate unbiased sampler path.
+Those distinctions include native ±.5, ±.4999 and ±.5001 controls. CPU Bilinear
+preserves native rounded coordinate operations, pairwise Float32 products, and
+independent `floor(float32(u+1))` neighbor indices, which can differ from
+`floor(u)+1` near a boundary.
+
+A legacy CPU limitation is deliberately closed: Bilinear cannot currently consume
+an already shifted finite canvas, and nonidentity legacy Transform Bilinear is
+refused. Native 4.2 partially computes intermediate buffers through areas of
+interest; those compositions produced different boundary pixels and an unchanged
+Transform graph produced non-finite pixels on one run. The implementation does
+not fit those uncomputed buffer values. The fixture records 68 explicit native
+mode refusals on 4.2 CPU while testing its supported direct Translate, Nearest,
+constant and unshifted Bilinear paths. Integer-v1 Nearest compatibility remains.
+Full native area-of-interest/data-window transport is required to widen this
+qualification.
+
+The new realization boundary materializes raw inputs before remapping and returns
+an `Fn` producer, so another `.load()` cannot discard an upstream spatial mapping.
+Two fixed 256×32 Float32 lookup textures hold per-axis indices, fractions and
+legacy finite-window masks. Their contents change only when physical dimensions
+change; shader structure is independent of dimensions. The live resampling extent
+is 1…8192 pixels per axis. Both axes and every source/render extent are checked
+before mutating resources, and invalid extents recover on a later valid render.
+RTT/lookup ownership is idempotent, borrowed source textures remain alive, and
+renderer target/MRT/clear/viewport/scissor state is restored in `finally`.
+
+Raw FULL RGBA32F compositor sampling was calibrated independently of Image Texture
+or half-float/color-band sampling. The proved Metal coordinate model quantizes
+the normalized texel position to 8 fractional bits **before** subtracting .5.
+Independent fixed-function interpolation probes also found nearest-away Float32
+output midpoint ties. Software four-tap interpolation retains small final
+Float32 rounding differences; this is not a bit-exact Bilinear claim. The signed
+HDR reference corpus includes RGB scaled by 64 and leaves the existing 2e-5 error
+budget unchanged. Nearest copies and source calibration compare Float32 words.
+
+Primary contracts:
+[modern result sampling](https://github.com/blender/blender/blob/02f0899d78e3/source/blender/compositor/COM_result.hh),
+[modern realization/matrix bias](https://github.com/blender/blender/blob/02f0899d78e3/source/blender/compositor/intern/realize_on_domain_operation.cc),
+[native CPU interpolation](https://github.com/blender/blender/blob/02f0899d78e3/source/blender/blenlib/BLI_math_interp.hh),
+[legacy Translate](https://github.com/blender/blender/blob/a51f293548ad/source/blender/compositor/operations/COM_TranslateOperation.cc),
+[legacy full-frame areas/buffer normalization](https://github.com/blender/blender/blob/a51f293548ad/source/blender/compositor/intern/COM_FullFrameExecutionModel.cc),
+and [legacy GPU realization](https://github.com/blender/blender/blob/a51f293548ad/source/blender/compositor/realtime_compositor/algorithms/intern/realize_on_domain.cc).
+
+```sh
+BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE=CPU \
+BLENDLINK_COMPOSITOR_RESAMPLE_REFERENCES="$PWD/artifacts/native/resample-42-cpu" \
+"$BLENDLINK_BLENDER_42" --background --factory-startup --python-exit-code 1 -t 1 \
+  --python packages/blender-addon/tests/compositor_resample_check.py
+# Repeat for GPU and Blender 5.2/5.3 into separate directories.
+# Uncalibrated GPU samplers emit NOT_APPLICABLE + a reason JSON, not pixel success.
+npm run build --workspace blendlink
+node experiments/native-compositor-differential/run.mjs --built \
+  artifacts/native/resample-42-cpu artifacts/native/resample-42-gpu \
+  artifacts/native/resample-52-cpu artifacts/native/resample-52-gpu \
+  artifacts/native/resample-53-cpu artifacts/native/resample-53-gpu \
+  --timeout-ms 1200000 --out artifacts/verification-compositor-resample/final-built
+```
+
+The oracle opts out of node thumbnails through the shared helper's default-
+preserving `node_previews=False` option. Actual 4.2 Metal Image thumbnails abort
+when their 128-pixel aspect-preserving preview would have zero height (for
+example 8192×32); disabling those previews renders the same compositor output.
+That fixture setting does not change Blendlink runtime behavior or native graph
+sampling. Physical extent controls still include 1920 and 8192-wide images.
+
+Checkpoint counts and final built results are recorded with the retained
+`qualified-final-built` provenance/results. Native versions are 4.2.0
+`a51f293548ad`, 5.2.0 `fbe6228777e7`, and 5.3.0 `02f0899d78e3`, independently
+selecting CPU and Metal compositing. The renderer backend is asserted on every
+run; fallback and shader validation failures remain fatal. Unsupported-window
+resize frames are explicit error-only controls (`nativeOracle:false`), with no
+invented native pixels.
+
+`resampling-gpu-probe.py` is an independent public `gpu` compute control. Set
+`BLENDLINK_RESAMPLE_GPU_COORDINATES=/absolute/output.json` and run it with the
+same Blender command. A tiny EEVEE-selected GPU-compositor render creates the
+background GPU context before `GPUShaderCreateInfo`, `gpu.compute.dispatch` and
+`GPUTexture.read`. It records division/reciprocal coordinates separately from the
+port; its fourth algebraically cancellable channel is explicitly not a sampler
+readback. This probe is not a substitute for the actual native graphs above.
+
+The qualified macOS built checkpoint contains 1372 new rows (172 for 4.2 CPU,
+240 for each other version/device) plus all 372 original integer-v1 rows.
+All 1744 rows passed on each browser backend, maximum absolute error
+`7.62939453125e-6`. There are 426 strict Float32-word copy rows and 42 reused
+compiled resize sequences per backend, including 42 explicit rejected-window
+frames. Measured cost is at most 6 passes and 12567-byte GLSL/10106-byte WGSL
+fragments. Shader errors, page/console errors and retained GPU textures are zero;
+the whole-production-module build guard and immutable runtime snapshot report no
+workspace changes during the run.
+
+A second complete native generation reproduced every one of the 1372 qualified
+JSON rows byte-for-byte (`native-repeat-stability.json`). Matched CPU/GPU input
+controls retain identical Float32 words, while the same Bilinear graph has
+measurably different native device pixels (`matched-device-canaries.json`),
+providing a fallback canary independent of the emitted device marker.
+
+
+### Legacy CPU constant Transform qualification
+
+Fresh extraction refuses a legacy CPU `CompositorNodeTransform` whose Image is
+single-valued, whether linked or supplied as a default. The same 4.2 constant
+Transform produced transparent black in a retained Linux reference and the
+authored color on macOS. Sixteen macOS context controls (EEVEE/Cycles,
+thumbnails enabled/disabled, warm/cold evaluation, unused Image present/absent)
+did not establish a portable oracle-context fix. The native node lowers to
+Scale→Rotate→Translate, whose CPU canvas processing differs from Translate's
+explicit single-element shortcut. No black/color result is substituted for the
+other host's captured pixels.
+
+This is a fresh-source qualification only: the integer-v1 runtime remains
+unchanged. Finite-image Transform, constant Translate, modern Transform and GPU
+Transform retain their existing contracts. The integer fixture now emits 61
+positive rows and 9 read-only, artist-named constant-input refusals for 4.2 CPU;
+the other five version/device corpora still emit 62 positive rows.
+
+`legacy-constant-transform-probe.py` reproduces the independent context controls.
+Set `BLENDLINK_TRANSFORM_CONSTANT_PROBE=/absolute/output-directory`, optionally
+`BLENDLINK_TRANSFORM_CONSTANT_INPUT=/absolute/retained-reference.json`, and run
+with the normal background Blender command. The optional retained input is read
+unchanged and its SHA256 is recorded. Probe output characterizes native behavior;
+it does not authorize the refused fresh-source mode.

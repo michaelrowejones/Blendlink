@@ -29,7 +29,9 @@ describe('varying Noise capability admission', () => {
     expect(() => build({ noiseType: 'MULTIFRACTAL', normalize: true })).toThrow(/explicit native normalization/)
   })
   it('does not grant a raw or non-FBM field normalized Roughness bounds', () => {
-    expect(isUnitRoughnessExpression({ ...expression, output: 'fac' })).toBe(true)
+    expect(isUnitRoughnessExpression({ ...expression, dimensions: 2, output: 'fac' })).toBe(true)
+    for (const dimensions of [3,4])
+      expect(isUnitRoughnessExpression({ ...expression, dimensions, output: 'fac' })).toBe(false)
     for (const changes of [{ normalize: false }, { noiseType: 'MULTIFRACTAL' }, { output: 'color' }])
       expect(isUnitRoughnessExpression({ ...expression, ...changes })).toBe(false)
   })

@@ -968,20 +968,20 @@ def _matching_socket(sockets, reference):
     )
 
 
-def _walk_channel_upstream(socket):
+def _walk_channel_upstream(socket, *, group_stack=()):
     """Return (node, output_socket) pairs feeding one input socket.
 
     The walk crosses node-group walls in both directions: it enters a group
     instance through its matching active Group Output and leaves through the
     instance input feeding a Group Input node.  Reroutes are transparent.
     Muted nodes are kept — counting a muted texture is conservative, never
-    unsafe.  The walk must start from a socket in the material's root tree so
-    every Group Input has a known enclosing instance.
+    unsafe. Start at the material root, or supply the actual enclosing
+    instance stack for a socket inside the selected surface's group.
     """
     visited = []
     seen = set()
     stack = [
-        (link.from_node, link.from_socket, ())
+        (link.from_node, link.from_socket, tuple(group_stack))
         for link in getattr(socket, "links", ())
     ]
     while stack:

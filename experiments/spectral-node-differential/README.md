@@ -48,3 +48,13 @@ and typed half samples before Blender 5.3 (nearest-away ties); the measured soft
 OpenGL gate uses full-fraction/full-float samples even for half-stored endpoints.
 Older schema-1 programs without a rounding tag retain their previous nearest-even
 interpretation. Unknown native GPU backends produce a named refusal.
+
+### Composed normalized Noise source profiles
+
+The Noise control and Noise→Blackbody graphs retain their authored normalized
+child. On an unmeasured Cycles source profile, the fixture accepts only the exact
+producer refusal for those two declared cases and records their IDs and reasons;
+all EEVEE cases remain numerical comparisons. Expected refusal-set equality and
+case-count conservation prevent an unrelated compiler failure from becoming a
+pass. The measured macOS Blender 5.2 checkpoint still passes all 88 graphs on
+both built browser backends.

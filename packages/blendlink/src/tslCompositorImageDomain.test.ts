@@ -34,7 +34,47 @@ describe('deferred compositor image origins', () => {
   it.each([{ image_domain_model: 'future' }, { image_translation: [.5, 0] }, { image_translation: [8193, 0] },
     { image_translation: [NaN, 0] }, { image_translation: [0] }])('refuses unverified origin contracts: %s', patch => {
     const op = operation(); Object.assign(op.properties, patch)
-    expect(() => translatedImageOrigin(op, null, fail)).toThrow(/bounded deferred integer-origin/)
+    expect(() => translatedImageOrigin(op, null, fail)).toThrow(/bounded/)
+  })
+
+  it('versions fractional accumulation and legacy CPU integer canvas origins separately', () => {
+    const op = operation(), root = { node: TSL.vec4(1) }, input = { x: Math.fround(.1), y: 0, roots: [root] }
+    Object.assign(op.properties, { image_domain_model: 'native-translation-v2', image_translation: [.2, -.25],
+      image_sampling_model: 'modern-cpu-v1', image_interpolation: 'Bilinear' })
+    expect(translatedImageOrigin(op, input, fail)).toEqual({ x: Math.fround(Math.fround(.1) + .2), y: -.25,
+      roots: [root], sampling: { model: 'modern-cpu-v1', interpolation: 'Bilinear' } })
+    Object.assign(op.properties, { image_translation: [1.2, -2.3], image_sampling_model: 'legacy-cpu-v1' })
+    expect(translatedImageOrigin(op, { x: 0, y: 0, roots: [root] }, fail)).toEqual({ x: 1, y: -2, roots: [root],
+      sampling: { model: 'legacy-cpu-v1', interpolation: 'Nearest' } })
+  })
+
+  it('refuses legacy CPU Bilinear partial canvases before creating render resources', () => {
+    const op = operation(), root = { node: TSL.vec4(1) }
+    Object.assign(op.properties, { image_domain_model: 'native-translation-v2', image_translation: [.1, .2],
+      image_sampling_model: 'legacy-cpu-v1', image_interpolation: 'Bilinear' })
+    expect(() => translatedImageOrigin(op, { x: 1, y: -1, roots: [root] }, fail)).toThrow(/area-of-interest/)
+    op.source.nodeType = 'CompositorNodeTransform'
+    expect(() => translatedImageOrigin(op, { x: 0, y: 0, roots: [root] }, fail)).toThrow(/area-of-interest/)
+  })
+
+  it('disposes Bilinear mapping textures and targets once while borrowing scene input', () => {
+    const target = vi.spyOn(RenderTarget.prototype, 'dispose'), material = vi.spyOn(NodeMaterial.prototype, 'dispose')
+    const lookup = vi.spyOn(DataTexture.prototype, 'dispose')
+    const texture = new DataTexture(), borrowed = vi.fn()
+    texture.addEventListener('dispose', borrowed)
+    const request = { scene: 'Scene', viewLayer: 'ViewLayer', pass: 'Image', name: 'Image', type: 'RGBA' }
+    const op = operation()
+    Object.assign(op.properties, { image_domain_model: 'native-translation-v2', image_translation: [.5, .25],
+      image_sampling_model: 'modern-cpu-v1', image_interpolation: 'Bilinear' })
+    const graph: SourceCompositorProgram = { version: 1, status: 'extracted', passes: [request], diagnostics: [],
+      ops: [{ id: 'source', kind: 'render-pass', type: 'RGBA', source: { path: ['Compositor'], node: 'Render Layers', nodeType: 'CompositorNodeRLayers', output: 'Image' },
+        properties: {}, inputs: {}, pass: request }, op], output: { kind: 'ref', type: 'RGBA', node: 'translation' } }
+    try {
+      const built = buildSourceCompositor(graph, () => TSL.texture(texture))
+      built.dispose(); built.dispose()
+      expect(target).toHaveBeenCalledTimes(1); expect(material).toHaveBeenCalledTimes(1)
+      expect(lookup).toHaveBeenCalledTimes(2); expect(borrowed).not.toHaveBeenCalled()
+    } finally { target.mockRestore(); material.mockRestore(); texture.removeEventListener('dispose', borrowed); lookup.mockRestore(); texture.dispose() }
   })
 
   it('owns final realization targets/materials exactly once and borrows the source texture', () => {

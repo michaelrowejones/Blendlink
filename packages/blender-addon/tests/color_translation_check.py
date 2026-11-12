@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import sys
+import platform
 import bpy
 
 ADDON = Path(__file__).resolve().parents[1]
@@ -64,7 +65,27 @@ try:
             noise.inputs['Detail'].default_value = 0
             tree.links.new(coordinates.outputs['UV'], noise.inputs['Vector'])
             tree.links.new(noise.outputs['Color'], separate.inputs[0])
-            assert tsl_ir.emit_output(separate, separate.outputs[0])['input']['inputDomain'] == 'unit-bounded-live'
+            # This positive shader fixture targets EEVEE. Fresh Cycles on
+            # unmeasured CPU profiles must keep its named bake qualification.
+            if engine == 'CYCLES' and tsl_ir._normalized_noise_source_profile(
+                    engine, sys.platform, platform.machine(), bpy.context.scene.cycles.device) is None:
+                try:
+                    tsl_ir.emit_output(separate, separate.outputs[0])
+                    raise AssertionError('Unmeasured Cycles Noise inherited an EEVEE source profile')
+                except tsl_ir.TslIrRefusal as error:
+                    assert 'no verified live source precision profile' in str(error) and 'CYCLES' in str(error)
+            with tsl_ir.emission_context(evaluation_engine='EEVEE'):
+                try:
+                    tsl_ir.emit_output(separate, separate.outputs[0])
+                    raise AssertionError('Normalized 3D Noise acquired a false unit HSL range')
+                except tsl_ir.TslIrRefusal as error: assert 'bounds are unknown' in str(error)
+                # A real authored Clamp, rather than Normalize, restores a
+                # portable unit input for downstream saturation arithmetic.
+                clamp = tree.nodes.new('ShaderNodeClamp')
+                tree.links.new(noise.outputs['Fac'], clamp.inputs['Value'])
+                tree.links.new(clamp.outputs[0], separate.inputs[0])
+                assert tsl_ir.emit_output(separate, separate.outputs[0])['input']['inputDomain'] == 'unit-bounded-live'
+                tree.links.new(noise.outputs['Color'], separate.inputs[0])
             noise.normalize = False
             signed_noise = tsl_ir.emit_output(noise, noise.outputs['Color'])
             assert signed_noise['op'] == 'noise_fractal' and signed_noise['normalize'] is False

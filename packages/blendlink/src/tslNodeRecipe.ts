@@ -27,6 +27,7 @@ import {buildTslNativeTangent} from './tslTangentNodes.js'
 import {buildTslTangentNormalMap} from './tslTangentNormalMap.js'
 import { buildSharedUtilityIr } from './tslSharedUtilities.js'
 import { buildPortableSine } from './tslPortableTrig.js'
+import { buildMetalShaderNoiseCoordinate, buildExactNoiseCoordinate } from './tslNoiseCoordinates.js'
 import { nativeCpuPerlinFade, buildNativeNoiseFma } from './tslNativeNoisePrecision.js'
 import { buildTslFractalNoise } from './tslFractalNoise.js'
 import { buildTslVaryingFbm, isUnitRoughnessExpression } from './tslVaryingNoise.js'
@@ -943,7 +944,7 @@ function build(expression: TslIrExpression): TslExpression {
         expression.noiseType !== undefined && expression.noiseType !== 'FBM'))
         return fail('IR native normalized Noise requires static FBM and explicit normalize true')
       const cpuPerlin = nativeNormalized && expression.perlinModel === 'cycles-neon-fma'
-      if (nativeNormalized && !['native-standard-f32', 'cycles-neon-fma'].includes(String(expression.perlinModel)))
+      if (nativeNormalized && !['native-standard-f32', 'cycles-neon-fma', 'eevee-metal-periodic-f32', 'mf-periodic-f32'].includes(String(expression.perlinModel)))
         return fail('IR native normalized Noise has no verified source Perlin model')
       const legacyNormalized = expression.op === 'noise'
       const normalizeOutput = legacyNormalized || nativeNormalized || varyingRoughness && expression.normalize === true
@@ -988,9 +989,18 @@ function build(expression: TslIrExpression): TslExpression {
       // Legacy 2D/3D documents retain their MaterialX primitive. Raw 2D
       // uses explicit native float32 fade stages; 1D/4D have native ports
       // because MaterialX has neither arity.
-      const octaveForDimension = dimensions === 1 ? (legacyNormalized ? perlin1d : fractalPerlin1d)
+      const unwrappedOctave = dimensions === 1 ? (legacyNormalized ? perlin1d : fractalPerlin1d)
         : dimensions === 4 ? (cpuPerlin ? normalizedPerlin4dCpu : legacyNormalized ? perlin4d : fractalPerlin4d)
           : nativeNormalized && dimensions === 2 ? (cpuPerlin ? normalizedPerlin2dCpu : fractalPerlin2d) : !normalizeOutput && dimensions === 2 ? fractalPerlin2d : nativeNormalized && dimensions === 3 ? (cpuPerlin ? normalizedPerlin3dCpu : normalizedPerlin3d) : noiseType === 'HYBRID_MULTIFRACTAL' ? (dimensions === 2 ? hybridPerlin2d : hybridPerlin3d) : tslNoise
+      const periodic = nativeNormalized && ['eevee-metal-periodic-f32', 'mf-periodic-f32'].includes(String(expression.perlinModel))
+      const reduce = expression.perlinModel === 'eevee-metal-periodic-f32' ? buildMetalShaderNoiseCoordinate : buildExactNoiseCoordinate
+      const octaveForDimension = !periodic ? unwrappedOctave : (point: TslExpression): TslExpression => {
+        const wrapped = dimensions === 1 ? reduce(point)
+          : dimensions === 2 ? tslVec2(reduce(point.x), reduce(point.y))
+            : dimensions === 3 ? tslVec3(reduce(point.x), reduce(point.y), reduce(point.z))
+              : tslVec4(reduce(point.x), reduce(point.y), reduce(point.z), reduce(point.w))
+        return unwrappedOctave(wrapped)
+      }
       if (dimensions === 2) {
         // Two-dimensional Noise consumes only the first two coordinates.
         position = tslVec2(position.x, position.y)

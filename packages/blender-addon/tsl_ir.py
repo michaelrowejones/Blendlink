@@ -1857,17 +1857,13 @@ def emit_output(node, from_socket, stack=()):
         if image_output not in {"Color", "Alpha"}:
             _refuse(f"Image Texture output {socket_name!r} unsupported")
         interpolation = str(node.interpolation)
-        # Cubic is the cubic B-spline, tapped at ix-1..ix+2. Cycles'
-        # SET_CUBIC_SPLINE_WEIGHTS (intern/cycles/kernel/device/cpu/image.h)
-        # and three's own TextureBicubic w0..w3 are the same basis term for
-        # term, which is what makes this mappable at all. 'Smart' is an
-        # EEVEE-only mip heuristic that Cycles resolves to cubic, so it stays
-        # refused until something needs it and a cell can pin which of the two
-        # the oracle actually ran.
-        if interpolation not in {"Linear", "Closest", "Cubic"}:
-            _refuse(
-                f"Image interpolation {interpolation!r} has no cell yet"
-            )
+        # Native Image Texture routes Smart to the same cubic B-spline
+        # sampler. Canonicalize its authored selector only after accepting
+        # the actual native menu; external cubic transport remains refused.
+        if interpolation not in {"Linear", "Closest", "Cubic", "Smart"}:
+            _refuse(f"Image interpolation {interpolation!r} has no cell yet")
+        if interpolation == "Smart":
+            interpolation = "Cubic"
         extension = str(node.extension)
         if extension not in {"REPEAT", "EXTEND", "MIRROR", "CLIP"}:
             _refuse(f"Image extension {extension!r} has no cell yet")
@@ -2496,7 +2492,7 @@ def emit_output(node, from_socket, stack=()):
                 _noise_gpu_renderer() if source_engine == 'EEVEE' and gpu_backend == 'OPENGL' else '')
             native_shader_fused = normalized_native and not native_mf and normalized_source_profile == 'cycles-neon-fma'
             if normalized_native:
-                expression['perlinModel'] = 'cycles-neon-fma' if native_shader_fused else 'native-standard-f32'
+                expression['perlinModel'] = 'cycles-neon-fma' if native_shader_fused else 'mf-periodic-f32' if native_mf else 'eevee-metal-periodic-f32' if gpu_backend == 'METAL' else normalized_source_profile
             expression['evaluationModel'] = 'shader-mf' if native_mf else 'shader'
             expression['offsetModel'] = ('cycles-neon-fma' if native_shader_fused else 'float4-f32' if dimensions == '4D' else 'mf-f32' if native_mf
                                          else shader_offset_profile or 'shader-folded')

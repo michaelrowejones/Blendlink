@@ -17,7 +17,7 @@ import { buildCompositorMathPrecision } from './tslCompositorMath.js'
 import { buildCompositorHueCorrect } from './tslCompositorHueCorrect.js'
 import { buildCompositorWhitePoint } from './tslCompositorWhitePoint.js'
 import { buildNativeCompositorBlur, ownBlurRtt } from './tslCompositorBlur.js'
-import { mergeImageOrigins, translatedImageOrigin, realizeIntegerImageOrigin, type CompositorImageOrigin } from './tslCompositorImageDomain.js'
+import { mergeImageOrigins, translatedImageOrigin, translatedCompositorField, realizeCompositorOrigin, type CompositorImageOrigin } from './tslCompositorImageDomain.js'
 import { buildSharedBoolean, buildSharedInteger, buildSharedCompare, sharedTypedConstant, sharedTypedConversion } from './tslSharedUtilities.js'
 
 const {
@@ -529,10 +529,32 @@ export function buildSourceCompositor(
       }
       throw new SourceCompositorUnsupported(`Unsupported compositor value type ${v.type}`)
     }
+    const nativeDomain = program.ops.find(op => op.kind === 'translate' && op.properties.image_domain_model === 'native-translation-v2')
     for (const op of program.ops) {
+      const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
+        `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
+      const single = op.kind !== 'render-pass' && Object.values(op.inputs).every(input => isSingleValue(input.value))
+      const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
+      const selectedDomain = op.properties.image_domain_input
+      let domain: CompositorImageOrigin | null = null
+      if (usesImageDomains && !single && op.kind !== 'render-pass') {
+        if (selectedDomain !== undefined) {
+          if (op.kind !== 'alpha-over' || typeof selectedDomain !== 'string'
+            || !['Background', 'Foreground', 'Fac'].includes(selectedDomain))
+            domainFail('Cross-domain composition requires a verified native domain-priority input')
+          const selected = incoming.find(input => input.name === selectedDomain)?.domain
+          if (!selected) domainFail('Cross-domain composition is missing its native image domain')
+          domain = { ...selected!, roots: [...new Set(incoming.flatMap(input => input.domain?.roots ?? []))] }
+        } else domain = mergeImageOrigins(incoming.map(input => input.domain), domainFail)
+      }
+      const aligned = new Map<string, TslEffectNode>()
       const input = (name: string): TslEffectNode => {
         if (!op.inputs[name]) throw new SourceCompositorUnsupported(`Missing input ${name}`)
-        return value(op.inputs[name]!.value)
+        const raw = value(op.inputs[name]!.value), from = origin(op.inputs[name]!.value)
+        if (!usesImageDomains || !domain || !from || from.x === domain.x && from.y === domain.y) return raw
+        if (op.inputs[name]!.value.type !== 'RGBA') domainFail('Cross-domain composition currently requires Color image inputs')
+        if (!aligned.has(name)) aligned.set(name, realizeCompositorOrigin(raw, from, [domain.x, domain.y], resources, domainFail))
+        return aligned.get(name)
       }
       const constant = (name: string): unknown => {
         const v = op.inputs[name]?.value
@@ -544,7 +566,7 @@ export function buildSourceCompositor(
       try {
         switch (op.kind) {
           case 'translate':
-            node = input('Image')
+            node = translatedCompositorField(op, input('Image'), domain, resources, domainFail)
             break
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
@@ -1061,21 +1083,19 @@ export function buildSourceCompositor(
         throw error
       }
       nodes.set(op.id, node)
-      const single = op.kind !== 'render-pass' && Object.values(op.inputs).every(input => isSingleValue(input.value))
       if (single) singleValues.add(op.id)
       if (usesImageDomains) {
-        const fail = (message: string): never => { throw new SourceCompositorUnsupported(
-          `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
-        let domain: CompositorImageOrigin | null = op.kind === 'render-pass' ? { x: 0, y: 0, roots: [{ node,
-          extent: options.resolvePassExtent ? renderer => options.resolvePassExtent!(op.pass!, renderer) : undefined }] }
-          : single ? null : mergeImageOrigins(Object.values(op.inputs).map(input => origin(input.value)), fail)
-        if (op.kind === 'translate') domain = translatedImageOrigin(op, domain, fail)
+        if (op.kind === 'render-pass') domain = { x: 0, y: 0, roots: [{ node,
+          extent: options.resolvePassExtent ? renderer => options.resolvePassExtent!(op.pass!, renderer) : undefined }],
+          ...(nativeDomain ? { sampling: { model: nativeDomain.properties.image_sampling_model,
+            interpolation: 'Bilinear' } as NonNullable<CompositorImageOrigin['sampling']> } : {}) }
+        if (op.kind === 'translate') domain = translatedImageOrigin(op, domain, domainFail)
         origins.set(op.id, domain)
       }
     }
     const output = value(program.output), domain = origin(program.output)
     const transformSource = program.ops.find(op => op.kind === 'translate')?.source
-    return { node: usesImageDomains && domain ? realizeIntegerImageOrigin(output, domain, resources,
+    return { node: usesImageDomains && domain ? realizeCompositorOrigin(output, domain, [0, 0], resources,
       message => { throw new SourceCompositorUnsupported(transformSource
         ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output, dispose }
   } catch (error) {

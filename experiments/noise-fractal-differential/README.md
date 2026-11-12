@@ -214,8 +214,9 @@ remain a separate path. Linked Roughness retains `noise_varying`.
 
 EEVEE is the primary target: 175 native EEVEE graphs on each Blender
 4.2/5.2/5.3 pass both physical Apple Metal browser APIs. The 5.3 repeat uses the
-built SDK with all 112 modules checked. All 175 retained 5.2 EEVEE graphs also
-pass both built SwiftShader APIs without device loss. This includes literal
+built SDK with all 112 modules checked. At the prior unwrapped-model checkpoint, all 175 retained 5.2 EEVEE graphs also
+passed both built SwiftShader APIs on the measured Mac ARM host without
+device loss; this does not certify hosted Linux driver stability. This includes literal
 and spatial shader stages, every dimension/output, fractional/high Detail,
 negative/nonbinary Lacunarity, Distortion and amplified residuals. Native
 OpenGL is a separate hosted gate, not inferred from Metal source evidence.
@@ -223,14 +224,15 @@ OpenGL is a separate hosted gate, not inferred from Metal source evidence.
 Verified Mac ARM Cycles CPU profiles remain available. Its SIMD Perlin uses
 fused multiply-add and different fade/interpolation staging, so the payload
 selects an explicit source precision model. The bounded portable FMA has
-12,288 independent exact-rational float32 controls: zero error on both physical
+16,384 independent exact-rational float32 controls: zero error on both physical
 and software browser APIs. Results travel as positive 11/11/10-bit RGB chunks
-so material clipping cannot hide negative-number errors. This is a bounded
-fade/gradient kernel proof, not a general overflow/subnormal FMA promise.
+so material clipping cannot hide negative-number errors. The extended controls include finite int32-quotient times 100000 cancellation
+used by Metal coordinate reduction. This is a bounded kernel proof, not a
+general overflow/subnormal FMA promise.
 
 Unmeasured Cycles source profiles and GPU rendering take a named source-bake
 path. Shader-stage Cycles SIMD 3D/4D is additionally limited to Detail <=1 and
-zero Distortion: the heavier 3D Color Detail6 program lost both SwiftShader
+zero Distortion: the heavier 3D Color Detail 6 program lost both SwiftShader
 devices despite tiny memory use. The emitter and runtime refuse those workloads;
 MF constant profiles use their independently proved standard model. Fresh
 final corpora retain 289 graphs in 4.2 and 317 each in 5.2/5.3, plus 60/32/32
@@ -241,11 +243,45 @@ Lacunarity2 with zero Distortion. Full-float input calibration is exact and its
 Cycles Color/Fac error is <=2.384186e-7. It does not rely solely on the main
 corpus's exactly half-representable input grid.
 
-These primitives still omit native `snoise`'s periodic coordinate reduction
-at 100000 and large-coordinate correction at 1e6. The current parity evidence
-covers octave coordinates inside that finite band; translated graphs beyond
-it must not be described as full native parity. Coordinate wrapping is a
-separate remaining port. Approximation and renderer/source limits stay explicit.
+New Metal EEVEE graphs select `eevee-metal-periodic-f32`; native MF constant
+graphs select `mf-periodic-f32`. Both reduce each octave coordinate at 100000
+and apply the native +.5 correction at abs(coordinate)>=1e6, including Color
+and Distortion octaves. Below 100000 they return the coordinate unchanged.
+The Metal model uses the measured float32 reciprocal/int32 quotient and fused
+subtraction; the MF model computes exact finite-float32 C fmod from the
+mantissa/exponent. Independent native Math controls distinguish the large
+Metal remainder 96 from a plausible but wrong nonfused remainder 128.
+
+Spatial OpenGL EEVEE and shader-stage Cycles retain their existing unwrapped
+models and qualified finite coordinate band. Their periodic source profiles
+are not promoted by the Metal/MF result. Old serialized `noise` and prior
+`noise_normalized` model names keep their prior behavior. Older runtimes
+reject the new model names rather than silently omitting wrapping.
+
+Native Metal boundary corpora contain 259 graphs in 4.2 and 291 each in 5.2/5.3:
+all four dimensions, Fac/Color, literal/MF and image stages, both signs and
+adjacent float32 values at 100000/1e6, plus the ~1.0741e9 quotient boundary.
+Modern MF cases also cover finite extremes through float32 maximum. Both
+physical browser APIs pass these cases under the existing native half-target
+allowance plus 2e-5; no numerical budget was expanded. The focused software
+repeat covers 51/83/83 graphs on the three native versions, including all
+modern MF extreme-coordinate cases. Built SDK snapshots validate all 113
+runtime modules.
+
+The identity optimization has a separate direct bit proof: 4,096 float32
+patterns below 100000, including signed zero/subnormals, pass both production
+helpers on physical and software WebGPU/WebGL2 (32,768 exact comparisons).
+This preserves input coordinates; it is not a claim that every compiled
+material's pixels stay byte-identical. Fresh ordinary EEVEE 175-graph corpora
+also pass both physical APIs on each native version.
+
+Normalize is statistical scaling, not a general unit-range guarantee.
+Actual native 3D/4D normalized fields can be negative: the durable
+`noise_normalized_range_check.py` preserves those values with a positive
+Emission offset and verifies the unit-proof refusal. Legacy 1D serialized
+normalization can also round a peak to 1.000000238418579 on SwiftShader while
+Metal returns 1. Output is preserved; an authored Clamp restores a downstream
+unit contract. Fresh staged 1D and the separate 2D admission remain distinct.
 
 ```sh
 BLENDLINK_NOISE_NORMALIZED=1 BLENDLINK_NOISE_ENGINE=EEVEE \
@@ -255,6 +291,18 @@ node experiments/noise-fractal-differential/run.mjs --built
 
 BLENDLINK_FMA_EVIDENCE=artifacts/verification-noise-fma \
 node experiments/noise-fractal-differential/probe-fma.mjs --built
+```
+
+Periodic and identity controls:
+
+```sh
+BLENDLINK_NOISE_COORDINATES=1 BLENDLINK_NOISE_ENGINE=EEVEE \
+BLENDLINK_BLENDER=/absolute/path/to/blender \
+BLENDLINK_NOISE_EVIDENCE=artifacts/verification-noise-coordinates \
+node experiments/noise-fractal-differential/run.mjs --built
+
+BLENDLINK_NOISE_IDENTITY_EVIDENCE=artifacts/verification-noise-coordinate-identity \
+node experiments/noise-fractal-differential/probe-coordinate-identity.mjs --built
 ```
 
 Omit the engine selector to also test admissible Cycles profiles and record
@@ -326,11 +374,34 @@ high-detail Color expression shallow for shader compilers. The legacy
 normalized recurrence remains unchanged. This is a portability investigation;
 hosted Linux success is required before calling its GPU-process loss fixed.
 
-All334 retained graphs per Blender4.2/5.2/5.3 pass both physical Metal browser
-backends (2,004 readbacks), and all334 retained Linux5.2 references pass both
-local SwiftShader APIs (668 readbacks). The996 readbacks overlapping the prior
-scalar-sharing corpus are byte-identical. The focused4D Color case is also
+All 334 retained graphs per Blender 4.2/5.2/5.3 pass both physical Metal browser
+backends (2,004 readbacks), and all 334 retained Linux 5.2 references pass both
+local SwiftShader APIs (668 readbacks). The 996 readbacks overlapping the prior
+scalar-sharing corpus are byte-identical. The focused 4D Color case is also
 byte-identical on both software APIs. That case's generated program grows from
-21,544 to22,670 bytes on WebGPU and20,359 to21,212 on WebGL2; this change does
+21,544 to 22,670 bytes on WebGPU and 20,359 to 21,212 on WebGL2; this change does
 not claim shader-size reduction or a production timing improvement. Native
 references, source parameter bounds and numerical budgets remain unchanged.
+
+### Normalized output and downstream ranges
+
+Normalize does not imply an exact unit interval. Actual native Blender 4.2/5.2/5.3
+EEVEE normalized 3D Noise at (27687.359375,47520.48046875,38070.5), Scale 1,
+Detail 0 produces −0.00439453125. The 4D point (58250.5,35498.5,49388.5,58164.5)
+produces −0.021728515625. Positive emission offsets expose these values without
+clipping; 12 physical browser readbacks preserve the output under the unchanged
+native target allowance. Python and TypeScript refuse 3D/4D unit-range claims
+for legacy, fresh-normalized and varying-normalized opcodes independently.
+
+Legacy serialized 1D at W 291.5, Detail 6, Roughness=f32(.063289), Lacunarity 1
+produces 1.000000238418579 on both SwiftShader APIs, while both physical Metal
+APIs produce 1. Its JavaScript-double amplitude denominator differs from shader
+float32 accumulation. Only that legacy 1D unit proof is removed; its output and
+new shader-staged 1D paths retain their behavior. The remaining 2D kernel has
+separate headroom evidence; no range is inferred solely from the Normalize UI.
+
+An actual authored clamp can re-establish a downstream range. For RGB, enable
+Clamp Result on a Mix Color node; a scalar Clamp converts a color to a scalar
+and is appropriate for scalar Roughness fields. HSL admission and live
+Roughness validate the executable graph rather than trusting a claimed range.
+Native output is never silently clipped by these validation changes.

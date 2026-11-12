@@ -34,6 +34,9 @@ try:
                 assert literal['value'] == list(ramp.color_ramp.evaluate(ramp.inputs['Fac'].default_value))[:3]
             constant = tree.nodes.new('ShaderNodeCombineXYZ')
             noise = tree.nodes.new('ShaderNodeTexNoise')
+            # This probes Ramp's MF domain, independently of whether the
+            # source host has a fresh normalized Cycles precision profile.
+            noise.normalize = False
             tree.links.new(constant.outputs[0], noise.inputs['Vector'])
             link = tree.links.new(noise.outputs['Fac'], ramp.inputs['Fac'])
             if bpy.app.version >= (5, 0, 0):

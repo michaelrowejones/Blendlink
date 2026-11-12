@@ -3190,7 +3190,8 @@ def _plan_tsl_program(
     with no proven channel stays `preserved` rather than `blocked`: an
     unproven program must not block the whole export, because the artist
     material ships stock either way and the named refusals on the channel
-    plan are the evidence."""
+    plan are the evidence. Required normal responses are an exception: a
+    stock carrier cannot silently substitute for an omitted live normal."""
     object_names = tuple(sorted({obj.name for obj, _slot in raw_bindings}))
     bindings = tuple(
         MaterialBinding(obj.name, slot) for obj, slot in raw_bindings
@@ -3218,8 +3219,9 @@ def _plan_tsl_program(
         )
     ]
     root = None
+    root_stack = ()
     if not surface_resolved:
-        root, _stack = tsl_ir.find_principled_root(tree, target=target)
+        root, root_stack = tsl_ir.find_principled_root(tree, target=target)
         for name in ('Normal', 'Coat Weight', 'Coat Roughness', 'Coat Normal',
                      'Transmission Weight', 'IOR', 'Sheen', 'Sheen Roughness'):
             socket = root.inputs.get('Sheen Tint' if name == 'Sheen' else name)
@@ -3244,8 +3246,43 @@ def _plan_tsl_program(
         from . import normal_ir
     else:
         import normal_ir
+    if surface_resolved:
+        def static_surface_scalar(socket,stack):
+            owners=(socket.id_data,)+(tuple(instance.id_data for instance in stack))
+            if any(procedural._animated_id(owner) for owner in owners):return None
+            try:
+                with tsl_ir.emission_context(evaluation_engine=target):
+                    return tsl_ir._fold_constant_scalar(tsl_ir._scalar_input(socket,stack))
+            except (tsl_ir.TslIrRefusal,RecursionError):return None
+        def required_surface_normals(expression):
+            if expression['kind']=='mix':
+                factor=static_surface_scalar(expression['fac_socket'],expression['fac_stack'])
+                branches=('a',) if factor is not None and factor<=0 else ('b',) if factor is not None and factor>=1 else ('a','b')
+                for branch in branches:yield from required_surface_normals(expression[branch])
+                return
+            node=expression.get('node')
+            if node is None or expression['kind'] not in {'principled','diffuse','glossy'}:return
+            for channel in ('Normal','Coat Normal'):
+                if channel=='Coat Normal':
+                    weight=node.inputs.get('Coat Weight')
+                    if weight is None or static_surface_scalar(weight,expression['stack'])==0:continue
+                socket=node.inputs.get(channel)
+                if socket is None or not socket.is_linked:continue
+                required=normal_ir.channel_native_normal_nodes(node,channel,procedural._walk_channel_upstream,group_stack=expression['stack'])
+                yield node,channel,required
+        try:
+            required_normals=list(required_surface_normals(tsl_ir.resolve_surface(tree,target)))
+        except (tsl_ir.TslIrRefusal,RecursionError):required_normals=[]
+        for leaf,channel,required in required_normals:
+            names=', '.join(sorted({node.bl_idname for node in required})) or 'a linked normal input'
+            object_info_issues.append(MaterialIssue(
+                'material.normal-map-program-unproven', material.name,
+                f'Active Surface leaf "{leaf.name}" has a {channel} response from {names}; '
+                'surface folding cannot carry this normal response.',
+                'Keep a supported normal program or explicitly choose a native material capture; '
+                'the source nodes remain intact.', object_names))
     for entry in channels:
-        if 'tslIr' not in entry and normal_ir.channel_has_native_normal(root,entry.get('channel'),procedural._walk_channel_upstream):
+        if 'tslIr' not in entry and normal_ir.channel_has_native_normal(root,entry.get('channel'),procedural._walk_channel_upstream,group_stack=root_stack):
             object_info_issues.append(MaterialIssue('material.normal-map-program-unproven',material.name,
                 'Native normal/tangent channel '+entry.get('channel','?')+' has no proven program: '+entry.get('tslIrRefusal','unknown input domain'),
                 'Keep this channel within a verified native normal domain; its source nodes remain intact.',object_names))

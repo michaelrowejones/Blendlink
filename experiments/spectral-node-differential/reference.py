@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Actual native shader pixels for spectral nodes; no copied math oracle."""
 import json
+import platform
 import os
 import sys
 import tempfile
@@ -50,8 +51,17 @@ engines = {item.identifier for item in scene.render.bl_rna.properties["engine"].
 eevee = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
 temperatures = [-100, 0, 799, 800, 801, 964.9, 965, 1167, 1449, 1902, 3315, 6365, 6500, 11999, 12000, 50000]
 wavelengths = [0, 374.9, 375, 375.1, 379, 380, 381, 385, 450, 500, 540, 600, 700, 775, 779, 780, 781, 1000]
-records = []
+records, refusals = [], []
+requested_count = 0
 only_cycles = os.environ.get("BLENDLINK_SPECTRAL_CYCLES_ONLY") == "1"
+
+def source_qualified_noise_refusal(engine, uses_noise, reason, source_profile):
+    """Accept only the declared unmeasured Cycles child-profile refusal."""
+    expected = ('Normalized Noise has no verified live source precision profile for '
+                'CYCLES on ' + sys.platform + '/' + platform.machine()
+                + '; use source baking for this Cycles profile')
+    return engine == 'CYCLES' and uses_noise and source_profile is None and reason == expected
+
 
 def material_for(kind, value=None, bounds=None):
     material = bpy.data.materials.new("Native spectral " + kind)
@@ -122,12 +132,26 @@ with tempfile.TemporaryDirectory(prefix="blendlink-native-spectral-") as tempora
         else:
             cases += [("blackbody", None, (900, 1000)), ("blackbody", None, (6000, 7000)),
                       ("wavelength", None, (490, 510))]
+        requested_count += len(cases)
+        source_profile = tsl_ir._normalized_noise_source_profile(engine, sys.platform, platform.machine(), scene.cycles.device)
+        expected_refusals = {engine.lower() + '-' + kind + '-' + str(index)
+            for index, (kind, value, bounds) in enumerate(cases)
+            if engine == 'CYCLES' and source_profile is None and isinstance(value, dict) and value.get('noise')}
+        observed_refusals = set()
         for index, (kind, value, bounds) in enumerate(cases):
             label = engine.lower() + "-" + kind + "-" + str(index)
             material, emission = material_for(kind, value, bounds)
             proxy.data.materials.clear()
             proxy.data.materials.append(material)
-            document = tsl_ir.emit_channel(emission.inputs["Color"])
+            try:
+                document = tsl_ir.emit_channel(emission.inputs["Color"])
+            except tsl_ir.TslIrRefusal as error:
+                if not source_qualified_noise_refusal(engine, isinstance(value, dict) and value.get('noise'), str(error), source_profile): raise
+                observed_refusals.add(label)
+                refusals.append({'id': label, 'engine': engine, 'reason': str(error),
+                                 'sourceQualification': 'unmeasured-cycles-normalized-child'})
+                bpy.data.materials.remove(material, do_unlink=True)
+                continue
             (OUTPUT / "ir" / (label + ".json")).write_text(json.dumps(document))
             if engine == "CYCLES":
                 result = bakelib.bake_channel_field_pixels([proxy], size=SIZE, margin_px=0,
@@ -149,6 +173,8 @@ with tempfile.TemporaryDirectory(prefix="blendlink-native-spectral-") as tempora
                             "value": value, "bounds": bounds,
                             "minimum": pixels.min(axis=(0, 1)).tolist(), "maximum": pixels.max(axis=(0, 1)).tolist()})
             bpy.data.materials.remove(material, do_unlink=True)
+        assert observed_refusals == expected_refusals, (observed_refusals, expected_refusals)
+assert len(records) + len(refusals) == requested_count
 (OUTPUT / "index.json").write_text(json.dumps({"blender": bpy.app.version_string,
-    "buildHash": bpy.app.build_hash.decode(), "cyclesDevice": "CPU", "size": SIZE, "cases": records}, indent=2))
+    "buildHash": bpy.app.build_hash.decode(), "cyclesDevice": "CPU", "size": SIZE, "cases": records, "refusals": refusals, "requestedCases": requested_count}, indent=2))
 print("BLENDLINK_SPECTRAL_REFERENCES_PASSED " + str(len(records)))

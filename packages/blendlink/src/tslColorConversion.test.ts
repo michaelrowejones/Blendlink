@@ -44,7 +44,7 @@ describe('native shader color conversion', () => {
     expect(() => build(expression({ inputDomain: 'unit-bounded-live', input }))).toThrow(/verified finite input domain/)
   })
   it('refuses unproven Noise modes and contradictory annotations', () => {
-    const input: TslIrExpression = { op: 'noise', dimensions: 3, detail: 2, roughness: .5, lacunarity: 2 }
+    const input: TslIrExpression = { op: 'noise', dimensions: 2, detail: 2, roughness: .5, lacunarity: 2 }
     expect(build(expression({ inputDomain: 'unit-bounded-live', input }))).toBeTruthy()
     for (const fields of [{ normalize: false }, { noiseType: 'MULTIFRACTAL' }, { type: 'RIDGED_MULTIFRACTAL' },
       { detail: 100 }, { roughness: -1 }, { lacunarity: Number.NaN }]) {

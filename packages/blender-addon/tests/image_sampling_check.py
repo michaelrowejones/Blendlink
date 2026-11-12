@@ -20,7 +20,7 @@ before=(tuple(image.pixels[:]),len(tree.nodes),len(tree.links),image.use_half_pr
 for engine in ["CYCLES","EEVEE"]:
  for extension in ["REPEAT","EXTEND","MIRROR","CLIP"]:
   node.extension=extension
-  for interpolation in ["Closest","Linear","Cubic"]:
+  for interpolation in ["Closest","Linear","Cubic","Smart"]:
    node.interpolation=interpolation
    for output in ["Color","Alpha"]:
     tree.links.new(node.outputs[output],target.inputs["Base Color"])
@@ -28,6 +28,7 @@ for engine in ["CYCLES","EEVEE"]:
     expression=document["output"];json.dumps(document,allow_nan=False)
     assert expression["sourceEngine"]==engine
     assert expression["extension"]==extension
+    assert expression['interpolation']==('Cubic' if interpolation=='Smart' else interpolation)
     assert expression["sourceImageStorage"]==("rgba16f" if engine=="EEVEE" else "rgba32f")
     assert tuple(image.pixels[:])==before[0] and image.use_half_precision==before[3] and image.users==before[4]
 image.use_half_precision=False
