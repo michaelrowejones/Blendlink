@@ -1,5 +1,6 @@
 import { buildNativeMathModulo } from './tslMathModuloNative.js'
 import { buildNoiseFieldBarrier } from './tslNoiseFieldBarrier.js'
+import { buildTslBumpHeight } from './tslBumpHeight.js'
 import { nativeBumpInput, isNativeUnitNormal } from './tslBumpPassthrough.js'
 /** MTLX-TSL-001: build TSL nodes from the Blender-channel IR.
  *
@@ -898,6 +899,8 @@ function build(expression: TslIrExpression): TslExpression {
       // IR vectors use Blender world axes; glTF world is Y-up.
       return tslVec3(world.x, world.z.negate(), world.y)
     }
+    case 'bump_height_native':
+      return buildTslBumpHeight(expression,activeOptions)
     case 'bump_passthrough_native':
       return build(nativeBumpInput(expression))
     case 'normal_map_native':

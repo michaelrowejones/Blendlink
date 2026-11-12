@@ -3,6 +3,7 @@ import { buildCompositorFlip } from './tslCompositorSpatial.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
 import { buildCompositorLuminanceKey } from './tslCompositorLuminanceKey.js'
 import { buildCompositorDifferenceKey } from './tslCompositorDifferenceKey.js'
+import { buildCompositorSpill } from './tslCompositorSpill.js'
 import * as TSL from 'three/tsl'
 import { DataTexture, FloatType, RGBAFormat } from 'three'
 import type {
@@ -756,6 +757,12 @@ export function buildSourceCompositor(
           case 'difference-key': {
             const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
             node = buildCompositorDifferenceKey(op, input, compositorEvaluationDevice(op, single),
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
+          }
+          case 'color-spill': {
+            const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
+            node = buildCompositorSpill(op, input, compositorEvaluationDevice(op, single),
               message => { throw new SourceCompositorUnsupported(message) })
             break
           }

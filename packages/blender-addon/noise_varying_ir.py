@@ -11,7 +11,7 @@ else:
 def _scalar_structure(expression):
     if not isinstance(expression, dict): return False
     operation = expression.get('op')
-    if operation in {'const_float', 'separate', 'rgb_to_bw'}: return True
+    if operation in {'const_float', 'separate', 'rgb_to_bw', 'math_modulo_native'}: return True
     if operation == 'clamp01': return _scalar_structure(expression.get('input'))
     if operation == 'clamp_minmax':
         return all(_scalar_structure(expression.get(key)) for key in ['value', 'min', 'max'])

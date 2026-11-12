@@ -119,11 +119,11 @@ export async function assertLegacyMaterialCarriers(
   const nativeNormal=(value:unknown):boolean=>{
     if(Array.isArray(value))return value.some(nativeNormal)
     if(!value||typeof value!=='object')return false
-    return ['normal_map_native','normal_view_native','normal_map_tangent_native'].includes(String((value as Record<string,unknown>).op))||Object.values(value).some(nativeNormal)
+    return ['normal_map_native','normal_view_native','normal_map_tangent_native','bump_height_native'].includes(String((value as Record<string,unknown>).op))||Object.values(value).some(nativeNormal)
   }
   const normalNames=[...primaryNormals].filter(([source])=>Object.hasOwn(programs.materials,source)&&nativeNormal(programs.materials[source]?.channels))
     .flatMap(([,names])=>[...names]).sort()
-  if(normalNames.length)throw new Error(`Legacy WebGLRenderer cannot render the shipped live native Normal Map program for ${normalNames.map(name=>JSON.stringify(name)).join(', ')}. `+
+  if(normalNames.length)throw new Error(`Legacy WebGLRenderer cannot render the shipped live native normal program for ${normalNames.map(name=>JSON.stringify(name)).join(', ')}. `+
     'Its portable base color does not carry the native normal function. Use WebGPURenderer (including its WebGL2 fallback).')
   const unsupported = [...missing].filter(([source]) =>
     Object.hasOwn(programs.materials, source) && programs.materials[source]?.channels?.['Base Color']?.tslIr)

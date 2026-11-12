@@ -12,9 +12,11 @@ import numpy as np
 if __package__:
     from . import geometry_ir
     from . import normal_noise_bounds
+    from .math_modulo_native_ir import qualified_modulo_scalar
 else:
     import geometry_ir
     import normal_noise_bounds
+    from math_modulo_native_ir import qualified_modulo_scalar
 
 
 def fail():raise ValueError('Normal Map tangent input has no verified finite range; use supported bounded image/procedural inputs')
@@ -54,6 +56,17 @@ def image_ranges(expression):
     return result
 
 
+def _clamp_bound(expression,depth=0):
+    if not isinstance(expression,dict) or depth>32:return None
+    if expression.get('op')=='const_float':
+        value=expression.get('value')
+        return value if isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(value) and abs(value)<=16 and (value==0 or abs(value)>=2**-126) and float(np.float32(value))==value else None
+    if expression.get('op')=='math' and expression.get('operation') in {'MINIMUM','MAXIMUM'}:
+        a,b=(_clamp_bound(expression.get(key),depth+1) for key in ['a','b'])
+        if a is not None and b is not None:return min(a,b) if expression['operation']=='MINIMUM' else max(a,b)
+    return None
+
+
 def bounds(expression):
     if not isinstance(expression,dict):fail()
     op=expression.get('op')
@@ -84,7 +97,16 @@ def bounds(expression):
             lo,hi=min(values),max(values);padding=max(1,abs(lo),abs(hi))*2**-22
             result.append((lo-padding,hi+padding))
     elif op=='clamp01':
-        bounds(expression.get('input'));result=[(0,1)]*3
+        incoming=expression.get('input')
+        if isinstance(incoming,dict) and incoming.get('op')=='math_modulo_native':
+            if not qualified_modulo_scalar(incoming):fail()
+        else:bounds(incoming)
+        result=[(0,1)]*3
+    elif op=='clamp_minmax' and isinstance(expression.get('value'),dict) and expression['value'].get('op')=='math_modulo_native':
+        if not qualified_modulo_scalar(expression['value']):fail()
+        low,high=(_clamp_bound(expression.get(key)) for key in ['min','max'])
+        if low is None or high is None:fail()
+        result=[(min(low,high),max(low,high))]*3
     else:fail()
     if len(result)!=3 or any(not isinstance(value,(int,float)) or not math.isfinite(value) or abs(value)>16 for pair in result for value in pair):fail()
     return result

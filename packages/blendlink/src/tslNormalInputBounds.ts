@@ -1,6 +1,7 @@
 import { FloatType, NoColorSpace, RGBAFormat, UnsignedByteType, type Texture } from 'three'
 import { TslIrError, type BuildTslOptions, type TslIrExpression } from './tslNodeRecipe.js'
 import { normalizedNormalNoiseAmplitude } from './tslNormalNoiseBounds.js'
+import { nativeModuloValidationError } from './tslMathModuloNative.js'
 
 type Pair = [number, number]
 export type NormalInputBounds = [Pair, Pair, Pair]
@@ -8,6 +9,16 @@ const fail = (): never => {
   throw new TslIrError(
     'Normal Map tangent input has no verified finite range; use supported bounded image/procedural inputs',
   )
+}
+function clampBound(value:unknown,depth=0):number|undefined {
+  if(!value || typeof value!=='object' || depth>32)return undefined
+  const node=value as TslIrExpression
+  if(node.op==='const_float')return typeof node.value==='number' && Number.isFinite(node.value) && Math.abs(node.value)<=16 && (node.value===0 || Math.abs(node.value)>=2**-126) && Math.fround(node.value)===node.value ? node.value : undefined
+  if(node.op==='math' && ['MINIMUM','MAXIMUM'].includes(String(node.operation))) {
+    const a=clampBound(node.a,depth+1),b=clampBound(node.b,depth+1)
+    if(a!==undefined && b!==undefined)return node.operation==='MINIMUM'?Math.min(a,b):Math.max(a,b)
+  }
+  return undefined
 }
 const colorCache = new WeakMap<
   Texture,
@@ -279,13 +290,24 @@ export function normalInputBounds(
       break
     }
     case 'clamp01':
-      child('input')
+      if((expression.input as TslIrExpression|undefined)?.op==='math_modulo_native') {
+        if(nativeModuloValidationError(expression.input as TslIrExpression)) fail()
+      } else child('input')
       result = [
         [0, 1],
         [0, 1],
         [0, 1],
       ]
       break
+    case 'clamp_minmax': {
+      const value=expression.value as TslIrExpression|undefined
+      if(value?.op!=='math_modulo_native' || nativeModuloValidationError(value))return fail()
+      const low=clampBound(expression.min),high=clampBound(expression.max)
+      if(low===undefined || high===undefined)return fail()
+      const pair:Pair=[Math.min(low,high),Math.max(low,high)]
+      result=[pair,pair,pair]
+      break
+    }
     default:
       return fail()
   }

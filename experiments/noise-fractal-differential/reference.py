@@ -158,6 +158,23 @@ def make_material(case):
     output = tree.nodes.new('ShaderNodeOutputMaterial')
     emission = tree.nodes.new('ShaderNodeEmission')
     tree.links.new(emission.outputs[0], output.inputs['Surface'])
+    def opaque_island_value():
+        if case.get('exactIsland'):
+            add = tree.nodes.new('ShaderNodeMath'); add.operation = 'ADD'
+            add.inputs[0].default_value, add.inputs[1].default_value = .125, .25
+            return add.outputs[0]
+        if 'islandLiteral' in case:
+            value = tree.nodes.new('ShaderNodeValue'); value.outputs[0].default_value = case['islandLiteral']
+            return value.outputs[0]
+        direction = case['islandDirection']
+        first = tree.nodes.new('ShaderNodeMath'); first.operation = 'ADD'
+        first.inputs[0].default_value, first.inputs[1].default_value = 100000000, direction
+        second = tree.nodes.new('ShaderNodeMath'); second.operation = 'SUBTRACT'
+        tree.links.new(first.outputs[0], second.inputs[0]); second.inputs[1].default_value = 100000000
+        third = tree.nodes.new('ShaderNodeMath'); third.operation = 'SUBTRACT'
+        tree.links.new(second.outputs[0], third.inputs[0]); third.inputs[1].default_value = direction
+        return third.outputs[0]
+
     if case['kind'] == 'constant':
         emission.inputs['Color'].default_value = (*case['value'], 1)
         return material, emission
@@ -182,6 +199,12 @@ def make_material(case):
         translated = tree.nodes.new('ShaderNodeVectorMath'); translated.operation = 'ADD'
         tree.links.new(incoming, translated.inputs[0]); translated.inputs[1].default_value = case['coordinateOffset']
         incoming = translated.outputs[0]
+    if case.get('opaqueIsland') == 'vector':
+        shift = tree.nodes.new('ShaderNodeCombineXYZ')
+        tree.links.new(opaque_island_value(), shift.inputs[0])
+        add = tree.nodes.new('ShaderNodeVectorMath'); add.operation = 'ADD'
+        tree.links.new(incoming, add.inputs[0]); tree.links.new(shift.outputs[0], add.inputs[1])
+        incoming = add.outputs[0]
     if case['kind'] == 'image-control':
         factor, bias = .25, .5
         raw = incoming
@@ -294,6 +317,11 @@ def make_material(case):
                 clamp=node.inputs['Roughness'].links[0].from_node;inner=clamp.inputs['Value'].links[0].from_socket
                 scaled=tree.nodes.new('ShaderNodeMath');scaled.operation='MULTIPLY';scaled.inputs[1].default_value=.01;tree.links.new(inner,scaled.inputs[0])
                 mixed=tree.nodes.new('ShaderNodeMath');mixed.operation='ADD';tree.links.new(scaled.outputs[0],mixed.inputs[0]);tree.links.new(third.outputs[0],mixed.inputs[1]);tree.links.new(mixed.outputs[0],clamp.inputs['Value'])
+        if case.get('opaqueIsland') == 'w':
+            base = node.inputs['W'].links[0].from_socket
+            add = tree.nodes.new('ShaderNodeMath'); add.operation = 'ADD'
+            tree.links.new(base, add.inputs[0]); tree.links.new(opaque_island_value(), add.inputs[1])
+            tree.links.new(add.outputs[0], node.inputs['W'])
         raw = node.outputs[case['output']]
         factor, bias = case.get('oracleScale', .0625), .5
         if 'staticBaseline' in case:
@@ -617,6 +645,18 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                                           'kind':'noise','type':'FBM','normalize':True,'dimensions':dimension,'output':output,
                                           'stage':'constant','Detail':0,'Scale':1,'oracleScale':1,'coordinateProbe':True,
                                           'coordinates':[point,-point,point*.5]})
+        if os.environ.get('BLENDLINK_NOISE_OPAQUE_ISLAND'):
+            cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}]
+            for placement in ('vector', 'w'):
+                common = {'kind': 'noise', 'stage': 'image', 'dimensions': '4D', 'output': 'Color',
+                    'Detail': 0, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 1, 'normalize': normalized,
+                    'opaqueIsland': placement, 'oracleScale': .0625}
+                for direction in (-1, 1):
+                    cases.append({**common, 'id': f'{engine.lower()}-opaque-island-{placement}-{direction}', 'islandDirection': direction})
+                for value in (-1, 0, 1):
+                    cases.append({**common, 'id': f'{engine.lower()}-opaque-island-{placement}-literal-{value}', 'islandLiteral': value})
+                cases.append({**common, 'id': f'{engine.lower()}-opaque-island-{placement}-exact', 'exactIsland': True})
+                cases.append({**common, 'id': f'{engine.lower()}-opaque-island-{placement}-literal-exact', 'islandLiteral': .375})
         if os.environ.get('BLENDLINK_NOISE_INPUT_STAGE_CANARY'):
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}]
             for direction in (-1, 1):
@@ -717,16 +757,21 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 native_distortion = native_live_distortion_refusal(case,engine,varying,str(error),bpy.context.preferences.system.gpu_backend,bpy.app.version)
                 input_arithmetic = (case.get('coordinateCanary') and engine != 'CYCLES' and bpy.app.version < (5, 0, 0)
                                     and str(error).startswith('Static 4D Noise Color shader input arithmetic'))
+                opaque_island = (os.environ.get('BLENDLINK_NOISE_OPAQUE_ISLAND') and case.get('opaqueIsland')
+                                 and 'islandDirection' in case and str(error).startswith('Static 4D Noise Color mixed input has unverified constant arithmetic'))
                 modulo_zero = (os.environ.get('BLENDLINK_MATH_MODULO_NATIVE') and case.get('kind') == 'math-modulo-probe'
                                and case.get('stage') == 'constant' and case.get('point') == -1000000000
                                and bpy.app.version >= (5,0,0) and str(error).startswith('Native MF fixed100000 Modulo negative-zero composition'))
                 modulo_image = (os.environ.get('BLENDLINK_MATH_MODULO_NATIVE') and case.get('inputPrecision') in ('modulo-positive','modulo-negative')
                                 and bpy.app.version < (5,0,0) and str(error).startswith('Legacy Metal fixed100000 Modulo image input requires exactly-half payload'))
-                if not (modulo_image or modulo_zero or input_arithmetic or native_distortion or qualified or normalized and engine == 'CYCLES' and (
+                if not (opaque_island or modulo_image or modulo_zero or input_arithmetic or native_distortion or qualified or normalized and engine == 'CYCLES' and (
                         'no verified live source precision profile' in str(error)
                         or 'Normalized Noise Cycles SIMD 3D/4D' in str(error))): raise
                 assert before == (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
                 refusal = {'id': case['id'], 'engine': engine, 'reason': str(error)}
+                if opaque_island:
+                    refusal['sourceQualification'] = 'mixed-opaque-noise-constant-arithmetic-island'
+                    refusal.update(retain_refused_native_graph(material,case,engine,temporary))
                 if modulo_image:
                     refusal['sourceQualification'] = 'native-legacy-metal-modulo-image-precision'
                     refusal.update(retain_refused_native_graph(material,case,engine,temporary))

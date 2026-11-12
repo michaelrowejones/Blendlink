@@ -189,7 +189,7 @@ it('audits the actual GLB normal bytes even when Base Color is already portable 
       descriptor: good.manifest,
       loadPrograms: async () => good.programs as never,
     }),
-  ).rejects.toThrow(/Legacy WebGLRenderer.*Normal Map.*WebGPURenderer/)
+  ).rejects.toThrow(/Legacy WebGLRenderer.*native normal program.*WebGPURenderer/)
   const applied = await installTslMaterials({
     root: scene.scene,
     descriptor: good.manifest,

@@ -51,7 +51,7 @@ tree.links.new(bump.outputs[0],bsdf.inputs['Normal']);assert not plan().errors
 # Even a linked constant height follows Blender's derivative path.
 height=tree.nodes.new('ShaderNodeValue');height.outputs[0].default_value=0
 tree.links.new(height.outputs[0],bump.inputs['Height']);result=plan()
-assert result.errors and 'height-function derivative' in str(result.as_dict()),result.as_dict()
+assert result.errors and 'unlinked Strength' in str(result.as_dict()),result.as_dict()
 # Source inspection never removes links or rewrites source input data.
 assert bump.inputs['Height'].links[0].from_node==height and bump.invert
 assert bump.inputs['Height'].default_value==-123

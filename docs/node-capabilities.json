@@ -1151,7 +1151,7 @@
     },
     "shader:ShaderNodeTexNoise": {
       "category": "partial",
-      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields. Fresh EEVEE normalized FBM supports independently unit-bounded live scalar Roughness at static Detail<=2 and Scale magnitude<=80. Zero Distortion uses explicit Metal/OpenGL source models. Nonzero Distortion within [-1,1] has separate measured Metal 1D shader and pure native-MF models; multidimensional shader and unmeasured OpenGL nonzero-D paths refuse. Existing serialized noise_varying behavior remains unchanged. No exact output-unit range is inferred for the new live-amplitude opcode. Fixed 4D Color FBM can evaluate to a CPU literal when its executable constant-input subset, zero Distortion, qualified standard/periodic kernel model and every seeded octave coordinate within 90000 are independently verified. Other graphs retain their GPU path. Focused native Linux 5.2 OpenGL references now pass both browser APIs on recorded SwiftShader/Subzero under the normal Chromium watchdog; broader native node matrix coverage remains separate. Fresh precise Noise source export requires literal Float32 Distortion, including literal Value links; unproved linked arithmetic takes a named source-bake path. This prevents Python-double folding from changing modern native Float32 distortion and leaves serialized runtime documents unchanged. Folded Detail, Roughness, Lacunarity, Scale and active Offset/Gain also require exact Float32 literal or ordered selection/Clamp plumbing. Unproved arithmetic is refused before it can change source parameters; genuinely live, independently bounded Roughness remains executable. Static 4D Color CPU folding follows source-stage arithmetic: MF uses explicit Float32 stages, while shader/legacy/unknown stages require independently exact input arithmetic. Witnessed unqualified EEVEE shader-constant coordinate graphs refuse with their source retained; falling back to an older GPU builder is not treated as a fidelity correction. Fresh nonzero-D profiles additionally require independently exact coordinate/W input plumbing, including nested MF Noise, and reject unqualified closed-arithmetic islands inside Roughness. Staticness or a source-stage label alone is not a numeric precision certificate.",
+      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields. Fresh EEVEE normalized FBM supports independently unit-bounded live scalar Roughness at static Detail<=2 and Scale magnitude<=80. Zero Distortion uses explicit Metal/OpenGL source models. Nonzero Distortion within [-1,1] has separate measured Metal 1D shader and pure native-MF models; multidimensional shader and unmeasured OpenGL nonzero-D paths refuse. Existing serialized noise_varying behavior remains unchanged. No exact output-unit range is inferred for the new live-amplitude opcode. Fixed 4D Color FBM can evaluate to a CPU literal when its executable constant-input subset, zero Distortion, qualified standard/periodic kernel model and every seeded octave coordinate within 90000 are independently verified. Other graphs retain their GPU path. Focused native Linux 5.2 OpenGL references now pass both browser APIs on recorded SwiftShader/Subzero under the normal Chromium watchdog; broader native node matrix coverage remains separate. Fresh precise Noise source export requires literal Float32 Distortion, including literal Value links; unproved linked arithmetic takes a named source-bake path. This prevents Python-double folding from changing modern native Float32 distortion and leaves serialized runtime documents unchanged. Folded Detail, Roughness, Lacunarity, Scale and active Offset/Gain also require exact Float32 literal or ordered selection/Clamp plumbing. Unproved arithmetic is refused before it can change source parameters; genuinely live, independently bounded Roughness remains executable. Static 4D Color CPU folding follows source-stage arithmetic: MF uses explicit Float32 stages, while shader/legacy/unknown stages require independently exact input arithmetic. Witnessed unqualified EEVEE shader-constant coordinate graphs refuse with their source retained; falling back to an older GPU builder is not treated as a fidelity correction. Fresh nonzero-D profiles additionally require independently exact coordinate/W input plumbing, including nested MF Noise, and reject unqualified closed-arithmetic islands inside Roughness. Staticness or a source-stage label alone is not a numeric precision certificate. Fresh live coordinate/W plumbing also rejects witnessed inexact constant arithmetic islands through transparent arithmetic, while retaining opaque/native kernel boundaries. Static top-level inputs are not required to expose a proven precision mismatch.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "noise",
@@ -1305,6 +1305,9 @@
         },
         {
           "path": "experiments/noise-field-barrier/README.md"
+        },
+        {
+          "path": "experiments/noise-opaque-island/README.md"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -2748,9 +2751,10 @@
     },
     "shader:ShaderNodeBump": {
       "category": "partial",
-      "limits": "EEVEE only: unlinked Height follows native no-op semantics, copying linked Normal without normalization or using the verified primary geometry normal. Strength/Distance/Filter Width/Invert are inactive in this branch. Linked Height (including a linked constant) refuses until height-function derivative sampling is earned. Arbitrary supported linked vectors may be used as color data; Normal/Coat Normal slots require a direct verified unit normal source or nested no-height passthrough. Inherits actual owner/normal/camera conditioning, deformation, visibility and instancing guards of its input. Cycles retains bake routing. Actual Final proof: 14 fields plus independent RGB control, all three native versions, shared/single/flat/HQ profiles, both browser backends; no mip/height-sampling claim.",
+      "limits": "EEVEE no-height identity remains independent: unlinked Height copies linked Normal without normalization or uses the verified primary geometry normal; its Strength/Distance/Filter Width/Invert are inactive. Fresh bump_height_native additionally supports a literal or bounded affine Add/Subtract/Multiply tree of one actual active-render/named UV source, using measured Metal EEVEE source profiles in Blender 4.2, 5.2 and 5.3. It reevaluates the original function at offset UVs; modern C6g derivative width is distinct from the Float32 denominator. Static Strength[-1,2], Distance[-1,1], unlinked FilterWidth[.1,10] (legacy implicit1), UV[-2,2], literal controls[-1,1], slope components<=1 and source Height[-2,2]; planar flat-normal primary triangles only, finite owner/world magnitude64, effective world slope*Distance*max(1,Strength)<=.1. Actual topology/UV/normal/matrix and per-draw camera/physical-viewport/shifted-evaluation/cancellation budgets validate independently. Small-amplitude legacy Distance1 is earned; tiny FW, large Distance/bias, close/grazing views, curved surfaces, linked controls and arbitrary textured/nonlinear Height remain refused. Direct unit output supports Normal/Coat Normal; no arbitrary downstream normal graph, ray/deformation/generated-instance or Cycles expansion. Actual Final source/readback proof and real Preview orbit/resize/retry proof are reproducible in the normal-node experiment; no general height-image/mip/derivative-scope port claimed.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
+        "bump_height_native",
         "bump_passthrough_native"
       ],
       "modes": {},
@@ -2768,6 +2772,20 @@
         },
         {
           "path": "experiments/normal-node-differential/README.md"
+        },
+        {
+          "path": "packages/blender-addon/bump_height_ir.py",
+          "anchor": "def emit"
+        },
+        {
+          "path": "packages/blendlink/src/tslBumpHeight.ts",
+          "anchor": "export function buildTslBumpHeight"
+        },
+        {
+          "path": "packages/blender-addon/tests/bump_height_check.py"
+        },
+        {
+          "path": "experiments/normal-node-differential/preview-height-recovery.mjs"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
@@ -6250,6 +6268,88 @@
         "nativeGpuBackend": "METAL",
         "sourcePreserved": true
       }
+    },
+    "compositor:CompositorNodeColorSpill": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "color-spill"
+      ],
+      "limits": "All R/G/B spill channels, Single R/G/B and Average limits, fixed Limit Strength in [0,2], optional fixed custom RGB strength in [-2,2], and live Image/Factor. Preserves original alpha, signed/HDR RGB and distinct legacy CPU versus modern/GPU factor behavior, including negative/over-one factors and modern single-value evaluation. Inactive custom strength and Average limit-channel settings are ignored without source mutation. Linked selectors/strength controls, animation and unsupported image-domain combinations refuse. This is Color Spill suppression, not full Keying coverage.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_spill.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorSpill.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorSpill.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_spill_check.py"
+        },
+        {
+          "path": "experiments/native-compositor-differential/COLOR_SPILL.md"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeScenes": 352,
+        "physicalAndSoftwareReadbacks": 1408,
+        "maximumAbsoluteError": 1.9073486328125e-06,
+        "budget": 2e-05,
+        "exactAlpha": true,
+        "nativeGpuBackend": "METAL",
+        "sourcePreservedDuringExtraction": true
+      },
+      "modes": {
+        "channel": {
+          "supported": [
+            "R",
+            "G",
+            "B"
+          ]
+        },
+        "limit_channel": {
+          "supported": [
+            "R",
+            "G",
+            "B"
+          ]
+        },
+        "limit_method": {
+          "supported": [
+            "SIMPLE",
+            "AVERAGE"
+          ]
+        },
+        "inputs:Spill Channel": {
+          "supported": [
+            "R",
+            "G",
+            "B"
+          ]
+        },
+        "inputs:Limit Channel": {
+          "supported": [
+            "R",
+            "G",
+            "B"
+          ]
+        },
+        "inputs:Limit Method": {
+          "supported": [
+            "Single",
+            "Average"
+          ]
+        }
+      }
     }
   },
   "knownUnsupported": [
@@ -6262,7 +6362,6 @@
     "compositor:CompositorNodeChannelMatte",
     "compositor:CompositorNodeChromaMatte",
     "compositor:CompositorNodeColorMatte",
-    "compositor:CompositorNodeColorSpill",
     "compositor:CompositorNodeCombineXYZ",
     "compositor:CompositorNodeConvertColorSpace",
     "compositor:CompositorNodeConvertToDisplay",

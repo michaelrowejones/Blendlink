@@ -909,9 +909,9 @@ def _channel_document(expression):
     encoded = _json.dumps(expression)
     if '"view_cos"' in encoded:
         document["viewDependent"] = True
-    if any(('"'+name+'"') in encoded for name in ('normal_map_native','normal_view_native','tangent_native','normal_map_tangent_native')):
+    if any(('"'+name+'"') in encoded for name in ('normal_map_native','normal_view_native','tangent_native','normal_map_tangent_native','bump_height_native')):
         document['viewDependent'] = True
-    if any(('"'+name+'"') in encoded for name in ('normal_map','normal_view','normal_map_native','normal_view_native','tangent_native','normal_map_tangent_native')):
+    if any(('"'+name+'"') in encoded for name in ('normal_map','normal_view','normal_map_native','normal_view_native','tangent_native','normal_map_tangent_native','bump_height_native')):
         document["geometryDependent"] = True
     if '"ambient_occlusion"' in encoded:
         # Scene occlusion is not carried: the runtime evaluates the
@@ -944,12 +944,18 @@ def emit_normal_channel(socket, stack=(), *, evaluation_engine=None):
     tangents=[];tangent_ir.requirements(expression,tangents)
     tangent_maps=[];normal_map_tangent_ir.requirements(expression,tangent_maps)
     if __package__:
-        from . import bump_ir
+        from . import bump_ir, bump_height_ir
     else:
-        import bump_ir
+        import bump_ir, bump_height_ir
     if (get_evaluation_engine() == 'EEVEE' and expression.get('op') == 'geometry_context'
             and expression.get('output') == 'normal' and expression.get('sourceEngine') == 'EEVEE'):
         return _channel_document({"op": "normal_view_native", "input": expression})
+    if expression.get('op')=='bump_height_native':
+        return _channel_document({"op": "normal_view_native", "input": expression})
+    # A derivative normal must stay direct; arbitrary downstream vector math is unproved.
+    height_requirements=[];bump_height_ir.requirements(expression,height_requirements)
+    if height_requirements:
+        _refuse('Bump Height normal channels currently require the direct native unit-normal output')
     if bump_ir.contains(expression):
         if not bump_ir.unit_normal(expression):
             _refuse('No-height Bump normal channels need a direct verified unit-normal source; linked zero/nonunit or transformed vectors remain unproved')
@@ -2624,8 +2630,13 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeBump":
         if __package__:
             from .bump_ir import emit as emit_bump
+            from .bump_height_ir import emit as emit_bump_height
         else:
             from bump_ir import emit as emit_bump
+            from bump_height_ir import emit as emit_bump_height
+        if node.inputs['Height'].is_linked:
+            return emit_bump_height(node,emit_scalar=lambda socket:emit_input(socket,stack=stack),
+                emit_vector=lambda socket:emit_input(socket,stack=stack,as_vector=True),refuse=_refuse,engine=get_evaluation_engine())
         return emit_bump(node, emit_vector=lambda socket: emit_input(socket, stack=stack, as_vector=True),
                             refuse=_refuse, engine=get_evaluation_engine())
 

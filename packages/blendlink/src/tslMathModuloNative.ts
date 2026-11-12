@@ -74,19 +74,29 @@ const mfModulo = fn(([point]) => {
   return choose(remainder.equal(i(0)), bits(sign, 'float'), f(remainder))
 }).setLayout({ name: 'blendlinkMfMathMod100000V1', type: 'float', inputs: [{ name: 'point', type: 'float' }] })
 
-export function buildNativeMathModulo(ir: TslIrExpression, build: (ir: TslIrExpression) => TslExpression,
-  fail: (message: string) => never): TslExpression {
+/** Shared finite scalar admission; range consumers must validate the actual
+ * primitive rather than trusting its opcode or a supplied interval. */
+export function nativeModuloValidationError(ir:TslIrExpression):string|null {
+  if(ir.op!=='math_modulo_native') return 'Native fixed100000 Modulo requires its qualified scalar opcode'
   const input = expression(ir.input)
-  if (!input || !nativeModuloIntegerBand(nativeModuloInputBounds(input))) return fail('Native fixed100000 Modulo requires a same-sign Float32 input in [2^24,2^31)')
+  if (!input || !nativeModuloIntegerBand(nativeModuloInputBounds(input))) return 'Native fixed100000 Modulo requires a same-sign Float32 input in [2^24,2^31)'
   const literalInput = ir.inputModel === 'literal-f32-v1' && input.op === 'const_float'
   const imageInput = input.op === 'separate' && (ir.inputModel === 'metal-f32-image-v1'
     || ir.inputModel === 'metal-half-exact-image-v1' && nativeModuloHalfExactImage(input))
-  if (!literalInput && !imageInput) return fail('Native fixed100000 Modulo input precision model is unqualified')
-  if (ir.precisionModel === 'metal-mod100000-v1') return metalModulo(build(input)) as TslExpression
+  if (!literalInput && !imageInput) return 'Native fixed100000 Modulo input precision model is unqualified'
+  if (ir.precisionModel === 'metal-mod100000-v1') return null
   if (ir.precisionModel === 'mf-fmod100000-v1' && input.op === 'const_float') {
     if ((input.value as number) < 0 && (input.value as number) % 100000 === 0)
-      return fail('Native MF fixed100000 Modulo negative-zero composition has no portable Math stage')
-    return mfModulo(build(input)) as TslExpression
+      return 'Native MF fixed100000 Modulo negative-zero composition has no portable Math stage'
+    return null
   }
-  return fail('Native fixed100000 Modulo precision model or constant evaluation stage is unqualified')
+  return 'Native fixed100000 Modulo precision model or constant evaluation stage is unqualified'
+}
+
+export function buildNativeMathModulo(ir: TslIrExpression, build: (ir: TslIrExpression) => TslExpression,
+  fail: (message: string) => never): TslExpression {
+  const error=nativeModuloValidationError(ir)
+  if(error) return fail(error)
+  const input=expression(ir.input)!
+  return (ir.precisionModel==='metal-mod100000-v1'?metalModulo:mfModulo)(build(input)) as TslExpression
 }

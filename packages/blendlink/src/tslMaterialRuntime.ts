@@ -1,3 +1,4 @@
+import { collectBumpHeights, validateBumpHeightBinding } from './tslBumpHeight.js'
 /**
  * Phase 4 Track C: apply shipped TSL IR programs to loaded materials.
  *
@@ -530,6 +531,11 @@ export async function installTslMaterials(
         // one clone would make createBakedScene refuse ("shared by atlas
         // groups"). Meshes sharing one loaded material still share one
         // clone per runtime-extras variant.
+        const heightEntries:TslIrExpression[]=[];collectBumpHeights(programs.materials[source]?.channels,heightEntries)
+        if(heightEntries.length){
+          try{validateBumpHeightBinding(heightEntries,mesh,buildOptionsFor(extras,undefined,source,programTextures?.resolver))}
+          catch(error){if(!(error instanceof TslIrError))throw error;skipped.push({material:source,reason:`mesh "${mesh.name}" Bump Height refused: ${error.message}; its carrier stays`});return}
+        }
         const tangentMaps=tangentMapContexts.get(source)
         if(tangentMaps){
           try{validateTangentNormalMapBinding(tangentMaps,mesh,extras?.objectSpace,extras,

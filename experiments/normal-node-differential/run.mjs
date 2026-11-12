@@ -53,6 +53,7 @@ const server = await createServer({
   resolve: {
     dedupe: ['three'],
     alias: {
+      '@blendlink-legacy-runtime': join(snapshot, 'materialProgramDocument' + (built ? '.js' : '.ts')),
       '@blendlink-geometry-runtime': join(snapshot, 'tslMaterialRuntime' + (built ? '.js' : '.ts')),
     },
   },

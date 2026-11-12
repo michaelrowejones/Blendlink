@@ -74,6 +74,21 @@ def in_integer_band(bounds):
                                    or -LIMIT < bounds[0] <= bounds[1] <= -MINIMUM)
 
 
+def qualified_modulo_scalar(expression):
+    """Finite scalar certificate, with no output-unit or small-range claim."""
+    if not isinstance(expression,dict) or expression.get('op')!='math_modulo_native':return False
+    incoming=expression.get('input')
+    if not isinstance(incoming,dict) or not in_integer_band(input_bounds(incoming)):return False
+    literal=expression.get('inputModel')=='literal-f32-v1' and incoming.get('op')=='const_float'
+    image=incoming.get('op')=='separate' and (expression.get('inputModel')=='metal-f32-image-v1'
+        or expression.get('inputModel')=='metal-half-exact-image-v1' and half_exact_image(incoming))
+    if not (literal or image):return False
+    if expression.get('precisionModel')=='metal-mod100000-v1':return True
+    if expression.get('precisionModel')=='mf-fmod100000-v1' and incoming.get('op')=='const_float':
+        return not (incoming['value']<0 and int(incoming['value'])%100000==0)
+    return False
+
+
 def qualify_modulo(expression, *, engine, backend, version, refuse):
     if engine != 'EEVEE' or expression.get('operation') != 'MODULO': return expression
     divisor = expression.get('b', {})

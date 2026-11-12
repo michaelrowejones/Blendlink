@@ -15,7 +15,7 @@ export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
 export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
 export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
-export const PREVIEW_STUDIO_HOST_VERSION = 20
+export const PREVIEW_STUDIO_HOST_VERSION = 21
 export const PREVIEW_STUDIO_MAIN_MARKER =
   '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
@@ -938,6 +938,10 @@ async function promote(status: StudioStatus): Promise<void> {
       return
     }
     const previous = active
+    // An inspection view can itself violate a live node's qualified domain.
+    // Retry must recreate the authored view, rather than immediately restore
+    // the camera that stopped this generation. Good-view hot reloads retain it.
+    if (inspecting && previous && runtimeFailedGeneration === previous.generation) stopInspection()
     candidate.canvas.classList.add('active')
     candidate.canvas.removeAttribute('aria-hidden')
     candidate.canvas.setAttribute('aria-label', SCENE_NAME + ' preview')

@@ -58,6 +58,7 @@ def references(directory):
                 cases.append({'space':space,'strength':strength,'color':[.8,.6,.9],'convention':'DIRECTX','base':'ORIGINAL'})
     for space in ['OBJECT','WORLD','BLENDER_OBJECT','BLENDER_WORLD']:
         for strength in [.5,1]:cases.append({'space':space,'strength':strength,'color':[.8,.6,.9],'slot':'normal'})
+    height_only=os.environ.get('BLENDLINK_NORMAL_NODE_HEIGHT_ONLY')=='1'
     geometry_only=os.environ.get('BLENDLINK_NORMAL_NODE_GEOMETRY_ONLY')=='1'
     bump_only=os.environ.get('BLENDLINK_NORMAL_NODE_BUMP_ONLY')=='1'
     if bump_only:
@@ -71,6 +72,17 @@ def references(directory):
     if geometry_only:
         cases=[{'kind':'geometry'}, {'kind':'geometry','slot':'normal'}, {'kind':'geometry','slot':'coat-normal'}]
     cycles_zero=os.environ.get('BLENDLINK_NORMAL_NODE_CYCLES_ZERO')=='1'
+    if height_only:
+        cases=[{'kind':'height','a':a,'b':b,'distance':distance,'width':width,'strength':strength,'bias':bias,'slot':slot}
+            for a,b,distance,width,strength,bias,slot in [
+                (.001,-.0007,1,.1,1,0,None), (.25,-.5,.001,.1,1,.3,None),
+                (.001,-.0007,1,1,2,0,None), (.001,-.0007,-1,1,1,0,None),
+                (.25,-.5,.001,1.015625,1,.3,None),(.001,-.0007,1,1,1,0,'normal'),
+                (.001,-.0007,1,1,1,0,'coat-normal'),(0,0,1,.1,1,.3,None),
+                (.25,-.5,.001,.1015625,1,.3,None),(.25,-.5,.001,.1234567,1,.3,None),
+                (.25,-.5,.001,10,1,.3,None),(.001,-.0007,1,1,0,0,None),
+                (.001,-.0007,1,1,-1,0,None)]]
+        cases += [dict(cases[0],invert=True),dict(cases[0],namedUV=True),dict(cases[0],uvScale=-1.13,uvOffset=.93)]
     if cycles_zero:cases=[{'space':'WORLD','strength':amount,'color':[.5,.5,.5]} for amount in [-1,0,.25,.5,1,2]]
     for index,case in enumerate(cases):case.update({'output':('geometry-normal-' if geometry_only else 'bump-' if bump_only else 'normal-map-')+str(index),'scale':.2})
     cases.append({'output':'control','scale':1})
@@ -81,11 +93,16 @@ def references(directory):
         offset=len(vertices);vertices.extend([(x,y,.5),(x+2,y,.5),(x+2,y+2,.5),(x,y+2,.5)])
         faces.append(tuple(range(offset,offset+4)));case['center']=[x+1,y+1,.5];case['name']='Native Normal '+case['output']
     mesh=bpy.data.meshes.new('Authored split normal shared geometry');mesh.from_pydata(vertices,[],faces);mesh.update()
+    if height_only:
+        uv=mesh.uv_layers.new(name='Authored Height UV')
+        for polygon in mesh.polygons:
+            for loop,point in zip(polygon.loop_indices,[(.13,.07),(.93,.07),(.93,.87),(.13,.87)]):
+                controls=cases[polygon.index];uv.data[loop].uv=[value*controls.get('uvScale',1)+controls.get('uvOffset',0) for value in point]
     for polygon in mesh.polygons:polygon.use_smooth=os.environ.get('BLENDLINK_NORMAL_NODE_FLAT')!='1'
     normals=[]
     for loop in mesh.loops:
         p=mesh.vertices[loop.vertex_index].co
-        normals.append(Vector((.15+.025*p.x,-.2+.04*p.y,1)).normalized())
+        normals.append(Vector((0,0,1)) if height_only else Vector((.15+.025*p.x,-.2+.04*p.y,1)).normalized())
     mesh.normals_split_custom_set(normals)
     originals=[];oracles=[]
     for index,case in enumerate(cases):
@@ -94,7 +111,26 @@ def references(directory):
         if case['output']=='control':
             value=tree.nodes.new('ShaderNodeRGB');value.outputs[0].default_value=(.3333333,.1234567,1.234567,1);field=value.outputs[0]
         else:
-            if geometry_only:
+            if height_only:
+                source=tree.nodes.new('ShaderNodeBump');source.invert=case.get('invert',False)
+                source.inputs['Strength'].default_value=case['strength'];source.inputs['Distance'].default_value=case['distance']
+                if source.inputs.get('Filter Width'):source.inputs['Filter Width'].default_value=case['width']
+                case['nativeControls']={name:float(source.inputs[name].default_value) for name in ['Strength','Distance','Filter Width'] if source.inputs.get(name)}
+                case['nativeControls']['invert']=bool(source.invert)
+                uvnode=tree.nodes.new('ShaderNodeUVMap' if case.get('namedUV') else 'ShaderNodeTexCoord')
+                if case.get('namedUV'):uvnode.uv_map='Authored Height UV'
+                axes=tree.nodes.new('ShaderNodeSeparateXYZ');tree.links.new(uvnode.outputs['UV'],axes.inputs[0])
+                def math_node(operation,a,b):
+                    node=tree.nodes.new('ShaderNodeMath');node.operation=operation
+                    for socket,value in zip(node.inputs,[a,b]):
+                        if isinstance(value,(int,float)):socket.default_value=value
+                        else:tree.links.new(value,socket)
+                    return node.outputs[0]
+                h=math_node('ADD',math_node('ADD',math_node('MULTIPLY',axes.outputs['X'],case['a']),math_node('MULTIPLY',axes.outputs['Y'],case['b'])),case['bias'])
+                if case['a']==0 and case['b']==0:
+                    literal=tree.nodes.new('ShaderNodeValue');literal.outputs[0].default_value=case['bias'];h=literal.outputs[0]
+                tree.links.new(h,source.inputs['Height'])
+            elif geometry_only:
                 source=tree.nodes.new('ShaderNodeNewGeometry')
             elif bump_only:
                 source=tree.nodes.new('ShaderNodeBump');source.invert=case.get('invert',False)
@@ -172,7 +208,7 @@ def references(directory):
                     camera.location=(.3*min(frame,3),-4,60 if face=='front' else -60)
                     camera.rotation_euler=(-camera.location).to_track_quat('-Z','Y').to_euler()
                     camera.keyframe_insert(data_path='location',frame=frame);camera.keyframe_insert(data_path='rotation_euler',frame=frame)
-                for engine in ([eevee] if bump_only or geometry_only else ['CYCLES'] if cycles_zero else ['CYCLES',eevee]):
+                for engine in ([eevee] if bump_only or geometry_only or height_only else ['CYCLES'] if cycles_zero else ['CYCLES',eevee]):
                     scene.render.engine=engine
                     label=('cycles' if engine=='CYCLES' else 'eevee')+'_'+projection.lower()+'_'+face
                     for frame in frames:
@@ -204,7 +240,7 @@ def references(directory):
     normal_source=[{'material':mesh.materials[polygon.material_index].name,'position':list(mesh.vertices[mesh.loops[index].vertex_index].co),'normal':list(mesh.corner_normals[index].vector)}
         for polygon in mesh.polygons for index in polygon.loop_indices]
     (root/'native-reference.json').write_text(json.dumps({'blender':bpy.app.version_string,'build':bpy.app.build_hash.decode(),
-        'fixtureSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'sources':sources,'cases':cases,'rows':rows,'normalSource':normal_source,'frames':frames,'ownerCount':len(active_owners),'flatShading':not mesh.polygons[0].use_smooth,'highQualityNormals':scene.render.use_high_quality_normals,
+        'fixtureSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'sources':sources,'cases':cases,'rows':rows,'normalSource':normal_source,'frames':frames,'ownerCount':len(active_owners),'heightOnly':height_only,'flatShading':not mesh.polygons[0].use_smooth,'highQualityNormals':scene.render.use_high_quality_normals,
         'cyclesFilter':{'type':'BOX','width':scene.cycles.filter_width},'rasterTolerance':2e-5},indent=2))
     print('BLENDLINK_NORMAL_NODE_REFERENCES_PASSED '+bpy.app.version_string)
 

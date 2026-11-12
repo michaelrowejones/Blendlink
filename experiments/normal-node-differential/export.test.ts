@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import { expect, it } from 'vitest'
 import { resolveConfig } from '../../packages/blendlink/src/config.js'
 import { parseManifest } from '../../packages/blendlink/src/typegen.js'
@@ -26,6 +26,8 @@ it('publishes actual primary triangle geometry programs, split normals and anima
     'packages/blender-addon/geometry_ir.py',
     'packages/blender-addon/normal_ir.py',
     'packages/blender-addon/bump_ir.py',
+    'packages/blender-addon/bump_height_ir.py',
+    'packages/blender-addon/shader_domains.py',
     'packages/blender-addon/material_compiler.py',
     'packages/blender-addon/tsl_ir.py',
     'packages/blendlink/blender/geometry_export.py',
@@ -81,6 +83,20 @@ it('publishes actual primary triangle geometry programs, split normals and anima
       source = references.sources.find((item: any) => scene.blendPath === join(native, item.file))
     const manifest = parseManifest(readFileSync(scene.manifestPath, 'utf8'))!
     expect(manifest.materialPrograms).toBeTruthy()
+    if(references.heightOnly){
+      const programs=JSON.parse(readFileSync(join(dirname(scene.glbPath),basename(manifest.materialPrograms!.url)),'utf8'))
+      const collect=(value:any,result:any[]=[])=>{if(value&&typeof value==='object'){if(value.op==='bump_height_native')result.push(value);Object.values(value).forEach(child=>collect(child,result))}return result}
+      for(const test of references.cases.filter((item:any)=>item.kind==='height')){
+        const expressions=collect(programs.materials[test.name])
+        expect(expressions.length).toBeGreaterThan(0)
+        for(const expression of expressions){
+          expect(expression.sourceVersion).toBe(references.blender.split('.').slice(0,2).join('.'))
+          expect(expression.sourceEngine).toBe('EEVEE');expect(expression.sourceGpuBackend).toBe('METAL')
+          expect(expression.strength).toBe(test.nativeControls.Strength);expect(expression.distance).toBe(test.nativeControls.Distance)
+          expect(expression.filterWidth).toBe(test.nativeControls['Filter Width']??1);expect(expression.invert).toBe(test.nativeControls.invert)
+        }
+      }
+    }
     return {
       name: scene.name,
       source: source.name,

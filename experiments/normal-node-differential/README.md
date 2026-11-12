@@ -136,8 +136,7 @@ node experiments/normal-node-differential/suite.mjs --built --bump --profiles sh
 returns the geometry normal when both Height and Normal are unlinked. With
 Normal linked and Height unlinked, it copies the linked vector verbatim; it
 does not normalize zero or nonunit data. Strength, Distance, Filter Width and
-Invert are inactive in this branch. A linked constant Height enters the real
-height-function path and remains refused, with an actionable diagnostic. The
+Invert are inactive in this branch. A linked constant Height enters the separate height-function path described below. The
 source graph is left intact. This port does not implement height sampling,
 derivatives, minification or bump shading from a height texture.
 
@@ -196,3 +195,99 @@ fixture. Source graphs remain unchanged.
 separate Cycles route. Reports are under
 `artifacts/verification-geometry-normal{42,52,53}-{final,physical}`; the baseline
 log and original producer are retained under `artifacts/geometry-normal-counterexample`.
+
+
+## Bounded affine-UV Bump Height
+
+`--height` selects a fresh `bump_height_native` / `eevee-affine-uv-v1` corpus.
+The no-height identity above remains separate. This port uses the measured
+**Metal EEVEE** source profiles in Blender 4.2/5.2/5.3. Other native backends
+and Cycles are explicitly refused by this new model. The browser renderer
+remains WebGPURenderer with either WebGPU or WebGL2; it need not use Metal.
+
+```sh
+BLENDLINK_NORMAL_NODE_BLENDER=/path/to/blender \
+BLENDLINK_NORMAL_NODE_NATIVE="$PWD/artifacts/verification-height" \
+node experiments/normal-node-differential/suite.mjs --built --height --profiles shared,single,flat,hq
+```
+
+Height must be a literal or an affine Add/Subtract/Multiply tree of one actual
+active-render or named UV layer, with literal factors. The authored operation
+order is retained. Evaluation at shifted UVs is repeated before subtracting
+the center Height; it is **not** `dFdx(finalHeight)`. The artifact-only negative
+control demonstrates that shortcut fails the unchanged pixel allowance.
+Modern native GPU code generation serializes the derivative offset Filter
+Width with C `%g` (six significant digits, ties to even), while the Bump
+denominator retains the full Float32 input; these are separate IR fields.
+Blender 4.2 has implicit width 1.
+
+Admission is deliberately bounded: primary planar triangle surfaces with
+geometric flat normals; one UV source with actual Float32 coordinates within
+[-2,2]; literal factors/bias within [-1,1]; each affine slope magnitude at most
+1; source Height range within [-2,2]; Strength [-1,2]; Distance [-1,1]; unlinked
+Filter Width [.1,10]. Skin, morph, modifier/generated-instance and unverified
+camera domains inherit the existing primary-geometry refusals. Object/world
+positions must have magnitude at most 64. The actual world gradient times
+Distance and max(1,Strength) must stay below .1. Thus legacy Distance 1 with
+small authored amplitude is useful, without claiming general Distance 1.
+
+Source planning, decoded Final GLBs, and installation validate the actual
+owner/topology/normals/UV binding. Cached mesh facts include attribute identities
+and update versions. Every draw additionally checks the actual camera and
+physical viewport, the source Height reevaluation interval, finite difference
+conditioning, and world-position cancellation. Source triangles must have
+well-conditioned bases; view incidence cosine must exceed .2, world pixel
+spacing must remain within [1e-4,100], and both weighted binary32 cancellation
+budgets are capped at 32. World-position magnitude divided by minimum world
+pixel spacing is additionally capped at 4096, including literal Height, to
+keep its native derivative frame nondegenerate. Shifted Height intermediates must remain within
+[-4,4]. These are conservative admission limits, not a universal raster
+parity theorem. Tiny Filter Width .001, Distance 1000, large Height bias, and
+unqualified close views remain named refusals; the original numerical
+counterexamples are retained under `artifacts/bump-height-work`.
+
+The real-Final fixture includes small-amplitude legacy Distance 1, modern
+Distance .001, negative Distance/Strength, zero Strength, Invert, decimal and
+exact-tie Filter Widths, reversed/nonbinary UVs, named/active UVs, linked
+literal Height, actual Normal and Coat Normal slots, animated shared owners,
+reflections/nonuniform parents, raw Z-up/glTF Y-up, and perspective/orthographic
+front/back views. Actual loaded UV mutation and over-resolved projection
+checks must refuse by name, recover after restoration, and preserve original
+material callbacks on disposal. Native EXR references keep the independent
+RGB orientation control and unchanged 2e-5 plus native final-half ULP budget.
+
+All three versions and four profiles pass 96 actual Final GLBs. Separate
+recorded Apple Metal and SwiftShader browser environments each pass 17,136
+readbacks across WebGPU and WebGL2 (34,272 total), maximum encoded RGB error
+0.000477910042. The exact current whole-program SDK output, native fixture,
+Python producer and browser harness hashes are recorded in each report. This
+certifies these normal-function fields; it does not certify full EEVEE
+lighting/BSDF pixel parity. The measured source renderer remains Metal EEVEE.
+
+
+Preview Studio uses its existing runtime error boundary. An out-of-domain
+orbit/resize pauses the generation and exposes the actionable Height message
+in Details. Retry discards the failed inspection camera and recreates the
+authored view; normal good-view hot reloads continue preserving inspection.
+To verify the real UI, start `blendlink preview --blend` on one generated
+EEVEE perspective fixture, then run:
+
+```sh
+BLENDLINK_TEST_CHROMIUM_CHANNEL=chromium \
+node experiments/normal-node-differential/preview-height-recovery.mjs \
+  http://127.0.0.1:PORT/ artifacts/verification-height-preview/recovery.json
+```
+
+This driver uses actual wheel/Inspect/Retry controls, fetched program bytes,
+recorded GPU adapter information, a retained failed canvas, detached/released
+prior presentation resources, and successful recovery. It injects no failures
+or acknowledgements. The retained unpatched baseline restores the bad camera
+and immediately fails again on both APIs. Browser backend names alone do not
+certify a physical adapter.
+
+Primary behavior references: [native Bump node branching](https://github.com/blender/blender/blob/v5.2.0/source/blender/nodes/shader/nodes/node_shader_bump.cc),
+[native derivative scope](https://github.com/blender/blender/blob/v5.2.0/source/blender/gpu/shaders/gpu_shader_codegen_lib.glsl),
+[native GPU function serialization](https://github.com/blender/blender/blob/v5.2.0/source/blender/gpu/intern/gpu_node_graph.cc).
+The independently constructed surface-gradient mathematics is also described
+by [Mikkelsen](https://mmikkelsen3d.blogspot.com/2011/07/derivative-maps.html)
+and used by Three's MIT BumpMapNode; no GPL shader code is copied into the SDK.

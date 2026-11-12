@@ -89,6 +89,46 @@ def constant_input(expression, depth=0, budget=None):
     return None
 
 
+
+ISLAND_MESSAGE = ('Static 4D Noise Color mixed input has unverified constant arithmetic; '
+                  'use exact inputs or source baking')
+INSPECTION_MESSAGE = ('Static 4D Noise Color mixed input exceeds bounded arithmetic inspection; '
+                      'use source baking')
+# Transparent coordinate arithmetic only. Texture/native Noise/qualified helper
+# boundaries keep their own source models; this does not inspect arbitrary
+# shader kernels or assert a universal Math evaluation model.
+_COORDINATE_INPUTS = {
+    'math': ('a', 'b', 'c'), 'vector_math': ('a', 'b', 'c'),
+    'vector_scale': ('input', 'scale'), 'combine': ('x', 'y', 'z'),
+    'separate': ('input',), 'clamp01': ('input',),
+    'clamp_minmax': ('value', 'min', 'max'),
+    'mapping': ('input', 'location', 'rotation', 'scale'),
+    'vector_rotate': ('input', 'center', 'axis', 'angle', 'rotation'),
+}
+
+
+def has_inexact_constant_island(expression, *, refuse):
+    """Find a witnessed inexact constant subtree within transparent inputs.
+
+    An opaque image makes the whole input ineligible for literal evaluation;
+    it must not hide an independently recognized, inexact constant sibling.
+    Unknown kernels remain opaque rather than inheriting a Math certificate.
+    """
+    pending = [(expression, 0)]
+    visited = 0
+    while pending:
+        node, depth = pending.pop()
+        if not isinstance(node, dict) or 'op' not in node: continue
+        visited += 1
+        if depth > 32 or visited > 256: refuse(INSPECTION_MESSAGE)
+        result = constant_input(node)
+        if result is not None:
+            if not result[1]: return True
+            continue
+        pending.extend((node[key], depth + 1) for key in _COORDINATE_INPUTS.get(node['op'], ()) if key in node)
+    return False
+
+
 def require_shader_constant_inputs(expression, refuse):
     if (expression.get('op') not in {'noise_fractal', 'noise_normalized'} or expression.get('dimensions') != 4
             or expression.get('output') != 'color' or expression.get('noiseType', 'FBM') != 'FBM'
@@ -97,3 +137,5 @@ def require_shader_constant_inputs(expression, refuse):
     inputs = [constant_input(expression.get(key)) for key in ('input', 'w')]
     if all(inputs) and any(not value[1] for value in inputs):
         refuse(MESSAGE)
+    if any(has_inexact_constant_island(expression.get(key), refuse=refuse) for key in ('input', 'w')):
+        refuse(ISLAND_MESSAGE)

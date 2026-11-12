@@ -3325,10 +3325,12 @@ def _plan_tsl_program(
         from . import geometry_ir
         from . import tangent_ir
         from . import normal_map_tangent_ir
+        from . import bump_height_ir
     else:
         import geometry_ir
         import tangent_ir
         import normal_map_tangent_ir
+        import bump_height_ir
     tangent_uv_choices = {}
     for entry in channels:
         outputs = set()
@@ -3339,6 +3341,9 @@ def _plan_tsl_program(
                 geometry_ir.bind_normal_model(entry['tslIr'], [obj for obj, _slot in raw_bindings])
                 tangent_ir.bind_owners(entry['tslIr'],[obj for obj,_slot in raw_bindings],tangent_uv_choices)
                 normal_map_tangent_ir.validate_owners(entry['tslIr'],[obj for obj,_slot in raw_bindings])
+                height_requirements=[];bump_height_ir.requirements(entry['tslIr'],height_requirements)
+                for obj,_slot in raw_bindings:
+                    for requirement in height_requirements:bump_height_ir.validate_owner(obj,requirement)
                 if __package__:
                     from . import normal_ir
                 else:

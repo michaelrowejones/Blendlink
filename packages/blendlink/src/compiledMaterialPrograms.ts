@@ -25,7 +25,7 @@ function record(value: unknown): value is Record<string, unknown> {
 function hasNativeNormal(value:unknown):boolean {
   if(Array.isArray(value))return value.some(hasNativeNormal)
   if(!record(value))return false
-  return value.op==='normal_map_native'||value.op==='normal_view_native'||value.op==='normal_map_tangent_native'||Object.values(value).some(hasNativeNormal)
+  return value.op==='normal_map_native'||value.op==='normal_view_native'||value.op==='normal_map_tangent_native'||value.op==='bump_height_native'||Object.values(value).some(hasNativeNormal)
 }
 
 function imageFile(value: unknown): string {
@@ -204,6 +204,7 @@ export async function validatedBaseColorProgramMaterials(
   const { collectNormalMapRequirements,validateNormalMapBinding } = await import('./tslNormalNodes.js')
   const {collectTangentRequirements,validateTangentBinding}=await import('./tslTangentNodes.js')
   const {collectTangentNormalMaps,validateTangentNormalMapBinding}=await import('./tslTangentNormalMap.js')
+  const {collectBumpHeights,validateBumpHeightBinding}=await import('./tslBumpHeight.js')
   const THREE = await import('three')
   const objectForBinding = (binding: PrimitiveBinding): import('three').Object3D => {
     if (binding.hierarchyIssue || !binding.nodeChain?.length) throw new TslIrError('Vector Transform needs actual default-scene object matrices: ' + (binding.hierarchyIssue ?? 'node hierarchy is missing'))
@@ -260,6 +261,8 @@ export async function validatedBaseColorProgramMaterials(
       collectTangentRequirements(record(program)?program.channels:null,tangents)
       const tangentMaps:import('./tslNodeRecipe.js').TslIrExpression[]=[]
       collectTangentNormalMaps(record(program)?program.channels:null,tangentMaps)
+      const heights:import('./tslNodeRecipe.js').TslIrExpression[]=[]
+      collectBumpHeights(record(program)?program.channels:null,heights)
       const material = materials[index]
       const materialInfo = record(material) && record(material.extras) ? material.extras.blendlink_tsl_material : null
       for (const binding of bindings) {
@@ -285,7 +288,7 @@ export async function validatedBaseColorProgramMaterials(
               validateGeometryContextMatrix(objectForBinding(binding),extras?.objectSpace)
             }
             let actualGeometry:import('three').Mesh|null=null
-            if(normalMaps.length||tangents.length){
+            if(normalMaps.length||tangents.length||heights.length){
               if(!extras?.geometryContext?.includes('normal'))throw new TslIrError('Native Normal Map requires its exported primary-normal context declaration')
               const owner=objectForBinding(binding),data=geometryData?.get(`${binding.meshIndex}:${binding.primitiveIndex}`)
               let bound:import('three').Object3D=owner
@@ -305,6 +308,10 @@ export async function validatedBaseColorProgramMaterials(
                 if(!(bound as import('three').Mesh).isMesh)throw new TslIrError('UV Tangent needs actual decoded primitive geometry')
                 validateTangentBinding(tangents,bound as import('three').Mesh,extras?.objectSpace,extras)
               }
+            }
+            if(heights.length){
+              if(!actualGeometry)throw new TslIrError('Bump Height needs actual decoded primitive geometry')
+              validateBumpHeightBinding(heights,actualGeometry,options)
             }
             if (transforms.length) {
               const objectNeeded = transforms.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')

@@ -4,20 +4,29 @@ import { vec4 } from 'three/tsl'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 import { installTslMaterials } from '@blendlink-geometry-runtime'
+import { assertLegacyMaterialCarriers } from '@blendlink-legacy-runtime'
 const halfUlp = (value) =>
   Math.max(2 ** (Math.floor(Math.log2(Math.abs(value) || 2 ** -14)) - 10), 2 ** -24)
 const difference = (a, b) => Math.max(...a.map((value, index) => Math.abs(value - b[index])))
 const C = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1),
   inverseC = C.clone().transpose()
 window.runProof = async (proof) => {
+  const requestedBackend=new URLSearchParams(location.search).get('backend')
+  let actualAdapter,actualDevice
+  if(requestedBackend==='webgpu'){
+    actualAdapter=await navigator.gpu.requestAdapter({powerPreference:'high-performance'})
+    if(!actualAdapter)throw new Error('No actual WebGPU adapter')
+    actualDevice=await actualAdapter.requestDevice({requiredFeatures:[...actualAdapter.features]})
+  }
   const renderer = new WebGPURenderer({
     antialias: false,
-    forceWebGL: new URLSearchParams(location.search).get('backend') === 'webgl2',
+    forceWebGL: requestedBackend === 'webgl2',
+    ...(actualDevice?{device:actualDevice}:{}),
   })
   await renderer.init()
   const adapter = renderer.backend?.device?.adapterInfo, gl = renderer.backend?.gl
   const debugRenderer = gl?.getExtension('WEBGL_debug_renderer_info')
-  const gpu = adapter ? { api: 'WebGPU', vendor: adapter.vendor, architecture: adapter.architecture,
+  const gpu = actualAdapter ? {api:'WebGPU',vendor:actualAdapter.info?.vendor,architecture:actualAdapter.info?.architecture,description:actualAdapter.info?.description,isFallbackAdapter:actualAdapter.info?.isFallbackAdapter??actualAdapter.isFallbackAdapter} : adapter ? { api: 'WebGPU', vendor: adapter.vendor, architecture: adapter.architecture,
     device: adapter.device, description: adapter.description }
     : gl ? { api: 'WebGL2', vendor: gl.getParameter(debugRenderer?.UNMASKED_VENDOR_WEBGL ?? gl.VENDOR),
       renderer: gl.getParameter(debugRenderer?.UNMASKED_RENDERER_WEBGL ?? gl.RENDERER) } : null
@@ -29,7 +38,7 @@ window.runProof = async (proof) => {
     device = renderer.backend.device,
     errors = [],
     failures = [],
-    rows = []
+    rows = [], negativeChecks=[]
   renderer.debug.onShaderError = (gl, program, vertex, fragment) =>
     errors.push(
       [gl.getProgramInfoLog(program), gl.getShaderInfoLog(vertex), gl.getShaderInfoLog(fragment)]
@@ -77,6 +86,21 @@ window.runProof = async (proof) => {
             )
         }
       })
+    if(proof.references.heightOnly){
+      let actualMesh
+      gltf.scene.traverse(mesh=>{if(!actualMesh&&mesh.isMesh&&proof.references.cases.some(test=>test.kind==='height'&&!test.slot&&test.name===mesh.material.userData.blendlink_source_material))actualMesh=mesh})
+      if(!actualMesh)throw new Error('Missing actual color-only Height primitive')
+      let refusal
+      try{await assertLegacyMaterialCarriers({root:actualMesh,descriptor:{materialPrograms:manifest.materialPrograms}})}catch(error){refusal=String(error)}
+      if(!refusal?.includes('native normal program')||!refusal.includes('WebGPURenderer'))throw new Error('Legacy renderer silently accepted actual Height color data: '+refusal)
+      negativeChecks.push({kind:'actual-color-only-legacy-guard',refusal})
+    }
+    const callbacks=[]
+    gltf.scene.traverse(mesh=>{if(mesh.isMesh){
+      const previous=mesh.onBeforeRender,row={mesh,previous,calls:0,observer:null}
+      row.observer=function(...args){row.calls++;previous.apply(this,args)}
+      mesh.onBeforeRender=row.observer;callbacks.push(row)
+    }})
     const installed = await installTslMaterials({
       root: gltf.scene,
       descriptor: { materialPrograms: manifest.materialPrograms },
@@ -250,10 +274,39 @@ window.runProof = async (proof) => {
       }
     }
     if (errors.length) throw new Error(errors.join('\n'))
+    if(proof.references.heightOnly&&source===proof.scenes.at(-1)){
+      const matrix=camera.projectionMatrix.clone(),culling=[]
+      gltf.scene.traverse(object=>{if(object.isMesh){culling.push([object,object.frustumCulled]);object.frustumCulled=false}})
+      camera.projectionMatrix.elements[0]*=1e6;camera.projectionMatrix.elements[5]*=1e6
+      let error
+      try{renderer.render(gltf.scene,camera)}catch(value){error=String(value)}
+      camera.projectionMatrix.copy(matrix);culling.forEach(([object,value])=>object.frustumCulled=value)
+      if(!error?.includes('Bump Height view precision is unproven')||!error.includes('Distance'))throw new Error('Actual resized view did not report its named actionable Height limitation: '+error)
+      renderer.render(gltf.scene,camera)
+      negativeChecks.push({kind:'actual-projection-footprint',error,recovered:true})
+      installed.dispose()
+      let mesh
+      gltf.scene.traverse(object=>{if(!mesh&&object.isMesh&&object.geometry.hasAttribute('uv')&&proof.references.cases.some(test=>test.kind==='height'&&test.name===object.material.userData.blendlink_source_material))mesh=object})
+      if(!mesh)throw new Error('Missing actual Height UV primitive')
+      const coordinates=mesh.geometry.getAttribute('uv'),before=coordinates.getX(0)
+      coordinates.setX(0,3);coordinates.needsUpdate=true
+      const refused=await installTslMaterials({root:gltf.scene,descriptor:{materialPrograms:manifest.materialPrograms}})
+      if(!refused.skipped.some(row=>row.reason.includes('Bump Height')&&row.reason.includes('UVs exceed')))throw new Error('Changed actual Final UVs did not refuse Height: '+JSON.stringify(refused.skipped))
+      refused.dispose();coordinates.setX(0,before);coordinates.needsUpdate=true
+      const recovered=await installTslMaterials({root:gltf.scene,descriptor:{materialPrograms:manifest.materialPrograms}})
+      if(recovered.skipped.length||recovered.applied!==proof.references.cases.length*owners.length)throw new Error('Height proof did not recover after restoring actual UV bytes')
+      recovered.dispose();negativeChecks.push({kind:'actual-final-uv-mutation',recovered:true})
+    }
     installed.dispose()
+    for(const row of callbacks){
+      if(row.mesh.onBeforeRender!==row.observer||!row.calls)throw new Error('Height installer lost an owned callback or never drew the actual mesh')
+      row.mesh.onBeforeRender=row.previous
+    }
+    if(proof.references.heightOnly)negativeChecks.push({kind:'owned-material-callback-cleanup',callbacks:callbacks.length})
     target.dispose()
     mixer.stopAllAction()
   }
   renderer.dispose()
-  return { backend, gpu, cases, maximum, rows, failures }
+  actualDevice?.destroy()
+  return { backend, gpu, cases, maximum, rows, failures, negativeChecks }
 }

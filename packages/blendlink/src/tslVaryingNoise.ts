@@ -13,7 +13,7 @@ function scalarStructure(expression: TslIrExpression | undefined): boolean {
   if (!expression) return false
   const scalarChild = (key: string): boolean => scalarStructure(expression[key] as TslIrExpression)
   switch (expression.op) {
-    case 'const_float': case 'separate': case 'rgb_to_bw': return true
+    case 'const_float': case 'separate': case 'rgb_to_bw': case 'math_modulo_native': return true
     case 'clamp01': return scalarChild('input')
     case 'clamp_minmax': return ['value', 'min', 'max'].every(scalarChild)
     case 'math': return scalarChild('a') && ['b', 'c'].filter(key => key in expression).every(scalarChild)

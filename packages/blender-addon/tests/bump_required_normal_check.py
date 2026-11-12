@@ -15,7 +15,7 @@ owner=bpy.data.objects.new('Required Bump owner',mesh);scene.collection.objects.
 material=bpy.data.materials.new('Authored live Bump');material.use_nodes=True;mesh.materials.append(material)
 tree=material.node_tree;bsdf=next(node for node in tree.nodes if node.type=='BSDF_PRINCIPLED')
 surface=next(node for node in tree.nodes if node.type=='OUTPUT_MATERIAL')
-bump=tree.nodes.new('ShaderNodeBump');height=tree.nodes.new('ShaderNodeValue');height.outputs[0].default_value=.3
+bump=tree.nodes.new('ShaderNodeBump');height=tree.nodes.new('ShaderNodeMath');height.operation='SINE';height.inputs[0].default_value=.3
 tree.links.new(height.outputs[0],bump.inputs['Height']);compiler.set_tsl_ir(material,True)
 
 def snapshot():

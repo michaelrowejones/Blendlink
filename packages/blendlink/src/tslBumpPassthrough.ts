@@ -14,7 +14,7 @@ export function nativeBumpInput(expression: TslIrExpression): TslIrExpression {
 }
 
 export function isNativeUnitNormal(expression: TslIrExpression): boolean {
-  if (['normal_map_native', 'tangent_native', 'normal_map_tangent_native'].includes(expression.op))
+  if (['normal_map_native', 'tangent_native', 'normal_map_tangent_native', 'bump_height_native'].includes(expression.op))
     return true
   if (expression.op === 'geometry_context') return expression.output === 'normal'
   return (
