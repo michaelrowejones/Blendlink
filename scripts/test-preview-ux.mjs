@@ -25,10 +25,23 @@ const report = []
 
 async function until(test, timeout = 45000) {
   const deadline = Date.now() + timeout
-  while (!test()) {
+  while (!await test()) {
     if (Date.now() > deadline) throw new Error('Timed out waiting for preview startup. ' + previewLog.slice(-4000))
     await new Promise(resolve => setTimeout(resolve, 100))
   }
+}
+async function stopPreview() {
+  if (!preview) return
+  const child = preview
+  if (child.exitCode === null && child.signalCode === null) {
+    await new Promise((resolve, reject) => {
+      const deadline = setTimeout(() => { child.kill('SIGKILL'); reject(new Error('Preview did not stop within 15 seconds')) }, 15000)
+      child.once('exit', () => { clearTimeout(deadline); resolve() })
+      child.kill('SIGTERM')
+    })
+  }
+  child.stdout?.destroy(); child.stderr?.destroy(); child.unref()
+  preview = null
 }
 async function runCli(args) {
   const child = spawn(process.execPath, [cli, ...args], { env: environment, cwd: root, stdio: ['ignore', 'pipe', 'pipe'] })
@@ -70,6 +83,7 @@ try {
   await page.mouse.move(700, 500); await page.mouse.down(); await page.mouse.move(820, 570, { steps: 10 }); await page.mouse.up()
   await page.locator('#reset').click()
   assert.equal(await page.locator('#inspect').getAttribute('aria-pressed'), 'false')
+  assert.equal(await page.locator('#notice').isVisible(), false)
   await page.locator('#mobile').click()
   await page.waitForTimeout(350)
   const phone = await page.locator('#viewport').boundingBox()
@@ -103,9 +117,11 @@ try {
   await ready()
   report.push({ flow: 'preview', inspection: true, phoneRatio: phone.width / phone.height, nonblankCapture: true, keyboard: true, retry: true, savedFailureRecovery: true })
   await browser.close(); browser = null
-  preview.kill('SIGTERM')
-  await new Promise(resolve => preview.once('exit', resolve))
-  preview = null
+  await stopPreview()
+  await until(async () => {
+    try { await fetch(url, { signal: AbortSignal.timeout(500) }); return false }
+    catch { return true }
+  }, 5000)
   console.log('BLENDLINK_PREVIEW_UX_PASSED preview inspection, capture, retry and save recovery')
 
   writeFileSync(join(evidence, 'export.log'), await runCli(['export', '--blend', blend, '--out', output]))
@@ -141,7 +157,7 @@ try {
   writeFileSync(join(evidence, 'report.json'), JSON.stringify(report, null, 2) + '\n')
 } finally {
   if (browser) await browser.close()
-  if (preview) preview.kill('SIGTERM')
+  await stopPreview()
   if (server) server.close()
   writeFileSync(join(evidence, 'preview.log'), previewLog)
   rmSync(work, { recursive: true, force: true })

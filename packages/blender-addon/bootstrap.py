@@ -194,7 +194,16 @@ def main(argv: list[str]) -> int:
     # On POSIX replace this background Blender so cancellation reaches the CLI.
     if os.name != "nt":
         os.execve(node, parts, env)
-    return subprocess.call(parts, env=env, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+    # Blender's Windows process may have no inheritable console handles.
+    # Relay explicitly so the artist receives compiler stages and exact errors.
+    with subprocess.Popen(
+        parts, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, encoding="utf-8", errors="replace", bufsize=1,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+    ) as child:
+        for line in child.stdout:
+            print(line, end="", flush=True)
+        return child.wait()
 
 
 if __name__ == "__main__":

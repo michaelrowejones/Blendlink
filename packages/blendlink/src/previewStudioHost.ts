@@ -15,7 +15,7 @@ export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
 export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
 export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
-export const PREVIEW_STUDIO_HOST_VERSION = 16
+export const PREVIEW_STUDIO_HOST_VERSION = 17
 export const PREVIEW_STUDIO_MAIN_MARKER =
   '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
@@ -1184,6 +1184,7 @@ function stopInspection(): void {
   active?.inspection?.dispose()
   if (active) active.inspection = undefined
   element<HTMLButtonElement>('inspect').setAttribute('aria-pressed', 'false')
+  if (noticeMessage.textContent?.startsWith('Inspecting ·')) hideNotice()
   updateRecoveryControls()
 }
 element<HTMLButtonElement>('inspect').addEventListener('click', () => {
@@ -1196,7 +1197,7 @@ element<HTMLButtonElement>('inspect').addEventListener('click', () => {
   inspecting = true
   startInspection(active)
   element<HTMLButtonElement>('inspect').setAttribute('aria-pressed', 'true')
-  showNotice('Inspecting · drag to orbit, scroll to zoom. Playback resumes when you reset the view.')
+  showNotice('Inspecting · drag to orbit, scroll to zoom. Reset view returns to your Blender camera.')
 })
 element<HTMLButtonElement>('capture').addEventListener('click', () => {
   if (!active) return

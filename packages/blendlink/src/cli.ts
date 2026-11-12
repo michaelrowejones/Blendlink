@@ -51,6 +51,18 @@ const flagValue = (name: string) => {
     : undefined
 }
 
+async function withPreviewInterrupt(run: (signal: AbortSignal) => Promise<number>): Promise<number> {
+  const controller = new AbortController()
+  const stop = () => controller.abort()
+  process.on('SIGINT', stop)
+  process.on('SIGTERM', stop)
+  try { return await run(controller.signal) }
+  finally {
+    process.off('SIGINT', stop)
+    process.off('SIGTERM', stop)
+  }
+}
+
 /** One legible line per material: "Base Color: baked 512 tile | Metallic:
  * factor 0.0 | …" — the MTL-BAKE-001 per-channel visibility that turns a
  * wall of identical needsBake errors into individual decisions. */
@@ -216,28 +228,32 @@ async function main(): Promise<number> {
       return 0
     }
     case 'preview': {
-      const requestedBlend = flagValue('--blend')
-      if (flags.has('--blend')) {
-        if (!requestedBlend) {
-          console.error('usage: blendlink preview --blend <saved-scene.blend> [--no-open]')
-          return 2
+      return withPreviewInterrupt(async signal => {
+        const requestedBlend = flagValue('--blend')
+        if (flags.has('--blend')) {
+          if (!requestedBlend) {
+            console.error('usage: blendlink preview --blend <saved-scene.blend> [--no-open]')
+            return 2
+          }
+          const { runPreviewStudio } = await import('./preview.js')
+          return runPreviewStudio({
+            signal,
+            blendPath: resolve(process.cwd(), requestedBlend),
+            openBrowser: !flags.has('--no-open'),
+            force: flags.has('--force'),
+            allowNewerFile: flags.has('--allow-newer'),
+          })
         }
-        const { runPreviewStudio } = await import('./preview.js')
-        return runPreviewStudio({
-          blendPath: resolve(process.cwd(), requestedBlend),
+        const config = await loadConfig(process.cwd())
+        const { runWebsitePreview } = await import('./preview.js')
+        return runWebsitePreview(config, {
+          signal,
           openBrowser: !flags.has('--no-open'),
+          autoUpdate: true,
+          ...(positional[0] ? { only: positional[0] } : {}),
           force: flags.has('--force'),
           allowNewerFile: flags.has('--allow-newer'),
         })
-      }
-      const config = await loadConfig(process.cwd())
-      const { runWebsitePreview } = await import('./preview.js')
-      return runWebsitePreview(config, {
-        openBrowser: !flags.has('--no-open'),
-        autoUpdate: true,
-        ...(positional[0] ? { only: positional[0] } : {}),
-        force: flags.has('--force'),
-        allowNewerFile: flags.has('--allow-newer'),
       })
     }
     case 'verify': {

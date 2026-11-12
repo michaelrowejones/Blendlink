@@ -81,6 +81,11 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Install software rendering libraries for headless Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0
+
       - name: Run the complete portable release gate
         run: npm run test:full
 
