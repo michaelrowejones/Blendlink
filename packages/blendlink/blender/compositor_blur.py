@@ -1,12 +1,44 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Native static separable Blur normalization and float32 filter tables."""
+import ctypes
+import ctypes.util
+from functools import lru_cache
 import math
+import sys
 
 import numpy as np
 
 
 FILTERS = {"FLAT": "Flat", "TENT": "Tent", "QUAD": "Quadratic", "CUBIC": "Cubic",
            "GAUSS": "Gaussian", "CATROM": "Catrom", "MITCH": "Mitch"}
+
+
+@lru_cache(maxsize=1)
+def gaussian_float_math():
+    """Use the process's scalar C functions, as RE_filter_value does.
+
+    NumPy's float32 exp can use a different SIMD approximation on x86. A
+    coefficient ULP is visible when gamma's filtered alpha is close to zero.
+    """
+    def libraries():
+        yield None
+        if sys.platform == "win32":
+            yield "ucrtbase.dll"
+        else:
+            library = ctypes.util.find_library("m")
+            if library:
+                yield library
+    for name in libraries():
+        try:
+            library = ctypes.CDLL(name, **({"winmode": 0x800} if sys.platform == "win32" and name else {}))
+            functions = [getattr(library, symbol) for symbol in ("expf", "sqrtf")]
+            for function in functions:
+                function.argtypes = (ctypes.c_float,)
+                function.restype = ctypes.c_float
+            return tuple(functions)
+        except (OSError, AttributeError):
+            continue
+    raise ValueError("Gaussian Blur requires the native scalar C expf and sqrtf functions")
 
 
 def filter_value(kind, coordinate):
@@ -20,9 +52,10 @@ def filter_value(kind, coordinate):
         return f(1) - x if x <= 1 else f(0)
     scale = f(1.6)
     if kind == "Gaussian":
+        expf, sqrtf = gaussian_float_math()
         two_scale2 = f(2) * scale * scale
         x *= f(3) * scale
-        return (f(1) / np.sqrt(f(math.pi) * two_scale2)) * np.exp(-x * x / two_scale2)
+        return (f(1) / f(sqrtf(float(f(math.pi) * two_scale2)))) * f(expf(float(-x * x / two_scale2)))
     x *= scale
     x2 = x * x
     if kind == "Quadratic":
@@ -103,13 +136,18 @@ def normalize_blur(node, op, scene, read, bounds, fail):
     if len(radii) != 2 or any(not math.isfinite(radius) or radius > 128 for radius in radii):
         fail(node.inputs["Size"], "Blur requires constant radii between 0 and 128 pixels per axis")
     legacy_cpu = legacy and device == "CPU"
-    with np.errstate(divide="ignore", invalid="ignore", over="ignore", under="ignore"):
-        weights = [filter_weights(mode, radius, legacy_cpu) for radius in radii]
+    try:
+        with np.errstate(divide="ignore", invalid="ignore", over="ignore", under="ignore"):
+            weights = [filter_weights(mode, radius, legacy_cpu) for radius in radii]
+    except ValueError as error:
+        fail(node.inputs["Size"], str(error))
     if any(not math.isfinite(value) for table in weights for value in table):
         fail(node.inputs["Size"], "Blur radius has no finite supported native filter table")
     op["properties"].update({"blur_model": "legacy-cpu-f32-v1" if legacy_cpu else "symmetric-separable-f32-v1",
                              "blur_weights": weights,
                              "blur_output_sampling_model": "native-texel-v1"})
+    if mode == "Gaussian":
+        op["properties"]["blur_gaussian_math"] = "native-c-f32-v1"
     if legacy and node.use_gamma_correction:
         op["properties"]["blur_gamma_model"] = "legacy-cpu-square-v1" if legacy_cpu else "legacy-gpu-square-v1"
     image = node.inputs["Image"]

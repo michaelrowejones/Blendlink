@@ -73,6 +73,7 @@ def main(output):
                     grade["properties"].pop("blur_model")
                     grade["properties"].pop("blur_weights")
                     grade["properties"].pop("blur_output_sampling_model")
+                    grade["properties"].pop("blur_gaussian_math", None)
                     compatibility["case"] += "-schema1-compatibility"
                     (Path(output) / (compatibility["case"] + ".json")).write_text(json.dumps(compatibility, separators=(",", ":")))
                     oracle.rows.append({"case": compatibility["case"]})

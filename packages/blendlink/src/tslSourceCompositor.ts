@@ -1,3 +1,4 @@
+import { buildCompositorFilter } from './tslCompositorFilter.js'
 import { buildCompositorFlip } from './tslCompositorSpatial.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
 import * as TSL from 'three/tsl'
@@ -719,6 +720,13 @@ export function buildSourceCompositor(
               throw new SourceCompositorUnsupported('Switch requires its native fixed-choice model')
             node = input('Selected')
             break
+          case 'filter': {
+            const image = input('Image'), factor = input('Fac'), single = isSingleValue(op.inputs.Image!.value)
+            node = buildCompositorFilter(op, image, factor, single, resources,
+              message => { throw new SourceCompositorUnsupported(message) })
+            if (single && op.properties.filter_schema === 'modern') singleValues.add(op.id)
+            break
+          }
           case 'flip':
             node = buildCompositorFlip(op, input('Image'), isSingleValue(op.inputs.Image!.value), resources,
               message => { throw new SourceCompositorUnsupported(message) })

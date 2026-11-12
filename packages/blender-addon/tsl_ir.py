@@ -892,7 +892,9 @@ def _channel_document(expression):
     encoded = _json.dumps(expression)
     if '"view_cos"' in encoded:
         document["viewDependent"] = True
-    if '"normal_map"' in encoded or '"normal_view"' in encoded:
+    if any(('"'+name+'"') in encoded for name in ('normal_map_native','normal_view_native')):
+        document['viewDependent'] = True
+    if any(('"'+name+'"') in encoded for name in ('normal_map','normal_view','normal_map_native','normal_view_native')):
         document["geometryDependent"] = True
     if '"ambient_occlusion"' in encoded:
         # Scene occlusion is not carried: the runtime evaluates the
@@ -910,7 +912,16 @@ def emit_normal_channel(socket, stack=(), *, evaluation_engine=None):
     if evaluation_engine is not None:
         with emission_context(evaluation_engine=evaluation_engine):
             return emit_normal_channel(socket, stack)
-    return _channel_document({"op": "normal_view", "input": emit_input(socket, stack, as_vector=True)})
+    expression=emit_input(socket, stack, as_vector=True)
+    if __package__:
+        from . import normal_ir
+    else:
+        import normal_ir
+    normals=[];normal_ir.requirements(expression,normals)
+    if normals and expression.get('op')!='normal_map_native':
+        _refuse('Native Normal Map normal channels currently require a direct unit-normal output; downstream vector normalization is not certified yet')
+    if normals: return _channel_document({"op": "normal_view_native", "input": expression})
+    return _channel_document({"op": "normal_view", "input": expression})
 
 
 def emit_surface(tree, target="CYCLES"):
@@ -2247,7 +2258,9 @@ def emit_output(node, from_socket, stack=()):
             _refuse(
                 f"Noise dimensions {dimensions!r} has no cell yet"
             )
+        roughness_expression = None
         def _folded_noise_scalar(name, default):
+            nonlocal roughness_expression
             # Same contract as Scale below: a linked value that folds to a
             # constant through group walls (the ellie paint corpus drives
             # Detail/Roughness through value + Clamp plumbing) is boundable
@@ -2260,6 +2273,15 @@ def emit_output(node, from_socket, stack=()):
             expression = emit_input(socket, stack=stack)
             folded = _fold_constant_scalar(expression)
             if folded is None:
+                if name == 'Roughness':
+                    if __package__:
+                        from .noise_varying_ir import unit_roughness
+                    else:
+                        from noise_varying_ir import unit_roughness
+                    if not unit_roughness(expression):
+                        _refuse('Noise linked Roughness needs a proven [0,1] input; use an authored Clamp for unbounded values')
+                    roughness_expression = expression
+                    return 1.0  # Independent conservative amplitude bound.
                 _refuse(
                     f"Noise with a non-constant {name} has no cell yet "
                     f"(source op {expression.get('op')!r})"
@@ -2272,6 +2294,9 @@ def emit_output(node, from_socket, stack=()):
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
+        precise_fractal = not normalize_output or roughness_expression is not None
+        if roughness_expression is not None and detail_value > 2:
+            _refuse('Noise varying Roughness requires static Detail <= 2 in the proven domain')
         offset_value = _folded_noise_scalar('Offset', 0) if noise_type in {'HETERO_TERRAIN', 'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 0
         gain_value = _folded_noise_scalar('Gain', 1) if noise_type in {'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 1
         amplitude_bound = None
@@ -2282,7 +2307,7 @@ def emit_output(node, from_socket, stack=()):
                 from noise_fractal_ir import fractal_amplitude_bound
             try: amplitude_bound = fractal_amplitude_bound(noise_type, detail_value, roughness_value, offset_value, gain_value)
             except ValueError as error: _refuse(str(error))
-        if not normalize_output and (
+        if precise_fractal and (
                 not all(math.isfinite(value) for value in [detail_value, roughness_value, lacunarity_value])
                 or abs(lacunarity_value) > 2):
             _refuse('Unnormalized Noise needs finite static controls and |Lacunarity| <= 2 in the proven domain')
@@ -2317,7 +2342,7 @@ def emit_output(node, from_socket, stack=()):
                 "Noise with a non-constant Scale has no bounded cell yet "
                 f"(source op {scale_expression.get('op')!r})"
             )
-        if not normalize_output and not math.isfinite(folded_scale):
+        if precise_fractal and not math.isfinite(folded_scale):
             _refuse('Unnormalized Noise requires a finite static Scale')
         scale_expression = {"op": "const_float", "value": folded_scale}
         input_expression = (
@@ -2332,7 +2357,7 @@ def emit_output(node, from_socket, stack=()):
         approximate_bound = _NOISE_SCALE_APPROXIMATE_BOUNDS.get(dimensions)
         if (
             scale_magnitude > _NOISE_SCALE_BOUND + 1e-9
-            and normalize_output
+            and not precise_fractal
             and approximate_bound is not None
             and scale_magnitude <= approximate_bound + 1e-9
         ):
@@ -2397,7 +2422,9 @@ def emit_output(node, from_socket, stack=()):
             expression['noiseType'] = noise_type
             if amplitude_bound is not None:
                 expression.update(offset=offset_value, gain=gain_value, amplitudeBound=amplitude_bound)
-        if not normalize_output and bpy.app.version >= (5, 0, 0):
+        if roughness_expression is not None:
+            expression.update({"op": "noise_varying", 'noiseType': noise_type, 'roughnessNode': roughness_expression})
+        if precise_fractal and bpy.app.version >= (5, 0, 0):
             if __package__:
                 from .shader_domains import native_shader_input_evaluation
             else:
@@ -2406,7 +2433,7 @@ def emit_output(node, from_socket, stack=()):
             if stage == 'opaque':
                 _refuse('Unnormalized Noise has unverified native constant-evaluation eligibility')
             native_mf = stage == 'constant'
-        if not normalize_output:
+        if precise_fractal:
             import platform
             import sys
             source_engine = get_evaluation_engine()
@@ -2443,7 +2470,7 @@ def emit_output(node, from_socket, stack=()):
                 distortion_value = folded
             else:
                 distortion_value = float(distortion_socket.default_value)
-        if not normalize_output and (not math.isfinite(distortion_value) or abs(distortion_value) > 1):
+        if precise_fractal and (not math.isfinite(distortion_value) or abs(distortion_value) > 1):
             _refuse('Unnormalized Noise Distortion exceeds its proven finite [-1,1] domain')
         if abs(distortion_value) > 1e-9:
             # Lane count follows the dimension. The old "2 if 2D else 3" was
@@ -2455,7 +2482,7 @@ def emit_output(node, from_socket, stack=()):
             expression["distortion"] = distortion_value
             expression["distortionOffsets"] = [
                 _noise_random_offset(float(seed), count, native_mf=native_mf,
-                                     native_float4=not normalize_output and count == 4,
+                                     native_float4=precise_fractal and count == 4,
                                      native_shader_f32=shader_offset_profile is not None)
                 for seed in range(count)
             ]
@@ -2473,14 +2500,20 @@ def emit_output(node, from_socket, stack=()):
             seeds = (float(count), float(count + 1))
             expression["colorOffsets"] = [
                 _noise_random_offset(seed, count, native_mf=native_mf,
-                                     native_float4=not normalize_output and count == 4,
+                                     native_float4=precise_fractal and count == 4,
                                      native_shader_f32=shader_offset_profile is not None) for seed in seeds
             ]
         return expression
 
     if idname == "ShaderNodeNormalMap":
         if node.space != 'TANGENT':
-            _refuse('Normal Map currently supports Tangent space')
+            if __package__:
+                from .normal_ir import emit_normal_map
+            else:
+                from normal_ir import emit_normal_map
+            return emit_normal_map(node, emit_vector=lambda socket:emit_input(socket, stack=stack, as_vector=True),
+                                   emit_scalar=lambda socket:emit_input(socket, stack=stack),
+                                   refuse=_refuse, engine=get_evaluation_engine())
         if node.uv_map:
             _refuse('Normal Map with a named tangent UV basis is not supported yet')
         convention = str(getattr(node, 'convention', 'OPENGL'))

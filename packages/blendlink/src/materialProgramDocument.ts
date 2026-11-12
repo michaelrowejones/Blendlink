@@ -79,6 +79,8 @@ export async function fetchMaterialPrograms(pointer: {
 /** Legacy WebGLRenderer cannot apply a live Base Color graph. Refuse only
  * when an actually matched shipped program would otherwise leave its surface
  * on glTF's white default; portable textured/factored carriers remain usable.
+ * Required native normal fields also need the node renderer, even with a
+ * portable base color. Ordinary portable-only scenes retain their no-fetch path.
  */
 export async function assertLegacyMaterialCarriers(
   options: {
@@ -90,6 +92,7 @@ export async function assertLegacyMaterialCarriers(
   const pointer = options.descriptor.materialPrograms
   if (!pointer) return
   const missing = new Map<string, Set<string>>()
+  const primaryNormals = new Map<string,Set<string>>()
   options.root.traverse(object => {
     const mesh = object as THREE.Mesh
     if (!mesh.isMesh) return
@@ -97,6 +100,11 @@ export async function assertLegacyMaterialCarriers(
     for (const material of list) {
       const source = material?.userData?.blendlink_source_material
       if (typeof source !== 'string') continue
+      const context=mesh.userData?.blendlink_tsl_runtime?.geometryContext
+      if(Array.isArray(context)&&context.includes('normal')){
+        const names=primaryNormals.get(source)??new Set<string>()
+        names.add(material.name||source);primaryNormals.set(source,names)
+      }
       const surface = material as THREE.MeshStandardMaterial
       if (surface.map || (surface.color &&
           [surface.color.r, surface.color.g, surface.color.b].some(value => value !== 1)) ||
@@ -106,8 +114,17 @@ export async function assertLegacyMaterialCarriers(
       missing.set(source, names)
     }
   })
-  if (!missing.size) return
+  if (!missing.size&&!primaryNormals.size) return
   const programs = options.loadPrograms ? await options.loadPrograms() : await fetchMaterialPrograms(pointer)
+  const nativeNormal=(value:unknown):boolean=>{
+    if(Array.isArray(value))return value.some(nativeNormal)
+    if(!value||typeof value!=='object')return false
+    return (value as Record<string,unknown>).op==='normal_map_native'||Object.values(value).some(nativeNormal)
+  }
+  const normalNames=[...primaryNormals].filter(([source])=>Object.hasOwn(programs.materials,source)&&nativeNormal(programs.materials[source]?.channels))
+    .flatMap(([,names])=>[...names]).sort()
+  if(normalNames.length)throw new Error(`Legacy WebGLRenderer cannot render the shipped live native Normal Map program for ${normalNames.map(name=>JSON.stringify(name)).join(', ')}. `+
+    'Its portable base color does not carry the native normal function. Use WebGPURenderer (including its WebGL2 fallback).')
   const unsupported = [...missing].filter(([source]) =>
     Object.hasOwn(programs.materials, source) && programs.materials[source]?.channels?.['Base Color']?.tslIr)
   if (!unsupported.length) return

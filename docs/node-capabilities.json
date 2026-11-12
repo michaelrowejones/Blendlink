@@ -1067,11 +1067,12 @@
     },
     "shader:ShaderNodeTexNoise": {
       "category": "partial",
-      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static controls; FBM Detail<=6, other recurrences Detail<=2. Negative Detail/Roughness follow native zero clamping; Roughness>1 refuses. New signed/HDR recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only FBM approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/LinuxCPU/OpenGL offset precision profiles and independent finite-amplitude bounds are explicit. Genuinely varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
+      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "noise",
-        "noise_fractal"
+        "noise_fractal",
+        "noise_varying"
       ],
       "modes": {
         "noise_dimensions": {
@@ -1132,6 +1133,17 @@
         },
         {
           "path": "packages/blender-addon/tests/automatic_engine_fallback_check.py"
+        },
+        {
+          "path": "packages/blender-addon/noise_varying_ir.py",
+          "anchor": "def unit_roughness"
+        },
+        {
+          "path": "packages/blendlink/src/tslVaryingNoise.ts",
+          "anchor": "export function isUnitRoughnessExpression"
+        },
+        {
+          "path": "packages/blender-addon/tests/noise_varying_translation_check.py"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -1157,6 +1169,10 @@
         "builtOtherFractalCorpusGraphs53": 458,
         "otherFractalCyclesMappedMaxAbs": 3.6954879760742188e-06,
         "otherFractalCyclesDerivedRawMaxAbs": 0.00019073486328125,
+        "varyingRoughnessGraphsPerVersion": 458,
+        "builtVaryingRoughnessGraphs53": 458,
+        "varyingRoughnessCyclesMappedMaxAbs": 7.3909759521484375e-06,
+        "varyingRoughnessCyclesDerivedRawMaxAbs": 0.0001983642578125,
         "retainedLinuxSignedFbmGraphs42": 334,
         "retainedLinuxSignedFbmCyclesMappedMax42": 4.410743713378906e-06,
         "retainedLinuxSignedFbmGraphs52": 334,
@@ -1489,17 +1505,24 @@
     },
     "shader:ShaderNodeNormalMap": {
       "category": "partial",
-      "limits": "Tangent space only; exported tangent/normal basis and decoded input conventions apply.",
+      "limits": "Fresh OBJECT/WORLD/BLENDER_OBJECT/BLENDER_WORLD routes use explicit Cycles versus EEVEE decode/strength/backface models, native primary-surface normal storage, actual per-draw owner/camera matrices and both exported bases. Inputs currently need literal/default, RGB/Value, Combine or resolved constant-group Color/Strength within absolute16; animated/spatial inputs remain unported. A conservative length/cone certificate over actual Float32 bound normal bytes rejects undefined or uncertified zero normal blends. Direct material Normal-slot conversion is measured with nonuniform camera scale and rawZ/Yup. Primary-geometry conditioning, camera, deformation/instance, Cycles single/shared-user and mixed-shading limits apply. No material displacement; ORIGINAL/DISPLACED selectors are retained but displaced-surface behavior is unproved. The existing TANGENT route is legacy and outside this new proof: do not infer Cycles/smooth/named-UV/deformation parity. Normal programs are audited even with portable BaseColor, and legacy WebGLRenderer refuses required native normal functions. Whole BSDF/lighting parity is not claimed.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
-        "normal_map"
+        "normal_map",
+        "normal_map_native",
+        "normal_view_native"
       ],
       "modes": {
         "space": {
           "supported": [
             "TANGENT"
           ],
-          "partial": []
+          "partial": [
+            "OBJECT",
+            "WORLD",
+            "BLENDER_OBJECT",
+            "BLENDER_WORLD"
+          ]
         },
         "base": {
           "partial": [
@@ -1525,9 +1548,62 @@
         },
         {
           "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "packages/blender-addon/normal_ir.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/normal_nodes_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/normal_domain_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslNormalNodes.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslNormalNodes.test.ts"
+        },
+        {
+          "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+        },
+        {
+          "path": "packages/blendlink/src/compiledSceneAudit.ts"
+        },
+        {
+          "path": "packages/blendlink/src/materialProgramDocument.ts"
+        },
+        {
+          "path": "experiments/normal-node-differential/README.md"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0 LTS",
+          "5.3.0"
+        ],
+        "nativeEngines": [
+          "Cycles CPU",
+          "EEVEE Metal"
+        ],
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "sharedFieldAndControlCellsPerBackend": {
+          "4.2": 3552,
+          "5.2": 4320,
+          "5.3": 4320
+        },
+        "cyclesZeroFallbackCellsPerBackendPerVersion": 336,
+        "actualFinalScenesPerVersion": 24,
+        "maximumCyclesAbsoluteEncodedRgbError": 1.9252300262451172e-05,
+        "maximumEeveeAbsoluteEncodedRgbError": 0.0004919767379760742,
+        "tolerance": "Fixed2e-5 native camera-raster allowance; EEVEE adds independently calibrated final half-float ULP",
+        "scope": "Shared corpus across non-tangent spaces, BaseColor encodings/actual Normal slots and RGB controls; no per-node-type count or legacyTangent/whole-render certification."
+      }
     },
     "shader:ShaderNodeFresnel": {
       "category": "partial",
@@ -5098,6 +5174,63 @@
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeFilter": {
+      "category": "partial",
+      "limits": "All eight fixed native 3x3 enhancement kernels on Blender 4.2/5.2/5.3, with clamped scene-viewport image boundaries and live Factor fields. Preserves native legacy CPU accumulation/clamping, modern single-value bypass, signed/HDR RGB and alpha differences. Flip to Filter, Filter to Blur and Posterize preserve evaluated fields. Linked kernel selectors, animation, expanded/transformed image domains and GPU Half precision remain refused. Draw cost, caller MRT/clear state and texture cleanup are verified.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "filter"
+      ],
+      "modes": {
+        "filter_type": {
+          "supported": [
+            "SOFTEN",
+            "SHARPEN",
+            "SHARPEN_DIAMOND",
+            "LAPLACE",
+            "SOBEL",
+            "PREWITT",
+            "KIRSCH",
+            "SHADOW"
+          ]
+        },
+        "inputs:Type": {
+          "supported": [
+            "Soften",
+            "Box Sharpen",
+            "Diamond Sharpen",
+            "Laplace",
+            "Sobel",
+            "Prewitt",
+            "Kirsch",
+            "Shadow"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_filter.py",
+          "anchor": "def normalize_filter"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'filter':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorFilter.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorFilter.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_filter_check.py"
+        },
+        {
+          "path": "experiments/compositor-spatial-differential/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
     }
   },
   "knownUnsupported": [
@@ -5129,7 +5262,6 @@
     "compositor:CompositorNodeDistanceMatte",
     "compositor:CompositorNodeDoubleEdgeMask",
     "compositor:CompositorNodeEllipseMask",
-    "compositor:CompositorNodeFilter",
     "compositor:CompositorNodeIDMask",
     "compositor:CompositorNodeImage",
     "compositor:CompositorNodeImageCoordinates",

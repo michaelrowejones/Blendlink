@@ -607,3 +607,40 @@ The final built checkpoint combines these with 968 fresh static/aspect and
 error 3.81470e-6, with the 510 interoperability graphs remaining at 3.57628e-7.
 Every cleanup, caller-state and shader-cost check passed; evidence is in
 `artifacts/verification-compositor-blur-interop/final-built`.
+
+## Gaussian kernel precision
+
+Gaussian tables now record `blur_gaussian_math='native-c-f32-v1'` and use the
+process's scalar C `expf` and `sqrtf`, as Blender's filter implementation does.
+NumPy's platform-dependent float32 transcendental path can produce a different
+coefficient ULP. Gamma correction amplifies that error near zero filtered alpha;
+the retained Linux 4.2 impulse/radius128 case exposed a 1.46988e-4 RGB error.
+The existing numeric budget is unchanged. Missing native scalar functions
+produce a named refusal; the exporter never silently substitutes approximate
+coefficients. POSIX uses process symbols or system libm, and Windows can use
+the system UCRT. Function handles are cached; no package dependency is added.
+
+`compositor_blur_kernel_check.py` uses
+`BLENDLINK_COMPOSITOR_BLUR_KERNEL_REFERENCES` and
+`BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE`. Six native graphs per device on each
+version test radii 0, 1, 2, 2.25, 7 and 128 using 257×4 impulse images. The
+native fixture compares exported coefficients against the rendered native
+float32 bits before accepting a reference. Browser calibration and output
+also compare every float32 word, with zero mismatches required. The fixture
+additionally verifies that unavailable C math functions refuse extraction.
+All 36 actual native CPU/Metal graphs pass WebGL2 and WebGPU bit-for-bit.
+
+The unchanged Linux reference reproduces its original failure on both macOS
+browser backends. Substituting scalar-C-derived tables makes that specific
+reference exact. All 880 retained Linux Blur, gamma and interoperability graphs
+also pass with regenerated tables: maximum channel errors 6.85453e-7 on WebGL2
+and 9.53674e-7 on WebGPU. This is a coefficient-regeneration replay, not a fresh
+Linux extraction: only Gaussian weight arrays and their precision marker are
+changed. Native input/expected text and float32 bits remain unchanged. Full
+per-file provenance is retained in
+`artifacts/verification-blur-gamma-linux42/retained-c-tables/replay-provenance.json`;
+the actual Linux scalar-library path is certified by the next native kernel gate.
+The final built checkpoint combines the 880 retained references with the 36
+native kernel graphs; all 916 pass on both browser backends at the same maxima,
+with every kernel word exact and every cleanup/state/shader-cost check passing.
+Evidence is in `artifacts/verification-blur-gamma-linux42/final-built`.

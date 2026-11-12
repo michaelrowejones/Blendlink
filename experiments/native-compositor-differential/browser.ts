@@ -58,15 +58,25 @@ try {
       if (actual.length < ((height - 1) * stride + width) * 4) throw new Error('Unexpected GPU readback layout')
       const channels = [0, 0, 0, 0]
       let worst: unknown
+      const actualBits = test.requireFloat32Bits ? new Uint32Array(actual.buffer, actual.byteOffset, actual.length) : null
+      const expectedBits = test.requireFloat32Bits ? new Uint32Array(new Float32Array(expected).buffer) : null
+      let bitMismatches = 0, bitWorst: unknown
       for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) for (let c = 0; c < 4; c++) {
-        const value = actual[(y * stride + x) * 4 + c]!
+        const actualIndex = (y * stride + x) * 4 + c
+        const expectedIndex = ((flip ? height - y - 1 : y) * width + x) * 4 + c
+        const value = actual[actualIndex]!
         if (!Number.isFinite(value)) throw new Error('GPU produced a non-finite compositor pixel')
-        const reference = expected[((flip ? height - y - 1 : y) * width + x) * 4 + c]!
+        const reference = expected[expectedIndex]!
+        if (actualBits && expectedBits && actualBits[actualIndex] !== expectedBits[expectedIndex]) {
+          bitMismatches++
+          bitWorst = { x, y, channel: c, actualBits: actualBits[actualIndex], expectedBits: expectedBits[expectedIndex] }
+        }
         const error = Math.abs(value - reference)
         if (error > Math.max(...channels)) worst = { x, y, channel: c, actual: value, expected: reference }
         channels[c] = Math.max(channels[c]!, error)
       }
-      return { max: Math.max(...channels), channels, worst }
+      return { max: Math.max(...channels), channels, worst,
+        ...(test.requireFloat32Bits ? { bitMismatches, bitWorst } : {}) }
     }
     try {
       ;(window as any).__compositorProgress.phase = 'calibrating'
@@ -83,6 +93,7 @@ try {
       row.rowFlip = flip
       row.calibration = calibration.max
       if (calibration.max > 1e-6) throw new Error('Unmodified HDR input did not survive the browser render target')
+      if (calibration.bitMismatches) throw new Error('Unmodified input float32 bits did not survive the browser render target')
       const built = buildSourceCompositor(test.program, () => source)
       try {
         ;(window as any).__compositorProgress.phase = 'rendering'
@@ -96,6 +107,7 @@ try {
         try { actual = await render(built.node) }
         finally { QuadMesh.prototype.render = renderQuad }
         Object.assign(row, errorFor(actual, test.expected, flip))
+        if (row.bitMismatches) throw new Error('GPU compositor float32 bits differ from native: ' + JSON.stringify(row.bitWorst))
         if (test.captureShader) row.fragmentShader = (await renderer.debug.getShaderAsync(quad, quad.camera, quad)).fragmentShader
         if (test.assertShaderCost) {
           const callerTarget = renderer.getRenderTarget(), callerMrt = renderer.getMRT()

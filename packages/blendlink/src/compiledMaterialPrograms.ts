@@ -9,9 +9,21 @@ import { materialProgramObjectOwner } from './materialProgramDocument.js'
 
 /** Exact image companions, keyed by their published basename, not by an IR name. */
 export type MaterialProgramImageBytes = ReadonlyMap<string, Uint8Array>
+export interface MaterialProgramPrimitiveData {
+  position: Float32Array | null
+  normal: Float32Array | null
+  indices: Uint8Array | Uint16Array | Uint32Array | null
+}
+export type MaterialProgramGeometryData = ReadonlyMap<string, MaterialProgramPrimitiveData>
 
 function record(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
+function hasNativeNormal(value:unknown):boolean {
+  if(Array.isArray(value))return value.some(hasNativeNormal)
+  if(!record(value))return false
+  return value.op==='normal_map_native'||Object.values(value).some(hasNativeNormal)
 }
 
 function imageFile(value: unknown): string {
@@ -36,6 +48,8 @@ export function readMaterialProgramImageBytes(bytes: Uint8Array, sidecarPath: st
 }
 
 interface PrimitiveBinding {
+  meshIndex: number
+  primitiveIndex: number
   primitive: Record<string, unknown>
   extras: Record<string, unknown>
   runtime: TslRuntimeMeshExtras | null
@@ -71,7 +85,7 @@ function primitiveBindings(gltf: Record<string, unknown>): PrimitiveBinding[] {
       record(node?.extras) && materialProgramObjectOwner(node.extras.blendlink_tsl_object)
       ? { ...meshExtras, ...node.extras } : meshExtras
     const instanced = record(node?.extensions) && Object.hasOwn(node.extensions, 'EXT_mesh_gpu_instancing')
-    for (const primitive of mesh.primitives) if (record(primitive)) bindings.push({ primitive, extras, runtime, instanced, nodeChain })
+    for (const [primitiveIndex,primitive] of mesh.primitives.entries()) if (record(primitive)) bindings.push({ meshIndex:meshes.indexOf(mesh),primitiveIndex,primitive, extras, runtime, instanced, nodeChain })
   }
   if (!nodes) { meshes.forEach(mesh => add(mesh)); return bindings }
   const scenes = Array.isArray(gltf.scenes) ? gltf.scenes : []
@@ -139,6 +153,7 @@ export async function validatedBaseColorProgramMaterials(
   manifest: Pick<SceneManifest, 'materialPrograms'>,
   bytes?: Uint8Array,
   imageBytes?: MaterialProgramImageBytes,
+  geometryData?: MaterialProgramGeometryData,
 ): Promise<ReadonlySet<number>> {
   const accepted = new Set<number>()
   if (!bytes) return accepted
@@ -164,24 +179,27 @@ export async function validatedBaseColorProgramMaterials(
     if (!record(material) || !record(material.extras)) return []
     const attributes = bindings.filter(binding => binding.primitive.material === index)
       .map(({ primitive }) => new Set(Object.keys(record(primitive.attributes) ? primitive.attributes : {})))
-    if (hasBaseColorCarrier(material, attributes)) return []
+    const baseColorRequired=!hasBaseColorCarrier(material, attributes)
     const source = material.extras.blendlink_source_material
     if (typeof source !== 'string' || !Object.hasOwn(programs, source)) return []
     const program = programs[source]
+    const nativeNormal=record(program)&&hasNativeNormal(program.channels)
+    if(!baseColorRequired&&!nativeNormal)return []
     const channel = record(program) && record(program.channels) ? program.channels['Base Color'] : null
-    if (!record(channel) || !record(channel.tslIr)) return []
+    if (baseColorRequired&&(!record(channel) || !record(channel.tslIr))) return []
     // GLTFLoader creates MeshBasicMaterial for an unlit carrier; the actual
     // program installer only swaps MeshStandardMaterial-compatible carriers.
     if (record(material.extensions) && Object.hasOwn(material.extensions, 'KHR_materials_unlit')) return []
-    return [{ index, ir: channel.tslIr as unknown as TslIrDocument, program }]
+    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal }]
   })
   if (!candidates.length) return accepted
   const { buildTslColorNode, createTslBuildResources, TslIrError } = await import('./tslNodeRecipe.js')
-  const { buildOptionsFor, collectObjectAttributeNames } = await import('./tslMaterialProgram.js')
+  const { buildOptionsFor, collectObjectAttributeNames,buildMaterialProgram } = await import('./tslMaterialProgram.js')
   const { objectAttributeResolver, objectAttributeValue, loadProgramTextures } = await import('./tslMaterialRuntime.js')
   const { collectObjectInfoOutputs, createObjectInfoResolver, validateObjectInfoBinding } = await import('./tslObjectInfo.js')
   const { collectVectorTransformRequirements, validateVectorTransformBinding } = await import('./tslVectorTransform.js')
   const { collectGeometryContextOutputs, validateGeometryContextMatrix } = await import('./tslGeometryContext.js')
+  const { collectNormalMapRequirements,validateNormalMapBinding } = await import('./tslNormalNodes.js')
   const THREE = await import('three')
   const objectForBinding = (binding: PrimitiveBinding): import('three').Object3D => {
     if (binding.hierarchyIssue || !binding.nodeChain?.length) throw new TslIrError('Vector Transform needs actual default-scene object matrices: ' + (binding.hierarchyIssue ?? 'node hierarchy is missing'))
@@ -220,9 +238,10 @@ export async function validatedBaseColorProgramMaterials(
     },
   })
   try {
-    for (const { index, ir, program } of candidates) {
+    for (const { index, ir, program,baseColorRequired,nativeNormal } of candidates) {
       let bindingCount = 0
       let valid = true
+      let refusal=''
       const names = new Set<string>()
       const info = new Set<string>()
       collectObjectAttributeNames(record(program) ? program.channels : null, names)
@@ -231,6 +250,8 @@ export async function validatedBaseColorProgramMaterials(
       collectVectorTransformRequirements(record(program) ? program.channels : null, transforms)
       const geometry=new Set<import('./tslGeometryContext.js').GeometryContextOutput>()
       collectGeometryContextOutputs(record(program)?program.channels:null,geometry)
+      const normalMaps:import('./tslNodeRecipe.js').TslIrExpression[]=[]
+      collectNormalMapRequirements(record(program)?program.channels:null,normalMaps)
       const material = materials[index]
       const materialInfo = record(material) && record(material.extras) ? material.extras.blendlink_tsl_material : null
       for (const binding of bindings) {
@@ -254,6 +275,18 @@ export async function validatedBaseColorProgramMaterials(
                 [...geometry].some(value=>['normal','object-normal','reflection'].includes(value))&&(!record(normal)||normal.type!=='VEC3'||normal.componentType!==5126||normal.normalized===true||normal.count!==position.count))
                 throw new TslIrError('Geometry context requires actual triangle position/normal attributes without skin, morph or GPU instances')
               validateGeometryContextMatrix(objectForBinding(binding),extras?.objectSpace)
+            }
+            if(normalMaps.length){
+              if(!extras?.geometryContext?.includes('normal'))throw new TslIrError('Native Normal Map requires its exported primary-normal context declaration')
+              const owner=objectForBinding(binding),data=geometryData?.get(`${binding.meshIndex}:${binding.primitiveIndex}`)
+              let bound:import('three').Object3D=owner
+              if(data?.position&&data.normal){
+                const actual=new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(data.position,3))
+                  .setAttribute('normal',new THREE.BufferAttribute(data.normal,3))
+                if(data.indices)actual.setIndex(new THREE.BufferAttribute(data.indices,1))
+                const mesh=new THREE.Mesh(actual);owner.add(mesh);bound=mesh
+              }
+              validateNormalMapBinding(normalMaps,bound,extras?.objectSpace)
             }
             if (transforms.length) {
               const objectNeeded = transforms.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')
@@ -300,13 +333,24 @@ export async function validatedBaseColorProgramMaterials(
               Object.values(value).forEach(inspect)
             }
             inspect(record(program) ? program.channels : ir)
-            buildTslColorNode(ir, options)
+            if(ir)buildTslColorNode(ir, options)
+            if(nativeNormal&&record(program)&&record(program.channels)){
+              const built=buildMaterialProgram(program.channels as unknown as Record<string,import('./tslMaterialProgram.js').MaterialProgramChannel>,options)
+              for(const [name,channel] of Object.entries(program.channels)){
+                if(hasNativeNormal(channel)){
+                  const skipped=built.skipped.find(item=>item.channel===name)
+                  if(skipped)throw new TslIrError(`Native normal channel ${name}: ${skipped.reason}`)
+                }
+              }
+            }
           } catch (error) {
             if (!(error instanceof TslIrError)) throw error
             valid = false
+            refusal=error.message
           } finally { resources.dispose() }
       }
-      if (valid && bindingCount > 0) accepted.add(index)
+      if(!baseColorRequired&&!valid&&bindingCount>0)throw new Error(`Compiled live normal program on material[${index}] has no verified actual binding: ${refusal}`)
+      if (baseColorRequired&&valid && bindingCount > 0) accepted.add(index)
     }
   } finally { textures?.dispose() }
   return accepted

@@ -21,7 +21,7 @@ const installedNodeFamilies = [
   ['ShaderNodeObjectInfo', 'object_info'], ['ShaderNodeCombineColor', 'color_convert'],
   ['ShaderNodeClamp', 'clamp_minmax'], ['ShaderNodeValToRGB', 'ramp_lut'],
   ['ShaderNodeVectorTransform', 'vector_transform'], ['ShaderNodeTexWave', 'tex_wave'],
-  ['ShaderNodeTexNoise', 'noise_fractal'],
+  ['ShaderNodeTexNoise', 'noise_fractal'], ['ShaderNodeNormalMap', 'normal_map_native'],
   ['ShaderNodeNewGeometry', 'geometry_context'], ['ShaderNodeTexCoord', 'geometry_context'],
 ]
 
@@ -288,6 +288,7 @@ def contains_op(value, expected):
 for node_type, expected in families:
     node = tree.nodes.new(node_type)
     if node_type == "ShaderNodeCombineColor": node.mode = "HSL"
+    if node_type == "ShaderNodeNormalMap": node.space = "WORLD"
     if node_type == "ShaderNodeClamp": node.clamp_type = "RANGE"
     if node_type == "ShaderNodeTexNoise":
         node.noise_type = "MULTIFRACTAL"
@@ -335,14 +336,16 @@ try:
     sink = compositor_tree.nodes.new("NodeGroupOutput" if modern_compositor else "CompositorNodeComposite")
     mask = compositor_tree.nodes.new("CompositorNodeSetAlpha")
     conversion = compositor_tree.nodes.new("CompositorNodePremulKey")
+    enhancement = compositor_tree.nodes.new("CompositorNodeFilter")
     compositor_tree.links.new(source.outputs["Image"], mask.inputs["Image"])
     compositor_tree.links.new(mask.outputs[0], conversion.inputs["Image"])
-    compositor_tree.links.new(conversion.outputs[0], sink.inputs[0])
+    compositor_tree.links.new(conversion.outputs[0], enhancement.inputs["Image"])
+    compositor_tree.links.new(enhancement.outputs[0], sink.inputs[0])
     before = len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups)
     compositor_module = importlib.import_module(module_name + ".compositor_graph")
     compositor_program = compositor_module.extract(compositor_scene)
     assert compositor_program["status"] == "extracted", compositor_program
-    assert {"set-alpha", "convert-alpha"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
+    assert {"set-alpha", "convert-alpha", "filter"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
     assert before == (len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups))
 finally:
     bpy.data.scenes.remove(compositor_scene)
@@ -357,7 +360,7 @@ print("##blendlink-addon-install " + json.dumps({
     "exportOperator": bpy.ops.blendlink.export_website.get_rna_type().identifier,
     "atlasOperator": bpy.ops.blendlink.check_atlas_fit.get_rna_type().identifier,
     "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
-    "compositorFamilies": ["CompositorNodeSetAlpha", "CompositorNodePremulKey"],
+    "compositorFamilies": ["CompositorNodeSetAlpha", "CompositorNodePremulKey", "CompositorNodeFilter"],
     "nodeFamilies": len(families),
     "testedNodeFamilies": [node_type for node_type, _expected in families],
 }, sort_keys=True))
@@ -379,7 +382,7 @@ print("##blendlink-addon-install " + json.dumps({
     new Set(tested).size === tested.length && required.every(name => tested.includes(name)) &&
     tested.every(name => required.includes(name) || optional.includes(name))
   if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
-      !validNodeFamilies || JSON.stringify(status.compositorFamilies) !== JSON.stringify(['CompositorNodeSetAlpha', 'CompositorNodePremulKey']) ||
+      !validNodeFamilies || JSON.stringify(status.compositorFamilies) !== JSON.stringify(['CompositorNodeSetAlpha', 'CompositorNodePremulKey', 'CompositorNodeFilter']) ||
       status.exportOperator !== 'BLENDLINK_OT_export_website' || status.atlasOperator !== 'BLENDLINK_OT_check_atlas_fit') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }

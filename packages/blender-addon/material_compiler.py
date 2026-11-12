@@ -3217,6 +3217,7 @@ def _plan_tsl_program(
             "Base Color", "Metallic", "Roughness", "Alpha", "Emission",
         )
     ]
+    root = None
     if not surface_resolved:
         root, _stack = tsl_ir.find_principled_root(tree, target=target)
         for name in ('Normal', 'Coat Weight', 'Coat Roughness', 'Coat Normal',
@@ -3239,6 +3240,15 @@ def _plan_tsl_program(
     else:
         import tsl_object_info
     object_info_issues = []
+    if __package__:
+        from . import normal_ir
+    else:
+        import normal_ir
+    for entry in channels:
+        if 'tslIr' not in entry and normal_ir.channel_has_native_normal(root,entry.get('channel'),procedural._walk_channel_upstream):
+            object_info_issues.append(MaterialIssue('material.normal-map-program-unproven',material.name,
+                'Native Normal Map channel '+entry.get('channel','?')+' has no proven program: '+entry.get('tslIrRefusal','unknown input domain'),
+                'Keep this channel within a verified native normal domain; its source nodes remain intact.',object_names))
     for entry in channels:
         outputs = set()
         tsl_object_info.collect_outputs(entry.get("tslIr"), outputs)
@@ -3285,6 +3295,13 @@ def _plan_tsl_program(
             try:
                 for obj, _slot in raw_bindings: geometry_ir.validate_owner(obj, outputs)
                 geometry_ir.bind_normal_model(entry['tslIr'], [obj for obj, _slot in raw_bindings])
+                if __package__:
+                    from . import normal_ir
+                else:
+                    import normal_ir
+                normal_requirements = []
+                normal_ir.requirements(entry['tslIr'], normal_requirements)
+                for obj, _slot in raw_bindings: normal_ir.validate_owner(obj, normal_requirements)
                 encoded = json.dumps(entry['tslIr'], sort_keys=True, separators=(',', ':'))
                 if len(encoded) > TSL_IR_BYTE_BUDGET:
                     raise ValueError('Geometry context metadata exceeds the channel IR byte budget')
@@ -3293,8 +3310,8 @@ def _plan_tsl_program(
             except ValueError as error:
                 for key in ("tslIr", "tslIrHash", "tslIrBytes", "tslIrApproximations"): entry.pop(key, None)
                 entry["tslIrRefusal"] = str(error)
-                object_info_issues.append(MaterialIssue("material.geometry-context-unproven", material.name, str(error),
-                    "Use supported triangle surfaces; the authored graph remains in Blender.", object_names))
+                object_info_issues.append(MaterialIssue("material.normal-map-domain-unproven" if 'Normal Map' in str(error) else "material.geometry-context-unproven", material.name, str(error),
+                    "Use a verified nonzero normal blend; the source nodes remain intact." if 'Normal Map' in str(error) else "Use supported triangle surfaces; the authored graph remains in Blender.", object_names))
     for entry in channels:
         entry["route"] = "program" if "tslIr" in entry else "refused"
     channel_plan = {

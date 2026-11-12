@@ -20,11 +20,12 @@ import {
 } from './compiledSceneConformance.js'
 import type { MaterialPortabilityDiagnostic } from './sceneDiagnostics.js'
 import type { SceneManifest } from './typegen.js'
-import { validatedBaseColorProgramMaterials, type MaterialProgramImageBytes } from './compiledMaterialPrograms.js'
+import { validatedBaseColorProgramMaterials, type MaterialProgramImageBytes, type MaterialProgramPrimitiveData } from './compiledMaterialPrograms.js'
 
 type RawRecord = Record<string, unknown>
 
 interface RawGltf {
+  meshes?: unknown
   scene?: unknown
   bufferViews?: unknown
   images?: unknown
@@ -193,9 +194,6 @@ export async function auditCompiledSceneArtifact(
   }
 
   const raw = readGlbJson(glbBytes, 'Compiled scene') as RawGltf
-  const baseColorPrograms = await validatedBaseColorProgramMaterials(
-    raw as unknown as Record<string, unknown>, manifest, input.materialProgramsBytes, input.materialProgramImageBytes,
-  )
   assertGltfRuntimeCompatibility(raw, BLENDLINK_THREE_R184_COMPILED_PROFILE)
   await MeshoptDecoder.ready
   const document = await new NodeIO()
@@ -204,6 +202,21 @@ export async function auditCompiledSceneArtifact(
     .readBinary(glbBytes)
   const root = document.getRoot()
   const meshes = root.listMeshes()
+  const rawMeshes=rawArray(raw.meshes,'meshes')
+  if(rawMeshes.length!==meshes.length)throw new Error('Compiled scene mesh evidence drifted while decoding.')
+  const geometryData=new Map<string,MaterialProgramPrimitiveData>()
+  meshes.forEach((mesh,index)=>{
+    if(rawArray(rawMeshes[index]!.primitives,'mesh primitives').length!==mesh.listPrimitives().length)
+      throw new Error('Compiled scene primitive evidence drifted while decoding.')
+    mesh.listPrimitives().forEach((primitive,part)=>{
+    const position=primitive.getAttribute('POSITION')?.getArray(),normal=primitive.getAttribute('NORMAL')?.getArray(),indices=primitive.getIndices()?.getArray()
+    geometryData.set(`${index}:${part}`,{position:position instanceof Float32Array?position:null,normal:normal instanceof Float32Array?normal:null,
+      indices:indices instanceof Uint8Array||indices instanceof Uint16Array||indices instanceof Uint32Array?indices:null})
+    })
+  })
+  const baseColorPrograms = await validatedBaseColorProgramMaterials(
+    raw as unknown as Record<string, unknown>, manifest, input.materialProgramsBytes, input.materialProgramImageBytes,geometryData,
+  )
   const materials = root.listMaterials()
   const rawMaterials = rawArray(raw.materials, 'materials')
   if (rawMaterials.length !== materials.length) {

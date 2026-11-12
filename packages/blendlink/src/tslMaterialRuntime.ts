@@ -17,6 +17,8 @@ import { MeshStandardNodeMaterial, MeshPhysicalNodeMaterial } from 'three/webgpu
 import { uniform } from 'three/tsl'
 import { collectVectorTransformRequirements, validateVectorTransformBinding, type VectorTransformRequirement } from './tslVectorTransform.js'
 import { collectGeometryContextOutputs, validateGeometryContextBinding, type GeometryContextOutput } from './tslGeometryContext.js'
+import { collectNormalMapRequirements, validateNormalMapBinding } from './tslNormalNodes.js'
+import type { TslIrExpression } from './tslNodeRecipe.js'
 import {
   createTslBuildResources,
   TslIrError,
@@ -359,9 +361,12 @@ export async function installTslMaterials(
   }
 
   const geometryContexts = new Map<string, Set<GeometryContextOutput>>()
+  const normalMapContexts = new Map<string,TslIrExpression[]>()
   for(const [name,program] of Object.entries(programs.materials)){
     const outputs=new Set<GeometryContextOutput>();collectGeometryContextOutputs(program.channels,outputs)
     if(outputs.size)geometryContexts.set(name,outputs)
+    const normalMaps:TslIrExpression[]=[];collectNormalMapRequirements(program.channels,normalMaps)
+    if(normalMaps.length)normalMapContexts.set(name,normalMaps)
   }
   const skipped: TslMaterialSkip[] = []
   interface InstalledSwap {
@@ -435,6 +440,17 @@ export async function installTslMaterials(
           catch(error){
             if(!(error instanceof TslIrError))throw error
             skipped.push({material:source,reason:`mesh "${mesh.name}" Geometry context refused: ${error.message}; its carrier stays`});return
+          }
+        }
+        const normalMaps=normalMapContexts.get(source)
+        if(normalMaps){
+          try{
+            if(!extras?.geometryContext?.includes('normal'))throw new TslIrError('Native Normal Map requires its exported primary-normal context declaration')
+            validateNormalMapBinding(normalMaps,mesh,extras?.objectSpace)
+          }
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" Normal Map refused: ${error.message}; its carrier stays`});return
           }
         }
         const objectTransform = transforms?.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')

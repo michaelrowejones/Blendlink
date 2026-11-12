@@ -41,6 +41,7 @@ validate_math_domain = _sibling("compositor_math").validate_math_domain
 native_gpu_profile = _sibling("compositor_gpu").native_gpu_profile
 whitepoint_properties = _sibling("compositor_whitepoint").whitepoint_properties
 normalize_blur = _sibling("compositor_blur").normalize_blur
+normalize_filter = _sibling("compositor_filter").normalize_filter
 normalize_alpha_conversion = _sibling("compositor_alpha_conversion").normalize_alpha_conversion
 
 TYPES = {
@@ -96,6 +97,7 @@ TYPES = {
     "CompositorNodeHueCorrect": "hue-correct",
     "CompositorNodeBlur": "blur",
     "CompositorNodeFlip": "flip",
+    "CompositorNodeFilter": "filter",
     "CompositorNodeSwitch": "switch",
     "CompositorNodeGlare": "glare",
     "CompositorNodeRLayers": "render-pass",
@@ -475,6 +477,9 @@ def extract(scene):
                     # choice; unsupported or expensive inactive branches remain authored.
                     op["inputs"]["Selected"] = {"name": incoming.name, "socketType": incoming.type,
                                                  "value": input_value(incoming, ctx)}
+                elif node.bl_idname == "CompositorNodeFilter":
+                    normalize_filter(node, op, scene, lambda incoming: input_value(incoming, ctx),
+                        lambda incoming, message: fail("unsupported-filter-mode", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeFlip":
                     if node.inputs.get("Flip X") is not None:
                         for name in ("Flip X", "Flip Y"):

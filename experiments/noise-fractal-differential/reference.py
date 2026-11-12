@@ -7,6 +7,7 @@ import sys
 import tempfile
 import math
 import struct
+import platform
 from pathlib import Path
 import bpy
 import numpy as np
@@ -82,7 +83,7 @@ def make_material(case):
     if case['kind'] == 'constant':
         emission.inputs['Color'].default_value = (*case['value'], 1)
         return material, emission
-    if case['stage'] == 'constant':
+    if case.get('coordinateStage', case['stage']) == 'constant':
         source = tree.nodes.new('ShaderNodeCombineXYZ')
         for index, value in enumerate([.173, -.375, .625]): source.inputs[index].default_value = value
         incoming = source.outputs[0]
@@ -99,6 +100,23 @@ def make_material(case):
         for key, default in [('Scale', 1), ('Detail', 2), ('Roughness', .5), ('Lacunarity', 2), ('Distortion', 0), ('Offset', 0), ('Gain', 1)]:
             socket = node.inputs.get(key)
             if socket is not None: socket.default_value = case.get(key, default)
+        if case.get('roughnessStage'):
+            if case['roughnessStage'] == 'constant-function':
+                rough_coordinates = tree.nodes.new('ShaderNodeCombineXYZ')
+                for index, value in enumerate([.375, -.173, .625]): rough_coordinates.inputs[index].default_value = value
+                rough_noise = tree.nodes.new('ShaderNodeTexNoise')
+                rough_noise.inputs['Scale'].default_value = 1
+                rough_noise.inputs['Detail'].default_value = 0
+                rough_noise.normalize = True
+                tree.links.new(rough_coordinates.outputs[0], rough_noise.inputs['Vector'])
+                rough = rough_noise.outputs['Fac']
+            else:
+                rough_components = tree.nodes.new('ShaderNodeSeparateXYZ')
+                tree.links.new(exact_inputs(tree), rough_components.inputs[0])
+                rough = rough_components.outputs[0]
+            rough_clamp = tree.nodes.new('ShaderNodeClamp')
+            tree.links.new(rough, rough_clamp.inputs['Value'])
+            tree.links.new(rough_clamp.outputs[0], node.inputs['Roughness'])
         if 'roughnessLinked' in case:
             roughness = tree.nodes.new('ShaderNodeValue')
             roughness.outputs[0].default_value = case['roughnessLinked']
@@ -174,7 +192,8 @@ def add_residual_control(material, emission, coarse, scale, amplification):
 
 
 records = []
-requested_types = json.loads(os.environ.get('BLENDLINK_NOISE_TYPES', '["FBM"]'))
+varying = bool(os.environ.get('BLENDLINK_NOISE_VARYING'))
+requested_types = json.loads(os.environ.get('BLENDLINK_NOISE_TYPES', json.dumps(['FBM', *sorted(FRACTAL_TYPES)]) if varying else '["FBM"]'))
 assert requested_types and all(kind in {'FBM', *FRACTAL_TYPES} for kind in requested_types)
 parameters = [
     {'Detail': 0, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 1},
@@ -256,12 +275,51 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                     cases.append({'id': f'{engine.lower()}-ridged-floor-{stage}-{str(detail).replace(".", "_")}',
                                   'kind': 'noise', 'type': 'RIDGED_MULTIFRACTAL', 'dimensions': '3D',
                                   'output': 'Color', 'stage': stage, 'Detail': detail, 'Offset': 1, 'Gain': 2})
+        if varying:
+            boundaries = [case for case in cases if '-hybrid-cutoff-' in case['id'] or '-ridged-floor-' in case['id']]
+            cases = cases[:3]
+            families = [(kind, False) for kind in requested_types] + ([('FBM', True)] if 'FBM' in requested_types else [])
+            for kind, normalize in families:
+                label = kind.lower() + ('-normalized' if normalize else '-raw')
+                base = {'kind': 'noise', 'type': kind, 'normalize': normalize, 'Roughness': 1}
+                for dimension in ['1D', '2D', '3D', '4D']:
+                    for output in ['Fac', 'Color']:
+                        for stage in ['constant', 'image']:
+                            cases.append({**base, 'id': f'{engine.lower()}-varying-{label}-{dimension.lower()}-{output.lower()}-{stage}',
+                                          'dimensions': dimension, 'output': output, 'stage': stage,
+                                          'roughnessStage': 'constant-function' if stage == 'constant' else 'image'})
+                for index, detail in enumerate([-.5, 0, .5, 1, 1.5, 2]):
+                    for stage in ['constant', 'image']:
+                        cases.append({**base, 'id': f'{engine.lower()}-varying-{label}-detail-{index}-{stage}',
+                                      'dimensions': '3D', 'output': 'Fac', 'stage': stage,
+                                      'roughnessStage': 'constant-function' if stage == 'constant' else 'image',
+                                      'Detail': detail, 'Lacunarity': 1.7 if index % 2 == 0 else -2,
+                                      'Offset': .5 if index % 2 == 0 else -1, 'Gain': 2 if index % 2 == 0 else -2,
+                                      'Distortion': -1 if index == 5 else 0})
+                for coordinate_stage, roughness_stage in [('constant', 'image'), ('image', 'constant-function')]:
+                    for output in ['Fac', 'Color']:
+                        cases.append({**base, 'id': f'{engine.lower()}-varying-{label}-stages-{coordinate_stage}-{roughness_stage}-{output.lower()}',
+                                      'dimensions': '3D', 'output': output, 'stage': 'image',
+                                      'coordinateStage': coordinate_stage, 'roughnessStage': roughness_stage})
+                if engine != 'CYCLES':
+                    for dimension in ['1D', '2D', '3D', '4D']:
+                        for stage in ['constant', 'image']:
+                            cases.append({**base, 'id': f'{engine.lower()}-varying-{label}-residual-{dimension.lower()}-{stage}',
+                                          'dimensions': dimension, 'output': 'Color', 'stage': stage, 'residual': True,
+                                          'roughnessStage': 'constant-function' if stage == 'constant' else 'image',
+                                          'Offset': 1, 'Gain': 2})
+            for case in boundaries:
+                case.update(roughnessStage='constant-function' if case['stage'] == 'constant' else 'image', Roughness=1)
+                cases.append(case)
         if os.environ.get('BLENDLINK_NOISE_RESIDUAL_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('residual')]
         if os.environ.get('BLENDLINK_NOISE_BOUNDARY_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or '-hybrid-cutoff-' in case['id'] or '-ridged-floor-' in case['id']]
         for case in cases:
-            if case.get('type', 'FBM') != 'FBM':
+            if case.get('roughnessStage') and case.get('type', 'FBM') == 'FBM':
+                bound = 1 if case.get('normalize') else 9
+                case['oracleScale'] = case.get('oracleScaleOverride', 2 ** math.floor(math.log2(.25 / bound)))
+            elif case.get('type', 'FBM') != 'FBM':
                 bound = fractal_amplitude_bound(case['type'], case.get('Detail', 2), case.get('Roughness', .5),
                                                case.get('Offset', 0) if case['type'] != 'MULTIFRACTAL' else 0,
                                                case.get('Gain', 1) if case['type'] in {'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 1)
@@ -280,11 +338,12 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             if case['kind'] == 'noise':
                 def collect(value):
                     if isinstance(value, dict):
-                        return ([value] if value.get('op') == 'noise_fractal' else []) + [item for child in value.values() for item in collect(child)]
+                        return ([value] if value.get('op') in {'noise_fractal', 'noise_varying'} else []) + [item for child in value.values() for item in collect(child)]
                     if isinstance(value, list): return [item for child in value for item in collect(child)]
                     return []
                 expressions = collect(document)
-                assert expressions and all(expression['normalize'] is False for expression in expressions), case['id']
+                assert expressions and all(expression['normalize'] == (case.get('type', 'FBM') == 'FBM' and case.get('normalize', False)) for expression in expressions), case['id']
+                if case.get('roughnessStage'): assert all(expression['op'] == 'noise_varying' for expression in expressions)
                 expected_model = 'shader-mf' if bpy.app.version >= (5, 0, 0) and case['stage'] == 'constant' else 'shader'
                 assert all(expression['evaluationModel'] == expected_model for expression in expressions), case['id']
                 case['evaluationModel'] = expected_model
@@ -305,7 +364,8 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 fractional = OUTPUT / f'{engine.lower()}-ridged-floor-{stage}-1_75.f32'
                 assert first.read_bytes() == fractional.read_bytes(), 'Native Ridged fractional-detail semantics changed'
 (OUTPUT / 'index.json').write_text(json.dumps({'blender': bpy.app.version_string, 'buildHash': bpy.app.build_hash.decode(),
-    'gpuBackend': bpy.context.preferences.system.gpu_backend, 'cyclesDevice': 'CPU', 'size': SIZE, 'cases': records,
+    'gpuBackend': bpy.context.preferences.system.gpu_backend, 'gpuRenderer': tsl_ir._noise_gpu_renderer(),
+    'platform': sys.platform, 'architecture': platform.machine(), 'cyclesDevice': 'CPU', 'size': SIZE, 'cases': records,
     'nativeModuleHashes': {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in Path(native).iterdir()
                            if path.suffix in {'.py', '.json'}} if native else {}}, indent=2))
 print('BLENDLINK_NOISE_REFERENCES_PASSED ' + str(len(records)))

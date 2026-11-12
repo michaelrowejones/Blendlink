@@ -51,7 +51,8 @@ export function nativeFractalAmplitudeBound(parameters: NativeFractalParameters)
 }
 
 export function buildTslFractalNoise(position: TslExpression, parameters: NativeFractalParameters,
-  octave: (position: TslExpression) => TslExpression, fail: (message: string) => never): TslExpression {
+  octave: (position: TslExpression) => TslExpression, fail: (message: string) => never,
+  roughnessNode?: TslExpression): TslExpression {
   const { type } = parameters
   if (!['MULTIFRACTAL', 'HETERO_TERRAIN', 'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'].includes(type))
     return fail('Noise has no verified fractal recurrence: ' + type)
@@ -66,25 +67,33 @@ export function buildTslFractalNoise(position: TslExpression, parameters: Native
   if (nativeFractalAmplitudeBound({ ...parameters, offset, gain }) > 128)
     return fail('Noise fractal amplitude exceeds its verified finite bound')
   const bounded = Math.max(0, Math.fround(detail)), count = Math.floor(bounded), remainder = bounded - count
-  const ratio = Math.max(0, Math.fround(roughness)), frequency = Math.fround(lacunarity)
+  // The varying-capability caller independently proves the actual node in
+  // [0,1] and supplies the conservative static amplitude bound1 above. Keep
+  // existing static float staging unchanged for older opcodes.
+  const ratio = roughnessNode ?? Math.max(0, Math.fround(roughness)), frequency = Math.fround(lacunarity)
+  type Power = number | TslExpression
+  const nextPower = (power: Power): Power => typeof power === 'number' && typeof ratio === 'number'
+    ? Math.fround(power * ratio) : scalar(power).mul(ratio).toVar()
+  const fractionPower = (power: Power): Power => typeof power === 'number'
+    ? Math.fround(remainder * power) : power.mul(remainder).toVar()
   let p = position
   const advance = (): void => { p = p.mul(frequency).toVar() }
   if (type === 'MULTIFRACTAL') {
-    let value = scalar(1), power = 1
+    let value = scalar(1), power: Power = 1
     for (let index = 0; index <= count; index++) {
       value = value.mul(octave(p).mul(power).add(1))
-      power = Math.fround(power * ratio)
+      power = nextPower(power)
       advance()
     }
-    if (remainder !== 0) value = value.mul(octave(p).mul(Math.fround(remainder * power)).add(1))
+    if (remainder !== 0) value = value.mul(octave(p).mul(fractionPower(power)).add(1))
     return value
   }
   if (type === 'HETERO_TERRAIN') {
-    let value = octave(p).add(offset), power = ratio
+    let value = octave(p).add(offset), power: Power = ratio
     advance()
     for (let index = 1; index <= count; index++) {
       value = value.add(octave(p).add(offset).mul(power).mul(value))
-      power = Math.fround(power * ratio)
+      power = nextPower(power)
       advance()
     }
     if (remainder !== 0) value = value.add(octave(p).add(offset).mul(power).mul(value).mul(remainder))
@@ -94,14 +103,15 @@ export function buildTslFractalNoise(position: TslExpression, parameters: Native
     // Explicit feedback storage keeps each signal/condition in this scope.
     // Expanding the selected value/weight DAG duplicates conditional paths
     // and can overwhelm software shader compilers even with only3 octaves.
-    let current = point!, power = 1
+    let current = point!
+    let power: Power = 1
     const value = scalar(0).toVar() as MutableFloat, weight = scalar(1).toVar() as MutableFloat
     for (let index = 0; index <= count; index++) {
       const active = weight.greaterThan(.001).toVar(), boundedWeight = minimum(weight, 1).toVar()
       const signal = octave(current).add(offset).mul(power).toVar()
       value.assign(choose(active, value.add(boundedWeight.mul(signal)), value))
       weight.assign(choose(active, boundedWeight.mul(signal.mul(gain)), weight))
-      power = Math.fround(power * ratio)
+      power = nextPower(power)
       current = current.mul(frequency).toVar()
     }
     if (remainder !== 0)
@@ -111,14 +121,14 @@ export function buildTslFractalNoise(position: TslExpression, parameters: Native
   // Native Ridged Multifractal deliberately ignores fractional detail.
   let signal = scalar(offset).sub(absolute(octave(p)))
   signal = signal.mul(signal)
-  let value = signal, power = ratio
+  let value = signal, power: Power = ratio
   for (let index = 1; index <= count; index++) {
     advance()
     const weight = clampNode(signal.mul(gain), 0, 1)
     const ridge = scalar(offset).sub(absolute(octave(p)))
     signal = ridge.mul(ridge).mul(weight)
     value = value.add(signal.mul(power))
-    power = Math.fround(power * ratio)
+    power = nextPower(power)
   }
   return value
 }

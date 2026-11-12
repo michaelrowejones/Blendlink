@@ -35,3 +35,35 @@ BLENDLINK_COMPOSITOR_FLIP_DEVICE=GPU \
 node experiments/native-compositor-differential/run.mjs --built \
   --out artifacts/flip-browser artifacts/flip-cpu artifacts/flip-gpu
 ```
+
+## Native enhancement Filter
+
+The fixed Soften, Box Sharpen, Diamond Sharpen, Laplace, Sobel, Prewitt,
+Kirsch and Shadow kernels normalize to `native-filter-v1`. Factor stays a live
+field, including negative and greater-than-one values. Each nine-tap load
+clamps to the input image boundary. Legacy CPU edge accumulation order and
+nonnegative channel clamping differ from modern/GPU evaluation; the runtime
+keeps those paths explicit. Modern single-value Image inputs bypass filtering
+even when Factor is a field. A uniform image texture still undergoes filtering.
+
+Fresh native CPU and Metal fixtures contain 217 graphs per device/version:
+signed 13×7 random and impulse images, positive/negative constants, hidden RGB,
+zero/negative/HDR alpha, six Factor cases, Flip → Filter, Filter → Posterize,
+and Filter → Blur. All 1,302 graphs across Blender 4.2/5.2/5.3 pass both source
+and built browser backends, maximum absolute error 9.5367431640625e-6.
+Every graph checks texture cleanup, caller MRT/clear-state restoration, at most
+five measured draw passes including the state probe, and fragment shaders
+below 20,000 bytes. Linked kernel menus, animation, expanded/transformed image
+domains, and GPU Half precision do not have an admitted contract.
+
+```sh
+BLENDLINK_COMPOSITOR_FILTER_REFERENCES=artifacts/filter-cpu \
+  blender --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_filter_check.py
+BLENDLINK_COMPOSITOR_FILTER_REFERENCES=artifacts/filter-gpu \
+BLENDLINK_COMPOSITOR_FILTER_DEVICE=GPU \
+  blender --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_filter_check.py
+node experiments/native-compositor-differential/run.mjs --built \
+  --out artifacts/filter-browser artifacts/filter-cpu artifacts/filter-gpu
+```

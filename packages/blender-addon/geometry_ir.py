@@ -27,7 +27,11 @@ def emit_geometry(node, socket, *, refuse, engine):
     name = getattr(socket, "identifier", socket.name)
     if name not in outputs: refuse(f'{node.name}: {name} has no verified primary triangle context')
     if engine not in {"CYCLES", "EEVEE"}: refuse("Geometry context requires a verified Cycles or EEVEE source engine")
-    return {"op": "geometry_context", "output": outputs[name], "sourceEngine": engine,
+    return primary_context(outputs[name], engine)
+
+
+def primary_context(output, engine):
+    return {"op": "geometry_context", "output": output, "sourceEngine": engine,
             "normalStorage": ("OCT16" if bpy.app.version >= (5, 2) else "FLOAT32") if engine == "CYCLES" else "SNORM16" if getattr(bpy.context.scene.render,"use_high_quality_normals",False) else "SNORM10",
             "model": "primary-triangles-v1"}
 
@@ -173,6 +177,8 @@ def capture_refusal(root, channel, walk_channel):
         socket = root.inputs.get(name)
         if socket is None: continue
         for node, output in walk_channel(socket):
+            if node.bl_idname == 'ShaderNodeNormalMap' and node.space != 'TANGENT':
+                return 'cannot automatically replace a primary Object/World Normal Map with UV-bake ray context; keep this channel live or review an explicit capture'
             table = GEOMETRY_OUTPUTS if node.bl_idname == "ShaderNodeNewGeometry" else TEXTURE_OUTPUTS if node.bl_idname == "ShaderNodeTexCoord" else {}
             if node.bl_idname == 'ShaderNodeNewGeometry' or getattr(output, "identifier", output.name) in table:
                 return "cannot automatically replace primary triangle/camera geometry context with UV-bake ray context; keep this channel live or choose an explicit reviewed material capture"

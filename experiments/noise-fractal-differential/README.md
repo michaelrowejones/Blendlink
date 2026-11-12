@@ -10,6 +10,11 @@ BLENDLINK_NOISE_EVIDENCE=artifacts/verification-noise \
 node experiments/noise-fractal-differential/run.mjs
 
 BLENDLINK_BLENDER=/absolute/path/to/blender \
+BLENDLINK_NOISE_VARYING=1 \
+BLENDLINK_NOISE_EVIDENCE=artifacts/verification-varying \
+node experiments/noise-fractal-differential/run.mjs
+
+BLENDLINK_BLENDER=/absolute/path/to/blender \
 BLENDLINK_NOISE_TYPES='["MULTIFRACTAL","HETERO_TERRAIN","HYBRID_MULTIFRACTAL","RIDGED_MULTIFRACTAL"]' \
 BLENDLINK_NOISE_EVIDENCE=artifacts/verification-fractals \
 node experiments/noise-fractal-differential/run.mjs
@@ -30,16 +35,21 @@ recurrences. Older runtimes refuse that opcode, and raw-only runtimes refuse
 unrecognized type selectors. Legacy `noise` documents retain their previous
 normalized interpretation. Both Color and Factor work in all four dimensions;
 4D scales Vector and W together. Shader Color has no separate Alpha output.
+The separate `noise_varying` opcode carries a live Roughness child; older
+runtimes refuse that capability instead of dropping the child expression.
 
 | Family | Live bounded domain |
 | --- | --- |
 | Signed FBM | Static Detail 0..6, Roughness 0..1, abs(Lacunarity)<=2, abs(Distortion)<=1, effective scale<=80 |
 | Multifractal, Hetero Terrain, Hybrid Multifractal, Ridged Multifractal | Static Detail 0..2, Roughness 0..1, abs(Lacunarity)<=2, abs(Distortion)<=1, effective scale<=80; abs(Offset)<=1 and abs(Gain)<=2 where active |
+| Varying Roughness, normalized/signed FBM and all four other modes | Actual scalar child independently proved in 0..1 by emitter and runtime; fixed Detail<=2, all other controls in the finite static domains above |
 
 Negative Detail and Roughness follow native Noise Texture zero clamping. Linked
 Roughness above 1 refuses because native Noise has no upper clamp. Supported
-constant plumbing may fold static inputs; genuinely varying controls retain
-named refusals. Inactive Offset/Gain and the non-FBM Normalize switch do not
+constant plumbing may fold static inputs. Varying Roughness requires the
+executable child range to be proved; author a Clamp for unknown ranges. An RGB
+vector or serialized range/amplitude annotation cannot grant scalar admission.
+Other genuinely varying controls retain named refusals. Inactive Offset/Gain and the non-FBM Normalize switch do not
 change an unrelated formula. Frequency approximation bands measured for legacy
 normalized FBM are not granted to these new recurrences.
 
@@ -151,6 +161,48 @@ amplified residuals and strict cutoff neighbors. Cycles mapped maximum remains
 3.695488e-6. The 5.3 proof uses the built package with 105 whole-program-checked
 modules. No error budget or parameter range changes accompany this optimization.
 
+The varying-Roughness corpus has 458 separate graphs and passes on each native
+Blender 4.2/5.2/5.3 and both browser backends: 2,748 rows with no failures.
+It covers all six mode/normalization selections, all dimensions/outputs,
+literal MF-eligible versus shader-stage Roughness sources, fractional/negative
+Detail, coordinate/source stage combinations, 48 amplified GPU residual fields,
+and Hybrid/Ridged boundaries. Controls use authored unit Clamps around exact
+half-representable image values and opaque constant Noise functions. Cycles
+mapped maximum is 7.390976e-6; derived raw maximum is 1.983643e-4. The 5.3 built
+repeat checks 104 modules against the complete source program. Native admission,
+vocabulary, and isolated package-qualified imports also pass. Reference indexes
+retain the source platform, architecture and native GPU renderer string.
+
+Raw/fractal 2D noise now uses a native Perlin primitive with explicit float32
+fade stages. Physical Apple Metal contracts the ordinary MaterialX polynomial;
+an existing 16x EEVEE residual exposed a 2.68e-5 amplified arithmetic difference.
+The finite-float bit dependency preserves the intermediate rounding while
+retaining the same polynomial, hashes, gradients, interpolation and domain.
+Legacy normalized `noise` documents keep their previous primitive.
+
+The failing retained Linux 5.2 OpenGL reference had a native half result
+0.5869140625. Physical Metal previously produced 0.5874252915; the corrected
+primitive produces 0.5873975158. The complete case maximum decreases from
+0.0005112290 to 0.0004913807, below the unchanged half-ULP plus 2e-5 budget
+0.00050828125. The first render/readback remains about 134 ms on this device.
+
+All 128 retained 2D raw-FBM/fractal/control graphs on each native Blender
+4.2/5.2/5.3 pass both browser APIs on physical Apple Metal and on SwiftShader:
+1,536 rows. Cycles mapped maximum is 4.410744e-6. A fresh 5.3 built-package repeat
+passes 256 more rows after checking all 105 emitted modules. The controls still
+independently determine native output precision and row orientation. This 2D
+precision fix does not change the separate high-octave software-GPU cost limits.
+Select the bundled full Chromium browser for physical-GPU evidence with:
+
+```sh
+BLENDLINK_TEST_CHROMIUM_CHANNEL=chromium \
+BLENDLINK_NOISE_EVIDENCE=/path/to/existing/evidence \
+node experiments/noise-fractal-differential/run.mjs --reuse-reference --built
+```
+
+Confirm the reported browser GPU information: the channel choice alone does not
+guarantee which adapter a machine exposes.
+
 Admission checks:
 
 ```sh
@@ -158,6 +210,8 @@ Admission checks:
   --python packages/blender-addon/tests/noise_parameter_admission_check.py
 /path/to/blender --background --factory-startup --python-exit-code 1 \
   --python packages/blender-addon/tests/noise_fractal_translation_check.py
+/path/to/blender --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/noise_varying_translation_check.py
 ```
 
 Primary implementations:

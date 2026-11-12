@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "2c85a284cf1ee93c3f39529080442a8da15ca92c2ea7c5cb2b07cfcd92348c63",
+  "capabilityMapSha256": "da2ea410bcc3569826ee1079c996f80cfb55cf3c3e8768c71102791bb23804fb",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T14:50:28.560259+00:00",
+  "generatedAt": "2026-11-12T15:52:32.544376+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -60,15 +60,15 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 16,
+            "partial": 17,
             "structural": 6,
             "supported": 24,
-            "unsupported": 141
+            "unsupported": 140
           },
           "enumValueCounts": {
             "partial": 6,
-            "supported": 204,
-            "unsupported": 722
+            "supported": 212,
+            "unsupported": 714
           },
           "nodes": [
             {
@@ -1114,25 +1114,48 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Type": {
-                  "Box Sharpen": "unsupported",
-                  "Diamond Sharpen": "unsupported",
-                  "Kirsch": "unsupported",
-                  "Laplace": "unsupported",
-                  "Prewitt": "unsupported",
-                  "Shadow": "unsupported",
-                  "Sobel": "unsupported",
-                  "Soften": "unsupported"
+                  "Box Sharpen": "supported",
+                  "Diamond Sharpen": "supported",
+                  "Kirsch": "supported",
+                  "Laplace": "supported",
+                  "Prewitt": "supported",
+                  "Shadow": "supported",
+                  "Sobel": "supported",
+                  "Soften": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_filter",
+                  "path": "packages/blendlink/blender/compositor_filter.py"
+                },
+                {
+                  "anchor": "case 'filter':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFilter.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFilter.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_filter_check.py"
+                },
+                {
+                  "path": "experiments/compositor-spatial-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeFilter",
               "label": "Filter",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All eight fixed native 3x3 enhancement kernels on Blender 4.2/5.2/5.3, with clamped scene-viewport image boundaries and live Factor fields. Preserves native legacy CPU accumulation/clamping, modern single-value bypass, signed/HDR RGB and alpha differences. Flip to Filter, Filter to Blur and Posterize preserve evaluated fields. Linked kernel selectors, animation, expanded/transformed image domains and GPU Half precision remain refused. Draw cost, caller MRT/clear state and texture cleanup are verified.",
+              "runtimeOps": [
+                "filter"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -4260,10 +4283,10 @@
             "unsupported": 81
           },
           "enumValueCounts": {
-            "partial": 16,
+            "partial": 20,
             "structural": 3,
             "supported": 241,
-            "unsupported": 181
+            "unsupported": 177
           },
           "nodes": [
             {
@@ -6220,11 +6243,11 @@
                   "OPENGL": "supported"
                 },
                 "space": {
-                  "BLENDER_OBJECT": "unsupported",
-                  "BLENDER_WORLD": "unsupported",
-                  "OBJECT": "unsupported",
+                  "BLENDER_OBJECT": "partial",
+                  "BLENDER_WORLD": "partial",
+                  "OBJECT": "partial",
                   "TANGENT": "supported",
-                  "WORLD": "unsupported"
+                  "WORLD": "partial"
                 }
               },
               "evidence": [
@@ -6238,13 +6261,42 @@
                 },
                 {
                   "path": "experiments/tsl-node-differential/cells.json"
+                },
+                {
+                  "path": "packages/blender-addon/normal_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_nodes_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_domain_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNormalNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNormalNodes.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledSceneAudit.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramDocument.ts"
+                },
+                {
+                  "path": "experiments/normal-node-differential/README.md"
                 }
               ],
               "id": "ShaderNodeNormalMap",
               "label": "Normal Map",
-              "limits": "Tangent space only; exported tangent/normal basis and decoded input conventions apply.",
+              "limits": "Fresh OBJECT/WORLD/BLENDER_OBJECT/BLENDER_WORLD routes use explicit Cycles versus EEVEE decode/strength/backface models, native primary-surface normal storage, actual per-draw owner/camera matrices and both exported bases. Inputs currently need literal/default, RGB/Value, Combine or resolved constant-group Color/Strength within absolute16; animated/spatial inputs remain unported. A conservative length/cone certificate over actual Float32 bound normal bytes rejects undefined or uncertified zero normal blends. Direct material Normal-slot conversion is measured with nonuniform camera scale and rawZ/Yup. Primary-geometry conditioning, camera, deformation/instance, Cycles single/shared-user and mixed-shading limits apply. No material displacement; ORIGINAL/DISPLACED selectors are retained but displaced-surface behavior is unproved. The existing TANGENT route is legacy and outside this new proof: do not infer Cycles/smooth/named-UV/deformation parity. Normal programs are audited even with portable BaseColor, and legacy WebGLRenderer refuses required native normal functions. Whole BSDF/lighting parity is not claimed.",
               "runtimeOps": [
-                "normal_map"
+                "normal_map",
+                "normal_map_native",
+                "normal_view_native"
               ],
               "unreviewedCapability": false
             },
@@ -7070,14 +7122,26 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/automatic_engine_fallback_check.py"
+                },
+                {
+                  "anchor": "def unit_roughness",
+                  "path": "packages/blender-addon/noise_varying_ir.py"
+                },
+                {
+                  "anchor": "export function isUnitRoughnessExpression",
+                  "path": "packages/blendlink/src/tslVaryingNoise.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_varying_translation_check.py"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static controls; FBM Detail<=6, other recurrences Detail<=2. Negative Detail/Roughness follow native zero clamping; Roughness>1 refuses. New signed/HDR recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only FBM approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/LinuxCPU/OpenGL offset precision profiles and independent finite-amplitude bounds are explicit. Genuinely varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
               "runtimeOps": [
                 "noise",
-                "noise_fractal"
+                "noise_fractal",
+                "noise_varying"
               ],
               "unreviewedCapability": false
             },
@@ -7743,15 +7807,15 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 14,
+            "partial": 15,
             "structural": 6,
             "supported": 23,
-            "unsupported": 125
+            "unsupported": 124
           },
           "enumValueCounts": {
             "partial": 1,
-            "supported": 162,
-            "unsupported": 526
+            "supported": 170,
+            "unsupported": 518
           },
           "nodes": [
             {
@@ -8663,25 +8727,48 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Type": {
-                  "Box Sharpen": "unsupported",
-                  "Diamond Sharpen": "unsupported",
-                  "Kirsch": "unsupported",
-                  "Laplace": "unsupported",
-                  "Prewitt": "unsupported",
-                  "Shadow": "unsupported",
-                  "Sobel": "unsupported",
-                  "Soften": "unsupported"
+                  "Box Sharpen": "supported",
+                  "Diamond Sharpen": "supported",
+                  "Kirsch": "supported",
+                  "Laplace": "supported",
+                  "Prewitt": "supported",
+                  "Shadow": "supported",
+                  "Sobel": "supported",
+                  "Soften": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_filter",
+                  "path": "packages/blendlink/blender/compositor_filter.py"
+                },
+                {
+                  "anchor": "case 'filter':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFilter.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFilter.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_filter_check.py"
+                },
+                {
+                  "path": "experiments/compositor-spatial-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeFilter",
               "label": "Filter",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All eight fixed native 3x3 enhancement kernels on Blender 4.2/5.2/5.3, with clamped scene-viewport image boundaries and live Factor fields. Preserves native legacy CPU accumulation/clamping, modern single-value bypass, signed/HDR RGB and alpha differences. Flip to Filter, Filter to Blur and Posterize preserve evaluated fields. Linked kernel selectors, animation, expanded/transformed image domains and GPU Half precision remain refused. Draw cost, caller MRT/clear state and texture cleanup are verified.",
+              "runtimeOps": [
+                "filter"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -11387,10 +11474,10 @@
             "unsupported": 56
           },
           "enumValueCounts": {
-            "partial": 14,
+            "partial": 18,
             "structural": 3,
             "supported": 216,
-            "unsupported": 130
+            "unsupported": 126
           },
           "nodes": [
             {
@@ -12900,11 +12987,11 @@
                   "OPENGL": "supported"
                 },
                 "space": {
-                  "BLENDER_OBJECT": "unsupported",
-                  "BLENDER_WORLD": "unsupported",
-                  "OBJECT": "unsupported",
+                  "BLENDER_OBJECT": "partial",
+                  "BLENDER_WORLD": "partial",
+                  "OBJECT": "partial",
                   "TANGENT": "supported",
-                  "WORLD": "unsupported"
+                  "WORLD": "partial"
                 }
               },
               "evidence": [
@@ -12918,13 +13005,42 @@
                 },
                 {
                   "path": "experiments/tsl-node-differential/cells.json"
+                },
+                {
+                  "path": "packages/blender-addon/normal_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_nodes_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_domain_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNormalNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNormalNodes.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledSceneAudit.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramDocument.ts"
+                },
+                {
+                  "path": "experiments/normal-node-differential/README.md"
                 }
               ],
               "id": "ShaderNodeNormalMap",
               "label": "Normal Map",
-              "limits": "Tangent space only; exported tangent/normal basis and decoded input conventions apply.",
+              "limits": "Fresh OBJECT/WORLD/BLENDER_OBJECT/BLENDER_WORLD routes use explicit Cycles versus EEVEE decode/strength/backface models, native primary-surface normal storage, actual per-draw owner/camera matrices and both exported bases. Inputs currently need literal/default, RGB/Value, Combine or resolved constant-group Color/Strength within absolute16; animated/spatial inputs remain unported. A conservative length/cone certificate over actual Float32 bound normal bytes rejects undefined or uncertified zero normal blends. Direct material Normal-slot conversion is measured with nonuniform camera scale and rawZ/Yup. Primary-geometry conditioning, camera, deformation/instance, Cycles single/shared-user and mixed-shading limits apply. No material displacement; ORIGINAL/DISPLACED selectors are retained but displaced-surface behavior is unproved. The existing TANGENT route is legacy and outside this new proof: do not infer Cycles/smooth/named-UV/deformation parity. Normal programs are audited even with portable BaseColor, and legacy WebGLRenderer refuses required native normal functions. Whole BSDF/lighting parity is not claimed.",
               "runtimeOps": [
-                "normal_map"
+                "normal_map",
+                "normal_map_native",
+                "normal_view_native"
               ],
               "unreviewedCapability": false
             },
@@ -13739,14 +13855,26 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/automatic_engine_fallback_check.py"
+                },
+                {
+                  "anchor": "def unit_roughness",
+                  "path": "packages/blender-addon/noise_varying_ir.py"
+                },
+                {
+                  "anchor": "export function isUnitRoughnessExpression",
+                  "path": "packages/blendlink/src/tslVaryingNoise.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_varying_translation_check.py"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static controls; FBM Detail<=6, other recurrences Detail<=2. Negative Detail/Roughness follow native zero clamping; Roughness>1 refuses. New signed/HDR recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only FBM approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/LinuxCPU/OpenGL offset precision profiles and independent finite-amplitude bounds are explicit. Genuinely varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
               "runtimeOps": [
                 "noise",
-                "noise_fractal"
+                "noise_fractal",
+                "noise_varying"
               ],
               "unreviewedCapability": false
             },
@@ -14410,14 +14538,14 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 10,
+            "partial": 11,
             "structural": 7,
             "supported": 25,
-            "unsupported": 62
+            "unsupported": 61
           },
           "enumValueCounts": {
-            "supported": 125,
-            "unsupported": 181
+            "supported": 133,
+            "unsupported": 173
           },
           "nodes": [
             {
@@ -15344,25 +15472,48 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "filter_type": {
-                  "KIRSCH": "unsupported",
-                  "LAPLACE": "unsupported",
-                  "PREWITT": "unsupported",
-                  "SHADOW": "unsupported",
-                  "SHARPEN": "unsupported",
-                  "SHARPEN_DIAMOND": "unsupported",
-                  "SOBEL": "unsupported",
-                  "SOFTEN": "unsupported"
+                  "KIRSCH": "supported",
+                  "LAPLACE": "supported",
+                  "PREWITT": "supported",
+                  "SHADOW": "supported",
+                  "SHARPEN": "supported",
+                  "SHARPEN_DIAMOND": "supported",
+                  "SOBEL": "supported",
+                  "SOFTEN": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_filter",
+                  "path": "packages/blendlink/blender/compositor_filter.py"
+                },
+                {
+                  "anchor": "case 'filter':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFilter.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFilter.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_filter_check.py"
+                },
+                {
+                  "path": "experiments/compositor-spatial-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeFilter",
               "label": "Filter",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All eight fixed native 3x3 enhancement kernels on Blender 4.2/5.2/5.3, with clamped scene-viewport image boundaries and live Factor fields. Preserves native legacy CPU accumulation/clamping, modern single-value bypass, signed/HDR RGB and alpha differences. Flip to Filter, Filter to Blur and Posterize preserve evaluated fields. Linked kernel selectors, animation, expanded/transformed image domains and GPU Half precision remain refused. Draw cost, caller MRT/clear state and texture cleanup are verified.",
+              "runtimeOps": [
+                "filter"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -16765,10 +16916,10 @@
             "unsupported": 42
           },
           "enumValueCounts": {
-            "partial": 12,
+            "partial": 16,
             "structural": 3,
             "supported": 211,
-            "unsupported": 103
+            "unsupported": 99
           },
           "nodes": [
             {
@@ -18026,11 +18177,11 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "space": {
-                  "BLENDER_OBJECT": "unsupported",
-                  "BLENDER_WORLD": "unsupported",
-                  "OBJECT": "unsupported",
+                  "BLENDER_OBJECT": "partial",
+                  "BLENDER_WORLD": "partial",
+                  "OBJECT": "partial",
                   "TANGENT": "supported",
-                  "WORLD": "unsupported"
+                  "WORLD": "partial"
                 }
               },
               "evidence": [
@@ -18044,13 +18195,42 @@
                 },
                 {
                   "path": "experiments/tsl-node-differential/cells.json"
+                },
+                {
+                  "path": "packages/blender-addon/normal_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_nodes_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_domain_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNormalNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNormalNodes.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledSceneAudit.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramDocument.ts"
+                },
+                {
+                  "path": "experiments/normal-node-differential/README.md"
                 }
               ],
               "id": "ShaderNodeNormalMap",
               "label": "Normal Map",
-              "limits": "Tangent space only; exported tangent/normal basis and decoded input conventions apply.",
+              "limits": "Fresh OBJECT/WORLD/BLENDER_OBJECT/BLENDER_WORLD routes use explicit Cycles versus EEVEE decode/strength/backface models, native primary-surface normal storage, actual per-draw owner/camera matrices and both exported bases. Inputs currently need literal/default, RGB/Value, Combine or resolved constant-group Color/Strength within absolute16; animated/spatial inputs remain unported. A conservative length/cone certificate over actual Float32 bound normal bytes rejects undefined or uncertified zero normal blends. Direct material Normal-slot conversion is measured with nonuniform camera scale and rawZ/Yup. Primary-geometry conditioning, camera, deformation/instance, Cycles single/shared-user and mixed-shading limits apply. No material displacement; ORIGINAL/DISPLACED selectors are retained but displaced-surface behavior is unproved. The existing TANGENT route is legacy and outside this new proof: do not infer Cycles/smooth/named-UV/deformation parity. Normal programs are audited even with portable BaseColor, and legacy WebGLRenderer refuses required native normal functions. Whole BSDF/lighting parity is not claimed.",
               "runtimeOps": [
-                "normal_map"
+                "normal_map",
+                "normal_map_native",
+                "normal_view_native"
               ],
               "unreviewedCapability": false
             },
@@ -18862,14 +19042,26 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/automatic_engine_fallback_check.py"
+                },
+                {
+                  "anchor": "def unit_roughness",
+                  "path": "packages/blender-addon/noise_varying_ir.py"
+                },
+                {
+                  "anchor": "export function isUnitRoughnessExpression",
+                  "path": "packages/blendlink/src/tslVaryingNoise.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/noise_varying_translation_check.py"
                 }
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static controls; FBM Detail<=6, other recurrences Detail<=2. Negative Detail/Roughness follow native zero clamping; Roughness>1 refuses. New signed/HDR recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only FBM approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/LinuxCPU/OpenGL offset precision profiles and independent finite-amplitude bounds are explicit. Genuinely varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
+              "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
               "runtimeOps": [
                 "noise",
-                "noise_fractal"
+                "noise_fractal",
+                "noise_varying"
               ],
               "unreviewedCapability": false
             },
@@ -19535,54 +19727,61 @@
   "schemaVersion": 1,
   "sourceSha256": {
     "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
-    "packages/blender-addon/color_ir.py": "5cbf232799c272f785ff57fea052d857184a685086620a6a661e808a50d5a5cc",
+    "packages/blender-addon/color_ir.py": "5bd0bf8b360f5b5a7007e4766e6d6ca9aff44b22199d168b16d0f37126d5a385",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
     "packages/blender-addon/engine_fallback.py": "6ebf95de3ea78fb2a94293d903c513c8ae56ceb855c4076ab92ed26876819a02",
-    "packages/blender-addon/geometry_ir.py": "5f4d5d128edf4d71d00af89e25c02bec92d6bf4e1a93299cdf9178aae1fd4df8",
+    "packages/blender-addon/geometry_ir.py": "0c019c96dd010ef0196e4c3d1c2a34c6063f64b8cf7181c31afba3822ae6eda6",
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
-    "packages/blender-addon/material_compiler.py": "9c712b16c65cee99091282366a332e51afe1f73d188c157d9b19257e7dddf09d",
+    "packages/blender-addon/material_compiler.py": "f1065b97d55b97899b6e7baa8a085077ed0ff4d6317ae2c6b377bde5f9ba5860",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
+    "packages/blender-addon/noise_varying_ir.py": "3fb30ae5e7ddd9b23193f8d6ce9f2a4ebfd3e38903a24f41a0f37ef9e5e3e34e",
+    "packages/blender-addon/normal_ir.py": "d7e1da19ac55e11a3c4bc05ecca89d3712a63bf651698cbc7102bd5d9fb6bced",
     "packages/blender-addon/procedural.py": "12f6fcaaa46f8a398d13482e421c20d3cd342a4a57962634f48595469170ef59",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
-    "packages/blender-addon/tsl_ir.py": "4389a58b5d43d667e72a93e5e129a0051a966de59a822f2726d4f5152941e13f",
+    "packages/blender-addon/tsl_ir.py": "06f44363208c930384044403f14ce4f6a99b2a1fbcd9c727b55f763f08d81c35",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
     "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
     "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
-    "packages/blendlink/blender/compositor_blur.py": "a74e1428643860a1cc8193b3383546bf1a5216ee9109b232c80caa2318d041f2",
+    "packages/blendlink/blender/compositor_blur.py": "b29f572b52f571f2b7ba231d4e43f2a6f99bc0662704040b295bf5c88209f8d3",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
-    "packages/blendlink/blender/compositor_graph.py": "7f502a47682d60cbc4d88024b150ce3134d3ae26e86c9e4b04aff69563f05c64",
+    "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
+    "packages/blendlink/blender/compositor_graph.py": "88bfd0d6fcd62f3d86f0b367d6c3c147412d2a38276d33851a962589493c0f40",
     "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
-    "packages/blendlink/src/compiledMaterialPrograms.ts": "902a1d632c807bf055d6f935eaec9376196af6e042dd18f59b113d71d489d326",
-    "packages/blendlink/src/materialProgramDocument.ts": "8e07d6aac8e565d15139dabd8257bf82faa700e564da09dd24b50ddf87797380",
+    "packages/blendlink/src/compiledMaterialPrograms.ts": "bd2d86419c266f7986dcbbf8c54e7df6551800ee4b5dc202b998ef99c22a686f",
+    "packages/blendlink/src/compiledSceneAudit.ts": "a75bd3c5b3980d29c995226bb8c2ab7e1718df63b0464b4187af314a11aaeec8",
+    "packages/blendlink/src/materialProgramDocument.ts": "812f4ac41d1c3bb3aff63cb143efd44a073b28e72788ddf0d3dc7224bed6067a",
     "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
     "packages/blendlink/src/threeRuntime.ts": "225b3dd29834a6f2adfea60f8e6122545ddc3f0bbc74204568b9993f04d45c2b",
     "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
-    "packages/blendlink/src/tslColorConversion.ts": "89a5bf61cb14dd0303ed9feb956b25d860e70f5ea4538369fdbc9d871230313c",
+    "packages/blendlink/src/tslColorConversion.ts": "547b70ed682a123a2d23da3bbf95bd801a3958044d15e82c810be81837ca097c",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
     "packages/blendlink/src/tslCompositorBlur.ts": "7f2bd72e5e6835e8005c98289268b802674615089ab7332579ed661df8544803",
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
+    "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
-    "packages/blendlink/src/tslFractalNoise.ts": "b96ce476f80664c818e3bd5924c11812b9d3c9568d3b9365b985b2d6aebc864e",
+    "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
     "packages/blendlink/src/tslGeometryContext.ts": "736a1849bc49b15d9b67b71bc29519c8d643ac6ee2b2ab862cfc363279efcc23",
     "packages/blendlink/src/tslMaterialProgram.ts": "56fa7f0524b2f9421568c04e18e0a18e84dfcf770bc27bc077a3777a13535e22",
-    "packages/blendlink/src/tslMaterialRuntime.ts": "74c19c9dbcb60c92a00c983eba08bff6de6ce5c4b7dcc281c9b68e2d2d0c3de4",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "1f50695abad019151d01828a14c8dc405e7929325d9da4100285c553268ba249",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
-    "packages/blendlink/src/tslNodeRecipe.ts": "9930cee00aa2999d1d3db9687541f91ed231f1eea3e5fc6a93fcbeba6d6df5a0",
+    "packages/blendlink/src/tslNodeRecipe.ts": "6903810cf9e593f68349fb9baa01712524bda3b5ff5878ecab6dbdc5ff85da10",
+    "packages/blendlink/src/tslNormalNodes.ts": "a2505eff8008f6f99f53909759dde91aa8cb02a8299f557351a0757761c6fa03",
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "657c6ab9cd69b63947fd3d49f2e2ef8ba7a30d1526d780bf2722457446a47054",
+    "packages/blendlink/src/tslSourceCompositor.ts": "d871797bd16541abacaf3916895176d9fb4357a5251e09468caeee6752088bdc",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
+    "packages/blendlink/src/tslVaryingNoise.ts": "d1ef701abe02214af94e951136638bf1d2ff5cf4ec2df4059524fbd311deb77c",
     "packages/blendlink/src/tslVectorTransform.ts": "5f5210b22de500e1d48faabbf86b19bee9c7d246a380658c845fb2ab7959fb66"
   }
 }
