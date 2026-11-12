@@ -11,6 +11,10 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Blender 4.2 website export tolerates the absence of newer white-balance settings.
+- Managed desktop tools forward compiler progress and exact errors on Windows.
+- Stopping the Preview CLI closes its owned website server; Reset view clears
+  the orbit-inspection hint.
 - Image size and compression settings follow linked images when the stock
   exporter uses a filename instead of the Blender datablock name. Ambiguous
   identity is refused instead of applying an override to an unrelated image.

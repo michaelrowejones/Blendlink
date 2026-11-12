@@ -379,8 +379,10 @@ save. The same test exports a complete static site and renders it under a nested
 hosting path in Playwright Chromium, Firefox and WebKit, checking failed requests,
 page errors, nonblank pixels and absence of external network dependencies.
 Screenshots and the structured report are retained under
-`artifacts/verification-preview-ux/`. The new hosted workflow is defined; it has
-not yet executed remotely.
+`artifacts/verification-preview-ux/`. [Hosted browser run 43144004793](https://github.com/michaelrowejones/Blendlink/actions/runs/43144004793)
+on commit `b66b635` passed the complete flow and all three engines. Linux uses
+Xvfb and software rendering; this is not physical-GPU or real-device evidence.
+Stopping Preview also verifies that its owned local server becomes unreachable.
 
 Standalone export compiles Final, verifies before/after its website build,
 includes all companion assets and third-party notices, refuses unrelated output
@@ -410,9 +412,20 @@ quality assertions.
 Sharp 0.35.5 and ndarray-pixels 5.2.0 replace the vulnerable image chain. Complete
 and production npm audits return zero findings; no advisory exception remains.
 A final local archive rehearsal is distinct from a public release. Public
-publishing still requires reviewed committed source, the hosted compatibility
-matrix, npm ownership/trusted publishing and the release settings in RELEASE.md.
+publishing still requires source review, npm ownership/trusted publishing and
+the release settings in RELEASE.md.
 Artist pilots remain deliberately deferred.
+
+[Release contract run 43143849609](https://github.com/michaelrowejones/Blendlink/actions/runs/43143849609)
+on commit `1ad1c78` passed the complete pinned Blender 5.2/KTX suite on hosted
+Linux, the three Node versions, and the four Linux/Windows Blender 4.2/5.2
+installation checks. Each desktop check installed the exact extension ZIP in a
+clean profile, downloaded its private runtime with global Node/npm absent from
+PATH, exported a saved scene to a website, and reused the tools offline. These
+checks found and fixed a missing white-balance property on Blender 4.2 and
+missing Windows child-process output forwarding. Distribution jobs were skipped
+because the run was on a pull request. Hosted macOS and physical-GPU coverage
+remain separate gaps.
 
 
 The retained local archive also passed `test:fresh-install`: an empty-cache npm

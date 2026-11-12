@@ -98,6 +98,10 @@ run on the CPU even when Cycles later bakes on the GPU. Large environments can
 take several minutes on their first bake. Leave the command running.
 Wait for **Ready**, which requires browser installation and a completed render.
 Save in Blender to rebuild. Unsaved viewport edits do not appear in the browser.
+Use **Inspect** to pause and orbit, **Reset view** to restore the Blender camera,
+**Phone** to check portrait framing, and **Save image** to capture the rendered
+canvas. **Compare** overlays a Blender reference so visual differences are easier
+to spot. These preview controls do not change your saved Blender scene.
 Use **Details** for warnings. Failed initial loads show the exact error on screen;
 **View error details** opens the full error. If browser loading fails, **Retry
 preview** reloads the compiled scene without another Blender save or bake.

@@ -37,21 +37,24 @@ this audit did not recheck remote repository settings or registry ownership.
   inspection, portrait framing, nonblank PNG capture, keyboard focus, load
   retry, failed-save recovery, and standalone export in a hosting subfolder.
   The standalone fixture passes in Playwright Chromium/Firefox/WebKit on
-  macOS. `.github/workflows/preview-ux.yml` retains equivalent hosted evidence
-  once run; its definition alone is not a hosted pass.
-- The Node contract workflow (`ci.yml`) has produced hosted evidence: run
-  30891723434 passed exact Node 22.15.0, latest Node 22, and Node 24 on
-  commit `a3b8c68`. The latest rechecked run, 34160661013 on
-  commit `63feed1`, also passed on 2026-09-07. The tagged release workflow
-  (`blender-contract.yml`) and the reusable application-owned Playwright
-  matrix are defined but have never executed, so every claim that depends on
-  them remains unproven.
-- Exact Blender 4.2.0/5.2.0 Linux/Windows archive acquisition is defined and
-  checksum-pinned, but has not run on hosted workers. The tagged workflow now
-  defines same-run candidate attestation, numeric-ID transfer, OIDC-only npm
+  macOS and hosted Linux. [Preview UX run 43144004793](https://github.com/michaelrowejones/Blendlink/actions/runs/43144004793)
+  on commit `b66b635` passed the complete flow and retained screenshots/report.
+  Linux uses Xvfb and software rendering; this does not certify physical GPUs.
+- The Node contract has hosted passes for exact Node 22.15.0, latest Node 22,
+  and Node 24. [Release contract run 43143849609](https://github.com/michaelrowejones/Blendlink/actions/runs/43143849609)
+  on commit `1ad1c78` passed those checks, the full Blender 5.2.0/KTX 4.4.2
+  release suite, and all four Linux/Windows Blender 4.2.0/5.2.0 desktop checks.
+  The full gate passed 812 unit tests (four optional skips), 16 required real
+  codec assertions, all 41 discovered Blender suites, packed consumers and
+  baked appearance/lighting/material end-to-end checks.
+- Exact Blender 4.2.0/5.2.0 Linux/Windows archive acquisition and checksums have
+  now run successfully on hosted workers. macOS arm64 retains local CPU-only
+  evidence; its hosted prototype and an application-owned reusable browser
+  matrix remain unrun. The tagged workflow defines same-run candidate
+  attestation, numeric-ID transfer, OIDC-only npm
   publication of the retained tarball, public-registry byte/provenance checks,
-  and exact immutable GitHub prerelease assets. It has not run on hosted
-  workers, and the protected environments, npm trust binding, immutable-release
+  and exact immutable GitHub prerelease assets. Distribution jobs were skipped
+  on this pull-request run. Protected environments, npm trust binding, immutable-release
   setting, marketplace upload, and deployed CDN verification remain external.
 - `npm run release:artifacts` now retains one npm tarball and one Blender ZIP,
   installs the exact ZIP, compiles Vanilla/R3F consumers from the exact
