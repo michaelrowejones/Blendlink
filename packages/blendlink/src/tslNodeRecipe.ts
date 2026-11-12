@@ -504,6 +504,20 @@ function numbers(expression: TslIrExpression, key: string): number[] {
   return value as number[]
 }
 
+/** Exact JSON-tree equality, retaining signed zero and distinct primitive types.
+ * Used only to share repeated scalar Noise evaluations inside one Combine. */
+function sameIrValue(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true
+  if (!a || !b || typeof a !== 'object' || typeof b !== 'object') return false
+  if (Array.isArray(a) || Array.isArray(b))
+    return Array.isArray(a) && Array.isArray(b) && a.length === b.length
+      && a.every((value, index) => sameIrValue(value, b[index]))
+  const left = a as Record<string, unknown>, right = b as Record<string, unknown>
+  const keys = Object.keys(left)
+  return keys.length === Object.keys(right).length
+    && keys.every(key => Object.hasOwn(right, key) && sameIrValue(left[key], right[key]))
+}
+
 function child(expression: TslIrExpression, key: string): TslIrExpression {
   const value = expression[key]
   if (typeof value !== 'object' || value === null
@@ -558,12 +572,18 @@ function build(expression: TslIrExpression): TslExpression {
       if (channel === 'z') return input.z
       return fail(`IR separate channel ${String(channel)}`)
     }
-    case 'combine':
+    case 'combine': {
+      const x = child(expression, 'x'), y = child(expression, 'y'), z = child(expression, 'z')
+      // A Blender scalar feeding all three channels is one field evaluation.
+      // The serialized tree repeats that source; share it within this Combine
+      // scope so large Perlin graphs do not compile three independent copies.
+      if (['noise', 'noise_fractal', 'noise_varying'].includes(x.op) && x.output === 'fac'
+        && sameIrValue(x, y) && sameIrValue(x, z))
+        return tslVec3(build(x).toVar())
       return tslVec3(
-        build(child(expression, 'x')),
-        build(child(expression, 'y')),
-        build(child(expression, 'z')),
+        build(x), build(y), build(z),
       )
+    }
     case 'clamp01':
       return tslClamp(build(child(expression, 'input')), 0.0, 1.0)
     case 'math':

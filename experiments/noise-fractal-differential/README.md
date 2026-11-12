@@ -240,3 +240,22 @@ passed both full-browser Metal backends locally with the default watchdog:
 130 ms on WebGPU and 33 ms on WebGL2 for first render/readback on the measured
 Apple M5 Pro setup, versus seconds in software rendering. Those observations
 are device-specific, not a browser-wide timing guarantee.
+
+### Repeated scalar fields
+
+When a Combine XYZ node connects the same scalar Noise Fac to all three
+channels, the serialized expression tree repeats that source. The browser now
+shares that one evaluation within the Combine scope. Exact structural equality
+keeps distinct primitive types and signed-zero input bits separate; other
+channel graphs still build independently. This applies to existing `noise`,
+`noise_fractal` and `noise_varying` scalar outputs without changing their math,
+controls, native references or error budgets.
+
+All affected retained FBM, other-fractal and varying-Roughness graphs pass on
+Blender 4.2/5.2/5.3 and both physical Apple Metal browser APIs: 3,948 rows,
+including independent render/orientation controls. The expensive 4D Detail=6
+Fac image case retains byte-identical physical-GPU pixels, reduces sampled
+texture allocations from six to two (three including the readback target), and
+reduces total WebGPU program bytes from 29,631 to 23,071. A default SwiftShader
+pilot also passes both APIs. These local results do not certify the Linux
+SwiftShader crash; that remains an explicit hosted regression check.

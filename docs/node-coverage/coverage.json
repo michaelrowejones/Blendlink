@@ -1,7 +1,7 @@
 {
   "capabilityMapSha256": "da2ea410bcc3569826ee1079c996f80cfb55cf3c3e8768c71102791bb23804fb",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T15:52:32.544376+00:00",
+  "generatedAt": "2026-11-12T16:07:49.691864+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -19774,7 +19774,7 @@
     "packages/blendlink/src/tslMaterialProgram.ts": "56fa7f0524b2f9421568c04e18e0a18e84dfcf770bc27bc077a3777a13535e22",
     "packages/blendlink/src/tslMaterialRuntime.ts": "1f50695abad019151d01828a14c8dc405e7929325d9da4100285c553268ba249",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
-    "packages/blendlink/src/tslNodeRecipe.ts": "6903810cf9e593f68349fb9baa01712524bda3b5ff5878ecab6dbdc5ff85da10",
+    "packages/blendlink/src/tslNodeRecipe.ts": "5ce6ba68d5df10e326ba473b7095a6b49f88876d90a020621246e6ca51c51fd8",
     "packages/blendlink/src/tslNormalNodes.ts": "a2505eff8008f6f99f53909759dde91aa8cb02a8299f557351a0757761c6fa03",
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
