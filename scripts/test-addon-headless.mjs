@@ -21,6 +21,8 @@ const installedNodeFamilies = [
   ['ShaderNodeObjectInfo', 'object_info'], ['ShaderNodeCombineColor', 'color_convert'],
   ['ShaderNodeClamp', 'clamp_minmax'], ['ShaderNodeValToRGB', 'ramp_lut'],
   ['ShaderNodeVectorTransform', 'vector_transform'], ['ShaderNodeTexWave', 'tex_wave'],
+  ['ShaderNodeTexNoise', 'noise_fractal'],
+  ['ShaderNodeNewGeometry', 'geometry_context'], ['ShaderNodeTexCoord', 'geometry_context'],
 ]
 
 // Human labels for discovered modules. A missing label degrades the console
@@ -260,6 +262,8 @@ module = importlib.import_module(module_name)
 # only when the source checkout is injected into sys.path.
 mesh = bpy.data.meshes.new("Installed Node Translation Probe")
 mesh.from_pydata([(0,0,0),(1,0,0),(1,1,0),(0,1,0)], [], [(0,1,2,3)])
+uv = mesh.uv_layers.new(name="Installed Probe UV")
+for index, value in enumerate(((0,0),(1,0),(1,1),(0,1))): uv.data[index].uv = value
 owner = bpy.data.objects.new("Installed Node Translation Probe", mesh)
 bpy.context.scene.collection.objects.link(owner)
 material = bpy.data.materials.new("Installed Native Node Families")
@@ -285,13 +289,20 @@ for node_type, expected in families:
     node = tree.nodes.new(node_type)
     if node_type == "ShaderNodeCombineColor": node.mode = "HSL"
     if node_type == "ShaderNodeClamp": node.clamp_type = "RANGE"
+    if node_type == "ShaderNodeTexNoise":
+        node.noise_type = "MULTIFRACTAL"
+        coordinate = tree.nodes.new("ShaderNodeTexCoord")
+        tree.links.new(coordinate.outputs["UV"], node.inputs["Vector"])
     if node_type == "ShaderNodeValToRGB":
         node.color_ramp.interpolation = "B_SPLINE"
         coordinate = tree.nodes.new("ShaderNodeTexCoord")
         separate = tree.nodes.new("ShaderNodeSeparateXYZ")
         tree.links.new(coordinate.outputs["UV"], separate.inputs[0])
         tree.links.new(separate.outputs[0], node.inputs["Fac"])
-    output = node.outputs["Color"] if node_type == "ShaderNodeObjectInfo" else node.outputs[0]
+    if node_type in {"ShaderNodeNewGeometry", "ShaderNodeTexCoord"}:
+        output = node.outputs["Normal"]
+    else:
+        output = node.outputs["Color"] if node_type == "ShaderNodeObjectInfo" else node.outputs[0]
     tree.links.new(output, root.inputs["Base Color"])
     before = len(tree.nodes), len(tree.links), len(bpy.data.node_groups)
     decision = module.material_compiler.plan_materials([owner], automatic_programs=True).decisions[0]
@@ -302,6 +313,7 @@ for node_type, expected in families:
     if node_type == "ShaderNodeValToRGB":
         tree.nodes.remove(separate)
         tree.nodes.remove(coordinate)
+    if node_type == "ShaderNodeTexNoise": tree.nodes.remove(coordinate)
 bpy.data.objects.remove(owner, do_unlink=True)
 bpy.data.meshes.remove(mesh)
 bpy.data.materials.remove(material)

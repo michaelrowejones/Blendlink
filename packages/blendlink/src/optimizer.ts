@@ -1020,6 +1020,10 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
       || node.getMesh()!.listPrimitives().some((primitive) =>
         primitive.getMaterial()?.getExtension('KHR_materials_volume'))
     ))
+  const nativeGeometryContext = root.listMeshes().some(mesh => {
+    const runtime = mesh.getExtras().blendlink_tsl_runtime as { geometryContext?: unknown } | undefined
+    return Array.isArray(runtime?.geometryContext) && runtime.geometryContext.length > 0
+  })
   const positionQuantizationRisk = hierarchySensitiveMeshNode ?? animatedMeshNode
   if (positionQuantizationRisk && !hasPrimitiveRestart) {
     refusePass(
@@ -1029,7 +1033,10 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
         + `quantizing it would replace an authored attachment or insert a correction child.`,
     )
   }
-  const quantizedSemantics = positionQuantizationRisk
+  if(nativeGeometryContext)refusePass('POSITION/NORMAL quantization was skipped because live geometry inputs require authored float32 surface data.')
+  const quantizedSemantics = nativeGeometryContext
+    ? /^(?!(?:POSITION|NORMAL|TEXCOORD(?:_\d+)?)$).*$/
+    : positionQuantizationRisk
     ? /^(?!(?:POSITION|TEXCOORD(?:_\d+)?)$).*$/
     : /^(?!TEXCOORD(?:_\d+)?$).*$/
   if (hasPrimitiveRestart) {

@@ -52,6 +52,27 @@ describe('native compositor Hue Correct and White Point contracts', () => {
     expect(() => buildSourceCompositor(program, () => null)).toThrow(/Authored correction.*finite curve clipping limits/)
   })
 
+  it.each(['future-model', 'opengl-normalized-f32-v1'])(
+    'refuses unknown or mismatched native Hue Correct sampling model %s', model => {
+      const program = graph(), dispose = vi.spyOn(DataTexture.prototype, 'dispose')
+      program.ops[0]!.properties.hue_curve_sampling_model = model
+      program.ops[0]!.properties.native_gpu_backend = model === 'future-model' ? 'OPENGL' : 'METAL'
+      try {
+        expect(() => buildSourceCompositor(program, () => null)).toThrow(/verified native curve sampling model/)
+        expect(dispose).toHaveBeenCalledOnce()
+      } finally { dispose.mockRestore() }
+    })
+
+  it.each([undefined, 'opengl-normalized-f32-v1'])(
+    'accepts legacy and explicit OpenGL Hue Correct sampling contracts %s', model => {
+      const program = graph()
+      program.ops[0]!.properties.native_gpu_backend = 'OPENGL'
+      program.ops[0]!.properties.hue_curve_sampling_model = model
+      const built = buildSourceCompositor(program, () => null)
+      expect(built.node.isNode).toBe(true)
+      built.dispose()
+    })
+
   it.each([undefined, [[1, 0, 0], [0, NaN, 0], [0, 0, 1]], [[1, 0], [0, 1]]])(
     'refuses absent, nonfinite or malformed working-space matrices', matrix => {
       const program = graph(true)

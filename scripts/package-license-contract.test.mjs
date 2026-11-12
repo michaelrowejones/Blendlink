@@ -33,11 +33,13 @@ function packedFixture() {
       'MIT',
       'GPL-3.0-or-later',
       'Apache-2.0',
+      'BSD-3-Clause',
       'CC0-1.0',
       'dist/addon/LICENSE',
       'assets/basis-apache-2.0.txt',
       'assets/blender-spectral-NOTICE.txt',
       'assets/blender-spectral-apache-2.0.txt',
+      'assets/blender-noise-bsd-3-clause.txt',
     ].join('\n'),
   )
   writeFileSync(
@@ -67,6 +69,12 @@ function packedFixture() {
     'Apache License\nVersion 2.0\nEND OF TERMS AND CONDITIONS')
   writeFileSync(join(root, 'dist', 'addon', 'spectral-NOTICE.txt'), 'Blender Foundation\nApache')
   writeFileSync(join(root, 'dist', 'addon', 'spectral-LICENSE.txt'), 'Apache License\nEND OF TERMS AND CONDITIONS')
+  const bsd = ['Sony Pictures Imageworks', 'Blender Foundation',
+    'Redistribution and use in source and binary forms', 'Redistributions of source code',
+    'Redistributions in binary form', 'Neither the name of the copyright holder',
+    'THIS SOFTWARE IS PROVIDED', 'EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.'].join('\n')
+  writeFileSync(join(root, 'assets', 'blender-noise-bsd-3-clause.txt'), bsd)
+  writeFileSync(join(root, 'dist', 'addon', 'noise-LICENSE.txt'), bsd)
   return root
 }
 
@@ -77,7 +85,7 @@ describe('packed Blendlink license contract', () => {
     assert.deepEqual(verifyPackedBlendlinkLicenseContract(root), {
       license: 'SEE LICENSE IN LICENSES.md',
       licenseMap: 'LICENSES.md',
-      fileLicenses: ['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'CC0-1.0'],
+      fileLicenses: ['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'BSD-3-Clause', 'CC0-1.0'],
     })
   })
 
@@ -97,6 +105,15 @@ describe('packed Blendlink license contract', () => {
     const root = packedFixture()
     rmSync(join(root, 'dist', 'vendor', 'n8ao-webgpu', 'NOTICE.md'))
     assert.throws(() => verifyPackedBlendlinkLicenseContract(root), /WebGPU AO upstream notice/)
+  })
+  it('rejects a truncated or missing Perlin license in either carrier', () => {
+    for (const relative of ['assets/blender-noise-bsd-3-clause.txt', 'dist/addon/noise-LICENSE.txt']) {
+      const root = packedFixture()
+      writeFileSync(join(root, relative), 'BSD-3-Clause')
+      assert.throws(() => verifyPackedBlendlinkLicenseContract(root), /complete BSD-3-Clause/)
+      rmSync(join(root, relative))
+      assert.throws(() => verifyPackedBlendlinkLicenseContract(root), /BSD-3-Clause license/)
+    }
   })
   it('rejects a missing spectral port attribution', () => {
     const root = packedFixture()

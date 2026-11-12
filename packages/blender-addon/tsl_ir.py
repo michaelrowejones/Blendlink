@@ -171,7 +171,22 @@ def object_random_number(name: str) -> float:
     ) / 0xFFFFFFFF
 
 
-def _noise_random_offset(seed, count, *, native_mf=False, native_float4=False):
+def _noise_shader_offset_profile(engine, host_platform, architecture, gpu_backend, version):
+    """Measured shader-stage arithmetic, separate from MF eligibility.
+
+    Legacy Linux x64 Cycles and measured Linux x64 OpenGL shaders round the hash conversion,
+    product and sum separately. Modern Cycles and Metal/ARM shader folding stay
+    separate from their MF-eligible constant path.
+    Concrete offsets ship in IR, so runtime behavior never guesses the host.
+    """
+    if engine == 'CYCLES' and version < (5, 0, 0) and host_platform.startswith('linux') and architecture.lower() in {'x86_64', 'amd64'}:
+        return 'cycles-legacy-linux-x64-f32'
+    if engine == 'EEVEE' and host_platform.startswith('linux') and architecture.lower() in {'x86_64', 'amd64'} and gpu_backend == 'OPENGL':
+        return 'eevee-opengl-f32'
+    return None
+
+
+def _noise_random_offset(seed, count, *, native_mf=False, native_float4=False, native_shader_f32=False):
     """noisetex.h random_floatN_offset for a constant seed.
 
     The scalar helper is NOT the vec2 hash with a zero lane:
@@ -183,7 +198,7 @@ def _noise_random_offset(seed, count, *, native_mf=False, native_float4=False):
     """
     hashes = ([_hash_float_to_float(seed)] if count == 1 else
               [_hash_float2_to_float(seed, float(index)) for index in range(count)])
-    if native_mf or native_float4:
+    if native_mf or native_float4 or native_shader_f32:
         import struct
         f32 = lambda value: struct.unpack('f', struct.pack('f', value))[0]
         # The shared hash helpers retain the exact uint quotient in double.
@@ -1229,6 +1244,12 @@ def emit_output(node, from_socket, stack=()):
         )
 
     if idname == "ShaderNodeTexCoord":
+        if socket_name in {"Camera", "Normal", "Window", "Reflection"}:
+            if __package__:
+                from .geometry_ir import emit_geometry
+            else:
+                from geometry_ir import emit_geometry
+            return emit_geometry(node, from_socket, refuse=_refuse, engine=get_evaluation_engine())
         if socket_name == "UV":
             return {"op": "uv"}
         if socket_name == "Object":
@@ -1254,6 +1275,13 @@ def emit_output(node, from_socket, stack=()):
         _refuse(
             f"Texture Coordinate {socket_name!r} has no TSL cell yet"
         )
+
+    if idname == "ShaderNodeNewGeometry":
+        if __package__:
+            from .geometry_ir import emit_geometry
+        else:
+            from geometry_ir import emit_geometry
+        return emit_geometry(node, from_socket, refuse=_refuse, engine=get_evaluation_engine())
 
     if idname == "ShaderNodeUVMap":
         uv_map = str(getattr(node, "uv_map", "") or "")
@@ -2190,9 +2218,9 @@ def emit_output(node, from_socket, stack=()):
         if noise_output not in {"Fac", "Color"}:
             _refuse(f"Noise output {socket_name!r} has no cell yet")
         noise_type = str(getattr(node, "noise_type", "FBM"))
-        if noise_type != "FBM":
+        if noise_type not in {"FBM", "MULTIFRACTAL", "HETERO_TERRAIN", "HYBRID_MULTIFRACTAL", "RIDGED_MULTIFRACTAL"}:
             _refuse(f"Noise type {noise_type!r} has no cell yet")
-        normalize_output = bool(getattr(node, "normalize", True))
+        normalize_output = noise_type == 'FBM' and bool(getattr(node, "normalize", True))
         dimensions = str(getattr(node, "noise_dimensions", "3D"))
         # 1D shipped 2026-07-30, second attempt. The first failed at 1.79e-1
         # because hashUint1's all-literal b/c seeds CONST-FOLDED in WGSL, and a
@@ -2230,6 +2258,16 @@ def emit_output(node, from_socket, stack=()):
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
+        offset_value = _folded_noise_scalar('Offset', 0) if noise_type in {'HETERO_TERRAIN', 'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 0
+        gain_value = _folded_noise_scalar('Gain', 1) if noise_type in {'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 1
+        amplitude_bound = None
+        if noise_type != 'FBM':
+            if __package__:
+                from .noise_fractal_ir import fractal_amplitude_bound
+            else:
+                from noise_fractal_ir import fractal_amplitude_bound
+            try: amplitude_bound = fractal_amplitude_bound(noise_type, detail_value, roughness_value, offset_value, gain_value)
+            except ValueError as error: _refuse(str(error))
         if not normalize_output and (
                 not all(math.isfinite(value) for value in [detail_value, roughness_value, lacunarity_value])
                 or abs(lacunarity_value) > 2):
@@ -2339,8 +2377,12 @@ def emit_output(node, from_socket, stack=()):
             ),
         }
         native_mf = False
+        shader_offset_profile = None
         if not normalize_output:
             expression.update({"op": "noise_fractal"})
+            expression['noiseType'] = noise_type
+            if amplitude_bound is not None:
+                expression.update(offset=offset_value, gain=gain_value, amplitudeBound=amplitude_bound)
         if not normalize_output and bpy.app.version >= (5, 0, 0):
             if __package__:
                 from .shader_domains import native_shader_input_evaluation
@@ -2351,8 +2393,13 @@ def emit_output(node, from_socket, stack=()):
                 _refuse('Unnormalized Noise has unverified native constant-evaluation eligibility')
             native_mf = stage == 'constant'
         if not normalize_output:
+            import platform
+            import sys
+            shader_offset_profile = _noise_shader_offset_profile(
+                get_evaluation_engine(), sys.platform, platform.machine(), bpy.context.preferences.system.gpu_backend, bpy.app.version)
             expression['evaluationModel'] = 'shader-mf' if native_mf else 'shader'
-            expression['offsetModel'] = ('float4-f32' if dimensions == '4D' else 'mf-f32' if native_mf else 'shader-folded')
+            expression['offsetModel'] = ('float4-f32' if dimensions == '4D' else 'mf-f32' if native_mf
+                                         else shader_offset_profile or 'shader-folded')
         # Distortion perturbs the SCALED coordinate before any octave runs,
         # by a single signed Perlin octave per component sampled at the low
         # hash-derived offsets. noisetex.h and
@@ -2391,7 +2438,8 @@ def emit_output(node, from_socket, stack=()):
             expression["distortion"] = distortion_value
             expression["distortionOffsets"] = [
                 _noise_random_offset(float(seed), count, native_mf=native_mf,
-                                     native_float4=not normalize_output and count == 4)
+                                     native_float4=not normalize_output and count == 4,
+                                     native_shader_f32=shader_offset_profile is not None)
                 for seed in range(count)
             ]
         if noise_output == "Color":
@@ -2408,7 +2456,8 @@ def emit_output(node, from_socket, stack=()):
             seeds = (float(count), float(count + 1))
             expression["colorOffsets"] = [
                 _noise_random_offset(seed, count, native_mf=native_mf,
-                                     native_float4=not normalize_output and count == 4) for seed in seeds
+                                     native_float4=not normalize_output and count == 4,
+                                     native_shader_f32=shader_offset_profile is not None) for seed in seeds
             ]
         return expression
 

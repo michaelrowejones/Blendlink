@@ -29,7 +29,7 @@ const manifest = {
       filename: `blendlink-${version}.tgz`,
       license: 'SEE LICENSE IN LICENSES.md',
       licenseMap: 'LICENSES.md',
-      fileLicenses: ['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'CC0-1.0'],
+      fileLicenses: ['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'BSD-3-Clause', 'CC0-1.0'],
       bytes: npmBytes.length,
       sha256: sha(npmBytes),
       integrity: integrity(npmBytes),

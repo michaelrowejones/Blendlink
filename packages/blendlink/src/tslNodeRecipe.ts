@@ -12,14 +12,19 @@
  * the dividend), and pow with a negative base is defined only for integer
  * exponents.
  */
+// Perlin primitives below adapt Cycles/Open Shading Language noise.h (BSD-3-Clause).
+// Copyright 2009-2010 Sony Pictures Imageworks Inc., et al. All Rights Reserved.
+// Copyright 2011-2022 Blender Foundation. See assets/blender-noise-bsd-3-clause.txt.
 import { buildTslSpectralNode } from './tslSpectralNodes.js'
 import { buildTslCurveNode } from './tslCurveNodes.js'
 import { buildTslColorConversion, isUnitBoundedExpression } from './tslColorConversion.js'
 import { buildNativeColorBandSample } from './tslNativeColorBand.js'
 import { buildTslBrickNode } from './tslBrickNodes.js'
 import { buildTslVectorTransformNode } from './tslVectorTransform.js'
+import { buildGeometryContext } from './tslGeometryContext.js'
 import { buildSharedUtilityIr } from './tslSharedUtilities.js'
 import { buildPortableSine } from './tslPortableTrig.js'
+import { buildTslFractalNoise } from './tslFractalNoise.js'
 import {
   abs,
   attribute,
@@ -145,6 +150,10 @@ const fractalPerlin1d = tslFn(([position]) => perlin1d(position!))
   .setLayout({ name: 'blendlinkFractalPerlin1dV1', type: 'float', inputs: [{ name: 'position', type: 'float' }] })
 const fractalPerlin4d = tslFn(([position]) => perlin4d(position!))
   .setLayout({ name: 'blendlinkFractalPerlin4dV1', type: 'float', inputs: [{ name: 'position', type: 'vec4' }] })
+const hybridPerlin2d = tslFn(([position]) => tslNoise(position!))
+  .setLayout({ name: 'blendlinkHybridPerlin2dV1', type: 'float', inputs: [{ name: 'position', type: 'vec2' }] })
+const hybridPerlin3d = tslFn(([position]) => tslNoise(position!))
+  .setLayout({ name: 'blendlinkHybridPerlin3dV1', type: 'float', inputs: [{ name: 'position', type: 'vec3' }] })
 const tslAttribute = attribute as unknown as (name: string) => TslExpression
 const tslTexture = texture as unknown as (
   map: DataTexture, coordinates: TslExpression,
@@ -500,6 +509,8 @@ function child(expression: TslIrExpression, key: string): TslIrExpression {
 
 function build(expression: TslIrExpression): TslExpression {
   switch (expression.op) {
+    case 'geometry_context':
+      return buildGeometryContext(expression, activeOptions.objectSpace?.basis)
     case 'typed_const':
     case 'typed_convert':
     case 'boolean_math':
@@ -869,13 +880,16 @@ function build(expression: TslIrExpression): TslExpression {
       // The legacy opcode keeps its normalized interpretation. New signed
       // capabilities use a distinct opcode so older runtimes fail closed.
       const normalizeOutput = expression.op === 'noise'
-      if (!normalizeOutput && expression.noiseType !== undefined && expression.noiseType !== 'FBM')
+      const noiseType = normalizeOutput ? 'FBM' : String(expression.noiseType ?? 'FBM')
+      if (!['FBM', 'MULTIFRACTAL', 'HETERO_TERRAIN', 'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'].includes(noiseType))
         return fail('IR Noise fractal type has no verified recurrence: ' + String(expression.noiseType))
       if (!normalizeOutput && expression.normalize !== undefined && expression.normalize !== false)
         return fail('IR raw FBM normalize must be false')
       const scaleExpression = child(expression, 'scale')
       if (!normalizeOutput && (scaleExpression.op !== 'const_float' || typeof scaleExpression.value !== 'number' || !Number.isFinite(scaleExpression.value)))
         return fail('IR unnormalized Noise needs a finite static Scale')
+      if (!normalizeOutput && Math.abs(scaleExpression.value as number) > 80)
+        return fail('IR unnormalized Noise Scale exceeds its verified magnitude <=80')
       if (!normalizeOutput && (
         ![expression.detail, expression.roughness, expression.lacunarity ?? 2].every(value => typeof value === 'number' && Number.isFinite(value)) ||
         (expression.detail as number) > 6 || (expression.roughness as number) > 1 || Math.abs((expression.lacunarity ?? 2) as number) > 2 ||
@@ -895,7 +909,7 @@ function build(expression: TslIrExpression): TslExpression {
       // are Blender's own perlins ported, because three has neither arity.
       const octaveForDimension = dimensions === 1 ? (normalizeOutput ? perlin1d : fractalPerlin1d)
         : dimensions === 4 ? (normalizeOutput ? perlin4d : fractalPerlin4d)
-          : tslNoise
+          : noiseType === 'HYBRID_MULTIFRACTAL' ? (dimensions === 2 ? hybridPerlin2d : hybridPerlin3d) : tslNoise
       if (dimensions === 2) {
         // Blender's 2D noise is a genuinely different Perlin dimension,
         // matched by mx_noise_float's vec2 overload (the noise-2d cell).
@@ -931,9 +945,12 @@ function build(expression: TslIrExpression): TslExpression {
       const roughness = scalar(expression, 'roughness')
       const lacunarity = typeof expression.lacunarity === 'number'
         ? expression.lacunarity : 2.0
-      const fac = blenderNoiseFac(
-        position, detail, roughness, lacunarity, octaveForDimension, normalizeOutput,
-      )
+      const fractal = (point: TslExpression): TslExpression => noiseType === 'FBM'
+        ? blenderNoiseFac(point, detail, roughness, lacunarity, octaveForDimension, normalizeOutput)
+        : buildTslFractalNoise(point, { type: noiseType, detail, roughness, lacunarity,
+          offset: noiseType !== 'MULTIFRACTAL' && expression.offset !== undefined ? scalar(expression, 'offset') : 0,
+          gain: ['HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'].includes(noiseType) && expression.gain !== undefined ? scalar(expression, 'gain') : 1 }, octaveForDimension, fail)
+      const fac = fractal(position)
       if (expression.output !== 'color') return fac
       // Color lanes are the same fBM at constant hash-derived offsets
       // (the emitter precomputed noisetex.h's random offsets).
@@ -947,12 +964,8 @@ function build(expression: TslIrExpression): TslExpression {
       )
       return tslVec3(
         fac,
-        blenderNoiseFac(
-          shifted(offsets[0]), detail, roughness, lacunarity, octaveForDimension, normalizeOutput,
-        ),
-        blenderNoiseFac(
-          shifted(offsets[1]), detail, roughness, lacunarity, octaveForDimension, normalizeOutput,
-        ),
+        fractal(shifted(offsets[0])),
+        fractal(shifted(offsets[1])),
       )
     }
     case 'rgb_to_hsv':

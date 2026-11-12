@@ -4,6 +4,12 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import { NODE_PARITY_SUITES, nodeParityPlan } from './lib/node-parity-plan.mjs'
+
+const plan = nodeParityPlan(process.argv.slice(2))
+if (process.argv.includes('--list-suites')) {
+  console.log(JSON.stringify({ suites: NODE_PARITY_SUITES, selected: plan.selected })); process.exit(0)
+}
 
 const root = resolve(import.meta.dirname, '..')
 const evidence = resolve(process.env.BLENDLINK_NATIVE_NODE_EVIDENCE || join(root, 'artifacts/verification-native-node-gate'))
@@ -50,6 +56,7 @@ const referenceSets = []
 const inapplicableFamilies = []
 const compositorFamilies = [
   ['math', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES'],
+  ['blur', 'compositor_blur_check.py', 'BLENDLINK_COMPOSITOR_BLUR_REFERENCES'],
   ['color-balance', 'compositor_color_balance_check.py', 'BLENDLINK_COLOR_BALANCE_REFERENCES'],
   ['color-channels', 'compositor_color_channels_check.py', 'BLENDLINK_COLOR_CHANNEL_REFERENCES'],
   ['pointwise', 'compositor_pointwise_check.py', 'BLENDLINK_COMPOSITOR_POINTWISE_REFERENCES'],
@@ -60,13 +67,13 @@ const compositorFamilies = [
 ]
 if (capabilities.whitePointCompositorAvailable) compositorFamilies.push(
   ['white-point', 'compositor_whitepoint_check.py', 'BLENDLINK_COMPOSITOR_WHITEPOINT_REFERENCES'])
-else inapplicableFamilies.push({ family: 'compositor-white-point',
+else if (plan.compositor) inapplicableFamilies.push({ family: 'compositor-white-point',
   reason: 'Native Color Balance creation/selector probe exposes no White Point mode' })
 if (capabilities.sharedUtilityCompositorAvailable) compositorFamilies.push(
   ['shared-utilities', 'shared_utility_check.py', 'BLENDLINK_SHARED_UTILITY_REFERENCES'])
-else inapplicableFamilies.push({ family: 'compositor-shared-utilities',
+else if (plan.compositor) inapplicableFamilies.push({ family: 'compositor-shared-utilities',
   reason: 'Native node creation probe found no shared Boolean/Integer input nodes in this compositor' })
-for (const [family, file, variable] of compositorFamilies) {
+if (plan.compositor) for (const [family, file, variable] of compositorFamilies) {
   const directory = join(evidence, family)
   rmSync(directory, { recursive: true, force: true })
   mkdirSync(directory, { recursive: true })
@@ -74,7 +81,7 @@ for (const [family, file, variable] of compositorFamilies) {
     '--python', join(root, 'packages/blender-addon/tests', file)], {
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU',
-    BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MATH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BALANCE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE: 'CPU',
@@ -86,9 +93,12 @@ for (const [family, file, variable] of compositorFamilies) {
   }
 }
 let nativeCompositorGpu
-if (capabilities.offlineGpuAvailable && capabilities.gpuParityVersionSupported) {
+if (!plan.compositor) {
+  nativeCompositorGpu = { status: 'not-requested', reason: 'Explicit ' + plan.suite + ' suite' }
+} else if (capabilities.offlineGpuAvailable && capabilities.gpuParityVersionSupported) {
   const gpuFamilies = [
     ['math-gpu', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES', 'BLENDLINK_COMPOSITOR_MATH_DEVICE'],
+    ['blur-gpu', 'compositor_blur_check.py', 'BLENDLINK_COMPOSITOR_BLUR_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_DEVICE'],
     ['color-balance-gpu', 'compositor_color_balance_check.py', 'BLENDLINK_COLOR_BALANCE_REFERENCES', 'BLENDLINK_COMPOSITOR_BALANCE_DEVICE'],
     ['color-channels-gpu', 'compositor_color_channels_check.py', 'BLENDLINK_COLOR_CHANNEL_REFERENCES', 'BLENDLINK_COMPOSITOR_CHANNEL_DEVICE'],
     ['alpha-gpu', 'compositor_alpha_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_REFERENCES', 'BLENDLINK_COMPOSITOR_ALPHA_DEVICE'],
@@ -158,70 +168,83 @@ const compositorComplete = references.length > 0 && attempt('compositor-browser'
   '--built', '--out', join(evidence, 'browser'), ...references], {}, compositorTimeout))
 if (nativeCompositorGpu.status === 'generated') nativeCompositorGpu.status = compositorComplete &&
   !failures.some(item => item.label.endsWith('-gpu')) ? 'passed' : 'not-verified'
-for (const [family, flag] of [
-  ['mapping', null], ['mix', '--mix'], ['map-range', '--map-range'],
-  ['math', '--math'], ['math-boundary', '--boundary'], ['hue-ramp', '--hue-ramp'],
-  ['vectors', '--vectors'],
-  ['brick', '--brick'], ['clamp', '--clamp'], ['images', '--images'],
-]) {
-  attempt('shader-' + family, () => run('shader-' + family, process.execPath, ['experiments/tsl-node-differential/run-mapping.mjs',
-    '--built', ...(flag ? [flag] : [])], { BLENDLINK_BLENDER: blender,
-      BLENDLINK_TSL_DIFF_ARTIFACTS: join(evidence, 'shader-' + family) }))
+if (plan.shaders) {
+  for (const [family, flag] of [
+    ['mapping', null], ['mix', '--mix'], ['map-range', '--map-range'],
+    ['math', '--math'], ['math-boundary', '--boundary'], ['hue-ramp', '--hue-ramp'],
+    ['vectors', '--vectors'],
+    ['brick', '--brick'], ['clamp', '--clamp'], ['images', '--images'],
+  ]) {
+    attempt('shader-' + family, () => run('shader-' + family, process.execPath, ['experiments/tsl-node-differential/run-mapping.mjs',
+      '--built', ...(flag ? [flag] : [])], { BLENDLINK_BLENDER: blender,
+        BLENDLINK_TSL_DIFF_ARTIFACTS: join(evidence, 'shader-' + family) }))
+  }
+  attempt('spectral', () => run('spectral', process.execPath, ['experiments/spectral-node-differential/run.mjs', '--built'],
+    { BLENDLINK_BLENDER: blender, BLENDLINK_SPECTRAL_EVIDENCE: join(evidence, 'spectral') }))
+  attempt('curves', () => run('curves', process.execPath, ['experiments/curve-node-differential/run.mjs', '--built'],
+    { BLENDLINK_BLENDER: blender, BLENDLINK_CURVE_EVIDENCE: join(evidence, 'curves') }))
+  attempt('vector-transform', () => {
+    const directory = join(evidence, 'vector-transform')
+    rmSync(directory, { recursive: true, force: true })
+    mkdirSync(directory, { recursive: true })
+    run('vector-transform-native', blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+      '--python', join(root, 'packages/blender-addon/tests/vector_transform_check.py')],
+    { BLENDLINK_VECTOR_TRANSFORM_REFERENCES: directory })
+    run('vector-transform-final', process.execPath, ['node_modules/vitest/vitest.mjs', 'run',
+      'experiments/vector-transform-differential/export.test.ts'],
+    { BLENDLINK_VECTOR_TRANSFORM_NATIVE: directory, BLENDLINK_VECTOR_TRANSFORM_BLENDER: blender,
+      BLENDLINK_VECTOR_TRANSFORM_BUILT: '1' })
+    run('vector-transform-browser', process.execPath, ['experiments/vector-transform-differential/run.mjs', directory, '--built'])
+  })
+  attempt('published-images', () => {
+    const directory = join(evidence, 'published-images')
+    rmSync(directory, { recursive: true, force: true })
+    mkdirSync(directory, { recursive: true })
+    run('published-images-native', blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+      '--python', join(root, 'packages/blender-addon/tests/multi_image_program_check.py')],
+    { BLENDLINK_MULTI_IMAGE_FIXTURE: directory })
+    run('published-images-final', process.execPath, ['node_modules/vitest/vitest.mjs', 'run',
+      'experiments/multi-image-differential/export.test.ts'],
+    { BLENDLINK_MULTI_IMAGE_NATIVE: directory, BLENDLINK_MULTI_IMAGE_BLENDER: blender,
+      BLENDLINK_MULTI_IMAGE_BUILT: '1' })
+    run('published-images-browser', process.execPath, ['experiments/multi-image-differential/run.mjs', '--built'],
+      { BLENDLINK_MULTI_IMAGE_NATIVE: directory })
+  })
+  attempt('wave', () => run('wave', process.execPath, ['experiments/wave-node-differential/run.mjs', '--built'],
+    { BLENDLINK_BLENDER: blender, BLENDLINK_WAVE_EVIDENCE: join(evidence, 'wave') }))
+  attempt('color-conversions', () => run('color-conversions', process.execPath,
+    ['experiments/color-conversion-differential/run.mjs', '--built'],
+    { BLENDLINK_BLENDER: blender, BLENDLINK_COLOR_EVIDENCE: join(evidence, 'color-conversions') }))
+  if (capabilities.sharedUtilityShaderAvailable) {
+    attempt('shared-utilities', () => run('shared-utilities', process.execPath,
+      ['experiments/shared-utility-differential/run.mjs', '--built'],
+      { BLENDLINK_BLENDER: blender, BLENDLINK_UTILITY_EVIDENCE: join(evidence, 'shared-utilities') }))
+  } else inapplicableFamilies.push({ family: 'shader-shared-utilities',
+    reason: 'Native node creation probe found no shared Boolean/Integer input nodes in this shader context' })
 }
-attempt('spectral', () => run('spectral', process.execPath, ['experiments/spectral-node-differential/run.mjs', '--built'],
-  { BLENDLINK_BLENDER: blender, BLENDLINK_SPECTRAL_EVIDENCE: join(evidence, 'spectral') }))
-attempt('curves', () => run('curves', process.execPath, ['experiments/curve-node-differential/run.mjs', '--built'],
-  { BLENDLINK_BLENDER: blender, BLENDLINK_CURVE_EVIDENCE: join(evidence, 'curves') }))
-attempt('vector-transform', () => {
-  const directory = join(evidence, 'vector-transform')
-  rmSync(directory, { recursive: true, force: true })
-  mkdirSync(directory, { recursive: true })
-  run('vector-transform-native', blender, ['--background', '--factory-startup', '--python-exit-code', '1',
-    '--python', join(root, 'packages/blender-addon/tests/vector_transform_check.py')],
-  { BLENDLINK_VECTOR_TRANSFORM_REFERENCES: directory })
-  run('vector-transform-final', process.execPath, ['node_modules/vitest/vitest.mjs', 'run',
-    'experiments/vector-transform-differential/export.test.ts'],
-  { BLENDLINK_VECTOR_TRANSFORM_NATIVE: directory, BLENDLINK_VECTOR_TRANSFORM_BLENDER: blender,
-    BLENDLINK_VECTOR_TRANSFORM_BUILT: '1' })
-  run('vector-transform-browser', process.execPath, ['experiments/vector-transform-differential/run.mjs', directory, '--built'])
-})
-attempt('published-images', () => {
-  const directory = join(evidence, 'published-images')
-  rmSync(directory, { recursive: true, force: true })
-  mkdirSync(directory, { recursive: true })
-  run('published-images-native', blender, ['--background', '--factory-startup', '--python-exit-code', '1',
-    '--python', join(root, 'packages/blender-addon/tests/multi_image_program_check.py')],
-  { BLENDLINK_MULTI_IMAGE_FIXTURE: directory })
-  run('published-images-final', process.execPath, ['node_modules/vitest/vitest.mjs', 'run',
-    'experiments/multi-image-differential/export.test.ts'],
-  { BLENDLINK_MULTI_IMAGE_NATIVE: directory, BLENDLINK_MULTI_IMAGE_BLENDER: blender,
-    BLENDLINK_MULTI_IMAGE_BUILT: '1' })
-  run('published-images-browser', process.execPath, ['experiments/multi-image-differential/run.mjs', '--built'],
-    { BLENDLINK_MULTI_IMAGE_NATIVE: directory })
-})
-attempt('wave', () => run('wave', process.execPath, ['experiments/wave-node-differential/run.mjs', '--built'],
-  { BLENDLINK_BLENDER: blender, BLENDLINK_WAVE_EVIDENCE: join(evidence, 'wave') }))
-attempt('noise-fractal', () => run('noise-fractal', process.execPath, ['experiments/noise-fractal-differential/run.mjs', '--built'],
-  { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-fractal') }, 1_200_000))
-attempt('color-conversions', () => run('color-conversions', process.execPath,
-  ['experiments/color-conversion-differential/run.mjs', '--built'],
-  { BLENDLINK_BLENDER: blender, BLENDLINK_COLOR_EVIDENCE: join(evidence, 'color-conversions') }))
-if (capabilities.sharedUtilityShaderAvailable) {
-  attempt('shared-utilities', () => run('shared-utilities', process.execPath,
-    ['experiments/shared-utility-differential/run.mjs', '--built'],
-    { BLENDLINK_BLENDER: blender, BLENDLINK_UTILITY_EVIDENCE: join(evidence, 'shared-utilities') }))
-} else inapplicableFamilies.push({ family: 'shader-shared-utilities',
-  reason: 'Native node creation probe found no shared Boolean/Integer input nodes in this shader context' })
+if (plan.geometry) attempt('geometry', () => run('geometry', process.execPath,
+  ['experiments/geometry-context-differential/suite.mjs', '--built'],
+  { BLENDLINK_GEOMETRY_BLENDER: blender, BLENDLINK_GEOMETRY_NATIVE: join(evidence, 'geometry') }, 1_800_000))
+if (plan.noiseFbm) attempt('noise-fractal', () => run('noise-fractal', process.execPath,
+  ['experiments/noise-fractal-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-fractal'),
+    BLENDLINK_NOISE_TYPES: '["FBM"]' }, 1_800_000))
+if (plan.noiseTypes) attempt('noise-types', () => run('noise-types', process.execPath,
+  ['experiments/noise-fractal-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-types'),
+    BLENDLINK_NOISE_TYPES: '["MULTIFRACTAL","HETERO_TERRAIN","HYBRID_MULTIFRACTAL","RIDGED_MULTIFRACTAL"]' }, 1_800_000))
 let browser = []
 try { browser = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 'utf8')) } catch { /* Failed families are recorded above. */ }
 writeFileSync(join(evidence, 'report.json'), JSON.stringify({
+  requestedSuite: plan.suite, selectedSuites: plan.selected,
   nativeCompositorDevices: [...new Set(referenceSets.flatMap(set => set.device.split('+')))],
   nativeCompositorGpu, nativeCapabilities: capabilities, references, referenceSets, inapplicableFamilies, compositorTimeout,
   compositor: browser.map(({ backend, rows, failure, error }) => ({ backend, cases: rows?.length ?? 0,
     maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
-  shaderFamilies: ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'noise-fractal', 'color-conversions',
-    ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])],
+  shaderFamilies: [...(plan.shaders ? ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'color-conversions',
+    ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])] : []),
+    ...(plan.geometry ? ['geometry'] : []), ...(plan.noiseFbm ? ['noise-fractal'] : []), ...(plan.noiseTypes ? ['noise-types'] : [])],
   builtRuntime: true, failures,
 }, null, 2) + '\n')
 assert.deepEqual(failures, [], 'Native node parity failed; all independent family logs were retained')
-console.log('BLENDLINK_NATIVE_NODE_GATE_PASSED native CPU and available GPU references, built runtime on both browser backends')
+console.log('BLENDLINK_NATIVE_NODE_GATE_PASSED ' + plan.suite + ': native references and built runtime on both browser backends')

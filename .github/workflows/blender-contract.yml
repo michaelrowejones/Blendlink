@@ -93,13 +93,14 @@ jobs:
         run: git diff --check
 
   linux:
-    name: Linux x64 / Blender ${{ matrix.version }}
+    name: Linux x64 / Blender ${{ matrix.blender.version }} / ${{ matrix.suite }}
     runs-on: ubuntu-24.04
     timeout-minutes: 75
     strategy:
       fail-fast: false
       matrix:
-        include:
+        suite: [compositor, shaders, geometry, noise-fbm, noise-types]
+        blender:
           - version: "4.2.0"
             series: "4.2"
             sha256: "4f4fd7646af01f6fee9d420408318381a6e52571268eb7cf9cd5033bd9e7a359"
@@ -122,9 +123,9 @@ jobs:
 
       - name: Download and verify exact Blender archive
         env:
-          BLENDER_VERSION: ${{ matrix.version }}
-          BLENDER_SERIES: ${{ matrix.series }}
-          BLENDER_SHA256: ${{ matrix.sha256 }}
+          BLENDER_VERSION: ${{ matrix.blender.version }}
+          BLENDER_SERIES: ${{ matrix.blender.series }}
+          BLENDER_SHA256: ${{ matrix.blender.sha256 }}
         run: |
           archive="$RUNNER_TEMP/blender-$BLENDER_VERSION-linux-x64.tar.xz"
           curl --fail --location --retry 3 \
@@ -150,7 +151,7 @@ jobs:
         run: npx --no-install playwright install --with-deps chromium
 
       - name: Compare native node pixels with both built browser backends
-        run: xvfb-run --auto-servernum node scripts/test-node-parity.mjs
+        run: xvfb-run --auto-servernum node scripts/test-node-parity.mjs --suite "${{ matrix.suite }}"
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
 
@@ -158,7 +159,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: native-node-parity-${{ matrix.version }}
+          name: native-node-parity-${{ matrix.blender.version }}-${{ matrix.suite }}
           path: |
             artifacts/verification-native-node-gate
             artifacts/verification-mapping

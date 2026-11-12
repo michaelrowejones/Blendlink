@@ -1,6 +1,6 @@
-Blendlink spectral color, color conversion, image sampling, integer utility, Noise/Wave and Brick node mathematics and tables
+Blendlink spectral color, color conversion, image sampling, integer utility, Noise/Wave and Brick node mathematics and tables, including packed-normal models
 
-Copyright 2011-2022 Blender Foundation
+Copyright 2011-2026 Blender Foundation
 Copyright 2026 Blendlink contributors
 
 Portions are adapted from the Apache-2.0 licensed Blender Cycles sources:
@@ -13,12 +13,27 @@ https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/wave.h
 https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/fractal_noise.h
 https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/util/image.h
 https://github.com/blender/blender/blob/v4.2.0/intern/cycles/kernel/device/cpu/image.h
+https://github.com/blender/blender/blob/v5.2.0/intern/cycles/util/types_normal.h
 
 Blendlink modifications: Three.js expression construction, explicit source
 engine evaluation models, serialized working-space matrices, resource ownership,
-native RGB/HSV/HSL conversion, signed 32-bit integer utility operations, native image wrap/clip/nearest and cubic sampling, Wave live distortion/roughness and Noise signed FBM with native constant/shader offset precision and bounded octave sums, integer Brick noise and mortar calculations, and browser/native differential
+native RGB/HSV/HSL conversion, signed 32-bit integer utility operations, native image wrap/clip/nearest and cubic sampling, Wave live distortion/roughness and Noise signed FBM and four bounded fractal recurrences with native constant/shader offset precision, recursive coordinates and finite amplitude bounds, integer Brick noise and mortar calculations, per-vertex octahedral normal storage/interpolation models, and browser/native differential
 checks. Native EEVEE sampler behavior is modeled
 separately from the Cycles analytical functions.
 
 The complete Apache License, Version 2.0 accompanies this notice in
 blender-spectral-apache-2.0.txt.
+
+Perlin noise primitives are separately adapted from BSD-3-Clause licensed
+Cycles/Open Shading Language code:
+https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/noise.h
+
+Copyright 2009-2010 Sony Pictures Imageworks Inc., et al. All Rights Reserved.
+Copyright 2011-2022 Blender Foundation
+
+Blendlink modifications: Three.js expressions for Perlin gradient, fade and
+interpolation primitives, reusable typed shader functions, and dimensional
+source evaluation models. The complete BSD-3-Clause license accompanies
+this notice in blender-noise-bsd-3-clause.txt (noise-LICENSE.txt in the
+standalone Blender Extension). This attribution does not replace the
+Apache-2.0 license for fractal_noise.h and the other sources listed above.

@@ -7,11 +7,11 @@ const { Fn, bitcast, clamp, dot, float, fract, max, min, mix, pow, select, uint,
   (...args: TslEffectNode[]) => TslEffectNode
 >
 
-// CPU division also precedes discontinuous Posterize bins and tonal regions.
+// Native rounded division precedes Posterize bins, tonal regions and GL hue curves.
 // GPU reciprocal approximations can cross those boundaries by one step. A
 // split product recovers the division residual, without an arbitrary epsilon
 // that would move genuinely neighboring image values across the boundary.
-const compositorCpuDivision = Fn(([value, divisor]: TslEffectNode[]) => {
+export const compositorCpuDivision = Fn(([value, divisor]: TslEffectNode[]) => {
   const quotient = value.div(divisor).toVar()
   const product = quotient.mul(divisor).toVar()
   const highQ = vec3(...['r', 'g', 'b'].map(channel =>

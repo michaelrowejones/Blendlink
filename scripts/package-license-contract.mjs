@@ -6,6 +6,7 @@ const FILE_LICENSES = Object.freeze([
   'MIT',
   'GPL-3.0-or-later',
   'Apache-2.0',
+  'BSD-3-Clause',
   'CC0-1.0',
 ])
 
@@ -59,6 +60,7 @@ export function verifyPackedBlendlinkLicenseContract(packageRoot) {
       'assets/basis-apache-2.0.txt',
       'assets/blender-spectral-NOTICE.txt',
       'assets/blender-spectral-apache-2.0.txt',
+      'assets/blender-noise-bsd-3-clause.txt',
     ],
     'Packed Blendlink license map is incomplete',
   )
@@ -118,6 +120,18 @@ export function verifyPackedBlendlinkLicenseContract(packageRoot) {
   const extensionSpectralLicense = readRequiredText(packageRoot, 'dist/addon/spectral-LICENSE.txt', 'extension spectral license')
   requireFragments(extensionSpectralNotice, ['Blender Foundation', 'Apache'], 'Extension spectral attribution is incomplete')
   requireFragments(extensionSpectralLicense, ['Apache License', 'END OF TERMS AND CONDITIONS'], 'Extension spectral license is incomplete')
+
+  for (const [path, label] of [
+    ['assets/blender-noise-bsd-3-clause.txt', 'Perlin BSD-3-Clause license'],
+    ['dist/addon/noise-LICENSE.txt', 'extension Perlin BSD-3-Clause license'],
+  ]) {
+    const text = readRequiredText(packageRoot, path, label)
+    requireFragments(text, ['Sony Pictures Imageworks', 'Blender Foundation',
+      'Redistribution and use in source and binary forms', 'Redistributions of source code',
+      'Redistributions in binary form', 'Neither the name of the copyright holder',
+      'THIS SOFTWARE IS PROVIDED', 'EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.'],
+    'Packed Perlin primitives must retain the complete BSD-3-Clause attribution and license')
+  }
 
   return {
     license: PACKAGE_LICENSE,

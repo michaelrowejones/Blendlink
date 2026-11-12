@@ -33,8 +33,8 @@ The complete GNU General Public License version 3 text is in
 ## Third-party notice
 
 `dist/tslSpectralNodes.js`, `dist/tslBrickNodes.js`, `dist/tslColorConversion.js`,
-`dist/tslSharedUtilities.js`, `dist/tslNodeRecipe.js` and their source TypeScript include spectral color,
-color conversion, image sampling, integer utility, Noise/Wave and Brick mathematics adapted from Apache-2.0 Cycles
+`dist/tslSharedUtilities.js`, `dist/tslFractalNoise.js`, `dist/tslGeometryContext.js`, `dist/tslNodeRecipe.js` and their source TypeScript include spectral color,
+color conversion, image sampling, integer utility, fractal Noise/Wave, packed-normal and Brick mathematics adapted from Apache-2.0 Cycles
 code. The coefficient/CIE data in
 `dist/addon/spectral_tables.json` and `dist/blender/spectral_tables.json` has the
 same license. Complete attribution and modification notices are in
@@ -43,6 +43,15 @@ the complete license is in
 [`assets/blender-spectral-apache-2.0.txt`](assets/blender-spectral-apache-2.0.txt).
 The separate Blender extension also carries these texts as
 `spectral-NOTICE.txt` and `spectral-LICENSE.txt` beside its GPL aggregate license.
+
+The Perlin gradient, fade and interpolation primitives in `tslNodeRecipe.ts`
+and its emitted JavaScript are separately adapted from Cycles/Open Shading
+Language `noise.h` under BSD-3-Clause, copyright 2009-2010 Sony Pictures
+Imageworks Inc., et al., and 2011-2022 Blender Foundation. Complete copyright,
+redistribution conditions and disclaimer are retained in
+[`assets/blender-noise-bsd-3-clause.txt`](assets/blender-noise-bsd-3-clause.txt).
+The Blender Extension carries the same license as `noise-LICENSE.txt`;
+standalone website exports include it in their third-party notices.
 
 `dist/vendor/n8ao-webgpu/` contains the unchanged runtime from
 `n8ao-webgpu@0.1.0`, licensed CC0-1.0. Its complete `LICENSE`, upstream

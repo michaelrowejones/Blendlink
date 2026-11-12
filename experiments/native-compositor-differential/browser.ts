@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { WebGPURenderer, NodeMaterial, QuadMesh } from 'three/webgpu'
-import { textureLoad, uv, vec2, ivec2 } from 'three/tsl'
+import { textureLoad, uv, vec2, ivec2, mrt, output, vec4 } from 'three/tsl'
 import { buildSourceCompositor } from 'blendlink-compositor-under-test'
 
 const reports: unknown[] = []
@@ -20,7 +20,9 @@ try {
   ].filter(Boolean).join('\n'))
   const device = (renderer.backend as any).device as GPUDevice | undefined
   const cases: { file: string }[] = await (await fetch('/references/index.json')).json()
+  let lastProgress = performance.now()
   for (const entry of cases) {
+    ;(window as any).__compositorProgress = { completed: reports.length, total: cases.length, case: entry.file, phase: 'loading' }
     const test = await (await fetch('/references/' + entry.file)).json()
     const { width, height } = test
     renderer.setSize(width, height)
@@ -29,13 +31,21 @@ try {
     const source = textureLoad(texture, ivec2(uv().mul(vec2(width, height))))
     const material = new NodeMaterial()
     const quad = new QuadMesh(material)
-    const target = new THREE.RenderTarget(width, height, { type: THREE.FloatType })
+    const target = new THREE.RenderTarget(width, height, { type: THREE.FloatType, count: test.assertMrtState ? 2 : 1 })
+    const activeMrt = test.assertMrtState ? mrt({ output, proof: vec4(0) }) : null
+    if (activeMrt) {
+      target.textures[0]!.name = 'output'
+      target.textures[1]!.name = 'proof'
+      renderer.setMRT(activeMrt)
+      renderer.autoClear = false
+      renderer.setClearAlpha(.37)
+    }
     const row: any = { case: test.case, blenderVersion: test.blenderVersion, blenderHash: test.blenderHash,
       exactAlpha: test.exactAlpha === true, backend }
     const shaderStart = shaderErrors.length
     device?.pushErrorScope('validation')
     const render = async (node: any) => {
-      material.fragmentNode = node
+      material.fragmentNode = activeMrt ? mrt({ output: node, proof: vec4(0) }) : node
       material.needsUpdate = true
       renderer!.setRenderTarget(target)
       quad.render(renderer!)
@@ -59,6 +69,7 @@ try {
       return { max: Math.max(...channels), channels, worst }
     }
     try {
+      ;(window as any).__compositorProgress.phase = 'calibrating'
       // Establish row orientation with unchanged HDR/alpha input, independently
       // of the color grade. Never pick a different orientation to fit a case.
       const control = await render(source)
@@ -74,17 +85,33 @@ try {
       if (calibration.max > 1e-6) throw new Error('Unmodified HDR input did not survive the browser render target')
       const built = buildSourceCompositor(test.program, () => source)
       try {
+        ;(window as any).__compositorProgress.phase = 'rendering'
         const actual = await render(built.node)
         Object.assign(row, errorFor(actual, test.expected, flip))
+        if (activeMrt && (renderer.getMRT() !== activeMrt || renderer.getRenderTarget() !== target
+          || renderer.autoClear !== false || renderer.getClearAlpha() !== .37))
+          throw new Error('Compositor changed the caller renderer MRT/clear state')
       } finally { built.dispose() }
     } catch (error) { row.error = String(error) }
     finally {
+      renderer.setMRT(null)
+      renderer.autoClear = true
+      renderer.setClearAlpha(1)
       texture.dispose(); material.dispose(); target.dispose()
+      if (test.assertTextureCleanup) {
+        row.remainingTextures = renderer.info.memory.textures
+        if (row.remainingTextures !== 0) row.error = 'Compositor retained ' + row.remainingTextures + ' GPU textures after disposal'
+      }
       const validation = await device?.popErrorScope()
       row.shaderErrors = shaderErrors.slice(shaderStart)
       if (validation) row.shaderErrors.push(validation.message)
       if (row.shaderErrors.length) row.error = 'Shader validation failed: ' + row.shaderErrors.join('\n')
       reports.push(row)
+      ;(window as any).__compositorProgress = { completed: reports.length, total: cases.length, case: test.case, phase: 'complete' }
+      if (performance.now() - lastProgress > 15000) {
+        console.info('BLENDLINK_COMPOSITOR_PROGRESS ' + backend + ' ' + reports.length + '/' + cases.length + ' ' + test.case)
+        lastProgress = performance.now()
+      }
     }
   }
   result.textContent = JSON.stringify(reports, null, 2)

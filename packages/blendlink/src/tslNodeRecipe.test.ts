@@ -27,12 +27,26 @@ describe('buildTslColorNode', () => {
     expect(buildTslColorNode(documentOf({ ...expression, op: 'noise', normalize: undefined }))).toBeTruthy()
     expect(buildTslColorNode(documentOf({ ...expression, op: 'noise', normalize: false, roughness: 2 }))).toBeTruthy()
     expect(() => buildTslColorNode(documentOf({ ...expression, normalize: 'false' }))).toThrow(/must be false/)
-    expect(() => buildTslColorNode(documentOf({ ...expression, noiseType: 'MULTIFRACTAL' })))
+    expect(() => buildTslColorNode(documentOf({ ...expression, noiseType: 'FUTURE_TYPE' })))
       .toThrow(/no verified recurrence/)
+    for (const noiseType of ['MULTIFRACTAL', 'HETERO_TERRAIN', 'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'])
+      expect(buildTslColorNode(documentOf({ ...expression, noiseType, detail: 1.5, offset: .5, gain: 1 }))).toBeTruthy()
+    expect(() => buildTslColorNode(documentOf({ ...expression, noiseType: 'HETERO_TERRAIN', detail: 2, offset: 2, amplitudeBound: 0 })))
+      .toThrow(/verified static parameter domain/)
     for (const controls of [{ detail: 7 }, { roughness: 2 }, { lacunarity: 3 }, { distortion: 2 }])
       expect(() => buildTslColorNode(documentOf({ ...expression, ...controls }))).toThrow(/verified finite fractal controls/)
     expect(() => buildTslColorNode(documentOf({ op: 'mix_color', blendType: 'MIX',
       factor: { ...expression, output: 'color' } }))).toThrow(/vector-typed \(noise_fractal\)/)
+  })
+  it('rechecks the raw Scale bound without trusting emitted admission metadata', () => {
+    const expression = { op: 'noise_fractal', normalize: false, dimensions: 3, detail: 2, roughness: .5,
+      input: { op: 'uv' }, scale: { op: 'const_float', value: 80 } }
+    for (const value of [-80, 80])
+      expect(buildTslColorNode(documentOf({ ...expression, scale: { op: 'const_float', value } }))).toBeTruthy()
+    for (const value of [-80.0001, 80.0001])
+      expect(() => buildTslColorNode(documentOf({ ...expression, scale: { op: 'const_float', value }, amplitudeBound: 0 })))
+        .toThrow(/Scale exceeds its verified magnitude/)
+    expect(buildTslColorNode(documentOf({ ...expression, op: 'noise', scale: { op: 'const_float', value: 100 } }))).toBeTruthy()
   })
   it('accepts live Wave distortion while refusing unknown modes and unproven octave counts', () => {
     const expression = { op: 'tex_wave', waveType: 'BANDS', bandsDirection: 'X', ringsDirection: 'SPHERICAL',

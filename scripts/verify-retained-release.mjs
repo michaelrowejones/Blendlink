@@ -17,7 +17,7 @@ import { verifyPackedBlendlinkLicenseContract } from './package-license-contract
 
 const PACKAGE_LICENSE = 'SEE LICENSE IN LICENSES.md'
 const ADDON_LICENSE = 'GPL-3.0-or-later'
-const FILE_LICENSES = Object.freeze(['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'CC0-1.0'])
+const FILE_LICENSES = Object.freeze(['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'BSD-3-Clause', 'CC0-1.0'])
 const FULL_SHA256 = /^[0-9a-f]{64}$/
 const FULL_COMMIT = /^[0-9a-f]{40}$/
 const VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/

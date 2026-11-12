@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Actual native Hue Correct curves, devices, HDR colors, factors and alpha."""
 import colorsys
+import json
 import os
 import sys
 import tempfile
@@ -59,6 +60,14 @@ def main(output):
         clip = (node.mapping.use_clip, node.mapping.clip_min_y, node.mapping.clip_max_y)
         groups, users = len(bpy.data.node_groups), oracle.image.users
         oracle.save(label, source)
+        captured = json.loads((output / (oracle.rows[-1]["case"] + ".json")).read_text())
+        for operation in captured["program"]["ops"]:
+            if operation["kind"] != "hue-correct":
+                continue
+            properties = operation["properties"]
+            opengl_gpu = oracle.device == "GPU" and properties["native_gpu_backend"] == "OPENGL"
+            assert properties.get("hue_curve_sampling_model") == (
+                "opengl-normalized-f32-v1" if opengl_gpu else None), properties
         assert groups == len(bpy.data.node_groups), "Hue Correct extraction leaked a copied tree"
         assert users + 1 == oracle.image.users, "Only the oracle input node may add an image user"
         assert before == [(tuple(point.location), point.handle_type) for curve in node.mapping.curves for point in curve.points]

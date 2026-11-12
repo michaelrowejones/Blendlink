@@ -33,6 +33,7 @@ function websiteLicenseNotices(workspace: string): string {
   notices.push('Basis Universal\n' + readFileSync(new URL('../assets/basis-apache-2.0.txt', import.meta.url), 'utf8'))
   notices.push(readFileSync(new URL('../assets/blender-spectral-NOTICE.txt', import.meta.url), 'utf8'))
   notices.push(readFileSync(new URL('../assets/blender-spectral-apache-2.0.txt', import.meta.url), 'utf8'))
+  notices.push(readFileSync(new URL('../assets/blender-noise-bsd-3-clause.txt', import.meta.url), 'utf8'))
   return notices.join('\n\n--------------------\n\n') + '\n'
 }
 

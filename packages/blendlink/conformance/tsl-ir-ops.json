@@ -16,6 +16,7 @@
     "fresnel",
     "gamma",
     "generated",
+    "geometry_context",
     "hue_sat",
     "integer_math",
     "invert",

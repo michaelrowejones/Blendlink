@@ -1,10 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Native material color conversion pixels; the native node is the numeric oracle."""
+"""Native Noise fractal pixels; actual Blender node graphs are the oracle."""
 import json
 import hashlib
 import os
 import sys
 import tempfile
+import math
+import struct
 from pathlib import Path
 import bpy
 import numpy as np
@@ -15,6 +17,7 @@ sys.path.insert(0, native or str(ROOT / 'packages/blender-addon'))
 sys.path.insert(0, native or str(ROOT / 'packages/blendlink/blender'))
 import bakelib
 import tsl_ir
+from noise_fractal_ir import fractal_amplitude_bound, FRACTAL_TYPES
 
 OUTPUT = Path(os.environ['BLENDLINK_NOISE_REFERENCES']).resolve()
 OUTPUT.mkdir(parents=True, exist_ok=True)
@@ -112,6 +115,12 @@ def make_material(case):
             tree.links.new(w.outputs[0], node.inputs['W'])
         raw = node.outputs[case['output']]
         factor, bias = case.get('oracleScale', .0625), .5
+        if 'staticBaseline' in case:
+            subtract = tree.nodes.new('ShaderNodeVectorMath')
+            subtract.operation = 'SUBTRACT'
+            subtract.inputs[1].default_value = (case['staticBaseline'],) * 3
+            tree.links.new(raw, subtract.inputs[0])
+            raw = subtract.outputs[0]
     affine = tree.nodes.new('ShaderNodeVectorMath')
     affine.operation = 'MULTIPLY_ADD'
     affine.inputs[1].default_value = (factor,) * 3
@@ -136,7 +145,7 @@ def native_pixels(material, temporary, label):
     return raw
 
 
-def add_residual_control(material, emission, coarse, scale):
+def add_residual_control(material, emission, coarse, scale, amplification):
     # The native half target supplies a coarse baseline only. Reevaluate the
     # same native noise subgraph after subtracting that baseline, so final
     # target quantization cannot hide shader-kernel arithmetic discrepancies.
@@ -161,10 +170,12 @@ def add_residual_control(material, emission, coarse, scale):
     tree.links.new(raw, subtract.inputs[0])
     tree.links.new(texture.outputs['Color'], subtract.inputs[1])
     tree.links.new(subtract.outputs[0], affine.inputs[0])
-    affine.inputs[1].default_value = (16,) * 3
+    affine.inputs[1].default_value = (amplification,) * 3
 
 
 records = []
+requested_types = json.loads(os.environ.get('BLENDLINK_NOISE_TYPES', '["FBM"]'))
+assert requested_types and all(kind in {'FBM', *FRACTAL_TYPES} for kind in requested_types)
 parameters = [
     {'Detail': 0, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 1},
     {'Detail': .5, 'Roughness': .7, 'Lacunarity': 1.7, 'Scale': 1},
@@ -189,25 +200,81 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             for output in ['Fac', 'Color']:
                 for stage in ['constant', 'image']:
                     for index, settings in enumerate(parameters):
+                        if 'FBM' not in requested_types: continue
                         cases.append({'id': f'{engine.lower()}-fbm-raw-{dimension.lower()}-{output.lower()}-{stage}-{index}',
                                       'kind': 'noise', 'dimensions': dimension, 'output': output, 'stage': stage,
                                       'oracleScale': .0625, **settings})
-        if engine != 'CYCLES':
+        if engine != 'CYCLES' and 'FBM' in requested_types:
             for dimension in ['1D', '2D', '3D', '4D']:
                 for stage in ['constant', 'image']:
                     cases.append({'id': f'{engine.lower()}-fbm-residual-{dimension.lower()}-{stage}',
                                   'kind': 'noise', 'dimensions': dimension, 'output': 'Color', 'stage': stage,
                                   'oracleScale': .0625, 'residual': True, **parameters[4]})
+        variations = [
+            {'Detail': 0, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 1},
+            {'Detail': .5, 'Roughness': .7, 'Lacunarity': 1.7, 'Scale': 1, 'Offset': -.5, 'Gain': 2},
+            {'Detail': 1, 'Roughness': 0, 'Lacunarity': 0, 'Scale': 40, 'Offset': 1, 'Gain': -2},
+            {'Detail': 1.5, 'Roughness': .7, 'Lacunarity': -2, 'Scale': 1, 'Offset': .5, 'Gain': 0},
+            {'Detail': 2, 'Roughness': 1, 'Lacunarity': 2, 'Scale': 40, 'Offset': 1, 'Gain': 2},
+            {'Detail': 2, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 80, 'Offset': -1, 'Gain': -1},
+            {'Detail': 2, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 1, 'Distortion': -1},
+            {'Detail': 2, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 1, 'Offset': 1, 'Gain': 2, 'Distortion': 1},
+        ]
+        for kind in requested_types:
+            if kind == 'FBM': continue
+            for dimension in ['1D', '2D', '3D', '4D']:
+                for output in ['Fac', 'Color']:
+                    for stage in ['constant', 'image']:
+                        cases.append({'id': f'{engine.lower()}-{kind.lower()}-{dimension.lower()}-{output.lower()}-{stage}',
+                                      'kind': 'noise', 'type': kind, 'dimensions': dimension, 'output': output, 'stage': stage})
+            for output in ['Fac', 'Color']:
+                for stage in ['constant', 'image']:
+                    for index, settings in enumerate(variations):
+                        cases.append({'id': f'{engine.lower()}-{kind.lower()}-variant-{output.lower()}-{stage}-{index}',
+                                      'kind': 'noise', 'type': kind, 'dimensions': '3D', 'output': output, 'stage': stage, **settings})
+            for stage in ['constant', 'image']:
+                cases.append({'id': f'{engine.lower()}-{kind.lower()}-ignored-normalize-{stage}',
+                              'kind': 'noise', 'type': kind, 'dimensions': '3D', 'output': 'Color', 'stage': stage, 'normalize': True})
+            if engine != 'CYCLES':
+                for dimension in ['1D', '2D', '3D', '4D']:
+                    for stage in ['constant', 'image']:
+                        cases.append({'id': f'{engine.lower()}-{kind.lower()}-residual-{dimension.lower()}-{stage}',
+                                      'kind': 'noise', 'type': kind, 'dimensions': dimension, 'output': 'Color', 'stage': stage,
+                                      'residual': True, **variations[4]})
+        if 'HYBRID_MULTIFRACTAL' in requested_types:
+            boundary = struct.unpack('I', struct.pack('f', .001))[0]
+            for side, bits in [('below', boundary - 1), ('equal', boundary), ('above', boundary + 1)]:
+                offset = struct.unpack('f', struct.pack('I', bits))[0]
+                for stage in ['constant', 'image']:
+                    cases.append({'id': f'{engine.lower()}-hybrid-cutoff-{side}-{stage}',
+                                  'kind': 'noise', 'type': 'HYBRID_MULTIFRACTAL', 'dimensions': '3D',
+                                  'output': 'Fac', 'stage': stage, 'Detail': 2, 'Scale': 0, 'Offset': offset, 'Gain': 1,
+                                  'staticBaseline': offset, 'oracleScaleOverride': 2048})
+        if 'RIDGED_MULTIFRACTAL' in requested_types:
+            for stage in ['constant', 'image']:
+                for detail in [1, 1.75]:
+                    cases.append({'id': f'{engine.lower()}-ridged-floor-{stage}-{str(detail).replace(".", "_")}',
+                                  'kind': 'noise', 'type': 'RIDGED_MULTIFRACTAL', 'dimensions': '3D',
+                                  'output': 'Color', 'stage': stage, 'Detail': detail, 'Offset': 1, 'Gain': 2})
         if os.environ.get('BLENDLINK_NOISE_RESIDUAL_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('residual')]
+        if os.environ.get('BLENDLINK_NOISE_BOUNDARY_ONLY'):
+            cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or '-hybrid-cutoff-' in case['id'] or '-ridged-floor-' in case['id']]
         for case in cases:
+            if case.get('type', 'FBM') != 'FBM':
+                bound = fractal_amplitude_bound(case['type'], case.get('Detail', 2), case.get('Roughness', .5),
+                                               case.get('Offset', 0) if case['type'] != 'MULTIFRACTAL' else 0,
+                                               case.get('Gain', 1) if case['type'] in {'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 1)
+                case['amplitudeBound'] = bound
+                case['oracleScale'] = case.get('oracleScaleOverride', 2 ** math.floor(math.log2(.25 / max(1, bound))))
             material, emission = make_material(case)
             proxy.data.materials.clear()
             proxy.data.materials.append(material)
             if case.get('residual'):
                 coarse = native_pixels(material, temporary, case['id'] + '-coarse')
-                add_residual_control(material, emission, coarse, case['oracleScale'])
-                case['oracleScale'] = 16
+                amplification = 256 * case['oracleScale']
+                add_residual_control(material, emission, coarse, case['oracleScale'], amplification)
+                case['oracleScale'] = amplification
             before = (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
             document = tsl_ir.emit_channel(emission.inputs['Color'])
             if case['kind'] == 'noise':
@@ -232,6 +299,11 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             bpy.data.materials.remove(material, do_unlink=True)
             for image in list(bpy.data.images):
                 if image.name.startswith('Exact Noise') and not image.users: bpy.data.images.remove(image)
+        if 'RIDGED_MULTIFRACTAL' in requested_types and not os.environ.get('BLENDLINK_NOISE_RESIDUAL_ONLY'):
+            for stage in ['constant', 'image']:
+                first = OUTPUT / f'{engine.lower()}-ridged-floor-{stage}-1.f32'
+                fractional = OUTPUT / f'{engine.lower()}-ridged-floor-{stage}-1_75.f32'
+                assert first.read_bytes() == fractional.read_bytes(), 'Native Ridged fractional-detail semantics changed'
 (OUTPUT / 'index.json').write_text(json.dumps({'blender': bpy.app.version_string, 'buildHash': bpy.app.build_hash.decode(),
     'gpuBackend': bpy.context.preferences.system.gpu_backend, 'cyclesDevice': 'CPU', 'size': SIZE, 'cases': records,
     'nativeModuleHashes': {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in Path(native).iterdir()

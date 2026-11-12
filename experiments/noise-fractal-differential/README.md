@@ -1,84 +1,137 @@
 # Native Noise fractal parity
 
-This proof builds real Blender material graphs, records their emitted live IR,
-and compares native Cycles CPU and EEVEE pixels with the production TSL builder
-on WebGPU and the WebGL2 backend of WebGPURenderer. No browser material is baked.
+This proof creates actual Blender material graphs and compares native Cycles CPU
+and EEVEE pixels with their exported live TSL programs on WebGPU and the WebGL2
+backend of WebGPURenderer. The browser material is not baked.
 
 ```sh
 BLENDLINK_BLENDER=/absolute/path/to/blender \
 BLENDLINK_NOISE_EVIDENCE=artifacts/verification-noise \
 node experiments/noise-fractal-differential/run.mjs
+
+BLENDLINK_BLENDER=/absolute/path/to/blender \
+BLENDLINK_NOISE_TYPES='["MULTIFRACTAL","HETERO_TERRAIN","HYBRID_MULTIFRACTAL","RIDGED_MULTIFRACTAL"]' \
+BLENDLINK_NOISE_EVIDENCE=artifacts/verification-fractals \
+node experiments/noise-fractal-differential/run.mjs
 ```
 
-`--built` checks emitted package JavaScript after a coordinated build.
-`--reuse-reference` replays native references. Every production module is frozen
-before the test. The shared built guard independently emits the entire TypeScript
-program and checks all modules, including dependency-inlined constants and the
-reviewed package import rewrite. Reports retain module/native-helper hashes,
-actual source snapshots, native version/device, per-case render/readback time,
-measured errors and failures. Vite watching/HMR is disabled.
-`BLENDLINK_TEST_CHROMIUM_ARGS` accepts a JSON array of browser flags.
+`BLENDLINK_NOISE_TYPES` defaults to `["FBM"]`, which runs the signed FBM corpus.
+`--built` independently emits the whole TypeScript program, checks every emitted
+module including dependency-inlined constants, and freezes the checked bytes.
+`--reuse-reference` replays existing native references. Reports retain runtime
+and native helper hashes, source snapshots, native version/device, errors,
+failures, elapsed time and per-case render/readback time. Vite HMR/file watching
+is disabled. `BLENDLINK_TEST_CHROMIUM_ARGS` accepts a JSON array of browser flags.
+The full software-renderer corpus is deliberately substantial; shards or
+per-family timeouts should account for high-octave 4D Color compilation.
 
-The first batch adds **unnormalized FBM**, using the new `noise_fractal` opcode so older runtimes refuse this capability.
-Legacy `noise` documents retain their normalized interpretation, including their
-previous handling of extra annotations. Both Factor and Color work
-in 1D/2D/3D/4D; 4D scales Vector and W together. Static controls can fold through the
-existing supported constant plumbing. Roughness above 1, dynamic fractal controls
-and unsupported inputs retain explicit refusals. Native Noise clamps negative
-Detail to 0 and negative Roughness to 0, unlike Wave's separate raw fBM call.
+The new `noise_fractal` opcode represents signed FBM and the four other native
+recurrences. Older runtimes refuse that opcode, and raw-only runtimes refuse
+unrecognized type selectors. Legacy `noise` documents retain their previous
+normalized interpretation. Both Color and Factor work in all four dimensions;
+4D scales Vector and W together. Shader Color has no separate Alpha output.
 
-The newly proved raw domain is Detail 0..6 (negative values follow native zero
-clamping), Roughness 0..1 (negative values follow native zero clamping),
-|Lacunarity|<=2, |Distortion|<=1 and the existing effective-scale bound<=80.
-Dimension-specific frequency approximation bands measured for normalized FBM
-are not granted to this signed field. Nonfinite controls and unproved ranges
-refuse in the emitter and runtime. The remaining four fractal modes are not
-claimed by this first batch.
+| Family | Live bounded domain |
+| --- | --- |
+| Signed FBM | Static Detail 0..6, Roughness 0..1, abs(Lacunarity)<=2, abs(Distortion)<=1, effective scale<=80 |
+| Multifractal, Hetero Terrain, Hybrid Multifractal, Ridged Multifractal | Static Detail 0..2, Roughness 0..1, abs(Lacunarity)<=2, abs(Distortion)<=1, effective scale<=80; abs(Offset)<=1 and abs(Gain)<=2 where active |
 
-Native material constant evaluation and shader evaluation have different offset
-rounding. Modern MF-eligible literal graphs use the native float-staged
-uint/hash conversion, multiplication and addition. The four-dimensional native
-path also uses separate float operations. Other shader graphs retain their
-proven folded offset values; the IR carries the concrete offsets. Native stage
-classification distinguishes image/object inputs from MF constants even when
-these happen to be spatially uniform. Regression cells cover the high-octave
-Color cases that exposed this distinction. Eight additional EEVEE residual
-controls first capture a coarse half-target baseline, then subtract that exactly
-half-representable baseline in the authored graph and amplify the residual 16x.
-Their raw precision is about 3e-5 rather than the coarse target's approximately
-0.008; the original primitive/target budget stays unchanged. This catches a
-4D offset error that ordinary half-target output could hide. Old normalized exports retain their
-prior behavior. The raw loop also reproduces float32 amplitude/frequency updates.
-Reusable named 1D/4D Perlin functions avoid expanding their integer hash bodies
-independently for every lane and octave.
+Negative Detail and Roughness follow native Noise Texture zero clamping. Linked
+Roughness above 1 refuses because native Noise has no upper clamp. Supported
+constant plumbing may fold static inputs; genuinely varying controls retain
+named refusals. Inactive Offset/Gain and the non-FBM Normalize switch do not
+change an unrelated formula. Frequency approximation bands measured for legacy
+normalized FBM are not granted to these new recurrences.
 
-The corpus of 334 graphs includes every dimension, Color/Factor, literal and
-nearest-image-driven coordinates, integer/fractional/negative Detail, negative
-linked Roughness, nonbinary/negative/zero lacunarity, both distortion signs and
-scale-bound endpoints. Image inputs are exactly half-representable and an
-independent carrier verifies them. Signed fields pass through an authored
-positive affine transform (scale 1/16, bias 1/2) because native Emission/bake output
-cannot carry negative values. That transform is part of both actual graphs.
-Reports provide both mapped error and its derived raw-field error; they do not
-mistake the mapped number for an unscaled HDR accuracy claim.
+Frequency and amplitude admission are separate. A conservative signed-octave
+bound 3 follows from the native gradients/scales and convex fade interpolation.
+The bounded domains give worst absolute amplitudes 64 (Multifractal), 100 (Hetero
+Terrain), 12 (Hybrid) and 48 (Ridged). Python and the runtime derive these bounds
+independently; an IR `amplitudeBound` annotation cannot grant a larger domain.
+Nonfinite, unknown and unproved controls refuse before building a live program.
+This is partial parameter-domain support, not every possible native Noise input.
 
-The mapped maximum absolute error budget is 2e-5. EEVEE additionally permits one
-independently verified final-target half ULP; node arithmetic is separate from
-that native target conversion. No UV rasterization allowance or generic browser
-intrinsic allowance is added. Local native EEVEE evidence uses Metal; hosted
-software OpenGL remains a separate platform gate. Legacy WebGLRenderer cannot
-consume live TSL programs.
+Native recurrence details matter. The four non-FBM modes update coordinates at
+each octave; FBM updates a frequency multiplier. Hybrid stops at a strict
+`weight > 0.001` and caps contributing weights at 1. Ridged ignores fractional
+Detail. The Hybrid primitive runs in named shader functions so conditional TSL
+expressions cannot reuse an inline primitive temporary in the wrong scope.
+Focused varying 2D/3D regressions caught that code-generation failure.
 
-Admission regressions run with:
+Offset precision also depends on native evaluation. Modern MF-eligible literal
+graphs use float-staged uint/hash conversion, multiplication and addition. The
+4D path uses separate float operations too. Legacy Cycles CPU on Linux x64 and
+EEVEE OpenGL on Linux x64 also use the staged offset profile. Metal/ARM shader graphs
+and modern Cycles shader-stage graphs retain their measured folded offsets.
+Concrete offsets and evaluation models ship in the IR;
+image/object inputs remain shader-stage even when spatially uniform. New raw
+loops reproduce float32 amplitude/frequency updates. Named 1D/4D Perlin functions
+avoid repeating their integer-hash body for each lane and octave.
+
+The signed FBM corpus has 334 graphs. The four-mode corpus has 458: every mode,
+dimension, output and literal/image stage; parameter signs, zero and nonbinary
+lacunarity, fractional detail, distortion, scale endpoints, ignored Normalize,
+and amplified residual controls. Hybrid cutoff tests use exact float neighbors
+below/equal/above 0.001, subtract the initial offset and amplify 2048x. Native
+Ridged Detail 1 and 1.75 pairs must be byte-identical. These are boundary tests,
+not additional supported domains.
+
+Nearest-sampled image inputs are exactly half-representable. Signed/HDR fields
+pass through an authored positive affine transform because native Emission/bake
+output cannot carry negatives. The transform's power-of-two scale follows the
+amplitude bound; it is part of both actual graphs. EEVEE residual controls first
+record a coarse target, subtract that exactly half-representable baseline, and
+amplify the residual. This exposes kernel errors hidden by the final half target.
+The original error budget stays unchanged. Reports include derived raw errors
+rather than presenting mapped error as an unscaled HDR accuracy claim.
+
+The mapped maximum absolute budget is 2e-5. EEVEE adds one independently verified
+final-target half ULP; node arithmetic is modeled separately. No UV rasterization
+or generic intrinsic allowance is added. Local native EEVEE evidence uses Metal;
+hosted software OpenGL is a separate check. Legacy WebGLRenderer cannot consume
+live TSL programs.
+
+The signed FBM batch passed all 334 graphs on each Blender 4.2/5.2/5.3 and both
+browser backends. A fresh 5.3 built-package run passed the same 334 after its
+whole-program guard checked 102 modules. Cycles mapped maximum 9.358e-6; ordinary
+signed-FBM scale is 1/16 and the report records the corresponding raw error.
+
+The separate four-mode batch passed all 458 graphs on each Blender 4.2/5.2/5.3
+and both browser backends. Cycles mapped maximum was 3.695488e-6 and the largest
+derived raw error was 1.907349e-4. The 32 EEVEE residual controls reached a
+derived raw maximum of 9.768009e-4 under the independently verified final-target
+precision allowance. Reports record both values and the authored oracle scale.
+These source runs used immutable 103-module snapshots; all recorded workspace
+hashes remained stable. A fresh Blender 5.3 built-package repeat passed all 458
+graphs on both backends after the whole-program guard checked 103 modules.
+With four software-browser jobs running concurrently,
+they took 1,164–1,190 seconds each. Per-case times include building the graph,
+first render and readback; higher-detail recurrence support needs a separate
+performance and amplitude-domain proof.
+
+Linux offset calibration replays all 334 retained native Blender 4.2 graphs on
+both browser backends with the same budgets and unchanged native pixels.
+Every one of the 1,800 reconstructed offset components matches the production
+helper for the recorded source profile. All 668 rows pass; Cycles mapped maximum
+is 4.410744e-6. The original high-octave 3D color failure drops from 1.429319e-4
+to 1.192093e-7. This fixes source arithmetic rather than granting a phase-error
+allowance. OpenGL evidence here uses the hosted software renderer. Source-profile
+selection and actual graph emission also pass native 4.2/5.2/5.3 admission tests.
+The corrected profile also passes all 334 retained native Blender 5.2 graphs on
+both browser backends: 668 rows, Cycles mapped maximum 9.298325e-6. This confirms
+the version split: modern Cycles shader-stage inputs retain folded offsets,
+while its MF constants use staged offsets. Windows and unmeasured host profiles
+keep their previous folded behavior.
+
+Admission checks:
 
 ```sh
 /path/to/blender --background --factory-startup --python-exit-code 1 \
   --python packages/blender-addon/tests/noise_parameter_admission_check.py
+/path/to/blender --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/noise_fractal_translation_check.py
 ```
 
-The implementations follow Blender's primary
-[fractal noise](https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/fractal_noise.h)
-and
+Primary implementations:
+[Cycles fractal recurrences](https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/fractal_noise.h),
 [dimensional/color noise](https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/noisetex.h).
-
-All 334 graphs passed on each native Blender 4.2/5.2/5.3 and both browser backends. A fresh 5.3 native run against the built package also passed all 334 after the whole-program semantic byte guard checked 102 production modules. Cycles mapped maximum 9.358e-6; the report records the corresponding unscaled field error rather than reusing that number as a raw HDR claim.

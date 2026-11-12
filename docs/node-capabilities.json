@@ -718,14 +718,86 @@
         "maximumAbsoluteError": 3.934e-06
       }
     },
+    "shader:ShaderNodeNewGeometry": {
+      "category": "partial",
+      "limits": "Primary triangle Position/Normal/True Normal/Incoming/Backfacing outputs are live with actual owner/camera matrices and explicit Y-up/Z-up bases. Cycles float/OCT16 and shared/single-owner interpolation plus EEVEE SNORM10/HQ16 vertex normalization are modeled separately. Unit authored normals require outward triangle cosine>0.05; finite invertible object matrices require linear/inverse components<=1e8 and Frobenius condition bound<=100. No modifiers, skin/morph, animated mesh-data, material displacement, Simplify Normals, secondary-ray/strand/volume or generated/GPU-instance context. Cycles normal routes refuse mixed flat/smooth topology, mixed shared/single-owner bindings, SSS/displacement geometry-key exceptions, motion blur and animated render visibility. View outputs refuse reflected/sheared and shifted/cropped authored camera projections. Parametric, Tangent, Pointiness and Random Per Island remain unsupported. Named refusals preserve source graphs and prohibit an automatic UV-ray capture from masquerading as the primary field. These are channel functions, not full lighting/BSDF pixel parity.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "geometry_context"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/geometry_ir.py",
+          "anchor": "def emit_geometry"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "geometry_ir.bind_normal_model"
+        },
+        {
+          "path": "packages/blendlink/src/tslGeometryContext.ts",
+          "anchor": "export function buildGeometryContext"
+        },
+        {
+          "path": "packages/blendlink/blender/geometry_export.py",
+          "anchor": "def exact_normals"
+        },
+        {
+          "path": "packages/blender-addon/tests/geometry_context_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/geometry_export_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslGeometryContext.test.ts"
+        },
+        {
+          "path": "experiments/geometry-context-differential/README.md"
+        },
+        {
+          "path": "experiments/geometry-context-differential/suite.mjs"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0 LTS",
+          "5.3.0"
+        ],
+        "nativeEngines": [
+          "Cycles CPU",
+          "EEVEE Metal"
+        ],
+        "actualFinalScenesPerVersion": 64,
+        "channelAndControlCellsPerBackendPerVersion": 3360,
+        "profiles": [
+          "shared smooth",
+          "single-owner smooth",
+          "shared flat",
+          "shared HQ normals"
+        ],
+        "nativeFramesPerScene": 3,
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "channelTolerance": "Cycles fixed2e-5 raster allowance; EEVEE adds independently calibrated final half-float ULP",
+        "maximumCyclesAbsoluteEncodedRgbError": 1.6957521438598633e-05,
+        "maximumEeveeAbsoluteEncodedRgbError": 0.0009713172912597656,
+        "scope": "Shared corpus across9 geometry/view outputs plus independent RGB control, both bases and browser backends; not per-class node counts. Native Linux/OpenGL not certified by this Metal run."
+      }
+    },
     "shader:ShaderNodeTexCoord": {
       "category": "partial",
-      "limits": "UV/Object/Generated outputs only; no Object override, instancer, Camera/Window/Reflection/Normal coordinates.",
+      "limits": "All7 ordinary UV/Object/Generated/Camera/Normal/Window/Reflection outputs now have live routes. New Camera/Normal/Window/Reflection routes share the measured primary-triangle context and limits of ShaderNodeNewGeometry: explicit bases, per-draw actual matrices, native normal storage/interpolation, no modifiers/deformation/generated or GPU instances, and named reflected/sheared/shifted/cropped source-camera limits. Object override and instancer coordinate domains remain unported. Native EEVEE proof is Metal; browser WebGPU and WebGL2 both pass. No automatic primary-field-to-UV-ray capture or complete Blender lighting/BSDF parity claim.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "uv",
         "object_coords",
-        "generated"
+        "generated",
+        "geometry_context"
       ],
       "modes": {},
       "evidence": [
@@ -739,9 +811,68 @@
         },
         {
           "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "packages/blender-addon/geometry_ir.py",
+          "anchor": "def emit_geometry"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "geometry_ir.bind_normal_model"
+        },
+        {
+          "path": "packages/blendlink/src/tslGeometryContext.ts",
+          "anchor": "export function buildGeometryContext"
+        },
+        {
+          "path": "packages/blendlink/blender/geometry_export.py",
+          "anchor": "def exact_normals"
+        },
+        {
+          "path": "packages/blender-addon/tests/geometry_context_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/geometry_export_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslGeometryContext.test.ts"
+        },
+        {
+          "path": "experiments/geometry-context-differential/README.md"
+        },
+        {
+          "path": "experiments/geometry-context-differential/suite.mjs"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0 LTS",
+          "5.3.0"
+        ],
+        "nativeEngines": [
+          "Cycles CPU",
+          "EEVEE Metal"
+        ],
+        "actualFinalScenesPerVersion": 64,
+        "channelAndControlCellsPerBackendPerVersion": 3360,
+        "profiles": [
+          "shared smooth",
+          "single-owner smooth",
+          "shared flat",
+          "shared HQ normals"
+        ],
+        "nativeFramesPerScene": 3,
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "channelTolerance": "Cycles fixed2e-5 raster allowance; EEVEE adds independently calibrated final half-float ULP",
+        "maximumCyclesAbsoluteEncodedRgbError": 1.6957521438598633e-05,
+        "maximumEeveeAbsoluteEncodedRgbError": 0.0009713172912597656,
+        "scope": "Shared corpus across9 geometry/view outputs plus independent RGB control, both bases and browser backends; not per-class node counts. Native Linux/OpenGL not certified by this Metal run."
+      }
     },
     "shader:ShaderNodeUVMap": {
       "category": "partial",
@@ -936,7 +1067,7 @@
     },
     "shader:ShaderNodeTexNoise": {
       "category": "partial",
-      "limits": "Normalized legacy FBM and signed unnormalized FBM, all four dimensions and Color/Factor. Static controls and Detail<=6; negative Detail/Roughness follow native zero clamping, roughness above1 refuses. Signed FBM additionally requires finite |Lacunarity|<=2 and |Distortion|<=1, effective scale<=80; normalized-only approximation bands are not inherited. Modern MF and 4D offset float staging are explicit. Other four fractal types and genuinely dynamic controls remain unported.",
+      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static controls; FBM Detail<=6, other recurrences Detail<=2. Negative Detail/Roughness follow native zero clamping; Roughness>1 refuses. New signed/HDR recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only FBM approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/LinuxCPU/OpenGL offset precision profiles and independent finite-amplitude bounds are explicit. Genuinely varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "noise",
@@ -954,7 +1085,11 @@
         },
         "noise_type": {
           "supported": [
-            "FBM"
+            "FBM",
+            "MULTIFRACTAL",
+            "HETERO_TERRAIN",
+            "HYBRID_MULTIFRACTAL",
+            "RIDGED_MULTIFRACTAL"
           ],
           "partial": []
         }
@@ -979,6 +1114,24 @@
         },
         {
           "path": "packages/blender-addon/tests/noise_parameter_admission_check.py"
+        },
+        {
+          "path": "packages/blender-addon/noise_fractal_ir.py",
+          "anchor": "def fractal_amplitude_bound"
+        },
+        {
+          "path": "packages/blendlink/src/tslFractalNoise.ts",
+          "anchor": "export function buildTslFractalNoise"
+        },
+        {
+          "path": "packages/blender-addon/tests/noise_fractal_translation_check.py"
+        },
+        {
+          "path": "packages/blender-addon/engine_fallback.py",
+          "anchor": "def channel_engine_difference"
+        },
+        {
+          "path": "packages/blender-addon/tests/automatic_engine_fallback_check.py"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -996,11 +1149,19 @@
           "WebGPU",
           "WebGL2 via WebGPURenderer"
         ],
-        "scope": "Signed FBM corpus includes independent carriers and eight amplified GPU residual controls. Existing normalized FBM has a separate legacy corpus.",
+        "scope": "Signed FBM corpus includes independent carriers and eight amplified GPU residual controls. A separate four-mode corpus includes all dimensions/outputs/stages, parameter signs, 32 amplified GPU residual controls, strict Hybrid cutoff neighbors and byte-identical Ridged fractional-detail pairs. Existing normalized FBM has a separate legacy corpus.",
         "corpusGraphsPerVersion": 334,
         "builtCorpusGraphs53": 334,
         "cyclesMappedMaxAbs": 9.357929229736328e-06,
-        "budget": "Mapped max2e-5 plus one independently established EEVEE final half-target ULP. Ordinary signed fields use affine scale1/16; residual controls amplify16x. Derived raw errors are reported separately."
+        "otherFractalCorpusGraphsPerVersion": 458,
+        "builtOtherFractalCorpusGraphs53": 458,
+        "otherFractalCyclesMappedMaxAbs": 3.6954879760742188e-06,
+        "otherFractalCyclesDerivedRawMaxAbs": 0.00019073486328125,
+        "retainedLinuxSignedFbmGraphs42": 334,
+        "retainedLinuxSignedFbmCyclesMappedMax42": 4.410743713378906e-06,
+        "retainedLinuxSignedFbmGraphs52": 334,
+        "retainedLinuxSignedFbmCyclesMappedMax52": 9.298324584960938e-06,
+        "budget": "Mapped max2e-5 plus one independently established EEVEE final half-target ULP. Ordinary signed FBM uses affine scale1/16; other fractal scales follow independent amplitude bounds. Amplified residual and cutoff controls expose masked kernel errors. Derived raw errors are reported separately."
       }
     },
     "shader:ShaderNodeTexWhiteNoise": {
@@ -2856,7 +3017,7 @@
     },
     "compositor:CompositorNodeBlur": {
       "category": "partial",
-      "limits": "Modern socket schema: separable Gaussian only, constant pixel radius 0..128 per axis, no Extend Bounds. Legacy property schema is not blanket supported.",
+      "limits": "Static separable Flat/Tent/Quadratic/Cubic/Gaussian/Catrom/Mitch filters on native 4.2 and modern schemas, with constant per-axis pixel radii 0..128 and native float32 coefficient tables. Modern fractional radii and legacy CPU/GPU Size multipliers are modeled separately. Only Gaussian is separable when the native toggle is disabled. Relative/variable sizing, legacy gamma correction, Bokeh, Extend Bounds and recursive Fast Gaussian remain refused. Full/AUTO final compositor precision only. Runtime passes restore caller MRT/clear state and dispose weight textures and render targets.",
       "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
       "runtimeOps": [
         "blur"
@@ -2864,31 +3025,59 @@
       "modes": {
         "inputs:Type": {
           "supported": [
-            "Gaussian"
+            "Flat",
+            "Tent",
+            "Quadratic",
+            "Cubic",
+            "Gaussian",
+            "Catrom",
+            "Mitch"
+          ]
+        },
+        "filter_type": {
+          "supported": [
+            "FLAT",
+            "TENT",
+            "QUAD",
+            "CUBIC",
+            "GAUSS",
+            "CATROM",
+            "MITCH"
           ],
-          "partial": []
+          "unsupported": [
+            "FAST_GAUSS"
+          ]
+        },
+        "aspect_correction": {
+          "supported": [
+            "NONE"
+          ],
+          "unsupported": [
+            "X",
+            "Y"
+          ]
         }
       },
       "evidence": [
         {
-          "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "def extract"
+          "path": "packages/blendlink/blender/compositor_blur.py",
+          "anchor": "def normalize_blur"
         },
         {
           "path": "packages/blendlink/src/tslSourceCompositor.ts",
           "anchor": "case 'blur':"
         },
         {
-          "path": "packages/blender-addon/tests/compositor_graph_check.py"
+          "path": "packages/blendlink/src/tslCompositorBlur.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_blur_check.py"
+        },
+        {
+          "path": "experiments/native-compositor-differential/run.mjs"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
-      "versionOverrides": {
-        "4.2.0": {
-          "category": "unsupported",
-          "limits": "Legacy 4.2 socket/property schema is not normalized to the implemented modern runtime inputs. A class/type mapping is insufficient; no audited live legacy route."
-        }
-      }
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
     },
     "compositor:CompositorNodeGlare": {
       "category": "partial",
@@ -4863,7 +5052,6 @@
     "shader:ShaderNodeLightIterInternalInput",
     "shader:ShaderNodeLightIterInternalOutput",
     "shader:ShaderNodeLightPath",
-    "shader:ShaderNodeNewGeometry",
     "shader:ShaderNodeNormal",
     "shader:ShaderNodeOutputAOV",
     "shader:ShaderNodeOutputLight",

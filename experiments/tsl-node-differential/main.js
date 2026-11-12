@@ -8,7 +8,7 @@
 import * as THREE from 'three'
 import { WebGPURenderer, MeshBasicNodeMaterial } from 'three/webgpu'
 import { mx_worley_noise_float, normalize, uv, vec3 } from 'three/tsl'
-import { buildTslColorNode } from '@blendlink-tsl-recipe'
+import { buildTslColorNode, createTslBuildResources } from '@blendlink-tsl-recipe'
 
 // The view-dependent cell camera contract, mirrored from reference.py:
 // camera at (0, 0, 2) looking down -Z at the quad spanning [-1, 1]^2 at
@@ -29,7 +29,7 @@ const HANDWRITTEN_CELLS = {
 
 const state = {
   ready: false, renderer: null, scene: null, camera: null,
-  mesh: null, target: null, error: null,
+  mesh: null, target: null, resources: null, error: null, deviceLoss: null,
 }
 
 async function init() {
@@ -47,6 +47,7 @@ async function init() {
     // read back as the sentinel, never as the previous cell's pixels.
     renderer.setClearColor(new THREE.Color(1.0, 0.0, 1.0), 1.0)
     await renderer.init()
+    renderer.backend?.device?.lost.then(info => { state.deviceLoss = { reason: info.reason, message: info.message } })
     const scene = new THREE.Scene()
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1)
     const mesh = new THREE.Mesh(
@@ -74,6 +75,7 @@ async function init() {
 
 window.__tslDiffInit = init
 window.__tslDiffReady = () => state.ready
+window.__tslDiffEnvironment = () => ({ memory: { ...state.renderer?.info.memory }, deviceLoss: state.deviceLoss })
 
 function ensureQuadVertexColors() {
   // Mirror the reference proxy's corner colors: linear in UV, so any
@@ -94,6 +96,7 @@ window.__tslDiffRun = async (
   cellId, pipeline, irPath, analyticCamera, analyticLight, objectAttributes,
 ) => {
   if (state.error) return { ok: false, error: state.error }
+  let pendingResources = null
   try {
     let colorNode
     if (pipeline === 'handwritten') {
@@ -116,7 +119,9 @@ window.__tslDiffRun = async (
       if (JSON.stringify(document).includes('"vertex_color"')) {
         ensureQuadVertexColors()
       }
+      pendingResources = createTslBuildResources()
       colorNode = buildTslColorNode(document, {
+        resources: pendingResources,
         ...(analyticCamera ? { viewCos: analyticViewCos() } : {}),
         // The light-contract override: a sun of the cell's declared
         // effective irradiance (the EEVEE reference measures the same
@@ -152,6 +157,9 @@ window.__tslDiffRun = async (
     const material = new MeshBasicNodeMaterial()
     material.colorNode = colorNode
     state.mesh.material.dispose()
+    state.resources?.dispose()
+    state.resources = pendingResources
+    pendingResources = null
     state.mesh.material = material
     state.renderer.setRenderTarget(state.target)
     // Truthfulness, in two parts. Clear in an OWN submit first, so a
@@ -191,6 +199,7 @@ window.__tslDiffRun = async (
       base64: btoa(binary),
     }
   } catch (error) {
+    pendingResources?.dispose()
     return {
       ok: false,
       error: `${error?.name ?? 'Error'}: ${error?.message ?? error}`,

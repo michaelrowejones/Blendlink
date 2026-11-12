@@ -7,7 +7,9 @@ _ENGINE_SENSITIVE = {
     "ShaderNodeValToRGB", "ShaderNodeSeparateColor", "ShaderNodeCombineColor",
     "ShaderNodeRGBToBW",
     "ShaderNodeTexImage",
+    "ShaderNodeTexNoise",
     "ShaderNodeVectorTransform",
+    "ShaderNodeNormalMap", "ShaderNodeBump", "ShaderNodeTangent",
 }
 
 
@@ -27,8 +29,13 @@ def channel_engine_difference(root, channel, source_engine, bake_engine, walk_ch
         socket = root.inputs.get(name)
         if socket is None:
             continue
-        for node, _output in walk_channel(socket):
+        for node, output in walk_channel(socket):
             sensitive = node.bl_idname in _ENGINE_SENSITIVE
+            field = getattr(output, 'identifier', output.name)
+            if node.bl_idname == 'ShaderNodeNewGeometry' and field in {'Normal', 'Tangent'}:
+                sensitive = True
+            if node.bl_idname == 'ShaderNodeTexCoord' and field in {'Normal', 'Reflection'}:
+                sensitive = True
             if node.bl_idname == "FunctionNodeIntegerMath" and node.operation in {"LCM", "FLOORED_MODULO"}:
                 sensitive = True
             if sensitive:

@@ -8,6 +8,7 @@ import { join, resolve } from 'node:path'
 import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
 import { captureRuntimeSnapshot } from '../../scripts/lib/runtime-provenance.mjs'
+import { freezeTslHarness } from '../../scripts/lib/frozen-tsl-harness.mjs'
 
 const experiment = resolve(import.meta.dirname)
 const root = resolve(experiment, '../..')
@@ -85,6 +86,7 @@ for (const file of ['reference.py', 'brick_reference.py', 'cells.json'])
   copyFileSync(join(experiment, file), join(nativeSnapshot, file))
 const testedNativeModuleHashes = Object.fromEntries(readdirSync(nativeSnapshot).filter(file => /\.(py|json)$/.test(file))
   .map(file => [file, createHash('sha256').update(readFileSync(join(nativeSnapshot, file))).digest('hex')]))
+const frozenHarness = freezeTslHarness(root, snapshot)
 const builder = join(snapshot, 'tslNodeRecipe.' + (useBuilt ? 'js' : 'ts'))
 const emitter = join(root, 'packages/blender-addon/tsl_ir.py')
 const sha256 = path => createHash('sha256').update(readFileSync(path)).digest('hex')
@@ -168,7 +170,7 @@ function difference(referencePixels, rendered, components, flipRows, allowance) 
     p99Abs: differences[Math.floor(differences.length * .99)], maxAbs: differences.at(-1) }
 }
 const server = await createServer({
-  root: experiment, configFile: false, logLevel: 'warn', cacheDir: join(evidence, 'vite-cache'),
+  root: frozenHarness.directory, configFile: false, logLevel: 'warn', cacheDir: join(evidence, 'vite-cache'),
   optimizeDeps: { noDiscovery: true }, resolve: { alias: { '@blendlink-tsl-recipe': builder } },
   server: { host: '127.0.0.1', port: 0, strictPort: false, watch: null, hmr: false, fs: { allow: [root, reference] } },
 })
@@ -305,7 +307,7 @@ try {
     nativeReferenceDirectory: reference,
     nativeManifestSha256: sha256(join(reference, 'manifest.json')),
     testedIrSha256: Object.fromEntries(cells.map(cell => [cell.id, sha256(join(reference, 'ir', cell.id + '.json'))])),
-    snapshot, runtimeProvenance, testedModuleHashes, testedNativeModuleHashes: retainedReference ? null : testedNativeModuleHashes,
+    snapshot, runtimeProvenance, testedModuleHashes, testedNativeModuleHashes: retainedReference ? null : testedNativeModuleHashes, testedHarnessHashes: frozenHarness.hashes,
     blender: oracleOutput.match(/Blender [^\r\n]+/)?.[0],
     sourceStable: sha256(source) === sourceHash, emitterStable: sha256(emitter) === emitterHash,
     requestedCellIds: ids, skippedNativeModes, nativeVectorMathOperations: referenceManifest.nativeVectorMathOperations,

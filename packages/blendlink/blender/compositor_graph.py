@@ -40,6 +40,7 @@ normalize_utility = _sibling("compositor_utilities").normalize_utility
 validate_math_domain = _sibling("compositor_math").validate_math_domain
 native_gpu_profile = _sibling("compositor_gpu").native_gpu_profile
 whitepoint_properties = _sibling("compositor_whitepoint").whitepoint_properties
+normalize_blur = _sibling("compositor_blur").normalize_blur
 
 TYPES = {
     "FunctionNodeInputBool": "utility-constant",
@@ -448,6 +449,10 @@ def extract(scene):
                     incoming = node.inputs["Fac"]
                     op["inputs"]["Fac"] = {"name": incoming.name, "socketType": incoming.type,
                                             "value": input_value(incoming, ctx)}
+                elif node.bl_idname == "CompositorNodeBlur":
+                    normalize_blur(node, op, scene, lambda incoming: input_value(incoming, ctx),
+                        _sibling("compositor_math").numeric_socket_bounds,
+                        lambda incoming, message: fail("unsupported-blur-mode", path, node, incoming, message))
                 elif TYPES[node.bl_idname] in ("curves", "hue-correct"):
                     try:
                         op["properties"].update(curve_tables(node))
@@ -455,6 +460,9 @@ def extract(scene):
                         fail("unsupported-curve-mapping", path, node, socket, str(error))
                     if node.bl_idname == "CompositorNodeHueCorrect":
                         op["properties"]["hue_correct_model"] = "native-curves-v1"
+                        if (getattr(scene.render, "compositor_device", "CPU") == "GPU"
+                                and op["properties"]["native_gpu_backend"] == "OPENGL"):
+                            op["properties"]["hue_curve_sampling_model"] = "opengl-normalized-f32-v1"
                     op["properties"]["color_conversion_device"] = getattr(scene.render, "compositor_device", "CPU")
                     op["properties"]["gpu_filter_fraction_bits"] = 8 if getattr(bpy.context.preferences.system, "gpu_backend", "") == "METAL" else None
                     if op["properties"]["color_conversion_device"] == "GPU":

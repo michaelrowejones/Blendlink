@@ -56,7 +56,9 @@ class NativeCompositorReference:
             pixels[0, :, :3] = [[0, 0, 0], [0.25, 0.5, 0.75], [1, 1, 1], [2, -0.25, 0.75],
                                 [-0.25, 0, 0.5], [0, 0, 0], [0.125, 0.25, 0.5], [0.75, 0.5, 0.25]]
         self.pixels = np.asarray(pixels, np.float32)
-        self.image = bpy.data.images.new(name + " float input", width=8, height=8, alpha=True, float_buffer=True)
+        self.height, self.width = self.pixels.shape[:2]
+        scene.render.resolution_x, scene.render.resolution_y = self.width, self.height
+        self.image = bpy.data.images.new(name + " float input", width=self.width, height=self.height, alpha=True, float_buffer=True)
         self.image.alpha_mode = "PREMUL"
         self.image.colorspace_settings.name = "Linear Rec.709"
         self.image.pixels.foreach_set(self.pixels.ravel())
@@ -95,12 +97,12 @@ class NativeCompositorReference:
         bpy.ops.render.render(write_still=True)
         result = bpy.data.images.load(self.scene.render.filepath, check_existing=False)
         result.alpha_mode = "PREMUL"
-        expected = np.asarray(result.pixels[:], np.float32).reshape(8, 8, 4)
+        expected = np.asarray(result.pixels[:], np.float32).reshape(self.height, self.width, 4)
         assert np.isfinite(expected).all(), (label, "Native Blender produced non-finite pixels")
         case = self.prefix + "-" + label
         data = {"case": case, "blenderVersion": bpy.app.version_string,
                 "blenderHash": bpy.app.build_hash.decode(), "compositorDevice": self.device,
-                "width": 8, "height": 8, "colorSpace": "scene-linear", "exactAlpha": exact_alpha,
+                "width": self.width, "height": self.height, "colorSpace": "scene-linear", "exactAlpha": exact_alpha,
                 "input": self.pixels.ravel().tolist(), "expected": expected.ravel().tolist(), "program": program}
         (self.output / (case + ".json")).write_text(json.dumps(data, separators=(",", ":")))
         self.rows.append({"case": case})

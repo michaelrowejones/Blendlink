@@ -333,7 +333,7 @@ see [the node translation inventory](../../docs/NODE_TRANSLATION.md).
 
 `BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE=GPU` and
 `BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE=GPU` select the actual native GPU
-compositor. Hue Correct generates 109 graphs per device on 4.2/5.2/5.3; White Point
+compositor. Hue Correct generates 113 graphs per device on 4.2/5.2/5.3; White Point
 generates 121 per device on 5.2/5.3. Blender 4.2 has no native White Point mode and
 writes an explicit `not-applicable.json` with zero generated pixel references.
 
@@ -346,6 +346,20 @@ nonunit horizontal ranges, HDR/negative RGB and nonunit alpha. A requested
 preserve that actual flag and do not claim a separately demonstrated false-flag
 state. Modern constant images use the native CPU single-value path, while 4.2
 GPU constants keep the native GPU path.
+
+Fresh OpenGL GPU Hue Correct programs record
+`hue_curve_sampling_model='opengl-normalized-f32-v1'`. This preserves Blender's
+float32 reciprocal range normalization, normalized sampler scale/offset and
+texture-coordinate roundtrip before interpolation. The idealized `h*256`
+coordinate skips native rounding and changes steep curves. Hue division also
+uses the existing split-product residual correction: native `3.5/6` differs
+by one float32 ULP from multiplication by a rounded reciprocal. These details
+follow the native
+[4.2 Hue Correct shader](https://github.com/blender/blender/blob/v4.2.0/source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_hue_correct.glsl)
+and [5.2 shader](https://github.com/blender/blender/blob/v5.2.0/source/blender/compositor/shaders/library/gpu_shader_compositor_hue_correct.glsl).
+CPU and Metal keep their independently proven equations; older programs lacking
+the new sampling field retain their prior behavior. Unknown sampling models or
+an OpenGL model paired with another native backend refuse explicitly.
 
 White Point ports Color Balance's Bradford adaptation and 31-entry Robertson
 temperature/tint locus. It transports the actual OCIO scene-linear↔XYZ matrices
@@ -390,6 +404,18 @@ The existing 2e-5 budget was unchanged. These native GPU results certify Metal;
 the same fixtures must pass against actual native OpenGL before claiming that
 platform's parity for the new families.
 
+The OpenGL rounding fix additionally replays 113 fresh Linux 4.2 and 113 fresh
+Linux 5.2 native GPU references through the built runtime on both browser
+backends, maximum channel error 1.04905e-5 at the unchanged 2e-5 budget. This is a
+metadata-only replay: the explicit sampling-model field is inserted into each
+retained program; removing it reproduces every original file byte-for-byte,
+including its signed input and native EXR values. Per-file source/replay hashes
+are recorded in `artifacts/verification-hue-ci/linux42-tagged/replay-provenance.json`
+and the corresponding `linux52-tagged` file. This replay does not claim a fresh
+Linux extraction with the new emitter. Fresh native CPU/Metal extraction and
+pixel checks on 4.2/5.2/5.3 cover another 678 Hue Correct graphs; their emitter
+assertions require the OpenGL field only on the actual OpenGL GPU path.
+
 ## Native GPU math implementations
 
 Fresh compositor operations record `native_gpu_backend`. Metal HSL preserves
@@ -424,3 +450,80 @@ so browser subnormal flushing cannot turn the prior 1e-38 threshold into a
 false zero comparison and return a large logarithm for input zero. Native
 reference pixels and the 2e-5 differential budget remain unchanged. Older
 documents without that domain tag keep their previous evaluation.
+
+## Static separable Blur
+
+`compositor_blur_check.py` covers the property-based 4.2 node and the 5.2/5.3
+socket schema. The supported filters are Flat (Box), Tent, Quadratic, Cubic,
+Gaussian, Catrom and Mitch, with constant absolute radii from 0 through 128
+pixels on each axis. Modern Gaussian also supports its Separable switch being
+disabled because the native implementation still uses the separable algorithm.
+The 4.2 Size multiplier clamps below zero on CPU and to [0,1] on GPU; the CPU
+retains multipliers above one. The resulting pixel radii must remain within the
+supported bound.
+
+Fresh programs carry finite float32 kernel tables and a versioned accumulation
+model. Legacy CPU sums the signed table from left to right, then multiplies by
+its inverse sum. Modern CPU/GPU and legacy GPU normalize the symmetric half
+table and accumulate center, positive tap, negative tap. Negative kernel lobes
+are preserved. Both axes clamp at the image border, preserve the image extent,
+and filter all four raw RGBA channels without alpha reassociation or clamping.
+Full precision and final-render Automatic precision are supported. Constant
+images and zero radii allocate no intermediate targets.
+
+The native definitions are
+[4.2 filter kernels](https://github.com/blender/blender/blob/v4.2.0/source/blender/render/intern/initrender.cc),
+[4.2 CPU tables](https://github.com/blender/blender/blob/v4.2.0/source/blender/compositor/operations/COM_BlurBaseOperation.cc),
+[modern kernels](https://github.com/blender/blender/blob/v5.3.0/source/blender/blenlib/intern/math_filter.cc),
+and [modern symmetric tables](https://github.com/blender/blender/blob/v5.3.0/source/blender/compositor/cached_resources/intern/symmetric_separable_blur_weights.cc).
+These coefficient textures use full float32 storage; their precision contract
+is separate from GPU color-band tables.
+
+The browser uses coefficient textures and a uniform loop bound instead of
+compiling hundreds of literal reads for each radius. It owns each new RTT
+target, internal quad material and coefficient texture, with idempotent
+cleanup. Three 0.184's inherited RTT `dispose()` event alone does not release
+those targets/materials. Borrowed render-pass textures retain caller ownership;
+the shared quad geometry stays alive. Older schema1 Gaussian programs keep
+their numerical path and receive the same ownership fix.
+
+Relative sizing, variable/per-pixel radii, linked modern settings, nonseparable
+filters, legacy Bokeh and gamma correction, Extend Bounds, and recursive Fast
+Gaussian refuse with named diagnostics. Relative radii need a resize-aware
+image-domain model: native 4.2 CPU rounds the percentage-derived radius before
+the Size multiplier while GPU retains the fractional radius. Expanded domains
+and automatic viewport half precision are not claimed by this batch.
+Nonfinite reconstructed tables also refuse explicitly, including subnormal
+radii whose float32 reciprocal overflows; no NaN table is labeled extracted.
+
+Generate native references with each official Blender binary and both devices:
+
+```sh
+BLENDLINK_COMPOSITOR_BLUR_DEVICE=GPU \
+BLENDLINK_COMPOSITOR_BLUR_REFERENCES="$PWD/artifacts/native/blur-42-gpu" \
+"$BLENDLINK_BLENDER_42" --background --factory-startup --python-exit-code 1 -t 1 \
+  --python packages/blender-addon/tests/compositor_blur_check.py
+npm run build --workspace blendlink
+node experiments/native-compositor-differential/run.mjs --built --timeout-ms 1200000 \
+  artifacts/native/blur-42-cpu artifacts/native/blur-42-gpu \
+  artifacts/native/blur-52-cpu artifacts/native/blur-52-gpu \
+  artifacts/native/blur-53-cpu artifacts/native/blur-53-gpu \
+  --out artifacts/verification-compositor-blur/final-built
+```
+
+The fixture generates 160 graphs per device on 4.2 and 161 per device on 5.2/5.3
+(964 total), using 13×7 float EXR images. Random signed/HDR RGBA, border/center
+impulses, each kernel, zero/asymmetric/maximum radii, fractional radii or legacy
+multipliers, constant images, final Automatic precision, schema1 Gaussian
+compatibility, exposure→Blur and chained filters are covered. Every browser
+case requires zero retained GPU textures after disposal; 18 compound cases
+also require preservation of the caller's render target, MRT and clear state.
+
+The 2026-11-12 macOS checkpoint used native Blender 4.2.0 `a51f293548ad`,
+5.2.0 `fbe6228777e7` and 5.3.0 `02f0899d78e3`, on CPU and Metal GPU. All 964
+graphs passed the built runtime on WebGL2 and WebGPU at the unchanged 2e-5
+budget: maximum channel error 3.69549e-6 and 4.76837e-6 respectively. Every
+disposal check reported zero retained textures, and all 18 compound graphs
+preserved caller state. The evidence is in
+`artifacts/verification-compositor-blur/loop-certified-built`; actual native
+OpenGL certification remains a separate platform check.

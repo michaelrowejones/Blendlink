@@ -11,7 +11,7 @@ _CONSTANT = {"const_float", "const_vec3", "typed_const"}
 _SHADER = {"uv", "generated", "object_coords", "normal_view", "view_cos",
            "attribute_object", "vertex_color", "normal_map", "object_info",
            "ambient_occlusion", "fresnel", "layer_weight", "shader_to_rgb_diffuse",
-           "texture_ref", "tex_image", "vector_transform"}
+           "texture_ref", "tex_image", "vector_transform", "geometry_context"}
 _FUNCTION = {"math", "vector_math", "mapping", "vector_rotate", "vector_scale",
              "combine", "separate", "clamp01", "clamp_minmax", "mix_color",
              "rgb_to_bw", "hue_sat", "hsv_to_rgb", "rgb_to_hsv", "gamma",

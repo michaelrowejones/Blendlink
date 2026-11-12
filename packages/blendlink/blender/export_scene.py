@@ -59,6 +59,7 @@ except ModuleNotFoundError:
     import weblights  # noqa: E402
 
 import camera_axes  # noqa: E402
+import geometry_export  # noqa: E402
 
 
 def artifact_filename_token(value: str) -> str:
@@ -6650,7 +6651,8 @@ def main() -> None:
                 )
                 stamped_random.append(stamped_obj)
             try:
-                result = bpy.ops.export_scene.gltf(**export_kwargs)
+                with geometry_export.exact_normals(material_plan):
+                    result = bpy.ops.export_scene.gltf(**export_kwargs)
                 if "FINISHED" in result:
                     camera_axes.canonicalize_camera_axes(
                         filepath, export_yup=export_kwargs.get("export_yup", True),

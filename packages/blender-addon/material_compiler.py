@@ -3274,6 +3274,27 @@ def _plan_tsl_program(
                     "material.vector-transform-context-unproven", material.name, str(error),
                     "Use finite, supported object transforms; the authored graph remains in Blender.", object_names,
                 ))
+    if __package__:
+        from . import geometry_ir
+    else:
+        import geometry_ir
+    for entry in channels:
+        outputs = set()
+        geometry_ir.collect_outputs(entry.get("tslIr"), outputs)
+        if outputs:
+            try:
+                for obj, _slot in raw_bindings: geometry_ir.validate_owner(obj, outputs)
+                geometry_ir.bind_normal_model(entry['tslIr'], [obj for obj, _slot in raw_bindings])
+                encoded = json.dumps(entry['tslIr'], sort_keys=True, separators=(',', ':'))
+                if len(encoded) > TSL_IR_BYTE_BUDGET:
+                    raise ValueError('Geometry context metadata exceeds the channel IR byte budget')
+                entry['tslIrHash'] = hashlib.sha256(encoded.encode('utf8')).hexdigest()
+                entry['tslIrBytes'] = len(encoded)
+            except ValueError as error:
+                for key in ("tslIr", "tslIrHash", "tslIrBytes", "tslIrApproximations"): entry.pop(key, None)
+                entry["tslIrRefusal"] = str(error)
+                object_info_issues.append(MaterialIssue("material.geometry-context-unproven", material.name, str(error),
+                    "Use supported triangle surfaces; the authored graph remains in Blender.", object_names))
     for entry in channels:
         entry["route"] = "program" if "tslIr" in entry else "refused"
     channel_plan = {
@@ -3312,8 +3333,12 @@ def _plan_tsl_program(
 def _automatic_channel_bake_refusal(tree, root, channel_name):
     if __package__:
         from .engine_fallback import channel_engine_difference
+        from .geometry_ir import capture_refusal
     else:
         from engine_fallback import channel_engine_difference
+        from geometry_ir import capture_refusal
+    context = capture_refusal(root, channel_name, procedural._walk_channel_upstream)
+    if context: return context
     try:
         with tsl_ir.emission_context(tree=tree, target="EEVEE") as source_engine:
             if source_engine not in {"EEVEE", "CYCLES"}:
@@ -3392,7 +3417,9 @@ def _plan_material_bake(
             issue_code, material.name,
             f"The {channel_name} channel {detail}."
             + (f" ({'; '.join(reasons)})" if reasons else ""),
-            ("Keep this channel live, use Cycles as the source engine, or explicitly choose a capture after reviewing the engine change."
+            ("Keep this view/surface channel live, or explicitly review a capture with its changed ray context; changing the render engine does not preserve this field."
+             if issue_code == "material.automatic-fallback-context-unproven" else
+             "Keep this channel live, use Cycles as the source engine, or explicitly choose a capture after reviewing the engine change."
              if issue_code == "material.automatic-fallback-engine-unproven" else
              "Keep the object Realtime, simplify this channel, or use an Appearance bake for deliberately flattened output."),
             object_names,
@@ -3421,7 +3448,8 @@ def _plan_material_bake(
         if live_plan and live_plan.get("automatic") and live_plan.get("sourceTarget") == "EEVEE":
             reason = _automatic_channel_bake_refusal(tree, root, channel_name)
             if reason:
-                refuse(channel_name, entry, extra=reason, issue_code="material.automatic-fallback-engine-unproven")
+                refuse(channel_name, entry, extra=reason, issue_code=("material.automatic-fallback-context-unproven"
+                    if "UV-bake ray context" in reason else "material.automatic-fallback-engine-unproven"))
                 return None
         routing_kind = entry.get("routing")
         if routing_kind in _CHANNEL_REFUSED_ROUTINGS:
@@ -4011,6 +4039,14 @@ def atlas_channel_tap(source, kind: str, created_materials: list):
 
 
 def plan_materials(objects, *, purpose: str = "inspect", automatic_programs=False) -> MaterialPlan:
+    if __package__:
+        from . import geometry_ir
+    else:
+        import geometry_ir
+    return geometry_ir.cached_plan(_plan_materials_uncached)(objects, purpose=purpose, automatic_programs=automatic_programs)
+
+
+def _plan_materials_uncached(objects, *, purpose: str = "inspect", automatic_programs=False) -> MaterialPlan:
     """Plan every used material binding in an already resolved export scope."""
     if purpose not in {"inspect", "preview", "final"}:
         raise ValueError(f"material compiler purpose must be inspect, preview, or final, not {purpose!r}")
@@ -5542,7 +5578,8 @@ def _ir_runtime_needs(value, needs) -> None:
             needs["objectSpace"] = True
             if "OBJECT" in {value.get("from"), value.get("to")}:
                 needs["vectorTransformOwner"] = True
-        if op in ("generated", "object_coords"):
+        if op == "geometry_context": needs["geometryContext"].add(value.get("output"))
+        if op in ("generated", "object_coords", "geometry_context"):
             needs["objectSpace"] = True
         if op == "generated":
             needs["texspace"] = True
@@ -5568,6 +5605,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
     needs = {
         "uvMaps": set(), "colorLayers": set(), "objectAttributes": set(), "objectInfo": set(),
         "texspace": False, "objectSpace": False, "vectorTransformOwner": False,
+        "geometryContext": set(),
     }
     for item in (decision.channel_plan or {}).get("channels", ()):
         ir = item.get("tslIr")
@@ -5585,6 +5623,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
         )
     entry = {"schemaVersion": 1}
     if needs["vectorTransformOwner"]: entry["vectorTransformOwner"] = True
+    if needs["geometryContext"]: entry["geometryContext"] = sorted(needs["geometryContext"])
     if needs["objectAttributes"]:
         entry["objectAttributes"] = sorted(needs["objectAttributes"])
     if needs["objectInfo"]:
@@ -5710,7 +5749,7 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict, object_space="gl
                 for key, value in mesh_entry.items():
                     if key not in merged or merged[key] == value:
                         merged[key] = value
-                    elif key == "objectAttributes":
+                    elif key in {"objectAttributes", "geometryContext"}:
                         merged[key] = sorted(set(merged[key]) | set(value))
                     elif key in {"uvChannels", "colorLayers"} and all(
                         name not in merged[key] or merged[key][name] == target

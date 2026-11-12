@@ -74,10 +74,12 @@ try:
             except tsl_ir.TslIrRefusal as error: assert 'bounds are unknown' in str(error)
             noise.normalize = True
             noise.noise_type = 'MULTIFRACTAL'
+            multifractal = tsl_ir.emit_output(noise, noise.outputs['Color'])
+            assert multifractal['op'] == 'noise_fractal' and multifractal['noiseType'] == 'MULTIFRACTAL'
             try:
                 tsl_ir.emit_output(separate, separate.outputs[0])
                 raise AssertionError('Multifractal noise acquired a unit HSL range')
-            except tsl_ir.TslIrRefusal as error: assert 'Noise type' in str(error)
+            except tsl_ir.TslIrRefusal as error: assert 'bounds are unknown' in str(error)
             ramp = tree.nodes.new('ShaderNodeValToRGB')
             ramp.color_ramp.interpolation = 'CARDINAL'
             ramp.color_ramp.elements[0].color = (0, 0, 0, 1)

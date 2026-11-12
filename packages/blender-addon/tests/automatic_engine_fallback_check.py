@@ -59,6 +59,15 @@ tree.links.remove(root.inputs["Base Color"].links[0])
 transform = tree.nodes.new("ShaderNodeVectorTransform"); transform.vector_type = "NORMAL"
 tree.links.new(transform.outputs[0], root.inputs["Base Color"])
 assert "ShaderNodeVectorTransform" in compiler._automatic_channel_bake_refusal(tree, root, "Base Color"), "Camera/identity normal EEVEE evaluation must not silently switch to Cycles"
+tree.links.remove(root.inputs["Base Color"].links[0])
+noise = tree.nodes.new("ShaderNodeTexNoise")
+tree.links.new(noise.outputs["Color"], root.inputs["Base Color"])
+for noise_type in ("FBM", "MULTIFRACTAL", "HETERO_TERRAIN", "HYBRID_MULTIFRACTAL", "RIDGED_MULTIFRACTAL"):
+    noise.noise_type = noise_type
+    assert "ShaderNodeTexNoise" in compiler._automatic_channel_bake_refusal(tree, root, "Base Color"), "Shared ALL output does not prove noise CPU/GPU seed or evaluator equivalence"
+scene.render.engine = "CYCLES"
+assert compiler._automatic_channel_bake_refusal(tree, root, "Base Color") is None
+scene.render.engine = eevee
 # Group walls do not hide a native engine difference from the guard.
 tree.links.remove(root.inputs["Base Color"].links[0])
 group = bpy.data.node_groups.new("Nested engine difference", "ShaderNodeTree")

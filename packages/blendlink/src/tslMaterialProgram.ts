@@ -38,6 +38,7 @@ export interface TslRuntimeMeshExtras {
   texspace?: { location: number[]; size: number[] }
   objectSpace?: string
   objectAttributes?: readonly string[]
+  geometryContext?: readonly string[]
 }
 
 export type MaterialNodeSlot =

@@ -11,12 +11,17 @@ const root = resolve(import.meta.dirname, '../..')
 const arguments_ = process.argv.slice(2)
 let output
 let built = false
+let timeoutMs
 const sources = []
 for (let index = 0; index < arguments_.length; index++) {
   const argument = arguments_[index]
   if (argument === '--out') {
     output = arguments_[++index]
     if (!output || output.startsWith('--')) throw new Error('--out requires an evidence directory')
+  } else if (argument === '--timeout-ms') {
+    timeoutMs = Number(arguments_[++index])
+    assert.ok(Number.isInteger(timeoutMs) && timeoutMs >= 1000 && timeoutMs <= 3600000,
+      '--timeout-ms requires an integer from 1000 to 3600000')
   } else if (argument === '--built') built = true
   else sources.push(argument)
 }
@@ -73,6 +78,8 @@ for (const [index, directory] of directories.entries()) {
   }
 }
 assert.ok(cases.length, 'No native compositor references were supplied')
+provenance.browserTimeoutMs = timeoutMs ?? Math.max(120000, cases.length * 250)
+await writeFile(join(evidence, 'provenance.json'), JSON.stringify(provenance, null, 2))
 await writeFile(join(references, 'index.json'), JSON.stringify(cases))
 const server = await createServer({ configFile: false, root: import.meta.dirname, publicDir,
   cacheDir: join(evidence, 'vite-cache'),
@@ -92,11 +99,14 @@ try {
     const errors = []
     const consoleErrors = []
     page.on('pageerror', error => errors.push(error.message))
-    page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()) })
+    page.on('console', message => {
+      if (message.type() === 'error') consoleErrors.push(message.text())
+      else if (message.text().startsWith('BLENDLINK_COMPOSITOR_PROGRESS ')) console.log(message.text())
+    })
     try {
       await page.goto(server.resolvedUrls.local[0] + '?backend=' + backend)
       await page.waitForFunction(() => window.__compositorResults || window.__compositorFailure, null,
-        { timeout: Math.max(120000, cases.length * 250) })
+        { timeout: provenance.browserTimeoutMs })
       const report = await page.evaluate(() => ({ rows: window.__compositorResults, failure: window.__compositorFailure }))
       results.push({ backend, ...report, pageErrors: errors, consoleErrors })
       await writeFile(join(evidence, 'results.json'), JSON.stringify(results, null, 2))
@@ -112,7 +122,11 @@ try {
       console.log(`BLENDLINK_NATIVE_COMPOSITOR_PASSED ${backend} mode=${provenance.mode} cases=${report.rows.length} max=${Math.max(...report.rows.map(row => row.max))}`)
     } catch (error) {
       failures.push(`${backend}: ${error.message}`)
-      if (!results.some(result => result.backend === backend)) results.push({ backend, error: String(error), pageErrors: errors, consoleErrors })
+      if (!results.some(result => result.backend === backend)) {
+        let progress
+        try { progress = await page.evaluate(() => window.__compositorProgress) } catch { /* page unavailable */ }
+        results.push({ backend, error: String(error), pageErrors: errors, consoleErrors, progress })
+      }
       await writeFile(join(evidence, 'results.json'), JSON.stringify(results, null, 2))
     } finally { await page.close() }
   }

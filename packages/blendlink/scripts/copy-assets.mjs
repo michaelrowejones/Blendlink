@@ -96,6 +96,7 @@ mkdirSync(addonOut, { recursive: true })
 // table attribution/license with it as well as with the browser runtime.
 copyFileSync(join(root, 'assets', 'blender-spectral-NOTICE.txt'), join(addonOut, 'spectral-NOTICE.txt'))
 copyFileSync(join(root, 'assets', 'blender-spectral-apache-2.0.txt'), join(addonOut, 'spectral-LICENSE.txt'))
+copyFileSync(join(root, 'assets', 'blender-noise-bsd-3-clause.txt'), join(addonOut, 'noise-LICENSE.txt'))
 for (const entry of readdirSync(addonSource)) {
   // Every .py and every .json: the addon's evidence registries are data its
   // own modules read at import time, so naming them one by one shipped an

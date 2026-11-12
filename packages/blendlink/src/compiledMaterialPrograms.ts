@@ -181,6 +181,7 @@ export async function validatedBaseColorProgramMaterials(
   const { objectAttributeResolver, objectAttributeValue, loadProgramTextures } = await import('./tslMaterialRuntime.js')
   const { collectObjectInfoOutputs, createObjectInfoResolver, validateObjectInfoBinding } = await import('./tslObjectInfo.js')
   const { collectVectorTransformRequirements, validateVectorTransformBinding } = await import('./tslVectorTransform.js')
+  const { collectGeometryContextOutputs, validateGeometryContextMatrix } = await import('./tslGeometryContext.js')
   const THREE = await import('three')
   const objectForBinding = (binding: PrimitiveBinding): import('three').Object3D => {
     if (binding.hierarchyIssue || !binding.nodeChain?.length) throw new TslIrError('Vector Transform needs actual default-scene object matrices: ' + (binding.hierarchyIssue ?? 'node hierarchy is missing'))
@@ -228,6 +229,8 @@ export async function validatedBaseColorProgramMaterials(
       collectObjectInfoOutputs(record(program) ? program.channels : null, info)
       const transforms: import('./tslVectorTransform.js').VectorTransformRequirement[] = []
       collectVectorTransformRequirements(record(program) ? program.channels : null, transforms)
+      const geometry=new Set<import('./tslGeometryContext.js').GeometryContextOutput>()
+      collectGeometryContextOutputs(record(program)?program.channels:null,geometry)
       const material = materials[index]
       const materialInfo = record(material) && record(material.extras) ? material.extras.blendlink_tsl_material : null
       for (const binding of bindings) {
@@ -242,6 +245,16 @@ export async function validatedBaseColorProgramMaterials(
               throw new TslIrError('Material program requires unavailable per-object properties or a non-mesh binding')
             }
             const options = buildOptionsFor(extras, resources, `materials[${index}]`, textures?.resolver, objectAttributeResolver())
+            if(geometry.size){
+              const accessors=Array.isArray(gltf.accessors)?gltf.accessors:[]
+              const position=accessors[Number(attributes.POSITION)]
+              const normal=accessors[Number(attributes.NORMAL)]
+              if(instanced||binding.nodeChain?.some(node=>node.skin!==undefined)||primitive.targets!==undefined||
+                (primitive.mode!==undefined&&primitive.mode!==4)||!record(position)||position.type!=='VEC3'||position.componentType!==5126||position.normalized===true||Number(position.count)<3||
+                [...geometry].some(value=>['normal','object-normal','reflection'].includes(value))&&(!record(normal)||normal.type!=='VEC3'||normal.componentType!==5126||normal.normalized===true||normal.count!==position.count))
+                throw new TslIrError('Geometry context requires actual triangle position/normal attributes without skin, morph or GPU instances')
+              validateGeometryContextMatrix(objectForBinding(binding),extras?.objectSpace)
+            }
             if (transforms.length) {
               const objectNeeded = transforms.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')
               validateVectorTransformBinding(transforms, objectNeeded ? objectForBinding(binding) : null, extras?.objectSpace, instanced)

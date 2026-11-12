@@ -13,6 +13,7 @@ import { buildNativeColorBandSample } from './tslNativeColorBand.js'
 import { buildCompositorMathPrecision } from './tslCompositorMath.js'
 import { buildCompositorHueCorrect } from './tslCompositorHueCorrect.js'
 import { buildCompositorWhitePoint } from './tslCompositorWhitePoint.js'
+import { buildNativeCompositorBlur, ownBlurRtt } from './tslCompositorBlur.js'
 import { buildSharedBoolean, buildSharedInteger, buildSharedCompare, sharedTypedConstant, sharedTypedConversion } from './tslSharedUtilities.js'
 
 const {
@@ -380,7 +381,17 @@ function buildCompositorCurves(op: SourceCompositorOperation,
   const evaluate = (parameter: TslEffectNode, channel: number, table = texture,
     extension = slopes[channel]!): TslEffectNode => {
     const [low, high] = ranges[channel]!
-    const coordinate = clamp(parameter.sub(low).div(high! - low!), 0, 1).mul(256)
+    const nativeOpenGlHue = gpu && op.kind === 'hue-correct'
+      && p.hue_curve_sampling_model === 'opengl-normalized-f32-v1'
+    const normalized = clamp(nativeOpenGlHue
+      ? parameter.sub(low).mul(Math.fround(1 / Math.fround(high! - low!)))
+      : parameter.sub(low).div(high! - low!), 0, 1)
+    // Native GLSL transforms its normalized coordinate for the 257-entry
+    // texture. Preserve these f32 roundings before emulating linear sampling;
+    // replacing the roundtrip by h*256 moves steep curves across a texel bin.
+    const coordinate = nativeOpenGlHue
+      ? normalized.mul(Math.fround(1 - Math.fround(1 / 257))).add(Math.fround(.5 / 257)).mul(257).sub(.5)
+      : normalized.mul(256)
     const index = floor(coordinate), key = ['r', 'g', 'b', 'a'][channel]!
     const a = textureLoad(table, ivec2(index, 0))[key]
     const b = textureLoad(table, ivec2(min(index.add(1), 256), 0))[key]
@@ -539,6 +550,11 @@ export function buildSourceCompositor(
               program.luminance ?? [0.2126, 0.7152, 0.0722])
             break
           case 'blur': {
+            if (op.properties.blur_model !== undefined) {
+              node = buildNativeCompositorBlur(op, input('Image'), isSingleValue(op.inputs.Image!.value), resources,
+                message => { throw new SourceCompositorUnsupported(message) })
+              break
+            }
             if (
               constant('Type') !== 'Gaussian' ||
               constant('Extend Bounds') ||
@@ -565,7 +581,7 @@ export function buildSourceCompositor(
                 type: FloatType,
                 depthBuffer: false,
               })
-              if (image !== node) resources.push(image)
+              if (image !== node && image.isRTTNode) resources.push(ownBlurRtt(image))
               const dimensions = textureSize(image)
               const center = ivec2(uv().mul(dimensions))
               const sample = (offset: number): TslEffectNode =>
@@ -580,7 +596,7 @@ export function buildSourceCompositor(
               for (let offset = 1; offset < taps.length; offset++)
                 sum = sum.add(sample(-offset).add(sample(offset)).mul(taps[offset]))
               node = rtt(sum, null, null, { type: FloatType, depthBuffer: false })
-              resources.push(node)
+              resources.push(ownBlurRtt(node))
             }
             break
           }
