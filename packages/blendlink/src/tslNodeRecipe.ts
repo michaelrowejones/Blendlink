@@ -53,6 +53,7 @@ import {
   step,
   oneMinus,
   texture,
+  uvec4,
   uv,
   vec2,
   vec3,
@@ -97,6 +98,7 @@ export interface TslExpression {
 export type TslExprLike = TslExpression | number
 
 const tslFloat = float as unknown as (value: TslExprLike) => TslExpression
+const tslUvec4 = uvec4 as unknown as (...values: TslExprLike[]) => TslExpression
 const tslVec3 = vec3 as unknown as (...values: TslExprLike[]) => TslExpression
 const tslClamp = clamp as unknown as (
   value: TslExprLike, low: TslExprLike, high: TslExprLike,
@@ -1615,39 +1617,43 @@ const tslBitcast = (
   ) => TslExpression
 )
 
-function uintRotate(value: TslExpression, bits: number): TslExpression {
-  return value.shiftLeft(tslUintOf(bits))
-    .bitOr(value.shiftRight(tslUintOf(32 - bits)))
+function uintRotate(value: TslExpression, bits: number, vector = false): TslExpression {
+  // WGSL requires equal vector widths for both shift operands.
+  const shift = vector ? tslUvec4 : tslUintOf
+  return value.shiftLeft(shift(bits))
+    .bitOr(value.shiftRight(shift(32 - bits)))
 }
 
 function jenkinsFinal(
   a0: TslExpression, b0: TslExpression, c0: TslExpression,
+  vector = false,
 ): TslExpression {
   let a = a0
   let b = b0
   let c = c0
-  c = c.bitXor(b).sub(uintRotate(b, 14))
-  a = a.bitXor(c).sub(uintRotate(c, 11))
-  b = b.bitXor(a).sub(uintRotate(a, 25))
-  c = c.bitXor(b).sub(uintRotate(b, 16))
-  a = a.bitXor(c).sub(uintRotate(c, 4))
-  b = b.bitXor(a).sub(uintRotate(a, 14))
-  c = c.bitXor(b).sub(uintRotate(b, 24))
+  c = c.bitXor(b).sub(uintRotate(b, 14, vector))
+  a = a.bitXor(c).sub(uintRotate(c, 11, vector))
+  b = b.bitXor(a).sub(uintRotate(a, 25, vector))
+  c = c.bitXor(b).sub(uintRotate(b, 16, vector))
+  a = a.bitXor(c).sub(uintRotate(c, 4, vector))
+  b = b.bitXor(a).sub(uintRotate(a, 14, vector))
+  c = c.bitXor(b).sub(uintRotate(b, 24, vector))
   return c
 }
 
 function jenkinsMix(
   a0: TslExpression, b0: TslExpression, c0: TslExpression,
+  vector = false,
 ): [TslExpression, TslExpression, TslExpression] {
   let a = a0
   let b = b0
   let c = c0
-  a = a.sub(c); a = a.bitXor(uintRotate(c, 4)); c = c.add(b)
-  b = b.sub(a); b = b.bitXor(uintRotate(a, 6)); a = a.add(c)
-  c = c.sub(b); c = c.bitXor(uintRotate(b, 8)); b = b.add(a)
-  a = a.sub(c); a = a.bitXor(uintRotate(c, 16)); c = c.add(b)
-  b = b.sub(a); b = b.bitXor(uintRotate(a, 19)); a = a.add(c)
-  c = c.sub(b); c = c.bitXor(uintRotate(b, 4)); b = b.add(a)
+  a = a.sub(c); a = a.bitXor(uintRotate(c, 4, vector)); c = c.add(b)
+  b = b.sub(a); b = b.bitXor(uintRotate(a, 6, vector)); a = a.add(c)
+  c = c.sub(b); c = c.bitXor(uintRotate(b, 8, vector)); b = b.add(a)
+  a = a.sub(c); a = a.bitXor(uintRotate(c, 16, vector)); c = c.add(b)
+  b = b.sub(a); b = b.bitXor(uintRotate(a, 19, vector)); a = a.add(c)
+  c = c.sub(b); c = c.bitXor(uintRotate(b, 4, vector)); b = b.add(a)
   return [a, b, c]
 }
 
@@ -1791,8 +1797,9 @@ const perlinGrad4 = tslFn(([hash, x, y, z, w]) => {
  * unlike hashUint1 there is no const-fold trap: every operand mixes in a
  * runtime key. `snoise_4d`'s |p| >= 1e6 fmod precision guard is deliberately
  * omitted — corpus coordinates are orders of magnitude below it.
- * Taps and lattice coords are `.toVar()`d to keep the WGSL flat: at detail 6
- * this function instantiates up to 7 octaves x 16 Jenkins hashes.
+ * Four unsigned-vector groups evaluate the sixteen lattice hashes with the
+ * same uint32 arithmetic. This reduces shader compiler work without changing
+ * the scalar gradient or interpolation order.
  */
 function perlin4d(p: TslExpression): TslExpression {
   const ix = tslFloor(p.x)
@@ -1812,12 +1819,15 @@ function perlin4d(p: TslExpression): TslExpression {
   const t = perlinFade(fz).toVar()
   const sw = perlinFade(fw).toVar()
   const one = tslUintOf(1)
+  const hashes = [0, 1].flatMap(l => [0, 1].map(k => hashUint4(
+    tslUvec4(X, X.add(one), X, X.add(one)),
+    tslUvec4(Y, Y, Y.add(one), Y.add(one)),
+    tslUvec4(k ? Z.add(one) : Z), tslUvec4(l ? W.add(one) : W), true,
+  ).toVar()))
+  const components = ['x', 'y', 'z', 'w'] as const
   const tap = (i: number, j: number, k: number, l: number): TslExpression =>
     perlinGrad4(
-      hashUint4(
-        i ? X.add(one) : X, j ? Y.add(one) : Y,
-        k ? Z.add(one) : Z, l ? W.add(one) : W,
-      ),
+      hashes[l * 2 + k]![components[i + 2 * j]!],
       i ? fx.sub(1.0) : fx, j ? fy.sub(1.0) : fy,
       k ? fz.sub(1.0) : fz, l ? fw.sub(1.0) : fw,
     ).toVar()
@@ -1854,14 +1864,16 @@ function hashUint3(
 
 function hashUint4(
   kx: TslExpression, ky: TslExpression, kz: TslExpression, kw: TslExpression,
+  vector = false,
 ): TslExpression {
   const seed = 0xdeadbeef + (4 << 2) + 13
   const [a, b, c] = jenkinsMix(
     tslUintOf(seed).add(kx),
     tslUintOf(seed).add(ky),
     tslUintOf(seed).add(kz),
+    vector,
   )
-  return jenkinsFinal(a.add(kw), b, c)
+  return jenkinsFinal(a.add(kw), b, c, vector)
 }
 
 const uintToUnitFloat = (value: TslExpression): TslExpression =>

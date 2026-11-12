@@ -44,6 +44,9 @@ def main(output):
         data = json.loads(file.read_text())
         data["assertTextureCleanup"] = True
         data["assertMrtState"] = "after-exposure" in label or "cascade" in label
+        for operation in data["program"]["ops"]:
+            if operation["kind"] == "blur":
+                assert operation["properties"]["blur_output_sampling_model"] == "native-texel-v1", operation
         assert data["width"] == 13 and data["height"] == 7, data
         file.write_text(json.dumps(data, separators=(",", ":")))
         return data
@@ -69,6 +72,7 @@ def main(output):
                     grade = next(op for op in compatibility["program"]["ops"] if op["kind"] == "blur")
                     grade["properties"].pop("blur_model")
                     grade["properties"].pop("blur_weights")
+                    grade["properties"].pop("blur_output_sampling_model")
                     compatibility["case"] += "-schema1-compatibility"
                     (Path(output) / (compatibility["case"] + ".json")).write_text(json.dumps(compatibility, separators=(",", ":")))
                     oracle.rows.append({"case": compatibility["case"]})
@@ -93,6 +97,13 @@ def main(output):
         node, source, _ = graph("GAUSS", (2, 3))
         node.inputs["Separable"].default_value = False
         save("blur-gaussian-separable-disabled", source)
+    else:
+        reference = json.loads((Path(output) / (oracle.prefix + "-blur-random-gauss-2-3.json")).read_text())
+        for aspect in ("X", "Y"):
+            node, source, _ = graph("GAUSS", (2, 3))
+            node.aspect_correction = aspect
+            data = save("blur-gaussian-absolute-aspect-" + aspect.lower(), source)
+            assert data["expected"] == reference["expected"], "Aspect correction changed absolute native radii"
     for kind in ("GAUSS", "MITCH"):
         node, source, _ = graph(kind, (2, 3))
         exposure = tree.nodes.new("CompositorNodeExposure")
@@ -113,7 +124,7 @@ def main(output):
     tree.links.new(second.outputs[0], sink.inputs[0])
     save("blur-cascade-gaussian-mitch", source)
     for feature in (("extended", "recursive", "nonseparable", "field") if modern else
-                    ("extended", "recursive", "bokeh", "gamma", "relative", "variable", "field")):
+                    ("extended", "recursive", "bokeh", "relative", "variable", "field")):
         node, source, _ = graph("FAST_GAUSS" if feature == "recursive" else "FLAT", (2, 3))
         if feature == "field":
             tree.links.new(oracle.separate(source.outputs["Image"]).outputs["Red"], node.inputs["Size"])

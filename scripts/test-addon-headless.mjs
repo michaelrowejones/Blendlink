@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 
@@ -274,13 +274,13 @@ root = next(node for node in tree.nodes if node.bl_idname == "ShaderNodeBsdfPrin
 families = ${JSON.stringify(installedNodeFamilies)}
 # These shared utility classes are absent in4.2 shader trees. Probe creation,
 # rather than assuming an RNA class can be used in this tree context.
-for utility in ("FunctionNodeInputBool", "FunctionNodeInputInt"):
+for utility in ("FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeInputVector"):
     try:
         candidate = tree.nodes.new(utility)
     except RuntimeError:
         continue
     tree.nodes.remove(candidate)
-    families.append((utility, "typed_const"))
+    families.append((utility, "const_vec3" if utility == "FunctionNodeInputVector" else "typed_const"))
 def contains_op(value, expected):
     if isinstance(value, dict):
         return value.get("op") == expected or any(contains_op(child, expected) for child in value.values())
@@ -317,6 +317,36 @@ for node_type, expected in families:
 bpy.data.objects.remove(owner, do_unlink=True)
 bpy.data.meshes.remove(mesh)
 bpy.data.materials.remove(material)
+# Exercise compositor sibling imports through the installed package too.
+compositor_scene = bpy.data.scenes.new("Installed Compositor Translation Probe")
+compositor_tree = None
+try:
+    modern_compositor = hasattr(compositor_scene, "compositing_node_group")
+    if modern_compositor:
+        compositor_tree = bpy.data.node_groups.new("Installed Compositor Translation Probe", "CompositorNodeTree")
+        compositor_tree.interface.new_socket(name="Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+        compositor_scene.compositing_node_group = compositor_tree
+    else:
+        compositor_scene.use_nodes = True
+        compositor_tree = compositor_scene.node_tree
+        compositor_tree.nodes.clear()
+    source = compositor_tree.nodes.new("CompositorNodeRLayers")
+    source.scene = compositor_scene
+    sink = compositor_tree.nodes.new("NodeGroupOutput" if modern_compositor else "CompositorNodeComposite")
+    mask = compositor_tree.nodes.new("CompositorNodeSetAlpha")
+    conversion = compositor_tree.nodes.new("CompositorNodePremulKey")
+    compositor_tree.links.new(source.outputs["Image"], mask.inputs["Image"])
+    compositor_tree.links.new(mask.outputs[0], conversion.inputs["Image"])
+    compositor_tree.links.new(conversion.outputs[0], sink.inputs[0])
+    before = len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups)
+    compositor_module = importlib.import_module(module_name + ".compositor_graph")
+    compositor_program = compositor_module.extract(compositor_scene)
+    assert compositor_program["status"] == "extracted", compositor_program
+    assert {"set-alpha", "convert-alpha"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
+    assert before == (len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups))
+finally:
+    bpy.data.scenes.remove(compositor_scene)
+    if modern_compositor and compositor_tree is not None: bpy.data.node_groups.remove(compositor_tree)
 ${desktopSmoke ? `assert len(bpy.data.objects) > 0, "Expected Blender's default scene"
 bpy.ops.wm.save_as_mainfile(filepath=${JSON.stringify(savedScene)})` : ''}
 print("##blendlink-addon-install " + json.dumps({
@@ -327,12 +357,15 @@ print("##blendlink-addon-install " + json.dumps({
     "exportOperator": bpy.ops.blendlink.export_website.get_rna_type().identifier,
     "atlasOperator": bpy.ops.blendlink.check_atlas_fit.get_rna_type().identifier,
     "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
+    "compositorFamilies": ["CompositorNodeSetAlpha", "CompositorNodePremulKey"],
     "nodeFamilies": len(families),
     "testedNodeFamilies": [node_type for node_type, _expected in families],
 }, sort_keys=True))
 `
+  const probeFile = join(installRoot, 'verify-installed.py')
+  writeFileSync(probeFile, probeScript)
   const probeOutput = runInstallStep('isolated extension verification', [
-    '--background', '--python-exit-code', '1', '--python-expr', probeScript,
+    '--background', '--python-exit-code', '1', '--python', probeFile,
   ])
   const sentinel = probeOutput.split(/\r?\n/).find(
     (line) => line.startsWith('##blendlink-addon-install '),
@@ -341,12 +374,12 @@ print("##blendlink-addon-install " + json.dumps({
   const status = JSON.parse(sentinel.slice('##blendlink-addon-install '.length))
   const tested = status.testedNodeFamilies
   const required = installedNodeFamilies.map(([name]) => name)
-  const optional = ['FunctionNodeInputBool', 'FunctionNodeInputInt']
+  const optional = ['FunctionNodeInputBool', 'FunctionNodeInputInt', 'FunctionNodeInputVector']
   const validNodeFamilies = Array.isArray(tested) && tested.length === status.nodeFamilies &&
     new Set(tested).size === tested.length && required.every(name => tested.includes(name)) &&
     tested.every(name => required.includes(name) || optional.includes(name))
   if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
-      !validNodeFamilies ||
+      !validNodeFamilies || JSON.stringify(status.compositorFamilies) !== JSON.stringify(['CompositorNodeSetAlpha', 'CompositorNodePremulKey']) ||
       status.exportOperator !== 'BLENDLINK_OT_export_website' || status.atlasOperator !== 'BLENDLINK_OT_check_atlas_fit') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }

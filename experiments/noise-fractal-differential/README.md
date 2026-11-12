@@ -61,7 +61,7 @@ Focused varying 2D/3D regressions caught that code-generation failure.
 Offset precision also depends on native evaluation. Modern MF-eligible literal
 graphs use float-staged uint/hash conversion, multiplication and addition. The
 4D path uses separate float operations too. Legacy Cycles CPU on Linux x64 and
-EEVEE OpenGL on Linux x64 also use the staged offset profile. Metal/ARM shader graphs
+EEVEE OpenGL with llvmpipe on Linux x64 also use the staged offset profile. Metal/ARM shader graphs
 and modern Cycles shader-stage graphs retain their measured folded offsets.
 Concrete offsets and evaluation models ship in the IR;
 image/object inputs remain shader-stage even when spatially uniform. New raw
@@ -115,13 +115,28 @@ Every one of the 1,800 reconstructed offset components matches the production
 helper for the recorded source profile. All 668 rows pass; Cycles mapped maximum
 is 4.410744e-6. The original high-octave 3D color failure drops from 1.429319e-4
 to 1.192093e-7. This fixes source arithmetic rather than granting a phase-error
-allowance. OpenGL evidence here uses the hosted software renderer. Source-profile
+allowance. OpenGL evidence here uses the hosted llvmpipe software renderer;
+hardware identification comes from the read-only native GPU platform query,
+and an unavailable or unmeasured renderer does not acquire this new profile. Source-profile
 selection and actual graph emission also pass native 4.2/5.2/5.3 admission tests.
 The corrected profile also passes all 334 retained native Blender 5.2 graphs on
 both browser backends: 668 rows, Cycles mapped maximum 9.298325e-6. This confirms
 the version split: modern Cycles shader-stage inputs retain folded offsets,
 while its MF constants use staged offsets. Windows and unmeasured host profiles
 keep their previous folded behavior.
+
+The 4D Perlin kernel batches its sixteen lattice hashes into four unsigned
+vector groups. Scalar gradients, corner order and floating interpolation stay
+the same; WGSL shift operands explicitly match the vector width. A focused
+software-renderer case (4D Factor, Detail 6, Roughness 1, Scale 40) retained
+byte-identical pixels while reducing shader source from 48.7 KB to 28.2 KB,
+GPU compilation wait from 5.63 s to 2.90 s, and first render/readback from
+7.40 s to 4.70 s. The existing parameter domain stays the same.
+
+All 88 retained native 4D cases pass on each Blender 4.2/5.2/5.3 and both browser
+backends: 528 rows with no failures. These include both outputs and input
+stages, all ten parameter variants and amplified GPU residuals. The 5.3 repeat
+uses the built package after its whole-program guard checked 105 modules.
 
 Admission checks:
 

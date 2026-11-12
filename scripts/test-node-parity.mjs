@@ -49,7 +49,7 @@ run('native-capabilities', blender, ['--background', '--factory-startup', '--pyt
 const capabilities = JSON.parse(readFileSync(capabilitiesFile, 'utf8'))
 assert.equal(typeof capabilities.offlineGpuAvailable, 'boolean', 'Native GPU capability was not reported')
 assert.equal(typeof capabilities.gpuParityVersionSupported, 'boolean', 'Native GPU parity version support was not reported')
-for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvailable', 'whitePointCompositorAvailable'])
+for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvailable', 'whitePointCompositorAvailable', 'blurGammaCompositorAvailable', 'sharedVectorCompositorAvailable'])
   assert.equal(typeof capabilities[key], 'boolean', `Native utility capability ${key} was not reported`)
 const references = []
 const referenceSets = []
@@ -57,14 +57,26 @@ const inapplicableFamilies = []
 const compositorFamilies = [
   ['math', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES'],
   ['blur', 'compositor_blur_check.py', 'BLENDLINK_COMPOSITOR_BLUR_REFERENCES'],
+  ['flip', 'compositor_flip_check.py', 'BLENDLINK_COMPOSITOR_FLIP_REFERENCES'],
+  ['switch', 'compositor_switch_check.py', 'BLENDLINK_COMPOSITOR_SWITCH_REFERENCES'],
+  ['blur-interop', 'compositor_blur_interop_check.py', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES'],
   ['color-balance', 'compositor_color_balance_check.py', 'BLENDLINK_COLOR_BALANCE_REFERENCES'],
   ['color-channels', 'compositor_color_channels_check.py', 'BLENDLINK_COLOR_CHANNEL_REFERENCES'],
   ['pointwise', 'compositor_pointwise_check.py', 'BLENDLINK_COMPOSITOR_POINTWISE_REFERENCES'],
   ['alpha', 'compositor_alpha_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_REFERENCES'],
+  ['alpha-conversion', 'compositor_alpha_conversion_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_REFERENCES'],
   ['mix', 'compositor_mix_check.py', 'BLENDLINK_COMPOSITOR_MIX_REFERENCES'],
   ['color-controls', 'compositor_color_check.py', 'BLENDLINK_COMPOSITOR_COLOR_REFERENCES'],
   ['hue-correct', 'compositor_hue_correct_check.py', 'BLENDLINK_COMPOSITOR_HUE_CORRECT_REFERENCES'],
 ]
+if (capabilities.sharedVectorCompositorAvailable) compositorFamilies.push(
+  ['vectors', 'compositor_vector_check.py', 'BLENDLINK_COMPOSITOR_VECTOR_REFERENCES'])
+else if (plan.compositor) inapplicableFamilies.push({ family: 'compositor-vector-utilities',
+  reason: 'Actual compositor creation probe found no shared vector/XYZ node family' })
+if (capabilities.blurGammaCompositorAvailable) compositorFamilies.push(
+  ['blur-gamma', 'compositor_blur_gamma_check.py', 'BLENDLINK_COMPOSITOR_BLUR_GAMMA_REFERENCES'])
+else if (plan.compositor) inapplicableFamilies.push({ family: 'compositor-blur-gamma',
+  reason: 'Native Blur creation probe exposes no legacy gamma correction property' })
 if (capabilities.whitePointCompositorAvailable) compositorFamilies.push(
   ['white-point', 'compositor_whitepoint_check.py', 'BLENDLINK_COMPOSITOR_WHITEPOINT_REFERENCES'])
 else if (plan.compositor) inapplicableFamilies.push({ family: 'compositor-white-point',
@@ -80,8 +92,8 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
-    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU',
-    BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MATH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BALANCE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE: 'CPU',
@@ -99,14 +111,22 @@ if (!plan.compositor) {
   const gpuFamilies = [
     ['math-gpu', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES', 'BLENDLINK_COMPOSITOR_MATH_DEVICE'],
     ['blur-gpu', 'compositor_blur_check.py', 'BLENDLINK_COMPOSITOR_BLUR_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_DEVICE'],
+    ['flip-gpu', 'compositor_flip_check.py', 'BLENDLINK_COMPOSITOR_FLIP_REFERENCES', 'BLENDLINK_COMPOSITOR_FLIP_DEVICE'],
+    ['switch-gpu', 'compositor_switch_check.py', 'BLENDLINK_COMPOSITOR_SWITCH_REFERENCES', 'BLENDLINK_COMPOSITOR_SWITCH_DEVICE'],
+    ['blur-interop-gpu', 'compositor_blur_interop_check.py', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE'],
     ['color-balance-gpu', 'compositor_color_balance_check.py', 'BLENDLINK_COLOR_BALANCE_REFERENCES', 'BLENDLINK_COMPOSITOR_BALANCE_DEVICE'],
     ['color-channels-gpu', 'compositor_color_channels_check.py', 'BLENDLINK_COLOR_CHANNEL_REFERENCES', 'BLENDLINK_COMPOSITOR_CHANNEL_DEVICE'],
     ['alpha-gpu', 'compositor_alpha_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_REFERENCES', 'BLENDLINK_COMPOSITOR_ALPHA_DEVICE'],
+    ['alpha-conversion-gpu', 'compositor_alpha_conversion_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_REFERENCES', 'BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE'],
     ['mix-gpu', 'compositor_mix_check.py', 'BLENDLINK_COMPOSITOR_MIX_REFERENCES', 'BLENDLINK_COMPOSITOR_MIX_DEVICE'],
     ['pointwise-gpu', 'compositor_pointwise_check.py', 'BLENDLINK_COMPOSITOR_POINTWISE_REFERENCES', 'BLENDLINK_COMPOSITOR_POINTWISE_DEVICE'],
     ['color-controls-gpu', 'compositor_color_check.py', 'BLENDLINK_COMPOSITOR_COLOR_REFERENCES', 'BLENDLINK_COMPOSITOR_COLOR_DEVICE'],
     ['hue-correct-gpu', 'compositor_hue_correct_check.py', 'BLENDLINK_COMPOSITOR_HUE_CORRECT_REFERENCES', 'BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE'],
   ]
+  if (capabilities.sharedVectorCompositorAvailable) gpuFamilies.push(
+    ['vectors-gpu', 'compositor_vector_check.py', 'BLENDLINK_COMPOSITOR_VECTOR_REFERENCES', 'BLENDLINK_COMPOSITOR_VECTOR_DEVICE'])
+  if (capabilities.blurGammaCompositorAvailable) gpuFamilies.push(
+    ['blur-gamma-gpu', 'compositor_blur_gamma_check.py', 'BLENDLINK_COMPOSITOR_BLUR_GAMMA_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE'])
   if (capabilities.whitePointCompositorAvailable) gpuFamilies.push(
     ['white-point-gpu', 'compositor_whitepoint_check.py', 'BLENDLINK_COMPOSITOR_WHITEPOINT_REFERENCES', 'BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE'])
   if (capabilities.sharedUtilityCompositorAvailable) gpuFamilies.push(

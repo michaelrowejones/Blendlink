@@ -75,8 +75,6 @@ def normalize_blur(node, op, scene, read, bounds, fail):
             fail(node.inputs["Size"], "Relative Blur requires an image-extent and resize-aware native radius model")
         if node.use_variable_size:
             fail(node.inputs["Size"], "Variable-size legacy Blur requires its native per-pixel filter model")
-        if node.use_gamma_correction:
-            fail(node.inputs["Image"], "Legacy Blur gamma correction requires its native premultiplied transfer model")
         if node.use_bokeh:
             fail(node.inputs["Image"], "Legacy Blur Bokeh requires its native two-dimensional filter model")
         mode = FILTERS.get(node.filter_type)
@@ -110,7 +108,10 @@ def normalize_blur(node, op, scene, read, bounds, fail):
     if any(not math.isfinite(value) for table in weights for value in table):
         fail(node.inputs["Size"], "Blur radius has no finite supported native filter table")
     op["properties"].update({"blur_model": "legacy-cpu-f32-v1" if legacy_cpu else "symmetric-separable-f32-v1",
-                             "blur_weights": weights})
+                             "blur_weights": weights,
+                             "blur_output_sampling_model": "native-texel-v1"})
+    if legacy and node.use_gamma_correction:
+        op["properties"]["blur_gamma_model"] = "legacy-cpu-square-v1" if legacy_cpu else "legacy-gpu-square-v1"
     image = node.inputs["Image"]
     op["inputs"]["Image"] = {"name": image.name, "socketType": image.type, "value": read(image)}
     for name, kind, value in (("Size", "VECTOR", radii), ("Type", "MENU", mode),

@@ -1,3 +1,5 @@
+import { buildCompositorFlip } from './tslCompositorSpatial.js'
+import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
 import * as TSL from 'three/tsl'
 import { DataTexture, FloatType, RGBAFormat } from 'three'
 import type {
@@ -698,6 +700,29 @@ export function buildSourceCompositor(
             })
             break
           }
+          case 'set-alpha':
+          case 'convert-alpha':
+            node = buildCompositorAlphaConversion(op, input,
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
+          case 'combine-vector':
+            node = vec3(input('X'), input('Y'), input('Z'))
+            break
+          case 'separate-vector': {
+            const channel = ({ X: 'x', Y: 'y', Z: 'z' } as Record<string, string>)[op.source.output]
+            if (!channel) throw new SourceCompositorUnsupported('Separate XYZ requires X, Y or Z output')
+            node = input('Vector')[channel]
+            break
+          }
+          case 'switch':
+            if (op.properties.switch_model !== 'fixed-choice-v1' || !['Off', 'On'].includes(String(op.properties.switch_selected)))
+              throw new SourceCompositorUnsupported('Switch requires its native fixed-choice model')
+            node = input('Selected')
+            break
+          case 'flip':
+            node = buildCompositorFlip(op, input('Image'), isSingleValue(op.inputs.Image!.value), resources,
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
           case 'rgb-to-bw':
             node = dot(input('Image').rgb, vec3(...(program.luminance ?? [0.2126, 0.7152, 0.0722])))
             break

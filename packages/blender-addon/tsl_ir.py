@@ -171,18 +171,29 @@ def object_random_number(name: str) -> float:
     ) / 0xFFFFFFFF
 
 
-def _noise_shader_offset_profile(engine, host_platform, architecture, gpu_backend, version):
+def _noise_gpu_renderer():
+    try:
+        import gpu
+        return gpu.platform.renderer_get() or ''
+    except Exception:
+        # A headless planning process can lack an initialized graphics
+        # context. Unidentified hardware never acquires a measured profile.
+        return ''
+
+
+def _noise_shader_offset_profile(engine, host_platform, architecture, gpu_backend, version, renderer=''):
     """Measured shader-stage arithmetic, separate from MF eligibility.
 
-    Legacy Linux x64 Cycles and measured Linux x64 OpenGL shaders round the hash conversion,
+    Legacy Linux x64 Cycles and measured Linux x64 llvmpipe shaders round the hash conversion,
     product and sum separately. Modern Cycles and Metal/ARM shader folding stay
     separate from their MF-eligible constant path.
     Concrete offsets ship in IR, so runtime behavior never guesses the host.
     """
     if engine == 'CYCLES' and version < (5, 0, 0) and host_platform.startswith('linux') and architecture.lower() in {'x86_64', 'amd64'}:
         return 'cycles-legacy-linux-x64-f32'
-    if engine == 'EEVEE' and host_platform.startswith('linux') and architecture.lower() in {'x86_64', 'amd64'} and gpu_backend == 'OPENGL':
-        return 'eevee-opengl-f32'
+    if engine == 'EEVEE' and host_platform.startswith('linux') and architecture.lower() in {'x86_64', 'amd64'} \
+            and gpu_backend == 'OPENGL' and 'llvmpipe' in renderer.lower():
+        return 'eevee-llvmpipe-f32'
     return None
 
 
@@ -1293,6 +1304,9 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeValue":
         return _scalar(_constant_value(node.outputs["Value"]))
 
+    if idname == "FunctionNodeInputVector":
+        return _vector(list(node.vector))
+
     if idname in {"FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeBooleanMath", "FunctionNodeIntegerMath"}:
         if __package__:
             from .utility_ir import emit_utility
@@ -2395,8 +2409,11 @@ def emit_output(node, from_socket, stack=()):
         if not normalize_output:
             import platform
             import sys
+            source_engine = get_evaluation_engine()
+            gpu_backend = bpy.context.preferences.system.gpu_backend
             shader_offset_profile = _noise_shader_offset_profile(
-                get_evaluation_engine(), sys.platform, platform.machine(), bpy.context.preferences.system.gpu_backend, bpy.app.version)
+                source_engine, sys.platform, platform.machine(), gpu_backend, bpy.app.version,
+                _noise_gpu_renderer() if source_engine == 'EEVEE' and gpu_backend == 'OPENGL' else '')
             expression['evaluationModel'] = 'shader-mf' if native_mf else 'shader'
             expression['offsetModel'] = ('float4-f32' if dimensions == '4D' else 'mf-f32' if native_mf
                                          else shader_offset_profile or 'shader-folded')

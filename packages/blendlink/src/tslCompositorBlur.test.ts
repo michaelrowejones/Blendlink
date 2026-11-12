@@ -90,4 +90,42 @@ describe('native compositor Blur lifecycle and contracts', () => {
     expect(buildNativeCompositorBlur(operation, TSL.vec4(1), false, resources, fail).isNode).toBe(true)
     for (const resource of resources) resource.dispose()
   })
+
+  it.each(['future-gamma', 'legacy-cpu-square-v1'])(
+    'refuses unknown or mismatched gamma models before allocating resources: %s', gamma => {
+      const operation = op(), resources: { dispose(): void }[] = []
+      operation.properties.blur_gamma_model = gamma
+      expect(() => buildNativeCompositorBlur(operation, TSL.vec4(1), false, resources, fail))
+        .toThrow(/matching native gamma correction model/)
+      expect(resources).toHaveLength(0)
+    })
+
+  it('retains the distinct CPU and GPU gamma identity paths without intermediate targets', () => {
+    const operation = op(), resources: { dispose(): void }[] = [], input = TSL.vec4(-.5, 1, .25, .5)
+    operation.properties.blur_gamma_model = 'legacy-gpu-square-v1'
+    expect(buildNativeCompositorBlur(operation, input, true, resources, fail)).toBe(input)
+    operation.properties.blur_model = 'legacy-cpu-f32-v1'
+    operation.properties.blur_gamma_model = 'legacy-cpu-square-v1'
+    expect(buildNativeCompositorBlur(operation, input, true, resources, fail)).not.toBe(input)
+    expect(resources).toHaveLength(0)
+  })
+
+  it('exposes exact pixel loads for the native sampling model while retaining tagless RTT sampling', () => {
+    for (const model of [undefined, 'native-texel-v1']) {
+      const operation = op(), resources: { dispose(): void }[] = []
+      operation.properties.blur_output_sampling_model = model
+      const built = buildNativeCompositorBlur(operation, TSL.vec4(1), false, resources, fail)
+      expect(built.isTextureNode).toBe(true)
+      expect(built.getSampler()).toBe(model === undefined)
+      for (const resource of resources) resource.dispose()
+    }
+  })
+
+  it('refuses unknown output sampling models without allocating resources', () => {
+    const operation = op(), resources: { dispose(): void }[] = []
+    operation.properties.blur_output_sampling_model = 'future-sampling'
+    expect(() => buildNativeCompositorBlur(operation, TSL.vec4(1), false, resources, fail))
+      .toThrow(/verified native output sampling model/)
+    expect(resources).toHaveLength(0)
+  })
 })

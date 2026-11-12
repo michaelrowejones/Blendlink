@@ -41,9 +41,13 @@ validate_math_domain = _sibling("compositor_math").validate_math_domain
 native_gpu_profile = _sibling("compositor_gpu").native_gpu_profile
 whitepoint_properties = _sibling("compositor_whitepoint").whitepoint_properties
 normalize_blur = _sibling("compositor_blur").normalize_blur
+normalize_alpha_conversion = _sibling("compositor_alpha_conversion").normalize_alpha_conversion
 
 TYPES = {
     "FunctionNodeInputBool": "utility-constant",
+    "FunctionNodeInputVector": "value",
+    "ShaderNodeCombineXYZ": "combine-vector",
+    "ShaderNodeSeparateXYZ": "separate-vector",
     "FunctionNodeInputInt": "utility-constant",
     "FunctionNodeBooleanMath": "boolean-math",
     "FunctionNodeIntegerMath": "integer-math",
@@ -57,6 +61,8 @@ TYPES = {
     "CompositorNodeMixRGB": "mix-rgb",
     "ShaderNodeMix": "mix",
     "CompositorNodeAlphaOver": "alpha-over",
+    "CompositorNodeSetAlpha": "set-alpha",
+    "CompositorNodePremulKey": "convert-alpha",
     "CompositorNodeExposure": "exposure",
     "CompositorNodeColorCorrection": "color-correction",
     "CompositorNodePosterize": "posterize",
@@ -89,6 +95,8 @@ TYPES = {
     "CompositorNodeHueSat": "hue-saturation-value",
     "CompositorNodeHueCorrect": "hue-correct",
     "CompositorNodeBlur": "blur",
+    "CompositorNodeFlip": "flip",
+    "CompositorNodeSwitch": "switch",
     "CompositorNodeGlare": "glare",
     "CompositorNodeRLayers": "render-pass",
 }
@@ -391,6 +399,12 @@ def extract(scene):
                     normalize_utility(node, op, lambda incoming: input_value(incoming, ctx),
                                       lambda message: fail("unsupported-utility-mode", path, node, socket, message),
                                       getattr(scene.render, "compositor_device", "CPU"))
+                elif node.bl_idname == "FunctionNodeInputVector":
+                    op["value"] = list(node.vector)
+                elif node.bl_idname in ("ShaderNodeCombineXYZ", "ShaderNodeSeparateXYZ"):
+                    for incoming in node.inputs:
+                        op["inputs"][incoming.identifier] = {"name": incoming.name, "socketType": incoming.type,
+                                                             "value": input_value(incoming, ctx)}
                 elif node.bl_idname in ("CompositorNodeRGB", "ShaderNodeValue", "CompositorNodeValue"):
                     op["value"] = value(socket.default_value)
                 elif node.bl_idname in ("CompositorNodeExposure", "CompositorNodeHueSat",
@@ -449,6 +463,33 @@ def extract(scene):
                     incoming = node.inputs["Fac"]
                     op["inputs"]["Fac"] = {"name": incoming.name, "socketType": incoming.type,
                                             "value": input_value(incoming, ctx)}
+                elif node.bl_idname == "CompositorNodeSwitch":
+                    selector = node.inputs.get("Switch")
+                    if selector is not None and selector.is_linked:
+                        fail("dynamic-switch-choice", path, node, selector,
+                             "Switch requires an unlinked fixed Boolean choice")
+                    selected = "On" if (selector.default_value if selector is not None else node.check) else "Off"
+                    incoming = node.inputs[selected]
+                    op["properties"].update({"switch_model": "fixed-choice-v1", "switch_selected": selected})
+                    # Unselected graphs are not dependencies of this fixed
+                    # choice; unsupported or expensive inactive branches remain authored.
+                    op["inputs"]["Selected"] = {"name": incoming.name, "socketType": incoming.type,
+                                                 "value": input_value(incoming, ctx)}
+                elif node.bl_idname == "CompositorNodeFlip":
+                    if node.inputs.get("Flip X") is not None:
+                        for name in ("Flip X", "Flip Y"):
+                            if node.inputs[name].is_linked:
+                                fail("dynamic-flip-axis", path, node, node.inputs[name],
+                                     "Flip axes require unlinked fixed Boolean settings")
+                        flags = [bool(node.inputs[name].default_value) for name in ("Flip X", "Flip Y")]
+                    else:
+                        if node.axis not in {"X", "Y", "XY"}:
+                            fail("unsupported-flip-axis", path, node, socket, "Flip has no verified native axis")
+                        flags = ["X" in node.axis, "Y" in node.axis]
+                    op["properties"].update({"spatial_model": "native-flip-v1", "flip_x": flags[0], "flip_y": flags[1]})
+                    incoming = node.inputs["Image"]
+                    op["inputs"]["Image"] = {"name": incoming.name, "socketType": incoming.type,
+                                              "value": input_value(incoming, ctx)}
                 elif node.bl_idname == "CompositorNodeBlur":
                     normalize_blur(node, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
@@ -496,6 +537,9 @@ def extract(scene):
                         incoming = next(item for item in node.inputs if item.identifier == identifier)
                         op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
                                               "value": input_value(incoming, ctx)}
+                elif node.bl_idname in ("CompositorNodeSetAlpha", "CompositorNodePremulKey"):
+                    normalize_alpha_conversion(node, op, lambda incoming: input_value(incoming, ctx),
+                        lambda incoming, message: fail("unsupported-alpha-conversion-mode", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeInvert":
                     for incoming in node.inputs:
                         op["inputs"][incoming.identifier] = {"name": incoming.name, "socketType": incoming.type,

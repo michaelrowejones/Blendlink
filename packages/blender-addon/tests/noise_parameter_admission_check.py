@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Native linked Noise roughness cannot silently acquire an upper clamp."""
 from pathlib import Path
+import platform
 import sys
 import bpy
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -39,14 +40,19 @@ try:
     coordinates = tree.nodes.new('ShaderNodeCombineXYZ')
     tree.links.new(coordinates.outputs[0], noise.inputs['Vector'])
     noise.noise_dimensions = '2D'
+    shader_profile = tsl_ir._noise_shader_offset_profile(
+        tsl_ir.get_evaluation_engine(), sys.platform, platform.machine(),
+        bpy.context.preferences.system.gpu_backend, bpy.app.version, tsl_ir._noise_gpu_renderer())
     literal = tsl_ir.emit_output(noise, noise.outputs['Color'])
     assert literal['evaluationModel'] == ('shader-mf' if bpy.app.version >= (5, 0, 0) else 'shader')
     if bpy.app.version >= (5, 0, 0):
         assert literal['offsetModel'] == 'mf-f32' and literal['colorOffsets'][0][1] == 157.369384765625
+    else:
+        assert literal['offsetModel'] == (shader_profile or 'shader-folded')
     texture_coordinates = tree.nodes.new('ShaderNodeTexCoord')
     tree.links.new(texture_coordinates.outputs['UV'], noise.inputs['Vector'])
     shader = tsl_ir.emit_output(noise, noise.outputs['Color'])
-    assert shader['evaluationModel'] == 'shader' and shader['offsetModel'] == 'shader-folded'
+    assert shader['evaluationModel'] == 'shader' and shader['offsetModel'] == (shader_profile or 'shader-folded')
     noise.noise_dimensions = '4D'
     fourth = tsl_ir.emit_output(noise, noise.outputs['Color'])
     assert fourth['offsetModel'] == 'float4-f32' and fourth['colorOffsets'][1][2] == 162.05215454101562

@@ -19,11 +19,11 @@ if not report["gpuParityVersionSupported"]:
     report["gpuParityReason"] = "The native GPU parity corpus requires Blender 4.2 or newer"
 
 
-def shared_utility_available(tree_type):
+def node_family_available(tree_type, identifiers):
     tree = bpy.data.node_groups.new("Blendlink Capability Probe", tree_type)
     failures = []
     try:
-        for node_type in ("FunctionNodeInputBool", "FunctionNodeInputInt"):
+        for node_type in identifiers:
             try:
                 tree.nodes.new(node_type)
             except RuntimeError as error:
@@ -34,11 +34,16 @@ def shared_utility_available(tree_type):
 
 
 for context, tree_type in (("Shader", "ShaderNodeTree"), ("Compositor", "CompositorNodeTree")):
-    supported, failures = shared_utility_available(tree_type)
+    supported, failures = node_family_available(tree_type, ("FunctionNodeInputBool", "FunctionNodeInputInt"))
     report["sharedUtility" + context + "Available"] = supported
     report["sharedUtility" + context + "Diagnostics"] = failures
+supported, failures = node_family_available("CompositorNodeTree",
+    ("FunctionNodeInputVector", "ShaderNodeCombineXYZ", "ShaderNodeSeparateXYZ"))
+report["sharedVectorCompositorAvailable"] = supported
+report["sharedVectorCompositorDiagnostics"] = failures
 tree = bpy.data.node_groups.new("Blendlink White Point Capability", "CompositorNodeTree")
 try:
+    report["blurGammaCompositorAvailable"] = hasattr(tree.nodes.new("CompositorNodeBlur"), "use_gamma_correction")
     node = tree.nodes.new("CompositorNodeColorBalance")
     selector = node.inputs.get("Type")
     report["whitePointCompositorAvailable"] = False

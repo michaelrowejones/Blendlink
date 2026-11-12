@@ -488,7 +488,7 @@ the shared quad geometry stays alive. Older schema1 Gaussian programs keep
 their numerical path and receive the same ownership fix.
 
 Relative sizing, variable/per-pixel radii, linked modern settings, nonseparable
-filters, legacy Bokeh and gamma correction, Extend Bounds, and recursive Fast
+filters, legacy Bokeh, Extend Bounds, and recursive Fast
 Gaussian refuse with named diagnostics. Relative radii need a resize-aware
 image-domain model: native 4.2 CPU rounds the percentage-derived radius before
 the Size multiplier while GPU retains the fractional radius. Expanded domains
@@ -511,13 +511,15 @@ node experiments/native-compositor-differential/run.mjs --built --timeout-ms 120
   --out artifacts/verification-compositor-blur/final-built
 ```
 
-The fixture generates 160 graphs per device on 4.2 and 161 per device on 5.2/5.3
-(964 total), using 13×7 float EXR images. Random signed/HDR RGBA, border/center
+The fixture generates 162 graphs per device on 4.2 and 161 per device on 5.2/5.3
+(968 total), using 13×7 float EXR images. Random signed/HDR RGBA, border/center
 impulses, each kernel, zero/asymmetric/maximum radii, fractional radii or legacy
 multipliers, constant images, final Automatic precision, schema1 Gaussian
 compatibility, exposure→Blur and chained filters are covered. Every browser
 case requires zero retained GPU textures after disposal; 18 compound cases
 also require preservation of the caller's render target, MRT and clear state.
+The two extra 4.2 cases check absolute-size aspect correction X and Y: their
+native expected arrays must equal aspect NONE exactly before browser comparison.
 
 The 2026-11-12 macOS checkpoint used native Blender 4.2.0 `a51f293548ad`,
 5.2.0 `fbe6228777e7` and 5.3.0 `02f0899d78e3`, on CPU and Metal GPU. All 964
@@ -527,3 +529,81 @@ disposal check reported zero retained textures, and all 18 compound graphs
 preserved caller state. The evidence is in
 `artifacts/verification-compositor-blur/loop-certified-built`; actual native
 OpenGL certification remains a separate platform check.
+
+## Legacy gamma-correct Blur
+
+The native 4.2 gamma option is transported with an explicit
+`blur_gamma_model` (`legacy-cpu-square-v1` or `legacy-gpu-square-v1`). CPU
+unpremultiplies only when alpha is positive, squares positive RGB and zeros
+other channels, reassociates alpha, convolves RGBA, and applies the corresponding
+square-root transfer. The GPU shader's component-wise negative-color handling
+is preserved separately. Alpha itself receives only the filter convolution.
+
+Identity behavior differs: 4.2 GPU returns constant images or zero-radius
+images before applying gamma. CPU still applies both transfers and clips
+negative color. Transfer functions load intermediate RTT pixels by integer
+texel coordinate. Default linear RTT sampling can blend a neighboring positive
+alpha into an exact zero by a fraction of an ULP, selecting a different native
+reassociation branch. No epsilon or alpha snapping is used.
+
+The native algorithms are the
+[CPU operations](https://github.com/blender/blender/blob/v4.2.0/source/blender/compositor/operations/COM_GammaCorrectOperation.cc)
+and [GPU transfer functions](https://github.com/blender/blender/blob/v4.2.0/source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_blur_common.glsl).
+The split product residual division already used by compositor CPU operations
+preserves rounded division by positive alpha. Old programs without the gamma
+model keep their existing path; unknown or mismatched models refuse before
+allocating resources.
+
+`compositor_blur_gamma_check.py` uses
+`BLENDLINK_COMPOSITOR_BLUR_GAMMA_REFERENCES` and
+`BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE`. It generates 193 actual graphs per
+device on 4.2: all seven filters, constant and spatial inputs, zero/asymmetric/
+maximum radii, multipliers, border impulses, signed/HDR RGB, zero/negative/tiny
+alpha, and exposure→Blur. Blender 5.2 and 5.3 no longer expose this property:
+the generator writes an explicit not-applicable report and zero pixel cases.
+
+Every gamma case checks cleanup. Forty-six native cases additionally require
+at most four actual quad renders and no fragment shader larger than 12000
+bytes, measuring every intermediate pass through Three's shader diagnostics.
+Two exposure cases per device also require caller render state preservation.
+The initial source proof passed all 386 CPU/Metal graphs on both browser
+backends with maximum channel error 2.38419e-6 at the unchanged 2e-5 budget;
+the measured maxima were four passes and 3674 fragment bytes.
+The final built checkpoint combines all 968 static/aspect graphs with these
+386 gamma graphs (1354 per browser backend). Both backends passed, with
+maximum channel error 3.69549e-6 on WebGL2 and 4.76837e-6 on WebGPU; gamma alone
+remained at 2.38419e-6. Every texture-cleanup and caller-state check passed.
+Evidence is in `artifacts/verification-compositor-blur-gamma/final-built`.
+
+## Blur output interoperability
+
+Fresh Blur programs record `blur_output_sampling_model='native-texel-v1'`.
+Their filtered output is an integer texel load, including when a pointwise
+node consumes it. Default linear RTT sampling at a rounded pixel-center UV can
+move a value across a Posterize bin or an Alpha Over sign decision. Tagless
+programs retain their previous RTT sampling; the older schema1 Gaussian path
+also remains unchanged. Unknown output sampling models refuse before resource
+allocation. Exact reads add no intermediate render pass or texture.
+
+`compositor_blur_interop_check.py` uses
+`BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES` and
+`BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE`. It generates 85 graphs per device
+on each of 4.2, 5.2 and 5.3 (510 total): Tent, Gaussian and Mitch;
+horizontal, vertical and two-axis radii; random signed/HDR RGBA, checker
+thresholds with zero/signed alpha, and border impulses. Each Blur feeds
+Posterize or premultiplied/straight Alpha Over. All graphs require caller
+MRT/clear-state preservation, zero retained textures and at most three quad
+renders with fragment shaders below 12000 bytes.
+
+The prior sampling path failed 56 graphs per browser backend with channel
+errors up to 0.5. The new source path passes all 510 on WebGL2 and WebGPU,
+maximum error 3.57628e-7 at the unchanged 2e-5 budget. Both sets come from actual
+native generations. Their float32 input/expected bits, including signed zero,
+match; removing only the new sampling property recreates every baseline file
+byte-for-byte. The per-file hashes and preservation contract are recorded in
+`artifacts/verification-compositor-blur-interop/reference-stability.json`.
+The final built checkpoint combines these with 968 fresh static/aspect and
+386 gamma graphs, totaling 1864 per backend. Both passed at maximum channel
+error 3.81470e-6, with the 510 interoperability graphs remaining at 3.57628e-7.
+Every cleanup, caller-state and shader-cost check passed; evidence is in
+`artifacts/verification-compositor-blur-interop/final-built`.

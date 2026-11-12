@@ -3017,7 +3017,7 @@
     },
     "compositor:CompositorNodeBlur": {
       "category": "partial",
-      "limits": "Static separable Flat/Tent/Quadratic/Cubic/Gaussian/Catrom/Mitch filters on native 4.2 and modern schemas, with constant per-axis pixel radii 0..128 and native float32 coefficient tables. Modern fractional radii and legacy CPU/GPU Size multipliers are modeled separately. Only Gaussian is separable when the native toggle is disabled. Relative/variable sizing, legacy gamma correction, Bokeh, Extend Bounds and recursive Fast Gaussian remain refused. Full/AUTO final compositor precision only. Runtime passes restore caller MRT/clear state and dispose weight textures and render targets.",
+      "limits": "Static separable Flat/Tent/Quadratic/Cubic/Gaussian/Catrom/Mitch filters on native 4.2 and modern schemas, with constant per-axis pixel radii 0..128 and native float32 coefficient tables. Modern fractional radii and legacy CPU/GPU Size multipliers are modeled separately. Only Gaussian is separable when the native toggle is disabled. Legacy gamma correction preserves CPU/GPU identity behavior, signed RGB and positive-alpha reassociation with exact-pixel transfers. Relative/variable sizing, Bokeh, Extend Bounds and recursive Fast Gaussian remain refused. Full/AUTO final compositor precision only. Fresh programs preserve exact Blur pixels for downstream Posterize/Alpha Over; older serialized sampling paths remain stable. Runtime passes restore caller MRT/clear state and dispose weight textures and render targets.",
       "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
       "runtimeOps": [
         "blur"
@@ -3050,9 +3050,7 @@
         },
         "aspect_correction": {
           "supported": [
-            "NONE"
-          ],
-          "unsupported": [
+            "NONE",
             "X",
             "Y"
           ]
@@ -3075,6 +3073,12 @@
         },
         {
           "path": "experiments/native-compositor-differential/run.mjs"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_blur_gamma_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_blur_interop_check.py"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
@@ -4839,6 +4843,261 @@
         "sourceBackends": "Metal; software OpenGL verification pending hosted CI"
       },
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend"
+    },
+    "compositor:CompositorNodeSetAlpha": {
+      "category": "supported",
+      "limits": "Static native mode selectors on legacy 4.2 and modern schemas. Live signed/HDR fields and constants preserve unclamped alpha, alpha above one, and hidden RGB at exactly zero alpha; no small-alpha epsilon. Linked menus and unknown alpha models refuse. CPU and native Metal GPU comparisons on all three versions, each built browser backend; other native GPU driver profiles require the hosted gate.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "set-alpha"
+      ],
+      "modes": {
+        "inputs:Type": {
+          "supported": [
+            "Apply Mask",
+            "Replace Alpha"
+          ]
+        },
+        "mode": {
+          "supported": [
+            "APPLY",
+            "REPLACE_ALPHA"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "normalize_alpha_conversion"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_alpha_conversion.py",
+          "anchor": "def normalize_alpha_conversion"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'set-alpha':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorAlphaConversion.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_alpha_conversion_check.py"
+        },
+        {
+          "path": "experiments/alpha-conversion-differential/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodePremulKey": {
+      "category": "supported",
+      "limits": "Static native mode selectors on legacy 4.2 and modern schemas. Live signed/HDR fields and constants preserve unclamped alpha, alpha above one, and hidden RGB at exactly zero alpha; no small-alpha epsilon. Linked menus and unknown alpha models refuse. CPU and native Metal GPU comparisons on all three versions, each built browser backend; other native GPU driver profiles require the hosted gate.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "convert-alpha"
+      ],
+      "modes": {
+        "inputs:Type": {
+          "supported": [
+            "To Premultiplied",
+            "To Straight"
+          ]
+        },
+        "mapping": {
+          "supported": [
+            "STRAIGHT_TO_PREMUL",
+            "PREMUL_TO_STRAIGHT"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "normalize_alpha_conversion"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_alpha_conversion.py",
+          "anchor": "def normalize_alpha_conversion"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'convert-alpha':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorAlphaConversion.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_alpha_conversion_check.py"
+        },
+        {
+          "path": "experiments/alpha-conversion-differential/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "shader:FunctionNodeInputVector": {
+      "category": "supported",
+      "limits": "Authored native Vector property, not a nonexistent output default. Blender 5.2+ actual shader-tree creation only; keyed/driven trees refuse. Signed and small vector components verified through native Cycles/EEVEE channel math and both built browser backends.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tsl_ir.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/vector_input_check.py"
+        },
+        {
+          "path": "experiments/shared-utility-differential/reference.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'const_vec3':"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:FunctionNodeInputVector": {
+      "category": "supported",
+      "limits": "Actual modern compositor tree creation on Blender 5.2/5.3. Static authored Vector property or live XYZ fields/constants, preserving signed/HDR components and native VECTOR/RGBA/scalar conversions. Animation and unknown Separate outputs refuse. CPU and Metal GPU references on both built browser backends.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "value"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_vector_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorVector.test.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:ShaderNodeCombineXYZ": {
+      "category": "supported",
+      "limits": "Actual modern compositor tree creation on Blender 5.2/5.3. Static authored Vector property or live XYZ fields/constants, preserving signed/HDR components and native VECTOR/RGBA/scalar conversions. Animation and unknown Separate outputs refuse. CPU and Metal GPU references on both built browser backends.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "combine-vector"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_vector_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorVector.test.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'combine-vector':"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:ShaderNodeSeparateXYZ": {
+      "category": "supported",
+      "limits": "Actual modern compositor tree creation on Blender 5.2/5.3. Static authored Vector property or live XYZ fields/constants, preserving signed/HDR components and native VECTOR/RGBA/scalar conversions. Animation and unknown Separate outputs refuse. CPU and Metal GPU references on both built browser backends.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "separate-vector"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_vector_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorVector.test.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'separate-vector':"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeFlip": {
+      "category": "partial",
+      "limits": "Native full scene-viewport pixel flips on Blender 4.2 and modern schemas. Fixed X/Y/XY axes and modern identity settings; linked Boolean selectors and animation refuse. Signed/HDR and zero-alpha hidden RGB remain intact. Constant/identity passthrough and live Flip cascades, Flip/Blur in both orders, Posterize and Alpha Over verified. Mapped expressions are materialized before another spatial remap. Expanded/transformed image domains require a separate contract. Caller MRT/clear state and texture/material ownership are verified.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "flip"
+      ],
+      "modes": {
+        "axis": {
+          "supported": [
+            "X",
+            "Y",
+            "XY"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "CompositorNodeFlip"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'flip':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorSpatial.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_flip_check.py"
+        },
+        {
+          "path": "experiments/compositor-spatial-differential/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeSwitch": {
+      "category": "partial",
+      "limits": "Legacy fixed check property and modern unlinked Boolean choice preserve live selected Off/On fields and constants. Inactive branches are not dependencies, including unsupported nodes; source graphs and choices are not mutated. Linked/per-pixel choices and animation refuse. Explicit fixed-choice-v1 model, with CPU/Metal comparisons across Blender 4.2/5.2/5.3 and both built browser backends.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "switch"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "CompositorNodeSwitch"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'switch':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_switch_check.py"
+        },
+        {
+          "path": "experiments/compositor-switch-differential/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
     }
   },
   "knownUnsupported": [
@@ -4871,7 +5130,6 @@
     "compositor:CompositorNodeDoubleEdgeMask",
     "compositor:CompositorNodeEllipseMask",
     "compositor:CompositorNodeFilter",
-    "compositor:CompositorNodeFlip",
     "compositor:CompositorNodeIDMask",
     "compositor:CompositorNodeImage",
     "compositor:CompositorNodeImageCoordinates",
@@ -4894,19 +5152,16 @@
     "compositor:CompositorNodeOutputFile",
     "compositor:CompositorNodePixelate",
     "compositor:CompositorNodePlaneTrackDeform",
-    "compositor:CompositorNodePremulKey",
     "compositor:CompositorNodeRelativeToPixel",
     "compositor:CompositorNodeRotate",
     "compositor:CompositorNodeScale",
     "compositor:CompositorNodeSceneTime",
     "compositor:CompositorNodeSeparateXYZ",
     "compositor:CompositorNodeSequencerStripInfo",
-    "compositor:CompositorNodeSetAlpha",
     "compositor:CompositorNodeSplit",
     "compositor:CompositorNodeStabilize",
     "compositor:CompositorNodeStringToImage",
     "compositor:CompositorNodeSunBeams",
-    "compositor:CompositorNodeSwitch",
     "compositor:CompositorNodeSwitchView",
     "compositor:CompositorNodeTexture",
     "compositor:CompositorNodeTime",
@@ -4933,7 +5188,6 @@
     "compositor:FunctionNodeInputRotation",
     "compositor:FunctionNodeInputSpecialCharacters",
     "compositor:FunctionNodeInputString",
-    "compositor:FunctionNodeInputVector",
     "compositor:FunctionNodeInvertMatrix",
     "compositor:FunctionNodeInvertRotation",
     "compositor:FunctionNodeMatchString",
@@ -4981,9 +5235,7 @@
     "compositor:NodeSeparateBundle",
     "compositor:NodeStoreBundleItem",
     "compositor:ShaderNodeBlackbody",
-    "compositor:ShaderNodeCombineXYZ",
     "compositor:ShaderNodeRadialTiling",
-    "compositor:ShaderNodeSeparateXYZ",
     "compositor:ShaderNodeTexBrick",
     "compositor:ShaderNodeTexChecker",
     "compositor:ShaderNodeTexGabor",
@@ -5001,7 +5253,6 @@
     "shader:FunctionNodeInputMenu",
     "shader:FunctionNodeInputSpecialCharacters",
     "shader:FunctionNodeInputString",
-    "shader:FunctionNodeInputVector",
     "shader:FunctionNodeMatchString",
     "shader:FunctionNodeReplaceString",
     "shader:FunctionNodeReverseString",

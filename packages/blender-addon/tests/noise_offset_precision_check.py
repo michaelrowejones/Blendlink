@@ -9,11 +9,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import tsl_ir
 
 profile = tsl_ir._noise_shader_offset_profile
+assert isinstance(tsl_ir._noise_gpu_renderer(), str)
 assert profile('CYCLES', 'linux', 'x86_64', 'OPENGL', (4, 2, 0)) == 'cycles-legacy-linux-x64-f32'
 assert profile('CYCLES', 'linux', 'AMD64', 'NONE', (4, 2, 0)) == 'cycles-legacy-linux-x64-f32'
 for version in [(5, 2, 0), (5, 3, 0)]:
     assert profile('CYCLES', 'linux', 'x86_64', 'OPENGL', version) is None
-    assert profile('EEVEE', 'linux', 'x86_64', 'OPENGL', version) == 'eevee-opengl-f32'
+    assert profile('EEVEE', 'linux', 'x86_64', 'OPENGL', version, 'llvmpipe (LLVM 20.1, 256 bits)') == 'eevee-llvmpipe-f32'
+for renderer in ['', 'NVIDIA GeForce', 'AMD Radeon', 'Intel UHD Graphics']:
+    assert profile('EEVEE', 'linux', 'x86_64', 'OPENGL', (4, 2, 0), renderer) is None
 assert profile('CYCLES', 'darwin', 'arm64', 'METAL', (4, 2, 0)) is None
 assert profile('EEVEE', 'darwin', 'arm64', 'METAL', (4, 2, 0)) is None
 assert profile('UNKNOWN', 'linux', 'x86_64', 'OPENGL', (4, 2, 0)) is None

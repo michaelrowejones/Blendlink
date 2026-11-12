@@ -44,7 +44,7 @@ engines = {item.identifier for item in scene.render.bl_rna.properties["engine"].
 EEVEE = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
 probe = bpy.data.node_groups.new("Actual shader utility availability", "ShaderNodeTree")
 capabilities = {}
-for identifier in ("FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeBooleanMath", "FunctionNodeIntegerMath", "FunctionNodeCompare"):
+for identifier in ("FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeInputVector", "FunctionNodeBooleanMath", "FunctionNodeIntegerMath", "FunctionNodeCompare"):
     try:
         node = probe.nodes.new(identifier); probe.nodes.remove(node)
         capabilities[identifier] = {"available": True}
@@ -60,6 +60,15 @@ def material_for(case):
     tree.links.new(emission.outputs[0], sink.inputs["Surface"])
     if case["kind"] == "constant":
         emission.inputs["Color"].default_value = (*case["value"], 1)
+        return material, emission
+    if case["kind"] == "vector-input":
+        vector = tree.nodes.new("FunctionNodeInputVector"); vector.vector = case["value"]
+        scale = tree.nodes.new("ShaderNodeVectorMath"); scale.operation = "SCALE"
+        scale.inputs["Scale"].default_value = 1 / 64
+        offset = tree.nodes.new("ShaderNodeVectorMath"); offset.operation = "ADD"
+        offset.inputs[1].default_value = (.5, .5, .5)
+        tree.links.new(vector.outputs[0], scale.inputs[0]); tree.links.new(scale.outputs[0], offset.inputs[0])
+        tree.links.new(offset.outputs[0], emission.inputs["Color"])
         return material, emission
     def scalar(number, kind="INT"):
         node = tree.nodes.new("FunctionNodeInputBool" if kind == "BOOLEAN" else "FunctionNodeInputInt")
@@ -97,6 +106,10 @@ def material_for(case):
 cases = []
 for engine in ["CYCLES", EEVEE]:
     cases.append({"id": engine.lower() + "-constant", "engine": engine, "kind": "constant", "value": [.25, .5, .75]})
+    if capabilities["FunctionNodeInputVector"]["available"]:
+        for index, values in enumerate([[0,0,0],[.25,.5,.75],[-8,4,16],[-1.234567,.3333333,2**-24]]):
+            cases.append({"id": engine.lower()+"-vector-input-"+str(index), "engine":engine,
+                          "kind":"vector-input", "value":values})
     for type, selected in [("BOOLEAN", [False, True]), ("INT", [-2147483648, -16777217, -1, 0, 1, 16777217, 2147483647])]:
         if not capabilities["FunctionNodeInputBool" if type == "BOOLEAN" else "FunctionNodeInputInt"]["available"]: continue
         for number in selected:
@@ -114,6 +127,11 @@ for engine in ["CYCLES", EEVEE]:
                 if operation == "DIVIDE_ROUND" and stage == "constant" and index == 4: continue
                 cases.append({"id": f"{engine.lower()}-integer-{operation.lower()}-{stage}-{index}", "engine": engine,
                               "kind": "integer", "operation": operation, "stage": stage, "value": values})
+selected_kinds = os.environ.get("BLENDLINK_UTILITY_KINDS")
+if selected_kinds:
+    selected = set(selected_kinds.split(","))
+    assert selected <= {"constant", "input", "vector-input", "boolean", "integer"}, selected
+    cases = [case for case in cases if case["kind"] in selected]
 records = []
 with tempfile.TemporaryDirectory(prefix="blendlink-native-utilities-") as temporary:
     for case in cases:

@@ -86,8 +86,33 @@ try {
       const built = buildSourceCompositor(test.program, () => source)
       try {
         ;(window as any).__compositorProgress.phase = 'rendering'
-        const actual = await render(built.node)
+        const calls: { quad: QuadMesh, target: any, mrt: any }[] = []
+        const renderQuad = QuadMesh.prototype.render
+        if (test.assertShaderCost) QuadMesh.prototype.render = function (activeRenderer) {
+          calls.push({ quad: this, target: activeRenderer.getRenderTarget(), mrt: activeRenderer.getMRT() })
+          return renderQuad.call(this, activeRenderer)
+        }
+        let actual: Float32Array
+        try { actual = await render(built.node) }
+        finally { QuadMesh.prototype.render = renderQuad }
         Object.assign(row, errorFor(actual, test.expected, flip))
+        if (test.captureShader) row.fragmentShader = (await renderer.debug.getShaderAsync(quad, quad.camera, quad)).fragmentShader
+        if (test.assertShaderCost) {
+          const callerTarget = renderer.getRenderTarget(), callerMrt = renderer.getMRT()
+          const shaderBytes: number[] = []
+          try {
+            for (const call of calls) {
+              renderer.setRenderTarget(call.target)
+              renderer.setMRT(call.mrt)
+              const shader = await renderer.debug.getShaderAsync(call.quad, call.quad.camera, call.quad)
+              shaderBytes.push(new TextEncoder().encode(shader.fragmentShader).length)
+            }
+          } finally { renderer.setRenderTarget(callerTarget); renderer.setMRT(callerMrt) }
+          row.shaderCost = { passes: calls.length, fragmentBytes: shaderBytes }
+          if (calls.length > test.assertShaderCost.maxPasses
+            || shaderBytes.some(bytes => bytes > test.assertShaderCost.maxFragmentBytes))
+            throw new Error('Compositor exceeded the proven shader/pass budget: ' + JSON.stringify(row.shaderCost))
+        }
         if (activeMrt && (renderer.getMRT() !== activeMrt || renderer.getRenderTarget() !== target
           || renderer.autoClear !== false || renderer.getClearAlpha() !== .37))
           throw new Error('Compositor changed the caller renderer MRT/clear state')
