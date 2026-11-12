@@ -317,3 +317,20 @@ texture allocations from six to two (three including the readback target), and
 reduces total WebGPU program bytes from 29,631 to 23,071. A default SwiftShader
 pilot also passes both APIs. These local results do not certify the Linux
 SwiftShader crash; that remains an explicit hosted regression check.
+
+### Raw FBM sum stages
+
+The unnormalized static FBM recurrence materializes each sum stage before the
+next octave. This preserves the native float32 recurrence while keeping the
+high-detail Color expression shallow for shader compilers. The legacy
+normalized recurrence remains unchanged. This is a portability investigation;
+hosted Linux success is required before calling its GPU-process loss fixed.
+
+All334 retained graphs per Blender4.2/5.2/5.3 pass both physical Metal browser
+backends (2,004 readbacks), and all334 retained Linux5.2 references pass both
+local SwiftShader APIs (668 readbacks). The996 readbacks overlapping the prior
+scalar-sharing corpus are byte-identical. The focused4D Color case is also
+byte-identical on both software APIs. That case's generated program grows from
+21,544 to22,670 bytes on WebGPU and20,359 to21,212 on WebGL2; this change does
+not claim shader-size reduction or a production timing improvement. Native
+references, source parameter bounds and numerical budgets remain unchanged.

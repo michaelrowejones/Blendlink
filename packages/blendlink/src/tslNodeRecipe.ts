@@ -458,7 +458,10 @@ export function blenderNoiseFac(
   let maxAmplitude = 0
   let sum = tslFloat(0.0)
   for (let octave = 0; octave <= octaves; octave += 1) {
-    sum = sum.add(octaveFn(position.mul(frequency)).mul(amplitude))
+    const nextSum = sum.add(octaveFn(position.mul(frequency)).mul(amplitude))
+    // Keep the raw recurrence in explicit float stages. A deeply nested
+    // high-detail Color expression can exhaust software GPU compilers.
+    sum = normalizeOutput ? nextSum : nextSum.toVar()
     maxAmplitude = normalizeOutput ? maxAmplitude + amplitude : Math.fround(maxAmplitude + amplitude)
     amplitude = normalizeOutput ? amplitude * amplitudeRatio : Math.fround(amplitude * amplitudeRatio)
     frequency = normalizeOutput ? frequency * frequencyRatio : Math.fround(frequency * frequencyRatio)
