@@ -45,7 +45,13 @@ const idsIndex = process.argv.indexOf('--ids')
 const requestedIds = idsIndex < 0 ? null : process.argv[idsIndex + 1]?.split(',')
 if (idsIndex >= 0) assert.ok(requestedIds?.length && new Set(requestedIds).size === requestedIds.length &&
   requestedIds.every(id => manifest.cases.some(cell => cell.id === id)), '--ids must select unique native case IDs')
-const cases = requestedIds ? manifest.cases.filter(cell => requestedIds.includes(cell.id)) : manifest.cases
+const requestedCases = requestedIds ? manifest.cases.filter(cell => requestedIds.includes(cell.id)) : manifest.cases
+const requestedEngines = new Set(requestedCases.filter(cell => cell.kind === 'noise').map(cell => cell.engine))
+// A field subset still needs independent row-orientation and render-precision
+// controls. Omitting them can make correct shaders appear to disagree wildly.
+const implicitControlIds = requestedIds ? manifest.cases.filter(cell => requestedEngines.has(cell.engine) &&
+  ['constant', 'image-control'].includes(cell.kind) && !requestedIds.includes(cell.id)).map(cell => cell.id) : []
+const cases = requestedIds ? manifest.cases.filter(cell => requestedIds.includes(cell.id) || implicitControlIds.includes(cell.id)) : manifest.cases
 
 writeFileSync(join(evidence, 'provenance.json'), JSON.stringify(provenance, null, 2))
 const size = manifest.size
@@ -62,7 +68,7 @@ function retainReport(finished = false) {
     built, elapsedMs: Date.now() - started, nativeGpuBackend: manifest.gpuBackend, cyclesDevice: manifest.cyclesDevice,
     sourceHashes, harnessSha256, testedHarnessHashes: frozenHarness.hashes, provenance, snapshot, testedModuleHashes: copied, refusals: manifest.refusals ?? [],
     nativeModuleHashes: manifest.nativeModuleHashes, workspaceStable: stable,
-    finished, completedAllCases: rows.length === cases.length * 2, expectedCasesPerBackend: cases.length, nativeCases: manifest.cases.length, requestedIds,
+    finished, completedAllCases: rows.length === cases.length * 2, expectedCasesPerBackend: cases.length, nativeCases: manifest.cases.length, requestedIds, implicitControlIds,
     rows, failures, executionFailures }, null, 2))
 }
 

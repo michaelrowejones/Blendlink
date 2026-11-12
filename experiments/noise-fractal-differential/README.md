@@ -138,6 +138,19 @@ backends: 528 rows with no failures. These include both outputs and input
 stages, all ten parameter variants and amplified GPU residuals. The 5.3 repeat
 uses the built package after its whole-program guard checked 105 modules.
 
+Hybrid feedback uses explicit local shader variables for each signal, value
+and weight. This keeps the native strict cutoff and arithmetic while avoiding
+duplicated conditional expression paths. The hosted failing literal/distorted
+case retains byte-identical pixels in a focused comparison, reduces shader
+source from 27.0 KB to 15.0 KB, compilation wait from 5.13 s to 0.73 s and first
+render/readback from 6.62 s to 0.84 s on the software renderer.
+
+All 126 retained Hybrid graphs pass on each Blender 4.2/5.2/5.3 and both browser
+backends: 756 rows, including all dimensions/outputs/stages, parameter variants,
+amplified residuals and strict cutoff neighbors. Cycles mapped maximum remains
+3.695488e-6. The 5.3 proof uses the built package with 105 whole-program-checked
+modules. No error budget or parameter range changes accompany this optimization.
+
 Admission checks:
 
 ```sh
@@ -150,3 +163,9 @@ Admission checks:
 Primary implementations:
 [Cycles fractal recurrences](https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/fractal_noise.h),
 [dimensional/color noise](https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/noisetex.h).
+
+Focused browser replays accept `--reuse-reference --ids id1,id2`. Noise subsets
+also run the requested engines' independent constant and image controls, in
+native manifest order, so row orientation and render precision remain calibrated.
+Reports distinguish requested IDs, implicitly included control IDs, and total
+completed cases. Constant-only harness retention probes keep their explicit scope.

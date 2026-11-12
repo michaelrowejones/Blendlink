@@ -1,7 +1,7 @@
 {
   "capabilityMapSha256": "2c85a284cf1ee93c3f39529080442a8da15ca92c2ea7c5cb2b07cfcd92348c63",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T14:37:46.230281+00:00",
+  "generatedAt": "2026-11-12T14:50:28.560259+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -19572,7 +19572,7 @@
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
-    "packages/blendlink/src/tslFractalNoise.ts": "843e826f1a74b47ca13ad98dfd7c4e7855ec10b732df854dd9d62bac44f697f6",
+    "packages/blendlink/src/tslFractalNoise.ts": "b96ce476f80664c818e3bd5924c11812b9d3c9568d3b9365b985b2d6aebc864e",
     "packages/blendlink/src/tslGeometryContext.ts": "736a1849bc49b15d9b67b71bc29519c8d643ac6ee2b2ab862cfc363279efcc23",
     "packages/blendlink/src/tslMaterialProgram.ts": "56fa7f0524b2f9421568c04e18e0a18e84dfcf770bc27bc077a3777a13535e22",
     "packages/blendlink/src/tslMaterialRuntime.ts": "74c19c9dbcb60c92a00c983eba08bff6de6ce5c4b7dcc281c9b68e2d2d0c3de4",

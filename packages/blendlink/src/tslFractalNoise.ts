@@ -2,7 +2,7 @@
  * Adapted from intern/cycles/kernel/svm/fractal_noise.h (Apache-2.0).
  * Admission, source evaluation stage and coordinate transport live upstream.
  */
-import { abs, clamp, float, min, select } from 'three/tsl'
+import { abs, clamp, float, min, select, Fn } from 'three/tsl'
 import type { TslExpression, TslExprLike } from './tslNodeRecipe.js'
 
 const scalar = float as unknown as (value: TslExprLike) => TslExpression
@@ -10,6 +10,9 @@ const absolute = abs as unknown as (value: TslExprLike) => TslExpression
 const minimum = min as unknown as (a: TslExprLike, b: TslExprLike) => TslExpression
 const clampNode = clamp as unknown as (value: TslExprLike, low: TslExprLike, high: TslExprLike) => TslExpression
 const choose = select as unknown as (test: TslExpression, yes: TslExprLike, no: TslExprLike) => TslExpression
+const shaderScope = Fn as unknown as (callback: (inputs: TslExpression[]) => TslExpression) =>
+  (...inputs: TslExpression[]) => TslExpression
+type MutableFloat = TslExpression & { assign(value: TslExprLike): TslExpression }
 
 export interface NativeFractalParameters {
   type: string
@@ -87,20 +90,24 @@ export function buildTslFractalNoise(position: TslExpression, parameters: Native
     if (remainder !== 0) value = value.add(octave(p).add(offset).mul(power).mul(value).mul(remainder))
     return value
   }
-  if (type === 'HYBRID_MULTIFRACTAL') {
-    let value = scalar(0), weight = scalar(1), power = 1
+  if (type === 'HYBRID_MULTIFRACTAL') return shaderScope(([point]) => {
+    // Explicit feedback storage keeps each signal/condition in this scope.
+    // Expanding the selected value/weight DAG duplicates conditional paths
+    // and can overwhelm software shader compilers even with only3 octaves.
+    let current = point!, power = 1
+    const value = scalar(0).toVar() as MutableFloat, weight = scalar(1).toVar() as MutableFloat
     for (let index = 0; index <= count; index++) {
-      const active = weight.greaterThan(.001), boundedWeight = minimum(weight, 1)
-      const signal = octave(p).add(offset).mul(power)
-      value = choose(active, value.add(boundedWeight.mul(signal)), value)
-      weight = choose(active, boundedWeight.mul(signal.mul(gain)), weight)
+      const active = weight.greaterThan(.001).toVar(), boundedWeight = minimum(weight, 1).toVar()
+      const signal = octave(current).add(offset).mul(power).toVar()
+      value.assign(choose(active, value.add(boundedWeight.mul(signal)), value))
+      weight.assign(choose(active, boundedWeight.mul(signal.mul(gain)), weight))
       power = Math.fround(power * ratio)
-      advance()
+      current = current.mul(frequency).toVar()
     }
     if (remainder !== 0)
-      value = choose(weight.greaterThan(.001), value.add(minimum(weight, 1).mul(remainder).mul(octave(p).add(offset).mul(power))), value)
+      value.assign(choose(weight.greaterThan(.001), value.add(minimum(weight, 1).mul(remainder).mul(octave(current).add(offset).mul(power))), value))
     return value
-  }
+  })(position)
   // Native Ridged Multifractal deliberately ignores fractional detail.
   let signal = scalar(offset).sub(absolute(octave(p)))
   signal = signal.mul(signal)
