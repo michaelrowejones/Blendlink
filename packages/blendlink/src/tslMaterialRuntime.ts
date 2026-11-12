@@ -15,6 +15,7 @@
 import * as THREE from 'three'
 import { MeshStandardNodeMaterial, MeshPhysicalNodeMaterial } from 'three/webgpu'
 import { uniform } from 'three/tsl'
+import { collectVectorTransformRequirements, validateVectorTransformBinding, type VectorTransformRequirement } from './tslVectorTransform.js'
 import {
   createTslBuildResources,
   TslIrError,
@@ -71,7 +72,7 @@ export interface InstallTslMaterialsOptions {
   ) => (transferred: boolean) => void
   /** Override texture_ref image decoding (tests, custom decoders). The
    * default fetches the published bytes (count + hash verified) and
-   * decodes through createImageBitmap with glTF orientation. */
+   * decodes through createImageBitmap into native bottom-up shader rows. */
   loadProgramTexture?: (
     name: string,
     entry: MaterialProgramImage,
@@ -195,11 +196,12 @@ async function defaultProgramTexture(
   }
   const bitmap = await createImageBitmap(
     new Blob([payload], { type: entry.mime }),
-    { premultiplyAlpha: 'none', colorSpaceConversion: 'none' },
+    { imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' },
   )
   const texture = new THREE.Texture(bitmap as unknown as HTMLImageElement)
-  // glTF orientation: exported TEXCOORDs are already V-flipped from
-  // Blender space, matching standard top-down image rows.
+  // Graph vectors are native Blender coordinates, including constants and
+  // transformed UVs. Bitmap rows are flipped at decode (Texture.flipY is
+  // ignored for ImageBitmap), independently of glTF geometry UV conversion.
   texture.flipY = false
   texture.colorSpace = entry.colorSpace === 'sRGB'
     ? THREE.SRGBColorSpace
@@ -342,6 +344,7 @@ export async function installTslMaterials(
   // the property in their exported extras or skip by name.
   const attributeNames = new Map<string, string[]>()
   const objectInfoOutputs = new Map<string, Set<string>>()
+  const vectorTransforms = new Map<string, VectorTransformRequirement[]>()
   for (const [source, program] of Object.entries(programs.materials)) {
     const names = new Set<string>()
     collectObjectAttributeNames(program.channels, names)
@@ -349,6 +352,9 @@ export async function installTslMaterials(
     const outputs = new Set<string>()
     collectObjectInfoOutputs(program.channels, outputs)
     if (outputs.size) objectInfoOutputs.set(source, outputs)
+    const transforms: VectorTransformRequirement[] = []
+    collectVectorTransformRequirements(program.channels, transforms)
+    if (transforms.length) vectorTransforms.set(source, transforms)
   }
 
   const skipped: TslMaterialSkip[] = []
@@ -416,6 +422,16 @@ export async function installTslMaterials(
         const needed = attributeNames.get(source)
         const owner = objectAttributeOwner(mesh)
         const info = objectInfoOutputs.get(source)
+        const transforms = vectorTransforms.get(source)
+        const objectTransform = transforms?.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')
+        if (transforms) {
+          try { validateVectorTransformBinding(transforms, mesh, extras?.objectSpace) }
+          catch (error) {
+            if (!(error instanceof TslIrError)) throw error
+            skipped.push({ material: source, reason: `mesh "${mesh.name}" Vector Transform refused: ${error.message}; its carrier stays` })
+            return
+          }
+        }
         if (info) {
           try { validateObjectInfoBinding(info, owner.userData?.blendlink_tsl_object,
             material.userData?.blendlink_tsl_material, Boolean((mesh as THREE.InstancedMesh).isInstancedMesh)) }
@@ -455,7 +471,7 @@ export async function installTslMaterials(
         // clone per runtime-extras variant.
         const normalMapBasis = !mesh.geometry.hasAttribute('uv') ? 'missing'
           : mesh.geometry.hasAttribute('tangent') ? 'attribute' : 'derivative'
-        const variantKey = `${material.uuid} ${normalMapBasis} ${JSON.stringify(extras ?? null)} ${needed?.length || info?.size ? owner.uuid : ''}`
+        const variantKey = `${material.uuid} ${normalMapBasis} ${JSON.stringify(extras ?? null)} ${needed?.length || info?.size || objectTransform ? owner.uuid : ''}`
         let variant = variants.get(variantKey)
         if (!variant) {
           const resources = createTslBuildResources()

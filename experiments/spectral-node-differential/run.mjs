@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
+import { captureRuntimeSnapshot } from '../../scripts/lib/runtime-provenance.mjs'
 
 const root = resolve(import.meta.dirname, '../..')
 const evidence = resolve(process.env.BLENDLINK_SPECTRAL_EVIDENCE || join(root, 'artifacts/verification-spectral-nodes'))
@@ -15,13 +16,9 @@ const built = process.argv.includes('--built')
 const snapshot = join(evidence, 'module-snapshot-' + Date.now() + '-' + process.pid)
 const nativeSnapshot = join(snapshot, 'native')
 mkdirSync(nativeSnapshot, { recursive: true })
-const copied = {}
-for (const file of readdirSync(join(root, built ? 'packages/blendlink/dist' : 'packages/blendlink/src'))) {
-  if (!file.endsWith(built ? '.js' : '.ts') || file.endsWith('.test.ts')) continue
-  const content = readFileSync(join(root, built ? 'packages/blendlink/dist' : 'packages/blendlink/src', file))
-  writeFileSync(join(snapshot, file), content)
-  copied[file] = createHash('sha256').update(content).digest('hex')
-}
+const { provenance: runtimeProvenance } = await captureRuntimeSnapshot({ root, built, destination: snapshot, label: 'spectral' })
+mkdirSync(nativeSnapshot, { recursive: true })
+const copied = Object.fromEntries(runtimeProvenance.snapshot.files.map(file => [file.name, file.sha256]))
 for (const directory of ['packages/blendlink/blender', 'packages/blender-addon'])
   for (const file of readdirSync(join(root, directory))) {
     if (!file.endsWith('.py') && !file.endsWith('.json')) continue
@@ -35,9 +32,6 @@ const sources = ['packages/blendlink/src/tslNodeRecipe.ts', 'packages/blendlink/
   'packages/blender-addon/tsl_ir.py', 'packages/blender-addon/spectral_ir.py', 'packages/blender-addon/spectral_tables.json']
 const hash = file => createHash('sha256').update(readFileSync(join(root, file))).digest('hex')
 const sourceHashes = Object.fromEntries(sources.map(file => [file, hash(file)]))
-if (built) for (const name of ['tslNodeRecipe', 'tslSpectralNodes'])
-  assert.ok(statSync(join(root, `packages/blendlink/dist/${name}.js`)).mtimeMs >=
-    statSync(join(root, `packages/blendlink/src/${name}.ts`)).mtimeMs, 'Build before testing emitted spectral nodes')
 if (!process.argv.includes('--reuse-reference')) {
   const blender = process.env.BLENDLINK_BLENDER || execFileSync(process.execPath,
     [join(root, 'packages/blendlink/dist/cli.js'), 'discover'], { encoding: 'utf8' }).trim().split(/\r?\n/).at(-1)
@@ -132,7 +126,7 @@ try {
   }
   const stable = sources.every(file => sourceHashes[file] === hash(file))
   writeFileSync(join(evidence, 'report.json'), JSON.stringify({ blender: manifest.blender, nativeBuild: manifest.buildHash,
-    built, sourceHashes, snapshot, testedModuleHashes: copied, testedNativeModuleHashes, workspaceStable: stable, rows, failures }, null, 2))
+    built, sourceHashes, runtimeProvenance, snapshot, testedModuleHashes: copied, testedNativeModuleHashes, workspaceStable: stable, rows, failures }, null, 2))
   assert.deepEqual(failures, [], 'Native spectral pixels differ; see report.json')
   console.log(`BLENDLINK_SPECTRAL_DIFFERENTIAL_PASSED ${manifest.cases.length} cases on both backends`)
 } finally { await browser?.close(); await server.close() }

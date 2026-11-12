@@ -1,4 +1,5 @@
 import { DataTexture } from 'three'
+import { float } from 'three/tsl'
 import { describe, expect, it, vi } from 'vitest'
 import { buildSourceCompositor } from './tslSourceCompositor.js'
 import type { SourceCompositorProgram } from './sourceDisplay.js'
@@ -91,6 +92,35 @@ describe('native compositor pointwise utilities', () => {
       disposed.mockClear()
       operation.properties.curve_tone = 'UNKNOWN'
       expect(() => buildSourceCompositor(graph, () => null)).toThrow(/Standard or Film Like/)
+      expect(disposed).toHaveBeenCalledTimes(1)
+    } finally { disposed.mockRestore() }
+  })
+
+  it('requires spatial GPU tables to carry native storage and sample precision', () => {
+    const graph = program('color-ramp'), operation = graph.ops[0]!
+    operation.inputs.Fac = { name: 'Fac', socketType: 'VALUE', value: { kind: 'ref', node: 'image', type: 'VALUE' } }
+    Object.assign(operation.properties, { color_mode: 'RGB', interpolation: 'LINEAR', hue_interpolation: 'NEAR',
+      color_conversion_device: 'GPU', stops: [0, 0.5, 1].map(position => ({ position, color: [position, 0, 1, 0.5] })) })
+    graph.ops.unshift({ id: 'image', kind: 'render-pass', type: 'VALUE', inputs: {}, properties: {},
+      source: { path: ['Compositor'], node: 'Image Input', nodeType: 'CompositorNodeRLayers', output: 'Image' },
+      pass: { scene: 'Scene', viewLayer: 'ViewLayer', pass: 'Combined', name: 'Image', type: 'VALUE' } })
+    expect(() => buildSourceCompositor(graph, () => float(0.4)))
+      .toThrow(/Artist Numeric Node.*native storage and sampling model/)
+    operation.properties.gpu_filter_fraction_bits = 8
+    operation.properties.values = Array.from({ length: 257 * 4 }, () => 0.5)
+    const legacy = buildSourceCompositor(graph, () => float(0.4))
+    expect(legacy.node.isNode).toBe(true)
+    legacy.dispose()
+    operation.properties.gpu_color_band = { values: Array.from({ length: 257 * 4 }, () => 0.5),
+      tableStorage: 'rgba16f', sampleStorage: 'rgba16f', filterFractionBits: 8 }
+    const built = buildSourceCompositor(graph, () => float(0.4))
+    expect(built.node.isNode).toBe(true)
+    built.dispose()
+    const disposed = vi.spyOn(DataTexture.prototype, 'dispose')
+    try {
+      const band = operation.properties.gpu_color_band as Record<string, unknown>
+      band.filterFractionBits = 7
+      expect(() => buildSourceCompositor(graph, () => float(0.4))).toThrow(/verified precision model/)
       expect(disposed).toHaveBeenCalledTimes(1)
     } finally { disposed.mockRestore() }
   })

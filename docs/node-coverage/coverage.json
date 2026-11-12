@@ -1,8 +1,58 @@
 {
-  "capabilityMapSha256": "7164d981608d97c51103c4525a37f280f54d756da532a11c1ed265db36b5d35a",
+  "capabilityMapSha256": "2a4fa750975423c22cce636342fe058243c449961dd014c51110e35667a13c0c",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T10:06:17.205224+00:00",
+  "generatedAt": "2026-11-12T11:12:48.696712+00:00",
   "nativeAvailabilityChanges": [],
+  "nativeEnumerationUnresolved": [
+    {
+      "acknowledged": true,
+      "blenderVersion": "4.2.0",
+      "node": "compositor:CompositorNodeChannelMatte",
+      "reason": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
+      "stateCount": 16,
+      "transitions": 250
+    },
+    {
+      "acknowledged": true,
+      "blenderVersion": "4.2.0",
+      "node": "compositor:CompositorNodeConvertColorSpace",
+      "reason": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
+      "stateCount": 16,
+      "transitions": 704
+    },
+    {
+      "acknowledged": true,
+      "blenderVersion": "5.2.0 LTS",
+      "node": "compositor:CompositorNodeChannelMatte",
+      "reason": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
+      "stateCount": 16,
+      "transitions": 480
+    },
+    {
+      "acknowledged": true,
+      "blenderVersion": "5.2.0 LTS",
+      "node": "compositor:CompositorNodeConvertColorSpace",
+      "reason": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
+      "stateCount": 16,
+      "transitions": 2048
+    },
+    {
+      "acknowledged": true,
+      "blenderVersion": "5.3.0",
+      "node": "compositor:CompositorNodeChannelMatte",
+      "reason": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
+      "stateCount": 16,
+      "transitions": 480
+    },
+    {
+      "acknowledged": true,
+      "blenderVersion": "5.3.0",
+      "node": "compositor:CompositorNodeConvertColorSpace",
+      "reason": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
+      "stateCount": 16,
+      "transitions": 4128
+    }
+  ],
   "reports": [
     {
       "blenderVersion": "4.2.0",
@@ -12,12 +62,12 @@
             "bake-only": 0,
             "partial": 6,
             "structural": 7,
-            "supported": 21,
-            "unsupported": 70
+            "supported": 23,
+            "unsupported": 68
           },
           "enumValueCounts": {
             "supported": 104,
-            "unsupported": 187
+            "unsupported": 202
           },
           "nodes": [
             {
@@ -194,8 +244,14 @@
                 },
                 "limit_channel": {
                   "B": "unsupported",
+                  "CB": "unsupported",
+                  "CR": "unsupported",
                   "G": "unsupported",
-                  "R": "unsupported"
+                  "H": "unsupported",
+                  "R": "unsupported",
+                  "S": "unsupported",
+                  "V": "unsupported",
+                  "Y": "unsupported"
                 },
                 "limit_method": {
                   "MAX": "unsupported",
@@ -203,8 +259,14 @@
                 },
                 "matte_channel": {
                   "B": "unsupported",
+                  "CB": "unsupported",
+                  "CR": "unsupported",
                   "G": "unsupported",
-                  "R": "unsupported"
+                  "H": "unsupported",
+                  "R": "unsupported",
+                  "S": "unsupported",
+                  "V": "unsupported",
+                  "Y": "unsupported"
                 }
               },
               "evidence": [],
@@ -259,14 +321,33 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "anchor": "case 'color-correction':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeColorCorrection",
               "label": "Color Correction",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All four tonal regions times five controls, masks (upper cap only), channel switches, linked modern controls, negative/HDR colors, independent alpha and collapsed/reversed/overlapping tonal ranges. Explicit legacy Lift vs modern Offset native models; finite gamma domains. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
+              "runtimeOps": [
+                "color-correction"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -588,7 +669,11 @@
               "declaredCategory": "unsupported",
               "enumCoverage": {
                 "layer": {},
-                "layer_name": {},
+                "layer_name": {
+                  "ViewLayer.CryptoAsset": "unsupported",
+                  "ViewLayer.CryptoMaterial": "unsupported",
+                  "ViewLayer.CryptoObject": "unsupported"
+                },
                 "source": {
                   "IMAGE": "unsupported",
                   "RENDER": "unsupported"
@@ -629,11 +714,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "CompositorNodeCurveRGB",
               "label": "RGB Curves",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -666,11 +757,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "CompositorNodeCurveVec",
               "label": "Vector Curves",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -853,11 +950,20 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_graph_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
                 }
               ],
               "id": "CompositorNodeExposure",
               "label": "Exposure",
-              "limits": "Pointwise exposure, linked image/scalar input under image broadcast rules.",
+              "limits": "Exposure and HSV pointwise controls with native CPU/GPU conversion/division, far Hue values, signed/extrapolated factors and independent alpha. Blender 4.2 CPU Hue wraps once; modern Hue uses fract. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
               "runtimeOps": [
                 "exposure"
               ],
@@ -1019,11 +1125,20 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_graph_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
                 }
               ],
               "id": "CompositorNodeHueSat",
               "label": "Hue/Saturation/Value",
-              "limits": "Pointwise HSV transform and factor.",
+              "limits": "Exposure and HSV pointwise controls with native CPU/GPU conversion/division, far Hue values, signed/extrapolated factors and independent alpha. Blender 4.2 CPU Hue wraps once; modern Hue uses fract. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
               "runtimeOps": [
                 "hue-saturation-value"
               ],
@@ -1455,14 +1570,33 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "anchor": "case 'posterize':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/README.md"
+                }
+              ],
               "id": "CompositorNodePosterize",
               "label": "Posterize",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Steps clamp 2..1024, linked levels and independent alpha. Explicit native 4.2 reciprocal-before-floor and modern division ordering, including adjacent float bin boundaries; native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
+              "runtimeOps": [
+                "posterize"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -1997,11 +2131,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "CompositorNodeValToRGB",
               "label": "Color Ramp",
-              "limits": "RGB five interpolations and HSV/HSL all four hue directions, Color/Alpha, linked factors. Native CPU-authored paths run on both browser backends. GPU-authored interpolated tables require measured METAL eight-bit filter metadata; other GPU filters explicitly refuse.",
+              "limits": "RGB five interpolations and HSV/HSL all four hue directions, Color/Alpha, linked factors. Native CPU-authored paths run on both browser backends. GPU-authored interpolated tables require measured METAL eight-bit filter metadata; other GPU filters explicitly refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "color-ramp"
               ],
@@ -2140,16 +2280,16 @@
         "shader": {
           "counts": {
             "bake-only": 1,
-            "partial": 35,
+            "partial": 34,
             "structural": 6,
-            "supported": 17,
-            "unsupported": 44
+            "supported": 19,
+            "unsupported": 43
           },
           "enumValueCounts": {
-            "partial": 9,
+            "partial": 12,
             "structural": 3,
-            "supported": 196,
-            "unsupported": 121
+            "supported": 207,
+            "unsupported": 107
           },
           "nodes": [
             {
@@ -2335,6 +2475,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSpectralNodes.ts"
                 },
                 {
                   "path": "packages/blendlink/blender/native_color_band.py"
@@ -2650,12 +2793,12 @@
               "unreviewedCapability": false
             },
             {
-              "category": "partial",
-              "declaredCategory": "partial",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {
                 "clamp_type": {
                   "MINMAX": "supported",
-                  "RANGE": "unsupported"
+                  "RANGE": "supported"
                 }
               },
               "evidence": [
@@ -2669,45 +2812,53 @@
                 },
                 {
                   "path": "experiments/tsl-node-differential/cells.json"
+                },
+                {
+                  "path": "packages/blender-addon/tests/clamp_translation_check.py"
                 }
               ],
               "id": "ShaderNodeClamp",
               "label": "Clamp",
-              "limits": "MINMAX only; RANGE is a named refusal.",
+              "limits": "MINMAX and RANGE with finite authored or live Value/Min/Max. RANGE orders bounds per evaluation; MINMAX retains authored order, including reversed and collapsed bounds. Animated/driven node trees follow the shared material limits.",
               "runtimeOps": [
                 "clamp_minmax"
               ],
               "unreviewedCapability": false
             },
             {
-              "category": "partial",
-              "declaredCategory": "partial",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {
                 "mode": {
-                  "HSL": "unsupported",
+                  "HSL": "supported",
                   "HSV": "supported",
                   "RGB": "supported"
                 }
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_color_conversion",
+                  "path": "packages/blender-addon/color_ir.py"
                 },
                 {
-                  "anchor": "case 'combine':",
-                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                  "anchor": "export function buildTslColorConversion",
+                  "path": "packages/blendlink/src/tslColorConversion.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "path": "packages/blender-addon/tests/color_translation_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeCombineColor",
               "label": "Combine Color",
-              "limits": "RGB/HSV components only; HSL is not ported yet. These native shader nodes have three component sockets and no separate Alpha socket; compositor counterparts have different schemas.",
+              "limits": "RGB/HSV/HSL, including negative/HDR inputs and native negative/wrapped HSV hue. Three component sockets; no shader Alpha socket. Source input alpha is ignored. Engine-specific evaluation and Cycles constant-fold eligibility are explicit.",
               "runtimeOps": [
-                "combine",
-                "hsv_to_rgb"
+                "color_convert"
               ],
               "unreviewedCapability": false
             },
@@ -3684,30 +3835,35 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "mode": {
-                  "HSL": "unsupported",
+                  "HSL": "partial",
                   "HSV": "supported",
                   "RGB": "supported"
                 }
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_color_conversion",
+                  "path": "packages/blender-addon/color_ir.py"
                 },
                 {
-                  "anchor": "case 'separate':",
-                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                  "anchor": "export function buildTslColorConversion",
+                  "path": "packages/blendlink/src/tslColorConversion.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "path": "packages/blender-addon/tests/color_translation_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeSeparateColor",
               "label": "Separate Color",
-              "limits": "RGB/HSV components only; HSL is not ported yet. These native shader nodes have three component sockets and no separate Alpha socket; compositor counterparts have different schemas.",
+              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently.",
               "runtimeOps": [
-                "separate",
-                "rgb_to_hsv"
+                "color_convert"
               ],
               "unreviewedCapability": false
             },
@@ -4010,9 +4166,9 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "extension": {
-                  "CLIP": "unsupported",
+                  "CLIP": "partial",
                   "EXTEND": "supported",
-                  "MIRROR": "unsupported",
+                  "MIRROR": "partial",
                   "REPEAT": "supported"
                 },
                 "interpolation": {
@@ -4048,11 +4204,32 @@
                 },
                 {
                   "path": "packages/blendlink/src/compiledMaterialPrograms.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/multi_image_program_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/sceneDiagnostics.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/image_sampling_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialRuntime.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialProgram.ts"
+                },
+                {
+                  "path": "experiments/multi-image-differential/export.test.ts"
+                },
+                {
+                  "path": "experiments/multi-image-differential/run.mjs"
                 }
               ],
               "id": "ShaderNodeTexImage",
               "label": "Image Texture",
-              "limits": "Embedded <=128x128: Linear/Closest/Cubic, Repeat/Extend, Flat or sharp Box. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; only Linear/Closest hardware sampling. Large Cubic explicitly refuses. Straight alpha/known color spaces; Smart/Clip/Mirror/spherical/tube and blended Box refuse; animated/oriented companions have no verified audit route.",
+              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. External Cubic/Mirror/Clip, Smart, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together.",
               "runtimeOps": [
                 "tex_image",
                 "texture_ref"
@@ -4117,7 +4294,7 @@
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "Normalized FBM, 1D/2D/3D/4D; Detail<=6 and static fractal controls; exact effective-scale band <= 80, additional dimension-specific approximation bands are declared.",
+              "limits": "Normalized FBM, 1D/2D/3D/4D; Detail<=6 and static fractal controls. Roughness is proved in [0,1], with native negative-to-zero behavior; linked roughness above1 refuses because native Noise has no upper clamp; exact effective-scale band <= 80, additional dimension-specific approximation bands are declared.",
               "runtimeOps": [
                 "noise"
               ],
@@ -4248,7 +4425,7 @@
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
+                  "anchor": "if idname == \"ShaderNodeTexWave\"",
                   "path": "packages/blender-addon/tsl_ir.py"
                 },
                 {
@@ -4256,12 +4433,22 @@
                   "path": "packages/blendlink/src/tslNodeRecipe.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "anchor": "buildPortableSine",
+                  "path": "packages/blendlink/src/tslPortableTrig.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/wave_translation_check.py"
+                },
+                {
+                  "path": "experiments/wave-node-differential/reference.py"
+                },
+                {
+                  "path": "experiments/wave-node-differential/README.md"
                 }
               ],
               "id": "ShaderNodeTexWave",
               "label": "Wave Texture",
-              "limits": "Bands/Rings and declared profiles; Distortion constant; nonzero distortion uses static Detail<=2 and static Detail Roughness.",
+              "limits": "Bands/Rings, every direction and SIN/SAW/TRI, Color/Factor; live Distortion, Scale, Detail Scale and Phase. Nonzero distortion requires static Detail in [0,2]. Linked Roughness requires independently proven [0,1] inputs (an authored Clamp can establish bounds); native Wave does not clamp linked values automatically. Unknown live Roughness, linked Detail and higher octaves refuse. Zero Distortion prunes dead noise inputs. Fresh SIN uses portable precision through |angle|<=8192; old documents retain intrinsic behavior.",
               "runtimeOps": [
                 "tex_wave"
               ],
@@ -4329,7 +4516,7 @@
               ],
               "id": "ShaderNodeUVMap",
               "label": "UV Map",
-              "limits": "Named or active UV binding; exported channel/attribute binding must exist; instancer semantics are not a general port.",
+              "limits": "Named or active UV binding; production glTF V is converted to native Blender coordinates before graph math, while direct native builder measurements retain their own UV convention. Exported channel/attribute binding must exist; instancer semantics are not a general port.",
               "runtimeOps": [
                 "uv"
               ],
@@ -4360,23 +4547,36 @@
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_context_ramp",
+                  "path": "packages/blender-addon/ramps_ir.py"
                 },
                 {
-                  "anchor": "case 'color_ramp':",
+                  "anchor": "case 'ramp_lut':",
                   "path": "packages/blendlink/src/tslNodeRecipe.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "anchor": "def hidden_ramp_stop",
+                  "path": "packages/blender-addon/legacy_ramp_data.py"
                 },
                 {
                   "path": "packages/blender-addon/tests/color_ramp_translation_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/ramp_context_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/legacy_ramp_data_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeValToRGB",
               "label": "Color Ramp",
-              "limits": "RGB LINEAR/CONSTANT use analytic stops; other RGB modes use a native 257-sample LUT with remaining narrow-stop bounds. HSV/HSL, all four hue directions and five interpolation settings, Color/Alpha: native Cycles 257-entry table, linear lookup except CONSTANT floor; factor stays live, no surface bake. Both 4.2/5.3 Cycles CPU and both node-renderer backends tested; EEVEE pixel parity is not claimed.",
+              "limits": "RGB/HSV/HSL and all hue directions, Color/Alpha. Cycles uses its native 257-entry shader table, including RGB LINEAR/CONSTANT. EEVEE uses proven two-stop analytic shortcuts or a version/backend-specific GPU table. Literal modern MF Factors use native CPU evaluation; nonliteral MF Factors refuse except RGB LINEAR/CONSTANT. Legacy one-stop RGB shortcuts recover hidden native slots through an isolated SDNA snapshot, preserving slot order; embedded owners with external ID references/custom ID properties and coincident LINEAR/EASE positions refuse before copying. Modern single-stop GPU Alpha uses its authored output-socket default. No additional surface bake.",
               "runtimeOps": [
                 "color_ramp",
                 "ramp_alpha",
@@ -4568,30 +4768,65 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "convert_from": {
-                  "CAMERA": "unsupported",
-                  "OBJECT": "unsupported",
-                  "WORLD": "unsupported"
+                  "CAMERA": "supported",
+                  "OBJECT": "supported",
+                  "WORLD": "supported"
                 },
                 "convert_to": {
-                  "CAMERA": "unsupported",
-                  "OBJECT": "unsupported",
-                  "WORLD": "unsupported"
+                  "CAMERA": "supported",
+                  "OBJECT": "supported",
+                  "WORLD": "supported"
                 },
                 "vector_type": {
-                  "NORMAL": "unsupported",
-                  "POINT": "unsupported",
-                  "VECTOR": "unsupported"
+                  "NORMAL": "supported",
+                  "POINT": "supported",
+                  "VECTOR": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_vector_transform",
+                  "path": "packages/blender-addon/vector_transform_ir.py"
+                },
+                {
+                  "anchor": "nativeVectorTransformMatrix",
+                  "path": "packages/blendlink/src/tslVectorTransform.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialRuntime.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/camera_axes.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/vector_transform_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/camera_axes_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslVectorTransform.test.ts"
+                },
+                {
+                  "path": "experiments/vector-transform-differential/export.test.ts"
+                },
+                {
+                  "path": "experiments/vector-transform-differential/run.mjs"
+                }
+              ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "runtimeOps": [
+                "vector_transform"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -4693,6 +4928,9 @@
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 },
                 {
+                  "path": "packages/blendlink/src/tslSpectralNodes.ts"
+                },
+                {
                   "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
@@ -4728,12 +4966,12 @@
             "bake-only": 0,
             "partial": 11,
             "structural": 6,
-            "supported": 14,
-            "unsupported": 137
+            "supported": 18,
+            "unsupported": 133
           },
           "enumValueCounts": {
             "supported": 148,
-            "unsupported": 538
+            "unsupported": 541
           },
           "nodes": [
             {
@@ -5018,14 +5256,33 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "anchor": "case 'color-correction':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeColorCorrection",
               "label": "Color Correction",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All four tonal regions times five controls, masks (upper cap only), channel switches, linked modern controls, negative/HDR colors, independent alpha and collapsed/reversed/overlapping tonal ranges. Explicit legacy Lift vs modern Offset native models; finite gamma domains. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
+              "runtimeOps": [
+                "color-correction"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -5330,7 +5587,11 @@
               "declaredCategory": "unsupported",
               "enumCoverage": {
                 "layer": {},
-                "layer_name": {},
+                "layer_name": {
+                  "ViewLayer.CryptoAsset": "unsupported",
+                  "ViewLayer.CryptoMaterial": "unsupported",
+                  "ViewLayer.CryptoObject": "unsupported"
+                },
                 "source": {
                   "IMAGE": "unsupported",
                   "RENDER": "unsupported"
@@ -5371,11 +5632,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "CompositorNodeCurveRGB",
               "label": "RGB Curves",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -5572,11 +5839,20 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_graph_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
                 }
               ],
               "id": "CompositorNodeExposure",
               "label": "Exposure",
-              "limits": "Pointwise exposure, linked image/scalar input under image broadcast rules.",
+              "limits": "Exposure and HSV pointwise controls with native CPU/GPU conversion/division, far Hue values, signed/extrapolated factors and independent alpha. Blender 4.2 CPU Hue wraps once; modern Hue uses fract. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
               "runtimeOps": [
                 "exposure"
               ],
@@ -5710,11 +5986,20 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_graph_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
                 }
               ],
               "id": "CompositorNodeHueSat",
               "label": "Hue/Saturation/Value",
-              "limits": "Pointwise HSV transform and factor.",
+              "limits": "Exposure and HSV pointwise controls with native CPU/GPU conversion/division, far Hue values, signed/extrapolated factors and independent alpha. Blender 4.2 CPU Hue wraps once; modern Hue uses fract. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
               "runtimeOps": [
                 "hue-saturation-value"
               ],
@@ -6038,14 +6323,33 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "anchor": "case 'posterize':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/README.md"
+                }
+              ],
               "id": "CompositorNodePosterize",
               "label": "Posterize",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Steps clamp 2..1024, linked levels and independent alpha. Explicit native 4.2 reciprocal-before-floor and modern division ordering, including adjacent float bin boundaries; native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
+              "runtimeOps": [
+                "posterize"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -6644,25 +6948,69 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'utility-constant':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeInputBool",
               "label": "Boolean",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Authored Boolean property, transported as a typed boolean. Blender 5.2+ actual tree creation only; keyed/driven trees refuse.",
+              "runtimeOps": [
+                "utility-constant"
+              ],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'utility-constant':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeInputInt",
               "label": "Integer",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Authored signed 32-bit Integer property remains integer-typed until an explicit native socket conversion. Blender 5.2+ actual tree creation only; keyed/driven trees refuse.",
+              "runtimeOps": [
+                "utility-constant"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -6679,7 +7027,9 @@
             {
               "category": "unsupported",
               "declaredCategory": "unsupported",
-              "enumCoverage": {},
+              "enumCoverage": {
+                "value": {}
+              },
               "evidence": [],
               "id": "FunctionNodeInputMenu",
               "label": "Menu",
@@ -7049,7 +7399,9 @@
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Item_0": {},
+                "inputs:Item_1": {}
               },
               "evidence": [],
               "id": "GeometryNodeIndexSwitch",
@@ -7109,6 +7461,8 @@
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
                 },
+                "inputs:Item_0": {},
+                "inputs:Item_1": {},
                 "inputs:Menu": {
                   "A": "unsupported",
                   "B": "unsupported"
@@ -7154,7 +7508,9 @@
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:False": {},
+                "inputs:True": {}
               },
               "evidence": [],
               "id": "GeometryNodeSwitch",
@@ -7197,7 +7553,8 @@
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Value": {}
               },
               "evidence": [],
               "id": "NodeEnableOutput",
@@ -7271,7 +7628,8 @@
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Value": {}
               },
               "evidence": [],
               "id": "NodeImplicitConversion",
@@ -7378,11 +7736,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "ShaderNodeFloatCurve",
               "label": "Float Curve",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -7655,11 +8019,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "ShaderNodeRGBCurve",
               "label": "RGB Curves",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -7901,11 +8271,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "ShaderNodeValToRGB",
               "label": "Color Ramp",
-              "limits": "RGB five interpolations and HSV/HSL all four hue directions, Color/Alpha, linked factors. Native CPU-authored paths run on both browser backends. GPU-authored interpolated tables require measured METAL eight-bit filter metadata; other GPU filters explicitly refuse.",
+              "limits": "RGB five interpolations and HSV/HSL all four hue directions, Color/Alpha, linked factors. Native CPU-authored paths run on both browser backends. GPU-authored interpolated tables require measured METAL eight-bit filter metadata; other GPU filters explicitly refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "color-ramp"
               ],
@@ -7963,11 +8339,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "ShaderNodeVectorCurve",
               "label": "Vector Curves",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -8042,44 +8424,90 @@
         "shader": {
           "counts": {
             "bake-only": 1,
-            "partial": 34,
+            "partial": 33,
             "structural": 6,
-            "supported": 16,
-            "unsupported": 61
+            "supported": 20,
+            "unsupported": 58
           },
           "enumValueCounts": {
-            "partial": 11,
+            "partial": 14,
             "structural": 3,
-            "supported": 201,
-            "unsupported": 148
+            "supported": 212,
+            "unsupported": 134
           },
           "nodes": [
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'typed_const':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeInputBool",
               "label": "Boolean",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Authored Boolean property, transported as a typed boolean. Blender 5.2+ actual tree creation only; keyed/driven trees refuse.",
+              "runtimeOps": [
+                "typed_const"
+              ],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'typed_const':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeInputInt",
               "label": "Integer",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Authored signed 32-bit Integer property remains integer-typed until an explicit native socket conversion. Blender 5.2+ actual tree creation only; keyed/driven trees refuse.",
+              "runtimeOps": [
+                "typed_const"
+              ],
               "unreviewedCapability": false
             },
             {
               "category": "unsupported",
               "declaredCategory": "unsupported",
-              "enumCoverage": {},
+              "enumCoverage": {
+                "value": {}
+              },
               "evidence": [],
               "id": "FunctionNodeInputMenu",
               "label": "Menu",
@@ -8124,6 +8552,8 @@
                   "SHADER": "unsupported",
                   "VECTOR": "unsupported"
                 },
+                "inputs:Item_0": {},
+                "inputs:Item_1": {},
                 "inputs:Menu": {
                   "A": "unsupported",
                   "B": "unsupported"
@@ -8264,7 +8694,8 @@
                   "RGBA": "unsupported",
                   "SHADER": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Value": {}
               },
               "evidence": [],
               "id": "NodeImplicitConversion",
@@ -8430,6 +8861,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSpectralNodes.ts"
                 },
                 {
                   "path": "packages/blendlink/blender/native_color_band.py"
@@ -8767,12 +9201,12 @@
               "unreviewedCapability": false
             },
             {
-              "category": "partial",
-              "declaredCategory": "partial",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {
                 "clamp_type": {
                   "MINMAX": "supported",
-                  "RANGE": "unsupported"
+                  "RANGE": "supported"
                 }
               },
               "evidence": [
@@ -8786,45 +9220,53 @@
                 },
                 {
                   "path": "experiments/tsl-node-differential/cells.json"
+                },
+                {
+                  "path": "packages/blender-addon/tests/clamp_translation_check.py"
                 }
               ],
               "id": "ShaderNodeClamp",
               "label": "Clamp",
-              "limits": "MINMAX only; RANGE is a named refusal.",
+              "limits": "MINMAX and RANGE with finite authored or live Value/Min/Max. RANGE orders bounds per evaluation; MINMAX retains authored order, including reversed and collapsed bounds. Animated/driven node trees follow the shared material limits.",
               "runtimeOps": [
                 "clamp_minmax"
               ],
               "unreviewedCapability": false
             },
             {
-              "category": "partial",
-              "declaredCategory": "partial",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {
                 "mode": {
-                  "HSL": "unsupported",
+                  "HSL": "supported",
                   "HSV": "supported",
                   "RGB": "supported"
                 }
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_color_conversion",
+                  "path": "packages/blender-addon/color_ir.py"
                 },
                 {
-                  "anchor": "case 'combine':",
-                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                  "anchor": "export function buildTslColorConversion",
+                  "path": "packages/blendlink/src/tslColorConversion.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "path": "packages/blender-addon/tests/color_translation_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeCombineColor",
               "label": "Combine Color",
-              "limits": "RGB/HSV components only; HSL is not ported yet. These native shader nodes have three component sockets and no separate Alpha socket; compositor counterparts have different schemas.",
+              "limits": "RGB/HSV/HSL, including negative/HDR inputs and native negative/wrapped HSV hue. Three component sockets; no shader Alpha socket. Source input alpha is ignored. Engine-specific evaluation and Cycles constant-fold eligibility are explicit.",
               "runtimeOps": [
-                "combine",
-                "hsv_to_rgb"
+                "color_convert"
               ],
               "unreviewedCapability": false
             },
@@ -9795,30 +10237,35 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "mode": {
-                  "HSL": "unsupported",
+                  "HSL": "partial",
                   "HSV": "supported",
                   "RGB": "supported"
                 }
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_color_conversion",
+                  "path": "packages/blender-addon/color_ir.py"
                 },
                 {
-                  "anchor": "case 'separate':",
-                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                  "anchor": "export function buildTslColorConversion",
+                  "path": "packages/blendlink/src/tslColorConversion.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "path": "packages/blender-addon/tests/color_translation_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeSeparateColor",
               "label": "Separate Color",
-              "limits": "RGB/HSV components only; HSL is not ported yet. These native shader nodes have three component sockets and no separate Alpha socket; compositor counterparts have different schemas.",
+              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently.",
               "runtimeOps": [
-                "separate",
-                "rgb_to_hsv"
+                "color_convert"
               ],
               "unreviewedCapability": false
             },
@@ -10102,9 +10549,9 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "extension": {
-                  "CLIP": "unsupported",
+                  "CLIP": "partial",
                   "EXTEND": "supported",
-                  "MIRROR": "unsupported",
+                  "MIRROR": "partial",
                   "REPEAT": "supported"
                 },
                 "interpolation": {
@@ -10140,11 +10587,32 @@
                 },
                 {
                   "path": "packages/blendlink/src/compiledMaterialPrograms.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/multi_image_program_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/sceneDiagnostics.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/image_sampling_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialRuntime.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialProgram.ts"
+                },
+                {
+                  "path": "experiments/multi-image-differential/export.test.ts"
+                },
+                {
+                  "path": "experiments/multi-image-differential/run.mjs"
                 }
               ],
               "id": "ShaderNodeTexImage",
               "label": "Image Texture",
-              "limits": "Embedded <=128x128: Linear/Closest/Cubic, Repeat/Extend, Flat or sharp Box. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; only Linear/Closest hardware sampling. Large Cubic explicitly refuses. Straight alpha/known color spaces; Smart/Clip/Mirror/spherical/tube and blended Box refuse; animated/oriented companions have no verified audit route.",
+              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. External Cubic/Mirror/Clip, Smart, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together.",
               "runtimeOps": [
                 "tex_image",
                 "texture_ref"
@@ -10209,7 +10677,7 @@
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "Normalized FBM, 1D/2D/3D/4D; Detail<=6 and static fractal controls; exact effective-scale band <= 80, additional dimension-specific approximation bands are declared.",
+              "limits": "Normalized FBM, 1D/2D/3D/4D; Detail<=6 and static fractal controls. Roughness is proved in [0,1], with native negative-to-zero behavior; linked roughness above1 refuses because native Noise has no upper clamp; exact effective-scale band <= 80, additional dimension-specific approximation bands are declared.",
               "runtimeOps": [
                 "noise"
               ],
@@ -10306,7 +10774,7 @@
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
+                  "anchor": "if idname == \"ShaderNodeTexWave\"",
                   "path": "packages/blender-addon/tsl_ir.py"
                 },
                 {
@@ -10314,12 +10782,22 @@
                   "path": "packages/blendlink/src/tslNodeRecipe.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "anchor": "buildPortableSine",
+                  "path": "packages/blendlink/src/tslPortableTrig.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/wave_translation_check.py"
+                },
+                {
+                  "path": "experiments/wave-node-differential/reference.py"
+                },
+                {
+                  "path": "experiments/wave-node-differential/README.md"
                 }
               ],
               "id": "ShaderNodeTexWave",
               "label": "Wave Texture",
-              "limits": "Bands/Rings and declared profiles; Distortion constant; nonzero distortion uses static Detail<=2 and static Detail Roughness.",
+              "limits": "Bands/Rings, every direction and SIN/SAW/TRI, Color/Factor; live Distortion, Scale, Detail Scale and Phase. Nonzero distortion requires static Detail in [0,2]. Linked Roughness requires independently proven [0,1] inputs (an authored Clamp can establish bounds); native Wave does not clamp linked values automatically. Unknown live Roughness, linked Detail and higher octaves refuse. Zero Distortion prunes dead noise inputs. Fresh SIN uses portable precision through |angle|<=8192; old documents retain intrinsic behavior.",
               "runtimeOps": [
                 "tex_wave"
               ],
@@ -10387,7 +10865,7 @@
               ],
               "id": "ShaderNodeUVMap",
               "label": "UV Map",
-              "limits": "Named or active UV binding; exported channel/attribute binding must exist; instancer semantics are not a general port.",
+              "limits": "Named or active UV binding; production glTF V is converted to native Blender coordinates before graph math, while direct native builder measurements retain their own UV convention. Exported channel/attribute binding must exist; instancer semantics are not a general port.",
               "runtimeOps": [
                 "uv"
               ],
@@ -10418,23 +10896,36 @@
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_context_ramp",
+                  "path": "packages/blender-addon/ramps_ir.py"
                 },
                 {
-                  "anchor": "case 'color_ramp':",
+                  "anchor": "case 'ramp_lut':",
                   "path": "packages/blendlink/src/tslNodeRecipe.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "anchor": "def hidden_ramp_stop",
+                  "path": "packages/blender-addon/legacy_ramp_data.py"
                 },
                 {
                   "path": "packages/blender-addon/tests/color_ramp_translation_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/ramp_context_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/legacy_ramp_data_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeValToRGB",
               "label": "Color Ramp",
-              "limits": "RGB LINEAR/CONSTANT use analytic stops; other RGB modes use a native 257-sample LUT with remaining narrow-stop bounds. HSV/HSL, all four hue directions and five interpolation settings, Color/Alpha: native Cycles 257-entry table, linear lookup except CONSTANT floor; factor stays live, no surface bake. Both 4.2/5.3 Cycles CPU and both node-renderer backends tested; EEVEE pixel parity is not claimed.",
+              "limits": "RGB/HSV/HSL and all hue directions, Color/Alpha. Cycles uses its native 257-entry shader table, including RGB LINEAR/CONSTANT. EEVEE uses proven two-stop analytic shortcuts or a version/backend-specific GPU table. Literal modern MF Factors use native CPU evaluation; nonliteral MF Factors refuse except RGB LINEAR/CONSTANT. Legacy one-stop RGB shortcuts recover hidden native slots through an isolated SDNA snapshot, preserving slot order; embedded owners with external ID references/custom ID properties and coincident LINEAR/EASE positions refuse before copying. Modern single-stop GPU Alpha uses its authored output-socket default. No additional surface bake.",
               "runtimeOps": [
                 "color_ramp",
                 "ramp_alpha",
@@ -10629,30 +11120,65 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "convert_from": {
-                  "CAMERA": "unsupported",
-                  "OBJECT": "unsupported",
-                  "WORLD": "unsupported"
+                  "CAMERA": "supported",
+                  "OBJECT": "supported",
+                  "WORLD": "supported"
                 },
                 "convert_to": {
-                  "CAMERA": "unsupported",
-                  "OBJECT": "unsupported",
-                  "WORLD": "unsupported"
+                  "CAMERA": "supported",
+                  "OBJECT": "supported",
+                  "WORLD": "supported"
                 },
                 "vector_type": {
-                  "NORMAL": "unsupported",
-                  "POINT": "unsupported",
-                  "VECTOR": "unsupported"
+                  "NORMAL": "supported",
+                  "POINT": "supported",
+                  "VECTOR": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_vector_transform",
+                  "path": "packages/blender-addon/vector_transform_ir.py"
+                },
+                {
+                  "anchor": "nativeVectorTransformMatrix",
+                  "path": "packages/blendlink/src/tslVectorTransform.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialRuntime.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/camera_axes.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/vector_transform_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/camera_axes_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslVectorTransform.test.ts"
+                },
+                {
+                  "path": "experiments/vector-transform-differential/export.test.ts"
+                },
+                {
+                  "path": "experiments/vector-transform-differential/run.mjs"
+                }
+              ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "runtimeOps": [
+                "vector_transform"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -10781,6 +11307,9 @@
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 },
                 {
+                  "path": "packages/blendlink/src/tslSpectralNodes.ts"
+                },
+                {
                   "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
@@ -10814,14 +11343,15 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 11,
+            "partial": 13,
             "structural": 6,
-            "supported": 14,
-            "unsupported": 156
+            "supported": 19,
+            "unsupported": 149
           },
           "enumValueCounts": {
-            "supported": 148,
-            "unsupported": 779
+            "partial": 5,
+            "supported": 190,
+            "unsupported": 737
           },
           "nodes": [
             {
@@ -11106,14 +11636,33 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "anchor": "case 'color-correction':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeColorCorrection",
               "label": "Color Correction",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All four tonal regions times five controls, masks (upper cap only), channel switches, linked modern controls, negative/HDR colors, independent alpha and collapsed/reversed/overlapping tonal ranges. Explicit legacy Lift vs modern Offset native models; finite gamma domains. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
+              "runtimeOps": [
+                "color-correction"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -11552,7 +12101,11 @@
               "declaredCategory": "unsupported",
               "enumCoverage": {
                 "layer": {},
-                "layer_name": {},
+                "layer_name": {
+                  "ViewLayer.CryptoAsset": "unsupported",
+                  "ViewLayer.CryptoMaterial": "unsupported",
+                  "ViewLayer.CryptoObject": "unsupported"
+                },
                 "source": {
                   "IMAGE": "unsupported",
                   "RENDER": "unsupported"
@@ -11593,11 +12146,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "CompositorNodeCurveRGB",
               "label": "RGB Curves",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -11794,11 +12353,20 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_graph_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
                 }
               ],
               "id": "CompositorNodeExposure",
               "label": "Exposure",
-              "limits": "Pointwise exposure, linked image/scalar input under image broadcast rules.",
+              "limits": "Exposure and HSV pointwise controls with native CPU/GPU conversion/division, far Hue values, signed/extrapolated factors and independent alpha. Blender 4.2 CPU Hue wraps once; modern Hue uses fract. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
               "runtimeOps": [
                 "exposure"
               ],
@@ -11932,11 +12500,20 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_graph_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
                 }
               ],
               "id": "CompositorNodeHueSat",
               "label": "Hue/Saturation/Value",
-              "limits": "Pointwise HSV transform and factor.",
+              "limits": "Exposure and HSV pointwise controls with native CPU/GPU conversion/division, far Hue values, signed/extrapolated factors and independent alpha. Blender 4.2 CPU Hue wraps once; modern Hue uses fract. Native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
               "runtimeOps": [
                 "hue-saturation-value"
               ],
@@ -12260,14 +12837,33 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_color.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorColor.ts"
+                },
+                {
+                  "anchor": "case 'posterize':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/README.md"
+                }
+              ],
               "id": "CompositorNodePosterize",
               "label": "Posterize",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Steps clamp 2..1024, linked levels and independent alpha. Explicit native 4.2 reciprocal-before-floor and modern division ordering, including adjacent float bin boundaries; native CPU 4.2/5.2/5.3 and GPU 5.2/5.3 proved.",
+              "runtimeOps": [
+                "posterize"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -12837,26 +13433,48 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {
                 "operation": {
-                  "AND": "unsupported",
-                  "IMPLY": "unsupported",
-                  "NAND": "unsupported",
-                  "NIMPLY": "unsupported",
-                  "NOR": "unsupported",
-                  "NOT": "unsupported",
-                  "OR": "unsupported",
-                  "XNOR": "unsupported",
-                  "XOR": "unsupported"
+                  "AND": "supported",
+                  "IMPLY": "supported",
+                  "NAND": "supported",
+                  "NIMPLY": "supported",
+                  "NOR": "supported",
+                  "NOT": "supported",
+                  "OR": "supported",
+                  "XNOR": "supported",
+                  "XOR": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'boolean-math':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeBooleanMath",
               "label": "Boolean Math",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All 9 native operations; explicit scalar/boolean/integer conversions. Negative scalar/integer converts false via >0. Blender 5.3+ only; unmodeled conversions and keyed/driven trees refuse.",
+              "runtimeOps": [
+                "boolean-math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -12882,39 +13500,58 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
-                  "FLOAT": "unsupported",
-                  "FONT": "unsupported",
-                  "INT": "unsupported",
-                  "OBJECT": "unsupported",
-                  "RGBA": "unsupported",
-                  "STRING": "unsupported",
-                  "VECTOR": "unsupported"
+                  "FLOAT": "supported",
+                  "FONT": "partial",
+                  "INT": "supported",
+                  "OBJECT": "partial",
+                  "RGBA": "supported",
+                  "STRING": "partial",
+                  "VECTOR": "supported"
                 },
                 "mode": {
-                  "AVERAGE": "unsupported",
-                  "DIRECTION": "unsupported",
-                  "DOT_PRODUCT": "unsupported",
-                  "ELEMENT": "unsupported",
-                  "LENGTH": "unsupported"
+                  "AVERAGE": "supported",
+                  "DIRECTION": "supported",
+                  "DOT_PRODUCT": "supported",
+                  "ELEMENT": "supported",
+                  "LENGTH": "supported"
                 },
                 "operation": {
-                  "EQUAL": "unsupported",
-                  "GREATER_EQUAL": "unsupported",
-                  "GREATER_THAN": "unsupported",
-                  "LESS_EQUAL": "unsupported",
-                  "LESS_THAN": "unsupported",
-                  "NOT_EQUAL": "unsupported"
+                  "BRIGHTER": "supported",
+                  "DARKER": "supported",
+                  "EQUAL": "supported",
+                  "GREATER_EQUAL": "supported",
+                  "GREATER_THAN": "supported",
+                  "LESS_EQUAL": "supported",
+                  "LESS_THAN": "supported",
+                  "NOT_EQUAL": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'compare':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                }
+              ],
               "id": "FunctionNodeCompare",
               "label": "Compare",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Live Float/Integer six operations, Vector five modes times six operations, and Color Equal/NotEqual/Brighter/Darker. Color equality ignores alpha; native luminance controls brightness. Authored unlinked String/Object/Font equality is folded statically; linked string/ID identity transport refuses and is not counted as a live mode. Keyed/driven trees and unmodeled conversions refuse. Blender 5.3 compositor creation only.",
+              "runtimeOps": [
+                "compare",
+                "utility-constant"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -13006,25 +13643,69 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'utility-constant':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeInputBool",
               "label": "Boolean",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Authored Boolean property, transported as a typed boolean. Blender 5.2+ actual tree creation only; keyed/driven trees refuse.",
+              "runtimeOps": [
+                "utility-constant"
+              ],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'utility-constant':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeInputInt",
               "label": "Integer",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Authored signed 32-bit Integer property remains integer-typed until an explicit native socket conversion. Blender 5.2+ actual tree creation only; keyed/driven trees refuse.",
+              "runtimeOps": [
+                "utility-constant"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -13041,7 +13722,9 @@
             {
               "category": "unsupported",
               "declaredCategory": "unsupported",
-              "enumCoverage": {},
+              "enumCoverage": {
+                "value": {}
+              },
               "evidence": [],
               "id": "FunctionNodeInputMenu",
               "label": "Menu",
@@ -13094,35 +13777,57 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "operation": {
-                  "ABSOLUTE": "unsupported",
-                  "ADD": "unsupported",
-                  "DIVIDE": "unsupported",
-                  "DIVIDE_CEIL": "unsupported",
-                  "DIVIDE_FLOOR": "unsupported",
-                  "DIVIDE_ROUND": "unsupported",
-                  "FLOORED_MODULO": "unsupported",
-                  "GCD": "unsupported",
-                  "LCM": "unsupported",
-                  "MAXIMUM": "unsupported",
-                  "MINIMUM": "unsupported",
-                  "MODULO": "unsupported",
-                  "MULTIPLY": "unsupported",
-                  "MULTIPLY_ADD": "unsupported",
-                  "NEGATE": "unsupported",
-                  "POWER": "unsupported",
-                  "SIGN": "unsupported",
-                  "SUBTRACT": "unsupported"
+                  "ABSOLUTE": "supported",
+                  "ADD": "supported",
+                  "DIVIDE": "supported",
+                  "DIVIDE_CEIL": "supported",
+                  "DIVIDE_FLOOR": "supported",
+                  "DIVIDE_ROUND": "partial",
+                  "FLOORED_MODULO": "supported",
+                  "GCD": "supported",
+                  "LCM": "partial",
+                  "MAXIMUM": "supported",
+                  "MINIMUM": "supported",
+                  "MODULO": "supported",
+                  "MULTIPLY": "supported",
+                  "MULTIPLY_ADD": "supported",
+                  "NEGATE": "supported",
+                  "POWER": "supported",
+                  "SIGN": "supported",
+                  "SUBTRACT": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'integer-math':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeIntegerMath",
               "label": "Integer Math",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All 18 native operations with explicit CPU/Cycles/GPU models, signed 32-bit arithmetic, zero-divisor/negative-power rules and low-bit overflow evidence. Round requires proven signed-intermediate bounds; LCM requires proven inputs above INT_MIN. Clamp can bound live fields. Float-to-integer covers finite native int32 values; unmodeled conversions and keyed/driven trees refuse. Blender 5.3+ only.",
+              "runtimeOps": [
+                "integer-math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -13511,7 +14216,9 @@
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Item_0": {},
+                "inputs:Item_1": {}
               },
               "evidence": [],
               "id": "GeometryNodeIndexSwitch",
@@ -13583,6 +14290,8 @@
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
                 },
+                "inputs:Item_0": {},
+                "inputs:Item_1": {},
                 "inputs:Menu": {
                   "A": "unsupported",
                   "B": "unsupported"
@@ -13629,7 +14338,9 @@
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:False": {},
+                "inputs:True": {}
               },
               "evidence": [],
               "id": "GeometryNodeSwitch",
@@ -13695,7 +14406,8 @@
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Value": {}
               },
               "evidence": [],
               "id": "NodeEnableOutput",
@@ -13805,7 +14517,8 @@
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Value": {}
               },
               "evidence": [],
               "id": "NodeImplicitConversion",
@@ -13845,6 +14558,7 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {
+                "inputs:Item": {},
                 "socket_type": {
                   "BOOLEAN": "unsupported",
                   "BUNDLE": "unsupported",
@@ -13958,11 +14672,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "ShaderNodeFloatCurve",
               "label": "Float Curve",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -14235,11 +14955,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "ShaderNodeRGBCurve",
               "label": "RGB Curves",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -14481,11 +15207,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "ShaderNodeValToRGB",
               "label": "Color Ramp",
-              "limits": "RGB five interpolations and HSV/HSL all four hue directions, Color/Alpha, linked factors. Native CPU-authored paths run on both browser backends. GPU-authored interpolated tables require measured METAL eight-bit filter metadata; other GPU filters explicitly refuse.",
+              "limits": "RGB five interpolations and HSV/HSL all four hue directions, Color/Alpha, linked factors. Native CPU-authored paths run on both browser backends. GPU-authored interpolated tables require measured METAL eight-bit filter metadata; other GPU filters explicitly refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "color-ramp"
               ],
@@ -14543,11 +15275,17 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslCompositorPointwise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/native_color_band.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 }
               ],
               "id": "ShaderNodeVectorCurve",
               "label": "Vector Curves",
-              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse.",
+              "limits": "Native curve tables preserve Standard/FilmLike, extrapolation, nonunit ranges, clipping and alpha/device order. CPU-authored paths support both browser backends; GPU interpolated tables require measured METAL eight-bit filter metadata. Other GPU filters, animation and unknown/collapsed models refuse. Native Metal precision additionally proved on Blender 5.2 half tables/ties-away sampler and Blender 5.3 float tables; explicit upload/filter metadata. Other native GPU backends still require their own proof.",
               "runtimeOps": [
                 "curves"
               ],
@@ -14624,37 +15362,59 @@
             "bake-only": 1,
             "partial": 34,
             "structural": 6,
-            "supported": 16,
-            "unsupported": 88
+            "supported": 21,
+            "unsupported": 83
           },
           "enumValueCounts": {
-            "partial": 11,
+            "partial": 16,
             "structural": 3,
-            "supported": 201,
-            "unsupported": 226
+            "supported": 237,
+            "unsupported": 185
           },
           "nodes": [
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {
                 "operation": {
-                  "AND": "unsupported",
-                  "IMPLY": "unsupported",
-                  "NAND": "unsupported",
-                  "NIMPLY": "unsupported",
-                  "NOR": "unsupported",
-                  "NOT": "unsupported",
-                  "OR": "unsupported",
-                  "XNOR": "unsupported",
-                  "XOR": "unsupported"
+                  "AND": "supported",
+                  "IMPLY": "supported",
+                  "NAND": "supported",
+                  "NIMPLY": "supported",
+                  "NOR": "supported",
+                  "NOT": "supported",
+                  "OR": "supported",
+                  "XNOR": "supported",
+                  "XOR": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'boolean_math':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeBooleanMath",
               "label": "Boolean Math",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All 9 native operations; explicit scalar/boolean/integer conversions. Negative scalar/integer converts false via >0. Blender 5.3+ only; unmodeled conversions and keyed/driven trees refuse.",
+              "runtimeOps": [
+                "boolean_math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -14696,31 +15456,77 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'typed_const':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeInputBool",
               "label": "Boolean",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Authored Boolean property, transported as a typed boolean. Blender 5.2+ actual tree creation only; keyed/driven trees refuse.",
+              "runtimeOps": [
+                "typed_const"
+              ],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'typed_const':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeInputInt",
               "label": "Integer",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Authored signed 32-bit Integer property remains integer-typed until an explicit native socket conversion. Blender 5.2+ actual tree creation only; keyed/driven trees refuse.",
+              "runtimeOps": [
+                "typed_const"
+              ],
               "unreviewedCapability": false
             },
             {
               "category": "unsupported",
               "declaredCategory": "unsupported",
-              "enumCoverage": {},
+              "enumCoverage": {
+                "value": {}
+              },
               "evidence": [],
               "id": "FunctionNodeInputMenu",
               "label": "Menu",
@@ -14762,35 +15568,57 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "operation": {
-                  "ABSOLUTE": "unsupported",
-                  "ADD": "unsupported",
-                  "DIVIDE": "unsupported",
-                  "DIVIDE_CEIL": "unsupported",
-                  "DIVIDE_FLOOR": "unsupported",
-                  "DIVIDE_ROUND": "unsupported",
-                  "FLOORED_MODULO": "unsupported",
-                  "GCD": "unsupported",
-                  "LCM": "unsupported",
-                  "MAXIMUM": "unsupported",
-                  "MINIMUM": "unsupported",
-                  "MODULO": "unsupported",
-                  "MULTIPLY": "unsupported",
-                  "MULTIPLY_ADD": "unsupported",
-                  "NEGATE": "unsupported",
-                  "POWER": "unsupported",
-                  "SIGN": "unsupported",
-                  "SUBTRACT": "unsupported"
+                  "ABSOLUTE": "supported",
+                  "ADD": "supported",
+                  "DIVIDE": "supported",
+                  "DIVIDE_CEIL": "supported",
+                  "DIVIDE_FLOOR": "supported",
+                  "DIVIDE_ROUND": "partial",
+                  "FLOORED_MODULO": "supported",
+                  "GCD": "supported",
+                  "LCM": "partial",
+                  "MAXIMUM": "supported",
+                  "MINIMUM": "supported",
+                  "MODULO": "supported",
+                  "MULTIPLY": "supported",
+                  "MULTIPLY_ADD": "supported",
+                  "NEGATE": "supported",
+                  "POWER": "supported",
+                  "SIGN": "supported",
+                  "SUBTRACT": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/utility_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSharedUtilities.ts"
+                },
+                {
+                  "anchor": "case 'integer_math':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "path": "experiments/shared-utility-differential/README.md"
+                }
+              ],
               "id": "FunctionNodeIntegerMath",
               "label": "Integer Math",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All 18 native operations with explicit CPU/Cycles/GPU models, signed 32-bit arithmetic, zero-divisor/negative-power rules and low-bit overflow evidence. Round requires proven signed-intermediate bounds; LCM requires proven inputs above INT_MIN. Clamp can bound live fields. Float-to-integer covers finite native int32 values; unmodeled conversions and keyed/driven trees refuse. Blender 5.3+ only.",
+              "runtimeOps": [
+                "integer_math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -14928,7 +15756,9 @@
                   "SHADER": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Item_0": {},
+                "inputs:Item_1": {}
               },
               "evidence": [],
               "id": "GeometryNodeIndexSwitch",
@@ -14964,6 +15794,8 @@
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
                 },
+                "inputs:Item_0": {},
+                "inputs:Item_1": {},
                 "inputs:Menu": {
                   "A": "unsupported",
                   "B": "unsupported"
@@ -15013,7 +15845,9 @@
                   "SHADER": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:False": {},
+                "inputs:True": {}
               },
               "evidence": [],
               "id": "GeometryNodeSwitch",
@@ -15098,7 +15932,8 @@
                   "SHADER": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Value": {}
               },
               "evidence": [],
               "id": "NodeEnableOutput",
@@ -15181,7 +16016,8 @@
                   "SHADER": "unsupported",
                   "STRING": "unsupported",
                   "VECTOR": "unsupported"
-                }
+                },
+                "inputs:Value": {}
               },
               "evidence": [],
               "id": "NodeImplicitConversion",
@@ -15348,6 +16184,9 @@
                 },
                 {
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSpectralNodes.ts"
                 },
                 {
                   "path": "packages/blendlink/blender/native_color_band.py"
@@ -15685,12 +16524,12 @@
               "unreviewedCapability": false
             },
             {
-              "category": "partial",
-              "declaredCategory": "partial",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {
                 "clamp_type": {
                   "MINMAX": "supported",
-                  "RANGE": "unsupported"
+                  "RANGE": "supported"
                 }
               },
               "evidence": [
@@ -15704,45 +16543,53 @@
                 },
                 {
                   "path": "experiments/tsl-node-differential/cells.json"
+                },
+                {
+                  "path": "packages/blender-addon/tests/clamp_translation_check.py"
                 }
               ],
               "id": "ShaderNodeClamp",
               "label": "Clamp",
-              "limits": "MINMAX only; RANGE is a named refusal.",
+              "limits": "MINMAX and RANGE with finite authored or live Value/Min/Max. RANGE orders bounds per evaluation; MINMAX retains authored order, including reversed and collapsed bounds. Animated/driven node trees follow the shared material limits.",
               "runtimeOps": [
                 "clamp_minmax"
               ],
               "unreviewedCapability": false
             },
             {
-              "category": "partial",
-              "declaredCategory": "partial",
+              "category": "supported",
+              "declaredCategory": "supported",
               "enumCoverage": {
                 "mode": {
-                  "HSL": "unsupported",
+                  "HSL": "supported",
                   "HSV": "supported",
                   "RGB": "supported"
                 }
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_color_conversion",
+                  "path": "packages/blender-addon/color_ir.py"
                 },
                 {
-                  "anchor": "case 'combine':",
-                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                  "anchor": "export function buildTslColorConversion",
+                  "path": "packages/blendlink/src/tslColorConversion.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "path": "packages/blender-addon/tests/color_translation_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeCombineColor",
               "label": "Combine Color",
-              "limits": "RGB/HSV components only; HSL is not ported yet. These native shader nodes have three component sockets and no separate Alpha socket; compositor counterparts have different schemas.",
+              "limits": "RGB/HSV/HSL, including negative/HDR inputs and native negative/wrapped HSV hue. Three component sockets; no shader Alpha socket. Source input alpha is ignored. Engine-specific evaluation and Cycles constant-fold eligibility are explicit.",
               "runtimeOps": [
-                "combine",
-                "hsv_to_rgb"
+                "color_convert"
               ],
               "unreviewedCapability": false
             },
@@ -16773,30 +17620,35 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "mode": {
-                  "HSL": "unsupported",
+                  "HSL": "partial",
                   "HSV": "supported",
                   "RGB": "supported"
                 }
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_color_conversion",
+                  "path": "packages/blender-addon/color_ir.py"
                 },
                 {
-                  "anchor": "case 'separate':",
-                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                  "anchor": "export function buildTslColorConversion",
+                  "path": "packages/blendlink/src/tslColorConversion.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "path": "packages/blender-addon/tests/color_translation_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeSeparateColor",
               "label": "Separate Color",
-              "limits": "RGB/HSV components only; HSL is not ported yet. These native shader nodes have three component sockets and no separate Alpha socket; compositor counterparts have different schemas.",
+              "limits": "RGB/HSV finite inputs; HSL requires a literal nonsingular RGB value or an independently proven unit-bounded live expression. Unknown live HDR and native saturation singularities refuse. Source alpha is ignored; this shader node has no Alpha output. Emitter and runtime validate domains independently.",
               "runtimeOps": [
-                "separate",
-                "rgb_to_hsv"
+                "color_convert"
               ],
               "unreviewedCapability": false
             },
@@ -17091,9 +17943,9 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "extension": {
-                  "CLIP": "unsupported",
+                  "CLIP": "partial",
                   "EXTEND": "supported",
-                  "MIRROR": "unsupported",
+                  "MIRROR": "partial",
                   "REPEAT": "supported"
                 },
                 "interpolation": {
@@ -17129,11 +17981,32 @@
                 },
                 {
                   "path": "packages/blendlink/src/compiledMaterialPrograms.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/multi_image_program_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/sceneDiagnostics.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/image_sampling_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialRuntime.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialProgram.ts"
+                },
+                {
+                  "path": "experiments/multi-image-differential/export.test.ts"
+                },
+                {
+                  "path": "experiments/multi-image-differential/run.mjs"
                 }
               ],
               "id": "ShaderNodeTexImage",
               "label": "Image Texture",
-              "limits": "Embedded <=128x128: Linear/Closest/Cubic, Repeat/Extend, Flat or sharp Box. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; only Linear/Closest hardware sampling. Large Cubic explicitly refuses. Straight alpha/known color spaces; Smart/Clip/Mirror/spherical/tube and blended Box refuse; animated/oriented companions have no verified audit route.",
+              "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. External Cubic/Mirror/Clip, Smart, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together.",
               "runtimeOps": [
                 "tex_image",
                 "texture_ref"
@@ -17198,7 +18071,7 @@
               ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "Normalized FBM, 1D/2D/3D/4D; Detail<=6 and static fractal controls; exact effective-scale band <= 80, additional dimension-specific approximation bands are declared.",
+              "limits": "Normalized FBM, 1D/2D/3D/4D; Detail<=6 and static fractal controls. Roughness is proved in [0,1], with native negative-to-zero behavior; linked roughness above1 refuses because native Noise has no upper clamp; exact effective-scale band <= 80, additional dimension-specific approximation bands are declared.",
               "runtimeOps": [
                 "noise"
               ],
@@ -17295,7 +18168,7 @@
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
+                  "anchor": "if idname == \"ShaderNodeTexWave\"",
                   "path": "packages/blender-addon/tsl_ir.py"
                 },
                 {
@@ -17303,12 +18176,22 @@
                   "path": "packages/blendlink/src/tslNodeRecipe.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "anchor": "buildPortableSine",
+                  "path": "packages/blendlink/src/tslPortableTrig.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/wave_translation_check.py"
+                },
+                {
+                  "path": "experiments/wave-node-differential/reference.py"
+                },
+                {
+                  "path": "experiments/wave-node-differential/README.md"
                 }
               ],
               "id": "ShaderNodeTexWave",
               "label": "Wave Texture",
-              "limits": "Bands/Rings and declared profiles; Distortion constant; nonzero distortion uses static Detail<=2 and static Detail Roughness.",
+              "limits": "Bands/Rings, every direction and SIN/SAW/TRI, Color/Factor; live Distortion, Scale, Detail Scale and Phase. Nonzero distortion requires static Detail in [0,2]. Linked Roughness requires independently proven [0,1] inputs (an authored Clamp can establish bounds); native Wave does not clamp linked values automatically. Unknown live Roughness, linked Detail and higher octaves refuse. Zero Distortion prunes dead noise inputs. Fresh SIN uses portable precision through |angle|<=8192; old documents retain intrinsic behavior.",
               "runtimeOps": [
                 "tex_wave"
               ],
@@ -17376,7 +18259,7 @@
               ],
               "id": "ShaderNodeUVMap",
               "label": "UV Map",
-              "limits": "Named or active UV binding; exported channel/attribute binding must exist; instancer semantics are not a general port.",
+              "limits": "Named or active UV binding; production glTF V is converted to native Blender coordinates before graph math, while direct native builder measurements retain their own UV convention. Exported channel/attribute binding must exist; instancer semantics are not a general port.",
               "runtimeOps": [
                 "uv"
               ],
@@ -17407,23 +18290,36 @@
               },
               "evidence": [
                 {
-                  "anchor": "def emit_output",
-                  "path": "packages/blender-addon/tsl_ir.py"
+                  "anchor": "def emit_context_ramp",
+                  "path": "packages/blender-addon/ramps_ir.py"
                 },
                 {
-                  "anchor": "case 'color_ramp':",
+                  "anchor": "case 'ramp_lut':",
                   "path": "packages/blendlink/src/tslNodeRecipe.ts"
                 },
                 {
-                  "path": "experiments/tsl-node-differential/cells.json"
+                  "anchor": "def hidden_ramp_stop",
+                  "path": "packages/blender-addon/legacy_ramp_data.py"
                 },
                 {
                   "path": "packages/blender-addon/tests/color_ramp_translation_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/ramp_context_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/legacy_ramp_data_check.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/reference.py"
+                },
+                {
+                  "path": "experiments/color-conversion-differential/README.md"
                 }
               ],
               "id": "ShaderNodeValToRGB",
               "label": "Color Ramp",
-              "limits": "RGB LINEAR/CONSTANT use analytic stops; other RGB modes use a native 257-sample LUT with remaining narrow-stop bounds. HSV/HSL, all four hue directions and five interpolation settings, Color/Alpha: native Cycles 257-entry table, linear lookup except CONSTANT floor; factor stays live, no surface bake. Both 4.2/5.3 Cycles CPU and both node-renderer backends tested; EEVEE pixel parity is not claimed.",
+              "limits": "RGB/HSV/HSL and all hue directions, Color/Alpha. Cycles uses its native 257-entry shader table, including RGB LINEAR/CONSTANT. EEVEE uses proven two-stop analytic shortcuts or a version/backend-specific GPU table. Literal modern MF Factors use native CPU evaluation; nonliteral MF Factors refuse except RGB LINEAR/CONSTANT. Legacy one-stop RGB shortcuts recover hidden native slots through an isolated SDNA snapshot, preserving slot order; embedded owners with external ID references/custom ID properties and coincident LINEAR/EASE positions refuse before copying. Modern single-stop GPU Alpha uses its authored output-socket default. No additional surface bake.",
               "runtimeOps": [
                 "color_ramp",
                 "ramp_alpha",
@@ -17618,32 +18514,67 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "convert_from": {
-                  "CAMERA": "unsupported",
+                  "CAMERA": "supported",
                   "LIGHT": "unsupported",
-                  "OBJECT": "unsupported",
-                  "WORLD": "unsupported"
+                  "OBJECT": "supported",
+                  "WORLD": "supported"
                 },
                 "convert_to": {
-                  "CAMERA": "unsupported",
+                  "CAMERA": "supported",
                   "LIGHT": "unsupported",
-                  "OBJECT": "unsupported",
-                  "WORLD": "unsupported"
+                  "OBJECT": "supported",
+                  "WORLD": "supported"
                 },
                 "vector_type": {
-                  "NORMAL": "unsupported",
-                  "POINT": "unsupported",
-                  "VECTOR": "unsupported"
+                  "NORMAL": "supported",
+                  "POINT": "supported",
+                  "VECTOR": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_vector_transform",
+                  "path": "packages/blender-addon/vector_transform_ir.py"
+                },
+                {
+                  "anchor": "nativeVectorTransformMatrix",
+                  "path": "packages/blendlink/src/tslVectorTransform.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMaterialRuntime.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/camera_axes.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/vector_transform_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/camera_axes_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslVectorTransform.test.ts"
+                },
+                {
+                  "path": "experiments/vector-transform-differential/export.test.ts"
+                },
+                {
+                  "path": "experiments/vector-transform-differential/run.mjs"
+                }
+              ],
               "id": "ShaderNodeVectorTransform",
               "label": "Vector Transform",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+              "runtimeOps": [
+                "vector_transform"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -17772,6 +18703,9 @@
                   "path": "packages/blendlink/src/tslNativeColorBand.ts"
                 },
                 {
+                  "path": "packages/blendlink/src/tslSpectralNodes.ts"
+                },
+                {
                   "path": "packages/blendlink/blender/native_color_band.py"
                 }
               ],
@@ -17803,24 +18737,40 @@
   "schemaVersion": 1,
   "sourceSha256": {
     "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
+    "packages/blender-addon/color_ir.py": "b0e6de2f9935cf6c2183efe68268ed6abc22dcc5e3c716f7803bfdda7f68c182",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
-    "packages/blender-addon/material_compiler.py": "51f9a286f879bab644a2d8159c427dcd6eb7750189a5af9a802731dccde3ab48",
+    "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
+    "packages/blender-addon/material_compiler.py": "cbb1ea2ed757b099d98d895ec5467e7aeda97ba7e3a2ac5ee1b3cb381bd7e05f",
     "packages/blender-addon/procedural.py": "12f6fcaaa46f8a398d13482e421c20d3cd342a4a57962634f48595469170ef59",
+    "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
-    "packages/blender-addon/tsl_ir.py": "a85d45491a4f891272852e81d0581a5df9c269f741fbd265051d9afcf1d3220f",
+    "packages/blender-addon/tsl_ir.py": "d016dba40d475ab4fd49805e6a4830b59977bfd5ce5a30e57256f1d56b47aa3f",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
-    "packages/blendlink/blender/compositor_graph.py": "7405ea7a11e4360c23db68ec585e507972b0d7aa68ac0fa97208b4de812298c2",
+    "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
+    "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
+    "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
+    "packages/blendlink/blender/compositor_color.py": "acdb773197fe10c51f924cef68971638059772e64094d5ca46ff0ff6ecab4057",
+    "packages/blendlink/blender/compositor_graph.py": "f289232019460a6db1a443a558725fc9395a817029b88316ab8a8cabe81ff0cb",
+    "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
-    "packages/blendlink/src/compiledMaterialPrograms.ts": "354cb1fc7156f1f7eaddb28cac9c2aa0f2868f96557d576632f256c7308f9df8",
+    "packages/blendlink/src/compiledMaterialPrograms.ts": "851c39957c01dd07da1abad980585cc4d312407fb77dfaf7521f1d454734b643",
     "packages/blendlink/src/materialProgramDocument.ts": "8e07d6aac8e565d15139dabd8257bf82faa700e564da09dd24b50ddf87797380",
+    "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
     "packages/blendlink/src/threeRuntime.ts": "225b3dd29834a6f2adfea60f8e6122545ddc3f0bbc74204568b9993f04d45c2b",
     "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
+    "packages/blendlink/src/tslColorConversion.ts": "8464e60debee9aa968b8e6547c55e14045eaa315a47f1250c25d521af321e9ff",
+    "packages/blendlink/src/tslCompositorColor.ts": "92378ec3a42beb4dd0b3bca173734951391db6cfa041ddab8506bf8b8e090b3d",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
-    "packages/blendlink/src/tslMaterialRuntime.ts": "bf3e49de34bd2e8d7ee4d006c62ee71134af2593570494b85044382766537cd2",
+    "packages/blendlink/src/tslMaterialProgram.ts": "b003590af53d83787d3f0e5394dfd15b398425ab67681beb568d83a90451095a",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "98a32cc5399f5ba60696cd99711674f3d9917fe0e2f1c958376a74a8ec0b040e",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
-    "packages/blendlink/src/tslNodeRecipe.ts": "37eb71b5e0688a5fdcc7e435daf7038c4d8ee911497df83c88e2241ae35366ca",
+    "packages/blendlink/src/tslNodeRecipe.ts": "5a6c0e2d360296fe1e583d6ef67b182ec9a4c4f647727ca206a52ada121847f6",
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
-    "packages/blendlink/src/tslSourceCompositor.ts": "b03210ee912f5cb12fec6c81f1419ec47971407ce5c74406e8108196798b82b3"
+    "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
+    "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
+    "packages/blendlink/src/tslSourceCompositor.ts": "6a0c2d358bbec6d4b4db66b39d54cd1c98a69760b8d7f848d8c21e372935887c",
+    "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
+    "packages/blendlink/src/tslVectorTransform.ts": "5f5210b22de500e1d48faabbf86b19bee9c7d246a380658c845fb2ab7959fb66"
   }
 }

@@ -122,7 +122,7 @@ export function buildOptionsFor(
   textures?: BuildTslOptions['textures'],
   objectAttribute?: BuildTslOptions['objectAttribute'],
 ): BuildTslOptions {
-  const options: BuildTslOptions = { resources }
+  const options: BuildTslOptions = { resources, uvSpace: 'gltf' }
   if (textures) options.textures = textures
   if (objectAttribute) options.objectAttribute = objectAttribute
   if (extras?.uvChannels) {

@@ -40,6 +40,8 @@ interface PrimitiveBinding {
   extras: Record<string, unknown>
   runtime: TslRuntimeMeshExtras | null
   instanced: boolean
+  nodeChain: Record<string, unknown>[] | null
+  hierarchyIssue?: string
 }
 
 /** Match GLTFLoader r184: mesh extras live on each primitive Mesh; node
@@ -53,7 +55,7 @@ function primitiveBindings(gltf: Record<string, unknown>): PrimitiveBinding[] {
   const bindings: PrimitiveBinding[] = []
   const joints = new Set((Array.isArray(gltf.skins) ? gltf.skins : []).flatMap(skin =>
     record(skin) && Array.isArray(skin.joints) ? skin.joints : []))
-  const add = (mesh: unknown, node?: Record<string, unknown>, index?: number): void => {
+  const add = (mesh: unknown, node?: Record<string, unknown>, index?: number, nodeChain: Record<string, unknown>[] | null = null): void => {
     if (!record(mesh) || !Array.isArray(mesh.primitives)) return
     const nodeOnMesh = mesh.primitives.length === 1 && node?.camera === undefined &&
       !(record(node?.extensions) && Object.hasOwn(node.extensions, 'KHR_lights_punctual')) && !joints.has(index)
@@ -69,21 +71,25 @@ function primitiveBindings(gltf: Record<string, unknown>): PrimitiveBinding[] {
       record(node?.extras) && materialProgramObjectOwner(node.extras.blendlink_tsl_object)
       ? { ...meshExtras, ...node.extras } : meshExtras
     const instanced = record(node?.extensions) && Object.hasOwn(node.extensions, 'EXT_mesh_gpu_instancing')
-    for (const primitive of mesh.primitives) if (record(primitive)) bindings.push({ primitive, extras, runtime, instanced })
+    for (const primitive of mesh.primitives) if (record(primitive)) bindings.push({ primitive, extras, runtime, instanced, nodeChain })
   }
   if (!nodes) { meshes.forEach(mesh => add(mesh)); return bindings }
   const scenes = Array.isArray(gltf.scenes) ? gltf.scenes : []
   const scene = scenes[typeof gltf.scene === 'number' ? gltf.scene : 0]
   const seen = new Set<number>()
-  const visit = (index: unknown): void => {
-    if (typeof index !== 'number' || !Number.isInteger(index) || seen.has(index)) return
+  let hierarchyIssue: string | undefined
+  const visit = (index: unknown, chain: Record<string, unknown>[]): void => {
+    if (typeof index !== 'number' || !Number.isInteger(index)) { hierarchyIssue = 'default-scene node index is invalid'; return }
+    if (seen.has(index)) { hierarchyIssue = 'default-scene hierarchy has a cycle or a node with multiple parents'; return }
     seen.add(index)
     const node = nodes[index]
-    if (!record(node)) return
-    if (typeof node.mesh === 'number') add(meshes[node.mesh], node, index)
-    if (Array.isArray(node.children)) node.children.forEach(visit)
+    if (!record(node)) { hierarchyIssue = 'default-scene node is missing'; return }
+    const next = [...chain, node]
+    if (typeof node.mesh === 'number') add(meshes[node.mesh], node, index, next)
+    if (Array.isArray(node.children)) node.children.forEach(child => visit(child, next))
   }
-  if (record(scene) && Array.isArray(scene.nodes)) scene.nodes.forEach(visit)
+  if (record(scene) && Array.isArray(scene.nodes)) scene.nodes.forEach(root => visit(root, []))
+  if (hierarchyIssue) for (const binding of bindings) binding.hierarchyIssue = hierarchyIssue
   return bindings
 }
 
@@ -110,7 +116,9 @@ async function verifiedImages(document: Record<string, unknown>, bytes: Material
         !['sRGB', 'Non-Color', 'Raw', 'Linear Rec.709'].includes(String(image.colorSpace))) {
       throw new Error(`Compiled material program image ${JSON.stringify(name)} format/dimensions/color-space metadata do not match a supported static image.`)
     }
-    const rgba = await source.ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+    // The production bitmap decoder flips rows into Blender's bottom-up
+    // graph convention. Audit textures must use the same verified pixel rows.
+    const rgba = await source.flip().ensureAlpha().raw().toBuffer({ resolveWithObject: true })
     if (rgba.info.channels !== 4 || rgba.info.width !== metadata.width || rgba.info.height !== metadata.height) {
       throw new Error(`Compiled material program image ${JSON.stringify(name)} could not decode to its declared RGBA dimensions.`)
     }
@@ -172,7 +180,34 @@ export async function validatedBaseColorProgramMaterials(
   const { buildOptionsFor, collectObjectAttributeNames } = await import('./tslMaterialProgram.js')
   const { objectAttributeResolver, objectAttributeValue, loadProgramTextures } = await import('./tslMaterialRuntime.js')
   const { collectObjectInfoOutputs, createObjectInfoResolver, validateObjectInfoBinding } = await import('./tslObjectInfo.js')
+  const { collectVectorTransformRequirements, validateVectorTransformBinding } = await import('./tslVectorTransform.js')
   const THREE = await import('three')
+  const objectForBinding = (binding: PrimitiveBinding): import('three').Object3D => {
+    if (binding.hierarchyIssue || !binding.nodeChain?.length) throw new TslIrError('Vector Transform needs actual default-scene object matrices: ' + (binding.hierarchyIssue ?? 'node hierarchy is missing'))
+    const numbers = (raw: unknown, size: number, defaults: number[], label: string): number[] => {
+      if (raw === undefined) return defaults
+      if (!Array.isArray(raw) || raw.length !== size || raw.some(value => typeof value !== 'number' || !Number.isFinite(value)))
+        throw new TslIrError('Vector Transform has invalid glTF node ' + label)
+      return raw
+    }
+    let parent: import('three').Object3D | null = null
+    for (const node of binding.nodeChain) {
+      const object = new THREE.Object3D()
+      // GLTFLoader r184 applies matrix then decomposes/recomposes it; TRS
+      // fields follow the standard glTF identity defaults. Reproduce that
+      // actual loader path instead of treating every binding as identity.
+      if (node.matrix !== undefined) object.applyMatrix4(new THREE.Matrix4().fromArray(numbers(node.matrix, 16, [], 'matrix')))
+      else {
+        object.position.fromArray(numbers(node.translation, 3, [0, 0, 0], 'translation'))
+        object.quaternion.fromArray(numbers(node.rotation, 4, [0, 0, 0, 1], 'rotation'))
+        object.scale.fromArray(numbers(node.scale, 3, [1, 1, 1], 'scale'))
+      }
+      parent?.add(object)
+      parent = object
+    }
+    parent!.updateWorldMatrix(true, false)
+    return parent!
+  }
   const textures = await loadProgramTextures(document as unknown as import('./materialProgramDocument.js').MaterialProgramsDocument, pointer.url, {
     loadProgramTexture: async name => {
       const image = decoded.get(name)!
@@ -191,9 +226,12 @@ export async function validatedBaseColorProgramMaterials(
       const info = new Set<string>()
       collectObjectAttributeNames(record(program) ? program.channels : null, names)
       collectObjectInfoOutputs(record(program) ? program.channels : null, info)
+      const transforms: import('./tslVectorTransform.js').VectorTransformRequirement[] = []
+      collectVectorTransformRequirements(record(program) ? program.channels : null, transforms)
       const material = materials[index]
       const materialInfo = record(material) && record(material.extras) ? material.extras.blendlink_tsl_material : null
-      for (const { primitive, extras: properties, runtime: extras, instanced } of bindings) {
+      for (const binding of bindings) {
+          const { primitive, extras: properties, runtime: extras, instanced } = binding
           if (!record(primitive) || primitive.material !== index) continue
           bindingCount++
           const attributes = record(primitive.attributes) ? primitive.attributes : {}
@@ -204,6 +242,10 @@ export async function validatedBaseColorProgramMaterials(
               throw new TslIrError('Material program requires unavailable per-object properties or a non-mesh binding')
             }
             const options = buildOptionsFor(extras, resources, `materials[${index}]`, textures?.resolver, objectAttributeResolver())
+            if (transforms.length) {
+              const objectNeeded = transforms.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')
+              validateVectorTransformBinding(transforms, objectNeeded ? objectForBinding(binding) : null, extras?.objectSpace, instanced)
+            }
             validateObjectInfoBinding(info, properties.blendlink_tsl_object, materialInfo, instanced)
             if (info.size) options.objectInfo = createObjectInfoResolver(properties.blendlink_tsl_object, materialInfo)
             options.normalMapBasis = !Object.hasOwn(attributes, 'TEXCOORD_0') ? 'missing'

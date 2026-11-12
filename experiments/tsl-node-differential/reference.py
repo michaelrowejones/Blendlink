@@ -554,6 +554,24 @@ def build_clamp_node(tree, emission):
     _emit_scalar(tree, emission, node.outputs["Result"])
 
 
+def make_clamp_builder(spec):
+    """Native Clamp with authored and live bounds, including crossings."""
+    def build(tree, emission):
+        node = tree.nodes.new("ShaderNodeClamp")
+        node.clamp_type = spec["mode"]
+        for name, value in zip(("Value", "Min", "Max"), spec["inputs"]):
+            if isinstance(value, (int, float)):
+                node.inputs[name].default_value = value
+            else:
+                source = _affine(tree, _uv_channel(tree, value.get("axis", "u")),
+                                 value.get("scale", 1), value.get("offset", 0))
+                tree.links.new(source, node.inputs[name])
+        # A shared positive carrier retains negative/HDR results through the
+        # Cycles isolated-channel bake; it is not a rewrite of the Clamp node.
+        tree.links.new(_affine(tree, node.outputs[0], 1 / 32, .5), emission.inputs["Color"])
+    return build
+
+
 def build_mix_divide(tree, emission):
     node = tree.nodes.new("ShaderNodeMix")
     node.data_type = "RGBA"
@@ -1644,6 +1662,26 @@ def build_white_noise_continuous_uv(tree, emission):
     tree.links.new(value, emission.inputs["Color"])
 
 
+def make_image_sampling_builder(spec):
+    def build(tree, emission):
+        node = tree.nodes.new("ShaderNodeTexImage")
+        node.image = _test_image("TSL_IMAGE_SAMPLING_" + str(spec.get("image", "float")),
+                                 float_buffer=spec.get("image", "float") == "float",
+                                 colorspace=spec.get("colorSpace", "Non-Color"))
+        node.interpolation, node.extension = spec["interpolation"], spec["extension"]
+        if "halfPrecision" in spec:
+            node.image.use_half_precision = spec["halfPrecision"]
+        if "coordinate" in spec:
+            coordinate = tree.nodes.new("ShaderNodeCombineXYZ")
+            for index, value in enumerate((*spec["coordinate"], 0)):
+                coordinate.inputs[index].default_value = value
+            tree.links.new(coordinate.outputs[0], node.inputs["Vector"])
+        else:
+            tree.links.new(_scaled_uv(tree, spec.get("scale", 3.125), spec.get("offset", -1.0625)), node.inputs["Vector"])
+        tree.links.new(node.outputs[spec.get("output", "Color")], emission.inputs["Color"])
+    return build
+
+
 def build_tex_image_cubic(tree, emission):
     # Cubic B-spline over a 4x4 neighbourhood. REPEAT extension on purpose:
     # the wrap has to hold for the ix-1 and ix+2 taps, which reach outside the
@@ -2660,7 +2698,7 @@ def main():
         # Match the graph's evaluation context to the actual native oracle,
         # before extracting engine-specific shader tables or folded values.
         engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties['engine'].enum_items}
-        bpy.context.scene.render.engine = ('BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT') if 'eeveeLight' in cell else 'CYCLES'
+        bpy.context.scene.render.engine = ('BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT') if 'eeveeLight' in cell or cell.get('nativeEngine') == 'EEVEE' else 'CYCLES'
         cell_id = cell["id"]
         pipeline = cell.get("pipeline", "ir")
         builder = BUILDERS.get(cell_id)
@@ -2681,6 +2719,13 @@ def main():
         if builder is None and "brickSweep" in cell:
             from brick_reference import make_brick_builder
             builder = make_brick_builder(cell["brickSweep"])
+        if builder is None and "imagePrecisionControl" in cell:
+            values = cell["imagePrecisionControl"]
+            builder = lambda tree, emission: setattr(emission.inputs["Color"], "default_value", (*values, 1))
+        if builder is None and "imageSampling" in cell:
+            builder = make_image_sampling_builder(cell["imageSampling"])
+        if builder is None and "clampSweep" in cell:
+            builder = make_clamp_builder(cell["clampSweep"])
         if builder is None and "mapRange" in cell:
             builder = make_map_range_builder(cell["mapRange"])
         if builder is None and "eeveeLight" not in cell:
@@ -2779,25 +2824,28 @@ def main():
             view_from = str(cell.get("viewFrom", "ABOVE_SURFACE"))
             if view_from == "ACTIVE_CAMERA":
                 ensure_view_camera()
-            proxy = bakelib.uv_tile_proxy([], window=(0.0, 0.0, 1.0, 1.0))
             manifest_extra = {}
-            try:
-                setup = CELL_PROXY_SETUP.get(cell_id)
-                if setup is not None:
-                    setup(proxy)
-                extra_hook = CELL_MANIFEST_EXTRA.get(cell_id)
-                if extra_hook is not None:
-                    manifest_extra = extra_hook(proxy)
-                proxy.data.materials.append(material)
-                result = bakelib.bake_channel_field_pixels(
-                    [proxy], size=SIZE, margin_px=0,
-                    uv_layer="BLENDLINK_TILE_BAKE",
-                    label=f"tsl differential {cell_id}",
-                    allow_hdr=True,
-                    view_from=view_from,
-                )
-            finally:
-                bakelib.remove_uv_tile_proxy(proxy)
+            if cell.get("nativeEngine") == "EEVEE":
+                result = render_eevee_reference(material, {"strength": 0})
+            else:
+                proxy = bakelib.uv_tile_proxy([], window=(0.0, 0.0, 1.0, 1.0))
+                try:
+                    setup = CELL_PROXY_SETUP.get(cell_id)
+                    if setup is not None:
+                        setup(proxy)
+                    extra_hook = CELL_MANIFEST_EXTRA.get(cell_id)
+                    if extra_hook is not None:
+                        manifest_extra = extra_hook(proxy)
+                    proxy.data.materials.append(material)
+                    result = bakelib.bake_channel_field_pixels(
+                        [proxy], size=SIZE, margin_px=0,
+                        uv_layer="BLENDLINK_TILE_BAKE",
+                        label=f"tsl differential {cell_id}",
+                        allow_hdr=True,
+                        view_from=view_from,
+                    )
+                finally:
+                    bakelib.remove_uv_tile_proxy(proxy)
         finally:
             bpy.data.materials.remove(material, do_unlink=True)
         pixels = np.asarray(result["pixels"], dtype=np.float32)

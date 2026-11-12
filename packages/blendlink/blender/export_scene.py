@@ -58,6 +58,8 @@ except ModuleNotFoundError:
     import web_runtime_limits  # noqa: E402
     import weblights  # noqa: E402
 
+import camera_axes  # noqa: E402
+
 
 def artifact_filename_token(value: str) -> str:
     """Cross-platform, traversal-proof token for an artist-facing label.
@@ -6648,7 +6650,12 @@ def main() -> None:
                 )
                 stamped_random.append(stamped_obj)
             try:
-                return bpy.ops.export_scene.gltf(**export_kwargs)
+                result = bpy.ops.export_scene.gltf(**export_kwargs)
+                if "FINISHED" in result:
+                    camera_axes.canonicalize_camera_axes(
+                        filepath, export_yup=export_kwargs.get("export_yup", True),
+                    )
+                return result
             finally:
                 for stamped_obj in stamped_random:
                     try:

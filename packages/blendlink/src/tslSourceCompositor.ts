@@ -8,6 +8,10 @@ import type {
 import type { TslEffectNode } from './tslPostEffects.js'
 import { blenderRgbToHsv, blenderHsvToRgb, blenderDivide, buildTslMathOperation, buildTslBlendOperation } from './tslNodeRecipe.js'
 import { buildBlenderBloom } from './tslBlenderBloom.js'
+import { buildCompositorColorOperation } from './tslCompositorColor.js'
+import { buildNativeColorBandSample } from './tslNativeColorBand.js'
+import { buildCompositorMathPrecision } from './tslCompositorMath.js'
+import { buildSharedBoolean, buildSharedInteger, buildSharedCompare, sharedTypedConstant, sharedTypedConversion } from './tslSharedUtilities.js'
 
 const {
   abs,
@@ -59,6 +63,13 @@ const {
 }
 
 export class SourceCompositorUnsupported extends Error {}
+
+function compositorEvaluationDevice(op: SourceCompositorOperation, single: boolean): unknown {
+  const folded = op.properties.single_value_device
+  if (folded !== undefined && folded !== 'CPU' && folded !== 'GPU')
+    throw new SourceCompositorUnsupported('Compositor has no verified single-value execution model')
+  return single ? folded ?? 'CPU' : op.properties.evaluation_device ?? op.properties.color_conversion_device
+}
 
 export interface BuiltSourceCompositor {
   node: TslEffectNode
@@ -221,6 +232,23 @@ function compositorBlend(mode: string, device: unknown, legacy: boolean): TslEff
 
 interface RampStop { position: number; color: number[] }
 
+function compositorGpuColorBand(op: SourceCompositorOperation, legacyValues: () => unknown): Record<string, unknown> & { op: string; values: number[] } {
+  let band = op.properties.gpu_color_band
+  // Earlier schema-1 exports encoded full-float tables and fixed8 filtering.
+  // Retain their published behavior; fresh exports name native precision.
+  if (band === undefined && op.properties.gpu_filter_fraction_bits === 8)
+    band = { values: legacyValues(), tableStorage: 'rgba32f', sampleStorage: 'rgba32f',
+      filterFractionBits: 8, sampleRounding: 'nearest-even' }
+  if (!band || typeof band !== 'object' || Array.isArray(band))
+    throw new SourceCompositorUnsupported('GPU color table requires its native storage and sampling model')
+  const model = band as Record<string, unknown>
+  if (!Array.isArray(model.values) || model.values.length !== 257 * 4
+    || !model.values.every(value => typeof value === 'number' && Number.isFinite(value))
+    || !['rgba16f', 'rgba32f'].includes(String(model.tableStorage)))
+    throw new SourceCompositorUnsupported('GPU color table requires 257 finite RGBA samples and verified storage')
+  return { ...model, op: 'compositor-native-color-band', values: model.values }
+}
+
 function buildCompositorRamp(op: SourceCompositorOperation, factor: TslEffectNode,
   single: boolean, resources: { dispose(): void }[]): TslEffectNode {
   const { color_mode: mode, interpolation, hue_interpolation: direction, color_conversion_device: device } = op.properties
@@ -237,24 +265,21 @@ function buildCompositorRamp(op: SourceCompositorOperation, factor: TslEffectNod
     throw new SourceCompositorUnsupported('Color Ramp requires finite ordered stops')
   const color = (stop: RampStop): TslEffectNode => vec4(...stop.color)
   if (stops.length === 1) return color(stops[0]!)
-  const gpu = device === 'GPU' && !single
+  const gpu = compositorEvaluationDevice(op, single) === 'GPU'
   const analyticGpu = mode === 'RGB' && stops.length === 2 && ['LINEAR', 'EASE', 'CONSTANT'].includes(String(interpolation))
   if (gpu && !analyticGpu) {
-    const samples = op.properties.samples, values = op.properties.values
-    if (samples !== 257 || !Array.isArray(values) || values.length !== 257 * 4
-      || values.some(value => typeof value !== 'number' || !Number.isFinite(value)))
-      throw new SourceCompositorUnsupported('Color Ramp requires its native 257-entry GPU table')
-    const texture = new DataTexture(new Float32Array(values), 257, 1, RGBAFormat, FloatType)
+    const band = compositorGpuColorBand(op, () => op.properties.values)
+    const texture = new DataTexture(new Float32Array(band.values), 257, 1, RGBAFormat, FloatType)
     texture.needsUpdate = true
     resources.push(texture)
     const coordinate = clamp(factor, 0, 1).mul(256)
     const low = floor(coordinate)
     const first = textureLoad(texture, ivec2(low, 0))
     if (interpolation === 'CONSTANT') return first
-    if (op.properties.gpu_filter_fraction_bits !== 8)
-      throw new SourceCompositorUnsupported('Color Ramp GPU lookup has no verified native filter precision')
-    const blend = floor(fract(coordinate).mul(256).add(0.5)).div(256)
-    return mix(first, textureLoad(texture, ivec2(min(low.add(1), 256), 0)), blend)
+    const load = (index: TslEffectNode): TslEffectNode => textureLoad(texture, ivec2(clamp(index, 0, 256), 0))
+    const fail = (message: string): never => { throw new SourceCompositorUnsupported(message) }
+    return vec4(buildNativeColorBandSample(band, coordinate, index => load(index).rgb, fail),
+      buildNativeColorBandSample(band, coordinate, index => vec3(load(index).a), fail).x)
   }
   if (analyticGpu && gpu && interpolation === 'CONSTANT')
     return select(factor.greaterThan(stops[1]!.position), color(stops[1]!), color(stops[0]!))
@@ -333,13 +358,13 @@ function buildCompositorCurves(op: SourceCompositorOperation,
     || values.some(row => !Array.isArray(row) || row.length !== 257 || !row.every(Number.isFinite))
     || slopes.some(row => !Array.isArray(row) || row.length !== 2 || !row.every(Number.isFinite)))
     throw new SourceCompositorUnsupported('Curves require finite native tables, ranges and slopes')
-  const gpu = p.color_conversion_device === 'GPU' && !single
-  if (gpu && p.gpu_filter_fraction_bits !== 8)
-    throw new SourceCompositorUnsupported('Curves GPU lookup has no verified native filter precision')
+  const gpu = compositorEvaluationDevice(op, single) === 'GPU'
+  const gpuBand = gpu ? compositorGpuColorBand(op, () => Array.from({ length: 257 * 4 }, (_, index) =>
+    values[index % 4]?.[Math.floor(index / 4)] ?? 0)) : null
   const makeTexture = (tables: number[][]): DataTexture => {
     const pixels = new Float32Array(257 * 4)
     for (let index = 0; index < 257; index++) for (let channel = 0; channel < tables.length; channel++)
-      pixels[index * 4 + channel] = tables[channel]![index]!
+      pixels[index * 4 + channel] = gpuBand ? gpuBand.values[index * 4 + channel]! : tables[channel]![index]!
     const texture = new DataTexture(pixels, 257, 1, RGBAFormat, FloatType)
     texture.needsUpdate = true
     resources.push(texture)
@@ -353,8 +378,9 @@ function buildCompositorCurves(op: SourceCompositorOperation,
     const index = floor(coordinate), key = ['r', 'g', 'b', 'a'][channel]!
     const a = textureLoad(table, ivec2(index, 0))[key]
     const b = textureLoad(table, ivec2(min(index.add(1), 256), 0))[key]
-    const fraction = gpu ? floor(fract(coordinate).mul(256).add(0.5)).div(256) : fract(coordinate)
-    const sampled = mix(a, b, fraction)
+    const sampled = gpuBand ? buildNativeColorBandSample(gpuBand, coordinate,
+      position => vec3(textureLoad(table, ivec2(clamp(position, 0, 256), 0))[key]),
+      message => { throw new SourceCompositorUnsupported(message) }).x : mix(a, b, fract(coordinate))
     const first = textureLoad(table, ivec2(0, 0))[key], last = textureLoad(table, ivec2(256, 0))[key]
     return select(parameter.lessThan(low), first.add(parameter.sub(low).mul(extension[0])),
       select(parameter.greaterThan(high), last.add(parameter.sub(high).mul(extension[1])), sampled))
@@ -439,6 +465,8 @@ export function buildSourceCompositor(
       if (v.kind === 'convert' && v.input) {
         const input = value(v.input)
         if (v.type === v.fromType) return input
+        if (v.type === 'INT' || v.fromType === 'INT' || v.type === 'BOOLEAN' || v.fromType === 'BOOLEAN')
+          return sharedTypedConversion(input, String(v.fromType), v.type, true)
         if (v.fromType === 'VALUE' && v.type === 'RGBA') return vec4(vec3(input), 1)
         if (v.fromType === 'RGBA' && v.type === 'VALUE')
           return dot(input.rgb, vec3(...(program.luminance ?? [0.2126, 0.7152, 0.0722])))
@@ -446,8 +474,6 @@ export function buildSourceCompositor(
         if (v.fromType === 'VECTOR' && v.type === 'RGBA') return vec4(input, 1)
         if (v.fromType === 'VALUE' && v.type === 'VECTOR') return vec3(input)
         if (v.fromType === 'VECTOR' && v.type === 'VALUE') return dot(input, vec3(1 / 3))
-        if (v.fromType === 'VALUE' && v.type === 'BOOLEAN') return input.greaterThan(0)
-        if (v.fromType === 'BOOLEAN' && v.type === 'VALUE') return select(input, 1, 0)
         // Other conversions require Blender's compositor-specific semantics.
         throw new SourceCompositorUnsupported(
           `Compositor conversion ${v.fromType} to ${v.type} is unsupported`,
@@ -456,7 +482,7 @@ export function buildSourceCompositor(
       if (v.kind === 'constant') {
         if (v.type === 'VALUE' && typeof v.value === 'number' && Number.isFinite(v.value))
           return float(v.value)
-        if (v.type === 'BOOLEAN' && typeof v.value === 'boolean') return float(v.value ? 1 : 0).notEqual(0)
+        if (v.type === 'BOOLEAN' || v.type === 'INT') return sharedTypedConstant(v.type, v.value)
         if (v.type === 'VECTOR' && Array.isArray(v.value) && v.value.length === 3
           && v.value.every(n => typeof n === 'number' && Number.isFinite(n))) return vec3(...v.value)
         if (
@@ -483,6 +509,21 @@ export function buildSourceCompositor(
       let node: TslEffectNode
       try {
         switch (op.kind) {
+          case 'utility-constant':
+            node = sharedTypedConstant(op.type, op.value)
+            break
+          case 'boolean-math':
+            node = buildSharedBoolean(String(op.properties.operation), input('Boolean'),
+              op.properties.operation === 'NOT' ? undefined : input('Boolean_001'))
+            break
+          case 'integer-math':
+            node = buildSharedInteger(String(op.properties.operation), Object.keys(op.inputs).map(input),
+              Object.values(op.inputs).every(input => isSingleValue(input.value)) ? 'CPU' : String(op.properties.integer_math_device))
+            break
+          case 'compare':
+            node = buildSharedCompare(op.properties, Object.fromEntries(Object.keys(op.inputs).map(key => [key, input(key)])),
+              program.luminance ?? [0.2126, 0.7152, 0.0722])
+            break
           case 'blur': {
             if (
               constant('Type') !== 'Gaussian' ||
@@ -613,9 +654,18 @@ export function buildSourceCompositor(
           case 'value':
             node = value({ kind: 'constant', type: op.type, value: op.value })
             break
-          case 'exposure': {
-            const color = input('Image')
-            node = vec4(color.rgb.mul(pow(2, input('Exposure'))), color.a)
+          case 'exposure':
+          case 'posterize':
+          case 'color-correction':
+          case 'hue-saturation-value': {
+            const single = Object.values(op.inputs).every(input => isSingleValue(input.value))
+            const device = compositorEvaluationDevice(op, single)
+            node = buildCompositorColorOperation(op, input, { device,
+              luminance: program.luminance ?? [0.2126, 0.7152, 0.0722],
+              rgbToHsv: color => compositorRgbToHsv(color, device),
+              hsvToRgb: color => compositorHsvToRgb(color, device),
+              fail: message => { throw new SourceCompositorUnsupported(message) },
+            })
             break
           }
           case 'rgb-to-bw':
@@ -716,12 +766,11 @@ export function buildSourceCompositor(
             if (channel === 'w') { node = color.a; break }
             if (op.properties.mode === 'RGB') node = color[channel]
             else if (op.properties.mode === 'HSV') node = compositorRgbToHsv(color.rgb,
-              isSingleValue(op.inputs.Image!.value) ? 'CPU' : op.properties.color_conversion_device)[channel]
+              compositorEvaluationDevice(op, isSingleValue(op.inputs.Image!.value)))[channel]
             else if (op.properties.mode === 'HSL') {
               if (!['CPU', 'GPU'].includes(String(op.properties.color_conversion_device)))
                 throw new SourceCompositorUnsupported('HSL separation has no verified compositor device')
-              node = compositorRgbToHsl(color.rgb, isSingleValue(op.inputs.Image!.value)
-                ? 'CPU' : op.properties.color_conversion_device)[channel]
+              node = compositorRgbToHsl(color.rgb, compositorEvaluationDevice(op, isSingleValue(op.inputs.Image!.value)))[channel]
             }
             else node = compositorYuvYcc(color.rgb, op.properties.mode, op.properties.ycc_mode, false)[channel]
             break
@@ -734,7 +783,7 @@ export function buildSourceCompositor(
               if (!['CPU', 'GPU'].includes(String(op.properties.color_conversion_device)))
                 throw new SourceCompositorUnsupported('HSV combination has no verified compositor device')
               const single = Object.values(op.inputs).every(input => isSingleValue(input.value))
-              color = compositorHsvToRgb(channels, single ? 'CPU' : op.properties.color_conversion_device)
+              color = compositorHsvToRgb(channels, compositorEvaluationDevice(op, single))
               if (typeof op.properties.legacy_hsv_clamp !== 'boolean')
                 throw new SourceCompositorUnsupported('HSV combination has no verified clamp model')
               if (op.properties.legacy_hsv_clamp) color = max(color, 0)
@@ -746,7 +795,7 @@ export function buildSourceCompositor(
               const chroma = float(1).sub(abs(channels.z.mul(2).sub(1))).mul(channels.y)
               color = hueBasis(channels.x).sub(0.5).mul(chroma).add(channels.z)
               const single = Object.values(op.inputs).every(input => isSingleValue(input.value))
-              if (op.properties.legacy_hsl_clamp || (!single && op.properties.color_conversion_device === 'GPU'))
+              if (op.properties.legacy_hsl_clamp || compositorEvaluationDevice(op, single) === 'GPU')
                 color = max(color, 0)
             } else if (op.properties.mode === 'YUV' || op.properties.mode === 'YCC') {
               color = compositorYuvYcc(channels, op.properties.mode, op.properties.ycc_mode, true)
@@ -791,19 +840,6 @@ export function buildSourceCompositor(
             node = vec4(mix(color.rgb, balanced, min(input('Fac'), 1)), color.a)
             break
           }
-          case 'hue-saturation-value': {
-            const color = input('Image'),
-              hsv = blenderRgbToHsv(color.rgb) as TslEffectNode
-            const changed = blenderHsvToRgb(
-              vec3(
-                fract(hsv.x.add(input('Hue')).sub(0.5)),
-                hsv.y.mul(input('Saturation')),
-                hsv.z.mul(input('Value')),
-              ),
-            )
-            node = vec4(mix(color.rgb, max(changed, 0), input('Fac')), color.a)
-            break
-          }
           case 'mix-rgb':
           case 'mix': {
             const modern = op.kind === 'mix'
@@ -820,7 +856,7 @@ export function buildSourceCompositor(
             else {
               if (legacy && op.properties.use_alpha) factor = factor.mul(b.a)
               const single = Object.values(op.inputs).every(input => isSingleValue(input.value))
-              const device = single ? 'CPU' : op.properties.color_conversion_device
+              const device = compositorEvaluationDevice(op, single)
               const mode = String(op.properties.blend_type)
               const rgb = compositorBlend(mode, device, legacy)(a.rgb, b.rgb, factor)
               const alpha = mode === 'MIX' && (modern || (!legacy && device === 'CPU')) ? mix(a.a, b.a, factor) : a.a
@@ -839,24 +875,39 @@ export function buildSourceCompositor(
             break
           }
           case 'math': {
-            if (op.properties.operation === 'POWER') {
+            const single = Object.values(op.inputs).every(input => isSingleValue(input.value))
+            const device = compositorEvaluationDevice(op, single) ?? 'CPU'
+            if (device === 'GPU' && op.properties.operation === 'INVERSE_SQRT') {
+              const bound = op.properties.math_domain_lower_bound
+              if (typeof bound !== 'number' || !Number.isFinite(bound) || bound < 2 ** -126)
+                throw new SourceCompositorUnsupported('GPU Inverse Square Root requires a provably positive normal input')
+            }
+            if (op.properties.operation === 'POWER' && device === 'CPU') {
               const first = op.inputs.Value?.value, second = op.inputs.Value_001?.value
               if (first?.kind === 'constant' && first.value === 0 && second?.kind === 'constant'
                   && typeof second.value === 'number' && second.value < 0) {
                 throw new SourceCompositorUnsupported('Zero raised to a negative power produces non-finite compositor pixels in Blender')
               }
             }
-            if (op.source.nodeType === 'CompositorNodeMath' && op.properties.operation === 'LOGARITHM') {
-              const base = constant('Value_001')
+            if ((op.source.nodeType === 'CompositorNodeMath' || device === 'GPU') && op.properties.operation === 'LOGARITHM') {
+              const incoming = op.inputs.Value_001?.value
+              const base = incoming?.kind === 'constant' ? incoming.value : op.properties.math_logarithm_base
               if (typeof base !== 'number' || !Number.isFinite(base) || base === 1) {
                 throw new SourceCompositorUnsupported('Legacy compositor Logarithm requires a fixed base other than 1; Blender can produce non-finite pixels')
               }
+            }
+            if (op.source.nodeType === 'CompositorNodeMath' && device === 'GPU' && op.properties.operation === 'ARCTAN2') {
+              const bound = op.properties.math_atan2_nonzero_bound, operand = op.properties.math_atan2_nonzero_operand
+              if ((operand !== 0 && operand !== 1) || typeof bound !== 'number' || !Number.isFinite(bound) || bound < 2 ** -126)
+                throw new SourceCompositorUnsupported('GPU Arctan2 requires one provably nonzero normal operand')
             }
             try {
               node = buildTslMathOperation(
                 String(op.properties.operation), input('Value'),
                 () => input('Value_001'), () => input('Value_002'),
               )
+              node = buildCompositorMathPrecision(op, input('Value'), node,
+                message => { throw new SourceCompositorUnsupported(message) })
             } catch (error) {
               throw new SourceCompositorUnsupported(error instanceof Error ? error.message : String(error))
             }
@@ -866,9 +917,13 @@ export function buildSourceCompositor(
               // Legacy compositor roundf uses half-away; modern shared Math
               // uses floor(x + .5). Preserve the authored Blender model.
               const magnitude = floor(abs(a).add(.5))
-              node = legacyMath ? select(a.lessThan(0), magnitude.negate(), magnitude) : floor(a.add(.5))
-            } else if (legacyMath && ['ARCSINE', 'ARCCOSINE'].includes(String(op.properties.operation))) {
+              node = legacyMath && device === 'CPU' ? select(a.lessThan(0), magnitude.negate(), magnitude) : floor(a.add(.5))
+            } else if ((legacyMath || device === 'GPU') && ['ARCSINE', 'ARCCOSINE'].includes(String(op.properties.operation))) {
               node = select(abs(input('Value')).greaterThan(1), 0, node)
+            } else if (op.properties.operation === 'ARCTAN2' && (!legacyMath || device === 'CPU')) {
+              const a = input('Value'), b = input('Value_001'), origin = a.equal(0).and(b.equal(0))
+              node = select(origin, 0, buildTslMathOperation('ARCTAN2', a,
+                () => select(origin, 1, b), () => float(0)))
             }
             if (op.properties.use_clamp) node = clamp(node, 0, 1)
             break

@@ -17,7 +17,14 @@ BLENDLINK_BLENDER=/path/to/blender npm run test:node-parity
 ```
 
 The gate discovers Blender, generates the native compositor families, and
-tests the built package on both browser backends. Evidence is retained under
+tests the built package on both browser backends. Blender 4.2 and newer also
+render the supported GPU families; an unavailable GPU device fails when those
+corpora are requested. Native capabilities and per-family case counts are
+recorded. Actual shared Boolean/Integer node creatability is probed separately
+for shader/compositor trees, so unavailable utility classes are reported
+explicitly. Matched CPU/GPU canaries prove GPU execution through differing ramp
+and curve results while unchanged HDR/negative/alpha controls remain bit-exact.
+Evidence is retained under
 `artifacts/verification-native-node-gate/`. CI runs this gate against Blender 4.2
 and 5.2; a successful run is required before claiming parity for that installed
 version and platform.
@@ -30,6 +37,8 @@ processing of the EXR, and select full compositor precision where available.
 Their default compositor device is CPU. The channel generator also accepts
 `BLENDLINK_COMPOSITOR_CHANNEL_DEVICE=GPU` on versions with an offline GPU
 compositor. A requested unavailable GPU device fails instead of substituting CPU.
+Pointwise, alpha, mix and color-control generators accept the corresponding
+`BLENDLINK_COMPOSITOR_<FAMILY>_DEVICE=GPU` override.
 
 ```sh
 BLENDLINK_COLOR_BALANCE_REFERENCES="$PWD/artifacts/native/balance" \
@@ -55,6 +64,22 @@ BLENDLINK_COMPOSITOR_ALPHA_REFERENCES="$PWD/artifacts/native/alpha" \
 BLENDLINK_COMPOSITOR_MIX_REFERENCES="$PWD/artifacts/native/mix" \
   "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
   --python packages/blender-addon/tests/compositor_mix_check.py
+
+BLENDLINK_COMPOSITOR_COLOR_REFERENCES="$PWD/artifacts/native/color" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_color_check.py
+
+BLENDLINK_COMPOSITOR_MATH_SPATIAL_REFERENCES="$PWD/artifacts/native/math-spatial" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_math_spatial_check.py
+
+BLENDLINK_COMPOSITOR_DEVICE_REFERENCES="$PWD/artifacts/native/devices" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_device_check.py
+
+BLENDLINK_COMPOSITOR_TRIG_REFERENCES="$PWD/artifacts/native/trig" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_trig_check.py
 
 BLENDLINK_COLOR_CHANNEL_REFERENCES="$PWD/artifacts/native/channels-gpu" \
 BLENDLINK_COMPOSITOR_CHANNEL_DEVICE=GPU \
@@ -119,9 +144,10 @@ strings; this does not relax backend or numeric assertions.
 ## Verified families and limits
 
 Local native references were generated with official Blender 4.2.0
-(`a51f293548ad`) and Blender 5.3.0 (`02f0899d78e3`). These provide distinct old
-property-based and modern socket-based node schemas. Blender 5.2 is checked by
-the repeatable CI gate rather than inferred from a 5.3 result.
+(`a51f293548ad`), Blender 5.2.0 LTS (`fbe6228777e7`) and Blender 5.3.0
+(`02f0899d78e3`). These provide distinct old property-based and modern
+socket-based node schemas. Blender 5.2 is also checked by the repeatable CI gate;
+its behavior is not inferred from a 5.3 result.
 
 - **Color Balance:** 9 legacy and 10 modern cases. Lift/Gamma/Gain and ASC-CDL,
   partial/negative/greater-than-one factors, zero gamma, HDR and negative RGB,
@@ -175,8 +201,24 @@ the repeatable CI gate rather than inferred from a 5.3 result.
   are included. Both browser backends matched within `1.91e-6`, with no
   shader/browser errors. Rotation is still a named refusal until its quaternion
   transport and interpolation are proved separately.
+- **Color controls:** 596 native graphs (108 Blender 4.2 CPU, 122 each for
+  Blender 5.2/5.3 CPU/GPU) cover Exposure, Hue/Saturation/Value, Posterize and
+  Color Correction. Color Correction includes all four tonal regions and five
+  grading controls, masks below zero/above one, channel switches, dynamic modern
+  controls, collapsed/reversed/overlapping tonal ranges, HDR and negative colors,
+  and independent alpha. Legacy Lift properties and modern Offset sockets carry
+  their respective negative-color fallback rules. Zero gamma has finite constant
+  probes; negative-gamma zero-base fallback probes keep positive inputs at least
+  `0.125`, since near-zero reciprocal grading amplifies native CPU/GPU rounding
+  into large HDR absolute differences. Both browser backends matched within
+  `6.62e-6`. Hue/Saturation checks far Hue values, signed/extrapolated factors and
+  native device conversions; Blender 4.2 CPU wraps Hue once rather than taking a
+  full fractional modulus. Legacy Posterize retains reciprocal-before-floor
+  ordering, including adjacent float values at bin boundaries. Compensated CPU
+  division preserves those bins and discontinuous Color Correction regions
+  without an arbitrary epsilon.
 
-The complete pointwise corpus, including ramps and curves, contains 672 native
+The initial pointwise corpus, including ramps and curves, contains 672 native
 graphs (140 legacy CPU, 266 modern CPU, 266 modern GPU). Both browser backends
 matched within `2.03e-6`, with no shader/browser errors. Alpha is exact for
 passthrough fixtures; calculated alpha uses the numeric tolerance above.
@@ -190,12 +232,22 @@ Compositor RGB Curves preserve alpha; modern shader RGB Curves in a CPU composit
 return opaque alpha, while their spatial GPU path preserves source alpha.
 
 Native Metal linear table filtering rounds sub-texel interpolation to eight
-fraction bits. The exporter records this proven precision model and the runtime
-reproduces it on either browser backend. Other native GPU filter models remain
-explicit runtime refusals for interpolated ramp/curve lookup until measured;
-CPU-authored graphs and supported analytic ramp paths do not require this GPU
-metadata. `BLENDLINK_COMPOSITOR_POINTWISE_DEVICE=GPU` generates the additional
-native GPU corpus on a supported Blender installation.
+fraction bits. Blender 5.2 uploads half-float color tables and rounds filtered
+half samples with ties away from zero; Blender 5.3 uses full-float table storage
+and samples. Table upload rounding and sampler rounding are separate contracts.
+The exporter records the native model and the runtime reproduces it on either
+browser backend. New positive/negative exact-half-tie probes and adjacent input
+floats distinguish the sampler rule from round-to-nearest-even. The expanded
+native GPU precision corpus contains 268 cases per version for Blender 5.2/5.3.
+Both browser backends match all 536 within `2.03e-6`, with no shader/browser errors.
+Other native GPU backends require their own compositor-reference run before
+claiming equivalent parity. On Linux 4.2+, the combined gate requests native
+OpenGL GPU compositor references under CI's Xvfb; that platform must pass before
+claiming parity there. CPU-authored graphs and supported analytic ramp paths do not
+require GPU lookup metadata. `BLENDLINK_COMPOSITOR_POINTWISE_DEVICE=GPU`
+generates the additional native GPU corpus on a supported Blender installation.
+Earlier schema-1 programs without explicit table precision retain their previous
+full-float/fixed8 behavior; re-exporting records the native version/device model.
 
 Mix preserves several native historical behaviors rather than applying a single
 shader formula to every class. Legacy MixRGB permits unclamped factors and its
@@ -209,12 +261,58 @@ are evaluated before conditional branches.
 
 Device and version metadata are part of the conversion contract, not cosmetic
 labels. Blender's CPU HSV conversion uses a triangular Hue basis while spatial
-GPU HSV uses sextants; out-of-range Hue exposes the difference. An all-constant
-GPU graph is constant-folded through the CPU function. Legacy combinations clamp
+GPU HSV uses sextants; out-of-range Hue exposes the difference. Blender 5.2/5.3
+fold all-constant GPU graphs through CPU functions, while Blender 4.2 executes
+those nodes on the GPU. The exporter records both execution and single-value
+devices; actual dependency classification handles linked Value nodes too.
+Legacy combinations clamp
 negative results where the corresponding modern CPU function preserves them;
 modern spatial GPU HSL still clamps. Alpha remains an independent channel, with
 no implicit unpremultiply. The tests include spatial inputs specifically to avoid
 mistaking constant folding for proof of a GPU operation.
+
+## Legacy GPU and math precision checkpoint
+
+The additional Blender 4.2 GPU corpus contains 140 pointwise, 107 alpha, 190 Mix,
+127 channel, 108 color-control and 9 Color Balance graphs. Its 41-mode Math sweep
+contains 287 finite cases and five explicit undefined-domain refusals. Native
+spatial Math adds 140 legacy and 141 cases each for Blender 5.2/5.3. Matched
+device probes contain 15 cases on 4.2 and 18 each on 5.2/5.3. Each device control
+records full compositor precision, float-buffer input and 32-bit Raw EXR output;
+it checks exact input preservation, independently of the graded result.
+
+Legacy GPU ROUND uses `floor(x + .5)` while legacy CPU uses half-away rounding.
+Legacy GPU Posterize uses multiply/floor/divide; its CPU reciprocal ordering is
+preserved separately. Native GPU Inverse Square Root requires a positive normal
+input on all three tested versions. Math Maximum or Absolute-plus-offset graphs
+provide a meaningful proved bound; float32 cancellation is included in the proof.
+Native spatial GPU Logarithm base one produces non-finite pixels, and legacy GPU
+`atan2(0,0)` does too. Modern CPU-folded constants retain their distinct defined
+results. The exporter/runtime refuse the undefined GPU domains, rather than
+substituting a CPU safe-math value. These refusals include actual native renders.
+
+Spatial inputs also expose loose browser GPU trigonometric intrinsics that
+constant-only sweeps can hide. Fresh Math programs opt into `portable-f32-v1`;
+older schema-1 programs retain their intrinsic behavior. The shared
+`tslPortableTrig.ts` sine/cosine reducer is proved for inputs within ±8192 and
+falls back to the prior intrinsic outside that range. Its rational π/2 parts
+have exact float32 products for the supported quadrant range. Factorial series
+on the reduced interval come from [NIST DLMF 4.19](https://dlmf.nist.gov/4.19),
+and inverse-trig series/identities from
+[NIST DLMF 4.24](https://dlmf.nist.gov/4.24). No fitted external coefficient table
+is required. A two-part reduced phase and division-residual correction preserve
+tangent accuracy near poles.
+
+The trig generator compares actual native CPU/GPU pixels with independent Python
+libm controls. Its main 18-case corpus per version covers central/reduced angles,
+inverse endpoints and tangent pole flanks with output magnitude about 64. The
+separate `pole-stress/index.json` captures adjacent float32 inputs at odd π/2
+multiples. On the measured cases the browser matches native CPU stress pixels
+exactly; native Metal GPU differs from CPU/libm by one float32 ULP at values around
+22.88 million (absolute difference 2). Those stress cases remain outside the
+strict absolute-error parity gate. No full accuracy claim is made for enormous
+arguments or arbitrary tangent pole neighborhoods, and the global `2e-5` budget
+is unchanged.
 
 Native formulas can be inspected in Blender's
 [CPU color functions](https://github.com/blender/blender/blob/v5.3.0/source/blender/blenlib/intern/math_color.cc),

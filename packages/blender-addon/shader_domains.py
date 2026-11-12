@@ -7,21 +7,23 @@ shader evaluation even when their coordinates/property happen to be constant.
 Unknown operations remain opaque until their native evaluation is proved.
 """
 
-_CONSTANT = {"const_float", "const_vec3"}
+_CONSTANT = {"const_float", "const_vec3", "typed_const"}
 _SHADER = {"uv", "generated", "object_coords", "normal_view", "view_cos",
            "attribute_object", "vertex_color", "normal_map", "object_info",
            "ambient_occlusion", "fresnel", "layer_weight", "shader_to_rgb_diffuse",
-           "texture_ref", "tex_image"}
+           "texture_ref", "tex_image", "vector_transform"}
 _FUNCTION = {"math", "vector_math", "mapping", "vector_rotate", "vector_scale",
              "combine", "separate", "clamp01", "clamp_minmax", "mix_color",
              "rgb_to_bw", "hue_sat", "hsv_to_rgb", "rgb_to_hsv", "gamma",
              "invert", "bright_contrast", "color_ramp", "ramp_alpha", "ramp_lut",
              "curve_rgb", "curve_native", "noise", "tex_checker", "tex_gradient", "tex_magic",
-             "tex_wave", "tex_voronoi", "tex_white_noise", "tex_brick"}
+             "tex_wave", "tex_voronoi", "tex_white_noise", "tex_brick",
+             "typed_convert", "boolean_math", "integer_math"}
 _CYCLES_FUNCTION = {"math", "vector_math", "mapping", "vector_scale", "combine",
                    "separate", "clamp01", "clamp_minmax", "mix_color", "rgb_to_bw",
                    "hsv_to_rgb", "rgb_to_hsv", "gamma", "invert", "bright_contrast",
-                   "color_ramp", "ramp_alpha", "ramp_lut", "curve_rgb", "curve_native"}
+                   "color_ramp", "ramp_alpha", "ramp_lut", "curve_rgb", "curve_native",
+                   "typed_convert", "boolean_math", "integer_math"}
 
 
 def native_shader_input_evaluation(expression, *, cycles=False):
@@ -29,6 +31,10 @@ def native_shader_input_evaluation(expression, *, cycles=False):
     if not isinstance(expression, dict) or "op" not in expression:
         return "opaque"
     operation = expression["op"]
+    if operation == "color_convert":
+        # Shader Separate/Combine Color has a Cycles constant folder, but
+        # no material multi-function registration in EEVEE.
+        return native_shader_input_evaluation(expression.get("input"), cycles=True) if cycles else "shader"
     if operation in _CONSTANT:
         return "constant"
     if operation in _SHADER:

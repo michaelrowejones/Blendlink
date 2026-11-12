@@ -61,8 +61,11 @@ def main(output):
     scene.render.resolution_percentage = 100
     scene.render.use_compositing = True
     scene.render.use_sequencer = False
+    device = os.environ.get("BLENDLINK_COMPOSITOR_BALANCE_DEVICE", "CPU")
     if hasattr(scene.render, "compositor_device"):
-        scene.render.compositor_device = "CPU"
+        scene.render.compositor_device = device
+    elif device != "CPU":
+        raise AssertionError("This Blender has no selectable offline GPU compositor")
     if hasattr(scene.render, "compositor_precision"):
         scene.render.compositor_precision = "FULL"
     scene.render.dither_intensity = 0
@@ -156,11 +159,11 @@ def main(output):
         actual = np.asarray(read.pixels[:], np.float32).reshape(8, 8, 4)
         expected = expected_grade(case_pixels, model, mode, factor, settings)
         error = float(np.max(np.abs(actual - expected)))
-        expect(np.isfinite(actual).all() and error < 2e-5,
+        expect(np.isfinite(actual).all() and (device != "CPU" or error < 2e-5),
                f"{label} {model}: native Color Balance differs from normalized math by {error}")
         expect(np.array_equal(actual[..., 3], case_pixels[..., 3]), "Color Balance changed alpha")
-        data = {"case": model + "-" + label, "blenderVersion": bpy.app.version_string,
-                "blenderHash": bpy.app.build_hash.decode(), "device": "CPU", "width": 8, "height": 8,
+        data = {"case": ("gpu-" if device == "GPU" else "") + model + "-" + label, "blenderVersion": bpy.app.version_string,
+                "blenderHash": bpy.app.build_hash.decode(), "device": device, "compositorDevice": device, "width": 8, "height": 8,
                 "orientation": "bottom-row-first, x-fastest RGBA", "colorSpace": "scene-linear", "exactAlpha": True,
                 "input": case_pixels.ravel().tolist(), "expected": actual.ravel().tolist(), "program": program}
         (output / (data["case"] + ".json")).write_text(json.dumps(data, separators=(",", ":")))
@@ -196,7 +199,7 @@ def main(output):
     expect(animated["status"] == "unsupported" and
            animated["diagnostics"][-1]["code"] == "animated-tree", animated)
     (output / "index.json").write_text(json.dumps(rows, indent=2))
-    print("BLENDLINK_COLOR_BALANCE_CHECK_PASSED " + json.dumps({"model": model, "cases": len(rows),
+    print("BLENDLINK_COLOR_BALANCE_CHECK_PASSED " + json.dumps({"model": model, "device": device, "cases": len(rows),
                                                               "maxError": max(row["nativeMathError"] for row in rows)}))
 
 

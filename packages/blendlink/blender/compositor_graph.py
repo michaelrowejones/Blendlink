@@ -1,12 +1,50 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Read-only extraction of the authored compositor output graph."""
 
+import importlib
+import importlib.util
 import math
 from contextlib import contextmanager
+from pathlib import Path
+import sys
 
 import bpy
 
+
+def _sibling(name):
+    qualified = (__package__ + "." if __package__ else "") + name
+    try:
+        return importlib.import_module(qualified)
+    except ModuleNotFoundError as error:
+        if error.name != qualified:
+            raise
+        # A source extension can load this canonical file under its own package
+        # name; installed extensions put all helpers directly beside it.
+        source = Path(__file__).with_name(name + ".py")
+        if not source.is_file():
+            raise
+        spec = importlib.util.spec_from_file_location(qualified, source)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[qualified] = module
+        try:
+            spec.loader.exec_module(module)
+        except Exception:
+            sys.modules.pop(qualified, None)
+            raise
+        return module
+
+
+normalize_color_operation = _sibling("compositor_color").normalize_color_operation
+native_color_band = _sibling("native_color_band").native_color_band
+normalize_utility = _sibling("compositor_utilities").normalize_utility
+validate_math_domain = _sibling("compositor_math").validate_math_domain
+
 TYPES = {
+    "FunctionNodeInputBool": "utility-constant",
+    "FunctionNodeInputInt": "utility-constant",
+    "FunctionNodeBooleanMath": "boolean-math",
+    "FunctionNodeIntegerMath": "integer-math",
+    "FunctionNodeCompare": "compare",
     "CompositorNodeRGB": "rgb",
     "ShaderNodeValue": "value",
     "CompositorNodeValue": "value",
@@ -17,6 +55,8 @@ TYPES = {
     "ShaderNodeMix": "mix",
     "CompositorNodeAlphaOver": "alpha-over",
     "CompositorNodeExposure": "exposure",
+    "CompositorNodeColorCorrection": "color-correction",
+    "CompositorNodePosterize": "posterize",
     "CompositorNodeBrightContrast": "brightness-contrast",
     "CompositorNodeColorBalance": "color-balance",
     "CompositorNodeSeparateColor": "separate-color",
@@ -158,6 +198,11 @@ def extract(scene):
     memo = {}
     visiting = set()
     pass_keys = set()
+    single_values = set()
+
+    def is_single_value(ref):
+        return ref["kind"] == "constant" or (ref["kind"] == "ref" and ref["node"] in single_values) \
+            or (ref["kind"] == "convert" and is_single_value(ref["input"]))
 
     def fail(code, path, node, socket, message):
         result["diagnostics"].append(
@@ -323,12 +368,13 @@ def extract(scene):
                     },
                     "inputs": {},
                 }
-                if node.bl_idname in ("ShaderNodeMath", "CompositorNodeMath") and node.operation == "POWER":
-                    first, second = node.inputs[0], node.inputs[1]
-                    if not first.is_linked and not second.is_linked \
-                            and first.default_value == 0 and second.default_value < 0:
-                        fail("non-finite-math-domain", path, node, first,
-                             "Zero raised to a negative power produces non-finite compositor pixels in Blender")
+                device = getattr(scene.render, "compositor_device", "CPU")
+                op["properties"]["evaluation_device"] = device
+                # The old GPU compositor evaluates even all-constant nodes in
+                # shaders. Shared compositor nodes now fold these through CPU
+                # functions, which have distinct curves, Hue and Math rules.
+                op["properties"]["single_value_device"] = "GPU" if device == "GPU" and bpy.app.version < (4, 5, 0) else "CPU"
+                if node.bl_idname in ("ShaderNodeMath", "CompositorNodeMath"):
                     for incoming in node.inputs:
                         if not incoming.enabled or getattr(incoming, "is_unavailable", False):
                             continue
@@ -336,8 +382,16 @@ def extract(scene):
                             "name": incoming.name, "socketType": incoming.type,
                             "value": input_value(incoming, ctx),
                         }
+                elif node.bl_idname in ("FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeBooleanMath", "FunctionNodeIntegerMath", "FunctionNodeCompare"):
+                    normalize_utility(node, op, lambda incoming: input_value(incoming, ctx),
+                                      lambda message: fail("unsupported-utility-mode", path, node, socket, message),
+                                      getattr(scene.render, "compositor_device", "CPU"))
                 elif node.bl_idname in ("CompositorNodeRGB", "ShaderNodeValue", "CompositorNodeValue"):
                     op["value"] = value(socket.default_value)
+                elif node.bl_idname in ("CompositorNodeExposure", "CompositorNodeHueSat",
+                                        "CompositorNodeColorCorrection", "CompositorNodePosterize"):
+                    normalize_color_operation(node, op, lambda incoming: input_value(incoming, ctx),
+                                              getattr(scene.render, "compositor_device", "CPU"))
                 elif node.bl_idname in ("ShaderNodeMapRange", "CompositorNodeMapRange"):
                     vector = getattr(node, "data_type", "FLOAT") == "FLOAT_VECTOR"
                     interpolation = getattr(node, "interpolation_type", "LINEAR")
@@ -382,6 +436,11 @@ def extract(scene):
                         "values": [float(channel) for index in range(257)
                                    for channel in ramp.evaluate(index / 256)],
                     })
+                    if op["properties"]["color_conversion_device"] == "GPU":
+                        try:
+                            op["properties"]["gpu_color_band"] = native_color_band(op["properties"]["values"])
+                        except ValueError as error:
+                            fail("unsupported-native-color-band", path, node, socket, str(error))
                     incoming = node.inputs["Fac"]
                     op["inputs"]["Fac"] = {"name": incoming.name, "socketType": incoming.type,
                                             "value": input_value(incoming, ctx)}
@@ -392,6 +451,14 @@ def extract(scene):
                         fail("unsupported-curve-mapping", path, node, socket, str(error))
                     op["properties"]["color_conversion_device"] = getattr(scene.render, "compositor_device", "CPU")
                     op["properties"]["gpu_filter_fraction_bits"] = 8 if getattr(bpy.context.preferences.system, "gpu_backend", "") == "METAL" else None
+                    if op["properties"]["color_conversion_device"] == "GPU":
+                        tables = op["properties"]["curve_values"]
+                        packed = [[tables[channel][index] if channel < len(tables) else 0.0
+                                   for channel in range(4)] for index in range(257)]
+                        try:
+                            op["properties"]["gpu_color_band"] = native_color_band(packed)
+                        except ValueError as error:
+                            fail("unsupported-native-color-band", path, node, socket, str(error))
                     for incoming in node.inputs:
                         name = {"Factor": "Fac", "Color": "Image"}.get(incoming.identifier, incoming.identifier)
                         op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
@@ -433,18 +500,6 @@ def extract(scene):
                         name = {"Image": "Background", "Image_001": "Foreground"}.get(incoming.identifier, incoming.identifier) if legacy else incoming.identifier
                         op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
                                               "value": input_value(incoming, ctx)}
-                elif node.bl_idname == "CompositorNodeMath" and node.operation == "LOGARITHM":
-                    base = node.inputs[1]
-                    if base.is_linked or base.default_value == 1:
-                        fail("legacy-logarithm-domain", path, node, base,
-                             "Legacy compositor Logarithm requires a fixed base other than 1; Blender can produce non-finite pixels")
-                    for incoming in node.inputs:
-                        if not incoming.enabled or getattr(incoming, "is_unavailable", False):
-                            continue
-                        op["inputs"][incoming.identifier] = {
-                            "name": incoming.name, "socketType": incoming.type,
-                            "value": input_value(incoming, ctx),
-                        }
                 elif TYPES[node.bl_idname] in ("separate-color", "combine-color"):
                     legacy_mode = {"CompositorNodeSepHSVA": "HSV", "CompositorNodeCombHSVA": "HSV",
                                    "CompositorNodeSepYUVA": "YUV", "CompositorNodeCombYUVA": "YUV",
@@ -589,8 +644,15 @@ def extract(scene):
                                 "value": input_value(incoming, ctx),
                             }
                 # Assign only after dependencies are emitted, yielding topological order.
+                single = op["kind"] != "render-pass" and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values())
+                if op["kind"] == "math":
+                    effective = op["properties"]["single_value_device"] if single else device
+                    op["properties"].update(validate_math_domain(node, effective,
+                        lambda code, incoming, message: fail(code, path, node, incoming, message)))
                 op["id"] = "n" + str(len(result["ops"]))
                 result["ops"].append(op)
+                if single:
+                    single_values.add(op["id"])
                 ref = {"kind": "ref", "node": op["id"], "type": socket.type}
             memo[key] = ref
             return ref

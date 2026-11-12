@@ -14,6 +14,14 @@ const legacyCurveSidecarTest = join(
   root, 'experiments', 'legacy-curve-sidecar-differential', 'run.py',
 )
 const desktopSmoke = process.argv.includes('--desktop-smoke')
+const installedNodeFamilies = [
+  ['ShaderNodeBlackbody', 'spectral'], ['ShaderNodeWavelength', 'spectral'],
+  ['ShaderNodeRGBCurve', 'curve_native'], ['ShaderNodeFloatCurve', 'curve_native'],
+  ['ShaderNodeVectorCurve', 'curve_native'], ['ShaderNodeTexBrick', 'tex_brick'],
+  ['ShaderNodeObjectInfo', 'object_info'], ['ShaderNodeCombineColor', 'color_convert'],
+  ['ShaderNodeClamp', 'clamp_minmax'], ['ShaderNodeValToRGB', 'ramp_lut'],
+  ['ShaderNodeVectorTransform', 'vector_transform'], ['ShaderNodeTexWave', 'tex_wave'],
+]
 
 // Human labels for discovered modules. A missing label degrades the console
 // line to a derived one; it can never make a suite silently not run, which
@@ -71,8 +79,13 @@ function discoverSuites() {
     // The sentinel need not be the whole literal: several modules append
     // measured counts after it (`print("BLENDLINK_X_PASSED " f"n={n}")`).
     // Shared native compositor fixtures publish through oracle.finish().
-    const sentinel = [...source.matchAll(/(?:print|oracle\.finish)\(\s*f?["'](BLENDLINK_[A-Z0-9_]+)/g)]
-      .map((match) => match[1]).at(-1)
+    const printedSentinels = [...source.matchAll(/(?:print|oracle\.finish)\(\s*f?["'](BLENDLINK_[A-Z0-9_]+)/g)]
+      .map((match) => match[1])
+    const declaredSentinel = source.match(/^#\s*blendlink-headless-sentinel:\s*(BLENDLINK_[A-Z0-9_]+)\s*$/m)?.[1]
+    if (declaredSentinel && !printedSentinels.includes(declaredSentinel)) {
+      throw new Error(`${file} declares a default success sentinel that it never prints`)
+    }
+    const sentinel = declaredSentinel ?? printedSentinels.at(-1)
     if (!sentinel) {
       unregistered.push(file)
       continue
@@ -254,16 +267,30 @@ material.use_nodes = True
 owner.data.materials.append(material)
 tree = material.node_tree
 root = next(node for node in tree.nodes if node.bl_idname == "ShaderNodeBsdfPrincipled")
-families = [("ShaderNodeBlackbody", "spectral"), ("ShaderNodeWavelength", "spectral"),
-    ("ShaderNodeRGBCurve", "curve_native"), ("ShaderNodeFloatCurve", "curve_native"),
-    ("ShaderNodeVectorCurve", "curve_native"), ("ShaderNodeTexBrick", "tex_brick"),
-    ("ShaderNodeObjectInfo", "object_info")]
+families = ${JSON.stringify(installedNodeFamilies)}
+# These shared utility classes are absent in4.2 shader trees. Probe creation,
+# rather than assuming an RNA class can be used in this tree context.
+for utility in ("FunctionNodeInputBool", "FunctionNodeInputInt"):
+    try:
+        candidate = tree.nodes.new(utility)
+    except RuntimeError:
+        continue
+    tree.nodes.remove(candidate)
+    families.append((utility, "typed_const"))
 def contains_op(value, expected):
     if isinstance(value, dict):
         return value.get("op") == expected or any(contains_op(child, expected) for child in value.values())
     return isinstance(value, list) and any(contains_op(child, expected) for child in value)
 for node_type, expected in families:
     node = tree.nodes.new(node_type)
+    if node_type == "ShaderNodeCombineColor": node.mode = "HSL"
+    if node_type == "ShaderNodeClamp": node.clamp_type = "RANGE"
+    if node_type == "ShaderNodeValToRGB":
+        node.color_ramp.interpolation = "B_SPLINE"
+        coordinate = tree.nodes.new("ShaderNodeTexCoord")
+        separate = tree.nodes.new("ShaderNodeSeparateXYZ")
+        tree.links.new(coordinate.outputs["UV"], separate.inputs[0])
+        tree.links.new(separate.outputs[0], node.inputs["Fac"])
     output = node.outputs["Color"] if node_type == "ShaderNodeObjectInfo" else node.outputs[0]
     tree.links.new(output, root.inputs["Base Color"])
     before = len(tree.nodes), len(tree.links), len(bpy.data.node_groups)
@@ -272,6 +299,9 @@ for node_type, expected in families:
     assert channel["route"] == "program" and contains_op(channel.get("tslIr"), expected), (node_type, channel)
     assert before == (len(tree.nodes), len(tree.links), len(bpy.data.node_groups)), node_type
     tree.nodes.remove(node)
+    if node_type == "ShaderNodeValToRGB":
+        tree.nodes.remove(separate)
+        tree.nodes.remove(coordinate)
 bpy.data.objects.remove(owner, do_unlink=True)
 bpy.data.meshes.remove(mesh)
 bpy.data.materials.remove(material)
@@ -286,6 +316,7 @@ print("##blendlink-addon-install " + json.dumps({
     "atlasOperator": bpy.ops.blendlink.check_atlas_fit.get_rna_type().identifier,
     "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
     "nodeFamilies": len(families),
+    "testedNodeFamilies": [node_type for node_type, _expected in families],
 }, sort_keys=True))
 `
   const probeOutput = runInstallStep('isolated extension verification', [
@@ -296,8 +327,14 @@ print("##blendlink-addon-install " + json.dumps({
   )
   if (!sentinel) throw new Error('Installed extension did not emit its verification sentinel')
   const status = JSON.parse(sentinel.slice('##blendlink-addon-install '.length))
+  const tested = status.testedNodeFamilies
+  const required = installedNodeFamilies.map(([name]) => name)
+  const optional = ['FunctionNodeInputBool', 'FunctionNodeInputInt']
+  const validNodeFamilies = Array.isArray(tested) && tested.length === status.nodeFamilies &&
+    new Set(tested).size === tested.length && required.every(name => tested.includes(name)) &&
+    tested.every(name => required.includes(name) || optional.includes(name))
   if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
-      status.nodeFamilies !== 7 ||
+      !validNodeFamilies ||
       status.exportOperator !== 'BLENDLINK_OT_export_website' || status.atlasOperator !== 'BLENDLINK_OT_check_atlas_fit') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }

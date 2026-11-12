@@ -27,7 +27,12 @@ material = bpy.data.materials.new("Native ColorRamp Translation")
 material.use_nodes = True
 tree = material.node_tree
 tree.nodes.clear()
+bpy.context.scene.render.engine = 'CYCLES'
 node = tree.nodes.new("ShaderNodeValToRGB")
+coordinates = tree.nodes.new('ShaderNodeTexCoord')
+separate = tree.nodes.new('ShaderNodeSeparateXYZ')
+tree.links.new(coordinates.outputs['UV'], separate.inputs[0])
+tree.links.new(separate.outputs[0], node.inputs['Fac'])
 ramp = node.color_ramp
 ramp.elements[0].color = (0.92, 0.12, 0.37, 0.18)
 ramp.elements[0].position = 0.07
@@ -67,8 +72,9 @@ for interpolation in ("LINEAR", "CONSTANT"):
     ramp.interpolation = interpolation
     tsl_ir.drain_approximations()
     expression = tsl_ir.emit_output(node, node.outputs["Color"])
-    expect(expression["op"] == "color_ramp", "Analytic RGB ramp was replaced with an approximation")
-    expect(not tsl_ir.drain_approximations(), "Analytic RGB ramp was labeled approximate")
+    expect(expression["op"] == "ramp_lut" and expression['model'] == 'cycles', 'Native Cycles RGB table was replaced with continuous interpolation')
+    expect(expression['lookup'] == ('FLOOR' if interpolation == 'CONSTANT' else 'LINEAR'), 'Native Cycles lookup was lost')
+    expect(not tsl_ir.drain_approximations(), "Native Cycles RGB table was labeled an additional approximation")
 
 # Native Cycles uses the same sampled table even for very sharp stop
 # intervals. Preserve that authored renderer behavior rather than inserting

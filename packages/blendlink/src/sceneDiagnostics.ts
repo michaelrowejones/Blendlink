@@ -1816,8 +1816,9 @@ export function verifyMaterialCompilationEvidence(
       // A stock program carrier ships the artist's own graph: its
       // textures and factors are the glTF exporter's derivation, recorded
       // as observed by the Python attestation (observedOnly), never
-      // asserted here. The runtime identity extras are what this
-      // verification pinned above.
+      // asserted here. This seam retains primitive ownership and observed
+      // factor checks; the compiled-artifact audit verifies program identity,
+      // payload/image pins and the actual material-program bindings.
     } else if (baseColorTexture) {
       materialEvidenceFailure(evidence.sourceMaterial, 'gained an unexpected base-color texture.')
     }
@@ -1913,9 +1914,9 @@ export function verifyMaterialCompilationEvidence(
         )
       }
     } else if (
-      // The channels branch above owns emissive-slot verification for
-      // MTL-BAKE-001 carriers (planned bake or refused-unplanned).
-      evidence.transport !== 'channels'
+      // The channels branch owns baked-slot verification. A program's stock
+      // carrier may retain authored emissive textures, like Base Color above.
+      evidence.transport !== 'channels' && evidence.transport !== 'program'
       && material.getEmissiveTexture()
     ) {
       materialEvidenceFailure(

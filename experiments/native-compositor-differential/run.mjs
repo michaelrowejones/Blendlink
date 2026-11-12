@@ -1,12 +1,11 @@
 // Generate references with compositor_color_balance_check.py, then pass one or
 // more reference directories here. Tests import the actual runtime source.
 import assert from 'node:assert/strict'
-import { createHash } from 'node:crypto'
-import { mkdir, readFile, writeFile, copyFile, stat, readdir, rm } from 'node:fs/promises'
+import { mkdir, readFile, writeFile, copyFile, readdir, rm } from 'node:fs/promises'
 import { resolve, join } from 'node:path'
 import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
-import ts from 'typescript'
+import { captureRuntimeProvenance, hash, normalizeEmit } from '../../scripts/lib/runtime-provenance.mjs'
 
 const root = resolve(import.meta.dirname, '../..')
 const arguments_ = process.argv.slice(2)
@@ -23,65 +22,7 @@ for (let index = 0; index < arguments_.length; index++) {
 }
 const evidence = output ? resolve(output) : join(root, 'artifacts/verification-native-compositor', `${Date.now()}-${process.pid}`)
 console.log('BLENDLINK_COMPOSITOR_EVIDENCE ' + evidence)
-const hash = content => createHash('sha256').update(content).digest('hex')
-const normalizeEmit = content => content.replaceAll('\r\n', '\n').replace(/^\/\/# sourceMappingURL=.*$/gm, '').trimEnd()
-const configuration = ts.readConfigFile(join(root, 'packages/blendlink/tsconfig.json'), ts.sys.readFile)
-if (configuration.error) throw new Error(ts.flattenDiagnosticMessageText(configuration.error.messageText, '\n'))
-const parsed = ts.parseJsonConfigFileContent(configuration.config, ts.sys, join(root, 'packages/blendlink'))
-const provenance = { mode: built ? 'built' : 'source', typescript: ts.version, modules: [] }
-// Reviewed package build rewrites from scripts/copy-assets.mjs. Reproduce the
-// exact transformation in memory; never ignore the remainder of that module.
-const postEmitRules = [{ module: 'threeWebgpuPostPipeline',
-  from: "import('n8ao-webgpu')", to: "import('./vendor/n8ao-webgpu/index.js')" }]
-const sourceDirectory = join(root, 'packages/blendlink/src')
-const sourceRecords = await Promise.all((await readdir(sourceDirectory)).sort()
-  .filter(name => name.endsWith('.ts') && !name.endsWith('.test.ts') && !name.endsWith('.d.ts'))
-  .map(async filename => {
-    const source = join(sourceDirectory, filename)
-    return { name: filename.slice(0, -3), source, contents: await readFile(source, 'utf8'),
-      sourceTime: (await stat(source)).mtimeMs }
-  }))
-const expectedOutputs = new Map()
-if (built) {
-  // Whole-program emission preserves semantic type-only reexports and const
-  // enum lowering. All output stays in memory; this never builds or writes dist.
-  const options = { ...parsed.options, declaration: false, sourceMap: false, noEmit: false }
-  const host = ts.createCompilerHost(options)
-  const originalReadFile = host.readFile.bind(host)
-  const capturedSources = new Map(sourceRecords.map(record => [record.source, record.contents]))
-  host.readFile = filename => capturedSources.get(resolve(filename)) ?? originalReadFile(filename)
-  const program = ts.createProgram({ rootNames: parsed.fileNames, options, host })
-  const emitted = program.emit(undefined, (filename, contents) => {
-    if (filename.endsWith('.js')) expectedOutputs.set(resolve(filename), normalizeEmit(contents))
-  })
-  assert.equal(emitted.emitSkipped, false, 'Could not derive current production JavaScript for --built verification')
-}
-for (const { name, source, contents, sourceTime } of sourceRecords) {
-  const emitted = join(root, 'packages/blendlink/dist', name + '.js')
-  let expected = built ? expectedOutputs.get(emitted) : normalizeEmit(ts.transpileModule(contents, { fileName: source,
-    compilerOptions: { ...parsed.options, module: ts.ModuleKind.ESNext,
-      moduleResolution: ts.ModuleResolutionKind.Bundler, sourceMap: false, declaration: false } }).outputText)
-  assert.notEqual(expected, undefined, `Missing independently emitted JavaScript for ${name}`)
-  const rule = postEmitRules.find(rule => rule.module === name)
-  if (rule) {
-    assert.equal(expected.split(rule.from).length, 2, `${name} no longer matches its reviewed package post-emit rule`)
-    expected = expected.replace(rule.from, rule.to)
-  }
-  let actual, emittedTime
-  try { actual = normalizeEmit(await readFile(emitted, 'utf8')); emittedTime = (await stat(emitted)).mtimeMs }
-  catch (error) { if (built) throw new Error(`Missing built compositor module ${name}; run npm run build first`, { cause: error }) }
-  const record = { name, sourceSha256: hash(contents), expectedEmitterSha256: hash(expected),
-    emitterSha256: actual === undefined ? null : hash(actual),
-    sourceMtimeMs: sourceTime, emitterMtimeMs: emittedTime ?? null,
-    emitterMatchesSource: actual === expected, postEmitTransform: rule ?? null }
-  provenance.modules.push(record)
-  if (built) {
-    assert.ok(emittedTime >= sourceTime, `${name} dist predates source; rebuild before --built verification`)
-    assert.ok(actual === expected, `${name} emitted JavaScript differs from current source; rebuild before --built verification`)
-  }
-}
-provenance.postEmitRules = postEmitRules
-provenance.copyAssetsSha256 = hash(await readFile(join(root, 'packages/blendlink/scripts/copy-assets.mjs')))
+const { provenance, sourceRecords } = await captureRuntimeProvenance({ root, built, label: 'compositor' })
 provenance.extractorSha256 = hash(await readFile(join(root, 'packages/blendlink/blender/compositor_graph.py')))
 const snapshot = join(evidence, 'module-snapshot')
 const moduleDirectory = join(root, 'packages/blendlink', built ? 'dist' : 'src')

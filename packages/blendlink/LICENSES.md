@@ -32,8 +32,9 @@ The complete GNU General Public License version 3 text is in
 
 ## Third-party notice
 
-`dist/tslSpectralNodes.js`, `dist/tslBrickNodes.js` and their source TypeScript
-include spectral color and Brick mathematics adapted from Apache-2.0 Cycles
+`dist/tslSpectralNodes.js`, `dist/tslBrickNodes.js`, `dist/tslColorConversion.js`,
+`dist/tslSharedUtilities.js`, `dist/tslNodeRecipe.js` and their source TypeScript include spectral color,
+color conversion, image sampling, integer utility, Wave and Brick mathematics adapted from Apache-2.0 Cycles
 code. The coefficient/CIE data in
 `dist/addon/spectral_tables.json` and `dist/blender/spectral_tables.json` has the
 same license. Complete attribution and modification notices are in

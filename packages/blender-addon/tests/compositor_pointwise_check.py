@@ -260,6 +260,28 @@ def main(output):
                         factor_socket.default_value = factor
                 tree.links.new(node.outputs[0], sink.inputs[0])
                 save("curves-" + node_type.lower() + "-" + style + "-" + str(factor), source)
+    if modern:
+        # Exact half-way samples distinguish the native Metal sampler's
+        # ties-away rule from the table upload's round-to-nearest-even rule.
+        # CPU/OpenGL fixtures retain their own independently rendered result.
+        for negative in (False, True):
+            boundary_pixels = pixels.copy()
+            positions = np.asarray([0.5 + (index + 0.5) * 2 ** -11 for index in range(8)], np.float32)
+            if negative:
+                positions = (np.float32(1) - positions) / np.float32(2)
+            boundary_pixels[..., 0] = positions
+            boundary_pixels[1, :, 0] = np.nextafter(positions, np.float32(-np.inf))
+            boundary_pixels[2, :, 0] = np.nextafter(positions, np.float32(np.inf))
+            sink, source, separate = reset()
+            node = tree.nodes.new("ShaderNodeFloatCurve")
+            node.mapping.use_clip = False
+            if negative:
+                node.mapping.curves[0].points[0].location = (0, -1)
+                node.mapping.curves[0].points[1].location = (1, 1)
+            node.mapping.update()
+            tree.links.new(separate.outputs["Red"], node.inputs["Value"])
+            tree.links.new(node.outputs[0], sink.inputs[0])
+            save("curves-sampler-half-boundaries-" + ("negative" if negative else "positive"), source, boundary_pixels)
     (output / "index.json").write_text(json.dumps(rows, indent=2))
     print("BLENDLINK_COMPOSITOR_POINTWISE_CHECK_PASSED " + json.dumps({
         "blender": bpy.app.version_string, "device": device, "cases": len(rows)}))

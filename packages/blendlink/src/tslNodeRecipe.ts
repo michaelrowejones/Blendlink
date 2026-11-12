@@ -14,7 +14,12 @@
  */
 import { buildTslSpectralNode } from './tslSpectralNodes.js'
 import { buildTslCurveNode } from './tslCurveNodes.js'
+import { buildTslColorConversion, isUnitBoundedExpression } from './tslColorConversion.js'
+import { buildNativeColorBandSample } from './tslNativeColorBand.js'
 import { buildTslBrickNode } from './tslBrickNodes.js'
+import { buildTslVectorTransformNode } from './tslVectorTransform.js'
+import { buildSharedUtilityIr } from './tslSharedUtilities.js'
+import { buildPortableSine } from './tslPortableTrig.js'
 import {
   abs,
   attribute,
@@ -204,6 +209,12 @@ const tslCameraPosition = cameraPosition as unknown as TslExpression
 const tslPositionWorld = positionWorld as unknown as TslExpression
 const tslPositionGeometry = positionGeometry as unknown as TslExpression
 
+/** Cycles' frac truncates minus (x<0), including exact negative integers. */
+function nativeClosestIndex(position: TslExpression, cycles: boolean): TslExpression {
+  const index = tslFloor(position)
+  return cycles ? tslSelect(position.lessThan(0).and(position.equal(index)), index.sub(1), index) : index
+}
+
 /** Object-space position in BLENDER'S Z-up basis. The exporter converts
  * Blender (x, y, z) to glTF (x, z, -y); the inverse swizzle recovers
  * Blender coordinates from GLB-loaded geometry: blender = (x, -z, y). */
@@ -254,6 +265,9 @@ export interface BuildTslOptions {
    * a resolver, named maps keep the measurement contract (the harness
    * materializes named maps as identity proxies on uv slot 0). */
   uvChannel?: (uvMap: string) => number
+  /** Native graph coordinates use bottom-up Blender V. The production
+   * glTF binding supplies 'gltf'; direct native measurement keeps the default. */
+  uvSpace?: 'blender' | 'gltf'
   /** Resolve a Blender color-layer name to the exported three attribute
    * name. Without a resolver, COLOR_0's 'color' attribute applies. */
   colorAttribute?: (layer: string) => string
@@ -423,6 +437,30 @@ export function blenderNoiseFac(
   return normalized.mul(0.5).add(0.5)
 }
 
+/** Same normalized fBM with live amplitudes and a statically bounded loop. */
+function waveNoiseFacWithLiveRoughness(
+  position: TslExpression, detail: number, roughness: TslExpression,
+): TslExpression {
+  const bounded = detail // Caller validates the native supported range [0,2].
+  const octaves = Math.floor(bounded), remainder = bounded - octaves
+  // Wave passes linked roughness through unchanged. Admission proves [0,1];
+  // the UI socket limits alone do not clamp an upstream shader expression.
+  const ratio = roughness
+  let amplitude = tslFloat(1), total = tslFloat(0), sum = tslFloat(0), frequency = 1
+  for (let octave = 0; octave <= octaves; octave++) {
+    sum = sum.add(tslNoise(position.mul(frequency)).mul(amplitude))
+    total = total.add(amplitude)
+    amplitude = amplitude.mul(ratio)
+    frequency *= 2
+  }
+  let normalized = sum.div(total)
+  if (remainder > 1e-9) {
+    const extra = sum.add(tslNoise(position.mul(frequency)).mul(amplitude)).div(total.add(amplitude))
+    normalized = tslMix(normalized, extra, remainder)
+  }
+  return normalized.mul(.5).add(.5)
+}
+
 function fail(message: string): never {
   throw new TslIrError(message)
 }
@@ -454,6 +492,11 @@ function child(expression: TslIrExpression, key: string): TslIrExpression {
 
 function build(expression: TslIrExpression): TslExpression {
   switch (expression.op) {
+    case 'typed_const':
+    case 'typed_convert':
+    case 'boolean_math':
+    case 'integer_math':
+      return buildSharedUtilityIr(expression, build)
     case 'const_float':
       return tslFloat(scalar(expression, 'value'))
     case 'const_vec3': {
@@ -480,7 +523,7 @@ function build(expression: TslIrExpression): TslExpression {
         )
       }
       const coordinates = tslUv(channel)
-      return tslVec3(coordinates.x, coordinates.y, 0.0)
+      return tslVec3(coordinates.x, activeOptions.uvSpace === 'gltf' ? tslOneMinus(coordinates.y) : coordinates.y, 0.0)
     }
     case 'separate': {
       const input = build(child(expression, 'input'))
@@ -510,6 +553,8 @@ function build(expression: TslIrExpression): TslExpression {
         const { lut, samples } = buildLutTexture(expression)
         return tslTexture(lut, tslVec2(index.add(0.5).div(samples), 0.5))
       }, fail)
+    case 'vector_transform':
+      return buildTslVectorTransformNode(expression, build(child(expression, 'input')), activeOptions.objectSpace?.basis, fail)
     case 'vector_rotate':
       return buildVectorRotate(expression)
     case 'mapping':
@@ -529,7 +574,7 @@ function build(expression: TslIrExpression): TslExpression {
       const factorOp = (expression.factor as TslIrExpression | undefined)?.op
       const vectorProducers = new Set([
         'const_vec3', 'combine', 'mix_color', 'curve_rgb', 'color_ramp',
-        'vertex_color', 'tex_checker', 'hsv_to_rgb', 'object_coords',
+        'vertex_color', 'tex_checker', 'hsv_to_rgb', 'color_convert', 'object_coords',
         'generated', 'uv', 'mapping', 'attribute_object', 'vector_rotate',
       ])
       const curveFactor = expression.factor as TslIrExpression | undefined
@@ -608,9 +653,18 @@ function build(expression: TslIrExpression): TslExpression {
       // Hue CONSTANT matches Cycles' 257-entry floor lookup. Manual sampling
       // avoids depending on the optional float32-filterable WebGPU feature.
       const lookup = expression.lookup ?? 'LINEAR'
+      if (expression.model !== undefined && expression.model !== 'cycles' && expression.model !== 'eevee-gpu')
+        return fail('Color Ramp table has no verified native source model')
       if (lookup !== 'LINEAR' && lookup !== 'FLOOR') fail(`IR ramp_lut lookup ${String(lookup)} unsupported`)
       const { lut, samples } = buildLutTexture(expression)
       const factor = tslClamp(build(child(expression, 'input')), 0.0, 1.0)
+      if (expression.model === 'eevee-gpu' && lookup !== 'FLOOR') {
+        const position = factor.mul(samples - 1)
+        const read = (index: TslExpression): TslExpression => tslTexture(lut, tslVec2(index.add(.5).div(samples), .5))
+        if (expression.channel === 'alpha') return buildNativeColorBandSample(expression, position,
+          index => tslVec3((read(index) as unknown as { w: TslExpression }).w), fail).x
+        return buildNativeColorBandSample(expression, position, read, fail)
+      }
       const mixed = sampleLut(lut, samples, factor, lookup !== 'FLOOR')
       if (expression.channel === 'alpha') {
         return (mixed as unknown as { w: TslExpression }).w
@@ -879,6 +933,8 @@ function build(expression: TslIrExpression): TslExpression {
       return blenderRgbToHsv(build(child(expression, 'input')))
     case 'hsv_to_rgb':
       return blenderHsvToRgb(build(child(expression, 'input')))
+    case 'color_convert':
+      return buildTslColorConversion(expression, build(child(expression, 'input')), fail)
     case 'invert': {
       const input = build(child(expression, 'input'))
       return tslMix(
@@ -1049,34 +1105,49 @@ function build(expression: TslIrExpression): TslExpression {
       let n: TslExpression
       if (waveType === 'BANDS') {
         const direction = String(expression.bandsDirection)
+        if (!['X', 'Y', 'Z', 'DIAGONAL'].includes(direction)) return fail(`IR wave bands direction ${direction}`)
         if (direction === 'X') n = p.x.mul(20.0)
         else if (direction === 'Y') n = p.y.mul(20.0)
         else if (direction === 'Z') n = p.z.mul(20.0)
         else n = p.x.add(p.y).add(p.z).mul(10.0)
-      } else {
+      } else if (waveType === 'RINGS') {
         const direction = String(expression.ringsDirection)
+        if (!['X', 'Y', 'Z', 'SPHERICAL'].includes(direction)) return fail(`IR wave rings direction ${direction}`)
         let axis = p
         if (direction === 'X') axis = tslVec3(0.0, p.y, p.z)
         else if (direction === 'Y') axis = tslVec3(p.x, 0.0, p.z)
         else if (direction === 'Z') axis = tslVec3(p.x, p.y, 0.0)
         n = tslLength(axis).mul(20.0)
-      }
+      } else return fail(`IR wave type ${waveType}`)
       n = n.add(build(child(expression, 'phase')))
-      const distortion = scalar(expression, 'distortion')
-      if (distortion !== 0) {
+      const linkedDistortion = expression.distortionNode !== undefined
+      const fixedDistortion = linkedDistortion ? 0 : scalar(expression, 'distortion')
+      if (!Number.isFinite(fixedDistortion)) return fail('IR Wave distortion must be finite')
+      const distortion = linkedDistortion ? build(child(expression, 'distortionNode')) : tslFloat(fixedDistortion)
+      if (linkedDistortion || fixedDistortion !== 0) {
+        const detail = scalar(expression, 'detail')
+        const roughness = scalar(expression, 'detailRoughness')
+        if (![detail, roughness].every(Number.isFinite) || detail < 0 || detail > 2)
+          return fail('IR Wave fractal needs a verified finite detail range [0,2]')
         // The distortion term is the RAW fractal in [-1, 1]; blenderNoise-
         // Fac returns the Fac remap, so 2f - 1 recovers it exactly.
-        const fac = blenderNoiseFac(
-          p.mul(build(child(expression, 'detailScale'))),
-          scalar(expression, 'detail'),
-          scalar(expression, 'detailRoughness'),
-          2.0,
-        )
-        n = n.add(fac.mul(2.0).sub(1.0).mul(distortion))
+        const noisePosition = p.mul(build(child(expression, 'detailScale')))
+        const roughnessNode = expression.detailRoughnessNode as TslIrExpression | undefined
+        if (roughnessNode && !isUnitBoundedExpression(roughnessNode))
+          return fail('IR Wave linked Detail Roughness needs a proven [0,1] input')
+        const fac = roughnessNode
+          ? waveNoiseFacWithLiveRoughness(noisePosition, detail, build(roughnessNode))
+          : blenderNoiseFac(noisePosition, detail, roughness, 2.0)
+        const distorted = n.add(fac.mul(2.0).sub(1.0).mul(distortion))
+        n = linkedDistortion ? tslSelect(distortion.equal(0), n, distorted) : distorted
       }
       const profile = String(expression.profile)
       if (profile === 'SIN') {
-        return tslFloat(0.5).add(tslSin(n.sub(Math.PI / 2)).mul(0.5))
+        const angle = n.sub(Math.PI / 2)
+        if (expression.precisionModel !== undefined && expression.precisionModel !== 'portable-f32-v1')
+          return fail('IR Wave has no verified sine precision model')
+        const sine = expression.precisionModel === 'portable-f32-v1' ? buildPortableSine(angle) : tslSin(angle)
+        return tslFloat(0.5).add(sine.mul(0.5))
       }
       const cycles = n.div(2 * Math.PI)
       if (profile === 'SAW') return cycles.sub(tslFloor(cycles))
@@ -1107,9 +1178,19 @@ function build(expression: TslIrExpression): TslExpression {
         )
       }
       const vector = build(child(expression, 'vector'))
-      const sampled: TslExpression = tslTexture(
-        map as never, tslVec2(vector.x, vector.y),
-      )
+      let coordinate = tslVec2(vector.x, vector.y)
+      if (expression.sourceEngine === 'CYCLES' && expression.interpolation === 'Closest') {
+        const image = expression.image as Record<string, unknown> | undefined
+        const width = image?.width, height = image?.height
+        if (typeof width !== 'number' || !Number.isInteger(width) || width <= 0 ||
+            typeof height !== 'number' || !Number.isInteger(height) || height <= 0)
+          return fail('Native Cycles nearest image transport requires pinned positive dimensions')
+        // Fetch the center of the exact native texel. The resolved texture
+        // still applies its attested Repeat/Extend sampler independently.
+        coordinate = tslVec2(nativeClosestIndex(vector.x.mul(width), true).add(.5).div(width),
+          nativeClosestIndex(vector.y.mul(height), true).add(.5).div(height))
+      }
+      const sampled: TslExpression = tslTexture(map as never, coordinate)
       const lanes = sampled as unknown as {
         a: TslExpression
         r: TslExpression
@@ -1121,6 +1202,10 @@ function build(expression: TslIrExpression): TslExpression {
         : tslVec3(lanes.r, lanes.g, lanes.b)
     }
     case 'tex_image': {
+      if (expression.sourceEngine !== undefined && expression.sourceEngine !== 'CYCLES' && expression.sourceEngine !== 'EEVEE')
+        return fail('Embedded image source engine has no verified sampling model')
+      if (expression.sourceEngine === 'EEVEE' && !['METAL', 'OPENGL'].includes(String(expression.nativeGpuBackend)))
+        return fail('Embedded image native GPU backend has no verified sampling model')
       // Cycles-style manual sampling over an embedded RGBA float image:
       // nearest-filtered texel reads (no float32-filterable dependency),
       // bilinear taps at u*W - 0.5, and per-tap REPEAT (floored modulo)
@@ -1129,11 +1214,14 @@ function build(expression: TslIrExpression): TslExpression {
       // bottom-up on both sides (Blender pixels and DataTexture agree).
       const width = scalar(expression, 'width')
       const height = scalar(expression, 'height')
+      if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > 16384)
+        return fail('Embedded image requires positive integer dimensions within 16384 pixels')
       const values = numbers(expression, 'pixels')
       if (values.length !== width * height * 4) {
         fail('IR tex_image pixels do not match its dimensions')
       }
       const data = new Float32Array(values)
+      if (!data.every(Number.isFinite)) return fail('Embedded image pixels exceed finite float32 transport')
       const map = new DataTexture(data, width, height, RGBAFormat, FloatType)
       map.minFilter = NearestFilter
       map.magFilter = NearestFilter
@@ -1174,24 +1262,31 @@ function build(expression: TslIrExpression): TslExpression {
         )
       }
       const extension = String(expression.extension)
-      const wrapIndex = (
-        index: TslExpression, size: number,
-      ): TslExpression => (
-        extension === 'REPEAT'
-          ? index.sub(tslFloor(index.div(size)).mul(size))
-          : tslClamp(index, 0.0, size - 1)
-      )
-      const texel = (
-        ix: TslExpression, iy: TslExpression,
-      ): TslExpression => tslTexture(map, tslVec2(
-        wrapIndex(ix, width).add(0.5).div(width),
-        wrapIndex(iy, height).add(0.5).div(height),
-      ))
+      if (!['REPEAT', 'EXTEND', 'MIRROR', 'CLIP'].includes(extension))
+        return fail('Embedded image extension has no verified sampler')
+      const wrapIndex = (index: TslExpression, size: number): TslExpression => {
+        if (extension === 'REPEAT') return index.sub(tslFloor(index.div(size)).mul(size))
+        if (extension === 'MIRROR') {
+          const period = index.sub(tslFloor(index.div(2 * size)).mul(2 * size))
+          return tslSelect(period.lessThan(size), period, tslFloat(2 * size - 1).sub(period))
+        }
+        return tslClamp(index, 0.0, size - 1)
+      }
+      const texel = (ix: TslExpression, iy: TslExpression): TslExpression => {
+        const pixel = tslTexture(map, tslVec2(
+          wrapIndex(ix, width).add(0.5).div(width),
+          wrapIndex(iy, height).add(0.5).div(height),
+        ))
+        // Clip is transparent black per out-of-bounds tap, including the
+        // partial border footprints of Linear and Cubic interpolation.
+        return extension === 'CLIP' ? pixel.mul(tslSelect(tslFloat(0).lessThanEqual(ix).and(ix.lessThan(width))
+          .and(tslFloat(0).lessThanEqual(iy)).and(iy.lessThan(height)), tslFloat(1), tslFloat(0))) : pixel
+      }
       let sample: TslExpression
       if (expression.interpolation === 'Closest') {
         sample = texel(
-          tslFloor(coordU.mul(width)),
-          tslFloor(coordV.mul(height)),
+          nativeClosestIndex(coordU.mul(width), expression.sourceEngine === 'CYCLES'),
+          nativeClosestIndex(coordV.mul(height), expression.sourceEngine === 'CYCLES'),
         )
       } else if (expression.interpolation === 'Cubic') {
         // Cubic B-spline over a 4x4 neighbourhood, taps at ix-1..ix+2.
@@ -1214,16 +1309,40 @@ function build(expression: TslIrExpression): TslExpression {
         ]
         const wx = splineWeights(x.sub(ix))
         const wy = splineWeights(y.sub(iy))
-        let accumulated: TslExpression | undefined
-        for (let row = 0; row < 4; row += 1) {
-          for (let column = 0; column < 4; column += 1) {
-            const tap = texel(
-              ix.add(column - 1), iy.add(row - 1),
-            ).mul(wx[column]!.mul(wy[row]!))
-            accumulated = accumulated ? accumulated.add(tap) : tap
+        if (expression.sourceEngine === 'EEVEE') {
+          // Pair adjacent positive B-spline weights algebraically into four
+          // bilinear samples. Native EEVEE uses this reduction; its Metal
+          // sampler rounds each internal interpolation fraction to eight bits.
+          const left = wx[0]!.add(wx[1]!), right = wx[2]!.add(wx[3]!)
+          const bottom = wy[0]!.add(wy[1]!), top = wy[2]!.add(wy[3]!)
+          const x0 = ix.sub(1).add(wx[1]!.div(left)), x1 = ix.add(1).add(wx[3]!.div(right))
+          const y0 = iy.sub(1).add(wy[1]!.div(bottom)), y1 = iy.add(1).add(wy[3]!.div(top))
+          const bilinear = (x: TslExpression, y: TslExpression): TslExpression => {
+            const ix = tslFloor(x), iy = tslFloor(y)
+            let fx = x.sub(ix), fy = y.sub(iy)
+            if (expression.nativeGpuBackend === 'METAL') {
+              fx = tslFloor(fx.mul(256).add(.5)).div(256)
+              fy = tslFloor(fy.mul(256).add(.5)).div(256)
+            }
+            return tslMix(tslMix(texel(ix, iy), texel(ix.add(1), iy), fx),
+              tslMix(texel(ix, iy.add(1)), texel(ix.add(1), iy.add(1)), fx), fy)
           }
+          sample = bilinear(x0, y0).mul(left.mul(bottom))
+            .add(bilinear(x1, y0).mul(right.mul(bottom)))
+            .add(bilinear(x0, y1).mul(left.mul(top)))
+            .add(bilinear(x1, y1).mul(right.mul(top)))
+        } else {
+          let accumulated: TslExpression | undefined
+          for (let row = 0; row < 4; row += 1) {
+            for (let column = 0; column < 4; column += 1) {
+              const tap = texel(
+                ix.add(column - 1), iy.add(row - 1),
+              ).mul(wx[column]!.mul(wy[row]!))
+              accumulated = accumulated ? accumulated.add(tap) : tap
+            }
+          }
+          sample = accumulated!
         }
-        sample = accumulated!
       } else {
         const x = coordU.mul(width).sub(0.5)
         const y = coordV.mul(height).sub(0.5)
@@ -2264,10 +2383,28 @@ interface RampStop { position: number; color: number[] }
 function buildColorRamp(
   expression: TslIrExpression, output: 'color' | 'alpha',
 ): TslExpression {
+  const interpolation = expression.interpolation ?? 'LINEAR'
   const stops = expression.stops as RampStop[]
-  if (!Array.isArray(stops) || stops.length === 0) {
-    fail('IR color_ramp needs stops')
+  const hiddenSlots = expression.sourceModel === 'eevee-analytic-hidden'
+  if (!Array.isArray(stops) || stops.length === 0 || stops.length > 32 || stops.some((stop, index) =>
+    !stop || !Number.isFinite(stop.position) || stop.position < 0 || stop.position > 1 ||
+    !hiddenSlots && index > 0 && stop.position < stops[index - 1]!.position || !Array.isArray(stop.color) || stop.color.length !== 4 || stop.color.some(value => !Number.isFinite(value)))) {
+    fail('IR color_ramp needs finite ordered RGBA stops')
   }
+  if (expression.sourceModel === 'eevee-analytic' || hiddenSlots) {
+    if (stops.length !== 2 || !['LINEAR', 'CONSTANT', 'EASE'].includes(String(interpolation)))
+      return fail('Native EEVEE analytic Color Ramp requires two RGB stops and a verified interpolation')
+    const raw = build(child(expression, 'input'))
+    const value = (index: number): TslExpression => output === 'alpha' ? tslFloat(stops[index]!.color[3]!)
+      : tslVec3(...stops[index]!.color.slice(0, 3))
+    if (interpolation === 'CONSTANT') return tslSelect(raw.greaterThan(Math.max(stops[0]!.position, stops[1]!.position)), value(1), value(0))
+    const coefficients = numbers(expression, 'mulBias')
+    if (coefficients.length !== 2 || coefficients.some(value => !Number.isFinite(value))) return fail('Native EEVEE Color Ramp has invalid multiplier/bias')
+    let factor = tslClamp(raw.mul(coefficients[0]!).add(coefficients[1]!), 0, 1)
+    if (interpolation === 'EASE') factor = factor.mul(factor).mul(tslFloat(3).sub(factor.mul(2)))
+    return tslMix(value(0), value(1), factor)
+  }
+  if (!['LINEAR', 'CONSTANT'].includes(String(interpolation))) return fail('Color Ramp direct interpolation has no verified native model')
   const factor = tslClamp(build(child(expression, 'input')), 0.0, 1.0)
   const value = (stop: RampStop) => output === 'color'
     ? tslVec3(stop.color[0]!, stop.color[1]!, stop.color[2]!)
@@ -2276,14 +2413,14 @@ function buildColorRamp(
   for (let index = 1; index < stops.length; index += 1) {
     const previous = stops[index - 1]!
     const current = stops[index]!
-    if (expression.interpolation === 'CONSTANT') {
+    if (interpolation === 'CONSTANT') {
       accumulated = tslSelect(
         factor.lessThan(current.position), accumulated, value(current),
       )
       continue
     }
     const span = current.position - previous.position
-    const blend = span <= 1e-9
+    const blend = span === 0
       ? tslStep(current.position, factor)
       : tslClamp(factor.sub(previous.position).div(span), 0.0, 1.0)
     accumulated = tslMix(accumulated, value(current), blend)

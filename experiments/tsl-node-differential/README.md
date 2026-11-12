@@ -421,3 +421,52 @@ Retained native artifacts can be replayed with `--reference-dir /path/to/referen
 and an optional comma-separated `--ids` subset. Replays record manifest/IR hashes
 and explicitly record that the current native emitter was not executed. Final
 release checks regenerate native references.
+
+## Clamp ranges
+
+`node experiments/tsl-node-differential/run-mapping.mjs --clamp --built`
+checks 58 native graphs per Blender version on both browser backends. Blender
+4.2, 5.2 and 5.3 pass with maximum absolute error 3.94e-6. Both MINMAX and
+RANGE are covered with negative/HDR values, reversed/collapsed bounds, and live
+bounds crossing inside the tile. RANGE lowers to existing min/max algebra;
+MINMAX keeps the native authored order. The native bake observes the unchanged
+Clamp result through a positive 1/32 scale plus 0.5 carrier. Constant cells are
+exact; the fixed 1e-5 spatial budget covers the independently measured Cycles
+UV nudge after that observation scale. This does not certify nonfinite inputs
+or animated node parameters.
+
+## Native image sampling
+
+`node experiments/tsl-node-differential/run-mapping.mjs --images --built`
+checks 220 actual native graphs per Blender version on both browser backends.
+Blender 4.2, 5.2 and 5.3 source proofs pass. The same production emitter walks
+the graph evaluated by Cycles CPU or EEVEE; actual scene-linear pixels come
+from isolated channel bakes or orthographic emission renders. All four
+extensions (Repeat/Extend/Mirror/Clip), three filters (Closest/Linear/Cubic),
+RGB/Alpha outputs, signed multi-tile fields and exact dyadic boundary probes
+are covered. This is the Flat 8x8 floating Non-Color image magnification
+contract; arbitrary minification/mipmap footprints and every color/alpha
+association remain outside this numerical claim.
+
+Cycles nearest selection reproduces the native truncation-minus-negative
+index rule at exact negative integers. Old schema-1 programs without an
+engine tag retain their previous floor behavior. Clip reads transparent black
+per out-of-bounds tap; Cubic border footprints therefore fade rather than
+being cut off at the image rectangle. Mirror wraps each tap independently.
+
+The native GPU float data-image upload unassociates texels (zero alpha keeps
+its authored RGB), then truncates to half storage when the source Image's
+Half Precision setting is enabled. Disabling it retains float32 storage.
+Cubic EEVEE sampling pairs positive B-spline weights into four bilinear
+lookups; native Metal uses eight-bit filter fractions. This precision belongs
+to the image sampling operation, separate from EEVEE's eventual scene target.
+Two independent nontrivial emission carriers first verify that target's
+half-float bound; the report retains raw error and per-component target
+allowance separately from strict residual mean/p99/maximum budgets. Fixed
+CPU boundary probes differ by at most1.20e-7; their strict budget is5e-6.
+
+Floating GPU images that exceed finite half storage refuse with an actionable
+Half Precision message. Media/tile/viewer sources refuse before reading their
+current frame as a static image. Source pixels and precision settings are
+never changed by extraction. External image transport retains its separate
+pinned-byte/decoded-dimension contract, and currently refuses Cubic/Mirror/Clip.

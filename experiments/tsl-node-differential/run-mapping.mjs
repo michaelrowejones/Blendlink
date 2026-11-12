@@ -3,10 +3,11 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
+import { captureRuntimeSnapshot } from '../../scripts/lib/runtime-provenance.mjs'
 
 const experiment = resolve(import.meta.dirname)
 const root = resolve(experiment, '../..')
@@ -15,12 +16,14 @@ assert.ok(Array.isArray(extraBrowserArgs) && extraBrowserArgs.every(value => typ
   'BLENDLINK_TEST_CHROMIUM_ARGS must be a JSON array of Chromium argument strings')
 const vectorFamily = process.argv.includes('--vectors')
 const brickFamily = process.argv.includes('--brick')
+const clampFamily = process.argv.includes('--clamp')
+const imageFamily = process.argv.includes('--images')
 const mathFamily = process.argv.includes('--math')
 const hueFamily = process.argv.includes('--hue-ramp')
 const boundaryFamily = process.argv.includes('--boundary')
 const mixFamily = process.argv.includes('--mix')
 const mapRangeFamily = process.argv.includes('--map-range')
-const family = brickFamily ? 'BRICK' : vectorFamily ? 'VECTORS' : mathFamily ? 'MATH' : hueFamily ? 'HUE_RAMP' : boundaryFamily ? 'MATH_BOUNDARY' : mapRangeFamily ? 'MAP_RANGE' : mixFamily ? 'MIX' : 'MAPPING'
+const family = imageFamily ? 'IMAGES' : clampFamily ? 'CLAMP' : brickFamily ? 'BRICK' : vectorFamily ? 'VECTORS' : mathFamily ? 'MATH' : hueFamily ? 'HUE_RAMP' : boundaryFamily ? 'MATH_BOUNDARY' : mapRangeFamily ? 'MAP_RANGE' : mixFamily ? 'MIX' : 'MAPPING'
 const option = name => {
   const index = process.argv.indexOf(name)
   if (index < 0) return null
@@ -28,12 +31,16 @@ const option = name => {
   return process.argv[index + 1]
 }
 const retainedReference = option('--reference-dir')
-const evidence = process.env.BLENDLINK_TSL_DIFF_ARTIFACTS ? resolve(process.env.BLENDLINK_TSL_DIFF_ARTIFACTS) : join(root, brickFamily ? 'artifacts/verification-brick' : vectorFamily ? 'artifacts/verification-vectors' : mathFamily ? 'artifacts/verification-shader-math' : hueFamily ? 'artifacts/verification-hue-ramp' : boundaryFamily ? 'artifacts/verification-math-boundary' : mapRangeFamily ? 'artifacts/verification-map-range' : mixFamily ? 'artifacts/verification-mix-math' : 'artifacts/verification-mapping')
+const evidence = process.env.BLENDLINK_TSL_DIFF_ARTIFACTS ? resolve(process.env.BLENDLINK_TSL_DIFF_ARTIFACTS) : join(root, imageFamily ? 'artifacts/verification-images' : clampFamily ? 'artifacts/verification-clamp' : brickFamily ? 'artifacts/verification-brick' : vectorFamily ? 'artifacts/verification-vectors' : mathFamily ? 'artifacts/verification-shader-math' : hueFamily ? 'artifacts/verification-hue-ramp' : boundaryFamily ? 'artifacts/verification-math-boundary' : mapRangeFamily ? 'artifacts/verification-map-range' : mixFamily ? 'artifacts/verification-mix-math' : 'artifacts/verification-mapping')
 const reference = retainedReference ? resolve(retainedReference) : join(evidence, 'reference')
 mkdirSync(evidence, { recursive: true })
 rmSync(join(evidence, 'report.json'), { force: true })
 const manifest = JSON.parse(readFileSync(join(experiment, 'cells.json'), 'utf8'))
-let ids = brickFamily
+let ids = imageFamily
+  ? ['constant-linear', 'uv-gradient', ...manifest.cells.filter(cell => cell.imageSampling || cell.imagePrecisionControl).map(cell => cell.id)]
+  : clampFamily
+  ? ['constant-linear', 'uv-gradient', ...manifest.cells.filter(cell => cell.clampSweep).map(cell => cell.id)]
+  : brickFamily
   ? ['constant-linear', 'uv-gradient', ...manifest.cells.filter(cell => cell.brickSweep).map(cell => cell.id)]
   : vectorFamily
   ? ['constant-linear', 'uv-gradient', 'mapping-rotate', 'mapping-texture-mode', ...manifest.cells.filter(cell => cell.vectorSweep || cell.vectorTransform || cell.mappingSweep || cell.id.startsWith('vector-rotate-')).map(cell => cell.id)]
@@ -62,22 +69,14 @@ let cells = ids.map(id => {
 const source = join(root, 'packages/blendlink/src/tslNodeRecipe.ts')
 const built = join(root, 'packages/blendlink/dist/tslNodeRecipe.js')
 const useBuilt = process.argv.includes('--built')
-if (useBuilt) {
-  assert.ok(existsSync(built), 'Build the compiler before using --built')
-  assert.ok(statSync(built).mtimeMs >= statSync(source).mtimeMs, 'Built TSL builder is stale; coordinate a build before using --built')
-}
 // Freeze both sides before native rendering begins. Other agents may edit a
 // helper while a long oracle runs; every import still resolves to this capture.
 const snapshot = join(evidence, 'module-snapshot-' + Date.now() + '-' + process.pid)
 const nativeSnapshot = join(snapshot, 'native')
 mkdirSync(nativeSnapshot, { recursive: true })
-const testedModuleHashes = {}
-for (const file of readdirSync(join(root, useBuilt ? 'packages/blendlink/dist' : 'packages/blendlink/src'))) {
-  if (!file.endsWith(useBuilt ? '.js' : '.ts') || file.endsWith('.test.ts')) continue
-  const contents = readFileSync(join(root, useBuilt ? 'packages/blendlink/dist' : 'packages/blendlink/src', file))
-  writeFileSync(join(snapshot, file), contents)
-  testedModuleHashes[file] = createHash('sha256').update(contents).digest('hex')
-}
+const { provenance: runtimeProvenance } = await captureRuntimeSnapshot({ root, built: useBuilt, destination: snapshot, label: family })
+mkdirSync(nativeSnapshot, { recursive: true })
+const testedModuleHashes = Object.fromEntries(runtimeProvenance.snapshot.files.map(file => [file.name, file.sha256]))
 for (const directory of ['packages/blendlink/blender', 'packages/blender-addon'])
   for (const file of readdirSync(join(root, directory))) {
     if (file.endsWith('.py') || file.endsWith('.json')) copyFileSync(join(root, directory, file), join(nativeSnapshot, file))
@@ -191,6 +190,7 @@ try {
     assert.equal(environment.backend, backend === 'webgpu', `Requested ${backend} but got another backend`)
     let flipRows
     const positionControls = new Map()
+    let imageRenderPrecisionCertified = false
     for (const cell of cells) {
       const irPath = '/@fs/' + join(reference, 'ir', `${cell.id}.json`).replaceAll('\\', '/')
       const rendered = await page.evaluate(({ id, path }) => window.__tslDiffRun(id, 'ir', path, false, null, null), { id: cell.id, path: irPath })
@@ -216,6 +216,24 @@ try {
       }
       let precisionResidual = measured
       let maximumPositionAllowance = 0
+      let nativeTargetAllowance = 0
+      if (cell.nativeEngine === 'EEVEE') {
+        const halfUlp = value => Math.max(2 ** (Math.floor(Math.log2(Math.abs(value) || 2 ** -14)) - 10), 2 ** -24)
+        if (cell.imagePrecisionControl) {
+          for (let channel = 0; channel < 3; channel++) {
+            const value = cell.imagePrecisionControl[channel], reference = expected[channel], units = reference / halfUlp(reference)
+            assert.ok(Math.abs(units - Math.round(units)) < 2e-4, 'Native image carrier is not representable half-float')
+            assert.ok(Math.abs(value - reference) <= halfUlp(value) + 2e-6, 'Independent native image carrier exceeds half-float bound')
+          }
+          imageRenderPrecisionCertified = true
+        }
+        assert.ok(imageRenderPrecisionCertified, 'Native image target precision requires preceding independent controls')
+        precisionResidual = difference(expected, actual, rendered.components, flipRows ?? false, (x, y, channel) => {
+          const precision = halfUlp(expected[(y * 64 + x) * 3 + channel])
+          nativeTargetAllowance = Math.max(nativeTargetAllowance, precision)
+          return precision
+        })
+      }
       if (cell.smoothMortarPositionControl) {
         const control = positionControls.get(cell.smoothMortarPositionControl)
         assert.ok(control, 'Sharp mortar requires its preceding independent position control')
@@ -272,7 +290,7 @@ try {
         .map(metric => `${backend}/${cell.id} precision residual ${metric}=${precisionResidual[metric]} exceeds ${budget[metric]}`)
       failures.push(...cellFailures)
       results.push({ backend, cell: cell.id, flipRows: flipRows ?? null, ...measured,
-        maximumPrecisionBudget, maximumPositionAllowance, precisionResidual,
+        maximumPrecisionBudget, maximumPositionAllowance, nativeTargetAllowance, precisionResidual,
         positionPrecisionControl: cell.smoothMortarPositionControl ?? null })
       writeFileSync(join(evidence, `${backend}-${cell.id}.f32`), Buffer.from(actual.buffer))
       console.log(`BLENDLINK_${family}_CELL_${cellFailures.length ? 'FAILED' : 'PASSED'} ${backend} ${cell.id} maxAbs=${measured.maxAbs.toExponential(4)}`)
@@ -280,14 +298,14 @@ try {
     await page.close()
   }
   writeFileSync(join(evidence, 'report.json'), JSON.stringify({
-    family, oracle: 'Blender Cycles CPU, native node graphs, linear float channels',
+    family, oracle: 'Native Blender graphs, Cycles CPU isolated channels or explicitly selected EEVEE emission, linear float readback',
     builder: useBuilt ? 'built production module' : 'production TypeScript source via Vite',
     sourceSha256: sourceHash, emitterSha256: retainedReference ? null : emitterHash,
     nativeCapture: retainedReference ? 'retained reference replay; no current emitter execution' : 'fresh native capture',
     nativeReferenceDirectory: reference,
     nativeManifestSha256: sha256(join(reference, 'manifest.json')),
     testedIrSha256: Object.fromEntries(cells.map(cell => [cell.id, sha256(join(reference, 'ir', cell.id + '.json'))])),
-    snapshot, testedModuleHashes, testedNativeModuleHashes: retainedReference ? null : testedNativeModuleHashes,
+    snapshot, runtimeProvenance, testedModuleHashes, testedNativeModuleHashes: retainedReference ? null : testedNativeModuleHashes,
     blender: oracleOutput.match(/Blender [^\r\n]+/)?.[0],
     sourceStable: sha256(source) === sourceHash, emitterStable: sha256(emitter) === emitterHash,
     requestedCellIds: ids, skippedNativeModes, nativeVectorMathOperations: referenceManifest.nativeVectorMathOperations,

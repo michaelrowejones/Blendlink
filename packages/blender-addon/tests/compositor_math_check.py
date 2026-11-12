@@ -29,8 +29,11 @@ def main(output):
     scene.render.resolution_percentage = 100
     scene.render.use_compositing = True
     scene.render.use_sequencer = False
+    device = os.environ.get("BLENDLINK_COMPOSITOR_MATH_DEVICE", "CPU")
     if hasattr(scene.render, "compositor_device"):
-        scene.render.compositor_device = "CPU"
+        scene.render.compositor_device = device
+    elif device != "CPU":
+        raise AssertionError("This Blender has no selectable offline GPU compositor")
     if hasattr(scene.render, "compositor_precision"):
         scene.render.compositor_precision = "FULL"
     scene.view_settings.view_transform = "Raw"
@@ -57,7 +60,7 @@ def main(output):
               (0, -1, 0), (-2, -1, 0), (-0.5, 2, 0)]
     clamp_probes = {"ADD": (-0.75, 0.4, 0.2), "MULTIPLY": (2, 1.3, 0.1),
                     "POWER": (-2, -1, 0), "SINE": (0.75, 0, 0), "ROUND": (-0.5, 0, 0)}
-    rows, undefined = [], []
+    rows, undefined, finite_refused = [], [], []
     for operation in operations:
         node.operation = operation
         operation_probes = [(str(index), values, False) for index, values in enumerate(probes)]
@@ -67,7 +70,7 @@ def main(output):
             node.use_clamp = use_clamp
             for socket, value in zip(node.inputs, values):
                 socket.default_value = value
-            label = "math-" + operation.lower() + "-" + suffix
+            label = ("gpu-" if device == "GPU" else "") + "math-" + operation.lower() + "-" + suffix
             program = compositor_graph.extract(scene)
             scene.render.filepath = str(output / "native.exr")
             bpy.ops.render.render(write_still=True)
@@ -75,19 +78,23 @@ def main(output):
             width, height = image.size
             actual = np.asarray(image.pixels[:], dtype=np.float32).reshape(height, width, 4)
             if not np.isfinite(actual).all():
-                assert program["status"] == "unsupported", (operation, values, program)
                 undefined.append({"case": label, "operation": operation, "operands": values,
-                                  "reason": "Native Blender produces non-finite pixels; translation explicitly refused",
+                                  "reason": "Native Blender produces non-finite pixels",
+                                  "translationStatus": program["status"],
                                   "diagnostics": program["diagnostics"]})
                 bpy.data.images.remove(image)
                 continue
-            assert program["status"] == "extracted", program
+            if program["status"] != "extracted":
+                finite_refused.append({"case": label, "operation": operation, "operands": values,
+                                       "diagnostics": program["diagnostics"]})
+                bpy.data.images.remove(image)
+                continue
             assert program["ops"][-1]["properties"]["use_clamp"] == use_clamp
             assert np.all(actual[..., 3] == 1), "Scalar compositor output must be opaque"
             data = {"case": label, "operation": operation, "operands": values,
                     "useClamp": use_clamp,
                     "blenderVersion": bpy.app.version_string, "blenderHash": bpy.app.build_hash.decode(),
-                    "device": "CPU", "width": width, "height": height,
+                    "device": device, "compositorDevice": device, "width": width, "height": height,
                     "input": np.tile([0.25, 0.5, 0.75, 1], width * height).tolist(),
                     "expected": actual.ravel().tolist(), "program": program}
             (output / (label + ".json")).write_text(json.dumps(data, separators=(",", ":")))
@@ -95,7 +102,11 @@ def main(output):
             bpy.data.images.remove(image)
     (output / "index.json").write_text(json.dumps(rows, indent=2))
     (output / "undefined.json").write_text(json.dumps(undefined, indent=2))
-    print("BLENDLINK_COMPOSITOR_MATH_CHECK_PASSED " + json.dumps({"operations": len(operations), "cases": len(rows), "undefinedRefusals": len(undefined)}))
+    (output / "finite-refused.json").write_text(json.dumps(finite_refused, indent=2))
+    missing_refusals = [row for row in undefined if row["translationStatus"] != "unsupported"]
+    assert not missing_refusals, ("Undefined native Math domains were not refused", missing_refusals)
+    assert not finite_refused, ("Finite native Math probes were unexpectedly refused", finite_refused)
+    print("BLENDLINK_COMPOSITOR_MATH_CHECK_PASSED " + json.dumps({"device": device, "operations": len(operations), "cases": len(rows), "undefinedRefusals": len(undefined)}))
 
 
 destination = os.environ.get("BLENDLINK_COMPOSITOR_MATH_REFERENCES")

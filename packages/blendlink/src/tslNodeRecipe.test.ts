@@ -20,6 +20,38 @@ const documentOf = (output: Record<string, unknown>): TslIrDocument => ({
 })
 
 describe('buildTslColorNode', () => {
+  it('accepts live Wave distortion while refusing unknown modes and unproven octave counts', () => {
+    const expression = { op: 'tex_wave', waveType: 'BANDS', bandsDirection: 'X', ringsDirection: 'SPHERICAL',
+      profile: 'SAW', vector: { op: 'uv' }, scale: { op: 'const_float', value: .25 },
+      phase: { op: 'const_float', value: .375 }, detailScale: { op: 'const_float', value: 1 },
+      distortion: 0, distortionNode: { op: 'const_float', value: -.7 }, detail: 2, detailRoughness: .5 }
+    expect(buildTslColorNode(documentOf(expression))).toBeTruthy()
+    for (const detail of [-.5, 3])
+      expect(() => buildTslColorNode(documentOf({ ...expression, detail }))).toThrow(/verified finite detail range/)
+    expect(() => buildTslColorNode(documentOf({ ...expression, waveType: 'UNKNOWN' }))).toThrow(/wave type UNKNOWN/)
+    expect(() => buildTslColorNode(documentOf({ ...expression, bandsDirection: 'UNKNOWN' }))).toThrow(/bands direction UNKNOWN/)
+    expect(() => buildTslColorNode(documentOf({ ...expression, profile: 'UNKNOWN' }))).toThrow(/wave profile UNKNOWN/)
+    expect(() => buildTslColorNode(documentOf({ ...expression, distortionNode: undefined, distortion: Infinity })))
+      .toThrow(/distortion must be finite/)
+    expect(buildTslColorNode(documentOf({ ...expression, detailRoughnessNode: {
+      op: 'clamp_minmax', value: { op: 'separate', channel: 'x', input: { op: 'uv' } },
+      min: { op: 'const_float', value: 0 }, max: { op: 'const_float', value: 1 } } }))).toBeTruthy()
+    expect(() => buildTslColorNode(documentOf({ ...expression, detailRoughnessNode: {
+      op: 'attribute_object', name: 'roughness', output: 'fac', inputDomain: 'unit-bounded-live' } })))
+      .toThrow(/needs a proven \[0,1\]/)
+    expect(() => buildTslColorNode(documentOf({ ...expression, profile: 'SIN', precisionModel: 'UNKNOWN' })))
+      .toThrow(/no verified sine precision model/)
+  })
+  it('preserves legacy hidden-slot order only for the explicit native analytic model', () => {
+    const expression = { op: 'color_ramp', sourceModel: 'eevee-analytic-hidden',
+      interpolation: 'LINEAR', input: { op: 'uv' }, mulBias: [-10, 9.5],
+      stops: [{ position: .95, color: [.2, .4, .7, .3] }, { position: .85, color: [.8, .3, .1, .9] }] }
+    expect(buildTslColorNode(documentOf(expression))).toBeTruthy()
+    expect(() => buildTslColorNode(documentOf({ ...expression, sourceModel: 'eevee-analytic' })))
+      .toThrow(/ordered RGBA/)
+    expect(() => buildTslColorNode(documentOf({ ...expression, interpolation: 'CARDINAL' })))
+      .toThrow(/verified interpolation/)
+  })
   it('builds the remaining vector operations and complete transform modes', () => {
     const vector = { op: 'const_vec3', value: [0.2, -0.3, 0.7] }
     for (const operation of ['PROJECT', 'REFLECT', 'REFRACT', 'FACEFORWARD', 'ROUND', 'POWER', 'SIGN']) {
@@ -157,6 +189,26 @@ describe('buildTslColorNode', () => {
       .toThrow(/BuildTslOptions\.textures/)
     expect(() => buildTslColorNode(reference, { textures: () => null }))
       .toThrow(/resolved no texture/)
+  })
+
+  it('refuses malformed image storage before allocating a GPU resource', () => {
+    const image = { op: 'tex_image', width: 1, height: 1, pixels: [1, 0, 0, 1],
+      interpolation: 'Linear', extension: 'CLIP', vector: { op: 'uv' } }
+    const resources = createTslBuildResources()
+    expect(() => buildTslColorNode(documentOf({ ...image, width: -1, height: -1 }), { resources }))
+      .toThrow(/positive integer dimensions/)
+    expect(() => buildTslColorNode(documentOf({ ...image, pixels: [1e40, 0, 0, 1] }), { resources }))
+      .toThrow(/finite float32/)
+    expect(() => buildTslColorNode(documentOf({ ...image, sourceEngine: 'EEVEE', nativeGpuBackend: 'UNKNOWN' }), { resources }))
+      .toThrow(/GPU backend/)
+    expect(resources.textures).toHaveLength(0)
+  })
+
+  it('requires pinned image dimensions for native Cycles external-nearest selection', () => {
+    const image = { op: 'texture_ref', sourceEngine: 'CYCLES', interpolation: 'Closest',
+      ref: { slot: 3 }, vector: { op: 'uv' } }
+    expect(() => buildTslColorNode(documentOf(image), { textures: () => ({}) }))
+      .toThrow(/pinned positive dimensions/)
   })
 
   it('builds native hue floor tables and refuses unknown lookup modes', () => {

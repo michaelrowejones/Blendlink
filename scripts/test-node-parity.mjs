@@ -19,12 +19,12 @@ function attempt(label, action) {
     return false
   }
 }
-function run(label, executable, args, extraEnv = {}) {
+function run(label, executable, args, extraEnv = {}, timeout = 600_000) {
   console.log('BLENDLINK_NODE_GATE_STEP ' + label)
   const started = Date.now()
   const result = spawnSync(executable, args, {
     cwd: root, env: { ...process.env, ...extraEnv }, encoding: 'utf8',
-    maxBuffer: 64 * 1024 * 1024, timeout: 600_000, windowsHide: true,
+    maxBuffer: 64 * 1024 * 1024, timeout, windowsHide: true,
   })
   const output = (result.stdout ?? '') + '\n' + (result.stderr ?? '')
   writeFileSync(join(evidence, label + '.log'), output)
@@ -37,15 +37,31 @@ function run(label, executable, args, extraEnv = {}) {
 const blender = run('discovery', process.execPath,
   [join(root, 'packages/blendlink/dist/cli.js'), 'discover']).trim().split(/\r?\n/).filter(Boolean).at(-1)
 assert.ok(blender, 'Blender discovery returned no executable')
+const capabilitiesFile = join(evidence, 'native-capabilities.json')
+run('native-capabilities', blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+  '--python', join(root, 'experiments/native-compositor-differential/capabilities.py'), '--', capabilitiesFile])
+const capabilities = JSON.parse(readFileSync(capabilitiesFile, 'utf8'))
+assert.equal(typeof capabilities.offlineGpuAvailable, 'boolean', 'Native GPU capability was not reported')
+assert.equal(typeof capabilities.gpuParityVersionSupported, 'boolean', 'Native GPU parity version support was not reported')
+for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvailable'])
+  assert.equal(typeof capabilities[key], 'boolean', `Native utility capability ${key} was not reported`)
 const references = []
-for (const [family, file, variable] of [
+const referenceSets = []
+const inapplicableFamilies = []
+const compositorFamilies = [
   ['math', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES'],
   ['color-balance', 'compositor_color_balance_check.py', 'BLENDLINK_COLOR_BALANCE_REFERENCES'],
   ['color-channels', 'compositor_color_channels_check.py', 'BLENDLINK_COLOR_CHANNEL_REFERENCES'],
   ['pointwise', 'compositor_pointwise_check.py', 'BLENDLINK_COMPOSITOR_POINTWISE_REFERENCES'],
   ['alpha', 'compositor_alpha_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_REFERENCES'],
   ['mix', 'compositor_mix_check.py', 'BLENDLINK_COMPOSITOR_MIX_REFERENCES'],
-]) {
+  ['color-controls', 'compositor_color_check.py', 'BLENDLINK_COMPOSITOR_COLOR_REFERENCES'],
+]
+if (capabilities.sharedUtilityCompositorAvailable) compositorFamilies.push(
+  ['shared-utilities', 'shared_utility_check.py', 'BLENDLINK_SHARED_UTILITY_REFERENCES'])
+else inapplicableFamilies.push({ family: 'compositor-shared-utilities',
+  reason: 'Native node creation probe found no shared Boolean/Integer input nodes in this compositor' })
+for (const [family, file, variable] of compositorFamilies) {
   const directory = join(evidence, family)
   rmSync(directory, { recursive: true, force: true })
   mkdirSync(directory, { recursive: true })
@@ -54,16 +70,90 @@ for (const [family, file, variable] of [
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_MATH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BALANCE_DEVICE: 'CPU',
   }))
-  if (complete) references.push(directory)
+  if (complete) {
+    references.push(directory)
+    referenceSets.push({ family, device: 'CPU', directory,
+      cases: JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8')).length })
+  }
 }
-if (references.length) attempt('compositor-browser', () => run('compositor-browser', process.execPath, ['experiments/native-compositor-differential/run.mjs',
-  '--built', '--out', join(evidence, 'browser'), ...references]))
+let nativeCompositorGpu
+if (capabilities.offlineGpuAvailable && capabilities.gpuParityVersionSupported) {
+  const gpuFamilies = [
+    ['math-gpu', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES', 'BLENDLINK_COMPOSITOR_MATH_DEVICE'],
+    ['color-balance-gpu', 'compositor_color_balance_check.py', 'BLENDLINK_COLOR_BALANCE_REFERENCES', 'BLENDLINK_COMPOSITOR_BALANCE_DEVICE'],
+    ['color-channels-gpu', 'compositor_color_channels_check.py', 'BLENDLINK_COLOR_CHANNEL_REFERENCES', 'BLENDLINK_COMPOSITOR_CHANNEL_DEVICE'],
+    ['alpha-gpu', 'compositor_alpha_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_REFERENCES', 'BLENDLINK_COMPOSITOR_ALPHA_DEVICE'],
+    ['mix-gpu', 'compositor_mix_check.py', 'BLENDLINK_COMPOSITOR_MIX_REFERENCES', 'BLENDLINK_COMPOSITOR_MIX_DEVICE'],
+    ['pointwise-gpu', 'compositor_pointwise_check.py', 'BLENDLINK_COMPOSITOR_POINTWISE_REFERENCES', 'BLENDLINK_COMPOSITOR_POINTWISE_DEVICE'],
+    ['color-controls-gpu', 'compositor_color_check.py', 'BLENDLINK_COMPOSITOR_COLOR_REFERENCES', 'BLENDLINK_COMPOSITOR_COLOR_DEVICE'],
+  ]
+  if (capabilities.sharedUtilityCompositorAvailable) gpuFamilies.push(
+    ['shared-utilities-gpu', 'shared_utility_check.py', 'BLENDLINK_SHARED_UTILITY_REFERENCES', 'BLENDLINK_SHARED_UTILITY_DEVICE'])
+  for (const [family, file, variable, deviceVariable] of gpuFamilies) {
+    const directory = join(evidence, family)
+    rmSync(directory, { recursive: true, force: true })
+    mkdirSync(directory, { recursive: true })
+    attempt('native-' + family, () => {
+    run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+      '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory, [deviceVariable]: 'GPU' })
+    const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
+    assert.ok(rows.length > 0, `${family}: native GPU generator produced no cases`)
+    for (const row of rows) {
+      const fixture = JSON.parse(readFileSync(join(directory, row.case + '.json'), 'utf8'))
+      assert.equal(fixture.compositorDevice, 'GPU', `${row.case}: native GPU was substituted`)
+    }
+    references.push(directory)
+    referenceSets.push({ family, device: 'GPU', directory, cases: rows.length })
+    })
+  }
+  const gpuModelProofs = [
+    ['math-spatial-gpu', 'compositor_math_spatial_check.py', 'BLENDLINK_COMPOSITOR_MATH_SPATIAL_REFERENCES'],
+    ['execution-model-gpu', 'compositor_device_check.py', 'BLENDLINK_COMPOSITOR_DEVICE_REFERENCES'],
+    ['trigonometry-gpu', 'compositor_trig_check.py', 'BLENDLINK_COMPOSITOR_TRIG_REFERENCES'],
+  ]
+  for (const [family, file, variable] of gpuModelProofs) {
+    const directory = join(evidence, family)
+    rmSync(directory, { recursive: true, force: true })
+    mkdirSync(directory, { recursive: true })
+    attempt('native-' + family, () => {
+      run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+        '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory })
+      const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
+      assert.ok(rows.length > 0, `${family}: native execution model generator produced no cases`)
+      const devices = new Set(rows.map(row => {
+        const fixture = JSON.parse(readFileSync(join(directory, row.case + '.json'), 'utf8'))
+        assert.ok(['CPU', 'GPU'].includes(fixture.compositorDevice), `${row.case}: native device was not identified`)
+        return fixture.compositorDevice
+      }))
+      assert.ok(devices.has('GPU'), `${family}: native GPU was substituted`)
+      references.push(directory)
+      referenceSets.push({ family, device: [...devices].sort().join('+'), directory, cases: rows.length })
+    })
+  }
+  nativeCompositorGpu = { status: 'generated', families: [...gpuFamilies, ...gpuModelProofs].map(([family]) => family) }
+} else if (!capabilities.offlineGpuAvailable) {
+  nativeCompositorGpu = { status: 'unavailable', reason: capabilities.availabilityReason }
+  console.log('BLENDLINK_NATIVE_COMPOSITOR_GPU_UNAVAILABLE ' + capabilities.availabilityReason)
+} else {
+  nativeCompositorGpu = { status: 'not-certified', reason: capabilities.gpuParityReason }
+  console.log('BLENDLINK_NATIVE_COMPOSITOR_GPU_NOT_CERTIFIED ' + capabilities.gpuParityReason)
+}
+const compositorCases = referenceSets.reduce((sum, set) => sum + set.cases, 0)
+// The browser runner gives each backend250ms per native case. Keep the outer
+// process deadline consistent with both backends and startup/provenance work.
+const compositorTimeout = Math.max(600_000, compositorCases * 500 + 60_000)
+const compositorComplete = references.length > 0 && attempt('compositor-browser', () => run('compositor-browser', process.execPath, ['experiments/native-compositor-differential/run.mjs',
+  '--built', '--out', join(evidence, 'browser'), ...references], {}, compositorTimeout))
+if (nativeCompositorGpu.status === 'generated') nativeCompositorGpu.status = compositorComplete &&
+  !failures.some(item => item.label.endsWith('-gpu')) ? 'passed' : 'not-verified'
 for (const [family, flag] of [
   ['mapping', null], ['mix', '--mix'], ['map-range', '--map-range'],
   ['math', '--math'], ['math-boundary', '--boundary'], ['hue-ramp', '--hue-ramp'],
   ['vectors', '--vectors'],
-  ['brick', '--brick'],
+  ['brick', '--brick'], ['clamp', '--clamp'], ['images', '--images'],
 ]) {
   attempt('shader-' + family, () => run('shader-' + family, process.execPath, ['experiments/tsl-node-differential/run-mapping.mjs',
     '--built', ...(flag ? [flag] : [])], { BLENDLINK_BLENDER: blender,
@@ -73,14 +163,54 @@ attempt('spectral', () => run('spectral', process.execPath, ['experiments/spectr
   { BLENDLINK_BLENDER: blender, BLENDLINK_SPECTRAL_EVIDENCE: join(evidence, 'spectral') }))
 attempt('curves', () => run('curves', process.execPath, ['experiments/curve-node-differential/run.mjs', '--built'],
   { BLENDLINK_BLENDER: blender, BLENDLINK_CURVE_EVIDENCE: join(evidence, 'curves') }))
+attempt('vector-transform', () => {
+  const directory = join(evidence, 'vector-transform')
+  rmSync(directory, { recursive: true, force: true })
+  mkdirSync(directory, { recursive: true })
+  run('vector-transform-native', blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+    '--python', join(root, 'packages/blender-addon/tests/vector_transform_check.py')],
+  { BLENDLINK_VECTOR_TRANSFORM_REFERENCES: directory })
+  run('vector-transform-final', process.execPath, ['node_modules/vitest/vitest.mjs', 'run',
+    'experiments/vector-transform-differential/export.test.ts'],
+  { BLENDLINK_VECTOR_TRANSFORM_NATIVE: directory, BLENDLINK_VECTOR_TRANSFORM_BLENDER: blender,
+    BLENDLINK_VECTOR_TRANSFORM_BUILT: '1' })
+  run('vector-transform-browser', process.execPath, ['experiments/vector-transform-differential/run.mjs', directory, '--built'])
+})
+attempt('published-images', () => {
+  const directory = join(evidence, 'published-images')
+  rmSync(directory, { recursive: true, force: true })
+  mkdirSync(directory, { recursive: true })
+  run('published-images-native', blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+    '--python', join(root, 'packages/blender-addon/tests/multi_image_program_check.py')],
+  { BLENDLINK_MULTI_IMAGE_FIXTURE: directory })
+  run('published-images-final', process.execPath, ['node_modules/vitest/vitest.mjs', 'run',
+    'experiments/multi-image-differential/export.test.ts'],
+  { BLENDLINK_MULTI_IMAGE_NATIVE: directory, BLENDLINK_MULTI_IMAGE_BLENDER: blender,
+    BLENDLINK_MULTI_IMAGE_BUILT: '1' })
+  run('published-images-browser', process.execPath, ['experiments/multi-image-differential/run.mjs', '--built'],
+    { BLENDLINK_MULTI_IMAGE_NATIVE: directory })
+})
+attempt('wave', () => run('wave', process.execPath, ['experiments/wave-node-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_WAVE_EVIDENCE: join(evidence, 'wave') }))
+attempt('color-conversions', () => run('color-conversions', process.execPath,
+  ['experiments/color-conversion-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_COLOR_EVIDENCE: join(evidence, 'color-conversions') }))
+if (capabilities.sharedUtilityShaderAvailable) {
+  attempt('shared-utilities', () => run('shared-utilities', process.execPath,
+    ['experiments/shared-utility-differential/run.mjs', '--built'],
+    { BLENDLINK_BLENDER: blender, BLENDLINK_UTILITY_EVIDENCE: join(evidence, 'shared-utilities') }))
+} else inapplicableFamilies.push({ family: 'shader-shared-utilities',
+  reason: 'Native node creation probe found no shared Boolean/Integer input nodes in this shader context' })
 let browser = []
 try { browser = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 'utf8')) } catch { /* Failed families are recorded above. */ }
 writeFileSync(join(evidence, 'report.json'), JSON.stringify({
-  nativeCompositorDevice: 'CPU', references,
+  nativeCompositorDevices: [...new Set(referenceSets.flatMap(set => set.device.split('+')))],
+  nativeCompositorGpu, nativeCapabilities: capabilities, references, referenceSets, inapplicableFamilies, compositorTimeout,
   compositor: browser.map(({ backend, rows, failure, error }) => ({ backend, cases: rows?.length ?? 0,
     maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
-  shaderFamilies: ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'spectral', 'curves'],
+  shaderFamilies: ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'color-conversions',
+    ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])],
   builtRuntime: true, failures,
 }, null, 2) + '\n')
 assert.deepEqual(failures, [], 'Native node parity failed; all independent family logs were retained')
-console.log('BLENDLINK_NATIVE_NODE_GATE_PASSED native CPU references and built runtime on both browser backends')
+console.log('BLENDLINK_NATIVE_NODE_GATE_PASSED native CPU and available GPU references, built runtime on both browser backends')

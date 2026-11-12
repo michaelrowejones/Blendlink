@@ -929,6 +929,8 @@ def _fold_constant_vector(expression):
     if expression.get("op") == "combine":
         values = [_fold_constant_scalar(expression.get(axis)) for axis in ("x", "y", "z")]
         return values if all(item is not None for item in values) else None
+    if expression.get('op') == 'color_convert' and expression.get('mode') == 'RGB':
+        return _fold_constant_vector(expression.get('input'))
     return None
 
 
@@ -961,6 +963,9 @@ def _fold_vector_prescale(expression):
         if not isinstance(current, dict):
             break
         op = current.get("op")
+        if op == 'color_convert' and current.get('mode') == 'RGB':
+            current = current.get('input')
+            continue
         if op == "mapping":
             if current.get("vectorType") == "NORMAL" or any(key in current for key in ("locationNode", "rotationNode", "scaleNode")):
                 _refuse("Mapping NORMAL or varying transforms feeding a frequency-bounded texture have no proven coordinate-frequency bound")
@@ -971,6 +976,11 @@ def _fold_vector_prescale(expression):
                 # increases frequency instead of reducing it.
                 scales = [1.0 / value if value != 0.0 else 0.0 for value in scales]
             factor *= max(scales)
+            current = current.get("input")
+            continue
+        if op == "vector_transform":
+            if current.get("from") != current.get("to"):
+                _refuse("Vector Transform feeding a frequency-bounded texture needs an explicit scene-transform frequency bound")
             current = current.get("input")
             continue
         if op == "vector_rotate":
@@ -1088,6 +1098,12 @@ def emit_input(socket, stack=(), *, as_vector=False):
     _require_static_tree(socket.node)
     source = _socket_source(socket)
     if source is None:
+        if socket.type in {"INT", "BOOLEAN"}:
+            if __package__:
+                from .utility_ir import typed_constant
+            else:
+                from utility_ir import typed_constant
+            return typed_constant(socket, _refuse)
         value = _constant_value(socket)
         if value is None:
             _refuse(f"socket {socket.name!r} has no usable constant")
@@ -1113,6 +1129,12 @@ def _convert_link(expression, from_socket, to_socket):
     average) refuses by name until a cell exists."""
     from_type = str(getattr(from_socket, "type", ""))
     to_type = str(getattr(to_socket, "type", ""))
+    if from_type != to_type and ({from_type, to_type} & {"INT", "BOOLEAN"}):
+        if __package__:
+            from .utility_ir import convert
+        else:
+            from utility_ir import convert
+        return convert(expression, from_type, to_type, _refuse)
     if to_type == "VECTOR" and from_type == "VALUE":
         # An explicit broadcast survives group boundaries and later vector
         # component reads. Relying on arithmetic broadcasting alone can leave
@@ -1236,6 +1258,13 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeValue":
         return _scalar(_constant_value(node.outputs["Value"]))
 
+    if idname in {"FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeBooleanMath", "FunctionNodeIntegerMath"}:
+        if __package__:
+            from .utility_ir import emit_utility
+        else:
+            from utility_ir import emit_utility
+        return emit_utility(node, lambda socket: emit_input(socket, stack=stack), _refuse, get_evaluation_engine())
+
     if idname == "ShaderNodeSeparateXYZ":
         return {
             "op": "separate",
@@ -1243,24 +1272,14 @@ def emit_output(node, from_socket, stack=()):
             "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
         }
 
-    if idname in {"ShaderNodeSeparateColor", "ShaderNodeSeparateRGB"}:
-        mode = str(getattr(node, "mode", "RGB")) \
-            if idname == "ShaderNodeSeparateColor" else "RGB"
-        if mode not in {"RGB", "HSV"}:
-            _refuse(f"Separate Color mode {mode!r} has no cell yet")
-        # HSV mode relabels the outputs; identifiers stay Red/Green/Blue.
-        channel = {
-            "Red": "x", "Green": "y", "Blue": "z",
-            "R": "x", "G": "y", "B": "z",
-        }[getattr(from_socket, "identifier", socket_name)]
-        inner = emit_input(node.inputs[0], stack=stack, as_vector=True)
-        if mode == "HSV":
-            inner = {"op": "rgb_to_hsv", "input": inner}
-        return {
-            "op": "separate",
-            "channel": channel,
-            "input": inner,
-        }
+    if idname in {"ShaderNodeSeparateColor", "ShaderNodeSeparateRGB", "ShaderNodeCombineColor", "ShaderNodeCombineRGB"}:
+        if __package__:
+            from .color_ir import emit_color_conversion
+        else:
+            from color_ir import emit_color_conversion
+        return emit_color_conversion(node, from_socket,
+            emit_input=lambda socket, as_vector=False: emit_input(socket, stack=stack, as_vector=as_vector),
+            refuse=_refuse, evaluation_engine=get_evaluation_engine())
 
     if idname == "ShaderNodeCombineXYZ":
         return {
@@ -1269,21 +1288,6 @@ def emit_output(node, from_socket, stack=()):
             "y": emit_input(node.inputs["Y"], stack=stack),
             "z": emit_input(node.inputs["Z"], stack=stack),
         }
-
-    if idname in {"ShaderNodeCombineColor", "ShaderNodeCombineRGB"}:
-        mode = str(getattr(node, "mode", "RGB")) \
-            if idname == "ShaderNodeCombineColor" else "RGB"
-        if mode not in {"RGB", "HSV"}:
-            _refuse(f"Combine Color mode {mode!r} has no cell yet")
-        expression = {
-            "op": "combine",
-            "x": emit_input(node.inputs[0], stack=stack),
-            "y": emit_input(node.inputs[1], stack=stack),
-            "z": emit_input(node.inputs[2], stack=stack),
-        }
-        if mode == "HSV":
-            expression = {"op": "hsv_to_rgb", "input": expression}
-        return expression
 
     if idname == "ShaderNodeInvert":
         return {
@@ -1415,6 +1419,15 @@ def emit_output(node, from_socket, stack=()):
                              evaluation_engine=get_evaluation_engine(),
                              fold_scalar=_fold_constant_scalar)
 
+    if idname == "ShaderNodeVectorTransform":
+        if __package__:
+            from .vector_transform_ir import emit_vector_transform
+        else:
+            from vector_transform_ir import emit_vector_transform
+        return emit_vector_transform(node, from_socket,
+                                     emit_input=lambda socket: emit_input(socket, stack=stack, as_vector=True),
+                                     refuse=_refuse, engine=get_evaluation_engine())
+
     if idname == "ShaderNodeVectorRotate":
         rotation_type = str(getattr(node, "rotation_type", "AXIS_ANGLE"))
         if rotation_type not in {"AXIS_ANGLE", "X_AXIS", "Y_AXIS", "Z_AXIS", "EULER_XYZ"}:
@@ -1508,6 +1521,15 @@ def emit_output(node, from_socket, stack=()):
         return expression
 
     if idname == "ShaderNodeValToRGB":
+        if __package__:
+            from .ramps_ir import emit_context_ramp
+        else:
+            from ramps_ir import emit_context_ramp
+        contextual = emit_context_ramp(node, from_socket,
+            incoming=lambda: emit_input(node.inputs['Fac'], stack=stack),
+            refuse=_refuse, evaluation_engine=get_evaluation_engine())
+        if contextual is not None:
+            return contextual
         ramp = node.color_ramp
         color_mode = str(getattr(ramp, "color_mode", "RGB"))
         interpolation = str(ramp.interpolation)
@@ -1671,6 +1693,7 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeTexWave":
+        import math
         if getattr(from_socket, "identifier", socket_name) not in {
             "Color", "Fac",
         }:
@@ -1679,25 +1702,35 @@ def emit_output(node, from_socket, stack=()):
         # unrolls octaves like the Noise mapping does.
         detail_socket = node.inputs["Detail"]
         roughness_socket = node.inputs["Detail Roughness"]
-        if node.inputs["Distortion"].is_linked:
-            _refuse("Wave with a linked Distortion has no cell yet")
-        distortion_value = float(node.inputs["Distortion"].default_value)
+        distortion_socket = node.inputs["Distortion"]
+        distortion_linked = distortion_socket.is_linked
+        distortion_value = float(distortion_socket.default_value)
         detail_value = 0.0
         roughness_value = 0.5
-        if distortion_value != 0.0:
+        roughness_expression = None
+        if distortion_linked or distortion_value != 0.0:
             if detail_socket.is_linked:
                 _refuse("Wave with a linked Detail has no cell yet")
             if roughness_socket.is_linked:
-                _refuse("Wave with a linked Detail Roughness has no cell yet")
+                if __package__:
+                    from .color_ir import _unit_bounded
+                else:
+                    from color_ir import _unit_bounded
+                roughness_expression = emit_input(roughness_socket, stack=stack)
+                if not _unit_bounded(roughness_expression):
+                    _refuse('Wave linked Detail Roughness needs a proven [0,1] input; use an authored Clamp for unbounded values')
             detail_value = float(detail_socket.default_value)
             roughness_value = float(roughness_socket.default_value)
-            if detail_value > 2.0:
+            if not all(math.isfinite(value) for value in [detail_value, roughness_value, distortion_value]):
+                _refuse('Wave fractal parameters must be finite')
+            if not 0.0 <= detail_value <= 2.0:
                 _refuse(
-                    f"Wave detail {detail_value:g} exceeds the proven "
-                    "range (<= 2); high-octave phase divergence measured"
+                    f"Wave detail {detail_value:g} is outside the proven "
+                    "range [0,2]; negative-detail semantics and high-octave phase divergence are not ported"
                 )
         return {
             "op": "tex_wave",
+            "precisionModel": "portable-f32-v1",
             "waveType": str(node.wave_type),
             "bandsDirection": str(node.bands_direction),
             "ringsDirection": str(node.rings_direction),
@@ -1705,8 +1738,10 @@ def emit_output(node, from_socket, stack=()):
             "vector": _texture_vector(node.inputs["Vector"], stack, node),
             "scale": emit_input(node.inputs["Scale"], stack=stack),
             "distortion": distortion_value,
+            **({"distortionNode": emit_input(distortion_socket, stack=stack)} if distortion_linked else {}),
             "detail": detail_value,
             "detailRoughness": roughness_value,
+            **({"detailRoughnessNode": roughness_expression} if roughness_expression is not None else {}),
             "detailScale": emit_input(
                 node.inputs["Detail Scale"], stack=stack,
             ),
@@ -1714,9 +1749,17 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeTexImage":
+        import bpy
         image = node.image
         if image is None:
             _refuse("Image Texture without an image")
+        if str(getattr(image, "source", "")) not in {"FILE", "GENERATED"}:
+            _refuse("Image Texture needs a static FILE or GENERATED image; media, tiles and viewer buffers need a separate transport")
+        animation = getattr(image, "animation_data", None)
+        if animation and (animation.action or len(animation.drivers) or len(animation.nla_tracks)):
+            _refuse("Image Texture datablock has animation or drivers; live image animation transport is required")
+        if get_evaluation_engine() == "EEVEE" and getattr(bpy.context.preferences.system, "gpu_backend", "OPENGL") not in {"METAL", "OPENGL"}:
+            _refuse("Native image sampling has no verified GPU backend model")
         image_output = getattr(from_socket, "identifier", socket_name)
         if image_output not in {"Color", "Alpha"}:
             _refuse(f"Image Texture output {socket_name!r} unsupported")
@@ -1733,7 +1776,7 @@ def emit_output(node, from_socket, stack=()):
                 f"Image interpolation {interpolation!r} has no cell yet"
             )
         extension = str(node.extension)
-        if extension not in {"REPEAT", "EXTEND"}:
+        if extension not in {"REPEAT", "EXTEND", "MIRROR", "CLIP"}:
             _refuse(f"Image extension {extension!r} has no cell yet")
         projection = str(node.projection)
         if projection not in {"FLAT", "BOX"}:
@@ -1765,6 +1808,8 @@ def emit_output(node, from_socket, stack=()):
                 )
             if interpolation == "Cubic":
                 _refuse("Image Cubic interpolation with the texture transport has no proven cubic sampler (embedded Cubic only)")
+            if extension not in {"REPEAT", "EXTEND"}:
+                _refuse("Image Mirror/Clip extension with the texture transport has no verified sampler (embedded images only)")
             if projection == "BOX":
                 _refuse(
                     "Image BOX projection with the texture transport has "
@@ -1788,6 +1833,7 @@ def emit_output(node, from_socket, stack=()):
             # runtime configures one texture per distinct triple.
             return {
                 "op": "texture_ref",
+                "sourceEngine": get_evaluation_engine(),
                 "ref": {
                     "image": str(image.name),
                     "interpolation": interpolation,
@@ -1812,6 +1858,17 @@ def emit_output(node, from_socket, stack=()):
                 "Float-buffer sRGB image has no cell yet "
                 "(association order unmeasured)"
             )
+        if get_evaluation_engine() == "EEVEE" and bool(getattr(image, "is_float", False)) and colorspace in {"Non-Color", "Raw"}:
+            # The native GPU image upload treats float buffers as associated
+            # storage even for data images, then unassociates each texel. The
+            # data-color node clears alpha without reversing that conversion.
+            # Zero-alpha pixels retain their authored RGB, as native controls
+            # explicitly verify; dividing them would destroy valid data.
+            for index in range(0, len(pixels), 4):
+                alpha = pixels[index + 3]
+                if alpha not in {0.0, 1.0}:
+                    for channel in range(3):
+                        pixels[index + channel] /= alpha
         if colorspace == "sRGB":
             # Measured against baked ground truth: Cycles associates
             # alpha at load IN BYTE sRGB SPACE with integer floor
@@ -1831,6 +1888,19 @@ def emit_output(node, from_socket, stack=()):
                     pixels[index + channel] = _srgb_to_linear(
                         associated_byte / 255,
                     )
+        gpu_half_image = get_evaluation_engine() == "EEVEE" and bool(getattr(image, "is_float", False)) and bool(getattr(image, "use_half_precision", False))
+        if gpu_half_image:
+            import numpy as np
+            source = np.asarray(pixels, dtype=np.float32)
+            if not np.isfinite(source).all() or np.any(np.abs(source) > 65504):
+                _refuse("Image half-float upload exceeds its finite range; disable Half Precision on the source image")
+            # Native image uploads use GPU float-to-half conversion. This path
+            # remains truncating on Metal even after color-band uploads moved
+            # to CPU nearest-even conversion in Blender5.0.
+            half = source.astype(np.float16)
+            away = np.abs(half.astype(np.float32)) > np.abs(source)
+            half = np.where(away, np.nextafter(half, np.float16(0)), half)
+            pixels = half.astype(np.float32).tolist()
         vector_socket = node.inputs["Vector"]
         if vector_socket.is_linked:
             vector_expression = emit_input(
@@ -1841,12 +1911,17 @@ def emit_output(node, from_socket, stack=()):
             vector_expression = {"op": "uv"}
         import math as _math
         embedded = [float(value) for value in pixels]
-        if not all(_math.isfinite(value) for value in embedded):
+        if not all(_math.isfinite(value) and abs(value) <= 3.4028234663852886e38 for value in embedded):
             # NaN/Inf pixels would serialize as non-standard JSON tokens
             # downstream (allow_nan defaults on) and poison the document.
-            _refuse("image contains non-finite pixel values")
+            _refuse("image contains pixel values outside finite float32 transport")
         return {
             "op": "tex_image",
+            "sourceEngine": get_evaluation_engine(),
+            "sourceImageStorage": "rgba16f" if gpu_half_image else "rgba32f" if bool(getattr(image, "is_float", False)) else "rgba8",
+            "sourceImageUploadRounding": "toward-zero" if gpu_half_image else "none",
+            **({"nativeGpuBackend": getattr(bpy.context.preferences.system, "gpu_backend", "OPENGL")}
+               if get_evaluation_engine() == "EEVEE" else {}),
             "width": width,
             "height": height,
             "pixels": embedded,
@@ -2148,6 +2223,14 @@ def emit_output(node, from_socket, stack=()):
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
+        if roughness_value > 1.0:
+            # Native Noise clamps negative roughness to zero, but does not
+            # upper-clamp a linked value. The current normalized kernel's
+            # [0,1] amplitude model must not silently replace values above1.
+            _refuse(
+                f"Noise Roughness {roughness_value:g} exceeds the proven range "
+                "(<= 1); native linked roughness is not upper-clamped"
+            )
         if detail_value > _NOISE_DETAIL_BOUND + 1e-9:
             # Cells: `noise-detail4`, `noise-detail6`. Measured 2026-07-30,
             # maxAbs against a 0.01 gate: detail 4 1.94e-4, detail 6 2.49e-4 --
@@ -2442,14 +2525,18 @@ def emit_output(node, from_socket, stack=()):
         return expression
 
     if idname == "ShaderNodeClamp":
-        if str(getattr(node, "clamp_type", "MINMAX")) != "MINMAX":
-            _refuse(f"Clamp type {node.clamp_type!r} has no cell yet")
-        return {
-            "op": "clamp_minmax",
-            "value": emit_input(node.inputs["Value"], stack=stack),
-            "min": emit_input(node.inputs["Min"], stack=stack),
-            "max": emit_input(node.inputs["Max"], stack=stack),
-        }
+        mode = str(getattr(node, "clamp_type", "MINMAX"))
+        if mode not in {"MINMAX", "RANGE"}:
+            _refuse(f"Clamp type {mode!r} has no native model")
+        low = emit_input(node.inputs["Min"], stack=stack)
+        high = emit_input(node.inputs["Max"], stack=stack)
+        # Range orders either authored or live bounds. Min Max deliberately
+        # retains their order: reversed bounds collapse to the Max input.
+        if mode == "RANGE":
+            low, high = ({"op": "math", "operation": "MINIMUM", "a": low, "b": high},
+                         {"op": "math", "operation": "MAXIMUM", "a": low, "b": high})
+        return {"op": "clamp_minmax", "value": emit_input(node.inputs["Value"], stack=stack),
+                "min": low, "max": high}
 
     _refuse(f"{idname} has no proven TSL mapping")
 

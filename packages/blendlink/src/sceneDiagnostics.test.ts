@@ -897,6 +897,37 @@ describe('scene diagnostics', () => {
       .toThrow(/refused the final GLB.*unexpectedly gained KHR_materials_unlit/)
   })
 
+  it('allows an authored stock program carrier emissive texture while retaining binding evidence', () => {
+    const document = new Document()
+    const buffer = document.createBuffer()
+    const position = document.createAccessor().setType('VEC3')
+      .setArray(new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0])).setBuffer(buffer)
+    const image = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAFgwJ/lsk+2QAAAABJRU5ErkJggg==', 'base64')
+    const texture = document.createTexture().setImage(image).setMimeType('image/png')
+    const material = document.createMaterial('BLENDLINK_WEB.PROGRAM.Paint')
+      .setMetallicFactor(0).setRoughnessFactor(0.5)
+      .setBaseColorTexture(texture).setEmissiveTexture(texture).setEmissiveFactor([1, 1, 1])
+      .setExtras({ blendlink_source_material: 'Paint' })
+    const mesh = document.createMesh().addPrimitive(document.createPrimitive().setAttribute('POSITION', position).setMaterial(material))
+    document.createScene().addChild(document.createNode('Program Object').setMesh(mesh))
+    const evidence: MaterialCompilationEvidence = {
+      schemaVersion: 1, attestationModel: 'primitive-corner-v1', sourceFingerprint: 'program-emission',
+      loweredMaterials: ['Paint'], generatedMaterials: ['BLENDLINK_WEB.PROGRAM.Paint'],
+      gltfEvidence: [{ sourceMaterial: 'Paint', generatedMaterial: 'BLENDLINK_WEB.PROGRAM.Paint', transport: 'program',
+        surfaceResponse: 'lit', unlit: false, metallicFactor: 0, roughnessFactor: 0.5, primitiveCount: 1,
+        color0: false, alphaMode: 'OPAQUE', baseColorFactor: [1, 1, 1, 1], doubleSided: false,
+        bindings: ['Program Object[0]'], bindingPrimitives: [{ binding: 'Program Object[0]', occurrences: [{ mesh: 0, primitives: [0] }] }],
+      }],
+    }
+    expect(() => verifyFixture(document, evidence)).not.toThrow()
+    evidence.gltfEvidence![0]!.transport = 'factor'
+    material.setBaseColorTexture(null)
+    expect(() => verifyFixture(document, evidence)).toThrow('unexpected emissive texture')
+    evidence.gltfEvidence![0]!.transport = 'program'
+    document.getRoot().listNodes()[0]!.setName('Other Object')
+    expect(() => verifyFixture(document, evidence)).toThrow(/Program Object|binding/)
+  })
+
   it('re-attests the exact shared-texture static shade-floor carrier', () => {
     const document = new Document()
     const buffer = document.createBuffer()

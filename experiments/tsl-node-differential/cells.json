@@ -9005,6 +9005,5224 @@
         "maxAbs": 2e-06
       },
       "notes": "Native shader-stage fixed-input arbitrary negative Scale probe."
+    },
+    {
+      "id": "clamp-minmax-bounds0-value0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          -4,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds0-value1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          -1,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds0-value2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          0,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds0-value3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          0.5,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds0-value4",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          1,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds0-value5",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          4,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds1-value0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          -4,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds1-value1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          -1,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds1-value2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          0,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds1-value3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          0.5,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds1-value4",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          1,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds1-value5",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          4,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds2-value0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          -4,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds2-value1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          -1,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds2-value2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          0,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds2-value3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds2-value4",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          1,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds2-value5",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          4,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds3-value0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          -4,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds3-value1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          -1,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds3-value2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          0,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds3-value3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          0.5,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds3-value4",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          1,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-bounds3-value5",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          4,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-minmax-dynamic0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          {
+            "scale": 4,
+            "offset": -2
+          },
+          {
+            "scale": 2,
+            "offset": -1
+          },
+          {
+            "axis": "v",
+            "scale": -2,
+            "offset": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Live finite operands including bounds that cross inside the tile. Fixed budget covers independently measured bake UV nudge after 1/32 observation scale."
+    },
+    {
+      "id": "clamp-minmax-dynamic1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          {
+            "axis": "v",
+            "scale": 4,
+            "offset": -2
+          },
+          1,
+          {
+            "scale": 4,
+            "offset": -2
+          }
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Live finite operands including bounds that cross inside the tile. Fixed budget covers independently measured bake UV nudge after 1/32 observation scale."
+    },
+    {
+      "id": "clamp-minmax-dynamic2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          {
+            "scale": 4,
+            "offset": -2
+          },
+          {
+            "scale": 2,
+            "offset": -1
+          },
+          {
+            "scale": 2,
+            "offset": -1
+          }
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Live finite operands including bounds that cross inside the tile. Fixed budget covers independently measured bake UV nudge after 1/32 observation scale."
+    },
+    {
+      "id": "clamp-minmax-dynamic3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "MINMAX",
+        "inputs": [
+          2,
+          {
+            "scale": 4,
+            "offset": -2
+          },
+          {
+            "axis": "v",
+            "scale": 4,
+            "offset": -2
+          }
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Live finite operands including bounds that cross inside the tile. Fixed budget covers independently measured bake UV nudge after 1/32 observation scale."
+    },
+    {
+      "id": "clamp-range-bounds0-value0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          -4,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds0-value1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          -1,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds0-value2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          0,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds0-value3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          0.5,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds0-value4",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          1,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds0-value5",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          4,
+          -1,
+          1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds1-value0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          -4,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds1-value1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          -1,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds1-value2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          0,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds1-value3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          0.5,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds1-value4",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          1,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds1-value5",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          4,
+          1,
+          -1
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds2-value0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          -4,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds2-value1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          -1,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds2-value2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          0,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds2-value3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds2-value4",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          1,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds2-value5",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          4,
+          0.5,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds3-value0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          -4,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds3-value1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          -1,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds3-value2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          0,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds3-value3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          0.5,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds3-value4",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          1,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-bounds3-value5",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          4,
+          -8,
+          4
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Native Clamp through a positive affine observation carrier; authored bounds and finite negative/HDR inputs."
+    },
+    {
+      "id": "clamp-range-dynamic0",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          {
+            "scale": 4,
+            "offset": -2
+          },
+          {
+            "scale": 2,
+            "offset": -1
+          },
+          {
+            "axis": "v",
+            "scale": -2,
+            "offset": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Live finite operands including bounds that cross inside the tile. Fixed budget covers independently measured bake UV nudge after 1/32 observation scale."
+    },
+    {
+      "id": "clamp-range-dynamic1",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          {
+            "axis": "v",
+            "scale": 4,
+            "offset": -2
+          },
+          1,
+          {
+            "scale": 4,
+            "offset": -2
+          }
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Live finite operands including bounds that cross inside the tile. Fixed budget covers independently measured bake UV nudge after 1/32 observation scale."
+    },
+    {
+      "id": "clamp-range-dynamic2",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          {
+            "scale": 4,
+            "offset": -2
+          },
+          {
+            "scale": 2,
+            "offset": -1
+          },
+          {
+            "scale": 2,
+            "offset": -1
+          }
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Live finite operands including bounds that cross inside the tile. Fixed budget covers independently measured bake UV nudge after 1/32 observation scale."
+    },
+    {
+      "id": "clamp-range-dynamic3",
+      "gate": true,
+      "clampSweep": {
+        "mode": "RANGE",
+        "inputs": [
+          2,
+          {
+            "scale": 4,
+            "offset": -2
+          },
+          {
+            "axis": "v",
+            "scale": 4,
+            "offset": -2
+          }
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 4e-06,
+        "p99Abs": 1e-05,
+        "maxAbs": 1e-05
+      },
+      "claim": "exact",
+      "notes": "Live finite operands including bounds that cross inside the tile. Fixed budget covers independently measured bake UV nudge after 1/32 observation scale."
+    },
+    {
+      "id": "image-repeat-closest-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-repeat-closest-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-repeat-closest-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-closest-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-closest-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-closest-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-closest-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-closest-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-linear-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-repeat-linear-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-repeat-linear-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-linear-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-linear-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-linear-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-linear-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-linear-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-cubic-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-repeat-cubic-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-repeat-cubic-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-cubic-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-cubic-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-cubic-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-cubic-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-repeat-cubic-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-closest-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-extend-closest-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-extend-closest-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-closest-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-closest-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-closest-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-closest-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-closest-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-linear-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-extend-linear-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-extend-linear-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-linear-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-linear-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-linear-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-linear-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-linear-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-cubic-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-extend-cubic-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-extend-cubic-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-cubic-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-cubic-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-cubic-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-cubic-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-extend-cubic-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-closest-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-mirror-closest-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-mirror-closest-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-closest-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-closest-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-closest-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-closest-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-closest-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-linear-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-mirror-linear-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-mirror-linear-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-linear-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-linear-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-linear-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-linear-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-linear-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-cubic-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-mirror-cubic-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-mirror-cubic-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-cubic-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-cubic-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-cubic-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-cubic-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-mirror-cubic-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-closest-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-clip-closest-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-clip-closest-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-closest-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-closest-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-closest-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-closest-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-closest-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-linear-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-clip-linear-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-clip-linear-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-linear-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-linear-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-linear-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-linear-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-linear-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-cubic-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-clip-cubic-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately."
+    },
+    {
+      "id": "image-clip-cubic-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-cubic-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-cubic-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-cubic-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-cubic-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-clip-cubic-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift."
+    },
+    {
+      "id": "image-eevee-precision-control0",
+      "gate": true,
+      "nativeEngine": "EEVEE",
+      "imagePrecisionControl": [
+        0.1234567,
+        1.234567,
+        5.413859
+      ],
+      "tolerance": {
+        "meanAbs": 6e-06,
+        "p99Abs": 6e-06,
+        "maxAbs": 6e-06
+      },
+      "claim": "exact"
+    },
+    {
+      "id": "image-eevee-precision-control1",
+      "gate": true,
+      "nativeEngine": "EEVEE",
+      "imagePrecisionControl": [
+        0.3333333,
+        2.003,
+        12.3456
+      ],
+      "tolerance": {
+        "meanAbs": 6e-06,
+        "p99Abs": 6e-06,
+        "maxAbs": 6e-06
+      },
+      "claim": "exact"
+    },
+    {
+      "id": "eevee-image-repeat-closest-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-closest-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-closest-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-closest-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-closest-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-closest-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-closest-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-closest-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "REPEAT",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-closest-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-closest-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-closest-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-closest-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-closest-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-closest-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-closest-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-closest-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "EXTEND",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-closest-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-closest-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-closest-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-closest-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-closest-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-closest-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-closest-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-closest-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "MIRROR",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-closest-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-closest-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-closest-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-closest-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-closest-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-closest-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-closest-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-closest-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Closest",
+        "extension": "CLIP",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-color-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-alpha-field",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "output": "Alpha"
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native image sampler, signed multi-tile UV field, independent UV bake calibration. Closest-field discontinuities are not covered by the continuous-filter error bound; exact probes prove boundaries separately.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-boundary0",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          -1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-boundary1",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-boundary2",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-boundary3",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          0,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-boundary4",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-boundary5",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          1.125,
+          0.5
+        ]
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Authored exact dyadic texel boundary; no UV dependence or tolerance for nearest selection drift.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-linear-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "REPEAT",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-boundary1-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          -0.875,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-repeat-cubic-boundary4-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "REPEAT",
+        "coordinate": [
+          1,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-linear-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "EXTEND",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-boundary1-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          -0.875,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-extend-cubic-boundary4-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "EXTEND",
+        "coordinate": [
+          1,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-linear-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "MIRROR",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-boundary1-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          -0.875,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-mirror-cubic-boundary4-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "MIRROR",
+        "coordinate": [
+          1,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-linear-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Linear",
+        "extension": "CLIP",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-color-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "output": "Color",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-alpha-field-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "output": "Alpha",
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 0.0005,
+        "p99Abs": 0.002,
+        "maxAbs": 0.004
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-boundary1-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          -0.875,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
+    },
+    {
+      "id": "eevee-image-clip-cubic-boundary4-float32",
+      "gate": true,
+      "imageSampling": {
+        "interpolation": "Cubic",
+        "extension": "CLIP",
+        "coordinate": [
+          1,
+          0.5
+        ],
+        "halfPrecision": false
+      },
+      "tolerance": {
+        "meanAbs": 5e-06,
+        "p99Abs": 5e-06,
+        "maxAbs": 5e-06
+      },
+      "claim": "exact",
+      "notes": "Native float32 image upload with Half Precision disabled; same independent scene-target half precision controls apply.",
+      "nativeEngine": "EEVEE"
     }
   ]
 }

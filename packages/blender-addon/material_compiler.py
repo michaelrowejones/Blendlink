@@ -2400,6 +2400,8 @@ def _plan_selected_material(
                                            for entry in live_plan.get('channels', ())):
                         hybrid = _plan_material_bake(material, raw_bindings, binding_issues,
                                                      purpose=purpose, live_plan=live_plan)
+                        if any(issue.code == "material.automatic-fallback-engine-unproven" for issue in hybrid.issues):
+                            return hybrid
                         if hybrid.outcome != 'blocked' and any(entry.get('route') == 'bake'
                                                               for entry in (hybrid.channel_plan or {}).get('channels', ())):
                             return hybrid
@@ -2856,14 +2858,8 @@ def _attach_surface_tsl_ir(tree, channels, hashlib, _json, target="CYCLES") -> N
                 f"{TSL_IR_BYTE_BUDGET}-byte channel budget"
             )
             continue
-        referenced_images = set()
-        _collect_texture_ref_images(document, referenced_images)
-        if len(referenced_images) > 1:
-            entry["tslIrRefusal"] = (
-                f"channel references {len(referenced_images)} large "
-                "images; the texture transport carries one per channel"
-            )
-            continue
+        # The sidecar's shared image table and sampler-keyed resolver carry
+        # every referenced image; source bytes remain individually pinned.
         entry["tslIr"] = document
         entry["tslIrHash"] = hashlib.sha256(
             encoded.encode("utf8"),
@@ -2951,14 +2947,8 @@ def _attach_tsl_ir_documents(tree, channels, hashlib, _json, target="CYCLES") ->
                 f"{TSL_IR_BYTE_BUDGET}-byte channel budget"
             )
             continue
-        referenced_images = set()
-        _collect_texture_ref_images(document, referenced_images)
-        if len(referenced_images) > 1:
-            entry["tslIrRefusal"] = (
-                f"channel references {len(referenced_images)} large "
-                "images; the texture transport carries one per channel"
-            )
-            continue
+        # Multiple channels/materials reuse the same exact-byte image table;
+        # a channel's image count is independent of its IR byte budget.
         entry["tslIr"] = document
         entry["tslIrHash"] = hashlib.sha256(
             encoded.encode("utf8"),
@@ -3267,6 +3257,23 @@ def _plan_tsl_program(
                 "material.object-info-context-unproven", material.name, message,
                 "Use supported object owners and property timelines; the graph remains authored in Blender.", object_names,
             ))
+    if __package__:
+        from . import vector_transform_ir
+    else:
+        import vector_transform_ir
+    for entry in channels:
+        requirements = []
+        vector_transform_ir.collect_requirements(entry.get("tslIr"), requirements)
+        if requirements:
+            try:
+                for obj, _slot in raw_bindings: vector_transform_ir.validate_owner(obj, requirements)
+            except ValueError as error:
+                for key in ("tslIr", "tslIrHash", "tslIrBytes", "tslIrApproximations"): entry.pop(key, None)
+                entry["tslIrRefusal"] = str(error)
+                object_info_issues.append(MaterialIssue(
+                    "material.vector-transform-context-unproven", material.name, str(error),
+                    "Use finite, supported object transforms; the authored graph remains in Blender.", object_names,
+                ))
     for entry in channels:
         entry["route"] = "program" if "tslIr" in entry else "refused"
     channel_plan = {
@@ -3300,6 +3307,20 @@ def _plan_tsl_program(
         "per-channel", None, bindings,
         issues=tuple(issues), channel_plan=channel_plan,
     )
+
+
+def _automatic_channel_bake_refusal(tree, root, channel_name):
+    if __package__:
+        from .engine_fallback import channel_engine_difference
+    else:
+        from engine_fallback import channel_engine_difference
+    try:
+        with tsl_ir.emission_context(tree=tree, target="EEVEE") as source_engine:
+            if source_engine not in {"EEVEE", "CYCLES"}:
+                return f"has no proven automatic channel-bake equivalence for source engine {source_engine!r}"
+            return channel_engine_difference(root, channel_name, source_engine, "CYCLES", procedural._walk_channel_upstream)
+    except (tsl_ir.TslIrRefusal, RecursionError) as error:
+        return "has no proven source engine for automatic channel baking: " + str(error)
 
 
 def _plan_material_bake(
@@ -3362,17 +3383,18 @@ def _plan_material_bake(
     tile_uses_active = False
     limitations = []
 
-    def refuse(channel_name, entry, extra=None):
+    def refuse(channel_name, entry, extra=None, issue_code="material.channel-refused"):
         detail = _CHANNEL_REFUSED_ROUTINGS.get(
             entry.get("routing"), "cannot be carried by a Material bake",
         ) if extra is None else extra
         reasons = list(entry.get("reasons") or ())
         issues.append(MaterialIssue(
-            "material.channel-refused", material.name,
+            issue_code, material.name,
             f"The {channel_name} channel {detail}."
             + (f" ({'; '.join(reasons)})" if reasons else ""),
-            "Keep the object Realtime, simplify this channel, or use an "
-            "Appearance bake for deliberately flattened output.",
+            ("Keep this channel live, use Cycles as the source engine, or explicitly choose a capture after reviewing the engine change."
+             if issue_code == "material.automatic-fallback-engine-unproven" else
+             "Keep the object Realtime, simplify this channel, or use an Appearance bake for deliberately flattened output."),
             object_names,
         ))
         channels.append({
@@ -3396,6 +3418,11 @@ def _plan_material_bake(
                 ),
             )
             return None
+        if live_plan and live_plan.get("automatic") and live_plan.get("sourceTarget") == "EEVEE":
+            reason = _automatic_channel_bake_refusal(tree, root, channel_name)
+            if reason:
+                refuse(channel_name, entry, extra=reason, issue_code="material.automatic-fallback-engine-unproven")
+                return None
         routing_kind = entry.get("routing")
         if routing_kind in _CHANNEL_REFUSED_ROUTINGS:
             refuse(channel_name, entry)
@@ -5511,6 +5538,10 @@ def _ir_runtime_needs(value, needs) -> None:
             needs["objectAttributes"].add(str(value["name"]))
         if op == "object_info":
             needs["objectInfo"].add(value.get("output"))
+        if op == "vector_transform" and value.get("from") != value.get("to"):
+            needs["objectSpace"] = True
+            if "OBJECT" in {value.get("from"), value.get("to")}:
+                needs["vectorTransformOwner"] = True
         if op in ("generated", "object_coords"):
             needs["objectSpace"] = True
         if op == "generated":
@@ -5536,7 +5567,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
     """
     needs = {
         "uvMaps": set(), "colorLayers": set(), "objectAttributes": set(), "objectInfo": set(),
-        "texspace": False, "objectSpace": False,
+        "texspace": False, "objectSpace": False, "vectorTransformOwner": False,
     }
     for item in (decision.channel_plan or {}).get("channels", ()):
         ir = item.get("tslIr")
@@ -5553,6 +5584,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
             f'data on "{getattr(obj, "name", "?")}", which has none.'
         )
     entry = {"schemaVersion": 1}
+    if needs["vectorTransformOwner"]: entry["vectorTransformOwner"] = True
     if needs["objectAttributes"]:
         entry["objectAttributes"] = sorted(needs["objectAttributes"])
     if needs["objectInfo"]:
@@ -5627,24 +5659,27 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict, object_space="gl
     nodes = document.get("nodes") or []
     meshes = document.get("meshes") or []
     changed = False
+    object_markers = {}
     for _generated_name, fact in sorted(staged.items()):
         for object_name, entry in sorted(fact["tslRuntimeMeshes"].items()):
             mesh_entry = {key: value for key, value in entry.items()
-                          if key not in {"objectInfoOwner", "objectInfoMaterial"}}
+                          if key not in {"objectInfoOwner", "objectInfoMaterial", "vectorTransformOwner"}}
             if "objectSpace" in mesh_entry:
                 mesh_entry["objectSpace"] = object_space
-            if entry.get("objectAttributes") or entry.get("objectInfoOwner"):
+            if entry.get("objectAttributes") or entry.get("objectInfoOwner") or entry.get("vectorTransformOwner"):
                 # GLTFLoader puts a multi-primitive object's node extras on
                 # a Group above its Mesh children. Mark that exact authored
                 # owner; the runtime must not search arbitrary ancestors or
                 # mistake shared geometry for shared per-object properties.
-                for node in nodes:
+                for node_index, node in enumerate(nodes):
                     if node.get("name") == object_name and "mesh" in node:
-                        node.setdefault("extras", {})["blendlink_tsl_object"] = {
+                        object_markers[node_index] = {
+                            **object_markers.get(node_index, {}),
                             "schemaVersion": 1, "objectName": object_name,
                             **({"objectInfo": {**entry["objectInfoOwner"], "coordinateBasis": object_space}}
                                if entry.get("objectInfoOwner") else {}),
                         }
+                        node.setdefault("extras", {})["blendlink_tsl_object"] = object_markers[node_index]
                         changed = True
             if entry.get("objectInfoMaterial"):
                 for material in document.get("materials", []):

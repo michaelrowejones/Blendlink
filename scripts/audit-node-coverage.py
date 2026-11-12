@@ -42,9 +42,10 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf8")
 
 
-def native_catalog():
+def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enumeration_budgets=None):
     import bpy
     base_properties = set(bpy.types.Node.bl_rna.properties.keys())
+    editor_properties = {"select", "hide", "show_options", "show_preview", "show_texture", "use_custom_color", "mute"}
     schemas = {}
 
     def clean(value):
@@ -55,7 +56,7 @@ def native_catalog():
         except (TypeError, ValueError):
             return {"rnaType": type(value).__name__, "name": getattr(value, "name", None)}
 
-    def schema(node):
+    def schema(node, *, state=False):
         result = {}
         for direction in ("inputs", "outputs"):
             result[direction] = [{
@@ -63,7 +64,8 @@ def native_catalog():
                 "type": socket.type, "socketClass": socket.bl_idname,
                 "enabled": bool(getattr(socket, "enabled", True)),
                 "unavailable": bool(getattr(socket, "is_unavailable", False)),
-                **({"default": clean(socket.default_value)} if hasattr(socket, "default_value") else {}),
+                **({"default": clean(socket.default_value)} if hasattr(socket, "default_value")
+                   and (not state or (socket.enabled and not getattr(socket, "is_unavailable", False))) else {}),
             } for socket in getattr(node, direction)]
         key = digest(result)[:20]
         if key in schemas and schemas[key] != result:
@@ -86,7 +88,8 @@ def native_catalog():
                 if values:
                     result.append((prefix + prop.identifier, values, "rna"))
         for socket in node.inputs:
-            if socket.type != "MENU" or not hasattr(socket, "default_value"):
+            if socket.type != "MENU" or not hasattr(socket, "default_value") \
+                    or not socket.enabled or getattr(socket, "is_unavailable", False):
                 continue
             prop = socket.bl_rna.properties.get("default_value")
             values = [item.identifier for item in prop.enum_items if item.identifier] if prop and prop.type == "ENUM" else []
@@ -116,6 +119,138 @@ def native_catalog():
         for part in parts[:-1]:
             result = getattr(result, part)
         return result, parts[-1]
+
+    def enum_candidates(node):
+        """Union static RNA with the native contextual validation menu.
+
+        Compare.operation demonstrates why enum_items alone is insufficient:
+        RGBA exposes BRIGHTER/DARKER although the default FLOAT RNA list does
+        not. Invalid native assignment is read-only after its expected error.
+        """
+        result = {}
+        owners = [("", node)]
+        for name in ("color_ramp", "mapping"):
+            nested = getattr(node, name, None)
+            if nested is not None and hasattr(nested, "bl_rna"):
+                owners.append((name + ".", nested))
+        for prefix, target in owners:
+            for prop in target.bl_rna.properties:
+                if prop.type != "ENUM" or prop.is_readonly or (not prefix and prop.identifier in base_properties):
+                    continue
+                values = {item.identifier for item in prop.enum_items if item.identifier}
+                values.update(item.identifier for item in prop.enum_items_static if item.identifier)
+                source = "rna-static-and-native-context-validation"
+                try:
+                    setattr(target, prop.identifier, "__BLENDLINK_UNKNOWN_ENUM_PROBE__")
+                except (RuntimeError, TypeError, ValueError) as error:
+                    match = re.search(r"not found in (\(.*\))", str(error), re.S)
+                    if match:
+                        parsed = ast.literal_eval(match.group(1))
+                        if isinstance(parsed, tuple) and all(isinstance(item, str) for item in parsed):
+                            values.update(parsed)
+                            if not parsed and not values: source = "native-empty-menu-validation"
+                result[prefix + prop.identifier] = (sorted(values), source)
+        for path, values, source in modes(node):
+            if path.startswith("inputs:"):
+                result[path] = (values, source)
+        return result
+
+    def boolean_paths(node):
+        result = []
+        owners = [("", node)]
+        for name in ("color_ramp", "mapping"):
+            nested = getattr(node, name, None)
+            if nested is not None and hasattr(nested, "bl_rna"):
+                owners.append((name + ".", nested))
+        for prefix, target in owners:
+            result.extend(prefix + prop.identifier for prop in target.bl_rna.properties
+                          if prop.type == "BOOLEAN" and not prop.is_readonly
+                          and (prefix or prop.identifier not in base_properties | editor_properties))
+        return sorted(result)
+
+    def explore_enum_states(tree, identifier, record):
+        budget = (enumeration_budgets or {}).get(domain + ":" + identifier, {})
+        state_budget = min(enum_state_budget, budget.get("states", enum_state_budget))
+        transition_budget = min(enum_transition_budget, budget.get("transitions", enum_transition_budget))
+        pending = [()]
+        seen = set()
+        states = []
+        transitions = 0
+        failures = []
+        budget_exhausted = False
+        while pending:
+            history = pending.pop(0)
+            probe = tree.nodes.new(identifier)
+            try:
+                for path, value in history:
+                    target, key = owner(probe, path)
+                    setattr(target, key, value)
+                menus = enum_candidates(probe)
+                bools = boolean_paths(probe)
+                settings = {}
+                for path in sorted(set(menus) | set(bools)):
+                    target, key = owner(probe, path)
+                    settings[path] = clean(getattr(target, key))
+                state_key = encoded(settings)
+                if state_key in seen:
+                    continue
+                if len(states) >= state_budget:
+                    budget_exhausted = True
+                    break
+                seen.add(state_key)
+                states.append({"settings": settings, "socketSchema": schema(probe, state=True)})
+                for path, (values, source) in menus.items():
+                    observed = record["enums"].setdefault(path, {"source": source, "available": {}, "rejectedRnaValues": {}})
+                    if not values and source == "native-empty-menu-validation": observed["emptyNativeMenu"] = True
+                    elif not values: observed["optionsUnavailable"] = True
+                    for value in values:
+                        if transitions >= transition_budget:
+                            budget_exhausted = True
+                            break
+                        transitions += 1
+                        candidate = tree.nodes.new(identifier)
+                        try:
+                            for old_path, old_value in history:
+                                target, key = owner(candidate, old_path)
+                                setattr(target, key, old_value)
+                            target, key = owner(candidate, path)
+                            setattr(target, key, value)
+                            observed["available"].setdefault(value, {"socketSchema": schema(candidate, state=True), "assignmentFromSettings": dict(settings)})
+                            observed["rejectedRnaValues"].pop(value, None)
+                            observed.pop("optionsUnavailable", None)
+                            # Skip no-op transitions without creating an
+                            # exponentially large pending queue.
+                            changed = any(clean(getattr(owner(candidate, setting)[0], owner(candidate, setting)[1])) != previous
+                                          for setting, previous in settings.items() if not setting.startswith("inputs:")
+                                          or candidate.inputs.get(setting.split(":", 1)[1]) is not None)
+                            if changed:
+                                pending.append(history + ((path, value),))
+                        except (RuntimeError, TypeError, ValueError, KeyError, AttributeError) as error:
+                            if value not in observed["available"]:
+                                observed["rejectedRnaValues"].setdefault(value, str(error))
+                        finally:
+                            tree.nodes.remove(candidate)
+                    if budget_exhausted: break
+                if budget_exhausted: break
+                for path in bools:
+                    if transitions >= transition_budget:
+                        budget_exhausted = True
+                        break
+                    transitions += 1
+                    pending.append(history + ((path, not settings[path]),))
+            except (RuntimeError, TypeError, ValueError, KeyError, AttributeError) as error:
+                failures.append(str(error))
+            finally:
+                tree.nodes.remove(probe)
+        record["enumStateExploration"] = {
+            "status": "incomplete" if budget_exhausted or failures else "complete",
+            "stateBudget": state_budget, "transitionBudget": transition_budget,
+            "transitions": transitions, "stateCount": len(states),
+            "stateDigest": digest(sorted(states, key=encoded)),
+            "representativeStates": list({state["socketSchema"]: state for state in reversed(states)}.values()),
+            "failures": sorted(set(failures)),
+            "scope": "Reachable enum, active MENU socket and semantic writable node/color-ramp/mapping boolean states in the first creatable context; editor flags and structural mute do not multiply menu states. Other context defaults recorded separately. Inactive socket menu cross-products, numeric/socket-boolean values, authored group interfaces, ID bindings and point handles are not enumerated. All states are counted/digested; representative states cover distinct socket schemas.",
+        }
 
     candidates = []
     for name in dir(bpy.types):
@@ -158,27 +293,12 @@ def native_catalog():
                         continue
                     record = {"id": identifier, "label": node.bl_label or node.name,
                               "contexts": [context_name], "contextSocketSchemas": {context_name: schema(node)},
-                              "defaultSocketSchema": schema(node), "enums": {}, "booleanDefaults": {}}
+                              "defaultSocketSchema": schema(node), "enums": {}, "booleanDefaults": {},
+                              "structuralDefaults": {"mute": bool(getattr(node, "mute", False))}}
                     for prop in node.bl_rna.properties:
                         if prop.identifier not in base_properties and prop.type == "BOOLEAN" and not prop.is_readonly:
                             record["booleanDefaults"][prop.identifier] = bool(getattr(node, prop.identifier))
-                    for path, values, source in modes(node):
-                        observed = {"source": source, "available": {}, "rejectedRnaValues": {}}
-                        for value in values:
-                            probe = tree.nodes.new(identifier)
-                            try:
-                                target, key = owner(probe, path)
-                                setattr(target, key, value)
-                                observed["available"][value] = {"socketSchema": schema(probe)}
-                            except (RuntimeError, TypeError, ValueError, KeyError) as error:
-                                observed["rejectedRnaValues"][value] = str(error)
-                            finally:
-                                tree.nodes.remove(probe)
-                        if not values and source != "native-empty-menu-validation":
-                            observed["optionsUnavailable"] = True
-                        elif not values:
-                            observed["emptyNativeMenu"] = True
-                        record["enums"][path] = observed
+                    explore_enum_states(tree, identifier, record)
                     if identifier == "CompositorNodeRLayers":
                         record["renderPassSocketVariants"] = {}
                         layer = bpy.context.view_layer
@@ -203,7 +323,7 @@ def native_catalog():
         domains[domain] = {"nodes": sorted(nodes.values(), key=lambda n: n["id"]), "unavailable": unavailable}
     return {"schemaVersion": 1, "blenderVersion": bpy.app.version_string,
             "blenderVersionTuple": list(bpy.app.version), "blenderBuildHash": bpy.app.build_hash.decode(),
-            "method": "Every registered bpy.types.Node subclass is attempted in factory shader/compositor trees, without class-prefix filtering. Actual creation is authoritative (poll/registration methods can exclude usable shared types); enum values validated by assignment in the actual context; single-setting socket-schema probes, not all cross-products",
+            "method": "Every registered bpy.types.Node subclass is attempted in factory shader/compositor trees, without class-prefix filtering. Actual creation is authoritative; bounded breadth-first exploration of reachable enum and writable node/color-ramp/mapping boolean states discovers contextual menus by native assignment. Numeric, authored-interface and ID-binding combinations are outside this audit; incomplete/budget-exhausted state exploration is explicit and fails --check.",
             "domains": domains, "socketSchemas": schemas}
 
 
@@ -257,7 +377,17 @@ def native_baseline(catalog):
         "contextSocketSchemas": node.get("contextSocketSchemas", {}),
         "renderPassSocketVariants": node.get("renderPassSocketVariants", {}),
         "booleanDefaults": node.get("booleanDefaults", {}),
+        "structuralDefaults": node.get("structuralDefaults", {}),
+        "enumStateDigest": node.get("enumStateExploration", {}).get("stateDigest"),
     } for node in data["nodes"]} for domain, data in catalog["domains"].items()}
+
+
+def enumeration_review(node, domain, version, capabilities):
+    key = domain + ":" + node["id"]
+    limitation = capabilities.get("nativeEnumerationLimitations", {}).get(key)
+    entry = capabilities["entries"].get(key, {"category": "unsupported"})
+    entry = {**entry, **entry.get("versionOverrides", {}).get(version, {})}
+    return limitation, bool(limitation) and entry["category"] == "unsupported"
 
 
 def baseline_changes(current, previous):
@@ -272,7 +402,7 @@ def baseline_changes(current, previous):
             previous_record = prior.get(identifier, {})
             if previous_record.get("defaultSocketSchema") and record.get("defaultSocketSchema") != previous_record["defaultSocketSchema"]:
                 changes.append(f"{domain}:{identifier}: native default socket schema changed")
-            for field in ("contextSocketSchemas", "renderPassSocketVariants", "booleanDefaults"):
+            for field in ("contextSocketSchemas", "renderPassSocketVariants", "booleanDefaults", "structuralDefaults", "enumStateDigest"):
                 if field in previous_record and record.get(field) != previous_record[field]:
                     changes.append(f"{domain}:{identifier}: native {field} changed")
             for prop, values in enums(record).items():
@@ -329,7 +459,11 @@ def render_markdown(reports, capabilities, unreviewed):
             c = data["counts"]
             lines.append("| " + " | ".join([report["blenderVersion"], domain, str(data["total"]), *(str(c[k]) for k in CATEGORIES)]) + " |")
     lines += ["", "The former prefix-only inventory missed 36 shader-context and 69 compositor-context types in Blender 5.3, including shared FunctionNode and GeometryNode classes and graph-composition types. The corrected all-subclasses catalogs are authoritative; newly discovered types remain unsupported until an explicit measured implementation is reviewed.", "",
-              "Enum-value counts, including modes of unsupported nodes, are retained separately in `coverage.json`. They are single-setting observations rather than counts of valid combinations. `partial` also covers parameter/output restrictions that are not enums."]
+              "Enum-value counts are unions of observed native values, not counts of valid combinations. Bounded breadth-first exploration changes enum selections, active MENU sockets and semantic node/color-ramp/mapping booleans, discovers contextual menus through native assignment, and records state counts/digests with representative socket schemas. Compare's Color-only Brighter/Darker modes are therefore visible. All live routes must finish this scoped exploration. Editor flags and structural mute are excluded from menu products; defaults remain recorded. Numeric/socket-boolean values, ID bindings, authored interfaces and point handles are outside this audit. `partial` also covers parameter/output restrictions that are not enums."]
+    if capabilities.get("nativeEnumerationLimitations"):
+        lines += ["", "### Explicit incomplete native enumeration", "",
+                  "The following unsupported types have reviewed bounds on large selector products. Their observed enum unions are lower bounds; no exhaustive-combination or live-support claim is made. `coverage.json` lists each affected native version, explored state/transition counts and acknowledgement. Unacknowledged truncation fails `--check`; promotion to a live route also fails until its scoped state exploration completes.", ""]
+        lines += ["- `" + key + "`: " + reason for key, reason in sorted(capabilities["nativeEnumerationLimitations"].items())]
     versions = [report["blenderVersion"] for report in reports]
     lines += ["", "## Audited live/structural routes and deliberate bake routes", "",
               "All remaining native type IDs and every observed enum value are listed in `coverage.json`; native socket schemas are in `blender-*.json`. Explicit compiler/runtime evidence and version limits are in `../node-capabilities.json`.", "",
@@ -355,7 +489,7 @@ def render_markdown(reports, capabilities, unreviewed):
               "## Regenerate and check", "", "```sh",
               "python3 scripts/audit-node-coverage.py --blender /path/to/blender-4.2 --blender /path/to/blender-5.3 --check",
               "python3 scripts/audit-node-coverage.py --self-test", "```", "",
-              "`--update-baseline` acknowledges observed native availability and schemas only; it never promotes support. New node types or enum values, changed socket schemas and changed boolean defaults fail `--check` until reviewed. New types also need an explicit capability entry or an acknowledged `knownUnsupported` entry; live routes need explicit enum rules. Source hashes and evidence anchors expose stale capability claims. Enumerated menu/property schemas are single-setting probes, not exhaustive setting cross-products.", ""]
+              "`--update-baseline` acknowledges observed native availability and schemas only; it never promotes support. New node types or enum values, changed socket schemas/boolean defaults/state digests fail `--check` until reviewed. New types need an explicit capability entry or an acknowledged `knownUnsupported` entry; live routes need explicit enum rules and completed scoped menu-state exploration. Source hashes and evidence anchors expose stale capability claims. State and transition budgets are configurable; reviewed limits on unsupported families remain explicit in the capability map and output.", ""]
     if unreviewed:
         lines += ["### Native availability changes needing review", ""] + ["- " + item for item in unreviewed] + [""]
     return "\n".join(lines)
@@ -372,6 +506,15 @@ def self_test():
     assert any("socket schema changed" in item for item in schema_change)
     context_change = baseline_changes({"shader": {"Node": {"enums": {}, "contextSocketSchemas": {"root": "changed"}}}}, {"shader": {"Node": {"enums": {}, "contextSocketSchemas": {"root": "original"}}}})
     assert any("contextSocketSchemas changed" in item for item in context_change)
+    state_change = baseline_changes({"shader": {"Node": {"enums": {}, "enumStateDigest": "changed"}}},
+                                    {"shader": {"Node": {"enums": {}, "enumStateDigest": "original"}}})
+    assert any("enumStateDigest changed" in item for item in state_change)
+    node = {"id": "Unported"}
+    limited = {"entries": {}, "nativeEnumerationLimitations": {"compositor:Unported": "Explicit incomplete Cartesian scope"}}
+    assert enumeration_review(node, "compositor", "5.3.0", limited)[1]
+    limited["entries"]["compositor:Unported"] = {"category": "partial"}
+    assert not enumeration_review(node, "compositor", "5.3.0", limited)[1], "Live routes cannot acknowledge incomplete menu exploration"
+    assert not enumeration_review(node, "compositor", "5.3.0", {"entries": {}})[1]
     fake = {"blenderVersion": "test", "domains": {"shader": {"nodes": [
         {"id": "ShaderNodeFuture", "label": "Future", "enums": {}},
     ]}}}
@@ -400,9 +543,12 @@ def main():
     parser.add_argument("--update-baseline", action="store_true")
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--enum-state-budget", type=int, default=2048)
+    parser.add_argument("--enum-transition-budget", type=int, default=100000)
     args = parser.parse_args(argv)
     if args.catalog_output:
-        catalog = native_catalog()
+        catalog = native_catalog(enum_state_budget=args.enum_state_budget, enum_transition_budget=args.enum_transition_budget,
+                                 enumeration_budgets=json.loads(args.capabilities.read_text()).get("nativeEnumerationBudgets", {}))
         write_json(args.catalog_output, catalog)
         print("BLENDLINK_NATIVE_NODE_CATALOG_PASSED " + catalog["blenderVersion"])
         return
@@ -414,12 +560,15 @@ def main():
     capabilities = json.loads(args.capabilities.read_text(encoding="utf8"))
     failures = verify_map(capabilities)
     catalogs = []
+    unresolved_enumerations = []
     with tempfile.TemporaryDirectory(prefix="blendlink-native-node-inventory-") as temporary:
         for index, executable in enumerate(args.blender):
             out = Path(temporary) / f"{index}.json"
             env = {**os.environ, "BLENDER_USER_RESOURCES": str(Path(temporary) / f"profile-{index}")}
             result = subprocess.run([executable, "--background", "--factory-startup", "--python-exit-code", "1",
-                                     "--python", str(Path(__file__).resolve()), "--", "--catalog-output", str(out)],
+                                     "--python", str(Path(__file__).resolve()), "--", "--catalog-output", str(out),
+                                     "--enum-state-budget", str(args.enum_state_budget), "--enum-transition-budget", str(args.enum_transition_budget),
+                                     "--capabilities", str(args.capabilities.resolve())],
                                     env=env, capture_output=True, text=True, timeout=180)
             if result.returncode or not out.is_file():
                 raise RuntimeError(f"Native catalog failed for {executable}:\n{result.stdout[-5000:]}\n{result.stderr[-5000:]}")
@@ -431,6 +580,17 @@ def main():
     for catalog in catalogs:
         for domain, data in catalog["domains"].items():
             for node in data["nodes"]:
+                if node.get("enumStateExploration", {}).get("status") == "incomplete":
+                    key = domain + ":" + node["id"]
+                    limitation, acknowledged = enumeration_review(node, domain, ".".join(map(str, catalog["blenderVersionTuple"])), capabilities)
+                    if not acknowledged:
+                        failures.append(f"{catalog['blenderVersion']} {key}: enum state exploration incomplete (unacknowledged, or a live route)")
+                    else:
+                        node["enumStateExploration"]["reviewedIncompleteScope"] = limitation
+                    unresolved_enumerations.append({"blenderVersion": catalog["blenderVersion"], "node": key,
+                        "acknowledged": acknowledged, "reason": limitation,
+                        "stateCount": node["enumStateExploration"]["stateCount"],
+                        "transitions": node["enumStateExploration"]["transitions"]})
                 for prop, mode in node["enums"].items():
                     if mode.get("optionsUnavailable"):
                         failures.append(f"{catalog['blenderVersion']} {domain}:{node['id']}:{prop}: native menu options could not be enumerated")
@@ -464,6 +624,7 @@ def main():
     output = {"schemaVersion": 1, "generatedAt": datetime.now(timezone.utc).isoformat(),
               "capabilityMapSha256": hashlib.sha256(args.capabilities.read_bytes()).hexdigest(),
               "sourceSha256": source_hashes, "reports": reports,
+              "nativeEnumerationUnresolved": unresolved_enumerations,
               "nativeAvailabilityChanges": changes, "capabilityValidationFailures": failures}
     write_json(args.output / "coverage.json", output)
     (args.output / "README.md").write_text(render_markdown(reports, capabilities, changes), encoding="utf8")

@@ -3,9 +3,11 @@
   "ops": [
     "ambient_occlusion",
     "attribute_object",
+    "boolean_math",
     "bright_contrast",
     "clamp01",
     "clamp_minmax",
+    "color_convert",
     "color_ramp",
     "combine",
     "const_float",
@@ -14,8 +16,8 @@
     "fresnel",
     "gamma",
     "generated",
-    "hsv_to_rgb",
     "hue_sat",
+    "integer_math",
     "invert",
     "layer_weight",
     "map_range",
@@ -30,7 +32,6 @@
     "ramp_alpha",
     "ramp_lut",
     "rgb_to_bw",
-    "rgb_to_hsv",
     "separate",
     "shader_to_rgb_diffuse",
     "spectral",
@@ -43,14 +44,19 @@
     "tex_wave",
     "tex_white_noise",
     "texture_ref",
+    "typed_const",
+    "typed_convert",
     "uv",
     "vector_math",
     "vector_rotate",
     "vector_scale",
+    "vector_transform",
     "vertex_color",
     "view_cos"
   ],
   "legacyBuilderOps": [
-    "curve_rgb"
+    "curve_rgb",
+    "hsv_to_rgb",
+    "rgb_to_hsv"
   ]
 }

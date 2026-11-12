@@ -26,7 +26,7 @@ BLENDLINK_CURVE_EVIDENCE=artifacts/verification-curve-nodes \
 npm exec --yes --package=node@24 -- node experiments/curve-node-differential/run.mjs
 ```
 
-Use `--built` after a coordinated package build to test emitted modules. `BLENDLINK_TEST_CHROMIUM_ARGS` accepts a JSON array of additional Chromium arguments. `--reuse-reference` reuses the recorded native IR/pixels and their original native-module hashes, while taking a fresh runtime snapshot. It is useful for diagnosis; a release proof should generate fresh native references.
+Use `--built` after a coordinated package build to test emitted modules. The shared proof guard independently emits the whole TypeScript program and validates every production module, including values inlined from nonentry dependencies, before capturing immutable tested bytes; fresh file timestamps alone cannot satisfy it. `BLENDLINK_TEST_CHROMIUM_ARGS` accepts a JSON array of additional Chromium arguments. `--reuse-reference` reuses the recorded native IR/pixels and their original native-module hashes, while taking a fresh runtime snapshot. It is useful for diagnosis; a release proof should generate fresh native references.
 
 The numerical budget is `6e-6` for Cycles fixed/dense inputs. EEVEE adds at most one independently verified half-float scene-render-target ULP per reference value. That allowance concerns the native final scene target; the curve node's own table/filter precision is modeled inside the production shader. No UV allowance is used.
 
@@ -38,3 +38,5 @@ Additional read-only and package seams are checked with:
 ```
 
 The native test exercises both ordinary source modules and package-qualified modules staged with the actual flat extension layout. `tslCurveNodes.test.ts` covers model/schema refusal, table resource ownership, deduplication and compatibility with old documents. `node_mode_refusal_check.py` retains the separate native legacy compositor alpha test and now checks shader-tone transport.
+
+Retained Linux software OpenGL 4.2 references also pass all191 cases on both browser backends with the independently established legacy upload truncation model. Before changing encoding, regenerating raw native curve tables reproduced every retained nearest-even table exactly; only the upload encoding changed, with no native pixels or numerical budgets changed. Metal retains its separate fixed8/half-sample contract.

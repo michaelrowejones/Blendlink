@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
+import { captureRuntimeSnapshot } from '../../scripts/lib/runtime-provenance.mjs'
 
 const root = resolve(import.meta.dirname, '../..')
 const evidence = resolve(process.env.BLENDLINK_CURVE_EVIDENCE || join(root, 'artifacts/verification-curve-nodes'))
@@ -14,14 +15,9 @@ rmSync(join(evidence, 'report.json'), { force: true })
 const built = process.argv.includes('--built')
 const snapshot = join(evidence, 'module-snapshot-' + Date.now() + '-' + process.pid)
 const nativeSnapshot = join(snapshot, 'native')
+const { provenance } = await captureRuntimeSnapshot({ root, built, destination: snapshot, label: 'curve' })
+const copied = Object.fromEntries(provenance.snapshot.files.map(file => [file.name, file.sha256]))
 mkdirSync(nativeSnapshot, { recursive: true })
-const copied = {}
-for (const file of readdirSync(join(root, built ? 'packages/blendlink/dist' : 'packages/blendlink/src'))) {
-  if (!file.endsWith(built ? '.js' : '.ts') || file.endsWith('.test.ts')) continue
-  const content = readFileSync(join(root, built ? 'packages/blendlink/dist' : 'packages/blendlink/src', file))
-  writeFileSync(join(snapshot, file), content)
-  copied[file] = createHash('sha256').update(content).digest('hex')
-}
 for (const directory of ['packages/blendlink/blender', 'packages/blender-addon'])
   for (const file of readdirSync(join(root, directory))) {
     if (!file.endsWith('.py') && !file.endsWith('.json')) continue
@@ -32,9 +28,6 @@ const sources = ['packages/blendlink/src/tslNodeRecipe.ts', 'packages/blendlink/
   'packages/blender-addon/shader_color_band.py', 'packages/blendlink/blender/compositor_graph.py']
 const hash = file => createHash('sha256').update(readFileSync(join(root, file))).digest('hex')
 const sourceHashes = Object.fromEntries(sources.map(file => [file, hash(file)]))
-if (built) for (const name of ['tslNodeRecipe', 'tslCurveNodes'])
-  assert.ok(statSync(join(root, `packages/blendlink/dist/${name}.js`)).mtimeMs >=
-    statSync(join(root, `packages/blendlink/src/${name}.ts`)).mtimeMs, 'Build before testing emitted curve nodes')
 if (!process.argv.includes('--reuse-reference')) {
   const blender = process.env.BLENDLINK_BLENDER || execFileSync(process.execPath,
     [join(root, 'packages/blendlink/dist/cli.js'), 'discover'], { encoding: 'utf8' }).trim().split(/\r?\n/).at(-1)
@@ -46,6 +39,7 @@ if (!process.argv.includes('--reuse-reference')) {
   assert.match(log, /BLENDLINK_CURVE_REFERENCES_PASSED/)
 }
 const manifest = JSON.parse(readFileSync(join(references, 'index.json'), 'utf8'))
+writeFileSync(join(evidence, 'provenance.json'), JSON.stringify(provenance, null, 2))
 const size = manifest.size
 const floats = buffer => new Float32Array(buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength))
 const server = await createServer({ configFile: false, root: join(root, 'experiments/tsl-node-differential'),
@@ -121,7 +115,7 @@ try {
   }
   const stable = sources.every(file => sourceHashes[file] === hash(file))
   writeFileSync(join(evidence, 'report.json'), JSON.stringify({ blender: manifest.blender, nativeBuild: manifest.buildHash,
-    built, sourceHashes, snapshot, testedModuleHashes: copied, nativeModuleHashes: manifest.nativeModuleHashes, workspaceStable: stable, rows, failures }, null, 2))
+    built, sourceHashes, provenance, snapshot, testedModuleHashes: copied, refusals: manifest.refusals ?? [], nativeModuleHashes: manifest.nativeModuleHashes, workspaceStable: stable, rows, failures }, null, 2))
   assert.deepEqual(failures, [], 'Native curve pixels differ; see report.json')
   console.log(`BLENDLINK_CURVE_DIFFERENTIAL_PASSED ${manifest.cases.length} cases on both backends`)
 } finally { await browser?.close(); await server.close() }
