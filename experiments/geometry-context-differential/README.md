@@ -119,3 +119,24 @@ and [normal-buffer extraction](https://github.com/blender/blender/blob/v5.2.0/so
 
 These are partial node implementations with tested live routes, not claims of
 all-output, arbitrary-scene, native-driver or whole-render parity.
+
+## Source active-render UV
+
+Set `BLENDLINK_GEOMETRY_ACTIVE_UV=1 BLENDLINK_GEOMETRY_ENGINE=EEVEE` to run
+the dedicated source-UV corpus with `suite.mjs --built --profiles shared`.
+Two meshes share four source materials but choose different active-render UV
+slots; edit selection deliberately points elsewhere. Actual native RGB covers
+Texture Coordinate UV, unnamed UV Map, named EditUV and unlinked Image Texture
+coordinates. The independent RGB orientation marker is outside its mirrored
+footprint and refuses ambiguous calibration.
+
+Blender4.2/5.2/5.3 each pass eight actual Final GLBs and240 readbacks per
+WebGPU/WebGL2 backend:1,440 total readbacks. These include both coordinate bases,
+perspective/orthographic front/back and three owner/camera frames. Maximum
+encoded RGB error is0.0004888773 within the unchanged2e-5 plus independently
+verified native final-half-target ULP. Source files remain unchanged.
+
+`active_uv_binding_check.py` additionally verifies missing/out-of-range render
+UV refusal, read-only edit/render selection and a real hybrid export with baked
+roughness plus a live source-UV Base Color channel. Legacy serialized `uv` stays
+UV0; only fresh `uv_active` requires the explicit owner binding.

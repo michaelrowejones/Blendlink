@@ -6,6 +6,8 @@ import sys
 import bpy
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import tsl_ir
+engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties['engine'].enum_items}
+bpy.context.scene.render.engine = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT'
 material = bpy.data.materials.new('Native Noise parameter admission')
 material.use_nodes = True
 tree = material.node_tree
@@ -25,7 +27,7 @@ try:
     for roughness in [0, .5, 1]:
         source.outputs[0].default_value = roughness
         expression = tsl_ir.emit_output(noise, noise.outputs['Fac'])
-        assert expression['op'] == 'noise' and expression['roughness'] == roughness
+        assert expression['op'] == 'noise_normalized' and expression['roughness'] == roughness
     noise.normalize = False
     expression = tsl_ir.emit_output(noise, noise.outputs['Fac'])
     assert expression['op'] == 'noise_fractal' and expression['normalize'] is False

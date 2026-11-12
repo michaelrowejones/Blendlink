@@ -19,6 +19,7 @@ import { collectVectorTransformRequirements, validateVectorTransformBinding, typ
 import { collectGeometryContextOutputs, validateGeometryContextBinding, type GeometryContextOutput } from './tslGeometryContext.js'
 import { collectNormalMapRequirements, validateNormalMapBinding } from './tslNormalNodes.js'
 import {collectTangentRequirements,validateTangentBinding} from './tslTangentNodes.js'
+import {collectTangentNormalMaps,validateTangentNormalMapBinding} from './tslTangentNormalMap.js'
 import type { TslIrExpression } from './tslNodeRecipe.js'
 import {
   createTslBuildResources,
@@ -29,6 +30,8 @@ import {
   buildMaterialProgram,
   buildOptionsFor,
   collectObjectAttributeNames,
+  requiresActiveUv,
+  validateActiveUvMesh,
   type MaterialNodeSlot,
   type MaterialProgramChannel,
   type TslRuntimeMeshExtras,
@@ -364,13 +367,18 @@ export async function installTslMaterials(
   const geometryContexts = new Map<string, Set<GeometryContextOutput>>()
   const normalMapContexts = new Map<string,TslIrExpression[]>()
   const tangentContexts=new Map<string,TslIrExpression[]>()
+  const tangentMapContexts=new Map<string,TslIrExpression[]>()
+  const activeUvPrograms = new Set<string>()
   for(const [name,program] of Object.entries(programs.materials)){
+    if (requiresActiveUv(program.channels)) activeUvPrograms.add(name)
     const outputs=new Set<GeometryContextOutput>();collectGeometryContextOutputs(program.channels,outputs)
     if(outputs.size)geometryContexts.set(name,outputs)
     const normalMaps:TslIrExpression[]=[];collectNormalMapRequirements(program.channels,normalMaps)
     if(normalMaps.length)normalMapContexts.set(name,normalMaps)
     const tangents:TslIrExpression[]=[];collectTangentRequirements(program.channels,tangents)
     if(tangents.length)tangentContexts.set(name,tangents)
+    const tangentMaps:TslIrExpression[]=[];collectTangentNormalMaps(program.channels,tangentMaps)
+    if(tangentMaps.length)tangentMapContexts.set(name,tangentMaps)
   }
   const skipped: TslMaterialSkip[] = []
   interface InstalledSwap {
@@ -435,6 +443,14 @@ export async function installTslMaterials(
           return
         }
         const needed = attributeNames.get(source)
+        if (activeUvPrograms.has(source)) {
+          try { validateActiveUvMesh(mesh.geometry, extras, source) }
+          catch (error) {
+            if (!(error instanceof TslIrError)) throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" active UV refused: ${error.message}; its carrier stays`})
+            return
+          }
+        }
         const owner = objectAttributeOwner(mesh)
         const info = objectInfoOutputs.get(source)
         const transforms = vectorTransforms.get(source)
@@ -511,6 +527,15 @@ export async function installTslMaterials(
         // one clone would make createBakedScene refuse ("shared by atlas
         // groups"). Meshes sharing one loaded material still share one
         // clone per runtime-extras variant.
+        const tangentMaps=tangentMapContexts.get(source)
+        if(tangentMaps){
+          try{validateTangentNormalMapBinding(tangentMaps,mesh,extras?.objectSpace,extras,
+            buildOptionsFor(extras,undefined,source,programTextures?.resolver))}
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" tangent Normal Map refused: ${error.message}; its carrier stays`});return
+          }
+        }
         const normalMapBasis = !mesh.geometry.hasAttribute('uv') ? 'missing'
           : mesh.geometry.hasAttribute('tangent') ? 'attribute' : 'derivative'
         const variantKey = `${material.uuid} ${normalMapBasis} ${JSON.stringify(extras ?? null)} ${needed?.length || info?.size || objectTransform ? owner.uuid : ''}`

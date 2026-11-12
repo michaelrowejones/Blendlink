@@ -197,7 +197,17 @@ def _noise_shader_offset_profile(engine, host_platform, architecture, gpu_backen
     return None
 
 
-def _noise_random_offset(seed, count, *, native_mf=False, native_float4=False, native_shader_f32=False):
+def _normalized_noise_source_profile(engine, host_platform, architecture, cycles_device='CPU'):
+    """Only measured fresh normalized source profiles; old IR stays separate."""
+    if engine == 'EEVEE':
+        return 'native-standard-f32'
+    if (engine == 'CYCLES' and cycles_device == 'CPU' and host_platform == 'darwin'
+            and architecture.lower() in {'arm64', 'aarch64'}):
+        return 'cycles-neon-fma'
+    return None
+
+
+def _noise_random_offset(seed, count, *, native_mf=False, native_float4=False, native_shader_f32=False, native_shader_fused=False):
     """noisetex.h random_floatN_offset for a constant seed.
 
     The scalar helper is NOT the vec2 hash with a zero lane:
@@ -209,6 +219,13 @@ def _noise_random_offset(seed, count, *, native_mf=False, native_float4=False, n
     """
     hashes = ([_hash_float_to_float(seed)] if count == 1 else
               [_hash_float2_to_float(seed, float(index)) for index in range(count)])
+    if native_shader_fused:
+        import struct
+        f32 = lambda value: struct.unpack('f', struct.pack('f', value))[0]
+        # Cycles NEON shader code rounds the uint quotient, then contracts
+        # 100*q+100. Its low-seed offsets differ from both legacy models.
+        return [f32(100 + f32(f32(round(value * 0xFFFFFFFF)) / f32(0xFFFFFFFF)) * 100)
+                for value in hashes]
     if native_mf or native_float4 or native_shader_f32:
         import struct
         f32 = lambda value: struct.unpack('f', struct.pack('f', value))[0]
@@ -892,9 +909,9 @@ def _channel_document(expression):
     encoded = _json.dumps(expression)
     if '"view_cos"' in encoded:
         document["viewDependent"] = True
-    if any(('"'+name+'"') in encoded for name in ('normal_map_native','normal_view_native','tangent_native')):
+    if any(('"'+name+'"') in encoded for name in ('normal_map_native','normal_view_native','tangent_native','normal_map_tangent_native')):
         document['viewDependent'] = True
-    if any(('"'+name+'"') in encoded for name in ('normal_map','normal_view','normal_map_native','normal_view_native','tangent_native')):
+    if any(('"'+name+'"') in encoded for name in ('normal_map','normal_view','normal_map_native','normal_view_native','tangent_native','normal_map_tangent_native')):
         document["geometryDependent"] = True
     if '"ambient_occlusion"' in encoded:
         # Scene occlusion is not carried: the runtime evaluates the
@@ -920,12 +937,15 @@ def emit_normal_channel(socket, stack=(), *, evaluation_engine=None):
     normals=[];normal_ir.requirements(expression,normals)
     if __package__:
         from . import tangent_ir
+        from . import normal_map_tangent_ir
     else:
         import tangent_ir
+        import normal_map_tangent_ir
     tangents=[];tangent_ir.requirements(expression,tangents)
-    if (normals or tangents) and expression.get('op') not in {'normal_map_native','tangent_native'}:
+    tangent_maps=[];normal_map_tangent_ir.requirements(expression,tangent_maps)
+    if (normals or tangents or tangent_maps) and expression.get('op') not in {'normal_map_native','tangent_native','normal_map_tangent_native'}:
         _refuse('Native Normal Map normal channels currently require a direct unit-normal output; downstream vector normalization is not certified yet')
-    if normals or tangents: return _channel_document({"op": "normal_view_native", "input": expression})
+    if normals or tangents or tangent_maps: return _channel_document({"op": "normal_view_native", "input": expression})
     return _channel_document({"op": "normal_view", "input": expression})
 
 
@@ -1278,7 +1298,7 @@ def emit_output(node, from_socket, stack=()):
                 from geometry_ir import emit_geometry
             return emit_geometry(node, from_socket, refuse=_refuse, engine=get_evaluation_engine())
         if socket_name == "UV":
-            return {"op": "uv"}
+            return {"op": "uv_active"}
         if socket_name == "Object":
             if getattr(node, "object", None) is not None:
                 _refuse(
@@ -1312,7 +1332,7 @@ def emit_output(node, from_socket, stack=()):
 
     if idname == "ShaderNodeUVMap":
         uv_map = str(getattr(node, "uv_map", "") or "")
-        return {"op": "uv", **({"uvMap": uv_map} if uv_map else {})}
+        return {"op": "uv", "uvMap": uv_map} if uv_map else {"op": "uv_active"}
 
     if idname == "ShaderNodeRGB":
         return _vector(_constant_value(node.outputs["Color"]))
@@ -1898,7 +1918,7 @@ def emit_output(node, from_socket, stack=()):
                     node.inputs["Vector"], stack=stack, as_vector=True,
                 )
             else:
-                reference_vector = {"op": "uv"}
+                reference_vector = {"op": "uv_active"}
             # Hardware sampling against the published source bytes; the
             # sRGB decode and alpha association follow the browser's image
             # pipeline (named fidelity note vs the byte-exact embedded
@@ -1981,7 +2001,7 @@ def emit_output(node, from_socket, stack=()):
             )
         else:
             # Unlinked Vector on Image Texture means the active UV map.
-            vector_expression = {"op": "uv"}
+            vector_expression = {"op": "uv_active"}
         import math as _math
         embedded = [float(value) for value in pixels]
         if not all(_math.isfinite(value) and abs(value) <= 3.4028234663852886e38 for value in embedded):
@@ -2044,7 +2064,7 @@ def emit_output(node, from_socket, stack=()):
             # coordinate ops.
             if isinstance(item, dict):
                 if item.get("op") in {
-                    "uv", "generated", "object_coords",
+                    "uv", "uv_active", "generated", "object_coords",
                     "vertex_color", "view_cos",
                 }:
                     return True
@@ -2307,7 +2327,8 @@ def emit_output(node, from_socket, stack=()):
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
-        precise_fractal = not normalize_output or roughness_expression is not None
+        normalized_native = normalize_output and roughness_expression is None
+        precise_fractal = not normalize_output or roughness_expression is not None or normalized_native
         if roughness_expression is not None and detail_value > 2:
             _refuse('Noise varying Roughness requires static Detail <= 2 in the proven domain')
         offset_value = _folded_noise_scalar('Offset', 0) if noise_type in {'HETERO_TERRAIN', 'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 0
@@ -2367,6 +2388,22 @@ def emit_output(node, from_socket, stack=()):
             else _fold_vector_prescale(input_expression)
         )
         scale_magnitude = abs(float(scale_expression["value"])) * prescale
+        # Keep explicitly measured legacy high-scale approximations separate
+        # from the versioned native normalized capability.
+        if normalized_native and scale_magnitude > _NOISE_SCALE_BOUND + 1e-9:
+            normalized_native = False
+            precise_fractal = False
+        normalized_source_profile = None
+        if normalized_native:
+            import platform
+            import sys
+            normalized_source_profile = _normalized_noise_source_profile(
+                get_evaluation_engine(), sys.platform, platform.machine(),
+                getattr(getattr(bpy.context.scene, 'cycles', None), 'device', 'CPU'))
+            if normalized_source_profile is None:
+                _refuse('Normalized Noise has no verified live source precision profile for '
+                        + get_evaluation_engine() + ' on ' + sys.platform + '/' + platform.machine()
+                        + '; use source baking for this Cycles profile')
         approximate_bound = _NOISE_SCALE_APPROXIMATE_BOUNDS.get(dimensions)
         if (
             scale_magnitude > _NOISE_SCALE_BOUND + 1e-9
@@ -2430,11 +2467,14 @@ def emit_output(node, from_socket, stack=()):
         }
         native_mf = False
         shader_offset_profile = None
+        native_shader_fused = False
         if not normalize_output:
             expression.update({"op": "noise_fractal"})
             expression['noiseType'] = noise_type
             if amplitude_bound is not None:
                 expression.update(offset=offset_value, gain=gain_value, amplitudeBound=amplitude_bound)
+        if normalized_native:
+            expression.update({"op": "noise_normalized", 'noiseType': 'FBM'})
         if roughness_expression is not None:
             expression.update({"op": "noise_varying", 'noiseType': noise_type, 'roughnessNode': roughness_expression})
         if precise_fractal and bpy.app.version >= (5, 0, 0):
@@ -2454,8 +2494,11 @@ def emit_output(node, from_socket, stack=()):
             shader_offset_profile = _noise_shader_offset_profile(
                 source_engine, sys.platform, platform.machine(), gpu_backend, bpy.app.version,
                 _noise_gpu_renderer() if source_engine == 'EEVEE' and gpu_backend == 'OPENGL' else '')
+            native_shader_fused = normalized_native and not native_mf and normalized_source_profile == 'cycles-neon-fma'
+            if normalized_native:
+                expression['perlinModel'] = 'cycles-neon-fma' if native_shader_fused else 'native-standard-f32'
             expression['evaluationModel'] = 'shader-mf' if native_mf else 'shader'
-            expression['offsetModel'] = ('float4-f32' if dimensions == '4D' else 'mf-f32' if native_mf
+            expression['offsetModel'] = ('cycles-neon-fma' if native_shader_fused else 'float4-f32' if dimensions == '4D' else 'mf-f32' if native_mf
                                          else shader_offset_profile or 'shader-folded')
         # Distortion perturbs the SCALED coordinate before any octave runs,
         # by a single signed Perlin octave per component sampled at the low
@@ -2485,6 +2528,9 @@ def emit_output(node, from_socket, stack=()):
                 distortion_value = float(distortion_socket.default_value)
         if precise_fractal and (not math.isfinite(distortion_value) or abs(distortion_value) > 1):
             _refuse('Unnormalized Noise Distortion exceeds its proven finite [-1,1] domain')
+        if native_shader_fused and dimensions in {'3D', '4D'} and (detail_value > 1 or distortion_value != 0):
+            _refuse('Normalized Noise Cycles SIMD 3D/4D above Detail1 or with Distortion needs source baking; '
+                    'the software renderer cannot reliably compile this workload')
         if abs(distortion_value) > 1e-9:
             # Lane count follows the dimension. The old "2 if 2D else 3" was
             # the same silent fallthrough that broke 1D dimensions: it would
@@ -2496,7 +2542,8 @@ def emit_output(node, from_socket, stack=()):
             expression["distortionOffsets"] = [
                 _noise_random_offset(float(seed), count, native_mf=native_mf,
                                      native_float4=precise_fractal and count == 4,
-                                     native_shader_f32=shader_offset_profile is not None)
+                                     native_shader_f32=shader_offset_profile is not None,
+                                     native_shader_fused=native_shader_fused)
                 for seed in range(count)
             ]
         if noise_output == "Color":
@@ -2514,7 +2561,8 @@ def emit_output(node, from_socket, stack=()):
             expression["colorOffsets"] = [
                 _noise_random_offset(seed, count, native_mf=native_mf,
                                      native_float4=precise_fractal and count == 4,
-                                     native_shader_f32=shader_offset_profile is not None) for seed in seeds
+                                     native_shader_f32=shader_offset_profile is not None,
+                                     native_shader_fused=native_shader_fused) for seed in seeds
             ]
         return expression
 
@@ -2526,6 +2574,13 @@ def emit_output(node, from_socket, stack=()):
         return emit_tangent(node,engine=get_evaluation_engine(),refuse=_refuse)
 
     if idname == "ShaderNodeNormalMap":
+        if node.space=='TANGENT' and get_evaluation_engine()=='EEVEE':
+            if __package__:
+                from .normal_map_tangent_ir import emit as emit_tangent_map
+            else:
+                from normal_map_tangent_ir import emit as emit_tangent_map
+            return emit_tangent_map(node,emit_vector=lambda socket:emit_input(socket,stack=stack,as_vector=True),
+                emit_scalar=lambda socket:emit_input(socket,stack=stack),refuse=_refuse,engine=get_evaluation_engine())
         if node.space != 'TANGENT':
             if __package__:
                 from .normal_ir import emit_normal_map

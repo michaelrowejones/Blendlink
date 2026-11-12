@@ -8,15 +8,15 @@ Unknown operations remain opaque until their native evaluation is proved.
 """
 
 _CONSTANT = {"const_float", "const_vec3", "typed_const"}
-_SHADER = {"uv", "generated", "object_coords", "normal_view", "view_cos",
+_SHADER = {"uv", "uv_active", "generated", "object_coords", "normal_view", "view_cos",
            "attribute_object", "vertex_color", "normal_map", "object_info",
            "ambient_occlusion", "fresnel", "layer_weight", "shader_to_rgb_diffuse",
-           "texture_ref", "tex_image", "vector_transform", "geometry_context", "normal_map_native", "normal_view_native", "tangent_native"}
+           "texture_ref", "tex_image", "vector_transform", "geometry_context", "normal_map_native", "normal_view_native", "tangent_native", "normal_map_tangent_native"}
 _FUNCTION = {"math", "vector_math", "mapping", "vector_rotate", "vector_scale",
              "combine", "separate", "clamp01", "clamp_minmax", "mix_color",
              "rgb_to_bw", "hue_sat", "hsv_to_rgb", "rgb_to_hsv", "gamma",
              "invert", "bright_contrast", "color_ramp", "ramp_alpha", "ramp_lut",
-             "curve_rgb", "curve_native", "noise", "noise_fractal", "noise_varying", "tex_checker", "tex_gradient", "tex_magic",
+             "curve_rgb", "curve_native", "noise", "noise_fractal", "noise_normalized", "noise_varying", "tex_checker", "tex_gradient", "tex_magic",
              "tex_wave", "tex_voronoi", "tex_white_noise", "tex_brick",
              "typed_convert", "boolean_math", "integer_math"}
 _CYCLES_FUNCTION = {"math", "vector_math", "mapping", "vector_scale", "combine",

@@ -130,6 +130,8 @@ window.__tslDiffRun = async (
       pendingResources = createTslBuildResources()
       colorNode = buildTslColorNode(document, {
         resources: pendingResources,
+        // Native tile fixtures explicitly author their active-render map on UV0.
+        activeUvChannel: 0,
         ...(analyticCamera ? { viewCos: analyticViewCos() } : {}),
         // The light-contract override: a sun of the cell's declared
         // effective irradiance (the EEVEE reference measures the same

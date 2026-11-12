@@ -3287,9 +3287,11 @@ def _plan_tsl_program(
     if __package__:
         from . import geometry_ir
         from . import tangent_ir
+        from . import normal_map_tangent_ir
     else:
         import geometry_ir
         import tangent_ir
+        import normal_map_tangent_ir
     tangent_uv_choices = {}
     for entry in channels:
         outputs = set()
@@ -3299,6 +3301,7 @@ def _plan_tsl_program(
                 for obj, _slot in raw_bindings: geometry_ir.validate_owner(obj, outputs)
                 geometry_ir.bind_normal_model(entry['tslIr'], [obj for obj, _slot in raw_bindings])
                 tangent_ir.bind_owners(entry['tslIr'],[obj for obj,_slot in raw_bindings],tangent_uv_choices)
+                normal_map_tangent_ir.validate_owners(entry['tslIr'],[obj for obj,_slot in raw_bindings])
                 if __package__:
                     from . import normal_ir
                 else:
@@ -5143,6 +5146,9 @@ def _prune_unpublished_uv_layers(data_swaps, generated_facts, log=print) -> int:
                             "which the TSL runtime resolves."
                         )
                     channels[name] = layer_names.index(name)
+                active = entry.get("activeRenderUv")
+                if active is not None:
+                    active["channel"] = channels[active["uvMap"]]
     return removed_total
 
 
@@ -5600,6 +5606,8 @@ def _ir_runtime_needs(value, needs) -> None:
         op = value.get("op")
         if op == "uv" and value.get("uvMap"):
             needs["uvMaps"].add(str(value["uvMap"]))
+        if op == "uv_active":
+            needs["usesActiveUv"] = True
         if op == "vertex_color" and value.get("layer"):
             needs["colorLayers"].add(str(value["layer"]))
         if op == "attribute_object" and value.get("name"):
@@ -5625,7 +5633,7 @@ def _ir_runtime_needs(value, needs) -> None:
             _ir_runtime_needs(item, needs)
 
 
-def _tsl_runtime_mesh_entry(decision, obj):
+def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
     """Mesh-level application data for the TSL IR route, or None when the
     material's channel IR needs none of it.
 
@@ -5638,7 +5646,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
     the ground-truth gate for staleness.
     """
     needs = {
-        "uvMaps": set(), "colorLayers": set(), "objectAttributes": set(), "objectInfo": set(),
+        "uvMaps": set(), "usesActiveUv": False, "colorLayers": set(), "objectAttributes": set(), "objectInfo": set(),
         "texspace": False, "objectSpace": False, "vectorTransformOwner": False,
         "geometryContext": set(),"tangentFrames": set(),
     }
@@ -5646,7 +5654,7 @@ def _tsl_runtime_mesh_entry(decision, obj):
         ir = item.get("tslIr")
         if ir:
             _ir_runtime_needs(ir, needs)
-    if not needs["uvMaps"] and not needs["colorLayers"] \
+    if not needs["uvMaps"] and not needs["usesActiveUv"] and not needs["colorLayers"] \
             and not needs["texspace"] and not needs["objectSpace"] \
             and not needs["objectAttributes"] and not needs["objectInfo"]:
         return None
@@ -5657,6 +5665,21 @@ def _tsl_runtime_mesh_entry(decision, obj):
             f'data on "{getattr(obj, "name", "?")}", which has none.'
         )
     entry = {"schemaVersion": 1}
+    if needs["usesActiveUv"]:
+        layers = getattr(mesh, "uv_layers", None)
+        active_name = source_uv_state.get("activeRenderUv") if source_uv_state is not None else None
+        active = (layers.get(active_name) if active_name else None) if source_uv_state is not None \
+            else next((layer for layer in layers if layer.active_render), None) if layers is not None else None
+        if active is None:
+            raise MaterialCompileError(
+                f'Material "{decision.material_name}" needs an active render UV map on mesh "{mesh.name}".'
+            )
+        index = int(layers.find(active.name))
+        if index < 0 or index > 3:
+            raise MaterialCompileError('The active render UV map must be one of the first four exported UV channels.')
+        needs["uvMaps"].add(active.name)
+        entry["activeRenderUv"] = {"schemaVersion": 1, "model": "source-active-render-v1",
+                                   "uvMap": active.name, "channel": index}
     if needs["vectorTransformOwner"]: entry["vectorTransformOwner"] = True
     if needs["geometryContext"]: entry["geometryContext"] = sorted(needs["geometryContext"])
     if needs["tangentFrames"]:
@@ -7638,6 +7661,10 @@ def _generated_material_bake(
             uses_alpha = True
     else:
         base_record = plan_records.get("Base Color")
+        if base_record is not None and base_record.get("route") == "program":
+            # A hybrid carrier has no baked base image to neutralize Blender's
+            # default gray. Its live Base Color program replaces this slot.
+            principled.inputs["Base Color"].default_value = (1.0, 1.0, 1.0, 1.0)
         if base_record is not None and base_record.get("route") == "factor":
             value = base_record.get("value")
             if isinstance(value, (list, tuple)) and len(value) >= 3:
@@ -7803,6 +7830,11 @@ def with_compiled_materials(
                     "source": source_material,
                     "oldLink": slot.link,
                     "oldMaterial": slot.material,
+                    # Atlas baking may choose a new render layer on the
+                    # private mesh. Live channels keep the artist's source
+                    # selection, resolved by name against final UV order.
+                    "sourceUvState": {"activeRenderUv": next(
+                        (layer.name for layer in obj.data.uv_layers if layer.active_render), None)},
                 })
 
         # Preserve instancing: objects that shared one source Mesh and require
@@ -7881,16 +7913,22 @@ def with_compiled_materials(
                 if binding_key not in installed_binding_keys:
                     installed_bindings.append(entry)
                     installed_binding_keys.add(binding_key)
-                program_key = ("tslProgram", decision.material_name)
+                runtime_entry = _tsl_runtime_mesh_entry(decision, obj, source_uv_state=entry["sourceUvState"])
+                uv_layout = {key: runtime_entry[key] for key in ("uvChannels", "activeRenderUv")
+                             if runtime_entry and key in runtime_entry}
+                uv_identity = json.dumps(uv_layout, sort_keys=True, separators=(",", ":"))
+                program_key = ("tslProgram", decision.material_name, uv_identity)
                 generated = generated_by_variant.get(program_key)
                 if generated is None:
-                    # ONE carrier per material, deliberately: the runtime
-                    # resolves programs by blendlink_source_material and
-                    # the attestation requires exactly one generated
-                    # match. Per-binding variance rides the per-object
-                    # mesh extras, not the material.
+                    # Stock glTF can split a shared material when its source
+                    # meshes choose different UV slots. Give each UV layout
+                    # an explicit carrier identity before export; the live
+                    # program remains shared by its source material name.
+                    fingerprint = decision.fingerprint_dict()
+                    if uv_layout:
+                        fingerprint = {**fingerprint, "sourceUvLayout": uv_layout}
                     program_variant = hashlib.sha256(json.dumps(
-                        decision.fingerprint_dict(), sort_keys=True,
+                        fingerprint, sort_keys=True,
                         separators=(",", ":"),
                     ).encode("utf8")).hexdigest()[:10]
                     try:
@@ -7902,7 +7940,9 @@ def with_compiled_materials(
                             f"the TSL program carrier: {error}"
                         ) from error
                     generated.name = (
-                        f"{decision.material_name}.BLENDLINK_TSL."
+                        # Prefix the digest: Blender 5.2 parses a final all-digit
+                        # name suffix through signed stoi and can abort on ten digits.
+                        f"{decision.material_name}.BLENDLINK_TSL.p"
                         f"{program_variant}"
                     )
                     generated["blendlink_source_material"] = (
@@ -7929,7 +7969,6 @@ def with_compiled_materials(
                     }
                 fact = generated_facts[generated.name]
                 fact["bindings"].add(binding_key)
-                runtime_entry = _tsl_runtime_mesh_entry(decision, obj)
                 if runtime_entry is not None:
                     fact.setdefault("tslRuntimeMeshes", {})[
                         binding.object_name
@@ -8669,7 +8708,7 @@ def with_compiled_materials(
                 }
             fact = generated_facts[generated.name]
             fact["bindings"].add(binding_key)
-            runtime_entry = _tsl_runtime_mesh_entry(decision, obj)
+            runtime_entry = _tsl_runtime_mesh_entry(decision, obj, source_uv_state=entry["sourceUvState"])
             if runtime_entry is not None:
                 fact.setdefault("tslRuntimeMeshes", {})[
                     binding.object_name

@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Primary-surface Mikk UV tangent context with explicit basis ownership."""
 import math
+import struct
 import bpy
 from mathutils import Vector
 
@@ -20,10 +21,14 @@ def requirements(value,result):
 
 def emit_tangent(node,*,engine,refuse):
     if node.direction_type!='UV_MAP':refuse('Radial Tangent still needs a proven nonzero axis/projection domain')
+    return uv_frame(str(node.uv_map),engine=engine,refuse=refuse)
+
+
+def uv_frame(uv_name,*,engine,refuse):
     if engine!='EEVEE':refuse('Cycles UV Tangent needs a verified triangulated native-normal Mikk basis; authored mesh tangents are not equivalent')
     context=geometry_ir.primary_context('normal',engine)
     return {"op": "tangent_native",'model':'primary-mikk-tangent-v1','sourceEngine':engine,
-            'frameSource':'blender-mikk-uv-v1','uvMap':str(node.uv_map),'tangentStorage':context['normalStorage'],
+            'frameSource':'blender-mikk-uv-v1','uvMap':uv_name,'tangentStorage':context['normalStorage'],
             'normal':context}
 
 
@@ -35,8 +40,8 @@ def cone(values):
     return axis,math.acos(min(1,cosine))
 
 
-def frame_bound(mesh,uv_name):
-    cache=geometry_ir._validation_cache.get();key=('tangent-frame',mesh.as_pointer(),uv_name)
+def frame_bound(mesh,uv_name,storage=None):
+    cache=geometry_ir._validation_cache.get();key=('tangent-frame',mesh.as_pointer(),uv_name,storage)
     if cache is not None and key in cache:return cache[key]
     uv=mesh.uv_layers.get(uv_name)
     if uv is None:raise ValueError('UV Tangent needs its actual named UV map '+uv_name)
@@ -47,17 +52,25 @@ def frame_bound(mesh,uv_name):
             raise ValueError('UV Tangent requires finite nondegenerate UV triangles')
     try:mesh.calc_tangents(uvmap=uv_name)
     except RuntimeError as error:raise ValueError('UV Tangent native Mikk computation failed: '+str(error)) from error
-    bound=1.0
+    bound={'sine':1.0,'normalCosine':1.0,'tangentCosine':1.0}
     for triangle in mesh.loop_triangles:
         indices=triangle.loops
         normals=[mesh.corner_normals[index].vector.copy() for index in indices]
         tangents=[mesh.loops[index].tangent.copy() for index in indices]
         if any(abs(value.length-1)>1e-4 for value in tangents) or any(mesh.loops[index].bitangent_sign not in {-1,1} for index in indices):
             raise ValueError('UV Tangent needs finite unit Mikk vectors and exact handedness')
+        if len({mesh.loops[index].bitangent_sign for index in indices})!=1:
+            raise ValueError('Native tangent frames need one handedness sign per triangle')
+        divisor=511 if storage=='SNORM10' else 32767 if storage=='SNORM16' else 0
+        if divisor:
+            def pack(vector):return Vector(tuple(math.trunc(struct.unpack('f',struct.pack('f',value*divisor))[0])/divisor for value in vector))
+            normals=[pack(value) for value in normals];tangents=[pack(value) for value in tangents]
         n,n_radius=cone(normals);t,t_radius=cone(tangents)
         separation=math.acos(min(1,abs(n.dot(t))))-n_radius-t_radius
         if separation<=.05:raise ValueError('UV Tangent cannot prove its tangent/normal interpolation stays independent')
-        bound=min(bound,math.sin(separation))
+        bound['sine']=min(bound['sine'],math.sin(separation))
+        bound['normalCosine']=min(bound['normalCosine'],math.cos(n_radius))
+        bound['tangentCosine']=min(bound['tangentCosine'],math.cos(t_radius))
     if cache is not None:cache[key]=bound
     return bound
 
@@ -76,7 +89,7 @@ def bind_owners(value,owners,uv_choices):
             if previous!=layer.name:raise ValueError('One mesh requests multiple UV tangent bases; this transport currently carries one explicit Mikk frame')
             if any(not polygon.use_smooth for polygon in mesh.polygons):
                 raise ValueError('UV Tangent currently requires smooth triangle shading')
-            frame_bound(mesh,layer.name)
+            frame_bound(mesh,layer.name,entry['tangentStorage'])
         if len(names)!=1:raise ValueError('One material has different UV tangent names across owners; use consistent named UV bases')
         entry['uvMap']=names.pop()
 

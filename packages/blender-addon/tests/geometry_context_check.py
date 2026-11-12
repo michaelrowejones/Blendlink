@@ -66,13 +66,26 @@ def references(directory):
                   'scale':.04, 'normalDirection':direction}
                  for socket in ['Normal','True Normal']
                  for index,direction in enumerate([(0,0,1),(.25,-.5,1),(2,-3,4)])]
+    active_uv_proof = os.environ.get('BLENDLINK_GEOMETRY_ACTIVE_UV') == '1'
+    if active_uv_proof:
+        cases = [{'output':kind,'uvKind':kind,'scale':1/16}
+                 for kind in ['active-coordinate','active-uv-map','explicit-edit','active-image']]
     cases.append({'output':'control','scale':1})
     vertices=[];faces=[]
     for index,case in enumerate(cases):
-        x,y=-5+(index%5)*2,-2+(index//5)*2
+        cell = 9 if active_uv_proof and case['output']=='control' else index
+        x,y=-5+(cell%5)*2,-2+(cell//5)*2
         offset=len(vertices);vertices.extend([(x,y,.5),(x+2,y,.5),(x+2,y+2,.5),(x,y+2,.5)])
         faces.append(tuple(range(offset,offset+4)));case['center']=[x+1,y+1,.5];case['name']='Geometry '+case['output']
     mesh=bpy.data.meshes.new('Authored split normal shared geometry');mesh.from_pydata(vertices,[],faces);mesh.update()
+    if active_uv_proof:
+        for name, low in [('EditUV',.125),('RenderUV',.625)]:
+            layer = mesh.uv_layers.new(name=name)
+            for index,entry in enumerate(layer.data):
+                u,v = [(0,0),(1,0),(1,1),(0,1)][index%4]
+                entry.uv = (low + u/4, low + v/4)
+        mesh.uv_layers['RenderUV'].active_render = True
+        mesh.uv_layers.active_index = 0
     for polygon in mesh.polygons:polygon.use_smooth=os.environ.get('BLENDLINK_GEOMETRY_FLAT')!='1'
     normals=[]
     for loop in mesh.loops:
@@ -85,6 +98,23 @@ def references(directory):
         sink=tree.nodes.new('ShaderNodeOutputMaterial');bsdf=tree.nodes.new('ShaderNodeBsdfPrincipled');tree.links.new(bsdf.outputs[0],sink.inputs['Surface'])
         if case['output']=='control':
             value=tree.nodes.new('ShaderNodeRGB');value.outputs[0].default_value=(*control_rgb,1);field=value.outputs[0]
+        elif 'uvKind' in case:
+            kind = case['uvKind']
+            if kind == 'active-coordinate':
+                source=tree.nodes.new('ShaderNodeTexCoord');incoming=source.outputs['UV']
+            elif kind in {'active-uv-map','explicit-edit'}:
+                source=tree.nodes.new('ShaderNodeUVMap');source.uv_map='EditUV' if kind=='explicit-edit' else ''
+                incoming=source.outputs[0]
+            else:
+                image=bpy.data.images.new('Active UV lookup',width=2,height=2,alpha=True,float_buffer=True)
+                image.colorspace_settings.name='Non-Color'
+                image.pixels.foreach_set([.125,.5,.75,1, .25,.75,.125,1, .5,.125,.25,1, .75,.25,.5,1])
+                image.pack()
+                source=tree.nodes.new('ShaderNodeTexImage');source.image=image;source.interpolation='Closest'
+                incoming=source.outputs['Color']
+            encode=tree.nodes.new('ShaderNodeVectorMath');encode.operation='MULTIPLY_ADD'
+            encode.inputs[1].default_value=(case['scale'],)*3;encode.inputs[2].default_value=(.5,)*3
+            tree.links.new(incoming,encode.inputs[0]);field=encode.outputs[0]
         else:
             source=tree.nodes.new(case['node']);encode=tree.nodes.new('ShaderNodeVectorMath');encode.operation='MULTIPLY_ADD'
             encode.inputs[1].default_value=(case['scale'],)*3;encode.inputs[2].default_value=(.5,)*3
@@ -107,6 +137,12 @@ def references(directory):
             owner.rotation_euler=(.35,.05,-.27) if frame==5 and index==0 else (.05+.02*pose,-.07+.03*pose,.03-.02*pose)
             owner.keyframe_insert(data_path='rotation_euler',frame=frame)
         owners.append(owner)
+    if active_uv_proof:
+        # One shared material program must resolve different active maps/slots
+        # on two actual source meshes, without changing their edit selection.
+        owners[1].data = mesh.copy()
+        owners[1].data.uv_layers['EditUV'].active_render = True
+        owners[1].data.uv_layers.active_index = 1
     camera=bpy.data.objects.new('Geometry Camera',bpy.data.cameras.new('Geometry Camera'));scene.collection.objects.link(camera);scene.camera=camera
     camera.data.lens=35;camera.data.sensor_width=36;camera.data.ortho_scale=28;camera.scale=(1.3,.7,2.1)
     recipe={'schemaVersion':1,'presentation':'realtime','atlases':[{'id':'main','name':'Main','size':256,'targetDensity':8,'margin':4,'fitPolicy':'block','bakeOutput':'lighting'}],
@@ -131,7 +167,8 @@ def references(directory):
                     label=('cycles' if engine=='CYCLES' else 'eevee')+'_'+projection.lower()+'_'+face
                     for frame in frames:
                         scene.frame_set(frame);bpy.context.view_layer.update()
-                        for index,material in enumerate(oracles):mesh.materials[index]=material
+                        for data in {owner.data for owner in owners}:
+                            for index,material in enumerate(oracles):data.materials[index]=material
                         try:
                             for owner in active_owners:
                                 # Preserve the saved scene's shared-geometry user
@@ -151,7 +188,8 @@ def references(directory):
                                 rows.append({'source':label,'engine':engine,'projection':projection,'face':face,'frame':frame,'owner':owner.name,'samples':samples,
                                     'objectMatrix':[list(row) for row in owner.matrix_world],'cameraMatrix':[list(row) for row in camera.matrix_world]})
                         finally:
-                            for index,material in enumerate(originals):mesh.materials[index]=material
+                            for data in {owner.data for owner in owners}:
+                                for index,material in enumerate(originals):data.materials[index]=material
                             for owner in owners:owner.hide_render=owner not in active_owners
                     scene.frame_set(1);path=root/(label+'.blend');bpy.ops.wm.save_as_mainfile(filepath=str(path));sources.append({'name':label,'file':path.name,'engine':engine})
     for material in oracles:bpy.data.materials.remove(material)
@@ -159,7 +197,7 @@ def references(directory):
         for polygon in mesh.polygons for index in polygon.loop_indices]
     (root/'native-reference.json').write_text(json.dumps({'blender':bpy.app.version_string,'build':bpy.app.build_hash.decode(),
         'fixtureSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'sources':sources,'cases':cases,'rows':rows,'normalSource':normal_source,'frames':frames,'ownerCount':len(active_owners),'flatShading':not mesh.polygons[0].use_smooth,'highQualityNormals':scene.render.use_high_quality_normals,
-        'controlRgb':control_rgb,'cyclesFilter':{'type':'BOX','width':scene.cycles.filter_width},'rasterTolerance':2e-5},indent=2))
+        'requireExactNormals':not active_uv_proof,'controlRgb':control_rgb,'cyclesFilter':{'type':'BOX','width':scene.cycles.filter_width},'rasterTolerance':2e-5},indent=2))
     print('BLENDLINK_GEOMETRY_REFERENCES_PASSED '+bpy.app.version_string)
 
 

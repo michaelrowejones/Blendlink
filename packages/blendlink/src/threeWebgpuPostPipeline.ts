@@ -248,6 +248,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
         if (new Set(graph.passes.map(pass => `${pass.scene}/${pass.viewLayer}`)).size > 1) {
           throw new SourceCompositorUnsupported('Multiple Blender view layers require separate runtime scene passes')
         }
+        const compositorExtent = new THREE.Vector2()
         this.sourceCompositor = buildSourceCompositor(graph, request => {
           if (request.aov) return null
           if (request.pass === 'Image') return context.color
@@ -258,7 +259,12 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
             return buildSourceDepth(scenePass.getTextureNode('depth'), () => this.options.camera)
           }
           return null
-        })
+        }, { resolvePassExtent: (_request, renderer) => {
+          // Registered color effects represent the full physical scene image,
+          // even when their result is a field expression rather than a texture.
+          renderer.getDrawingBufferSize(compositorExtent)
+          return [compositorExtent.x, compositorExtent.y]
+        } })
         context.color = this.sourceCompositor.node
         this.resolvedOrder.push('blender-compositor')
       } catch (error) {

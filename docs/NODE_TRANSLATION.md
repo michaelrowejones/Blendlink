@@ -125,3 +125,17 @@ graph execution. Prioritize operations that preserve the most authored scenes,
 while maintaining explicit fallback and diagnostic behavior at every stage.
 See the [ranked coverage batches](node-coverage/README.md#remaining-work-by-batch)
 for the current list. Multiplayer and XR remain outside this work.
+
+## Source render UV selection
+
+Fresh Texture Coordinate UV, an unnamed UV Map and an unlinked Image Texture
+Vector input use the source mesh's **active render** UV layer. Edit selection
+does not change that binding. Shared materials may use different render slots
+on different owners; each owner exports an explicit name/channel contract and
+receives the corresponding live material variant. Named maps keep their names.
+
+The source layer must fit in the first four exported UV channels. Missing,
+stale or nonfinite attributes refuse with the carrier retained. Hybrid channel
+baking preserves the source selection while adding its private atlas layer.
+Older serialized unnamed `uv` expressions retain their TEXCOORD_0 behavior;
+fresh owner-bound expressions use `uv_active`, which requires an explicit binding.

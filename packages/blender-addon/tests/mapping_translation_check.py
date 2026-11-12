@@ -46,7 +46,7 @@ mapping.vector_type = "POINT"
 for name in ("Location", "Rotation", "Scale"):
     link = tree.links.new(coord.outputs["UV"], mapping.inputs[name])
     document = tsl_ir.emit_channel(emission.inputs["Color"])
-    expect(document["output"][name.lower() + "Node"]["op"] == "uv", f"Linked {name} was flattened")
+    expect(document["output"][name.lower() + "Node"]["op"] == "uv_active", f"Linked {name} was flattened")
     tree.links.remove(link)
 
 noise = tree.nodes.new("ShaderNodeTexNoise")

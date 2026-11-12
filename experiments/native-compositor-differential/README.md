@@ -642,6 +642,7 @@ the actual Linux scalar-library path is certified by the next native kernel gate
 The final built checkpoint combines the 880 retained references with the 36
 native kernel graphs; all 916 pass on both browser backends at the same maxima,
 with every kernel word exact and every cleanup/state/shader-cost check passing.
+Evidence is in `artifacts/verification-blur-gamma-linux42/final-built`.
 
 ## Legacy relative Blur
 
@@ -712,4 +713,79 @@ also passed all 18 sequences (maximum `4.76837158203125e-7`). The matched native
 CPU/GPU Tent canary differs by `.1120211482`, establishing the device-specific
 radius behavior. These are native Metal results, not a claim of Linux OpenGL
 certification; the hosted gate must generate and test that backend separately.
-Evidence is in `artifacts/verification-blur-gamma-linux42/final-built`.
+Evidence is in `artifacts/verification-compositor-relative-blur/optimized-final-built`.
+
+## Deferred integer image translations
+
+`compositor_transform_check.py` tests an earned subset of native Translate and
+Transform on the 4.2 property schema and the 5.2/5.3 menu-socket schemas. This
+model supports absolute integer X/Y offsets from −8192 through 8192, Nearest
+interpolation and Clip extension. Transform additionally requires Angle=0 and
+Scale=1. Relative/wrapped coordinates, fractional offsets, other interpolation,
+rotation/scale, active render-border/crop windows, differing-origin merges and unequal source/render image windows
+remain named refusals. Rotate and Scale nodes are not claimed by this batch.
+
+Transforms carry a separate finite image origin through the compiled graph.
+Pointwise expressions and neighborhood filters operate on the original pixel
+window; the translated origin is realized only at the compositor output. This
+preserves off-canvas pixels through inverse translations and Blur/Flip/Posterize
+consumers, rather than cropping after every Translate. Constants have no finite
+window. Equal-origin branches may merge; unequal origins require a later native
+domain-realization model and currently refuse during extraction and runtime
+validation. Origin composition is also bounded to ±8192 pixels.
+
+The native contracts come from
+[4.2 TranslateCanvasOperation](https://github.com/blender/blender/blob/v4.2.0/source/blender/compositor/operations/COM_TranslateOperation.cc),
+[modern TranslateOperation](https://github.com/blender/blender/blob/v5.3.0/source/blender/nodes/composite/nodes/node_composite_translate.cc),
+[Domain::transform](https://github.com/blender/blender/blob/v5.3.0/source/blender/compositor/intern/domain.cc)
+and [native domain realization](https://github.com/blender/blender/blob/v5.3.0/source/blender/compositor/intern/realize_on_domain_operation.cc).
+This first window model requires each participating image source to match the
+renderer's physical compositing extent. It verifies this on every render and
+restores renderer target/MRT/clear/viewport/scissor state even on a refusal.
+Final realization owns its RTT target and quad material and borrows source
+textures. Sampling clamps the inactive texture load before selecting transparent
+black outside the window, avoiding undefined out-of-range GLSL texel fetches.
+
+`buildSourceCompositor` also accepts an optional `resolvePassExtent` provider.
+The actual post pipeline supplies its known full-frame physical extent for
+TRAA/Bloom-style field results that have no raw texture dimensions. Direct
+texture callers retain inferred extents. This is explicit renderer/domain
+metadata, not an assumption that arbitrary field expressions expose texture
+storage. Full data/display-window transport and rotated/scaled intermediate
+bounding boxes remain separate work.
+
+The fixture renders EEVEE scenes on each native version while independently
+selecting CPU or GPU compositing. Injected scene-linear float Image data isolates
+the compositor contract from scene-renderer differences. It includes strict
+Float32 copies, signed/HDR RGBA and zero/negative alpha, entire-image off-canvas
+inverse translations, pointwise and Blur/Flip consumers, constant and
+same-origin Alpha Over branches, explicit full-frame field providers, and reused
+graphs through resize, changed pixels at unchanged dimensions, HiDPI, an
+unsupported extent and recovery. Unsupported-extent frames are error-only
+controls (`nativeOracle:false`), not native pixel claims.
+
+```sh
+BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE=CPU \
+BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES="$PWD/artifacts/native/transform-42-cpu" \
+"$BLENDLINK_BLENDER_42" --background --factory-startup --python-exit-code 1 -t 1 \
+  --python packages/blender-addon/tests/compositor_transform_check.py
+# Repeat for GPU and Blender 5.2/5.3 into separate reference directories.
+npm run build --workspace blendlink
+node experiments/native-compositor-differential/run.mjs --built \
+  artifacts/native/transform-42-cpu artifacts/native/transform-42-gpu \
+  artifacts/native/transform-52-cpu artifacts/native/transform-52-gpu \
+  artifacts/native/transform-53-cpu artifacts/native/transform-53-gpu \
+  --out artifacts/verification-compositor-transforms/final-built
+```
+
+The macOS checkpoint used native Blender 4.2.0 `a51f293548ad`, 5.2.0
+`fbe6228777e7` and 5.3.0 `02f0899d78e3`, each with EEVEE scene rendering and
+CPU/Metal compositing. All 372 built-package rows passed on WebGL2 and WebGPU
+(maximum absolute error `4.76837158203125e-7`), including 138 exact Float32-word
+copy checks and 24 live compiled sequences. Shader validation and retained GPU
+texture counts were zero. Maximum measured cost was five passes, with fragment
+sources at most 3674 bytes (GLSL) or 2262 bytes (WGSL). The final native corpus
+also verifies read-only render-border refusal; adding that guard left supported
+input/expected Float32 words and programs unchanged. Evidence is retained in
+`artifacts/verification-compositor-transforms/reviewed-final-built`. Linux OpenGL
+requires its own fresh native generation and replay before certification.

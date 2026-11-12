@@ -20,6 +20,22 @@ describe('repeated scalar Noise in Combine channels', () => {
       expect(resources.textures).toHaveLength(1)
     } finally { resources.dispose() }
   })
+  it('shares identical normalized fields but keeps their source precision models distinct', () => {
+    const normalized = (): TslIrExpression => ({ ...noise(), op: 'noise_normalized', normalize: true, detail: 1,
+      perlinModel: 'native-standard-f32' })
+    const resources = createTslBuildResources()
+    try {
+      buildTslColorNode(document(normalized(), normalized(), normalized()), { resources })
+      expect(resources.textures).toHaveLength(1)
+    } finally { resources.dispose() }
+    const distinct = createTslBuildResources()
+    try {
+      const x = normalized(), y = normalized(), z = normalized()
+      y.perlinModel = 'cycles-neon-fma'
+      buildTslColorNode(document(x, y, z), { resources: distinct })
+      expect(distinct.textures).toHaveLength(3)
+    } finally { distinct.dispose() }
+  })
   it('keeps distinct controls and signed-zero input bits independent', () => {
     for (const value of [.625, -0]) {
       const x = noise(), y = noise(), z = noise()

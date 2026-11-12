@@ -17,6 +17,7 @@ import { buildCompositorMathPrecision } from './tslCompositorMath.js'
 import { buildCompositorHueCorrect } from './tslCompositorHueCorrect.js'
 import { buildCompositorWhitePoint } from './tslCompositorWhitePoint.js'
 import { buildNativeCompositorBlur, ownBlurRtt } from './tslCompositorBlur.js'
+import { mergeImageOrigins, translatedImageOrigin, realizeIntegerImageOrigin, type CompositorImageOrigin } from './tslCompositorImageDomain.js'
 import { buildSharedBoolean, buildSharedInteger, buildSharedCompare, sharedTypedConstant, sharedTypedConversion } from './tslSharedUtilities.js'
 
 const {
@@ -460,6 +461,7 @@ function buildCompositorCurves(op: SourceCompositorOperation,
 export function buildSourceCompositor(
   program: SourceCompositorProgram,
   resolvePass: (pass: NonNullable<SourceCompositorOperation['pass']>) => TslEffectNode | null,
+  options: { resolvePassExtent?: (pass: NonNullable<SourceCompositorOperation['pass']>, renderer: TslEffectNode) => readonly [number, number] } = {},
 ): BuiltSourceCompositor {
   const resources: { dispose(): void }[] = []
   const dispose = (): void => {
@@ -479,6 +481,10 @@ export function buildSourceCompositor(
       )
     }
     const nodes = new Map<string, TslEffectNode>()
+    const origins = new Map<string, CompositorImageOrigin | null>()
+    const usesImageDomains = program.ops.some(op => op.kind === 'translate')
+    const origin = (v: CompositorValue): CompositorImageOrigin | null =>
+      v.kind === 'ref' ? origins.get(v.node ?? '') ?? null : v.kind === 'convert' && v.input ? origin(v.input) : null
     const singleValues = new Set<string>()
     const isSingleValue = (v: CompositorValue): boolean =>
       v.kind === 'constant' ||
@@ -537,6 +543,9 @@ export function buildSourceCompositor(
       let node: TslEffectNode
       try {
         switch (op.kind) {
+          case 'translate':
+            node = input('Image')
+            break
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
             break
@@ -1052,13 +1061,23 @@ export function buildSourceCompositor(
         throw error
       }
       nodes.set(op.id, node)
-      if (
-        op.kind !== 'render-pass' &&
-        Object.values(op.inputs).every((input) => isSingleValue(input.value))
-      )
-        singleValues.add(op.id)
+      const single = op.kind !== 'render-pass' && Object.values(op.inputs).every(input => isSingleValue(input.value))
+      if (single) singleValues.add(op.id)
+      if (usesImageDomains) {
+        const fail = (message: string): never => { throw new SourceCompositorUnsupported(
+          `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
+        let domain: CompositorImageOrigin | null = op.kind === 'render-pass' ? { x: 0, y: 0, roots: [{ node,
+          extent: options.resolvePassExtent ? renderer => options.resolvePassExtent!(op.pass!, renderer) : undefined }] }
+          : single ? null : mergeImageOrigins(Object.values(op.inputs).map(input => origin(input.value)), fail)
+        if (op.kind === 'translate') domain = translatedImageOrigin(op, domain, fail)
+        origins.set(op.id, domain)
+      }
     }
-    return { node: value(program.output), dispose }
+    const output = value(program.output), domain = origin(program.output)
+    const transformSource = program.ops.find(op => op.kind === 'translate')?.source
+    return { node: usesImageDomains && domain ? realizeIntegerImageOrigin(output, domain, resources,
+      message => { throw new SourceCompositorUnsupported(transformSource
+        ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output, dispose }
   } catch (error) {
     dispose()
     throw error

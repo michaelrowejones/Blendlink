@@ -55,13 +55,15 @@ EEVEE = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT'
 
 
 
-def exact_inputs(tree):
+def exact_inputs(tree, precision='half'):
     image = bpy.data.images.new('Exact Noise inputs', width=SIZE, height=SIZE, alpha=True, float_buffer=True)
     image.colorspace_settings.name = 'Non-Color'
+    if hasattr(image, 'use_half_precision'): image.use_half_precision = False
     values = np.ones((SIZE * SIZE, 4), np.float32)
     index = np.arange(SIZE * SIZE)
     for channel, multiplier in enumerate([1, 613, 1019]):
         values[:, channel] = ((index * multiplier) % 2048) / np.float32(1024) - .5
+        if precision == 'float32': values[:, channel] = np.sin(index.astype(np.float32) * np.float32(.137 + channel * .071)) * np.float32(.973) + np.float32(.173)
     image.pixels.foreach_set(values.ravel())
     image.update()
     texture = tree.nodes.new('ShaderNodeTexImage')
@@ -88,7 +90,7 @@ def make_material(case):
         for index, value in enumerate([.173, -.375, .625]): source.inputs[index].default_value = value
         incoming = source.outputs[0]
     else:
-        incoming = exact_inputs(tree)
+        incoming = exact_inputs(tree, case.get('inputPrecision', 'half'))
     if case['kind'] == 'image-control':
         factor, bias = .25, .5
         raw = incoming
@@ -192,7 +194,10 @@ def add_residual_control(material, emission, coarse, scale, amplification):
 
 
 records = []
+refusals = []
 varying = bool(os.environ.get('BLENDLINK_NOISE_VARYING'))
+normalized = bool(os.environ.get('BLENDLINK_NOISE_NORMALIZED'))
+assert not (varying and normalized)
 requested_types = json.loads(os.environ.get('BLENDLINK_NOISE_TYPES', json.dumps(['FBM', *sorted(FRACTAL_TYPES)]) if varying else '["FBM"]'))
 assert requested_types and all(kind in {'FBM', *FRACTAL_TYPES} for kind in requested_types)
 parameters = [
@@ -209,6 +214,7 @@ parameters = [
 ]
 with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
     only = os.environ.get('BLENDLINK_NOISE_ENGINE')
+    if only == 'EEVEE': only = EEVEE
     for engine in ([only] if only else ['CYCLES', EEVEE]):
         scene.render.engine = engine
         if engine != 'CYCLES': scene.eevee.taa_render_samples = 1
@@ -311,6 +317,30 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             for case in boundaries:
                 case.update(roughnessStage='constant-function' if case['stage'] == 'constant' else 'image', Roughness=1)
                 cases.append(case)
+        if normalized:
+            cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('type', 'FBM') == 'FBM']
+            for case in cases:
+                if case['kind'] == 'noise':
+                    case['normalize'] = True
+                    case['id'] = case['id'].replace('-fbm-raw-', '-fbm-normalized-')
+                    case['oracleScale'] = .0625 if case.get('residual') else 1
+            for stage in ['constant', 'image']:
+                for output in ['Fac', 'Color']:
+                    cases.append({'id': f'{engine.lower()}-fbm-normalized-artist-3d-{output.lower()}-{stage}',
+                                  'kind': 'noise', 'type': 'FBM', 'normalize': True, 'dimensions': '3D',
+                                  'stage': stage, 'output': output, 'Scale': .15, 'Detail': 1,
+                                  'Roughness': .5, 'Lacunarity': 2, 'Distortion': 0, 'oracleScale': 1})
+            if engine == 'CYCLES':
+                cases.append({'id': 'cycles-artist-float32-image-control', 'kind': 'image-control', 'stage': 'image', 'inputPrecision': 'float32'})
+                for output in ['Fac', 'Color']:
+                    for distortion in [0, -1, 1]:
+                        cases.append({'id': f'cycles-fbm-normalized-artist-float32-3d-{output.lower()}-dist{distortion}',
+                                      'kind': 'noise', 'type': 'FBM', 'normalize': True, 'dimensions': '3D',
+                                      'stage': 'image', 'output': output, 'Scale': .15, 'Detail': 1,
+                                      'Roughness': .5, 'Lacunarity': 2, 'Distortion': distortion, 'oracleScale': 1,
+                                      'inputPrecision': 'float32'})
+        if os.environ.get('BLENDLINK_NOISE_ARTIST_ONLY'):
+            cases = [case for case in cases if case['kind'] in {'constant','image-control'} or '-artist-' in case['id']]
         if os.environ.get('BLENDLINK_NOISE_RESIDUAL_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('residual')]
         if os.environ.get('BLENDLINK_NOISE_BOUNDARY_ONLY'):
@@ -334,15 +364,30 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 add_residual_control(material, emission, coarse, case['oracleScale'], amplification)
                 case['oracleScale'] = amplification
             before = (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
-            document = tsl_ir.emit_channel(emission.inputs['Color'])
+            try:
+                document = tsl_ir.emit_channel(emission.inputs['Color'])
+            except tsl_ir.TslIrRefusal as error:
+                # These are declared Cycles source/cost limits, not hidden
+                # omissions from the primary EEVEE numerical corpus.
+                if not (normalized and engine == 'CYCLES' and (
+                        'no verified live source precision profile' in str(error)
+                        or 'Normalized Noise Cycles SIMD 3D/4D' in str(error))): raise
+                assert before == (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
+                refusals.append({'id': case['id'], 'engine': engine, 'reason': str(error)})
+                bpy.data.materials.remove(material, do_unlink=True)
+                for image in list(bpy.data.images):
+                    if image.name.startswith('Exact Noise') and not image.users: bpy.data.images.remove(image)
+                continue
+
             if case['kind'] == 'noise':
                 def collect(value):
                     if isinstance(value, dict):
-                        return ([value] if value.get('op') in {'noise_fractal', 'noise_varying'} else []) + [item for child in value.values() for item in collect(child)]
+                        return ([value] if value.get('op') in {'noise_fractal', 'noise_normalized', 'noise_varying'} else []) + [item for child in value.values() for item in collect(child)]
                     if isinstance(value, list): return [item for child in value for item in collect(child)]
                     return []
                 expressions = collect(document)
                 assert expressions and all(expression['normalize'] == (case.get('type', 'FBM') == 'FBM' and case.get('normalize', False)) for expression in expressions), case['id']
+                if normalized: assert all(expression['op'] == 'noise_normalized' for expression in expressions)
                 if case.get('roughnessStage'): assert all(expression['op'] == 'noise_varying' for expression in expressions)
                 expected_model = 'shader-mf' if bpy.app.version >= (5, 0, 0) and case['stage'] == 'constant' else 'shader'
                 assert all(expression['evaluationModel'] == expected_model for expression in expressions), case['id']
@@ -365,7 +410,7 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 assert first.read_bytes() == fractional.read_bytes(), 'Native Ridged fractional-detail semantics changed'
 (OUTPUT / 'index.json').write_text(json.dumps({'blender': bpy.app.version_string, 'buildHash': bpy.app.build_hash.decode(),
     'gpuBackend': bpy.context.preferences.system.gpu_backend, 'gpuRenderer': tsl_ir._noise_gpu_renderer(),
-    'platform': sys.platform, 'architecture': platform.machine(), 'cyclesDevice': 'CPU', 'size': SIZE, 'cases': records,
+    'platform': sys.platform, 'architecture': platform.machine(), 'cyclesDevice': 'CPU', 'size': SIZE, 'cases': records, 'refusals': refusals,
     'nativeModuleHashes': {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in Path(native).iterdir()
                            if path.suffix in {'.py', '.json'}} if native else {}}, indent=2))
 print('BLENDLINK_NOISE_REFERENCES_PASSED ' + str(len(records)))

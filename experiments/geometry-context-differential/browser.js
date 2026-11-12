@@ -49,7 +49,7 @@ window.runProof = async (proof) => {
         value.normal,
       ]),
     )
-    for (const owner of owners)
+    if (proof.references.requireExactNormals !== false) for (const owner of owners)
       owner.traverse((mesh) => {
         if (!mesh.isMesh) return
         const position = mesh.geometry.getAttribute('position'),
@@ -173,6 +173,8 @@ window.runProof = async (proof) => {
           }
           const direct = difference(sample(control.pixel, false), authored),
             flipped = difference(sample(control.pixel, true), authored)
+          if (direct <= 2e-6 && flipped <= 2e-6)
+            throw new Error('Independent RGB orientation control is ambiguous; move its marker outside the mirrored footprint')
           if (Math.min(direct, flipped) > 2e-6)
             throw new Error(
               'Independent RGB control failed ' +

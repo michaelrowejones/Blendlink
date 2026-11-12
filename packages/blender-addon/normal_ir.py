@@ -21,7 +21,7 @@ def channel_has_native_normal(root, channel, walk_channel):
     names=('Emission Color','Emission Strength') if channel=='Emission' else (channel,)
     for name in names:
         socket=root.inputs.get(name)
-        if socket is not None and any((node.bl_idname=='ShaderNodeNormalMap' and node.space in SPACES) or node.bl_idname=='ShaderNodeTangent'
+        if socket is not None and any(node.bl_idname in {'ShaderNodeNormalMap','ShaderNodeTangent'}
                                       for node,output in walk_channel(socket)):
             return True
     return False

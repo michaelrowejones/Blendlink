@@ -16,7 +16,7 @@ def _scalar_structure(expression):
     if operation == 'math':
         return _scalar_structure(expression.get('a')) and all(
             _scalar_structure(expression[key]) for key in ['b', 'c'] if key in expression)
-    if operation in {'noise', 'noise_fractal', 'noise_varying', 'tex_white_noise'}:
+    if operation in {'noise', 'noise_fractal', 'noise_normalized', 'noise_varying', 'tex_white_noise'}:
         return expression.get('output') != 'color'
     if operation in {'tex_image', 'texture_ref'}: return expression.get('output') == 'alpha'
     if operation == 'tex_checker': return expression.get('output') == 'fac'

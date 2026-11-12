@@ -24,8 +24,10 @@ import { buildTslVectorTransformNode } from './tslVectorTransform.js'
 import { buildGeometryContext } from './tslGeometryContext.js'
 import { buildTslNativeNormalMap, buildNativeNormalView } from './tslNormalNodes.js'
 import {buildTslNativeTangent} from './tslTangentNodes.js'
+import {buildTslTangentNormalMap} from './tslTangentNormalMap.js'
 import { buildSharedUtilityIr } from './tslSharedUtilities.js'
 import { buildPortableSine } from './tslPortableTrig.js'
+import { nativeCpuPerlinFade, buildNativeNoiseFma } from './tslNativeNoisePrecision.js'
 import { buildTslFractalNoise } from './tslFractalNoise.js'
 import { buildTslVaryingFbm, isUnitRoughnessExpression } from './tslVaryingNoise.js'
 import {
@@ -157,6 +159,14 @@ const fractalPerlin4d = tslFn(([position]) => perlin4d(position!))
   .setLayout({ name: 'blendlinkFractalPerlin4dV1', type: 'float', inputs: [{ name: 'position', type: 'vec4' }] })
 const fractalPerlin2d = tslFn(([position]) => perlin2d(position!))
   .setLayout({ name: 'blendlinkFractalPerlin2dV1', type: 'float', inputs: [{ name: 'position', type: 'vec2' }] })
+const normalizedPerlin2dCpu = tslFn(([position]) => perlin2d(position!, nativeCpuPerlinFade, true))
+  .setLayout({ name: 'blendlinkCpuPerlin2dV1', type: 'float', inputs: [{ name: 'position', type: 'vec2' }] })
+const normalizedPerlin3dCpu = tslFn(([position]) => nativePerlin3d(position!, nativeCpuPerlinFade, true))
+  .setLayout({ name: 'blendlinkCpuPerlin3dV1', type: 'float', inputs: [{ name: 'position', type: 'vec3' }] })
+const normalizedPerlin4dCpu = tslFn(([position]) => perlin4d(position!, nativeCpuPerlinFade, true))
+  .setLayout({ name: 'blendlinkCpuPerlin4dV1', type: 'float', inputs: [{ name: 'position', type: 'vec4' }] })
+const normalizedPerlin3d = tslFn(([position]) => nativePerlin3d(position!))
+  .setLayout({ name: 'blendlinkNativePerlin3dV1', type: 'float', inputs: [{ name: 'position', type: 'vec3' }] })
 const hybridPerlin2d = tslFn(([position]) => tslNoise(position!))
   .setLayout({ name: 'blendlinkHybridPerlin2dV1', type: 'float', inputs: [{ name: 'position', type: 'vec2' }] })
 const hybridPerlin3d = tslFn(([position]) => tslNoise(position!))
@@ -287,6 +297,8 @@ export interface BuildTslOptions {
    * a resolver, named maps keep the measurement contract (the harness
    * materializes named maps as identity proxies on uv slot 0). */
   uvChannel?: (uvMap: string) => number
+  /** Fresh default-UV programs require the source owner's active-render channel. */
+  activeUvChannel?: number
   /** Native graph coordinates use bottom-up Blender V. The production
    * glTF binding supplies 'gltf'; direct native measurement keeps the default. */
   uvSpace?: 'blender' | 'gltf'
@@ -544,6 +556,7 @@ function build(expression: TslIrExpression): TslExpression {
       if (value.length < 3) fail('IR const_vec3 needs three components')
       return tslVec3(value[0]!, value[1]!, value[2]!)
     }
+    case 'uv_active':
     case 'uv': {
       // Blender's TexCoord.UV is a 3D vector with z = 0; a bare 2D uv()
       // would route vector consumers (noise) into their 2D overloads and
@@ -551,12 +564,15 @@ function build(expression: TslIrExpression): TslExpression {
       // uvName->TEXCOORD map; without a resolver the measurement contract
       // holds (named maps are materialized as identity proxies on slot 0).
       const uvMap = expression.uvMap
-      const channel = typeof uvMap === 'string' && uvMap && activeOptions.uvChannel
+      if (expression.op === 'uv_active' && (uvMap !== undefined || activeOptions.activeUvChannel === undefined))
+        return fail('IR active-render UV requires its explicit exported channel and cannot also name a UV map')
+      const channel = expression.op === 'uv_active' ? activeOptions.activeUvChannel
+        : typeof uvMap === 'string' && uvMap && activeOptions.uvChannel
         ? activeOptions.uvChannel(uvMap)
         : 0
       // Three binds only TEXCOORD_0..3 (its GLTFLoader ATTRIBUTES table stops
       // at 'uv3'); a higher channel silently becomes vec2(0,0).
-      if (!Number.isInteger(channel) || channel < 0 || channel > 3) {
+      if (typeof channel !== 'number' || !Number.isInteger(channel) || channel < 0 || channel > 3) {
         return fail(
           `BuildTslOptions.uvChannel resolved ${JSON.stringify(uvMap)} to invalid index ${channel}`
           + ' (expected glTF TEXCOORD channel 0, 1, 2, or 3)',
@@ -578,7 +594,7 @@ function build(expression: TslIrExpression): TslExpression {
       // A Blender scalar feeding all three channels is one field evaluation.
       // The serialized tree repeats that source; share it within this Combine
       // scope so large Perlin graphs do not compile three independent copies.
-      if (['noise', 'noise_fractal', 'noise_varying'].includes(x.op) && x.output === 'fac'
+      if (['noise', 'noise_fractal', 'noise_normalized', 'noise_varying'].includes(x.op) && x.output === 'fac'
         && sameIrValue(x, y) && sameIrValue(x, z))
         return tslVec3(build(x).toVar())
       return tslVec3(
@@ -627,7 +643,7 @@ function build(expression: TslIrExpression): TslExpression {
       if (typeof factorOp === 'string' && (vectorProducers.has(factorOp)
         || (factorOp === 'tex_checker' && curveFactor?.output !== 'fac')
         || (factorOp === 'curve_native' && curveFactor?.kind !== 'float')
-        || (['noise', 'noise_fractal', 'noise_varying'].includes(factorOp) && curveFactor?.output === 'color'))) {
+        || (['noise', 'noise_fractal', 'noise_normalized', 'noise_varying'].includes(factorOp) && curveFactor?.output === 'color'))) {
         fail(
           `IR mix_color factor is vector-typed (${factorOp}); the emitter `
           + 'must wrap colour sources in rgb_to_bw',
@@ -873,8 +889,10 @@ function build(expression: TslIrExpression): TslExpression {
       return buildTslNativeNormalMap(expression, build(child(expression,'color')),build(child(expression,'strength')),build(child(expression,'normal')),activeOptions.objectSpace?.basis)
     case 'tangent_native':
       return buildTslNativeTangent(expression,activeOptions.objectSpace?.basis)
+    case 'normal_map_tangent_native':
+      return buildTslTangentNormalMap(expression,build(child(expression,'color')),build(child(expression,'strength')),activeOptions)
     case 'normal_view_native':
-      if(!['normal_map_native','tangent_native'].includes(child(expression,'input').op))return fail('Native normal channels require a direct verified unit-normal output')
+      if(!['normal_map_native','tangent_native','normal_map_tangent_native'].includes(child(expression,'input').op))return fail('Native normal channels require a direct verified unit-normal output')
       return buildNativeNormalView(build(child(expression,'input')),activeOptions.objectSpace?.basis)
     case 'normal_view': {
       const normal = build(child(expression, 'input'))
@@ -910,14 +928,22 @@ function build(expression: TslIrExpression): TslExpression {
     }
     case 'noise':
     case 'noise_fractal':
+    case 'noise_normalized':
     case 'noise_varying': {
       const dimensions = scalar(expression, 'dimensions')
       if (![1, 2, 3, 4].includes(dimensions)) return fail('IR Noise has an unsupported dimension')
       // The legacy opcode keeps its normalized interpretation. New signed
       // capabilities use a distinct opcode so older runtimes fail closed.
       const varyingRoughness = expression.op === 'noise_varying'
+      const nativeNormalized = expression.op === 'noise_normalized'
+      if (nativeNormalized && (expression.normalize !== true || expression.roughnessNode !== undefined ||
+        expression.noiseType !== undefined && expression.noiseType !== 'FBM'))
+        return fail('IR native normalized Noise requires static FBM and explicit normalize true')
+      const cpuPerlin = nativeNormalized && expression.perlinModel === 'cycles-neon-fma'
+      if (nativeNormalized && !['native-standard-f32', 'cycles-neon-fma'].includes(String(expression.perlinModel)))
+        return fail('IR native normalized Noise has no verified source Perlin model')
       const legacyNormalized = expression.op === 'noise'
-      const normalizeOutput = legacyNormalized || varyingRoughness && expression.normalize === true
+      const normalizeOutput = legacyNormalized || nativeNormalized || varyingRoughness && expression.normalize === true
       const noiseType = legacyNormalized ? 'FBM' : String(expression.noiseType ?? 'FBM')
       if (!['FBM', 'MULTIFRACTAL', 'HETERO_TERRAIN', 'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'].includes(noiseType))
         return fail('IR Noise fractal type has no verified recurrence: ' + String(expression.noiseType))
@@ -936,6 +962,8 @@ function build(expression: TslIrExpression): TslExpression {
         (expression.detail as number) > 6 || (expression.roughness as number) > 1 || Math.abs((expression.lacunarity ?? 2) as number) > 2 ||
         expression.distortion !== undefined && (typeof expression.distortion !== 'number' || !Number.isFinite(expression.distortion) || Math.abs(expression.distortion) > 1)))
         return fail('IR unnormalized Noise exceeds its verified finite fractal controls')
+      if (cpuPerlin && dimensions >= 3 && ((expression.detail as number) > 1 || (expression.distortion ?? 0) !== 0))
+        return fail('IR native normalized Cycles SIMD workload requires source baking above Detail1 or with Distortion in 3D/4D')
       const roughnessIr = varyingRoughness ? child(expression, 'roughnessNode') : undefined
       if (varyingRoughness && (scalar(expression, 'detail') > 2 || expression.roughness !== 1 || !isUnitRoughnessExpression(roughnessIr)))
         return fail('IR varying Noise needs static Detail <=2 and an independently proven [0,1] Roughness input')
@@ -947,14 +975,19 @@ function build(expression: TslIrExpression): TslExpression {
         position = tslVec4(position, build(child(expression, 'w')))
       }
       position = position.mul(build(child(expression, 'scale')))
+      const roundPoint = (point: TslExpression): TslExpression => dimensions === 1 ? roundFiniteF32(point)
+        : dimensions === 2 ? tslVec2(roundFiniteF32(point.x), roundFiniteF32(point.y))
+          : dimensions === 3 ? tslVec3(roundFiniteF32(point.x), roundFiniteF32(point.y), roundFiniteF32(point.z))
+            : tslVec4(roundFiniteF32(point.x), roundFiniteF32(point.y), roundFiniteF32(point.z), roundFiniteF32(point.w))
+      if (nativeNormalized) position = roundPoint(position)
       // dimensions === 1 needs no coordinate surgery: the emitter sends the W
       // socket as a scalar, and perlin1d consumes it directly.
       // Legacy 2D/3D documents retain their MaterialX primitive. Raw 2D
       // uses explicit native float32 fade stages; 1D/4D have native ports
       // because MaterialX has neither arity.
       const octaveForDimension = dimensions === 1 ? (legacyNormalized ? perlin1d : fractalPerlin1d)
-        : dimensions === 4 ? (legacyNormalized ? perlin4d : fractalPerlin4d)
-          : !normalizeOutput && dimensions === 2 ? fractalPerlin2d : noiseType === 'HYBRID_MULTIFRACTAL' ? (dimensions === 2 ? hybridPerlin2d : hybridPerlin3d) : tslNoise
+        : dimensions === 4 ? (cpuPerlin ? normalizedPerlin4dCpu : legacyNormalized ? perlin4d : fractalPerlin4d)
+          : nativeNormalized && dimensions === 2 ? (cpuPerlin ? normalizedPerlin2dCpu : fractalPerlin2d) : !normalizeOutput && dimensions === 2 ? fractalPerlin2d : nativeNormalized && dimensions === 3 ? (cpuPerlin ? normalizedPerlin3dCpu : normalizedPerlin3d) : noiseType === 'HYBRID_MULTIFRACTAL' ? (dimensions === 2 ? hybridPerlin2d : hybridPerlin3d) : tslNoise
       if (dimensions === 2) {
         // Two-dimensional Noise consumes only the first two coordinates.
         position = tslVec2(position.x, position.y)
@@ -984,13 +1017,15 @@ function build(expression: TslIrExpression): TslExpression {
                 : tslVec3(lanes[0], lanes[1], lanes[2])
           ).mul(expression.distortion),
         )
+        if (nativeNormalized) position = roundPoint(position)
       }
       const detail = scalar(expression, 'detail')
       const roughness = scalar(expression, 'roughness')
       const lacunarity = typeof expression.lacunarity === 'number'
         ? expression.lacunarity : 2.0
       const fractal = (point: TslExpression): TslExpression => noiseType === 'FBM'
-        ? roughnessNode ? buildTslVaryingFbm(point, detail, lacunarity, roughnessNode, normalizeOutput, octaveForDimension)
+        ? nativeNormalized ? buildTslVaryingFbm(point, detail, lacunarity, tslFloat(Math.max(0, Math.fround(roughness))), true, octaveForDimension)
+          : roughnessNode ? buildTslVaryingFbm(point, detail, lacunarity, roughnessNode, normalizeOutput, octaveForDimension)
           : blenderNoiseFac(point, detail, roughness, lacunarity, octaveForDimension, normalizeOutput)
         : buildTslFractalNoise(point, { type: noiseType, detail, roughness, lacunarity,
           offset: noiseType !== 'MULTIFRACTAL' && expression.offset !== undefined ? scalar(expression, 'offset') : 0,
@@ -1826,11 +1861,11 @@ function nativePerlinFade(t: TslExpression): TslExpression {
 
 /** Native signed 2D Perlin. Separate fade stages avoid contraction errors that
  * the native amplified residual exposes on physical Apple Metal GPUs. */
-function perlin2d(p: TslExpression): TslExpression {
+function perlin2d(p: TslExpression, fade = nativePerlinFade, cpuMix = false): TslExpression {
   const ix = tslFloor(p.x), iy = tslFloor(p.y)
   const x = p.x.sub(ix).toVar(), y = p.y.sub(iy).toVar()
   const X = tslBitcast(tslIntOf(ix), 'uint'), Y = tslBitcast(tslIntOf(iy), 'uint')
-  const u = nativePerlinFade(x), v = nativePerlinFade(y), oneMinusU = tslFloat(1).sub(u)
+  const u = fade(x), v = fade(y), oneMinusU = tslFloat(1).sub(u)
   const gradient = (i: number, j: number): TslExpression => {
     const hash = hashUint2(X.add(tslUintOf(i)), Y.add(tslUintOf(j)))
     const h = hash.bitAnd(tslUintOf(7)), useX = h.lessThan(tslUintOf(4))
@@ -1839,9 +1874,33 @@ function perlin2d(p: TslExpression): TslExpression {
     return tslSelect(h.bitAnd(tslUintOf(1)).equal(tslUintOf(0)), a, a.negate())
       .add(tslSelect(h.bitAnd(tslUintOf(2)).equal(tslUintOf(0)), b, b.negate())).toVar()
   }
+  const mixCpu = (a: TslExpression, b: TslExpression, t: TslExpression): TslExpression => buildNativeNoiseFma(t, roundFiniteF32(b.sub(a)), a)
+  if (cpuMix) return mixCpu(mixCpu(gradient(0, 0), gradient(1, 0), u),
+    mixCpu(gradient(0, 1), gradient(1, 1), u), v).mul(.6616)
   const row0 = gradient(0, 0).mul(oneMinusU).add(gradient(1, 0).mul(u))
   const row1 = gradient(0, 1).mul(oneMinusU).add(gradient(1, 1).mul(u))
   return tslFloat(1).sub(v).mul(row0).add(v.mul(row1)).mul(0.6616)
+}
+
+/** Native 3D gradient and x/y/z interpolation with the same staged fade. */
+function nativePerlin3d(p: TslExpression, fade = nativePerlinFade, cpuMix = false): TslExpression {
+  const ix = tslFloor(p.x), iy = tslFloor(p.y), iz = tslFloor(p.z)
+  const x = p.x.sub(ix).toVar(), y = p.y.sub(iy).toVar(), z = p.z.sub(iz).toVar()
+  const X = tslBitcast(tslIntOf(ix), 'uint'), Y = tslBitcast(tslIntOf(iy), 'uint'), Z = tslBitcast(tslIntOf(iz), 'uint')
+  const u = fade(x), v = fade(y), w = fade(z)
+  const gradient = (i: number, j: number, k: number): TslExpression => {
+    const hash = hashUint3(X.add(tslUintOf(i)), Y.add(tslUintOf(j)), Z.add(tslUintOf(k)))
+    const h = hash.bitAnd(tslUintOf(15))
+    const a = tslSelect(h.lessThan(tslUintOf(8)), x.sub(i), y.sub(j))
+    const b = tslSelect(h.lessThan(tslUintOf(4)), y.sub(j),
+      tslSelect(h.equal(tslUintOf(12)), x.sub(i), tslSelect(h.equal(tslUintOf(14)), x.sub(i), z.sub(k))))
+    return tslSelect(h.bitAnd(tslUintOf(1)).equal(tslUintOf(0)), a, a.negate())
+      .add(tslSelect(h.bitAnd(tslUintOf(2)).equal(tslUintOf(0)), b, b.negate())).toVar()
+  }
+  const lerp = (a: TslExpression, b: TslExpression, t: TslExpression): TslExpression => cpuMix ? buildNativeNoiseFma(t, roundFiniteF32(b.sub(a)), a) : tslFloat(1).sub(t).mul(a).add(t.mul(b))
+  const plane = (k: number): TslExpression => lerp(lerp(gradient(0, 0, k), gradient(1, 0, k), u),
+    lerp(gradient(0, 1, k), gradient(1, 1, k), u), v)
+  return lerp(plane(0), plane(1), w).mul(.982)
 }
 
 const perlinGrad4 = tslFn(([hash, x, y, z, w]) => {
@@ -1880,7 +1939,7 @@ const perlinGrad4 = tslFn(([hash, x, y, z, w]) => {
  * same uint32 arithmetic. This reduces shader compiler work without changing
  * the scalar gradient or interpolation order.
  */
-function perlin4d(p: TslExpression): TslExpression {
+function perlin4d(p: TslExpression, fade = perlinFade, cpuMix = false): TslExpression {
   const ix = tslFloor(p.x)
   const iy = tslFloor(p.y)
   const iz = tslFloor(p.z)
@@ -1893,10 +1952,10 @@ function perlin4d(p: TslExpression): TslExpression {
   const Y = tslBitcast(tslIntOf(iy), 'uint').toVar()
   const Z = tslBitcast(tslIntOf(iz), 'uint').toVar()
   const W = tslBitcast(tslIntOf(iw), 'uint').toVar()
-  const u = perlinFade(fx).toVar()
-  const v = perlinFade(fy).toVar()
-  const t = perlinFade(fz).toVar()
-  const sw = perlinFade(fw).toVar()
+  const u = fade(fx).toVar()
+  const v = fade(fy).toVar()
+  const t = fade(fz).toVar()
+  const sw = fade(fw).toVar()
   const one = tslUintOf(1)
   const hashes = [0, 1].flatMap(l => [0, 1].map(k => hashUint4(
     tslUvec4(X, X.add(one), X, X.add(one)),
@@ -1910,17 +1969,18 @@ function perlin4d(p: TslExpression): TslExpression {
       i ? fx.sub(1.0) : fx, j ? fy.sub(1.0) : fy,
       k ? fz.sub(1.0) : fz, l ? fw.sub(1.0) : fw,
     ).toVar()
-  const tri = (l: number): TslExpression => tslMix(
-    tslMix(
-      tslMix(tap(0, 0, 0, l), tap(1, 0, 0, l), u),
-      tslMix(tap(0, 1, 0, l), tap(1, 1, 0, l), u), v,
+  const blend = cpuMix ? (a: TslExpression, b: TslExpression, t: TslExpression): TslExpression => buildNativeNoiseFma(t, roundFiniteF32(b.sub(a)), a) : tslMix
+  const tri = (l: number): TslExpression => blend(
+    blend(
+      blend(tap(0, 0, 0, l), tap(1, 0, 0, l), u),
+      blend(tap(0, 1, 0, l), tap(1, 1, 0, l), u), v,
     ),
-    tslMix(
-      tslMix(tap(0, 0, 1, l), tap(1, 0, 1, l), u),
-      tslMix(tap(0, 1, 1, l), tap(1, 1, 1, l), u), v,
+    blend(
+      blend(tap(0, 0, 1, l), tap(1, 0, 1, l), u),
+      blend(tap(0, 1, 1, l), tap(1, 1, 1, l), u), v,
     ), t,
   )
-  return tslMix(tri(0), tri(1), sw).mul(0.8344)
+  return blend(tri(0), tri(1), sw).mul(0.8344)
 }
 
 function hashUint2(kx: TslExpression, ky: TslExpression): TslExpression {

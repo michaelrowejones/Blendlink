@@ -37,6 +37,8 @@ def _sibling(name):
 normalize_color_operation = _sibling("compositor_color").normalize_color_operation
 native_color_band = _sibling("native_color_band").native_color_band
 normalize_utility = _sibling("compositor_utilities").normalize_utility
+normalize_transform = _sibling("compositor_transform").normalize_transform
+transform_origin_conflict = _sibling("compositor_transform").origin_conflict
 validate_math_domain = _sibling("compositor_math").validate_math_domain
 native_gpu_profile = _sibling("compositor_gpu").native_gpu_profile
 whitepoint_properties = _sibling("compositor_whitepoint").whitepoint_properties
@@ -97,6 +99,8 @@ TYPES = {
     "CompositorNodeHueSat": "hue-saturation-value",
     "CompositorNodeHueCorrect": "hue-correct",
     "CompositorNodeBlur": "blur",
+    "CompositorNodeTranslate": "translate",
+    "CompositorNodeTransform": "translate",
     "CompositorNodeFlip": "flip",
     "CompositorNodeFilter": "filter",
     "CompositorNodeNormal": "normal-direction",
@@ -504,6 +508,10 @@ def extract(scene):
                     normalize_blur(node, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
                         lambda incoming, message: fail("unsupported-blur-mode", path, node, incoming, message))
+                elif node.bl_idname in ("CompositorNodeTranslate", "CompositorNodeTransform"):
+                    normalize_transform(node, op, scene, lambda incoming: input_value(incoming, ctx),
+                        _sibling("compositor_math").numeric_socket_bounds,
+                        lambda incoming, message: fail("unsupported-transform-mode", path, node, incoming, message))
                 elif TYPES[node.bl_idname] in ("curves", "hue-correct"):
                     try:
                         op["properties"].update(curve_tables(node))
@@ -785,6 +793,13 @@ def extract(scene):
             sink = sinks[0]
             terminal = sink.inputs.get("Image")
         result["output"] = input_value(terminal, ctx)
+        if any(op["kind"] == "translate" for op in result["ops"]):
+            conflict = transform_origin_conflict(result, single_values)
+            if conflict:
+                op, message = conflict
+                result["diagnostics"].append({"code": "unsupported-image-domain", "path": op["source"]["path"],
+                    "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
+                raise Unsupported()
         result["status"] = "extracted"
     except Unsupported:
         result["status"] = "unsupported"

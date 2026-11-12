@@ -21,10 +21,12 @@ const installedNodeFamilies = [
   ['ShaderNodeObjectInfo', 'object_info'], ['ShaderNodeCombineColor', 'color_convert'],
   ['ShaderNodeClamp', 'clamp_minmax'], ['ShaderNodeValToRGB', 'ramp_lut'],
   ['ShaderNodeVectorTransform', 'vector_transform'], ['ShaderNodeTexWave', 'tex_wave'],
-  ['ShaderNodeTexNoise', 'noise_fractal'], ['ShaderNodeNormalMap', 'normal_map_native'],
+  ['ShaderNodeTexNoise', 'noise_fractal'], ['ShaderNodeTexNoise', 'noise_normalized'], ['ShaderNodeNormalMap', 'normal_map_native'],
+  ['ShaderNodeNormalMap', 'normal_map_tangent_native'],
   ['ShaderNodeTangent', 'tangent_native'],
   ['ShaderNodeNormal', 'const_vec3'],
   ['ShaderNodeNewGeometry', 'geometry_context'], ['ShaderNodeTexCoord', 'geometry_context'],
+  ['ShaderNodeTexCoord', 'uv_active'],
 ]
 
 // Human labels for discovered modules. A missing label degrades the console
@@ -290,16 +292,23 @@ def contains_op(value, expected):
 for node_type, expected in families:
     node = tree.nodes.new(node_type)
     if node_type == "ShaderNodeCombineColor": node.mode = "HSL"
-    if node_type == "ShaderNodeNormalMap": node.space = "WORLD"
+    if node_type == "ShaderNodeNormalMap": node.space = "TANGENT" if expected == "normal_map_tangent_native" else "WORLD"
     previous_engine = bpy.context.scene.render.engine
-    if node_type == "ShaderNodeTangent":
-        node.direction_type = "UV_MAP"
+    if node_type == "ShaderNodeTangent" or expected == "normal_map_tangent_native":
+        if node_type == "ShaderNodeTangent": node.direction_type = "UV_MAP"
         engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties["engine"].enum_items}
         bpy.context.scene.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
         for polygon in mesh.polygons: polygon.use_smooth = True
     if node_type == "ShaderNodeClamp": node.clamp_type = "RANGE"
     if node_type == "ShaderNodeTexNoise":
-        node.noise_type = "MULTIFRACTAL"
+        if expected == "noise_normalized":
+            engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties["engine"].enum_items}
+            bpy.context.scene.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
+            node.noise_type = "FBM"
+            node.normalize = True
+            node.inputs["Detail"].default_value = 1
+        else:
+            node.noise_type = "MULTIFRACTAL"
         coordinate = tree.nodes.new("ShaderNodeTexCoord")
         tree.links.new(coordinate.outputs["UV"], node.inputs["Vector"])
     if node_type == "ShaderNodeValToRGB":
@@ -309,7 +318,7 @@ for node_type, expected in families:
         tree.links.new(coordinate.outputs["UV"], separate.inputs[0])
         tree.links.new(separate.outputs[0], node.inputs["Fac"])
     if node_type in {"ShaderNodeNewGeometry", "ShaderNodeTexCoord"}:
-        output = node.outputs["Normal"]
+        output = node.outputs["UV" if expected == "uv_active" else "Normal"]
     else:
         output = node.outputs["Color"] if node_type == "ShaderNodeObjectInfo" else node.outputs[0]
     tree.links.new(output, root.inputs["Base Color"])
@@ -374,8 +383,9 @@ print("##blendlink-addon-install " + json.dumps({
     "atlasOperator": bpy.ops.blendlink.check_atlas_fit.get_rna_type().identifier,
     "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
     "compositorFamilies": ["CompositorNodeSetAlpha", "CompositorNodePremulKey", "CompositorNodeFilter", "CompositorNodeNormal"],
-    "nodeFamilies": len(families),
-    "testedNodeFamilies": [node_type for node_type, _expected in families],
+    "nodeFamilies": len({node_type for node_type, _expected in families}),
+    "testedNodeFamilies": list(dict.fromkeys(node_type for node_type, _expected in families)),
+    "testedNodeCapabilities": [node_type + "#" + expected for node_type, expected in families],
 }, sort_keys=True))
 `
   const probeFile = join(installRoot, 'verify-installed.py')
@@ -390,12 +400,16 @@ print("##blendlink-addon-install " + json.dumps({
   const status = JSON.parse(sentinel.slice('##blendlink-addon-install '.length))
   const tested = status.testedNodeFamilies
   const required = installedNodeFamilies.map(([name]) => name)
+  const capabilities = status.testedNodeCapabilities
+  const requiredCapabilities = installedNodeFamilies.map(([name, op]) => name + '#' + op)
+  const validCapabilities = Array.isArray(capabilities) && new Set(capabilities).size === capabilities.length &&
+    requiredCapabilities.every(capability => capabilities.includes(capability))
   const optional = ['FunctionNodeInputBool', 'FunctionNodeInputInt', 'FunctionNodeInputVector']
   const validNodeFamilies = Array.isArray(tested) && tested.length === status.nodeFamilies &&
     new Set(tested).size === tested.length && required.every(name => tested.includes(name)) &&
     tested.every(name => required.includes(name) || optional.includes(name))
   if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
-      !validNodeFamilies || JSON.stringify(status.compositorFamilies) !== JSON.stringify(['CompositorNodeSetAlpha', 'CompositorNodePremulKey', 'CompositorNodeFilter', 'CompositorNodeNormal']) ||
+      !validNodeFamilies || !validCapabilities || JSON.stringify(status.compositorFamilies) !== JSON.stringify(['CompositorNodeSetAlpha', 'CompositorNodePremulKey', 'CompositorNodeFilter', 'CompositorNodeNormal']) ||
       status.exportOperator !== 'BLENDLINK_OT_export_website' || status.atlasOperator !== 'BLENDLINK_OT_check_atlas_fit') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }

@@ -43,6 +43,9 @@ export function isUnitBoundedExpression(expression: TslIrExpression | undefined)
       ((index % 4 === 3) === (expression.channel === 'alpha')) ? finiteUnit(value) : true)
     case 'tex_image': return Array.isArray(expression.pixels) && expression.pixels.length > 0 && expression.pixels.every((value, index) =>
       ((index % 4 === 3) === (expression.output === 'alpha')) ? finiteUnit(value) : true)
+    case 'noise_normalized':
+      if (expression.normalize !== true || expression.roughnessNode !== undefined || !['native-standard-f32', 'cycles-neon-fma'].includes(String(expression.perlinModel))) return false
+      // Shared normalized bounds below; the builder independently validates its domain.
     case 'noise': return expression.normalize !== false && (expression.normalize === undefined || expression.normalize === true) &&
       ['noiseType', 'noise_type', 'type'].every(key => expression[key] === undefined || expression[key] === 'FBM') &&
       typeof expression.dimensions === 'number' && [1, 2, 3, 4].includes(expression.dimensions) && typeof expression.detail === 'number' && Number.isFinite(expression.detail) && expression.detail >= 0 && expression.detail <= 6 &&

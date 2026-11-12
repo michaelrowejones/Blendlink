@@ -54,8 +54,17 @@ function cone(values: Vector3[]): { axis: Vector3; radius: number } {
   return { axis, radius: Math.acos(Math.min(1, cosine)) }
 }
 
-const cache = new WeakMap<BufferGeometry, { signature: unknown[]; bound: number }>()
-function localFrameBound(geometry: BufferGeometry, uvAttribute: string): number {
+export interface TangentFrameBound {
+  sine: number
+  normalCosine: number
+  tangentCosine: number
+}
+const cache = new WeakMap<BufferGeometry, { signature: unknown[]; bound: TangentFrameBound }>()
+function localFrameBound(
+  geometry: BufferGeometry,
+  uvAttribute: string,
+  storage: unknown,
+): TangentFrameBound {
   const tangent = geometry.getAttribute('tangent'),
     normal = geometry.getAttribute('normal'),
     uv = geometry.getAttribute(uvAttribute),
@@ -67,6 +76,7 @@ function localFrameBound(geometry: BufferGeometry, uvAttribute: string): number 
       tangent,
       uv,
       index,
+      storage,
       ...[position, normal, tangent, uv, index].map(
         (value) => (value as any)?.version ?? (value as any)?.data?.version,
       ),
@@ -89,7 +99,7 @@ function localFrameBound(geometry: BufferGeometry, uvAttribute: string): number 
     throw new TslIrError('UV Tangent needs actual Float32 Mikk TANGENT and bound UV attributes')
   const get = (attribute: typeof normal, vertex: number) =>
     new Vector3(attribute.getX(vertex), attribute.getY(vertex), attribute.getZ(vertex))
-  let bound = 1
+  const bound: TangentFrameBound = { sine: 1, normalCosine: 1, tangentCosine: 1 }
   const count = index?.count ?? position.count
   for (let offset = 0; offset < count; offset += 3) {
     const vertices = [0, 1, 2].map((corner) =>
@@ -106,6 +116,16 @@ function localFrameBound(geometry: BufferGeometry, uvAttribute: string): number 
       vertices.some((vertex) => ![1, -1].includes(tangent.getW(vertex)))
     )
       throw new TslIrError('UV Tangent needs finite unit Mikk vectors and exact handedness')
+    if (vertices.some((vertex) => tangent.getW(vertex) !== tangent.getW(vertices[0]!)))
+      throw new TslIrError('Native tangent frames need one handedness sign per triangle')
+    const divisor = storage === 'SNORM10' ? 511 : 32767
+    for (const value of [...normals, ...tangents]) {
+      value.set(
+        ...([value.x, value.y, value.z].map(
+          (item) => Math.trunc(Math.fround(item * divisor)) / divisor,
+        ) as [number, number, number]),
+      )
+    }
     const [a, b, c] = vertices.map((vertex) => [uv.getX(vertex), uv.getY(vertex)]) as [
       number[],
       number[],
@@ -123,7 +143,9 @@ function localFrameBound(geometry: BufferGeometry, uvAttribute: string): number 
       throw new TslIrError(
         'UV Tangent cannot prove its tangent/normal interpolation stays independent',
       )
-    bound = Math.min(bound, Math.sin(separation))
+    bound.sine = Math.min(bound.sine, Math.sin(separation))
+    bound.normalCosine = Math.min(bound.normalCosine, Math.cos(n.radius))
+    bound.tangentCosine = Math.min(bound.tangentCosine, Math.cos(t.radius))
   }
   cache.set(geometry, { signature, bound })
   return bound
@@ -152,11 +174,29 @@ export function validateTangentBinding(
       throw new TslIrError(
         'UV Tangent needs its exported Mikk/UV frame declaration and actual UV channel',
       )
-    localFrameBound(mesh.geometry, index === 0 ? 'uv' : 'uv' + index)
+    localFrameBound(mesh.geometry, index === 0 ? 'uv' : 'uv' + index, expression.tangentStorage)
   }
 }
 
-export function buildTslNativeTangent(expression: TslIrExpression, basis: unknown): TslExpression {
+export function verifiedTangentFrameBound(
+  expression: TslIrExpression,
+  mesh: Mesh,
+  basis: unknown,
+  extras: TslRuntimeMeshExtras | null,
+): TangentFrameBound {
+  validateTangentBinding([expression], mesh, basis, extras)
+  const index = extras!.uvChannels![String(expression.uvMap)]!
+  return localFrameBound(
+    mesh.geometry,
+    index === 0 ? 'uv' : 'uv' + index,
+    expression.tangentStorage,
+  )
+}
+
+export function buildTslNativeTangentFrame(
+  expression: TslIrExpression,
+  basis: unknown,
+): { tangent: Node; normal: Node; sign: Node; approved: Node } {
   shape(expression)
   if (basis !== 'blender-z-up' && basis !== 'gltf-y-up')
     throw new TslIrError('UV Tangent needs an explicit exported coordinate basis')
@@ -185,7 +225,19 @@ export function buildTslNativeTangent(expression: TslIrExpression, basis: unknow
     local: Node = basis === 'gltf-y-up' ? vec3(raw.x, raw.z.negate(), raw.y) : raw
   const divisor = expression.tangentStorage === 'SNORM10' ? 511 : 32767
   const tangent: Node = normalize(
-    normalize((matrix as Node).mul(trunc(local.mul(divisor)).div(divisor))).toVarying(),
-  )
-  return tangent.mul(approved)
+    (matrix as Node).mul(trunc(local.mul(divisor)).div(divisor)),
+  ).toVarying()
+  const rawNormal: Node = attribute('normal', 'vec3'),
+    localNormal: Node =
+      basis === 'gltf-y-up' ? vec3(rawNormal.x, rawNormal.z.negate(), rawNormal.y) : rawNormal
+  const normal: Node = normalize(
+    (matrix as Node).mul(trunc(localNormal.mul(divisor)).div(divisor)),
+  ).toVarying()
+  return { tangent, normal, sign: tangentAttribute.w.toVarying(), approved }
+}
+
+export function buildTslNativeTangent(expression: TslIrExpression, basis: unknown): TslExpression {
+  const frame = buildTslNativeTangentFrame(expression, basis)
+  const tangent: Node = normalize(frame.tangent)
+  return tangent.mul(frame.approved)
 }

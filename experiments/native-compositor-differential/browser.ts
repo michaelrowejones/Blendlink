@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { WebGPURenderer, NodeMaterial, QuadMesh } from 'three/webgpu'
 import { textureLoad, uv, vec2, ivec2, mrt, output, vec4 } from 'three/tsl'
 import { buildSourceCompositor } from 'blendlink-compositor-under-test'
-import { relativeResizeProof } from './relative-resize.js'
+import { compositorResizeProof } from './relative-resize.js'
 
 const reports: unknown[] = []
 const result = document.querySelector('#results')!
@@ -29,7 +29,7 @@ try {
       const row: any = { case: test.case, blenderVersion: test.blenderVersion, blenderHash: test.blenderHash, backend }
       const shaderStart = shaderErrors.length
       device?.pushErrorScope('validation')
-      try { Object.assign(row, await relativeResizeProof(test, renderer, webgl)) }
+      try { Object.assign(row, await compositorResizeProof(test, renderer, webgl)) }
       catch (error) { row.error = String(error) }
       const validation = await device?.popErrorScope()
       row.shaderErrors = shaderErrors.slice(shaderStart)
@@ -108,7 +108,15 @@ try {
       row.calibration = calibration.max
       if (calibration.max > 1e-6) throw new Error('Unmodified HDR input did not survive the browser render target')
       if (calibration.bitMismatches) throw new Error('Unmodified input float32 bits did not survive the browser render target')
-      const built = buildSourceCompositor(test.program, () => source)
+      const providedSource = test.sourceAsPointwise ? vec4(source.rgb, source.a) : source
+      const sourceExtent = new THREE.Vector2()
+      const built = buildSourceCompositor(test.program, () => providedSource, test.sourceAsPointwise ? {
+        resolvePassExtent: (_pass, activeRenderer) => {
+          if (test.passExtentMode === 'input-texture') return [texture.image.width, texture.image.height]
+          activeRenderer.getDrawingBufferSize(sourceExtent)
+          return [sourceExtent.x, sourceExtent.y]
+        },
+      } : {})
       try {
         ;(window as any).__compositorProgress.phase = 'rendering'
         const calls: { quad: QuadMesh, target: any, mrt: any }[] = []

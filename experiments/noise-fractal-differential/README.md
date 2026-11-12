@@ -203,6 +203,64 @@ node experiments/noise-fractal-differential/run.mjs --reuse-reference --built
 Confirm the reported browser GPU information: the channel choice alone does not
 guarantee which adapter a machine exposes.
 
+## Fresh static normalized FBM
+
+New bounded static normalized graphs use `noise_normalized`. Older runtimes
+refuse the new opcode; old serialized `noise` keeps its prior behavior. The new
+program independently validates static Detail <=6, Roughness <=1, absolute
+Lacunarity <=2, absolute Distortion <=1 and Scale <=80. Negative Detail and
+Roughness use native zero clamping. Named legacy high-scale approximations
+remain a separate path. Linked Roughness retains `noise_varying`.
+
+EEVEE is the primary target: 175 native EEVEE graphs on each Blender
+4.2/5.2/5.3 pass both physical Apple Metal browser APIs. The 5.3 repeat uses the
+built SDK with all 112 modules checked. All 175 retained 5.2 EEVEE graphs also
+pass both built SwiftShader APIs without device loss. This includes literal
+and spatial shader stages, every dimension/output, fractional/high Detail,
+negative/nonbinary Lacunarity, Distortion and amplified residuals. Native
+OpenGL is a separate hosted gate, not inferred from Metal source evidence.
+
+Verified Mac ARM Cycles CPU profiles remain available. Its SIMD Perlin uses
+fused multiply-add and different fade/interpolation staging, so the payload
+selects an explicit source precision model. The bounded portable FMA has
+12,288 independent exact-rational float32 controls: zero error on both physical
+and software browser APIs. Results travel as positive 11/11/10-bit RGB chunks
+so material clipping cannot hide negative-number errors. This is a bounded
+fade/gradient kernel proof, not a general overflow/subnormal FMA promise.
+
+Unmeasured Cycles source profiles and GPU rendering take a named source-bake
+path. Shader-stage Cycles SIMD 3D/4D is additionally limited to Detail <=1 and
+zero Distortion: the heavier 3D Color Detail6 program lost both SwiftShader
+devices despite tiny memory use. The emitter and runtime refuse those workloads;
+MF constant profiles use their independently proved standard model. Fresh
+final corpora retain 289 graphs in 4.2 and 317 each in 5.2/5.3, plus 60/32/32
+explicit Cycles refusals. All 1,846 admitted physical readbacks pass.
+
+The artist regression includes normalized 3D Scale .15, Detail1, Roughness .5,
+Lacunarity2 with zero Distortion. Full-float input calibration is exact and its
+Cycles Color/Fac error is <=2.384186e-7. It does not rely solely on the main
+corpus's exactly half-representable input grid.
+
+These primitives still omit native `snoise`'s periodic coordinate reduction
+at 100000 and large-coordinate correction at 1e6. The current parity evidence
+covers octave coordinates inside that finite band; translated graphs beyond
+it must not be described as full native parity. Coordinate wrapping is a
+separate remaining port. Approximation and renderer/source limits stay explicit.
+
+```sh
+BLENDLINK_NOISE_NORMALIZED=1 BLENDLINK_NOISE_ENGINE=EEVEE \
+BLENDLINK_BLENDER=/absolute/path/to/blender \
+BLENDLINK_NOISE_EVIDENCE=artifacts/verification-normalized \
+node experiments/noise-fractal-differential/run.mjs --built
+
+BLENDLINK_FMA_EVIDENCE=artifacts/verification-noise-fma \
+node experiments/noise-fractal-differential/probe-fma.mjs --built
+```
+
+Omit the engine selector to also test admissible Cycles profiles and record
+their exact refusal reasons. `BLENDLINK_NOISE_ARTIST_ONLY=1` selects the focused
+artist/input calibration graphs. None of these controls require real users.
+
 Admission checks:
 
 ```sh

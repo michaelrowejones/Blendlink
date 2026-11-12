@@ -38,7 +38,8 @@ def _unit_bounded(expression):
         alpha = expression.get('output') == 'alpha'
         return all(0 <= value <= 1 for index, value in enumerate(expression['pixels'])
                    if (index % 4 == 3) == alpha)
-    if op == 'noise':
+    if op == 'noise_normalized' and (expression.get('normalize') is not True or 'roughnessNode' in expression or expression.get('perlinModel') not in {'native-standard-f32', 'cycles-neon-fma'}): return False
+    if op in {'noise', 'noise_normalized'}:
         return (expression.get('normalize', True) is True
                 and all(expression.get(key, 'FBM') == 'FBM' for key in ['noiseType', 'noise_type', 'type'])
                 and expression.get('dimensions') in {1, 2, 3, 4}

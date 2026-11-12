@@ -17,7 +17,7 @@ function scalarStructure(expression: TslIrExpression | undefined): boolean {
     case 'clamp01': return scalarChild('input')
     case 'clamp_minmax': return ['value', 'min', 'max'].every(scalarChild)
     case 'math': return scalarChild('a') && ['b', 'c'].filter(key => key in expression).every(scalarChild)
-    case 'noise': case 'noise_fractal': case 'noise_varying': case 'tex_white_noise': return expression.output !== 'color'
+    case 'noise': case 'noise_fractal': case 'noise_normalized': case 'noise_varying': case 'tex_white_noise': return expression.output !== 'color'
     case 'tex_image': case 'texture_ref': return expression.output === 'alpha'
     case 'tex_checker': return expression.output === 'fac'
     case 'ramp_lut': return expression.channel === 'alpha'

@@ -794,6 +794,11 @@ def _fingerprint_object_contributor(
         digest, obj, depsgraph, visited, *, include_atlas=False,
         evaluated=False, matrix_world=None, source_raw=False) -> None:
     """Hash one Cycles contributor using the same contract in/out of instances."""
+    # Blender4.2 lazily installs an empty IDPropertyGroup on this first read.
+    # Resolve it before sampling obj.items(), so the first and subsequent
+    # fingerprints see the same registered property container. Its actual
+    # Cycles settings and all custom properties still participate below.
+    cycles = getattr(obj, "cycles", None)
     transform = matrix_world if matrix_world is not None else obj.matrix_world
     transform_values = transform if isinstance(transform, tuple) else tuple(
         value for row in transform for value in row
@@ -820,7 +825,6 @@ def _fingerprint_object_contributor(
             if key not in {"_RNA_UI", "blendlink_id"}
         )),
     ))
-    cycles = getattr(obj, "cycles", None)
     if cycles is not None:
         _fingerprint_rna_scalars(digest, cycles)
     linking = getattr(obj, "light_linking", None)
@@ -6116,6 +6120,13 @@ def average_unpinned(objs, uv_name: str) -> dict:
     """
     packable = [obj for obj in objs if len(obj.data.polygons) > 0]
     if not packable:
+        return {}
+    # Nothing needs a linked-selection expansion when every loop is free.
+    # Besides avoiding redundant operators, this keeps the no-pin path away
+    # from legacy Blender's background select_linked context crash.
+    layers = [obj.data.uv_layers.get(uv_name) for obj in packable]
+    if all(layer is not None for layer in layers) and not any(_uv_layer_has_pins(layer) for layer in layers):
+        average(packable)
         return {}
     # The uv.select_* ops below act on UV selection, not mesh selection,
     # so this needs sync OFF and establishes its own UV selection.

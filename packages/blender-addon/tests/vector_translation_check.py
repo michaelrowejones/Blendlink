@@ -66,7 +66,7 @@ for mode in ("AXIS_ANGLE", "X_AXIS", "Y_AXIS", "Z_AXIS", "EULER_XYZ"):
         link = tree.links.new(coord.outputs["UV"], rotate.inputs["Center"])
         expression = tsl_ir.emit_output(rotate, rotate.outputs["Vector"])
         expect(expression["rotationType"] == mode and expression["invert"] == inverse, "Native rotate mode was lost")
-        expect(expression["centerNode"]["op"] == "uv", "Linked center was flattened")
+        expect(expression["centerNode"]["op"] == "uv_active", "Linked center was flattened")
         if mode == "EULER_XYZ":
             expect("rotation" in expression and "angle" not in expression, "Euler read inactive axis/angle sockets")
         tree.links.remove(link)

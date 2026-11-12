@@ -60,6 +60,7 @@ const compositorFamilies = [
   ['flip', 'compositor_flip_check.py', 'BLENDLINK_COMPOSITOR_FLIP_REFERENCES'],
   ['filter', 'compositor_filter_check.py', 'BLENDLINK_COMPOSITOR_FILTER_REFERENCES'],
   ['normal-direction', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES'],
+  ['transform', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES'],
   ['switch', 'compositor_switch_check.py', 'BLENDLINK_COMPOSITOR_SWITCH_REFERENCES'],
   ['blur-interop', 'compositor_blur_interop_check.py', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES'],
   ['blur-kernel', 'compositor_blur_kernel_check.py', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_REFERENCES'],
@@ -99,7 +100,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
-    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MATH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BALANCE_DEVICE: 'CPU',
@@ -121,6 +122,7 @@ if (!plan.compositor) {
     ['flip-gpu', 'compositor_flip_check.py', 'BLENDLINK_COMPOSITOR_FLIP_REFERENCES', 'BLENDLINK_COMPOSITOR_FLIP_DEVICE'],
     ['filter-gpu', 'compositor_filter_check.py', 'BLENDLINK_COMPOSITOR_FILTER_REFERENCES', 'BLENDLINK_COMPOSITOR_FILTER_DEVICE'],
     ['normal-direction-gpu', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES', 'BLENDLINK_COMPOSITOR_NORMAL_DEVICE'],
+    ['transform-gpu', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES', 'BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE'],
     ['switch-gpu', 'compositor_switch_check.py', 'BLENDLINK_COMPOSITOR_SWITCH_REFERENCES', 'BLENDLINK_COMPOSITOR_SWITCH_DEVICE'],
     ['blur-interop-gpu', 'compositor_blur_interop_check.py', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE'],
     ['blur-kernel-gpu', 'compositor_blur_kernel_check.py', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE'],
@@ -257,12 +259,19 @@ if (plan.shaders) {
 if (plan.geometry) attempt('geometry', () => run('geometry', process.execPath,
   ['experiments/geometry-context-differential/suite.mjs', '--built'],
   { BLENDLINK_GEOMETRY_BLENDER: blender, BLENDLINK_GEOMETRY_NATIVE: join(evidence, 'geometry') }, 1_800_000))
+if (plan.geometry) attempt('active-uv', () => run('active-uv', process.execPath,
+  ['experiments/geometry-context-differential/suite.mjs', '--built', '--profiles', 'shared'],
+  { BLENDLINK_GEOMETRY_ACTIVE_UV: '1', BLENDLINK_GEOMETRY_ENGINE: 'EEVEE',
+    BLENDLINK_GEOMETRY_BLENDER: blender, BLENDLINK_GEOMETRY_NATIVE: join(evidence, 'active-uv') }, 1_800_000))
 if (plan.geometry) attempt('normal-map', () => run('normal-map', process.execPath,
   ['experiments/normal-node-differential/suite.mjs', '--built', '--profiles', 'shared,cycles-zero'],
   { BLENDLINK_NORMAL_NODE_BLENDER: blender, BLENDLINK_NORMAL_NODE_NATIVE: join(evidence, 'normal-map') }, 1_800_000))
 if (plan.geometry) attempt('tangent', () => run('tangent', process.execPath,
   ['experiments/tangent-node-differential/suite.mjs', '--built', '--profiles', 'shared,named,hq'],
   { BLENDLINK_TANGENT_NODE_BLENDER: blender, BLENDLINK_TANGENT_NODE_NATIVE: join(evidence, 'tangent') }, 1_800_000))
+if (plan.geometry) attempt('tangent-normal', () => run('tangent-normal', process.execPath,
+  ['experiments/tangent-normal-differential/suite.mjs', '--built', '--profiles', 'shared,named,hq'],
+  { BLENDLINK_TANGENT_NORMAL_BLENDER: blender, BLENDLINK_TANGENT_NORMAL_NATIVE: join(evidence, 'tangent-normal') }, 1_800_000))
 if (plan.geometry) attempt('normal-dot', () => run('normal-dot', process.execPath,
   ['experiments/geometry-context-differential/suite.mjs', '--built', '--profiles', 'shared'],
   { BLENDLINK_GEOMETRY_NORMAL_DOT: '1', BLENDLINK_GEOMETRY_ENGINE: 'EEVEE',
@@ -273,6 +282,11 @@ if (plan.shaders) attempt('normal-input', () => run('normal-input', process.exec
 if (plan.noiseFbm) attempt('noise-fractal', () => run('noise-fractal', process.execPath,
   ['experiments/noise-fractal-differential/run.mjs', '--built'],
   { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-fractal'),
+    BLENDLINK_NOISE_VARYING: '', BLENDLINK_NOISE_TYPES: '["FBM"]' }, 1_800_000))
+if (plan.noiseFbm) attempt('noise-normalized', () => run('noise-normalized', process.execPath,
+  ['experiments/noise-fractal-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-normalized'),
+    BLENDLINK_NOISE_NORMALIZED: '1', BLENDLINK_NOISE_ENGINE: 'EEVEE',
     BLENDLINK_NOISE_VARYING: '', BLENDLINK_NOISE_TYPES: '["FBM"]' }, 1_800_000))
 if (plan.noiseTypes) attempt('noise-types', () => run('noise-types', process.execPath,
   ['experiments/noise-fractal-differential/run.mjs', '--built'],
@@ -292,8 +306,8 @@ writeFileSync(join(evidence, 'report.json'), JSON.stringify({
     maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
   shaderFamilies: [...(plan.shaders ? ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'color-conversions',
     ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])] : []),
-    ...(plan.geometry ? ['geometry', 'normal-map', 'tangent', 'normal-dot'] : []), ...(plan.shaders ? ['normal-input'] : []),
-    ...(plan.noiseFbm ? ['noise-fractal'] : []), ...(plan.noiseTypes ? ['noise-types', 'noise-varying'] : [])],
+    ...(plan.geometry ? ['geometry', 'active-uv', 'normal-map', 'tangent', 'tangent-normal', 'normal-dot'] : []), ...(plan.shaders ? ['normal-input'] : []),
+    ...(plan.noiseFbm ? ['noise-fractal', 'noise-normalized'] : []), ...(plan.noiseTypes ? ['noise-types', 'noise-varying'] : [])],
   builtRuntime: true, failures,
 }, null, 2) + '\n')
 assert.deepEqual(failures, [], 'Native node parity failed; all independent family logs were retained')

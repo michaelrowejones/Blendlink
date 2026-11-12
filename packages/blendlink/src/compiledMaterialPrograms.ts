@@ -25,7 +25,7 @@ function record(value: unknown): value is Record<string, unknown> {
 function hasNativeNormal(value:unknown):boolean {
   if(Array.isArray(value))return value.some(hasNativeNormal)
   if(!record(value))return false
-  return value.op==='normal_map_native'||value.op==='normal_view_native'||Object.values(value).some(hasNativeNormal)
+  return value.op==='normal_map_native'||value.op==='normal_view_native'||value.op==='normal_map_tangent_native'||Object.values(value).some(hasNativeNormal)
 }
 
 function imageFile(value: unknown): string {
@@ -203,6 +203,7 @@ export async function validatedBaseColorProgramMaterials(
   const { collectGeometryContextOutputs, validateGeometryContextMatrix } = await import('./tslGeometryContext.js')
   const { collectNormalMapRequirements,validateNormalMapBinding } = await import('./tslNormalNodes.js')
   const {collectTangentRequirements,validateTangentBinding}=await import('./tslTangentNodes.js')
+  const {collectTangentNormalMaps,validateTangentNormalMapBinding}=await import('./tslTangentNormalMap.js')
   const THREE = await import('three')
   const objectForBinding = (binding: PrimitiveBinding): import('three').Object3D => {
     if (binding.hierarchyIssue || !binding.nodeChain?.length) throw new TslIrError('Vector Transform needs actual default-scene object matrices: ' + (binding.hierarchyIssue ?? 'node hierarchy is missing'))
@@ -257,6 +258,8 @@ export async function validatedBaseColorProgramMaterials(
       collectNormalMapRequirements(record(program)?program.channels:null,normalMaps)
       const tangents:import('./tslNodeRecipe.js').TslIrExpression[]=[]
       collectTangentRequirements(record(program)?program.channels:null,tangents)
+      const tangentMaps:import('./tslNodeRecipe.js').TslIrExpression[]=[]
+      collectTangentNormalMaps(record(program)?program.channels:null,tangentMaps)
       const material = materials[index]
       const materialInfo = record(material) && record(material.extras) ? material.extras.blendlink_tsl_material : null
       for (const binding of bindings) {
@@ -281,6 +284,7 @@ export async function validatedBaseColorProgramMaterials(
                 throw new TslIrError('Geometry context requires actual triangle position/normal attributes without skin, morph or GPU instances')
               validateGeometryContextMatrix(objectForBinding(binding),extras?.objectSpace)
             }
+            let actualGeometry:import('three').Mesh|null=null
             if(normalMaps.length||tangents.length){
               if(!extras?.geometryContext?.includes('normal'))throw new TslIrError('Native Normal Map requires its exported primary-normal context declaration')
               const owner=objectForBinding(binding),data=geometryData?.get(`${binding.meshIndex}:${binding.primitiveIndex}`)
@@ -294,7 +298,7 @@ export async function validatedBaseColorProgramMaterials(
                   const match=/^TEXCOORD_(\d+)$/.exec(semantic)
                   if(match)actual.setAttribute(match[1]==='0'?'uv':'uv'+match[1],new THREE.BufferAttribute(values,2))
                 })
-                const mesh=new THREE.Mesh(actual);owner.add(mesh);bound=mesh
+                const mesh=new THREE.Mesh(actual);owner.add(mesh);bound=mesh;actualGeometry=mesh
               }
               validateNormalMapBinding(normalMaps,bound,extras?.objectSpace)
               if(tangents.length){
@@ -310,6 +314,10 @@ export async function validatedBaseColorProgramMaterials(
             if (info.size) options.objectInfo = createObjectInfoResolver(properties.blendlink_tsl_object, materialInfo)
             options.normalMapBasis = !Object.hasOwn(attributes, 'TEXCOORD_0') ? 'missing'
               : Object.hasOwn(attributes, 'TANGENT') ? 'attribute' : 'derivative'
+            if(tangentMaps.length){
+              if(!actualGeometry)throw new TslIrError('Tangent Normal Map needs actual decoded primitive geometry')
+              validateTangentNormalMapBinding(tangentMaps,actualGeometry,extras?.objectSpace,extras,options)
+            }
             // The expression builder validates its operations. These checks also
             // establish that its vertex inputs exist on this exact primitive,
             // rather than relying on the renderer's silent zero-attribute fallbacks.
@@ -326,9 +334,14 @@ export async function validatedBaseColorProgramMaterials(
                   throw new TslIrError('Material program texture_ref does not match its verified image metadata/sampling')
                 }
               }
-              if (value.op === 'uv') {
+              if (value.op === 'uv' || value.op === 'uv_active') {
                 const name = typeof value.uvMap === 'string' ? value.uvMap : ''
-                const channel = name ? extras?.uvChannels?.[name] : 0
+                const active = extras?.activeRenderUv
+                if (value.op === 'uv_active' && (!active || active.schemaVersion !== 1
+                  || active.model !== 'source-active-render-v1' || typeof active.uvMap !== 'string' || !active.uvMap
+                  || extras?.uvChannels?.[active.uvMap] !== active.channel))
+                  throw new TslIrError('Base Color program requires its source active-render UV binding')
+                const channel = value.op === 'uv_active' ? active?.channel : name ? extras?.uvChannels?.[name] : 0
                 if (!Number.isInteger(channel) || channel! < 0 || channel! > 3 ||
                     !Object.hasOwn(attributes, `TEXCOORD_${channel}`)) {
                   throw new TslIrError('Base Color program requires an unavailable UV attribute')

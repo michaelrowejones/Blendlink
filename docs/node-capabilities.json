@@ -791,13 +791,14 @@
     },
     "shader:ShaderNodeTexCoord": {
       "category": "partial",
-      "limits": "All7 ordinary UV/Object/Generated/Camera/Normal/Window/Reflection outputs now have live routes. New Camera/Normal/Window/Reflection routes share the measured primary-triangle context and limits of ShaderNodeNewGeometry: explicit bases, per-draw actual matrices, native normal storage/interpolation, no modifiers/deformation/generated or GPU instances, and named reflected/sheared/shifted/cropped source-camera limits. Object override and instancer coordinate domains remain unported. Native EEVEE proof is Metal; browser WebGPU and WebGL2 both pass. No automatic primary-field-to-UV-ray capture or complete Blender lighting/BSDF parity claim.",
+      "limits": "All7 ordinary UV/Object/Generated/Camera/Normal/Window/Reflection outputs now have live routes. New Camera/Normal/Window/Reflection routes share the measured primary-triangle context and limits of ShaderNodeNewGeometry: explicit bases, per-draw actual matrices, native normal storage/interpolation, no modifiers/deformation/generated or GPU instances, and named reflected/sheared/shifted/cropped source-camera limits. Object override and instancer coordinate domains remain unported. Native EEVEE proof is Metal; browser WebGPU and WebGL2 both pass. No automatic primary-field-to-UV-ray capture or complete Blender lighting/BSDF parity claim. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "uv",
         "object_coords",
         "generated",
-        "geometry_context"
+        "geometry_context",
+        "uv_active"
       ],
       "modes": {},
       "evidence": [
@@ -842,6 +843,16 @@
         },
         {
           "path": "experiments/geometry-context-differential/suite.mjs"
+        },
+        {
+          "path": "packages/blender-addon/tests/active_uv_binding_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslActiveUv.test.ts"
+        },
+        {
+          "path": "experiments/geometry-context-differential/README.md",
+          "anchor": "Source active-render UV"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -871,15 +882,26 @@
         "channelTolerance": "Cycles fixed2e-5 raster allowance; EEVEE adds independently calibrated final half-float ULP",
         "maximumCyclesAbsoluteEncodedRgbError": 1.6957521438598633e-05,
         "maximumEeveeAbsoluteEncodedRgbError": 0.0009713172912597656,
-        "scope": "Shared corpus across9 geometry/view outputs plus independent RGB control, both bases and browser backends; not per-class node counts. Native Linux/OpenGL not certified by this Metal run."
+        "scope": "Shared corpus across9 geometry/view outputs plus independent RGB control, both bases and browser backends; not per-class node counts. Native Linux/OpenGL not certified by this Metal run.",
+        "activeRenderUv": {
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0",
+            "5.3.0"
+          ],
+          "actualFinalGlbsPerVersion": 8,
+          "readbacksPerBackendPerVersion": 240,
+          "scope": "EEVEE direct UV, unnamed UV Map, named edit UV and unlinked image coordinates; two owners with different render slots sharing source materials; perspective/orthographic front/back, three frames and both coordinate bases. Existing channel tolerance and independent EEVEE final-half carrier controls unchanged."
+        }
       }
     },
     "shader:ShaderNodeUVMap": {
       "category": "partial",
-      "limits": "Named or active UV binding; production glTF V is converted to native Blender coordinates before graph math, while direct native builder measurements retain their own UV convention. Exported channel/attribute binding must exist; instancer semantics are not a general port.",
+      "limits": "Named or active UV binding; production glTF V is converted to native Blender coordinates before graph math, while direct native builder measurements retain their own UV convention. Exported channel/attribute binding must exist; instancer semantics are not a general port. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
-        "uv"
+        "uv",
+        "uv_active"
       ],
       "modes": {},
       "evidence": [
@@ -893,9 +915,31 @@
         },
         {
           "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/active_uv_binding_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslActiveUv.test.ts"
+        },
+        {
+          "path": "experiments/geometry-context-differential/README.md",
+          "anchor": "Source active-render UV"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "activeRenderUv": {
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0",
+            "5.3.0"
+          ],
+          "actualFinalGlbsPerVersion": 8,
+          "readbacksPerBackendPerVersion": 240,
+          "scope": "EEVEE direct UV, unnamed UV Map, named edit UV and unlinked image coordinates; two owners with different render slots sharing source materials; perspective/orthographic front/back, three frames and both coordinate bases. Existing channel tolerance and independent EEVEE final-half carrier controls unchanged."
+        }
+      }
     },
     "shader:ShaderNodeTexChecker": {
       "category": "partial",
@@ -1067,12 +1111,13 @@
     },
     "shader:ShaderNodeTexNoise": {
       "category": "partial",
-      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent.",
+      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Native periodic coordinate reduction beyond the verified coordinate band remains unported.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "noise",
         "noise_fractal",
-        "noise_varying"
+        "noise_varying",
+        "noise_normalized"
       ],
       "modes": {
         "noise_dimensions": {
@@ -1144,6 +1189,15 @@
         },
         {
           "path": "packages/blender-addon/tests/noise_varying_translation_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/noise_normalized_translation_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslNativeNoisePrecision.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslNativeNormalizedNoise.test.ts"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -1177,7 +1231,18 @@
         "retainedLinuxSignedFbmCyclesMappedMax42": 4.410743713378906e-06,
         "retainedLinuxSignedFbmGraphs52": 334,
         "retainedLinuxSignedFbmCyclesMappedMax52": 9.298324584960938e-06,
-        "budget": "Mapped max2e-5 plus one independently established EEVEE final half-target ULP. Ordinary signed FBM uses affine scale1/16; other fractal scales follow independent amplitude bounds. Amplified residual and cutoff controls expose masked kernel errors. Derived raw errors are reported separately."
+        "budget": "Mapped max2e-5 plus one independently established EEVEE final half-target ULP. Ordinary signed FBM uses affine scale1/16; other fractal scales follow independent amplitude bounds. Amplified residual and cutoff controls expose masked kernel errors. Derived raw errors are reported separately.",
+        "freshNormalizedGraphsByVersion": {
+          "4.2.0": 289,
+          "5.2.0": 317,
+          "5.3.0": 317
+        },
+        "freshNormalizedEeveeGraphsPerVersion": 175,
+        "freshNormalizedSoftwareGraphsByVersion": {
+          "4.2.0": 289,
+          "5.2.0": 317
+        },
+        "boundedPortableFmaExactControls": 12288
       }
     },
     "shader:ShaderNodeTexWhiteNoise": {
@@ -1259,11 +1324,12 @@
     },
     "shader:ShaderNodeTexImage": {
       "category": "partial",
-      "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. External Cubic/Mirror/Clip, Smart, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together.",
+      "limits": "Embedded static FILE/GENERATED images up to 16,384 pixels: Linear/Closest/Cubic and Repeat/Extend/Mirror/Clip, Color/Alpha, Flat or existing sharp Box subset. Cycles exact negative-integer nearest selection is explicit; EEVEE floating Non-Color/Raw image upload unassociates pixels and honors Half Precision, with native Metal fixed8 cubic-filter fractions. The 220-case native proof covers Flat data-image magnification and exact boundary canaries, not arbitrary mipmapped minification or every color/alpha association. Larger nonfloat Flat images use exact pinned PNG/JPEG/WebP bytes with verified dimensions/color-space; Linear/Closest only. External Cubic/Mirror/Clip, Smart, sphere/tube, blended Box and animated/media/tiled images refuse. Multiple external references share the pinned sidecar table; independent sampler variants stay isolated. Production bitmap and CPU-audit decoders use native bottom-up rows independently of glTF UV conversion. The actual Final integration fixture checks11 mixed-image Principled/Emission programs, signed external-nearest boundaries, authored/mapped UVs, and embedded/external orientation together. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "tex_image",
-        "texture_ref"
+        "texture_ref",
+        "uv_active"
       ],
       "modes": {
         "interpolation": {
@@ -1333,6 +1399,16 @@
         },
         {
           "path": "experiments/multi-image-differential/run.mjs"
+        },
+        {
+          "path": "packages/blender-addon/tests/active_uv_binding_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslActiveUv.test.ts"
+        },
+        {
+          "path": "experiments/geometry-context-differential/README.md",
+          "anchor": "Source active-render UV"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -1348,7 +1424,17 @@
           "WebGL2 via WebGPURenderer"
         ],
         "nativePixelOracle": "Cycles CPU isolated-channel bake and actual EEVEE emission; fresh production-emitted IR from the same graphs",
-        "scope": "Embedded 8x8 floating Non-Color, RGB/Alpha, four extensions, three filters, signed spatial fields, exact boundaries, native GPU half/full image storage. Independent native EEVEE carrier controls certify scene-target precision separately. Metal native source proofs; software OpenGL proof is pending the next full hosted checkpoint."
+        "scope": "Embedded 8x8 floating Non-Color, RGB/Alpha, four extensions, three filters, signed spatial fields, exact boundaries, native GPU half/full image storage. Independent native EEVEE carrier controls certify scene-target precision separately. Metal native source proofs; software OpenGL proof is pending the next full hosted checkpoint.",
+        "activeRenderUv": {
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0",
+            "5.3.0"
+          ],
+          "actualFinalGlbsPerVersion": 8,
+          "readbacksPerBackendPerVersion": 240,
+          "scope": "EEVEE direct UV, unnamed UV Map, named edit UV and unlinked image coordinates; two owners with different render slots sharing source materials; perspective/orthographic front/back, three frames and both coordinate bases. Existing channel tolerance and independent EEVEE final-half carrier controls unchanged."
+        }
       }
     },
     "shader:ShaderNodeValToRGB": {
@@ -1505,19 +1591,18 @@
     },
     "shader:ShaderNodeNormalMap": {
       "category": "partial",
-      "limits": "Fresh OBJECT/WORLD/BLENDER_OBJECT/BLENDER_WORLD routes use explicit Cycles versus EEVEE decode/strength/backface models, native primary-surface normal storage, actual per-draw owner/camera matrices and both exported bases. Inputs currently need literal/default, RGB/Value, Combine or resolved constant-group Color/Strength within absolute16; animated/spatial inputs remain unported. A conservative length/cone certificate over actual Float32 bound normal bytes rejects undefined or uncertified zero normal blends. Direct material Normal-slot conversion is measured with nonuniform camera scale and rawZ/Yup. Primary-geometry conditioning, camera, deformation/instance, Cycles single/shared-user and mixed-shading limits apply. No material displacement; ORIGINAL/DISPLACED selectors are retained but displaced-surface behavior is unproved. The existing TANGENT route is legacy and outside this new proof: do not infer Cycles/smooth/named-UV/deformation parity. Normal programs are audited even with portable BaseColor, and legacy WebGLRenderer refuses required native normal functions. Whole BSDF/lighting parity is not claimed.",
+      "limits": "Fresh EEVEE TANGENT uses an exact exported Mikk UV frame, native SNORM10/16 vertex packing/interpolation, raw XY Strength and saturated Z Strength, front/back and reflected-owner models. Live finite Color/Strength inputs include literals, Checker, clamped-factor Mix, supported bounded scalar arithmetic, embedded byte images and actual bound byte PNGs. Actual source and decoded pixels establish nonzero/float32 conditioning; asserted image bounds are ignored. External Color currently requires opaque Non-Color/Raw PNG, Alpha may drive Strength, and image inspection is capped at 4096 squared pixels. Image pixel parity is measured only in an LOD0 footprint; mip generation/minification fidelity is a separate unported sampler domain. Active-render and named frame/input UVs among the first4channels must resolve unambiguously across material owners; one Mikk basis per mesh. Noise/other unknown live input ranges refuse. Fresh OBJECT/WORLD/BLENDER_OBJECT/BLENDER_WORLD routes retain separate Cycles/EEVEE literal/default, RGB/Value, Combine or resolved constant-group inputs within absolute16. Actual normal/frame cones and per-draw owner/camera matrices reject undefined or poorly conditioned blends. Existing primary-geometry, camera, deformation/instance and Cycles single/shared-user limits apply. No material displacement; ORIGINAL/DISPLACED selectors are retained, with displacement effects outside proof. Existing legacy Cycles TANGENT behavior is preserved separately and is not certified by the fresh EEVEE proof. Normal programs are audited even with portable BaseColor; legacy WebGLRenderer refuses required native normal functions. Whole BSDF/lighting parity is not claimed.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "normal_map",
         "normal_map_native",
-        "normal_view_native"
+        "normal_view_native",
+        "normal_map_tangent_native"
       ],
       "modes": {
         "space": {
-          "supported": [
-            "TANGENT"
-          ],
           "partial": [
+            "TANGENT",
             "OBJECT",
             "WORLD",
             "BLENDER_OBJECT",
@@ -1575,6 +1660,30 @@
         },
         {
           "path": "experiments/normal-node-differential/README.md"
+        },
+        {
+          "path": "packages/blender-addon/normal_map_tangent_ir.py"
+        },
+        {
+          "path": "packages/blender-addon/normal_input_bounds.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/tangent_normal_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/tangent_normal_domain_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslTangentNormalMap.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslNormalInputBounds.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslTangentNormalMap.test.ts"
+        },
+        {
+          "path": "experiments/tangent-normal-differential/README.md"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -1602,7 +1711,24 @@
         "maximumCyclesAbsoluteEncodedRgbError": 1.9252300262451172e-05,
         "maximumEeveeAbsoluteEncodedRgbError": 0.0004919767379760742,
         "tolerance": "Fixed2e-5 native camera-raster allowance; EEVEE adds independently calibrated final half-float ULP",
-        "scope": "Shared corpus across non-tangent spaces, BaseColor encodings/actual Normal slots and RGB controls; no per-node-type count or legacyTangent/whole-render certification."
+        "scope": "Earlier shared corpus covers non-tangent spaces, actual Normal slots and RGB controls; fresh EEVEE tangent corpus is recorded separately below. No per-node-type percentage, legacy Cycles Tangent or whole-render certification.",
+        "eeveeTangent": {
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0 LTS",
+            "5.3.0"
+          ],
+          "nativeGpuBackend": "Metal",
+          "actualFinalScenesPerVersion": 32,
+          "fieldAndControlReadbacksPerBackend": {
+            "4.2": 3528,
+            "5.2": 3864,
+            "5.3": 3864
+          },
+          "maximumEncodedRgbError": 0.0004910826683044434,
+          "tolerance": "Fixed2e-5 raster allowance plus independently calibrated native final half-float ULP",
+          "scope": "Four actual Final profiles, exact tangent/normal/UV transport, live bounded inputs, animated/parented/reflected shared owners, both exported bases, front/back perspective/orthographic camera; image checks limited to tested LOD0 footprints."
+        }
       }
     },
     "shader:ShaderNodeFresnel": {
@@ -5369,6 +5495,156 @@
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeTranslate": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "translate"
+      ],
+      "modes": {
+        "inputs:Interpolation": {
+          "supported": [
+            "Nearest"
+          ],
+          "unsupported": [
+            "Anisotropic",
+            "Bicubic",
+            "Bilinear"
+          ]
+        },
+        "inputs:Extension X": {
+          "supported": [
+            "Clip"
+          ],
+          "unsupported": [
+            "Extend",
+            "Repeat"
+          ]
+        },
+        "inputs:Extension Y": {
+          "supported": [
+            "Clip"
+          ],
+          "unsupported": [
+            "Extend",
+            "Repeat"
+          ]
+        },
+        "interpolation": {
+          "supported": [
+            "Nearest"
+          ],
+          "unsupported": [
+            "Bicubic",
+            "Bilinear"
+          ]
+        },
+        "wrap_axis": {
+          "supported": [
+            "NONE"
+          ],
+          "unsupported": [
+            "BOTH",
+            "XAXIS",
+            "YAXIS"
+          ]
+        }
+      },
+      "limits": "Absolute integer translation within +/-8192 pixels, Nearest interpolation and Clip on both axes. Transform additionally requires Angle0/Scale1. Deferred origins preserve off-canvas fields through pointwise operations, Blur/Flip and same-origin merges before one final realization. Typed pass extents support full-frame postprocessing expressions and live resize/HiDPI. Fractional/default Bilinear, other interpolation/extensions, relative/wrapped/cropped windows, rotation/scale, differing-origin merges and unequal extents remain named refusals. Native EEVEE-context scene with independent CPU/GPU compositing on Blender4.2/5.2/5.3; both built browser backends, strict copy checks, state/disposal and error recovery.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_transform.py",
+          "anchor": "def normalize_transform"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'translate':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorImageDomain.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorImageDomain.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_transform_check.py"
+        },
+        {
+          "path": "experiments/native-compositor-differential/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:CompositorNodeTransform": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "translate"
+      ],
+      "modes": {
+        "inputs:Interpolation": {
+          "supported": [
+            "Nearest"
+          ],
+          "unsupported": [
+            "Anisotropic",
+            "Bicubic",
+            "Bilinear"
+          ]
+        },
+        "inputs:Extension X": {
+          "supported": [
+            "Clip"
+          ],
+          "unsupported": [
+            "Extend",
+            "Repeat"
+          ]
+        },
+        "inputs:Extension Y": {
+          "supported": [
+            "Clip"
+          ],
+          "unsupported": [
+            "Extend",
+            "Repeat"
+          ]
+        },
+        "filter_type": {
+          "supported": [
+            "NEAREST"
+          ],
+          "unsupported": [
+            "BICUBIC",
+            "BILINEAR"
+          ]
+        }
+      },
+      "limits": "Absolute integer translation within +/-8192 pixels, Nearest interpolation and Clip on both axes. Transform additionally requires Angle0/Scale1. Deferred origins preserve off-canvas fields through pointwise operations, Blur/Flip and same-origin merges before one final realization. Typed pass extents support full-frame postprocessing expressions and live resize/HiDPI. Fractional/default Bilinear, other interpolation/extensions, relative/wrapped/cropped windows, rotation/scale, differing-origin merges and unequal extents remain named refusals. Native EEVEE-context scene with independent CPU/GPU compositing on Blender4.2/5.2/5.3; both built browser backends, strict copy checks, state/disposal and error recovery.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_transform.py",
+          "anchor": "def normalize_transform"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'translate':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorImageDomain.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorImageDomain.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_transform_check.py"
+        },
+        {
+          "path": "experiments/native-compositor-differential/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
     }
   },
   "knownUnsupported": [
@@ -5436,8 +5712,6 @@
     "compositor:CompositorNodeTime",
     "compositor:CompositorNodeTonemap",
     "compositor:CompositorNodeTrackPos",
-    "compositor:CompositorNodeTransform",
-    "compositor:CompositorNodeTranslate",
     "compositor:CompositorNodeVecBlur",
     "compositor:CompositorNodeZcombine",
     "compositor:FunctionNodeAlignRotationToVector",

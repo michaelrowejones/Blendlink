@@ -40,6 +40,8 @@ this notice in blender-noise-bsd-3-clause.txt (noise-LICENSE.txt in the
 standalone Blender Extension). This attribution does not replace the
 Apache-2.0 license for fractal_noise.h and the other sources listed above.
 
-The first-party UV tangent runtime tslTangentNodes.ts is also distributed
-under Apache-2.0. It implements explicit native packed-attribute, vertex-transform
-and fragment-interpolation contracts with independently constructed Three TSL.
+The first-party UV tangent and tangent-normal runtimes tslTangentNodes.ts and
+tslTangentNormalMap.ts are also distributed
+under Apache-2.0. They implement explicit native packed-attribute, vertex-transform
+and fragment-interpolation contracts, including EEVEE tangent-normal composition,
+with independently constructed Three TSL.

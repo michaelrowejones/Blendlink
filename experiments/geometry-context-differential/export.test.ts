@@ -66,15 +66,31 @@ it('publishes actual primary triangle geometry programs, split normals and anima
   }
   const scenes = config.scenes.map((scene) => {
     const gltf = readGlbJson(readFileSync(scene.glbPath), 'Geometry context Final') as any
-    const meshes = gltf.meshes.filter(
-      (mesh: any) => mesh.extras?.blendlink_tsl_runtime?.geometryContext?.length,
-    )
-    expect(meshes).toHaveLength(1)
-    for (const primitive of meshes[0].primitives) {
-      const position = gltf.accessors[primitive.attributes.POSITION],
-        normal = gltf.accessors[primitive.attributes.NORMAL]
-      expect(position.componentType).toBe(5126)
-      expect(normal.componentType).toBe(5126)
+    if (references.requireExactNormals !== false) {
+      const meshes = gltf.meshes.filter(
+        (mesh: any) => mesh.extras?.blendlink_tsl_runtime?.geometryContext?.length,
+      )
+      expect(meshes).toHaveLength(1)
+      for (const primitive of meshes[0].primitives) {
+        const position = gltf.accessors[primitive.attributes.POSITION],
+          normal = gltf.accessors[primitive.attributes.NORMAL]
+        expect(position.componentType).toBe(5126)
+        expect(normal.componentType).toBe(5126)
+      }
+    } else {
+      const meshes = gltf.meshes.filter((mesh: any) => mesh.extras?.blendlink_tsl_runtime?.activeRenderUv)
+      expect(meshes).toHaveLength(2)
+      expect(meshes.map((mesh: any) => mesh.extras.blendlink_tsl_runtime.activeRenderUv.channel).sort()).toEqual([0,1])
+      for (const mesh of meshes) {
+        const extras = mesh.extras.blendlink_tsl_runtime, binding = extras.activeRenderUv
+        expect(binding.model).toBe('source-active-render-v1')
+        expect(extras.uvChannels[binding.uvMap]).toBe(binding.channel)
+        for (const primitive of mesh.primitives) {
+          const uv = gltf.accessors[primitive.attributes['TEXCOORD_'+binding.channel]]
+          expect(uv.componentType).toBe(5126)
+          expect(uv.count).toBe(gltf.accessors[primitive.attributes.POSITION].count)
+        }
+      }
     }
     const rawYup = scene.name.toLowerCase().endsWith('yup'),
       source = references.sources.find((item: any) => scene.blendPath === join(native, item.file))
