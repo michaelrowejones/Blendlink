@@ -42,6 +42,7 @@ native_gpu_profile = _sibling("compositor_gpu").native_gpu_profile
 whitepoint_properties = _sibling("compositor_whitepoint").whitepoint_properties
 normalize_blur = _sibling("compositor_blur").normalize_blur
 normalize_filter = _sibling("compositor_filter").normalize_filter
+normalize_normal = _sibling("compositor_normal").normalize_normal
 normalize_alpha_conversion = _sibling("compositor_alpha_conversion").normalize_alpha_conversion
 
 TYPES = {
@@ -98,6 +99,7 @@ TYPES = {
     "CompositorNodeBlur": "blur",
     "CompositorNodeFlip": "flip",
     "CompositorNodeFilter": "filter",
+    "CompositorNodeNormal": "normal-direction",
     "CompositorNodeSwitch": "switch",
     "CompositorNodeGlare": "glare",
     "CompositorNodeRLayers": "render-pass",
@@ -409,6 +411,9 @@ def extract(scene):
                                                              "value": input_value(incoming, ctx)}
                 elif node.bl_idname in ("CompositorNodeRGB", "ShaderNodeValue", "CompositorNodeValue"):
                     op["value"] = value(socket.default_value)
+                elif node.bl_idname == "CompositorNodeNormal":
+                    normalize_normal(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
+                        lambda incoming, message: fail("unsupported-normal-direction", path, node, incoming, message))
                 elif node.bl_idname in ("CompositorNodeExposure", "CompositorNodeHueSat",
                                         "CompositorNodeColorCorrection", "CompositorNodePosterize"):
                     normalize_color_operation(node, op, lambda incoming: input_value(incoming, ctx),

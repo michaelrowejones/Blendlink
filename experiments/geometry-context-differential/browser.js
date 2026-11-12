@@ -75,7 +75,7 @@ window.runProof = async (proof) => {
       root: gltf.scene,
       descriptor: { materialPrograms: manifest.materialPrograms },
     })
-    if (installed.applied !== 10 * owners.length || installed.skipped.length)
+    if (installed.applied !== proof.references.cases.length * owners.length || installed.skipped.length)
       throw new Error('Geometry context install refused ' + JSON.stringify(installed.skipped))
     const materials = new Set()
     for (const owner of owners)
@@ -161,8 +161,18 @@ window.runProof = async (proof) => {
         }
         if (flip === undefined) {
           const control = reference.samples.at(-1)
-          const direct = difference(sample(control.pixel, false), control.rgb),
-            flipped = difference(sample(control.pixel, true), control.rgb)
+          const authored = proof.references.controlRgb
+          if (!Array.isArray(authored) || authored.length !== 3)
+            throw new Error('Independent RGB control requires its authored values')
+          for (let channel = 0; channel < 3; channel++) {
+            const expected = control.rgb[channel], value = authored[channel], step = halfUlp(expected)
+            if (reference.engine !== 'CYCLES' && Math.abs(expected / step - Math.round(expected / step)) > 2e-4)
+              throw new Error('Native EEVEE RGB control is no longer a half-float carrier')
+            if (Math.abs(expected - value) > 2e-6 + (reference.engine === 'CYCLES' ? 0 : halfUlp(value)))
+              throw new Error('Native RGB control exceeds its independently measured precision')
+          }
+          const direct = difference(sample(control.pixel, false), authored),
+            flipped = difference(sample(control.pixel, true), authored)
           if (Math.min(direct, flipped) > 2e-6)
             throw new Error(
               'Independent RGB control failed ' +

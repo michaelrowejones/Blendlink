@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "f8e0d05577dcdb5b2fc602a44b6a43a0a11aef6e93dc3ae76d1d96a113fafb33",
+  "capabilityMapSha256": "c38c1241b32fdae666447710536009f7513c202a6b6b1b093fbe78c53c256aa6",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-12T16:32:05.142763+00:00",
+  "generatedAt": "2026-11-12T16:52:56.193518+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -60,10 +60,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 17,
+            "partial": 18,
             "structural": 6,
             "supported": 24,
-            "unsupported": 140
+            "unsupported": 139
           },
           "enumValueCounts": {
             "partial": 6,
@@ -1586,14 +1586,34 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_normal",
+                  "path": "packages/blendlink/blender/compositor_normal.py"
+                },
+                {
+                  "anchor": "case 'normal-direction':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorNormal.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_normal_direction_check.py"
+                },
+                {
+                  "path": "experiments/normal-input-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeNormal",
               "label": "Normal",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Native authored direction components within +/-16 normalize to a constant Vector on modern schemas and legacy CPU/GPU. Legacy Dot preserves the native negative dot product without normalizing its linked vector. Signed/HDR fields, constants, zero input vectors, vector-to-color conversion and downstream Posterize are verified. Legacy GPU direction must be nonzero; native CPU/modern zero constants remain defined. Animation and unmeasured direction domains refuse. CPU and Metal GPU on Blender4.2/5.2/5.3, both built browser backends; no tangent-space or BSDF parity claim.",
+              "runtimeOps": [
+                "normal-direction"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -4277,10 +4297,10 @@
         "shader": {
           "counts": {
             "bake-only": 1,
-            "partial": 36,
+            "partial": 37,
             "structural": 6,
             "supported": 22,
-            "unsupported": 80
+            "unsupported": 79
           },
           "enumValueCounts": {
             "partial": 24,
@@ -6220,14 +6240,39 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_normal_direction",
+                  "path": "packages/blender-addon/normal_direction_ir.py"
+                },
+                {
+                  "anchor": "ShaderNodeNormal",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "anchor": "case 'DOT_PRODUCT':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_direction_translation_check.py"
+                },
+                {
+                  "path": "experiments/normal-input-differential/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/geometry_context_check.py"
+                }
+              ],
               "id": "ShaderNodeNormal",
               "label": "Normal",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Static authored Normal direction components within +/-16. EEVEE retains the authored vector; existing Cycles direction normalization remains explicit. Dot normalizes its input and preserves signed output. Admitted inputs are finite nonzero constants (length >=1e-15, components <=2^54), opaque nearest embedded images with independently inspected nonzero pixels (RGB within +/-16, length >=0.001, alpha1, Repeat/Extend), and validated primary Geometry Normal/True Normal fields. Unsafe zero/subnormal or opaque inputs and animation produce named diagnostics. Actual EEVEE Final geometry bindings, owner/camera animation, front/back faces, rawZ/Yup and both browser backends are verified. Other live input families need separate nonzero proofs.",
+              "runtimeOps": [
+                "const_vec3",
+                "vector_math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -7837,10 +7882,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 15,
+            "partial": 16,
             "structural": 6,
             "supported": 23,
-            "unsupported": 124
+            "unsupported": 123
           },
           "enumValueCounts": {
             "partial": 1,
@@ -9229,14 +9274,34 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_normal",
+                  "path": "packages/blendlink/blender/compositor_normal.py"
+                },
+                {
+                  "anchor": "case 'normal-direction':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorNormal.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_normal_direction_check.py"
+                },
+                {
+                  "path": "experiments/normal-input-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeNormal",
               "label": "Normal",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Native authored direction components within +/-16 normalize to a constant Vector on modern schemas and legacy CPU/GPU. Legacy Dot preserves the native negative dot product without normalizing its linked vector. Signed/HDR fields, constants, zero input vectors, vector-to-color conversion and downstream Posterize are verified. Legacy GPU direction must be nonzero; native CPU/modern zero constants remain defined. Animation and unmeasured direction domains refuse. CPU and Metal GPU on Blender4.2/5.2/5.3, both built browser backends; no tangent-space or BSDF parity claim.",
+              "runtimeOps": [
+                "normal-direction"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -11498,10 +11563,10 @@
         "shader": {
           "counts": {
             "bake-only": 1,
-            "partial": 35,
+            "partial": 36,
             "structural": 6,
             "supported": 21,
-            "unsupported": 55
+            "unsupported": 54
           },
           "enumValueCounts": {
             "partial": 22,
@@ -12994,14 +13059,39 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_normal_direction",
+                  "path": "packages/blender-addon/normal_direction_ir.py"
+                },
+                {
+                  "anchor": "ShaderNodeNormal",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "anchor": "case 'DOT_PRODUCT':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_direction_translation_check.py"
+                },
+                {
+                  "path": "experiments/normal-input-differential/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/geometry_context_check.py"
+                }
+              ],
               "id": "ShaderNodeNormal",
               "label": "Normal",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Static authored Normal direction components within +/-16. EEVEE retains the authored vector; existing Cycles direction normalization remains explicit. Dot normalizes its input and preserves signed output. Admitted inputs are finite nonzero constants (length >=1e-15, components <=2^54), opaque nearest embedded images with independently inspected nonzero pixels (RGB within +/-16, length >=0.001, alpha1, Repeat/Extend), and validated primary Geometry Normal/True Normal fields. Unsafe zero/subnormal or opaque inputs and animation produce named diagnostics. Actual EEVEE Final geometry bindings, owner/camera animation, front/back faces, rawZ/Yup and both browser backends are verified. Other live input families need separate nonzero proofs.",
+              "runtimeOps": [
+                "const_vec3",
+                "vector_math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -14598,10 +14688,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 11,
+            "partial": 12,
             "structural": 7,
             "supported": 25,
-            "unsupported": 61
+            "unsupported": 60
           },
           "enumValueCounts": {
             "supported": 133,
@@ -16140,14 +16230,34 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_normal",
+                  "path": "packages/blendlink/blender/compositor_normal.py"
+                },
+                {
+                  "anchor": "case 'normal-direction':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorNormal.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_normal_direction_check.py"
+                },
+                {
+                  "path": "experiments/normal-input-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeNormal",
               "label": "Normal",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Native authored direction components within +/-16 normalize to a constant Vector on modern schemas and legacy CPU/GPU. Legacy Dot preserves the native negative dot product without normalizing its linked vector. Signed/HDR fields, constants, zero input vectors, vector-to-color conversion and downstream Posterize are verified. Legacy GPU direction must be nonzero; native CPU/modern zero constants remain defined. Animation and unmeasured direction domains refuse. CPU and Metal GPU on Blender4.2/5.2/5.3, both built browser backends; no tangent-space or BSDF parity claim.",
+              "runtimeOps": [
+                "normal-direction"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -16970,10 +17080,10 @@
         "shader": {
           "counts": {
             "bake-only": 1,
-            "partial": 36,
+            "partial": 37,
             "structural": 6,
             "supported": 19,
-            "unsupported": 41
+            "unsupported": 40
           },
           "enumValueCounts": {
             "partial": 20,
@@ -18222,14 +18332,39 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_normal_direction",
+                  "path": "packages/blender-addon/normal_direction_ir.py"
+                },
+                {
+                  "anchor": "ShaderNodeNormal",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "anchor": "case 'DOT_PRODUCT':",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/normal_direction_translation_check.py"
+                },
+                {
+                  "path": "experiments/normal-input-differential/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/geometry_context_check.py"
+                }
+              ],
               "id": "ShaderNodeNormal",
               "label": "Normal",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Static authored Normal direction components within +/-16. EEVEE retains the authored vector; existing Cycles direction normalization remains explicit. Dot normalizes its input and preserves signed output. Admitted inputs are finite nonzero constants (length >=1e-15, components <=2^54), opaque nearest embedded images with independently inspected nonzero pixels (RGB within +/-16, length >=0.001, alpha1, Repeat/Extend), and validated primary Geometry Normal/True Normal fields. Unsafe zero/subnormal or opaque inputs and animation produce named diagnostics. Actual EEVEE Final geometry bindings, owner/camera animation, front/back faces, rawZ/Yup and both browser backends are verified. Other live input families need separate nonzero proofs.",
+              "runtimeOps": [
+                "const_vec3",
+                "vector_math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -19819,19 +19954,20 @@
     "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
     "packages/blender-addon/color_ir.py": "5bd0bf8b360f5b5a7007e4766e6d6ca9aff44b22199d168b16d0f37126d5a385",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
-    "packages/blender-addon/engine_fallback.py": "6ebf95de3ea78fb2a94293d903c513c8ae56ceb855c4076ab92ed26876819a02",
+    "packages/blender-addon/engine_fallback.py": "a451ac01e8f82b0052fd92abec63afdb7342b9fc0a5d85755bb5699edbc428ee",
     "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
     "packages/blender-addon/material_compiler.py": "8c0d14d3ed871c048144eedfdfc6b73397b553f8191b0fa96c23070fdc0066ae",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
     "packages/blender-addon/noise_varying_ir.py": "3fb30ae5e7ddd9b23193f8d6ce9f2a4ebfd3e38903a24f41a0f37ef9e5e3e34e",
+    "packages/blender-addon/normal_direction_ir.py": "0aa3b1b0226320b6b92fce63b06d7e5202bd012ce9820085d3fc26c426b3857f",
     "packages/blender-addon/normal_ir.py": "55ec20ba884c3f2582bf31ff95c1e8815d6394c05af753d7b2f9c8b1d18b52c3",
     "packages/blender-addon/procedural.py": "12f6fcaaa46f8a398d13482e421c20d3cd342a4a57962634f48595469170ef59",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/tangent_ir.py": "9241c930d968e4a54637d89e9a6d709c711550ac2f216bf78458df47f65f6abf",
-    "packages/blender-addon/tsl_ir.py": "606e50234eda6baab1115b7817b6ea8e46c8390f6462762ed279f21d0cab38a2",
+    "packages/blender-addon/tsl_ir.py": "abb6e6bdbec8889b6096649455db697cdaa1d854ac44a29ab97d89348e4b6009",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
@@ -19840,7 +19976,8 @@
     "packages/blendlink/blender/compositor_blur.py": "916b300583cfcf06c3c1add69fa24396cea43d3bf699c32dea4f314a45661b66",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
-    "packages/blendlink/blender/compositor_graph.py": "88bfd0d6fcd62f3d86f0b367d6c3c147412d2a38276d33851a962589493c0f40",
+    "packages/blendlink/blender/compositor_graph.py": "f2968ce5c349e7fea7a07042658bb5c0d5677478e3121f8d2b8b91bd339459f7",
+    "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
@@ -19871,7 +20008,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "d871797bd16541abacaf3916895176d9fb4357a5251e09468caeee6752088bdc",
+    "packages/blendlink/src/tslSourceCompositor.ts": "f1d954dedb7ede3b39edfd0118af1fb1a32c8260b045767ed93e4611e773bed2",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
     "packages/blendlink/src/tslTangentNodes.ts": "85af45271a6cd9f6a4265e32fddc1101dfe40052d21e4564ee429d586e4cd69d",
     "packages/blendlink/src/tslVaryingNoise.ts": "d1ef701abe02214af94e951136638bf1d2ff5cf4ec2df4059524fbd311deb77c",

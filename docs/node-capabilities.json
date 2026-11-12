@@ -5308,6 +5308,67 @@
         "sourcePreserved": true,
         "loadedMikkBytesExact": true
       }
+    },
+    "shader:ShaderNodeNormal": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "const_vec3",
+        "vector_math"
+      ],
+      "limits": "Static authored Normal direction components within +/-16. EEVEE retains the authored vector; existing Cycles direction normalization remains explicit. Dot normalizes its input and preserves signed output. Admitted inputs are finite nonzero constants (length >=1e-15, components <=2^54), opaque nearest embedded images with independently inspected nonzero pixels (RGB within +/-16, length >=0.001, alpha1, Repeat/Extend), and validated primary Geometry Normal/True Normal fields. Unsafe zero/subnormal or opaque inputs and animation produce named diagnostics. Actual EEVEE Final geometry bindings, owner/camera animation, front/back faces, rawZ/Yup and both browser backends are verified. Other live input families need separate nonzero proofs.",
+      "evidence": [
+        {
+          "path": "packages/blender-addon/normal_direction_ir.py",
+          "anchor": "def emit_normal_direction"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "ShaderNodeNormal"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'DOT_PRODUCT':"
+        },
+        {
+          "path": "packages/blender-addon/tests/normal_direction_translation_check.py"
+        },
+        {
+          "path": "experiments/normal-input-differential/README.md"
+        },
+        {
+          "path": "packages/blender-addon/tests/geometry_context_check.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; constant carriers can use portable glTF"
+    },
+    "compositor:CompositorNodeNormal": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "normal-direction"
+      ],
+      "limits": "Native authored direction components within +/-16 normalize to a constant Vector on modern schemas and legacy CPU/GPU. Legacy Dot preserves the native negative dot product without normalizing its linked vector. Signed/HDR fields, constants, zero input vectors, vector-to-color conversion and downstream Posterize are verified. Legacy GPU direction must be nonzero; native CPU/modern zero constants remain defined. Animation and unmeasured direction domains refuse. CPU and Metal GPU on Blender4.2/5.2/5.3, both built browser backends; no tangent-space or BSDF parity claim.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_normal.py",
+          "anchor": "def normalize_normal"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'normal-direction':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorNormal.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_normal_direction_check.py"
+        },
+        {
+          "path": "experiments/normal-input-differential/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
     }
   },
   "knownUnsupported": [
@@ -5356,7 +5417,6 @@
     "compositor:CompositorNodeMaskToSDF",
     "compositor:CompositorNodeMovieClip",
     "compositor:CompositorNodeMovieDistortion",
-    "compositor:CompositorNodeNormal",
     "compositor:CompositorNodeNormalize",
     "compositor:CompositorNodeOutputFile",
     "compositor:CompositorNodePixelate",
@@ -5512,7 +5572,6 @@
     "shader:ShaderNodeLightIterInternalInput",
     "shader:ShaderNodeLightIterInternalOutput",
     "shader:ShaderNodeLightPath",
-    "shader:ShaderNodeNormal",
     "shader:ShaderNodeOutputAOV",
     "shader:ShaderNodeOutputLight",
     "shader:ShaderNodeOutputLineStyle",

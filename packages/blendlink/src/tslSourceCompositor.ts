@@ -715,6 +715,27 @@ export function buildSourceCompositor(
             node = input('Vector')[channel]
             break
           }
+          case 'normal-direction': {
+            const direction = op.value
+            if (op.properties.normal_model !== 'native-normal-direction-v1'
+              || !['legacy', 'modern'].includes(String(op.properties.normal_schema))
+              || !Array.isArray(direction) || direction.length !== 3
+              || !direction.every(value => typeof value === 'number' && Number.isFinite(value) && Math.abs(value) <= 1.000001))
+              throw new SourceCompositorUnsupported('Normal requires a verified finite native direction model')
+            const squared = direction.reduce((sum, value) => sum + value * value, 0)
+            if (squared !== 0 && Math.abs(squared - 1) > 4e-6)
+              throw new SourceCompositorUnsupported('Normal direction must retain its native unit normalization')
+            if (!['CPU', 'GPU'].includes(String(op.properties.evaluation_device)))
+              throw new SourceCompositorUnsupported('Normal requires a verified native compositor device')
+            if (squared === 0 && op.properties.normal_schema === 'legacy' && op.properties.evaluation_device === 'GPU')
+              throw new SourceCompositorUnsupported('Legacy GPU Normal requires a proven nonzero direction')
+            const normal = vec3(...direction)
+            if (op.source.output === 'Normal') node = normal
+            else if (op.source.output === 'Dot' && op.properties.normal_schema === 'legacy')
+              node = dot(input('Normal'), normal).negate()
+            else throw new SourceCompositorUnsupported('Normal has no verified output ' + op.source.output)
+            break
+          }
           case 'switch':
             if (op.properties.switch_model !== 'fixed-choice-v1' || !['Off', 'On'].includes(String(op.properties.switch_selected)))
               throw new SourceCompositorUnsupported('Switch requires its native fixed-choice model')

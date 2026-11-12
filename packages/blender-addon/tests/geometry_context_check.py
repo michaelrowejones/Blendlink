@@ -53,9 +53,19 @@ def references(directory):
     if hasattr(scene.cycles,'use_denoising'):scene.cycles.use_denoising=False
     if hasattr(scene,'eevee'):scene.eevee.taa_render_samples=1
     eevee='BLENDER_EEVEE_NEXT' if 'BLENDER_EEVEE_NEXT' in {item.identifier for item in scene.render.bl_rna.properties['engine'].enum_items} else 'BLENDER_EEVEE'
+    engine_target = os.environ.get('BLENDLINK_GEOMETRY_ENGINE')
+    if engine_target not in {None, 'EEVEE', 'CYCLES'}:
+        raise ValueError('Unknown native geometry reference engine ' + engine_target)
+    reference_engines = [eevee] if engine_target == 'EEVEE' else ['CYCLES'] if engine_target == 'CYCLES' else ['CYCLES', eevee]
+    control_rgb=(.3333333,.1234567,1.234567)
     cases=[]
     for identifier,outputs in [('ShaderNodeNewGeometry',geometry_ir.GEOMETRY_OUTPUTS),('ShaderNodeTexCoord',geometry_ir.TEXTURE_OUTPUTS)]:
         for name,output in outputs.items():cases.append({'node':identifier,'socket':name,'output':output,'scale':.02 if output in {'position','camera'} else .2})
+    if os.environ.get('BLENDLINK_GEOMETRY_NORMAL_DOT') == '1':
+        cases = [{'node':'ShaderNodeNewGeometry', 'socket':socket, 'output':'normal-dot-'+socket.lower().replace(' ','-')+'-'+str(index),
+                  'scale':.04, 'normalDirection':direction}
+                 for socket in ['Normal','True Normal']
+                 for index,direction in enumerate([(0,0,1),(.25,-.5,1),(2,-3,4)])]
     cases.append({'output':'control','scale':1})
     vertices=[];faces=[]
     for index,case in enumerate(cases):
@@ -74,11 +84,15 @@ def references(directory):
         material=bpy.data.materials.new(case['name']);material.use_nodes=True;tree=material.node_tree;tree.nodes.clear()
         sink=tree.nodes.new('ShaderNodeOutputMaterial');bsdf=tree.nodes.new('ShaderNodeBsdfPrincipled');tree.links.new(bsdf.outputs[0],sink.inputs['Surface'])
         if case['output']=='control':
-            value=tree.nodes.new('ShaderNodeRGB');value.outputs[0].default_value=(.3333333,.1234567,1.234567,1);field=value.outputs[0]
+            value=tree.nodes.new('ShaderNodeRGB');value.outputs[0].default_value=(*control_rgb,1);field=value.outputs[0]
         else:
             source=tree.nodes.new(case['node']);encode=tree.nodes.new('ShaderNodeVectorMath');encode.operation='MULTIPLY_ADD'
             encode.inputs[1].default_value=(case['scale'],)*3;encode.inputs[2].default_value=(.5,)*3
-            tree.links.new(source.outputs[case['socket']],encode.inputs[0]);field=encode.outputs[0]
+            incoming = source.outputs[case['socket']]
+            if 'normalDirection' in case:
+                normal = tree.nodes.new('ShaderNodeNormal');normal.outputs['Normal'].default_value = case['normalDirection']
+                tree.links.new(incoming, normal.inputs['Normal']);incoming = normal.outputs['Dot']
+            tree.links.new(incoming,encode.inputs[0]);field=encode.outputs[0]
         tree.links.new(field,bsdf.inputs['Base Color']);compiler.set_tsl_ir(material,True)
         mesh.materials.append(material);mesh.polygons[index].material_index=index;originals.append(material)
         oracle=material.copy();tree=oracle.node_tree;sink=next(node for node in tree.nodes if node.type=='OUTPUT_MATERIAL');bsdf=next(node for node in tree.nodes if node.type=='BSDF_PRINCIPLED')
@@ -112,7 +126,7 @@ def references(directory):
                     camera.location=(.3*min(frame,3),-4,30 if face=='front' else -30)
                     camera.rotation_euler=(-camera.location).to_track_quat('-Z','Y').to_euler()
                     camera.keyframe_insert(data_path='location',frame=frame);camera.keyframe_insert(data_path='rotation_euler',frame=frame)
-                for engine in ['CYCLES',eevee]:
+                for engine in reference_engines:
                     scene.render.engine=engine
                     label=('cycles' if engine=='CYCLES' else 'eevee')+'_'+projection.lower()+'_'+face
                     for frame in frames:
@@ -133,7 +147,7 @@ def references(directory):
                                     x,y=int(point.x*1024),int(point.y*512)
                                     assert 0<=x<1024 and 0<=y<512 and pixels[y,x,3]>.95,(label,owner.name,case['name'],point[:])
                                     samples.append({'pixel':[x,y],'rgb':pixels[y,x,:3].tolist()})
-                                assert max(abs(a-b) for a,b in zip(samples[-1]['rgb'],(.3333333,.1234567,1.234567)))<(2e-6 if engine=='CYCLES' else .001)
+                                assert max(abs(a-b) for a,b in zip(samples[-1]['rgb'],control_rgb))<(2e-6 if engine=='CYCLES' else .001)
                                 rows.append({'source':label,'engine':engine,'projection':projection,'face':face,'frame':frame,'owner':owner.name,'samples':samples,
                                     'objectMatrix':[list(row) for row in owner.matrix_world],'cameraMatrix':[list(row) for row in camera.matrix_world]})
                         finally:
@@ -145,7 +159,7 @@ def references(directory):
         for polygon in mesh.polygons for index in polygon.loop_indices]
     (root/'native-reference.json').write_text(json.dumps({'blender':bpy.app.version_string,'build':bpy.app.build_hash.decode(),
         'fixtureSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'sources':sources,'cases':cases,'rows':rows,'normalSource':normal_source,'frames':frames,'ownerCount':len(active_owners),'flatShading':not mesh.polygons[0].use_smooth,'highQualityNormals':scene.render.use_high_quality_normals,
-        'cyclesFilter':{'type':'BOX','width':scene.cycles.filter_width},'rasterTolerance':2e-5},indent=2))
+        'controlRgb':control_rgb,'cyclesFilter':{'type':'BOX','width':scene.cycles.filter_width},'rasterTolerance':2e-5},indent=2))
     print('BLENDLINK_GEOMETRY_REFERENCES_PASSED '+bpy.app.version_string)
 
 

@@ -1320,6 +1320,14 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeValue":
         return _scalar(_constant_value(node.outputs["Value"]))
 
+    if idname == "ShaderNodeNormal":
+        if __package__:
+            from .normal_direction_ir import emit_normal_direction
+        else:
+            from normal_direction_ir import emit_normal_direction
+        return emit_normal_direction(node, from_socket, engine=get_evaluation_engine(),
+            emit_vector=lambda socket: emit_input(socket, stack=stack, as_vector=True), refuse=_refuse)
+
     if idname == "FunctionNodeInputVector":
         return _vector(list(node.vector))
 
