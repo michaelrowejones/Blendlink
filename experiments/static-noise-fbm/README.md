@@ -72,6 +72,29 @@ Linux Subzero completion is required before declaring the crash resolved.
 Fresh native 4.2/5.2/5.3 constant corpora pass both browser APIs: 27 raw graphs
 per version and 21/28/28 normalized graphs respectively, 316 readbacks total.
 The current candidate also passes the focused retained-ID replays in built
-mode, 1,212 unit tests (5 skipped), and its isolated package build. Broad
-unchanged-path regression and actual hosted Subzero certification continue
-from this frozen candidate; neither is inferred from the local constant proof.
+mode, 1,212 unit tests (5 skipped), and its isolated package build.
+
+The complete retained Linux 5.2 raw334 + normalized175 corpora pass both actual
+physical Metal browser APIs (1,018 readbacks). Comparing those same native
+IR/expected-file bytes against a clean 9904 baseline proves all 966 non-folded
+readbacks / 15,826,944 Float32 words remain bit-identical. The 52 eligible
+literal-fold readbacks stay within their unchanged native budgets. The
+`compare-unchanged.mts` helper verifies input hashes and independently rejects
+unexpected eligibility of native dynamic cases before doing that comparison.
+
+The two retained serialized legacy `noise` programs (4D Fac and distorted 4D
+Color) also remain bit-identical on physical Metal and LLVM SwiftShader, both
+APIs: 131,072 Float32 words, including sign bits. `compare-legacy.mjs` snapshots
+both the baseline source and guarded built candidate, records actual adapters,
+uses an independent literal calibration, and refuses flat/failed legacy fields.
+These are runtime compatibility controls, separate from native oracle parity.
+
+```sh
+node --experimental-strip-types experiments/static-noise-fbm/compare-unchanged.mts \
+  /absolute/baseline-report /absolute/candidate-report /absolute/comparison
+node experiments/static-noise-fbm/compare-legacy.mjs \
+  /absolute/clean-9904-worktree /absolute/legacy-comparison
+```
+
+Actual hosted Subzero certification remains pending; it is not inferred from
+these local numeric, shader-size, or unchanged-path controls.
