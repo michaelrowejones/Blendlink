@@ -1611,7 +1611,7 @@
     },
     "shader:ShaderNodeNormalMap": {
       "category": "partial",
-      "limits": "Fresh EEVEE TANGENT uses an exact exported Mikk UV frame, native SNORM10/16 vertex packing/interpolation, raw XY Strength and saturated Z Strength, front/back and reflected-owner models. Live finite Color/Strength inputs include literals, Checker, clamped-factor Mix, supported bounded scalar arithmetic, embedded byte images and actual bound byte PNGs. Actual source and decoded pixels establish nonzero/float32 conditioning; asserted image bounds are ignored. External Color currently requires opaque Non-Color/Raw PNG, Alpha may drive Strength, and image inspection is capped at 4096 squared pixels. Image pixel parity is measured only in an LOD0 footprint; mip generation/minification fidelity is a separate unported sampler domain. Active-render and named frame/input UVs among the first4channels must resolve unambiguously across material owners; one Mikk basis per mesh. Noise/other unknown live input ranges refuse. Fresh OBJECT/WORLD/BLENDER_OBJECT/BLENDER_WORLD routes retain separate Cycles/EEVEE literal/default, RGB/Value, Combine or resolved constant-group inputs within absolute16. Actual normal/frame cones and per-draw owner/camera matrices reject undefined or poorly conditioned blends. Existing primary-geometry, camera, deformation/instance and Cycles single/shared-user limits apply. No material displacement; ORIGINAL/DISPLACED selectors are retained, with displacement effects outside proof. Existing legacy Cycles TANGENT behavior is preserved separately and is not certified by the fresh EEVEE proof. Normal programs are audited even with portable BaseColor; legacy WebGLRenderer refuses required native normal functions. Whole BSDF/lighting parity is not claimed.",
+      "limits": "Fresh EEVEE TANGENT uses an exact exported Mikk UV frame, native SNORM10/16 vertex packing/interpolation, raw XY Strength and saturated Z Strength, front/back and reflected-owner models. Live finite Color/Strength inputs include literals, Checker, clamped-factor Mix, supported bounded scalar arithmetic, embedded byte images and actual bound byte PNGs. Actual source and decoded pixels establish nonzero/float32 conditioning; asserted image bounds are ignored. External Color currently requires opaque Non-Color/Raw PNG, Alpha may drive Strength, and image inspection is capped at 4096 squared pixels. Image pixel parity is measured only in an LOD0 footprint; mip generation/minification fidelity is a separate unported sampler domain. Active-render and named frame/input UVs among the first4channels must resolve unambiguously across material owners; one Mikk basis per mesh. Fresh qualified native-standard-f32/MF-periodic/Metal-periodic noise_normalized inputs have a conservative signed range[-1.01,2.01], never assumed[0,1]. Dynamic Object/Generated inputs require static Scale magnitude<=1, Detail<=2, Distortion0 and actual coordinate slope times positive-amplitude-weighted octave frequency times Scale<=0.25. Actual bound geometry/texspace and coordinate arithmetic are inspected, including hidden VectorScale. Literal coordinate inputs have separate static kernel limits. All scaled/distorted/seeded octave coordinates must stay below90000; higher frequencies, periodic domains, old MaterialX noise and other unknown ranges refuse. Direct full-Strength Noise Color may also refuse the independent nonzero-normal certificate. Exact native Object/Generated coordinate staging and the common Scale5 workflow remain unfinished. Fresh OBJECT/WORLD/BLENDER_OBJECT/BLENDER_WORLD routes retain separate Cycles/EEVEE literal/default, RGB/Value, Combine or resolved constant-group inputs within absolute16. Actual normal/frame cones and per-draw owner/camera matrices reject undefined or poorly conditioned blends. Existing primary-geometry, camera, deformation/instance and Cycles single/shared-user limits apply. No material displacement; ORIGINAL/DISPLACED selectors are retained, with displacement effects outside proof. Existing legacy Cycles TANGENT behavior is preserved separately and is not certified by the fresh EEVEE proof. Normal programs are audited even with portable BaseColor; legacy WebGLRenderer refuses required native normal functions. Whole BSDF/lighting parity is not claimed. Flat and smooth authored surfaces share the verified corner-normal/Mikk-frame contract.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "normal_map",
@@ -1704,6 +1704,15 @@
         },
         {
           "path": "experiments/tangent-normal-differential/README.md"
+        },
+        {
+          "path": "packages/blender-addon/normal_noise_bounds.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/normal_noise_domain_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslNormalNoiseBounds.ts"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -1748,6 +1757,25 @@
           "maximumEncodedRgbError": 0.0004910826683044434,
           "tolerance": "Fixed2e-5 raster allowance plus independently calibrated native final half-float ULP",
           "scope": "Four actual Final profiles, exact tangent/normal/UV transport, live bounded inputs, animated/parented/reflected shared owners, both exported bases, front/back perspective/orthographic camera; image checks limited to tested LOD0 footprints."
+        },
+        "flatTangentFinalScenesPerVersion": 32,
+        "flatTangentReadbacksPerBrowserEnvironment": 22512,
+        "flatTangentBrowserEnvironments": [
+          "Apple Metal",
+          "local SwiftShader"
+        ],
+        "eeveeTangentNoise": {
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0 LTS",
+            "5.3.0"
+          ],
+          "nativeGpuBackend": "Metal",
+          "actualFinalScenesPerVersion": 32,
+          "fieldAndControlReadbacksPerBackendPerVersion": 4536,
+          "maximumEncodedRgbError": 0.0004943609237670898,
+          "tolerance": "Unchanged fixed2e-5 raster allowance plus independently calibrated native final half-float ULP",
+          "scope": "Separate27-case corpus:1D\u20134D Object/Generated/constant inputs, lowStrengthColor and FacStrength, static signed controls, animated/shared/reflected owners, both exported bases, allfour Mikk profiles. Source/installer/actualGLB/draw guards enforce the narrower dynamic frequency domain and nonzero-normal certificate. Widerstresscases remain refused."
         }
       }
     },
@@ -2523,19 +2551,30 @@
       }
     },
     "shader:ShaderNodeBump": {
-      "category": "bake-only",
-      "limits": "No audited live IR handler. Static channel graphs may use the native Cycles channel baker only under proven coordinate/UV and shared-engine-root rules; animation/view/light dependencies refuse. Not live ported.",
-      "runtimeOps": [],
+      "category": "partial",
+      "limits": "EEVEE only: unlinked Height follows native no-op semantics, copying linked Normal without normalization or using the verified primary geometry normal. Strength/Distance/Filter Width/Invert are inactive in this branch. Linked Height (including a linked constant) refuses until height-function derivative sampling is earned. Arbitrary supported linked vectors may be used as color data; Normal/Coat Normal slots require a direct verified unit normal source or nested no-height passthrough. Inherits actual owner/normal/camera conditioning, deformation, visibility and instancing guards of its input. Cycles retains bake routing. Actual Final proof: 14 fields plus independent RGB control, all three native versions, shared/single/flat/HQ profiles, both browser backends; no mip/height-sampling claim.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "bump_passthrough_native"
+      ],
+      "modes": {},
       "evidence": [
         {
-          "path": "packages/blender-addon/procedural.py",
-          "anchor": "_CHANNEL_NEUTRAL_NODES"
+          "path": "packages/blender-addon/bump_ir.py",
+          "anchor": "def emit"
         },
         {
-          "path": "packages/blender-addon/material_compiler.py",
-          "anchor": "def _plan_material_bake"
+          "path": "packages/blendlink/src/tslBumpPassthrough.ts",
+          "anchor": "export function nativeBumpInput"
+        },
+        {
+          "path": "packages/blender-addon/tests/bump_passthrough_check.py"
+        },
+        {
+          "path": "experiments/normal-node-differential/README.md"
         }
-      ]
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
     },
     "shader:NodeFrame": {
       "category": "structural",
@@ -5380,7 +5419,7 @@
     },
     "shader:ShaderNodeTangent": {
       "category": "partial",
-      "limits": "EEVEE UV_MAP only: active-render or explicit named UV among the first four channels, one Mikk basis per mesh. Exact Float32 native tangent/handedness transport is preserved before welding and through lossless optimization. SNORM10/SNORM16 vertex packing, inverse-transpose vertex normalization, fragment interpolation and live owner/view matrices are explicit. Smooth finite nondegenerate geometry/UV triangles, unit vectors, exact +/-1 handedness and nonzero frame cones are required. Existing primary-geometry camera/condition/deformation/instance limits apply. Cycles requires triangulated native-normal Mikk inputs; authored mesh Mikk frames are not certified equivalents and refuse. RADIAL remains unported. This does not certify the separate legacy tangent-space Normal Map path or whole BSDF/lighting parity.",
+      "limits": "EEVEE UV_MAP only: active-render or explicit named UV among the first four channels, one Mikk basis per mesh. Exact Float32 native tangent/handedness transport is preserved before welding and through lossless optimization. SNORM10/SNORM16 vertex packing, inverse-transpose vertex normalization, fragment interpolation and live owner/view matrices are explicit. Finite nondegenerate flat or smooth geometry/UV triangles, unit vectors, exact +/-1 handedness and nonzero frame cones are required. Existing primary-geometry camera/condition/deformation/instance limits apply. Cycles requires triangulated native-normal Mikk inputs; authored mesh Mikk frames are not certified equivalents and refuse. RADIAL remains unported. This does not certify the separate legacy tangent-space Normal Map path or whole BSDF/lighting parity.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "tangent_native",
@@ -5452,7 +5491,13 @@
           "WebGL2 via WebGPURenderer"
         ],
         "sourcePreserved": true,
-        "loadedMikkBytesExact": true
+        "loadedMikkBytesExact": true,
+        "flatFinalScenesPerVersion": 32,
+        "flatReadbacksPerBrowserEnvironment": 3024,
+        "flatBrowserEnvironments": [
+          "Apple Metal",
+          "local SwiftShader"
+        ]
       }
     },
     "shader:ShaderNodeNormal": {

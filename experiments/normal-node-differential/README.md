@@ -7,7 +7,8 @@ absolute value 16. The normal function follows live owner transforms and the
 active camera; editing values in Blender and saving rebuilds the program.
 Spatial/animated color or strength inputs are not certified here. The existing
 tangent path is separate; this proof does not certify its Cycles, smooth-normal,
-named-UV or deformation domains. Bump and Tangent node ports remain future work.
+named-UV or deformation domains. The separate UV Tangent port is documented in
+`experiments/tangent-node-differential`; the no-height Bump subset is below.
 
 ## Reproduce
 
@@ -120,3 +121,53 @@ within the documented normal conditioning bounds; and no unverified reflected,
 sheared, shifted/cropped or panoramic authored camera context. Cycles inherits
 its explicit single/shared-user normal model limits. Direct Normal-slot output
 is certified; downstream vector normalization needs its own domain proof.
+
+## No-height Bump identity
+
+`--bump` selects an independent EEVEE corpus. Use a separate directory:
+
+```sh
+BLENDLINK_NORMAL_NODE_BLENDER=/path/to/blender \
+BLENDLINK_NORMAL_NODE_NATIVE="$PWD/artifacts/verification-bump" \
+node experiments/normal-node-differential/suite.mjs --built --bump --profiles shared,single,flat,hq
+```
+
+[Blender's native branch](https://github.com/blender/blender/blob/v5.2.0/source/blender/nodes/shader/nodes/node_shader_bump.cc)
+returns the geometry normal when both Height and Normal are unlinked. With
+Normal linked and Height unlinked, it copies the linked vector verbatim; it
+does not normalize zero or nonunit data. Strength, Distance, Filter Width and
+Invert are inactive in this branch. A linked constant Height enters the real
+height-function path and remains refused, with an actionable diagnostic. The
+source graph is left intact. This port does not implement height sampling,
+derivatives, minification or bump shading from a height texture.
+
+The fresh `bump_passthrough_native` / `eevee-no-height-v1` contract preserves
+that identity through color graphs. Normal and Coat Normal slots require a
+verified unit native normal source, the primary geometry normal, or nested
+no-height passthroughs of those sources. Other linked normal vectors receive a
+named refusal instead of being silently normalized or sent through the legacy
+view transform. Engine-specific normal packing, actual Float32 glTF normals,
+per-owner matrices, animation and camera validation remain enforced. The
+existing Cycles route is unchanged; no new Cycles live coverage is claimed.
+
+Fourteen native fields and an independent authored RGB control cover default,
+nested and linked geometry normals, linked Object/World Normal Map output,
+zero/nonunit/negative vector color data, inactive unsupported control inputs,
+and actual Normal/Coat Normal installation. Three versions (4.2.0, 5.2.0 LTS,
+5.3.0) and four profiles (shared owners, one owner, flat faces, high-quality
+normals) pass actual Final publication, GLTFLoader, production installation
+and both WebGPURenderer backends. This is 96 GLBs and 15,120 field/control
+readbacks. Maximum encoded RGB error is 0.000489474 within the unchanged
+2e-5 raster allowance plus the native final half-float ULP. No adapter-specific
+claim is inferred from browser backend names. The independent authored RGB
+control calibrates row orientation with a strict 2e-6 budget; native EXR
+control pixels are checked separately under the final half-float allowance.
+
+Focused regressions:
+
+```sh
+/path/to/blender --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/bump_passthrough_check.py
+node packages/blendlink/scripts/run-vitest.mjs \
+  packages/blendlink/src/tslBumpPassthrough.test.ts
+```

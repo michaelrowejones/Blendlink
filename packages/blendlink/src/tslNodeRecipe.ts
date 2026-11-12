@@ -1,3 +1,4 @@
+import { nativeBumpInput, isNativeUnitNormal } from './tslBumpPassthrough.js'
 /** MTLX-TSL-001: build TSL nodes from the Blender-channel IR.
  *
  * The back half of the node compiler. `tsl_ir.py` walks a Blender channel
@@ -889,6 +890,8 @@ function build(expression: TslIrExpression): TslExpression {
       // IR vectors use Blender world axes; glTF world is Y-up.
       return tslVec3(world.x, world.z.negate(), world.y)
     }
+    case 'bump_passthrough_native':
+      return build(nativeBumpInput(expression))
     case 'normal_map_native':
       return buildTslNativeNormalMap(expression, build(child(expression,'color')),build(child(expression,'strength')),build(child(expression,'normal')),activeOptions.objectSpace?.basis)
     case 'tangent_native':
@@ -896,7 +899,7 @@ function build(expression: TslIrExpression): TslExpression {
     case 'normal_map_tangent_native':
       return buildTslTangentNormalMap(expression,build(child(expression,'color')),build(child(expression,'strength')),activeOptions)
     case 'normal_view_native':
-      if(!['normal_map_native','tangent_native','normal_map_tangent_native'].includes(child(expression,'input').op))return fail('Native normal channels require a direct verified unit-normal output')
+      if(!isNativeUnitNormal(child(expression,'input')))return fail('Native normal channels require a direct verified unit-normal output')
       return buildNativeNormalView(build(child(expression,'input')),activeOptions.objectSpace?.basis)
     case 'normal_view': {
       const normal = build(child(expression, 'input'))

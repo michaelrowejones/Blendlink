@@ -2621,21 +2621,29 @@ def prepare_active_material_previews(context=None) -> bool:
     return prepared
 
 
-def _draw_automatic_material_graph(layout, compilation):
+def _draw_native_material_graph(layout, compilation):
     """Show the cached compiler's native-node routes, with named refusals."""
     box = layout.box()
+    automatic = bool((compilation.get("channels") or {}).get("automatic"))
     channels = (compilation.get("channels") or {}).get("channels", ())
     refused = [entry for entry in channels if entry.get("route") == "refused"]
     needs_attention = compilation.get("outcome") == "blocked" or bool(refused)
     box.alert = needs_attention
     box.label(
-        text="Native shader inputs need attention" if needs_attention else "Native shader graph · automatic",
+        text=("Native shader inputs need attention" if needs_attention else "Native shader graph · automatic")
+        if automatic else {
+            "lowered": "TSL Program needs attention" if needs_attention else "TSL Program ready to compile",
+            "blocked": "TSL Program needs attention",
+            "preserved": "TSL Program has no proven channel",
+        }.get(compilation.get("outcome"), "TSL Program"),
         icon="ERROR" if needs_attention else "NODETREE",
     )
     _draw_wrapped(
         box,
         "Blendlink reads your existing Blender nodes. Supported channels translate "
-        "automatically; static fallback channels bake without rebuilding the graph.",
+        "automatically; static fallback channels bake without rebuilding the graph."
+        if automatic else "Blendlink translates the supported channels of your existing Blender nodes. "
+        "Review untranslated channels below before publishing.",
     )
     for entry in channels:
         route = entry.get("route")
@@ -2662,8 +2670,10 @@ def _draw_automatic_material_graph(layout, compilation):
         _draw_wrapped(box, issue.get("problem", "This material input needs attention."), icon="ERROR")
         # Automatic translation has no explicit TSL intent to clear. Preserve
         # useful authored-route remedies, but do not offer a nonexistent switch.
-        if issue.get("code") != "material.tsl-program-unproven" and issue.get("fix"):
+        if (not automatic or issue.get("code") != "material.tsl-program-unproven") and issue.get("fix"):
             _draw_wrapped(box, issue["fix"], icon="LIGHT")
+    if not automatic:
+        box.operator("blendlink.toggle_tsl_program", text="Disable TSL Program", icon="X")
     _draw_wrapped(
         box,
         "Live node materials need the node renderer; it can use WebGPU or WebGL2. "
@@ -2716,8 +2726,8 @@ def _draw_material_compatibility(layout, result):
     if _draw_appearance_material_capture(layout, result):
         return
     compilation = result.get("materialCompilation") or {}
-    if (compilation.get("channels") or {}).get("automatic"):
-        _draw_automatic_material_graph(layout, compilation)
+    if (compilation.get("channels") or {}).get("automatic") or compilation.get("intent") == "tslProgram":
+        _draw_native_material_graph(layout, compilation)
         return
     status = result.get("status", "approximated")
     box = layout.box()
@@ -2734,35 +2744,6 @@ def _draw_material_compatibility(layout, result):
     _draw_wrapped(box, result.get("summary", ""))
     for reason in result.get("reasons", [])[:4]:
         _draw_wrapped(box, reason, icon="DOT")
-    if compilation.get("intent") == "tslProgram":
-        program_box = box.box()
-        program_box.alert = compilation.get("outcome") == "blocked"
-        program_box.label(
-            text={
-                "lowered": "TSL Program ready to compile",
-                "blocked": "TSL Program needs attention",
-                "preserved": "TSL Program has no proven channel",
-            }.get(compilation.get("outcome"), "TSL Program"),
-            icon={
-                "lowered": "CHECKMARK", "blocked": "ERROR",
-                "preserved": "INFO",
-            }.get(compilation.get("outcome"), "NODETREE"),
-        )
-        for entry in (compilation.get("channels") or {}).get("channels", ())[:8]:
-            route = entry.get("route")
-            detail = (
-                "translates to a program" if route == "program" else "refused"
-            )
-            _draw_wrapped(
-                program_box,
-                f'{entry.get("channel", "?")}: {detail}',
-                icon="DOT" if route == "program" else "ERROR",
-            )
-        program_box.operator(
-            "blendlink.toggle_tsl_program",
-            text="Disable TSL Program",
-            icon="X",
-        )
     if compilation.get("intent") == "materialBake":
         bake_box = box.box()
         bake_box.alert = compilation.get("outcome") == "blocked"

@@ -35,6 +35,12 @@ tree.links.new(node.outputs[0],bsdf.inputs['Normal'])
 
 def plan(module=compiler):return module.plan_materials([owner],purpose='final',automatic_programs=True)
 assert not plan().errors
+for smooth in [False,True]:
+    mesh.polygons[0].use_smooth=smooth;mesh.update()
+    for high_quality in [False,True]:
+        scene.render.use_high_quality_normals=high_quality
+        result=plan();assert not result.errors,result.errors
+scene.render.use_high_quality_normals=False
 node.inputs['Color'].default_value=(.5,.5,.5,1)
 assert any('nonzero native normal' in issue.problem for issue in plan().errors)
 node.inputs['Color'].default_value=(.5,.5,.5000001,1)

@@ -11,6 +11,7 @@ import {
 } from './tslNodeRecipe.js'
 import { buildTslNativeTangentFrame, verifiedTangentFrameBound } from './tslTangentNodes.js'
 import { normalMapCoefficientBounds, refreshNormalInputBounds } from './tslNormalInputBounds.js'
+import { validateNormalNoiseCoordinates } from './tslNormalNoiseBounds.js'
 import { nativeVectorTransformMatrix } from './tslVectorTransform.js'
 import type { TslRuntimeMeshExtras } from './tslMaterialProgram.js'
 
@@ -57,6 +58,7 @@ export function validateTangentNormalMapBinding(
   options: BuildTslOptions,
 ): void {
   for (const expression of entries) {
+    validateNormalNoiseCoordinates(expression, mesh, options)
     const { minimum, maximum } = parameters(expression, options),
       frame = verifiedTangentFrameBound(expression.frame as TslIrExpression, mesh, basis, extras),
       matrix = new Matrix3().setFromMatrix4(

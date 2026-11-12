@@ -11,8 +11,10 @@ import numpy as np
 
 if __package__:
     from . import geometry_ir
+    from . import normal_noise_bounds
 else:
     import geometry_ir
+    import normal_noise_bounds
 
 
 def fail():raise ValueError('Normal Map tangent input has no verified finite range; use supported bounded image/procedural inputs')
@@ -64,6 +66,7 @@ def bounds(expression):
         incoming=bounds(expression.get('input'));lo,hi=min(lo for lo,hi in incoming),max(hi for lo,hi in incoming)
         padding=max(1,abs(lo),abs(hi))*2**-22;result=[(lo-padding,hi+padding)]*3
     elif op in {'tex_image','texture_ref'}:result=image_ranges(expression)
+    elif op=='noise_normalized':result=normal_noise_bounds.amplitude(expression)
     elif op=='tex_checker':
         if expression.get('output')=='fac':result=[(0,1)]*3
         else:result=[(min(a[0],b[0]),max(a[1],b[1])) for a,b in zip(bounds(expression.get('color1')),bounds(expression.get('color2')))]

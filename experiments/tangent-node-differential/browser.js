@@ -15,6 +15,13 @@ window.runProof = async (proof) => {
     forceWebGL: new URLSearchParams(location.search).get('backend') === 'webgl2',
   })
   await renderer.init()
+  const adapter = renderer.backend?.device?.adapterInfo
+  const gl = renderer.backend?.gl
+  const debugRenderer = gl?.getExtension('WEBGL_debug_renderer_info')
+  const gpu = adapter ? { api: 'WebGPU', vendor: adapter.vendor, architecture: adapter.architecture,
+    device: adapter.device, description: adapter.description }
+    : gl ? { api: 'WebGL2', vendor: gl.getParameter(debugRenderer?.UNMASKED_VENDOR_WEBGL ?? gl.VENDOR),
+      renderer: gl.getParameter(debugRenderer?.UNMASKED_RENDERER_WEBGL ?? gl.RENDERER) } : null
   renderer.setPixelRatio(1)
   renderer.setSize(1024, 512)
   renderer.toneMapping = THREE.NoToneMapping
@@ -268,5 +275,5 @@ window.runProof = async (proof) => {
     mixer.stopAllAction()
   }
   renderer.dispose()
-  return { backend, cases, maximum, rows, failures }
+  return { backend, gpu, cases, maximum, rows, failures }
 }

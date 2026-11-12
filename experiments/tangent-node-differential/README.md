@@ -112,3 +112,27 @@ matrices within the existing condition bounds; and no unverified reflected,
 sheared, shifted/cropped or panoramic authored camera context. Animated node
 settings/UV data are not part of this port. Automatic capture cannot silently
 replace this owner-dependent field or change its source renderer.
+
+### Flat-shaded surfaces
+
+Flat-shaded faces retain the same actual corner-normal and Mikk-tangent
+transport contract. Removing the blanket smooth-only admission restriction
+requires no change to the frame shader or serialized programs. Finite geometry
+and UVs, actual unit vectors/handedness, frame-cone conditioning, source
+preservation and loaded-Float32 attribute checks remain mandatory. Native
+planning also checks mixed source shading without treating a shading flag as
+a substitute for a valid frame.
+
+Use `suite.mjs --built --profiles shared,single,named,hq --flat` to repeat all
+four flat profiles; `--profiles flat` runs the ordinary shared flat profile.
+The Blender 4.2/5.2/5.3 checkpoint contains 96 Final GLBs and 3,024
+readbacks per browser environment. Independent runs record Apple Metal and
+local SwiftShader adapters on both APIs. Reports include browser version,
+channel and harness hashes; no numerical budget changes. Linux parity also
+runs the flat profile. Native fixture settings and authored shading stay intact.
+
+The complete Blender 5.2 baked export test passes with the default flat Gallery
+cube, authored normal texture and separated lighting atlas. This preserves the
+existing PBR/UV/program-carrier assertions rather than changing the source to
+smooth shading. Native minification and unrestricted Cycles frame parity remain
+outside the tangent contract.

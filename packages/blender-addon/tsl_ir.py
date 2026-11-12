@@ -943,6 +943,14 @@ def emit_normal_channel(socket, stack=(), *, evaluation_engine=None):
         import normal_map_tangent_ir
     tangents=[];tangent_ir.requirements(expression,tangents)
     tangent_maps=[];normal_map_tangent_ir.requirements(expression,tangent_maps)
+    if __package__:
+        from . import bump_ir
+    else:
+        import bump_ir
+    if bump_ir.contains(expression):
+        if not bump_ir.unit_normal(expression):
+            _refuse('No-height Bump normal channels need a direct verified unit-normal source; linked zero/nonunit or transformed vectors remain unproved')
+        return _channel_document({"op": "normal_view_native", "input": expression})
     if (normals or tangents or tangent_maps) and expression.get('op') not in {'normal_map_native','tangent_native','normal_map_tangent_native'}:
         _refuse('Native Normal Map normal channels currently require a direct unit-normal output; downstream vector normalization is not certified yet')
     if normals or tangents or tangent_maps: return _channel_document({"op": "normal_view_native", "input": expression})
@@ -2561,6 +2569,14 @@ def emit_output(node, from_socket, stack=()):
                                      native_shader_fused=native_shader_fused) for seed in seeds
             ]
         return expression
+
+    if idname == "ShaderNodeBump":
+        if __package__:
+            from .bump_ir import emit as emit_bump
+        else:
+            from bump_ir import emit as emit_bump
+        return emit_bump(node, emit_vector=lambda socket: emit_input(socket, stack=stack, as_vector=True),
+                            refuse=_refuse, engine=get_evaluation_engine())
 
     if idname == "ShaderNodeTangent":
         if __package__:

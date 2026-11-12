@@ -87,12 +87,17 @@ window.runProof = async (proof) => {
           const test = proof.references.cases.find(
             (value) => value.name === mesh.material.userData.blendlink_source_material,
           )
-          if (test?.slot === 'normal' && !mesh.material.normalNode)
-            throw new Error('Native Normal Map program did not install its Normal slot')
-          const field =
+          const normalField =
             test?.slot === 'normal'
-              ? mesh.material.normalNode.mul(0.2).add(0.5)
-              : mesh.material.colorNode
+              ? mesh.material.normalNode
+              : test?.slot === 'coat-normal'
+                ? mesh.material.clearcoatNormalNode
+                : null
+          if (['normal', 'coat-normal'].includes(test?.slot) && !normalField)
+            throw new Error(
+              'Native normal program did not install its authored Normal/Coat Normal slot',
+            )
+          const field = normalField ? normalField.mul(0.2).add(0.5) : mesh.material.colorNode
           mesh.material.fragmentNode = vec4(field, 1)
           mesh.material.needsUpdate = true
           materials.add(mesh.material)
@@ -173,8 +178,12 @@ window.runProof = async (proof) => {
         }
         if (flip === undefined) {
           const control = reference.samples.at(-1)
-          const direct = difference(sample(control.pixel, false), control.rgb),
-            flipped = difference(sample(control.pixel, true), control.rgb)
+          // Calibrate row orientation against the independent authored RGB
+          // constant. EEVEE's EXR contains a final half conversion; native
+          // control pixels are checked with their half ULP below.
+          const authored = [0.3333333, 0.1234567, 1.234567]
+          const direct = difference(sample(control.pixel, false), authored),
+            flipped = difference(sample(control.pixel, true), authored)
           if (Math.min(direct, flipped) > 2e-6)
             throw new Error(
               'Independent RGB control failed ' +

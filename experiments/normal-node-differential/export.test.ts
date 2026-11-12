@@ -25,6 +25,7 @@ it('publishes actual primary triangle geometry programs, split normals and anima
   const pythonSources = [
     'packages/blender-addon/geometry_ir.py',
     'packages/blender-addon/normal_ir.py',
+    'packages/blender-addon/bump_ir.py',
     'packages/blender-addon/material_compiler.py',
     'packages/blender-addon/tsl_ir.py',
     'packages/blendlink/blender/geometry_export.py',

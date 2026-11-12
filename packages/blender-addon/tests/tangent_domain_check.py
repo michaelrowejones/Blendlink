@@ -37,6 +37,13 @@ for engine in [eevee]:
     assert runtime['uvChannels']['RenderUV']==1 and runtime['tangentFrame']['uvMap']=='RenderUV',runtime
     tangent.uv_map='EditUV';assert not plan().errors;tangent.uv_map=''
 
+# Flat faces and a mixed source mesh retain the same independently checked
+# corner-normal/Mikk-frame contract. Shading flags do not grant a cone proof.
+for flags in [(False,False),(True,False),(True,True)]:
+    for polygon,smooth in zip(mesh.polygons,flags):polygon.use_smooth=smooth
+    mesh.update()
+    result=plan();assert not result.errors,result.errors
+
 bpy.context.scene.render.engine='CYCLES'
 assert any('Cycles UV Tangent' in issue.problem for issue in plan().errors)
 bpy.context.scene.render.engine=eevee

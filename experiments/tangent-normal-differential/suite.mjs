@@ -7,9 +7,11 @@ const blender = process.env.BLENDLINK_TANGENT_NORMAL_BLENDER ?? process.env.BLEN
 if (!blender)
   throw new Error('Set BLENDLINK_TANGENT_NORMAL_BLENDER to an actual native Blender executable')
 const built = process.argv.includes('--built')
+const flat = process.argv.includes('--flat')
+const noiseOnly = process.argv.includes('--noise')
 const argument = process.argv.indexOf('--profiles')
 const profiles = (argument < 0 ? 'shared' : process.argv[argument + 1]).split(',')
-if (profiles.some((value) => !['shared', 'single', 'hq', 'named'].includes(value)))
+if (profiles.some((value) => !['shared', 'single', 'hq', 'named', 'flat'].includes(value)))
   throw new Error('Unknown UV tangent profile')
 const destination = resolve(
   process.env.BLENDLINK_TANGENT_NORMAL_NATIVE ??
@@ -25,9 +27,10 @@ for (const profile of profiles) {
     BLENDLINK_TANGENT_NORMAL_REFERENCES: native,
     BLENDLINK_TANGENT_NORMAL_BLENDER: blender,
     BLENDLINK_TANGENT_NORMAL_BUILT: built ? '1' : '0',
+    BLENDLINK_TANGENT_NORMAL_NOISE_ONLY: noiseOnly ? '1' : '0',
     BLENDLINK_TANGENT_NORMAL_UV: profile === 'named' ? 'EditUV' : '',
     BLENDLINK_TANGENT_NORMAL_SINGLE_OWNER: profile === 'single' ? '1' : '0',
-    BLENDLINK_TANGENT_NORMAL_FLAT: profile === 'flat' ? '1' : '0',
+    BLENDLINK_TANGENT_NORMAL_FLAT: profile === 'flat' || flat ? '1' : '0',
     BLENDLINK_TANGENT_NORMAL_HIGH_QUALITY: profile === 'hq' ? '1' : '0',
   }
   const run = (command, args) => execFileSync(command, args, { cwd: root, env, stdio: 'inherit' })
@@ -62,7 +65,7 @@ for (const profile of profiles) {
 }
 writeFileSync(
   join(destination, 'results.json'),
-  JSON.stringify({ built, profiles: results }, null, 2),
+  JSON.stringify({ built, flat, noiseOnly, profiles: results }, null, 2),
 )
 console.log(
   'BLENDLINK_TANGENT_NORMAL_SUITE_PASSED ' +

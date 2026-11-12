@@ -281,10 +281,10 @@ if (plan.geometry) attempt('normal-map', () => run('normal-map', process.execPat
   ['experiments/normal-node-differential/suite.mjs', '--built', '--profiles', 'shared,cycles-zero'],
   { BLENDLINK_NORMAL_NODE_BLENDER: blender, BLENDLINK_NORMAL_NODE_NATIVE: join(evidence, 'normal-map') }, 1_800_000))
 if (plan.geometry) attempt('tangent', () => run('tangent', process.execPath,
-  ['experiments/tangent-node-differential/suite.mjs', '--built', '--profiles', 'shared,named,hq'],
+  ['experiments/tangent-node-differential/suite.mjs', '--built', '--profiles', 'shared,named,hq,flat'],
   { BLENDLINK_TANGENT_NODE_BLENDER: blender, BLENDLINK_TANGENT_NODE_NATIVE: join(evidence, 'tangent') }, 1_800_000))
 if (plan.geometry) attempt('tangent-normal', () => run('tangent-normal', process.execPath,
-  ['experiments/tangent-normal-differential/suite.mjs', '--built', '--profiles', 'shared,named,hq'],
+  ['experiments/tangent-normal-differential/suite.mjs', '--built', '--profiles', 'shared,named,hq,flat'],
   { BLENDLINK_TANGENT_NORMAL_BLENDER: blender, BLENDLINK_TANGENT_NORMAL_NATIVE: join(evidence, 'tangent-normal') }, 1_800_000))
 if (plan.geometry) attempt('normal-dot', () => run('normal-dot', process.execPath,
   ['experiments/geometry-context-differential/suite.mjs', '--built', '--profiles', 'shared'],

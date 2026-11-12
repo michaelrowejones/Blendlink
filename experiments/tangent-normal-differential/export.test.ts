@@ -27,6 +27,7 @@ it('publishes actual tangent normal programs, exact Mikk frames and animated sha
     'packages/blender-addon/normal_ir.py',
     'packages/blender-addon/tangent_ir.py',
     'packages/blender-addon/normal_input_bounds.py',
+    'packages/blender-addon/normal_noise_bounds.py',
     'packages/blender-addon/normal_map_tangent_ir.py',
     'packages/blender-addon/material_compiler.py',
     'packages/blender-addon/tsl_ir.py',

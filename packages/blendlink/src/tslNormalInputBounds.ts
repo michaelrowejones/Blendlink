@@ -1,5 +1,6 @@
 import { FloatType, NoColorSpace, RGBAFormat, UnsignedByteType, type Texture } from 'three'
 import { TslIrError, type BuildTslOptions, type TslIrExpression } from './tslNodeRecipe.js'
+import { normalizedNormalNoiseAmplitude } from './tslNormalNoiseBounds.js'
 
 type Pair = [number, number]
 export type NormalInputBounds = [Pair, Pair, Pair]
@@ -218,6 +219,9 @@ export function normalInputBounds(
       result = textureBounds(texture, expression.output === 'alpha')
       break
     }
+    case 'noise_normalized':
+      result = normalizedNormalNoiseAmplitude(expression)
+      break
     case 'tex_checker':
       result =
         expression.output === 'fac'

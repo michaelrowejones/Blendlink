@@ -5,6 +5,7 @@
     "attribute_object",
     "boolean_math",
     "bright_contrast",
+    "bump_passthrough_native",
     "clamp01",
     "clamp_minmax",
     "color_convert",

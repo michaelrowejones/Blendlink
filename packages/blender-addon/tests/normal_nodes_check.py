@@ -58,9 +58,18 @@ def references(directory):
                 cases.append({'space':space,'strength':strength,'color':[.8,.6,.9],'convention':'DIRECTX','base':'ORIGINAL'})
     for space in ['OBJECT','WORLD','BLENDER_OBJECT','BLENDER_WORLD']:
         for strength in [.5,1]:cases.append({'space':space,'strength':strength,'color':[.8,.6,.9],'slot':'normal'})
+    bump_only=os.environ.get('BLENDLINK_NORMAL_NODE_BUMP_ONLY')=='1'
+    if bump_only:
+        cases=[{'kind':'default'}, {'kind':'default','invert':True,'inactive':True},
+               {'kind':'geometry'}, {'kind':'nested'},
+               *[{'kind':'vector','vector':value} for value in [(0,0,0),(.2,-.7,3),(-2,4,.125)]],
+               {'kind':'default','slot':'normal'}, {'kind':'geometry','slot':'normal'},
+               {'kind':'nested','slot':'normal'}, {'kind':'normal-map','slot':'normal'},
+               {'kind':'normal-map'}, {'kind':'default','slot':'coat-normal'},
+               {'kind':'normal-map','slot':'coat-normal'}]
     cycles_zero=os.environ.get('BLENDLINK_NORMAL_NODE_CYCLES_ZERO')=='1'
     if cycles_zero:cases=[{'space':'WORLD','strength':amount,'color':[.5,.5,.5]} for amount in [-1,0,.25,.5,1,2]]
-    for index,case in enumerate(cases):case.update({'output':'normal-map-'+str(index),'scale':.2})
+    for index,case in enumerate(cases):case.update({'output':('bump-' if bump_only else 'normal-map-')+str(index),'scale':.2})
     cases.append({'output':'control','scale':1})
     columns=8;rows_count=math.ceil(len(cases)/columns)
     vertices=[];faces=[]
@@ -82,24 +91,45 @@ def references(directory):
         if case['output']=='control':
             value=tree.nodes.new('ShaderNodeRGB');value.outputs[0].default_value=(.3333333,.1234567,1.234567,1);field=value.outputs[0]
         else:
-            source=tree.nodes.new('ShaderNodeNormalMap');source.space=case['space']
-            if 'convention' in case:source.convention=case['convention']
-            if 'base' in case:source.base=case['base']
-            color=tree.nodes.new('ShaderNodeCombineXYZ')
-            for socket,value in zip(color.inputs,case['color']):socket.default_value=value
-            strength=tree.nodes.new('ShaderNodeValue');strength.outputs[0].default_value=case['strength']
-            tree.links.new(color.outputs[0],source.inputs['Color']);tree.links.new(strength.outputs[0],source.inputs['Strength'])
+            if bump_only:
+                source=tree.nodes.new('ShaderNodeBump');source.invert=case.get('invert',False)
+                source.inputs['Height'].default_value=-123
+                if case.get('inactive'):
+                    unsupported=tree.nodes.new('ShaderNodeTexEnvironment')
+                    for name in ['Strength','Distance']:
+                        tree.links.new(unsupported.outputs[0],source.inputs[name])
+                if case['kind']=='vector':
+                    value=tree.nodes.new('ShaderNodeCombineXYZ')
+                    for socket,amount in zip(value.inputs,case['vector']):socket.default_value=amount
+                    tree.links.new(value.outputs[0],source.inputs['Normal'])
+                elif case['kind'] in {'geometry','nested'}:
+                    value=tree.nodes.new('ShaderNodeNewGeometry') if case['kind']=='geometry' else tree.nodes.new('ShaderNodeBump')
+                    tree.links.new(value.outputs['Normal'],source.inputs['Normal'])
+                elif case['kind']=='normal-map':
+                    value=tree.nodes.new('ShaderNodeNormalMap');value.space='WORLD'
+                    value.inputs['Color'].default_value=(.8,.6,.9,1)
+                    tree.links.new(value.outputs['Normal'],source.inputs['Normal'])
+            else:
+                source=tree.nodes.new('ShaderNodeNormalMap');source.space=case['space']
+                if 'convention' in case:source.convention=case['convention']
+                if 'base' in case:source.base=case['base']
+                color=tree.nodes.new('ShaderNodeCombineXYZ')
+                for socket,value in zip(color.inputs,case['color']):socket.default_value=value
+                strength=tree.nodes.new('ShaderNodeValue');strength.outputs[0].default_value=case['strength']
+                tree.links.new(color.outputs[0],source.inputs['Color']);tree.links.new(strength.outputs[0],source.inputs['Strength'])
             encode=tree.nodes.new('ShaderNodeVectorMath');encode.operation='MULTIPLY_ADD'
             encode.inputs[1].default_value=(case['scale'],)*3;encode.inputs[2].default_value=(.5,)*3
             tree.links.new(source.outputs['Normal'],encode.inputs[0]);field=encode.outputs[0]
-        if case.get('slot')=='normal':
-            tree.links.new(source.outputs['Normal'],bsdf.inputs['Normal']);bsdf.inputs['Base Color'].default_value=(.42,.35,.13,1)
+        if case.get('slot') in {'normal','coat-normal'}:
+            channel='Coat Normal' if case['slot']=='coat-normal' else 'Normal'
+            if channel=='Coat Normal':bsdf.inputs['Coat Weight'].default_value=1
+            tree.links.new(source.outputs['Normal'],bsdf.inputs[channel]);bsdf.inputs['Base Color'].default_value=(.42,.35,.13,1)
         else:tree.links.new(field,bsdf.inputs['Base Color'])
         compiler.set_tsl_ir(material,True)
         mesh.materials.append(material);mesh.polygons[index].material_index=index;originals.append(material)
         oracle=material.copy();tree=oracle.node_tree;sink=next(node for node in tree.nodes if node.type=='OUTPUT_MATERIAL');bsdf=next(node for node in tree.nodes if node.type=='BSDF_PRINCIPLED')
-        if case.get('slot')=='normal':
-            normal=bsdf.inputs['Normal'].links[0].from_socket
+        if case.get('slot') in {'normal','coat-normal'}:
+            normal=bsdf.inputs['Coat Normal' if case['slot']=='coat-normal' else 'Normal'].links[0].from_socket
             view=tree.nodes.new('ShaderNodeVectorTransform');view.vector_type='VECTOR';view.convert_from='WORLD';view.convert_to='CAMERA'
             tree.links.new(normal,view.inputs['Vector'])
             flipped=tree.nodes.new('ShaderNodeVectorMath');flipped.operation='MULTIPLY';flipped.inputs[1].default_value=(1,1,-1)
@@ -137,7 +167,7 @@ def references(directory):
                     camera.location=(.3*min(frame,3),-4,60 if face=='front' else -60)
                     camera.rotation_euler=(-camera.location).to_track_quat('-Z','Y').to_euler()
                     camera.keyframe_insert(data_path='location',frame=frame);camera.keyframe_insert(data_path='rotation_euler',frame=frame)
-                for engine in (['CYCLES'] if cycles_zero else ['CYCLES',eevee]):
+                for engine in ([eevee] if bump_only else ['CYCLES'] if cycles_zero else ['CYCLES',eevee]):
                     scene.render.engine=engine
                     label=('cycles' if engine=='CYCLES' else 'eevee')+'_'+projection.lower()+'_'+face
                     for frame in frames:

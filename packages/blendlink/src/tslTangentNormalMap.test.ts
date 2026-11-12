@@ -16,6 +16,10 @@ import type { SceneManifest } from './typegen.js'
 import { expect, it } from 'vitest'
 import { normalInputBounds, normalMapCoefficientBounds } from './tslNormalInputBounds.js'
 import { validateTangentNormalMapBinding } from './tslTangentNormalMap.js'
+import {
+  normalizedNormalNoiseAmplitude,
+  validateNormalNoiseCoordinates,
+} from './tslNormalNoiseBounds.js'
 import type { TslIrExpression } from './tslNodeRecipe.js'
 
 const scalar = (value: number): TslIrExpression => ({ op: 'const_float', value })
@@ -160,6 +164,88 @@ it('bounds Mix output clamp independently of its endpoint colors', () => {
   ])
 })
 
+it('admits only fresh native normalized Noise and proves the real object-coordinate domain', () => {
+  const noise: TslIrExpression = {
+    op: 'noise_normalized',
+    normalize: true,
+    noiseType: 'FBM',
+    perlinModel: 'native-standard-f32',
+    dimensions: 3,
+    detail: 1,
+    roughness: 0.5,
+    lacunarity: 2,
+    input: { op: 'object_coords' },
+    scale: scalar(0.15),
+    output: 'fac',
+  }
+  expect(normalizedNormalNoiseAmplitude(noise)).toEqual([
+    [-1.01, 2.01],
+    [-1.01, 2.01],
+    [-1.01, 2.01],
+  ])
+  expect(() => normalizedNormalNoiseAmplitude({ ...noise, op: 'noise' })).toThrow(/static native/)
+  for (const perlinModel of ['mf-periodic-f32', 'eevee-metal-periodic-f32'])
+    expect(normalizedNormalNoiseAmplitude({ ...noise, perlinModel })).toEqual(
+      normalizedNormalNoiseAmplitude(noise),
+    )
+  for (const perlinModel of ['eevee-periodic-f32', 'cycles-neon-periodic-fma', 'unknown'])
+    expect(() => normalizedNormalNoiseAmplitude({ ...noise, perlinModel })).toThrow(/static native/)
+  const owner = mesh(),
+    options = { objectSpace: { basis: 'blender-z-up' as const } },
+    ir = expression()
+  ir.strength = noise
+  validateTangentNormalMapBinding([ir], owner, 'blender-z-up', extras, options)
+  ir.color = {
+    ...noise,
+    output: 'color',
+    colorOffsets: [
+      [100, 100, 100],
+      [110, 110, 110],
+    ],
+  }
+  ir.strength = scalar(0.125)
+  validateTangentNormalMapBinding([ir], owner, 'blender-z-up', extras, options)
+  ir.strength = scalar(1)
+  expect(() =>
+    validateTangentNormalMapBinding([ir], owner, 'blender-z-up', extras, options),
+  ).toThrow(/nonzero native/)
+  const position = owner.geometry.getAttribute('position')
+  position.setX(0, 1000000)
+  position.needsUpdate = true
+  noise.claimedCoordinateMaximum = 1
+  expect(() => validateNormalNoiseCoordinates(noise, owner, options)).toThrow(/non-periodic/)
+  position.setX(0, 0)
+  position.needsUpdate = true
+  for (const unsupported of [
+    { ...noise, scale: scalar(80) },
+    { ...noise, detail: 6 },
+    { ...noise, distortion: 0.2 },
+    { ...noise, detail: 0.1, roughness: 1, lacunarity: 0, scale: scalar(0.3) },
+    { ...noise, input: { op: 'vector_scale', input: { op: 'object_coords' }, scale: scalar(80) } },
+  ])
+    expect(() => validateNormalNoiseCoordinates(unsupported, owner, options)).toThrow(
+      /higher frequencies/,
+    )
+  const generated = { ...noise, input: { op: 'generated' } }
+  validateNormalNoiseCoordinates(generated, owner, {
+    ...options,
+    generatedTexspace: { location: [0.5, 0.5, 0], size: [0.5, 0.5, 0.00001] },
+  })
+  expect(() =>
+    validateNormalNoiseCoordinates(generated, owner, {
+      ...options,
+      generatedTexspace: { location: [0.5, 0.5, 0], size: [0.001, 0.001, 0.00001] },
+    }),
+  ).toThrow(/higher frequencies/)
+  expect(() =>
+    validateNormalNoiseCoordinates(
+      { ...noise, input: { op: 'const_vec3', value: [1e40, 0, 0] }, scale: scalar(0) },
+      owner,
+      options,
+    ),
+  ).toThrow(/finite range/)
+})
+
 it('audits actual pinned PNG ranges on an actual GLB normal-only program with portable base color', async () => {
   const geometry = mesh().geometry,
     document = new Document(),
@@ -196,7 +282,7 @@ it('audits actual pinned PNG ranges on an actual GLB normal-only program with po
     ir = expression()
   ir.color = { ...ref(), vector: vector(0.1, 0.2, 0), claimedMinimumBlue: 1 }
   const hash = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex').slice(0, 16)
-  const audit = async (pixels: Uint8Array) => {
+  const audit = async (pixels: Uint8Array, sceneBytes: Uint8Array = glb) => {
     const png = await sharp(pixels, { raw: { width: 2, height: 1, channels: 4 } })
         .png()
         .toBuffer(),
@@ -232,9 +318,9 @@ it('audits actual pinned PNG ranges on an actual GLB normal-only program with po
       manifest = {
         schemaVersion: 3,
         generator: 'blendlink',
-        hash: hash(glb),
+        hash: hash(sceneBytes),
         url: '/actual.glb',
-        stats: { bytes: glb.length },
+        stats: { bytes: sceneBytes.length },
         materialPrograms: {
           url: '/actual.materials.json',
           bytes: bytes.length,
@@ -244,7 +330,7 @@ it('audits actual pinned PNG ranges on an actual GLB normal-only program with po
       } as unknown as SceneManifest
     return auditCompiledSceneArtifact({
       manifest,
-      glbBytes: glb,
+      glbBytes: sceneBytes,
       materialProgramsBytes: bytes,
       materialProgramImageBytes: new Map([['normal.png', png]]),
     })
@@ -255,4 +341,26 @@ it('audits actual pinned PNG ranges on an actual GLB normal-only program with po
   await expect(audit(new Uint8Array([127, 127, 127, 255, 128, 128, 128, 255]))).rejects.toThrow(
     /nonzero native normal/,
   )
+  ir.color = vector(0.8, 0.6, 0.9)
+  ir.strength = {
+    op: 'noise_normalized',
+    normalize: true,
+    noiseType: 'FBM',
+    perlinModel: 'native-standard-f32',
+    dimensions: 3,
+    detail: 1,
+    roughness: 0.5,
+    lacunarity: 2,
+    input: { op: 'object_coords' },
+    scale: scalar(0.15),
+    output: 'fac',
+    claimedCoordinateMaximum: 1,
+  }
+  const validPixels = new Uint8Array([128, 128, 255, 255, 128, 128, 255, 255])
+  await expect(audit(validPixels)).resolves.toBeDefined()
+  primitive
+    .getAttribute('POSITION')!
+    .setArray(new Float32Array([1000000, 0, 0, 1000001, 0, 0, 1000000, 1, 0]))
+  const farGlb = await new NodeIO().writeBinary(document)
+  await expect(audit(validPixels, farGlb)).rejects.toThrow(/non-periodic/)
 })

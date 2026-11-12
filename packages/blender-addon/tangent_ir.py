@@ -87,8 +87,6 @@ def bind_owners(value,owners,uv_choices):
             names.add(layer.name)
             previous=uv_choices.setdefault(mesh.as_pointer(),layer.name)
             if previous!=layer.name:raise ValueError('One mesh requests multiple UV tangent bases; this transport currently carries one explicit Mikk frame')
-            if any(not polygon.use_smooth for polygon in mesh.polygons):
-                raise ValueError('UV Tangent currently requires smooth triangle shading')
             frame_bound(mesh,layer.name,entry['tangentStorage'])
         if len(names)!=1:raise ValueError('One material has different UV tangent names across owners; use consistent named UV bases')
         entry['uvMap']=names.pop()

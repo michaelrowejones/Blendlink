@@ -4,10 +4,11 @@ import math
 import bpy
 
 if __package__:
-    from . import tangent_ir,normal_input_bounds
+    from . import tangent_ir,normal_input_bounds,normal_noise_bounds
 else:
     import tangent_ir
     import normal_input_bounds
+    import normal_noise_bounds
 
 
 def emit(node,*,emit_vector,emit_scalar,refuse,engine):
@@ -49,6 +50,7 @@ def validate_owners(value,owners):
         pin_default_uv(entry['color'],owners);pin_default_uv(entry['strength'],owners)
         minimum,maximum=normal_input_bounds.coefficients(entry['color'],entry['strength'],entry['convention'])
         for owner in owners:
+            normal_noise_bounds.validate(entry,owner)
             frame=entry['frame'];bound=tangent_ir.frame_bound(owner.data,frame['uvMap'],frame['tangentStorage'])
             matrix=owner.evaluated_get(bpy.context.evaluated_depsgraph_get()).matrix_world.to_3x3().inverted().transposed()
             condition=math.sqrt(sum(item*item for row in matrix for item in row)*sum(item*item for row in matrix.inverted() for item in row))

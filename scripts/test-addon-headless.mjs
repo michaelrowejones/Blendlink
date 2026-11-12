@@ -22,7 +22,8 @@ const installedNodeFamilies = [
   ['ShaderNodeClamp', 'clamp_minmax'], ['ShaderNodeValToRGB', 'ramp_lut'],
   ['ShaderNodeVectorTransform', 'vector_transform'], ['ShaderNodeTexWave', 'tex_wave'],
   ['ShaderNodeTexNoise', 'noise_fractal'], ['ShaderNodeTexNoise', 'noise_normalized'], ['ShaderNodeNormalMap', 'normal_map_native'],
-  ['ShaderNodeNormalMap', 'normal_map_tangent_native'],
+  ['ShaderNodeNormalMap', 'normal_map_tangent_native'], ['ShaderNodeNormalMap', 'noise_normalized'],
+  ['ShaderNodeBump', 'bump_passthrough_native'],
   ['ShaderNodeTangent', 'tangent_native'],
   ['ShaderNodeNormal', 'const_vec3'],
   ['ShaderNodeNewGeometry', 'geometry_context'], ['ShaderNodeTexCoord', 'geometry_context'],
@@ -292,13 +293,20 @@ def contains_op(value, expected):
 for node_type, expected in families:
     node = tree.nodes.new(node_type)
     if node_type == "ShaderNodeCombineColor": node.mode = "HSL"
-    if node_type == "ShaderNodeNormalMap": node.space = "TANGENT" if expected == "normal_map_tangent_native" else "WORLD"
+    if node_type == "ShaderNodeNormalMap": node.space = "TANGENT" if expected in {"normal_map_tangent_native", "noise_normalized"} else "WORLD"
     previous_engine = bpy.context.scene.render.engine
-    if node_type == "ShaderNodeTangent" or expected == "normal_map_tangent_native":
+    if node_type in {"ShaderNodeTangent", "ShaderNodeBump"} or (node_type == "ShaderNodeNormalMap" and expected in {"normal_map_tangent_native", "noise_normalized"}):
         if node_type == "ShaderNodeTangent": node.direction_type = "UV_MAP"
         engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties["engine"].enum_items}
         bpy.context.scene.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
         for polygon in mesh.polygons: polygon.use_smooth = True
+    if node_type == "ShaderNodeNormalMap" and expected == "noise_normalized":
+        child_noise = tree.nodes.new("ShaderNodeTexNoise")
+        child_noise.normalize = True
+        child_noise.inputs["Scale"].default_value = 0.15
+        child_noise.inputs["Detail"].default_value = 1
+        child_noise.inputs["Distortion"].default_value = 0
+        tree.links.new(child_noise.outputs["Fac"], node.inputs["Strength"])
     if node_type == "ShaderNodeClamp": node.clamp_type = "RANGE"
     if node_type == "ShaderNodeTexNoise":
         if expected == "noise_normalized":
@@ -335,6 +343,7 @@ for node_type, expected in families:
         tree.nodes.remove(separate)
         tree.nodes.remove(coordinate)
     if node_type == "ShaderNodeTexNoise": tree.nodes.remove(coordinate)
+    if node_type == "ShaderNodeNormalMap" and expected == "noise_normalized": tree.nodes.remove(child_noise)
 bpy.data.objects.remove(owner, do_unlink=True)
 bpy.data.meshes.remove(mesh)
 bpy.data.materials.remove(material)

@@ -59,6 +59,27 @@ def references(directory):
         cases.append({'live':live,'strength':.5})
         cases.append({'live':live,'liveStrength':True,'strength':1,'slot':'normal'})
     cases.append({'live':'external','strength':1,'image_uv':'EditUV'})
+    if os.environ.get('BLENDLINK_TANGENT_NORMAL_NOISE_ONLY')=='1':
+        cases=[]
+        for dimension in [1,2,3,4]:
+            for coordinate in ['object','generated'] if dimension>1 else ['constant']:
+                for live_strength in [False,True]:
+                    cases.append({'live':'native-noise','dimensions':dimension,'coordinates':coordinate,
+                                  'strength':.125 if not live_strength else 1,'liveStrength':live_strength,
+                                  'detail':1,'noiseScale':.15,'slot':'normal' if live_strength else 'color'})
+        for detail,scale,distortion in [(0,.25,0),(2,.125,0),(1,.125,0)]:
+            cases.append({'live':'native-noise','dimensions':3,'coordinates':'object','strength':1,
+                          'liveStrength':True,'detail':detail,'noiseScale':scale,'distortion':distortion})
+        for dimension,detail,scale,roughness,lacunarity,distortion,live_strength in [
+            (2,2,.25,0,2,0,True),(3,0,.25,1,0,0,True),(3,1,.125,1,-2,0,False),
+            (4,2,.1,1,2,0,False),(3,2,.15,-.5,2,0,True),
+            (4,2,.1,1,2,0,False),(2,2,-.1,1,-2,0,True)]:
+            cases.append({'live':'native-noise','dimensions':dimension,'coordinates':'object','strength':.125 if not live_strength else 1,
+                          'liveStrength':live_strength,'detail':detail,'noiseScale':scale,'distortion':distortion,
+                          'roughness':roughness,'lacunarity':lacunarity,'slot':'normal'})
+        for dimension in [2,4]:
+            cases.append({'live':'native-noise','dimensions':dimension,'coordinates':'constant','strength':.125,
+                          'liveStrength':False,'detail':6,'noiseScale':80,'roughness':1,'slot':'normal'})
     requested_uv=os.environ.get('BLENDLINK_TANGENT_NORMAL_UV','')
     bound_uv=requested_uv or 'RenderUV'
     for index,case in enumerate(cases):case.update({'output':'tangent-normal-'+str(index),'scale':.2})
@@ -114,7 +135,27 @@ def references(directory):
             if 'base' in case:source.base=case['base']
             if case.get('live'):
                 live=case['live']
-                if live in {'checker','mix'}:
+                if live=='native-noise':
+                    texture=tree.nodes.new('ShaderNodeTexNoise');texture.noise_dimensions=str(case['dimensions'])+'D';texture.normalize=True
+                    texture.inputs['Scale'].default_value=case['noiseScale'];texture.inputs['Detail'].default_value=case['detail']
+                    texture.inputs['Roughness'].default_value=case.get('roughness',.5);texture.inputs['Distortion'].default_value=case.get('distortion',0)
+                    texture.inputs['Lacunarity'].default_value=case.get('lacunarity',2)
+                    if case.get('roughness',.5)<0:
+                        amount=tree.nodes.new('ShaderNodeValue');amount.outputs[0].default_value=case['roughness'];tree.links.new(amount.outputs[0],texture.inputs['Roughness'])
+                    if case['dimensions']==1:texture.inputs['W'].default_value=.371234
+                    elif case['coordinates']=='constant':
+                        coordinate=tree.nodes.new('ShaderNodeCombineXYZ')
+                        for socket,value in zip(coordinate.inputs,[.371234,-.138237,.193421]):socket.default_value=value
+                        tree.links.new(coordinate.outputs[0],texture.inputs['Vector'])
+                        if case['dimensions']==4:texture.inputs['W'].default_value=.371234
+                    else:
+                        coordinate=tree.nodes.new('ShaderNodeTexCoord')
+                        tree.links.new(coordinate.outputs['Object' if case['coordinates']=='object' else 'Generated'],texture.inputs['Vector'])
+                        if case['dimensions']==4:texture.inputs['W'].default_value=.371234
+                    color=texture.outputs['Color'];strength=texture.outputs['Fac']
+                    if case.get('liveStrength'):
+                        constant=tree.nodes.new('ShaderNodeRGB');constant.outputs[0].default_value=(.8,.6,.9,1);color=constant.outputs[0]
+                elif live in {'checker','mix'}:
                     coordinate=tree.nodes.new('ShaderNodeTexCoord');texture=tree.nodes.new('ShaderNodeTexChecker');texture.inputs['Scale'].default_value=.15
                     texture.inputs['Color1'].default_value=(.2,.3,.9,1);texture.inputs['Color2'].default_value=(.9,.65,.95,1)
                     shifted=tree.nodes.new('ShaderNodeVectorMath');shifted.operation='ADD';shifted.inputs[1].default_value=(.137,.173,.089)
