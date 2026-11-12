@@ -1,4 +1,4 @@
-name: Static Noise software GPU
+name: Native node canaries
 
 on:
   pull_request:
@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   native-static-color:
-    name: Native 4D Color / Linux SwiftShader
+    name: Native static Noise and masks / Linux SwiftShader
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -81,6 +81,78 @@ jobs:
           BLENDLINK_NOISE_ENGINE: EEVEE
           BLENDLINK_NOISE_TYPES: '["FBM"]'
           BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/normalized
+
+      - name: Compare high-detail raw 4D Color fields with the normal watchdog
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_NOISE_FIELD_FOCUS: '1'
+          BLENDLINK_NOISE_TYPES: '["FBM"]'
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/raw-field
+
+      - name: Compare high-detail normalized 4D Color fields with the normal watchdog
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_NOISE_FIELD_FOCUS: '1'
+          BLENDLINK_NOISE_NORMALIZED: '1'
+          BLENDLINK_NOISE_ENGINE: EEVEE
+          BLENDLINK_NOISE_TYPES: '["FBM"]'
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/normalized-field
+
+      - name: Compare native MF large-coordinate Math Modulo
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_MATH_MODULO_NATIVE: '1'
+          BLENDLINK_MATH_MODULO_MF_ONLY: '1'
+          BLENDLINK_NOISE_ENGINE: EEVEE
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/math-modulo-mf
+
+      - name: Verify native Noise admission and installed-package imports
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: xvfb-run --auto-servernum node scripts/test-addon-headless.mjs
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_HEADLESS_ONLY: noise
+          BLENDLINK_TEST_CYCLES_DEVICE: CPU
+
+      - name: Compare native Luminance Key on both browser backends
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          for source_device in CPU GPU; do
+            BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE="$source_device" \
+            BLENDLINK_COMPOSITOR_LUMINANCE_KEY_REFERENCES="$PWD/artifacts/verification-static-noise-ci/luma-$source_device" \
+              xvfb-run --auto-servernum "$BLENDLINK_BLENDER" \
+                --background --factory-startup --python-exit-code 1 \
+                --python packages/blender-addon/tests/compositor_luminance_key_check.py
+          done
+          xvfb-run --auto-servernum node experiments/native-compositor-differential/run.mjs --built \
+            --out artifacts/verification-static-noise-ci/luma-browser \
+            artifacts/verification-static-noise-ci/luma-CPU \
+            artifacts/verification-static-noise-ci/luma-GPU
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+
+      - name: Compare native Difference Key on both browser backends
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          for source_device in CPU GPU; do
+            BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE="$source_device" \
+            BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_REFERENCES="$PWD/artifacts/verification-static-noise-ci/difference-$source_device" \
+              xvfb-run --auto-servernum "$BLENDLINK_BLENDER" \
+                --background --factory-startup --python-exit-code 1 \
+                --python packages/blender-addon/tests/compositor_difference_key_check.py
+          done
+          xvfb-run --auto-servernum node experiments/native-compositor-differential/run.mjs --built \
+            --out artifacts/verification-static-noise-ci/difference-browser \
+            artifacts/verification-static-noise-ci/difference-CPU \
+            artifacts/verification-static-noise-ci/difference-GPU
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
 
       - name: Retain native inputs, pixels and browser failures
         if: always()

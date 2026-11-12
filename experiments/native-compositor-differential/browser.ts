@@ -9,12 +9,25 @@ const result = document.querySelector('#results')!
 let renderer: WebGPURenderer | undefined
 try {
   const webgl = new URLSearchParams(location.search).get('backend') === 'webgl2'
-  renderer = new WebGPURenderer({ forceWebGL: webgl })
+  const adapter = webgl ? undefined : await navigator.gpu?.requestAdapter({ powerPreference: 'high-performance' })
+  if (!webgl && !adapter) throw new Error('Requested WebGPU adapter was not available')
+  const requestedDevice = await adapter?.requestDevice({ requiredFeatures: [...adapter.features] })
+  renderer = new WebGPURenderer({ forceWebGL: webgl, ...(requestedDevice ? { device: requestedDevice } : {}) })
   await renderer.init()
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace
   renderer.toneMapping = THREE.NoToneMapping
   const backend = (renderer.backend as any).isWebGLBackend ? 'webgl2' : 'webgpu'
   if (backend !== (webgl ? 'webgl2' : 'webgpu')) throw new Error('Requested renderer backend was not available')
+  const gl = (renderer.backend as any).gl as WebGL2RenderingContext | undefined
+  const debugRenderer = gl?.getExtension('WEBGL_debug_renderer_info')
+  ;(window as any).__compositorGPU = adapter ? {
+    vendor: adapter.info?.vendor, architecture: adapter.info?.architecture,
+    device: adapter.info?.device, description: adapter.info?.description,
+    isFallbackAdapter: adapter.info?.isFallbackAdapter,
+  } : gl ? {
+    vendor: gl.getParameter(debugRenderer?.UNMASKED_VENDOR_WEBGL ?? gl.VENDOR),
+    renderer: gl.getParameter(debugRenderer?.UNMASKED_RENDERER_WEBGL ?? gl.RENDERER),
+  } : null
   const shaderErrors: string[] = []
   renderer.debug.onShaderError = (gl, program, vertex, fragment) => shaderErrors.push([
     gl.getProgramInfoLog(program), gl.getShaderInfoLog(vertex), gl.getShaderInfoLog(fragment),

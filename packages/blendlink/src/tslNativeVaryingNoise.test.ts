@@ -35,7 +35,37 @@ describe('native normalized live Roughness capability',()=>{
   it('prunes zero Distortion without requiring unused offsets',()=>{
     expect(build({distortion:0})).toBeTruthy()
     expect(build({distortion:-0,distortionOffsets:'unused'})).toBeTruthy()
-    expect(()=>build({distortion:.37})).toThrow(/requires Distortion = 0/)
+    expect(()=>build({distortion:.37})).toThrow(/requires verified Metal/)
+  })
+  it('admits nonzero Distortion only under the earned Metal 1D shader model',()=>{
+    for (const distortion of [-1,.37,1,2**-35]) for(const output of ['fac','color']) {
+      const changes={dimensions:1,input:scalar(.25),output,distortion,evaluationModel:'shader',
+        distortionModel:'metal-1d-fma-f32-v1',distortionOffsets:[[111]],colorOffsets:[[123],[157]]}
+      expect(build(changes)).toBeTruthy()
+      for(const invalid of [{distortionModel:undefined},{distortionModel:'future'},
+        {dimensions:2,input:{op:'uv'},colorOffsets:[[1,2],[3,4]]},{nativeGpuBackend:'OPENGL',perlinModel:'native-standard-f32'},
+        {evaluationModel:'shader-mf'},{distortionOffsets:[]},{distortionOffsets:[[Number.NaN]]}])
+        expect(()=>build({...changes,...invalid})).toThrow()
+    }
+  })
+  it('independently reproves the actual native-MF inputs rather than trusting stage labels',()=>{
+    const child:TslIrExpression={op:'noise_normalized',normalize:true,noiseType:'FBM',output:'fac',dimensions:3,
+      detail:0,roughness:.5,lacunarity:2,scale:scalar(1),input:{op:'const_vec3',value:[.375,Math.fround(-.173),.625]},
+      evaluationModel:'shader-mf',perlinModel:'mf-periodic-f32'}
+    const rho:TslIrExpression={op:'clamp01',input:child}
+    for(const dimensions of [1,2,3,4]) {
+      const changes={dimensions,input:dimensions===1?scalar(.25):{op:'const_vec3',value:[.125,.25,.375]},
+        roughnessNode:rho,w:scalar(.125),distortion:.37,evaluationModel:'shader-mf',perlinModel:'mf-periodic-f32',
+        distortionModel:'native-mf-f32-v1',distortionOffsets:Array.from({length:dimensions},()=>Array(dimensions).fill(123))}
+      expect(build(changes)).toBeTruthy()
+      for(const invalid of [{input:{op:'uv',constant:true}}, {roughnessNode:roughness},
+        {roughnessNode:{...rho,input:{...child,input:{op:'uv'},evaluationModel:'shader-mf'}}},
+        {roughnessNode:{...rho,input:{...child,perlinModel:'eevee-metal-periodic-f32'}}},
+        {nativeGpuBackend:'OPENGL'},{evaluationModel:'shader'}, {distortionModel:'metal-1d-fma-f32-v1'},
+        ...(dimensions===4?[{w:{op:'separate',channel:'x',input:{op:'uv'}}}]:[])])
+        expect(()=>build({...changes,...invalid})).toThrow()
+    }
+    expect(()=>build({distortion:0,distortionModel:'native-mf-f32-v1'})).toThrow(/unused Distortion/)
   })
   it('keeps the prior varying opcode available without the new source metadata',()=>{
     expect(build({op:'noise_varying',sourceEngine:undefined,perlinModel:undefined,distortion:.37,distortionOffsets:[[1,2,3],[4,5,6],[7,8,9]]})).toBeTruthy()

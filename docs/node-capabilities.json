@@ -211,10 +211,11 @@
     },
     "shader:ShaderNodeMath": {
       "category": "supported",
-      "limits": "All declared scalar operations; Blender safe math and optional clamp; nonfinite/animated inputs are not blanket supported.",
+      "limits": "All declared scalar operations; Blender safe math and optional clamp; nonfinite/animated inputs are not blanket supported. A distinct EEVEE fixed-divisor 100000 Modulo profile preserves native large-coordinate remainder in same-sign Float32 integer bands 2^24<=|a|<2^31, using independently bounded literal or nearest image-plus-offset inputs. Metal shader reciprocal/integer remainder differs from modern constant/MF remainder. Modern MF negative-zero composition and legacy non-half-exact image fields refuse. Ordinary and old serialized Math retain prior dispatch; this is not an unrestricted new division/remainder model.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
-        "math"
+        "math",
+        "math_modulo_native"
       ],
       "modes": {
         "operation": {
@@ -232,9 +233,39 @@
         },
         {
           "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "packages/blender-addon/math_modulo_native_ir.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslMathModuloNative.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslMathModuloNative.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/math_modulo_native_admission_check.py"
+        },
+        {
+          "path": "experiments/math-modulo-native/README.md"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "fixed100000Modulo": {
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0",
+            "5.3.0"
+          ],
+          "nativeGraphs": 99,
+          "nativeRecordedRefusals": 6,
+          "physicalAndSoftwareReadbacks": 396,
+          "maximumPackedRemainderError": 0,
+          "independentIntegerIdentities": 1078270,
+          "legacyCompatibilityFloat32Words": 6750208
+        }
+      }
     },
     "shader:ShaderNodeVectorMath": {
       "category": "supported",
@@ -1120,7 +1151,7 @@
     },
     "shader:ShaderNodeTexNoise": {
       "category": "partial",
-      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields. Fresh EEVEE normalized FBM also supports independently unit-bounded live scalar Roughness at static Detail<=2, Scale magnitude<=80 and zero Distortion, with explicit Metal/OpenGL source models. Nonzero Distortion in this new capability takes a named source-bake path; existing serialized noise_varying behavior remains unchanged. No exact output-unit range is inferred for the new live-amplitude opcode. Fixed 4D Color FBM can evaluate to a CPU literal when its executable constant-input subset, zero Distortion, qualified standard/periodic kernel model and every seeded octave coordinate within 90000 are independently verified. Other graphs retain their GPU path. This bounded constant optimization does not imply hosted software-driver certification.",
+      "limits": "FBM, Multifractal, Hetero Terrain, Hybrid Multifractal and Ridged Multifractal, all four dimensions and Color/Factor. Static FBM Detail<=6, other recurrences Detail<=2. Varying Roughness additionally supports normalized/signed FBM and all other recurrences at fixed Detail<=2 when both emitter and runtime prove the actual executable scalar child stays [0,1]; an authored Clamp is the route for unknown ranges. Claimed range/amplitude annotations or RGB vectors cannot grant admission. Other controls remain static. Negative Detail/static Roughness follow native zero clamping; static Roughness>1 refuses. New signed/HDR or varying recurrences require finite |Lacunarity|<=2, |Distortion|<=1 and effective scale<=80, plus |Offset|<=1 and |Gain|<=2 where active. Normalized-only legacy approximation bands are not inherited. Non-FBM Normalize and inactive inputs are ignored natively; Hybrid has strict weight>.001 and Ridged ignores fractional Detail. MF/4D/measured Linux offset precision profiles and independent finite-amplitude bounds are explicit. Other varying controls and larger parameter domains remain unported; signed/HDR outputs cannot acquire unit HSL bounds. Automatic EEVEE-to-Cycles channel fallback refuses when native evaluator equivalence is unproven; explicit artist-selected Material capture retains its separate intent. Fresh bounded static normalized FBM uses an explicit native precision profile instead of the legacy normalized opcode. EEVEE covers Detail<=6 in the static domain; verified Cycles CPU SIMD shader-stage 3D/4D requires Detail<=1 and zero Distortion, while unmeasured Cycles profiles take a named source-bake path. Fresh normalized Metal EEVEE and native constant/MF profiles reproduce periodic coordinate reduction at 100000 and the large-coordinate correction at 1e6, with separate source precision models. Spatial OpenGL EEVEE and shader-stage Cycles retain their qualified unwrapped coordinate band; their periodic models remain unported. Normalize is not a unit-range guarantee: native 3D/4D Noise can be negative or above 1. These normalized Noise opcodes cannot prove HSL/unit Roughness inputs without an actual authored Clamp; output remains HDR and is never silently clipped. Legacy serialized 1D normalized Noise also cannot grant an exact unit proof because its denominator staging can overshoot on software GPUs. For RGB clipping use Mix Color Clamp Result; scalar Clamp applies to scalar fields. Fresh EEVEE normalized FBM supports independently unit-bounded live scalar Roughness at static Detail<=2 and Scale magnitude<=80. Zero Distortion uses explicit Metal/OpenGL source models. Nonzero Distortion within [-1,1] has separate measured Metal 1D shader and pure native-MF models; multidimensional shader and unmeasured OpenGL nonzero-D paths refuse. Existing serialized noise_varying behavior remains unchanged. No exact output-unit range is inferred for the new live-amplitude opcode. Fixed 4D Color FBM can evaluate to a CPU literal when its executable constant-input subset, zero Distortion, qualified standard/periodic kernel model and every seeded octave coordinate within 90000 are independently verified. Other graphs retain their GPU path. Focused native Linux 5.2 OpenGL references now pass both browser APIs on recorded SwiftShader/Subzero under the normal Chromium watchdog; broader native node matrix coverage remains separate. Fresh precise Noise source export requires literal Float32 Distortion, including literal Value links; unproved linked arithmetic takes a named source-bake path. This prevents Python-double folding from changing modern native Float32 distortion and leaves serialized runtime documents unchanged. Folded Detail, Roughness, Lacunarity, Scale and active Offset/Gain also require exact Float32 literal or ordered selection/Clamp plumbing. Unproved arithmetic is refused before it can change source parameters; genuinely live, independently bounded Roughness remains executable. Static 4D Color CPU folding follows source-stage arithmetic: MF uses explicit Float32 stages, while shader/legacy/unknown stages require independently exact input arithmetic. Witnessed unqualified EEVEE shader-constant coordinate graphs refuse with their source retained; falling back to an older GPU builder is not treated as a fidelity correction. Fresh nonzero-D profiles additionally require independently exact coordinate/W input plumbing, including nested MF Noise, and reject unqualified closed-arithmetic islands inside Roughness. Staticness or a source-stage label alone is not a numeric precision certificate.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "noise",
@@ -1235,6 +1266,45 @@
         },
         {
           "path": "experiments/static-noise-fbm/README.md"
+        },
+        {
+          "path": "experiments/noise-fractal-differential/probe-linked-distortion.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/noise_static_scalar_folding_check.py"
+        },
+        {
+          "path": "experiments/noise-fractal-differential/probe-linked-noise-controls.py"
+        },
+        {
+          "path": "packages/blender-addon/noise_static_inputs.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/noise_static_input_admission_check.py"
+        },
+        {
+          "path": "experiments/static-noise-fbm/INPUT_STAGE.md"
+        },
+        {
+          "path": "experiments/noise-fractal-differential/probe-native-distortion.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslNoiseInputPrecision.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslNoiseInputPrecision.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/noise_mf_input_precision_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslNoiseFieldBarrier.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslNoiseFieldBarrier.test.ts"
+        },
+        {
+          "path": "experiments/noise-field-barrier/README.md"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -1285,7 +1355,44 @@
           "physicalAndSoftwareReadbacks": 2316,
           "nonzeroDistortionRefusalsPerVersion": 66,
           "detailMaximum": 2,
-          "distortion": 0
+          "distortion": 0,
+          "qualification": "zero-distortion baseline",
+          "distortionExtension": {
+            "requestedGraphsPerVersion": 289,
+            "admittedGraphs": {
+              "4.2.0": 221,
+              "5.2.0": 264,
+              "5.3.0": 264
+            },
+            "namedRefusals": {
+              "4.2.0": 68,
+              "5.2.0": 25,
+              "5.3.0": 25
+            },
+            "physicalAndSoftwareReadbacks": 2996,
+            "coordinateBoundaryReadbacks": 372,
+            "sourceBackend": "METAL",
+            "models": [
+              "metal-1d-fma-f32-v1",
+              "native-mf-f32-v1"
+            ],
+            "guardedRequestedGraphs": {
+              "4.2.0": 291,
+              "5.2.0": 294,
+              "5.3.0": 294
+            },
+            "guardedNamedRefusals": {
+              "4.2.0": 70,
+              "5.2.0": 30,
+              "5.3.0": 30
+            },
+            "inputPrecisionGuard": {
+              "freshBuiltPhysicalReadbacks": 1498,
+              "priorFailingDocumentsRejected": 7,
+              "additionalNativeRecordedRefusals": 12,
+              "coordinateAndRoughnessIslands": true
+            }
+          }
         },
         "static4dConstantFold": {
           "nativeReadbacks": 316,
@@ -1296,7 +1403,59 @@
           ],
           "distortion": 0,
           "coordinateMagnitudeExclusive": 90000,
-          "hostedSubzeroCertification": "pending"
+          "hostedSubzeroCertification": "focused-linux-5.2-passed",
+          "hostedRawGraphs": 27,
+          "hostedNormalizedGraphs": 14,
+          "hostedWorkflowRun": 43309506012,
+          "hostedArtifact": 13984459722
+        },
+        "distortionFoldingGuard": {
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0",
+            "5.3.0"
+          ],
+          "sourceFamilies": [
+            "native-live",
+            "static-normalized",
+            "signed-fbm"
+          ],
+          "modernNativeCancellation": -1,
+          "pythonDoubleCancellation": 0,
+          "legacyMetalConstantCancellation": 0
+        },
+        "scalarFoldingGuard": {
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0",
+            "5.3.0"
+          ],
+          "controls": [
+            "Detail",
+            "Roughness",
+            "Lacunarity",
+            "Scale",
+            "Offset",
+            "Gain"
+          ],
+          "nativePositiveCanary": 1,
+          "pythonDoubleCanary": 0,
+          "serializedRuntimeUnchanged": true
+        },
+        "experimentalFieldBarrier": {
+          "status": "awaiting-hosted-Subzero-proof",
+          "detail": [
+            4,
+            6
+          ],
+          "scale": [
+            40,
+            80
+          ],
+          "distortion": 0,
+          "literalOrLiveRoughness": "static-only",
+          "input": "measured nearest image profile with independently exact sampled coordinates",
+          "unrelatedShaderPathsUnchanged": true
         }
       }
     },
@@ -6013,6 +6172,84 @@
           "limits": "Legacy immediate affine canvases remain unqualified; extraction records a named refusal."
         }
       }
+    },
+    "compositor:CompositorNodeLumaMatte": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "luminance-key"
+      ],
+      "limits": "Image and Matte outputs preserve source OCIO luminance, native threshold ramp, alpha cap and whole-RGBA mask multiplication. Signed/HDR color and negative/above-one alpha remain native. Fixed finite thresholds in [0,1] must be separated by at least 1/64; modern proven constant Value/qualified Math links are allowed. Changing/unproved thresholds, collapsed/narrow intervals and animated/driven controls refuse. Legacy CPU endpoint branches remain separate from modern/GPU clamped ramps; modern reversed limits are measured. Groups, cascades, Matte-to-alpha and integer-shifted finite image windows are verified. This is a pointwise image/mask port, not full Keying or render-pass coverage.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_luminance_key.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorLuminanceKey.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorLuminanceKey.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_luminance_key_check.py"
+        },
+        {
+          "path": "experiments/native-compositor-differential/LUMINANCE_KEY.md"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeScenes": 206,
+        "physicalAndSoftwareReadbacks": 824,
+        "maximumAbsoluteError": 5.960464477539062e-07,
+        "budget": 2e-05,
+        "nativeGpuBackend": "METAL",
+        "sourcePreserved": true
+      }
+    },
+    "compositor:CompositorNodeDiffMatte": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "difference-key"
+      ],
+      "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_difference_key.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorDifferenceKey.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorDifferenceKey.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_difference_key_check.py"
+        },
+        {
+          "path": "experiments/native-compositor-differential/DIFFERENCE_KEY.md"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeScenes": 234,
+        "physicalAndSoftwareReadbacks": 936,
+        "maximumAbsoluteError": 0,
+        "budget": 2e-05,
+        "nativeGpuBackend": "METAL",
+        "sourcePreserved": true
+      }
     }
   },
   "knownUnsupported": [
@@ -6038,7 +6275,6 @@
     "compositor:CompositorNodeDefocus",
     "compositor:CompositorNodeDenoise",
     "compositor:CompositorNodeDespeckle",
-    "compositor:CompositorNodeDiffMatte",
     "compositor:CompositorNodeDilateErode",
     "compositor:CompositorNodeDisplace",
     "compositor:CompositorNodeDistanceMatte",
@@ -6054,7 +6290,6 @@
     "compositor:CompositorNodeKuwahara",
     "compositor:CompositorNodeLensdist",
     "compositor:CompositorNodeLevels",
-    "compositor:CompositorNodeLumaMatte",
     "compositor:CompositorNodeMapUV",
     "compositor:CompositorNodeMapValue",
     "compositor:CompositorNodeMask",

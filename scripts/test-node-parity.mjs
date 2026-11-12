@@ -79,6 +79,8 @@ const compositorFamilies = [
   ['flip', 'compositor_flip_check.py', 'BLENDLINK_COMPOSITOR_FLIP_REFERENCES'],
   ['filter', 'compositor_filter_check.py', 'BLENDLINK_COMPOSITOR_FILTER_REFERENCES'],
   ['normal-direction', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES'],
+  ['luminance-key', 'compositor_luminance_key_check.py', 'BLENDLINK_COMPOSITOR_LUMINANCE_KEY_REFERENCES'],
+  ['difference-key', 'compositor_difference_key_check.py', 'BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_REFERENCES'],
   ['transform', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES'],
   ['resample', 'compositor_resample_check.py', 'BLENDLINK_COMPOSITOR_RESAMPLE_REFERENCES'],
   ['affine', 'compositor_affine_check.py', 'BLENDLINK_COMPOSITOR_AFFINE_REFERENCES'],
@@ -120,7 +122,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   mkdirSync(directory, { recursive: true })
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
-    [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
+    [variable]: directory, BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_AFFINE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
@@ -145,6 +147,8 @@ if (!plan.compositor) {
     ['flip-gpu', 'compositor_flip_check.py', 'BLENDLINK_COMPOSITOR_FLIP_REFERENCES', 'BLENDLINK_COMPOSITOR_FLIP_DEVICE'],
     ['filter-gpu', 'compositor_filter_check.py', 'BLENDLINK_COMPOSITOR_FILTER_REFERENCES', 'BLENDLINK_COMPOSITOR_FILTER_DEVICE'],
     ['normal-direction-gpu', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES', 'BLENDLINK_COMPOSITOR_NORMAL_DEVICE'],
+    ['luminance-key-gpu', 'compositor_luminance_key_check.py', 'BLENDLINK_COMPOSITOR_LUMINANCE_KEY_REFERENCES', 'BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE'],
+    ['difference-key-gpu', 'compositor_difference_key_check.py', 'BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_REFERENCES', 'BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE'],
     ['transform-gpu', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES', 'BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE'],
     ['resample-gpu', 'compositor_resample_check.py', 'BLENDLINK_COMPOSITOR_RESAMPLE_REFERENCES', 'BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE'],
     ['affine-gpu', 'compositor_affine_check.py', 'BLENDLINK_COMPOSITOR_AFFINE_REFERENCES', 'BLENDLINK_COMPOSITOR_AFFINE_DEVICE'],

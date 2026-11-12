@@ -1454,6 +1454,14 @@ def emit_output(node, from_socket, stack=()):
             expression["b"] = emit_input(node.inputs[1], stack=stack)
         if operation in _MATH_TERNARY:
             expression["c"] = emit_input(node.inputs[2], stack=stack)
+        if operation == "MODULO":
+            import bpy
+            try:
+                from .math_modulo_native_ir import qualify_modulo
+            except ImportError:
+                from math_modulo_native_ir import qualify_modulo
+            expression = qualify_modulo(expression, engine=get_evaluation_engine(),
+                backend=str(bpy.context.preferences.system.gpu_backend), version=bpy.app.version, refuse=_refuse)
         if getattr(node, "use_clamp", False):
             expression = {
                 "op": "clamp01", "input": expression,
@@ -2312,6 +2320,13 @@ def emit_output(node, from_socket, stack=()):
                 return float(socket.default_value)
             expression = emit_input(socket, stack=stack)
             folded = _fold_constant_scalar(expression)
+            if folded is not None:
+                if __package__:
+                    from .noise_varying_ir import float32_safe_noise_scalar
+                else:
+                    from noise_varying_ir import float32_safe_noise_scalar
+                if not float32_safe_noise_scalar(expression):
+                    _refuse(f'Noise linked {name} requires literal float32/Clamp inputs; arithmetic folding needs source baking')
             if folded is None:
                 if name == 'Roughness':
                     if __package__:
@@ -2386,6 +2401,13 @@ def emit_output(node, from_socket, stack=()):
                 "Noise with a non-constant Scale has no bounded cell yet "
                 f"(source op {scale_expression.get('op')!r})"
             )
+        if node.inputs['Scale'].is_linked:
+            if __package__:
+                from .noise_varying_ir import float32_safe_noise_scalar
+            else:
+                from noise_varying_ir import float32_safe_noise_scalar
+            if not float32_safe_noise_scalar(scale_expression):
+                _refuse('Noise linked Scale requires literal float32/Clamp inputs; arithmetic folding needs source baking')
         if precise_fractal and not math.isfinite(folded_scale):
             _refuse('Unnormalized Noise requires a finite static Scale')
         scale_expression = {"op": "const_float", "value": folded_scale}
@@ -2527,9 +2549,11 @@ def emit_output(node, from_socket, stack=()):
         distortion_value = 0.0
         if distortion_socket is not None:
             if distortion_socket.is_linked:
-                folded = _fold_constant_scalar(
-                    emit_input(distortion_socket, stack=stack)
-                )
+                distortion_expression = emit_input(distortion_socket, stack=stack)
+                if precise_fractal and distortion_expression.get('op') != 'const_float':
+                    _refuse('Native normalized live Roughness requires literal float32 Distortion; linked arithmetic needs source baking'
+                            if native_varying else 'Native Noise requires literal float32 Distortion; linked arithmetic needs source baking')
+                folded = _fold_constant_scalar(distortion_expression)
                 if folded is None:
                     _refuse(
                         "Noise with a non-constant Distortion has no bounded "
@@ -2538,14 +2562,25 @@ def emit_output(node, from_socket, stack=()):
                 distortion_value = folded
             else:
                 distortion_value = float(distortion_socket.default_value)
-        if native_varying and distortion_value != 0:
-            _refuse('Native normalized live Roughness requires Distortion = 0; nonzero Distortion needs source baking')
         if precise_fractal and (not math.isfinite(distortion_value) or abs(distortion_value) > 1):
             _refuse('Unnormalized Noise Distortion exceeds its proven finite [-1,1] domain')
+        if native_varying and distortion_value != 0:
+            if __package__:
+                from .noise_varying_ir import native_distortion_mf_inputs, portable_noise_constant_arithmetic, NATIVE_MF_NOISE_INPUT_MESSAGE, NATIVE_SHADER_NOISE_INPUT_MESSAGE
+            else:
+                from noise_varying_ir import native_distortion_mf_inputs, portable_noise_constant_arithmetic, NATIVE_MF_NOISE_INPUT_MESSAGE, NATIVE_SHADER_NOISE_INPUT_MESSAGE
+            mf_distortion = native_mf and native_distortion_mf_inputs(expression)
+            if native_mf and not mf_distortion:
+                _refuse(NATIVE_MF_NOISE_INPUT_MESSAGE)
+            if not native_mf and not portable_noise_constant_arithmetic(expression):
+                _refuse(NATIVE_SHADER_NOISE_INPUT_MESSAGE)
+            if gpu_backend != 'METAL' or not (mf_distortion or dimensions == '1D' and not native_mf):
+                _refuse('Native normalized live Roughness nonzero Distortion requires verified Metal 1D shader or native MF inputs; use source baking')
+            expression['distortionModel'] = 'native-mf-f32-v1' if mf_distortion else 'metal-1d-fma-f32-v1'
         if native_shader_fused and dimensions in {'3D', '4D'} and (detail_value > 1 or distortion_value != 0):
             _refuse('Normalized Noise Cycles SIMD 3D/4D above Detail1 or with Distortion needs source baking; '
                     'the software renderer cannot reliably compile this workload')
-        if abs(distortion_value) > 1e-9:
+        if distortion_value != 0 if native_varying else abs(distortion_value) > 1e-9:
             # Lane count follows the dimension. The old "2 if 2D else 3" was
             # the same silent fallthrough that broke 1D dimensions: it would
             # emit three offsets for a 1D or 4D noise and the runtime would
@@ -2578,6 +2613,12 @@ def emit_output(node, from_socket, stack=()):
                                      native_shader_f32=shader_offset_profile is not None,
                                      native_shader_fused=native_shader_fused) for seed in seeds
             ]
+        if precise_fractal and get_evaluation_engine() == 'EEVEE':
+            if __package__:
+                from .noise_static_inputs import require_shader_constant_inputs
+            else:
+                from noise_static_inputs import require_shader_constant_inputs
+            require_shader_constant_inputs(expression, _refuse)
         return expression
 
     if idname == "ShaderNodeBump":

@@ -49,6 +49,8 @@ normalize_blur = _sibling("compositor_blur").normalize_blur
 normalize_filter = _sibling("compositor_filter").normalize_filter
 normalize_normal = _sibling("compositor_normal").normalize_normal
 normalize_alpha_conversion = _sibling("compositor_alpha_conversion").normalize_alpha_conversion
+normalize_luminance_key = _sibling("compositor_luminance_key").normalize_luminance_key
+normalize_difference_key = _sibling("compositor_difference_key").normalize_difference_key
 
 TYPES = {
     "FunctionNodeInputBool": "utility-constant",
@@ -70,6 +72,8 @@ TYPES = {
     "CompositorNodeAlphaOver": "alpha-over",
     "CompositorNodeSetAlpha": "set-alpha",
     "CompositorNodePremulKey": "convert-alpha",
+    "CompositorNodeLumaMatte": "luminance-key",
+    "CompositorNodeDiffMatte": "difference-key",
     "CompositorNodeExposure": "exposure",
     "CompositorNodeColorCorrection": "color-correction",
     "CompositorNodePosterize": "posterize",
@@ -567,6 +571,14 @@ def extract(scene):
                 elif node.bl_idname in ("CompositorNodeSetAlpha", "CompositorNodePremulKey"):
                     normalize_alpha_conversion(node, op, lambda incoming: input_value(incoming, ctx),
                         lambda incoming, message: fail("unsupported-alpha-conversion-mode", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeLumaMatte":
+                    normalize_luminance_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
+                        _sibling("compositor_math").numeric_socket_bounds,
+                        lambda incoming, message: fail("unsupported-luminance-key", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeDiffMatte":
+                    normalize_difference_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
+                        _sibling("compositor_math").numeric_socket_bounds,
+                        lambda incoming, message: fail("unsupported-difference-key", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeInvert":
                     for incoming in node.inputs:
                         op["inputs"][incoming.identifier] = {"name": incoming.name, "socketType": incoming.type,

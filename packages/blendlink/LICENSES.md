@@ -45,7 +45,7 @@ the complete license is in
 The separate Blender extension also carries these texts as
 `spectral-NOTICE.txt` and `spectral-LICENSE.txt` beside its GPL aggregate license.
 
-The Perlin gradient, fade and interpolation primitives in `tslNodeRecipe.ts`
+The Perlin gradient, fade and interpolation primitives in `tslNodeRecipe.ts`,
 `tslNativeNoisePrecision.ts` and `staticNoise4d.ts`, and their emitted JavaScript are separately adapted from Cycles/Open Shading
 Language `noise.h` under BSD-3-Clause, copyright 2009-2010 Sony Pictures
 Imageworks Inc., et al., and 2011-2022 Blender Foundation. Complete copyright,
@@ -58,6 +58,11 @@ The first-party native UV tangent and tangent-normal runtimes
 `dist/tslTangentNodes.js`, `dist/tslTangentNormalMap.js` and their source
 TypeScript are also Apache-2.0, as marked by their file-level headers.
 They use the same complete Apache license text linked above.
+
+The first-party bounded Math Modulo implementation `dist/tslMathModuloNative.js`
+and experimental field barrier `dist/tslNoiseFieldBarrier.js`, with their source
+TypeScript, are Apache-2.0 as marked by their file-level headers,
+using the complete Apache license text linked above.
 
 `dist/vendor/n8ao-webgpu/` contains the unchanged runtime from
 `n8ao-webgpu@0.1.0`, licensed CC0-1.0. Its complete `LICENSE`, upstream

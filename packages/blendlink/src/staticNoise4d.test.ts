@@ -62,4 +62,23 @@ describe('fresh static 4D FBM Color', () => {
     expect(evaluateStaticNoiseInput(vector([NaN, 1, 2]))).toBeUndefined()
     expect(evaluateStaticNoiseInput(scalar(2 ** -149))).toBeUndefined()
   })
+
+  it('qualifies constant coordinate arithmetic by native evaluation stage', () => {
+    for (const direction of [-1, 1]) {
+      const canary: TslIrExpression = { op: 'math', operation: 'SUBTRACT', b: scalar(direction), a: {
+        op: 'math', operation: 'SUBTRACT', b: scalar(1e8), a: {
+          op: 'math', operation: 'ADD', a: scalar(1e8), b: scalar(direction),
+        },
+      } }
+      expect(evaluateStaticNoiseInput(canary)).toBe(-direction)
+      expect(evaluateStaticNoiseInput(canary, { exactArithmetic: true })).toBeUndefined()
+      const expr = { ...operation(), input: { op: 'combine', x: canary, y: scalar(-.375), z: scalar(.625) } }
+      expect(foldStaticNoise4dColor({ ...expr, evaluationModel: 'shader' })).toBeUndefined()
+      expect(foldStaticNoise4dColor({ ...expr, evaluationModel: 'shader-mf' })).toBeDefined()
+    }
+    const lostInDouble: TslIrExpression = { op: 'math', operation: 'ADD', a: scalar(2 ** 80), b: scalar(1) }
+    expect(evaluateStaticNoiseInput(lostInDouble)).toBe(2 ** 80)
+    expect(evaluateStaticNoiseInput(lostInDouble, { exactArithmetic: true })).toBeUndefined()
+    expect(foldStaticNoise4dColor({ ...operation(), evaluationModel: 'shader' })).toBeDefined()
+  })
 })

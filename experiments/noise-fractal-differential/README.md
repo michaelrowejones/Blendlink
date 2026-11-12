@@ -440,7 +440,7 @@ Roughness uses `noise_varying_native`. The new opcode keeps previously saved
 signed FBM and other fractal modes retain that existing capability.
 
 This batch supports Detail <=2, finite static abs(Scale)<=80 and
-abs(Lacunarity)<=2, and **Distortion =0**. The actual Roughness expression must
+abs(Lacunarity)<=2. Distortion =0 keeps the full dimension/backend scope. The actual Roughness expression must
 prove both scalar shape and [0,1] range; a label such as `roughnessRange` grants
 nothing. Negative Detail uses the native zero clamp. Metal/OpenGL source
 backend and compatible Perlin model are explicit. Metal periodic and native-MF
@@ -452,20 +452,70 @@ The new opcode does not acquire an exact output-unit proof from Normalize.
 An authored Clamp restores a downstream unit/HSL/Roughness contract. This
 conservative decision leaves previously earned static 1D/2D bounds intact.
 
-Nonzero Distortion receives the same exact named refusal independently from
-the source compiler and runtime. The ordinary renders initially passed, but
-amplified actual shader-stage controls exposed errors in coupled distorted
-fields. Their FMA/offset investigation is separate from this shipped batch;
-no error budget is expanded and no production input graph is rewritten.
+Nonzero Distortion in [-1,1] is separately qualified for **Metal-source 1D
+shader evaluation**, tagged `metal-1d-fma-f32-v1`, and the verified pure native-MF
+input subset, tagged `native-mf-f32-v1`. MF is available from Blender 5.0;
+the measured versions here are 5.2/5.3 on Apple ARM. The runtime independently
+walks the actual input, W, Scale and Roughness expressions. Claimed MF stage
+labels cannot turn UVs, images or attributes into constants. MF coordinates
+and W require independently certified exact Float32 literal/combine/separate
+and supported arithmetic plumbing, including the default exact `.5*x+.125`.
+Unqualified Mapping/Vector Rotate coordinate expressions take source baking.
+Nested MF Noise coordinates obey the same certificate. Every closed constant
+arithmetic island inside Roughness also needs that exact certificate, even
+when its surrounding Noise input is opaque to scalar constant evaluation.
+Only executable operands count; an extra claimed opaque child cannot hide a
+bad island. The fresh scalar shader profile applies the same island check.
+The fresh scalar Metal profile explicitly stages the fade FMA polynomial,
+the two-FMA interpolation `fma(b,t,fma(-a,t,a))`, and the warp multiply-add.
+Generic browser mix and partial-contraction variants fail the amplified
+software controls. These helpers are selected only by the new nonzero-D tag;
+MF, D0 and the old serialized kernels retain their existing arithmetic.
 
-The native corpus requests 259 actual graphs per Blender 4.2/5.2/5.3: 193
-admitted graphs and 66 declared Distortion refusals. It covers all four
+Linked Distortion arithmetic also takes a named source-bake refusal, even if
+Python-double folding returns zero. Actual Blender 5.2/5.3 native MF evaluation
+of `(((1e8 + 1) - 1e8) - 1)` produces -1 while that fold returns zero; the
+measured 4.2 Metal shader constant folder instead returns zero. Exact literal
+and Value-node links keep D0 admission. Serialized runtime arithmetic stays
+unchanged. `probe-linked-distortion.py` reproduces the native control and
+retains the unaltered refused graph, input images and float32 render.
+The same conservative source guard covers fresh static normalized/signed
+Noise and other precise fractal paths. The probe checks live Roughness,
+static normalized and signed FBM separately, including native D0 comparison
+renders: the modern native graph must actually differ from the literal-zero
+variant. The old serialized runtime programs retain their existing arithmetic.
+
+The same source-admission audit covers folded Detail, Roughness, Lacunarity,
+Scale and the active Offset/Gain sockets. Linked static controls accept exact
+float32 literals/Value links, ordered Clamp bounds, RANGE Clamp normalization
+and finite min/max selection. Linked arithmetic folding takes a named bake
+path; a claimed constant/range annotation cannot grant a certificate. Truly
+live independently bounded Roughness retains its executable input graph.
+`probe-linked-noise-controls.py` retains six actual cancellation graphs,
+native scalar readbacks and native comparisons to each literal-zero variant.
+The positive canary `(((1e8 - 1) - 1e8) + 1)` folds to zero in Python but native
+5.2/5.3 MF returns one; the measured 4.2 Metal shader also returns one for
+this positive canary. Its native Color changes range from .00146 to .12622
+across the six controls on all three measured versions. Reversed MINMAX
+Clamp bounds refuse; RANGE explicitly normalizes them. This is a source guard, not a generic
+rewrite of constant folding or old serialized programs.
+
+OpenGL nonzero Distortion and 2D–4D shader-stage nonzero Distortion still
+receive an exact named source-bake refusal from both compiler and runtime.
+This includes spatial Fac as well as Color. The Distortion tags do not alter
+old static/varying opcodes, D0 arithmetic, or their coordinate models. Older
+versions of this runtime already refuse nonzero Distortion on the new opcode;
+they cannot silently ignore these new precision tags. Tiny nonzero authored
+values retain their warp and offsets rather than being pruned as D0.
+
+The native corpus requests 291 actual graphs on Blender 4.2 (221 admitted,
+70 exact refusals) and 294 on 5.2/5.3 (264 admitted, 30 refusals). It covers all four
 dimensions, Fac/Color, MF-eligible and image Roughness, mixed stage
 compositions, negative/fractional Detail, Scale 0/-1/40/80, zero/negative/
 nonbinary Lacunarity, real Clamp endpoints and amplified residuals. Independent
 constant/image controls remain included. Both physical and software browser
-backends replay the exact same retained native pixels: all 2,316 built
-readbacks pass, with all 122 runtime modules covered by the semantic build
+backends replay the exact same retained native pixels: all 2,996 built
+readbacks pass, with all 127 runtime modules covered by the semantic build
 guard. No browser/shader errors or device losses occurred in this batch.
 
 Every refused graph is retained under `reference/refused/`: actual RNA
@@ -474,6 +524,70 @@ pixels, and a native render of the unaltered graph. These are source snapshots,
 not replacement shaders or successful runtime comparisons. Manifest IDs and
 exact reasons distinguish the refused scope; requested counts must equal
 admitted plus refused counts, and expected/observed refusal sets must match.
+
+The additional 30 amplified domain cells cover negative/nonbinary/endpoint
+Distortion, tiny 2^-35 Distortion, fractional Detail, Scale 0/-1/40/80,
+negative/zero/nonbinary Lacunarity and actual linked Roughness endpoints.
+The unchanged acceptance budget is 2e-5 plus independently measured native
+carrier precision. No production input graph or native reference is replaced.
+
+An additional 31-case coordinate corpus per version checks constant/image
+inputs immediately before/at/after +/-100000 and +/-1e6 plus the large
+1074100096 cancellation case. All 372 built physical/software readbacks pass:
+
+```sh
+BLENDLINK_NOISE_NATIVE_VARYING=1 BLENDLINK_NOISE_NATIVE_DISTORTION_COORDINATES=1 \
+BLENDLINK_BLENDER=/absolute/path/to/blender \
+BLENDLINK_NOISE_EVIDENCE=artifacts/native-live-distortion-coordinates \
+node experiments/noise-fractal-differential/run.mjs --built
+```
+
+After the conservative scalar-source guards, fresh native regeneration and
+physical replay preserve SHA256-identical IR/native pixels for all 749
+admitted programs and identical bytes for all 127 tested runtime modules.
+The software proofs therefore exercise those same actual programs and
+references, with the stricter source admission in place.
+
+The input-staging canaries retain the actual `(((1e8+1)-1e8)-1)` coordinate,
+W and composed `Clamp(innerNoiseFac*.01 + cancellation)` graphs. Before this
+guard, actual 5.3 MF nonzero-D inputs differed by .026–.090 on WebGPU; the
+amplified Roughness composition differed by .104. Actual 4.2 scalar shader
+canaries differ on opposite browser backends (.0357 in Roughness on WebGPU,
+.0437 in W on WebGL2). Staticness alone is insufficient to choose a universal
+rounding model. Both source and runtime now refuse the witnessed class; old
+serialized static/varying opcodes retain their arithmetic. Arbitrary graph
+amplification remains a separate limit rather than a claim of this certificate.
+
+The focused source-admission corpus uses:
+
+```sh
+BLENDLINK_NOISE_NATIVE_VARYING=1 BLENDLINK_NOISE_NATIVE_DISTORTION_INPUTS_ONLY=1 \
+BLENDLINK_BLENDER=/absolute/path/to/blender \
+BLENDLINK_NOISE_EVIDENCE=artifacts/native-live-input-precision \
+node experiments/noise-fractal-differential/run.mjs --built
+```
+
+The unpromoted vector-shader precision study remains reproducible through the
+existing `residual-warp` and `residual-small-warp` graph IDs. Ordinary renders
+passed, but amplified seeded Color exposed rare remaining differences, so
+that broader domain is not admitted. A native-only control compares a single
+distorted node with an authored graph of signed warp octaves, Vector Math
+Multiply Add and zero-distortion final Noise:
+
+```sh
+BLENDLINK_NOISE_DISTORTION_DIAGNOSTIC=artifacts/native-distortion-controls \
+/absolute/path/to/blender --background --factory-startup --python-exit-code 1 \
+  --python experiments/noise-fractal-differential/probe-native-distortion.py
+```
+
+This is diagnostic evidence, not a relaxed runtime gate. It retains actual
+RNA graphs, exact input images and native float32 readbacks. Blender 5.3 Metal
+fused-offset controls reduce native-vs-native maximum differences to
+9.06e-6 at Scale1 and 6.68e-6 at Scale40, but do not remove them. An independent
+capture of 73,728 actual warp operand/result tuples found zero portable-FMA
+errors against an exact-rational nearest-even float32 oracle. An explicit
+FBM function boundary also did not remove the remaining seeded discrepancies.
+These findings do not justify wider vector-stage admission or larger budgets.
 
 ```sh
 BLENDLINK_NOISE_NATIVE_VARYING=1 \

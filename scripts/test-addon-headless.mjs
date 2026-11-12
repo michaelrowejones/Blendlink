@@ -29,6 +29,8 @@ const installedNodeFamilies = [
   ['ShaderNodeNewGeometry', 'geometry_context'], ['ShaderNodeTexCoord', 'geometry_context'],
   ['ShaderNodeTexCoord', 'uv_active'],
 ]
+const installedCompositorFamilies = ['CompositorNodeSetAlpha', 'CompositorNodePremulKey',
+  'CompositorNodeFilter', 'CompositorNodeNormal', 'CompositorNodeLumaMatte', 'CompositorNodeDiffMatte']
 
 // Human labels for discovered modules. A missing label degrades the console
 // line to a derived one; it can never make a suite silently not run, which
@@ -377,16 +379,21 @@ try:
     conversion = compositor_tree.nodes.new("CompositorNodePremulKey")
     enhancement = compositor_tree.nodes.new("CompositorNodeFilter")
     direction = compositor_tree.nodes.new("CompositorNodeNormal")
+    luminance_key = compositor_tree.nodes.new("CompositorNodeLumaMatte")
+    difference_key = compositor_tree.nodes.new("CompositorNodeDiffMatte")
     compositor_tree.links.new(source.outputs["Image"], mask.inputs["Image"])
     compositor_tree.links.new(mask.outputs[0], conversion.inputs["Image"])
     compositor_tree.links.new(conversion.outputs[0], enhancement.inputs["Image"])
     compositor_tree.links.new(direction.outputs["Normal"], enhancement.inputs["Fac"])
-    compositor_tree.links.new(enhancement.outputs[0], sink.inputs[0])
+    compositor_tree.links.new(enhancement.outputs[0], luminance_key.inputs["Image"])
+    compositor_tree.links.new(luminance_key.outputs["Image"], difference_key.inputs["Image 1"])
+    compositor_tree.links.new(enhancement.outputs[0], difference_key.inputs["Image 2"])
+    compositor_tree.links.new(difference_key.outputs["Image"], sink.inputs[0])
     before = len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups)
     compositor_module = importlib.import_module(module_name + ".compositor_graph")
     compositor_program = compositor_module.extract(compositor_scene)
     assert compositor_program["status"] == "extracted", compositor_program
-    assert {"set-alpha", "convert-alpha", "filter", "normal-direction"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
+    assert {"set-alpha", "convert-alpha", "filter", "normal-direction", "luminance-key", "difference-key"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
     assert before == (len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups))
 finally:
     bpy.data.scenes.remove(compositor_scene)
@@ -401,7 +408,7 @@ print("##blendlink-addon-install " + json.dumps({
     "exportOperator": bpy.ops.blendlink.export_website.get_rna_type().identifier,
     "atlasOperator": bpy.ops.blendlink.check_atlas_fit.get_rna_type().identifier,
     "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
-    "compositorFamilies": ["CompositorNodeSetAlpha", "CompositorNodePremulKey", "CompositorNodeFilter", "CompositorNodeNormal"],
+    "compositorFamilies": ${JSON.stringify(installedCompositorFamilies)},
     "nodeFamilies": len({node_type for node_type, _expected in families}),
     "testedNodeFamilies": list(dict.fromkeys(node_type for node_type, _expected in families)),
     "testedNodeCapabilities": [node_type + "#" + expected for node_type, expected in families],
@@ -428,7 +435,7 @@ print("##blendlink-addon-install " + json.dumps({
     new Set(tested).size === tested.length && required.every(name => tested.includes(name)) &&
     tested.every(name => required.includes(name) || optional.includes(name))
   if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
-      !validNodeFamilies || !validCapabilities || JSON.stringify(status.compositorFamilies) !== JSON.stringify(['CompositorNodeSetAlpha', 'CompositorNodePremulKey', 'CompositorNodeFilter', 'CompositorNodeNormal']) ||
+      !validNodeFamilies || !validCapabilities || JSON.stringify(status.compositorFamilies) !== JSON.stringify(installedCompositorFamilies) ||
       status.exportOperator !== 'BLENDLINK_OT_export_website' || status.atlasOperator !== 'BLENDLINK_OT_check_atlas_fit') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }

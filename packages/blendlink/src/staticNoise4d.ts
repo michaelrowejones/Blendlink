@@ -17,7 +17,13 @@ const literal = (value: unknown): value is number => finite(value) && F(value) =
 /** An executable subset, not a staticness claim supplied by the payload. No
  * textures, coordinates, uniforms, nested Noise or source readbacks enter it.
  * Ambiguous contracted multiply-add / approximate division stays on the GPU. */
-export function evaluateStaticNoiseInput(expression: TslIrExpression): Constant | undefined {
+export function evaluateStaticNoiseInput(expression: TslIrExpression,
+  { exactArithmetic = false }: { exactArithmetic?: boolean } = {}): Constant | undefined {
+  const exactSum = (a: number, b: number): boolean => a === 0 || b === 0
+    || Math.abs(Math.floor(Math.log2(Math.abs(a))) - Math.floor(Math.log2(Math.abs(b)))) <= 24 && add(a, b) === a + b
+  const sum = (a: number, b: number): number => exactArithmetic && !exactSum(a, b) ? NaN : add(a, b)
+  const difference = (a: number, b: number): number => sum(a, -b)
+  const product = (a: number, b: number): number => exactArithmetic && mul(a, b) !== a * b ? NaN : mul(a, b)
   let count = 0
   const visiting = new Set<object>()
   const visit = (value: unknown, depth: number): Constant | undefined => {
@@ -45,16 +51,16 @@ export function evaluateStaticNoiseInput(expression: TslIrExpression): Constant 
         }
         case 'vector_scale': {
           const input = child('input'), scale = scalar('scale')
-          if (Array.isArray(input) && scale !== undefined) result = input.map(part => mul(part, scale)) as unknown as Vector
+          if (Array.isArray(input) && scale !== undefined) result = input.map(part => product(part, scale)) as unknown as Vector
           break
         }
         case 'math': {
           const a = scalar('a'), b = 'b' in node ? scalar('b') : undefined, c = 'c' in node ? scalar('c') : undefined
           if (a === undefined) break
-          if (node.operation === 'ADD' && b !== undefined) result = add(a, b)
-          else if (node.operation === 'SUBTRACT' && b !== undefined) result = sub(a, b)
-          else if (node.operation === 'MULTIPLY' && b !== undefined) result = mul(a, b)
-          else if (node.operation === 'MULTIPLY_ADD' && b !== undefined && c !== undefined && mul(a, b) === a * b) result = add(mul(a, b), c)
+          if (node.operation === 'ADD' && b !== undefined) result = sum(a, b)
+          else if (node.operation === 'SUBTRACT' && b !== undefined) result = difference(a, b)
+          else if (node.operation === 'MULTIPLY' && b !== undefined) result = product(a, b)
+          else if (node.operation === 'MULTIPLY_ADD' && b !== undefined && c !== undefined && mul(a, b) === a * b) result = sum(mul(a, b), c)
           else if (node.operation === 'DIVIDE' && b !== undefined && b !== 0 && F(a / b) === a / b) result = F(a / b)
           else if (node.operation === 'MINIMUM' && b !== undefined) result = Math.min(a, b)
           else if (node.operation === 'MAXIMUM' && b !== undefined) result = Math.max(a, b)
@@ -65,10 +71,10 @@ export function evaluateStaticNoiseInput(expression: TslIrExpression): Constant 
           const a = child('a'), b = child('b'), c = 'c' in node ? child('c') : undefined
           if (!Array.isArray(a) || !Array.isArray(b)) break
           const parts = a.map((part, axis) => {
-            if (node.operation === 'ADD') return add(part, b[axis]!)
-            if (node.operation === 'SUBTRACT') return sub(part, b[axis]!)
-            if (node.operation === 'MULTIPLY') return mul(part, b[axis]!)
-            if (node.operation === 'MULTIPLY_ADD' && Array.isArray(c) && mul(part, b[axis]!) === part * b[axis]!) return add(mul(part, b[axis]!), c[axis]!)
+            if (node.operation === 'ADD') return sum(part, b[axis]!)
+            if (node.operation === 'SUBTRACT') return difference(part, b[axis]!)
+            if (node.operation === 'MULTIPLY') return product(part, b[axis]!)
+            if (node.operation === 'MULTIPLY_ADD' && Array.isArray(c) && mul(part, b[axis]!) === part * b[axis]!) return sum(mul(part, b[axis]!), c[axis]!)
             return NaN
           })
           if (parts.every(ordinary)) result = parts as unknown as Vector
@@ -131,7 +137,10 @@ export function foldStaticNoise4dColor(expression: TslIrExpression): Vector | un
   if (![detail, roughness, lacunarity].every(finite) || (detail as number) > 6 || (roughness as number) > 1 || Math.abs(lacunarity as number) > 2) return undefined
   const scaleNode = expression.scale as TslIrExpression | undefined
   if (scaleNode?.op !== 'const_float' || !literal(scaleNode.value) || Math.abs(scaleNode.value) > 80) return undefined
-  const input = evaluateStaticNoiseInput(expression.input as TslIrExpression), w = evaluateStaticNoiseInput(expression.w as TslIrExpression)
+  // Native MF stores each operation in Float32. Legacy shader-constant folding
+  // can retain wider intermediates, so only exact arithmetic is portable there.
+  const options = { exactArithmetic: expression.evaluationModel !== 'shader-mf' }
+  const input = evaluateStaticNoiseInput(expression.input as TslIrExpression, options), w = evaluateStaticNoiseInput(expression.w as TslIrExpression, options)
   if (!Array.isArray(input) || typeof w !== 'number') return undefined
   const offsets = expression.colorOffsets
   if (!Array.isArray(offsets) || offsets.length !== 2 || offsets.some(offset => !Array.isArray(offset) || offset.length !== 4 || !offset.every(literal))) return undefined

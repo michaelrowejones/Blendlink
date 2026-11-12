@@ -1,3 +1,5 @@
+import { buildNativeMathModulo } from './tslMathModuloNative.js'
+import { buildNoiseFieldBarrier } from './tslNoiseFieldBarrier.js'
 import { nativeBumpInput, isNativeUnitNormal } from './tslBumpPassthrough.js'
 /** MTLX-TSL-001: build TSL nodes from the Blender-channel IR.
  *
@@ -32,7 +34,7 @@ import { buildMetalShaderNoiseCoordinate, buildExactNoiseCoordinate } from './ts
 import { nativeCpuPerlinFade, buildNativeNoiseFma } from './tslNativeNoisePrecision.js'
 import { buildTslFractalNoise } from './tslFractalNoise.js'
 import { buildTslVaryingFbm, isUnitRoughnessExpression } from './tslVaryingNoise.js'
-import { validateNativeVaryingNoise, buildNativeVaryingFbm } from './tslNativeVaryingNoise.js'
+import { validateNativeVaryingNoise, buildNativeVaryingFbm, nativeMetalVaryingFade, nativeMetalVaryingMix } from './tslNativeVaryingNoise.js'
 import { foldStaticNoise4dColor } from './staticNoise4d.js'
 import {
   abs,
@@ -159,6 +161,8 @@ const tslFn = (TSLX as Record<string, unknown>).Fn as (
 // the 16-corner integer hash body independently for every lane and octave.
 const fractalPerlin1d = tslFn(([position]) => perlin1d(position!))
   .setLayout({ name: 'blendlinkFractalPerlin1dV1', type: 'float', inputs: [{ name: 'position', type: 'float' }] })
+const nativeVaryingPerlin1dMetal = tslFn(([position]) => perlin1d(position!, nativeMetalVaryingFade, nativeMetalVaryingMix))
+  .setLayout({ name: 'blendlinkNativeVaryingMetalPerlin1dV1', type: 'float', inputs: [{ name: 'position', type: 'float' }] })
 const fractalPerlin4d = tslFn(([position]) => perlin4d(position!))
   .setLayout({ name: 'blendlinkFractalPerlin4dV1', type: 'float', inputs: [{ name: 'position', type: 'vec4' }] })
 const fractalPerlin2d = tslFn(([position]) => perlin2d(position!))
@@ -610,6 +614,8 @@ function build(expression: TslIrExpression): TslExpression {
     }
     case 'clamp01':
       return tslClamp(build(child(expression, 'input')), 0.0, 1.0)
+    case 'math_modulo_native':
+      return buildNativeMathModulo(expression, build, fail)
     case 'math':
       return buildMath(expression)
     case 'vector_scale':
@@ -999,7 +1005,8 @@ function build(expression: TslIrExpression): TslExpression {
       // Legacy 2D/3D documents retain their MaterialX primitive. Raw 2D
       // uses explicit native float32 fade stages; 1D/4D have native ports
       // because MaterialX has neither arity.
-      const unwrappedOctave = dimensions === 1 ? (legacyNormalized ? perlin1d : fractalPerlin1d)
+      const unwrappedOctave = nativeVarying && expression.distortionModel === 'metal-1d-fma-f32-v1' ? nativeVaryingPerlin1dMetal
+        : dimensions === 1 ? (legacyNormalized ? perlin1d : fractalPerlin1d)
         : dimensions === 4 ? (cpuPerlin ? normalizedPerlin4dCpu : legacyNormalized ? perlin4d : fractalPerlin4d)
           : nativeNormalized && dimensions === 2 ? (cpuPerlin ? normalizedPerlin2dCpu : fractalPerlin2d) : !normalizeOutput && dimensions === 2 ? fractalPerlin2d : nativeNormalized && dimensions === 3 ? (cpuPerlin ? normalizedPerlin3dCpu : normalizedPerlin3d) : noiseType === 'HYBRID_MULTIFRACTAL' ? (dimensions === 2 ? hybridPerlin2d : hybridPerlin3d) : tslNoise
       const periodic = nativeNormalized && ['eevee-metal-periodic-f32', 'mf-periodic-f32'].includes(String(expression.perlinModel))
@@ -1032,7 +1039,11 @@ function build(expression: TslIrExpression): TslExpression {
                 : position.add(tslVec3(offset[0], offset[1], offset[2]))
         )
         const lanes = offsets.map((offset) => octaveForDimension(shift(offset)))
-        position = position.add(
+        // This fresh source-qualified scalar model requires native Metal FMA.
+        // Browser implicit mul+add contraction differs on software backends.
+        position = nativeVarying && expression.distortionModel === 'metal-1d-fma-f32-v1'
+          ? buildNativeNoiseFma(lanes[0]!, tslFloat(expression.distortion), position)
+          : position.add(
           (dimensions === 1 ? lanes[0]!
             : dimensions === 2 ? tslVec2(lanes[0], lanes[1])
               : dimensions === 4
@@ -1042,6 +1053,7 @@ function build(expression: TslIrExpression): TslExpression {
         )
         if (nativeNormalized) position = roundPoint(position)
       }
+      position = buildNoiseFieldBarrier(expression, position)
       const detail = scalar(expression, 'detail')
       const roughness = scalar(expression, 'roughness')
       const lacunarity = typeof expression.lacunarity === 'number'
@@ -1850,7 +1862,8 @@ const blenderOverlayChannel = tslFn(([aChannel, bChannel, f]) => {
  * gradient, fade, full perlin) agreeing to 4.2e-8; the gated `noise-1d` cells
  * hold the Blender-vs-TSL claim.
  */
-function perlin1d(x: TslExpression): TslExpression {
+function perlin1d(x: TslExpression, fade = perlinFade,
+  interpolate:(a:TslExpression,b:TslExpression,t:TslExpression)=>TslExpression = tslMix): TslExpression {
   const ix = tslFloor(x)
   const fx = x.sub(ix)
   // Blender keeps X as a signed int and hands it to hash_uint, which C
@@ -1858,8 +1871,8 @@ function perlin1d(x: TslExpression): TslExpression {
   // undefined for negatives, so bitcast is the only well-defined spelling and
   // negative coordinates are entirely normal here.
   const X = tslBitcast(tslIntOf(ix), 'uint')
-  const u = perlinFade(fx)
-  const result = tslMix(
+  const u = fade(fx)
+  const result = interpolate(
     perlinGrad1(hashUint1(X), fx),
     perlinGrad1(hashUint1(X.add(tslUintOf(1))), fx.sub(1.0)),
     u,

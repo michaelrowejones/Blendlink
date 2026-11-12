@@ -30,11 +30,17 @@ def source_qualified_roughness_refusal(case, engine, varying, reason, source_pro
             and reason == expected)
 
 
-def native_live_distortion_refusal(case, engine, varying, reason):
+def native_live_distortion_refusal(case, engine, varying, reason, gpu_backend='METAL', native_version=(4,2,0)):
+    precision_case = case.get('inputCancellationAxis') in {'x','w','rho'}
+    admitted = (gpu_backend == 'METAL' and (case.get('dimensions') == '1D'
+                or native_version >= (5,0,0) and case.get('stage') == 'constant') and not precision_case)
+    expected_reason = ('Native normalized live Roughness nonzero Distortion requires exact MF coordinate inputs and portable constant arithmetic; use source baking'
+        if native_version >= (5,0,0) else 'Native normalized live Roughness nonzero Distortion requires portable constant arithmetic; use exact inputs or source baking') if precision_case else 'Native normalized live Roughness nonzero Distortion requires verified Metal 1D shader or native MF inputs; use source baking'
     return (varying and engine in {'BLENDER_EEVEE','BLENDER_EEVEE_NEXT'} and case.get('kind') == 'noise'
             and case.get('normalize') is True and case.get('type','FBM') == 'FBM'
             and bool(case.get('roughnessStage')) and case.get('Distortion',0) != 0
-            and reason == 'Native normalized live Roughness requires Distortion = 0; nonzero Distortion needs source baking')
+            and not admitted
+            and reason == expected_reason)
 
 
 def authored_graph_state(material):
@@ -124,6 +130,16 @@ def exact_inputs(tree, precision='half'):
     for channel, multiplier in enumerate([1, 613, 1019]):
         values[:, channel] = ((index * multiplier) % 2048) / np.float32(1024) - .5
         if precision == 'float32': values[:, channel] = np.sin(index.astype(np.float32) * np.float32(.137 + channel * .071)) * np.float32(.973) + np.float32(.173)
+    if precision in {'modulo-positive', 'modulo-negative'}:
+        # Independent full-f32 field spans the admitted band, including endpoint
+        # and quotient-rounding canaries. Never reconstruct input from GPU output.
+        mixed = (index.astype(np.uint64) * np.uint64(1664525) + np.uint64(1013904223)) % np.uint64(2**31 - 2**24 - 128)
+        values[:, 0] = (mixed + np.uint64(2**24)).astype(np.float32)
+        controls = [2**24, 2**24+2, 1074099968, 1074100096, 1638499968, 2147483520, 1000000000]
+        values[:len(controls), 0] = controls
+        if precision == 'modulo-negative': values[:, 0] *= -1
+    if precision in {'modulo-half-positive', 'modulo-half-negative'}:
+        values[:, 0] = (((index * 613) % 65505) - 32752).astype(np.float16).astype(np.float32)
     image.pixels.foreach_set(values.ravel())
     image.update()
     texture = tree.nodes.new('ShaderNodeTexImage')
@@ -151,6 +167,15 @@ def make_material(case):
             source.inputs[index].default_value = value
             assert source.inputs[index].default_value == float(np.float32(value)), 'Coordinate socket changed the authored test value'
         incoming = source.outputs[0]
+        if case.get('coordinateCanary'):
+            first = tree.nodes.new('ShaderNodeMath'); first.operation = 'ADD'
+            first.inputs[0].default_value = 100000000
+            first.inputs[1].default_value = case['coordinateCanary']
+            second = tree.nodes.new('ShaderNodeMath'); second.operation = 'SUBTRACT'
+            tree.links.new(first.outputs[0], second.inputs[0]); second.inputs[1].default_value = 100000000
+            third = tree.nodes.new('ShaderNodeMath'); third.operation = 'SUBTRACT'
+            tree.links.new(second.outputs[0], third.inputs[0]); third.inputs[1].default_value = case['coordinateCanary']
+            tree.links.new(third.outputs[0], source.inputs[0])
     else:
         incoming = exact_inputs(tree, case.get('inputPrecision', 'half'))
     if 'coordinateOffset' in case:
@@ -174,6 +199,42 @@ def make_material(case):
         modulo = tree.nodes.new('ShaderNodeMath'); modulo.operation = 'MODULO'
         tree.links.new(component.outputs[0], modulo.inputs[0]); modulo.inputs[1].default_value = 100000
         raw = modulo.outputs[0]; factor, bias = (1 if case['coordinateOffset'][0] > 0 else -1)/128, .5
+    elif case['kind'] == 'math-modulo-probe':
+        component = tree.nodes.new('ShaderNodeSeparateXYZ'); tree.links.new(incoming, component.inputs[0])
+
+        def math_node(operation, a, b=None):
+            node = tree.nodes.new('ShaderNodeMath'); node.operation = operation
+            for index, value in enumerate((a, b)):
+                if value is None: continue
+                if isinstance(value, bpy.types.NodeSocket): tree.links.new(value, node.inputs[index])
+                else: node.inputs[index].default_value = value
+            return node.outputs[0]
+
+        a = component.outputs[0]
+        if case['variant'] == 'quotient':
+            quotient = math_node('TRUNC', math_node('DIVIDE', a, 100000))
+            raw = math_node('SUBTRACT', quotient, math.trunc(case['point'] / 100000))
+            factor, bias = .125, .5
+        else:
+            remainder = math_node('MODULO', a, 100000)
+            if case['variant'] == 'zero-sign':
+                raw = math_node('ARCTAN2', remainder, -1)
+                factor, bias = .125, .5
+            else:
+                # Split into independently representable positive lanes. The
+                # low lane distinguishes a32-unit remainder error even when
+                # the native half target would hide it in a large raw value.
+                absolute = math_node('ABSOLUTE', remainder)
+                high = math_node('FLOOR', math_node('DIVIDE', absolute, 256))
+                low = math_node('SUBTRACT', absolute, math_node('MULTIPLY', high, 256))
+                output = tree.nodes.new('ShaderNodeCombineXYZ')
+                for socket, value in zip(output.inputs, (
+                    math_node('ADD', math_node('MULTIPLY', high, 1/1024), .125),
+                    math_node('ADD', math_node('MULTIPLY', low, 1/256), .125),
+                    math_node('ADD', math_node('MULTIPLY', math_node('SIGN', remainder), .125), .5))):
+                    tree.links.new(value, socket)
+                tree.links.new(output.outputs[0], emission.inputs['Color'])
+                return material, emission
     else:
         node = tree.nodes.new('ShaderNodeTexNoise')
         node.noise_type = case.get('type', 'FBM')
@@ -221,6 +282,18 @@ def make_material(case):
             w.inputs[2].default_value = .125
             tree.links.new(components.outputs[1], w.inputs[0])
             tree.links.new(w.outputs[0], node.inputs['W'])
+        if case.get('inputCancellationAxis'):
+            first=tree.nodes.new('ShaderNodeMath');first.operation='ADD';first.inputs[0].default_value=1e8;first.inputs[1].default_value=1
+            second=tree.nodes.new('ShaderNodeMath');second.operation='SUBTRACT';second.inputs[1].default_value=1e8;tree.links.new(first.outputs[0],second.inputs[0])
+            third=tree.nodes.new('ShaderNodeMath');third.operation='SUBTRACT';third.inputs[1].default_value=1;tree.links.new(second.outputs[0],third.inputs[0])
+            if case['inputCancellationAxis']=='w':tree.links.new(third.outputs[0],node.inputs['W'])
+            elif case['inputCancellationAxis']=='x':
+                point=tree.nodes.new('ShaderNodeCombineXYZ');point.inputs[1].default_value=-.375;point.inputs[2].default_value=.625
+                tree.links.new(third.outputs[0],point.inputs[0]);tree.links.new(point.outputs[0],node.inputs['Vector'])
+            else:
+                clamp=node.inputs['Roughness'].links[0].from_node;inner=clamp.inputs['Value'].links[0].from_socket
+                scaled=tree.nodes.new('ShaderNodeMath');scaled.operation='MULTIPLY';scaled.inputs[1].default_value=.01;tree.links.new(inner,scaled.inputs[0])
+                mixed=tree.nodes.new('ShaderNodeMath');mixed.operation='ADD';tree.links.new(scaled.outputs[0],mixed.inputs[0]);tree.links.new(third.outputs[0],mixed.inputs[1]);tree.links.new(mixed.outputs[0],clamp.inputs['Value'])
         raw = node.outputs[case['output']]
         factor, bias = case.get('oracleScale', .0625), .5
         if 'staticBaseline' in case:
@@ -444,6 +517,46 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                         cases.append({'id':f'{engine.lower()}-native-varying-residual-{label}-{dimension.lower()}-{stage}',
                             'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':'Color','stage':stage,
                             'roughnessStage':'constant-function' if stage=='constant' else 'image','Detail':2,'residual':True,**settings})
+            # Earn nonzero Distortion independently of the D0 capability.
+            # Constant vector cases remain actual shader refusals on 4.2;
+            # 5.x native MF and the 1D Metal shader have separate tags.
+            distortion_controls = [
+                {'Distortion':-.37,'Detail':1.5,'Scale':80,'Lacunarity':-2},
+                {'Distortion':1,'Detail':.5,'Scale':-1,'Lacunarity':1.7},
+                {'Distortion':-1,'Detail':2,'Scale':1,'Lacunarity':0},
+                {'Distortion':2**-35,'Detail':0,'Scale':0,'Lacunarity':2},
+                {'Distortion':.37,'Detail':2,'Scale':40,'Lacunarity':1.7,'roughnessTransform':[0,0]},
+                {'Distortion':-.37,'Detail':2,'Scale':40,'Lacunarity':1.7,'roughnessTransform':[0,1]},
+            ]
+            for dimension,stage in [('1D','image'),*[(d,'constant') for d in ['1D','2D','3D','4D']]]:
+                for index,settings in enumerate(distortion_controls):
+                    cases.append({'id':f'{engine.lower()}-native-varying-distortion-domain-{dimension.lower()}-{stage}-{index}',
+                        'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':'Color','stage':stage,
+                        'roughnessStage':'constant-function' if stage=='constant' else 'image','residual':True,**settings})
+            if os.environ.get('BLENDLINK_NOISE_NATIVE_DISTORTION_COORDINATES'):
+                cases = [case for case in cases if case['kind'] in {'constant','image-control'}]
+                points = []
+                for boundary in [100000,1000000]:
+                    center = np.float32(boundary)
+                    for point in [np.nextafter(center,np.float32(-math.inf)),center,np.nextafter(center,np.float32(math.inf))]:
+                        points.extend([float(point),-float(point)])
+                points.extend([1074100096.,-1074100096.])
+                for index,point in enumerate(points):
+                    for stage in ['constant','image']:
+                        position = {'coordinates':[point,0,0]} if stage=='constant' else {'coordinateOffset':[point,0,0]}
+                        cases.append({'id':f'{engine.lower()}-native-varying-distortion-coordinate-{stage}-{index}',
+                            'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':'1D','output':'Color','stage':stage,
+                            'roughnessStage':'constant-function' if stage=='constant' else 'image','residual':True,
+                            'coordinateProbe':True,'Detail':1.5,'Scale':1,'Lacunarity':1.7,'Distortion':-.37 if point<0 else .37,**position})
+            if not os.environ.get('BLENDLINK_NOISE_NATIVE_DISTORTION_COORDINATES'):
+                if os.environ.get('BLENDLINK_NOISE_NATIVE_DISTORTION_INPUTS_ONLY'):
+                    cases=[case for case in cases if case['kind'] in {'constant','image-control'}]
+                domains=[('3D','x'),('4D','x'),('4D','w'),('1D','w'),('3D','rho')] if bpy.app.version >= (5,0,0) else [('1D','w'),('1D','rho')]
+                for dimension,axis in domains:
+                    cases.append({'id':f'{engine.lower()}-native-varying-input-precision-{dimension.lower()}-{axis}',
+                        'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':'Color','stage':'constant',
+                        'roughnessStage':'constant-function','inputCancellationAxis':axis,'Detail':2,'Scale':1,'Lacunarity':1.7,'Distortion':.37,
+                        'residual':axis=='rho'})
         if normalized:
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('type', 'FBM') == 'FBM']
             for case in cases:
@@ -504,6 +617,41 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                                           'kind':'noise','type':'FBM','normalize':True,'dimensions':dimension,'output':output,
                                           'stage':'constant','Detail':0,'Scale':1,'oracleScale':1,'coordinateProbe':True,
                                           'coordinates':[point,-point,point*.5]})
+        if os.environ.get('BLENDLINK_NOISE_INPUT_STAGE_CANARY'):
+            cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}]
+            for direction in (-1, 1):
+                cases.append({'id': f'{engine.lower()}-input-stage-canary-{direction}', 'kind': 'noise',
+                    'dimensions': '4D', 'output': 'Color', 'stage': 'constant', 'coordinateCanary': direction,
+                    'Detail': 0, 'Roughness': .5, 'Lacunarity': 2, 'Scale': 1, 'oracleScale': .0625})
+        if os.environ.get('BLENDLINK_MATH_MODULO_PROBE') or os.environ.get('BLENDLINK_MATH_MODULO_NATIVE'):
+            cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}]
+            points = [0.0, -0.0, 99999.9921875, 100000.0, 100000.0078125, -100000.0,
+                      1000000.0, -1000000.0, 16777216.0, -16777216.0, 1000000000.0, -1000000000.0,
+                      1074099968.0, 1074100096.0, -1074099968.0, -1074100096.0,
+                      1638499968.0, -1638499968.0, 2147483520.0, -2147483520.0, 2147483648.0, -2147483648.0]
+            qualified_modulo = bool(os.environ.get('BLENDLINK_MATH_MODULO_NATIVE'))
+            if qualified_modulo:
+                points = [16777232.0, -16777232.0, 1000000000.0, -1000000000.0,
+                          1074099968.0, 1074100096.0, -1074099968.0, -1074100096.0,
+                          1638499968.0, -1638499968.0, 2147483520.0, -2147483520.0]
+            for index, point in enumerate(points):
+                for stage in ('constant', 'image'):
+                    for variant in (('remainder',) if qualified_modulo else ('remainder', 'quotient')):
+                        cases.append({'id': f'{engine.lower()}-math-modulo-{index}-{stage}-{variant}',
+                            'kind': 'math-modulo-probe', 'stage': stage, 'point': point, 'variant': variant,
+                            **({'coordinates': [point, 0, 0]} if stage == 'constant' else {'coordinateOffset': [point, 0, 0]})})
+                    if point in (0, -100000, -1000000, -1000000000) or qualified_modulo and point == 1000000000:
+                        cases.append({'id': f'{engine.lower()}-math-modulo-{index}-{stage}-zero-sign',
+                            'kind': 'math-modulo-probe', 'stage': stage, 'point': point, 'variant': 'zero-sign',
+                            **({'coordinates': [point, 0, 0]} if stage == 'constant' else {'coordinateOffset': [point, 0, 0]})})
+            if qualified_modulo:
+                for sign in ('positive', 'negative'):
+                    cases.append({'id': f'{engine.lower()}-math-modulo-wide-{sign}', 'kind': 'math-modulo-probe',
+                        'stage': 'image', 'point': 0, 'variant': 'remainder', 'coordinateOffset': [0,0,0],
+                        'inputPrecision': 'modulo-' + sign})
+                    cases.append({'id': f'{engine.lower()}-math-modulo-half-field-{sign}', 'kind': 'math-modulo-probe',
+                        'stage': 'image', 'point': 0, 'variant': 'remainder', 'coordinateOffset': [1000000000 * (1 if sign == 'positive' else -1),0,0],
+                        'inputPrecision': 'modulo-half-' + sign})
         if os.environ.get('BLENDLINK_NOISE_COORDINATE_CONTROLS_ONLY'):
             cases = [case for case in cases if case['kind'] in {'constant','image-control','coordinate-control','coordinate-quotient'}]
         if os.environ.get('BLENDLINK_NOISE_ARTIST_ONLY'):
@@ -516,13 +664,29 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}
                      or (case.get('dimensions') == '4D' and case.get('output') == 'Color'
                          and case.get('stage') == 'constant')]
+        if os.environ.get('BLENDLINK_MATH_MODULO_MF_ONLY'):
+            assert os.environ.get('BLENDLINK_MATH_MODULO_NATIVE') and bpy.app.version >= (5, 0, 0), 'MF-only Modulo requires the native profile and modern Blender'
+            cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}
+                     or case['kind'] == 'math-modulo-probe' and case['stage'] == 'constant']
+        if os.environ.get('BLENDLINK_NOISE_FIELD_FOCUS'):
+            # Start with the actual expensive Color fields, before a long
+            # corpus can hide their compiler/device failure behind earlier rows.
+            # Keep the independent row/carrier controls and amplified residual.
+            cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}
+                or (case['kind'] == 'noise' and case.get('dimensions') == '4D'
+                    and case.get('output') == 'Color' and case.get('stage') == 'image'
+                    and case.get('type', 'FBM') == 'FBM' and case.get('Detail', 0) >= 4
+                    and case.get('Distortion', 0) == 0 and not case.get('roughnessStage'))]
+            assert any(case['kind'] == 'noise' for case in cases), 'Field focus selected no actual native field'
         requested_count += len(cases)
         source_profile = tsl_ir._normalized_noise_source_profile(engine, sys.platform, platform.machine(), scene.cycles.device)
         expected_source_refusals = {case['id'] for case in cases if varying and engine == 'CYCLES'
             and source_profile is None and case.get('roughnessStage') == 'constant-function'}
         observed_source_refusals = set()
         expected_native_distortion_refusals = {case['id'] for case in cases if varying and engine != 'CYCLES' and case.get('kind') == 'noise'
-            and case.get('normalize') is True and case.get('type','FBM') == 'FBM' and case.get('roughnessStage') and case.get('Distortion',0) != 0}
+            and case.get('normalize') is True and case.get('type','FBM') == 'FBM' and case.get('roughnessStage') and case.get('Distortion',0) != 0
+            and (bool(case.get('inputCancellationAxis')) or not (bpy.context.preferences.system.gpu_backend == 'METAL' and (case.get('dimensions') == '1D'
+                     or bpy.app.version >= (5,0,0) and case.get('stage') == 'constant')))}
         observed_native_distortion_refusals = set()
         assert len({case['id'] for case in cases}) == len(cases), 'Native reference case IDs must be unique'
         for case in cases:
@@ -550,17 +714,33 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 # These are declared Cycles source/cost limits, not hidden
                 # omissions from the primary EEVEE numerical corpus.
                 qualified = source_qualified_roughness_refusal(case, engine, varying, str(error), source_profile)
-                native_distortion = native_live_distortion_refusal(case,engine,varying,str(error))
-                if not (native_distortion or qualified or normalized and engine == 'CYCLES' and (
+                native_distortion = native_live_distortion_refusal(case,engine,varying,str(error),bpy.context.preferences.system.gpu_backend,bpy.app.version)
+                input_arithmetic = (case.get('coordinateCanary') and engine != 'CYCLES' and bpy.app.version < (5, 0, 0)
+                                    and str(error).startswith('Static 4D Noise Color shader input arithmetic'))
+                modulo_zero = (os.environ.get('BLENDLINK_MATH_MODULO_NATIVE') and case.get('kind') == 'math-modulo-probe'
+                               and case.get('stage') == 'constant' and case.get('point') == -1000000000
+                               and bpy.app.version >= (5,0,0) and str(error).startswith('Native MF fixed100000 Modulo negative-zero composition'))
+                modulo_image = (os.environ.get('BLENDLINK_MATH_MODULO_NATIVE') and case.get('inputPrecision') in ('modulo-positive','modulo-negative')
+                                and bpy.app.version < (5,0,0) and str(error).startswith('Legacy Metal fixed100000 Modulo image input requires exactly-half payload'))
+                if not (modulo_image or modulo_zero or input_arithmetic or native_distortion or qualified or normalized and engine == 'CYCLES' and (
                         'no verified live source precision profile' in str(error)
                         or 'Normalized Noise Cycles SIMD 3D/4D' in str(error))): raise
                 assert before == (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
                 refusal = {'id': case['id'], 'engine': engine, 'reason': str(error)}
+                if modulo_image:
+                    refusal['sourceQualification'] = 'native-legacy-metal-modulo-image-precision'
+                    refusal.update(retain_refused_native_graph(material,case,engine,temporary))
+                if modulo_zero:
+                    refusal['sourceQualification'] = 'native-mf-modulo-negative-zero-composition'
+                    refusal.update(retain_refused_native_graph(material,case,engine,temporary))
+                if input_arithmetic:
+                    refusal['sourceQualification'] = 'shader-constant-noise-input-arithmetic'
+                    refusal.update(retain_refused_native_graph(material,case,engine,temporary))
                 if qualified:
                     refusal['sourceQualification'] = 'unmeasured-cycles-normalized-roughness'
                     observed_source_refusals.add(case['id']);source_qualified_refusal_ids.add(case['id'])
                 if native_distortion:
-                    refusal['capabilityLimit']='native-live-roughness-distortion-zero'
+                    refusal['capabilityLimit']='native-live-roughness-distortion-source-domain'
                     refusal.update(retain_refused_native_graph(material,case,engine,temporary))
                     observed_native_distortion_refusals.add(case['id']);native_distortion_refusal_ids.add(case['id'])
                 refusals.append(refusal)
@@ -590,6 +770,20 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 expected_model = 'shader-mf' if bpy.app.version >= (5, 0, 0) and case['stage'] == 'constant' else 'shader'
                 assert all(expression['evaluationModel'] == expected_model for expression in expressions), case['id']
                 case['evaluationModel'] = expected_model
+            if case['kind'] == 'math-modulo-probe' and os.environ.get('BLENDLINK_MATH_MODULO_NATIVE'):
+                def native_modulos(value):
+                    if isinstance(value, dict):
+                        return ([value] if value.get('op') == 'math_modulo_native' else []) + [item for child in value.values() for item in native_modulos(child)]
+                    if isinstance(value, list): return [item for child in value for item in native_modulos(child)]
+                    return []
+                modulos = native_modulos(document)
+                expected_model = 'mf-fmod100000-v1' if bpy.app.version >= (5, 0, 0) and case['stage'] == 'constant' else 'metal-mod100000-v1'
+                assert modulos and all(item['precisionModel'] == expected_model for item in modulos), case['id']
+                expected_input = ('literal-f32-v1' if case['stage'] == 'constant' else 'metal-half-exact-image-v1'
+                                  if bpy.app.version < (5,0,0) else 'metal-f32-image-v1')
+                assert all(item['inputModel'] == expected_input for item in modulos), case['id']
+                case['moduloPrecisionModel'] = expected_model
+                case['moduloInputModel'] = expected_input
             assert before == (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
             (OUTPUT / 'ir' / (case['id'] + '.json')).write_text(json.dumps(document))
             raw = native_pixels(material, temporary, case['id'])

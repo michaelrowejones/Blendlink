@@ -1,6 +1,8 @@
 import { buildCompositorFilter } from './tslCompositorFilter.js'
 import { buildCompositorFlip } from './tslCompositorSpatial.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
+import { buildCompositorLuminanceKey } from './tslCompositorLuminanceKey.js'
+import { buildCompositorDifferenceKey } from './tslCompositorDifferenceKey.js'
 import * as TSL from 'three/tsl'
 import { DataTexture, FloatType, RGBAFormat } from 'three'
 import type {
@@ -747,6 +749,16 @@ export function buildSourceCompositor(
             node = buildCompositorAlphaConversion(op, input,
               message => { throw new SourceCompositorUnsupported(message) })
             break
+          case 'luminance-key':
+            node = buildCompositorLuminanceKey(op, input('Image'), program.luminance ?? [0.2126, 0.7152, 0.0722],
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
+          case 'difference-key': {
+            const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
+            node = buildCompositorDifferenceKey(op, input, compositorEvaluationDevice(op, single),
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
+          }
           case 'combine-vector':
             node = vec3(input('X'), input('Y'), input('Z'))
             break

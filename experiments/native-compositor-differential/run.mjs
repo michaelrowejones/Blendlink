@@ -93,7 +93,15 @@ assert.ok(Array.isArray(extraBrowserArgs) && extraBrowserArgs.every(value => typ
   'BLENDLINK_TEST_CHROMIUM_ARGS must be a JSON array of Chromium argument strings')
 try {
   await server.listen()
-  browser = await chromium.launch({ headless: true, args: ['--enable-unsafe-webgpu', '--enable-unsafe-swiftshader', ...extraBrowserArgs] })
+  const channel = process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL || null
+  assert.ok(channel === null || channel === 'chromium', 'Only the bundled chromium channel is allowed')
+  const args = ['--enable-unsafe-webgpu', '--enable-unsafe-swiftshader', ...extraBrowserArgs]
+  browser = await chromium.launch({ headless: true, args, ...(channel ? { channel } : {}) })
+  provenance.browserChannel = channel
+  provenance.browserVersion = browser.version()
+  provenance.browserLaunchArgs = args
+  provenance.harnessSha256 = Object.fromEntries(await Promise.all(['browser.ts', 'run.mjs', 'relative-resize.ts'].map(async name =>
+    [name, hash(await readFile(join(import.meta.dirname, name)))])))
   for (const backend of ['webgl2', 'webgpu']) {
     const page = await browser.newPage()
     const errors = []
@@ -107,7 +115,8 @@ try {
       await page.goto(server.resolvedUrls.local[0] + '?backend=' + backend)
       await page.waitForFunction(() => window.__compositorResults || window.__compositorFailure, null,
         { timeout: provenance.browserTimeoutMs })
-      const report = await page.evaluate(() => ({ rows: window.__compositorResults, failure: window.__compositorFailure }))
+      const report = await page.evaluate(() => ({ rows: window.__compositorResults, failure: window.__compositorFailure,
+        gpu: window.__compositorGPU }))
       results.push({ backend, ...report, pageErrors: errors, consoleErrors })
       await writeFile(join(evidence, 'results.json'), JSON.stringify(results, null, 2))
       assert.equal(report.failure, undefined)

@@ -25,6 +25,7 @@
     "map_range",
     "mapping",
     "math",
+    "math_modulo_native",
     "mix_color",
     "noise",
     "noise_fractal",
