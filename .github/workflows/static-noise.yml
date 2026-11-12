@@ -130,12 +130,14 @@ jobs:
           if-no-files-found: warn
 
   native-compositor:
-    name: Native ${{ matrix.family }} / Linux SwiftShader
+    name: Native ${{ matrix.family }} / ${{ matrix.source_device }} / Linux SwiftShader
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
+        family: [Luminance Key, Difference Key, Color Spill]
+        source_device: [CPU, GPU]
         include:
           - family: Luminance Key
             fixture: compositor_luminance_key_check.py
@@ -188,29 +190,28 @@ jobs:
           npx --no-install playwright install --with-deps chromium
           npm run build
 
-      - name: Compare native CPU and GPU compositing on both browser backends
+      - name: Compare native compositing on both browser backends
         timeout-minutes: 25
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
+          SOURCE_DEVICE: ${{ matrix.source_device }}
           DEVICE_VARIABLE: ${{ matrix.device_variable }}
           REFERENCE_VARIABLE: ${{ matrix.reference_variable }}
           FIXTURE: ${{ matrix.fixture }}
           EVIDENCE: artifacts/verification-compositor-canary/${{ matrix.evidence }}
         run: |
-          for source_device in CPU GPU; do
-            env "$DEVICE_VARIABLE=$source_device" \
-              "$REFERENCE_VARIABLE=$PWD/$EVIDENCE-$source_device" \
-              xvfb-run --auto-servernum "$BLENDLINK_BLENDER" \
-                --background --factory-startup --python-exit-code 1 \
-                --python "packages/blender-addon/tests/$FIXTURE"
-          done
+          env "$DEVICE_VARIABLE=$SOURCE_DEVICE" \
+            "$REFERENCE_VARIABLE=$PWD/$EVIDENCE-$SOURCE_DEVICE" \
+            xvfb-run --auto-servernum "$BLENDLINK_BLENDER" \
+              --background --factory-startup --python-exit-code 1 \
+              --python "packages/blender-addon/tests/$FIXTURE"
           xvfb-run --auto-servernum node experiments/native-compositor-differential/run.mjs --built \
-            --out "$EVIDENCE-browser" "$EVIDENCE-CPU" "$EVIDENCE-GPU"
+            --out "$EVIDENCE-browser" "$EVIDENCE-$SOURCE_DEVICE"
 
       - name: Retain native inputs, pixels and browser failures
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: compositor-canary-${{ matrix.evidence }}-linux-5.2
+          name: compositor-canary-${{ matrix.evidence }}-${{ matrix.source_device }}-linux-5.2
           path: artifacts/verification-compositor-canary
           if-no-files-found: warn

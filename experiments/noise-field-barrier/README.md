@@ -33,6 +33,17 @@ Subzero fields pass. It changes no native pixel references, numeric budgets,
 launch/watchdog flags, or Perlin/fractal formulas. It does not revive the prior
 unpromoted bounded-loop prototype.
 
+## Hosted result
+
+The exact candidate at `ba8b950` failed the native Linux 5.2/Subzero field
+canaries in run `43325529511`, artifact `13993149702`. Both raw and normalized
+families completed six control rows with zero numerical failures, then lost
+both browser devices at the same `4d-color-image-4` case. Shader sizes were
+25,605/23,629 bytes (raw WebGPU/WebGL2) and 28,460/25,967 (normalized).
+The private coordinate barrier did not resolve this failure. The retained ZIP
+preserves the actual native references, runtime snapshots and reports; local
+LLVM/Metal success is not a substitute for this failing Subzero result.
+
 ## Fast native field canary
 
 From the repository root, after a normal build:
