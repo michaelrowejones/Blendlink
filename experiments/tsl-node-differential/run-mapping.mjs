@@ -21,12 +21,19 @@ const boundaryFamily = process.argv.includes('--boundary')
 const mixFamily = process.argv.includes('--mix')
 const mapRangeFamily = process.argv.includes('--map-range')
 const family = brickFamily ? 'BRICK' : vectorFamily ? 'VECTORS' : mathFamily ? 'MATH' : hueFamily ? 'HUE_RAMP' : boundaryFamily ? 'MATH_BOUNDARY' : mapRangeFamily ? 'MAP_RANGE' : mixFamily ? 'MIX' : 'MAPPING'
+const option = name => {
+  const index = process.argv.indexOf(name)
+  if (index < 0) return null
+  assert.ok(process.argv[index + 1] && !process.argv[index + 1].startsWith('--'), name + ' requires a value')
+  return process.argv[index + 1]
+}
+const retainedReference = option('--reference-dir')
 const evidence = process.env.BLENDLINK_TSL_DIFF_ARTIFACTS ? resolve(process.env.BLENDLINK_TSL_DIFF_ARTIFACTS) : join(root, brickFamily ? 'artifacts/verification-brick' : vectorFamily ? 'artifacts/verification-vectors' : mathFamily ? 'artifacts/verification-shader-math' : hueFamily ? 'artifacts/verification-hue-ramp' : boundaryFamily ? 'artifacts/verification-math-boundary' : mapRangeFamily ? 'artifacts/verification-map-range' : mixFamily ? 'artifacts/verification-mix-math' : 'artifacts/verification-mapping')
-const reference = join(evidence, 'reference')
+const reference = retainedReference ? resolve(retainedReference) : join(evidence, 'reference')
 mkdirSync(evidence, { recursive: true })
 rmSync(join(evidence, 'report.json'), { force: true })
 const manifest = JSON.parse(readFileSync(join(experiment, 'cells.json'), 'utf8'))
-const ids = brickFamily
+let ids = brickFamily
   ? ['constant-linear', 'uv-gradient', ...manifest.cells.filter(cell => cell.brickSweep).map(cell => cell.id)]
   : vectorFamily
   ? ['constant-linear', 'uv-gradient', 'mapping-rotate', 'mapping-texture-mode', ...manifest.cells.filter(cell => cell.vectorSweep || cell.vectorTransform || cell.mappingSweep || cell.id.startsWith('vector-rotate-')).map(cell => cell.id)]
@@ -42,6 +49,11 @@ const ids = brickFamily
   ? ['constant-linear', 'uv-gradient', 'mix-overlay', 'mix-divide', ...manifest.cells.filter(cell => cell.genericMix).map(cell => cell.id)]
   : ['constant-linear', 'uv-gradient', 'mapping-rotate', 'mapping-texture-mode',
     'mapping-point-xyz', 'mapping-texture-xyz', 'mapping-vector-xyz', 'mapping-texture-zero-scale']
+const selectedIds = option('--ids')?.split(',')
+if (selectedIds) {
+  assert.ok(selectedIds.length && selectedIds.every(id => ids.includes(id)), '--ids must name cases in the selected family')
+  ids = ids.filter(id => selectedIds.includes(id))
+}
 let cells = ids.map(id => {
   const cell = manifest.cells.find(item => item.id === id)
   assert.ok(cell, `Missing ${family} differential cell ${id}`)
@@ -79,6 +91,8 @@ const emitter = join(root, 'packages/blender-addon/tsl_ir.py')
 const sha256 = path => createHash('sha256').update(readFileSync(path)).digest('hex')
 const sourceHash = sha256(source)
 const emitterHash = sha256(emitter)
+let oracleOutput = 'Retained native Blender references (no new native capture)'
+if (!retainedReference) {
 const blender = process.env.BLENDLINK_BLENDER_PATH ?? process.env.BLENDLINK_BLENDER ?? execFileSync(process.execPath, [join(root, 'packages/blendlink/dist/cli.js'), 'discover'], {
   encoding: 'utf8', env: process.env,
 }).trim().split(/\r?\n/).at(-1)
@@ -115,11 +129,12 @@ writeFileSync(oracle, [
   'document["nativeBlenderVersion"]=list(module.bpy.app.version)',
   'path.write_text(json.dumps(document,indent=2))', '',
 ].join('\n'))
-const oracleOutput = execFileSync(blender, ['--background', '--factory-startup', '--python-exit-code', '1', '--python', oracle], {
+oracleOutput = execFileSync(blender, ['--background', '--factory-startup', '--python-exit-code', '1', '--python', oracle], {
   cwd: root, env: { ...process.env, BLENDLINK_TSL_NATIVE_MODULES: nativeSnapshot }, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024,
 })
 writeFileSync(join(evidence, 'blender.log'), oracleOutput)
 assert.match(oracleOutput, /BLENDLINK_TSL_DIFFERENTIAL_REFERENCE_DONE/)
+}
 const referenceManifest = JSON.parse(readFileSync(join(reference, 'manifest.json'), 'utf8'))
 const skippedNativeModes = referenceManifest.skippedNativeModes ?? []
 for (const id of ids) {
@@ -139,7 +154,7 @@ for (const id of ids) {
 }
 cells = cells.filter(cell => !skippedNativeModes.some(item => item.cell === cell.id))
 const floats = bytes => new Float32Array(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength))
-function difference(referencePixels, rendered, components, flipRows) {
+function difference(referencePixels, rendered, components, flipRows, allowance) {
   assert.equal(referencePixels.length, 64 * 64 * 3)
   assert.equal(rendered.length, 64 * 64 * components)
   const differences = []
@@ -147,7 +162,7 @@ function difference(referencePixels, rendered, components, flipRows) {
     const expected = referencePixels[(y * 64 + x) * 3 + channel]
     const actual = rendered[((flipRows ? 63 - y : y) * 64 + x) * components + channel]
     assert.ok(Number.isFinite(expected) && Number.isFinite(actual), 'Nonfinite material-graph sample')
-    differences.push(Math.abs(expected - actual))
+    differences.push(Math.max(0, Math.abs(expected - actual) - (allowance?.(x, y, channel) ?? 0)))
   }
   differences.sort((a, b) => a - b)
   return { meanAbs: differences.reduce((a, b) => a + b, 0) / differences.length,
@@ -156,7 +171,7 @@ function difference(referencePixels, rendered, components, flipRows) {
 const server = await createServer({
   root: experiment, configFile: false, logLevel: 'warn', cacheDir: join(evidence, 'vite-cache'),
   optimizeDeps: { noDiscovery: true }, resolve: { alias: { '@blendlink-tsl-recipe': builder } },
-  server: { host: '127.0.0.1', port: 0, strictPort: false, watch: null, hmr: false, fs: { allow: [root] } },
+  server: { host: '127.0.0.1', port: 0, strictPort: false, watch: null, hmr: false, fs: { allow: [root, reference] } },
 })
 let browser
 const results = []
@@ -196,8 +211,11 @@ try {
       if (cell.brickSweep?.positionControl) {
         let magnitude = 0
         for (let index = 0; index < expected.length; index++) magnitude = Math.max(magnitude, Math.abs(expected[index] - 2))
-        positionControls.set(cell.id, { maximumError: measured.maxAbs, magnitude })
+        positionControls.set(cell.id, { maximumError: measured.maxAbs, magnitude,
+          expected, actual, components: rendered.components, flipRows: flipRows ?? false })
       }
+      let precisionResidual = measured
+      let maximumPositionAllowance = 0
       if (cell.smoothMortarPositionControl) {
         const control = positionControls.get(cell.smoothMortarPositionControl)
         assert.ok(control, 'Sharp mortar requires its preceding independent position control')
@@ -214,17 +232,48 @@ try {
         const derivative = 1.5 / (size * smooth)
         const colorAmplitude = cell.brickSweep.output === 'Fac' ? 1 : 1.02
         maximumPrecisionBudget += derivative * distancePrecision * colorAmplitude
+        const properties = cell.brickSweep.properties ?? {}
+        const width = cell.brickSweep.inputs?.['Brick Width'] ?? .5
+        const height = cell.brickSweep.inputs?.['Row Height'] ?? .25
+        const offsetFrequency = properties.offset_frequency ?? 2, squashFrequency = properties.squash_frequency ?? 2
+        const allowance = (x, y) => {
+          const nativeIndex = (y * 64 + x) * 3
+          const actualIndex = ((control.flipRows ? 63 - y : y) * 64 + x) * control.components
+          const p = [control.expected[nativeIndex] - 2, control.expected[nativeIndex + 1] - 2]
+          const error = Math.max(...[0, 1].map(channel =>
+            Math.abs(control.expected[nativeIndex + channel] - control.actual[actualIndex + channel]) +
+            ulp(control.expected[nativeIndex + channel]) + ulp(control.actual[actualIndex + channel])))
+          const delta = error + 8 * ulp(Math.max(...p.map(Math.abs)) + 1)
+          const row = Math.floor(p[1] / height)
+          const w = width * (offsetFrequency && squashFrequency && row % squashFrequency === 0 ? Math.fround(properties.squash ?? 1) : 1)
+          const offset = offsetFrequency && squashFrequency && row % offsetFrequency === 0 ? w * Math.fround(properties.offset ?? .5) : 0
+          const brick = Math.floor((p[0] + offset) / w)
+          const local = [p[0] + offset - w * brick, p[1] - height * row]
+          const distance = Math.min(...local, w - local[0], height - local[1])
+          const low = (1 - (distance + delta) / size) / smooth
+          const high = (1 - (distance - delta) / size) / smooth
+          // Outside the transition, the mortar is exactly saturated. An
+          // input uncertainty interval receives only its local derivative,
+          // rather than excusing every image pixel by a global maximum.
+          const q = Math.min(1, Math.max(0, Math.min(high, Math.max(low, .5))))
+          const localDerivative = high <= 0 || low >= 1 ? 0 : 6 * q * (1 - q) / (size * smooth)
+          const bound = localDerivative * delta * colorAmplitude
+          maximumPositionAllowance = Math.max(maximumPositionAllowance, bound)
+          return bound
+        }
+        precisionResidual = difference(expected, actual, rendered.components, flipRows ?? false, allowance)
       }
       if (cell.claim === 'approximate') {
         assert.equal(cell.divergenceKind, 'bounded')
         assert.ok(cell.provenBy?.length && cell.provenBy.every(id => cells.some(item => item.id === id && item.claim === 'exact')), 'Approximate cells require included exact algorithm proofs')
       }
       const cellFailures = ['meanAbs', 'p99Abs', 'maxAbs']
-        .filter(metric => measured[metric] > (metric === 'maxAbs' ? maximumPrecisionBudget : budget[metric]))
-        .map(metric => `${backend}/${cell.id} ${metric}=${measured[metric]} exceeds ${metric === 'maxAbs' ? maximumPrecisionBudget : budget[metric]}`)
+        .filter(metric => precisionResidual[metric] > budget[metric])
+        .map(metric => `${backend}/${cell.id} precision residual ${metric}=${precisionResidual[metric]} exceeds ${budget[metric]}`)
       failures.push(...cellFailures)
       results.push({ backend, cell: cell.id, flipRows: flipRows ?? null, ...measured,
-        maximumPrecisionBudget, positionPrecisionControl: cell.smoothMortarPositionControl ?? null })
+        maximumPrecisionBudget, maximumPositionAllowance, precisionResidual,
+        positionPrecisionControl: cell.smoothMortarPositionControl ?? null })
       writeFileSync(join(evidence, `${backend}-${cell.id}.f32`), Buffer.from(actual.buffer))
       console.log(`BLENDLINK_${family}_CELL_${cellFailures.length ? 'FAILED' : 'PASSED'} ${backend} ${cell.id} maxAbs=${measured.maxAbs.toExponential(4)}`)
     }
@@ -233,8 +282,12 @@ try {
   writeFileSync(join(evidence, 'report.json'), JSON.stringify({
     family, oracle: 'Blender Cycles CPU, native node graphs, linear float channels',
     builder: useBuilt ? 'built production module' : 'production TypeScript source via Vite',
-    sourceSha256: sourceHash, emitterSha256: emitterHash,
-    snapshot, testedModuleHashes, testedNativeModuleHashes,
+    sourceSha256: sourceHash, emitterSha256: retainedReference ? null : emitterHash,
+    nativeCapture: retainedReference ? 'retained reference replay; no current emitter execution' : 'fresh native capture',
+    nativeReferenceDirectory: reference,
+    nativeManifestSha256: sha256(join(reference, 'manifest.json')),
+    testedIrSha256: Object.fromEntries(cells.map(cell => [cell.id, sha256(join(reference, 'ir', cell.id + '.json'))])),
+    snapshot, testedModuleHashes, testedNativeModuleHashes: retainedReference ? null : testedNativeModuleHashes,
     blender: oracleOutput.match(/Blender [^\r\n]+/)?.[0],
     sourceStable: sha256(source) === sourceHash, emitterStable: sha256(emitter) === emitterHash,
     requestedCellIds: ids, skippedNativeModes, nativeVectorMathOperations: referenceManifest.nativeVectorMathOperations,

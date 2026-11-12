@@ -14,7 +14,8 @@
           "offset_frequency": 2
         },
         "output": "Fac",
-        "positionControl": true
+        "positionControl": true,
+        "compositionPrecision": true
       },
       "tolerance": {
         "meanAbs": 2e-06,
@@ -36,7 +37,8 @@
           ]
         },
         "output": "Fac",
-        "positionControl": true
+        "positionControl": true,
+        "compositionPrecision": true
       },
       "tolerance": {
         "meanAbs": 2e-06,
@@ -6314,7 +6316,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-default-fac",
@@ -6328,7 +6330,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-smooth-color",
@@ -6345,7 +6347,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-smooth-fac",
@@ -6362,7 +6364,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-mortar-zero-color",
@@ -6379,7 +6381,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-mortar-zero-fac",
@@ -6396,7 +6398,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-large-mortar-color",
@@ -6413,7 +6415,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-large-mortar-fac",
@@ -6430,7 +6432,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-bias-low-color",
@@ -6447,7 +6449,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-bias-low-fac",
@@ -6464,7 +6466,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-bias-high-color",
@@ -6481,7 +6483,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-bias-high-fac",
@@ -6498,7 +6500,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-scale-zero-color",
@@ -6515,7 +6517,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-scale-zero-fac",
@@ -6532,7 +6534,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-scale-negative-color",
@@ -6540,7 +6542,7 @@
       "claim": "exact",
       "brickSweep": {
         "inputs": {
-          "Scale": -2.37
+          "Scale": -2
         },
         "output": "Color"
       },
@@ -6549,7 +6551,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-scale-negative-fac",
@@ -6557,7 +6559,7 @@
       "claim": "exact",
       "brickSweep": {
         "inputs": {
-          "Scale": -2.37
+          "Scale": -2
         },
         "output": "Fac"
       },
@@ -6566,7 +6568,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-offset-zero-frequency-color",
@@ -6585,7 +6587,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-offset-zero-frequency-fac",
@@ -6604,7 +6606,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-squash-zero-frequency-color",
@@ -6623,7 +6625,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-squash-zero-frequency-fac",
@@ -6642,7 +6644,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-squash-color",
@@ -6655,7 +6657,8 @@
           "offset": 0.73,
           "offset_frequency": 2
         },
-        "output": "Color"
+        "output": "Color",
+        "compositionPrecision": true
       },
       "tolerance": {
         "meanAbs": 2e-06,
@@ -6676,7 +6679,8 @@
           "offset": 0.73,
           "offset_frequency": 2
         },
-        "output": "Fac"
+        "output": "Fac",
+        "compositionPrecision": true
       },
       "tolerance": {
         "meanAbs": 2e-06,
@@ -6703,7 +6707,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-negative-coordinates-fac",
@@ -6722,7 +6726,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-scale-color",
@@ -6736,7 +6740,8 @@
             1.61
           ]
         },
-        "output": "Color"
+        "output": "Color",
+        "compositionPrecision": true
       },
       "tolerance": {
         "meanAbs": 2e-06,
@@ -6758,7 +6763,8 @@
             1.61
           ]
         },
-        "output": "Fac"
+        "output": "Fac",
+        "compositionPrecision": true
       },
       "tolerance": {
         "meanAbs": 2e-06,
@@ -6787,7 +6793,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-size-fac",
@@ -6808,7 +6814,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-smooth-color",
@@ -6829,7 +6835,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-smooth-fac",
@@ -6850,7 +6856,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-bias-color",
@@ -6871,7 +6877,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-bias-fac",
@@ -6892,7 +6898,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-color-color",
@@ -6919,7 +6925,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-color-fac",
@@ -6946,7 +6952,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-mortar-color",
@@ -6968,7 +6974,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-mortar-fac",
@@ -6990,7 +6996,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native Cycles Brick; nearest float coordinate image supplies identical node inputs despite bake UV rasterization nudges. Includes linked controls and signed row/brick indices."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-0-0-color",
@@ -7012,7 +7018,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-0-0-fac",
@@ -7034,7 +7040,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-0-0.1-color",
@@ -7056,7 +7062,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-0-0.1-fac",
@@ -7078,7 +7084,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-0-0.7-color",
@@ -7100,7 +7106,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-0-0.7-fac",
@@ -7122,7 +7128,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-0-1-color",
@@ -7144,7 +7150,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-0-1-fac",
@@ -7166,7 +7172,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-1-0-color",
@@ -7188,7 +7194,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-1-0-fac",
@@ -7210,7 +7216,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-1-0.1-color",
@@ -7232,7 +7238,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-1-0.1-fac",
@@ -7254,7 +7260,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-1-0.7-color",
@@ -7276,7 +7282,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-1-0.7-fac",
@@ -7298,7 +7304,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-1-1-color",
@@ -7320,7 +7326,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-1-1-fac",
@@ -7342,7 +7348,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-2-0-color",
@@ -7364,7 +7370,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-2-0-fac",
@@ -7386,7 +7392,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-2-0.1-color",
@@ -7408,7 +7414,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-2-0.1-fac",
@@ -7430,7 +7436,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-2-0.7-color",
@@ -7452,7 +7458,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-2-0.7-fac",
@@ -7474,7 +7480,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-2-1-color",
@@ -7496,7 +7502,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-2-1-fac",
@@ -7518,7 +7524,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-3-0-color",
@@ -7540,7 +7546,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-3-0-fac",
@@ -7562,7 +7568,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-3-0.1-color",
@@ -7584,7 +7590,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-3-0.1-fac",
@@ -7606,7 +7612,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-3-0.7-color",
@@ -7628,7 +7634,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-3-0.7-fac",
@@ -7650,7 +7656,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-3-1-color",
@@ -7672,7 +7678,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-3-1-fac",
@@ -7694,7 +7700,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-4-0-color",
@@ -7716,7 +7722,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-4-0-fac",
@@ -7738,7 +7744,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-4-0.1-color",
@@ -7760,7 +7766,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-4-0.1-fac",
@@ -7782,7 +7788,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-4-0.7-color",
@@ -7804,7 +7810,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-4-0.7-fac",
@@ -7826,7 +7832,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-4-1-color",
@@ -7848,7 +7854,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-4-1-fac",
@@ -7870,7 +7876,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-5-0-color",
@@ -7892,7 +7898,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-5-0-fac",
@@ -7914,7 +7920,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-5-0.1-color",
@@ -7936,7 +7942,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-5-0.1-fac",
@@ -7958,7 +7964,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-5-0.7-color",
@@ -7980,7 +7986,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-5-0.7-fac",
@@ -8002,7 +8008,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-5-1-color",
@@ -8024,7 +8030,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-5-1-fac",
@@ -8046,7 +8052,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-6-0-color",
@@ -8068,7 +8074,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-6-0-fac",
@@ -8090,7 +8096,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-6-0.1-color",
@@ -8112,7 +8118,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-6-0.1-fac",
@@ -8134,7 +8140,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-6-0.7-color",
@@ -8156,7 +8162,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-6-0.7-fac",
@@ -8178,7 +8184,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-6-1-color",
@@ -8200,7 +8206,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-6-1-fac",
@@ -8222,7 +8228,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-7-0-color",
@@ -8244,7 +8250,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-7-0-fac",
@@ -8266,7 +8272,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-7-0.1-color",
@@ -8288,7 +8294,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-7-0.1-fac",
@@ -8310,7 +8316,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-7-0.7-color",
@@ -8332,7 +8338,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-7-0.7-fac",
@@ -8354,7 +8360,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-7-1-color",
@@ -8376,7 +8382,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-7-1-fac",
@@ -8398,7 +8404,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-8-0-color",
@@ -8420,7 +8426,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-8-0-fac",
@@ -8442,7 +8448,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-8-0.1-color",
@@ -8464,7 +8470,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-8-0.1-fac",
@@ -8486,7 +8492,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-8-0.7-color",
@@ -8508,7 +8514,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-8-0.7-fac",
@@ -8530,7 +8536,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-8-1-color",
@@ -8552,7 +8558,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-8-1-fac",
@@ -8574,7 +8580,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-9-0-color",
@@ -8596,7 +8602,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-9-0-fac",
@@ -8618,7 +8624,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-9-0.1-color",
@@ -8640,7 +8646,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-9-0.1-fac",
@@ -8662,7 +8668,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-9-0.7-color",
@@ -8684,7 +8690,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-9-0.7-fac",
@@ -8706,7 +8712,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-9-1-color",
@@ -8728,7 +8734,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-constant-9-1-fac",
@@ -8750,7 +8756,7 @@
         "p99Abs": 2e-06,
         "maxAbs": 2e-06
       },
-      "notes": "Fixed native input Brick algorithm probe; no rasterization allowance."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-positive-width-color",
@@ -8778,7 +8784,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native linked dimension with an independently provable positive MathMaximum lower bound."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-positive-width-fac",
@@ -8806,7 +8812,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native linked dimension with an independently provable positive MathMaximum lower bound."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-positive-height-color",
@@ -8834,7 +8840,7 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native linked dimension with an independently provable positive MathMaximum lower bound."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
     },
     {
       "id": "brick-live-positive-height-fac",
@@ -8862,7 +8868,143 @@
         "p99Abs": 2e-05,
         "maxAbs": 2e-05
       },
-      "notes": "Native linked dimension with an independently provable positive MathMaximum lower bound."
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
+    },
+    {
+      "id": "brick-literal-mf-0",
+      "pipeline": "ir",
+      "claim": "exact",
+      "brickSweep": {
+        "constantCoordinate": [
+          -1.013,
+          0.497,
+          3
+        ],
+        "inputs": {
+          "Mortar Smooth": 0.1
+        },
+        "output": "Color",
+        "literalConstant": true
+      },
+      "tolerance": {
+        "meanAbs": 2e-06,
+        "p99Abs": 2e-06,
+        "maxAbs": 2e-06
+      },
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
+    },
+    {
+      "id": "brick-literal-mf-3",
+      "pipeline": "ir",
+      "claim": "exact",
+      "brickSweep": {
+        "constantCoordinate": [
+          0,
+          0,
+          0
+        ],
+        "inputs": {
+          "Mortar Smooth": 0.1
+        },
+        "output": "Color",
+        "literalConstant": true
+      },
+      "tolerance": {
+        "meanAbs": 2e-06,
+        "p99Abs": 2e-06,
+        "maxAbs": 2e-06
+      },
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
+    },
+    {
+      "id": "brick-literal-mf-6",
+      "pipeline": "ir",
+      "claim": "exact",
+      "brickSweep": {
+        "constantCoordinate": [
+          -3.125,
+          -2.125,
+          1
+        ],
+        "inputs": {
+          "Mortar Smooth": 0.1
+        },
+        "output": "Color",
+        "literalConstant": true
+      },
+      "tolerance": {
+        "meanAbs": 2e-06,
+        "p99Abs": 2e-06,
+        "maxAbs": 2e-06
+      },
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
+    },
+    {
+      "id": "brick-literal-mf-8",
+      "pipeline": "ir",
+      "claim": "exact",
+      "brickSweep": {
+        "constantCoordinate": [
+          0.17,
+          0.071,
+          0
+        ],
+        "inputs": {
+          "Mortar Smooth": 0.1
+        },
+        "output": "Color",
+        "literalConstant": true
+      },
+      "tolerance": {
+        "meanAbs": 2e-06,
+        "p99Abs": 2e-06,
+        "maxAbs": 2e-06
+      },
+      "notes": "Actual native Brick kernel with identical nearest-image input signals; shader-stage constant probes bypass MF folding. Affine/FMA composition is tested separately with independently measured position precision."
+    },
+    {
+      "id": "brick-constant-arbitrary-negative-scale-color",
+      "pipeline": "ir",
+      "claim": "exact",
+      "brickSweep": {
+        "constantCoordinate": [
+          0.125,
+          0.25,
+          0.5
+        ],
+        "inputs": {
+          "Scale": -2.37
+        },
+        "output": "Color"
+      },
+      "tolerance": {
+        "meanAbs": 2e-06,
+        "p99Abs": 2e-06,
+        "maxAbs": 2e-06
+      },
+      "notes": "Native shader-stage fixed-input arbitrary negative Scale probe."
+    },
+    {
+      "id": "brick-constant-arbitrary-negative-scale-fac",
+      "pipeline": "ir",
+      "claim": "exact",
+      "brickSweep": {
+        "constantCoordinate": [
+          0.125,
+          0.25,
+          0.5
+        ],
+        "inputs": {
+          "Scale": -2.37
+        },
+        "output": "Fac"
+      },
+      "tolerance": {
+        "meanAbs": 2e-06,
+        "p99Abs": 2e-06,
+        "maxAbs": 2e-06
+      },
+      "notes": "Native shader-stage fixed-input arbitrary negative Scale probe."
     }
   ]
 }

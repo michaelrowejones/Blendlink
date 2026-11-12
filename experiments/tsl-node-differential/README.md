@@ -387,14 +387,16 @@ runtime resolver has no proven cubic sampler; embedded Cubic stays live.
 ## Brick textures
 
 `node experiments/tsl-node-differential/run-mapping.mjs --brick --built`
-checks 124 native Cycles graphs on both browser backends. Local source proofs
+checks 130 native Cycles graphs on both browser backends. Local source proofs
 pass on Blender 4.2, 5.2 and 5.3. Eighty fixed-input kernel cases differ by at
 most 5.96e-8. The spatial cases cover both outputs, signed coordinates,
 offset/squash frequencies, zero scale/mortar, bias extremes, linked colors,
 scale, mortar size/smoothing, and dimensions bounded positively by Math Maximum.
 
-Nearest-sampled float coordinate images provide identical inputs to both
-evaluators. This isolates the node from the independent bake UV nudge, which
+Nearest-sampled exactly representable coordinate and control images isolate
+the native Brick kernel from unrelated affine/FMA contraction. Fixed shader-stage
+inputs also prevent modern multi-function folding; additional literal controls
+exercise that separate path. Both evaluators receive the same authored images. This isolates the node from the independent bake UV nudge, which
 the unchanged UV calibration fixture still measures. Negative color probes
 encode their signal after the native node so the production bake can retain it.
 
@@ -402,8 +404,11 @@ Two sharp spatial variants amplify float32 partition/remainder rounding at
 mortar edges. Their maximum-error allowance uses independently compared
 pre-Brick position carriers, eight rounded float operations at the measured
 coordinate magnitude, and the analytic smoothstep derivative bound
-`1.5 / (mortarSize * mortarSmooth)`. Their strict mean and p99 budgets stay
-unchanged. Measured worst error is 3.58e-4; this precision allowance does not
+`1.5 / (mortarSize * mortarSmooth)`. The local smoothstep derivative is applied only where the independently bounded
+coordinate interval intersects a mortar transition. All three strict budgets
+apply to the remaining numerical residual; raw maximum/mean/p99 and the local
+allowance are retained separately. Linux retained-reference replay gives a
+maximum residual of 1.20e-7. Measured raw worst error is 3.58e-4; this precision allowance does not
 apply to hard/discontinuous mortar or the fixed-input algorithm probes.
 
 The exporter requires provably positive brick dimensions and effective squash
@@ -411,3 +416,8 @@ width, preserving live bounded dimensions while refusing undefined zero
 division. Animated inputs still follow the material animation transport limits.
 These fixtures do not certify arbitrary frequency, parameter, or whole-scene
 pixel equivalence.
+
+Retained native artifacts can be replayed with `--reference-dir /path/to/reference`
+and an optional comma-separated `--ids` subset. Replays record manifest/IR hashes
+and explicitly record that the current native emitter was not executed. Final
+release checks regenerate native references.

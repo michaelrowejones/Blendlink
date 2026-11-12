@@ -1112,6 +1112,9 @@
         },
         {
           "path": "packages/blendlink/src/tslCurveNodes.ts"
+        },
+        {
+          "path": "packages/blendlink/blender/native_color_band.py"
         }
       ],
       "verification": {
@@ -1612,7 +1615,7 @@
           "5.2.0",
           "5.3.0"
         ],
-        "nativeGraphsPerVersion": 124,
+        "nativeGraphsPerVersion": 130,
         "runtimeBackends": [
           "WebGPU",
           "WebGL2 via WebGPURenderer"
@@ -1661,6 +1664,9 @@
         },
         {
           "path": "packages/blendlink/src/tslCurveNodes.ts"
+        },
+        {
+          "path": "packages/blendlink/blender/native_color_band.py"
         }
       ],
       "verification": {
@@ -1719,6 +1725,9 @@
         },
         {
           "path": "packages/blendlink/src/tslCurveNodes.ts"
+        },
+        {
+          "path": "packages/blendlink/blender/native_color_band.py"
         }
       ],
       "verification": {
@@ -1768,6 +1777,9 @@
         },
         {
           "path": "packages/blendlink/src/tslNativeColorBand.ts"
+        },
+        {
+          "path": "packages/blendlink/blender/native_color_band.py"
         }
       ],
       "verification": {
@@ -1816,6 +1828,9 @@
         },
         {
           "path": "packages/blendlink/src/tslNativeColorBand.ts"
+        },
+        {
+          "path": "packages/blendlink/blender/native_color_band.py"
         }
       ],
       "verification": {

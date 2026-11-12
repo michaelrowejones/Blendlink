@@ -9,6 +9,16 @@ const root = resolve(import.meta.dirname, '..')
 const evidence = resolve(process.env.BLENDLINK_NATIVE_NODE_EVIDENCE || join(root, 'artifacts/verification-native-node-gate'))
 mkdirSync(evidence, { recursive: true })
 rmSync(join(evidence, 'report.json'), { force: true })
+rmSync(join(evidence, 'browser'), { recursive: true, force: true })
+const failures = []
+function attempt(label, action) {
+  try { action(); return true }
+  catch (error) {
+    failures.push({ label, message: String(error.message).split('\n')[0] })
+    console.error('BLENDLINK_NODE_GATE_STEP_FAILED ' + label + ': ' + String(error.message).split('\n')[0])
+    return false
+  }
+}
 function run(label, executable, args, extraEnv = {}) {
   console.log('BLENDLINK_NODE_GATE_STEP ' + label)
   const started = Date.now()
@@ -39,36 +49,38 @@ for (const [family, file, variable] of [
   const directory = join(evidence, family)
   rmSync(directory, { recursive: true, force: true })
   mkdirSync(directory, { recursive: true })
-  run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+  const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
     [variable]: directory, BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU',
-  })
-  references.push(directory)
+  }))
+  if (complete) references.push(directory)
 }
-run('compositor-browser', process.execPath, ['experiments/native-compositor-differential/run.mjs',
-  '--built', '--out', join(evidence, 'browser'), ...references])
+if (references.length) attempt('compositor-browser', () => run('compositor-browser', process.execPath, ['experiments/native-compositor-differential/run.mjs',
+  '--built', '--out', join(evidence, 'browser'), ...references]))
 for (const [family, flag] of [
   ['mapping', null], ['mix', '--mix'], ['map-range', '--map-range'],
   ['math', '--math'], ['math-boundary', '--boundary'], ['hue-ramp', '--hue-ramp'],
   ['vectors', '--vectors'],
   ['brick', '--brick'],
 ]) {
-  run('shader-' + family, process.execPath, ['experiments/tsl-node-differential/run-mapping.mjs',
+  attempt('shader-' + family, () => run('shader-' + family, process.execPath, ['experiments/tsl-node-differential/run-mapping.mjs',
     '--built', ...(flag ? [flag] : [])], { BLENDLINK_BLENDER: blender,
-      BLENDLINK_TSL_DIFF_ARTIFACTS: join(evidence, 'shader-' + family) })
+      BLENDLINK_TSL_DIFF_ARTIFACTS: join(evidence, 'shader-' + family) }))
 }
-run('spectral', process.execPath, ['experiments/spectral-node-differential/run.mjs', '--built'],
-  { BLENDLINK_BLENDER: blender, BLENDLINK_SPECTRAL_EVIDENCE: join(evidence, 'spectral') })
-run('curves', process.execPath, ['experiments/curve-node-differential/run.mjs', '--built'],
-  { BLENDLINK_BLENDER: blender, BLENDLINK_CURVE_EVIDENCE: join(evidence, 'curves') })
-const browser = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 'utf8'))
+attempt('spectral', () => run('spectral', process.execPath, ['experiments/spectral-node-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_SPECTRAL_EVIDENCE: join(evidence, 'spectral') }))
+attempt('curves', () => run('curves', process.execPath, ['experiments/curve-node-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_CURVE_EVIDENCE: join(evidence, 'curves') }))
+let browser = []
+try { browser = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 'utf8')) } catch { /* Failed families are recorded above. */ }
 writeFileSync(join(evidence, 'report.json'), JSON.stringify({
   nativeCompositorDevice: 'CPU', references,
-  compositor: browser.map(({ backend, rows }) => ({ backend, cases: rows.length,
-    maximumAbsoluteError: Math.max(...rows.map(row => row.max)) })),
+  compositor: browser.map(({ backend, rows, failure, error }) => ({ backend, cases: rows?.length ?? 0,
+    maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
   shaderFamilies: ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'spectral', 'curves'],
-  builtRuntime: true,
+  builtRuntime: true, failures,
 }, null, 2) + '\n')
+assert.deepEqual(failures, [], 'Native node parity failed; all independent family logs were retained')
 console.log('BLENDLINK_NATIVE_NODE_GATE_PASSED native CPU references and built runtime on both browser backends')

@@ -161,7 +161,10 @@ def emit_spectral(node, socket, *, emit_input, refuse, fold_scalar, evaluation_e
         evaluator = _blackbody_rgb if kind == "blackbody" else _wavelength_rgb
         values = [[*evaluator(np.float32(low) + np.float32(span / size) * np.float32(index), matrix), 1]
                   for index in range(size)]
-        result.update(samples=size, **native_color_band(values))
+        try:
+            result.update(samples=size, **native_color_band(values))
+        except ValueError as error:
+            refuse(str(error))
     elif kind == "wavelength":
         result.update(samples=81, values=[value for row in _tables()["cie_color_match"] for value in [*row, 1]])
     return result

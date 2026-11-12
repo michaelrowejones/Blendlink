@@ -40,3 +40,9 @@ Shader/browser errors and fallback to an unrequested browser backend fail.
 The fixture proves these graphs and domains, not arbitrary shader composition,
 all devices, other working-space configurations, or whole-scene renderer parity.
 The Apache-2.0 attribution and license travel with both distribution carriers.
+
+Native sampler precision is explicit: Metal uses fixed eight-bit filter fractions
+and typed half samples before Blender 5.3 (nearest-away ties); the measured software
+OpenGL gate uses full-fraction/full-float samples even for half-stored endpoints.
+Older schema-1 programs without a rounding tag retain their previous nearest-even
+interpretation. Unknown native GPU backends produce a named refusal.
