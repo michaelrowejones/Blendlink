@@ -78,10 +78,22 @@ def require_fixed_logarithm_base(node, fail):
     return float(bounds[0])
 
 
-def validate_math_domain(node, device, fail):
+def validate_math_domain(node, device, fail, gpu_profile=None):
     """Return native domain evidence after actual dependencies are classified."""
     properties = {}
     legacy = node.bl_idname == "CompositorNodeMath"
+    if node.operation == "LOGARITHM":
+        properties["math_logarithm_domain_model"] = "nonpositive-zero-v1"
+    profile = None
+    if device == "GPU" and node.operation in {"ARCSINE", "ARCCOSINE"}:
+        profile = gpu_profile() if gpu_profile is not None else {"intrinsicModel": "unverified"}
+        properties["math_gpu_profile"] = profile
+        if profile["intrinsicModel"] == "mesa-glsl-v1":
+            properties["math_gpu_intrinsic_model"] = "mesa-glsl-v1"
+        elif profile["intrinsicModel"] != "metal-native-v1":
+            fail("unverified-gpu-inverse-trig", node.inputs[0],
+                 "GPU inverse trigonometry requires a verified native Metal or Mesa GLSL renderer; "
+                 "Blender 4.2 background OpenGL identification needs glxinfo on the same DISPLAY")
     if node.operation in {"SINE", "COSINE", "TANGENT", "ARCSINE", "ARCCOSINE"}:
         properties["math_precision_model"] = "portable-f32-v1"
     if node.operation == "POWER":

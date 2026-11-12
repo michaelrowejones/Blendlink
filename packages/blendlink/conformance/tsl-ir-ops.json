@@ -25,6 +25,7 @@
     "math",
     "mix_color",
     "noise",
+    "noise_fractal",
     "normal_map",
     "normal_view",
     "object_coords",

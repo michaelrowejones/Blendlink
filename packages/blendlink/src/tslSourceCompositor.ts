@@ -11,6 +11,8 @@ import { buildBlenderBloom } from './tslBlenderBloom.js'
 import { buildCompositorColorOperation } from './tslCompositorColor.js'
 import { buildNativeColorBandSample } from './tslNativeColorBand.js'
 import { buildCompositorMathPrecision } from './tslCompositorMath.js'
+import { buildCompositorHueCorrect } from './tslCompositorHueCorrect.js'
+import { buildCompositorWhitePoint } from './tslCompositorWhitePoint.js'
 import { buildSharedBoolean, buildSharedInteger, buildSharedCompare, sharedTypedConstant, sharedTypedConversion } from './tslSharedUtilities.js'
 
 const {
@@ -98,16 +100,20 @@ function hueBasis(hue: TslEffectNode): TslEffectNode {
     clamp(float(2).sub(abs(phase.sub(4))), 0, 1))
 }
 
-function compositorRgbToHsl(color: TslEffectNode, device: unknown): TslEffectNode {
+function compositorRgbToHsl(color: TslEffectNode, device: unknown, backend?: unknown): TslEffectNode {
+  if (device === 'GPU' && backend !== undefined && backend !== 'OPENGL' && backend !== 'METAL')
+    throw new SourceCompositorUnsupported('HSL separation has no verified native GPU backend')
   const high = max(color.r, max(color.g, color.b))
   const low = min(color.r, min(color.g, color.b))
   const delta = high.sub(low)
   const gray = high.equal(low)
   const safeDelta = select(gray, 1, delta)
   const lightness = min(high.add(low).mul(0.5), 1)
-  // Blender's GPU compiler groups the extrema sum; this matters near the
-  // saturation singularity even though the two formulas are algebraically equal.
-  const upperDivisor = device === 'GPU' ? float(2).sub(high.add(low)) : float(2).sub(high).sub(low)
+  // Metal groups the extrema sum; native OpenGL retains left association.
+  // Their float32 denominators differ near the saturation singularity. Old
+  // driverless documents retain the previous grouped GPU behavior.
+  const upperDivisor = device === 'GPU' && backend !== 'OPENGL'
+    ? float(2).sub(high.add(low)) : float(2).sub(high).sub(low)
   const divisor = select(lightness.greaterThan(0.5), upperDivisor, high.add(low))
   const saturation = select(gray, 0, delta.div(select(gray, 1, divisor)))
   const hue = select(high.equal(color.r),
@@ -386,6 +392,14 @@ function buildCompositorCurves(op: SourceCompositorOperation,
       select(parameter.greaterThan(high), last.add(parameter.sub(high).mul(extension[1])), sampled))
   }
   const factor = op.inputs.Fac ? input('Fac') : float(1)
+  if (op.kind === 'hue-correct') {
+    const device = compositorEvaluationDevice(op, single)
+    return buildCompositorHueCorrect(op, input, { gpu, evaluateCurve: evaluate,
+      rgbToHsv: color => compositorRgbToHsv(color, device),
+      hsvToRgb: color => compositorHsvToRgb(color, device),
+      fail: message => { throw new SourceCompositorUnsupported(message) },
+    })
+  }
   if (scalar) {
     let curved = evaluate(input('Value'), 0)
     if (!gpu && p.curve_clip) {
@@ -677,6 +691,7 @@ export function buildSourceCompositor(
             break
           }
           case 'curves':
+          case 'hue-correct':
             node = buildCompositorCurves(op, input,
               Object.values(op.inputs).every(input => isSingleValue(input.value)), resources)
             break
@@ -770,7 +785,8 @@ export function buildSourceCompositor(
             else if (op.properties.mode === 'HSL') {
               if (!['CPU', 'GPU'].includes(String(op.properties.color_conversion_device)))
                 throw new SourceCompositorUnsupported('HSL separation has no verified compositor device')
-              node = compositorRgbToHsl(color.rgb, compositorEvaluationDevice(op, isSingleValue(op.inputs.Image!.value)))[channel]
+              node = compositorRgbToHsl(color.rgb, compositorEvaluationDevice(op, isSingleValue(op.inputs.Image!.value)),
+                op.properties.native_gpu_backend)[channel]
             }
             else node = compositorYuvYcc(color.rgb, op.properties.mode, op.properties.ycc_mode, false)[channel]
             break
@@ -833,8 +849,12 @@ export function buildSourceCompositor(
               balanced = pow(model === 'legacy-srgb' ? toLinear(gained) : gained, vec3(1).div(safeGamma))
             } else if (mode === 'Offset/Power/Slope (ASC-CDL)') {
               balanced = pow(max(color.rgb.mul(product('Slope')).add(offset('Offset')), 0), product('Power'))
+            } else if (mode === 'White Point' && model === 'linear') {
+              const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
+              balanced = buildCompositorWhitePoint(op, input, compositorEvaluationDevice(op, single) === 'GPU',
+                resources, message => { throw new SourceCompositorUnsupported(message) })
             } else {
-              throw new SourceCompositorUnsupported('Color Balance supports Lift/Gamma/Gain and ASC-CDL; White Point needs a verified chromatic-adaptation mapping')
+              throw new SourceCompositorUnsupported('Color Balance requires a verified Lift/Gamma/Gain, ASC-CDL or White Point mapping')
             }
             // Blender caps only the upper factor bound and preserves input alpha.
             node = vec4(mix(color.rgb, balanced, min(input('Fac'), 1)), color.a)
@@ -925,6 +945,11 @@ export function buildSourceCompositor(
               node = select(origin, 0, buildTslMathOperation('ARCTAN2', a,
                 () => select(origin, 1, b), () => float(0)))
             }
+            const logModel = op.properties.math_logarithm_domain_model
+            if (op.properties.operation === 'LOGARITHM' && logModel !== undefined && logModel !== 'nonpositive-zero-v1')
+              throw new SourceCompositorUnsupported('Logarithm has no verified native domain model')
+            if (op.properties.operation === 'LOGARITHM' && logModel === 'nonpositive-zero-v1')
+              node = select(input('Value').lessThanEqual(0).or(input('Value_001').lessThanEqual(0)), 0, node)
             if (op.properties.use_clamp) node = clamp(node, 0, 1)
             break
           }

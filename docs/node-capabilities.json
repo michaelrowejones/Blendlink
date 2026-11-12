@@ -936,10 +936,11 @@
     },
     "shader:ShaderNodeTexNoise": {
       "category": "partial",
-      "limits": "Normalized FBM, 1D/2D/3D/4D; Detail<=6 and static fractal controls. Roughness is proved in [0,1], with native negative-to-zero behavior; linked roughness above1 refuses because native Noise has no upper clamp; exact effective-scale band <= 80, additional dimension-specific approximation bands are declared.",
+      "limits": "Normalized legacy FBM and signed unnormalized FBM, all four dimensions and Color/Factor. Static controls and Detail<=6; negative Detail/Roughness follow native zero clamping, roughness above1 refuses. Signed FBM additionally requires finite |Lacunarity|<=2 and |Distortion|<=1, effective scale<=80; normalized-only approximation bands are not inherited. Modern MF and 4D offset float staging are explicit. Other four fractal types and genuinely dynamic controls remain unported.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
-        "noise"
+        "noise",
+        "noise_fractal"
       ],
       "modes": {
         "noise_dimensions": {
@@ -969,9 +970,38 @@
         },
         {
           "path": "experiments/tsl-node-differential/cells.json"
+        },
+        {
+          "path": "experiments/noise-fractal-differential/reference.py"
+        },
+        {
+          "path": "experiments/noise-fractal-differential/README.md"
+        },
+        {
+          "path": "packages/blender-addon/tests/noise_parameter_admission_check.py"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "blenderVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeEngines": [
+          "Cycles CPU",
+          "EEVEE Metal"
+        ],
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "scope": "Signed FBM corpus includes independent carriers and eight amplified GPU residual controls. Existing normalized FBM has a separate legacy corpus.",
+        "corpusGraphsPerVersion": 334,
+        "builtCorpusGraphs53": 334,
+        "cyclesMappedMaxAbs": 9.357929229736328e-06,
+        "budget": "Mapped max2e-5 plus one independently established EEVEE final half-target ULP. Ordinary signed fields use affine scale1/16; residual controls amplify16x. Derived raw errors are reported separately."
+      }
     },
     "shader:ShaderNodeTexWhiteNoise": {
       "category": "partial",
@@ -2669,7 +2699,7 @@
     },
     "compositor:CompositorNodeColorBalance": {
       "category": "partial",
-      "limits": "LGG and ASC-CDL, linked grade/factor inputs. Legacy 4.2 LGG uses sRGB adaptation; modern socket form is scene-linear. White Point/linked mode selectors refuse; alpha preserved.",
+      "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
       "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
       "runtimeOps": [
         "color-balance"
@@ -2687,7 +2717,9 @@
             "Lift/Gamma/Gain",
             "Offset/Power/Slope (ASC-CDL)"
           ],
-          "partial": []
+          "partial": [
+            "White Point"
+          ]
         }
       },
       "evidence": [
@@ -2704,9 +2736,42 @@
         },
         {
           "path": "packages/blender-addon/tests/compositor_color_balance_check.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_whitepoint.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorWhitePoint.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorHueWhitePoint.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_whitepoint_check.py"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "whitePointVerification": {
+        "nativeVersions": [
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeGraphsPerDevice": 121,
+        "workingSpaces": [
+          "default scene-linear",
+          "Rec2020 OCIO role"
+        ],
+        "nativeDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "runtimeBackends": [
+          "WebGL2",
+          "WebGPU"
+        ],
+        "alphaMaximumError": 0,
+        "scope": "726 White Point graphs across regular and alternate working-space corpora; no full-rectangle pole-free claim"
+      }
     },
     "compositor:ShaderNodeGamma": {
       "category": "supported",
@@ -4525,6 +4590,66 @@
         ],
         "maxAbs": 6.616e-06
       }
+    },
+    "compositor:CompositorNodeHueCorrect": {
+      "category": "partial",
+      "limits": "Native static cyclic Hue/Saturation/Value curve mappings, original-hue parameterization, Factor extrapolation, negative/HDR colors and preserved alpha. Explicit CPU/GPU table/filter/clipping distinctions; animated, collapsed or nonfinite curve mappings refuse. Native retained clipping flags are recorded rather than inventing an unavailable disabled state.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "hue-correct"
+      ],
+      "modes": {
+        "mapping.extend": {
+          "supported": [
+            "EXTRAPOLATED",
+            "HORIZONTAL"
+          ]
+        },
+        "mapping.tone": {
+          "supported": [
+            "STANDARD",
+            "FILMLIKE"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "def extract"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'hue-correct':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorHueCorrect.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_hue_correct_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorHueWhitePoint.test.ts"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeGraphsPerDevice": 113,
+        "nativeDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "runtimeBackends": [
+          "WebGL2",
+          "WebGPU"
+        ],
+        "maximumAbsoluteError": 2.98023e-06,
+        "sourceBackends": "Metal; software OpenGL verification pending hosted CI"
+      },
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend"
     }
   },
   "knownUnsupported": [
@@ -4558,7 +4683,6 @@
     "compositor:CompositorNodeEllipseMask",
     "compositor:CompositorNodeFilter",
     "compositor:CompositorNodeFlip",
-    "compositor:CompositorNodeHueCorrect",
     "compositor:CompositorNodeIDMask",
     "compositor:CompositorNodeImage",
     "compositor:CompositorNodeImageCoordinates",

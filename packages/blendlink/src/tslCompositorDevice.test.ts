@@ -68,6 +68,17 @@ describe('native compositor device and domain contracts', () => {
     built.dispose()
   })
 
+  it.each(['ARCSINE', 'ARCCOSINE'])('requires a recognized fresh GPU inverse-trig model for %s', name => {
+    const graph = math(name), operation = graph.ops[0]!
+    operation.properties.math_precision_model = 'portable-f32-v1'
+    operation.properties.math_gpu_intrinsic_model = 'mesa-glsl-v1'
+    const built = buildSourceCompositor(graph, () => null)
+    expect(built.node.isNode).toBe(true)
+    built.dispose()
+    operation.properties.math_gpu_intrinsic_model = 'unverified-driver'
+    expect(() => buildSourceCompositor(graph, () => null)).toThrow(/Artist Math.*native GPU intrinsic model/)
+  })
+
   it('accepts a proven fixed linked Logarithm base and refuses base one', () => {
     const graph = math('LOGARITHM'), operation = graph.ops[0]!
     operation.inputs.Value_001!.value = { kind: 'ref', type: 'VALUE', node: 'base' }
@@ -79,5 +90,18 @@ describe('native compositor device and domain contracts', () => {
     built.dispose()
     operation.properties.math_logarithm_base = 1
     expect(() => buildSourceCompositor(graph, () => null)).toThrow(/Artist Math.*fixed base other than 1/)
+  })
+
+  it('keeps the logarithm domain correction explicit for fresh documents', () => {
+    const graph = math('LOGARITHM'), operation = graph.ops[0]!
+    operation.inputs.Value = input(0)
+    for (const model of [undefined, 'nonpositive-zero-v1']) {
+      operation.properties.math_logarithm_domain_model = model
+      const built = buildSourceCompositor(graph, () => null)
+      expect(built.node.isNode).toBe(true)
+      built.dispose()
+    }
+    operation.properties.math_logarithm_domain_model = 'future-model'
+    expect(() => buildSourceCompositor(graph, () => null)).toThrow(/Artist Math.*Logarithm.*native domain model/)
   })
 })

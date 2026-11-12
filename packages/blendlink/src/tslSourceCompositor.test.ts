@@ -34,9 +34,9 @@ describe('native compositor Color Balance', () => {
       .toThrow(/Compositor \/ Final grade \[Image\]: Color Balance has no verified color model/)
   })
 
-  it('refuses White Point with the artist node name', () => {
+  it('refuses White Point without its native model with the artist node name', () => {
     expect(() => buildSourceCompositor(colorBalance('linear', 'White Point'), () => null))
-      .toThrow(/Final grade.*White Point needs a verified chromatic-adaptation mapping/)
+      .toThrow(/Final grade.*White Point requires its native chromatic-adaptation model/)
   })
 
   it('refuses a linked mode selector without installing a partial graph', () => {

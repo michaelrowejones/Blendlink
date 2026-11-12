@@ -3,8 +3,8 @@ import type { SourceCompositorOperation } from './sourceDisplay.js'
 import type { TslEffectNode } from './tslPostEffects.js'
 import { PORTABLE_TRIG_REDUCTION_LIMIT, buildPortableTrigParts, buildPortableSine, buildPortableCosine } from './tslPortableTrig.js'
 
-const { Fn, abs, bitcast, clamp, float, select, sqrt, uint } = TSL as unknown as Record<
-  'Fn' | 'abs' | 'bitcast' | 'clamp' | 'float' | 'select' | 'sqrt' | 'uint', (...args: TslEffectNode[]) => TslEffectNode
+const { Fn, abs, bitcast, clamp, float, select, sign, sqrt, uint } = TSL as unknown as Record<
+  'Fn' | 'abs' | 'bitcast' | 'clamp' | 'float' | 'select' | 'sign' | 'sqrt' | 'uint', (...args: TslEffectNode[]) => TslEffectNode
 >
 
 export { PORTABLE_TRIG_REDUCTION_LIMIT as COMPOSITOR_TRIG_REDUCTION_LIMIT } from './tslPortableTrig.js'
@@ -54,7 +54,21 @@ const inverse = Fn(([input, cosine]: TslEffectNode[]) => {
   { name: 'value', type: 'float' }, { name: 'cosine', type: 'bool' },
 ] })
 
-/** Fresh exports opt into accurate bounded math. Old schema1 documents retain
+// Mesa GLSL builtin_functions.cpp asin_expr, _asin and _acos. These native
+// builtins use different low-degree polynomials, not accurate mathematical
+// inverses. Preserve their actual authored pixels explicitly.
+const mesaInverse = Fn(([input, cosine]: TslEffectNode[]) => {
+  const value = clamp(input, -1, 1).toVar(), magnitude = abs(value).toVar()
+  const p0 = select(cosine, .08132463, .086566724), p1 = select(cosine, -.02363318, -.03102955)
+  const polynomial = p0.add(magnitude.mul(p1)).mul(magnitude)
+    .add(Math.fround(Math.fround(Math.PI / 4) - 1)).mul(magnitude).add(Math.PI / 2)
+  const arcsine = sign(value).mul(float(Math.PI / 2).sub(sqrt(float(1).sub(magnitude)).mul(polynomial)))
+  return select(cosine, float(Math.PI / 2).sub(arcsine), arcsine)
+}).setLayout({ name: 'blendlinkCompositorMesaInverseTrigV1', type: 'float', inputs: [
+  { name: 'value', type: 'float' }, { name: 'cosine', type: 'bool' },
+] })
+
+/** Fresh exports opt into bounded native-aware math. Old schema1 documents retain
  * their previous intrinsic behavior. Huge arguments use the prior intrinsic;
  * the polynomial reduction makes no claim about their phase accuracy. */
 export function buildCompositorMathPrecision(op: SourceCompositorOperation, value: TslEffectNode,
@@ -63,8 +77,11 @@ export function buildCompositorMathPrecision(op: SourceCompositorOperation, valu
   if (model === undefined) return intrinsic
   if (model !== 'portable-f32-v1') return fail('Compositor Math has no verified precision model')
   const operation = op.properties.operation
-  if (operation === 'ARCSINE' || operation === 'ARCCOSINE')
-    return inverse(value, float(operation === 'ARCCOSINE' ? 1 : 0).notEqual(0))
+  if (operation === 'ARCSINE' || operation === 'ARCCOSINE') {
+    const backend = op.properties.math_gpu_intrinsic_model
+    if (backend !== undefined && backend !== 'mesa-glsl-v1') return fail('Compositor Math has no verified native GPU intrinsic model')
+    return (backend === 'mesa-glsl-v1' ? mesaInverse : inverse)(value, float(operation === 'ARCCOSINE' ? 1 : 0).notEqual(0))
+  }
   if (operation === 'POWER' && op.properties.math_fixed_power_exponent === -1)
     return select(value.equal(0), 0, float(1).div(select(value.equal(0), 1, value)))
   if (operation === 'SINE') return buildPortableSine(value, intrinsic)

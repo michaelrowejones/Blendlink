@@ -139,6 +139,12 @@ const tslFn = (TSLX as Record<string, unknown>).Fn as (
 ) => ((...args: TslExprLike[]) => TslExpression) & {
   setLayout(layout: TslFnLayout): (...args: TslExprLike[]) => TslExpression
 }
+// One reusable primitive keeps a multi-octave 4D Color material from expanding
+// the 16-corner integer hash body independently for every lane and octave.
+const fractalPerlin1d = tslFn(([position]) => perlin1d(position!))
+  .setLayout({ name: 'blendlinkFractalPerlin1dV1', type: 'float', inputs: [{ name: 'position', type: 'float' }] })
+const fractalPerlin4d = tslFn(([position]) => perlin4d(position!))
+  .setLayout({ name: 'blendlinkFractalPerlin4dV1', type: 'float', inputs: [{ name: 'position', type: 'vec4' }] })
 const tslAttribute = attribute as unknown as (name: string) => TslExpression
 const tslTexture = texture as unknown as (
   map: DataTexture, coordinates: TslExpression,
@@ -412,29 +418,31 @@ export function blenderNoiseFac(
   // 2D/3D cells prove agrees with Blender's; 1D has no MaterialX counterpart
   // at all and runs Blender's own ported perlin1d instead.
   octaveFn: (position: TslExpression) => TslExpression = tslNoise,
+  normalizeOutput = true,
 ): TslExpression {
-  const clampedDetail = Math.min(Math.max(detail, 0), 15)
+  const clampedDetail = Math.min(Math.max(normalizeOutput ? detail : Math.fround(detail), 0), 15)
   const octaves = Math.floor(clampedDetail)
   const remainder = clampedDetail - octaves
-  const amplitudeRatio = Math.min(Math.max(roughness, 0), 1)
+  const amplitudeRatio = Math.min(Math.max(normalizeOutput ? roughness : Math.fround(roughness), 0), 1)
+  const frequencyRatio = normalizeOutput ? lacunarity : Math.fround(lacunarity)
   let frequency = 1
   let amplitude = 1
   let maxAmplitude = 0
   let sum = tslFloat(0.0)
   for (let octave = 0; octave <= octaves; octave += 1) {
     sum = sum.add(octaveFn(position.mul(frequency)).mul(amplitude))
-    maxAmplitude += amplitude
-    amplitude *= amplitudeRatio
-    frequency *= lacunarity
+    maxAmplitude = normalizeOutput ? maxAmplitude + amplitude : Math.fround(maxAmplitude + amplitude)
+    amplitude = normalizeOutput ? amplitude * amplitudeRatio : Math.fround(amplitude * amplitudeRatio)
+    frequency = normalizeOutput ? frequency * frequencyRatio : Math.fround(frequency * frequencyRatio)
   }
   let normalized = sum.div(maxAmplitude)
-  if (remainder > 1e-9) {
-    const extra = sum
-      .add(octaveFn(position.mul(frequency)).mul(amplitude))
-      .div(maxAmplitude + amplitude)
+  if (normalizeOutput ? remainder > 1e-9 : remainder !== 0) {
+    const extraSum = sum.add(octaveFn(position.mul(frequency)).mul(amplitude))
+    if (!normalizeOutput) return tslMix(sum, extraSum, remainder)
+    const extra = extraSum.div(maxAmplitude + amplitude)
     normalized = tslMix(normalized, extra, remainder)
   }
-  return normalized.mul(0.5).add(0.5)
+  return normalizeOutput ? normalized.mul(0.5).add(0.5) : sum
 }
 
 /** Same normalized fBM with live amplitudes and a statically bounded loop. */
@@ -579,7 +587,8 @@ function build(expression: TslIrExpression): TslExpression {
       ])
       const curveFactor = expression.factor as TslIrExpression | undefined
       if (typeof factorOp === 'string' && (vectorProducers.has(factorOp)
-        || (factorOp === 'curve_native' && curveFactor?.kind !== 'float'))) {
+        || (factorOp === 'curve_native' && curveFactor?.kind !== 'float')
+        || (['noise', 'noise_fractal'].includes(factorOp) && curveFactor?.output === 'color'))) {
         fail(
           `IR mix_color factor is vector-typed (${factorOp}); the emitter `
           + 'must wrap colour sources in rgb_to_bw',
@@ -853,8 +862,25 @@ function build(expression: TslIrExpression): TslExpression {
       )
       return tslOneMinus(tslPow(facing, exponent))
     }
-    case 'noise': {
+    case 'noise':
+    case 'noise_fractal': {
       const dimensions = scalar(expression, 'dimensions')
+      if (![1, 2, 3, 4].includes(dimensions)) return fail('IR Noise has an unsupported dimension')
+      // The legacy opcode keeps its normalized interpretation. New signed
+      // capabilities use a distinct opcode so older runtimes fail closed.
+      const normalizeOutput = expression.op === 'noise'
+      if (!normalizeOutput && expression.noiseType !== undefined && expression.noiseType !== 'FBM')
+        return fail('IR Noise fractal type has no verified recurrence: ' + String(expression.noiseType))
+      if (!normalizeOutput && expression.normalize !== undefined && expression.normalize !== false)
+        return fail('IR raw FBM normalize must be false')
+      const scaleExpression = child(expression, 'scale')
+      if (!normalizeOutput && (scaleExpression.op !== 'const_float' || typeof scaleExpression.value !== 'number' || !Number.isFinite(scaleExpression.value)))
+        return fail('IR unnormalized Noise needs a finite static Scale')
+      if (!normalizeOutput && (
+        ![expression.detail, expression.roughness, expression.lacunarity ?? 2].every(value => typeof value === 'number' && Number.isFinite(value)) ||
+        (expression.detail as number) > 6 || (expression.roughness as number) > 1 || Math.abs((expression.lacunarity ?? 2) as number) > 2 ||
+        expression.distortion !== undefined && (typeof expression.distortion !== 'number' || !Number.isFinite(expression.distortion) || Math.abs(expression.distortion) > 1)))
+        return fail('IR unnormalized Noise exceeds its verified finite fractal controls')
       let position = build(child(expression, 'input'))
       if (dimensions === 4) {
         // Blender scales the WHOLE float4(co, w), so w joins before the
@@ -867,8 +893,8 @@ function build(expression: TslIrExpression): TslExpression {
       // The per-dimension single octave: 2D/3D ride MaterialX (proven to
       // agree with Blender by the noise-2d / noise-scale cells); 1D and 4D
       // are Blender's own perlins ported, because three has neither arity.
-      const octaveForDimension = dimensions === 1 ? perlin1d
-        : dimensions === 4 ? perlin4d
+      const octaveForDimension = dimensions === 1 ? (normalizeOutput ? perlin1d : fractalPerlin1d)
+        : dimensions === 4 ? (normalizeOutput ? perlin4d : fractalPerlin4d)
           : tslNoise
       if (dimensions === 2) {
         // Blender's 2D noise is a genuinely different Perlin dimension,
@@ -906,7 +932,7 @@ function build(expression: TslIrExpression): TslExpression {
       const lacunarity = typeof expression.lacunarity === 'number'
         ? expression.lacunarity : 2.0
       const fac = blenderNoiseFac(
-        position, detail, roughness, lacunarity, octaveForDimension,
+        position, detail, roughness, lacunarity, octaveForDimension, normalizeOutput,
       )
       if (expression.output !== 'color') return fac
       // Color lanes are the same fBM at constant hash-derived offsets
@@ -922,10 +948,10 @@ function build(expression: TslIrExpression): TslExpression {
       return tslVec3(
         fac,
         blenderNoiseFac(
-          shifted(offsets[0]), detail, roughness, lacunarity, octaveForDimension,
+          shifted(offsets[0]), detail, roughness, lacunarity, octaveForDimension, normalizeOutput,
         ),
         blenderNoiseFac(
-          shifted(offsets[1]), detail, roughness, lacunarity, octaveForDimension,
+          shifted(offsets[1]), detail, roughness, lacunarity, octaveForDimension, normalizeOutput,
         ),
       )
     }
@@ -1284,10 +1310,18 @@ function build(expression: TslIrExpression): TslExpression {
       }
       let sample: TslExpression
       if (expression.interpolation === 'Closest') {
-        sample = texel(
-          nativeClosestIndex(coordU.mul(width), expression.sourceEngine === 'CYCLES'),
-          nativeClosestIndex(coordV.mul(height), expression.sourceEngine === 'CYCLES'),
-        )
+        const nearest = (coordinate: TslExpression, size: number): TslExpression => {
+          if (expression.sourceEngine === 'EEVEE' && expression.nativeGpuBackend === 'OPENGL' && extension === 'MIRROR') {
+            // OpenGL mirrors normalized coordinates before nearest selection;
+            // exact boundaries therefore differ from Metal's index mirroring.
+            const period = coordinate.sub(tslFloor(coordinate.div(2)).mul(2))
+            const mirrored = tslSelect(period.lessThanEqual(1), period, tslFloat(2).sub(period))
+            return tslMin(tslFloor(mirrored.mul(size)), size - 1)
+          }
+          return nativeClosestIndex(coordinate.mul(size), expression.sourceEngine === 'CYCLES')
+        }
+        sample = texel(nearest(coordU, width), nearest(coordV, height))
+
       } else if (expression.interpolation === 'Cubic') {
         // Cubic B-spline over a 4x4 neighbourhood, taps at ix-1..ix+2.
         // Weights transcribed from SET_CUBIC_SPLINE_WEIGHTS in

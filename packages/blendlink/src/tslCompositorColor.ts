@@ -67,10 +67,19 @@ export function buildCompositorColorOperation(op: SourceCompositorOperation,
   if (op.kind !== 'color-correction') return options.fail('Unknown native pointwise color operation ' + op.kind)
   const model = op.properties.color_correction_model
   if (model !== 'legacy' && model !== 'modern') options.fail('Color Correction has no verified negative-color model')
+  const nativeBackend = op.properties.native_gpu_backend
+  if (options.device === 'GPU' && nativeBackend !== undefined && !['METAL', 'OPENGL'].includes(String(nativeBackend)))
+    options.fail('Color Correction has no verified native GPU arithmetic model')
   return Fn(() => {
     const color = input('Image').toVar()
     const rg = color.r.add(color.g).toVar(), sum = rg.add(color.b).toVar()
-    const level = (options.device === 'CPU' ? compositorCpuDivision(vec3(sum), float(3)).x : sum.div(3)).toVar()
+    // Native OpenGL keeps correctly rounded division here; the Metal
+    // path and legacy documents retain reciprocal multiplication. One ULP
+    // can select a different tonal region, so an epsilon cannot repair it.
+    const roundedDivision = options.device === 'CPU' || nativeBackend === 'OPENGL'
+    const quotient = roundedDivision ? compositorCpuDivision(vec3(sum), float(3)).x
+      : nativeBackend === 'METAL' ? sum.mul(Math.fround(1 / 3)) : sum.div(3)
+    const level = quotient.toVar()
     const start = input('Midtones Start').toVar(), end = input('Midtones End').toVar()
     const rising = level.sub(start).mul(5).add(0.5), falling = level.sub(end).mul(5).add(0.5)
     const weights = select(level.lessThan(start.sub(0.1)), vec3(1, 0, 0),

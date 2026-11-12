@@ -48,6 +48,7 @@ export function isUnitBoundedExpression(expression: TslIrExpression | undefined)
       typeof expression.dimensions === 'number' && [1, 2, 3, 4].includes(expression.dimensions) && typeof expression.detail === 'number' && Number.isFinite(expression.detail) && expression.detail >= 0 && expression.detail <= 6 &&
       typeof expression.roughness === 'number' && Number.isFinite(expression.roughness) && expression.roughness >= 0 && expression.roughness <= 1 &&
       (expression.lacunarity === undefined || typeof expression.lacunarity === 'number' && Number.isFinite(expression.lacunarity) && expression.lacunarity > 0)
+    case 'noise_fractal': return false // Signed/HDR family, regardless of an untrusted normalize annotation.
     case 'tex_white_noise': return true
     case 'tex_checker': return expression.output === 'fac' || ['color1', 'color2'].every(unit)
     case 'mix_color': return expression.clampResult === true || expression.blendType === 'MIX' && expression.clampFactor !== false && ['a', 'b'].every(unit)

@@ -181,7 +181,7 @@ def main(output):
         grade.inputs["Type"].default_value = "White Point"
         refused = compositor_graph.extract(scene)
         expect(refused["status"] == "unsupported" and
-               refused["diagnostics"][-1]["code"] == "unsupported-color-balance-mode", refused)
+               refused["diagnostics"][-1]["code"] == "white-point-domain", refused)
         grade.inputs["Type"].default_value = "Lift/Gamma/Gain"
         mode = tree.interface.new_socket(name="Dynamic mode", in_out="INPUT", socket_type="NodeSocketMenu")
         incoming = tree.nodes.new("NodeGroupInput")

@@ -51,6 +51,9 @@ describe('native shader color conversion', () => {
       expect(() => build(expression({ inputDomain: 'unit-bounded-live', input: { ...input, ...fields } })))
         .toThrow(/verified finite input domain/)
     }
+    for (const normalize of [undefined, true, false])
+      expect(() => build(expression({ inputDomain: 'unit-bounded-live', input: { ...input, op: 'noise_fractal', normalize } })))
+        .toThrow(/verified finite input domain/)
   })
   it('requires a ramp model whose actual interpolation is convex', () => {
     const input = { op: 'color_ramp', interpolation: 'LINEAR', stops: [

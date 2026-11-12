@@ -84,7 +84,7 @@ jobs:
       - name: Install software rendering libraries for headless Blender
         run: |
           sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 mesa-utils
 
       - name: Run the complete portable release gate
         run: npm run test:full
@@ -95,7 +95,7 @@ jobs:
   linux:
     name: Linux x64 / Blender ${{ matrix.version }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 75
     strategy:
       fail-fast: false
       matrix:
@@ -144,7 +144,7 @@ jobs:
       - name: Install software rendering libraries for headless Blender
         run: |
           sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 mesa-utils
 
       - name: Install the version-matched node parity browser
         run: npx --no-install playwright install --with-deps chromium

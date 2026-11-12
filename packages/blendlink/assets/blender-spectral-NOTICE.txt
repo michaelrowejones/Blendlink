@@ -1,4 +1,4 @@
-Blendlink spectral color, color conversion, image sampling, integer utility, Wave and Brick node mathematics and tables
+Blendlink spectral color, color conversion, image sampling, integer utility, Noise/Wave and Brick node mathematics and tables
 
 Copyright 2011-2022 Blender Foundation
 Copyright 2026 Blendlink contributors
@@ -16,7 +16,7 @@ https://github.com/blender/blender/blob/v4.2.0/intern/cycles/kernel/device/cpu/i
 
 Blendlink modifications: Three.js expression construction, explicit source
 engine evaluation models, serialized working-space matrices, resource ownership,
-native RGB/HSV/HSL conversion, signed 32-bit integer utility operations, native image wrap/clip/nearest and cubic sampling, Wave live distortion/roughness with bounded normalized octave sums, integer Brick noise and mortar calculations, and browser/native differential
+native RGB/HSV/HSL conversion, signed 32-bit integer utility operations, native image wrap/clip/nearest and cubic sampling, Wave live distortion/roughness and Noise signed FBM with native constant/shader offset precision and bounded octave sums, integer Brick noise and mortar calculations, and browser/native differential
 checks. Native EEVEE sampler behavior is modeled
 separately from the Cycles analytical functions.
 

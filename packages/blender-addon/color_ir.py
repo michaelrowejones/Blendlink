@@ -45,6 +45,7 @@ def _unit_bounded(expression):
                 and isinstance(expression.get('detail'), (int, float)) and math.isfinite(expression['detail']) and 0 <= expression['detail'] <= 6
                 and isinstance(expression.get('roughness'), (int, float)) and math.isfinite(expression['roughness']) and 0 <= expression['roughness'] <= 1
                 and math.isfinite(expression.get('lacunarity', 2)) and expression.get('lacunarity', 2) > 0)
+    if op == 'noise_fractal': return False  # Signed/HDR family; no normalized bounds can be inherited.
     if op == 'tex_white_noise': return True
     if op == 'tex_checker':
         return expression.get('output') == 'fac' or all(_unit_bounded(expression[key]) for key in ['color1', 'color2'])

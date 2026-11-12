@@ -20,6 +20,20 @@ const documentOf = (output: Record<string, unknown>): TslIrDocument => ({
 })
 
 describe('buildTslColorNode', () => {
+  it('constructs signed FBM and refuses unverified controls without changing old normalized documents', () => {
+    const expression = { op: 'noise_fractal', normalize: false, dimensions: 3, detail: 2.5, roughness: .7, lacunarity: 1.7,
+      input: { op: 'uv' }, scale: { op: 'const_float', value: 1 } }
+    expect(buildTslColorNode(documentOf(expression))).toBeTruthy()
+    expect(buildTslColorNode(documentOf({ ...expression, op: 'noise', normalize: undefined }))).toBeTruthy()
+    expect(buildTslColorNode(documentOf({ ...expression, op: 'noise', normalize: false, roughness: 2 }))).toBeTruthy()
+    expect(() => buildTslColorNode(documentOf({ ...expression, normalize: 'false' }))).toThrow(/must be false/)
+    expect(() => buildTslColorNode(documentOf({ ...expression, noiseType: 'MULTIFRACTAL' })))
+      .toThrow(/no verified recurrence/)
+    for (const controls of [{ detail: 7 }, { roughness: 2 }, { lacunarity: 3 }, { distortion: 2 }])
+      expect(() => buildTslColorNode(documentOf({ ...expression, ...controls }))).toThrow(/verified finite fractal controls/)
+    expect(() => buildTslColorNode(documentOf({ op: 'mix_color', blendType: 'MIX',
+      factor: { ...expression, output: 'color' } }))).toThrow(/vector-typed \(noise_fractal\)/)
+  })
   it('accepts live Wave distortion while refusing unknown modes and unproven octave counts', () => {
     const expression = { op: 'tex_wave', waveType: 'BANDS', bandsDirection: 'X', ringsDirection: 'SPHERICAL',
       profile: 'SAW', vector: { op: 'uv' }, scale: { op: 'const_float', value: .25 },

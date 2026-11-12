@@ -43,7 +43,7 @@ run('native-capabilities', blender, ['--background', '--factory-startup', '--pyt
 const capabilities = JSON.parse(readFileSync(capabilitiesFile, 'utf8'))
 assert.equal(typeof capabilities.offlineGpuAvailable, 'boolean', 'Native GPU capability was not reported')
 assert.equal(typeof capabilities.gpuParityVersionSupported, 'boolean', 'Native GPU parity version support was not reported')
-for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvailable'])
+for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvailable', 'whitePointCompositorAvailable'])
   assert.equal(typeof capabilities[key], 'boolean', `Native utility capability ${key} was not reported`)
 const references = []
 const referenceSets = []
@@ -56,7 +56,12 @@ const compositorFamilies = [
   ['alpha', 'compositor_alpha_check.py', 'BLENDLINK_COMPOSITOR_ALPHA_REFERENCES'],
   ['mix', 'compositor_mix_check.py', 'BLENDLINK_COMPOSITOR_MIX_REFERENCES'],
   ['color-controls', 'compositor_color_check.py', 'BLENDLINK_COMPOSITOR_COLOR_REFERENCES'],
+  ['hue-correct', 'compositor_hue_correct_check.py', 'BLENDLINK_COMPOSITOR_HUE_CORRECT_REFERENCES'],
 ]
+if (capabilities.whitePointCompositorAvailable) compositorFamilies.push(
+  ['white-point', 'compositor_whitepoint_check.py', 'BLENDLINK_COMPOSITOR_WHITEPOINT_REFERENCES'])
+else inapplicableFamilies.push({ family: 'compositor-white-point',
+  reason: 'Native Color Balance creation/selector probe exposes no White Point mode' })
 if (capabilities.sharedUtilityCompositorAvailable) compositorFamilies.push(
   ['shared-utilities', 'shared_utility_check.py', 'BLENDLINK_SHARED_UTILITY_REFERENCES'])
 else inapplicableFamilies.push({ family: 'compositor-shared-utilities',
@@ -72,6 +77,7 @@ for (const [family, file, variable] of compositorFamilies) {
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MATH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BALANCE_DEVICE: 'CPU',
+    BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE: 'CPU',
   }))
   if (complete) {
     references.push(directory)
@@ -89,7 +95,10 @@ if (capabilities.offlineGpuAvailable && capabilities.gpuParityVersionSupported) 
     ['mix-gpu', 'compositor_mix_check.py', 'BLENDLINK_COMPOSITOR_MIX_REFERENCES', 'BLENDLINK_COMPOSITOR_MIX_DEVICE'],
     ['pointwise-gpu', 'compositor_pointwise_check.py', 'BLENDLINK_COMPOSITOR_POINTWISE_REFERENCES', 'BLENDLINK_COMPOSITOR_POINTWISE_DEVICE'],
     ['color-controls-gpu', 'compositor_color_check.py', 'BLENDLINK_COMPOSITOR_COLOR_REFERENCES', 'BLENDLINK_COMPOSITOR_COLOR_DEVICE'],
+    ['hue-correct-gpu', 'compositor_hue_correct_check.py', 'BLENDLINK_COMPOSITOR_HUE_CORRECT_REFERENCES', 'BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE'],
   ]
+  if (capabilities.whitePointCompositorAvailable) gpuFamilies.push(
+    ['white-point-gpu', 'compositor_whitepoint_check.py', 'BLENDLINK_COMPOSITOR_WHITEPOINT_REFERENCES', 'BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE'])
   if (capabilities.sharedUtilityCompositorAvailable) gpuFamilies.push(
     ['shared-utilities-gpu', 'shared_utility_check.py', 'BLENDLINK_SHARED_UTILITY_REFERENCES', 'BLENDLINK_SHARED_UTILITY_DEVICE'])
   for (const [family, file, variable, deviceVariable] of gpuFamilies) {
@@ -192,6 +201,8 @@ attempt('published-images', () => {
 })
 attempt('wave', () => run('wave', process.execPath, ['experiments/wave-node-differential/run.mjs', '--built'],
   { BLENDLINK_BLENDER: blender, BLENDLINK_WAVE_EVIDENCE: join(evidence, 'wave') }))
+attempt('noise-fractal', () => run('noise-fractal', process.execPath, ['experiments/noise-fractal-differential/run.mjs', '--built'],
+  { BLENDLINK_BLENDER: blender, BLENDLINK_NOISE_EVIDENCE: join(evidence, 'noise-fractal') }, 1_200_000))
 attempt('color-conversions', () => run('color-conversions', process.execPath,
   ['experiments/color-conversion-differential/run.mjs', '--built'],
   { BLENDLINK_BLENDER: blender, BLENDLINK_COLOR_EVIDENCE: join(evidence, 'color-conversions') }))
@@ -208,7 +219,7 @@ writeFileSync(join(evidence, 'report.json'), JSON.stringify({
   nativeCompositorGpu, nativeCapabilities: capabilities, references, referenceSets, inapplicableFamilies, compositorTimeout,
   compositor: browser.map(({ backend, rows, failure, error }) => ({ backend, cases: rows?.length ?? 0,
     maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
-  shaderFamilies: ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'color-conversions',
+  shaderFamilies: ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'noise-fractal', 'color-conversions',
     ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])],
   builtRuntime: true, failures,
 }, null, 2) + '\n')

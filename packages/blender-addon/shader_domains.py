@@ -16,7 +16,7 @@ _FUNCTION = {"math", "vector_math", "mapping", "vector_rotate", "vector_scale",
              "combine", "separate", "clamp01", "clamp_minmax", "mix_color",
              "rgb_to_bw", "hue_sat", "hsv_to_rgb", "rgb_to_hsv", "gamma",
              "invert", "bright_contrast", "color_ramp", "ramp_alpha", "ramp_lut",
-             "curve_rgb", "curve_native", "noise", "tex_checker", "tex_gradient", "tex_magic",
+             "curve_rgb", "curve_native", "noise", "noise_fractal", "tex_checker", "tex_gradient", "tex_magic",
              "tex_wave", "tex_voronoi", "tex_white_noise", "tex_brick",
              "typed_convert", "boolean_math", "integer_math"}
 _CYCLES_FUNCTION = {"math", "vector_math", "mapping", "vector_scale", "combine",

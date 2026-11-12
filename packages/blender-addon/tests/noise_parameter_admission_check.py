@@ -25,6 +25,31 @@ try:
         source.outputs[0].default_value = roughness
         expression = tsl_ir.emit_output(noise, noise.outputs['Fac'])
         assert expression['op'] == 'noise' and expression['roughness'] == roughness
+    noise.normalize = False
+    expression = tsl_ir.emit_output(noise, noise.outputs['Fac'])
+    assert expression['op'] == 'noise_fractal' and expression['normalize'] is False
+    for parameter, value, message in [('Lacunarity', 3, '|Lacunarity| <= 2'), ('Distortion', 2, '[-1,1]')]:
+        previous = noise.inputs[parameter].default_value
+        noise.inputs[parameter].default_value = value
+        try:
+            tsl_ir.emit_output(noise, noise.outputs['Fac'])
+            raise AssertionError('Unnormalized noise inherited an unverified control range')
+        except tsl_ir.TslIrRefusal as error: assert message in str(error)
+        noise.inputs[parameter].default_value = previous
+    coordinates = tree.nodes.new('ShaderNodeCombineXYZ')
+    tree.links.new(coordinates.outputs[0], noise.inputs['Vector'])
+    noise.noise_dimensions = '2D'
+    literal = tsl_ir.emit_output(noise, noise.outputs['Color'])
+    assert literal['evaluationModel'] == ('shader-mf' if bpy.app.version >= (5, 0, 0) else 'shader')
+    if bpy.app.version >= (5, 0, 0):
+        assert literal['offsetModel'] == 'mf-f32' and literal['colorOffsets'][0][1] == 157.369384765625
+    texture_coordinates = tree.nodes.new('ShaderNodeTexCoord')
+    tree.links.new(texture_coordinates.outputs['UV'], noise.inputs['Vector'])
+    shader = tsl_ir.emit_output(noise, noise.outputs['Color'])
+    assert shader['evaluationModel'] == 'shader' and shader['offsetModel'] == 'shader-folded'
+    noise.noise_dimensions = '4D'
+    fourth = tsl_ir.emit_output(noise, noise.outputs['Color'])
+    assert fourth['offsetModel'] == 'float4-f32' and fourth['colorOffsets'][1][2] == 162.05215454101562
 finally:
     bpy.data.materials.remove(material)
 print('BLENDLINK_NOISE_PARAMETER_ADMISSION_PASSED native linked roughness range, named refusal and supported endpoints')

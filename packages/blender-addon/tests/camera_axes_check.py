@@ -120,6 +120,22 @@ with tempfile.TemporaryDirectory(prefix="blendlink-camera-axes-") as temporary:
         assert max(abs(a - b) for a, b in zip(rewritten, independent)) < 1e-6, (source, rewritten, independent)
     assert abs(sum(value * value for value in actual[2]) - sum(value * value for value in rotation_rows[2])) < 2e-5
     assert result["nodes"] == document["nodes"], "Static/matrix-authored node transforms must remain exact"
+    left = copy.deepcopy(document)
+    left["nodes"][0]["children"] = [1]
+    left["nodes"].append({"name": "unrelated"})
+    left["animations"][0]["channels"][0]["target"]["node"] = 1
+    left["animations"][0]["channels"][1]["target"]["node"] = 3
+    glblib.write_document(path, left, [[glblib.GLB_JSON_CHUNK, b""], [glblib.GLB_BINARY_CHUNK, payload]], 0, "test")
+    camera_axes.canonicalize_camera_axes(path, export_yup=True)
+    result, chunks, _ = glblib.read_document(path, "test")
+    animation = result["animations"][0]
+    output = animation["samplers"][animation["channels"][0]["sampler"]]["output"]
+    actual = read_values(result, glblib.binary_chunk(chunks, "test"), output)
+    for source, rewritten in zip(rotation_rows, actual):
+        x, y, z, w = source
+        independent = [half * (x + w), half * (y - z), half * (z + y), half * (w - x)]
+        assert max(abs(a - b) for a, b in zip(rewritten, independent)) < 1e-6
+    assert animation["channels"][1]["sampler"] == 0
     # No animation correction is needed for purely static cameras, even with
     # matrix-authored nodes and arbitrary extra GLB chunks.
     static = copy.deepcopy(document); static.pop("animations")

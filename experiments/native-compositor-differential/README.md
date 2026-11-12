@@ -69,6 +69,14 @@ BLENDLINK_COMPOSITOR_COLOR_REFERENCES="$PWD/artifacts/native/color" \
   "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
   --python packages/blender-addon/tests/compositor_color_check.py
 
+BLENDLINK_COMPOSITOR_HUE_CORRECT_REFERENCES="$PWD/artifacts/native/hue-correct" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_hue_correct_check.py
+
+BLENDLINK_COMPOSITOR_WHITEPOINT_REFERENCES="$PWD/artifacts/native/whitepoint" \
+  "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_whitepoint_check.py
+
 BLENDLINK_COMPOSITOR_MATH_SPATIAL_REFERENCES="$PWD/artifacts/native/math-spatial" \
   "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
   --python packages/blender-addon/tests/compositor_math_spatial_check.py
@@ -320,3 +328,99 @@ Native formulas can be inspected in Blender's
 and [compositor channel nodes](https://github.com/blender/blender/blob/v5.3.0/source/blender/compositor/shaders/library/gpu_shader_compositor_separate_combine.glsl).
 Coverage of these tested families does not imply support for all compositor nodes;
 see [the node translation inventory](../../docs/NODE_TRANSLATION.md).
+
+## Hue Correct and White Point
+
+`BLENDLINK_COMPOSITOR_HUE_CORRECT_DEVICE=GPU` and
+`BLENDLINK_COMPOSITOR_WHITEPOINT_DEVICE=GPU` select the actual native GPU
+compositor. Hue Correct generates 109 graphs per device on 4.2/5.2/5.3; White Point
+generates 121 per device on 5.2/5.3. Blender 4.2 has no native White Point mode and
+writes an explicit `not-applicable.json` with zero generated pixel references.
+
+Hue Correct transports Blender's own 257-entry curves, native wrapping and
+endpoint behavior, original-hue parameterization of all three curves, clipping
+limits, raw Factor extrapolation, and CPU/GPU HSV conversion and color-band
+precision. The fixture includes hue/saturation/value edits, VECTOR handles,
+nonunit horizontal ranges, HDR/negative RGB and nonunit alpha. A requested
+`use_clip=False` retains `True` in these native Hue Correct RNA builds; references
+preserve that actual flag and do not claim a separately demonstrated false-flag
+state. Modern constant images use the native CPU single-value path, while 4.2
+GPU constants keep the native GPU path.
+
+White Point ports Color Balance's Bradford adaptation and 31-entry Robertson
+temperature/tint locus. It transports the actual OCIO scene-linear↔XYZ matrices
+and refuses nonlinear, offset or noninvertible working-space transforms. The
+constant matrix uses float32 XYZ directly, independently checked against native
+RNA on an owned NodeTree copy, avoiding a lossy XYZ→scene→XYZ roundtrip. Unlinked
+controls retain Blender's native CPU-precomputed GPU matrix optimization; linked
+Value and spatial controls retain the variable GPU path. Factor has only its
+native upper cap; negative RGB and input alpha are preserved.
+
+The proven parameter domain is 1800..100000 K and tint −150..150. Each input must
+have proven bounds; spatial controls can use Math Maximum and Minimum. A
+piecewise analytic interval certificate also requires a nonzero Bradford source
+LMS response, expanded conservatively by 2e-5 for float32 arithmetic. Potential
+zero crossings and near-pole grades refuse with the artist's node/socket path.
+Fixed negative LMS responses are valid and remain supported. These bounds are
+an explicit supported subset, not an assertion that arbitrary native controls
+outside it are defined. Dynamic mode selectors still refuse.
+
+The native fixtures cover both unlinked and linked constant controls, each
+spatial temperature/tint control, constant and spatial images, raw Factor,
+negative/HDR RGB, UI domain endpoints, refusal of unknown/unsafe ranges, and
+read-only authored state and image-user counts. For working-space checks, launch
+Blender with `OCIO=/absolute/custom/config.ocio`, using an installed configuration
+whose `scene_linear` role is changed to `Linear Rec.2020` and whose LUT search
+paths are absolute. The fixture sets its generated image and EXR to the chosen
+scene-linear space and restores generated pixels after changing image color
+space. This adds 121 actual CPU and 121 GPU graphs with different transported
+working-space matrices; it does not recolor native references to fit the runtime.
+
+The native equations and constant/variable optimization are documented in
+[Blender 5.2 Color Balance](https://github.com/blender/blender/blob/v5.2.0/source/blender/nodes/composite/nodes/node_composite_color_balance.cc),
+[BLI color math](https://github.com/blender/blender/blob/v5.2.0/source/blender/blenlib/intern/math_color.cc),
+and [Blender 5.3 Hue Correct](https://github.com/blender/blender/blob/v5.3.0/source/blender/nodes/composite/nodes/node_composite_hue_correct.cc).
+
+The macOS native Metal checkpoint on 2026-11-12 used Blender 4.2.0
+`a51f293548ad`, 5.2.0 `fbe6228777e7`, and 5.3.0 `02f0899d78e3`.
+Its 654 Hue Correct and 726 White Point graphs (including 242 Rec.2020 graphs)
+passed the built runtime on both browser backends: 1380 comparisons per backend,
+maximum absolute channel error 1.14441e-5, with White Point alpha error exactly 0.
+The existing 2e-5 budget was unchanged. These native GPU results certify Metal;
+the same fixtures must pass against actual native OpenGL before claiming that
+platform's parity for the new families.
+
+## Native GPU math implementations
+
+Fresh compositor operations record `native_gpu_backend`. Metal HSL preserves
+its grouped extrema sum; OpenGL retains the native left-associated subtraction.
+This matters for HDR saturation close to its denominator singularity.
+
+GPU inverse trigonometry also records a verified implementation profile.
+Mesa's GLSL frontend uses different low-degree polynomials for asin and acos;
+these are ported from its
+[builtin definitions](https://github.com/mirror/mesa/blob/mesa-24.0.9/src/compiler/glsl/builtin_functions.cpp),
+including the native float32 constants. They intentionally differ from accurate
+libm inverses. CPU and verified Metal keep the accurate bounded polynomial
+model. Existing driverless serialized programs retain their prior behavior.
+
+Identification first uses supported `gpu.platform` queries and initializes that
+module when required by Blender 5.2+. Blender 4.2 background mode disables these
+queries: when an explicit `DISPLAY` exists, the extractor can query `glxinfo -B`
+under the same driver/offload environment, with no shell, a 10-second timeout and
+a cached result. Headless Linux needs `mesa-utils` for this fallback. Unknown
+OpenGL implementations refuse inverse trig with a named diagnostic instead of
+being assigned Mesa's numeric model. CPU folding does not require a GPU query.
+
+Legacy GPU atan2 still requires one provably nonzero operand. GLSL leaves
+atan(y,x) undefined at (0,0): actual retained Mesa output is finite 2.356191158,
+while Metal produces NaN. The spatial native fixture records both outcomes and
+keeps the refusal; a finite implementation artifact does not make that domain
+portable. Modern native zero-origin behavior is preserved separately.
+
+Fresh Logarithm IR opts into `math_logarithm_domain_model=nonpositive-zero-v1`
+and explicitly guards nonpositive arguments before accepting its result,
+so browser subnormal flushing cannot turn the prior 1e-38 threshold into a
+false zero comparison and return a large logarithm for input zero. Native
+reference pixels and the 2e-5 differential budget remain unchanged. Older
+documents without that domain tag keep their previous evaluation.

@@ -171,7 +171,7 @@ def object_random_number(name: str) -> float:
     ) / 0xFFFFFFFF
 
 
-def _noise_random_offset(seed, count):
+def _noise_random_offset(seed, count, *, native_mf=False, native_float4=False):
     """noisetex.h random_floatN_offset for a constant seed.
 
     The scalar helper is NOT the vec2 hash with a zero lane:
@@ -181,12 +181,19 @@ def _noise_random_offset(seed, count):
     but WRONG offsets for 1D distortion and colour lanes, which decorrelates
     the field at ~9e-2 while everything else measures exact.
     """
-    if count == 1:
-        return [100.0 + _hash_float_to_float(seed) * 100.0]
-    return [
-        100.0 + _hash_float2_to_float(seed, float(index)) * 100.0
-        for index in range(count)
-    ]
+    hashes = ([_hash_float_to_float(seed)] if count == 1 else
+              [_hash_float2_to_float(seed, float(index)) for index in range(count)])
+    if native_mf or native_float4:
+        import struct
+        f32 = lambda value: struct.unpack('f', struct.pack('f', value))[0]
+        # The shared hash helpers retain the exact uint quotient in double.
+        # Recovering its integer is exact (<2^-20 rounding error), then model
+        # BLI's float conversion, multiply and addition separately. Material
+        # MF evaluation differs from the lower-dimensional shader's folded
+        # offset here; the native float4 path also uses separate operations.
+        return [f32(100 + f32(f32(f32(round(value * 0xFFFFFFFF)) / f32(0xFFFFFFFF)) * 100))
+                for value in hashes]
+    return [100.0 + value * 100.0 for value in hashes]
 
 
 def _fold_constant_scalar(expression):
@@ -2175,6 +2182,8 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeTexNoise":
+        import math
+        import bpy
         # Blender 5.2 displays the output as "Factor"; the identifier stays
         # "Fac" across versions.
         noise_output = getattr(from_socket, "identifier", socket_name)
@@ -2183,8 +2192,7 @@ def emit_output(node, from_socket, stack=()):
         noise_type = str(getattr(node, "noise_type", "FBM"))
         if noise_type != "FBM":
             _refuse(f"Noise type {noise_type!r} has no cell yet")
-        if not bool(getattr(node, "normalize", True)):
-            _refuse("Unnormalized noise has no cell yet")
+        normalize_output = bool(getattr(node, "normalize", True))
         dimensions = str(getattr(node, "noise_dimensions", "3D"))
         # 1D shipped 2026-07-30, second attempt. The first failed at 1.79e-1
         # because hashUint1's all-literal b/c seeds CONST-FOLDED in WGSL, and a
@@ -2192,8 +2200,7 @@ def emit_output(node, from_socket, stack=()):
         # wrap -- the shader never built and the harness read back the previous
         # render. Two .toVar() calls fix it; the stage-by-stage GPU-vs-CPU
         # bisection that found it is run-debug1d.mjs in the differential
-        # harness, and the gated noise-1d cells hold the claim. 4D still
-        # refuses: it needs grad4 and the 16-tap quad_mix, not just a hash.
+        # harness. 4D uses the separately proved grad4/16-tap quad_mix port.
         if dimensions not in {"1D", "2D", "3D", "4D"}:
             _refuse(
                 f"Noise dimensions {dimensions!r} has no cell yet"
@@ -2223,6 +2230,10 @@ def emit_output(node, from_socket, stack=()):
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
+        if not normalize_output and (
+                not all(math.isfinite(value) for value in [detail_value, roughness_value, lacunarity_value])
+                or abs(lacunarity_value) > 2):
+            _refuse('Unnormalized Noise needs finite static controls and |Lacunarity| <= 2 in the proven domain')
         if roughness_value > 1.0:
             # Native Noise clamps negative roughness to zero, but does not
             # upper-clamp a linked value. The current normalized kernel's
@@ -2254,6 +2265,8 @@ def emit_output(node, from_socket, stack=()):
                 "Noise with a non-constant Scale has no bounded cell yet "
                 f"(source op {scale_expression.get('op')!r})"
             )
+        if not normalize_output and not math.isfinite(folded_scale):
+            _refuse('Unnormalized Noise requires a finite static Scale')
         scale_expression = {"op": "const_float", "value": folded_scale}
         input_expression = (
             emit_input(node.inputs["W"], stack=stack)
@@ -2267,6 +2280,7 @@ def emit_output(node, from_socket, stack=()):
         approximate_bound = _NOISE_SCALE_APPROXIMATE_BOUNDS.get(dimensions)
         if (
             scale_magnitude > _NOISE_SCALE_BOUND + 1e-9
+            and normalize_output
             and approximate_bound is not None
             and scale_magnitude <= approximate_bound + 1e-9
         ):
@@ -2300,6 +2314,7 @@ def emit_output(node, from_socket, stack=()):
             )
         expression = {
             "op": "noise",
+            "normalize": normalize_output,
             "output": "fac" if noise_output == "Fac" else "color",
             # 1D must be carried explicitly: an "else 3" fallthrough silently
             # sends the scalar W into mx_noise_float, whose
@@ -2323,6 +2338,21 @@ def emit_output(node, from_socket, stack=()):
                 if dimensions == "4D" else {}
             ),
         }
+        native_mf = False
+        if not normalize_output:
+            expression.update({"op": "noise_fractal"})
+        if not normalize_output and bpy.app.version >= (5, 0, 0):
+            if __package__:
+                from .shader_domains import native_shader_input_evaluation
+            else:
+                from shader_domains import native_shader_input_evaluation
+            stage = native_shader_input_evaluation(expression)
+            if stage == 'opaque':
+                _refuse('Unnormalized Noise has unverified native constant-evaluation eligibility')
+            native_mf = stage == 'constant'
+        if not normalize_output:
+            expression['evaluationModel'] = 'shader-mf' if native_mf else 'shader'
+            expression['offsetModel'] = ('float4-f32' if dimensions == '4D' else 'mf-f32' if native_mf else 'shader-folded')
         # Distortion perturbs the SCALED coordinate before any octave runs,
         # by a single signed Perlin octave per component sampled at the low
         # hash-derived offsets. noisetex.h and
@@ -2349,6 +2379,8 @@ def emit_output(node, from_socket, stack=()):
                 distortion_value = folded
             else:
                 distortion_value = float(distortion_socket.default_value)
+        if not normalize_output and (not math.isfinite(distortion_value) or abs(distortion_value) > 1):
+            _refuse('Unnormalized Noise Distortion exceeds its proven finite [-1,1] domain')
         if abs(distortion_value) > 1e-9:
             # Lane count follows the dimension. The old "2 if 2D else 3" was
             # the same silent fallthrough that broke 1D dimensions: it would
@@ -2358,7 +2390,8 @@ def emit_output(node, from_socket, stack=()):
             count = {"1D": 1, "2D": 2, "4D": 4}.get(dimensions, 3)
             expression["distortion"] = distortion_value
             expression["distortionOffsets"] = [
-                _noise_random_offset(float(seed), count)
+                _noise_random_offset(float(seed), count, native_mf=native_mf,
+                                     native_float4=not normalize_output and count == 4)
                 for seed in range(count)
             ]
         if noise_output == "Color":
@@ -2374,7 +2407,8 @@ def emit_output(node, from_socket, stack=()):
             count = {"1D": 1, "2D": 2, "4D": 4}.get(dimensions, 3)
             seeds = (float(count), float(count + 1))
             expression["colorOffsets"] = [
-                _noise_random_offset(seed, count) for seed in seeds
+                _noise_random_offset(seed, count, native_mf=native_mf,
+                                     native_float4=not normalize_output and count == 4) for seed in seeds
             ]
         return expression
 

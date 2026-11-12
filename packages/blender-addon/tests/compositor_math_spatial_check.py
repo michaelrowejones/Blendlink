@@ -16,6 +16,8 @@ from compositor_reference import NativeCompositorReference, compositor_graph
 def main(output):
     oracle = NativeCompositorReference(output, device="GPU", name="Native Spatial Math")
     tree = oracle.tree
+    gpu_profile = compositor_graph._sibling("compositor_gpu").native_gpu_profile()
+    (Path(output) / "gpu-profile.json").write_text(json.dumps(gpu_profile, indent=2))
     node_type = "ShaderNodeMath" if oracle.modern else "CompositorNodeMath"
     probe = tree.nodes.new(node_type)
     operations = [item.identifier for item in probe.bl_rna.properties["operation"].enum_items if item.identifier]
@@ -80,9 +82,16 @@ def main(output):
         oracle.scene.render.filepath = str(Path(output) / (mode + ".exr"))
         bpy.ops.render.render(write_still=True)
         result = bpy.data.images.load(oracle.scene.render.filepath, check_existing=False)
-        assert not np.isfinite(np.asarray(result.pixels[:], np.float32)).all(), (mode, "Native domain is unexpectedly finite")
+        native = np.asarray(result.pixels[:], np.float32)
+        finite = bool(np.isfinite(native).all())
+        # GLSL atan(y,x) explicitly leaves(0,0) undefined. Mesa can return a
+        # finite2.35619 here while Metal returnsNaN; neither is a portable
+        # authored result. Preserve the refusal and record the native outcome.
+        if not (mode == "arctan2-origin" and gpu_profile["backend"] == "OPENGL"):
+            assert not finite, (mode, "Native domain is unexpectedly finite")
         bpy.data.images.remove(result)
-        undefined.append({"case": mode, "diagnostics": refused["diagnostics"]})
+        undefined.append({"case": mode, "diagnostics": refused["diagnostics"], "nativeFinite": finite,
+                          "nativeFirstPixel": [float(v) if np.isfinite(v) else str(v) for v in native[:4]]})
     (Path(output) / "undefined.json").write_text(json.dumps(undefined, indent=2))
     oracle.finish("BLENDLINK_COMPOSITOR_MATH_SPATIAL_CHECK_PASSED")
 

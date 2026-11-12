@@ -17,6 +17,7 @@ def normalize_color_operation(node, op, read_input, device):
         op["properties"]["legacy_posterize_reciprocal"] = bpy.app.version < (4, 5, 0)
     if node.bl_idname != "CompositorNodeColorCorrection":
         return
+    op["properties"].setdefault("native_gpu_backend", str(bpy.context.preferences.system.gpu_backend))
 
     # The renamed Offset sockets arrived with the newer negative-color gamut
     # rule. Older Lift sockets/properties retain their pre-gain fallback color.

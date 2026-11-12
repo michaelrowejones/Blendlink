@@ -38,6 +38,8 @@ normalize_color_operation = _sibling("compositor_color").normalize_color_operati
 native_color_band = _sibling("native_color_band").native_color_band
 normalize_utility = _sibling("compositor_utilities").normalize_utility
 validate_math_domain = _sibling("compositor_math").validate_math_domain
+native_gpu_profile = _sibling("compositor_gpu").native_gpu_profile
+whitepoint_properties = _sibling("compositor_whitepoint").whitepoint_properties
 
 TYPES = {
     "FunctionNodeInputBool": "utility-constant",
@@ -84,6 +86,7 @@ TYPES = {
     "CompositorNodeGamma": "gamma",
     "CompositorNodeInvert": "invert",
     "CompositorNodeHueSat": "hue-saturation-value",
+    "CompositorNodeHueCorrect": "hue-correct",
     "CompositorNodeBlur": "blur",
     "CompositorNodeGlare": "glare",
     "CompositorNodeRLayers": "render-pass",
@@ -370,6 +373,7 @@ def extract(scene):
                 }
                 device = getattr(scene.render, "compositor_device", "CPU")
                 op["properties"]["evaluation_device"] = device
+                op["properties"]["native_gpu_backend"] = getattr(bpy.context.preferences.system, "gpu_backend", "UNKNOWN")
                 # The old GPU compositor evaluates even all-constant nodes in
                 # shaders. Shared compositor nodes now fold these through CPU
                 # functions, which have distinct curves, Hue and Math rules.
@@ -444,11 +448,13 @@ def extract(scene):
                     incoming = node.inputs["Fac"]
                     op["inputs"]["Fac"] = {"name": incoming.name, "socketType": incoming.type,
                                             "value": input_value(incoming, ctx)}
-                elif TYPES[node.bl_idname] == "curves":
+                elif TYPES[node.bl_idname] in ("curves", "hue-correct"):
                     try:
                         op["properties"].update(curve_tables(node))
                     except Unsupported as error:
                         fail("unsupported-curve-mapping", path, node, socket, str(error))
+                    if node.bl_idname == "CompositorNodeHueCorrect":
+                        op["properties"]["hue_correct_model"] = "native-curves-v1"
                     op["properties"]["color_conversion_device"] = getattr(scene.render, "compositor_device", "CPU")
                     op["properties"]["gpu_filter_fraction_bits"] = 8 if getattr(bpy.context.preferences.system, "gpu_backend", "") == "METAL" else None
                     if op["properties"]["color_conversion_device"] == "GPU":
@@ -548,16 +554,16 @@ def extract(scene):
                         if any(link.is_valid and not getattr(link, "is_muted", False)
                                for link in type_socket.links):
                             fail("dynamic-color-balance-mode", path, node, type_socket,
-                                 "Color Balance requires a fixed Lift/Gamma/Gain or ASC-CDL mode")
+                                 "Color Balance requires a fixed Lift/Gamma/Gain, ASC-CDL or White Point mode")
                         mode = type_socket.default_value
                     else:
                         mode = {"LIFT_GAMMA_GAIN": "Lift/Gamma/Gain",
                                 "OFFSET_POWER_SLOPE": "Offset/Power/Slope (ASC-CDL)"}.get(
                             getattr(node, "correction_method", ""))
-                    if mode not in ("Lift/Gamma/Gain", "Offset/Power/Slope (ASC-CDL)"):
+                    if mode not in ("Lift/Gamma/Gain", "Offset/Power/Slope (ASC-CDL)", "White Point"):
                         fail("unsupported-color-balance-mode", path, node,
                              node.inputs.get("Type"),
-                             "Color Balance supports Lift/Gamma/Gain and ASC-CDL; White Point needs a verified chromatic-adaptation mapping")
+                             "Color Balance requires Lift/Gamma/Gain, ASC-CDL or White Point mode")
 
                     def balance_constant(name, socket_type, setting):
                         op["inputs"][name] = {
@@ -572,8 +578,20 @@ def extract(scene):
                                               "socketType": incoming.type,
                                               "value": input_value(incoming, ctx)}
                     balance_constant("Type", "MENU", mode)
-                    parameters = ("Lift", "Gamma", "Gain") if mode == "Lift/Gamma/Gain" else (
-                        "Offset", "Power", "Slope")
+                    if mode == "White Point":
+                        try:
+                            op["properties"].update(whitepoint_properties(node,
+                                _sibling("compositor_math").numeric_socket_bounds,
+                                lambda incoming, message: fail("white-point-domain", path, node, incoming, message)))
+                        except ValueError as error:
+                            fail("white-point-working-space", path, node, node.inputs["Image"], str(error))
+                        for name in ("Input Temperature", "Input Tint", "Output Temperature", "Output Tint"):
+                            incoming = node.inputs[name]
+                            op["inputs"][name] = {"name": incoming.name, "socketType": incoming.type,
+                                                  "value": input_value(incoming, ctx)}
+                    parameters = {"Lift/Gamma/Gain": ("Lift", "Gamma", "Gain"),
+                                  "Offset/Power/Slope (ASC-CDL)": ("Offset", "Power", "Slope"),
+                                  "White Point": ()}[mode]
                     for parameter in parameters:
                         if modern_balance:
                             for name in ("Base " + parameter, "Color " + parameter):
@@ -648,7 +666,7 @@ def extract(scene):
                 if op["kind"] == "math":
                     effective = op["properties"]["single_value_device"] if single else device
                     op["properties"].update(validate_math_domain(node, effective,
-                        lambda code, incoming, message: fail(code, path, node, incoming, message)))
+                        lambda code, incoming, message: fail(code, path, node, incoming, message), native_gpu_profile))
                 op["id"] = "n" + str(len(result["ops"]))
                 result["ops"].append(op)
                 if single:

@@ -37,6 +37,19 @@ for context, tree_type in (("Shader", "ShaderNodeTree"), ("Compositor", "Composi
     supported, failures = shared_utility_available(tree_type)
     report["sharedUtility" + context + "Available"] = supported
     report["sharedUtility" + context + "Diagnostics"] = failures
+tree = bpy.data.node_groups.new("Blendlink White Point Capability", "CompositorNodeTree")
+try:
+    node = tree.nodes.new("CompositorNodeColorBalance")
+    selector = node.inputs.get("Type")
+    report["whitePointCompositorAvailable"] = False
+    if selector is not None:
+        try:
+            selector.default_value = "White Point"
+            report["whitePointCompositorAvailable"] = selector.default_value == "White Point"
+        except (TypeError, ValueError):
+            pass
+finally:
+    bpy.data.node_groups.remove(tree)
 try:
     import gpu
     report["gpuPlatform"] = {"backend": gpu.platform.backend_type_get(),

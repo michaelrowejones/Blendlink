@@ -43,4 +43,17 @@ describe('native compositor pointwise color controls', () => {
     delete graph.ops[0]!.properties.color_correction_model
     expect(() => buildSourceCompositor(graph, () => null)).toThrow(/Artist Grade.*verified negative-color model/)
   })
+  it.each(['METAL','OPENGL',undefined])('retains the native %s Color Correction division model across collapsed tonal ranges', backend => {
+    const graph=program('color-correction')
+    Object.assign(graph.ops[0]!.properties,{evaluation_device:'GPU',single_value_device:'GPU',native_gpu_backend:backend})
+    graph.ops[0]!.inputs['Midtones Start']=input('VALUE',.5)
+    graph.ops[0]!.inputs['Midtones End']=input('VALUE',.5)
+    const built=buildSourceCompositor(graph,()=>null)
+    expect(built.node.isNode).toBe(true);built.dispose()
+  })
+  it('refuses an unverified fresh native GPU arithmetic backend by artist node name', () => {
+    const graph=program('color-correction')
+    Object.assign(graph.ops[0]!.properties,{evaluation_device:'GPU',single_value_device:'GPU',native_gpu_backend:'UNVERIFIED'})
+    expect(()=>buildSourceCompositor(graph,()=>null)).toThrow(/Artist Grade.*native GPU arithmetic/)
+  })
 })
