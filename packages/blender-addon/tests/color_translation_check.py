@@ -66,10 +66,12 @@ try:
             tree.links.new(noise.outputs['Color'], separate.inputs[0])
             assert tsl_ir.emit_output(separate, separate.outputs[0])['input']['inputDomain'] == 'unit-bounded-live'
             noise.normalize = False
+            signed_noise = tsl_ir.emit_output(noise, noise.outputs['Color'])
+            assert signed_noise['op'] == 'noise_fractal' and signed_noise['normalize'] is False
             try:
                 tsl_ir.emit_output(separate, separate.outputs[0])
                 raise AssertionError('Unnormalized noise acquired a unit HSL range')
-            except tsl_ir.TslIrRefusal as error: assert 'Unnormalized noise' in str(error)
+            except tsl_ir.TslIrRefusal as error: assert 'bounds are unknown' in str(error)
             noise.normalize = True
             noise.noise_type = 'MULTIFRACTAL'
             try:
