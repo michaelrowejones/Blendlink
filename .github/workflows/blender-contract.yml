@@ -141,6 +141,11 @@ jobs:
       - name: Verify installed extension and managed desktop tools
         run: npm run build && node scripts/test-addon-headless.mjs --desktop-smoke
 
+      - name: Install software rendering libraries for headless Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0
+
       - name: Install the version-matched node parity browser
         run: npx --no-install playwright install --with-deps chromium
 
