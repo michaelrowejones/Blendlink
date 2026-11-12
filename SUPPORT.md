@@ -21,6 +21,12 @@ behavior; they are not real iOS or Android support evidence. A local production
 server is not evidence for a deployed CDN, base path, CORS, CSP, service worker,
 or cache policy.
 
+On the 2026-11-11 macOS test host, Playwright WebKit mouse events arrived at
+incorrect coordinates even on plain HTML; native touch events targeted controls
+correctly. `BLENDLINK_TEST_WEBKIT_TOUCH=1` explicitly selects touch activation for
+local acceptance checks and records that mode in their report. Hosted Linux uses
+normal pointer activation. This is browser-engine evidence, not real iOS hardware.
+
 ## Desktop preview tools
 
 Artist-facing Preview and Export actions prepare a private Node 24.22.3 runtime

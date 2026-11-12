@@ -4170,6 +4170,60 @@ class BLENDLINK_OT_browser_preview(bpy.types.Operator):
         return {"FINISHED"}
 
 
+def _standalone_task_issue(context) -> str | None:
+    """Recheck after a file selector, not only when drawing its launch button."""
+    from . import previewrun, syncrun
+    issue = _publish_settings_issue(context)
+    if issue:
+        return issue
+    if not bpy.data.filepath:
+        return "Save your .blend first"
+    if syncrun.is_running():
+        return "Another website task is running"
+    if previewrun.matches_current_file() and previewrun.is_running() \
+            and (not previewrun.is_ready() or previewrun.is_updating()):
+        return "Website Preview is still compiling; wait for Ready"
+    return None
+
+
+class BLENDLINK_OT_check_atlas_fit(bpy.types.Operator):
+    """Check Final atlas capacity without a bake or a connected website"""
+    bl_idname = "blendlink.check_atlas_fit"
+    bl_label = "Check Atlas Fit"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        issue = _standalone_task_issue(context)
+        if issue:
+            cls.poll_message_set(issue)
+            return False
+        return True
+
+    def execute(self, context):
+        from . import props, syncrun, syncstatus
+        issue = _standalone_task_issue(context)
+        if issue:
+            self.report({"ERROR"}, issue)
+            return {"CANCELLED"}
+        try:
+            assigned_ids = _ensure_scene_ids(context.scene)
+            props.write_recipe(context.scene)
+            saved = _save_before_publish(assigned_ids)
+            syncstatus.refresh(force=not saved)
+            root = syncstatus.project_root()
+            arguments = ["plan"] if root else ["plan", "--blend", bpy.data.filepath]
+            command, cwd = _desktop_cli_command(bpy.data.filepath, arguments, cwd=root)
+            error = syncrun.start(command, cwd, initial_label="Checking Final atlas fit")
+            if error:
+                raise RuntimeError(error)
+        except (OSError, RuntimeError, ValueError) as error:
+            self.report({"ERROR"}, str(error))
+            return {"CANCELLED"}
+        self.report({"INFO"}, "Checking Final atlas fit in the background; no bake is needed")
+        return {"FINISHED"}
+
+
 class BLENDLINK_OT_export_website(bpy.types.Operator):
     """Build a complete standalone website in a folder you can upload to any static host"""
     bl_idname = "blendlink.export_website"
@@ -4180,10 +4234,9 @@ class BLENDLINK_OT_export_website(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        from . import syncrun
-        issue = _publish_settings_issue(context)
-        if issue or not bpy.data.filepath or syncrun.is_running():
-            cls.poll_message_set(issue or ("Save your .blend first" if not bpy.data.filepath else "Another website task is running"))
+        issue = _standalone_task_issue(context)
+        if issue:
+            cls.poll_message_set(issue)
             return False
         return True
 
@@ -4194,6 +4247,10 @@ class BLENDLINK_OT_export_website(bpy.types.Operator):
 
     def execute(self, context):
         from . import props, syncrun
+        issue = _standalone_task_issue(context)
+        if issue:
+            self.report({"ERROR"}, issue)
+            return {"CANCELLED"}
         if not self.directory.strip():
             self.report({"ERROR"}, "Choose a folder for your website")
             return {"CANCELLED"}
@@ -4202,7 +4259,8 @@ class BLENDLINK_OT_export_website(bpy.types.Operator):
             props.write_recipe(context.scene)
             _save_before_publish(assigned_ids)
             command, cwd = _desktop_cli_command(bpy.data.filepath, [
-                "export", "--blend", bpy.data.filepath, "--out", os.path.abspath(self.directory),
+                "export", "--blend", bpy.data.filepath,
+                "--out", os.path.abspath(bpy.path.abspath(os.path.expanduser(self.directory))),
             ])
             error = syncrun.start(command, cwd, initial_label="Preparing your complete website")
             if error:
@@ -4532,6 +4590,7 @@ classes = (
     BLENDLINK_OT_copy_sync_hint,
     BLENDLINK_OT_copy_connect_command,
     BLENDLINK_OT_export_website,
+    BLENDLINK_OT_check_atlas_fit,
     BLENDLINK_OT_copy_website_handoff,
     BLENDLINK_OT_refresh_checks,
     BLENDLINK_OT_refresh_sync,

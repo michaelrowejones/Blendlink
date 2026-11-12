@@ -249,6 +249,7 @@ print("##blendlink-addon-install " + json.dumps({
     "package": bool(module.__file__),
     "version": version,
     "exportOperator": bpy.ops.blendlink.export_website.get_rna_type().identifier,
+    "atlasOperator": bpy.ops.blendlink.check_atlas_fit.get_rna_type().identifier,
     "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
 }, sort_keys=True))
 `
@@ -261,7 +262,7 @@ print("##blendlink-addon-install " + json.dumps({
   if (!sentinel) throw new Error('Installed extension did not emit its verification sentinel')
   const status = JSON.parse(sentinel.slice('##blendlink-addon-install '.length))
   if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
-      status.exportOperator !== 'BLENDLINK_OT_export_website') {
+      status.exportOperator !== 'BLENDLINK_OT_export_website' || status.atlasOperator !== 'BLENDLINK_OT_check_atlas_fit') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }
   console.log('BLENDLINK_FULL_TEST addon: isolated install passed')

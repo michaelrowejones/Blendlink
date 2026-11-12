@@ -733,9 +733,9 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             _draw_wrapped(
                 publish,
                 "No website is connected yet. Preview Website creates a private, reusable "
-                "Three.js studio without adding files beside this .blend. It needs Node.js, "
-                "and the first preview downloads the Blendlink tool from npm into a private "
-                "cache. Connect a website when you are ready to publish it.",
+                "studio for this scene. First use sets up its verified tools automatically; "
+                "no terminal or separate Node installation is needed. Export Website Folder "
+                "builds a complete site you can upload to a static host.",
                 icon="INFO",
             )
 
@@ -858,10 +858,18 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
 
         publish.operator("blendlink.export_website", text="Export Website Folder", icon="EXPORT")
 
+        publish.operator("blendlink.check_atlas_fit", text="Check Atlas Fit", icon="CHECKMARK")
+        measurement = _atlas_capacity_measurement()
+        if measurement:
+            if not measurement["current"]:
+                publish.label(text="Scene changed — check atlas fit again", icon="TIME")
+            elif measurement["plan"] is None:
+                publish.label(text="No baked atlases are needed for this scene", icon="INFO")
+            else:
+                publish.label(text="Final atlas measurement is current", icon="INFO")
+
         if root is not None:
             actions = publish.column(align=True) if _is_compact(context) else publish.row(align=True)
-            plan = actions.operator("blendlink.sync_now", text="Check Atlas Fit", icon="CHECKMARK")
-            plan.quality = "PLAN"
             final = actions.operator("blendlink.sync_now", text="Publish Website", icon="EXPORT")
             final.quality = "FINAL"
         else:
@@ -1969,8 +1977,23 @@ class BLENDLINK_PT_optimization(_BlendlinkScenePanelMixin, bpy.types.Panel):
             )
 
 
+def _atlas_capacity_measurement():
+    measurement = syncrun.atlas_plan_measurement()
+    return measurement if measurement and measurement["quality"] == "final" else None
+
+
+def _atlas_capacity_plan():
+    measurement = _atlas_capacity_measurement()
+    return (measurement["plan"] or {}) if measurement else (syncstatus.bake_plan() or {})
+
+
+def _atlas_capacity_is_current():
+    measurement = _atlas_capacity_measurement()
+    return measurement["current"] if measurement else syncstatus.status()[0] == "IN_SYNC"
+
+
 def _atlas_plan_result(atlas):
-    plan = syncstatus.bake_plan() or {}
+    plan = _atlas_capacity_plan()
     atlases = plan.get("atlases") or {}
     return (
         atlases.get(atlas.atlas_id)
@@ -2080,7 +2103,7 @@ def _draw_atlas_recipe(layout, project, context=None):
         "Main receives baked meshes by default. Select meshes before adding an atlas to give them a separate detail budget.",
         icon="INFO",
     )
-    plan = syncstatus.bake_plan() or {}
+    plan = _atlas_capacity_plan()
     _draw_active_atlas_gpu_estimate(layout, plan)
     layout.template_list(
         "BLENDLINK_UL_atlases", "", project, "atlases",
@@ -2180,10 +2203,9 @@ def _draw_atlas_recipe(layout, project, context=None):
         _draw_atlas_plan_evidence(
             result, atlas_name, evidence, context=context,
         )
-        if syncstatus.status()[0] != "IN_SYNC":
+        if not _atlas_capacity_is_current():
             result.label(text="From the last check · run again to refresh", icon="TIME")
-    check = layout.operator("blendlink.sync_now", text="Check Atlas Fit", icon="CHECKMARK")
-    check.quality = "PLAN"
+    layout.operator("blendlink.check_atlas_fit", text="Check Atlas Fit", icon="CHECKMARK")
 
 
 def _draw_bake_quality_recipe(layout, project):

@@ -15,7 +15,7 @@ export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
 export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
 export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
-export const PREVIEW_STUDIO_HOST_VERSION = 17
+export const PREVIEW_STUDIO_HOST_VERSION = 19
 export const PREVIEW_STUDIO_MAIN_MARKER =
   '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
@@ -145,7 +145,7 @@ export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PR
         <button id="inspect" type="button" title="Pause playback and orbit around the scene without changing Blender" aria-pressed="false">Inspect</button>
         <button id="mobile" type="button" title="Check phone framing" aria-pressed="false">Phone</button>
         <button id="capture" type="button" title="Save the current rendered view as a PNG">Save image</button>
-        <button id="compare" type="button" title="Compare with a Blender render">Compare</button>
+        <button id="compare" type="button" title="Compare with a Blender render" aria-pressed="false" aria-controls="comparison-controls">Compare</button>
         <button id="background" type="button" title="Background: dark. Cycle dark, checker, and light." aria-label="Background: dark">Background</button>
         <button id="fullscreen" type="button" title="Enter fullscreen">Fullscreen</button>
         <button id="details" type="button" aria-expanded="false" aria-controls="drawer">Details</button>
@@ -170,7 +170,7 @@ export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PR
         <button id="failure-details" type="button">View error details</button>
       </div>
     </section>
-    <aside id="drawer" class="drawer" hidden>
+    <aside id="drawer" class="drawer" hidden aria-label="Scene details">
       <div class="drawer-heading"><div><strong id="scene-name">Scene</strong><div id="generation" class="muted">Waiting for first generation</div></div><button id="close-details" type="button" aria-label="Close details">×</button></div>
       <div class="viewport-presets" aria-label="Responsive viewport">
         <button type="button" data-viewport="fill" aria-pressed="true">Fit window</button>
@@ -208,15 +208,17 @@ button:focus-visible { outline: 2px solid #6ee7c7; outline-offset: 2px; }
 #studio { position: relative; display: grid; place-items: center; background: #11151d; }
 #studio[data-background="checker"] { background-color: #141921; background-image: linear-gradient(45deg,#1d2430 25%,transparent 25%),linear-gradient(-45deg,#1d2430 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#1d2430 75%),linear-gradient(-45deg,transparent 75%,#1d2430 75%); background-size: 28px 28px; background-position: 0 0,0 14px,14px -14px,-14px 0; }
 #studio[data-background="light"] { background: #cbd2d1; }
-#viewport { position: relative; width: 100%; height: 100%; overflow: hidden; box-shadow: 0 28px 80px rgba(0,0,0,.28); transition: width .22s ease, height .22s ease, border-radius .22s ease; }
+#viewport { position: relative; min-width: 0; min-height: 0; width: 100%; height: 100%; overflow: hidden; box-shadow: 0 28px 80px rgba(0,0,0,.28); transition: width .22s ease, height .22s ease, border-radius .22s ease; }
 #studio[data-viewport="desktop"] #viewport { width: min(92vw, 131.2vh, 1440px); height: auto; aspect-ratio: 16 / 10; border-radius: 12px; }
 #studio[data-viewport="mobile"] #viewport { width: min(88vw, 41vh, 430px); height: auto; aspect-ratio: 1 / 2; border-radius: 18px; }
 .scene-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; pointer-events: none; }
 .scene-canvas.active { opacity: 1; pointer-events: auto; }
+.scene-canvas:focus-visible { outline: 2px solid #6ee7c7; outline-offset: -3px; }
 #reference-image { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
-.comparison-controls { position: fixed; z-index: 22; left: 18px; bottom: 18px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; max-width: calc(100vw - 36px); background: rgba(10,13,18,.94); border-radius: 10px; padding: 12px; font-size: 12px; }
+.comparison-controls { position: fixed; z-index: 22; left: 18px; bottom: 18px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; max-width: calc(100vw - 36px); max-height: 35dvh; overflow: auto; background: rgba(10,13,18,.94); border-radius: 10px; padding: 12px; font-size: 12px; }
 .comparison-controls[hidden], #reference-image[hidden] { display: none; }
 .comparison-controls label { display: flex; align-items: center; gap: 6px; }
+#reference-name { overflow-wrap: anywhere; }
 .studio-bar { position: fixed; z-index: 20; top: 14px; left: 14px; right: 14px; min-height: 44px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; pointer-events: none; }
 .brand, .status-chip, .toolbar { pointer-events: auto; }
 .brand { justify-self: start; display: flex; gap: 8px; align-items: center; padding: 9px 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 11px; background: rgba(10,13,18,.7); backdrop-filter: blur(18px); font-size: 12px; font-weight: 650; }
@@ -257,7 +259,21 @@ button:disabled { opacity: .45; cursor: default; }
 .range-summary { margin: 8px 0 0; font-size: 11px; line-height: 1.45; }
 pre { margin: 0; padding: 11px; white-space: pre-wrap; word-break: break-word; border-radius: 9px; background: rgba(255,141,134,.08); color: #ffc1bd; font: 11px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace; }
 @keyframes pulse { to { opacity: .42; } } @keyframes breathe { to { transform: scale(.92); opacity: .72; } }
-@media (max-width: 1100px) { .studio-bar { top: 10px; left: 10px; right: 10px; grid-template-columns: 1fr auto; }.status-chip { order: 3; grid-column: 1/-1; }.brand .muted { display: none; }.toolbar { position: fixed; left: 10px; right: 10px; bottom: 10px; justify-content: flex-start; overflow-x: auto; padding: 3px; }.toolbar button { display: block; flex: 0 0 auto; }.notice { bottom: 66px; }.drawer { bottom: 66px; } }
+@media (max-width: 1100px) {
+  #studio { padding: var(--preview-top, 104px) 0 var(--preview-bottom, 180px); }
+  .studio-bar { top: 10px; left: 10px; right: 10px; grid-template-columns: 1fr auto; }
+  .status-chip { order: 3; grid-column: 1/-1; max-width: 100%; }
+  .brand .muted { display: none; }
+  .toolbar { position: fixed; left: 10px; right: 10px; bottom: max(10px,env(safe-area-inset-bottom)); justify-self: stretch; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit,minmax(88px,1fr)); gap: 6px; padding: 6px; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: rgba(10,13,18,.9); backdrop-filter: blur(18px); }
+  .toolbar button { min-width: 0; min-height: 44px; padding: 8px 5px; white-space: normal; }
+  .drawer-heading > button { min-width: 44px; min-height: 44px; }
+  .comparison-controls button { min-height: 44px; }
+  #studio[data-viewport="desktop"] #viewport { width: min(92vw,calc((100dvh - var(--preview-top,104px) - var(--preview-bottom,180px)) * 1.6),1440px); }
+  #studio[data-viewport="mobile"] #viewport { width: min(88vw,calc((100dvh - var(--preview-top,104px) - var(--preview-bottom,180px)) / 2),430px); }
+  .notice { bottom: var(--preview-toolbar-offset,180px); }
+  .comparison-controls { left: 10px; bottom: var(--preview-toolbar-offset,180px); max-width: calc(100vw - 20px); }
+  .drawer { top: var(--preview-top,104px); bottom: var(--preview-toolbar-offset,180px); }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 `
 
@@ -476,7 +492,9 @@ let queuedPromotion: StudioStatus | null = null
 let latestStatus: StudioStatus | null = null
 let failedLoad: StudioStatus | null = null
 let lastSequence = -1
-let paused = false
+let paused = matchMedia('(prefers-reduced-motion: reduce)').matches
+let playbackOverride: boolean | null = null
+let playbackButtonState = ''
 let updateNoticeTimer = 0
 let animationFrame = 0
 let previousTime = performance.now()
@@ -899,6 +917,8 @@ async function promote(status: StudioStatus): Promise<void> {
       candidate = null
       return
     }
+    if (paused) candidate.installed.animation?.pause()
+    else if (playbackOverride === false) candidate.installed.animation?.play()
     // A retained generation represents the last successfully published files
     // after the current Blender save failed. It is useful to show, but must
     // not turn that invalid save into a false ready acknowledgement.
@@ -922,7 +942,10 @@ async function promote(status: StudioStatus): Promise<void> {
     previous?.canvas.setAttribute('aria-hidden', 'true')
     const promoted = candidate
     active = promoted
-    if (inspecting) {
+    updatePlaybackButton()
+    if (inspecting && promoted.installed.cameraController?.interactive) {
+      stopInspection()
+    } else if (inspecting) {
       const sameCamera = previous && previous.cameraSnapshot.position.equals(promoted.cameraSnapshot.position)
         && previous.cameraSnapshot.quaternion.equals(promoted.cameraSnapshot.quaternion)
         && previous.cameraSnapshot.zoom === promoted.cameraSnapshot.zoom
@@ -934,7 +957,8 @@ async function promote(status: StudioStatus): Promise<void> {
           promoted.installed.camera.updateProjectionMatrix()
         }
       }
-      startInspection(promoted, sameCamera ? previous?.inspection?.target : undefined)
+      startInspection(promoted, sameCamera ? previous?.inspection?.target : undefined,
+        document.activeElement === previous?.canvas)
     }
     runtimeFailedGeneration = ''
     runtimeFailureMessage = ''
@@ -1133,21 +1157,44 @@ function frame(now: number): void {
         active.installed.resize(width, height)
         active.lastWidth = width; active.lastHeight = height
       }
-      if (!paused && !active.inspection) active.installed.update(deltaSeconds)
+      // A paused timeline still needs camera damping, LOD and input updates.
+      // Inspection owns its temporary camera and must not be reset by playback.
+      if (!active.inspection) active.installed.update(paused ? 0 : deltaSeconds)
       active.inspection?.update()
-      active.installed.render(deltaSeconds)
+      active.installed.render(paused || active.inspection ? 0 : deltaSeconds)
+      updatePlaybackButton()
     } catch (error) {
       reportRuntimeFailure(error)
     }
   }
 }
 
-element<HTMLButtonElement>('pause').addEventListener('click', event => {
-  paused = !paused
-  const button = event.currentTarget as HTMLButtonElement
-  button.textContent = paused ? 'Play' : 'Pause'
-  button.title = paused ? 'Resume animation' : 'Pause animation'
-  button.setAttribute('aria-pressed', String(paused))
+function playbackIsPaused(): boolean {
+  return paused || Boolean(active?.installed.animation && active.installed.animation.state.phase !== 'playing')
+}
+function updatePlaybackButton(): void {
+  const stopped = playbackIsPaused()
+  const finished = active?.installed.animation?.state.phase === 'finished'
+  const state = stopped ? finished ? 'Replay' : 'Play' : 'Pause'
+  if (state === playbackButtonState) return
+  playbackButtonState = state
+  const button = element<HTMLButtonElement>('pause')
+  button.textContent = state
+  button.title = state === 'Replay' ? 'Replay animation' : stopped ? 'Start or resume animation' : 'Pause animation'
+  button.setAttribute('aria-pressed', String(stopped))
+}
+function setPaused(value: boolean, applyTransport = true): void {
+  paused = value
+  if (applyTransport) {
+    playbackOverride = value
+    if (value) active?.installed.animation?.pause()
+    else active?.installed.animation?.play()
+  }
+  updatePlaybackButton()
+}
+element<HTMLButtonElement>('pause').addEventListener('click', () => {
+  try { setPaused(!playbackIsPaused()) }
+  catch (error) { showNotice('Animation needs attention: ' + errorText(error), true) }
 })
 function resetView(): void {
   if (!active) return
@@ -1166,7 +1213,7 @@ function resetView(): void {
 element<HTMLButtonElement>('reset').addEventListener('click', resetView)
 
 let inspecting = false
-function startInspection(presentation: Presentation, target?: THREE.Vector3): void {
+function startInspection(presentation: Presentation, target?: THREE.Vector3, focus = false): void {
   presentation.inspection?.dispose()
   const camera = presentation.installed.camera
   const controls = new OrbitControls(camera, presentation.canvas)
@@ -1175,14 +1222,22 @@ function startInspection(presentation: Presentation, target?: THREE.Vector3): vo
   const distance = Math.max(sphere.radius * .05, sphere.center.clone().sub(camera.position).dot(direction), .01)
   controls.target.copy(target || camera.position.clone().addScaledVector(direction, distance))
   controls.enableDamping = true
+  controls.listenToKeyEvents(presentation.canvas)
   controls.update()
   presentation.inspection = controls
+  presentation.canvas.tabIndex = 0
+  presentation.canvas.title = 'Drag to orbit. Arrow keys pan; Shift + arrow keys orbit.'
+  if (focus) presentation.canvas.focus({ preventScroll: true })
   updateRecoveryControls()
 }
 function stopInspection(): void {
   inspecting = false
   active?.inspection?.dispose()
-  if (active) active.inspection = undefined
+  if (active) {
+    active.inspection = undefined
+    active.canvas.removeAttribute('tabindex')
+    active.canvas.removeAttribute('title')
+  }
   element<HTMLButtonElement>('inspect').setAttribute('aria-pressed', 'false')
   if (noticeMessage.textContent?.startsWith('Inspecting ·')) hideNotice()
   updateRecoveryControls()
@@ -1195,9 +1250,9 @@ element<HTMLButtonElement>('inspect').addEventListener('click', () => {
     return
   }
   inspecting = true
-  startInspection(active)
+  startInspection(active, undefined, true)
   element<HTMLButtonElement>('inspect').setAttribute('aria-pressed', 'true')
-  showNotice('Inspecting · drag to orbit, scroll to zoom. Reset view returns to your Blender camera.')
+  showNotice('Inspecting · drag to orbit, scroll to zoom. Arrow keys pan; Shift + arrows orbit. Reset view returns to your Blender camera.')
 })
 element<HTMLButtonElement>('capture').addEventListener('click', () => {
   if (!active) return
@@ -1222,26 +1277,45 @@ let referenceUrl: string | null = null
 function resizeReference(): void {
   if (referenceImage.hidden || !referenceImage.naturalWidth) return
   const ratio = referenceImage.naturalWidth / referenceImage.naturalHeight
-  const width = Math.min(window.innerWidth * .92, window.innerHeight * .82 * ratio)
+  const style = getComputedStyle(studio)
+  const height = studio.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
+  const width = Math.min(studio.clientWidth * .92, Math.max(24, height) * .92 * ratio)
   viewport.style.width = width + 'px'
   viewport.style.height = (width / ratio) + 'px'
+}
+function updateStudioLayout(): void {
+  if (matchMedia('(max-width: 1100px)').matches) {
+    const toolbar = document.querySelector<HTMLElement>('.toolbar')!
+    const header = document.querySelector<HTMLElement>('.studio-bar')!
+    const comparison = element<HTMLElement>('comparison-controls')
+    const bottom = Math.ceil(window.innerHeight - toolbar.getBoundingClientRect().top + 12)
+    studio.style.setProperty('--preview-top', Math.ceil(header.getBoundingClientRect().bottom + 12) + 'px')
+    studio.style.setProperty('--preview-toolbar-offset', bottom + 'px')
+    studio.style.setProperty('--preview-bottom', (bottom + (comparison.hidden ? 0 : comparison.offsetHeight + 12)) + 'px')
+  } else {
+    for (const property of ['--preview-top', '--preview-toolbar-offset', '--preview-bottom']) studio.style.removeProperty(property)
+  }
+  resizeReference()
 }
 function updateComparison(): void {
   referenceImage.style.clipPath = comparisonDifference.checked ? 'none' : 'inset(0 ' + (100 - Number(comparisonSplit.value)) + '% 0 0)'
   referenceImage.style.mixBlendMode = comparisonDifference.checked ? 'difference' : 'normal'
   comparisonSplit.disabled = comparisonDifference.checked
 }
-function closeComparison(): void {
+function closeComparison(restoreFocus = false): void {
   referenceImage.onload = null
   referenceImage.onerror = null
   referenceImage.hidden = true
   referenceImage.removeAttribute('src')
   element<HTMLElement>('comparison-controls').hidden = true
+  element<HTMLButtonElement>('compare').setAttribute('aria-pressed', 'false')
   viewport.style.removeProperty('width')
   viewport.style.removeProperty('height')
   if (referenceUrl) URL.revokeObjectURL(referenceUrl)
   referenceUrl = null
   referenceFile.value = ''
+  updateStudioLayout()
+  if (restoreFocus) element<HTMLButtonElement>('compare').focus()
 }
 element<HTMLButtonElement>('compare').addEventListener('click', () => referenceFile.click())
 referenceFile.addEventListener('change', () => {
@@ -1252,20 +1326,25 @@ referenceFile.addEventListener('change', () => {
   referenceImage.onload = () => {
     referenceImage.hidden = false
     element<HTMLElement>('comparison-controls').hidden = false
+    element<HTMLButtonElement>('compare').setAttribute('aria-pressed', 'true')
     element<HTMLElement>('reference-name').textContent = file.name + ' · use the same saved frame'
-    if (!paused) element<HTMLButtonElement>('pause').click()
-    element<HTMLButtonElement>('reset').click()
-    resizeReference()
+    // Pause directly: the playback button is disabled during orbit inspection.
+    // Reset then removes inspection without resuming animation under the image.
+    setPaused(true)
+    resetView()
+    updateStudioLayout()
     updateComparison()
+    if (comparisonSplit.disabled) comparisonDifference.focus()
+    else comparisonSplit.focus()
   }
   referenceImage.onerror = () => { closeComparison(); showNotice('The reference image could not be decoded.', true) }
   referenceImage.src = referenceUrl
 })
 comparisonSplit.addEventListener('input', updateComparison)
 comparisonDifference.addEventListener('change', updateComparison)
-element<HTMLButtonElement>('comparison-close').addEventListener('click', closeComparison)
-window.addEventListener('resize', resizeReference)
-window.addEventListener('beforeunload', closeComparison)
+element<HTMLButtonElement>('comparison-close').addEventListener('click', () => closeComparison(true))
+window.addEventListener('resize', updateStudioLayout)
+window.addEventListener('beforeunload', () => closeComparison())
 element<HTMLButtonElement>('background').addEventListener('click', event => {
   const modes = ['dark', 'checker', 'light']
   const current = modes.indexOf(studio.dataset.background || 'dark')
@@ -1275,20 +1354,36 @@ element<HTMLButtonElement>('background').addEventListener('click', event => {
   button.title = 'Background: ' + next + '. Cycle dark, checker, and light.'
   button.setAttribute('aria-label', 'Background: ' + next)
 })
-element<HTMLButtonElement>('fullscreen').addEventListener('click', () => {
-  const change = document.fullscreenElement ? document.exitFullscreen() : studio.requestFullscreen()
-  void change.catch(error => showNotice('Fullscreen is unavailable: ' + errorText(error), true))
+element<HTMLButtonElement>('fullscreen').addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen()
+    else if (typeof studio.requestFullscreen === 'function') await studio.requestFullscreen()
+    else showNotice('Fullscreen is unavailable in this browser.')
+  } catch (error) { showNotice('Fullscreen is unavailable: ' + errorText(error), true) }
 })
 document.addEventListener('fullscreenchange', () => {
-  element<HTMLButtonElement>('fullscreen').textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen'
+  const button = element<HTMLButtonElement>('fullscreen')
+  button.textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen'
+  button.title = document.fullscreenElement ? 'Exit fullscreen' : 'Enter fullscreen'
 })
-function setDrawer(open: boolean): void {
+let drawerOpener: HTMLElement | null = null
+function setDrawer(open: boolean, opener?: HTMLElement): void {
+  // Safari deliberately does not focus buttons on pointer activation. Keep
+  // the actual trigger instead of inferring it from document.activeElement.
+  if (open) drawerOpener = opener || element<HTMLButtonElement>('details')
   drawer.hidden = !open
   element<HTMLButtonElement>('details').setAttribute('aria-expanded', String(open))
-  element<HTMLButtonElement>(open ? 'close-details' : 'details').focus()
+  if (open) element<HTMLButtonElement>('close-details').focus()
+  else {
+    const target = opener || drawerOpener
+    const returnTo = target?.isConnected && !target.closest('[hidden]') && !target.matches(':disabled')
+      ? target : element<HTMLButtonElement>('details')
+    returnTo.focus()
+    drawerOpener = null
+  }
 }
-element<HTMLButtonElement>('failure-details').addEventListener('click', () => {
-  setDrawer(true)
+element<HTMLButtonElement>('failure-details').addEventListener('click', event => {
+  setDrawer(true, event.currentTarget as HTMLButtonElement)
   errorSection.scrollIntoView({ block: 'nearest' })
 })
 retryButton.addEventListener('click', () => {
@@ -1300,9 +1395,12 @@ retryButton.addEventListener('click', () => {
   setPhase('published', 'Retrying preview…')
   void promote({ ...failure, phase: 'published' })
 })
-element<HTMLButtonElement>('details').addEventListener('click', () => setDrawer(drawer.hidden))
+element<HTMLButtonElement>('details').addEventListener('click', event => setDrawer(drawer.hidden, event.currentTarget as HTMLButtonElement))
 element<HTMLButtonElement>('close-details').addEventListener('click', () => setDrawer(false))
 function setViewport(name: string): void {
+  // A reference temporarily owns its exact aspect ratio. Choosing a responsive
+  // preset exits that comparison instead of leaving the preset ineffective.
+  if (!referenceImage.hidden) closeComparison()
   studio.dataset.viewport = name
   element<HTMLButtonElement>('mobile').setAttribute('aria-pressed', String(name === 'mobile'))
   for (const button of document.querySelectorAll<HTMLButtonElement>('button[data-viewport]')) {
@@ -1318,7 +1416,9 @@ for (const button of document.querySelectorAll<HTMLButtonElement>('button[data-v
   })
 }
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && !drawer.hidden && !document.fullscreenElement) setDrawer(false)
+  if (event.key !== 'Escape' || document.fullscreenElement) return
+  if (!drawer.hidden) { event.preventDefault(); setDrawer(false) }
+  else if (!referenceImage.hidden) { event.preventDefault(); closeComparison(true) }
 })
 window.addEventListener('error', event => {
   if (!active) return
@@ -1334,7 +1434,12 @@ window.addEventListener('beforeunload', () => {
   if (active) disposePresentation(active)
 }, { once: true })
 
+setPaused(paused, false)
 updateRecoveryControls()
+const chromeObserver = new ResizeObserver(updateStudioLayout)
+for (const target of document.querySelectorAll('.studio-bar, .toolbar, #comparison-controls')) chromeObserver.observe(target)
+updateStudioLayout()
+window.addEventListener('beforeunload', () => chromeObserver.disconnect(), { once: true })
 const compileClock = window.setInterval(renderCompileProgress, 1000)
 window.addEventListener('beforeunload', () => window.clearInterval(compileClock), { once: true })
 void pollStatus()

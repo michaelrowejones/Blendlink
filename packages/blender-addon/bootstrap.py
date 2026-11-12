@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Private desktop tools for the Preview button. No global Node/npm install.
+"""Private desktop tools for website actions. No global Node/npm install.
 
 Runs in a background Blender Python process, so downloading, verification and
 package installation never block Blender's UI. Node archive hashes come from
@@ -42,7 +42,7 @@ def runtime_platform() -> tuple[str, str]:
     arch = {"aarch64": "arm64", "arm64": "arm64", "amd64": "x64", "x86_64": "x64"}.get(machine, machine)
     key = (platform.system(), arch)
     if key not in NODE_ARCHIVES:
-        raise RuntimeError("Automatic preview setup supports Windows, macOS and Linux on x64/arm64. "
+        raise RuntimeError("Automatic website setup supports Windows, macOS and Linux on x64/arm64. "
                            "Use the Blendlink CLI on this platform instead.")
     return key
 
@@ -72,7 +72,7 @@ def extract_runtime(archive: Path, destination: Path, expected_root: str) -> Pat
     def safe(name: str) -> Path:
         path = (base / name).resolve()
         if not path.is_relative_to(base / expected_root):
-            raise RuntimeError("The preview runtime archive contains an unsafe path")
+            raise RuntimeError("The website tools archive contains an unsafe path")
         return path
 
     if archive.suffix == ".zip":
@@ -80,7 +80,7 @@ def extract_runtime(archive: Path, destination: Path, expected_root: str) -> Pat
             for item in bundle.infolist():
                 safe(item.filename)
                 if (item.external_attr >> 16) & 0o170000 == 0o120000:
-                    raise RuntimeError("The preview runtime ZIP contains an unexpected link")
+                    raise RuntimeError("The website tools ZIP contains an unexpected link")
             bundle.extractall(base)
     else:
         with tarfile.open(archive, "r:gz") as bundle:
@@ -91,7 +91,7 @@ def extract_runtime(archive: Path, destination: Path, expected_root: str) -> Pat
                 elif item.islnk():
                     safe(item.linkname)
                 elif not (item.isfile() or item.isdir()):
-                    raise RuntimeError("The preview runtime archive contains an unexpected file type")
+                    raise RuntimeError("The website tools archive contains an unexpected file type")
                 item.mode &= 0o755
             if hasattr(tarfile, "data_filter"):
                 bundle.extractall(base, filter="data")
@@ -109,10 +109,10 @@ def ensure_runtime(cache: Path, *, online: bool = True) -> tuple[Path, Path]:
     if valid_runtime(root, system, expected_hash):
         return runtime_paths(root, system)
     if not online:
-        raise RuntimeError("First preview needs a small tools download. Enable Allow Online Access "
-                           "in Blender Preferences → System, then click Preview Website again.")
+        raise RuntimeError("Website tools need a first-time download. Enable Allow Online Access "
+                           "in Blender Preferences → System, then retry this action.")
     cache.mkdir(parents=True, exist_ok=True)
-    progress("Setting up preview tools · downloading Node " + NODE_VERSION)
+    progress("Setting up website tools · downloading Node " + NODE_VERSION)
     with tempfile.TemporaryDirectory(prefix=".setup-", dir=cache) as temporary:
         work = Path(temporary)
         archive = work / name
@@ -125,22 +125,22 @@ def ensure_runtime(cache: Path, *, online: bool = True) -> tuple[Path, Path]:
                 while chunk := response.read(1024 * 1024):
                     total += len(chunk)
                     if total > 150 * 1024 * 1024:
-                        raise RuntimeError("The preview tools download exceeded its expected size")
+                        raise RuntimeError("The website tools download exceeded its expected size")
                     digest.update(chunk)
                     output.write(chunk)
                     if total % (5 * 1024 * 1024) == 0:
-                        progress(f"Setting up preview tools · {total // (1024 * 1024)} MB downloaded")
+                        progress(f"Setting up website tools · {total // (1024 * 1024)} MB downloaded")
         except (OSError, urllib.error.URLError) as error:
-            raise RuntimeError("Could not download preview tools. Check your connection and retry Preview Website. "
+            raise RuntimeError("Could not download website tools. Check your connection and retry this action. "
                                + str(error)) from error
         if digest.hexdigest() != expected_hash:
-            raise RuntimeError("The preview tools download failed its SHA-256 check. Retry Preview Website; "
+            raise RuntimeError("The website tools download failed its SHA-256 check. Retry this action; "
                                "the unverified download was not installed.")
-        progress("Setting up preview tools · verifying and unpacking")
+        progress("Setting up website tools · verifying and unpacking")
         unpacked = extract_runtime(archive, work / "unpacked", root_name)
         (unpacked / ".blendlink-runtime").write_text(expected_hash)
         if not valid_runtime(unpacked, system, expected_hash):
-            raise RuntimeError("The downloaded preview tools could not start on this computer")
+            raise RuntimeError("The downloaded website tools could not start on this computer")
         # Another Blender window may have completed setup while we downloaded.
         if not valid_runtime(root, system, expected_hash):
             if root.exists():
@@ -167,7 +167,7 @@ def main(argv: list[str]) -> int:
         raise RuntimeError("The installed Blendlink extension has an invalid compiler version")
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command:
-        raise RuntimeError("No preview action was requested")
+        raise RuntimeError("No website action was requested")
     cache = Path(args.cache).resolve()
     node, npm = ensure_runtime(cache, online=not args.offline)
     env = os.environ.copy()

@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto'
 import { createRequire } from 'node:module'
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { dirname, isAbsolute, join, resolve, relative, sep } from 'node:path'
 import { defaultPreviewStudioCacheRoot, installPreviewStudioDependencies, planPreviewStudio, previewStudioPackageDependency } from './preview.js'
 import { publishWebsiteProject } from './publish.js'
 import { emitProgress } from './progress.js'
-import { withPublicationScopes } from './publicationScopes.js'
+import { canonicalizePublicationRoot, withPublicationScopes } from './publicationScopes.js'
 
 const MARKER = '.blendlink-website.json'
 
@@ -35,12 +35,27 @@ function websiteLicenseNotices(workspace: string): string {
 }
 
 export function assertWebsiteExportDestination(output: string, sourceKey: string): void {
+  if (existsSync(output) && !statSync(output).isDirectory()) {
+    throw new Error('Choose a folder for the website export. The selected path is an existing file and was left untouched.')
+  }
   if (!existsSync(output) || readdirSync(output).length === 0) return
   try {
     const marker = JSON.parse(readFileSync(join(output, MARKER), 'utf8'))
     if (marker.schemaVersion === 1 && marker.sourceKey === sourceKey) return
   } catch { /* An unknown folder is never an export target. */ }
   throw new Error('Choose an empty folder, or the previous Blendlink website export for this scene. Existing files were left untouched.')
+}
+
+export function resolveWebsiteExportDestination(output: string, blendPath: string): string {
+  // Resolve folder aliases before checking containment and replacing an owned
+  // export. Otherwise renaming a symlink replaces the alias itself, and a
+  // parent reached through an alias can conceal the source scene.
+  const destination = canonicalizePublicationRoot(resolve(output))
+  const sourceRelative = relative(destination, realpathSync(blendPath))
+  if (!isAbsolute(sourceRelative) && !sourceRelative.startsWith('..' + sep) && sourceRelative !== '..') {
+    throw new Error('The website export folder cannot contain its source .blend. Choose a separate folder.')
+  }
+  return destination
 }
 
 export function standaloneWebsiteMainSource(sceneName: string): string {
@@ -58,73 +73,131 @@ const pause = document.querySelector<HTMLButtonElement>('#pause')!
 const reset = document.querySelector<HTMLButtonElement>('#reset')!
 let installed: Awaited<ReturnType<typeof installThreeCompiledScene>> | null = null
 let renderer: WebGPURenderer | null = null
-let paused = matchMedia('(prefers-reduced-motion: reduce)').matches
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)')
+const loading = new AbortController()
+let paused = motionPreference.matches
+let playbackChosen = false
 let failed = false
+let disposed = false
+let animationFrame = 0
 let previous = performance.now()
+function releaseResources(): void {
+  const scene = installed, graphics = renderer
+  installed = null; renderer = null
+  try { scene?.dispose() } catch (error) { console.warn('Scene cleanup failed:', error) }
+  try { graphics?.dispose() } catch (error) { console.warn('Renderer cleanup failed:', error) }
+}
 function fail(error: unknown): void {
+  if (disposed || failed) return
   failed = true
+  loading.abort()
+  cancelAnimationFrame(animationFrame)
+  delete document.body.dataset.ready
+  const restoreFocus = document.activeElement === pause || document.activeElement === reset
   status.hidden = false
+  status.setAttribute('role', 'alert')
   status.textContent = 'This scene could not load. ' + (error instanceof Error ? error.message : String(error))
   retry.hidden = false
   pause.disabled = true; reset.disabled = true
+  if (restoreFocus) retry.focus()
+  releaseResources()
 }
 async function load(): Promise<void> {
   try {
-    renderer = new WebGPURenderer({ canvas, antialias: true, alpha: true })
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
-    renderer.onDeviceLost = info => fail(new Error(info.message || 'Graphics device was lost.'))
-    await renderer.init()
-    installed = await installThreeCompiledScene({
-      renderer, scene: new THREE.Scene(), descriptor, createBakedScene,
+    const graphics = new WebGPURenderer({ canvas, antialias: true, alpha: true })
+    renderer = graphics
+    graphics.setPixelRatio(Math.min(devicePixelRatio, 2))
+    graphics.onDeviceLost = info => fail(new Error(info.message || 'Graphics device was lost.'))
+    await graphics.init()
+    if (disposed || failed) return
+    const candidate = await installThreeCompiledScene({
+      renderer: graphics, scene: new THREE.Scene(), descriptor, createBakedScene,
       assetBaseUrl: new URL('./', location.href), useAuthoringPreview: true,
+      signal: loading.signal,
       onWarning(message) { console.warn(message) },
     })
+    if (disposed || failed) { candidate.dispose(); return }
+    installed = candidate
+    setPaused(paused)
     resize()
     installed.update(0); installed.render(0)
+    if (disposed || failed) return
     status.hidden = true
     pause.disabled = false
-    pause.hidden = Object.keys(descriptor.clips || {}).length === 0 && !('animationSequence' in descriptor && descriptor.animationSequence)
+    pause.hidden = !installed.animation || installed.animation.availableClips.length === 0
     reset.disabled = false; reset.hidden = !installed.cameraController?.interactive
     document.body.dataset.ready = 'true'
   } catch (error) { fail(error) }
 }
-function resize(): void { installed?.resize(innerWidth, innerHeight) }
+function resize(): void {
+  if (disposed || failed) return
+  try { installed?.resize(Math.max(1, innerWidth), Math.max(1, innerHeight)) }
+  catch (error) { fail(error) }
+}
 function frame(now: number): void {
-  requestAnimationFrame(frame)
+  if (disposed || failed) return
+  animationFrame = requestAnimationFrame(frame)
   const delta = Math.min(.1, Math.max(0, (now - previous) / 1000))
   previous = now
   if (!installed || failed || document.hidden) return
   try {
-    if (!paused) installed.update(delta)
-    installed.render(delta)
+    installed.update(paused ? 0 : delta)
+    // Explicit visitor navigation still works while authored motion is paused.
+    // Orbit damping updates above; free controls also need elapsed input time.
+    if (paused && installed.cameraController?.behavior === 'free') installed.cameraController.update(delta)
+    installed.render(paused ? 0 : delta)
+    if (!paused && installed.animation?.state.phase === 'finished') { paused = true; updatePause() }
   } catch (error) { fail(error) }
 }
 function updatePause(): void {
   pause.textContent = paused ? 'Play' : 'Pause'
+  pause.title = paused ? 'Resume scene animation' : 'Pause scene animation'
   pause.setAttribute('aria-pressed', String(paused))
 }
-pause.addEventListener('click', () => { paused = !paused; updatePause() })
-reset.addEventListener('click', () => installed?.cameraController?.reset())
+function setPaused(value: boolean, explicit = false): void {
+  paused = value
+  const animation = installed?.animation
+  if (animation) {
+    if (paused && animation.state.phase === 'playing') animation.pause()
+    else if (!paused && (explicit || animation.state.phase === 'paused')) animation.play()
+    // Manual playback waits for the visitor; a motion preference change must
+    // not turn an authored idle scene into autoplay.
+    if (animation.state.phase === 'idle' || animation.state.phase === 'finished') paused = true
+  }
+  updatePause()
+}
+pause.addEventListener('click', () => { playbackChosen = true; setPaused(!paused, true) })
+reset.addEventListener('click', () => {
+  try { installed?.cameraController?.reset() } catch (error) { fail(error) }
+})
 retry.addEventListener('click', () => location.reload())
 canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); fail(new Error('Graphics context was lost.')) })
 window.addEventListener('resize', resize)
-window.addEventListener('beforeunload', () => { installed?.dispose(); renderer?.dispose() }, { once: true })
+motionPreference.addEventListener('change', event => {
+  if (!playbackChosen) setPaused(event.matches)
+})
+window.addEventListener('pagehide', event => {
+  // A cached page keeps its scene for Back/Forward restoration. A departing
+  // page releases even when loading is still in progress.
+  if ((event as PageTransitionEvent).persisted) return
+  disposed = true
+  loading.abort()
+  cancelAnimationFrame(animationFrame)
+  releaseResources()
+})
+window.addEventListener('pageshow', () => { previous = performance.now() })
 updatePause()
 void load()
-requestAnimationFrame(frame)
+animationFrame = requestAnimationFrame(frame)
 `
 }
 
 /** Final compile + verified static site. No change to the source or live preview. */
 export async function exportStandaloneWebsite(options: { blendPath: string; output: string; force?: boolean }): Promise<{ output: string; warnings: string[] }> {
   const blendPath = realpathSync(resolve(options.blendPath))
-  const output = resolve(options.output)
+  const output = resolveWebsiteExportDestination(options.output, blendPath)
   if (!blendPath.toLowerCase().endsWith('.blend')) throw new Error('Choose a saved .blend scene to export.')
   const sourceKey = createHash('sha256').update(blendPath).digest('hex')
-  const sourceRelative = relative(output, blendPath)
-  if (!isAbsolute(sourceRelative) && !sourceRelative.startsWith('..' + sep) && sourceRelative !== '..') {
-    throw new Error('The website export folder cannot contain its source .blend. Choose a separate folder.')
-  }
   assertWebsiteExportDestination(output, sourceKey)
   const plan = planPreviewStudio(blendPath, { cacheRoot: join(defaultPreviewStudioCacheRoot(), 'website-exports') })
   return withPublicationScopes({

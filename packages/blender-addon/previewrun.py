@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import collections
 import json
+import math
 import os
 import queue
 import signal
@@ -432,10 +433,19 @@ def _handle_line(line):
             payload = json.loads(line[len(_PREFIX):])
             if not isinstance(payload, dict):
                 raise TypeError("progress payload must be a JSON object")
+            value = payload.get("fraction", _state["fraction"])
+            if isinstance(value, bool):
+                raise TypeError("progress fraction must be a finite number")
+            fraction = float(value)
+            if not math.isfinite(fraction):
+                raise ValueError("progress fraction must be a finite number")
+            label = payload.get("label", _state["label"])
+            if not isinstance(label, str):
+                raise TypeError("progress label must be text")
             if not _validate_protocol_identity(payload, line):
                 return
-            _state["fraction"] = float(payload.get("fraction", _state["fraction"]))
-            _state["label"] = str(payload.get("label", _state["label"]))
+            _state["fraction"] = max(0.0, min(1.0, fraction))
+            _state["label"] = label
             preview_watching = payload.get("previewWatching")
             if isinstance(preview_watching, bool):
                 _state["watching"] = preview_watching
@@ -476,7 +486,7 @@ def _handle_line(line):
                     open_browser()
             if preview_update == "ready":
                 _refresh_published_state()
-        except (ValueError, TypeError) as error:
+        except (ValueError, TypeError, OverflowError) as error:
             _remember_diagnostic(
                 "blendlink preview: malformed progress protocol "
                 f"({type(error).__name__}: {error}); raw line: {line}"

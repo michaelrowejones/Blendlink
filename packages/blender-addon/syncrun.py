@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import collections
 import json
+import math
 import os
 import queue
 import signal
@@ -32,6 +33,9 @@ _state = {
     "cancel_requested": False,
     "canceled": False,
     "finished_at": 0,
+    "source_blend": "",
+    "source_stamp": None,
+    "atlas_measurement": None,
 }
 
 _PROGRESS_PREFIX = "##blendlink "
@@ -78,6 +82,87 @@ def was_canceled() -> bool:
 
 def last_finished_at() -> int:
     return int(_state["finished_at"])
+
+
+def _source_identity(path: str) -> str:
+    return os.path.normcase(os.path.realpath(os.path.abspath(path))) if path else ""
+
+
+def _source_stamp(path: str):
+    try:
+        stat = os.stat(path)
+        return stat.st_mtime_ns, stat.st_size
+    except OSError:
+        return None
+
+
+def atlas_plan_measurement() -> dict | None:
+    """Last direct measurement for this file, independent of publication state."""
+    measured = _state["atlas_measurement"]
+    current_path = _source_identity(bpy.data.filepath)
+    if not isinstance(measured, dict) or measured["sourceBlend"] != current_path:
+        return None
+    return {
+        **measured,
+        "current": bool(not bpy.data.is_dirty and measured["sourceStamp"] is not None
+                        and measured["sourceStamp"] == _source_stamp(current_path)),
+    }
+
+
+def _validate_atlas_capacity(plan) -> None:
+    """Validate the measured fields that atlas panels format or index."""
+    if plan is None:
+        return
+    if not isinstance(plan, dict):
+        raise TypeError("atlasPlan.plan must be an object or explicit null")
+
+    def finite_number(record, key, *, required=False):
+        if key not in record and not required:
+            return
+        number = record.get(key)
+        if isinstance(number, bool) or not isinstance(number, (int, float)) \
+                or not math.isfinite(number) or number < 0:
+            raise ValueError(f"atlasPlan {key} must be a finite nonnegative number")
+
+    finite_number(plan, "estimatedActiveAtlasGpuBytesRgba8Mipmapped")
+    atlases = plan.get("atlases", {})
+    if not isinstance(atlases, dict):
+        raise TypeError("atlasPlan atlases must be an object")
+    for atlas in atlases.values():
+        if not isinstance(atlas, dict):
+            raise TypeError("atlasPlan atlas entries must be objects")
+        finite_number(atlas, "occupancy", required=True)
+        for key in ("requiredOccupancy", "targetAchievement", "estimatedGpuBytesRgba8Mipmapped"):
+            finite_number(atlas, key)
+        if "compositionDetail" not in atlas:
+            continue
+        detail = atlas["compositionDetail"]
+        if not isinstance(detail, dict):
+            raise TypeError("atlasPlan compositionDetail must be an object")
+        for key in ("cssWidth", "cssHeight", "atlasTexelsPerCssPixelAt1x", "atlasTexelsPerDevicePixelAt2x"):
+            finite_number(detail, key)
+        for key in ("worstObject", "composition"):
+            if key in detail and not isinstance(detail[key], str):
+                raise TypeError(f"atlasPlan {key} must be text")
+
+
+def _remember_atlas_measurement(value) -> None:
+    if not isinstance(value, dict) or not isinstance(value.get("sourceBlend"), str) \
+            or value.get("quality") not in {"final", "preview"} \
+            or "plan" not in value:
+        raise TypeError("atlasPlan must contain its source file, quality and plan")
+    source = _source_identity(value["sourceBlend"])
+    # Connected projects may measure several scenes. Only the Blender file
+    # that launched this task supplies evidence to its atlas panel.
+    if not source or source != _state["source_blend"]:
+        return
+    _validate_atlas_capacity(value["plan"])
+    _state["atlas_measurement"] = {
+        "sourceBlend": source,
+        "sourceStamp": _state["source_stamp"],
+        "quality": value["quality"],
+        "plan": value.get("plan"),
+    }
 
 
 def _log_dir() -> str:
@@ -154,6 +239,8 @@ def start(
         log_path=os.path.join(_log_dir(), "sync-log.txt"),
         cancel_requested=False, canceled=False,
         finished_at=0,
+        source_blend=_source_identity(bpy.data.filepath),
+        source_stamp=_source_stamp(bpy.data.filepath),
     )
     _state["tail"].clear()
     try:
@@ -198,9 +285,22 @@ def _handle_line(line):
     if line.startswith(_PROGRESS_PREFIX):
         try:
             payload = json.loads(line[len(_PROGRESS_PREFIX):])
-            _state["fraction"] = float(payload.get("fraction", _state["fraction"]))
-            _state["label"] = str(payload.get("label", _state["label"]))
-        except (ValueError, TypeError) as error:
+            if not isinstance(payload, dict):
+                raise TypeError("progress payload must be a JSON object")
+            value = payload.get("fraction", _state["fraction"])
+            if isinstance(value, bool):
+                raise TypeError("progress fraction must be a finite number")
+            fraction = float(value)
+            if not math.isfinite(fraction):
+                raise ValueError("progress fraction must be a finite number")
+            label = payload.get("label", _state["label"])
+            if not isinstance(label, str):
+                raise TypeError("progress label must be text")
+            if "atlasPlan" in payload:
+                _remember_atlas_measurement(payload["atlasPlan"])
+            _state["fraction"] = max(0.0, min(1.0, fraction))
+            _state["label"] = label
+        except (ValueError, TypeError, OverflowError) as error:
             _remember_diagnostic(
                 "blendlink build: malformed progress protocol "
                 f"({type(error).__name__}: {error}); raw line: {line}"
@@ -265,6 +365,7 @@ def shutdown():
     _state.update(
         running=False, process=None, queue=None,
         cancel_requested=False, canceled=False,
+        atlas_measurement=None, source_blend="", source_stamp=None,
     )
 
 
@@ -282,6 +383,9 @@ def reset_for_tests():
         cancel_requested=False,
         canceled=False,
         finished_at=0,
+        atlas_measurement=None,
+        source_blend="",
+        source_stamp=None,
     )
     _state["tail"].clear()
 

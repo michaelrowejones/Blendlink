@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { discoverBlender } from './discover.js'
-import { loadConfig } from './config.js'
+import { loadConfig, resolveConfig } from './config.js'
 import {
   commitPublishedFiles,
   draftSettings,
@@ -24,11 +24,12 @@ import {
   renderBakedRecipe,
   updateBakedRecipeTemplateFile,
 } from './bakedRecipe.js'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { withPublicationScopes } from './publicationScopes.js'
 import { writeLocalPathProvenance } from './generatedProvenance.js'
+import { emitAtlasPlanProgress } from './progress.js'
 
 const [command, ...rest] = process.argv.slice(2)
 const flags = new Set(rest.filter((arg) => arg.startsWith('--')))
@@ -563,10 +564,22 @@ async function main(): Promise<number> {
       })
     }
     case 'plan': {
-      const config = await loadConfig(process.cwd())
+      const requestedBlend = flagValue('--blend')
+      if (flags.has('--blend') && (!requestedBlend || positional.length > 0)) {
+        console.error('usage: blendlink plan --blend <saved-scene.blend> [--preview] [--json]')
+        return 2
+      }
+      const absoluteBlend = requestedBlend ? resolve(process.cwd(), requestedBlend) : undefined
+      if (absoluteBlend && (!/\.blend$/i.test(absoluteBlend) || !existsSync(absoluteBlend) || !statSync(absoluteBlend).isFile())) {
+        throw new Error(`Choose a saved .blend file to check atlas fit: ${absoluteBlend}`)
+      }
+      // A plan uses temporary Blender output and never needs a website,
+      // package installation or files generated beside the artist's scene.
+      const config = absoluteBlend
+        ? resolveConfig({ scenes: [{ file: absoluteBlend }] }, dirname(absoluteBlend))
+        : await loadConfig(process.cwd())
       const { discoverBlender } = await import('./discover.js')
       const { exportBlend } = await import('./invoke.js')
-      const { existsSync } = await import('node:fs')
       const {
         inspectRealtimePlanMaterialDiagnostics,
         readPlanSyncDuration,
@@ -606,6 +619,7 @@ async function main(): Promise<number> {
             planOnly: true,
           },
           blender,
+          ...(flags.has('--allow-newer') ? { allowNewerFile: true } : {}),
         })
         const plan = result.plan
         const inspection = inspectRealtimePlanMaterialDiagnostics(
@@ -617,6 +631,8 @@ async function main(): Promise<number> {
               : {}),
           },
         )
+        emitAtlasPlanProgress(scene.blendPath, planQuality, plan,
+          inspection.errors.length > 0 || (plan?.errors?.length ?? 0) > 0)
         if (inspection.errors.length > 0) {
           hasPlanErrors = true
           if (asJson) {
@@ -875,6 +891,8 @@ async function main(): Promise<number> {
         '                           Preview artifacts are refused by verify)\n' +
         '  plan [scene] [--preview] [--json]\n' +
         '                           inspect Final by default or the resolved Preview profile\n' +
+        '  plan --blend <saved-scene.blend> [--preview] [--json]\n' +
+        '                           check atlas fit without connecting a website or running a bake\n' +
         '  verify [scene]           Blender-free scene-scoped or project-wide drift check (CI)\n' +
         '  perf [scene] [--tier mobile|balanced|showcase] [--json] [--fail]\n' +
         '                           inspect build budgets; browser runtime evidence remains required\n' +

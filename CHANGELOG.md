@@ -11,6 +11,14 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Play starts authored manual animations in Preview Studio and exported sites.
+  Paused/reduced-motion scenes retain camera navigation; finished clips can replay.
+- Comparison mode pauses inspection correctly, closes when choosing a viewport
+  preset, and returns keyboard focus. Details returns focus to its actual opener.
+- Narrow Preview Studio windows keep every toolbar action visible with touch-sized
+  controls. Inspect supports keyboard navigation and retains focus across saves.
+- Blender-relative export paths and folder aliases resolve to the intended folder.
+- Invalid task progress cannot leave Blender's website panel stuck busy.
 - Blender 4.2 website export tolerates the absence of newer white-balance settings.
 - Managed desktop tools forward compiler progress and exact errors on Windows.
 - Stopping the Preview CLI closes its owned website server; Reset view clears
@@ -70,6 +78,9 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Added
 
+- **Check Atlas Fit** works without a connected site, using
+  `blendlink plan --blend <saved-scene.blend>`. Measurements reach Blender's
+  atlas panel without publishing assets; later edits mark old measurements stale.
 - Terminal-free desktop preview setup downloads and SHA-256-verifies a private
   Node runtime. It respects Blender online access and reuses cached tools.
 - **Export Website Folder** and `blendlink export --blend ... --out ...` build

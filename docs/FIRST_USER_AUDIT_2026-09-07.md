@@ -433,3 +433,25 @@ installation outside the repository, exact tarball SRI in the lockfile,
 framework-neutral root evaluation and a Vite browser build using only the fresh
 installation. This closes the local borrowed-dependency gap for that artifact;
 public-registry provenance remains a publication-time check.
+
+### Follow-up workflow polish
+
+The follow-up acceptance uses authored animated, manual-playback, orbit-camera
+and baked-planning scenes. Local checks pass actual moving/paused pixels,
+keyboard inspection, comparison transitions, 390px controls, reduced motion,
+manual Play, failed-save recovery, Back/Forward, exported-site retry and
+preservation of every prior export file after a failed compile. Preview controls
+and exported animation controls are exercised in all three Playwright engines.
+The macOS WebKit mouse driver misplaces trusted coordinates even on plain HTML;
+its native touch backend is correct, so the explicit local touch mode is recorded
+in `artifacts/verification-preview-ux/report.json`. Hosted pointer checks remain
+enabled. This is not real-device evidence.
+
+An isolated native Blender 5.3 test also passes the complete **Check Atlas Fit**
+path through a fresh private runtime, CLI planning and the atlas panel. The saved
+source is unchanged during planning, later saves mark the result stale, Realtime
+clears prior baked capacity, and publication status remains `NO_MANIFEST`.
+Evidence is retained under `artifacts/verification-polish-addon/`. Malformed
+progress and malformed capacity payloads preserve the last valid measurement and
+recover on the next valid record. The Node suite passes 819 tests with five
+optional codec/tool skips; the full pinned hosted toolchain gate is separate.

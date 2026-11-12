@@ -75,6 +75,13 @@ checkout replaces `dist`, which a source-based preview still uses.
 6. Run **Check Atlas Fit** before an expensive bake. An oversized Final atlas
    blocks with a remedy; Preview may scale it down and report the detail loss.
 
+**Check Atlas Fit** works before connecting a website. It measures the saved
+scene without running a Cycles bake, then shows capacity in Blender's atlas
+panel. Later edits mark that measurement stale; run the check again to refresh
+it. From the checkout, use
+`node packages/blendlink/dist/cli.js plan --blend "/path/to/scene.blend"`;
+add `--preview` to measure the Preview profile. Planning does not publish a site.
+
 For an HDR environment, load a real Radiance `.hdr` or OpenEXR `.exr` file.
 If you create one from a generated Blender image, save it, reload that saved
 file, select the loaded image in **HDR Environment**, and then pack it. A
@@ -102,6 +109,9 @@ Use **Inspect** to pause and orbit, **Reset view** to restore the Blender camera
 **Phone** to check portrait framing, and **Save image** to capture the rendered
 canvas. **Compare** overlays a Blender reference so visual differences are easier
 to spot. These preview controls do not change your saved Blender scene.
+Inspect focuses the canvas for keyboard navigation: arrows pan and Shift+arrows
+orbit. Escape closes comparison or Details and returns focus. Reduced-motion
+preferences start playback paused; **Play** starts it when you choose.
 Use **Details** for warnings. Failed initial loads show the exact error on screen;
 **View error details** opens the full error. If browser loading fails, **Retry
 preview** reloads the compiled scene without another Blender save or bake.
