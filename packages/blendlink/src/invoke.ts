@@ -285,6 +285,7 @@ export interface BlendSidecar {
   }>
   textures: Array<{
     name: string
+    aliases?: string[]
     width: number
     height: number
     colorSpace: string

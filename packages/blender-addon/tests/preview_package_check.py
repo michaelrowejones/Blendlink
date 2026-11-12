@@ -30,7 +30,7 @@ try:
         addon.prefs.get_prefs = lambda: preferences
         scene = Path(temporary) / "Unrelated Artist Folder" / "Scene.blend"
         command, cwd = addon.ops._preview_studio_command(str(scene))
-        assert str(cli) in command and str(scene) in command and "npx" not in command
+        assert str(cli.resolve()) in command and str(scene) in command and "npx" not in command
         assert cwd == str(scene.parent)
         for invalid, message in (("relative/package", "absolute"), (str(package / "missing"), "Cannot read")):
             preferences.preview_package = invalid

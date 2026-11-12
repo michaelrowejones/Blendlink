@@ -1427,6 +1427,28 @@ describe('official Three scene installation seam', () => {
     expect(mesh.material).toBe(material)
   })
 
+  it.each(['source', 'materials'] as const)('rebases directly fetched %s sidecars under a deployment subfolder', async kind => {
+    const webgpu = { ...renderer(), isWebGPURenderer: true, isWebGLRenderer: false, alpha: true }
+    const fetch = vi.fn(async () => new Response('missing', { status: 404 }))
+    vi.stubGlobal('fetch', fetch)
+    const pointer = { url: '/scene.json?v=hash', bytes: 1, hash: 'hash' }
+    try {
+      await expect(installLoadedThreeCompiledScene(
+        await loader(new THREE.Group()).loadAsync() as unknown as import('three/addons/loaders/GLTFLoader.js').GLTF,
+        {
+          descriptor: descriptor({
+            look: { toneMapping: 'application', exposure: 0, background: 'application' },
+            ...(kind === 'source' ? { sourcePresentation: pointer } : { materialPrograms: pointer }),
+          }),
+          renderer: webgpu as unknown as THREE.WebGLRenderer,
+          scene: new THREE.Scene(),
+          assetBaseUrl: '/nested/site/',
+        },
+      )).rejects.toThrow(/fetch failed.*404/i)
+      expect(fetch.mock.calls[0][0]).toBe('/nested/site/scene.json?v=hash')
+    } finally { vi.unstubAllGlobals() }
+  })
+
   it('rejects renderer-like objects without a Three renderer identity', async () => {
     await expect(installThreeCompiledScene({
       descriptor: descriptor(),

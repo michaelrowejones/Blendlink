@@ -356,3 +356,67 @@ corrupt payloads, rollback and refusal to cache failed layouts. The build,
 794 unit tests with two codec skips, 19 release-policy checks and the baked
 end-to-end suite passed. The full headless/release matrix was not repeated.
 Logs and input probes remain under `artifacts/verification-performance/`.
+
+
+## Installation and preview verification — 2026-11-11
+
+The target is a free Blender-to-web publishing workflow, with multiplayer and
+XR deferred. The repository is public; npm publication is still pending.
+
+This pass adds a private, SHA-256-pinned Node 24.22.3 runtime behind Blender's
+Preview/Publish/Export actions. A fresh macOS arm64 download and cached execution
+both succeeded with system Node/npm absent from PATH. Online Access is respected,
+including npm's offline mode. Installing from the local CLI connects the matching
+compiler in the extension preferences automatically. An isolated Blender 5.3
+profile verified that binding and the new Export Website operator.
+
+Preview Studio adds orbit inspection, a stable portrait preset, rendered PNG
+capture and keyboard focus return. A fixed-camera Reset bug found during browser
+inspection is corrected. `npm run test:preview-ux` now reproduces inspection,
+nonblank capture, keyboard interaction, failed initial-load retry without a new
+bake, a malformed-save failure retaining the good canvas, and recovery on a valid
+save. The same test exports a complete static site and renders it under a nested
+hosting path in Playwright Chromium, Firefox and WebKit, checking failed requests,
+page errors, nonblank pixels and absence of external network dependencies.
+Screenshots and the structured report are retained under
+`artifacts/verification-preview-ux/`. The new hosted workflow is defined; it has
+not yet executed remotely.
+
+Standalone export compiles Final, verifies before/after its website build,
+includes all companion assets and third-party notices, refuses unrelated output
+folders, and preserves a previous export on failure. Browser testing found and
+fixed missing deployment-base handling for directly fetched source-presentation
+and TSL material sidecars. Bake testing also found stock-exporter filename changes
+that caused image size policies to miss their target; resize/compression policies
+now retain source filename aliases and refuse ambiguous identity.
+
+The complete local release suite passed on Node 24 with checksum-verified Blender
+5.2.0 / exporter 5.2.39 and KTX 4.4.2, using an explicit Cycles CPU override. It
+includes real codec round trips, packed consumers, 41 discovered Blender suites,
+isolated ZIP installation and the appearance/lighting/material bake contracts.
+The unit run passed 812 tests with four optional skips; the required real-tool
+step separately passed all 16 codec assertions. The exact Node 22.15 floor also
+passed the unit/release-policy suite before the final image-alias test additions.
+The new preview/publishing browser suite passed separately on Blender 5.3.
+
+These CPU bake results do not certify Blender 5.2 Metal on this hardware: its
+native Metal compiler crashed in the first direct attempt. The general Blender
+5.3 preview and bake smoke worked, but the full material fixtures intentionally
+require the source-audited 5.2.39 exporter. macOS temporary-path aliases and native
+Smart Project variation were corrected in tests by requiring canonical identities
+and the actual non-overlap/non-degenerate UV result, preserving the original
+quality assertions.
+
+Sharp 0.35.5 and ndarray-pixels 5.2.0 replace the vulnerable image chain. Complete
+and production npm audits return zero findings; no advisory exception remains.
+A final local archive rehearsal is distinct from a public release. Public
+publishing still requires reviewed committed source, the hosted compatibility
+matrix, npm ownership/trusted publishing and the release settings in RELEASE.md.
+Artist pilots remain deliberately deferred.
+
+
+The retained local archive also passed `test:fresh-install`: an empty-cache npm
+installation outside the repository, exact tarball SRI in the lockfile,
+framework-neutral root evaluation and a Vite browser build using only the fresh
+installation. This closes the local borrowed-dependency gap for that artifact;
+public-registry provenance remains a publication-time check.

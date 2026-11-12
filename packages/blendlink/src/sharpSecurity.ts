@@ -1,10 +1,9 @@
 import sharp from 'sharp'
 
 /**
- * Sharp versions before 0.35 inherit vulnerable libvips loaders for GIF,
- * TIFF, and native VIPS files (GHSA-f88m-g3jw-g9cj). Blendlink's portable
- * compiler formats do not require those loaders, so apply Sharp's documented
- * process-wide workaround before decoding any artist-controlled bytes.
+ * Keep the compiler's established input boundary after upgrading to patched
+ * Sharp/libvips. Portable scene images do not need GIF, TIFF or native VIPS
+ * loaders. This format restriction is no longer an advisory exception.
  *
  * Keep this narrow. PNG, JPEG, WebP, AVIF, and raw buffers remain available.
  */

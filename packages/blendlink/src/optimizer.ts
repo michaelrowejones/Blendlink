@@ -792,6 +792,7 @@ function mergeGeneratedChannelTextures(document: Document) {
 
 export interface TextureResizePolicy {
   name: string
+  aliases?: readonly string[]
   maxSize: number
 }
 
@@ -835,8 +836,10 @@ export async function resizeTextures(
   const warnings: string[] = []
   let changed = false
   for (const policy of policies) {
-    const texture = textures.find((candidate) => candidate.getName() === policy.name)
-      ?? textures.find((candidate) => textureKey(candidate.getName()) === textureKey(policy.name))
+    const keys = new Set([policy.name, ...(policy.aliases ?? [])].map(textureKey))
+    const matches = textures.filter(candidate => keys.has(textureKey(candidate.getName())) || keys.has(textureKey(candidate.getURI())))
+    if (matches.length > 1) throw new Error(`Texture size override for "${policy.name}" matches multiple exported images. Give the source images distinct names and filenames.`)
+    const texture = matches[0]
     if (!texture) {
       warnings.push(
         `Texture size override for "${policy.name}" did not match an exported image; ` +
@@ -880,7 +883,7 @@ export async function resizeTextures(
     }
     const published = await sharp(output).metadata()
     transforms.push({
-      name: texture.getName() || policy.name,
+      name: policy.name,
       originalWidth,
       originalHeight,
       publishedWidth: published.width ?? originalWidth,

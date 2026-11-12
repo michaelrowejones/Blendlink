@@ -794,6 +794,14 @@ def _principled_omissions(node, tree, capabilities):
     known_inputs = _PRINCIPLED_GLTF_INPUTS | {
         name for name, _expected, _label in _PRINCIPLED_OMITTED_INPUTS
     } | _PRINCIPLED_CONDITIONAL_INPUTS | _PRINCIPLED_CONTEXTUAL_INPUTS
+    # Blender 5.3 added spectral transmission. The documented scale/weight
+    # zero gates prove these sockets dormant; their presence alone must not
+    # downgrade every new default material. Active dispersion stays unverified.
+    # https://docs.blender.org/manual/en/5.3/render/shader_nodes/shader/principled.html
+    transmission = _constant_float(_node_input(node, "Transmission Weight"))
+    dispersion = _constant_float(_node_input(node, "Transmission Dispersion Scale"))
+    if transmission == 0.0 or dispersion == 0.0:
+        known_inputs = known_inputs | {"Transmission Dispersion Scale", "Transmission Dispersion Abbe Number"}
     for socket in node.inputs:
         socket_name = socket.name or socket.identifier
         if socket_name in known_inputs:

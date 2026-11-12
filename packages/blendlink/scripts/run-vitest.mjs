@@ -1,10 +1,10 @@
 import { spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 
 const require = createRequire(import.meta.url)
-const vitest = require.resolve('vitest/vitest.mjs')
+const vitest = join(dirname(require.resolve('vitest/package.json')), 'vitest.mjs')
 const registryVariable = 'BLENDLINK_PUBLICATION_LEASE_REGISTRY'
 const result = spawnSync(
   process.execPath,

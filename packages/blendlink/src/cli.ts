@@ -159,7 +159,7 @@ async function main(): Promise<number> {
       const { installBlenderAddon } = await import('./addon.js')
       const result = await installBlenderAddon()
       console.log(
-        `✓ installed and enabled Blendlink ${result.addonVersion} in Blender ${result.blenderVersion}`,
+        `✓ installed and enabled Blendlink ${result.addonVersion} in ${result.blenderVersion}`,
       )
       return 0
     }
@@ -200,6 +200,19 @@ async function main(): Promise<number> {
         console.log('watching scene sources, declared inputs, and blendlink.config — ctrl-c to stop')
         await new Promise(() => {}) // stay alive until interrupted
       }
+      return 0
+    }
+    case 'export': {
+      const blend = flagValue('--blend')
+      const output = flagValue('--out')
+      if (!blend || !output) {
+        console.error('usage: blendlink export --blend <saved-scene.blend> --out <website-folder>')
+        return 2
+      }
+      const { exportStandaloneWebsite } = await import('./exportWebsite.js')
+      const result = await exportStandaloneWebsite({ blendPath: blend, output, force: flags.has('--force') })
+      for (const warning of formatHumanWarnings(result.warnings)) console.warn(`  ! ${warning}`)
+      console.log(`✓ Website exported to ${result.output}\nUpload this folder to your static host. No Blender or Node is needed on the host.`)
       return 0
     }
     case 'preview': {
@@ -832,6 +845,8 @@ async function main(): Promise<number> {
         '                           publish Final by default; --preview uses the scene-owned Preview profile\n' +
         '  preview [scene] [--no-open]\n' +
         '                           compile Preview, start the connected project server, and open its reported URL\n' +
+        '  export --blend <saved-scene.blend> --out <website-folder>\n' +
+        '                           build a complete standalone website for any static host\n' +
         '  preview --blend <saved-scene.blend> [--no-open]\n' +
         '                           one-click disposable Preview Studio: scaffold/cache, compile Preview, and open it\n' +
         '  publish [scene] [--assets-only] [--force] [--allow-newer]\n' +

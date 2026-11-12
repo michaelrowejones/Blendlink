@@ -856,6 +856,8 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
                 live.label(text="Watching this saved .blend for changes", icon="REC")
                 live.operator("blendlink.stop_preview", text="Stop", icon="X")
 
+        publish.operator("blendlink.export_website", text="Export Website Folder", icon="EXPORT")
+
         if root is not None:
             actions = publish.column(align=True) if _is_compact(context) else publish.row(align=True)
             plan = actions.operator("blendlink.sync_now", text="Check Atlas Fit", icon="CHECKMARK")

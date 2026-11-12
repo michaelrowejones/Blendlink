@@ -105,6 +105,7 @@ import {
 } from './meshoptWorkers.js'
 import {
   createCompiledAssetUrlModifier,
+  resolveCompiledAssetUrl,
   runtimeAssetGraphRoot,
 } from './assetUrls.js'
 import {
@@ -2197,7 +2198,14 @@ async function installLoadedThreeCompiledSceneNow(
       const { installTslMaterials } = await import('./tslMaterialRuntime.js')
       tslMaterials = await installTslMaterials({
         root,
-        descriptor: descriptor as Parameters<typeof installTslMaterials>[0]['descriptor'],
+        descriptor: {
+          ...descriptor,
+          materialPrograms: {
+            ...descriptor.materialPrograms,
+            url: options.assetBaseUrl === undefined ? descriptor.materialPrograms.url
+              : resolveCompiledAssetUrl(descriptor.materialPrograms.url, options.assetBaseUrl),
+          },
+        } as Parameters<typeof installTslMaterials>[0]['descriptor'],
         ...(options.loadMaterialPrograms
           ? { loadPrograms: options.loadMaterialPrograms }
           : {}),
@@ -2650,7 +2658,11 @@ async function installLoadedThreeCompiledSceneNow(
     if (descriptor.sourcePresentation && options.useSourcePresentation !== false
       && (!options.descriptor.look || options.descriptor.look.toneMapping === 'application')) {
       if ((renderer as THREE.WebGLRenderer & { isWebGPURenderer?: boolean }).isWebGPURenderer) {
-        sourcePresentation = await loadSourcePresentation(descriptor.sourcePresentation, options.signal)
+        sourcePresentation = await loadSourcePresentation({
+          ...descriptor.sourcePresentation,
+          url: options.assetBaseUrl === undefined ? descriptor.sourcePresentation.url
+            : resolveCompiledAssetUrl(descriptor.sourcePresentation.url, options.assetBaseUrl),
+        }, options.signal)
         for (const warning of sourcePresentation.warnings) warnThreeInstallation(options, warning)
       } else {
         warnThreeInstallation(options, 'The authored Blender display/compositor needs WebGPURenderer (WebGPU or WebGL2 backend). Native tone mapping remains active.')

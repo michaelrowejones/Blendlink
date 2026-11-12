@@ -1,31 +1,9 @@
 import { createHash } from 'node:crypto'
 
-const REVIEWED_ADVISORY = Object.freeze({
-  source: 1124066,
-  name: 'sharp',
-  severity: 'high',
-  url: 'https://github.com/advisories/GHSA-f88m-g3jw-g9cj',
-  range: '<0.35.0',
-})
-
-// Re-reviewed 2026-08-03: npm's audit rollup stopped listing the
-// @gltf-transform/functions edge for the same advisory (source 1124066,
-// sharp <0.35.0) while verifyReviewedDependencyChain proved the installed
-// lock records byte-identical to the reviewed snapshot — a reporting-shape
-// change over identical bytes, not a dependency change. The exact-names
-// check below now accepts only the two-entry rollup; the old three-entry
-// shape reappearing, or any other change, fails closed again.
-const REVIEWED_COUNTS = Object.freeze({
-  info: 0,
-  low: 0,
-  moderate: 0,
-  high: 2,
-  critical: 0,
-  total: 2,
-})
-
+// Reviewed 2026-11-11: patched Sharp/libvips chain. There are no advisory
+// exceptions. Pin the complete native payload snapshot as well as the versions.
 const REVIEWED_CHAIN_FINGERPRINT =
-  '191da92116d726780930ad4f31f049b6493a571ae656250b78785d5a84d11868'
+  '60749f3030d3509ff3b303ff0419a93c2586440081524ef5f5e62b0b5fdca3b4'
 
 function auditFailure(detail) {
   throw new Error(
@@ -37,7 +15,7 @@ function auditFailure(detail) {
 function dependencyFailure(detail) {
   throw new Error(
     `The reviewed production dependency chain changed: ${detail}. `
-    + 'Re-run the live audit and review the Sharp workaround before releasing.',
+    + 'Re-run the live audit and review the patched image dependency chain before releasing.',
   )
 }
 
@@ -57,97 +35,17 @@ function assertExactCounts(actual, expected, fail) {
   }
 }
 
-function assertStringVia(entry, expected, packageName) {
-  if (
-    !Array.isArray(entry.via)
-    || entry.via.length !== 1
-    || entry.via[0] !== expected
-  ) {
-    auditFailure(`${packageName}.via no longer identifies only ${expected}`)
-  }
-}
-
-/**
- * Accept the one production advisory chain that has an upstream-documented,
- * behavior-tested loader workaround in Blendlink.
- *
- * This intentionally fails closed. Count-only allowlists are unsafe because a
- * new advisory can replace the reviewed one without changing the totals.
- */
+/** Require a well-formed, empty production audit over the patched graph. */
 export function verifyProductionAuditReport(report) {
   const root = recordAt(report, 'audit report', auditFailure)
-  if (root.auditReportVersion !== 2) {
-    auditFailure(`auditReportVersion was ${String(root.auditReportVersion)}; expected 2`)
-  }
-
-  const vulnerabilities = recordAt(
-    root.vulnerabilities,
-    'vulnerabilities',
-    auditFailure,
-  )
+  if (root.auditReportVersion !== 2) auditFailure('expected auditReportVersion 2')
+  const vulnerabilities = recordAt(root.vulnerabilities, 'vulnerabilities', auditFailure)
   const names = Object.keys(vulnerabilities).sort()
-
-  if (names.length === 0) {
-    assertExactCounts(root.metadata?.vulnerabilities, {
-      info: 0,
-      low: 0,
-      moderate: 0,
-      high: 0,
-      critical: 0,
-      total: 0,
-    }, auditFailure)
-    auditFailure(
-      'npm omitted the reviewed Sharp advisory while the release policy still pins '
-      + 'the vulnerable dependency snapshot',
-    )
-  }
-
-  const expectedNames = [
-    'ndarray-pixels',
-    'sharp',
-  ]
-  if (
-    names.length !== expectedNames.length
-    || names.some((name, index) => name !== expectedNames[index])
-  ) {
-    auditFailure(`vulnerability packages were ${names.join(', ') || '(none)'}`)
-  }
-  assertExactCounts(root.metadata?.vulnerabilities, REVIEWED_COUNTS, auditFailure)
-
-  const ndarrayEntry = recordAt(
-    vulnerabilities['ndarray-pixels'],
-    'vulnerabilities.ndarray-pixels',
-    auditFailure,
-  )
-  if (ndarrayEntry.severity !== 'high' || ndarrayEntry.isDirect !== true) {
-    auditFailure('ndarray-pixels severity/directness changed')
-  }
-  assertStringVia(ndarrayEntry, 'sharp', 'ndarray-pixels')
-
-  const sharpEntry = recordAt(
-    vulnerabilities.sharp,
-    'vulnerabilities.sharp',
-    auditFailure,
-  )
-  if (sharpEntry.severity !== 'high' || sharpEntry.isDirect !== true) {
-    auditFailure('sharp severity/directness changed')
-  }
-  if (!Array.isArray(sharpEntry.via) || sharpEntry.via.length !== 1) {
-    auditFailure('sharp.via no longer contains exactly one advisory')
-  }
-  const advisory = recordAt(sharpEntry.via[0], 'vulnerabilities.sharp.via[0]', auditFailure)
-  for (const [field, expected] of Object.entries(REVIEWED_ADVISORY)) {
-    if (advisory[field] !== expected) {
-      auditFailure(
-        `Sharp advisory ${field} was ${String(advisory[field])}; expected ${String(expected)}`,
-      )
-    }
-  }
-
-  return {
-    status: 'reviewed-workaround',
-    advisory: 'GHSA-f88m-g3jw-g9cj',
-  }
+  if (names.length) auditFailure(`vulnerability packages were ${names.join(', ')}`)
+  assertExactCounts(root.metadata?.vulnerabilities, {
+    info: 0, low: 0, moderate: 0, high: 0, critical: 0, total: 0,
+  }, auditFailure)
+  return { status: 'clean' }
 }
 
 function requireValue(actual, expected, label) {
@@ -224,7 +122,7 @@ export function fingerprintReviewedDependencyChain(lockfile) {
 }
 
 /**
- * Pin the installed packages and edges to the graph examined with the advisory.
+ * Pin the installed packages and native payloads to the reviewed patched graph.
  * An upgrade is welcome, but it must produce a fresh audit rather than inheriting
  * an allow decision made for different bytes.
  */
@@ -258,23 +156,23 @@ export function verifyReviewedDependencyChain(lockfile) {
   )
   requireValue(
     workspace.dependencies?.['ndarray-pixels'],
-    '5.0.1',
+    '5.2.0',
     'Blendlink ndarray-pixels version',
   )
-  requireValue(workspace.dependencies?.sharp, '0.34.5', 'Blendlink Sharp version')
+  requireValue(workspace.dependencies?.sharp, '0.35.5', 'Blendlink Sharp version')
   requireValue(functionsPackage.version, '4.4.1', '@gltf-transform/functions version')
   requireValue(
     functionsPackage.dependencies?.['ndarray-pixels'],
     '^5.0.1',
     '@gltf-transform/functions -> ndarray-pixels range',
   )
-  requireValue(ndarrayPackage.version, '5.0.1', 'ndarray-pixels version')
+  requireValue(ndarrayPackage.version, '5.2.0', 'ndarray-pixels version')
   requireValue(
     ndarrayPackage.dependencies?.sharp,
-    '^0.34.0',
+    '^0.35.0',
     'ndarray-pixels -> Sharp range',
   )
-  requireValue(sharpPackage.version, '0.34.5', 'Sharp version')
+  requireValue(sharpPackage.version, '0.35.5', 'Sharp version')
   const fingerprint = fingerprintReviewedDependencyChain(lockfile)
   requireValue(
     fingerprint,
@@ -284,8 +182,8 @@ export function verifyReviewedDependencyChain(lockfile) {
 
   return {
     functions: '4.4.1',
-    ndarrayPixels: '5.0.1',
-    sharp: '0.34.5',
+    ndarrayPixels: '5.2.0',
+    sharp: '0.35.5',
     fingerprint,
   }
 }

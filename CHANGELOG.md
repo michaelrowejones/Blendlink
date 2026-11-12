@@ -11,6 +11,21 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Image size and compression settings follow linked images when the stock
+  exporter uses a filename instead of the Blender datablock name. Ambiguous
+  identity is refused instead of applying an override to an unrelated image.
+- Root-relative source-presentation and TSL material-program sidecars honor the
+  installation's deployment base path, including standalone exports in a subfolder.
+- Default Blender 5.3 Principled materials are no longer marked approximate
+  merely because dormant transmission-dispersion sockets exist. Active spectral
+  dispersion remains explicitly unverified.
+- macOS temporary-path tests compare canonical paths, and the fixed-camera
+  Preview reset now restores authored framing after orbit inspection.
+- Stopping a Blender website task terminates its owned POSIX process group.
+- Sharp 0.35.5 and ndarray-pixels 5.2.0 replace the vulnerable image chain.
+  Release auditing now requires zero advisories; the old exception is removed.
+  Vitest and its dependency chain are updated to a clean audited version.
+
 - Repeated baked compiles reuse validated atlas preparation when evaluated
   geometry, UVs, pins, cameras and layout settings match. Lighting, material,
   sample-count and denoise edits can reuse the layout while rebuilding pixels.
@@ -50,6 +65,14 @@ pre-1.0; breaking changes must still be called out with a migration note.
   and lighting choices. Both examples include mobile viewport metadata.
 
 ### Added
+
+- Terminal-free desktop preview setup downloads and SHA-256-verifies a private
+  Node runtime. It respects Blender online access and reuses cached tools.
+- **Export Website Folder** and `blendlink export --blend ... --out ...` build
+  an independent Final-quality static site with all companion assets, without
+  modifying a connected application or overwriting unrelated folders.
+- Preview Studio orbit inspection, direct phone framing, PNG capture, and
+  keyboard focus return for the diagnostics drawer.
 
 - Preview Studio shows the current compile stage and object, total and stage
   elapsed time, and the selected Cycles backend and sample count. Progress

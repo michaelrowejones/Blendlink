@@ -1,131 +1,46 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
-import {
-  verifyProductionAuditReport,
-  verifyReviewedDependencyChain,
-} from './production-audit-policy.mjs'
+import { verifyProductionAuditReport, verifyReviewedDependencyChain } from './production-audit-policy.mjs'
 
-function reviewedReport() {
-  return {
-    auditReportVersion: 2,
-    vulnerabilities: {
-      'ndarray-pixels': {
-        severity: 'high',
-        isDirect: true,
-        via: ['sharp'],
-      },
-      sharp: {
-        severity: 'high',
-        isDirect: true,
-        via: [{
-          source: 1124066,
-          name: 'sharp',
-          severity: 'high',
-          url: 'https://github.com/advisories/GHSA-f88m-g3jw-g9cj',
-          range: '<0.35.0',
-        }],
-      },
-    },
-    metadata: {
-      vulnerabilities: {
-        info: 0, low: 0, moderate: 0, high: 2, critical: 0, total: 2,
-      },
-    },
-  }
-}
-
-function currentLockfile() {
-  return JSON.parse(
-    readFileSync(new URL('../package-lock.json', import.meta.url), 'utf8'),
-  )
-}
+const cleanReport = () => ({
+  auditReportVersion: 2,
+  vulnerabilities: {},
+  metadata: { vulnerabilities: { info: 0, low: 0, moderate: 0, high: 0, critical: 0, total: 0 } },
+})
+const lockfile = () => JSON.parse(readFileSync(new URL('../package-lock.json', import.meta.url), 'utf8'))
 
 describe('production audit release policy', () => {
-  it('accepts only the exact reviewed Sharp/libvips chain', () => {
-    assert.deepEqual(verifyProductionAuditReport(reviewedReport()), {
-      status: 'reviewed-workaround',
-      advisory: 'GHSA-f88m-g3jw-g9cj',
-    })
+  it('accepts a clean production report', () => {
+    assert.deepEqual(verifyProductionAuditReport(cleanReport()), { status: 'clean' })
   })
-
-  it('rejects the pre-2026-08 three-entry rollup if npm reintroduces it', () => {
-    // The 2026-08-03 re-review accepted npm's narrowed two-entry rollup for
-    // the same advisory over byte-identical lock records. The shape moving
-    // AGAIN — in either direction — must fail closed for a fresh review.
-    const report = reviewedReport()
-    report.vulnerabilities['@gltf-transform/functions'] = {
-      severity: 'high',
-      isDirect: true,
-      via: ['ndarray-pixels'],
+  it('rejects every advisory, including the formerly accepted workaround', () => {
+    const report = cleanReport()
+    report.vulnerabilities.sharp = { via: [{ url: 'https://github.com/advisories/GHSA-f88m-g3jw-g9cj' }] }
+    assert.throws(() => verifyProductionAuditReport(report), /unreviewed production audit result/i)
+  })
+  it('rejects malformed or contradictory empty reports', () => {
+    for (const report of [{}, { ...cleanReport(), vulnerabilities: [] }, { ...cleanReport(), metadata: {} }]) {
+      assert.throws(() => verifyProductionAuditReport(report), /unreviewed production audit result/i)
     }
-    report.metadata.vulnerabilities.high = 3
-    report.metadata.vulnerabilities.total = 3
-    assert.throws(
-      () => verifyProductionAuditReport(report),
-      /unreviewed production audit result/i,
-    )
+    const report = cleanReport()
+    report.metadata.vulnerabilities.high = 1
+    assert.throws(() => verifyProductionAuditReport(report), /expected 0/)
   })
-
-  it('rejects a new advisory even when its count looks unchanged', () => {
-    const report = reviewedReport()
-    report.vulnerabilities.sharp.via[0].url =
-      'https://github.com/advisories/GHSA-new-unreviewed'
-    assert.throws(
-      () => verifyProductionAuditReport(report),
-      /unreviewed production audit result/i,
-    )
-  })
-
-  it('requires the reviewed ndarray-pixels pin to remain a direct dependency', () => {
-    const report = reviewedReport()
-    report.vulnerabilities['ndarray-pixels'].isDirect = false
-    assert.throws(
-      () => verifyProductionAuditReport(report),
-      /ndarray-pixels severity\/directness changed/i,
-    )
-  })
-
-  it('rejects a clean report while the reviewed vulnerable snapshot is pinned', () => {
-    assert.throws(
-      () => verifyProductionAuditReport({
-        auditReportVersion: 2,
-        vulnerabilities: {},
-        metadata: {
-          vulnerabilities: {
-            info: 0, low: 0, moderate: 0, high: 0, critical: 0, total: 0,
-          },
-        },
-      }),
-      /omitted the reviewed Sharp advisory/i,
-    )
-  })
-
-  it('content-identifies the exact dependency chain whose workaround was reviewed', () => {
-    assert.deepEqual(verifyReviewedDependencyChain(currentLockfile()), {
-      functions: '4.4.1',
-      ndarrayPixels: '5.0.1',
-      sharp: '0.34.5',
-      fingerprint: '191da92116d726780930ad4f31f049b6493a571ae656250b78785d5a84d11868',
+  it('content-identifies the patched image chain and native binaries', () => {
+    assert.deepEqual(verifyReviewedDependencyChain(lockfile()), {
+      functions: '4.4.1', ndarrayPixels: '5.2.0', sharp: '0.35.5',
+      fingerprint: '60749f3030d3509ff3b303ff0419a93c2586440081524ef5f5e62b0b5fdca3b4',
     })
   })
-
-  it('rejects dependency-chain drift until it is reviewed again', () => {
-    const changed = structuredClone(currentLockfile())
-    changed.packages['node_modules/sharp'].version = '0.34.6'
-    assert.throws(
-      () => verifyReviewedDependencyChain(changed),
-      /reviewed production dependency chain changed/i,
-    )
+  it('rejects dependency drift before trusting a clean report', () => {
+    const changed = lockfile()
+    changed.packages['node_modules/sharp'].version = '0.34.5'
+    assert.throws(() => verifyReviewedDependencyChain(changed), /production dependency chain changed/i)
   })
-
-  it('rejects resolved native-payload drift even when versions stay unchanged', () => {
-    const changed = structuredClone(currentLockfile())
-    changed.packages['node_modules/@img/sharp-win32-x64'].integrity =
-      'sha512-unreviewed'
-    assert.throws(
-      () => verifyReviewedDependencyChain(changed),
-      /content fingerprint/i,
-    )
+  it('rejects a changed native payload at the same version', () => {
+    const changed = lockfile()
+    changed.packages['node_modules/@img/sharp-win32-x64'].integrity = 'sha512-unreviewed'
+    assert.throws(() => verifyReviewedDependencyChain(changed), /content fingerprint/i)
   })
 })

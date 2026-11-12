@@ -99,20 +99,20 @@
     "chokidar": "^4.0.3",
     "meshoptimizer": "^1.2.0",
     "n8ao": "1.10.2",
+    "ndarray-pixels": "5.2.0",
     "postprocessing": "6.39.3",
-    "ndarray-pixels": "5.0.1",
-    "sharp": "0.34.5"
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
     "@types/three": "0.184.0",
     "three": "0.184.0",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "vitest": "4.1.12"
   },
   "peerDependencies": {
-    "@types/three": ">=0.184.0 <0.185.0",
     "@react-three/fiber": ">=9.0.0 <10.0.0",
+    "@types/three": ">=0.184.0 <0.185.0",
     "react": ">=19.0.0 <20.0.0",
     "three": "0.184.0"
   },

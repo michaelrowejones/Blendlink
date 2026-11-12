@@ -38,9 +38,12 @@
     "release:artifacts": "npm run audit:production && npm run build && node scripts/build-release-artifacts.mjs",
     "prototype:eevee-materializer": "node experiments/eevee-uv-materializer-prototype/run.mjs",
     "prototype:r3f-atomic-presentation": "node experiments/r3f-atomic-presentation-prototype/run.mjs",
-    "prototype:content-addressed-bundle": "node --test experiments/content-addressed-bundle-prototype/publisher.test.mjs"
+    "prototype:content-addressed-bundle": "node --test experiments/content-addressed-bundle-prototype/publisher.test.mjs",
+    "test:preview-ux": "npm run build && node scripts/test-preview-ux.mjs",
+    "test:fresh-install": "node scripts/test-fresh-install.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "1.65.0",
     "@react-three/fiber": "^9.6.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

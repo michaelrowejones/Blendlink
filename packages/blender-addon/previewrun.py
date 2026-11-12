@@ -12,6 +12,7 @@ import collections
 import json
 import os
 import queue
+import signal
 import subprocess
 import threading
 import time
@@ -213,7 +214,7 @@ def _remember_diagnostic(message: str) -> None:
 
 
 def start(
-    command: str,
+    command: str | list[str],
     cwd: str,
     *,
     blend_path: str | None = None,
@@ -227,7 +228,7 @@ def start(
     try:
         process = subprocess.Popen(
             command,
-            shell=True,
+            shell=isinstance(command, str),
             cwd=cwd,
             env=env,
             stdout=subprocess.PIPE,
@@ -236,6 +237,7 @@ def start(
             encoding="utf8",
             errors="replace",
             creationflags=creationflags,
+            start_new_session=os.name != "nt",
         )
     except OSError as error:
         return str(error)
@@ -248,7 +250,7 @@ def start(
         updating=False,
         update_error="",
         fraction=0.0,
-        label="Compiling Preview quality",
+        label="Preparing website preview",
         # A restarted server must earn a fresh reachable URL. Retaining the
         # previous run here can hide a failed restart behind a dead Open button.
         url="",
@@ -281,7 +283,7 @@ def start(
 
 
 def replace(
-    command: str,
+    command: str | list[str],
     cwd: str,
     *,
     blend_path: str,
@@ -331,7 +333,10 @@ def cancel():
             creationflags=subprocess.CREATE_NO_WINDOW,
         )
     else:
-        process.kill()
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
 
 
 def _validate_protocol_identity(payload, raw_line: str) -> bool:

@@ -1,12 +1,31 @@
 # Your first scene on a website
 
-Blendlink is currently private source work. Use a local package built from this
+Blendlink is public source in pre-release development. Use a local package built from this
 checkout, or an archive supplied by the maintainer. The package's `0.9.0`
 version is not evidence that an installable public release exists.
 
 This walkthrough starts with a saved Blender scene, previews it without a web
 project, then attaches it to a small existing Three.js or React Three Fiber
 site. No hosting account is needed.
+
+## Install from an extension ZIP
+
+The artist installation starts in Blender: **Preferences → Get Extensions →
+Install from Disk**, choose the matching Blendlink extension ZIP, and enable it.
+No global Node or npm installation is required for Preview Website or Export
+Website Folder. On first use, Blendlink downloads Node 24.22.3 from nodejs.org,
+checks its pinned SHA-256, and keeps it with a private npm cache in Blender's
+extension data. Later uses reuse those tools. Blender remains responsive during
+setup. Allow Online Access must be enabled for the first download; existing
+cached tools can be used offline.
+
+A public registry release is still pending. When testing an unpublished build,
+follow the source installation below. `addon install` connects that local
+compiler automatically. For a ZIP installed separately, set **Local Preview Package**
+in Blendlink preferences to the built `packages/blendlink` folder. That connects
+an installed extension to the matching local compiler even for scenes saved
+outside this repository. The source guide requires Node only to build the
+compiler; the artist buttons use their private runtime.
 
 ## Build and install the local tools
 
@@ -99,6 +118,27 @@ node packages/blendlink/dist/cli.js preview --blend artifacts/verification-diora
 It authors a cabin, trees, stone path, camera and lighting with a 512px Appearance
 atlas. It has no external image dependencies. The desktop camera crops the outer
 island on a narrow phone; use it to practice authoring Responsive Frames too.
+
+## Export a standalone website
+
+Choose **Export Website Folder** in Blender and select a new or empty output
+folder. Blendlink saves the scene, compiles Final quality, verifies every scene
+artifact, builds a minimal viewer, and verifies again. Progress and errors stay
+in Blender's Website Task panel. You can also run:
+
+```sh
+node packages/blendlink/dist/cli.js export --blend "/path/to/scene.blend" --out "/path/to/Scene Website"
+```
+
+Upload the folder contents to a static web host. A subfolder is supported; you
+do not need Blender, npm, or a server application on the host. The result has
+no watermark and requires no Blendlink account. Use the hosted page URL in an
+iframe to embed it in another website. Serve the folder through HTTP for local
+inspection; double-clicking `index.html` does not bypass browser file security.
+
+A later export can replace this scene's own prior export. An unrelated folder
+is refused. Failed compilation/build leaves the previous export intact. Keep
+custom application code in your own project using the connection route below.
 
 ## Attach your existing website
 

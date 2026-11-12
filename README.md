@@ -1,8 +1,9 @@
 # Blendlink
 
-> Make the scene in Blender. Ship it beautifully in Three.js.
+> Make the scene in Blender. Publish a beautiful, interactive website for free.
 
-This is currently private source work, not a public installable release.
+Blendlink is public source in pre-release development. An npm release and
+matching downloadable Blender extension have not been published yet.
 Start with [your first scene on a website](docs/FIRST_SCENE.md) for local
 installation, Blender preparation, preview, and an existing Three.js/R3F site.
 The [September first-user audit](docs/FIRST_USER_AUDIT_2026-09-07.md) records
@@ -24,6 +25,29 @@ initialized `WebGPURenderer`; environment, shadow, probe, KTX2, and lifecycle
 behavior are renderer-family-aware. Compiled TSL material programs shipped in
 a scene's material-programs sidecar apply automatically on the WebGPU family
 only — on WebGL those materials keep their portable glTF form.
+
+## Start in Blender
+
+With a matching extension ZIP supplied by the maintainer, use **Preferences →
+Get Extensions → Install from Disk**, then enable Blendlink. Open a saved scene,
+choose **Set Up Blendlink Scene**, and click **Preview Website**. The first
+preview downloads a verified private Node runtime and the matching compiler;
+there is no global Node/npm installation or terminal setup for this path.
+Blender's **Allow Online Access** setting is respected. Local unpublished builds
+remain usable through **Local Preview Package** in the extension preferences.
+
+Preview Studio updates when you save. **Inspect** lets you orbit without
+changing the Blender camera; **Reset view** restores authored framing. **Phone**
+checks a portrait frame, **Save image** captures the rendered canvas, and
+**Compare** overlays a Blender reference. Failed updates retain the last good
+scene and offer the appropriate recovery.
+
+Choose **Export Website Folder** to build a complete standalone site at Final
+quality. Upload the folder's contents to your static host. Its scripts, models,
+textures and decoders are included, it works under a hosting subfolder, and it
+has no watermark or account requirement. Existing website teams can instead
+connect their own Three.js/R3F project using the guide below. See
+[your first scene](docs/FIRST_SCENE.md) for source installation and the full flow.
 
 ## The artist workflow
 
@@ -106,7 +130,9 @@ world bounds and rendered vertex counts, and reports bytes saved (including a
 warning when a tiny file grows instead). The loader adapter configures the
 official decoder automatically.
 
-In Material Properties, **Blendlink Web Material** reports the active material
+Supported shader graphs translate automatically and safe static channels are
+cached by the material compiler; manual route controls remain available for
+exceptions. In Material Properties, **Blendlink Web Material** reports the active material
 as **Exact glTF**, **Approximated**, or **Needs Bake** before showing image
 previews, source dimensions, color space, and the last published result.
 Supported Principled BSDF inputs and Blender's supported KHR material

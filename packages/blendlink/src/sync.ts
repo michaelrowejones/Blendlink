@@ -1324,7 +1324,7 @@ async function syncSceneWithPublicationLease(
   }
   const texturePolicies = (exported.sidecar.textures ?? [])
     .filter((texture) => texture.maxSize !== undefined)
-    .map((texture) => ({ name: texture.name, maxSize: texture.maxSize! }))
+    .map((texture) => ({ name: texture.name, aliases: texture.aliases, maxSize: texture.maxSize! }))
   if (texturePolicies.length > 0) {
     emitProgress(0.74, `enforcing ${texturePolicies.length} texture size limit(s)`)
     const { resizeTextures } = await import('./optimizer.js')
@@ -1334,7 +1334,7 @@ async function syncSceneWithPublicationLease(
   }
   const textureCompressionPolicies = (exported.sidecar.textures ?? [])
     .filter((texture) => texture.compression !== undefined)
-    .map((texture) => ({ name: texture.name, override: texture.compression! }))
+    .map((texture) => ({ name: texture.name, aliases: texture.aliases, override: texture.compression! }))
   if (sceneRecipe?.optimization.textures === 'ktx2' || textureCompressionPolicies.some((policy) => policy.override !== 'none')) {
     emitProgress(0.77, `compressing realtime material textures for the GPU`)
     const { compressTexturesKtx2 } = await import('./textureCompression.js')

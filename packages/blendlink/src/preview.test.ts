@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -99,7 +99,7 @@ describe('website preview contract', () => {
       blendlink: `file:${blendlinkPackageRoot.replace(/\\/g, '/')}`,
       three: '0.184.0',
     })
-    expect(packageJson.devDependencies.vite).toBe('^7.0.0')
+    expect(packageJson.devDependencies.vite).toBe('7.3.8')
     expect(packageJson.scripts['preview:dev']).toContain('vite --host 127.0.0.1 --port 0')
     const entry = readFileSync(join(plan.workspace, 'src', 'main.ts'), 'utf8')
     expect(entry).toContain("import * as THREE from 'three'")
@@ -339,7 +339,7 @@ describe('website preview contract', () => {
     const checkoutRoot = join(tempProject('checkout-origin'), 'packages', 'blendlink')
     mkdirSync(checkoutRoot, { recursive: true })
     expect(resolvePreviewStudioBlendlinkDependency(checkoutRoot, '0.8.0'))
-      .toBe(`file:${resolve(checkoutRoot).replace(/\\/g, '/')}`)
+      .toBe(`file:${realpathSync(checkoutRoot).replace(/\\/g, '/')}`)
 
     const publishedInstall = join(tempProject('registry-origin'), 'node_modules', 'blendlink')
     mkdirSync(publishedInstall, { recursive: true })
@@ -358,7 +358,7 @@ describe('website preview contract', () => {
       },
     }))
     expect(resolvePreviewStudioBlendlinkDependency(fileInstall, '0.8.0'))
-      .toBe(`file:${resolve(fileInstall).replace(/\\/g, '/')}`)
+      .toBe(`file:${realpathSync(fileInstall).replace(/\\/g, '/')}`)
   })
 
   it('installs Preview Studio dependencies only when the declared package changed or required runtime packages are absent', () => {

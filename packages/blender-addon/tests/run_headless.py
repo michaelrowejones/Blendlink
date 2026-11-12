@@ -20,6 +20,10 @@ from types import SimpleNamespace
 
 import bpy
 
+# Production resolves published paths. Canonicalize the fixture root too:
+# macOS exposes the same temporary directory through /var and /private/var.
+tempfile.tempdir = str(Path(tempfile.gettempdir()).resolve())
+
 ADDON_DIR = Path(__file__).resolve().parents[1]
 PACKAGE = "blendlink_addon"
 
@@ -1590,11 +1594,11 @@ def main():
                    and "preview" in preview_command
                    and "--no-open" in preview_command,
                    f"Preview Studio ignored its compatible local CLI: {preview_command!r}")
-            expect(preview_cwd == str(preview_source.resolve().parent),
+            expect(Path(preview_cwd).resolve() == preview_source.resolve().parent,
                    f"Preview Studio command used an unsafe working directory: {preview_cwd!r}")
             if os.name == "nt":
-                expect(f'"{str(local_cli.resolve())}"' in preview_command
-                       and f'"{str(preview_source.resolve())}"' in preview_command,
+                expect(str(local_cli.resolve()) in preview_command
+                       and str(preview_source.resolve()) in preview_command,
                        f"Preview Studio split a spaced Windows path: {preview_command!r}")
 
             local_package.joinpath("package.json").write_text(json.dumps({
@@ -1603,8 +1607,8 @@ def main():
             captured = StringIO()
             with redirect_stdout(captured):
                 fallback_command, _ = ops._preview_studio_command(str(preview_source))
-            expect(f"blendlink@{addon_release}" in fallback_command
-                   and "--yes" in fallback_command,
+            expect(addon_release in fallback_command
+                   and "--cli" not in fallback_command,
                    f"Preview Studio used a mismatched local CLI: {fallback_command!r}")
             expect("version 9.9.9" in captured.getvalue()
                    and f"requires {addon_release}" in captured.getvalue(),
@@ -1617,7 +1621,8 @@ def main():
             captured = StringIO()
             with redirect_stdout(captured):
                 unbuilt_command, _ = ops._preview_studio_command(str(preview_source))
-            expect(f"blendlink@{addon_release}" in unbuilt_command
+            expect(addon_release in unbuilt_command
+                   and "--cli" not in unbuilt_command
                    and "dist/cli.js is missing" in captured.getvalue()
                    and "npm run build" in captured.getvalue(),
                    f"Preview Studio silently used an unbuilt local package: "
@@ -4888,13 +4893,19 @@ def main():
     # The rescued face count travels with the report so every consumer can
     # state the size of the change: without it the atlas warning described a
     # per-face rechart as an ordinary reprojection.
+    # Smart Project's result varies across Blender/platform revisions. Require
+    # the actual injectivity outcome and truthful reporting, whether native
+    # projection already separated the shell or the rescue had to do so.
+    rescued_faces = repairs[0].get("lightmapRescuedFaces", 0) if repairs else 0
     expect(repairs == [{
         "object": solidified_unpinned.name,
         "triangleCount": len(unpinned_bad),
-        "strategy": "smart-project-whole-unpinned-object+lightmap-rescue",
-        "lightmapRescuedFaces": repairs[0].get("lightmapRescuedFaces"),
-    }] and repairs[0].get("lightmapRescuedFaces", 0) > 0,
+        "strategy": "smart-project-whole-unpinned-object" + ("+lightmap-rescue" if rescued_faces else ""),
+        **({"lightmapRescuedFaces": rescued_faces} if rescued_faces else {}),
+    }],
         f"unexpected evaluated UV repair report: {repairs}")
+    expect(not bakelib._projection_overlap_issues(solidified_unpinned, bakelib.ATLAS_UV),
+           "Evaluated UV repair left overlapping charts")
     expect(not bakelib._nonzero_geometry_zero_uv_triangles(
         solidified_unpinned, bakelib.ATLAS_UV,
     ), "Smart Project left non-zero evaluated triangles with zero UV area")
@@ -5926,13 +5937,16 @@ def main():
     )
     # Same Solidify inner/outer fold as above: the projection self-overlaps,
     # so the per-face rescue runs and reports itself.
+    rescued_faces = post_pack_repairs[0].get("lightmapRescuedFaces", 0) if post_pack_repairs else 0
     expect(post_pack_repairs == [{
         "object": solidified_unpinned.name,
         "triangleCount": len(post_pack_bad),
-        "strategy": "smart-project-whole-unpinned-object+lightmap-rescue",
-        "lightmapRescuedFaces": post_pack_repairs[0].get("lightmapRescuedFaces"),
-    }] and post_pack_repairs[0].get("lightmapRescuedFaces", 0) > 0,
+        "strategy": "smart-project-whole-unpinned-object" + ("+lightmap-rescue" if rescued_faces else ""),
+        **({"lightmapRescuedFaces": rescued_faces} if rescued_faces else {}),
+    }],
         f"unexpected post-pack repair report: {post_pack_repairs}")
+    expect(not bakelib._projection_overlap_issues(solidified_unpinned, bakelib.ATLAS_UV),
+           "Post-pack repair left overlapping charts")
     expect(final_held == {},
            f"post-pack repair invented pinned ownership: {final_held}")
     expect(not bakelib._nonzero_geometry_zero_uv_triangles(

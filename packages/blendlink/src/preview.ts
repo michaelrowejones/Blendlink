@@ -347,7 +347,7 @@ export function resolvePreviewStudioBlendlinkDependency(
   return version
 }
 
-function previewStudioPackageDependency(): string {
+export function previewStudioPackageDependency(): string {
   const identity = previewStudioPackageIdentity()
   return resolvePreviewStudioBlendlinkDependency(identity.root, identity.version)
 }
@@ -489,7 +489,7 @@ function previewStudioFiles(
         blendlink: blendlinkDependency,
         three: '0.184.0',
       },
-      devDependencies: { vite: '^7.0.0' },
+      devDependencies: { vite: '7.3.8' },
     }, null, 2) + '\n',
     'index.html': PREVIEW_STUDIO_INDEX,
     'tsconfig.json': JSON.stringify({
@@ -826,7 +826,7 @@ async function runPreviewStudioCommand(command: string, cwd: string, stage: stri
   })
 }
 
-async function installPreviewStudioDependencies(plan: PreviewStudioPlan, packageHash: string): Promise<void> {
+export async function installPreviewStudioDependencies(plan: PreviewStudioPlan, packageHash: string): Promise<void> {
   const state = readStudioState(join(plan.workspace, PREVIEW_STUDIO_STATE))
   if (!previewStudioNeedsInstall({
     packageHash,

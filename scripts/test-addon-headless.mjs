@@ -118,10 +118,13 @@ console.log(`BLENDLINK_FULL_TEST addon: ${blender}`)
 
 function runHeadlessSuite(label, testPath, sentinel) {
   console.log(`BLENDLINK_FULL_TEST addon: ${label}`)
+  const cpuOnly = process.env.BLENDLINK_TEST_CYCLES_DEVICE === 'CPU'
+  if (cpuOnly) console.log('BLENDLINK_FULL_TEST addon: Cycles CPU override (not GPU evidence)')
   const result = spawnSync(blender, [
     '--background',
     '--factory-startup',
     '--python-exit-code', '1',
+    ...(cpuOnly ? ['--python-expr', 'import _cycles; _cycles.set_device_override("CPU")'] : []),
     '--python', testPath,
   ], {
     cwd: join(root, 'packages', 'blender-addon'),

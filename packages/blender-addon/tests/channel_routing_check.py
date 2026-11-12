@@ -441,6 +441,18 @@ def main():
         f"{pristine_record['channels']}",
     )
 
+    # New sockets must not make an untouched Blender 5.3 material look lossy.
+    dispersion = _principled.inputs.get("Transmission Dispersion Scale")
+    if dispersion is not None:
+        transmission = _principled.inputs["Transmission Weight"]
+        transmission.default_value = 1.0
+        expect(procedural.analyze_material(pristine_material)["status"] == "exact", "Zero dispersion must stay dormant")
+        dispersion.default_value = 1.0
+        active = procedural.analyze_material(pristine_material)
+        expect(active["status"] != "exact" and any("Dispersion" in reason for reason in active["reasons"]),
+               "Active spectral dispersion was silently advertised as portable")
+        transmission.default_value = 0.0
+        expect(procedural.analyze_material(pristine_material)["status"] == "exact", "Zero transmission must gate dispersion")
     print("BLENDLINK_CHANNEL_ROUTING_CHECK_PASSED")
 
 

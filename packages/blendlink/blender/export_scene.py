@@ -1462,12 +1462,34 @@ def collect_sidecar(
             compression = None
         textures.append({
             "name": image.name,
+            # Stock exporter revisions may name a linked image from its file
+            # rather than its Blender datablock. Preserve both identities.
+            "aliases": list(dict.fromkeys([
+                os.path.basename(bpy.path.abspath(image.filepath)),
+                os.path.splitext(os.path.basename(bpy.path.abspath(image.filepath)))[0],
+            ])) if image.filepath else [],
             "width": width,
             "height": height,
             "colorSpace": image.colorspace_settings.name,
             **({"maxSize": int(max_size)} if isinstance(max_size, (int, float)) and max_size > 0 else {}),
             **({"compression": compression} if compression else {}),
         })
+
+    def image_keys(record):
+        return {
+            re.sub(r"\.(?:png|jpe?g|webp|avif|ktx2)$", "", name.lower())
+            for name in [record["name"], *record.get("aliases", [])] if name
+        }
+    for texture in textures:
+        if "maxSize" not in texture and "compression" not in texture:
+            continue
+        collisions = [other["name"] for other in textures
+                      if other is not texture and image_keys(texture) & image_keys(other)]
+        if collisions:
+            raise RuntimeError(
+                f'Image policy for "{texture["name"]}" is ambiguous with {", ".join(collisions)}. '
+                'Give these images distinct datablock names and filenames before publishing.'
+            )
 
     camera_recipe = recipe.get("camera") if isinstance(recipe, dict) else None
     fixed_camera = bool(

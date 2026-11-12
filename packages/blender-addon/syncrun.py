@@ -12,6 +12,7 @@ import collections
 import json
 import os
 import queue
+import signal
 import subprocess
 import threading
 import time
@@ -119,7 +120,7 @@ def _remember_diagnostic(message: str) -> None:
 
 
 def start(
-    command: str,
+    command: str | list[str],
     cwd: str,
     *,
     initial_label: str = "Starting website task",
@@ -133,7 +134,7 @@ def start(
     try:
         process = subprocess.Popen(
             command,
-            shell=True,
+            shell=isinstance(command, str),
             cwd=cwd,
             env=env,
             stdout=subprocess.PIPE,
@@ -142,6 +143,7 @@ def start(
             encoding="utf8",
             errors="replace",
             creationflags=creationflags,
+            start_new_session=os.name != "nt",
         )
     except OSError as error:
         return str(error)
@@ -177,7 +179,10 @@ def cancel():
             capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW,
         )
     else:
-        process.kill()
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
 
 
 def _handle_line(line):

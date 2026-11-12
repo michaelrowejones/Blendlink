@@ -9,17 +9,31 @@ contract from environments that have actually been exercised.
 | Surface | Supported contract | Evidence today |
 | --- | --- | --- |
 | Node.js | `22.15.0` or newer Node 22; Node 24 | Declared by the npm package. The CI matrix covers exact 22.15, latest 22, and latest 24; 22.15 is the first Node 22 release with the Zstandard API required to inspect compressed `.blend` headers. |
-| Blender | 4.2.0 and newer | The extension manifest is the compatibility floor. Local verification currently covers the discoverable Windows Blender 5.2 installation, not every version or OS. |
-| Operating systems | Windows, Linux, and macOS are intended | Windows is locally exercised. Hosted Linux and macOS Blender evidence is not yet available. |
+| Blender | 4.2.0 and newer | The extension manifest is the compatibility floor. Windows Blender 5.2 evidence is retained. macOS Blender 5.2 passes the full contract with a CPU override, and Blender 5.3 has a verified first-preview/standalone flow; the complete material compatibility suite intentionally requires Blender 5.2 / exporter 5.2.39. |
+| Operating systems | Windows, Linux, and macOS are intended | Windows and macOS arm64 have local evidence. Hosted Linux/Windows/macOS release-matrix evidence is still required. |
 | Three.js / `@types/three` | runtime exact `three@0.184.0`; declarations `>=0.184.0 <0.185.0` | Declared optional peer contract. Blendlink's compiled and loaded capability profiles were audited against the exact r184 runtime source. Declaration-only r184 patch releases do not change loader behavior; the dogfood site exercises `@types/three@0.184.1`. Other runtime releases are unsupported until separately profiled. |
 | React | `>=19.0.0 <20.0.0` | Declared optional peer range for React adapters. |
 | React Three Fiber | `>=9.0.0 <10.0.0` | Declared optional peer range; packed R3F consumer is locally compiled. |
-| Browsers | Modern Chromium, Firefox, and WebKit are intended | Production Chromium is locally exercised. Firefox, WebKit, branded Safari/Firefox, and real mobile devices are not yet verified. |
+| Browsers | Modern Chromium, Firefox, and WebKit are intended | The standalone fixture renders in Playwright Chromium, Firefox, and WebKit on macOS, including a deployment subfolder. Branded Safari/Firefox, real mobile hardware, and wider scene coverage still need verification. |
 
 Playwright mobile profiles emulate viewport, user agent, device scale, and touch
 behavior; they are not real iOS or Android support evidence. A local production
 server is not evidence for a deployed CDN, base path, CORS, CSP, service worker,
 or cache policy.
+
+## Desktop preview tools
+
+Artist-facing Preview and Export actions prepare a private Node 24.22.3 runtime
+for macOS, Windows, or Linux on x64/arm64. Six official archive SHA-256 values
+are pinned in the extension. Fresh setup and cached execution have been exercised
+on macOS arm64 with system Node/npm absent from PATH. Windows/Linux download,
+extraction and invocation still require their hosted platform checks.
+
+For a CPU-only headless Blender contract run, set
+`BLENDLINK_TEST_CYCLES_DEVICE=CPU`. This is explicitly CPU evidence and does not
+certify a GPU backend. The full material fixtures require the pinned Blender
+5.2.0 / glTF exporter 5.2.39; a newer Blender is not an interchangeable full-suite
+runner even when its normal preview workflow succeeds.
 
 ## What support means
 

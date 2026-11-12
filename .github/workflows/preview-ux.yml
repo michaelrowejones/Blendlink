@@ -1,0 +1,52 @@
+name: Preview and website UX
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-ux-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preview-ux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install locked dependencies and browsers
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium firefox webkit
+      - name: Download and verify Blender 5.2.0
+        env:
+          BLENDER_SHA256: 96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48
+        run: |
+          archive="$RUNNER_TEMP/blender.tar.xz"
+          curl --fail --location --retry 3 \
+            https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz \
+            --output "$archive"
+          echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/blender"
+          tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
+          echo "BLENDLINK_BLENDER=$RUNNER_TEMP/blender/blender" >> "$GITHUB_ENV"
+      - name: Verify preview and standalone publishing
+        run: npm run test:preview-ux
+      - name: Retain browser evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: preview-ux
+          path: artifacts/verification-preview-ux
+          if-no-files-found: warn

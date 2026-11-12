@@ -10,7 +10,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import shlex
 import subprocess
 import tomllib
 import uuid
@@ -130,18 +129,37 @@ def _local_preview_cli(blend_path: Path, release_version: str) -> Path | None:
     return None
 
 
-def _preview_studio_command(blend_path: str | None = None) -> tuple[str, str]:
-    """Return a shell-safe disposable-preview command and harmless cwd."""
-    blend_path = Path(os.path.abspath(blend_path or bpy.data.filepath))
+def _desktop_tools_directory() -> Path:
+    try:
+        return Path(bpy.utils.extension_path_user(__package__, path="tools", create=False))
+    except (RuntimeError, ValueError):
+        return Path(bpy.utils.user_resource("CONFIG")) / "blendlink" / "tools"
+
+
+def _desktop_cli_command(blend_path: str, arguments: list[str], *, cwd: str | None = None) -> tuple[list[str], str]:
+    """Use Blender's Python to prepare private tools without a terminal or PATH."""
+    blend_path = Path(os.path.abspath(blend_path))
     release_version = _addon_release_version()
-    local_cli = _local_preview_cli(blend_path, release_version)
+    local_cli = _local_preview_cli(Path(cwd) / blend_path.name, release_version) if cwd else None
     if local_cli is None:
-        parts = ["npx", "--yes", f"blendlink@{release_version}"]
-    else:
-        parts = ["node", str(local_cli)]
-    parts.extend(("preview", "--blend", str(blend_path), "--no-open"))
-    command = subprocess.list2cmdline(parts) if os.name == "nt" else shlex.join(parts)
-    return command, str(blend_path.parent)
+        local_cli = _local_preview_cli(blend_path, release_version)
+    parts = [
+        bpy.app.binary_path, "--background", "--factory-startup",
+        "--python-exit-code", "1", "--python", str(Path(__file__).with_name("bootstrap.py")),
+        "--", "--cache", str(_desktop_tools_directory()),
+        "--version", release_version, "--blender", bpy.app.binary_path,
+    ]
+    if local_cli is not None:
+        parts.extend(("--cli", str(local_cli)))
+    if not getattr(bpy.app, "online_access", True):
+        parts.append("--offline")
+    parts.extend(("--", *arguments))
+    return parts, str(cwd or blend_path.parent)
+
+
+def _preview_studio_command(blend_path: str | None = None) -> tuple[list[str], str]:
+    path = os.path.abspath(blend_path or bpy.data.filepath)
+    return _desktop_cli_command(path, ["preview", "--blend", path, "--no-open"])
 
 
 def _copy_to_system_clipboard(context, text: str) -> str | None:
@@ -4006,8 +4024,11 @@ class BLENDLINK_OT_sync_now(bpy.types.Operator):
         # compile, verification, and the connected website's own build. Preview
         # remains the fast, save-driven asset loop and never runs that build.
         try:
-            command = _website_task_command(self.quality)
-        except ValueError as error:
+            command, _ = _desktop_cli_command(
+                bpy.data.filepath, _website_task_command(self.quality).split()[2:],
+                cwd=syncstatus.project_root(),
+            )
+        except (OSError, RuntimeError, ValueError) as error:
             print(f"blendlink addon: website task canceled: {error}")
             self.report({"ERROR"}, str(error))
             return {"CANCELLED"}
@@ -4073,12 +4094,20 @@ class BLENDLINK_OT_browser_preview(bpy.types.Operator):
             return {"CANCELLED"}
         syncstatus.refresh(force=not saved)
         root = syncstatus.project_root()
-        if root is None:
-            update_command, update_cwd = _preview_studio_command()
-            preview_command, preview_cwd = update_command, update_cwd
-        else:
-            update_command, update_cwd = "npx blendlink compile --preview", root
-            preview_command, preview_cwd = "npx blendlink preview --no-open", root
+        try:
+            if root is None:
+                update_command, update_cwd = _preview_studio_command()
+                preview_command, preview_cwd = update_command, update_cwd
+            else:
+                update_command, update_cwd = _desktop_cli_command(
+                    bpy.data.filepath, ["compile", "--preview"], cwd=root,
+                )
+                preview_command, preview_cwd = _desktop_cli_command(
+                    bpy.data.filepath, ["preview", "--no-open"], cwd=root,
+                )
+        except (OSError, RuntimeError, ValueError) as error:
+            self.report({"ERROR"}, str(error))
+            return {"CANCELLED"}
 
         preview_current = previewrun.matches_current_file()
         if previewrun.is_running() and preview_current:
@@ -4138,6 +4167,50 @@ class BLENDLINK_OT_browser_preview(bpy.types.Operator):
             "Creating a private Preview Studio..." if root is None
             else "Compiling and starting the local website preview...",
         )
+        return {"FINISHED"}
+
+
+class BLENDLINK_OT_export_website(bpy.types.Operator):
+    """Build a complete standalone website in a folder you can upload to any static host"""
+    bl_idname = "blendlink.export_website"
+    bl_label = "Export Website"
+    bl_options = {"REGISTER", "UNDO"}
+
+    directory: bpy.props.StringProperty(name="Website Folder", subtype="DIR_PATH")
+
+    @classmethod
+    def poll(cls, context):
+        from . import syncrun
+        issue = _publish_settings_issue(context)
+        if issue or not bpy.data.filepath or syncrun.is_running():
+            cls.poll_message_set(issue or ("Save your .blend first" if not bpy.data.filepath else "Another website task is running"))
+            return False
+        return True
+
+    def invoke(self, context, event):
+        self.directory = str(Path(bpy.data.filepath).with_suffix("")) + " Website" + os.sep
+        context.window_manager.fileselect_add(self)
+        return {"RUNNING_MODAL"}
+
+    def execute(self, context):
+        from . import props, syncrun
+        if not self.directory.strip():
+            self.report({"ERROR"}, "Choose a folder for your website")
+            return {"CANCELLED"}
+        try:
+            assigned_ids = _ensure_scene_ids(context.scene)
+            props.write_recipe(context.scene)
+            _save_before_publish(assigned_ids)
+            command, cwd = _desktop_cli_command(bpy.data.filepath, [
+                "export", "--blend", bpy.data.filepath, "--out", os.path.abspath(self.directory),
+            ])
+            error = syncrun.start(command, cwd, initial_label="Preparing your complete website")
+            if error:
+                raise RuntimeError(error)
+        except (OSError, RuntimeError, ValueError) as error:
+            self.report({"ERROR"}, str(error))
+            return {"CANCELLED"}
+        self.report({"INFO"}, "Exporting a complete website in the background; see Website Task for progress")
         return {"FINISHED"}
 
 
@@ -4458,6 +4531,7 @@ classes = (
     BLENDLINK_OT_open_sync_log,
     BLENDLINK_OT_copy_sync_hint,
     BLENDLINK_OT_copy_connect_command,
+    BLENDLINK_OT_export_website,
     BLENDLINK_OT_copy_website_handoff,
     BLENDLINK_OT_refresh_checks,
     BLENDLINK_OT_refresh_sync,

@@ -239,6 +239,17 @@ export async function installBlenderAddon(
     const expectedFingerprint = bundledBlenderAddonFingerprint()
     const status = inspectBlenderAddon(blender.executable)
     assertBlenderAddonInstallation(status, expectedVersion, expectedFingerprint)
+    // A local checkout/archive must keep working before npm publication,
+    // including scenes outside that checkout. A normal registry installation
+    // uses its exact release through the private desktop runtime instead.
+    const packageRoot = dirname(fileURLToPath(new URL('../package.json', import.meta.url)))
+    const { resolvePreviewStudioBlendlinkDependency } = await import('./preview.js')
+    const dependency = resolvePreviewStudioBlendlinkDependency(packageRoot, expectedVersion)
+    const localPreviewPackage = dependency.startsWith('file:') ? packageRoot : ''
+    run(blender.executable, [
+      '--background', '--python-exit-code', '1', '--python-expr',
+      `import bpy; p = bpy.context.preferences.addons["bl_ext.user_default.blendlink"].preferences; p.preview_package = ${JSON.stringify(localPreviewPackage)}; bpy.ops.wm.save_userpref()`,
+    ], 'connect the matching desktop preview compiler')
     return { blenderVersion: blender.version, addonVersion: expectedVersion }
   } finally {
     rmSync(work, { recursive: true, force: true })
