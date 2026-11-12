@@ -134,7 +134,10 @@ try {
     assert.equal(json.scenes[0].plan.bakeCount, 1)
   }
   assert.ok(readFileSync(planningScene).equals(planningBytes), 'Atlas planning modified the saved source')
-  assert.ok(!existsSync(join(work, 'cache')), 'Atlas planning installed website dependencies')
+  // Blender may create its own shader/driver cache on Linux. The website
+  // workspace and its dependencies must still be absent after a plan-only run.
+  assert.ok(!existsSync(join(work, 'cache/blendlink')) && !existsSync(join(work, 'node_modules')),
+    'Atlas planning installed website dependencies')
   assert.ok(!existsSync(join(work, 'src')) && !existsSync(join(work, 'public')), 'Atlas planning generated website files')
   report.push({ flow: 'standalone atlas planning', final: true, preview: true, noBake: true, sourceUnchanged: true, noWebsiteRequired: true })
   console.log('BLENDLINK_PREVIEW_UX_PASSED standalone atlas planning without a website')
