@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "id": "squeeze",
+  "nativeNode": "ShaderNodeSqueeze",
+  "domain": "shader",
+  "lifecycle": "production",
+  "scope": "Partial GPU-shader EEVEE Squeeze, no multi-function evaluator. Bounded literals/opaque nearest full-float Non-Color images with literal coordinates; current production source profiles only. Research4.2 source N/A grants zero production credit.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/shader/nodes/node_shader_squeeze.cc",
+      "source/blender/gpu/shaders/material/gpu_shader_material_squeeze.glsl",
+      "source/blender/gpu/shaders/material/gpu_shader_material_squeeze.bsl.hh"
+    ],
+    "shared": [
+      "source/blender/nodes/shader/node_shader_util.cc",
+      "source/blender/nodes/shader/node_shader_util.hh",
+      "source/blender/nodes/NOD_static_types.h",
+      "source/blender/makesrna/intern/rna_nodetree.cc",
+      "source/blender/gpu/intern/gpu_node_graph.cc",
+      "source/blender/gpu/intern/gpu_node_graph.hh",
+      "source/blender/gpu/intern/gpu_codegen.cc",
+      "source/blender/gpu/intern/gpu_codegen.hh",
+      "source/blender/gpu/intern/gpu_material.cc",
+      "source/blender/nodes/intern/shader_nodes_inline.cc",
+      "source/blender/nodes/NOD_shader_nodes_inline.hh",
+      "source/blender/gpu/shaders/gpu_shader_compat.hh",
+      "source/blender/gpu/shaders/compat/gpu_shader_compat.hh",
+      "source/blender/nodes/shader/nodes/node_shader_tex_image.cc",
+      "source/blender/gpu/shaders/material/gpu_shader_material_tex_image.*",
+      "source/blender/blenkernel/intern/image_gpu.cc",
+      "source/blender/gpu/intern/gpu_texture.cc",
+      "source/blender/gpu/opengl/gl_texture.cc",
+      "source/blender/gpu/metal/mtl_texture.mm",
+      "source/blender/imbuf/intern/colormanagement.cc",
+      "source/blender/gpu/intern/gpu_shader_dependency.cc",
+      "source/blender/gpu/intern/gpu_material_library.hh",
+      "source/blender/blenkernel/BKE_type_conversions.hh",
+      "source/blender/blenkernel/intern/type_conversions.cc"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blender-addon/**/*.py",
+      "packages/blendlink/blender/**/*.py",
+      "experiments/squeeze-node-differential/*.py"
+    ],
+    "runtime": [
+      "packages/blendlink/src/**/*.ts"
+    ],
+    "sdk": [
+      "package.json",
+      "package-lock.json",
+      "packages/blendlink/package.json",
+      "packages/blendlink/tsconfig.json",
+      "packages/blendlink/scripts/*.mjs",
+      "scripts/lib/runtime-provenance.mjs",
+      "docs/node-capabilities.json",
+      "scripts/test-node-port.mjs",
+      "scripts/lib/node-port-contract.mjs"
+    ],
+    "tests": [
+      "experiments/squeeze-node-differential/*.mjs",
+      "experiments/squeeze-node-differential/*.ts",
+      "experiments/squeeze-node-differential/*.js",
+      "experiments/squeeze-node-differential/*.html",
+      "experiments/squeeze-node-differential/sources.json",
+      "scripts/lib/node-port-contract.test.mjs"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "experiments/squeeze-node-differential/suite.mjs",
+        "--built",
+        "--blender",
+        "{blender}",
+        "--output",
+        "{evidence}"
+      ],
+      "timeoutMs": 1200000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-52",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.2.0",
+      "blenderBuildHash": "fbe6228777e7",
+      "nativeSource": {
+        "profile": "darwin-arm64-metal-v1",
+        "backend": "METAL"
+      },
+      "runs": [
+        {
+          "id": "metal",
+          "adapter": "metal",
+          "env": {
+            "BLENDLINK_TEST_PROFILE": "metal",
+            "BLENDLINK_TEST_CHROMIUM_CHANNEL": "chromium",
+            "BLENDLINK_TEST_CHROMIUM_ARGS": "[]"
+          }
+        },
+        {
+          "id": "software",
+          "adapter": "software",
+          "env": {
+            "BLENDLINK_TEST_PROFILE": "software",
+            "BLENDLINK_TEST_CHROMIUM_CHANNEL": null,
+            "BLENDLINK_TEST_CHROMIUM_ARGS": "[\"--use-angle=swiftshader\",\"--use-webgpu-adapter=swiftshader\"]"
+          },
+          "args": [
+            "--reuse-native"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-metal-v1",
+        "backend": "METAL"
+      },
+      "runs": [
+        {
+          "id": "metal",
+          "adapter": "metal",
+          "env": {
+            "BLENDLINK_TEST_PROFILE": "metal",
+            "BLENDLINK_TEST_CHROMIUM_CHANNEL": "chromium",
+            "BLENDLINK_TEST_CHROMIUM_ARGS": "[]"
+          }
+        },
+        {
+          "id": "software",
+          "adapter": "software",
+          "env": {
+            "BLENDLINK_TEST_PROFILE": "software",
+            "BLENDLINK_TEST_CHROMIUM_CHANNEL": null,
+            "BLENDLINK_TEST_CHROMIUM_ARGS": "[\"--use-angle=swiftshader\",\"--use-webgpu-adapter=swiftshader\"]"
+          },
+          "args": [
+            "--reuse-native"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "linux-52-llvmpipe20",
+      "hostPlatforms": [
+        "linux"
+      ],
+      "blenderVersion": "5.2.0",
+      "blenderBuildHash": "fbe6228777e7",
+      "nativeSource": {
+        "profile": "linux-x86_64-llvmpipe20-opengl-v1",
+        "backend": "OPENGL",
+        "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)"
+      },
+      "runs": [
+        {
+          "id": "software",
+          "adapter": "software",
+          "env": {
+            "BLENDLINK_TEST_PROFILE": "software",
+            "BLENDLINK_TEST_CHROMIUM_CHANNEL": null,
+            "BLENDLINK_TEST_CHROMIUM_ARGS": "[\"--use-angle=swiftshader\",\"--use-webgpu-adapter=swiftshader\"]"
+          }
+        }
+      ]
+    },
+    {
+      "id": "research-42-source-na",
+      "hostPlatforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "blenderVersion": "4.2.0",
+      "expectedStatus": "not-applicable",
+      "nativeSource": {
+        "profile": null,
+        "backend": null
+      },
+      "runs": [
+        {
+          "id": "software",
+          "adapter": "software",
+          "env": {
+            "BLENDLINK_TEST_PROFILE": "software",
+            "BLENDLINK_TEST_CHROMIUM_CHANNEL": null,
+            "BLENDLINK_TEST_CHROMIUM_ARGS": "[\"--use-angle=swiftshader\",\"--use-webgpu-adapter=swiftshader\"]"
+          }
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "squeeze-v1",
+    "productionCases": 25,
+    "calibrationCases": 1,
+    "refusedNativeCases": 12
+  }
+}

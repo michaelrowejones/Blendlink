@@ -96,8 +96,19 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf8")
 
 
+def node_selection(node_ids):
+    if node_ids is None:
+        return None
+    if not isinstance(node_ids, (list, tuple)) or not node_ids or any(
+            not isinstance(identifier, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", identifier)
+            for identifier in node_ids):
+        raise ValueError("node_ids must be a nonempty list of native node identifiers")
+    return sorted(set(node_ids))
+
+
 def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enumeration_budgets=None,
-                   _node_factory=None):
+                   node_ids=None, _node_factory=None):
+    selected = node_selection(node_ids)
     import bpy
     base_properties = set(bpy.types.Node.bl_rna.properties.keys())
     editor_properties = {"select", "hide", "show_options", "show_preview", "show_texture", "use_custom_color", "mute"}
@@ -350,14 +361,15 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
                 "skippedSelectors": sorted(skipped), "activeSelectorSets": [list(value) for value in sorted(active_sets)],
             }
 
-    candidates = []
-    for name in dir(bpy.types):
-        cls = getattr(bpy.types, name)
-        try:
-            if issubclass(cls, bpy.types.Node):
-                candidates.append(name)
-        except (TypeError, AttributeError):
-            pass
+    candidates = selected if selected is not None else []
+    if selected is None:
+        for name in dir(bpy.types):
+            cls = getattr(bpy.types, name)
+            try:
+                if issubclass(cls, bpy.types.Node):
+                    candidates.append(name)
+            except (TypeError, AttributeError):
+                pass
     domains = {}
     for domain, tree_type in (("shader", "ShaderNodeTree"), ("compositor", "CompositorNodeTree")):
         group = bpy.data.node_groups.new("Blendlink isolated coverage " + domain, tree_type)
@@ -378,7 +390,6 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
         try:
             for context_name, tree in (("root", root_tree), ("group", group)):
                 for identifier in candidates:
-                    cls = getattr(bpy.types, identifier)
                     try:
                         node = new_node(tree, identifier)
                     except (RuntimeError, TypeError, ValueError) as error:
@@ -419,10 +430,15 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
                 bpy.context.scene.compositing_node_group = None
                 bpy.data.node_groups.remove(root_tree)
         domains[domain] = {"nodes": sorted(nodes.values(), key=lambda n: n["id"]), "unavailable": unavailable}
-    return {"schemaVersion": 1, "blenderVersion": bpy.app.version_string,
+    catalog = {"schemaVersion": 1, "blenderVersion": bpy.app.version_string,
             "blenderVersionTuple": list(bpy.app.version), "blenderBuildHash": bpy.app.build_hash.decode(),
             "method": "Every registered bpy.types.Node subclass is attempted in factory shader/compositor trees, without class-prefix filtering. Actual creation is authoritative; bounded breadth-first exploration of reachable enum and writable node/color-ramp/mapping boolean states discovers contextual menus by native assignment. Numeric, authored-interface and ID-binding combinations are outside this audit; incomplete/budget-exhausted state exploration is explicit and fails --check.",
             "domains": domains, "socketSchemas": schemas}
+    if selected is not None:
+        catalog.update({"selection": {"completeInventory": False, "nodeIds": selected},
+                        "productionCases": 0, "needsOracle": True,
+                        "method": "Focused node IDs use the shared root/group shader/compositor creation and enum-state explorer. This partial catalog records schema/availability only and grants no numerical qualification."})
+    return catalog
 
 
 def python_constant(path, name):
@@ -675,6 +691,7 @@ def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--python" in sys.argv else sys.argv[1:]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--catalog-output", type=Path)
+    parser.add_argument("--node", action="append", help="Focus native schema capture on a node ID; repeatable, only with --catalog-output")
     parser.add_argument("--blender", action="append", default=[])
     parser.add_argument("--output", type=Path, default=ROOT / "docs/node-coverage")
     parser.add_argument("--capabilities", type=Path, default=ROOT / "docs/node-capabilities.json")
@@ -684,11 +701,20 @@ def main():
     parser.add_argument("--enum-state-budget", type=int, default=2048)
     parser.add_argument("--enum-transition-budget", type=int, default=100000)
     args = parser.parse_args(argv)
+    if args.node is not None:
+        if not args.catalog_output or args.check or args.update_baseline or args.self_test or args.blender:
+            parser.error("--node is only available with --catalog-output for partial schema discovery, not coverage checks or baseline updates")
+        try:
+            node_selection(args.node)
+        except ValueError as error:
+            parser.error(str(error))
     if args.catalog_output:
         catalog = native_catalog(enum_state_budget=args.enum_state_budget, enum_transition_budget=args.enum_transition_budget,
-                                 enumeration_budgets=json.loads(args.capabilities.read_text()).get("nativeEnumerationBudgets", {}))
+                                 enumeration_budgets=json.loads(args.capabilities.read_text()).get("nativeEnumerationBudgets", {}),
+                                 node_ids=args.node)
         write_json(args.catalog_output, catalog)
-        print("BLENDLINK_NATIVE_NODE_CATALOG_PASSED " + catalog["blenderVersion"])
+        print(("BLENDLINK_NATIVE_NODE_SCHEMA_CAPTURED " if args.node is not None else "BLENDLINK_NATIVE_NODE_CATALOG_PASSED ")
+              + catalog["blenderVersion"])
         return
     if args.self_test:
         self_test()
