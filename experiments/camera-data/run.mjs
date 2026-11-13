@@ -5,7 +5,9 @@ import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
 import { captureRuntimeSnapshot, hash } from '../../scripts/lib/runtime-provenance.mjs'
 const root = resolve(import.meta.dirname, '../..'),
-  built = process.argv.includes('--built'), ownership=process.argv.includes('--ownership')
+  built = process.argv.includes('--built'), ownership=process.argv.includes('--ownership'),
+  diagnosticDeviceLoss = process.argv.includes('--diagnostic-device-loss')
+assert.ok(!diagnosticDeviceLoss || !ownership, 'The explicit device-loss failure control belongs to the numerical fixture')
 const native = resolve(
   process.env.BLENDLINK_CAMERA_DATA_NATIVE ?? join(root, 'artifacts/camera-data/native53'),
 )
@@ -61,6 +63,12 @@ const server = await createServer({
 let browser
 const rows = [],
   failures = []
+const reportPath = join(native, (ownership?'ownership-report-':'browser-report-')+(process.env.BLENDLINK_TEST_PROFILE??'default')+'.json')
+const report = { schemaVersion: 1, built, provenance, diagnosticDeviceLoss, complete: false,
+  completedAllBackends: false, rows, failures, backendRuns: [] }
+const save = () => writeFile(reportPath, JSON.stringify(report, null, 2))
+const describe = error => ({ name: error.name, message: error.message, stack: error.stack })
+await save()
 try {
   await server.listen()
   browser = await chromium.launch({
@@ -75,30 +83,62 @@ try {
   for (const backend of ['webgpu', 'webgl2']) {
     const page = await browser.newPage(),
       errors = []
+    const run = { backend, status: 'running', startedAt: new Date().toISOString(),
+      errors, progress: [], pageEvents: [] }
+    report.backendRuns.push(run)
+    await save()
+    await page.exposeFunction('cameraDataProgress', phase => { run.progress.push(phase) })
+    page.on('crash', () => run.pageEvents.push({ event: 'crash', at: new Date().toISOString() }))
+    page.on('close', () => run.pageEvents.push({ event: 'close', at: new Date().toISOString() }))
     page.on('pageerror', (error) => errors.push(error.message))
     page.on('console', (message) => {
       if (message.type() === 'error') errors.push(message.text())
     })
-    await page.goto(server.resolvedUrls.local[0] + (ownership?'ownership.html':'')+'?backend=' + backend)
-    await page.waitForFunction(() => typeof window.runProof === 'function')
-    const result = await page.evaluate((proof) => window.runProof(proof), browserProof)
-    assert.deepEqual(errors, [])
-    assert.equal(result.backend, backend)
-    rows.push(result)
-    failures.push(...result.failures)
-    await page.close()
+    try {
+      await page.goto(server.resolvedUrls.local[0] + (ownership?'ownership.html':'')+'?backend=' + backend +
+        (diagnosticDeviceLoss ? '&diagnosticDeviceLoss=1' : ''))
+      await page.waitForFunction(() => typeof window.runProof === 'function')
+      const result = await page.evaluate((proof) => window.runProof(proof), browserProof)
+      // Retain completed numerical rows before any console/backend assertion.
+      rows.push(result)
+      failures.push(...result.failures)
+      run.result = result
+      run.status = 'completed'
+      await save()
+      assert.deepEqual(errors, [])
+      assert.equal(result.backend, backend)
+      assert.deepEqual(result.uncapturedErrors ?? [], [], 'Uncaptured GPU errors invalidate the proof')
+      assert.deepEqual(result.contextEvents ?? [], [], 'Unexpected WebGL context events invalidate the proof')
+      assert.deepEqual((result.deviceLosses ?? []).filter(event => event.phase?.name !== 'renderer-dispose'), [],
+        'Unexpected WebGPU device loss invalidates the proof')
+    } catch (error) {
+      run.status = 'failed'
+      run.error = describe(error)
+      run.partial = await page.evaluate(() => window.cameraDataProof ?? null).catch(snapshotError => ({
+        unavailable: describe(snapshotError),
+      }))
+      failures.push({ backend, kind: 'execution-or-validation', error: run.error })
+    } finally {
+      run.finishedAt = new Date().toISOString()
+      await save()
+      await page.close()
+    }
   }
-  await writeFile(
-    join(native, (ownership?'ownership-report-':'browser-report-')+(process.env.BLENDLINK_TEST_PROFILE??'default')+'.json'),
-    JSON.stringify({ built, provenance, rows, failures }, null, 2),
-  )
+  report.complete = true
+  report.completedAllBackends = report.backendRuns.length === 2 && report.backendRuns.every(run => run.status === 'completed')
+  await save()
   assert.deepEqual(failures, [], 'Native geometry contexts differ; see browser-report.json')
+  assert.equal(report.completedAllBackends, true, 'Both requested browser backends must complete')
   console.log(
     (ownership?'BLENDLINK_CAMERA_DATA_OWNERSHIP_PASSED ':'BLENDLINK_CAMERA_DATA_BROWSER_PASSED ') +
       JSON.stringify(
         rows.map((row) => ({ backend: row.backend, cases: row.cases, maximum: row.maximum })),
       ),
   )
+} catch (error) {
+  report.error = describe(error)
+  await save()
+  throw error
 } finally {
   await browser?.close()
   await server.close()
