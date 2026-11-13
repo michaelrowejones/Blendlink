@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve, join } from 'node:path'
-import { officialBytes } from '../../scripts/lib/blender-build-discovery.mjs'
+import { downloadPinnedDemo } from './download.mjs'
 const sha = bytes => createHash('sha256').update(bytes).digest('hex')
 const manifest = JSON.parse(await readFile(new URL('./corpus.json', import.meta.url), 'utf8'))
 const args = process.argv.slice(2)
@@ -13,7 +13,7 @@ const receipts = []
 for (const scene of manifest.scenes) {
   const archive = join(directory, scene.url.split('/').at(-1)); let bytes, cacheHit = false
   try { bytes = await readFile(archive); cacheHit = true } catch (error) { if (error.code !== 'ENOENT') throw error }
-  if (!bytes) { bytes = (await officialBytes(scene.url, { purpose: 'archive', maximumBytes: scene.bytes, timeoutMs: 120_000 })).bytes; assert.equal(bytes.length, scene.bytes); assert.equal(sha(bytes), scene.sha256); await writeFile(archive, bytes, { flag: 'wx', mode: 0o444 }) }
+  if (!bytes) { bytes = await downloadPinnedDemo(scene); await writeFile(archive, bytes, { flag: 'wx', mode: 0o444 }) }
   assert.equal(bytes.length, scene.bytes); assert.equal(sha(bytes), scene.sha256, 'Cached source changed: ' + scene.id)
   const path = join(directory, scene.fileName)
   if (scene.archiveEntry) {

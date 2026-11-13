@@ -10,7 +10,6 @@ import sys
 
 import bpy
 
-
 def _sibling(name):
     qualified = (__package__ + "." if __package__ else "") + name
     try:
@@ -21,6 +20,12 @@ def _sibling(name):
         # A source extension can load this canonical file under its own package
         # name; installed extensions put all helpers directly beside it.
         source = Path(__file__).with_name(name + ".py")
+        if name == "static_selection" and not source.is_file():
+            # This shared policy is authored with the addon. Standalone source
+            # probes only add the canonical Blender directory to sys.path;
+            # packaged SDK/extension builds put the derived import closure
+            # beside this file, so they never need the source-layout fallback.
+            source = Path(__file__).resolve().parents[2] / "blender-addon" / "static_selection.py"
         if not source.is_file():
             raise
         spec = importlib.util.spec_from_file_location(qualified, source)
@@ -34,8 +39,10 @@ def _sibling(name):
         return module
 
 
+static_selection = _sibling("static_selection")
 normalize_color_operation = _sibling("compositor_color").normalize_color_operation
 native_color_band = _sibling("native_color_band").native_color_band
+normalize_integer_bits = _sibling("compositor_integer_bits").normalize_integer_bits
 normalize_utility = _sibling("compositor_utilities").normalize_utility
 normalize_transform = _sibling("compositor_transform").normalize_transform
 normalize_affine = _sibling("compositor_affine").normalize_affine
@@ -64,6 +71,8 @@ normalize_vector_component = _sibling("compositor_vector_component").normalize_v
 normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_int
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 normalize_relative_to_pixel = _sibling("compositor_relative_to_pixel").normalize_relative_to_pixel
+normalize_image_coordinates = _sibling("compositor_image_coordinates").normalize_image_coordinates
+validate_image_coordinate_graph = _sibling("compositor_image_coordinates").validate_image_coordinate_graph
 normalize_crop = _sibling("compositor_crop").normalize_crop
 normalize_split = _sibling("compositor_split").normalize_split
 validate_split_domains = _sibling("compositor_split").validate_split_domains
@@ -76,6 +85,7 @@ TYPES = {
     "ShaderNodeTexGradient": "gradient-texture",
     "ShaderNodeTexChecker": "checker-texture",
     "CompositorNodeRelativeToPixel": "relative-to-pixel",
+    "CompositorNodeImageCoordinates": "image-coordinates",
     "FunctionNodeInputVector": "value",
     "ShaderNodeCombineXYZ": "combine-vector",
     "ShaderNodeSeparateXYZ": "separate-vector",
@@ -83,6 +93,8 @@ TYPES = {
     "FunctionNodeInputInt": "utility-constant",
     "FunctionNodeBooleanMath": "boolean-math",
     "FunctionNodeIntegerMath": "integer-math",
+    "FunctionNodeBitMath": "bit-math",
+    "FunctionNodeHashValue": "hash-value",
     "FunctionNodeCompare": "compare",
     "CompositorNodeRGB": "rgb",
     "ShaderNodeValue": "value",
@@ -321,11 +333,19 @@ def extract(scene):
         if not links:
             return const(socket)
         resolved = output_value(links[0].from_socket, ctx)
-        if resolved.get("type") != socket.type:
+        target_type = socket.type
+        if resolved.get("type") == "INT_VECTOR2":
+            default = getattr(socket, "default_value", None)
+            if socket.type == "INT_VECTOR" and socket.bl_idname == "NodeSocketIntVector2D" and default is not None and len(default) == 2:
+                target_type = "INT_VECTOR2"
+            if socket.bl_idname == "NodeSocketVector2D" or target_type not in {"INT_VECTOR2", "RGBA", "VECTOR"}:
+                fail("unsupported-int2-conversion", ctx["path"], socket.node, socket,
+                     "Image Coordinates INT_VECTOR2 currently supports only identity, RGBA and padded float3 edges; scalar/integer conversions remain unqualified")
+        if resolved.get("type") != target_type:
             return {
                 "kind": "convert",
                 "fromType": resolved.get("type"),
-                "type": socket.type,
+                "type": target_type,
                 "input": resolved,
             }
         return resolved
@@ -405,6 +425,23 @@ def extract(scene):
                         "Group output identifier does not match instance",
                     )
                 ref = input_value(target, subctx)
+            elif node.bl_idname in static_selection.NODES:
+                # The native shader inliner and compositor operation both forward only
+                # the selected input. Inactive branches must never enter extraction.
+                group_stack = []
+                current = ctx
+                while current.get('parent') is not None:
+                    group_stack.append(current['instance'])
+                    current = current['parent']
+                try:
+                    selected = static_selection.static_selection(node, socket, tuple(reversed(group_stack)))
+                except static_selection.SelectionUnsupported as error:
+                    fail('unsupported-static-selection', path, node, socket, str(error))
+                if selected['constant'] is not None:
+                    ref = {'kind': 'constant', 'type': 'BOOLEAN', 'value': selected['constant']}
+                else:
+                    ref = input_value(selected['input'], ctx)
+                result.setdefault('compileTimeSelections', []).append(dict(selected['metadata'], path=list(path), node=node.name))
             elif node.bl_idname not in TYPES:
                 fail(
                     "unsupported-node",
@@ -462,6 +499,9 @@ def extract(scene):
                     normalize_utility(node, op, lambda incoming: input_value(incoming, ctx),
                                       lambda message: fail("unsupported-utility-mode", path, node, socket, message),
                                       getattr(scene.render, "compositor_device", "CPU"))
+                elif node.bl_idname in ("FunctionNodeBitMath", "FunctionNodeHashValue"):
+                    normalize_integer_bits(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-integer-bits", path, node, incoming, message))
                 elif node.bl_idname in ("ShaderNodeTexGradient", "ShaderNodeTexChecker"):
                     normalize_procedural_texture(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-procedural-texture", path, node, incoming, message))
@@ -471,6 +511,9 @@ def extract(scene):
                 elif node.bl_idname == "CompositorNodeRelativeToPixel":
                     normalize_relative_to_pixel(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-relative-to-pixel", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeImageCoordinates":
+                    normalize_image_coordinates(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-image-coordinates", path, node, incoming, message))
                 elif node.bl_idname == "FunctionNodeInputVector":
                     op["value"] = list(node.vector)
                 elif node.bl_idname == "FunctionNodeGetVectorComponent":
@@ -844,7 +887,7 @@ def extract(scene):
                 result["ops"].append(op)
                 if single:
                     single_values.add(op["id"])
-                ref = {"kind": "ref", "node": op["id"], "type": socket.type}
+                ref = {"kind": "ref", "node": op["id"], "type": op["type"] if op["kind"] == "image-coordinates" else socket.type}
             memo[key] = ref
             return ref
         finally:
@@ -899,6 +942,12 @@ def extract(scene):
         if not modern and not sink.use_alpha:
             result["outputAlpha"] = "legacy-composite-opaque-v1"
         result["output"] = input_value(terminal, ctx)
+        coordinate_conflict = validate_image_coordinate_graph(result)
+        if coordinate_conflict:
+            op, message = coordinate_conflict
+            result["diagnostics"].append({"code": "unsupported-image-coordinates", "path": op["source"]["path"],
+                "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
+            raise Unsupported()
         split_conflict = validate_split_domains(result)
         if split_conflict:
             op, message = split_conflict

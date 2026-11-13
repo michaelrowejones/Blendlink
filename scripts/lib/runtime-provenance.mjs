@@ -5,14 +5,17 @@ import { createHash } from 'node:crypto'
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import ts from 'typescript'
+import { createCompilerTrace } from './runtime-compiler-trace.mjs'
 
 export const hash = content => createHash('sha256').update(content).digest('hex')
 export const normalizeEmit = content => content.replaceAll('\r\n', '\n').replace(/^\/\/# sourceMappingURL=.*$/gm, '').trimEnd()
 
-export async function captureRuntimeProvenance({ root, built, label = 'runtime' }) {
-  const configuration = ts.readConfigFile(join(root, 'packages/blendlink/tsconfig.json'), ts.sys.readFile)
+export async function captureRuntimeProvenance({ root, built, label = 'runtime', compilerInputs = false }) {
+  const trace = compilerInputs ? createCompilerTrace() : null
+  const system = trace ? trace.wrap(ts.sys) : ts.sys
+  const configuration = ts.readConfigFile(join(root, 'packages/blendlink/tsconfig.json'), system.readFile)
   if (configuration.error) throw new Error(ts.flattenDiagnosticMessageText(configuration.error.messageText, '\n'))
-  const parsed = ts.parseJsonConfigFileContent(configuration.config, ts.sys, join(root, 'packages/blendlink'))
+  const parsed = ts.parseJsonConfigFileContent(configuration.config, system, join(root, 'packages/blendlink'))
   const provenance = { mode: built ? 'built' : 'source', typescript: ts.version, modules: [] }
   // Reviewed package build rewrites. No other emitted bytes are ignored.
   const postEmitRules = [{ module: 'threeWebgpuPostPipeline',
@@ -33,11 +36,13 @@ export async function captureRuntimeProvenance({ root, built, label = 'runtime' 
     const originalReadFile = host.readFile.bind(host)
     const capturedSources = new Map(sourceRecords.map(record => [record.source, record.contents]))
     host.readFile = filename => capturedSources.get(resolve(filename)) ?? originalReadFile(filename)
+    if (trace) trace.wrap(host, true)
     const program = ts.createProgram({ rootNames: parsed.fileNames, options, host })
     const emitted = program.emit(undefined, (filename, contents) => {
       if (filename.endsWith('.js')) expectedOutputs.set(resolve(filename), normalizeEmit(contents))
     })
     assert.equal(emitted.emitSkipped, false, 'Could not derive current production JavaScript for --built verification')
+    if (trace) provenance.compilerAttestation = trace.finish(program)
   }
   for (const { name, source, contents, sourceTime } of sourceRecords) {
     const emitted = join(root, 'packages/blendlink/dist', name + '.js')
@@ -67,8 +72,8 @@ export async function captureRuntimeProvenance({ root, built, label = 'runtime' 
 }
 
 /** Freeze exactly the modules that passed the whole-program build check. */
-export async function captureRuntimeSnapshot({ root, built, destination, label = 'runtime' }) {
-  const { provenance, sourceRecords } = await captureRuntimeProvenance({ root, built, label })
+export async function captureRuntimeSnapshot({ root, built, destination, label = 'runtime', compilerInputs = false }) {
+  const { provenance, sourceRecords } = await captureRuntimeProvenance({ root, built, label, compilerInputs })
   const directory = join(root, 'packages/blendlink', built ? 'dist' : 'src')
   const extension = built ? '.js' : '.ts'
   await rm(destination, { recursive: true, force: true })

@@ -1813,7 +1813,8 @@ function floatBits(value: TslExpression): TslExpression {
  * measured as a plausible-looking 1.79e-1 divergence before the stage-by-stage
  * bisection (experiments/tsl-node-differential/run-debug1d.mjs) isolated it.
  */
-function hashUint1(kx: TslExpression): TslExpression {
+const hashUint1 = compositorHashUint1
+export function compositorHashUint1(kx: TslExpression): TslExpression {
   const seed = 0xdeadbeef + (1 << 2) + 13
   const b = tslUintOf(seed).toVar()
   const c = tslUintOf(seed).toVar()
@@ -2050,7 +2051,8 @@ function perlin4d(p: TslExpression, fade = perlinFade, cpuMix = false): TslExpre
   return blend(tri(0), tri(1), sw).mul(0.8344)
 }
 
-function hashUint2(kx: TslExpression, ky: TslExpression): TslExpression {
+const hashUint2 = compositorHashUint2
+export function compositorHashUint2(kx: TslExpression, ky: TslExpression): TslExpression {
   const seed = 0xdeadbeef + (2 << 2) + 13
   return jenkinsFinal(
     tslUintOf(seed).add(kx), tslUintOf(seed).add(ky), tslUintOf(seed),

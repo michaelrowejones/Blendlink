@@ -55,7 +55,9 @@
       "scripts/lib/node-port-python.mjs",
       "scripts/node-port-blender.mjs",
       "scripts/lib/node-port-evidence.mjs",
-      "experiments/float-to-int-native/literal_verify.mjs"
+      "experiments/float-to-int-native/literal_verify.mjs",
+      "scripts/lib/native-proof-archive.mjs",
+      "scripts/lib/runtime-compiler-trace.mjs"
     ],
     "tests": [
       "experiments/float-to-int-native/*.mjs",

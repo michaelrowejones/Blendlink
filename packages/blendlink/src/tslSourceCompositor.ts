@@ -1,3 +1,4 @@
+import {buildCompositorImageCoordinates,buildCompositorInt2Conversion,validateImageCoordinateGraph} from './tslCompositorImageCoordinates.js'
 import { buildCompositorProceduralTexture } from './tslCompositorProceduralTexture.js'
 import { buildCompositorRelativeToPixel } from './tslCompositorRelativeToPixel.js'
 import { buildCompositorFloatToInt } from './tslCompositorFloatToInt.js'
@@ -34,6 +35,7 @@ import { buildCompositorHueCorrect } from './tslCompositorHueCorrect.js'
 import { buildCompositorWhitePoint } from './tslCompositorWhitePoint.js'
 import { buildNativeCompositorBlur, ownBlurRtt } from './tslCompositorBlur.js'
 import { mergeImageOrigins, translatedImageOrigin, affineImageOrigin, translatedCompositorField, realizeCompositorOrigin, type CompositorImageOrigin } from './tslCompositorImageDomain.js'
+import { buildCompositorIntegerBits } from './tslCompositorIntegerBits.js'
 import { buildSharedBoolean, buildSharedInteger, buildSharedCompare, sharedTypedConstant, sharedTypedConversion } from './tslSharedUtilities.js'
 
 const {
@@ -501,6 +503,7 @@ export function buildSourceCompositor(
     }
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
+    validateImageCoordinateGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     const nodes = new Map<string, TslEffectNode>()
     const images = new Map<string, ReturnType<typeof staticCompositorTexture>>()
     const cacheImages = staticImageCacheEligible(program)
@@ -526,6 +529,7 @@ export function buildSourceCompositor(
         return nodes.get(v.node)
       }
       if (v.kind === 'convert' && v.input) {
+        if (v.fromType === 'INT_VECTOR2') return buildCompositorInt2Conversion(v, program.ops, value, message => { throw new SourceCompositorUnsupported(message) })
         const input = value(v.input)
         if (v.type === v.fromType) return input
         if (v.type === 'INT' || v.fromType === 'INT' || v.type === 'BOOLEAN' || v.fromType === 'BOOLEAN')
@@ -642,6 +646,9 @@ export function buildSourceCompositor(
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
             break
+          case 'image-coordinates':
+            node = buildCompositorImageCoordinates(op, program.ops, input('Image'), domainFail)
+            break
           case 'relative-to-pixel':
             node = buildCompositorRelativeToPixel(op, program.ops, value, domainFail)
             break
@@ -655,6 +662,10 @@ export function buildSourceCompositor(
           case 'boolean-math':
             node = buildSharedBoolean(String(op.properties.operation), input('Boolean'),
               op.properties.operation === 'NOT' ? undefined : input('Boolean_001'))
+            break
+          case 'bit-math':
+          case 'hash-value':
+            node = buildCompositorIntegerBits(op, program.ops, input, message => { throw new SourceCompositorUnsupported(message) })
             break
           case 'integer-math':
             node = buildSharedInteger(String(op.properties.operation), Object.keys(op.inputs).map(input),

@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "kind": "scenetoweb-integrated-real-scene-triage-v1",
+  "role": "Read-only native load, geometry and material-plan triage. No Final publication, browser fidelity, node numerical qualification or rendering performance credit.",
+  "nativeInventoryRefreshed": false,
+  "corpusSha256": "4cf26200e6ec31fd21b7792e2c5b99df03cf517532270a79bee9634562fd6156",
+  "probeSha256": "badffecaa706dbae95af52d2b580742bfde9420dcb2cd848c64206decf5db442",
+  "sdkSourceSha256": "ced7a2f5da5efb9383de788f0e5dfec3d39c8cfd15aa6d2a2dbec54f2bd366b6",
+  "sourceIdentity": "Working source bytes pinned by raw SDK inventory; source commit is the pre-checkpoint base, not a claim of a clean tree.",
+  "checkoutBase": "f7f2af355a8a5bd1266d99a70618c28a9781388f",
+  "nodeVersion": "v24.22.1",
+  "rows": [
+    {
+      "scene": "mandelbrot-grow",
+      "sourcePreserved": true,
+      "sourceSha256": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "physicalNodes": 35,
+      "usedMaterialActiveSurfaceNodes": 25,
+      "usedMaterialActiveSurfaceClasses": {
+        "GeometryNodeRepeatInput": 1,
+        "GeometryNodeRepeatOutput": 1,
+        "NodeReroute": 3,
+        "ShaderNodeBsdfPrincipled": 1,
+        "ShaderNodeBump": 1,
+        "ShaderNodeCombineXYZ": 1,
+        "ShaderNodeMath": 7,
+        "ShaderNodeMix": 3,
+        "ShaderNodeSeparateXYZ": 1,
+        "ShaderNodeTexCoord": 1,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 4
+      },
+      "triangles": 2,
+      "materialPlanOutcomes": {
+        "blocked": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Base Color",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Metallic",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Roughness",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Alpha",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Emission",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Normal",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "IOR",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        }
+      ]
+    },
+    {
+      "scene": "radial-tiling",
+      "sourcePreserved": true,
+      "sourceSha256": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "physicalNodes": 30,
+      "usedMaterialActiveSurfaceNodes": 23,
+      "usedMaterialActiveSurfaceClasses": {
+        "NodeReroute": 6,
+        "ShaderNodeBsdfPrincipled": 2,
+        "ShaderNodeCombineXYZ": 1,
+        "ShaderNodeGroup": 2,
+        "ShaderNodeMapRange": 1,
+        "ShaderNodeMath": 4,
+        "ShaderNodeMix": 1,
+        "ShaderNodeRadialTiling": 1,
+        "ShaderNodeSeparateXYZ": 1,
+        "ShaderNodeTexCoord": 1,
+        "ShaderNodeTexImage": 1,
+        "ShaderNodeVectorMath": 2
+      },
+      "triangles": 4,
+      "materialPlanOutcomes": {
+        "lowered": 1,
+        "preserved": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Coordinates",
+          "channel": "Base Color",
+          "tslIrRefusal": "ShaderNodeRadialTiling has no proven TSL mapping",
+          "route": "refused"
+        }
+      ]
+    },
+    {
+      "scene": "cube-diorama",
+      "sourcePreserved": true,
+      "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "physicalNodes": 723,
+      "usedMaterialActiveSurfaceNodes": 93,
+      "usedMaterialActiveSurfaceClasses": {
+        "NodeReroute": 2,
+        "ShaderNodeBsdfPrincipled": 6,
+        "ShaderNodeBump": 5,
+        "ShaderNodeCombineColor": 1,
+        "ShaderNodeGroup": 7,
+        "ShaderNodeMapRange": 4,
+        "ShaderNodeMath": 24,
+        "ShaderNodeMix": 9,
+        "ShaderNodeObjectInfo": 3,
+        "ShaderNodeRGBCurve": 1,
+        "ShaderNodeSeparateColor": 1,
+        "ShaderNodeSeparateXYZ": 2,
+        "ShaderNodeTexCoord": 3,
+        "ShaderNodeTexImage": 3,
+        "ShaderNodeTexNoise": 4,
+        "ShaderNodeUVMap": 4,
+        "ShaderNodeValToRGB": 3,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 10
+      },
+      "triangles": 2106644,
+      "materialPlanOutcomes": {
+        "blocked": 5,
+        "preserved": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Boards - Basketweave",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Concrete",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Plaster - Teal",
+          "channel": "Base Color",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Plaster - Teal",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wood 6",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wood 6",
+          "channel": "Coat Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Base Color",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Roughness",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        }
+      ]
+    }
+  ],
+  "rawReceipt": {
+    "machineLocal": true,
+    "path": "artifacts/verification-official-demo-integrated-20261113/run.json",
+    "sha256": "c4f5f7d16b9b38dd198eb6cc05c7f0b1e877a5085e942f2143e7c1147467fa52"
+  },
+  "assetsRedistributed": false
+}

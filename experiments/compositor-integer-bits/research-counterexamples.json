@@ -1,0 +1,33 @@
+{
+  "status": "research-counterexample-not-production-scope-proof",
+  "profile": "Blender5.3.0 nativeCPU; Chromium Metal WebGL2 built browser preflight",
+  "case": "bit-shift-0",
+  "input": {
+    "A": -2023406815,
+    "Shift": -2147483648
+  },
+  "nativeExpectedInt": 0,
+  "expectedRawRGBAWords": [
+    0,
+    0,
+    0,
+    1065353216
+  ],
+  "observedRawRGBAWords": [
+    1199570688,
+    0,
+    0,
+    1065353216
+  ],
+  "observedRGBA": [
+    65535,
+    0,
+    0,
+    1
+  ],
+  "mismatchedWords": 64,
+  "initialShader": "uint tsl_bitcast_uint_to_int ( uint x ) { return floatBitsToInt( uintBitsToFloat ( x ) ); }\nuint tsl_bitcast_int_to_uint ( int x ) { return floatBitsToUint( intBitsToFloat ( x ) ); }\nint scenetowebIntegerBitsShiftV1 ( int arg0, int arg1 ) {\n\n\tint nodeVar0;\n\n\tnodeVar0 = 0;\n\n\tif ( ( ( arg1 >= -31 ) && ( arg1 <= 31 ) ) ) {\n\n\n\t\tif ( ( arg1 >= 0 ) ) {\n\n\t\t\tnodeVar0 = tsl_bitcast_uint_to_int( ( tsl_bitcast_int_to_uint( arg0 ) << uint( arg1 ) ) );\n\t\t\t\n\n\t\t} else {\n\n\t\t\tnodeVar0 = tsl_bitcast_uint_to_int( ( tsl_bitcast_int_to_uint( arg0 ) >> uint( ( - arg1 ) ) ) );\n\t\t\t\n\n\t\t}\n\n\t\t\n\n\t}\n\n\n\treturn nodeVar0;\n\n}",
+  "observation": "TSL int/uint bitcast emitted float reinterpret intermediates and a uint-returning uint_to_int helper. Native source uses pure numeric signed/unsigned casts. This counterexample initially motivated replacing those casts; causal attribution awaits the next exact differential run.",
+  "resolution": "Replacing all IntegerBits int/uint TSLbitcast calls with pure uint()/int() casts removed the float reinterpret helper from generated GLSL and resolved the exact reproducer. Complete297case Metal WebGPU+WebGL2 and SwiftShader WebGPU+WebGL2 raw suites pass. Lower-driver optimization mechanics are not independently attributed.",
+  "regression": "browser.js wraps actual backend.createProgram and rejects GLSL intBitsToFloat/uintBitsToFloat/floatBitsToInt/floatBitsToUint whenever an IntegerBits shader compiles; every API receipt records positive integerShaderCompiles and integerFloatBitcasts=0."
+}

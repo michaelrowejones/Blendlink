@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
+import {downloadPinnedDemo} from './download.mjs'
 const bytes = await readFile(new URL('./corpus.json', import.meta.url)), corpus = JSON.parse(bytes), receipt = JSON.parse(await readFile(new URL('./receipt.json', import.meta.url), 'utf8'))
 
 test('real-scene corpus pins small official licensed assets without redistributing them', () => {
@@ -28,4 +29,24 @@ test('compiler optimization receipts compare full plans and scoped untimed Pytho
   }
   const med = numbers => [...numbers].sort((a, b) => a - b).slice(2, 4).reduce((sum, value) => sum + value, 0) / 2
   assert.equal(pair.warmed53Summary.baselineSamplesMs.length, 6); assert.equal(pair.warmed53Summary.baselineMedianMs, med(pair.warmed53Summary.baselineSamplesMs)); assert.equal(pair.warmed53Summary.candidateMedianMs, med(pair.warmed53Summary.candidateSamplesMs))
+})
+
+const demoBytes = Buffer.from('pinned demo'), demoScene = {url:'https://download.blender.org/demo/example.blend', bytes:demoBytes.length, sha256:createHash('sha256').update(demoBytes).digest('hex')}
+test('downloads exact pinned demo bytes with redirects disabled', async () => {
+  assert.deepEqual(await downloadPinnedDemo(demoScene, {fetchImpl:async(url, options) => {
+    assert.equal(url, demoScene.url); assert.equal(options.redirect, 'error'); assert.ok(options.signal instanceof AbortSignal)
+    return new Response(demoBytes, {headers:{'content-length':String(demoBytes.length)}})
+  }}), demoBytes)
+})
+test('rejects altered, oversized, truncated and redirected responses', async () => {
+  for (const response of [new Response('bad bytes'), new Response(Buffer.concat([demoBytes, demoBytes])), new Response(demoBytes.subarray(0, 2)), new Response(null, {status:302, headers:{location:'https://other.example/demo.blend'}}), new Response(demoBytes, {headers:{'content-length':'1'}})]) {
+    await assert.rejects(downloadPinnedDemo(demoScene, {fetchImpl:async() => response}))
+  }
+})
+test('rejects non-demo, credentialed or unbounded requests before network access', async () => {
+  const fetchImpl=async()=>{throw new Error('Network must not run')}
+  for (const url of ['http://download.blender.org/demo/example.blend','https://other.example/demo/example.blend','https://download.blender.org/release/example.zip','https://user@download.blender.org/demo/example.blend','https://download.blender.org/demo/example.blend?token=x']) {
+    await assert.rejects(downloadPinnedDemo({...demoScene,url},{fetchImpl}), error=>!error.message.includes('Network must not run'))
+  }
+  await assert.rejects(downloadPinnedDemo({...demoScene,bytes:Infinity},{fetchImpl}))
 })

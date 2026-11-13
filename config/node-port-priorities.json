@@ -1412,11 +1412,12 @@
     "compositor:ShaderNodeRadialTiling": "Native context availability and separate shader research do not constitute a compositor port.",
     "shader:ShaderNodeLightFalloff": "Native EEVEE/Cycles differences justify an engine-fallback safety guard, not a live Light Falloff port.",
     "shader:ShaderNodeSqueeze": "Blender 4.2 owned-context initialization remains research and production source admission stays N/A. Existing qualified 5.2/5.3 slices remain limited as declared.",
-    "compositor:CompositorNodeImageCoordinates": "Native5.3 socket and conversion research establishes float2/int2 output widths; public group interfaces reject2D socket classes. Explicit typed field/provenance and native conversion edges are prerequisites. Native Pixel-to-Color/Vector3 and ordered INT2 midpoint controls are research only, not admitted live coverage. A separate isolated implementation is in progress."
+    "compositor:CompositorNodeImageCoordinates": "Pixel INT2 full-frame pointwise field slice is qualified on the measured Blender5.3 build, including live resize/DPR. Explicit Uniform/Normalized float2 fields and native casts are the next shared prerequisite for artist-authored default Gradient/Checker coordinates; they remain unqualified."
   },
   "observationEvidence": [
     "experiments/official-demo-node-performance/README.md",
-    "experiments/official-demo-node-performance/receipt.json"
+    "experiments/official-demo-node-performance/receipt.json",
+    "experiments/official-demo-node-performance/integrated-node-triage.json"
   ],
   "researchEvidencePaths": {
     "compositor:FunctionNodeFloatToInt": [
@@ -1439,7 +1440,9 @@
     "compositor:CompositorNodeImageCoordinates": [
       "experiments/compositor-vector-width/discovery.json",
       "experiments/compositor-vector-width/word-transport-evidence.json",
-      "docs/NODE_PORT_WORKLOG.md"
+      "docs/NODE_PORT_WORKLOG.md",
+      "experiments/compositor-image-coordinates/evidence.json",
+      "experiments/compositor-image-coordinates/NEXT.md"
     ]
   },
   "sceneObservations": {

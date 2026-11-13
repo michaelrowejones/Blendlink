@@ -1,0 +1,8 @@
+{
+  "kind": "unqualified-independent-UV-raster-control",
+  "productionCredit": 0,
+  "originalNativeQualificationSha256": "ef069fce1632a7c03b9eada7fc91bbf4102d868cf6f4408df6f4f4aa3d61ab31",
+  "browserVersion": "158.0.8127.18",
+  "error": "Error: page.evaluate: Error: Independent source/calibration mismatch 2\n    at read (http://127.0.0.1:56879/browser.js:68:92)\n    at async window.staticSelectionProof (http://127.0.0.1:56879/browser.js:73:83)\n    at async <anonymous>:381:23",
+  "response": "Use authored SNAP-quantized UV field/control; preserve exact word comparison and restrict measured field claim accordingly."
+}

@@ -478,7 +478,28 @@ def verify_map(capabilities):
         for op in runtime:
             if not re.search(r"case\s+['\"]" + re.escape(op) + r"['\"]\s*:", text):
                 failures.append(key + ": missing runtime dispatch for " + op)
-        if entry["category"] in {"supported", "partial"} and (not runtime or len(entry.get("evidence", [])) < 2):
+        compile_time = entry.get("compileTime")
+        valid_compile_time = False
+        if compile_time is not None:
+            try:
+                if runtime:
+                    raise ValueError("a forwarding route must not invent a runtime opcode")
+                path = compile_time["path"]
+                tree = ast.parse((ROOT / path).read_text(encoding="utf8"))
+                if not any(isinstance(item, ast.FunctionDef) and item.name == compile_time["function"] for item in tree.body):
+                    raise ValueError("missing compiler entry point")
+                if key.split(":", 1)[1] not in python_constant(path, compile_time["nodeSet"]):
+                    raise ValueError("native node is outside the compiler node set")
+                callers = compile_time["callers"]
+                if not callers or any(not caller.get("anchor") or caller["anchor"] not in (ROOT / caller["path"]).read_text(encoding="utf8") for caller in callers):
+                    raise ValueError("missing compiler forwarding caller")
+                if not runtime_path.is_file():
+                    raise ValueError("missing selected-expression runtime")
+                valid_compile_time = True
+            except (KeyError, TypeError, ValueError, OSError) as error:
+                failures.append(key + ": invalid compile-time forwarding route: " + str(error))
+        categories = {entry["category"]} | {override.get("category", entry["category"]) for override in entry.get("versionOverrides", {}).values()}
+        if categories & {"supported", "partial"} and (not (runtime or valid_compile_time) or len(entry.get("evidence", [])) < 2):
             failures.append(key + ": live classification needs explicit compiler and runtime evidence")
     return failures
 

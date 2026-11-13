@@ -20,6 +20,14 @@ without pull requests or hosted workflow dispatch. The
 and reusable bottlenecks. This temporary working policy does not weaken the
 native/Final/browser evidence required for support claims.
 
+Compile-time forwarding ports declare `compileTime` with an actual compiler
+function, its native-node constant set, and the relevant call sites. They keep
+`runtimeOps` empty because they forward existing expressions. The coverage audit
+checks those compiler references instead of requiring an invented GPU opcode.
+Live classifications in version overrides require the same evidence as base
+classifications. This route metadata describes implementation, not qualification;
+native, saved Final and actual browser proofs still determine the supported slice.
+
 ## Workflow
 
 1. **Discover upstream.** Resolve an official daily archive, its checksum, and

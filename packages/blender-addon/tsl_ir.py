@@ -1307,6 +1307,20 @@ def emit_output(node, from_socket, stack=()):
             as_vector=outer.type in {"RGBA", "VECTOR"},
         )
 
+    if idname in {"GeometryNodeSwitch", "GeometryNodeIndexSwitch", "GeometryNodeMenuSwitch"}:
+        if __package__:
+            from .static_selection import static_selection, SelectionUnsupported
+        else:
+            from static_selection import static_selection, SelectionUnsupported
+        try:
+            selected = static_selection(node, from_socket, stack)
+        except SelectionUnsupported as error:
+            _refuse(str(error))
+        if selected['constant'] is not None:
+            return {"op": "typed_const", "type": "BOOLEAN", "value": selected['constant']}
+        return emit_input(selected['input'], stack=stack,
+                          as_vector=from_socket.type in {"VECTOR", "RGBA"})
+
     if idname == "ShaderNodeTexCoord":
         if socket_name in {"Camera", "Normal", "Window", "Reflection"}:
             if __package__:

@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "4303acc81ff8cee27d1a6c8f7703c4f2b9ffcbb852ccb21c445cb7491815ca73",
+  "capabilityMapSha256": "9dcdfb2a278542370f9ed659c2e6e91b32fa0c0be9d8909f61547fbaf2489f3d",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-13T19:43:21.466620+00:00",
+  "generatedAt": "2026-11-13T20:39:44.849510+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -7578,11 +7578,23 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/tests/compositor_image_coordinates_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageCoordinates.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-image-coordinates/evidence.json"
+                }
+              ],
               "id": "CompositorNodeImageCoordinates",
               "label": "Image Coordinates",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "image-coordinates"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -9311,10 +9323,39 @@
                 "inputs:Item_0": {},
                 "inputs:Item_1": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeIndexSwitch",
               "label": "Index Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9376,10 +9417,39 @@
                   "B": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeMenuSwitch",
               "label": "Menu Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9420,10 +9490,39 @@
                 "inputs:False": {},
                 "inputs:True": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeSwitch",
               "label": "Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -10593,10 +10692,39 @@
                   "B": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeMenuSwitch",
               "label": "Menu Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -13904,16 +14032,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 38,
+            "partial": 44,
             "structural": 7,
             "supported": 24,
-            "unsupported": 118
+            "unsupported": 112
           },
           "enumValueCounts": {
             "partial": 27,
             "structural": 3,
-            "supported": 239,
-            "unsupported": 663
+            "supported": 263,
+            "unsupported": 639
           },
           "nodes": [
             {
@@ -15429,14 +15557,26 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/tests/compositor_image_coordinates_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageCoordinates.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-image-coordinates/evidence.json"
+                }
+              ],
               "id": "CompositorNodeImageCoordinates",
               "label": "Image Coordinates",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Fresh Blender5.3.0 02f0899d78e3 macOS arm64 Pixel INT_VECTOR2 only. Direct full-frame Render Layers Image, zero data offset, square pixels, no border/crop, physical extents1..8192. Pointwise consumers and explicit Pixel-to-RGBA/padded-float3 conversions; direct, reroute and artist group paths. Same runtime and actual saved Final pipeline support real resize/DPR transitions. Uniform/Normalized FLOAT2, scalar/int midpoint conversion, transformed/static/computed image domains and spatial/neighborhood nodes remain unsupported.",
+              "runtimeOps": [
+                "image-coordinates"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -16645,23 +16785,56 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "operation": {
-                  "AND": "unsupported",
-                  "NOT": "unsupported",
-                  "OR": "unsupported",
-                  "ROTATE": "unsupported",
-                  "SHIFT": "unsupported",
-                  "XOR": "unsupported"
+                  "AND": "supported",
+                  "NOT": "supported",
+                  "OR": "supported",
+                  "ROTATE": "supported",
+                  "SHIFT": "supported",
+                  "XOR": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_integer_bits.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorIntegerBits.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorIntegerBits.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_integer_bits_check.py"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/README.md"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/research-counterexamples.json"
+                }
+              ],
               "id": "FunctionNodeBitMath",
               "label": "Bit Math",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath→Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay.",
+              "runtimeOps": [
+                "bit-math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -16927,12 +17100,12 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
                   "FLOAT": "unsupported",
-                  "INT": "unsupported",
+                  "INT": "supported",
                   "MATRIX": "unsupported",
                   "RGBA": "unsupported",
                   "ROTATION": "unsupported",
@@ -16940,11 +17113,44 @@
                   "VECTOR": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_integer_bits.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorIntegerBits.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorIntegerBits.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_integer_bits_check.py"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/README.md"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-integer-bits/research-counterexamples.json"
+                }
+              ],
               "id": "FunctionNodeHashValue",
               "label": "Hash Value",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath→Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay.",
+              "runtimeOps": [
+                "hash-value"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -17520,31 +17726,60 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
-                  "BOOLEAN": "unsupported",
+                  "BOOLEAN": "supported",
                   "BUNDLE": "unsupported",
-                  "FLOAT": "unsupported",
+                  "FLOAT": "supported",
                   "FONT": "unsupported",
-                  "INT": "unsupported",
+                  "INT": "supported",
                   "INT_VECTOR": "unsupported",
                   "MATRIX": "unsupported",
                   "MENU": "unsupported",
                   "OBJECT": "unsupported",
-                  "RGBA": "unsupported",
+                  "RGBA": "supported",
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
-                  "VECTOR": "unsupported"
+                  "VECTOR": "supported"
                 },
                 "inputs:Item_0": {},
                 "inputs:Item_1": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeIndexSwitch",
               "label": "Index Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17593,35 +17828,64 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
-                  "BOOLEAN": "unsupported",
+                  "BOOLEAN": "supported",
                   "BUNDLE": "unsupported",
-                  "FLOAT": "unsupported",
+                  "FLOAT": "supported",
                   "FONT": "unsupported",
-                  "INT": "unsupported",
+                  "INT": "supported",
                   "INT_VECTOR": "unsupported",
                   "MATRIX": "unsupported",
                   "MENU": "unsupported",
                   "OBJECT": "unsupported",
-                  "RGBA": "unsupported",
+                  "RGBA": "supported",
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
-                  "VECTOR": "unsupported"
+                  "VECTOR": "supported"
                 },
                 "inputs:Item_0": {},
                 "inputs:Item_1": {},
                 "inputs:Menu": {
-                  "A": "unsupported",
-                  "B": "unsupported"
+                  "A": "supported",
+                  "B": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeMenuSwitch",
               "label": "Menu Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17642,31 +17906,60 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "input_type": {
-                  "BOOLEAN": "unsupported",
+                  "BOOLEAN": "supported",
                   "BUNDLE": "unsupported",
-                  "FLOAT": "unsupported",
+                  "FLOAT": "supported",
                   "FONT": "unsupported",
-                  "INT": "unsupported",
+                  "INT": "supported",
                   "INT_VECTOR": "unsupported",
                   "MATRIX": "unsupported",
                   "MENU": "unsupported",
                   "OBJECT": "unsupported",
-                  "RGBA": "unsupported",
+                  "RGBA": "supported",
                   "ROTATION": "unsupported",
                   "STRING": "unsupported",
-                  "VECTOR": "unsupported"
+                  "VECTOR": "supported"
                 },
                 "inputs:False": {},
                 "inputs:True": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeSwitch",
               "label": "Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18796,16 +19089,16 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 41,
+            "partial": 44,
             "structural": 7,
             "supported": 22,
-            "unsupported": 75
+            "unsupported": 72
           },
           "enumValueCounts": {
             "partial": 25,
             "structural": 3,
-            "supported": 241,
-            "unsupported": 172
+            "supported": 258,
+            "unsupported": 155
           },
           "nodes": [
             {
@@ -19231,28 +19524,57 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
-                  "BOOLEAN": "unsupported",
+                  "BOOLEAN": "supported",
                   "BUNDLE": "unsupported",
                   "CLOSURE": "unsupported",
-                  "FLOAT": "unsupported",
-                  "INT": "unsupported",
+                  "FLOAT": "supported",
+                  "INT": "supported",
                   "MENU": "unsupported",
-                  "RGBA": "unsupported",
+                  "RGBA": "supported",
                   "SHADER": "unsupported",
                   "STRING": "unsupported",
-                  "VECTOR": "unsupported"
+                  "VECTOR": "supported"
                 },
                 "inputs:Item_0": {},
                 "inputs:Item_1": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeIndexSwitch",
               "label": "Index Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19268,32 +19590,61 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
-                  "BOOLEAN": "unsupported",
+                  "BOOLEAN": "supported",
                   "BUNDLE": "unsupported",
                   "CLOSURE": "unsupported",
-                  "FLOAT": "unsupported",
-                  "INT": "unsupported",
+                  "FLOAT": "supported",
+                  "INT": "supported",
                   "MENU": "unsupported",
-                  "RGBA": "unsupported",
+                  "RGBA": "supported",
                   "SHADER": "unsupported",
                   "STRING": "unsupported",
-                  "VECTOR": "unsupported"
+                  "VECTOR": "supported"
                 },
                 "inputs:Item_0": {},
                 "inputs:Item_1": {},
                 "inputs:Menu": {
-                  "A": "unsupported",
-                  "B": "unsupported"
+                  "A": "supported",
+                  "B": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeMenuSwitch",
               "label": "Menu Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19320,28 +19671,57 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "input_type": {
-                  "BOOLEAN": "unsupported",
+                  "BOOLEAN": "supported",
                   "BUNDLE": "unsupported",
                   "CLOSURE": "unsupported",
-                  "FLOAT": "unsupported",
-                  "INT": "unsupported",
+                  "FLOAT": "supported",
+                  "INT": "supported",
                   "MENU": "unsupported",
-                  "RGBA": "unsupported",
+                  "RGBA": "supported",
                   "SHADER": "unsupported",
                   "STRING": "unsupported",
-                  "VECTOR": "unsupported"
+                  "VECTOR": "supported"
                 },
                 "inputs:False": {},
                 "inputs:True": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def static_selection",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/README.md"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "GeometryNodeSwitch",
               "label": "Switch",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -22780,13 +23160,14 @@
     "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
     "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
     "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
-    "packages/blender-addon/procedural.py": "6af8a5848965a72d99ab039de18491c87feb0b45114a74d184d93453d4888750",
+    "packages/blender-addon/procedural.py": "953104e0888e4e4054a31dbe3a2f7f2d0dd60a5e0dfd1eb5ae33973543307548",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/shader_color_band.py": "dc9bf6130aaf4d972787aa5a7779500fb5ed6718b199d7c5069578d5bdc10508",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
+    "packages/blender-addon/static_selection.py": "10af08ff1efb2f7f43c87a2b74e65c8b4fa82a81b1bd7a8c11c9df58d155fdc7",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-    "packages/blender-addon/tsl_ir.py": "0958888afb14802144a89f2bc149c9939311789fda2d71dcb642b6f72d2ee231",
+    "packages/blender-addon/tsl_ir.py": "842a2370673d2545bf789e6a847dc6c74f14d901116b3e4ff6cbc9133df0bd36",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
@@ -22804,8 +23185,9 @@
     "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "dcabedf408f42158e0fe3387b5abf6f00a3525f92eede589ff392bd4f2e502dd",
+    "packages/blendlink/blender/compositor_graph.py": "0c51a8783a9b5e22f86e93326f885c3942e91fa5f6ed5eb11fa6af959e998ff4",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
+    "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
@@ -22858,6 +23240,7 @@
     "packages/blendlink/src/tslCompositorGray.ts": "e32c05ec6deb9a8a793d3de4751ebac288a7fe0ab1d90555f8ec4504562975d1",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
     "packages/blendlink/src/tslCompositorImageDomain.ts": "50eb4b114dcb565a22df1c13821179d879881df87e33bed52f98b565ef7e5016",
+    "packages/blendlink/src/tslCompositorIntegerBits.ts": "cf59d1b7fe476b8489d6a2d28e745f2a088a8f03798c4d44dfe41fa9e482f748",
     "packages/blendlink/src/tslCompositorLumaGradual.ts": "f6497d953d2371b323fbfb0c1d4e98b543d2387528b49c7538ccb1e25ee491ed",
     "packages/blendlink/src/tslCompositorLuminanceKey.ts": "3858b364150d9dc847ea05ee4ef768cb9b2ef5fae3c0ece240f3c3c1016e23c4",
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
@@ -22885,7 +23268,7 @@
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "7b64b75c45d38815d7d0cb9c1f74b4abae9352612edd2d7c6b615e4df1c495dd",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
-    "packages/blendlink/src/tslNodeRecipe.ts": "cf50122cfe15d43e1af1bc7c279d970ca48498bd1692884a6494bd3374867a87",
+    "packages/blendlink/src/tslNodeRecipe.ts": "1069cc89c2c153dde63b30cce88a639eb4f6065bf0eb36d355e08bbe8d7fbf8c",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "f0eb9e256f75be2915f0d2d78509fe3d638fbcb0936fc6c79099b19a1472f9f4",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
     "packages/blendlink/src/tslNoiseFields.ts": "a66cf44b0298add1ab3db195085629788060a9005df14757d283228e703416d1",
@@ -22896,7 +23279,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "a6245b081682899ec3a69956340a9d8526abac1ff5794f9d24c5c7c303150da6",
+    "packages/blendlink/src/tslSourceCompositor.ts": "776404536cbb63dfdb55d0c28e3aeaf75ab1dcdefac71b5c2c05c62a19d83d36",
     "packages/blendlink/src/tslSpectralNodes.ts": "0b3b12601a937d51544168acdde2ee721a25a926a4890d41b2c63b5b09013200",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

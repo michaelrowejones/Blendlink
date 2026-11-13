@@ -1,0 +1,42 @@
+{
+  "revision": "02f0899d78e3",
+  "nativeBuild": "5.3.0 macOS arm64",
+  "sources": [
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_bit_math.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/function/nodes/node_fn_bit_math.cc",
+      "sha256": "6792bcaa5610ff4324751eb20a61ee4946babd30365d7ba454989fc1bee08eaa"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_hash_value.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/function/nodes/node_fn_hash_value.cc",
+      "sha256": "ec8caf468e1cb2ae49d937ee615448d3f977ae02c62734021c178363946110e3"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_bit_math.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_bit_math.bsl.hh",
+      "sha256": "66f6766a988d668439fe40e89df2c944aef0f2e92cf3783c98e05bf1b0d51f68"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_hash_value.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_hash_value.bsl.hh",
+      "sha256": "4066b05e8378c8a2368147367ee690a98e65c01e9d04ddb69d1291454f123c2f"
+    },
+    {
+      "path": "source/blender/blenlib/intern/noise.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/blenlib/intern/noise.cc",
+      "sha256": "ad717117a1c191bc5204706fd890e262356fc9a5fac4b8aee77be7e7b9b13df9"
+    },
+    {
+      "path": "source/blender/gpu/shaders/nodes/gpu_shader_common_hash.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/nodes/gpu_shader_common_hash.bsl.hh",
+      "sha256": "1a0ea1112dbbc247b8eafde6792226d015e86d0aadf65e2d34c4efb8bb24a0da"
+    },
+    {
+      "path": "source/blender/functions/FN_multi_function_registry.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/functions/FN_multi_function_registry.hh",
+      "sha256": "cb24dcc869e946652b2f39abc0a76937081e467b60e0e95ddcf113f7cd447393"
+    }
+  ],
+  "watchLimit": "BitMath CPU registry keys identified; registry callback definition source not yet isolated. Numerical credit is actual measured CPU multi-function oracle; GPU-authored single values also CPU. Spatial GPU source is reviewed, not numerically qualified."
+}

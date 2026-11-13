@@ -41,6 +41,21 @@ evidence. Run the broader local unit/policy gates once per integrated batch.
 Update capability/coverage reports after numerical transactions finish, because
 those reports are part of their pinned inputs.
 
+Use `npm run nodes:diagnose -- <report.json>` on common-runner receipts to rank
+recorded command costs and inspect native invocation counts and median/p95
+times. Child native durations are nested inside suite commands; the diagnosis
+keeps them separate and does not invent a whole-transaction wall time. This
+read-only command never starts Blender, browsers, builds or hosted jobs.
+
+The first Float to Integer checkpoint recorded 114.4 seconds of commands:
+69.7 seconds for the Metal suite, 42.0 for software, and 2.5 for build steps.
+Its 32 Final export invocations took 26.9 seconds in total, nested in those
+suites; two native capture invocations took 1.8 seconds. This receipt does not
+show execution as a twenty-minute bottleneck. Repeated fixture development,
+precision debugging and proof-specific harness work remain the areas to reduce.
+Keep distinct numerical/resource contracts, but reuse transport, native process
+isolation, API attestation and family fixtures rather than copying entire suites.
+
 ## Batch beginning 2026-11-13
 
 Starting Blender 5.3 inventory: 46 supported, 76 partial, 14 structural and
@@ -126,3 +141,70 @@ already use raw float32 buffers.
 catalog bytes and existing native baselines before updating classifications.
 It preserves the original native inventory date. This replaces manual report
 rewrites and avoids fetching legacy binaries solely to classify a new 5.3 port.
+
+## Integrated selection, integer and coordinate batch
+
+Fresh combined-root transactions closed all three families after a single
+production build. Isolated receipts were replaced by fresh captures when shared
+extraction code changed. A missing shared-oracle fingerprint triggered a fresh
+Integer/Pixel capture with the complete 107-file native import/oracle inventory;
+no hashes were grafted onto an older numerical receipt.
+
+| Family | Native graphs | Saved Final scenes | Browser case runs | Primary Float32 words |
+| --- | ---: | ---: | ---: | ---: |
+| Static Switch / Index Switch / Menu Switch, shader and compositor | 195 | 72 | 1,068 | 273,408 |
+| Compositor Bit Math / INT Hash Value | 594 | 24 | 2,472 | 632,832 |
+| Compositor Image Coordinates Pixel INT2 | 32 | 8 | 160 | 246,080 |
+
+Every admitted comparison passed with zero word mismatches on actual WebGPU and
+WebGL2 under Metal and SwiftShader. The Switch counts include three native and
+24 browser controls; the integer counts include 24 native and 96 browser
+transport controls. Controls earn no node credit. Integer per-node counts overlap
+on the explicit Bit Math to Hash chain and must not be summed.
+
+All nine new context/node pairs remain partial: fixed typed Switch selectors
+forward an existing selected expression without a new GPU operation; integer
+ports admit bounded typed constant/own-family graphs; Pixel admits direct
+full-frame pointwise fields and explicit INT2 to RGBA/float3 conversion. Pixel
+supports actual animation-frame resize/DPR changes. Uniform/Normalized float2
+coordinates and implicit default Gradient/Checker fields remain pending. The
+Blender 5.3 totals are now 46 supported, 88 partial, 14 structural and 184
+unsupported; 4.2/5.2 classifications are unchanged.
+
+### Bottlenecks resolved and retained
+
+- Static branch planning now visits only the selected branch, including separate
+  instances of a shared artist group. Inactive unsupported branches no longer
+  force an otherwise supported material to bake.
+- Three's GLSL integer bitcast helper crossed through float bit representations.
+  Pure integer casts fixed the measured Bit Math counterexample; generated-shader
+  regression controls reject that float path on both actual APIs.
+- Resizing a raw DataTexture requires GPU allocation disposal before changing its
+  dimensions. Actual PassNode renders must advance real renderer animation frames.
+  The Pixel proof fixes those fixture lifecycles, with no production uniform
+  compensation for a stale texture or frame.
+- A source-only compositor import now resolves the addon-authored static policy
+  through the same sibling loader; the built package's derived import closure
+  includes the policy beside the exporter and extension.
+- Switch now prepares one fresh parent-pinned runtime snapshot per transaction.
+  Each child revalidates compiler sources, resolution probes, source/dist/build
+  inventories and snapshot bytes; the closing reader independently emits again.
+  The observed browser phase decreased from 81.001 to 58.184 seconds (28.2%).
+  This is one scoped measurement, not a general runtime or whole-job speed claim.
+- The same Switch transaction recorded 95.687 seconds in guarded Final exports
+  out of 172.507 recorded command seconds. Native process/identity startup is the
+  next execution bottleneck. Investigate bounded export batching while preserving
+  individual scene results and source/prefix accounting; do not weaken the guards
+  or add more per-family cases during a proof freeze.
+- Shared strict runtime archive validation replaces another pair of handwritten
+  readers and rejects incomplete module/vendor/map/fixture inventories. Native
+  launcher archiving is also shared with the common runner.
+
+Fresh read-only planning on the three pinned official demos still finds artist
+gaps: animated/repeat shader transport in Mandelbrot, Radial Tiling fidelity,
+and Cycles normal/bake channels in Cube. The
+[fresh triage receipt](../experiments/official-demo-node-performance/integrated-node-triage.json)
+is planning evidence, not Final publication or visual parity. None of the three
+used material graphs contains this batch's new node classes. A broken fresh-demo
+download path was fixed with a separate, byte-pinned demo downloader; executable
+download restrictions remain intact.

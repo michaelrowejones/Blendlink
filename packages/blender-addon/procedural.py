@@ -278,11 +278,34 @@ def reachable_surface_nodes(tree, output_type="OUTPUT_MATERIAL"):
     reachable = []
     seen = set()
 
-    def visit_output(node, output_socket):
-        key = (node.as_pointer(), getattr(output_socket, "identifier", output_socket.name))
+    def visit_output(node, output_socket, group_stack=()):
+        key = (node.as_pointer(), getattr(output_socket, "identifier", output_socket.name),
+               tuple(item.as_pointer() for item in group_stack))
         if key in seen:
             return
         seen.add(key)
+        if node.bl_idname in {"GeometryNodeSwitch", "GeometryNodeIndexSwitch", "GeometryNodeMenuSwitch"}:
+            try:
+                if __package__:
+                    from .static_selection import static_selection
+                else:
+                    from static_selection import static_selection
+                selected = static_selection(node, output_socket, group_stack)
+            except ValueError:
+                pass  # Unqualified selectors retain conservative dependencies/refusals.
+            else:
+                if selected['constant'] is None:
+                    for link in selected['input'].links:
+                        if link.is_valid and not getattr(link, 'is_muted', False):
+                            visit_output(link.from_node, link.from_socket, group_stack)
+                return
+        if node.bl_idname == 'NodeGroupInput' and group_stack:
+            outer = _matching_socket(group_stack[-1].inputs, output_socket)
+            if outer is not None:
+                for link in outer.links:
+                    if link.is_valid and not getattr(link, 'is_muted', False):
+                        visit_output(link.from_node, link.from_socket, group_stack[:-1])
+            return
         reachable.append(node)
         if node.type == "GROUP" and node.node_tree is not None:
             group_outputs = [
@@ -299,14 +322,11 @@ def reachable_surface_nodes(tree, output_type="OUTPUT_MATERIAL"):
                     ), None)
                 if target is not None:
                     for link in target.links:
-                        visit_output(link.from_node, link.from_socket)
-            for socket in node.inputs:
-                for link in socket.links:
-                    visit_output(link.from_node, link.from_socket)
+                        visit_output(link.from_node, link.from_socket, group_stack + (node,))
             return
         for socket in node.inputs:
             for link in socket.links:
-                visit_output(link.from_node, link.from_socket)
+                visit_output(link.from_node, link.from_socket, group_stack)
 
     outputs = [
         node for node in tree.nodes if node.type == output_type
@@ -1034,6 +1054,21 @@ def _walk_channel_upstream(socket, *, group_stack=()):
                 for link in node.inputs[0].links
             )
             continue
+        if idname in {"GeometryNodeSwitch", "GeometryNodeIndexSwitch", "GeometryNodeMenuSwitch"}:
+            try:
+                if __package__:
+                    from .static_selection import static_selection
+                else:
+                    from static_selection import static_selection
+                selected = static_selection(node, from_socket, group_stack)
+            except ValueError:
+                pass
+            else:
+                if selected['constant'] is None:
+                    stack.extend((link.from_node, link.from_socket, group_stack)
+                                 for link in selected['input'].links
+                                 if link.is_valid and not getattr(link, 'is_muted', False))
+                continue
         visited.append((node, from_socket))
         stack.extend(
             (link.from_node, link.from_socket, group_stack)

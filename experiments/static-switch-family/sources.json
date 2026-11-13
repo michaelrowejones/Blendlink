@@ -1,0 +1,28 @@
+{
+  "primarySources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/intern/shader_nodes_inline.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/intern/shader_nodes_inline.cc",
+      "sha256": "c7828d3eea17ff0e5c6ba9fde8c0034d15c1b2412a53d389c6524105f8774bad"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/geometry/nodes/node_geo_switch.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/geometry/nodes/node_geo_switch.cc",
+      "sha256": "738df5902fc16a2aac8ca16e939952a8c88dae95c9d3a717bab78251b6c09830"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/geometry/nodes/node_geo_index_switch.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/geometry/nodes/node_geo_index_switch.cc",
+      "sha256": "315df4921d1a76ec8bd54ff0aeb8bef4efc0774fd2a699c94570a677e3637fff"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/geometry/nodes/node_geo_menu_switch.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/geometry/nodes/node_geo_menu_switch.cc",
+      "sha256": "6c61f101da680274bac419453bfde4eba03c3f1775bda2ce3754fb0b5f45b570"
+    }
+  ]
+}

@@ -84,4 +84,13 @@ node --test experiments/official-demo-node-performance/corpus-policy.test.mjs
 
 ## Next useful work
 
+The [integrated node triage](./integrated-node-triage.json) repeats source-preserving
+load, geometry and material planning on all three original demos after the
+selection/integer/Pixel batch. It preserves the remaining animated/repeat,
+Radial and Cycles normal/bake refusals. None of their used material graphs
+contains the newly added classes. This is no new Final or browser parity claim.
+Fresh acquisition now uses a separate byte-pinned demo downloader: Blender's
+executable downloader intentionally rejects `/demo/` paths. Download tests cover
+wrong hashes, oversized/truncated bodies, redirects and non-demo hosts/paths.
+
 Keep the bulk material-use scan and its exact-binding tests. Prioritize real contributing normal/animated-loop/Radial domains or honest bake workflows before calling the tiny stock controls useful web ports. Retain output/fidelity gates while measuring preview load/compile/frame costs independently. Treat evaluated modifiers and texture payloads as separate geometry/transfer budgets; do not infer them from `.blend` size or node count.

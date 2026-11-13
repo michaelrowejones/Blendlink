@@ -8935,6 +8935,863 @@
           "limits": "Checker additionally requires sixteenth-grid vectors within +/-16 and fixed integer Scale0..256. Color1/Color2 are bounded exact Float32 literal/group colors; Color preserves independent signed/HDR RGB/alpha, while Fac prunes unused Color subtrees. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. Native CPU multi-function single values, including authored GPU compositing; not a spatial GPU-field port. Explicit linked literal, Value, reroute, CombineXYZ and group-default vectors only; exact normal Float32 words (magnitude >=2^-125) or positive zero, bounded magnitude <=65536. Negative zero, subnormal/nonfinite/F64/unknown-provenance values, implicit socket conversions, nonidentity texture mapping, animation/drivers, other native versions/builds/platforms and all computed/image fields refuse. Unlinked Vector uses native Uniform Image Coordinates and refuses rather than being replaced by literal zero. Runtime independently rederives actual prior-operation provenance with 2048-operation/64-visit/depth8 bounds. No port-owned textures/render targets or per-frame readback. Final disposal restores exact renderer-owned DFG_LUT identities established by a no-compositor PBR control, not a generic resource allowance."
         }
       }
+    },
+    "shader:GeometryNodeSwitch": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {
+        "input_type": {
+          "supported": [
+            "FLOAT",
+            "INT",
+            "BOOLEAN",
+            "VECTOR",
+            "RGBA"
+          ],
+          "unsupported": [
+            "BUNDLE",
+            "CLOSURE",
+            "MENU",
+            "SHADER",
+            "STRING"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        },
+        {
+          "path": "packages/blender-addon/procedural.py"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "experiments/static-switch-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/sources.json"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeContexts": [
+          "EEVEE shader",
+          "compositor CPU",
+          "compositor GPU"
+        ],
+        "familyNativeGraphs": 195,
+        "familyProductionNativeGraphs": 192,
+        "familySavedFinalScenes": 72,
+        "familyBrowserCaseRuns": 1068,
+        "familyProductionBrowserCaseRuns": 1044,
+        "familyComparedFloat32Words": 273408,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Six context/node pairs share one fixed-selector family proof. Counts are family totals, not per-entry totals; controls earn no coverage."
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification."
+        }
+      },
+      "compileTime": {
+        "path": "packages/blender-addon/static_selection.py",
+        "function": "static_selection",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blender-addon/tsl_ir.py",
+            "anchor": "selected = static_selection("
+          }
+        ]
+      }
+    },
+    "shader:GeometryNodeIndexSwitch": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "FLOAT",
+            "INT",
+            "BOOLEAN",
+            "VECTOR",
+            "RGBA"
+          ],
+          "unsupported": [
+            "BUNDLE",
+            "CLOSURE",
+            "MENU",
+            "SHADER",
+            "STRING"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        },
+        {
+          "path": "packages/blender-addon/procedural.py"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "experiments/static-switch-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/sources.json"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeContexts": [
+          "EEVEE shader",
+          "compositor CPU",
+          "compositor GPU"
+        ],
+        "familyNativeGraphs": 195,
+        "familyProductionNativeGraphs": 192,
+        "familySavedFinalScenes": 72,
+        "familyBrowserCaseRuns": 1068,
+        "familyProductionBrowserCaseRuns": 1044,
+        "familyComparedFloat32Words": 273408,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Six context/node pairs share one fixed-selector family proof. Counts are family totals, not per-entry totals; controls earn no coverage."
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification."
+        }
+      },
+      "compileTime": {
+        "path": "packages/blender-addon/static_selection.py",
+        "function": "static_selection",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blender-addon/tsl_ir.py",
+            "anchor": "selected = static_selection("
+          }
+        ]
+      }
+    },
+    "shader:GeometryNodeMenuSwitch": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "FLOAT",
+            "INT",
+            "BOOLEAN",
+            "VECTOR",
+            "RGBA"
+          ],
+          "unsupported": [
+            "BUNDLE",
+            "CLOSURE",
+            "MENU",
+            "SHADER",
+            "STRING"
+          ]
+        },
+        "inputs:Menu": {
+          "supported": [
+            "A",
+            "B"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        },
+        {
+          "path": "packages/blender-addon/procedural.py"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "experiments/static-switch-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/sources.json"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeContexts": [
+          "EEVEE shader",
+          "compositor CPU",
+          "compositor GPU"
+        ],
+        "familyNativeGraphs": 195,
+        "familyProductionNativeGraphs": 192,
+        "familySavedFinalScenes": 72,
+        "familyBrowserCaseRuns": 1068,
+        "familyProductionBrowserCaseRuns": 1044,
+        "familyComparedFloat32Words": 273408,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Six context/node pairs share one fixed-selector family proof. Counts are family totals, not per-entry totals; controls earn no coverage."
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification."
+        }
+      },
+      "compileTime": {
+        "path": "packages/blender-addon/static_selection.py",
+        "function": "static_selection",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blender-addon/tsl_ir.py",
+            "anchor": "selected = static_selection("
+          }
+        ]
+      }
+    },
+    "compositor:GeometryNodeSwitch": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {
+        "input_type": {
+          "supported": [
+            "FLOAT",
+            "INT",
+            "BOOLEAN",
+            "VECTOR",
+            "RGBA"
+          ],
+          "unsupported": [
+            "BUNDLE",
+            "FONT",
+            "INT_VECTOR",
+            "MATRIX",
+            "MENU",
+            "OBJECT",
+            "ROTATION",
+            "STRING"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        },
+        {
+          "path": "packages/blender-addon/procedural.py"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "experiments/static-switch-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/sources.json"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeContexts": [
+          "EEVEE shader",
+          "compositor CPU",
+          "compositor GPU"
+        ],
+        "familyNativeGraphs": 195,
+        "familyProductionNativeGraphs": 192,
+        "familySavedFinalScenes": 72,
+        "familyBrowserCaseRuns": 1068,
+        "familyProductionBrowserCaseRuns": 1044,
+        "familyComparedFloat32Words": 273408,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Six context/node pairs share one fixed-selector family proof. Counts are family totals, not per-entry totals; controls earn no coverage."
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification."
+        }
+      },
+      "compileTime": {
+        "path": "packages/blender-addon/static_selection.py",
+        "function": "static_selection",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "selected = static_selection.static_selection("
+          }
+        ]
+      }
+    },
+    "compositor:GeometryNodeIndexSwitch": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "FLOAT",
+            "INT",
+            "BOOLEAN",
+            "VECTOR",
+            "RGBA"
+          ],
+          "unsupported": [
+            "BUNDLE",
+            "FONT",
+            "INT_VECTOR",
+            "MATRIX",
+            "MENU",
+            "OBJECT",
+            "ROTATION",
+            "STRING"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        },
+        {
+          "path": "packages/blender-addon/procedural.py"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "experiments/static-switch-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/sources.json"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeContexts": [
+          "EEVEE shader",
+          "compositor CPU",
+          "compositor GPU"
+        ],
+        "familyNativeGraphs": 195,
+        "familyProductionNativeGraphs": 192,
+        "familySavedFinalScenes": 72,
+        "familyBrowserCaseRuns": 1068,
+        "familyProductionBrowserCaseRuns": 1044,
+        "familyComparedFloat32Words": 273408,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Six context/node pairs share one fixed-selector family proof. Counts are family totals, not per-entry totals; controls earn no coverage."
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification."
+        }
+      },
+      "compileTime": {
+        "path": "packages/blender-addon/static_selection.py",
+        "function": "static_selection",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "selected = static_selection.static_selection("
+          }
+        ]
+      }
+    },
+    "compositor:GeometryNodeMenuSwitch": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "FLOAT",
+            "INT",
+            "BOOLEAN",
+            "VECTOR",
+            "RGBA"
+          ],
+          "unsupported": [
+            "BUNDLE",
+            "FONT",
+            "INT_VECTOR",
+            "MATRIX",
+            "MENU",
+            "OBJECT",
+            "ROTATION",
+            "STRING"
+          ]
+        },
+        "inputs:Menu": {
+          "supported": [
+            "A",
+            "B"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        },
+        {
+          "path": "packages/blender-addon/procedural.py"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "experiments/static-switch-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/sources.json"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeContexts": [
+          "EEVEE shader",
+          "compositor CPU",
+          "compositor GPU"
+        ],
+        "familyNativeGraphs": 195,
+        "familyProductionNativeGraphs": 192,
+        "familySavedFinalScenes": 72,
+        "familyBrowserCaseRuns": 1068,
+        "familyProductionBrowserCaseRuns": 1044,
+        "familyComparedFloat32Words": 273408,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Six context/node pairs share one fixed-selector family proof. Counts are family totals, not per-entry totals; controls earn no coverage."
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification."
+        }
+      },
+      "compileTime": {
+        "path": "packages/blender-addon/static_selection.py",
+        "function": "static_selection",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "selected = static_selection.static_selection("
+          }
+        ]
+      }
+    },
+    "compositor:FunctionNodeBitMath": {
+      "category": "unsupported",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "renderer": "WebGPURenderer with actual WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_integer_bits.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorIntegerBits.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorIntegerBits.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_integer_bits_check.py"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/README.md"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/sources.json"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/research-counterexamples.json"
+        }
+      ],
+      "runtimeOps": [
+        "bit-math"
+      ],
+      "modes": {
+        "operation": {
+          "supported": [
+            "AND",
+            "OR",
+            "XOR",
+            "NOT",
+            "SHIFT",
+            "ROTATE"
+          ],
+          "unsupported": []
+        }
+      },
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "nativeNodeEvaluator": "CPU-MF including GPU source single values",
+        "nativeGraphs": 472,
+        "savedFinalScenes": 16,
+        "browserCaseRuns": 1952,
+        "primaryFloat32Words": 499712,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Partial typed int32 literal/own-family slice; full32bit exact proof, no arbitrary fields or unqualified HashValue types.",
+        "sharedFamilyCasesOverlap": true
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath\u2192Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
+        }
+      }
+    },
+    "compositor:FunctionNodeHashValue": {
+      "category": "unsupported",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "renderer": "WebGPURenderer with actual WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_integer_bits.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorIntegerBits.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorIntegerBits.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_integer_bits_check.py"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/README.md"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/sources.json"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-integer-bits/research-counterexamples.json"
+        }
+      ],
+      "runtimeOps": [
+        "hash-value"
+      ],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "INT"
+          ],
+          "unsupported": [
+            "FLOAT",
+            "VECTOR",
+            "RGBA",
+            "ROTATION",
+            "MATRIX",
+            "STRING"
+          ]
+        }
+      },
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "nativeNodeEvaluator": "CPU-MF including GPU source single values",
+        "nativeGraphs": 100,
+        "savedFinalScenes": 10,
+        "browserCaseRuns": 440,
+        "primaryFloat32Words": 112640,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Partial typed int32 literal/own-family slice; full32bit exact proof, no arbitrary fields or unqualified HashValue types.",
+        "sharedFamilyCasesOverlap": true
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath\u2192Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
+        }
+      }
+    },
+    "compositor:CompositorNodeImageCoordinates": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "image-coordinates"
+      ],
+      "modes": {
+        "output": [
+          "Pixel"
+        ],
+        "conversion": [
+          "INT_VECTOR2->RGBA",
+          "INT_VECTOR2->VECTOR"
+        ]
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/tests/compositor_image_coordinates_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorImageCoordinates.test.ts"
+        },
+        {
+          "path": "experiments/compositor-image-coordinates/evidence.json"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU or WebGL2; Metal and SwiftShader profiles. Native CPU and Metal compositor settings; no claim for other builds/platforms.",
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "nativeGraphs": 32,
+        "savedFinalScenes": 8,
+        "browserCaseRuns": 160,
+        "primaryFloat32Words": 246080,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Pixel INT2 on direct full-frame Render Layers only, explicit RGBA/float3 conversions, real frame-driven resize and DPR. Floating coordinates and other domains remain unqualified."
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Fresh Blender5.3.0 02f0899d78e3 macOS arm64 Pixel INT_VECTOR2 only. Direct full-frame Render Layers Image, zero data offset, square pixels, no border/crop, physical extents1..8192. Pointwise consumers and explicit Pixel-to-RGBA/padded-float3 conversions; direct, reroute and artist group paths. Same runtime and actual saved Final pipeline support real resize/DPR transitions. Uniform/Normalized FLOAT2, scalar/int midpoint conversion, transformed/static/computed image domains and spatial/neighborhood nodes remain unsupported."
+        }
+      }
     }
   },
   "knownUnsupported": [

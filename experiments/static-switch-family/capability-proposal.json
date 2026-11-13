@@ -1,0 +1,208 @@
+{
+  "entries": {
+    "shader:GeometryNodeSwitch": {
+      "category": "partial",
+      "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+      "runtimePath": "packages/blender-addon/static_selection.py",
+      "runtimeOps": [
+        "compile-time selection; existing selected expression only"
+      ],
+      "modes": {
+        "dataTypes": [
+          "FLOAT",
+          "INT",
+          "BOOLEAN",
+          "VECTOR",
+          "RGBA"
+        ],
+        "model": "native-static-selection-53-v1"
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
+    },
+    "shader:GeometryNodeIndexSwitch": {
+      "category": "partial",
+      "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+      "runtimePath": "packages/blender-addon/static_selection.py",
+      "runtimeOps": [
+        "compile-time selection; existing selected expression only"
+      ],
+      "modes": {
+        "dataTypes": [
+          "FLOAT",
+          "INT",
+          "BOOLEAN",
+          "VECTOR",
+          "RGBA"
+        ],
+        "model": "native-static-selection-53-v1"
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
+    },
+    "shader:GeometryNodeMenuSwitch": {
+      "category": "partial",
+      "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+      "runtimePath": "packages/blender-addon/static_selection.py",
+      "runtimeOps": [
+        "compile-time selection; existing selected expression only"
+      ],
+      "modes": {
+        "dataTypes": [
+          "FLOAT",
+          "INT",
+          "BOOLEAN",
+          "VECTOR",
+          "RGBA"
+        ],
+        "model": "native-static-selection-53-v1"
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
+    },
+    "compositor:GeometryNodeSwitch": {
+      "category": "partial",
+      "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+      "runtimePath": "packages/blender-addon/static_selection.py",
+      "runtimeOps": [
+        "compile-time selection; existing selected expression only"
+      ],
+      "modes": {
+        "dataTypes": [
+          "FLOAT",
+          "INT",
+          "BOOLEAN",
+          "VECTOR",
+          "RGBA"
+        ],
+        "model": "native-static-selection-53-v1"
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
+    },
+    "compositor:GeometryNodeIndexSwitch": {
+      "category": "partial",
+      "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+      "runtimePath": "packages/blender-addon/static_selection.py",
+      "runtimeOps": [
+        "compile-time selection; existing selected expression only"
+      ],
+      "modes": {
+        "dataTypes": [
+          "FLOAT",
+          "INT",
+          "BOOLEAN",
+          "VECTOR",
+          "RGBA"
+        ],
+        "model": "native-static-selection-53-v1"
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
+    },
+    "compositor:GeometryNodeMenuSwitch": {
+      "category": "partial",
+      "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+      "runtimePath": "packages/blender-addon/static_selection.py",
+      "runtimeOps": [
+        "compile-time selection; existing selected expression only"
+      ],
+      "modes": {
+        "dataTypes": [
+          "FLOAT",
+          "INT",
+          "BOOLEAN",
+          "VECTOR",
+          "RGBA"
+        ],
+        "model": "native-static-selection-53-v1"
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_selection.py",
+          "anchor": "def static_selection"
+        },
+        {
+          "path": "packages/blender-addon/tests/static_selection_check.py"
+        },
+        {
+          "path": "experiments/static-switch-family/evidence.json"
+        },
+        {
+          "path": "experiments/static-switch-family/README.md"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
+    }
+  }
+}

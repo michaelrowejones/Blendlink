@@ -118,5 +118,37 @@ class RetainedCatalogTests(unittest.TestCase):
                 audit.retained_catalogs(directory)
 
 
+class CompileTimeRouteTests(unittest.TestCase):
+    def test_forwarding_route_requires_real_function_node_set_and_call_site(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            previous = audit.ROOT
+            audit.ROOT = directory = Path(temporary)
+            try:
+                (directory / 'compiler.py').write_text("NODES={'GeometryNodeSwitch'}\ndef select():\n    pass\n")
+                (directory / 'caller.py').write_text('selected = select(node)\n')
+                (directory / 'runtime.ts').write_text("case 'constant': return value\n")
+                entry = {'category': 'unsupported', 'versionOverrides': {'5.3.0': {'category': 'partial'}},
+                    'runtimeOps': [], 'runtimePath': 'runtime.ts',
+                    'evidence': [{'path': 'compiler.py'}, {'path': 'caller.py'}],
+                    'compileTime': {'path': 'compiler.py', 'function': 'select', 'nodeSet': 'NODES',
+                        'callers': [{'path': 'caller.py', 'anchor': 'selected = select('}]}}
+                validate = lambda value: audit.verify_map({'entries': {'shader:GeometryNodeSwitch': value}})
+                self.assertEqual(validate(entry), [])
+                for mutate in [lambda value: value['compileTime'].update(function='missing'),
+                               lambda value: value['compileTime']['callers'][0].update(anchor='missing('),
+                               lambda value: value.update(runtimeOps=['constant'])]:
+                    altered = json.loads(json.dumps(entry))
+                    mutate(altered)
+                    self.assertTrue(any('invalid compile-time' in failure for failure in validate(altered)))
+                (directory / 'compiler.py').write_text("NODES={'OtherNode'}\ndef select():\n    pass\n")
+                self.assertTrue(any('outside the compiler node set' in failure for failure in validate(entry)))
+            finally:
+                audit.ROOT = previous
+
+    def test_partial_version_override_cannot_bypass_live_evidence_checks(self):
+        entry = {'category': 'unsupported', 'versionOverrides': {'5.3.0': {'category': 'partial'}}, 'runtimeOps': []}
+        self.assertTrue(any('live classification needs' in failure for failure in audit.verify_map({'entries': {'shader:Test': entry}})))
+
+
 if __name__ == '__main__':
     unittest.main()

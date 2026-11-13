@@ -1,0 +1,7 @@
+{
+ "blenderVersion":"5.3.0","commit":"02f0899d78e374b63e7181d9061e1f7ab03419cc",
+ "sources":[
+  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc","finding":"Pixel is a two-component integer field. The Image domain controls the coordinates; this is not a constant vector."},
+  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc","finding":"Native Pixel coordinates add the domain data offset to each texel. This first port qualifies only full-frame zero-offset domains. Uniform and Normalized use distinct float2 math and are excluded."}
+ ]
+}

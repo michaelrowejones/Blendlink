@@ -59,7 +59,9 @@
       "scripts/lib/node-port-contract.mjs",
       "scripts/lib/node-port-evidence.mjs",
       "scripts/lib/node-port-python.mjs",
-      "scripts/node-port-blender.mjs"
+      "scripts/node-port-blender.mjs",
+      "scripts/lib/native-proof-archive.mjs",
+      "scripts/lib/runtime-compiler-trace.mjs"
     ],
     "tests": [
       "experiments/squeeze-node-differential/*.mjs",
