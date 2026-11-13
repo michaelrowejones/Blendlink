@@ -136,7 +136,7 @@ async function executePort(options) {
     if (!profile.hostPlatforms.includes(process.platform)) throw new Refused('The selected source profile is not declared for this host platform')
     if (!manifest.commands.verify || manifest.evidence.adapter !== 'squeeze-v1') throw new Refused('This entry has no implemented verification adapter; research/scaffold metadata grants no support')
     if (!options.blender) throw new Refused('Specify the actual --blender executable')
-    if (!['darwin', 'linux'].includes(process.platform)) throw new Refused('The native proof launcher is independently qualified on macOS/Linux only')
+    if (!['darwin', 'linux'].includes(process.platform)) throw new Refused('The native proof launcher supports macOS/Linux; other hosts require independent qualification')
     report.nativeIdentity = await nodePortFileIdentity(options.blender)
     const identityStep = await executeNodePortCommand({ argv: [report.nativeIdentity.path, '--version'], env: baseEnv,
       timeoutMs: 15000, cwd: root, logPath: join(evidence, 'identity-blender.log') })
