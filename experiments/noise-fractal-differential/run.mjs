@@ -7,6 +7,7 @@ import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
 import { captureRuntimeSnapshot } from '../../scripts/lib/runtime-provenance.mjs'
 import { freezeTslHarness } from '../../scripts/lib/frozen-tsl-harness.mjs'
+import { applyFieldTableOverlay } from '../noise-field-kernel/overlay.mjs'
 
 const started = Date.now()
 const harnessSha256 = createHash('sha256').update(readFileSync(import.meta.filename)).digest('hex')
@@ -18,8 +19,34 @@ rmSync(join(evidence, 'report.json'), { force: true })
 const built = process.argv.includes('--built')
 const snapshot = join(evidence, 'module-snapshot-' + Date.now() + '-' + process.pid)
 const nativeSnapshot = join(snapshot, 'native')
-const { provenance } = await captureRuntimeSnapshot({ root, built, destination: snapshot, label: 'noise' })
+let { provenance } = await captureRuntimeSnapshot({ root, built, destination: snapshot, label: 'noise' })
+let runtimeSnapshot = snapshot
+const fieldTableExperiment = process.env.BLENDLINK_NOISE_FIELD_TABLE_EXPERIMENT === '1'
+if (fieldTableExperiment) {
+  const overlay = await applyFieldTableOverlay({ root, snapshot, built, provenance })
+  runtimeSnapshot = overlay.snapshot; provenance = overlay.provenance
+}
 const frozenHarness = freezeTslHarness(root, snapshot)
+const fieldUvControls = process.env.BLENDLINK_NOISE_FIELD_TABLE_CONTROLS === '1'
+if (fieldTableExperiment || fieldUvControls) {
+  const mainPath = join(frozenHarness.directory, 'main.js')
+  let source = readFileSync(mainPath, 'utf8')
+  const reset = '  if (state.error) return { ok: false, error: state.error }'
+  assert.equal(source.split(reset).length, 2)
+  source = source.replace(reset, reset + `
+  state.fieldTables=[];window.__fieldTableDiagnostic=stats=>state.fieldTables.push(stats)
+  const fieldUv=state.mesh.geometry.getAttribute('uv')
+  state.fieldBaseUv??=Float32Array.from(fieldUv.array)
+  const fieldUvWindow=objectAttributes?.__fieldUvWindow??[0,0,1,1]
+  for(let index=0;index<fieldUv.count;index++)fieldUv.setXY(index,
+    state.fieldBaseUv[index*2]*(fieldUvWindow[2]-fieldUvWindow[0])+fieldUvWindow[0],
+    state.fieldBaseUv[index*2+1]*(fieldUvWindow[3]-fieldUvWindow[1])+fieldUvWindow[1])
+  fieldUv.needsUpdate=true
+`)
+  source = source.replace('      base64: btoa(binary),', '      base64: btoa(binary),\n      fieldTables:state.fieldTables,')
+  writeFileSync(mainPath, source)
+  frozenHarness.hashes['main.js'] = createHash('sha256').update(source).digest('hex')
+}
 const copied = Object.fromEntries(provenance.snapshot.files.map(file => [file.name, file.sha256]))
 mkdirSync(nativeSnapshot, { recursive: true })
 for (const directory of ['packages/blendlink/blender', 'packages/blender-addon'])
@@ -47,6 +74,14 @@ if (!process.argv.includes('--reuse-reference')) {
   assert.match(log, /BLENDLINK_NOISE_REFERENCES_PASSED/)
 }
 const manifest = JSON.parse(readFileSync(join(references, 'index.json'), 'utf8'))
+if (manifest.size !== 64) {
+  assert.ok([128].includes(manifest.size), 'Noise experimental proof size is unqualified')
+  const mainPath = join(frozenHarness.directory, 'main.js'), source = readFileSync(mainPath, 'utf8')
+  assert.equal(source.split('const SIZE = 64').length, 2)
+  const resized = source.replace('const SIZE = 64', 'const SIZE = ' + manifest.size)
+  writeFileSync(mainPath, resized); frozenHarness.hashes['main.js'] = createHash('sha256').update(resized).digest('hex')
+}
+
 const idsIndex = process.argv.indexOf('--ids')
 const requestedIds = idsIndex < 0 ? null : process.argv[idsIndex + 1]?.split(',')
 if (idsIndex >= 0) assert.ok(requestedIds?.length && new Set(requestedIds).size === requestedIds.length &&
@@ -64,7 +99,7 @@ const size = manifest.size
 const floats = buffer => new Float32Array(buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength))
 const server = await createServer({ configFile: false, root: frozenHarness.directory,
   cacheDir: join(evidence, 'vite-cache'), logLevel: 'warn', optimizeDeps: { noDiscovery: true },
-  resolve: { alias: { '@blendlink-tsl-recipe': join(snapshot, 'tslNodeRecipe.' + (built ? 'js' : 'ts')) } },
+  resolve: { alias: { '@blendlink-tsl-recipe': join(runtimeSnapshot, 'tslNodeRecipe.' + (built ? 'js' : 'ts')) } },
   server: { host: '127.0.0.1', port: 0, watch: null, hmr: false, fs: { allow: [root] } } })
 const browserChannel = process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL || null
 assert.ok(browserChannel === null || browserChannel === 'chromium', 'Only the bundled chromium channel is allowed')
@@ -74,8 +109,8 @@ const rows = [], failures = [], executionFailures = []
 function retainReport(finished = false) {
   const stable = sources.every(file => sourceHashes[file] === hash(file))
   writeFileSync(join(evidence, 'report.json'), JSON.stringify({ blender: manifest.blender, nativeBuild: manifest.buildHash,
-    built, elapsedMs: Date.now() - started, nativeGpuBackend: manifest.gpuBackend, cyclesDevice: manifest.cyclesDevice,
-    sourceHashes, harnessSha256, testedHarnessHashes: frozenHarness.hashes, provenance, snapshot, testedModuleHashes: copied, refusals: manifest.refusals ?? [],
+    built: built && !fieldTableExperiment, productionBuildVerified: built, fieldTableExperiment, fieldUvControls, elapsedMs: Date.now() - started, nativeGpuBackend: manifest.gpuBackend, cyclesDevice: manifest.cyclesDevice,
+    sourceHashes, harnessSha256, testedHarnessHashes: frozenHarness.hashes, provenance, snapshot: runtimeSnapshot, baselineSnapshot: snapshot, testedModuleHashes: copied, refusals: manifest.refusals ?? [],
     nativeModuleHashes: manifest.nativeModuleHashes, nativeFixtureHashes: nativeFixtures, workspaceStable: stable,
     finished, completedAllCases: rows.length === cases.length * 2, expectedCasesPerBackend: cases.length, nativeCases: manifest.cases.length, requestedIds, implicitControlIds, browserVersion, browserLaunchArgs, browserChannel,
     rows, failures, executionFailures }, null, 2))
@@ -148,7 +183,7 @@ try {
       // is reproduced separately in the production shader.
       const tolerance = 2e-5
       const metrics = measure(flip, tolerance)
-      const row = { backend, id: cell.id, engine: cell.engine, actualFile, components: rendered.components, ...metrics, tolerance, derivedRawMaximum: metrics.maximum / (cell.oracleScale ?? 1), renderAndReadbackMs: Date.now() - renderStarted, flipRows: flip }
+      const row = { backend, id: cell.id, engine: cell.engine, fieldTables: rendered.fieldTables ?? [], actualFile, components: rendered.components, ...metrics, tolerance, derivedRawMaximum: metrics.maximum / (cell.oracleScale ?? 1), renderAndReadbackMs: Date.now() - renderStarted, flipRows: flip }
       row.browserEnvironment = await page.evaluate(() => window.__tslDiffEnvironment())
       rows.push(row)
       if (rows.length % 32 === 0) retainReport()
@@ -178,5 +213,7 @@ try {
   retainReport(true)
   assert.deepEqual(executionFailures, [], 'Noise browser execution failed; partial pixels and metrics were retained')
   assert.deepEqual(failures, [], 'Native Noise pixels differ; see report.json')
+  if (fieldTableExperiment) assert.ok(rows.some(row => row.fieldTables.length > 0),
+    'Experimental field table selection lowered no native field; inspect source sampling/profile admission')
   console.log(`BLENDLINK_NOISE_DIFFERENTIAL_PASSED ${cases.length} cases on both backends`)
 } finally { await browser?.close(); await server.close() }

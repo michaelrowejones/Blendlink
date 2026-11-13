@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import { readDifferenceProfileRefusal } from './lib/difference-profile-refusal.mjs'
 import { NODE_PARITY_SUITES, nodeParityPlan } from './lib/node-parity-plan.mjs'
 
 const plan = nodeParityPlan(process.argv.slice(2))
@@ -12,6 +13,7 @@ if (process.argv.includes('--list-suites')) {
 }
 
 const root = resolve(import.meta.dirname, '..')
+const { isMeasuredDifferenceRneProfile } = await import(join(root, 'packages/blendlink/dist/tslCompositorDifferenceKey.js'))
 const evidence = resolve(process.env.BLENDLINK_NATIVE_NODE_EVIDENCE || join(root, 'artifacts/verification-native-node-gate'))
 mkdirSync(evidence, { recursive: true })
 rmSync(join(evidence, 'report.json'), { force: true })
@@ -83,6 +85,7 @@ const compositorFamilies = [
   ['difference-key', 'compositor_difference_key_check.py', 'BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_REFERENCES'],
   ['color-spill', 'compositor_spill_check.py', 'BLENDLINK_COMPOSITOR_SPILL_REFERENCES'],
   ['color-key', 'compositor_color_key_check.py', 'BLENDLINK_COMPOSITOR_COLOR_KEY_REFERENCES'],
+  ['chroma-key', 'compositor_chroma_key_check.py', 'BLENDLINK_COMPOSITOR_CHROMA_KEY_REFERENCES'],
   ['transform', 'compositor_transform_check.py', 'BLENDLINK_COMPOSITOR_TRANSFORM_REFERENCES'],
   ['resample', 'compositor_resample_check.py', 'BLENDLINK_COMPOSITOR_RESAMPLE_REFERENCES'],
   ['affine', 'compositor_affine_check.py', 'BLENDLINK_COMPOSITOR_AFFINE_REFERENCES'],
@@ -124,7 +127,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   mkdirSync(directory, { recursive: true })
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
-    [variable]: directory, BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPILL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
+    [variable]: directory, BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPILL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_AFFINE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
@@ -182,10 +185,24 @@ if (!plan.compositor) {
     rmSync(directory, { recursive: true, force: true })
     mkdirSync(directory, { recursive: true })
     attempt('native-' + family, () => {
-    run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+    const nativeOutput = run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
       '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory, [deviceVariable]: 'GPU' })
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
     if (family === 'affine-gpu' && recordAffineUnavailable(directory, family, 'GPU', rows)) return
+    if (family === 'difference-key-gpu') {
+      const qualification = readDifferenceProfileRefusal(directory, rows, profile => {
+        assert.equal(typeof isMeasuredDifferenceRneProfile, 'function', 'Missing current Difference profile validator')
+        return isMeasuredDifferenceRneProfile(profile)
+      })
+      if (qualification) {
+        assert.match(nativeOutput, /BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_SOURCE_PROFILE_REFUSED/)
+        assert.doesNotMatch(nativeOutput, /BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_PASSED/)
+        inapplicableFamilies.push({ family, device: 'GPU', directory, ...qualification })
+        references.push(directory)
+        referenceSets.push({ family: 'difference-key-gpu-independent-control', device: 'GPU', directory, cases: 1 })
+        return
+      }
+    }
     const unavailable = join(directory, 'not-applicable.json')
     if (family === 'resample-gpu' && existsSync(unavailable)) {
       const qualification = JSON.parse(readFileSync(unavailable, 'utf8'))
@@ -217,7 +234,7 @@ if (!plan.compositor) {
     rmSync(directory, { recursive: true, force: true })
     mkdirSync(directory, { recursive: true })
     attempt('native-' + family, () => {
-      run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
+      const nativeOutput = run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
         '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory })
       const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
       assert.ok(rows.length > 0, `${family}: native execution model generator produced no cases`)

@@ -90,7 +90,8 @@ def retain_refused_native_graph(material, case, engine, temporary):
 OUTPUT = Path(os.environ['BLENDLINK_NOISE_REFERENCES']).resolve()
 OUTPUT.mkdir(parents=True, exist_ok=True)
 (OUTPUT / 'ir').mkdir(exist_ok=True)
-SIZE = 64
+SIZE = int(os.environ.get('BLENDLINK_NOISE_REFERENCE_SIZE', '64'))
+assert SIZE in (64,128), 'Native Noise proof size must be64 or128'
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 scene.cycles.samples = 1
@@ -119,15 +120,20 @@ scene.render.image_settings.color_mode = 'RGBA'
 scene.render.image_settings.color_depth = '32'
 engines = {item.identifier for item in scene.render.bl_rna.properties['engine'].enum_items}
 EEVEE = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT'
+render_uv_layer = next((layer for layer in proxy.data.uv_layers if layer.active_render), proxy.data.uv_layers.active)
+original_uvs = np.empty(len(render_uv_layer.data) * 2, np.float32)
+render_uv_layer.data.foreach_get('uv', original_uvs)
+original_uvs = original_uvs.reshape(-1, 2)
 
 
 
-def exact_inputs(tree, precision='half'):
-    image = bpy.data.images.new('Exact Noise inputs', width=SIZE, height=SIZE, alpha=True, float_buffer=True)
+def exact_inputs(tree, precision='half', dimensions=None):
+    width, height = dimensions or (SIZE, SIZE)
+    image = bpy.data.images.new('Exact Noise inputs', width=width, height=height, alpha=True, float_buffer=True)
     image.colorspace_settings.name = 'Non-Color'
     if hasattr(image, 'use_half_precision'): image.use_half_precision = False
-    values = np.ones((SIZE * SIZE, 4), np.float32)
-    index = np.arange(SIZE * SIZE)
+    values = np.ones((width * height, 4), np.float32)
+    index = np.arange(width * height)
     for channel, multiplier in enumerate([1, 613, 1019]):
         values[:, channel] = ((index * multiplier) % 2048) / np.float32(1024) - .5
         if precision == 'float32': values[:, channel] = np.sin(index.astype(np.float32) * np.float32(.137 + channel * .071)) * np.float32(.973) + np.float32(.173)
@@ -141,6 +147,12 @@ def exact_inputs(tree, precision='half'):
         if precision == 'modulo-negative': values[:, 0] *= -1
     if precision in {'modulo-half-positive', 'modulo-half-negative'}:
         values[:, 0] = (((index * 613) % 65505) - 32752).astype(np.float16).astype(np.float32)
+    if precision == 'field-cap':
+        half_bits = ((index % 15360) + 0x400).astype('<u2')
+        half_bits[index >= 15360] = (((index[index >= 15360] - 15360) % 15360) + 0x8400).astype('<u2')
+        values[:,0] = half_bits.view('<f2').astype(np.float32)
+        values[:,1] = .5
+        values[:,2] = (((index*13) % 15360) + 0x400).astype('<u2').view('<f2').astype(np.float32)
     image.pixels.foreach_set(values.ravel())
     image.update()
     texture = tree.nodes.new('ShaderNodeTexImage')
@@ -195,7 +207,7 @@ def make_material(case):
             tree.links.new(second.outputs[0], third.inputs[0]); third.inputs[1].default_value = case['coordinateCanary']
             tree.links.new(third.outputs[0], source.inputs[0])
     else:
-        incoming = exact_inputs(tree, case.get('inputPrecision', 'half'))
+        incoming = exact_inputs(tree, case.get('inputPrecision', 'half'), case.get('inputSize'))
     if 'coordinateOffset' in case:
         translated = tree.nodes.new('ShaderNodeVectorMath'); translated.operation = 'ADD'
         tree.links.new(incoming, translated.inputs[0]); translated.inputs[1].default_value = case['coordinateOffset']
@@ -721,6 +733,16 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             assert os.environ.get('BLENDLINK_MATH_MODULO_NATIVE') and bpy.app.version >= (5, 0, 0), 'MF-only Modulo requires the native profile and modern Blender'
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'}
                      or case['kind'] == 'math-modulo-probe' and case['stage'] == 'constant']
+        if os.environ.get('BLENDLINK_NOISE_FIELD_TABLE_CONTROLS') and engine != 'CYCLES':
+            shared = {'kind':'noise','stage':'image','dimensions':'4D','output':'Color','type':'FBM',
+                'Detail':6,'Roughness':1,'Lacunarity':2,'Scale':40,'normalize':normalized,'oracleScale':.0625}
+            cases.append({**shared,'id':f'{engine.lower()}-field-table-hdr','Lacunarity':1})
+            for name, window, dimensions in [('negative',[-1,-1,1,1],[5,7]),('positive',[1,1,3,3],[7,5])]:
+                attributes = {'__fieldUvWindow':window}
+                cases.append({**shared,'id':f'{engine.lower()}-field-table-repeat-{name}',
+                    'uvWindow':window,'inputSize':dimensions,'objectAttributes':attributes})
+                cases.append({'id':f'{engine.lower()}-field-table-input-{name}','kind':'image-control','stage':'image',
+                    'uvWindow':window,'inputSize':dimensions,'objectAttributes':attributes})
         if os.environ.get('BLENDLINK_NOISE_FIELD_FOCUS'):
             # Start with the actual expensive Color fields, before a long
             # corpus can hide their compiler/device failure behind earlier rows.
@@ -731,6 +753,12 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                     and case.get('type', 'FBM') == 'FBM' and case.get('Detail', 0) >= 4
                     and case.get('Distortion', 0) == 0 and not case.get('roughnessStage'))]
             assert any(case['kind'] == 'noise' for case in cases), 'Field focus selected no actual native field'
+        if os.environ.get('BLENDLINK_NOISE_FIELD_CAP'):
+            assert SIZE == 128 and engine != 'CYCLES', 'Field cap requires128px EEVEE references'
+            cases = [case for case in cases if case['kind'] in {'constant','image-control'}]
+            cases.append({'id':f'{engine.lower()}-field-table-cap','kind':'noise','stage':'image','dimensions':'4D',
+                'output':'Color','type':'FBM','Detail':6,'Roughness':1,'Lacunarity':2,'Scale':40,'normalize':normalized,
+                'inputPrecision':'field-cap','oracleScale':.0625,'residual':True})
         requested_count += len(cases)
         source_profile = tsl_ir._normalized_noise_source_profile(engine, sys.platform, platform.machine(), scene.cycles.device)
         expected_source_refusals = {case['id'] for case in cases if varying and engine == 'CYCLES'
@@ -752,6 +780,11 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                                                case.get('Gain', 1) if case['type'] in {'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 1)
                 case['amplitudeBound'] = bound
                 case['oracleScale'] = case.get('oracleScaleOverride', 2 ** math.floor(math.log2(.25 / max(1, bound))))
+            if os.environ.get('BLENDLINK_NOISE_FIELD_TABLE_CONTROLS'):
+                window = case.get('uvWindow', [0,0,1,1])
+                mapped = original_uvs * np.asarray([window[2]-window[0],window[3]-window[1]],np.float32) + np.asarray(window[:2],np.float32)
+                render_uv_layer.data.foreach_set('uv', mapped.ravel())
+                proxy.data.update()
             material, emission = make_material(case)
             proxy.data.materials.clear()
             proxy.data.materials.append(material)

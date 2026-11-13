@@ -978,3 +978,68 @@ of 64/1-sample renders, requires identical input/program/output, and excludes
 the first pair from timing. On the measured Mac Blender 5.2 Metal profile,
 median CPU-case render time changed from 0.195s to 0.0233s and GPU-case time
 from 0.108s to 0.0208s. These local timings do not establish Linux speedups.
+
+Difference Key's fresh `native-difference-key-rne-v1` model qualifies the exact
+recorded Blender 5.2 Linux x86-64 llvmpipe context: native build
+`fbe6228777e7`, LLVM 20.1.2/256-bit renderer, Mesa 25.2.8 driver
+`4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4`, SOFTWARE device and requested
+and actual OPENGL backends. The source captures all eleven native profile
+fields; Python and TypeScript independently check every field. It uses the
+existing bounded two-sum corrected mean. The old `native-difference-key-v1`
+keeps its serialized arithmetic, including its GPU branch and Metal results.
+Older runtimes reject the new tag. The actual reported profile was retained
+by hosted run 43334775635, artifact 13995933757.
+
+The distinction matters at strict HDR-alpha boundaries: with RGB f32(.2),
+input alpha 2 and tolerance/falloff f32(.1), the retained native Metal image
+alpha is 4, while the measured llvmpipe image alpha is 2. Retained-data replay
+of the new model is a diagnostic metadata overlay: original image inputs and
+native pixels remain unchanged. It is separate from fresh source emission.
+The positive fixture asserts the new tag/profile on every Difference op
+before saving matching OpenGL references. CPU/Metal assert the original tag.
+Fresh-source qualification requires that actual fixture and numerical gate;
+an overlay is not evidence that the new producer emitted a document.
+
+Fresh unmeasured GPU/OPENGL requests take the exact source-bake refusal:
+`Difference Key GPU OpenGL source precision profile is unverified; use source
+baking`. GPU API initialization is attempted when available; failure leaves
+unknown fields and cannot grant the model. Other renderer/driver/native-build
+profiles require their own proof.
+
+The Difference fixture declares an unmeasured profile using
+`qualification.json` with status `source-profile-refused`, protocol
+`blendlink-difference-gpu-source-profile-v1`, cases=0, controlCases=1 and
+numericalDifferenceCases=0. Its index contains only the independent control.
+Two separate Image/Matte records carry basename-only filenames and SHA256
+hashes. Each file retains the unsupported program, exact named diagnostics,
+source fingerprint/preservation assertion, requested compositor device,
+native GPU profile, dimensions and actual float input/output pixels. The
+`SOURCE_PROFILE_REFUSED` marker cannot be counted as a completed numerical
+Difference family. Default CPU and qualified profiles retain the numerical
+`PASSED` marker.
+
+`probe-difference-refusal-protocol.py` tests that protocol with an explicitly
+injected unmeasured context over real RNA and native rendering. It asserts
+both hashes/outputs, source restoration and zero numerical Difference cases.
+It is a routing/error-path simulation, not native Linux fidelity evidence.
+Set `BLENDLINK_DIFFERENCE_PROTOCOL_EVIDENCE` to retain it. The actual native
+unmeasured-profile fixture remains the source of hosted refusal evidence.
+
+The fresh qualified OpenGL GPU corpus also adds two asymmetric HDR-alpha
+cases (Image/Matte) after the original 39 authored graphs. A deterministic
+NumPy Float32 search selects sixteen distinct permuted triples near sum 0.6;
+ordered-left and ordered-right addition produce different means on opposite
+sides of f32(.1+.1). Eight triples straddle in each direction. A separate
+owned float image supplies those exact RGB words with alpha 2/key 0. Native
+Blender computes all expected pixels; the independent arithmetic only selects
+inputs. `association-inputs.json` retains the seed, triples, sum/mean words
+and predicted association directions. This supplement tests native dot3
+association, independently from whether /3 is correctly rounded. The original
+39 node graphs and input arrays are unchanged. Other CPU/Metal profiles keep
+their original 39-case corpus.
+
+Fixture source fingerprints capture actual input and output defaults,
+including sequence RGBA values and Value-node outputs. ID defaults use type
+and name. Both extraction and the native-refusal render restore that full
+source fingerprint; the routing test explicitly changes key RGBA/Value
+output defaults to verify that either mutation is detected.

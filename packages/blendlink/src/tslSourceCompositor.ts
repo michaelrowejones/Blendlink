@@ -1,4 +1,5 @@
 import { buildCompositorColorKey } from './tslCompositorColorKey.js'
+import { buildCompositorChromaKey } from './tslCompositorChromaKey.js'
 import { buildCompositorFilter } from './tslCompositorFilter.js'
 import { buildCompositorFlip } from './tslCompositorSpatial.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
@@ -765,6 +766,12 @@ export function buildSourceCompositor(
             const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
             const device = compositorEvaluationDevice(op, single)
             node = buildCompositorColorKey(op, input, device, color => compositorRgbToHsv(color, device),
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
+          }
+          case 'chroma-key': {
+            const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
+            node = buildCompositorChromaKey(op, input('Image'), compositorEvaluationDevice(op, single),
               message => { throw new SourceCompositorUnsupported(message) })
             break
           }

@@ -51,6 +51,7 @@ normalize_normal = _sibling("compositor_normal").normalize_normal
 normalize_alpha_conversion = _sibling("compositor_alpha_conversion").normalize_alpha_conversion
 normalize_luminance_key = _sibling("compositor_luminance_key").normalize_luminance_key
 normalize_difference_key = _sibling("compositor_difference_key").normalize_difference_key
+normalize_chroma_key = _sibling("compositor_chroma_key").normalize_chroma_key
 normalize_spill = _sibling("compositor_spill").normalize_spill
 normalize_color_key = _sibling("compositor_color_key").normalize_color_key
 
@@ -76,6 +77,7 @@ TYPES = {
     "CompositorNodePremulKey": "convert-alpha",
     "CompositorNodeLumaMatte": "luminance-key",
     "CompositorNodeDiffMatte": "difference-key",
+    "CompositorNodeChromaMatte": "chroma-key",
     "CompositorNodeColorSpill": "color-spill",
     "CompositorNodeColorMatte": "color-key",
     "CompositorNodeExposure": "exposure",
@@ -587,6 +589,10 @@ def extract(scene):
                     normalize_color_key(node, socket, op, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
                         lambda incoming, message: fail("unsupported-color-key", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeChromaMatte":
+                    normalize_chroma_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
+                        _sibling("compositor_math").numeric_socket_bounds,
+                        lambda incoming, message: fail("unsupported-chroma-key", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeColorSpill":
                     normalize_spill(node, op, lambda incoming: input_value(incoming, ctx),
                         lambda incoming, message: fail("unsupported-color-spill", path, node, incoming, message))

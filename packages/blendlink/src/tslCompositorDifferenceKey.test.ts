@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildSourceCompositor } from './tslSourceCompositor.js'
+import { isMeasuredDifferenceRneProfile } from './tslCompositorDifferenceKey.js'
 import type { SourceCompositorProgram } from './sourceDisplay.js'
 
 function program(): SourceCompositorProgram {
@@ -35,5 +36,55 @@ describe('Difference Key document admission', () => {
       const document = program(); Object.assign(document.ops[0]!.properties, properties)
       expect(() => buildSourceCompositor(document, () => null)).toThrow(/Artist Difference Key.*native model/)
     }
+  })
+})
+
+
+// Captured from actual Blender 5.2 GPU execution, not inferred from CI flags.
+const measuredProfile={platform:'linux',architecture:'x86_64',blenderVersion:[5,2,0],blenderHash:'fbe6228777e7',
+  requestedBackend:'OPENGL',renderer:'llvmpipe (LLVM 20.1.2, 256 bits)',vendor:'Mesa',
+  version:'4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4',deviceType:'SOFTWARE',backend:'OPENGL'}
+const profiled=():SourceCompositorProgram=>{
+  const document=program()
+  Object.assign(document.ops[0]!.properties,{difference_key_model:'native-difference-key-rne-v1',
+    evaluation_device:'GPU',single_value_device:'GPU',native_gpu_backend:'OPENGL',difference_key_gpu_profile:structuredClone(measuredProfile)})
+  return document
+}
+describe('fresh measured llvmpipe Difference Key model',()=>{
+  it('admits its field evaluator and modern native constant-fold evaluator',()=>{
+    for(const single of ['CPU','GPU'])for(const output of ['Image','Matte']) {
+      const document=profiled();document.ops[0]!.properties.single_value_device=single
+      document.ops[0]!.source.output=output
+      const built=buildSourceCompositor(document,()=>null)
+      expect(built.node.isNode).toBe(true);built.dispose()
+    }
+  })
+  it('checks every actual context field independently; flags cannot certify a profile',()=>{
+    expect(isMeasuredDifferenceRneProfile(measuredProfile)).toBe(true)
+    for(const field of Object.keys(measuredProfile)) {
+      const profile={...measuredProfile,[field]:field==='blenderVersion'?[5,3,0]:'unmeasured'}
+      expect(isMeasuredDifferenceRneProfile(profile)).toBe(false)
+      const document=profiled();document.ops[0]!.properties.difference_key_gpu_profile=profile
+      expect(()=>buildSourceCompositor(document,()=>null)).toThrow(/Artist Difference Key.*measured Blender 5.2/)
+    }
+    const inherited={...measuredProfile,extra:'claim'} as Record<string,unknown>
+    delete inherited.renderer
+    Object.setPrototypeOf(inherited,{renderer:measuredProfile.renderer})
+    expect(isMeasuredDifferenceRneProfile(inherited)).toBe(false)
+    for(const profile of [null,[],{backend:'OPENGL',software:true},
+      {...measuredProfile,certified:true},{...measuredProfile,blenderVersion:[5,2,false]},
+      {...measuredProfile,blenderVersion:[5,2,0,0]},{...measuredProfile,blenderVersion:[5,2,,]},
+      Object.assign(Object.create({renderer:measuredProfile.renderer}),{...measuredProfile,renderer:undefined,extra:'claim'})])expect(isMeasuredDifferenceRneProfile(profile)).toBe(false)
+  })
+  it('requires the new model/backend/device/schema together and preserves old v1 admission',()=>{
+    for(const changed of [
+      {difference_key_model:'native-difference-key-v1'}, {difference_key_schema:'legacy-cpu'},
+      {native_gpu_backend:'METAL'}, {evaluation_device:'CPU'}, {difference_key_gpu_profile:undefined},
+    ]) {
+      const document=profiled();Object.assign(document.ops[0]!.properties,changed)
+      expect(()=>buildSourceCompositor(document,()=>null)).toThrow(/Artist Difference Key/)
+    }
+    const old=program();Object.assign(old.ops[0]!.properties,{evaluation_device:'GPU',single_value_device:'GPU',native_gpu_backend:'OPENGL'})
+    const built=buildSourceCompositor(old,()=>null);expect(built.node.isNode).toBe(true);built.dispose()
   })
 })

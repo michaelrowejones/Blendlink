@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "f02626b25021cb0d78c9dbd5c03af86e704677e741263cc6fb28b96c03fb5174",
+  "capabilityMapSha256": "bba0116d0426e1ccfff518c543838bbd372b3ce08e8e6b5305ac4574822bb05c",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T00:07:05.503808+00:00",
+  "generatedAt": "2026-11-13T01:01:55.717885+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -60,10 +60,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 18,
+            "partial": 19,
             "structural": 7,
             "supported": 25,
-            "unsupported": 54
+            "unsupported": 53
           },
           "enumValueCounts": {
             "partial": 2,
@@ -290,14 +290,32 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_chroma_key.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorChromaKey.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorChromaKey.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_chroma_key_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/CHROMA_KEY.md"
+                }
+              ],
               "id": "CompositorNodeChromaMatte",
               "label": "Chroma Key",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "CPU-source soft chroma key only: Minimum / legacy Cutoff must equal zero. Default positive cutoff and all GPU-authored source compositing explicitly refuse because native atan2 rounding changes binary matte decisions. Maximum / legacy Acceptance requires a fixed Float32 angle in [pi/32,pi/2]; Falloff / legacy Gain in [1/64,1]. Finite fixed RGBA key, RGB in [0,1] and normalized BT.709 chroma magnitude >=1/32. Key alpha is ignored numerically but must remain a supported fixed input; modern scalar controls accept unlinked values/direct Value nodes. Live Image field or constant, Image/Matte outputs and differently configured cascades preserve native reciprocal-vs-division normalization, signed/HDR RGB/alpha, negative matte and full RGBA multiplication. No alpha clamp or automatic authored-setting changes. Native scalar C math prepares only fixed basis/tangent parameters; no image bake. Animated/driven trees, dynamic key/controls, near-neutral keys and unqualified image-domain combinations refuse. Positive-Minimum/default/GPU counterexamples remain retained; this is not full Keying coverage.",
+              "runtimeOps": [
+                "chroma-key"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -913,11 +931,17 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/DIFFERENCE_KEY.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_difference_profile_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/probe-difference-refusal-protocol.py"
                 }
               ],
               "id": "CompositorNodeDiffMatte",
               "label": "Difference Key",
-              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage.",
+              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime and mean division is explicitly rounded. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh hosted emission and asymmetric RGB threshold cases are pending; retained Linux-reference overlay tests alone are not fresh-source certification.",
               "runtimeOps": [
                 "difference-key"
               ],
@@ -5728,10 +5752,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 24,
+            "partial": 25,
             "structural": 6,
             "supported": 23,
-            "unsupported": 115
+            "unsupported": 114
           },
           "enumValueCounts": {
             "partial": 12,
@@ -5989,14 +6013,32 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_chroma_key.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorChromaKey.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorChromaKey.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_chroma_key_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/CHROMA_KEY.md"
+                }
+              ],
               "id": "CompositorNodeChromaMatte",
               "label": "Chroma Key",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "CPU-source soft chroma key only: Minimum / legacy Cutoff must equal zero. Default positive cutoff and all GPU-authored source compositing explicitly refuse because native atan2 rounding changes binary matte decisions. Maximum / legacy Acceptance requires a fixed Float32 angle in [pi/32,pi/2]; Falloff / legacy Gain in [1/64,1]. Finite fixed RGBA key, RGB in [0,1] and normalized BT.709 chroma magnitude >=1/32. Key alpha is ignored numerically but must remain a supported fixed input; modern scalar controls accept unlinked values/direct Value nodes. Live Image field or constant, Image/Matte outputs and differently configured cascades preserve native reciprocal-vs-division normalization, signed/HDR RGB/alpha, negative matte and full RGBA multiplication. No alpha clamp or automatic authored-setting changes. Native scalar C math prepares only fixed basis/tangent parameters; no image bake. Animated/driven trees, dynamic key/controls, near-neutral keys and unqualified image-domain combinations refuse. Positive-Minimum/default/GPU counterexamples remain retained; this is not full Keying coverage.",
+              "runtimeOps": [
+                "chroma-key"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -6559,11 +6601,17 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/DIFFERENCE_KEY.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_difference_profile_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/probe-difference-refusal-protocol.py"
                 }
               ],
               "id": "CompositorNodeDiffMatte",
               "label": "Difference Key",
-              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage.",
+              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime and mean division is explicitly rounded. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh hosted emission and asymmetric RGB threshold cases are pending; retained Linux-reference overlay tests alone are not fresh-source certification.",
               "runtimeOps": [
                 "difference-key"
               ],
@@ -12936,10 +12984,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 26,
+            "partial": 27,
             "structural": 6,
             "supported": 24,
-            "unsupported": 131
+            "unsupported": 130
           },
           "enumValueCounts": {
             "partial": 17,
@@ -13197,14 +13245,32 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_chroma_key.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorChromaKey.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorChromaKey.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_chroma_key_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/CHROMA_KEY.md"
+                }
+              ],
               "id": "CompositorNodeChromaMatte",
               "label": "Chroma Key",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "CPU-source soft chroma key only: Minimum / legacy Cutoff must equal zero. Default positive cutoff and all GPU-authored source compositing explicitly refuse because native atan2 rounding changes binary matte decisions. Maximum / legacy Acceptance requires a fixed Float32 angle in [pi/32,pi/2]; Falloff / legacy Gain in [1/64,1]. Finite fixed RGBA key, RGB in [0,1] and normalized BT.709 chroma magnitude >=1/32. Key alpha is ignored numerically but must remain a supported fixed input; modern scalar controls accept unlinked values/direct Value nodes. Live Image field or constant, Image/Matte outputs and differently configured cascades preserve native reciprocal-vs-division normalization, signed/HDR RGB/alpha, negative matte and full RGBA multiplication. No alpha clamp or automatic authored-setting changes. Native scalar C math prepares only fixed basis/tangent parameters; no image bake. Animated/driven trees, dynamic key/controls, near-neutral keys and unqualified image-domain combinations refuse. Positive-Minimum/default/GPU counterexamples remain retained; this is not full Keying coverage.",
+              "runtimeOps": [
+                "chroma-key"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -13901,11 +13967,17 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/DIFFERENCE_KEY.md"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_difference_profile_check.py"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/probe-difference-refusal-protocol.py"
                 }
               ],
               "id": "CompositorNodeDiffMatte",
               "label": "Difference Key",
-              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage.",
+              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime and mean division is explicitly rounded. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh hosted emission and asymmetric RGB threshold cases are pending; retained Linux-reference overlay tests alone are not fresh-source certification.",
               "runtimeOps": [
                 "difference-key"
               ],
@@ -21189,11 +21261,12 @@
     "packages/blendlink/blender/compositor_affine.py": "a29c7ab3a8bbb6d6f17ebc26e5e1dfafaa547ed4171a549498977e49c9b8766c",
     "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
     "packages/blendlink/blender/compositor_blur.py": "916b300583cfcf06c3c1add69fa24396cea43d3bf699c32dea4f314a45661b66",
+    "packages/blendlink/blender/compositor_chroma_key.py": "9640a5663a707cc5823b17b21a2d7206dfc3e963e3738c0914f47274648a3c6f",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
     "packages/blendlink/blender/compositor_color_key.py": "40a10dde3fb179aba672664446b89cd80cb3a03881490143643a5cd5b7a3cb32",
-    "packages/blendlink/blender/compositor_difference_key.py": "f28ec42bba70cd32743638a1c26647c054b5f01c746bfc9f04d92e3fef8920de",
+    "packages/blendlink/blender/compositor_difference_key.py": "fb6ed344f0f524ab8fe958978bad80f2938f7816b972653cc9f85b68a5f6c727",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
-    "packages/blendlink/blender/compositor_graph.py": "e2fbd5b922888f68ca7383bcd9b509e9051b44dfd8726cec89a7dbba5ee1245d",
+    "packages/blendlink/blender/compositor_graph.py": "b4476a9a49d82abf53c2db0f1d465ec52694965b9e7241fc9b8929dd18ec8cd5",
     "packages/blendlink/blender/compositor_luminance_key.py": "d264bc0f2011484945e2dc14937198e4664cee7971967ced4b3c38eb765afaef",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
@@ -21216,10 +21289,11 @@
     "packages/blendlink/src/tslCompositorAffine.ts": "8b2ce8dbe3468882fbbf9f5077d8c2d4bb3dfc0cb48e221b1a36d4688045b2e3",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
     "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
+    "packages/blendlink/src/tslCompositorChromaKey.ts": "f69481feb37448ad02f7873091a540eb18bf1564620489e2a0d7010fd0fc6875",
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
     "packages/blendlink/src/tslCompositorColorKey.ts": "ecbe2a81ee5de9242c684bb0cfb3835686b3d945ef633cdb1cf9ae96bf1fd9c1",
     "packages/blendlink/src/tslCompositorCoordinateFma.ts": "6916359803b825eecd65595d1fa694a8b3db0800be78db0568b9168e20b55d88",
-    "packages/blendlink/src/tslCompositorDifferenceKey.ts": "de4035c2288835a84b871de2e1b54d7a9e43e52c2df530a0a9fbf1b3c7f19296",
+    "packages/blendlink/src/tslCompositorDifferenceKey.ts": "05edf5797c068052831ce1520e87c5e65f44e3b6eb33009e76cf8b65d407c03f",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
     "packages/blendlink/src/tslCompositorImageDomain.ts": "8b4314dedfd42eb038ff70ffecca4afe028d2254164f796e200c93467777eb57",
@@ -21248,7 +21322,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "2986bef478413e481ddeecc4dc2f68f4aea910c62973be028aed4eb4abc7b13f",
+    "packages/blendlink/src/tslSourceCompositor.ts": "0d236093aac5e72e84e4a50569ea7c3d9ee9aaec7b6b87d39944f766a2414a55",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
     "packages/blendlink/src/tslTangentNodes.ts": "517c0e9d33d838d381fafb311d6289282860f8fe6fcae3b1b6bd10c59b424831",
     "packages/blendlink/src/tslTangentNormalMap.ts": "ac9b769015f51c282bd5b6bf3a98bb52f7cf950befa86c6042ec2eb79de9030d",

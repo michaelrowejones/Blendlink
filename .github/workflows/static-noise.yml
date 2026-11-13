@@ -103,6 +103,28 @@ jobs:
           BLENDLINK_NOISE_TYPES: '["FBM"]'
           BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/normalized-field
 
+      - name: Compare experimental nearest-field raw Noise overlay
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_NOISE_FIELD_FOCUS: '1'
+          BLENDLINK_NOISE_FIELD_TABLE_EXPERIMENT: '1'
+          BLENDLINK_NOISE_TYPES: '["FBM"]'
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/experimental-raw-field
+
+      - name: Compare experimental nearest-field normalized Noise overlay
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_NOISE_FIELD_FOCUS: '1'
+          BLENDLINK_NOISE_FIELD_TABLE_EXPERIMENT: '1'
+          BLENDLINK_NOISE_NORMALIZED: '1'
+          BLENDLINK_NOISE_ENGINE: EEVEE
+          BLENDLINK_NOISE_TYPES: '["FBM"]'
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/experimental-normalized-field
+
       - name: Compare native MF large-coordinate Math Modulo
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
@@ -136,10 +158,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        family: [Luminance Key, Difference Key, Color Spill, Color Key]
+        family: [Luminance Key, Difference Key, Color Spill, Color Key, Chroma Key]
         source_device: [CPU, GPU]
         exclude:
           - family: Color Key
+            source_device: GPU
+          - family: Chroma Key
             source_device: GPU
         include:
           - family: Luminance Key
@@ -162,6 +186,11 @@ jobs:
             device_variable: BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE
             reference_variable: BLENDLINK_COMPOSITOR_COLOR_KEY_REFERENCES
             evidence: color-key
+          - family: Chroma Key
+            fixture: compositor_chroma_key_check.py
+            device_variable: BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_CHROMA_KEY_REFERENCES
+            evidence: chroma-key
     steps:
       - name: Check out the exact candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
