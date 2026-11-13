@@ -45,5 +45,5 @@ def normalize_image_coordinates(node, socket, op, scene, input_value, operations
 def validate_image_coordinate_graph(program):
     coordinates = [op for op in program['ops'] if op['kind'] == 'image-coordinates']
     if coordinates and any(op['kind'] in SPATIAL for op in program['ops']):
-        return coordinates[0], 'Image Coordinates Pixel currently qualifies pointwise consumers only; spatial/neighborhood realization remains unqualified'
+        return coordinates[0], 'Image Coordinates fields currently qualify pointwise consumers only; spatial/neighborhood realization remains unqualified'
     return None

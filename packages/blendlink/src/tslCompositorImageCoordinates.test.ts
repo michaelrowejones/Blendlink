@@ -9,6 +9,10 @@ const program=(op=operation(),output:CompositorValue={kind:'convert',fromType:'I
 const image=new DataTexture(new Float32Array(13*9*4),13,9,RGBAFormat,FloatType)
 const build=(p:SourceCompositorProgram)=>buildSourceCompositor(p,()=>texture(image))
 describe('explicit Image Coordinates Pixel INT2 contract',()=>{
+ it('retains the named coordinate-domain refusal when a foreign spatial step lacks texture properties',()=>{
+  const p=program();p.ops.push({id:'unsupported-spatial',kind:'blur'} as SourceCompositorOperation)
+  expect(()=>build(p)).toThrow(/Image Coordinates.*spatial\/neighborhood/)
+ })
  it('builds the fresh integer pair and direct RGBA edge through the production dispatcher',()=>{const result=build(program());expect(result.node.isNode).toBe(true);result.dispose();result.dispose()})
  it('keeps the new padded float3 edge explicit',()=>{const p=program();p.output={kind:'convert',fromType:'VECTOR',type:'RGBA',input:{kind:'convert',fromType:'INT_VECTOR2',type:'VECTOR',input:{kind:'ref',node:'pixels',type:'INT_VECTOR2'}}};const result=build(p);expect(result.node.isNode).toBe(true);result.dispose()})
  it('rejects scalar/int/float2 edge substitutions instead of reusing float3 averaging',()=>{for(const type of ['VALUE','INT','VECTOR2','INT_VECTOR','INT_VECTOR2']){const p=program();p.output={kind:'convert',type:'RGBA',fromType:type,input:{kind:'convert',type,fromType:'INT_VECTOR2',input:{kind:'ref',node:'pixels',type:'INT_VECTOR2'}}};expect(()=>build(p)).toThrow(/INT_VECTOR2/)}})

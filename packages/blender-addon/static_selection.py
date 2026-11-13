@@ -4,6 +4,7 @@ import bpy
 
 MODEL = 'native-static-selection-53-v1'
 NODES = {'GeometryNodeSwitch', 'GeometryNodeIndexSwitch', 'GeometryNodeMenuSwitch'}
+MENU_SOURCES = {'FunctionNodeInputMenu'}
 TYPES = {'FLOAT': 'VALUE', 'INT': 'INT', 'BOOLEAN': 'BOOLEAN', 'VECTOR': 'VECTOR', 'RGBA': 'RGBA'}
 
 
@@ -42,6 +43,14 @@ def _literal(socket, stack, budget, seen=(), depth=0):
             return bool(node.boolean)
         if node.bl_idname == 'FunctionNodeInputInt' and socket.identifier == 'Integer' and socket.type == 'INT':
             return int(node.integer)
+        if node.bl_idname in MENU_SOURCES and socket.identifier == 'Menu' and socket.type == 'MENU':
+            # Native Input Menu stores its constant on the node, independently
+            # of the output socket default. RNA resolves its label through the
+            # enum propagated from the actual connected menu consumer.
+            value = node.value
+            if isinstance(value, str) and value:
+                return value
+            raise SelectionUnsupported('Menu source needs a resolved, nonconflicting native menu choice')
         if node.bl_idname == 'FunctionNodeBooleanMath' and socket.type == 'BOOLEAN':
             active = [item for item in node.inputs if item.enabled and not item.is_unavailable]
             values = [_literal(item, stack, budget, seen, depth + 1) for item in active]

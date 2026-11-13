@@ -27,7 +27,9 @@ def state(tree):
  def value(socket):
   v=getattr(socket,'default_value',None)
   return v if v is None or isinstance(v,(str,bool,int,float)) else tuple(v)
- return repr([(n.bl_idname,n.name,[(s.identifier,value(s)) for s in n.inputs],[(s.identifier,value(s)) for s in n.outputs]) for n in tree.nodes])+repr(sorted((l.from_node.name,l.from_socket.identifier,l.to_node.name,l.to_socket.identifier) for l in tree.links))
+ return repr([(n.bl_idname,n.name,n.value if n.bl_idname=='FunctionNodeInputMenu' else None,
+               [item.name for item in n.enum_items] if n.bl_idname=='GeometryNodeMenuSwitch' else None,
+               [(s.identifier,value(s)) for s in n.inputs],[(s.identifier,value(s)) for s in n.outputs]) for n in tree.nodes])+repr(sorted((l.from_node.name,l.from_socket.identifier,l.to_node.name,l.to_socket.identifier) for l in tree.links))
 
 def render(label):
  scene.render.filepath=str(OUT/(label+'.exr'));bpy.ops.render.render(write_still=True)
@@ -64,7 +66,7 @@ for row in configurations:
   assert all(op['source']['nodeType']!='CompositorNodeKuwahara' for op in program['ops'])
  before=state(tree);entry=dict(row);entry['context']=CONTEXT
  path=OUT/(name+'.program.json');path.write_text(json.dumps(program,indent=2)+'\n');entry.update({'programFile':path.name,'programSha256':sha(path)})
- saved=row['kind'] in ['control','field','group','mask','three-items','reordered'] or row['kind']=='literal' and row['mode']=='RGBA' and row['choice']==1
+ saved=row['kind'] in ['control','field','group','mask','three-items','reordered'] or row['kind'].startswith('menu-source-') or row['kind']=='literal' and row['mode']=='RGBA' and row['choice']==1
  if saved:
   path=OUT/(name+'.blend');bpy.ops.wm.save_as_mainfile(filepath=str(path));entry.update({'sourceFile':path.name,'sourceSha256':sha(path)})
  if CONTEXT=='shader':

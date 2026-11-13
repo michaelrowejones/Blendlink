@@ -1,26 +1,34 @@
 {
   "runtimeTransaction": {
-    "sha256": "045e9592389c983f77160b3039050b50d396a22a44adbc886e576df265c8a0f9",
-    "id": "993f2266-398c-4e43-a643-143bdbe90a28",
+    "sha256": "2cbe4e45454b4def115cd2f01dfff9f4b6d2e79ed271c1fcb1400241870d57cc",
+    "id": "e3ebcba8-7f8e-45e2-82a3-21840845afbf",
     "independentlyReemittedAtClose": true
   },
   "nativePythonProof": {
-    "pythonInvocations": 76,
-    "finalInvocations": 72,
-    "uniqueCachePrefixes": 76,
+    "pythonInvocations": 94,
+    "finalInvocations": 90,
+    "uniqueCachePrefixes": 94,
     "numericalCredit": 0,
-    "sha256": "3e80f8cad15b3f5868aab0dc565497078716685dab195199cec518ffa4e7a6bf"
+    "identityTransaction": {
+      "policy": "transaction-metadata-v1",
+      "finalizationSha256": "6b5914adb0f3f1a0985dc98401af67ebd9aeb8bc877812d904e8c59dc0169c4c",
+      "sealedInvocations": 97,
+      "byteHashesAtStartAndEnd": true,
+      "metadataChecksPerInvocation": true,
+      "numericalCredit": 0
+    },
+    "sha256": "974a49290eb6748ae6ecc86161f373a863b339c353ba80bd05b212eeaa4bffc1"
   },
   "status": "qualified-static-selection-slice",
   "scope": "Blender 5.3.0 build 02f0899d78e3; macOS arm64; fixed typed Boolean/Integer/Menu selectors, five data types; selected existing expression only",
   "baseline": "29e9e03f6d193ecdd25800e7bb2f2cf5239e8c83",
-  "nativeGraphs": 195,
-  "productionNativeGraphs": 192,
-  "savedFinalScenes": 72,
-  "browserCaseRuns": 1068,
-  "productionBrowserCaseRuns": 1044,
-  "comparedFloat32Words": 273408,
-  "productionComparedWords": 267264,
+  "nativeGraphs": 213,
+  "productionNativeGraphs": 210,
+  "savedFinalScenes": 90,
+  "browserCaseRuns": 1212,
+  "productionBrowserCaseRuns": 1188,
+  "comparedFloat32Words": 310272,
+  "productionComparedWords": 304128,
   "wordMismatches": 0,
   "remainingOwnedTextures": 0,
   "qualificationCredit": {
@@ -29,7 +37,7 @@
     "notApplicable": 0,
     "unqualifiedDynamicSelectors": 0
   },
-  "runtimeFingerprint": "b12983da16c701bd7263fa8369a472cc2d2f3454fd9b71001b88f7ab03ee8694",
+  "runtimeFingerprint": "7f20ac4063ae70453c5d6625022b5da62240c78b2720cb8044ae96353e968bc4",
   "sourceHashes": {
     "packages/blender-addon/__init__.py": "de0e8534abcb690cc935eda33b827312e65901d944a540bb839c77dc1e871538",
     "packages/blender-addon/bakelib_loader.py": "8f50fa1479d43f5f2e8a834e62b4c3517ef32beb858fae8e0082f807cfb6f5ed",
@@ -80,7 +88,7 @@
     "packages/blender-addon/shader_domains.py": "a72d1c466d2e68bfe3144c9184743ae590a2b8fb7adcecaaab0e86d457ca8757",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
-    "packages/blender-addon/static_selection.py": "10af08ff1efb2f7f43c87a2b74e65c8b4fa82a81b1bd7a8c11c9df58d155fdc7",
+    "packages/blender-addon/static_selection.py": "4d2631406029bedae51f7dfe90c821dac3d5cf7391148fb44635cbd4ce9f812b",
     "packages/blender-addon/syncrun.py": "b1a80d00f7a45846e6d246dcbd1f5632e76f17ef2ae18a9024f609b2cde12a1a",
     "packages/blender-addon/syncstatus.py": "517f07d9066f6a3b7cb4173a8b1c4847edb7ea149c7334c4883b0519024c336f",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
@@ -108,11 +116,12 @@
     "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
     "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
+    "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
     "packages/blendlink/blender/compositor_gpu.py": "9577b6df9abbf9820af6dab309b0ab2ec3a00db8a9bf60a4c5e0c9e4cb8600ae",
-    "packages/blendlink/blender/compositor_graph.py": "0c51a8783a9b5e22f86e93326f885c3942e91fa5f6ed5eb11fa6af959e998ff4",
+    "packages/blendlink/blender/compositor_graph.py": "60eb5ff6be29509634a9bfc1d049d117defb6593dc0f622a406ac229ee9be14c",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
-    "packages/blendlink/blender/compositor_image_coordinates.py": "2bdb59e8ee782aeac24f0516524201183ee1548968a9a220d947e653b4049978",
+    "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
@@ -120,7 +129,7 @@
     "packages/blendlink/blender/compositor_math.py": "fd2f9efc43f4b0bf1dfebbdc651190025c9e33ccf2ae3ab0baf653715dd00b78",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
-    "packages/blendlink/blender/compositor_procedural_texture.py": "a65589c148509e3fa000ce3db40719f4528c8ee30281a56899d316d1fe838cc6",
+    "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
     "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
     "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
@@ -136,19 +145,19 @@
     "packages/blendlink/blender/source_presentation.py": "ee6d03a6aa52b4828cc38dd795a6fbf17371f599695ac69605aa7f9b3179a96e",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
     "packages/blendlink/blender/uvgeometry.py": "2420caeccc225eddf3dce09c8dafe8ab9048d503689c0795c4a5513f7b3d705c",
-    "experiments/static-switch-family/cases.py": "50c02e5663a8198db0a93e826b09ebf5e15570ad09cc615d8eb973beb7f9a82b",
-    "experiments/static-switch-family/reference.py": "af6f5cbc73792c3b044377ae1af71a4eb15ea1d894597f17dcbaf13e36aa1034"
+    "experiments/static-switch-family/cases.py": "89dab2d7b5a78da8628d9b4478c75a529d4119539e07e912c071bb63231cfbde",
+    "experiments/static-switch-family/reference.py": "da6da9ffa9be76fc001791774e032478b7122860ed6b242a3394042fcd1e94ba"
   },
   "fixturePins": {
     "run.mjs": "996f929304a9f7b3291265a10d9d48de221ad1a0c959d63e8a89468b844bd668",
-    "verify.mjs": "bb5e869f2472271b906741ccf16598d1254b2494671e870f35aef2535165a218",
-    "protocol.mjs": "9c3ec1b67f586c1b96a079c6ba7c906cccc7ad24dced2b095c25137a2ed8bada",
+    "verify.mjs": "ee3825fe16310632c5519c27e659027431c36e741c52ac06aefe2a2955d3a606",
+    "protocol.mjs": "098e3b749500e99baf4dbb7b4fd2c34f76a5c6cae557c1d08ec4816463be227d",
     "browser.js": "a282e29f04e32476b6680f2392fea481fe61a8a2676e7741d84a38078c777dab",
     "index.html": "31f29b3754f406298fbe82a05c86e98817c9d857d589241641f28126c488aa1d",
     "export.test.ts": "92195905fddd3818be92328a07e42e0ea317e450693e0097ec35bf80685644e8",
-    "suite.mjs": "daa82e75e3651af42545dc3ac1adeaf78ab73b56b8c385fdffdff05905377f30",
-    "../../scripts/lib/native-proof-archive.mjs": "ec98b01c66cbac1516e0048371554aa79cf468efaded71da8677686bdb942f82",
-    "../../scripts/lib/node-port-python.mjs": "f9b018633d6663a39a5bd10d5b779fc3b1fee8c0ce0949c692154d183de0fdd5",
+    "suite.mjs": "065e7531c141895cbc73eb70b065dcc29fe7e5d9286f8bc91a7b315256d9c4f3",
+    "../../scripts/lib/native-proof-archive.mjs": "6fc916200526b0eca6e7352c7a5ea1f903a409acb44c429baee5f0d918cac333",
+    "../../scripts/lib/node-port-python.mjs": "78a134a426314bc7867f82d9f8c9deb274f378ad2099d7d6416743eec8b0a56b",
     "../../scripts/node-port-blender.mjs": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c",
     "../../scripts/lib/runtime-transaction-snapshot.mjs": "447ef4494d1f33b8ce1d9c0efd03cf1a77ed61fb4ac034b05793cf11fb9b247a",
     "../../scripts/lib/runtime-compiler-trace.mjs": "c0e1243747c89352e1f253b6fb216301ac6064681c243823a369ee5205f363f5"
@@ -156,11 +165,11 @@
   "receipts": [
     {
       "context": "shader",
-      "nativeQualificationSha256": "521cb0f3c08368137fa490a9a7c6950c7ef7eaa65366454c5b532db07427b2c6",
-      "finalProofSha256": "b0c5818f064f706d17e7fdafcc6e818494f220da0d7d4722a608a171aed97006",
-      "nativeGraphs": 65,
-      "productionNativeGraphs": 64,
-      "savedFinalScenes": 24,
+      "nativeQualificationSha256": "88048299fffe1ecd4c8753ac6c3264a26fb3573bfa781e89875787c629ac7af0",
+      "finalProofSha256": "c4a1a23bbff50b12bfaffa48781528e065a2bee1a5ccc0c2b2a41f5591465395",
+      "nativeGraphs": 71,
+      "productionNativeGraphs": 70,
+      "savedFinalScenes": 30,
       "nativeBackend": {
         "backend": "METAL",
         "renderer": "Metal API"
@@ -169,8 +178,8 @@
         {
           "profile": "metal",
           "phase": "raw",
-          "reportSha256": "05ea49ceff9947474db267db02dfd2a85669f21d0da527c1584fdfb0166075c8",
-          "caseRuns": 130,
+          "reportSha256": "8e5800c4973ab4bcd2e46bb610143f14295d7fd8d763c8be9f46251923274e52",
+          "caseRuns": 142,
           "APIs": [
             {
               "backend": "webgpu",
@@ -195,8 +204,8 @@
         {
           "profile": "metal",
           "phase": "final",
-          "reportSha256": "9efd822d2f37b6bf213ad2f0760be0c876902fa8cac40f4c8d6d5b9d9ad0b8e5",
-          "caseRuns": 48,
+          "reportSha256": "918fb666eeae9bfdefd22772991791217a3843a1b3da50b2b18fea841bf10d10",
+          "caseRuns": 60,
           "APIs": [
             {
               "backend": "webgpu",
@@ -221,8 +230,8 @@
         {
           "profile": "software",
           "phase": "raw",
-          "reportSha256": "f488bb9ba248c6ec3c19ed709b960a51b943324671aeceaa162eeb43210a3dc5",
-          "caseRuns": 130,
+          "reportSha256": "eb42181b246876472c96e95c522e378a4ef8934f39f8ae606278cc82fc462234",
+          "caseRuns": 142,
           "APIs": [
             {
               "backend": "webgpu",
@@ -247,8 +256,8 @@
         {
           "profile": "software",
           "phase": "final",
-          "reportSha256": "ccdfa00213720f1245308f9fa1bbc97a231efa144b085593f962eb59f1208659",
-          "caseRuns": 48,
+          "reportSha256": "8b980d1e0d70291f0f8f6b1b5ce5a224054b0bde537895bd0be5ad364913ac5a",
+          "caseRuns": 60,
           "APIs": [
             {
               "backend": "webgpu",
@@ -274,11 +283,11 @@
     },
     {
       "context": "CPU",
-      "nativeQualificationSha256": "efc62a1fa8246fc9655c31378692ff300968d5812b6cc341dfd9a5d34bd5b33e",
-      "finalProofSha256": "5cd50f65f757abd78b7fb9cd20c1838b51c3a12390d98355e88a2a8b25f99cc3",
-      "nativeGraphs": 65,
-      "productionNativeGraphs": 64,
-      "savedFinalScenes": 24,
+      "nativeQualificationSha256": "8707cc325ec023eb66ecd25f41baad6b64691c4742b9ff29bcdfe9efc0794e38",
+      "finalProofSha256": "65e9bed4e4f43f983f42b2827670aa763435152ef324c26355e7d99689b56b74",
+      "nativeGraphs": 71,
+      "productionNativeGraphs": 70,
+      "savedFinalScenes": 30,
       "nativeBackend": {
         "backend": "METAL",
         "renderer": "Metal API"
@@ -287,8 +296,8 @@
         {
           "profile": "metal",
           "phase": "raw",
-          "reportSha256": "f4b7da7b7150e12729d140d1f5383a275a74fb4d212cc8997b26be741d481e93",
-          "caseRuns": 130,
+          "reportSha256": "a1d334d3dd91b34a50b8ba1691b60e32470a0d05b824d82e4b42880008b156d8",
+          "caseRuns": 142,
           "APIs": [
             {
               "backend": "webgpu",
@@ -313,8 +322,8 @@
         {
           "profile": "metal",
           "phase": "final",
-          "reportSha256": "991bba87eee05ba5bc8b478a5af3e33f02da402d198e5124e90276f295655181",
-          "caseRuns": 48,
+          "reportSha256": "073e6647faf0a47de530adfb55aad4680f74e3ec9e2d1641e0e1ec79c9c0f5d9",
+          "caseRuns": 60,
           "APIs": [
             {
               "backend": "webgpu",
@@ -339,8 +348,8 @@
         {
           "profile": "software",
           "phase": "raw",
-          "reportSha256": "a770b90f2946f177c6ddbbb61e689bd0c1107f116771d99631f1f8b70f4be59a",
-          "caseRuns": 130,
+          "reportSha256": "82ce728728ecde8b5b194baaf99f3ddbfb8791307a784596fbd70e8b7c371570",
+          "caseRuns": 142,
           "APIs": [
             {
               "backend": "webgpu",
@@ -365,8 +374,8 @@
         {
           "profile": "software",
           "phase": "final",
-          "reportSha256": "8e2c183bd209d0eb169887e10dd3c285ddc1db11ae6809ae824c625616753163",
-          "caseRuns": 48,
+          "reportSha256": "fafa303500c41e5668dc9181c454fb9a227dbf747814b46cdf793c3bd492c4af",
+          "caseRuns": 60,
           "APIs": [
             {
               "backend": "webgpu",
@@ -392,11 +401,11 @@
     },
     {
       "context": "GPU",
-      "nativeQualificationSha256": "1ca40c6891b40ad0f8ff93ff8115ac87e96ef9bdbb91c8f97440ec3b42fe943a",
-      "finalProofSha256": "2509a728db2cdd4d3f5a5aa7d4fc29e77babc6ae78afc7ec88916c87acff4902",
-      "nativeGraphs": 65,
-      "productionNativeGraphs": 64,
-      "savedFinalScenes": 24,
+      "nativeQualificationSha256": "bbac7fe547d4770d49435182d7d4a58e86a669748ab9bc7a0ee71cbaa3640516",
+      "finalProofSha256": "4e99731f27a15fe0d641e4aa9f36d9f351b679d7d777188f71b4279ea94cbae9",
+      "nativeGraphs": 71,
+      "productionNativeGraphs": 70,
+      "savedFinalScenes": 30,
       "nativeBackend": {
         "backend": "METAL",
         "renderer": "Metal API"
@@ -405,8 +414,8 @@
         {
           "profile": "metal",
           "phase": "raw",
-          "reportSha256": "55e28f3242fdf31b914f77553c671d9ad073b109888998ff5899d0cb73b81454",
-          "caseRuns": 130,
+          "reportSha256": "5343f67ebe6386d7fd481bcde7006cf7a227753f4b68168acd8c9da4415ad9b4",
+          "caseRuns": 142,
           "APIs": [
             {
               "backend": "webgpu",
@@ -431,8 +440,8 @@
         {
           "profile": "metal",
           "phase": "final",
-          "reportSha256": "9a2846b8808a07a6c9b7afef0596fe38ae7e9ef35775950addcf058ccd8b2649",
-          "caseRuns": 48,
+          "reportSha256": "d6bfe85dfcc78592165c8d321efac3baea0e4a809fbd6a51bf267c1224641283",
+          "caseRuns": 60,
           "APIs": [
             {
               "backend": "webgpu",
@@ -457,8 +466,8 @@
         {
           "profile": "software",
           "phase": "raw",
-          "reportSha256": "2f1f4cbf0e583a7eb629886e3df0b0b4c9f138e75c477b0840a488bc3a7a4def",
-          "caseRuns": 130,
+          "reportSha256": "100e4ecc3479ce73c48c349460bb8a43bea45a1f727b0be52ad61b0c1a89f228",
+          "caseRuns": 142,
           "APIs": [
             {
               "backend": "webgpu",
@@ -483,8 +492,8 @@
         {
           "profile": "software",
           "phase": "final",
-          "reportSha256": "50f22447dfe95bba73192a06c03a7f866c7e6bd73a0a3a0a7e26071c85554202",
-          "caseRuns": 48,
+          "reportSha256": "57ac55af460091a694ef277226637663d66cdf18cf4a87eb67ef26fe413b11a6",
+          "caseRuns": 60,
           "APIs": [
             {
               "backend": "webgpu",

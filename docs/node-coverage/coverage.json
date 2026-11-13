@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "9dcdfb2a278542370f9ed659c2e6e91b32fa0c0be9d8909f61547fbaf2489f3d",
+  "capabilityMapSha256": "065a1d128af955ea65715c5e604cb090220076fd9b935323fa8769ecd6b2721e",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-13T20:39:44.849510+00:00",
+  "generatedAt": "2026-11-13T22:13:56.959376+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -7587,6 +7587,30 @@
                 },
                 {
                   "path": "experiments/compositor-image-coordinates/evidence.json"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_float_coordinates.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFloatCoordinates.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFloatCoordinates.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_float_coordinates_check.py"
+                },
+                {
+                  "path": "experiments/compositor-float-coordinates/README.md"
+                },
+                {
+                  "path": "experiments/compositor-float-coordinates/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-float-coordinates/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-float-coordinates/evidence.json"
                 }
               ],
               "id": "CompositorNodeImageCoordinates",
@@ -8934,10 +8958,27 @@
               "enumCoverage": {
                 "value": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "MENU_SOURCES",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "FunctionNodeInputMenu",
               "label": "Menu",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -10147,6 +10188,33 @@
                 },
                 {
                   "path": "experiments/compositor-texture-family/research-counterexamples.json"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorTextureField.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorTextureField.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_float_coordinates.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_texture_fields_check.py"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/README.md"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/research-counterexamples.json"
                 }
               ],
               "id": "ShaderNodeTexChecker",
@@ -10223,6 +10291,33 @@
                 },
                 {
                   "path": "experiments/compositor-texture-family/research-counterexamples.json"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorTextureField.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorTextureField.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_float_coordinates.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_texture_fields_check.py"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/README.md"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/research-counterexamples.json"
                 }
               ],
               "id": "ShaderNodeTexGradient",
@@ -10625,10 +10720,27 @@
               "enumCoverage": {
                 "value": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "MENU_SOURCES",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "FunctionNodeInputMenu",
               "label": "Menu",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -14032,10 +14144,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 44,
+            "partial": 45,
             "structural": 7,
             "supported": 24,
-            "unsupported": 112
+            "unsupported": 111
           },
           "enumValueCounts": {
             "partial": 27,
@@ -15569,11 +15681,35 @@
                 },
                 {
                   "path": "experiments/compositor-image-coordinates/evidence.json"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_float_coordinates.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFloatCoordinates.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFloatCoordinates.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_float_coordinates_check.py"
+                },
+                {
+                  "path": "experiments/compositor-float-coordinates/README.md"
+                },
+                {
+                  "path": "experiments/compositor-float-coordinates/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-float-coordinates/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-float-coordinates/evidence.json"
                 }
               ],
               "id": "CompositorNodeImageCoordinates",
               "label": "Image Coordinates",
-              "limits": "Fresh Blender5.3.0 02f0899d78e3 macOS arm64 Pixel INT_VECTOR2 only. Direct full-frame Render Layers Image, zero data offset, square pixels, no border/crop, physical extents1..8192. Pointwise consumers and explicit Pixel-to-RGBA/padded-float3 conversions; direct, reroute and artist group paths. Same runtime and actual saved Final pipeline support real resize/DPR transitions. Uniform/Normalized FLOAT2, scalar/int midpoint conversion, transformed/static/computed image domains and spatial/neighborhood nodes remain unsupported.",
+              "limits": "Fresh Blender5.3.0 02f0899d78e3 macOS arm64 Pixel INT_VECTOR2 and Uniform/Normalized FLOAT_VECTOR2. Direct texture-backed full-frame Render Layers Image, zero data offset, square pixels, no border/crop, physical extents1..8192, matching actual image/drawing/target domains. Pointwise consumers; explicit conversion to RGBA(x,y,0,1) or padded VECTOR3(x,y,0), through direct/reroute/artist-group paths. Pixel remains bitexact; Uniform/Normalized XY require <=2ULP AND absolute error <=2^-22, exact zero centers/Z+0/alpha1. Numeric differences are reported separately from contract violations. Actual saved Final pipelines and built raw graphs support real resize/DPR transitions and refusal/recovery. This bound stops at the admitted field output; downstream discontinuities or arithmetic require their own contract. Scalar/int midpoint conversion, legacy VECTOR-to-float2 reinterpretation, transformed/static/computed references, arbitrary offsets and spatial/neighborhood domains remain unqualified. No port-owned texture/RTT or per-frame readback; exact renderer cache/source lifecycle restoration is verified.",
               "runtimeOps": [
                 "image-coordinates"
               ],
@@ -17231,15 +17367,32 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "value": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "MENU_SOURCES",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "FunctionNodeInputMenu",
               "label": "Menu",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 only. Resolved native FunctionNodeInputMenu.value storage supplies a fixed exact Menu selector to qualified typed GeometryNodeMenuSwitch; direct/reroute/group routes and A/B choices are measured in EEVEE shader and separate CPU/GPU compositor pipelines. Compiler forwarding introduces no runtime MENU opcode and retains existing selected upstream qualifications. Empty/unresolved/conflicting native menu definitions, dynamic/animated/driven selectors, standalone runtime Menu values, unqualified data types and arbitrary downstream MENU consumers refuse. The native output socket default is not used as the source value. Existing traversal/branch/type budgets apply; inactive branches remain pruned. No other-version/platform or Cycles bake qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17779,7 +17932,7 @@
               ],
               "id": "GeometryNodeIndexSwitch",
               "label": "Index Switch",
-              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants or resolved FunctionNodeInputMenu storage values (direct/reroute/group), literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17885,7 +18038,7 @@
               ],
               "id": "GeometryNodeMenuSwitch",
               "label": "Menu Switch",
-              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants or resolved FunctionNodeInputMenu storage values (direct/reroute/group), literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17959,7 +18112,7 @@
               ],
               "id": "GeometryNodeSwitch",
               "label": "Switch",
-              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants or resolved FunctionNodeInputMenu storage values (direct/reroute/group), literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18695,11 +18848,38 @@
                 },
                 {
                   "path": "experiments/compositor-texture-family/research-counterexamples.json"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorTextureField.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorTextureField.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_float_coordinates.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_texture_fields_check.py"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/README.md"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/research-counterexamples.json"
                 }
               ],
               "id": "ShaderNodeTexChecker",
               "label": "Checker Texture",
-              "limits": "Checker additionally requires sixteenth-grid vectors within +/-16 and fixed integer Scale0..256. Color1/Color2 are bounded exact Float32 literal/group colors; Color preserves independent signed/HDR RGB/alpha, while Fac prunes unused Color subtrees. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. Native CPU multi-function single values, including authored GPU compositing; not a spatial GPU-field port. Explicit linked literal, Value, reroute, CombineXYZ and group-default vectors only; exact normal Float32 words (magnitude >=2^-125) or positive zero, bounded magnitude <=65536. Negative zero, subnormal/nonfinite/F64/unknown-provenance values, implicit socket conversions, nonidentity texture mapping, animation/drivers, other native versions/builds/platforms and all computed/image fields refuse. Unlinked Vector uses native Uniform Image Coordinates and refuses rather than being replaced by literal zero. Runtime independently rederives actual prior-operation provenance with 2048-operation/64-visit/depth8 bounds. No port-owned textures/render targets or per-frame readback. Final disposal restores exact renderer-owned DFG_LUT identities established by a no-compositor PBR control, not a generic resource allowance.",
+              "limits": "Literal coordinates retain sixteenth-grid vectors within +/-16 and fixed integer Scale0..256, bounded exact normal Float32 literal/group Color1/Color2, and independent Color/Fac outputs. Field Scale is also a fixed integer0..256 with bounded literal colors; every current extent/Scale must pass conservative rational phase-margin admission so all possible native/browser phases share the same floor. Checker branches and RGBA words remain exact; no epsilon repair or branch tolerance. Admission costs O(width+height) on extent changes and is cached during frames. Default Scale5 admits1920x1080/1080x1920/1280x720/3840x2160/13x9;4x5/5x4/15x10/1920x1081 refuse and recover after a safe resize. Measured colors cover HDR RGB and independent alpha0/1; attempted negative native color assignments clamp and confer no negative-color numerical credit. Fac prunes unused Color subtrees. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only, CPU and Metal GPU measured separately. Identity texture mapping, square pixels, no border/crop or spatial/neighborhood consumers. Fields use the actual implicit Uniform image-coordinate field when Vector is unlinked, or a qualified direct full-frame Render Layers Uniform/Normalized FLOAT_VECTOR2 producer with explicit padded-vector conversion; no literal-zero substitution. Physical extents4..8192 must match drawing/target/reference domains and are checked again during live resize/DPR changes. Other versions/builds/platforms, arbitrary computed/transformed coordinates, implicit unknown conversions and animation/drivers remain unqualified. Bounded output fidelity does not imply arbitrary downstream composition parity. No port-owned textures/render targets or per-frame readback; apply/dispose restores independently controlled exact DFG_LUT identities and source materials/callbacks.",
               "runtimeOps": [
                 "checker-texture"
               ],
@@ -18771,11 +18951,38 @@
                 },
                 {
                   "path": "experiments/compositor-texture-family/research-counterexamples.json"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorTextureField.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorTextureField.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_float_coordinates.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_texture_fields_check.py"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/README.md"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-fields/research-counterexamples.json"
                 }
               ],
               "id": "ShaderNodeTexGradient",
               "label": "Gradient Texture",
-              "limits": "LINEAR accepts the bounded literal vector domain. QUADRATIC, EASING and DIAGONAL additionally require exact sixteenth-grid coordinates; RADIAL/SPHERICAL/QUADRATIC_SPHERE remain unqualified. Native Fac and RGBA Color (alpha1) outputs are independently verified. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. Native CPU multi-function single values, including authored GPU compositing; not a spatial GPU-field port. Explicit linked literal, Value, reroute, CombineXYZ and group-default vectors only; exact normal Float32 words (magnitude >=2^-125) or positive zero, bounded magnitude <=65536. Negative zero, subnormal/nonfinite/F64/unknown-provenance values, implicit socket conversions, nonidentity texture mapping, animation/drivers, other native versions/builds/platforms and all computed/image fields refuse. Unlinked Vector uses native Uniform Image Coordinates and refuses rather than being replaced by literal zero. Runtime independently rederives actual prior-operation provenance with 2048-operation/64-visit/depth8 bounds. No port-owned textures/render targets or per-frame readback. Final disposal restores exact renderer-owned DFG_LUT identities established by a no-compositor PBR control, not a generic resource allowance.",
+              "limits": "Literal LINEAR accepts bounded exact normal Float32 vectors or positive zero, magnitude <=65536; QUADRATIC/EASING/DIAGONAL literals additionally require sixteenth-grid coordinates. Explicit literal, Value, reroute, CombineXYZ and group-default vectors retain their existing exact-word contract and provenance/depth/visit budgets. Fields LINEAR/QUADRATIC and admitted EASING/Normalized DIAGONAL use <=8ULP AND absolute error <=2^-20, with exact native zero/one/alpha controls. EASING requires1-upperX^2*(3-2*upperX)>8*2^-24, where upperX=min(1,rmax+2^-22+2^-24) and rmax=(width-1)/max(width,height) for Uniform or1-.5/width for Normalized; e.g. default Uniform1920x1080 and safe portrait4x8192 admit,8192x4 refuses. Uniform DIAGONAL additionally requires a power-of-two maximum physical extent and retains exact words, including after resize. RADIAL/SPHERICAL/QUADRATIC_SPHERE remain unqualified. Fac and Color(alpha1) independently verified. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only, CPU and Metal GPU measured separately. Identity texture mapping, square pixels, no border/crop or spatial/neighborhood consumers. Fields use the actual implicit Uniform image-coordinate field when Vector is unlinked, or a qualified direct full-frame Render Layers Uniform/Normalized FLOAT_VECTOR2 producer with explicit padded-vector conversion; no literal-zero substitution. Physical extents4..8192 must match drawing/target/reference domains and are checked again during live resize/DPR changes. Other versions/builds/platforms, arbitrary computed/transformed coordinates, implicit unknown conversions and animation/drivers remain unqualified. Bounded output fidelity does not imply arbitrary downstream composition parity. No port-owned textures/render targets or per-frame readback; apply/dispose restores independently controlled exact DFG_LUT identities and source materials/callbacks.",
               "runtimeOps": [
                 "gradient-texture"
               ],
@@ -19089,10 +19296,10 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 44,
+            "partial": 45,
             "structural": 7,
             "supported": 22,
-            "unsupported": 72
+            "unsupported": 71
           },
           "enumValueCounts": {
             "partial": 25,
@@ -19288,15 +19495,32 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "value": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "MENU_SOURCES",
+                  "path": "packages/blender-addon/static_selection.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/static_selection_check.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/evidence.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/sources.json"
+                }
+              ],
               "id": "FunctionNodeInputMenu",
               "label": "Menu",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 only. Resolved native FunctionNodeInputMenu.value storage supplies a fixed exact Menu selector to qualified typed GeometryNodeMenuSwitch; direct/reroute/group routes and A/B choices are measured in EEVEE shader and separate CPU/GPU compositor pipelines. Compiler forwarding introduces no runtime MENU opcode and retains existing selected upstream qualifications. Empty/unresolved/conflicting native menu definitions, dynamic/animated/driven selectors, standalone runtime Menu values, unqualified data types and arbitrary downstream MENU consumers refuse. The native output socket default is not used as the source value. Existing traversal/branch/type budgets apply; inactive branches remain pruned. No other-version/platform or Cycles bake qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19574,7 +19798,7 @@
               ],
               "id": "GeometryNodeIndexSwitch",
               "label": "Index Switch",
-              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants or resolved FunctionNodeInputMenu storage values (direct/reroute/group), literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19644,7 +19868,7 @@
               ],
               "id": "GeometryNodeMenuSwitch",
               "label": "Menu Switch",
-              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants or resolved FunctionNodeInputMenu storage values (direct/reroute/group), literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19721,7 +19945,7 @@
               ],
               "id": "GeometryNodeSwitch",
               "label": "Switch",
-              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants, literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
+              "limits": "Blender5.3.0 build02f0899d78e3 only. Static exact typed Boolean/Integer/Menu selectors from defaults, typed Bool/Int constants or resolved FunctionNodeInputMenu storage values (direct/reroute/group), literal group bindings, reroutes/native muted bypass or fixed Boolean Math; data FLOAT/INT/BOOLEAN/VECTOR/RGBA. Compile-time selection forwards only supported selected expression; inactive unsupported branches are not dependencies. Menu Boolean masks included. Dynamic/converted/animated selectors, out-of-range Index, ambiguous Menu, closures/matrices/strings and >32 branches refuse. Shader fields retain their existing selected upstream qualification; measured field is quantized UV. Compositor native CPU/GPU measured separately. No Cycles bake credit or other-version qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -23165,7 +23389,7 @@
     "packages/blender-addon/shader_color_band.py": "dc9bf6130aaf4d972787aa5a7779500fb5ed6718b199d7c5069578d5bdc10508",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
-    "packages/blender-addon/static_selection.py": "10af08ff1efb2f7f43c87a2b74e65c8b4fa82a81b1bd7a8c11c9df58d155fdc7",
+    "packages/blender-addon/static_selection.py": "4d2631406029bedae51f7dfe90c821dac3d5cf7391148fb44635cbd4ce9f812b",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
     "packages/blender-addon/tsl_ir.py": "842a2370673d2545bf789e6a847dc6c74f14d901116b3e4ff6cbc9133df0bd36",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
@@ -23184,8 +23408,9 @@
     "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
     "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
+    "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "0c51a8783a9b5e22f86e93326f885c3942e91fa5f6ed5eb11fa6af959e998ff4",
+    "packages/blendlink/blender/compositor_graph.py": "60eb5ff6be29509634a9bfc1d049d117defb6593dc0f622a406ac229ee9be14c",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
@@ -23193,7 +23418,7 @@
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
-    "packages/blendlink/blender/compositor_procedural_texture.py": "a65589c148509e3fa000ce3db40719f4528c8ee30281a56899d316d1fe838cc6",
+    "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
     "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
     "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
@@ -23236,6 +23461,7 @@
     "packages/blendlink/src/tslCompositorDifferenceKey.ts": "4604b8aa1de7300739d602eec4a94e04cfe660491beea34dea23c690fd00b4de",
     "packages/blendlink/src/tslCompositorDistanceKey.ts": "8a2aebf7105274f8d02fd9b68b358bdb3cb89a6b43a60edda00a0fd30a5aa2fa",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
+    "packages/blendlink/src/tslCompositorFloatCoordinates.ts": "473b117bb7dc3872761f2c098e58cdf7dab1262a2e1f47fdf9e1286ba4e8ada9",
     "packages/blendlink/src/tslCompositorFloatToInt.ts": "8e39857c7d79d0233e4f29163052f6dcc3ef14585ee05425be3405d924989aac",
     "packages/blendlink/src/tslCompositorGray.ts": "e32c05ec6deb9a8a793d3de4751ebac288a7fe0ab1d90555f8ec4504562975d1",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
@@ -23246,7 +23472,7 @@
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
     "packages/blendlink/src/tslCompositorMapValueDomain.ts": "325637bd5fb107ff49ce5aa8b45aa954be7a4411e9daf8cb79b4bb64ffa9ad0a",
     "packages/blendlink/src/tslCompositorPixelate.ts": "20feecc95d60c471e11428474bbcd3c214133652ecaafabc6b81a0486bc28b21",
-    "packages/blendlink/src/tslCompositorProceduralTexture.ts": "660c70a0689a27b9d88d5152cc67a467f296113428020bc9ae0666ae85126c4b",
+    "packages/blendlink/src/tslCompositorProceduralTexture.ts": "6c53d01b82960c77bb624bcefdb261805244363d4ffb7e70b1d45d1004d8cb9a",
     "packages/blendlink/src/tslCompositorRelativeToPixel.ts": "0594bfe77a71f54c5526abc520b5ef6a9f59a864db07f1554c39133bf4153646",
     "packages/blendlink/src/tslCompositorResampling.ts": "6ff79d9bb5f31bee831e2491fe5cfb89582584c80026b1a3c0c302985377a1d6",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
@@ -23254,6 +23480,7 @@
     "packages/blendlink/src/tslCompositorSplit.ts": "662a552d1b3f1201871bbfa06b84418426d30e614b8df290374bba7c3fc96cc7",
     "packages/blendlink/src/tslCompositorStaticImage.ts": "c72547908fbc1c43f382e3c968c894f979cd4e017cebd9cff34f6d33491ac9af",
     "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "82bb6bf70f547a8b3309df0ac564456d5ae262b0c42525f8a2d6e80565cab7cf",
+    "packages/blendlink/src/tslCompositorTextureField.ts": "e4816ef165f41d5f667f0b6667a03a6d94283ef737aaa945f9912a42157d4023",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
@@ -23279,7 +23506,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "776404536cbb63dfdb55d0c28e3aeaf75ab1dcdefac71b5c2c05c62a19d83d36",
+    "packages/blendlink/src/tslSourceCompositor.ts": "8a5f23e702596e6c2d174b2d32f8ec94689d037b85b890af621a9a64da35dc1e",
     "packages/blendlink/src/tslSpectralNodes.ts": "0b3b12601a937d51544168acdde2ee721a25a926a4890d41b2c63b5b09013200",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

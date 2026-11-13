@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "kind": "cpu-only-guarded-export-throughput",
+  "baselineCommit": "12bf580",
+  "numericalCredit": 0,
+  "scope": "macOS arm64 local filesystem, Node24, Blender5.3.0; owned constant cube; no GPU/browser/render work; each actual Final export forced",
+  "sourcePreserved": true,
+  "allPublishedGlbsByteIdentical": true,
+  "savedSourceSha256": "133625c69f52358db8fd9ef3692be2dfb24d48dda29b60bec9df3c2aeed13306",
+  "toolchain": {
+    "native": {
+      "bytes": 210043328,
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+    },
+    "node": {
+      "bytes": 126827136,
+      "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+    }
+  },
+  "inputs": {
+    "helperSha256": "78a134a426314bc7867f82d9f8c9deb274f378ad2099d7d6416743eec8b0a56b",
+    "archiveSha256": "6fc916200526b0eca6e7352c7a5ea1f903a409acb44c429baee5f0d918cac333",
+    "fixtureSha256": "12367ccd1dd790a04b089789abbe5f2324962e71178e1d06f4ddd8464329d03d",
+    "runnerSha256": "6eea1710b38ca4d334e7e98e8a30978d89049e1b77249f20d56fd26af497b9a7"
+  },
+  "profileSha256": "45aaec78a42a00d7a169c6796b347985ea46d927f9c5a5a8bea8b0704a2e6526",
+  "startupMeanMs": {
+    "version": 233.11077066666678,
+    "plain-python": 473.0144443333332,
+    "fresh-prefix-python": 463.5945348333332
+  },
+  "hashMeanMs": {
+    "native": 98.50703319999994,
+    "node": 59.526075000000034
+  },
+  "pairedBatches": [
+    {
+      "mode": "guarded",
+      "exports": 6,
+      "sdkStageMs": 7955.8715,
+      "identityCaptureMs": 0,
+      "identityFinalizeMs": 0,
+      "archiveMs": 112.49445799999921,
+      "nativeChildMs": 5862,
+      "preIdentityMs": 1008.9124159999999,
+      "postIdentityMs": 613.7314159999999,
+      "invocations": 7,
+      "freshPythonPrefixes": 6,
+      "sourcePreserved": true,
+      "glbSha256": [
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d"
+      ]
+    },
+    {
+      "mode": "transaction",
+      "exports": 6,
+      "sdkStageMs": 6754.2457920000015,
+      "identityCaptureMs": 167.82391700000153,
+      "identityFinalizeMs": 168.9078750000008,
+      "archiveMs": 268.3478329999998,
+      "nativeChildMs": 6103,
+      "preIdentityMs": 14.056582999999993,
+      "postIdentityMs": 7.450750999999968,
+      "invocations": 7,
+      "freshPythonPrefixes": 6,
+      "sourcePreserved": true,
+      "glbSha256": [
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d"
+      ],
+      "identitySeal": {
+        "policy": "transaction-metadata-v1",
+        "finalizationSha256": "72e1533723f6a799e88ea111a320a3b4eb25ea324fea9b88658f2c239fab9cd3",
+        "sealedInvocations": 7,
+        "byteHashesAtStartAndEnd": true,
+        "metadataChecksPerInvocation": true,
+        "numericalCredit": 0
+      }
+    },
+    {
+      "mode": "guarded",
+      "exports": 6,
+      "sdkStageMs": 8115.70175,
+      "identityCaptureMs": 0,
+      "identityFinalizeMs": 0,
+      "archiveMs": 107.7287920000017,
+      "nativeChildMs": 6025,
+      "preIdentityMs": 1030.6475,
+      "postIdentityMs": 613.1746660000003,
+      "invocations": 7,
+      "freshPythonPrefixes": 6,
+      "sourcePreserved": true,
+      "glbSha256": [
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d"
+      ]
+    },
+    {
+      "mode": "transaction",
+      "exports": 6,
+      "sdkStageMs": 6463.812125,
+      "identityCaptureMs": 164.91895800000202,
+      "identityFinalizeMs": 157.63150000000314,
+      "archiveMs": 259.2016670000012,
+      "nativeChildMs": 5863,
+      "preIdentityMs": 13.410375000000002,
+      "postIdentityMs": 5.663792000000086,
+      "invocations": 7,
+      "freshPythonPrefixes": 6,
+      "sourcePreserved": true,
+      "glbSha256": [
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d",
+        "15b96e81ee3f9965f0426009b9fc70ff52be16bb79b411b28f67b2553c10e05d"
+      ],
+      "identitySeal": {
+        "policy": "transaction-metadata-v1",
+        "finalizationSha256": "69e81d326ca65917792eec780e06de66f64f705615ed9d6f03e85623637a71f4",
+        "sealedInvocations": 7,
+        "byteHashesAtStartAndEnd": true,
+        "metadataChecksPerInvocation": true,
+        "numericalCredit": 0
+      }
+    }
+  ],
+  "comparison": {
+    "defaultStageMeanMs": 8035.786625000001,
+    "transactionStageMeanMs": 6609.028958500001,
+    "stageReductionPercent": 17.755046681568643,
+    "defaultStageAndArchiveMeanMs": 8145.89825,
+    "transactionStageCaptureFinalizeArchiveMeanMs": 7202.444833500005,
+    "conservativeCompleteReductionPercent": 11.581944526498289,
+    "limit": "Default launcher capture is excluded; all optimized capture/finalize/archive costs included. Small six-export transactions measured; larger-scene and full numerical suites require root replay."
+  },
+  "tests": {
+    "passed": 19,
+    "skipped": 0,
+    "actualBlenderFreshPrefixControl": true
+  }
+}

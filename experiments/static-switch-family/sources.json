@@ -23,6 +23,12 @@
       "path": "source/blender/nodes/geometry/nodes/node_geo_menu_switch.cc",
       "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/geometry/nodes/node_geo_menu_switch.cc",
       "sha256": "6c61f101da680274bac419453bfde4eba03c3f1775bda2ce3754fb0b5f45b570"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/function/nodes/node_fn_input_menu.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_input_menu.cc",
+      "sha256": "b505e267c7cbea028c8993dd844d40a1668e879b90bb7f5bae491086a5810ea3"
     }
   ]
 }

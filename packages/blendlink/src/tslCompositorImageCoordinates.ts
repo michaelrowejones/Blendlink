@@ -14,9 +14,9 @@ const pixelProducer=(op:SourceCompositorOperation):boolean=>op.kind==='image-coo
 
 export function validateImageCoordinateGraph(program:SourceCompositorProgram,fail:(message:string)=>never):void{
  if(program.ops.some(op=>op.kind==='image-coordinates')&&program.output?.type!=='RGBA')
-  fail('Image Coordinates Pixel requires an explicit qualified RGBA output conversion')
+  fail('Image Coordinates fields require an explicit qualified RGBA output conversion')
  if(program.ops.some(op=>op.kind==='image-coordinates')&&program.ops.some(op=>spatial.has(op.kind)))
-  fail('Image Coordinates Pixel currently qualifies pointwise consumers only; spatial/neighborhood realization remains unqualified')
+  fail('Image Coordinates fields currently qualify pointwise consumers only; spatial/neighborhood realization remains unqualified')
 }
 
 /** Explicit fresh INT2 edges. Existing serialized VECTOR retains float3 semantics. */

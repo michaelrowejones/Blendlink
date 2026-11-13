@@ -1,0 +1,10 @@
+{
+ "blenderVersion":"5.3.0","commit":"02f0899d78e374b63e7181d9061e1f7ab03419cc",
+ "sources":[
+  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc","finding":"Uniform and Normalized are native two-component float fields and inherit the input image domain."},
+  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc","finding":"The CPU uses half-pixel centers. Normalized divides by per-axis display size; Uniform centers the coordinates, divides by the larger display axis and multiplies by two."},
+  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl","finding":"The GPU Uniform shader expresses the same ordered arithmetic as the CPU. Compiler reciprocal lowering can produce small Float32 rounding differences; the port records exact differences and bounded errors separately."},
+  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_image_coordinates_normalized.glsl","finding":"GPU Normalized divides the half-pixel coordinates by the display dimensions."},
+  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/type_conversions.cc","finding":"Native float2-to-float3 pads Z=0, and float2-to-color pads Z=0 and alpha=1. These are the only newly admitted width conversions; scalar means and integer casts remain excluded."}
+ ]
+}

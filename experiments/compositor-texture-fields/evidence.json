@@ -1,0 +1,708 @@
+{
+  "status": "QUALIFIED_PARTIAL_COMPOSITOR_TEXTURE_FIELDS",
+  "nativeGraphs": 222,
+  "savedFinalScenes": 16,
+  "browserCaseRuns": 952,
+  "primaryFloat32Words": 68565664,
+  "exactWordMismatches": 66090,
+  "contractViolations": 0,
+  "maxUlps": 3,
+  "maxAbsoluteError": 1.7881393432617188e-7,
+  "exactControlWords": 68110672,
+  "resizeFrames": 768,
+  "uniqueActualPythonPrefixes": 18,
+  "numericContract": {
+    "model": "texture-fields-source-forward-error-v1",
+    "declaredBeforeConsumerMeasurement": true,
+    "gradient": {
+      "maxUlps": 8,
+      "maxAbsoluteError": 9.5367431640625e-7,
+      "conjunction": true
+    },
+    "uniformDiagonal": {
+      "exact": true,
+      "domain": "Power-of-two maximum physical extent only, including after resize",
+      "reason": "Non-dyadic linked field cancellation produced7.45e-9 at a nativezero and was refused without relaxing the predeclared exactzero gate. Dyadic half-centers/subtraction/power-of-two division/scaling/sum are exact within8192."
+    },
+    "exactControls": "Every Checker RGBA word/branch; every Gradient zero/one/alpha word; independent image-load calibration.",
+    "coordinatePrecondition": "Known sharedUniform/Normalized kernel only, <=2ULP AND abs<=2^-22 percoordinate, exactzero centers, fixedzeroZ. Default uses the same native Uniform coordinate cache, no literal substitute.",
+    "checker": "Every physicalextent/Scale combination must pass rational phase-margin admission before drawing and againafterresize. No epsilon repair or branch-output tolerance. NativeCPU/GPU staging remains recordedseparately.",
+    "rationale": "LINEAR Lipschitz1; QUADRATIC2; EASING1.5; DIAGONAL0.5*(abs(dx)+abs(dy)). Ordered polynomial arithmetic adds bounded Float32 rounding; sourceCPU and sourceGPU have separate receipts. Literal scopes stay bitexact. Report exact-word differences separately; never widen limits after failures.",
+    "easingAdmission": {
+      "maximumX": {
+        "Uniform": "(width-1)/max(width,height)",
+        "Normalized": "1-.5/width"
+      },
+      "upperX": "min(1,maximumX+2^-22+2^-24)",
+      "requiredEndpointGap": "1-upperX^2*(3-2*upperX) > 8*2^-24",
+      "derivation": "Ordered r²,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
+      "counterexample": "NativeCPU Easing exactone became0.9999999403953552 onactualMetal WebGPU/WebGL2 at8192x4. No acceptance limit widened."
+    }
+  },
+  "numericContractSha256": "7a6a62d123b792cbc25ce605d68bc9ff49c51b098c8d3b5a625d2f701c27d813",
+  "scope": "MeasuredBlender5.3.0 02f0899d78e3 macOSarm64 CPU/GPU compositor; implicitUniform and linkedfullframeImageCoordinates Uniform/Normalized with identitymapping. LINEAR/QUADRATIC boundedfieldcontract. EASING requiresnative-one endpointseparation greaterthan8u aftercoordinateuncertainty, includingresize; exactzero/onecontrolsunchanged. UniformDIAGONAL requirespoweroftwo maxphysicalextent andbitexactwords, includingresize; NormalizedDIAGONAL boundedcontract. Checker literalintegerScale0..256 andliteralcolors onlywhen conservativephaseguardadmitscurrentphysicalextent; exactbranch/words, recheckedafterresize. Literalportsunchanged. Noarbitrarycomputedcoordinates/spatialdomains/borders/non-squarepixels.",
+  "resources": "Noportownedtextures/RTTs/perframeGPUreadback. Shadercoordinate/mathkernelsreusefloat2producer. CheckerphaseguardO(width+height)onlyonextentchange, cachedduringframes. ActualGLTFnoglobalcompositorbaselinewarmsoneDFG_LUT identity;3apply/disposecyclespreservesourcematerials/callbacksandrestoreexactcacheidentityset.",
+  "closedReader": {
+    "runtimeFingerprint": "7f20ac4063ae70453c5d6625022b5da62240c78b2720cb8044ae96353e968bc4",
+    "verifierSha256": "06150069fdf51b9340bf65845a1c48ed521c054ca93ad3772b74d5b843e13bcc",
+    "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed"
+  },
+  "sources": [
+    {
+      "device": "CPU",
+      "nativeCases": 111,
+      "savedFinalScenes": 8,
+      "native": {
+        "path": "artifacts/verification-next-texture-fields-integrated/cpu/qualification.json",
+        "sha256": "5a56e11602137d4071bd37d5a069bbb2f01dd6b1f9142f27827e189c5318d1ad"
+      },
+      "final": {
+        "path": "artifacts/verification-next-texture-fields-integrated/cpu/final-proof.json",
+        "sha256": "bd18431afbaec5c5556963d6246f3c2fcc422e457f7bfd39a83274309dea5549"
+      },
+      "sourceHashes": {
+        "packages/blender-addon/__init__.py": "de0e8534abcb690cc935eda33b827312e65901d944a540bb839c77dc1e871538",
+        "packages/blender-addon/bakelib_loader.py": "8f50fa1479d43f5f2e8a834e62b4c3517ef32beb858fae8e0082f807cfb6f5ed",
+        "packages/blender-addon/bootstrap.py": "891bf5814e20e8b86bd5bfa5d78a4c6a8a67919122f1738bed7e4690b3e70202",
+        "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
+        "packages/blender-addon/bump_height_ir.py": "c634d0eed632ffc62293ce1cd0985bc115951b02bdef88901b3e59ec164cd5d6",
+        "packages/blender-addon/bump_ir.py": "438d0422d6106a489bb001ad65904e26f4861dd699f00eed559fa38d2ee19590",
+        "packages/blender-addon/camera_data_ir.py": "956a074bad662f2a643335666ec62823643f955d6da8c75d056fa5f75928f1c8",
+        "packages/blender-addon/color_ir.py": "0b6fd4f61a5ce22d5fe84135b2fbdd484b5bc805889ff952e87e573053797e69",
+        "packages/blender-addon/component_schema.py": "5d1aeeb885077d71cecef78ca0aea2c381ce190428d745dafffb2126b64d70e0",
+        "packages/blender-addon/component_validation.py": "df23bb276c95d1068fe9a242ac6a3170433a900dc9c2338fbe34e562ab56bbb9",
+        "packages/blender-addon/components_ui.py": "77436f5bc00aee78670c6d5571e812d039090b13d2e2ece00fc5b0d3c450c2fc",
+        "packages/blender-addon/consequence_gizmos.py": "e10e508a6612e73957f3dbe9c2125fbbac25a88499f08ca8ea8d34fb230486d7",
+        "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
+        "packages/blender-addon/engine_fallback.py": "c5f9c9a31f5b26f4dc7929e672b1b03835d6eda1f3882de738d87cfafd622037",
+        "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
+        "packages/blender-addon/glblib.py": "0ebdf44320d7e89b6954f1b09b7c28d0d814ad20e81239a9a389f0b4f596385f",
+        "packages/blender-addon/handlers.py": "90499ee38fbb16165d2f581a5235c853c502483d8de4ae435d8d3ea688f47a0c",
+        "packages/blender-addon/known_issues.py": "40aeda4a7a172e8e133cd94f0c663a4a6ccf2c9f79a8159bdf42b75df1395c52",
+        "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
+        "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
+        "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
+        "packages/blender-addon/material_compiler.py": "a2bd3b7cfdcb1cebb98c462200a89f0a260526d16e6f31d92ae2c066cc4ab694",
+        "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
+        "packages/blender-addon/nla_sequence.py": "6bd3e380bc15cd177e9650008d5e47dc5f34ad76d5e8121249dcd2bbf7df7c35",
+        "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
+        "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
+        "packages/blender-addon/noise_mf_coordinates.py": "fc40bdf258c62a75977839e5af1250289f474595523fa67826b586f673bb3233",
+        "packages/blender-addon/noise_static_inputs.py": "a73556da121f0a39f1df06c9037c845a778c97a612ed3ae08c2e2c1b9e005eaa",
+        "packages/blender-addon/noise_varying_ir.py": "8f949efe54b6b911df6987165299318d6ed3371f785e7fea5ec858c54249d7b0",
+        "packages/blender-addon/normal_direction_ir.py": "0aa3b1b0226320b6b92fce63b06d7e5202bd012ce9820085d3fc26c426b3857f",
+        "packages/blender-addon/normal_input_bounds.py": "7967ed668d1a4e9de8d437717f22b736bf3956a1f6d3816da140e9725b13c3c7",
+        "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
+        "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
+        "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
+        "packages/blender-addon/ops.py": "fb5280e257b385e80bdbe1c4790c2ea0030ae1b3865860214298e8748ee95ece",
+        "packages/blender-addon/overlay.py": "261f479d6a54978111d6355f6748198e14a437e8a0e5df29b01b1b6e8ee1677c",
+        "packages/blender-addon/ownership.py": "939b9822ae5646382e1a37031ab35f6c28ba2d8f6b3fc5cfc174b930d1f40c99",
+        "packages/blender-addon/prefs.py": "0995582b536b88f2d4bc62c6ddc1e163136fb22d44e11b81b4ad2ebe28615f28",
+        "packages/blender-addon/presentation.py": "ccbd9452654f88d60c5b7abe80f28985a52d3a2146f1ea4d1190d5ba4938c142",
+        "packages/blender-addon/presentation_ui.py": "a37fbf6cd240eab386d7dd6e0a525f299b59edbb95e3ac932b891c683ff0a2a7",
+        "packages/blender-addon/previewrun.py": "da775c4bf76c138f8f11d3415318968dee3e9df82e905877708435260e654006",
+        "packages/blender-addon/probe_authoring.py": "1de592094d0c46252d2011da274e9843f5fdadf3782f4cd96bf92d75c002d90f",
+        "packages/blender-addon/procedural.py": "953104e0888e4e4054a31dbe3a2f7f2d0dd60a5e0dfd1eb5ae33973543307548",
+        "packages/blender-addon/props.py": "09e2ace896407b2a2d7aee4ef04a61d9303af764589a1f77f5617d56bea9d315",
+        "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
+        "packages/blender-addon/shader_color_band.py": "dc9bf6130aaf4d972787aa5a7779500fb5ed6718b199d7c5069578d5bdc10508",
+        "packages/blender-addon/shader_domains.py": "a72d1c466d2e68bfe3144c9184743ae590a2b8fb7adcecaaab0e86d457ca8757",
+        "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
+        "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
+        "packages/blender-addon/static_selection.py": "4d2631406029bedae51f7dfe90c821dac3d5cf7391148fb44635cbd4ce9f812b",
+        "packages/blender-addon/syncrun.py": "b1a80d00f7a45846e6d246dcbd1f5632e76f17ef2ae18a9024f609b2cde12a1a",
+        "packages/blender-addon/syncstatus.py": "517f07d9066f6a3b7cb4173a8b1c4847edb7ea149c7334c4883b0519024c336f",
+        "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
+        "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
+        "packages/blender-addon/tests/compositor_texture_fields_check.py": "c22f7579cd0e0ee4d12258a56132b1344c8b114b6db9e64c045e4e943119cd16",
+        "packages/blender-addon/tsl_ir.py": "842a2370673d2545bf789e6a847dc6c74f14d901116b3e4ff6cbc9133df0bd36",
+        "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
+        "packages/blender-addon/ui.py": "50258c0153f14cac41dfa3c6b50ef11ca3c8c819306209f3d8e1909b107a16a4",
+        "packages/blender-addon/ui_state.py": "bbc3f335df8910029d76b0fa8334a85c9d21d9051410ff7a766714cb5966d23b",
+        "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
+        "packages/blender-addon/validation.py": "d78623aa5ba076756409bd8dd5cb041b2f876df7a75b23ed021a0bbd03377759",
+        "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
+        "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
+        "packages/blender-addon/vocab.py": "1778a646feb149b2594440350076868b7f07b4f02c4ef8f6114b93050d0e13ba",
+        "packages/blender-addon/web_runtime_limits.py": "ef269bf5ed2d3cd695820a242f53aa53f6ca3ef044c251a04d647033faef9e9c",
+        "packages/blender-addon/weblights.py": "9addb7b2de3e2add3955df9cf344fcdf9d0fcf1d57a5a466057fdec9924dce93",
+        "packages/blendlink/blender/bakelib.py": "77a9535f53ab2fd07005436b9b74855e70428e2f42025f7c91ccc5e519fbe6de",
+        "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
+        "packages/blendlink/blender/compositor_affine.py": "7df4327f10d8cb0d223cd4b2e5c67b2f62721e246831ce4a6fd98ec4653b03e4",
+        "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
+        "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
+        "packages/blendlink/blender/compositor_channel_key.py": "a00e0f67b92ab817a401340c654758177eadc1b07d7a0ae92258b16760dc46dc",
+        "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
+        "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
+        "packages/blendlink/blender/compositor_color_key.py": "3d905f6f46171a0c9beb48edf280d3969d8f53ef77a11a0334124cdc176e84f5",
+        "packages/blendlink/blender/compositor_crop.py": "44ed9983ecac97b400a3ba7896a8eb66738e23cb61bb151d139dbdff7150351c",
+        "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
+        "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
+        "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
+        "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
+        "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
+        "packages/blendlink/blender/compositor_gpu.py": "9577b6df9abbf9820af6dab309b0ab2ec3a00db8a9bf60a4c5e0c9e4cb8600ae",
+        "packages/blendlink/blender/compositor_graph.py": "60eb5ff6be29509634a9bfc1d049d117defb6593dc0f622a406ac229ee9be14c",
+        "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
+        "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
+        "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
+        "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
+        "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
+        "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
+        "packages/blendlink/blender/compositor_math.py": "fd2f9efc43f4b0bf1dfebbdc651190025c9e33ccf2ae3ab0baf653715dd00b78",
+        "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
+        "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
+        "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
+        "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
+        "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
+        "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
+        "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
+        "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
+        "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
+        "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
+        "packages/blendlink/blender/environment_compress.py": "397d332d28c72fbfc66ca5f4c85298efaf2a9dc23c8cf6ba7f020c22d09f8408",
+        "packages/blendlink/blender/export_scene.py": "a592e88079601a95fbf0c287b31e9ec7c5f44e9d0ca004f8b361f437bd80aca2",
+        "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
+        "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
+        "packages/blendlink/blender/preparation_cache.py": "e3518eaa9999a0d51a0b7a9dd9810c68843dedd0d3bc119af3534ea8ec2db28d",
+        "packages/blendlink/blender/source_presentation.py": "ee6d03a6aa52b4828cc38dd795a6fbf17371f599695ac69605aa7f9b3179a96e",
+        "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
+        "packages/blendlink/blender/uvgeometry.py": "2420caeccc225eddf3dce09c8dafe8ab9048d503689c0795c4a5513f7b3d705c"
+      },
+      "nativeLauncher": {
+        "native": {
+          "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "bytes": 210043328,
+          "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+        },
+        "node": {
+          "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "bytes": 126827136,
+          "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+        },
+        "configurationSha256": "150095531b6ed8323137e2e5622eb3d5845ad6b8972593c7e16656e4367a7ef1",
+        "invocations": [
+          {
+            "name": "259aff57-9636-4f00-a7ed-4944ab94fe15.json",
+            "sha256": "7ebf57833ff7510e5e5cb74a2249b3c5ec71c313f16488a3b45b79c23b58bb2d"
+          },
+          {
+            "name": "4561b6f4-b346-469c-88e6-05350f291644.json",
+            "sha256": "d640abbce9f56c95e20bb4610eb2457e3149277b9cdc2a635397d4a738fe30bf"
+          },
+          {
+            "name": "4c2d4075-88e3-43b2-81dd-af86f72a970b.json",
+            "sha256": "7941819be4d7daee0add6a0191e09fb6e47de83cde2a488be601991f42f8d5ac"
+          },
+          {
+            "name": "4fd3d6c0-1889-4397-89dc-202de864d6bd.json",
+            "sha256": "71559a856e2936b8779d61f90b51ff070d2a5fed9ad46cdc4f23161f7990bb71"
+          },
+          {
+            "name": "8b7af511-235e-42f9-b360-e9ea52bae3f1.json",
+            "sha256": "43482d53c9fcf11fa562abb1bbf98bca3f2cd0026e12b66ea87ade3aa8434214"
+          },
+          {
+            "name": "92fae547-923c-4c12-aec8-b2138fa3f974.json",
+            "sha256": "cb58229ad9516e28195352330a01b925090061ee70b2228add9f70a6bc59fa0a"
+          },
+          {
+            "name": "9caf0aa2-00f5-4cdc-be00-970ab8cc5d26.json",
+            "sha256": "e1f2499a95312d7b796f527c302fec89af235c1c10720ab326207795bcdc6d56"
+          },
+          {
+            "name": "a24be189-ced0-47ad-95ad-66ef0f70888e.json",
+            "sha256": "00dcae10a3d65b8871839ccb7aebeee7e87df7b75be4baf65e5bbe19cb23322b"
+          },
+          {
+            "name": "a9e00f83-785e-496d-8843-55ca67f5404a.json",
+            "sha256": "d5e20e79dfcf496d605c74feba09c282e622018eb614c3437c096cf8c1dabcbd"
+          },
+          {
+            "name": "f31b7b54-6532-42cd-ad26-349abdc8352e.json",
+            "sha256": "2628c59e26f86b701427f23699436ba56f191820da9c9fe02d950f2e53a8647d"
+          }
+        ],
+        "exports": 8,
+        "captures": 1,
+        "versionProbes": 1
+      }
+    },
+    {
+      "device": "GPU",
+      "nativeCases": 111,
+      "savedFinalScenes": 8,
+      "native": {
+        "path": "artifacts/verification-next-texture-fields-integrated/gpu/qualification.json",
+        "sha256": "b2cd9c7473e99a3a46a6f422bc491a87d8ba01fbeb096fb1224d74c9fe9bc3ce"
+      },
+      "final": {
+        "path": "artifacts/verification-next-texture-fields-integrated/gpu/final-proof.json",
+        "sha256": "d41004083e911b9363911d3537b5d218013c0cb2fc5bfc162532b104a0da6014"
+      },
+      "sourceHashes": {
+        "packages/blender-addon/__init__.py": "de0e8534abcb690cc935eda33b827312e65901d944a540bb839c77dc1e871538",
+        "packages/blender-addon/bakelib_loader.py": "8f50fa1479d43f5f2e8a834e62b4c3517ef32beb858fae8e0082f807cfb6f5ed",
+        "packages/blender-addon/bootstrap.py": "891bf5814e20e8b86bd5bfa5d78a4c6a8a67919122f1738bed7e4690b3e70202",
+        "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
+        "packages/blender-addon/bump_height_ir.py": "c634d0eed632ffc62293ce1cd0985bc115951b02bdef88901b3e59ec164cd5d6",
+        "packages/blender-addon/bump_ir.py": "438d0422d6106a489bb001ad65904e26f4861dd699f00eed559fa38d2ee19590",
+        "packages/blender-addon/camera_data_ir.py": "956a074bad662f2a643335666ec62823643f955d6da8c75d056fa5f75928f1c8",
+        "packages/blender-addon/color_ir.py": "0b6fd4f61a5ce22d5fe84135b2fbdd484b5bc805889ff952e87e573053797e69",
+        "packages/blender-addon/component_schema.py": "5d1aeeb885077d71cecef78ca0aea2c381ce190428d745dafffb2126b64d70e0",
+        "packages/blender-addon/component_validation.py": "df23bb276c95d1068fe9a242ac6a3170433a900dc9c2338fbe34e562ab56bbb9",
+        "packages/blender-addon/components_ui.py": "77436f5bc00aee78670c6d5571e812d039090b13d2e2ece00fc5b0d3c450c2fc",
+        "packages/blender-addon/consequence_gizmos.py": "e10e508a6612e73957f3dbe9c2125fbbac25a88499f08ca8ea8d34fb230486d7",
+        "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
+        "packages/blender-addon/engine_fallback.py": "c5f9c9a31f5b26f4dc7929e672b1b03835d6eda1f3882de738d87cfafd622037",
+        "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
+        "packages/blender-addon/glblib.py": "0ebdf44320d7e89b6954f1b09b7c28d0d814ad20e81239a9a389f0b4f596385f",
+        "packages/blender-addon/handlers.py": "90499ee38fbb16165d2f581a5235c853c502483d8de4ae435d8d3ea688f47a0c",
+        "packages/blender-addon/known_issues.py": "40aeda4a7a172e8e133cd94f0c663a4a6ccf2c9f79a8159bdf42b75df1395c52",
+        "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
+        "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
+        "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
+        "packages/blender-addon/material_compiler.py": "a2bd3b7cfdcb1cebb98c462200a89f0a260526d16e6f31d92ae2c066cc4ab694",
+        "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
+        "packages/blender-addon/nla_sequence.py": "6bd3e380bc15cd177e9650008d5e47dc5f34ad76d5e8121249dcd2bbf7df7c35",
+        "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
+        "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
+        "packages/blender-addon/noise_mf_coordinates.py": "fc40bdf258c62a75977839e5af1250289f474595523fa67826b586f673bb3233",
+        "packages/blender-addon/noise_static_inputs.py": "a73556da121f0a39f1df06c9037c845a778c97a612ed3ae08c2e2c1b9e005eaa",
+        "packages/blender-addon/noise_varying_ir.py": "8f949efe54b6b911df6987165299318d6ed3371f785e7fea5ec858c54249d7b0",
+        "packages/blender-addon/normal_direction_ir.py": "0aa3b1b0226320b6b92fce63b06d7e5202bd012ce9820085d3fc26c426b3857f",
+        "packages/blender-addon/normal_input_bounds.py": "7967ed668d1a4e9de8d437717f22b736bf3956a1f6d3816da140e9725b13c3c7",
+        "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
+        "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
+        "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
+        "packages/blender-addon/ops.py": "fb5280e257b385e80bdbe1c4790c2ea0030ae1b3865860214298e8748ee95ece",
+        "packages/blender-addon/overlay.py": "261f479d6a54978111d6355f6748198e14a437e8a0e5df29b01b1b6e8ee1677c",
+        "packages/blender-addon/ownership.py": "939b9822ae5646382e1a37031ab35f6c28ba2d8f6b3fc5cfc174b930d1f40c99",
+        "packages/blender-addon/prefs.py": "0995582b536b88f2d4bc62c6ddc1e163136fb22d44e11b81b4ad2ebe28615f28",
+        "packages/blender-addon/presentation.py": "ccbd9452654f88d60c5b7abe80f28985a52d3a2146f1ea4d1190d5ba4938c142",
+        "packages/blender-addon/presentation_ui.py": "a37fbf6cd240eab386d7dd6e0a525f299b59edbb95e3ac932b891c683ff0a2a7",
+        "packages/blender-addon/previewrun.py": "da775c4bf76c138f8f11d3415318968dee3e9df82e905877708435260e654006",
+        "packages/blender-addon/probe_authoring.py": "1de592094d0c46252d2011da274e9843f5fdadf3782f4cd96bf92d75c002d90f",
+        "packages/blender-addon/procedural.py": "953104e0888e4e4054a31dbe3a2f7f2d0dd60a5e0dfd1eb5ae33973543307548",
+        "packages/blender-addon/props.py": "09e2ace896407b2a2d7aee4ef04a61d9303af764589a1f77f5617d56bea9d315",
+        "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
+        "packages/blender-addon/shader_color_band.py": "dc9bf6130aaf4d972787aa5a7779500fb5ed6718b199d7c5069578d5bdc10508",
+        "packages/blender-addon/shader_domains.py": "a72d1c466d2e68bfe3144c9184743ae590a2b8fb7adcecaaab0e86d457ca8757",
+        "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
+        "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
+        "packages/blender-addon/static_selection.py": "4d2631406029bedae51f7dfe90c821dac3d5cf7391148fb44635cbd4ce9f812b",
+        "packages/blender-addon/syncrun.py": "b1a80d00f7a45846e6d246dcbd1f5632e76f17ef2ae18a9024f609b2cde12a1a",
+        "packages/blender-addon/syncstatus.py": "517f07d9066f6a3b7cb4173a8b1c4847edb7ea149c7334c4883b0519024c336f",
+        "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
+        "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
+        "packages/blender-addon/tests/compositor_texture_fields_check.py": "c22f7579cd0e0ee4d12258a56132b1344c8b114b6db9e64c045e4e943119cd16",
+        "packages/blender-addon/tsl_ir.py": "842a2370673d2545bf789e6a847dc6c74f14d901116b3e4ff6cbc9133df0bd36",
+        "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
+        "packages/blender-addon/ui.py": "50258c0153f14cac41dfa3c6b50ef11ca3c8c819306209f3d8e1909b107a16a4",
+        "packages/blender-addon/ui_state.py": "bbc3f335df8910029d76b0fa8334a85c9d21d9051410ff7a766714cb5966d23b",
+        "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
+        "packages/blender-addon/validation.py": "d78623aa5ba076756409bd8dd5cb041b2f876df7a75b23ed021a0bbd03377759",
+        "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
+        "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
+        "packages/blender-addon/vocab.py": "1778a646feb149b2594440350076868b7f07b4f02c4ef8f6114b93050d0e13ba",
+        "packages/blender-addon/web_runtime_limits.py": "ef269bf5ed2d3cd695820a242f53aa53f6ca3ef044c251a04d647033faef9e9c",
+        "packages/blender-addon/weblights.py": "9addb7b2de3e2add3955df9cf344fcdf9d0fcf1d57a5a466057fdec9924dce93",
+        "packages/blendlink/blender/bakelib.py": "77a9535f53ab2fd07005436b9b74855e70428e2f42025f7c91ccc5e519fbe6de",
+        "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
+        "packages/blendlink/blender/compositor_affine.py": "7df4327f10d8cb0d223cd4b2e5c67b2f62721e246831ce4a6fd98ec4653b03e4",
+        "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
+        "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
+        "packages/blendlink/blender/compositor_channel_key.py": "a00e0f67b92ab817a401340c654758177eadc1b07d7a0ae92258b16760dc46dc",
+        "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
+        "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
+        "packages/blendlink/blender/compositor_color_key.py": "3d905f6f46171a0c9beb48edf280d3969d8f53ef77a11a0334124cdc176e84f5",
+        "packages/blendlink/blender/compositor_crop.py": "44ed9983ecac97b400a3ba7896a8eb66738e23cb61bb151d139dbdff7150351c",
+        "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
+        "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
+        "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
+        "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
+        "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
+        "packages/blendlink/blender/compositor_gpu.py": "9577b6df9abbf9820af6dab309b0ab2ec3a00db8a9bf60a4c5e0c9e4cb8600ae",
+        "packages/blendlink/blender/compositor_graph.py": "60eb5ff6be29509634a9bfc1d049d117defb6593dc0f622a406ac229ee9be14c",
+        "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
+        "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
+        "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
+        "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
+        "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
+        "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
+        "packages/blendlink/blender/compositor_math.py": "fd2f9efc43f4b0bf1dfebbdc651190025c9e33ccf2ae3ab0baf653715dd00b78",
+        "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
+        "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
+        "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
+        "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
+        "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
+        "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
+        "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
+        "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
+        "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
+        "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
+        "packages/blendlink/blender/environment_compress.py": "397d332d28c72fbfc66ca5f4c85298efaf2a9dc23c8cf6ba7f020c22d09f8408",
+        "packages/blendlink/blender/export_scene.py": "a592e88079601a95fbf0c287b31e9ec7c5f44e9d0ca004f8b361f437bd80aca2",
+        "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
+        "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
+        "packages/blendlink/blender/preparation_cache.py": "e3518eaa9999a0d51a0b7a9dd9810c68843dedd0d3bc119af3534ea8ec2db28d",
+        "packages/blendlink/blender/source_presentation.py": "ee6d03a6aa52b4828cc38dd795a6fbf17371f599695ac69605aa7f9b3179a96e",
+        "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
+        "packages/blendlink/blender/uvgeometry.py": "2420caeccc225eddf3dce09c8dafe8ab9048d503689c0795c4a5513f7b3d705c"
+      },
+      "nativeLauncher": {
+        "native": {
+          "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "bytes": 210043328,
+          "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+        },
+        "node": {
+          "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "bytes": 126827136,
+          "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+        },
+        "configurationSha256": "8df160370239a117d84f39b3e85281250eff86cea8367188f1feddf3adce5bce",
+        "invocations": [
+          {
+            "name": "1e6395f0-cd02-4155-8a18-844ec84cc28a.json",
+            "sha256": "7c129edc73971cb8613debce495d3726b4d4192d6863d14ed86bf2e90f4c9052"
+          },
+          {
+            "name": "2d0cadcf-8132-439c-8ff5-87a29f8f6362.json",
+            "sha256": "c7f24a38f7cabc1d8c46a14bea0b5a782d0d0d482ea8449840ecaf443687051a"
+          },
+          {
+            "name": "36fc0fd5-ad3f-4187-8a7d-f1acccaa4967.json",
+            "sha256": "e144bfcde0939301a1408dd0d5aa7de32eb2b00ecd594e8ef932198fbb418141"
+          },
+          {
+            "name": "53210b94-78e7-4867-b6e1-8e3ba9fbd802.json",
+            "sha256": "a267cde1fc2b69322d347f14217f206497f79e63b36035aa9a1b5722cbeed43f"
+          },
+          {
+            "name": "64f43437-3685-4d1c-b35e-b551ba8bacb5.json",
+            "sha256": "12c39e922175a743b0cf28ed547fbd5fd11f70cd3cbec2cdd35a9575f39e53f0"
+          },
+          {
+            "name": "ad5771bc-207c-434b-aca9-8680d41373e0.json",
+            "sha256": "292aa784756f314d57bff145579e29b5383ce0286b66fff99b99356ffb6719d9"
+          },
+          {
+            "name": "b003ec4b-9930-4da2-92d7-77a19d0bbe8f.json",
+            "sha256": "a2cf35b7ab4a4008a8e7df68a90317d6271e27da36a7d2d51c9bb2d5c3d6c552"
+          },
+          {
+            "name": "d09f4ade-0a77-4eb6-8e87-fce708ed3fc1.json",
+            "sha256": "19372a895251ef0d4116f8beba02edd43a58522a13bc33d0785f628dd6051bfe"
+          },
+          {
+            "name": "e598bc70-a572-4f75-b4e9-62528973aac5.json",
+            "sha256": "789fbb5468c02e46935570e0cc3f351dbb7f9feaa1d335360abbf60988416407"
+          },
+          {
+            "name": "f78478b5-d500-4ffe-82fb-f879183242d3.json",
+            "sha256": "7ccf1af13389639f06269a4d19dec550b52fa8c9fef3dca3ee8308d8cfdc85ad"
+          }
+        ],
+        "exports": 8,
+        "captures": 1,
+        "versionProbes": 1
+      }
+    }
+  ],
+  "runs": [
+    {
+      "path": "artifacts/verification-next-texture-fields-integrated/cpu/browser-raw-metal/report.json",
+      "sha256": "2552e1d3059bebbf2eb4e75054a3494a5025c035ab9707a178ac4843c69ce3e7",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 111
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 111
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next-texture-fields-integrated/cpu/browser-final-metal/report.json",
+      "sha256": "4f4ebb2ab66783bfc002c862cb5227fed65a91b5dbe0462663203b3b3574944e",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 8
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next-texture-fields-integrated/cpu/browser-raw-software/report.json",
+      "sha256": "e7f381f244362a59a4bb29f2155ff05efd058fe1f38b28766394bf3c4134fcf9",
+      "sourceDevice": "CPU",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 111
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 111
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next-texture-fields-integrated/cpu/browser-final-software/report.json",
+      "sha256": "2cace868489acce013dad953ef57516c05c742dc717cd873b0e3090f86d17102",
+      "sourceDevice": "CPU",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 8
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next-texture-fields-integrated/gpu/browser-raw-metal/report.json",
+      "sha256": "061793651720402320f1c7973127280b05125e7c33782952cb112537dc3a4c45",
+      "sourceDevice": "GPU",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 111
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 111
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next-texture-fields-integrated/gpu/browser-final-metal/report.json",
+      "sha256": "0dded3ffdc2050f920dd5c557bb5a9635bf3bd6fe471a4d0b622485a60bc86fb",
+      "sourceDevice": "GPU",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 8
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next-texture-fields-integrated/gpu/browser-raw-software/report.json",
+      "sha256": "4a8d2410b8836e86003293273264d6ba3a11402a570f5310dc24e5af60e221b4",
+      "sourceDevice": "GPU",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 111
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 111
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next-texture-fields-integrated/gpu/browser-final-software/report.json",
+      "sha256": "8287e3ac0c9ed0050a6c71b2476d83ea0f67d3250328e09696a6ae1cf4372253",
+      "sourceDevice": "GPU",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 8
+        }
+      ]
+    }
+  ],
+  "upstream": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_tex_gradient.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/nodes/node_shader_tex_gradient.cc",
+      "sha256": "0cacd276b4ee29bf926257c5e9d4e95b95a3adce8ebecb8890718f1a98a8bbfa"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_tex_checker.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/nodes/node_shader_tex_checker.cc",
+      "sha256": "071abe965255ac86ba8b61408e1a327d0c3a5677775546e625eced32cafdfdf3"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_gradient.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_tex_gradient.bsl.hh",
+      "sha256": "b25510f053184931c1b914ed9f3205a5ff65e14b133106cef436964b035f6594"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_checker.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_tex_checker.bsl.hh",
+      "sha256": "1e82a6eb46e6b68e0a48983d82bf7a497e7096ed31b4886ac7a37bc80482c019"
+    },
+    {
+      "path": "source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "sha256": "15fc47ea692a70c77c3af533fff6fa2f5ebffaa51fcf253b82bc114855df2bad"
+    },
+    {
+      "path": "source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl",
+      "sha256": "50ab96f98c4f196c2346f1b1074ac78556ad0882ed4546890ed53eb8132c951c"
+    },
+    {
+      "path": "source/blender/compositor/shaders/compositor_image_coordinates_normalized.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/shaders/compositor_image_coordinates_normalized.glsl",
+      "sha256": "66f7f8c4dd318a82ac276ad2176359f4d377451fad4d9e7d3ce2d1ef51a59166"
+    },
+    {
+      "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9"
+    },
+    {
+      "path": "source/blender/nodes/shader/node_shader_util.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/node_shader_util.cc",
+      "sha256": "ca8cc21ff2de73ed00b1180145a8e85e6c7c1f4197689c330ed04cc830966df4"
+    }
+  ],
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "path": "artifacts/verification-next-texture-fields-integrated"
+  }
+}

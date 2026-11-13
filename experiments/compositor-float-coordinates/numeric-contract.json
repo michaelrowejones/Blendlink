@@ -1,0 +1,9 @@
+{
+ "model":"float-coordinate-2ulp-and-2m22-v1",
+ "declaredBeforeNumericProof":true,
+ "scope":"Uniform/Normalized floating coordinate components on a zero-offset full-frame domain; fresh explicit float2 to RGBA/paddedfloat3 only",
+ "xy":{"maxUlps":2,"maxAbsoluteError":2.384185791015625e-7,"conjunction":true},
+ "exactControls":"Every Z=+0, alpha=1, and exact zero coordinate center must retain its Float32 word; image-load calibration is exact.",
+ "rationale":"Integer texels, half-pixel centers, display halves and centered numerators are exactly representable within the 8192-axis bound. The one non-power-of-two division can lower to reciprocal multiplication on GPU. A two-ULP bound and independent absolute bound limit that rounding difference; no transcendental is used. Uniform's final power-of-two scaling is exact. This coordinate bound does not authorize tolerance across Checker floor discontinuities.",
+ "reporting":"Count exact-word differences separately from contract violations. Never widen these limits after seeing results; stop and review a failed contract."
+}

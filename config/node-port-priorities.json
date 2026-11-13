@@ -1404,6 +1404,22 @@
         "typed-field-contracts",
         "bounded-graph-execution"
       ]
+    },
+    "shader:FunctionNodeInputMenu": {
+      "priority": "P0 Enablers",
+      "reason": "A fixed native Menu source now feeds compile-time Menu Switch in the qualified 5.3 slice. Finish typed source/binding and bounded execution contracts before dynamic menus; this remains partial, with no GPU opcode.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeInputMenu": {
+      "priority": "P0 Enablers",
+      "reason": "A fixed native Menu source now feeds compile-time Menu Switch in the qualified 5.3 slice. Finish typed source/binding and bounded execution contracts before dynamic menus; this remains partial, with no GPU opcode.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
     }
   },
   "researchNotes": {
@@ -1412,7 +1428,11 @@
     "compositor:ShaderNodeRadialTiling": "Native context availability and separate shader research do not constitute a compositor port.",
     "shader:ShaderNodeLightFalloff": "Native EEVEE/Cycles differences justify an engine-fallback safety guard, not a live Light Falloff port.",
     "shader:ShaderNodeSqueeze": "Blender 4.2 owned-context initialization remains research and production source admission stays N/A. Existing qualified 5.2/5.3 slices remain limited as declared.",
-    "compositor:CompositorNodeImageCoordinates": "Pixel INT2 full-frame pointwise field slice is qualified on the measured Blender5.3 build, including live resize/DPR. Explicit Uniform/Normalized float2 fields and native casts are the next shared prerequisite for artist-authored default Gradient/Checker coordinates; they remain unqualified."
+    "compositor:CompositorNodeImageCoordinates": "Pixel INT2 and fresh Uniform/Normalized FLOAT2 full-frame pointwise fields are qualified on measured Blender5.3 build02f0899d78e3, including real resize/DPR and explicit RGBA/padded-float3 edges. FLOAT2 XY uses both <=2ULP and abs<=2^-22, with exact zero centers/Z/alpha; this output contract does not qualify arbitrary downstream composition. Next shared work: native scalar/int reduction/casts, data-window/origin/domain algebra and independently budgeted composed fields. Preserve Pixel exact-word gates.",
+    "compositor:ShaderNodeTexGradient": "Existing exact literal slices now have separate partial implicit Uniform and linked Uniform/Normalized field contracts: LINEAR/QUADRATIC and admitted EASING are bounded by both <=8ULP and abs<=2^-20 with exact zero/one/alpha controls; Uniform DIAGONAL requires dyadic maximum physical extent and exact words. Endpoint-separation and extent guards are rechecked after resize. Other modes, mapping, domains and arbitrary downstream composition remain pending.",
+    "compositor:ShaderNodeTexChecker": "Existing exact literal slice now has a separate exact implicit Uniform/linked Uniform/Normalized field slice at fixed integer Scale0..256. Rational phase-margin admission checks every extent before drawing and again after resize; near-boundary phases refuse without epsilon repair. Next work is safe broader coordinate/Scale provenance and independently qualified domains, not relaxation of branch gates.",
+    "shader:FunctionNodeInputMenu": "Partial fixed native node.value selector for existing compile-time Menu Switch; direct, reroute and artist-group paths are measured on Blender5.3 build02f0899d78e3. Empty/conflicting menus, dynamic selectors, standalone Menu transport and other builds remain unqualified.",
+    "compositor:FunctionNodeInputMenu": "Partial fixed native node.value selector for existing compile-time Menu Switch; direct, reroute and artist-group paths are measured on Blender5.3 build02f0899d78e3. Empty/conflicting menus, dynamic selectors, standalone Menu transport and other builds remain unqualified."
   },
   "observationEvidence": [
     "experiments/official-demo-node-performance/README.md",
@@ -1442,7 +1462,29 @@
       "experiments/compositor-vector-width/word-transport-evidence.json",
       "docs/NODE_PORT_WORKLOG.md",
       "experiments/compositor-image-coordinates/evidence.json",
-      "experiments/compositor-image-coordinates/NEXT.md"
+      "experiments/compositor-image-coordinates/NEXT.md",
+      "experiments/compositor-float-coordinates/README.md",
+      "experiments/compositor-float-coordinates/evidence.json",
+      "experiments/compositor-texture-fields/README.md",
+      "experiments/compositor-texture-fields/evidence.json"
+    ],
+    "shader:FunctionNodeInputMenu": [
+      "experiments/static-switch-family/README.md",
+      "experiments/static-switch-family/evidence.json"
+    ],
+    "compositor:FunctionNodeInputMenu": [
+      "experiments/static-switch-family/README.md",
+      "experiments/static-switch-family/evidence.json"
+    ],
+    "compositor:ShaderNodeTexGradient": [
+      "experiments/compositor-texture-fields/README.md",
+      "experiments/compositor-texture-fields/evidence.json",
+      "experiments/compositor-texture-fields/research-counterexamples.json"
+    ],
+    "compositor:ShaderNodeTexChecker": [
+      "experiments/compositor-texture-fields/README.md",
+      "experiments/compositor-texture-fields/evidence.json",
+      "experiments/compositor-texture-fields/research-counterexamples.json"
     ]
   },
   "sceneObservations": {

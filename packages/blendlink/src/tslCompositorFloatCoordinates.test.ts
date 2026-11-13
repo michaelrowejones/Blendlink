@@ -1,0 +1,18 @@
+import {describe,expect,it} from 'vitest'
+import {DataTexture,FloatType,RGBAFormat} from 'three'
+import {texture,vec4} from 'three/tsl'
+import {buildSourceCompositor} from './tslSourceCompositor.js'
+import type {CompositorValue,SourceCompositorOperation,SourceCompositorProgram} from './sourceDisplay.js'
+const pass:SourceCompositorOperation={id:'image',kind:'render-pass',type:'RGBA',source:{path:['Artist'],node:'Render Layers',nodeType:'CompositorNodeRLayers',output:'Image'},properties:{},inputs:{},pass:{scene:'Scene',viewLayer:'ViewLayer',pass:'Image',name:'Image',type:'RGBA'}}
+const operation=(output='Uniform'):SourceCompositorOperation=>({id:'coordinates',kind:'image-coordinates',type:'FLOAT_VECTOR2',source:{path:['Artist'],node:'Image Coordinates',nodeType:'CompositorNodeImageCoordinates',output},properties:{image_coordinates_model:'render-layer-float2-v1',image_coordinates_source_profile:'darwin-arm64-53-float2-v1',image_coordinates_native_version:[5,3,0],image_coordinates_reference_model:'full-frame-render-layer-v1',evaluation_device:'CPU',single_value_device:'CPU'},inputs:{Image:{name:'Image',socketType:'RGBA',value:{kind:'ref',node:'image',type:'RGBA'}}}})
+const program=(op=operation(),output:CompositorValue={kind:'convert',fromType:'FLOAT_VECTOR2',type:'RGBA',input:{kind:'ref',node:op.id,type:'FLOAT_VECTOR2'}}):SourceCompositorProgram=>({version:1,status:'extracted',ops:[pass,op],passes:[pass.pass!],diagnostics:[],output})
+const image=new DataTexture(new Float32Array(13*9*4),13,9,RGBAFormat,FloatType)
+const build=(p:SourceCompositorProgram)=>buildSourceCompositor(p,()=>texture(image))
+describe('explicit Image Coordinates floating pair contract',()=>{
+ it.each(['Uniform','Normalized'])('builds fresh %s fields through the real dispatcher',output=>{const result=build(program(operation(output)));expect(result.node.isNode).toBe(true);result.dispose();result.dispose()})
+ it('keeps padded float3 conversion explicit',()=>{const p=program();p.output={kind:'convert',fromType:'VECTOR',type:'RGBA',input:{kind:'convert',fromType:'FLOAT_VECTOR2',type:'VECTOR',input:{kind:'ref',node:'coordinates',type:'FLOAT_VECTOR2'}}};const result=build(p);expect(result.node.isNode).toBe(true);result.dispose()})
+ it('refuses scalar/integer and unrelated width substitutions',()=>{for(const type of ['VALUE','INT','VECTOR2','INT_VECTOR2','FLOAT_VECTOR2']){const p=program();p.output={kind:'convert',fromType:type,type:'RGBA',input:{kind:'convert',fromType:'FLOAT_VECTOR2',type,input:{kind:'ref',node:'coordinates',type:'FLOAT_VECTOR2'}}};expect(()=>build(p)).toThrow(/Image Coordinates/)}})
+ it('refuses a legacy vector producer relabeled as a floating pair',()=>{const op=operation();op.kind='value';op.type='VECTOR';op.value=[1,2,3];op.inputs={};expect(()=>build(program(op))).toThrow(/FLOAT_VECTOR2/)})
+ it('refuses forged provenance, native settings, output and image references',()=>{for(const mutate of [(op:SourceCompositorOperation)=>{op.source.output='Pixel'},(op:SourceCompositorOperation)=>{op.properties.image_coordinates_model='unknown'},(op:SourceCompositorOperation)=>{op.properties.image_coordinates_native_version=[5,2,0]},(op:SourceCompositorOperation)=>{op.properties.image_coordinates_source_profile='unmeasured'},(op:SourceCompositorOperation)=>{op.inputs.Image!.value={kind:'constant',type:'RGBA',value:[1,1,1,1]}},(op:SourceCompositorOperation)=>{op.properties.evaluation_device='GPU';op.properties.native_gpu_backend='OPENGL'}]){const op=operation();mutate(op);expect(()=>build(program(op))).toThrow(/Image Coordinates/)}})
+ it('refuses non-texture image expressions before shader compilation',()=>{expect(()=>buildSourceCompositor(program(),()=>vec4(1))).toThrow(/texture-backed/)})
+})

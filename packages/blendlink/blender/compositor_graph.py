@@ -70,8 +70,10 @@ normalize_static_image = _sibling("compositor_image").normalize_image
 normalize_vector_component = _sibling("compositor_vector_component").normalize_vector_component
 normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_int
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
+validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
 normalize_relative_to_pixel = _sibling("compositor_relative_to_pixel").normalize_relative_to_pixel
 normalize_image_coordinates = _sibling("compositor_image_coordinates").normalize_image_coordinates
+normalize_float_coordinates = _sibling("compositor_float_coordinates").normalize_float_coordinates
 validate_image_coordinate_graph = _sibling("compositor_image_coordinates").validate_image_coordinate_graph
 normalize_crop = _sibling("compositor_crop").normalize_crop
 normalize_split = _sibling("compositor_split").normalize_split
@@ -334,6 +336,13 @@ def extract(scene):
             return const(socket)
         resolved = output_value(links[0].from_socket, ctx)
         target_type = socket.type
+        if resolved.get("type") == "FLOAT_VECTOR2":
+            default = getattr(socket, "default_value", None)
+            if socket.type == "VECTOR" and socket.bl_idname == "NodeSocketVector2D" and default is not None and len(default) == 2:
+                target_type = "FLOAT_VECTOR2"
+            if target_type not in {"FLOAT_VECTOR2", "RGBA", "VECTOR"}:
+                fail("unsupported-float2-conversion", ctx["path"], socket.node, socket,
+                     "Image Coordinates FLOAT_VECTOR2 currently supports only identity, RGBA and padded float3 edges; scalar/integer conversions remain unqualified")
         if resolved.get("type") == "INT_VECTOR2":
             default = getattr(socket, "default_value", None)
             if socket.type == "INT_VECTOR" and socket.bl_idname == "NodeSocketIntVector2D" and default is not None and len(default) == 2:
@@ -504,7 +513,7 @@ def extract(scene):
                         lambda incoming, message: fail("unsupported-integer-bits", path, node, incoming, message))
                 elif node.bl_idname in ("ShaderNodeTexGradient", "ShaderNodeTexChecker"):
                     normalize_procedural_texture(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
-                        lambda incoming, message: fail("unsupported-procedural-texture", path, node, incoming, message))
+                        lambda incoming, message: fail("unsupported-procedural-texture", path, node, incoming, message), scene)
                 elif node.bl_idname == "FunctionNodeFloatToInt":
                     normalize_float_to_int(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-float-to-int", path, node, incoming, message))
@@ -512,7 +521,8 @@ def extract(scene):
                     normalize_relative_to_pixel(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-relative-to-pixel", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeImageCoordinates":
-                    normalize_image_coordinates(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
+                    coordinate_normalizer = normalize_float_coordinates if socket.identifier in {"Uniform", "Normalized"} else normalize_image_coordinates
+                    coordinate_normalizer(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-image-coordinates", path, node, incoming, message))
                 elif node.bl_idname == "FunctionNodeInputVector":
                     op["value"] = list(node.vector)
@@ -875,7 +885,7 @@ def extract(scene):
                                 "value": input_value(incoming, ctx),
                             }
                 # Assign only after dependencies are emitted, yielding topological order.
-                single = op["kind"] not in {"render-pass", "image-input"} and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values())
+                single = op["kind"] not in {"render-pass", "image-input"} and not op["properties"].get("procedural_texture_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values())
                 if single and op["kind"] == "alpha-crop" and bpy.app.version < (4, 5, 0) and device == "CPU":
                     fail("unsupported-crop-domain", path, node, socket,
                          "Legacy CPU Crop requires a finite image input; constant-image canvas evaluation remains unqualified")
@@ -942,6 +952,11 @@ def extract(scene):
         if not modern and not sink.use_alpha:
             result["outputAlpha"] = "legacy-composite-opaque-v1"
         result["output"] = input_value(terminal, ctx)
+        texture_conflict = validate_texture_field_graph(result)
+        if texture_conflict:
+            op, message = texture_conflict
+            result["diagnostics"].append({"code":"unsupported-procedural-texture-field", "path":op["source"]["path"], "node":op["source"]["node"], "socket":op["source"]["output"], "message":message})
+            raise Unsupported()
         coordinate_conflict = validate_image_coordinate_graph(result)
         if coordinate_conflict:
             op, message = coordinate_conflict

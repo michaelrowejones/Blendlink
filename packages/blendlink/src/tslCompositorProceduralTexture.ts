@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 /** Modern compositor texture contracts; EEVEE shader defaults are not inferred. */
 import * as TSL from 'three/tsl'
+import {textureFieldKind,buildTextureCoordinateField} from './tslCompositorTextureField.js'
 import type { CompositorValue, SourceCompositorOperation } from './sourceDisplay.js'
 import type { TslEffectNode } from './tslPostEffects.js'
 
@@ -54,38 +55,43 @@ const checkerKernel=Fn(([vector,scale]:TslEffectNode[])=>{
 
 export function buildCompositorProceduralTexture(op:SourceCompositorOperation,operations:readonly SourceCompositorOperation[],input:(name:string)=>TslEffectNode,fail:(message:string)=>never):TslEffectNode {
   const p=op.properties,v=p?.procedural_texture_version,vector=op.inputs?.Vector
-  const gradient=op.kind==='gradient-texture',checker=op.kind==='checker-texture'
+  const gradient=op.kind==='gradient-texture',checker=op.kind==='checker-texture',field=textureFieldKind(op)
   if((!gradient&&!checker)||p?.procedural_texture_model!==MODEL||p.procedural_texture_profile!==PROFILE
     ||!Array.isArray(v)||v.length!==3||![5,3,0].every((n,i)=>Object.hasOwn(v,i)&&v[i]===n)
     ||p.texture_mapping_model!=='identity-v1'||!['CPU','GPU'].includes(String(p.evaluation_device))||p.single_value_device!=='CPU'
     ||op.source.nodeType!==(gradient?'ShaderNodeTexGradient':'ShaderNodeTexChecker')||!['Color','Fac'].includes(op.source.output)
-    ||op.type!==(op.source.output==='Color'?'RGBA':'VALUE')||vector?.socketType!=='VECTOR'||vector.value?.type!=='VECTOR')
+    ||op.type!==(op.source.output==='Color'?'RGBA':'VALUE')||(!field&&(vector?.socketType!=='VECTOR'||vector.value?.type!=='VECTOR')))
     return fail('Procedural Texture requires its measured Blender 5.3 compositor source, typed schema and identity mapping model')
-  const literal=resolveTextureLiteral(vector.value,operations,op,'VECTOR')
+  const checkerScale=checker?resolveTextureLiteral(op.inputs.Scale?.value,operations,op,'VALUE'):undefined
+  if(field&&checker&&(typeof checkerScale!=='number'||!Number.isInteger(checkerScale)||checkerScale<0||checkerScale>256))return fail('Procedural Texture Checker field requires a fixed integer Scale0..256')
+  const fieldVector=field?buildTextureCoordinateField(op,operations,input,fail,checker?checkerScale as number:undefined):null
+  const literal=field?null:resolveTextureLiteral(vector!.value,operations,op,'VECTOR')
+  const vectorNode=()=>fieldVector??input('Vector')
+  const vectorCount=field&&p.procedural_texture_coordinate_model==='implicit-uniform-full-frame-v1'?0:1
   let factor:TslEffectNode
   if(gradient){
     const mode=String(p.gradient_type)
-    if(!Object.hasOwn(gradientKernels,mode)||Object.keys(op.inputs).length!==1)
+    if(!Object.hasOwn(gradientKernels,mode)||Object.keys(op.inputs).length!==vectorCount)
       return fail('Procedural Texture Gradient mode or input schema has no qualified kernel')
-    if(!Array.isArray(literal))
+    if(!field&&!Array.isArray(literal))
       return fail('Procedural Texture Gradient requires bounded literal/Value/group vectors; general fields need a separate signed-zero/subnormal contract')
-    if(mode!=='LINEAR'&&(literal as number[]).some(x=>!Number.isInteger(x*16)))
+    if(!field&&mode!=='LINEAR'&&(literal as number[]).some(x=>!Number.isInteger(x*16)))
       return fail('Procedural Texture nonlinear/diagonal Gradient requires exact sixteenth-grid literal coordinates')
-    if(literal===null&&vector.value.kind==='constant')
+    if(!field&&literal===null&&vector!.value.kind==='constant')
       return fail('Procedural Texture literal Vector must contain bounded finite exact Float32 words')
-    factor=gradientKernels[mode]!(input('Vector'))
+    factor=gradientKernels[mode]!(vectorNode())
   }else{
     const scale=op.inputs.Scale,number=resolveTextureLiteral(scale?.value,operations,op,'VALUE')
-    const names=op.source.output==='Color'?['Vector','Scale','Color1','Color2']:['Vector','Scale']
+    const names=[...(vectorCount?['Vector']:[]),'Scale',...(op.source.output==='Color'?['Color1','Color2']:[])]
     if(Object.keys(op.inputs).length!==names.length||!names.every(name=>Object.hasOwn(op.inputs,name))
-      ||!Array.isArray(literal)||literal.some(x=>Math.abs(x)>16||!Number.isInteger(x*16))
+      ||(!field&&(!Array.isArray(literal)||literal.some(x=>Math.abs(x)>16||!Number.isInteger(x*16))))
       ||scale?.socketType!=='VALUE'||typeof number!=='number'||!Number.isInteger(number)||number<0||number>256)
       return fail('Procedural Texture Checker requires sixteenth-grid literal vectors within +/-16 and fixed integer Scale 0..256')
     if(op.source.output==='Color')for(const name of ['Color1','Color2']){
       if(op.inputs[name]?.socketType!=='RGBA'||!Array.isArray(resolveTextureLiteral(op.inputs[name]?.value,operations,op,'RGBA')))
         return fail('Procedural Texture Checker Color inputs require finite bounded exact Float32 literal/group colors')
     }
-    factor=checkerKernel(input('Vector'),input('Scale'))
+    factor=checkerKernel(vectorNode(),input('Scale'))
     if(op.source.output==='Color')return select(factor.equal(1),input('Color1'),input('Color2'))
   }
   return op.source.output==='Color'?vec4(factor,factor,factor,1):factor

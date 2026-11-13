@@ -1,0 +1,17 @@
+# Default and linked compositor texture fields
+
+Blender5.3.0 build`02f0899d78e3`, macOSarm64 compositor. Gradient and Checker now understand Blender's implicit Uniform image-coordinate field, plus the qualified linked Uniform/Normalized float2 producer. An unlinked Vector is never substituted with a literal. Texture mapping must remain identity; domains are full-frame, square-pixel, without borders or neighborhood operations. Physical extents are4..8192 and validated again during live resize/DPR changes.
+
+Existing literal ports remain bitexact. LINEAR and QUADRATIC fields use the declared8ULP AND2^-20 absolute bound, with exactzero/one/alpha controls. EASING uses that bound only when source-derived endpoint separation admits the current Xextent; the CPU correctly-rounded coordinate anchor and the independently bounded nativeGPU/browser coordinate error are distinct. Default UniformEASING1920x1080 is admitted;8192x4 is refused. Safe4x8192 portrait remains admitted. UniformDIAGONAL requires a power-of-two maximum physical extent and exactwords; NormalizedDIAGONAL has nonnegative inputs and uses the bounded contract.
+
+Checker literal integerScale0..256 and finite literalcolors remain exact. An O(width+height) rational phase-margin admission test runs on extent changes, then caches the decision. It encloses coordinate uncertainty and fused/unfused Float32 arithmetic; every possible phase must share the same floor. It changes no shader branch or epsilon. DefaultScale5 admits1920x1080,1080x1920,1280x720 and3840x2160;4x5,5x4,15x10 and1920x1081 refuse. All refusals are checked before drawing and recover after returning to an admitted extent.
+
+The fixed matrix has111native cases/device:102 common field signatures at six extents, eight dyadic UniformDIAGONAL controls and one actual1920x1080 defaultChecker field. Eight saved.blend files/device exercise actual built Final publication, GLTF/pinned presentation loading and the production post pipeline. Raw and Final paths reuse the same built graphs across physical resize/DPR frames, independently calibrate readback orientation, test hazardous resize refusal/recovery and three apply/dispose cycles. Exact renderer-owned DFG_LUT object identities come from a separate no-compositor draw of each actual saved scene. No port-owned textures/RTTs or per-frame GPU readback are introduced.
+
+```sh
+npm run build --workspace=scenetoweb
+node experiments/compositor-texture-fields/matrix.mjs artifacts/verification-texture-fields
+node experiments/compositor-texture-fields/verify.mjs artifacts/verification-texture-fields experiments/compositor-texture-fields/evidence.json
+```
+
+`capture.mjs CPU|GPU directory` performs exactly one native capture AND one eight-scene Final publication; do not call the exporter again. `run.mjs --built [--final]` uses`SCENETOWEB_TEXTURE_FIELD_REFERENCES`, the existing Metal/SwiftShader profile variables and actual WebGPU/WebGL2. Native invocations have fresh Python prefixes and retained launcher/helper/configuration archives. The closed reader independently checks native source/helper/oracle census, exact exporter-source census and executable/archive identities, plus current independent emission and complete runtime/vendor/map/fixture snapshots. Research counterexamples are retained separately; no acceptance threshold was widened after a failure. Full proof qualification remains tied to its compact evidence receipt.

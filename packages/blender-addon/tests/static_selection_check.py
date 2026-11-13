@@ -109,4 +109,28 @@ node.inputs[0].default_value=0;node.inputs[0].keyframe_insert(data_path='default
 try:static_selection.static_selection(node,node.outputs[0])
 except static_selection.SelectionUnsupported as error:assert 'animation' in str(error)
 else:raise AssertionError('Animated selector admitted')
-print('BLENDLINK_STATIC_SELECTION_POLICY_PASSED '+json.dumps({'typedSelections':count,'booleanTruthTableCases':boolean_cases,'sharedGroupInstances':2}))
+# Native Input Menu constants select through direct, reroute and group bindings.
+sys.path.insert(0,str(ROOT/'experiments/static-switch-family'))
+from cases import build as build_case
+menu_sources=0
+for context in ['shader','compositor']:
+ for route in ['direct','reroute','group']:
+  for choice in [0,1]:
+   if context=='shader':tree,root=shader();target=root.inputs['Base Color']
+   else:scene,tree,sink=compositor();target=sink.inputs[0]
+   row={'kind':'menu-source-'+route,'family':'menu','mode':'RGBA','choice':choice}
+   signal,_=build_case(tree,row,context)
+   tree.links.new(signal,target)
+   if context=='shader':assert tsl_ir.emit_channel(target,evaluation_engine='EEVEE')['output']
+   else:
+    result=compositor_graph.extract(scene);assert result['status']=='extracted',result
+    assert result['compileTimeSelections'][0]['selectedIndex']==choice,result
+   menu_sources+=1
+# Undefined menu sources never substitute an arbitrary first branch.
+tree,root=shader();menu=tree.nodes.new('FunctionNodeInputMenu');empty=tree.nodes.new('GeometryNodeMenuSwitch');empty.data_type='RGBA'
+for item in list(empty.enum_items):empty.enum_items.remove(item)
+tree.links.new(menu.outputs[0],empty.inputs[0]);tree.links.new(empty.outputs[0],root.inputs['Base Color']);bpy.context.view_layer.update()
+try:tsl_ir.emit_channel(root.inputs['Base Color'],evaluation_engine='EEVEE')
+except tsl_ir.TslIrRefusal as error:assert 'resolved' in str(error)
+else:raise AssertionError('Undefined Menu source was admitted')
+print('BLENDLINK_STATIC_SELECTION_POLICY_PASSED '+json.dumps({'typedSelections':count,'booleanTruthTableCases':boolean_cases,'sharedGroupInstances':2,'menuSources':menu_sources}))

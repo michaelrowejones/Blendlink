@@ -64,7 +64,7 @@ def main(destination):
     node = tree.nodes.new('ShaderNodeTexGradient')
     tree.links.new(node.outputs['Fac'], sink.inputs[0])
     refused = compositor_graph.extract(scene)
-    assert refused['status'] == 'unsupported' and any('Uniform Image Coordinates' in row['message'] for row in refused['diagnostics'])
+    assert refused['status'] == 'extracted' and refused['ops'][0]['properties']['procedural_texture_coordinate_model'] == 'implicit-uniform-full-frame-v1'
     node, output = texture('gradient', [.5, -.25, .125])
     tree.links.new(output, sink.inputs[0])
     node.gradient_type = 'RADIAL'

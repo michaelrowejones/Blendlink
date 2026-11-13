@@ -24,7 +24,7 @@ export interface SourcePresentation {
 
 export interface CompositorValue {
   kind: 'constant' | 'ref' | 'convert'
-  /** VECTOR is the legacy float3 contract. Fresh Pixel producers may use explicit INT_VECTOR2. */
+  /** VECTOR is the legacy float3 contract. Fresh coordinate fields may use explicit INT_VECTOR2/FLOAT_VECTOR2. */
   type: string
   value?: unknown
   node?: string

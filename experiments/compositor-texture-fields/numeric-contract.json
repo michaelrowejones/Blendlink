@@ -1,0 +1,28 @@
+{
+  "model": "texture-fields-source-forward-error-v1",
+  "declaredBeforeConsumerMeasurement": true,
+  "gradient": {
+    "maxUlps": 8,
+    "maxAbsoluteError": 9.5367431640625e-07,
+    "conjunction": true
+  },
+  "uniformDiagonal": {
+    "exact": true,
+    "domain": "Power-of-two maximum physical extent only, including after resize",
+    "reason": "Non-dyadic linked field cancellation produced7.45e-9 at a nativezero and was refused without relaxing the predeclared exactzero gate. Dyadic half-centers/subtraction/power-of-two division/scaling/sum are exact within8192."
+  },
+  "exactControls": "Every Checker RGBA word/branch; every Gradient zero/one/alpha word; independent image-load calibration.",
+  "coordinatePrecondition": "Known sharedUniform/Normalized kernel only, <=2ULP AND abs<=2^-22 percoordinate, exactzero centers, fixedzeroZ. Default uses the same native Uniform coordinate cache, no literal substitute.",
+  "checker": "Every physicalextent/Scale combination must pass rational phase-margin admission before drawing and againafterresize. No epsilon repair or branch-output tolerance. NativeCPU/GPU staging remains recordedseparately.",
+  "rationale": "LINEAR Lipschitz1; QUADRATIC2; EASING1.5; DIAGONAL0.5*(abs(dx)+abs(dy)). Ordered polynomial arithmetic adds bounded Float32 rounding; sourceCPU and sourceGPU have separate receipts. Literal scopes stay bitexact. Report exact-word differences separately; never widen limits after failures.",
+  "easingAdmission": {
+    "maximumX": {
+      "Uniform": "(width-1)/max(width,height)",
+      "Normalized": "1-.5/width"
+    },
+    "upperX": "min(1,maximumX+2^-22+2^-24)",
+    "requiredEndpointGap": "1-upperX^2*(3-2*upperX) > 8*2^-24",
+    "derivation": "Ordered r\u00b2,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
+    "counterexample": "NativeCPU Easing exactone became0.9999999403953552 onactualMetal WebGPU/WebGL2 at8192x4. No acceptance limit widened."
+  }
+}

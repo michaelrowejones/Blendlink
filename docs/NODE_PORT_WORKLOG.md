@@ -208,3 +208,133 @@ is planning evidence, not Final publication or visual parity. None of the three
 used material graphs contains this batch's new node classes. A broken fresh-demo
 download path was fixed with a separate, byte-pinned demo downloader; executable
 download restrictions remain intact.
+
+## Integrated floating coordinates, texture fields and native Menu sources
+
+The next combined-root freeze extends existing partial nodes and adds the
+shader/compositor `FunctionNodeInputMenu` context pairs as partial. New routes
+are qualified only on Blender 5.3.0 build `02f0899d78e3`, macOS arm64, using
+native compositor CPU/Metal and actual browser WebGPU/WebGL2 on Metal and
+SwiftShader. Earlier Blender classifications remain unchanged. The resulting
+5.3 inventory is 46 supported, 90 partial, 14 structural and 182 unsupported.
+These are scoped implementation classifications, not a claim that all modes or
+arbitrary composed graphs have visual parity.
+
+| Fresh integrated family | Native graphs | Saved Final scenes | Browser case runs | Primary Float32 words | Exact-word differences | Contract violations |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Uniform/Normalized Image Coordinates FLOAT2 | 96 | 16 | 448 | 596,992 | 33,024 | 0 |
+| Default/linked Gradient and Checker fields | 222 | 16 | 952 | 68,565,664 | 66,090 | 0 |
+| Static selection including native Menu sources | 213 | 90 | 1,212 | 310,272 | 0 | 0 |
+| Pixel INT2 regression replay | 32 | 8 | 160 | 246,080 | 0 | 0 |
+
+The same current runtime fingerprint closes all four receipts. These are fresh
+native captures, saved Final publications, independent browser runs and closing
+source/runtime checks, rather than relabelled isolated results. Shared cases
+and controls earn no additional per-node credit; family counts must not be
+summed into a number of newly supported node classes.
+
+### Coordinate precision and artist defaults
+
+Fresh `FLOAT_VECTOR2` distinguishes native two-component floating coordinates
+from existing float3 `VECTOR` and Pixel `INT_VECTOR2`. Direct/reroute/artist-group
+paths admit explicit RGBA `(x,y,0,1)` and padded float3 `(x,y,0)` edges. Float2
+scalar/int conversion remains unqualified. The full-frame source is a direct
+texture-backed Render Layers Image with zero offset, square pixels and physical
+extents1..8192, with no crop/border or spatial/neighborhood operations. Physical
+image/drawing/target agreement is checked during actual animation-frame
+resize/DPR changes.
+
+The coordinate contract was declared before proof: XY must satisfy both
+<=2ULP and absolute error<=2^-22; zero centers, Z=+0 and alpha=1 stay exact.
+Measured maximum was1ULP / 5.960464477539063e-8. This bound ends at the field
+output and padding conversions. Downstream Math can amplify error, and Compare
+or Checker can cross a branch boundary, so each composition needs its own proof.
+
+An unlinked compositor Gradient/Checker Vector now uses Blender's actual
+implicit Uniform field. Linked qualified Uniform/Normalized fields use the same
+coordinate kernel; no literal zero or fake Render Layers dependency substitutes
+for the implicit field. Existing exact literal scopes retain their earlier
+contracts. Field domains require identity texture mapping, full-frame square
+pixels, no borders/neighborhood operations and physical extents4..8192.
+
+LINEAR/QUADRATIC and admitted EASING fields require both <=8ULP and absolute
+error<=2^-20, with every native zero/one/alpha word exact. The measured maximum
+was3ULP / 1.7881393432617188e-7. EASING additionally checks source-derived X
+endpoint separation before export and every resize: default Uniform1920x1080
+and portrait4x8192 pass; landscape8192x4 refuses. Uniform DIAGONAL remains exact
+only when the maximum physical extent is a power of two. Normalized DIAGONAL
+uses its independently bounded nonnegative-input contract.
+
+Checker remains bitexact at fixed integer Scale0..256. A cached
+O(width+height) rational phase-margin check encloses coordinate and fused/unfused
+Float32 arithmetic uncertainty and requires one unambiguous floor for each
+phase. Default Scale5 admits1920x1080,1080x1920,1280x720,3840x2160 and13x9;
+4x5,5x4,15x10 and1920x1081 refuse. Resizes repeat the admission test and recover
+after returning to a safe extent. The actual field color fixtures cover HDR RGB
+and alpha0/1; native RNA clamped attempted negative RGB assignments, so those
+attempts provide no measured negative-color credit.
+
+Counterexamples remain tracked separately: near-boundary Checker phases,
+non-dyadic Uniform DIAGONAL cancellation at native zero, and thin landscape
+EASING endpoint rounding. No shader epsilon, output repair or relaxed threshold
+was added after these failures. Actual Final pipelines and raw graphs cover
+768 texture-field resize/DPR frames, refusal/recovery and exact renderer-owned
+DFG cache/source restoration over three apply/dispose cycles. The kernels add
+no port-owned textures/RTTs or per-frame GPU readback. These resource properties
+are not a broad frame-time performance claim.
+
+### Menu sources and verification throughput
+
+`FunctionNodeInputMenu` now supplies the resolved native `node.value` choice to
+existing compile-time Menu Switch, including direct, reroute and artist-group
+bindings. Empty/conflicting choices, animation/drivers/NLA, invalid schemas and
+budget violations still refuse. Only the selected existing expression is
+emitted: no new GPU opcode, branch pass or generic standalone Menu transport.
+The expanded Switch family keeps all310,272 words exact and includes six Menu
+source cases per shader/compositor context with actual saved Final scenes.
+
+The guarded launcher keeps full per-invocation SHA256 as its default. An
+explicit opt-in serial transaction profile checks full native/Node bytes at
+capture and finalize, per-call identity metadata and fresh helper/bridge bytes,
+then seals exact successful calls before archival. Every native Python action
+still gets a fresh prefix before imports; failed, overlapping, unsealed,
+tampered or owner-dead transactions refuse/clean up. Nineteen guard tests include
+actual Blender invocation and during-child drift. This is local proof execution
+infrastructure, not an artist-export speed or rendering speed claim.
+
+Paired six-export CPU-only batches measured a17.76% stage reduction and11.58%
+reduction after including optimized capture/finalize/archive costs (mean8.146s
+to7.202s); GLBs were byte-identical and sources unchanged. The expanded integrated
+Switch transaction recorded156.191 command seconds, including84.136s Final
+exports and56.474s browser checks. Its larger census differs from the preceding
+run, so the integrated totals are not a controlled whole-job speed comparison.
+
+### Integration failures and next bottlenecks
+
+- A texture-field dispatcher assumed every spatial refusal control had a
+  `properties` object. Existing Pixel/Float bad-spatial controls exposed a
+  TypeError before their named refusal. Optional access fixes the production
+  dispatch; a public dispatcher regression now protects it. Switch/Float/Pixel
+  were freshly replayed after the shared fix, without grafting receipts.
+- The new texture reader initially disagreed with its copied writer's legacy
+  status token. The reader now demands the exact existing writer token while
+  retaining field-specific case/source/module/fixture closure. No numerical
+  reports or acceptance gates were patched. Shared typed harness contracts
+  should replace copied metadata constants before the next family.
+- Keep source/admission decisions ahead of the proof freeze. Independently
+  porting workers are useful; simultaneous edits to shared extraction or proof
+  helpers force expensive recaptures. Freeze one combined build before serial
+  GPU proofs and record each failure as a distinct retained transaction.
+- Next reusable work is native float2 scalar/int casts, domain/window/origin
+  algebra and composition-aware precision budgets. Existing Gradient/Checker
+  field scopes no longer wait on basic Uniform/Normalized support. Safe broader
+  Scale/coordinate provenance, remaining Gradient modes and real artist-scene
+  Radial/animation/Cycles-bake blockers remain pending.
+
+Local verification passed180 SDK test files (1,508 tests, five optional skips),
+98 release-policy tests,107 Node pipeline tests and seven Python audit tests.
+The guarded native identity suite passed19 tests. A freshly packed SDK compiled
+in Vanilla and R3F consumers. An independent install using an empty npm cache
+verified the archive SRI, CLI version, root import and browser build. This is
+local install verification; no release, publish, PR change or hosted workflow
+was requested or run.

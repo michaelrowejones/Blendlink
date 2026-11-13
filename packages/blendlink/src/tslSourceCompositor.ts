@@ -1,3 +1,5 @@
+import {buildCompositorFloat2Conversion,buildCompositorFloatCoordinates} from './tslCompositorFloatCoordinates.js'
+import {validateTextureFieldGraph,textureFieldKind} from './tslCompositorTextureField.js'
 import {buildCompositorImageCoordinates,buildCompositorInt2Conversion,validateImageCoordinateGraph} from './tslCompositorImageCoordinates.js'
 import { buildCompositorProceduralTexture } from './tslCompositorProceduralTexture.js'
 import { buildCompositorRelativeToPixel } from './tslCompositorRelativeToPixel.js'
@@ -503,6 +505,7 @@ export function buildSourceCompositor(
     }
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
+    validateTextureFieldGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateImageCoordinateGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     const nodes = new Map<string, TslEffectNode>()
     const images = new Map<string, ReturnType<typeof staticCompositorTexture>>()
@@ -529,6 +532,7 @@ export function buildSourceCompositor(
         return nodes.get(v.node)
       }
       if (v.kind === 'convert' && v.input) {
+        if(v.fromType==='FLOAT_VECTOR2')return buildCompositorFloat2Conversion(v,program.ops,value,message=>{throw new SourceCompositorUnsupported(message)})
         if (v.fromType === 'INT_VECTOR2') return buildCompositorInt2Conversion(v, program.ops, value, message => { throw new SourceCompositorUnsupported(message) })
         const input = value(v.input)
         if (v.type === v.fromType) return input
@@ -567,7 +571,7 @@ export function buildSourceCompositor(
     for (const op of program.ops) {
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
-      const single = !['render-pass', 'image-input'].includes(op.kind) && Object.values(op.inputs).every(input => isSingleValue(input.value))
+      const single = !['render-pass', 'image-input'].includes(op.kind) && !textureFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
       if (incoming.some(input => input.domain?.croppedWindow)
         && !['exposure', 'invert', 'posterize', 'alpha-over'].includes(op.kind))
@@ -647,7 +651,7 @@ export function buildSourceCompositor(
             node = sharedTypedConstant(op.type, op.value)
             break
           case 'image-coordinates':
-            node = buildCompositorImageCoordinates(op, program.ops, input('Image'), domainFail)
+            node = op.type==='FLOAT_VECTOR2'?buildCompositorFloatCoordinates(op,program.ops,input('Image'),domainFail):buildCompositorImageCoordinates(op, program.ops, input('Image'), domainFail)
             break
           case 'relative-to-pixel':
             node = buildCompositorRelativeToPixel(op, program.ops, value, domainFail)

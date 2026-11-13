@@ -1,5 +1,6 @@
 // Proof-only archive. Launcher receipts grant no numerical node credit.
 import assert from 'node:assert/strict'
+import {validateNodePortIdentityTransaction} from './node-port-python.mjs'
 import {cp,readdir,realpath,readFile,stat} from 'node:fs/promises'
 import {join,relative,sep} from 'node:path'
 import {nodePortHash,nodePortFileIdentity} from './node-port-contract.mjs'
@@ -59,7 +60,8 @@ export async function archiveNativeLauncher(launcher, evidence, requireComplete)
     assert.ok(!(await readdir(active)).some(name => name.startsWith('python-cache-')), 'Owned native cache prefix leaked')
     assert.deepEqual(await nodePortFileIdentity(launcher.identity.native.path), launcher.identity.native, 'Underlying native binary changed during proof')
   }
-  return { directory, files, invocations, pythonInvocations, finalInvocations, finalSources, numericalCredit: false, complete: requireComplete }
+  const identityTransaction=requireComplete?await validateNodePortIdentityTransaction({identity:launcher.identity,config:JSON.parse(await readFile(join(directory,'launcher.json'))),directory}):null
+  return { directory, files, invocations, pythonInvocations, finalInvocations, finalSources, numericalCredit: false, complete: requireComplete, ...(identityTransaction?{identityTransaction}:{}) }
 }
 
 /** Recheck the archived bytes and every guarded call without depending on deleted active paths. */
@@ -79,6 +81,7 @@ export async function validateNativeArchive(record,evidence,{expectedFinalSource
  for(const key of ['native','node'])assert.deepEqual(await nodePortFileIdentity(identity[key].path),identity[key])
  const invocations=[];for(const file of files.filter(x=>x.path.startsWith('invocations/')))invocations.push(JSON.parse(await readFile(join(directory,file.path))))
  assert.deepEqual(invocations,proof.invocations)
+ const identityTransaction=await validateNodePortIdentityTransaction({identity,config,directory});if(identityTransaction)assert.deepEqual(proof.identityTransaction,identityTransaction);else assert.equal(proof.identityTransaction,undefined)
  const prefixes=new Set(),sources=[],references=[],policies=[];let python=0
  for(const call of invocations){
   assert.equal(call.productionCases,0);assert.equal(call.kind,identity.kind);assert.equal(call.configSha256,identity.configuration.sha256);assert.deepEqual(call.native,identity.native);assert.deepEqual(call.node,identity.node);assert.equal(call.error,undefined)
@@ -93,5 +96,5 @@ export async function validateNativeArchive(record,evidence,{expectedFinalSource
   if(args.some((x,i)=>i<end&&x==='--python'&&args[i+1]===policyScript))policies.push(call)
  }
  assert.equal(python,proof.pythonInvocations);assert.equal(sources.length,proof.finalInvocations);assert.deepEqual([...sources].sort(),[...proof.finalSources].sort());assert.deepEqual([...sources].sort(),[...expectedFinalSources].sort());assert.equal(references.length,3);assert.equal(policies.length,1);assert.equal(python,expectedFinalSources.length+4)
- assert.ok(!files.some(x=>x.path.split('/').some(part=>part.startsWith('python-cache-'))));return{pythonInvocations:python,finalInvocations:sources.length,uniqueCachePrefixes:prefixes.size,numericalCredit:0}
+ assert.ok(!files.some(x=>x.path.split('/').some(part=>part.startsWith('python-cache-'))));return{pythonInvocations:python,finalInvocations:sources.length,uniqueCachePrefixes:prefixes.size,numericalCredit:0,...(identityTransaction?{identityTransaction}:{})}
 }

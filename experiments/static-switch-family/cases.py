@@ -20,6 +20,8 @@ def cases():
  for family in ['index','menu']:
   rows.append({'case':family+'-three-items','family':family,'mode':'RGBA','choice':2,'kind':'three-items'})
   rows.append({'case':family+'-reordered','family':family,'mode':'RGBA','choice':0,'kind':'reordered'})
+ for route in ['direct','reroute','group']:
+  for choice in [0,1]:rows.append({'case':f'menu-source-{route}-{choice}','family':'menu','mode':'RGBA','choice':choice,'kind':'menu-source-'+route})
  return rows
 
 
@@ -39,7 +41,7 @@ def set_branches(node,mode):
 def build(tree,row,context,field=None):
  import bpy
  group_kind='ShaderNodeGroup' if context=='shader' else 'CompositorNodeGroup'
- if row['kind']=='group':
+ if row['kind'] in ['group','menu-source-group']:
   group=bpy.data.node_groups.new('Artist static selection group',tree.bl_idname)
   typ='NodeSocketBool' if row['family']=='switch' else 'NodeSocketInt' if row['family']=='index' else 'NodeSocketMenu'
   group.interface.new_socket(name='Choice',in_out='INPUT',socket_type=typ)
@@ -52,6 +54,8 @@ def build(tree,row,context,field=None):
   if row['family']=='switch':instance.inputs['Choice'].default_value=bool(row['choice'])
   elif row['family']=='index':instance.inputs['Choice'].default_value=row['choice']
   else:instance.inputs['Choice'].default_value=node.enum_items[row['choice']].name
+  if row['kind']=='menu-source-group':
+   menu=tree.nodes.new('FunctionNodeInputMenu');tree.links.new(menu.outputs[0],instance.inputs['Choice']);bpy.context.view_layer.update();menu.value=node.enum_items[row['choice']].name
   bad=tree.nodes.new('ShaderNodeTexSky' if context=='shader' else 'CompositorNodeKuwahara')
   tree.links.new(bad.outputs[0],instance.inputs['Inactive artist input'])
   return instance.outputs[0],node
@@ -64,6 +68,11 @@ def build(tree,row,context,field=None):
   collection.move(0,1)
   if row['family']=='menu':node.enum_items[0].name='Renamed artist option'
  set_branches(node,row['mode']);setting(node,row['choice'])
+ if row['kind'] in ['menu-source-direct','menu-source-reroute']:
+  menu=tree.nodes.new('FunctionNodeInputMenu');signal=menu.outputs[0]
+  if row['kind']=='menu-source-reroute':
+   route=tree.nodes.new('NodeReroute');tree.links.new(signal,route.inputs[0]);signal=route.outputs[0]
+  tree.links.new(signal,node.inputs[0]);bpy.context.view_layer.update();menu.value=node.enum_items[row['choice']].name
  if row['kind']=='field':tree.links.new(field,node.inputs[1+row['choice']])
  if row['kind']=='inactive':
   bad=tree.nodes.new('ShaderNodeTexSky' if context=='shader' else 'CompositorNodeKuwahara');tree.links.new(bad.outputs[0],node.inputs[2 if row['choice']==0 else 1])

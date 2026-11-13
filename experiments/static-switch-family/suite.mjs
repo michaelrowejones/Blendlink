@@ -10,8 +10,8 @@ const root=resolve(import.meta.dirname,'../..'),args=process.argv.slice(2),outpu
 assert.ok(args.every(x=>['--built'].includes(x)));assert.ok(args.includes('--built'))
 await mkdir(output,{recursive:true});const steps=[];let runtimeTransaction
 await assert.rejects(readFile(join(output,'native-python-proof.json')),{code:'ENOENT'},'Use a fresh guarded transaction')
-const launcher=await createNodePortBlenderLauncher({blender,directory:join(output,'native-python-active')});let archived=false
-async function archive(complete){const proof=await archiveNativeLauncher(launcher,output,complete);await writeFile(join(output,'native-python-proof.json'),JSON.stringify({identity:launcher.identity,proof},null,2)+'\n');archived=true}
+const launcher=await createNodePortBlenderLauncher({blender,directory:join(output,'native-python-active'),identityPolicy:process.env.SCENETOWEB_NATIVE_IDENTITY_POLICY??'per-invocation-sha256-v1'});let archived=false
+async function archive(complete){if(complete)await launcher.finalize();const proof=await archiveNativeLauncher(launcher,output,complete);await writeFile(join(output,'native-python-proof.json'),JSON.stringify({identity:launcher.identity,proof},null,2)+'\n');archived=true}
 async function run(name,exe,argv,env={}){const start=performance.now(),r=spawnSync(exe,argv,{cwd:root,env:{...process.env,...(runtimeTransaction?{SCENETOWEB_RUNTIME_TRANSACTION:runtimeTransaction.path,SCENETOWEB_RUNTIME_TRANSACTION_SHA256:runtimeTransaction.sha256}:{}),...env},encoding:'utf8',maxBuffer:32*1024*1024,timeout:600000});await writeFile(join(output,name+'.log'),(r.stdout??'')+(r.stderr??'')+String(r.error??''));steps.push({name,milliseconds:Math.round(performance.now()-start),exitCode:r.status});assert.equal(r.status,0,name+' failed; inspect retained log');console.log(name+' passed')}
 try{
  const start=performance.now();runtimeTransaction=await captureRuntimeTransaction({root,directory:join(output,'runtime-transaction'),label:'Static Switch transaction'});steps.push({name:'runtime-attestation',milliseconds:Math.round(performance.now()-start),exitCode:0})

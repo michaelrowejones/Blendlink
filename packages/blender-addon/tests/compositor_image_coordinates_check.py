@@ -50,7 +50,7 @@ def run():
         assert program['status']=='extracted',(route,program)
         emitted=next(op for op in program['ops'] if op['kind']=='image-coordinates')
         assert emitted['type']=='INT_VECTOR2' and emitted['source']['output']=='Pixel'
-    for route,output in [('rgba','Normalized'),('rgba','Uniform'),('scalar','Pixel')]:
+    for route,output in [('scalar','Pixel')]:
         graph(oracle,route,output);assert compositor_graph.extract(oracle.scene)['status']=='unsupported',(route,output)
     graph(oracle);oracle.scene.render.use_border=True
     assert compositor_graph.extract(oracle.scene)['status']=='unsupported'
