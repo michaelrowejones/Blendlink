@@ -98,7 +98,7 @@ test('hosted trials retain all three source profiles and verify cached native ar
   assert.ok(driver.indexOf("await run('ordinary-browser'")<driver.indexOf('report.productionAdmissionCases=verifyProductionLumaBrowser('))
   assert.ok(driver.indexOf("await native('ratio-native'") < driver.indexOf("await run('browser-profile'"))
   assert.ok(driver.indexOf("await run('browser-profile'") < driver.indexOf("await run('ordinary-browser'"))
-  assert.match(workflow, /BLENDLINK_TEST_CHROMIUM_CHANNEL: chromium\n\s+BLENDLINK_TEST_CHROMIUM_ARGS: '\["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader","--use-vulkan=swiftshader","--enable-logging=stderr"\]'\n\s+DEBUG: pw:browser/)
+  assert.match(workflow, /BLENDLINK_TEST_CHROMIUM_CHANNEL: chromium\n(?:\s+#[^\n]+\n)*\s+BLENDLINK_TEST_CHROMIUM_ARGS: '\["--use-angle=d3d11-warp","--use-webgpu-adapter=swiftshader","--enable-logging=stderr"\]'\n\s+DEBUG: pw:browser/)
 
   assert.equal(workflow.match(/node experiments\/luma-cpu-precision\/qualify-host.mjs/g)?.length, 2)
   assert.ok(workflow.includes('if: always()')); assert.ok(workflow.includes('artifacts/verification-luma-cpu-host'))
@@ -106,8 +106,7 @@ test('hosted trials retain all three source profiles and verify cached native ar
 })
 
 test('browser availability uses the real requested APIs and cannot turn missing WebGPU into a pass', () => {
-  const args = ['--use-angle=swiftshader', '--use-webgpu-adapter=swiftshader',
-    '--use-vulkan=swiftshader', '--enable-logging=stderr']
+  const args = ['--use-angle=d3d11-warp', '--use-webgpu-adapter=swiftshader', '--enable-logging=stderr']
   assert.deepEqual(lumaBrowserLaunchOptions({ BLENDLINK_TEST_CHROMIUM_CHANNEL: 'chromium',
     BLENDLINK_TEST_CHROMIUM_ARGS: JSON.stringify(args) }), {
     headless: true, channel: 'chromium', args: ['--enable-unsafe-webgpu', '--enable-unsafe-swiftshader', ...args],
