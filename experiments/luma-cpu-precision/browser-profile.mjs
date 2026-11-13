@@ -72,6 +72,17 @@ export async function captureLumaBrowserProfile(destination, env = process.env) 
     }))
     profile.systemInfoAfterApiRequests = await cdp.send('SystemInfo.getInfo')
     await cdp.detach()
+    if (!profile.webgpu.adapterAvailable) {
+      // Chromium keeps native Dawn/driver rejection messages on this page.
+      // Their absence from pageerror does not establish an available adapter.
+      try {
+        await page.goto('chrome://gpu')
+        await page.waitForFunction(() => document.querySelector('info-view')?.shadowRoot
+          ?.querySelector('#content')?.textContent?.includes('Graphics Feature Status'), null, { timeout: 10000 })
+        profile.gpuInternals = await page.evaluate(() => document.querySelector('info-view')
+          ?.shadowRoot?.querySelector('#content')?.innerText)
+      } catch (error) { profile.gpuInternalsUnavailable = String(error) }
+    }
     await page.close()
     requireLumaBrowserApis(profile)
     assert.deepEqual(profile.pageErrors, [])
