@@ -2,6 +2,8 @@
 # blendlink-headless-suite: manual Shared native oracle helper imported by compositor regression suites.
 """Small native image oracle shared by compositor family regression fixtures."""
 import json
+from contextlib import contextmanager
+from time import perf_counter
 import sys
 from pathlib import Path
 
@@ -13,12 +15,14 @@ import compositor_graph
 
 
 class NativeCompositorReference:
-    def __init__(self, output, *, device="CPU", name="Native Compositor", pixels=None, node_previews=True):
+    def __init__(self, output, *, device="CPU", name="Native Compositor", pixels=None, node_previews=True, image_only_scene=False):
         self.output = Path(output)
         self.output.mkdir(parents=True, exist_ok=True)
         self.device = device
         self.node_previews = node_previews
         self.rows = []
+        self.image_only_scene = image_only_scene
+        self.render_profiles = []
         bpy.ops.wm.read_factory_settings(use_empty=False)
         self.scene = scene = bpy.context.scene
         scene.render.engine = "CYCLES"
@@ -87,6 +91,53 @@ class NativeCompositorReference:
         self.tree.links.new(source, node.inputs["Image"])
         return node
 
+    def _has_scene_result_input(self):
+        # Opt-in fixtures have replaced their Render Layers Image source. A
+        # second pass or a nested scene-result reader must still retain the
+        # ordinary render settings. Inspect all links, even disconnected ones.
+        pending = [self.tree]
+        visited = set()
+        count = 0
+        while pending:
+            tree = pending.pop()
+            if tree.as_pointer() in visited:
+                continue
+            visited.add(tree.as_pointer())
+            for node in tree.nodes:
+                count += 1
+                if count > 1024:
+                    return True
+                if node.bl_idname == "CompositorNodeRLayers" and any(socket.is_linked for socket in node.outputs):
+                    return True
+                if node.bl_idname.startswith("CompositorNodeCryptomatte"):
+                    return True
+                image = getattr(node, "image", None)
+                if image is not None and image.type in {"RENDER_RESULT", "COMPOSITING"}:
+                    return True
+                group = getattr(node, "node_tree", None)
+                if group is not None:
+                    pending.append(group)
+        return False
+
+    @contextmanager
+    def _render_sampling(self):
+        scene = self.scene
+        eevee = getattr(scene, "eevee", None)
+        previous = getattr(eevee, "taa_render_samples", None)
+        optimize = (self.image_only_scene and scene.render.engine in {"BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"}
+                    and previous is not None and not self._has_scene_result_input())
+        profile = {"sceneEngine": scene.render.engine, "compositorDevice": self.device,
+                   "compositorPrecision": getattr(scene.render, "compositor_precision", None),
+                   "imageOnlyScene": bool(optimize), "samplesBefore": previous,
+                   "samplesDuring": 1 if optimize else previous}
+        try:
+            if optimize:
+                eevee.taa_render_samples = 1
+            yield profile
+        finally:
+            if optimize:
+                eevee.taa_render_samples = previous
+
     def save(self, label, source, *, exact_alpha=False):
         program = compositor_graph.extract(self.scene)
         assert program["status"] == "extracted", program
@@ -101,7 +152,11 @@ class NativeCompositorReference:
         for link in list(source.outputs["Image"].links):
             self.tree.links.new(replacement.outputs["Image"], link.to_socket)
         self.scene.render.filepath = str(self.output / "native.exr")
-        bpy.ops.render.render(write_still=True)
+        started = perf_counter()
+        with self._render_sampling() as render_profile:
+            bpy.ops.render.render(write_still=True)
+        render_profile["elapsedSeconds"] = perf_counter() - started
+        render_profile["samplesRestored"] = getattr(getattr(self.scene, "eevee", None), "taa_render_samples", None)
         result = bpy.data.images.load(self.scene.render.filepath, check_existing=False)
         result.alpha_mode = "PREMUL"
         expected = np.asarray(result.pixels[:], np.float32).reshape(self.height, self.width, 4)
@@ -113,9 +168,11 @@ class NativeCompositorReference:
                 "input": self.pixels.ravel().tolist(), "expected": expected.ravel().tolist(), "program": program}
         (self.output / (case + ".json")).write_text(json.dumps(data, separators=(",", ":")))
         self.rows.append({"case": case})
+        self.render_profiles.append({"case": case, **render_profile})
         bpy.data.images.remove(result)
 
     def finish(self, marker):
         (self.output / "index.json").write_text(json.dumps(self.rows, indent=2))
+        (self.output / "render-profile.json").write_text(json.dumps(self.render_profiles, indent=2))
         print(marker + " " + json.dumps({"blender": bpy.app.version_string,
                                           "device": self.device, "cases": len(self.rows)}))

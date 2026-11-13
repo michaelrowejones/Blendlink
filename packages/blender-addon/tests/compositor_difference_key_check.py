@@ -13,6 +13,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from compositor_reference import NativeCompositorReference
 import compositor_graph
+from compositor_difference_key import native_gpu_profile
 
 
 def fingerprint(tree):
@@ -39,7 +40,7 @@ def main(output):
     # beyond the greatest possible tolerance+falloff, while image HDR remains.
     pixels[5, :, :3] = [20, -20, 40]
     oracle = NativeCompositorReference(output, name='Native Difference Key', pixels=pixels,
-        device=os.environ.get('BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE', 'CPU'))
+        device=os.environ.get('BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE', 'CPU'), image_only_scene=True)
     engines = {item.identifier for item in oracle.scene.render.bl_rna.properties['engine'].enum_items}
     oracle.scene.render.engine = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT'
     tree = oracle.tree
@@ -108,6 +109,7 @@ def main(output):
     (output / 'qualification.json').write_text(json.dumps({'sourcePreserved': True,
         'sceneEngine': oracle.scene.render.engine, 'blenderVersion': list(bpy.app.version),
         'device': oracle.device, 'backend': bpy.context.preferences.system.gpu_backend, 'cases': len(oracle.rows),
+        'nativeGpuProfile': native_gpu_profile(),
         'sha256': {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in paths}}, indent=2))
     oracle.finish('BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_PASSED')
 

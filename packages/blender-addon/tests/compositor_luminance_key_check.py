@@ -32,7 +32,7 @@ def main(output):
         np.nextafter(np.float32(.25), np.float32(np.inf)), np.nextafter(np.float32(.75), np.float32(-np.inf)),
         .75, np.nextafter(np.float32(.75), np.float32(np.inf))])[:, None]
     oracle = NativeCompositorReference(output, name='Native Luminance Key', pixels=pixels,
-        device=os.environ.get('BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE', 'CPU'))
+        device=os.environ.get('BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE', 'CPU'), image_only_scene=True)
     engines = {item.identifier for item in oracle.scene.render.bl_rna.properties['engine'].enum_items}
     oracle.scene.render.engine = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT'
     tree = oracle.tree

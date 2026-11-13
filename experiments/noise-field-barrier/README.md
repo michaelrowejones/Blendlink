@@ -11,7 +11,7 @@ The browser GPU subprocess exits 139 on SwiftShader Subzero. macOS SwiftShader
 uses LLVM; passing there does not establish a Subzero fix. The prior constant
 fold addressed constant inputs, not these fields.
 
-The candidate adds one private, never-updated zero uniform to the scaled 4D
+The initial candidate added one private, never-updated zero uniform to the scaled 4D
 position before fresh static FBM Color octave evaluation. It is restricted to
 `noise_fractal`/`noise_normalized`, shader-evaluated image inputs, Detail 4..6,
 no distortion or live Roughness. Admission independently requires nearest embedded
@@ -28,8 +28,11 @@ and alternate filters/wrapping are excluded by a closed profile allowlist. This 
 contraction staging in arbitrary authored coordinate expressions. Legacy `noise`, other dimensions/outputs,
 MF constant folds, other fractal types and lower-detail paths retain their old
 code. Ordinary direct-UV, other texture/input shapes, and unproved arithmetic
-remain on their existing paths. This is an experimental compiler-staging candidate until actual hosted
-Subzero fields pass. It changes no native pixel references, numeric budgets,
+remain on their existing paths. The actual hosted ba8 run43325529511/artifact13993149702 still lost both
+Subzero devices at the first high-detail image field. The runtime activation
+was therefore removed. The workload certificate, field selector and research
+evidence remain for explicit isolated successor experiments; they are not an
+active general driver fix. The experiment changed no native pixel references, numeric budgets,
 launch/watchdog flags, or Perlin/fractal formulas. It does not revive the prior
 unpromoted bounded-loop prototype.
 

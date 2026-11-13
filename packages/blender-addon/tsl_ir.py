@@ -2575,6 +2575,16 @@ def emit_output(node, from_socket, stack=()):
                 from .noise_varying_ir import native_distortion_mf_inputs, portable_noise_constant_arithmetic, NATIVE_MF_NOISE_INPUT_MESSAGE, NATIVE_SHADER_NOISE_INPUT_MESSAGE
             else:
                 from noise_varying_ir import native_distortion_mf_inputs, portable_noise_constant_arithmetic, NATIVE_MF_NOISE_INPUT_MESSAGE, NATIVE_SHADER_NOISE_INPUT_MESSAGE
+            mf_coordinates = False
+            if native_mf and gpu_backend == 'METAL' and not native_distortion_mf_inputs(expression):
+                if __package__:
+                    from .noise_mf_coordinates import canonicalize_mf_coordinates
+                else:
+                    from noise_mf_coordinates import canonicalize_mf_coordinates
+                canonical = canonicalize_mf_coordinates(expression)
+                if canonical is not None and native_distortion_mf_inputs(canonical):
+                    expression = canonical
+                    mf_coordinates = True
             mf_distortion = native_mf and native_distortion_mf_inputs(expression)
             if native_mf and not mf_distortion:
                 _refuse(NATIVE_MF_NOISE_INPUT_MESSAGE)
@@ -2582,7 +2592,7 @@ def emit_output(node, from_socket, stack=()):
                 _refuse(NATIVE_SHADER_NOISE_INPUT_MESSAGE)
             if gpu_backend != 'METAL' or not (mf_distortion or dimensions == '1D' and not native_mf):
                 _refuse('Native normalized live Roughness nonzero Distortion requires verified Metal 1D shader or native MF inputs; use source baking')
-            expression['distortionModel'] = 'native-mf-f32-v1' if mf_distortion else 'metal-1d-fma-f32-v1'
+            expression['distortionModel'] = ('native-mf-f32-coordinates-v1' if mf_coordinates else 'native-mf-f32-v1') if mf_distortion else 'metal-1d-fma-f32-v1'
         if native_shader_fused and dimensions in {'3D', '4D'} and (detail_value > 1 or distortion_value != 0):
             _refuse('Normalized Noise Cycles SIMD 3D/4D above Detail1 or with Distortion needs source baking; '
                     'the software renderer cannot reliably compile this workload')

@@ -30,6 +30,8 @@ mf_reason='Native normalized live Roughness nonzero Distortion requires exact MF
 precision={**case,'dimensions':'3D','stage':'constant','inputCancellationAxis':'rho'}
 assert qualifies(precision,'BLENDER_EEVEE',True,mf_reason,'METAL',(5,3,0))
 assert not qualifies({**precision,'inputCancellationAxis':'unknown'},'BLENDER_EEVEE',True,mf_reason,'METAL',(5,3,0))
+assert not qualifies({**precision,'inputCancellationAxis':'x'},'BLENDER_EEVEE',True,mf_reason,'METAL',(5,3,0))
+assert qualifies({**precision,'inputCancellationAxis':'x'},'BLENDER_EEVEE',True,mf_reason,'OPENGL',(5,3,0))
 assert not qualifies(precision,'BLENDER_EEVEE',True,mf_reason+' unrelated suffix','METAL',(5,3,0))
 material=bpy.data.materials.new('Native live normalized Noise');material.use_nodes=True
 nodes=material.node_tree.nodes;links=material.node_tree.links

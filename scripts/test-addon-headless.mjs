@@ -382,6 +382,8 @@ try:
     luminance_key = compositor_tree.nodes.new("CompositorNodeLumaMatte")
     difference_key = compositor_tree.nodes.new("CompositorNodeDiffMatte")
     spill = compositor_tree.nodes.new("CompositorNodeColorSpill")
+    color_key = compositor_tree.nodes.new("CompositorNodeColorMatte")
+    compositor_scene.render.compositor_device = "CPU"
     compositor_tree.links.new(source.outputs["Image"], mask.inputs["Image"])
     compositor_tree.links.new(mask.outputs[0], conversion.inputs["Image"])
     compositor_tree.links.new(conversion.outputs[0], enhancement.inputs["Image"])
@@ -390,12 +392,13 @@ try:
     compositor_tree.links.new(luminance_key.outputs["Image"], difference_key.inputs["Image 1"])
     compositor_tree.links.new(enhancement.outputs[0], difference_key.inputs["Image 2"])
     compositor_tree.links.new(difference_key.outputs["Image"], spill.inputs["Image"])
-    compositor_tree.links.new(spill.outputs["Image"], sink.inputs[0])
+    compositor_tree.links.new(spill.outputs["Image"], color_key.inputs["Image"])
+    compositor_tree.links.new(color_key.outputs["Image"], sink.inputs[0])
     before = len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups)
     compositor_module = importlib.import_module(module_name + ".compositor_graph")
     compositor_program = compositor_module.extract(compositor_scene)
     assert compositor_program["status"] == "extracted", compositor_program
-    assert {"set-alpha", "convert-alpha", "filter", "normal-direction", "luminance-key", "difference-key", "color-spill"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
+    assert {"set-alpha", "convert-alpha", "filter", "normal-direction", "luminance-key", "difference-key", "color-spill", "color-key"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
     assert before == (len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups))
 finally:
     bpy.data.scenes.remove(compositor_scene)

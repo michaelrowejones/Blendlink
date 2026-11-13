@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { buildNoiseFieldBarrier, usesNoiseFieldBarrier } from './tslNoiseFieldBarrier.js'
-import type { TslExpression, TslIrExpression } from './tslNodeRecipe.js'
+import { usesNoiseFieldBarrier } from './tslNoiseFieldBarrier.js'
+import type { TslIrExpression } from './tslNodeRecipe.js'
 const field = (): TslIrExpression => ({ op: 'noise_fractal', output: 'color', dimensions: 4,
   noiseType: 'FBM', evaluationModel: 'shader', detail: 6, roughness: 1, lacunarity: 2,
   scale: { op: 'const_float', value: 40 },
@@ -9,14 +9,9 @@ const field = (): TslIrExpression => ({ op: 'noise_fractal', output: 'color', di
     vector: { op: 'uv_active' }, width: 2, height: 1,
     pixels: [-.5, 0, .5, 1, .125, .25, .875, 1] }, w: { op: 'const_float', value: .5 } })
 
-describe('fresh high-detail4D Color field compiler barrier', () => {
-  it('uses a private zero uniform for the actual failing field shape', () => {
-    const ir = field(); expect(usesNoiseFieldBarrier(ir)).toBe(true)
-    const calls: unknown[] = [], result = {} as TslExpression
-    const input = { add(value: unknown) { calls.push(value); return { toVar: () => result } } } as unknown as TslExpression
-    expect(buildNoiseFieldBarrier(ir, input)).toBe(result)
-    expect(calls).toHaveLength(1)
-    expect(calls[0]).toMatchObject({ isUniformNode: true, value: 0 })
+describe('bounded high-detail4D Color field workload certificate', () => {
+  it('selects the measured field shape for isolated compiler experiments', () => {
+    expect(usesNoiseFieldBarrier(field())).toBe(true)
   })
   it.each([
     { op: 'noise' }, { op: 'noise_varying' }, { op: 'noise_varying_native' },
@@ -25,9 +20,8 @@ describe('fresh high-detail4D Color field compiler barrier', () => {
     { distortion: 1 }, { roughnessNode: { op: 'separate' } },
     { input: { op: 'const_vec3', value: [0, 0, 0] } },
   ])('leaves the existing path unchanged for %j', change => {
-    const ir = { ...field(), ...change }, input = {} as TslExpression
+    const ir = { ...field(), ...change }
     expect(usesNoiseFieldBarrier(ir)).toBe(false)
-    expect(buildNoiseFieldBarrier(ir, input)).toBe(input)
   })
   it('recognizes a live W subtree without treating a claimed stage alone as a field', () => {
     const ir = field()

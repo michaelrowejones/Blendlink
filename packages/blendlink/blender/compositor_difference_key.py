@@ -3,6 +3,29 @@
 import math
 
 
+def native_gpu_profile():
+    """Actual native context identity; absent context fields stay unknown.
+
+    A software-rendering environment flag or OS is not a renderer certificate.
+    Call after the native fixture has initialized its requested GPU context.
+    """
+    import bpy
+    import gpu
+    import platform
+    import sys
+    profile = {'platform': sys.platform, 'architecture': platform.machine(),
+               'blenderVersion': list(bpy.app.version), 'blenderHash': bpy.app.build_hash.decode(),
+               'requestedBackend': getattr(bpy.context.preferences.system, 'gpu_backend', 'UNKNOWN')}
+    for field, getter in [('renderer', 'renderer_get'), ('vendor', 'vendor_get'), ('version', 'version_get'),
+                          ('deviceType', 'device_type_get'), ('backend', 'backend_type_get')]:
+        function = getattr(gpu.platform, getter, None)
+        try:
+            profile[field] = function() if function is not None else None
+        except Exception:
+            profile[field] = None
+    return profile
+
+
 def normalize_difference_key(node, socket, op, scene, read, bounds, fail):
     modern = node.inputs.get('Tolerance') is not None
     settings = []

@@ -1,11 +1,9 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-import { uniform } from 'three/tsl'
 import { evaluateStaticNoiseInput } from './staticNoise4d.js'
-import type { TslExpression, TslIrExpression } from './tslNodeRecipe.js'
+import type { TslIrExpression } from './tslNodeRecipe.js'
 
-// Private and never updated. Experimental: actual hosted Subzero field
-// execution must establish whether this prevents its GPU-process crash.
-const neutral = uniform(0, 'float') as unknown as TslExpression
+// Research-only workload certificate. The failed coordinate-uniform runtime
+// activation was removed after actual Linux Subzero field canaries failed.
 const expression = (value: unknown): TslIrExpression | undefined => value !== null && typeof value === 'object'
   && typeof (value as TslIrExpression).op === 'string' ? value as TslIrExpression : undefined
 const literal = (ir: TslIrExpression | undefined, value: number): boolean => ir?.op === 'const_float' && ir.value === value
@@ -71,8 +69,4 @@ export function usesNoiseFieldBarrier(ir: TslIrExpression): boolean {
     && (ir.noiseType ?? 'FBM') === 'FBM' && ir.evaluationModel === 'shader'
     && typeof ir.detail === 'number' && Number.isFinite(ir.detail) && ir.detail >= 4 && ir.detail <= 6
     && ir.roughnessNode === undefined && (ir.distortion ?? 0) === 0 && hasExactNoiseFieldCoordinates(ir)
-}
-
-export function buildNoiseFieldBarrier(ir: TslIrExpression, point: TslExpression): TslExpression {
-  return usesNoiseFieldBarrier(ir) ? point.add(neutral).toVar() : point
 }

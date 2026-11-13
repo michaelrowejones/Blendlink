@@ -1,5 +1,4 @@
 import { buildNativeMathModulo } from './tslMathModuloNative.js'
-import { buildNoiseFieldBarrier } from './tslNoiseFieldBarrier.js'
 import { buildTslBumpHeight } from './tslBumpHeight.js'
 import { nativeBumpInput, isNativeUnitNormal } from './tslBumpPassthrough.js'
 /** MTLX-TSL-001: build TSL nodes from the Blender-channel IR.
@@ -1056,7 +1055,6 @@ function build(expression: TslIrExpression): TslExpression {
         )
         if (nativeNormalized) position = roundPoint(position)
       }
-      position = buildNoiseFieldBarrier(expression, position)
       const detail = scalar(expression, 'detail')
       const roughness = scalar(expression, 'roughness')
       const lacunarity = typeof expression.lacunarity === 'number'

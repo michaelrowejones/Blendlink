@@ -136,8 +136,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        family: [Luminance Key, Difference Key, Color Spill]
+        family: [Luminance Key, Difference Key, Color Spill, Color Key]
         source_device: [CPU, GPU]
+        exclude:
+          - family: Color Key
+            source_device: GPU
         include:
           - family: Luminance Key
             fixture: compositor_luminance_key_check.py
@@ -154,6 +157,11 @@ jobs:
             device_variable: BLENDLINK_COMPOSITOR_SPILL_DEVICE
             reference_variable: BLENDLINK_COMPOSITOR_SPILL_REFERENCES
             evidence: spill
+          - family: Color Key
+            fixture: compositor_color_key_check.py
+            device_variable: BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_COLOR_KEY_REFERENCES
+            evidence: color-key
     steps:
       - name: Check out the exact candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

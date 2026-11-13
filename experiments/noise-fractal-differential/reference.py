@@ -14,6 +14,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 native = os.environ.get('BLENDLINK_NOISE_NATIVE_MODULES')
+sys.path.insert(0,str(Path(__file__).resolve().parent))
 sys.path.insert(0, native or str(ROOT / 'packages/blender-addon'))
 sys.path.insert(0, native or str(ROOT / 'packages/blendlink/blender'))
 import bakelib
@@ -33,7 +34,7 @@ def source_qualified_roughness_refusal(case, engine, varying, reason, source_pro
 def native_live_distortion_refusal(case, engine, varying, reason, gpu_backend='METAL', native_version=(4,2,0)):
     precision_case = case.get('inputCancellationAxis') in {'x','w','rho'}
     admitted = (gpu_backend == 'METAL' and (case.get('dimensions') == '1D'
-                or native_version >= (5,0,0) and case.get('stage') == 'constant') and not precision_case)
+                or native_version >= (5,0,0) and case.get('stage') == 'constant') and (not precision_case or native_version >= (5,0,0) and case.get('inputCancellationAxis') != 'rho'))
     expected_reason = ('Native normalized live Roughness nonzero Distortion requires exact MF coordinate inputs and portable constant arithmetic; use source baking'
         if native_version >= (5,0,0) else 'Native normalized live Roughness nonzero Distortion requires portable constant arithmetic; use exact inputs or source baking') if precision_case else 'Native normalized live Roughness nonzero Distortion requires verified Metal 1D shader or native MF inputs; use source baking'
     return (varying and engine in {'BLENDER_EEVEE','BLENDER_EEVEE_NEXT'} and case.get('kind') == 'noise'
@@ -317,6 +318,9 @@ def make_material(case):
                 clamp=node.inputs['Roughness'].links[0].from_node;inner=clamp.inputs['Value'].links[0].from_socket
                 scaled=tree.nodes.new('ShaderNodeMath');scaled.operation='MULTIPLY';scaled.inputs[1].default_value=.01;tree.links.new(inner,scaled.inputs[0])
                 mixed=tree.nodes.new('ShaderNodeMath');mixed.operation='ADD';tree.links.new(scaled.outputs[0],mixed.inputs[0]);tree.links.new(third.outputs[0],mixed.inputs[1]);tree.links.new(mixed.outputs[0],clamp.inputs['Value'])
+        if case.get('mfCoordinateVariant'):
+            from mf_coordinate_reference import install
+            case['mfCoordinateOracle'] = install(tree,node,case)
         if case.get('opaqueIsland') == 'w':
             base = node.inputs['W'].links[0].from_socket
             add = tree.nodes.new('ShaderNodeMath'); add.operation = 'ADD'
@@ -585,6 +589,15 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                         'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':'Color','stage':'constant',
                         'roughnessStage':'constant-function','inputCancellationAxis':axis,'Detail':2,'Scale':1,'Lacunarity':1.7,'Distortion':.37,
                         'residual':axis=='rho'})
+        if os.environ.get('BLENDLINK_NOISE_MF_COORDINATES'):
+            assert native_varying and bpy.app.version >= (5,0,0), 'MF coordinate corpus requires modern EEVEE live Roughness'
+            from mf_coordinate_reference import cases as mf_coordinate_cases
+            cases = [case for case in cases if case['kind'] in {'constant','image-control'} or case.get('inputCancellationAxis')=='rho']
+            cases += mf_coordinate_cases(engine)
+            for dimension in ['1D','2D','3D','4D']:
+                cases.append({'id':f'{engine.lower()}-mf-coordinate-{dimension.lower()}-exact-v1',
+                    'kind':'noise','type':'FBM','normalize':True,'Roughness':1,'dimensions':dimension,'output':'Color','stage':'constant',
+                    'roughnessStage':'constant-function','Detail':2,'Scale':1,'Lacunarity':1.7,'Distortion':.37})
         if normalized:
             cases = [case for case in cases if case['kind'] in {'constant', 'image-control'} or case.get('type', 'FBM') == 'FBM']
             for case in cases:
@@ -725,7 +738,7 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
         observed_source_refusals = set()
         expected_native_distortion_refusals = {case['id'] for case in cases if varying and engine != 'CYCLES' and case.get('kind') == 'noise'
             and case.get('normalize') is True and case.get('type','FBM') == 'FBM' and case.get('roughnessStage') and case.get('Distortion',0) != 0
-            and (bool(case.get('inputCancellationAxis')) or not (bpy.context.preferences.system.gpu_backend == 'METAL' and (case.get('dimensions') == '1D'
+            and ((bool(case.get('inputCancellationAxis')) and not (bpy.context.preferences.system.gpu_backend == 'METAL' and bpy.app.version >= (5,0,0) and case.get('inputCancellationAxis') != 'rho')) or not (bpy.context.preferences.system.gpu_backend == 'METAL' and (case.get('dimensions') == '1D'
                      or bpy.app.version >= (5,0,0) and case.get('stage') == 'constant')))}
         observed_native_distortion_refusals = set()
         assert len({case['id'] for case in cases}) == len(cases), 'Native reference case IDs must be unique'
@@ -747,6 +760,7 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 amplification = 256 * case['oracleScale']
                 add_residual_control(material, emission, coarse, case['oracleScale'], amplification)
                 case['oracleScale'] = amplification
+            authored_before = authored_graph_state(material) if case.get('mfCoordinateVariant') else None
             before = (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
             try:
                 document = tsl_ir.emit_channel(emission.inputs['Color'])
@@ -830,11 +844,24 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
                 case['moduloPrecisionModel'] = expected_model
                 case['moduloInputModel'] = expected_input
             assert before == (len(bpy.data.materials), len(bpy.data.node_groups), len(material.node_tree.nodes))
+            if case.get('mfCoordinateVariant'):
+                assert authored_graph_state(material)==authored_before, 'MF literalization changed the authored graph'
+                (OUTPUT/'graphs').mkdir(exist_ok=True)
+                graph_bytes=json.dumps(authored_before,allow_nan=False).encode()
+                graph_file='graphs/'+case['id']+'.json';(OUTPUT/graph_file).write_bytes(graph_bytes)
+                case['authoredGraph']={'file':graph_file,'sha256':hashlib.sha256(graph_bytes).hexdigest()}
+                outer=[expression for expression in expressions if expression['op']=='noise_varying_native']
+                assert all(expression.get('distortionModel')==('native-mf-f32-v1' if case['mfCoordinateLiteral'] else 'native-mf-f32-coordinates-v1') for expression in outer),case['id']
             (OUTPUT / 'ir' / (case['id'] + '.json')).write_text(json.dumps(document))
             raw = native_pixels(material, temporary, case['id'])
             pixels = raw if case.get('stage') == 'image' else np.tile(raw[SIZE // 2, SIZE // 2, :3], (SIZE, SIZE, 1))
             assert np.isfinite(pixels).all(), case['id']
             pixels.astype('<f4').tofile(OUTPUT / (case['id'] + '.f32'))
+            if case.get('mfCoordinateVariant') and case.get('mfCoordinateLiteral'):
+                paired=OUTPUT/(case['id'].replace('-literal','-authored')+'.f32')
+                assert paired.read_bytes()==pixels.astype('<f4').tobytes(), 'Native MF arithmetic differs from the independent staged Float32 literal: '+case['id']
+                case['nativeArithmeticLiteralIdentity']=True
+            if authored_before is not None: assert authored_graph_state(material)==authored_before, 'Native rendering changed authored MF graph'
             case.update(engine=engine, minimum=pixels.min(axis=(0, 1)).tolist(), maximum=pixels.max(axis=(0, 1)).tolist())
             records.append(case)
             bpy.data.materials.remove(material, do_unlink=True)

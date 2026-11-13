@@ -27,6 +27,12 @@ for (const directory of ['packages/blendlink/blender', 'packages/blender-addon']
     if (!file.endsWith('.py') && !file.endsWith('.json')) continue
     copyFileSync(join(root, directory, file), join(nativeSnapshot, file))
   }
+const nativeFixtures = Object.fromEntries(['reference.py','mf_coordinate_reference.py'].map(name => {
+  const source = join(import.meta.dirname,name), target = join(nativeSnapshot,name)
+  const bytes = readFileSync(source)
+  writeFileSync(target,bytes)
+  return [name,createHash('sha256').update(bytes).digest('hex')]
+}))
 const sources = ['packages/blendlink/src/tslNodeRecipe.ts', 'packages/blender-addon/tsl_ir.py', 'packages/blender-addon/shader_domains.py']
 const hash = file => createHash('sha256').update(readFileSync(join(root, file))).digest('hex')
 const sourceHashes = Object.fromEntries(sources.map(file => [file, hash(file)]))
@@ -35,7 +41,7 @@ if (!process.argv.includes('--reuse-reference')) {
     [join(root, 'packages/blendlink/dist/cli.js'), 'discover'], { encoding: 'utf8' }).trim().split(/\r?\n/).at(-1)
   assert.ok(blender && existsSync(blender))
   const log = execFileSync(blender, ['--background', '--factory-startup', '--python-exit-code', '1',
-    '--python', join(import.meta.dirname, 'reference.py')], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024,
+    '--python', join(nativeSnapshot, 'reference.py')], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024,
     env: { ...process.env, BLENDLINK_NOISE_REFERENCES: references, BLENDLINK_NOISE_NATIVE_MODULES: nativeSnapshot } })
   writeFileSync(join(evidence, 'reference.log'), log)
   assert.match(log, /BLENDLINK_NOISE_REFERENCES_PASSED/)
@@ -70,7 +76,7 @@ function retainReport(finished = false) {
   writeFileSync(join(evidence, 'report.json'), JSON.stringify({ blender: manifest.blender, nativeBuild: manifest.buildHash,
     built, elapsedMs: Date.now() - started, nativeGpuBackend: manifest.gpuBackend, cyclesDevice: manifest.cyclesDevice,
     sourceHashes, harnessSha256, testedHarnessHashes: frozenHarness.hashes, provenance, snapshot, testedModuleHashes: copied, refusals: manifest.refusals ?? [],
-    nativeModuleHashes: manifest.nativeModuleHashes, workspaceStable: stable,
+    nativeModuleHashes: manifest.nativeModuleHashes, nativeFixtureHashes: nativeFixtures, workspaceStable: stable,
     finished, completedAllCases: rows.length === cases.length * 2, expectedCasesPerBackend: cases.length, nativeCases: manifest.cases.length, requestedIds, implicitControlIds, browserVersion, browserLaunchArgs, browserChannel,
     rows, failures, executionFailures }, null, 2))
 }
@@ -159,6 +165,16 @@ try {
       await page.close()
     }
   }
+  const mfCoordinateIdentities=[]
+  if(executionFailures.length===0) for(const backend of ['webgpu','webgl2']) for(const cell of cases) {
+    if(!cell.mfCoordinateVariant || !cell.mfCoordinateLiteral)continue
+    const authored=cell.id.replace('-literal','-authored')
+    if(!cases.some(candidate=>candidate.id===authored))continue
+    assert.deepEqual(readFileSync(join(evidence,backend+'-'+cell.id+'.f32')),
+      readFileSync(join(evidence,backend+'-'+authored+'.f32')), 'Runtime MF coordinate arithmetic/literal pixels differ: '+backend+'/'+cell.id)
+    mfCoordinateIdentities.push({backend,authored,literal:cell.id})
+  }
+  writeFileSync(join(evidence,'mf-coordinate-identities.json'),JSON.stringify(mfCoordinateIdentities,null,2))
   retainReport(true)
   assert.deepEqual(executionFailures, [], 'Noise browser execution failed; partial pixels and metrics were retained')
   assert.deepEqual(failures, [], 'Native Noise pixels differ; see report.json')

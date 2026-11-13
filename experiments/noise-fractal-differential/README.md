@@ -460,6 +460,20 @@ walks the actual input, W, Scale and Roughness expressions. Claimed MF stage
 labels cannot turn UVs, images or attributes into constants. MF coordinates
 and W require independently certified exact Float32 literal/combine/separate
 and supported arithmetic plumbing, including the default exact `.5*x+.125`.
+Fresh Metal EEVEE native-MF input/W coordinates additionally accept bounded
+separate ADD/SUBTRACT/MULTIPLY nodes, including Vector Math and Vector Scale.
+The compiler rounds each node to Float32, emits coordinate literals, and
+retains the original executable coordinate IR under
+`distortionModel: native-mf-f32-coordinates-v1`. The runtime independently
+repeats this bounded evaluation and compares the literal Float32 words.
+Ordinary finite intermediates must remain within ±2^31 and final coordinates
+within ±1,000,000; subnormal/underflow/overflow results refuse. Unchanged exact
+plumbing keeps the original `native-mf-f32-v1` tag. Inexact Multiply Add,
+Division, unknown arithmetic and live coordinate fields retain source baking.
+This model does not evaluate Roughness or nested Noise coordinate islands;
+their existing exact-input guards remain in force. Old runtimes refuse the
+new precision tag rather than silently reverting to generic GPU Math.
+
 Unqualified Mapping/Vector Rotate coordinate expressions take source baking.
 Nested MF Noise coordinates obey the same certificate. Every closed constant
 arithmetic island inside Roughness also needs that exact certificate, even
@@ -508,8 +522,8 @@ versions of this runtime already refuse nonzero Distortion on the new opcode;
 they cannot silently ignore these new precision tags. Tiny nonzero authored
 values retain their warp and offsets rather than being pruned as D0.
 
-The native corpus requests 291 actual graphs on Blender 4.2 (221 admitted,
-70 exact refusals) and 294 on 5.2/5.3 (264 admitted, 30 refusals). It covers all four
+The measured Metal-source corpus requests 291 actual graphs on Blender 4.2 (221 admitted,
+70 exact refusals) and 294 on 5.2/5.3 (268 admitted, 26 refusals). It covers all four
 dimensions, Fac/Color, MF-eligible and image Roughness, mixed stage
 compositions, negative/fractional Detail, Scale 0/-1/40/80, zero/negative/
 nonbinary Lacunarity, real Clamp endpoints and amplified residuals. Independent
@@ -601,3 +615,44 @@ Use the same `--reuse-reference` and browser-channel controls described above
 for physical versus software runtime replay. This test exercises
 WebGPURenderer through its WebGPU and WebGL2 backends; it does not certify
 legacy WebGLRenderer TSL support.
+
+
+The dedicated MF coordinate corpus requests 58 authored graphs in each
+measured modern version: 57 admitted and the original unsafe Roughness-island
+refusal retained with its authored graph and native pixels. Its 25 arithmetic
+Noise graphs are paired with 25 independently constructed NumPy-Float32
+literal graphs. Native EEVEE output bytes must match for every pair, and
+browser readbacks must independently have the same pair identity. The cases
+cover both cancellation directions, ties-to-even, nonbinary multiplication,
+vector ADD/SUBTRACT/MULTIPLY/Scale, 1D–4D, Fac/Color and independent 4D W.
+Three carrier/row controls and four unchanged exact-v1 inputs complete the
+corpus. Blender 4.2 retains its shader-stage behavior and refusals; it has no
+MF model to widen. This does not qualify OpenGL or Cycles MF coordinates.
+
+```sh
+BLENDLINK_NOISE_NATIVE_VARYING=1 BLENDLINK_NOISE_MF_COORDINATES=1 \
+BLENDLINK_BLENDER=/path/to/Blender \
+BLENDLINK_TEST_CHROMIUM_CHANNEL=chromium \
+BLENDLINK_NOISE_EVIDENCE=artifacts/native-mf-coordinates \
+node experiments/noise-fractal-differential/run.mjs --built
+```
+
+Omit `BLENDLINK_TEST_CHROMIUM_CHANNEL` for the software-browser APIs. Reuse the
+same native `reference` directory with `--reuse-reference` to compare that
+backend without altering its authored graphs. As elsewhere, the unchanged
+2e-5 arithmetic budget is added to the independently verified native EEVEE
+half-float render-target allowance; there is no coordinate-noise tolerance.
+The runner snapshots the native fixture and helper as well as all native
+modules and the full runtime before generation/browser verification.
+
+
+`probe-mf-coordinate-stages.py` supplies seven additional native-only controls
+per modern version. It subtracts the independently staged Float32 result from
+the authored arithmetic graph, multiplies that residual by 1,048,576 and adds
+0.5 before emission. Both measured modern versions return exactly 0.5 in all
+channels/pixels, including tie and nonbinary multiplication cases. The probe
+retains the actual graphs and float renders; it does not claim that generic
+browser Math outside this versioned Noise capability has acquired MF staging.
+Run it with `BLENDLINK_MF_STAGE_EVIDENCE=/path/to/evidence` using Blender
+`--background --factory-startup --python-exit-code 1 --python
+experiments/noise-fractal-differential/probe-mf-coordinate-stages.py`.

@@ -29,7 +29,7 @@ def main(output):
     pixels[0, :, :3] = np.asarray([[0, 0, 0], [1, 1, 1], [-1, -1, -1], [2, 1, 0],
         [0, 2, 1], [1, 0, 2], [-2, 1, -1], [1, -2, -1]] * 2, np.float32)
     oracle = NativeCompositorReference(output, name='Native Color Spill', pixels=pixels,
-        device=os.environ.get('BLENDLINK_COMPOSITOR_SPILL_DEVICE', 'CPU'))
+        device=os.environ.get('BLENDLINK_COMPOSITOR_SPILL_DEVICE', 'CPU'), image_only_scene=True)
     engines = {item.identifier for item in oracle.scene.render.bl_rna.properties['engine'].enum_items}
     oracle.scene.render.engine = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT'
     tree = oracle.tree

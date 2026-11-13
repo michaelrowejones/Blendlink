@@ -45,8 +45,28 @@ try:
                 else:
                     links.new(mixed.outputs[0],clamp.inputs['Value'])
                     assert tsl_ir._fold_constant_scalar(tsl_ir.emit_input(root.inputs['Roughness'])) is None
-                try:emit();raise AssertionError('MF arithmetic staging bypassed the source certificate')
+                if axis != 'rho' and bpy.context.preferences.system.gpu_backend == 'METAL':
+                    result=emit()
+                    assert result['distortionModel']=='native-mf-f32-coordinates-v1'
+                    assert result['mfCoordinateSource']
+                    assert native_distortion_mf_inputs(result)
+                    literal=result['w' if axis=='w' and dimension=='4D' else 'input']
+                    assert literal['value']==(-1 if axis=='w' else [-1,-.375,.625])
+                else:
+                    try:emit();raise AssertionError('MF arithmetic staging bypassed the source certificate')
+                    except tsl_ir.TslIrRefusal as error:assert str(error)==NATIVE_MF_NOISE_INPUT_MESSAGE,str(error)
+            # Distinct Multiply Add/approximate Division contracts are not
+            # smuggled in through the new separate-node coordinate model.
+            links.new(inner.outputs['Fac'],clamp.inputs['Value'])
+            root.noise_dimensions='3D'
+            for operation in ['MULTIPLY_ADD','DIVIDE']:
+                unsafe=nodes.new('ShaderNodeMath');unsafe.operation=operation
+                unsafe.inputs[0].default_value=1.3;unsafe.inputs[1].default_value=.7
+                if operation=='MULTIPLY_ADD':unsafe.inputs[2].default_value=.173
+                links.new(unsafe.outputs[0],bad_point.inputs[0]);links.new(bad_point.outputs[0],root.inputs['Vector'])
+                try:emit();raise AssertionError('Unqualified arithmetic joined the MF coordinate model')
                 except tsl_ir.TslIrRefusal as error:assert str(error)==NATIVE_MF_NOISE_INPUT_MESSAGE,str(error)
+                nodes.remove(unsafe)
             links.new(inner.outputs['Fac'],clamp.inputs['Value'])
             for dimension in ['1D','2D','3D','4D']:
                 root.noise_dimensions=dimension

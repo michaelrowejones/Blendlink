@@ -943,3 +943,38 @@ Set `BLENDLINK_TRANSFORM_CONSTANT_PROBE=/absolute/output-directory`, optionally
 with the normal background Blender command. The optional retained input is read
 unchanged and its SHA256 is recorded. Probe output characterizes native behavior;
 it does not authorize the refused fresh-source mode.
+
+Image-only EEVEE oracle sampling is an explicit fixture option:
+`NativeCompositorReference(..., image_only_scene=True)`. Initially Color Spill,
+Luminance Key and Difference Key opt in. After the placeholder Render Layers
+Image is replaced with the independent float image, the helper checks root
+and nested trees for remaining linked render passes or implicit scene-result
+readers. Qualified renders temporarily use EEVEE TAA 1; a `finally` restores
+the authored sample count, including when rendering raises. The engine,
+compositor CPU/GPU device, FULL precision and native node graph stay intact.
+Unrelated fixtures retain their current sample counts. Render settings and
+elapsed time are retained separately in `render-profile.json`, leaving native
+case JSON unchanged.
+
+The initial retained-baseline comparison covers 792 complete native case JSON
+files across the three families, Blender 4.2/5.2/5.3 and CPU/GPU. Every file,
+including the source program, independent image input and native output,
+matched byte for byte. The 41 retained Linux 5.2 CPU Luminance Key input/output
+Float32 arrays also matched the Mac candidate exactly; their IR preserves its
+correct OPENGL/Metal annotation. That cross-platform agreement is separate
+from running the optimized fixture on Linux.
+
+Use `compare-oracle-sampling.py --baseline /retained/family --candidate
+/new/family --report /evidence/identity.json` to require complete case identity,
+EEVEE, the intended compositor device/precision and exact sample restoration.
+`compositor_reference_render_check.py` tests opt-in behavior, remaining root
+and nested render passes, Cycles preservation and exception restoration.
+
+For an independent timing/output control, run Blender with
+`--background --factory-startup --python-exit-code 1 --python
+experiments/native-compositor-differential/probe-oracle-sampling.py --
+--evidence /evidence/sampling --device CPU` (or GPU). It alternates six pairs
+of 64/1-sample renders, requires identical input/program/output, and excludes
+the first pair from timing. On the measured Mac Blender 5.2 Metal profile,
+median CPU-case render time changed from 0.195s to 0.0233s and GPU-case time
+from 0.108s to 0.0208s. These local timings do not establish Linux speedups.

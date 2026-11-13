@@ -2,6 +2,7 @@ import type { TslIrExpression, TslExpression } from './tslNodeRecipe.js'
 import { isUnitRoughnessExpression, buildTslVaryingFbm } from './tslVaryingNoise.js'
 import { bitcast, uint, float, select } from 'three/tsl'
 import { buildNativeNoiseFma } from './tslNativeNoisePrecision.js'
+import { MF_COORDINATE_MODEL, hasValidMfCoordinateSource } from './tslMfNoiseCoordinates.js'
 import { hasExactMfNoiseCoordinates, hasPortableNoiseConstantArithmetic, NATIVE_MF_NOISE_INPUT_MESSAGE, NATIVE_SHADER_NOISE_INPUT_MESSAGE } from './tslNoiseInputPrecision.js'
 
 const scalar=float as unknown as (value:number)=>TslExpression
@@ -82,12 +83,17 @@ export function validateNativeVaryingNoise(expression: TslIrExpression,
     const mf=metal && expression.perlinModel==='mf-periodic-f32' && expression.evaluationModel==='shader-mf' && nativeDistortionMfInputs(expression)
     if(metal && expression.perlinModel==='mf-periodic-f32' && expression.evaluationModel==='shader-mf' && !mf)
       fail('IR '+NATIVE_MF_NOISE_INPUT_MESSAGE)
-    if (!(shader && expression.distortionModel==='metal-1d-fma-f32-v1' || mf && expression.distortionModel==='native-mf-f32-v1'))
+    const canonicalMf=expression.distortionModel===MF_COORDINATE_MODEL
+    if(canonicalMf && (!mf || !hasValidMfCoordinateSource(expression)))
+      fail('IR native MF coordinate literals do not match qualified Float32 source arithmetic; use source baking')
+    if(expression.mfCoordinateSource!==undefined && !canonicalMf)
+      fail('IR native MF coordinate source requires its versioned precision model')
+    if (!(shader && expression.distortionModel==='metal-1d-fma-f32-v1' || mf && (expression.distortionModel==='native-mf-f32-v1' || canonicalMf)))
       fail('IR native normalized live Roughness nonzero Distortion requires verified Metal 1D shader or native MF inputs; use source baking')
     if (!Array.isArray(expression.distortionOffsets) || expression.distortionOffsets.length!==expression.dimensions ||
         !expression.distortionOffsets.every(offset=>Array.isArray(offset) && offset.length===expression.dimensions && offset.every(finite)))
       fail('IR native varying Noise Distortion requires verified finite dimension-matched seed offsets')
-  } else if (expression.distortionModel!==undefined) {
+  } else if (expression.distortionModel!==undefined || expression.mfCoordinateSource!==undefined) {
     fail('IR native varying Noise has an unused Distortion precision model')
   }
 }
