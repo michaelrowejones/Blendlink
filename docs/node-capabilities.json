@@ -10008,6 +10008,18 @@
         },
         {
           "path": "experiments/compositor-float-coordinates/evidence.json"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_image_coordinates.py"
+        },
+        {
+          "path": "experiments/compositor-image-coordinates/README.md"
+        },
+        {
+          "path": "experiments/compositor-image-coordinates/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-image-coordinates/verify.mjs"
         }
       ],
       "renderer": "WebGPURenderer actual WebGPU or WebGL2; Metal and SwiftShader profiles. Native CPU and Metal compositor settings; no claim for other builds/platforms.",
@@ -10039,11 +10051,6 @@
             "CPU",
             "GPU"
           ],
-          "nativeGraphs": 32,
-          "savedFinalScenes": 8,
-          "browserCaseRuns": 160,
-          "primaryFloat32Words": 246080,
-          "wordMismatches": 0,
           "actualRuntimeBackends": [
             "WebGPU",
             "WebGL2 via WebGPURenderer"
@@ -10052,7 +10059,22 @@
             "Apple Metal",
             "SwiftShader"
           ],
-          "coverageScope": "Pixel INT_VECTOR2 on direct full-frame Render Layers only, explicit RGBA/padded-float3 conversion, real resize/DPR, exact words; no FLOAT_VECTOR2 claim from this Pixel receipt."
+          "nativeGraphs": 156,
+          "savedFinalScenes": 32,
+          "primaryFloat32Words": 1071200,
+          "wordMismatches": 0,
+          "uniqueActualPythonPrefixes": 34,
+          "browserCaseRuns": 752,
+          "evidence": "experiments/compositor-image-coordinates/evidence.json",
+          "coverageScope": "Fresh two-component Pixel INT_VECTOR2 output; explicit RGBA, padded float3, exact scalar half-sum, integer midpoint ties toward X and Boolean either-component-nonzero edges through direct/reroute/group routes. Independent native analytic cast controls include odd-sum ties on both sides of X=Y. Direct full-frame Render Layers Image with square pixels, dimensions1..8192; pointwise consumers only. Floating coordinate scalar reduction, arbitrary offsets/transforms, borders and neighborhood operations remain unsupported.",
+          "resizeContract": "Same built raw graph and actual saved Final PassNode pipeline reused through seven physical resize/DPR frames per eligible route/source/profile/API/phase, including portrait and landscape. Raw control disposes its owned DataTexture GPU allocation before changing dimensions, retaining the same JavaScript Texture identity; actual pipeline uses normal RenderTarget.setSize. Mismatched physical extents refuse and recover.",
+          "resourceContract": "No port-owned texture or RTT. Actual GLB source-scene control warms renderer-owned DFG_LUT16x16. Three apply/dispose cycles restore its exact identity set, source materials and callbacks, and zero render targets. Raw controls dispose all owned textures. No broad performance claim.",
+          "closedReader": {
+            "runtimeFingerprint": "6c018a70abdba552a25eb2d7112447a1657de722911ccaecc0265ac57a0e114a",
+            "verifierSha256": "77f0d4c0cde158380e81ba582224c93e548722cc8d3dc246fdc851ba72ca53ca",
+            "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+            "runtimeProvenanceHelperSha256": "939d6ff241f49a82fc64a64822d831a1c7bbe5a2b4703ab95069ee3eaf17cdb1"
+          }
         },
         "floatCoordinateContract": {
           "nativeGraphs": 96,
@@ -10084,7 +10106,23 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Fresh Blender5.3.0 02f0899d78e3 macOS arm64 Pixel INT_VECTOR2 and Uniform/Normalized FLOAT_VECTOR2. Direct texture-backed full-frame Render Layers Image, zero data offset, square pixels, no border/crop, physical extents1..8192, matching actual image/drawing/target domains. Pointwise consumers; explicit conversion to RGBA(x,y,0,1) or padded VECTOR3(x,y,0), through direct/reroute/artist-group paths. Pixel remains bitexact; Uniform/Normalized XY require <=2ULP AND absolute error <=2^-22, exact zero centers/Z+0/alpha1. Numeric differences are reported separately from contract violations. Actual saved Final pipelines and built raw graphs support real resize/DPR transitions and refusal/recovery. This bound stops at the admitted field output; downstream discontinuities or arithmetic require their own contract. Scalar/int midpoint conversion, legacy VECTOR-to-float2 reinterpretation, transformed/static/computed references, arbitrary offsets and spatial/neighborhood domains remain unqualified. No port-owned texture/RTT or per-frame readback; exact renderer cache/source lifecycle restoration is verified."
+          "limits": "Fresh Blender5.3.0 02f0899d78e3 macOS arm64 Pixel INT_VECTOR2 and Uniform/Normalized FLOAT_VECTOR2. Direct texture-backed full-frame Render Layers Image, zero data offset, square pixels, no border/crop, physical extents1..8192, matching actual image/drawing/target domains. Pointwise consumers and explicit RGBA(x,y,0,1)/padded VECTOR3(x,y,0) edges through direct/reroute/artist-group paths. Pixel additionally supports exact VALUE=(x+y)/2, native INT midpoint (odd-sum ties toward X: ceil when x>y, floor otherwise), and BOOLEAN=(x!=0 OR y!=0). Pixel components0..8191 make all sums/halves exact; analytic native controls cover odd ties on both sides of X=Y. Pixel words remain exact. Uniform/Normalized XY still require <=2ULP AND absolute error <=2^-22, with exact zero centers/Z+0/alpha1; no FLOAT2 scalar/int/Boolean reduction is qualified. Numeric differences are separate from contract violations. Actual saved Final pipelines and built raw graphs support real resize/DPR transitions and refusal/recovery. This bound stops at the admitted output; downstream discontinuities or arithmetic require their own contract. Legacy VECTOR-to-float2 reinterpretation, transformed/static/computed references, arbitrary offsets and spatial/neighborhood domains remain unqualified. No port-owned texture/RTT or per-frame readback; exact renderer cache/source lifecycle restoration is verified.",
+          "modes": {
+            "output": [
+              "Pixel",
+              "Uniform",
+              "Normalized"
+            ],
+            "conversion": [
+              "INT_VECTOR2->RGBA",
+              "INT_VECTOR2->VECTOR",
+              "FLOAT_VECTOR2->RGBA",
+              "FLOAT_VECTOR2->VECTOR",
+              "INT_VECTOR2->VALUE",
+              "INT_VECTOR2->INT",
+              "INT_VECTOR2->BOOLEAN"
+            ]
+          }
         }
       }
     },
@@ -10244,6 +10282,312 @@
             "anchor": "value = _literal(selector,"
           }
         ]
+      }
+    },
+    "compositor:ShaderNodeVectorMath": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "vector-math"
+      ],
+      "modes": {},
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Metal and SwiftShader measured. Legacy WebGLRenderer has no live installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_vector_math.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorVectorMath.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorVectorMath.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_vector_math_check.py"
+        },
+        {
+          "path": "experiments/compositor-vector-math/README.md"
+        },
+        {
+          "path": "experiments/compositor-vector-math/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-vector-math/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-vector-math/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-vector-math/sources.json"
+        },
+        {
+          "path": "experiments/compositor-vector-math/research-counterexamples.json"
+        },
+        {
+          "path": "experiments/compositor-vector-math/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "nativeGraphs": 408,
+        "savedFinalScenes": 64,
+        "browserCaseRuns": 1888,
+        "primaryFloat32Words": 483328,
+        "wordMismatches": 0,
+        "uniqueActualPythonPrefixes": 66,
+        "nativeNodeEvaluator": "CPU multi-function single values under authored CPU/GPU compositor settings; no native GPU field arithmetic credit",
+        "evidence": "experiments/compositor-vector-math/evidence.json",
+        "numericContract": {
+          "model": "exact-literal-vector-math-v1",
+          "declaredBeforeBrowserMeasurement": true,
+          "gate": "All Float32 RGBA output words must equal native words. No output tolerance, signed-zero repair or branch epsilon.",
+          "input": "Actual typed 3D literal vectors and literal Scale with exact Float32 provenance. ADD/SUBTRACT/MULTIPLY/SCALE/MINIMUM/MAXIMUM/ABSOLUTE/FLOOR/CEIL/FRACTION/ROUND/SIGN accept nonzero magnitude[2^-32,2^16], or positive zero. MULTIPLY_ADD/CROSS_PRODUCT/DOT_PRODUCT/DIVIDE retain sixteenth-grid values within +/-16. Bounded earlier-operation provenance resolves only native InputVector, Value, CombineXYZ and flattened group/reroute defaults; computed Vector Math outputs and image fields refuse.",
+          "arithmetic": "Simple modes use the same ordered normal Float32 primitive at every output stage: one add/subtract/multiply or exact input selection/discrete transform; FRACTION is a-floor(a), ROUND is floor(Float32(a+.5)). Products stay within[2^-64,2^32] when nonzero; add/subtract cancellation has smallest nonzero spacing at least2^-55. These are finite normal results, avoiding overflow, underflow and denormal flushing. This scope permits ordinary rounded results and still requires native/browser output words to agree exactly. Compound-mode dyadic inputs are integers/16. Products and power-of-two quotients are multiples of1/256 with bounded magnitude256; cross differences and three-term dot sums remain exact Float32 multiples of1/256 with magnitude<=768, including fused/unfused arithmetic. Nonzero Divide denominators are powers of two; zero divisors use native safe-divide+0.",
+          "hazards": "Negative-zero literal inputs refuse. Multiplication/reduction products and division quotients that could produce negative zero refuse. Native SCALE with a negative component and zero Scale may canonicalize+0 rather than IEEE-0; it remains quarantined. CEIL inputs strictly between-1 and0 refuse. Other transcendental/normalization/project/reflection/remainder modes and arbitrary fields need separate contracts. No output tolerance, shader epsilon or signed-zero output repair is introduced.",
+          "scope": "At the admitted output, not arbitrary downstream composition. Modern native compositor single-value CPU-MF is measured for both CPU/GPU-authored settings; no GPU field arithmetic credit. Actual built browser WebGPU/WebGL2 and Metal/SwiftShader are required separately."
+        },
+        "coverageScope": "Blender5.3.0 02f0899d78e3 macOSarm64 modern compositor CPU multi-function single values, including GPU-authored settings; not GPU field arithmetic qualification. Twelve simple modes accept arbitrary exact normal Float32 3D literal vectors/scales with nonzero magnitude[2^-32,2^16], or+0. MADD/CROSS/DOT/DIVIDE retain sixteenth-grid +/-16 bounds, power-of-two nonzero divisors and exact zero-divisor branch. Negative-zero input/product/quotient and Ceil negative-zero hazards refuse. Explicit defaults, typed Vector, Value/CombineXYZ, reroute and group routes; arbitrary computed/field provenance refuses. All measured RGBA words are exact, including alpha1. No arbitrary downstream composition, native-build/platform or shader qualification.",
+        "closedReader": {
+          "runtimeFingerprint": "6c018a70abdba552a25eb2d7112447a1657de722911ccaecc0265ac57a0e114a",
+          "verifierSha256": "ac47d71809075ec88717fb50d4edd4e004aa52de4b89e8fa69d7504e9ca1f666",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed"
+        }
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 modern compositor CPU multi-function single values, including GPU-authored settings; no native GPU field arithmetic or shader-context qualification. Twelve simple modes ADD/SUBTRACT/MULTIPLY/SCALE/MINIMUM/MAXIMUM/ABSOLUTE/FLOOR/CEIL/FRACTION/ROUND/SIGN accept exact stored normal Float32 3D literal vectors/Scale with nonzero magnitude[2^-32,2^16], or positive zero. Their ordered Float32 results must match native words exactly; ordinary rounding receives no output tolerance. MULTIPLY_ADD/CROSS_PRODUCT/DOT_PRODUCT/DIVIDE retain sixteenth-grid +/-16 inputs, with exact dyadic products/reductions and power-of-two nonzero divisors; native safe zero division returns+0. Native Round=floor(Float32(a+.5)). Negative-zero input/product/quotient hazards and CEIL inputs strictly between-1 and0 refuse; native SCALE negative-component times zero-Scale remains quarantined. Explicit defaults, typed Input Vector, Value/CombineXYZ, reroutes and group bindings only. Runtime independently rederives bounded earlier-operation provenance (2048 operations,64 visits,depth8). Computed producer chains, image/coordinate fields, alternate dimensions, remaining modes, animation/drivers, other versions/builds/platforms and arbitrary downstream compositions remain unqualified. No port-owned textures/render targets or per-frame GPU readback; three actual Final lifecycle cycles restore exact independently controlled renderer cache and source material/callback ownership.",
+          "modes": {
+            "operation": {
+              "supported": [
+                "ABSOLUTE",
+                "ADD",
+                "CEIL",
+                "CROSS_PRODUCT",
+                "DIVIDE",
+                "DOT_PRODUCT",
+                "FLOOR",
+                "FRACTION",
+                "MAXIMUM",
+                "MINIMUM",
+                "MULTIPLY",
+                "MULTIPLY_ADD",
+                "ROUND",
+                "SCALE",
+                "SIGN",
+                "SUBTRACT"
+              ],
+              "unsupported": [
+                "COSINE",
+                "DISTANCE",
+                "FACEFORWARD",
+                "LENGTH",
+                "MODULO",
+                "NORMALIZE",
+                "POWER",
+                "PROJECT",
+                "REFLECT",
+                "REFRACT",
+                "SINE",
+                "SNAP",
+                "TANGENT",
+                "WRAP"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "compositor:CompositorNodeImageInfo": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "image-info"
+      ],
+      "modes": {},
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Metal and SwiftShader measured. Legacy WebGLRenderer has no live installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_image_info.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorImageInfo.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorImageInfo.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_image_info_check.py"
+        },
+        {
+          "path": "experiments/compositor-image-info/README.md"
+        },
+        {
+          "path": "experiments/compositor-image-info/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-image-info/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-image-info/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-image-info/sources.json"
+        },
+        {
+          "path": "experiments/compositor-image-info/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "nativeNodeEvaluator": "Host single-value image metadata under both CPU/GPU-authored settings; no native GPU arithmetic credit",
+        "familyTotals": {
+          "nativeGraphs": 264,
+          "savedFinalScenes": 24,
+          "browserCaseRuns": 1152,
+          "primaryFloat32Words": 1604288,
+          "exactWordMismatches": 0,
+          "contractViolations": 0,
+          "maxUlps": 0,
+          "maxAbsoluteError": 0,
+          "exactControlWords": 1492352,
+          "resizeFrames": 728,
+          "uniqueActualPythonPrefixes": 26
+        },
+        "metadataExactContract": {
+          "nativeGraphs": 240,
+          "savedFinalScenes": 20,
+          "browserCaseRuns": 1040,
+          "primaryFloat32Words": 1455040,
+          "exactWordMismatches": 0,
+          "contractViolations": 0,
+          "maxUlps": 0,
+          "maxAbsoluteError": 0,
+          "exactControlWords": 1455040,
+          "resizeFrames": 560,
+          "wordMismatches": 0,
+          "nativeOutputs": [
+            "Dimensions",
+            "Resolution",
+            "Location",
+            "Rotation",
+            "Scale"
+          ],
+          "coverageScope": "Dimensions, Resolution, Location, Rotation and Scale require exact Float32 word equality through explicit metadata-to-RGBA/padded-vector edges.",
+          "evidence": "experiments/compositor-image-info/evidence.json"
+        },
+        "existingMathDivideConsumerContract": {
+          "nativeGraphs": 24,
+          "savedFinalScenes": 4,
+          "browserCaseRuns": 112,
+          "primaryFloat32Words": 149248,
+          "exactWordMismatches": 0,
+          "contractViolations": 0,
+          "maxUlps": 0,
+          "maxAbsoluteError": 0,
+          "exactControlWords": 37312,
+          "resizeFrames": 168,
+          "nativeOutput": false,
+          "consumer": {
+            "nativeOutput": false,
+            "consumer": "Dimensions/Resolution -> padded VECTOR -> SeparateXYZ -> existing Math DIVIDE(X,Y)",
+            "maxUlps": 2,
+            "maxAbsoluteError": "2^-22*max(1,abs(nativeRatio))",
+            "conjunction": true,
+            "exactControls": "Alpha=1; native metadata dimensions remain exact before the ratio consumer."
+          },
+          "coverageScope": "Two separately labelled existing Math DIVIDE consumer graphs compute width/height from padded Dimensions/Resolution. This is not a native Aspect socket. Metadata outputs and alpha controls require exactwords; ratio examples use the predeclared two-ULP AND scaled-absolute bound. No all-composition claim.",
+          "evidence": "experiments/compositor-image-info/evidence.json"
+        },
+        "numericContract": {
+          "model": "identity-image-info-exact-metadata-v1",
+          "declaredBeforeBrowserProof": true,
+          "nativeOutputs": "Dimensions, Resolution, Location, Rotation and Scale require exact Float32 word equality through explicit metadata-to-RGBA/padded-vector edges.",
+          "nativeDomain": "Current-scene direct full-frame Render Layers Image with identity image-domain transform, square pixels and no borders. Outputs are host single-value metadata even when the authored compositor device is GPU.",
+          "aspectExample": {
+            "nativeOutput": false,
+            "consumer": "Dimensions/Resolution -> padded VECTOR -> SeparateXYZ -> existing Math DIVIDE(X,Y)",
+            "maxUlps": 2,
+            "maxAbsoluteError": "2^-22*max(1,abs(nativeRatio))",
+            "conjunction": true,
+            "exactControls": "Alpha=1; native metadata dimensions remain exact before the ratio consumer."
+          },
+          "rationale": "Metadata reads the live image texture size. All integer extents1..8192 convert exactly to Float32. Location/Rotation/Scale identity facts are emitted only after proving the input domain; single-value, static and transformed inputs are refused. The aspect example is an existing floating divide consumer, whose GPU division can differ from the native CPU-folded ratio; it is not a fabricated Image Info socket."
+        },
+        "numericContractSha256": "890497e2f852e97aad9b0c2da43953de5214157dae9bb77ce732f31747e68d5a",
+        "coverageScope": "Measured Blender5.3.0 02f0899d78e3 macOSarm64 metadata from current-scene direct full-frame Render Layers Image with identity domain, square pixels, no borders, physical extents1..8192. All five actual Image Info outputs: Dimensions,Resolution,Location,Rotation,Scale. Native metadata is host single-value data under both authored CPU/GPU settings; no native GPU arithmetic credit. Width/height comes from live textureSize and retained actual PassNode dependency, including resize/DPR. INT2/FLOAT2 conversion provenance is owned by Image Info, limited to native identity and RGBA/paddedVECTOR edges; no coordinate tags are spoofed. Single-value/unlinked, static/transformed/computed or other-scene references and direct scalar/integer/Boolean vector casts remain unqualified.",
+        "closedReader": {
+          "runtimeFingerprint": "6c018a70abdba552a25eb2d7112447a1657de722911ccaecc0265ac57a0e114a",
+          "verifierSha256": "3daac57656236bbf35e8e53a7d51329ae2f2cd04ed53e387578d874d66d9f5d5",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed"
+        }
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 only. All five actual native outputs Dimensions/Resolution(INT_VECTOR2), Location/Scale(FLOAT_VECTOR2) and Rotation(VALUE), from a direct current-scene full-frame Render Layers Image with identity image domain, square pixels, no border/crop and matching physical image/drawing/target extents1..8192. Native metadata outputs and explicit RGBA/padded VECTOR3 conversions require exact Float32 words; native two-component identity is retained through qualified groups. Dimensions/Resolution read live textureSize rather than exported literals; every output retains an actual PassNode dependency and render-time guard, including identity transform facts and resize/DPR. Native metadata is host single-value data under authored CPU/GPU settings; no native GPU arithmetic credit. Two separately labelled existing Math DIVIDE consumer examples compute width/height from padded Dimensions/Resolution via SeparateXYZ; these are not a native Aspect output. Ratio consumers alone use <=2ULP AND abs<=2^-22*max(1,abs(nativeRatio)), with exact metadata/alpha controls and separately reported exact-word differences. Unlinked/single-value/static/transformed/computed/other-scene references, borders, non-square pixels, direct vector2 scalar/integer/Boolean casts, arbitrary composed graphs and other versions/builds/platforms remain unqualified. No port-owned textures/render targets or per-frame readback; three actual saved Final lifecycle cycles restore exact independent renderer cache identities and source material/callback ownership.",
+          "modes": {
+            "output": [
+              "Dimensions",
+              "Resolution",
+              "Location",
+              "Rotation",
+              "Scale"
+            ],
+            "conversion": [
+              "INT_VECTOR2->RGBA",
+              "INT_VECTOR2->VECTOR",
+              "FLOAT_VECTOR2->RGBA",
+              "FLOAT_VECTOR2->VECTOR"
+            ]
+          }
+        }
       }
     }
   },

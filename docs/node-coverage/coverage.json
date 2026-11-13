@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "065a1d128af955ea65715c5e604cb090220076fd9b935323fa8769ecd6b2721e",
+  "capabilityMapSha256": "d12d5690cdc7b370a118e1b0911b5db1bb8a03fc4b5bdcbedb5950d7d667b286",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-13T22:13:56.959376+00:00",
+  "generatedAt": "2026-11-13T23:38:49.328766+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -7611,6 +7611,18 @@
                 },
                 {
                   "path": "experiments/compositor-float-coordinates/evidence.json"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_image_coordinates.py"
+                },
+                {
+                  "path": "experiments/compositor-image-coordinates/README.md"
+                },
+                {
+                  "path": "experiments/compositor-image-coordinates/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-image-coordinates/verify.mjs"
                 }
               ],
               "id": "CompositorNodeImageCoordinates",
@@ -7625,11 +7637,50 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_image_info.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageInfo.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageInfo.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_image_info_check.py"
+                },
+                {
+                  "path": "experiments/compositor-image-info/README.md"
+                },
+                {
+                  "path": "experiments/compositor-image-info/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-image-info/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-image-info/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-image-info/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-image-info/evidence.json"
+                }
+              ],
               "id": "CompositorNodeImageInfo",
               "label": "Image Info",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "image-info"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -10604,11 +10655,53 @@
                   "WRAP": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_vector_math.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorVectorMath.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorVectorMath.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_vector_math_check.py"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/README.md"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/research-counterexamples.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/evidence.json"
+                }
+              ],
               "id": "ShaderNodeVectorMath",
               "label": "Vector Math",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "vector-math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -14144,16 +14237,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 45,
+            "partial": 47,
             "structural": 7,
             "supported": 24,
-            "unsupported": 111
+            "unsupported": 109
           },
           "enumValueCounts": {
             "partial": 27,
             "structural": 3,
-            "supported": 263,
-            "unsupported": 639
+            "supported": 279,
+            "unsupported": 623
           },
           "nodes": [
             {
@@ -15705,25 +15798,76 @@
                 },
                 {
                   "path": "experiments/compositor-float-coordinates/evidence.json"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_image_coordinates.py"
+                },
+                {
+                  "path": "experiments/compositor-image-coordinates/README.md"
+                },
+                {
+                  "path": "experiments/compositor-image-coordinates/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-image-coordinates/verify.mjs"
                 }
               ],
               "id": "CompositorNodeImageCoordinates",
               "label": "Image Coordinates",
-              "limits": "Fresh Blender5.3.0 02f0899d78e3 macOS arm64 Pixel INT_VECTOR2 and Uniform/Normalized FLOAT_VECTOR2. Direct texture-backed full-frame Render Layers Image, zero data offset, square pixels, no border/crop, physical extents1..8192, matching actual image/drawing/target domains. Pointwise consumers; explicit conversion to RGBA(x,y,0,1) or padded VECTOR3(x,y,0), through direct/reroute/artist-group paths. Pixel remains bitexact; Uniform/Normalized XY require <=2ULP AND absolute error <=2^-22, exact zero centers/Z+0/alpha1. Numeric differences are reported separately from contract violations. Actual saved Final pipelines and built raw graphs support real resize/DPR transitions and refusal/recovery. This bound stops at the admitted field output; downstream discontinuities or arithmetic require their own contract. Scalar/int midpoint conversion, legacy VECTOR-to-float2 reinterpretation, transformed/static/computed references, arbitrary offsets and spatial/neighborhood domains remain unqualified. No port-owned texture/RTT or per-frame readback; exact renderer cache/source lifecycle restoration is verified.",
+              "limits": "Fresh Blender5.3.0 02f0899d78e3 macOS arm64 Pixel INT_VECTOR2 and Uniform/Normalized FLOAT_VECTOR2. Direct texture-backed full-frame Render Layers Image, zero data offset, square pixels, no border/crop, physical extents1..8192, matching actual image/drawing/target domains. Pointwise consumers and explicit RGBA(x,y,0,1)/padded VECTOR3(x,y,0) edges through direct/reroute/artist-group paths. Pixel additionally supports exact VALUE=(x+y)/2, native INT midpoint (odd-sum ties toward X: ceil when x>y, floor otherwise), and BOOLEAN=(x!=0 OR y!=0). Pixel components0..8191 make all sums/halves exact; analytic native controls cover odd ties on both sides of X=Y. Pixel words remain exact. Uniform/Normalized XY still require <=2ULP AND absolute error <=2^-22, with exact zero centers/Z+0/alpha1; no FLOAT2 scalar/int/Boolean reduction is qualified. Numeric differences are separate from contract violations. Actual saved Final pipelines and built raw graphs support real resize/DPR transitions and refusal/recovery. This bound stops at the admitted output; downstream discontinuities or arithmetic require their own contract. Legacy VECTOR-to-float2 reinterpretation, transformed/static/computed references, arbitrary offsets and spatial/neighborhood domains remain unqualified. No port-owned texture/RTT or per-frame readback; exact renderer cache/source lifecycle restoration is verified.",
               "runtimeOps": [
                 "image-coordinates"
               ],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_image_info.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageInfo.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageInfo.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_image_info_check.py"
+                },
+                {
+                  "path": "experiments/compositor-image-info/README.md"
+                },
+                {
+                  "path": "experiments/compositor-image-info/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-image-info/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-image-info/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-image-info/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-image-info/evidence.json"
+                }
+              ],
               "id": "CompositorNodeImageInfo",
               "label": "Image Info",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 only. All five actual native outputs Dimensions/Resolution(INT_VECTOR2), Location/Scale(FLOAT_VECTOR2) and Rotation(VALUE), from a direct current-scene full-frame Render Layers Image with identity image domain, square pixels, no border/crop and matching physical image/drawing/target extents1..8192. Native metadata outputs and explicit RGBA/padded VECTOR3 conversions require exact Float32 words; native two-component identity is retained through qualified groups. Dimensions/Resolution read live textureSize rather than exported literals; every output retains an actual PassNode dependency and render-time guard, including identity transform facts and resize/DPR. Native metadata is host single-value data under authored CPU/GPU settings; no native GPU arithmetic credit. Two separately labelled existing Math DIVIDE consumer examples compute width/height from padded Dimensions/Resolution via SeparateXYZ; these are not a native Aspect output. Ratio consumers alone use <=2ULP AND abs<=2^-22*max(1,abs(nativeRatio)), with exact metadata/alpha controls and separately reported exact-word differences. Unlinked/single-value/static/transformed/computed/other-scene references, borders, non-square pixels, direct vector2 scalar/integer/Boolean casts, arbitrary composed graphs and other versions/builds/platforms remain unqualified. No port-owned textures/render targets or per-frame readback; three actual saved Final lifecycle cycles restore exact independent renderer cache identities and source material/callback ownership.",
+              "runtimeOps": [
+                "image-info"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -19228,47 +19372,89 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "operation": {
-                  "ABSOLUTE": "unsupported",
-                  "ADD": "unsupported",
-                  "CEIL": "unsupported",
+                  "ABSOLUTE": "supported",
+                  "ADD": "supported",
+                  "CEIL": "supported",
                   "COSINE": "unsupported",
-                  "CROSS_PRODUCT": "unsupported",
+                  "CROSS_PRODUCT": "supported",
                   "DISTANCE": "unsupported",
-                  "DIVIDE": "unsupported",
-                  "DOT_PRODUCT": "unsupported",
+                  "DIVIDE": "supported",
+                  "DOT_PRODUCT": "supported",
                   "FACEFORWARD": "unsupported",
-                  "FLOOR": "unsupported",
-                  "FRACTION": "unsupported",
+                  "FLOOR": "supported",
+                  "FRACTION": "supported",
                   "LENGTH": "unsupported",
-                  "MAXIMUM": "unsupported",
-                  "MINIMUM": "unsupported",
+                  "MAXIMUM": "supported",
+                  "MINIMUM": "supported",
                   "MODULO": "unsupported",
-                  "MULTIPLY": "unsupported",
-                  "MULTIPLY_ADD": "unsupported",
+                  "MULTIPLY": "supported",
+                  "MULTIPLY_ADD": "supported",
                   "NORMALIZE": "unsupported",
                   "POWER": "unsupported",
                   "PROJECT": "unsupported",
                   "REFLECT": "unsupported",
                   "REFRACT": "unsupported",
-                  "ROUND": "unsupported",
-                  "SCALE": "unsupported",
-                  "SIGN": "unsupported",
+                  "ROUND": "supported",
+                  "SCALE": "supported",
+                  "SIGN": "supported",
                   "SINE": "unsupported",
                   "SNAP": "unsupported",
-                  "SUBTRACT": "unsupported",
+                  "SUBTRACT": "supported",
                   "TANGENT": "unsupported",
                   "WRAP": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_vector_math.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorVectorMath.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorVectorMath.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_vector_math_check.py"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/README.md"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/research-counterexamples.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-math/evidence.json"
+                }
+              ],
               "id": "ShaderNodeVectorMath",
               "label": "Vector Math",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 modern compositor CPU multi-function single values, including GPU-authored settings; no native GPU field arithmetic or shader-context qualification. Twelve simple modes ADD/SUBTRACT/MULTIPLY/SCALE/MINIMUM/MAXIMUM/ABSOLUTE/FLOOR/CEIL/FRACTION/ROUND/SIGN accept exact stored normal Float32 3D literal vectors/Scale with nonzero magnitude[2^-32,2^16], or positive zero. Their ordered Float32 results must match native words exactly; ordinary rounding receives no output tolerance. MULTIPLY_ADD/CROSS_PRODUCT/DOT_PRODUCT/DIVIDE retain sixteenth-grid +/-16 inputs, with exact dyadic products/reductions and power-of-two nonzero divisors; native safe zero division returns+0. Native Round=floor(Float32(a+.5)). Negative-zero input/product/quotient hazards and CEIL inputs strictly between-1 and0 refuse; native SCALE negative-component times zero-Scale remains quarantined. Explicit defaults, typed Input Vector, Value/CombineXYZ, reroutes and group bindings only. Runtime independently rederives bounded earlier-operation provenance (2048 operations,64 visits,depth8). Computed producer chains, image/coordinate fields, alternate dimensions, remaining modes, animation/drivers, other versions/builds/platforms and arbitrary downstream compositions remain unqualified. No port-owned textures/render targets or per-frame GPU readback; three actual Final lifecycle cycles restore exact independently controlled renderer cache and source material/callback ownership.",
+              "runtimeOps": [
+                "vector-math"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -23410,8 +23596,10 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "60eb5ff6be29509634a9bfc1d049d117defb6593dc0f622a406ac229ee9be14c",
+    "packages/blendlink/blender/compositor_graph.py": "3cd091a6aa0e2a834255c74d7581b7c0426f73779a673470fecc0e96254b9210",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
+    "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
+    "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
     "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
@@ -23425,6 +23613,7 @@
     "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
     "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
     "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
+    "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
@@ -23466,6 +23655,7 @@
     "packages/blendlink/src/tslCompositorGray.ts": "e32c05ec6deb9a8a793d3de4751ebac288a7fe0ab1d90555f8ec4504562975d1",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
     "packages/blendlink/src/tslCompositorImageDomain.ts": "50eb4b114dcb565a22df1c13821179d879881df87e33bed52f98b565ef7e5016",
+    "packages/blendlink/src/tslCompositorImageInfo.ts": "c7124d8af5c3e5f02fc4780ad06faaf122daadf1d686e14aa2cfd87d58073390",
     "packages/blendlink/src/tslCompositorIntegerBits.ts": "cf59d1b7fe476b8489d6a2d28e745f2a088a8f03798c4d44dfe41fa9e482f748",
     "packages/blendlink/src/tslCompositorLumaGradual.ts": "f6497d953d2371b323fbfb0c1d4e98b543d2387528b49c7538ccb1e25ee491ed",
     "packages/blendlink/src/tslCompositorLuminanceKey.ts": "3858b364150d9dc847ea05ee4ef768cb9b2ef5fae3c0ece240f3c3c1016e23c4",
@@ -23481,6 +23671,7 @@
     "packages/blendlink/src/tslCompositorStaticImage.ts": "c72547908fbc1c43f382e3c968c894f979cd4e017cebd9cff34f6d33491ac9af",
     "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "82bb6bf70f547a8b3309df0ac564456d5ae262b0c42525f8a2d6e80565cab7cf",
     "packages/blendlink/src/tslCompositorTextureField.ts": "e4816ef165f41d5f667f0b6667a03a6d94283ef737aaa945f9912a42157d4023",
+    "packages/blendlink/src/tslCompositorVectorMath.ts": "72e656d14d7a1a7d83e2102b36803a48af72392623ac7129db4ebda58717dd9a",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
@@ -23506,7 +23697,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "8a5f23e702596e6c2d174b2d32f8ec94689d037b85b890af621a9a64da35dc1e",
+    "packages/blendlink/src/tslSourceCompositor.ts": "fe9975635fc75e8282cc54315c34f8e266cab372bab60df7c401d498d8dcbb53",
     "packages/blendlink/src/tslSpectralNodes.ts": "0b3b12601a937d51544168acdde2ee721a25a926a4890d41b2c63b5b09013200",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

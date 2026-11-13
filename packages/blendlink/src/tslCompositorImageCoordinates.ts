@@ -3,7 +3,7 @@ import {Vector2} from 'three'
 import * as TSL from 'three/tsl'
 import type {CompositorValue,SourceCompositorOperation,SourceCompositorProgram} from './sourceDisplay.js'
 import type {TslEffectNode} from './tslPostEffects.js'
-const {floor,ivec2,textureSize,uniform,uv,vec2,vec3,vec4}=TSL as unknown as Record<'floor'|'ivec2'|'textureSize'|'uniform'|'uv'|'vec2'|'vec3'|'vec4',(...args:TslEffectNode[])=>TslEffectNode>
+const {ceil,floor,int,ivec2,select,textureSize,uniform,uv,vec2,vec3,vec4}=TSL as unknown as Record<'ceil'|'floor'|'int'|'ivec2'|'select'|'textureSize'|'uniform'|'uv'|'vec2'|'vec3'|'vec4',(...args:TslEffectNode[])=>TslEffectNode>
 const MODEL='render-layer-pixel-int2-v1',PROFILE='darwin-arm64-53-pixel-int2-v1'
 const record=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object'&&!Array.isArray(value)
 const spatial=new Set(['translate','image-affine','image-input','image-crop','alpha-crop','image-split','pixelate','blur','filter','glare'])
@@ -22,12 +22,18 @@ export function validateImageCoordinateGraph(program:SourceCompositorProgram,fai
 /** Explicit fresh INT2 edges. Existing serialized VECTOR retains float3 semantics. */
 export function buildCompositorInt2Conversion(value:CompositorValue,operations:readonly SourceCompositorOperation[],
  resolve:(input:CompositorValue)=>TslEffectNode,fail:(message:string)=>never):TslEffectNode{
- if(value.kind!=='convert'||value.fromType!=='INT_VECTOR2'||!['RGBA','VECTOR'].includes(value.type)
+ if(value.kind!=='convert'||value.fromType!=='INT_VECTOR2'||!['RGBA','VECTOR','VALUE','INT','BOOLEAN'].includes(value.type)
   ||value.input?.kind!=='ref'||value.input.type!=='INT_VECTOR2'||operations.length>2048)
-  return fail('Image Coordinates INT_VECTOR2 supports only verified Pixel-to-RGBA or padded float3 edges; scalar/int/float2 conversions remain unqualified')
+  return fail('Image Coordinates INT_VECTOR2 supports only verified Pixel RGBA, padded float3, scalar, integer midpoint and Boolean edges; other widths/conversions remain unqualified')
  const matches=operations.filter(op=>op.id===value.input!.node)
  if(matches.length!==1||!pixelProducer(matches[0]!))return fail('Image Coordinates INT_VECTOR2 requires a verified fresh two-component Pixel producer')
- const input=vec2(resolve(value.input))
+ const typed=ivec2(resolve(value.input)),input=vec2(typed)
+ if(value.type==='BOOLEAN')return typed.x.notEqual(0).or(typed.y.notEqual(0))
+ // Pixel components are nonnegative integers <=8191. Their sum and half are
+ // exactly representable; native int2->int midpoint rounds odd sums toward X.
+ const midpoint=input.x.add(input.y).mul(.5)
+ if(value.type==='VALUE')return midpoint
+ if(value.type==='INT')return int(select(typed.x.greaterThan(typed.y),ceil(midpoint),floor(midpoint)))
  return value.type==='RGBA'?vec4(input,0,1):vec3(input,0)
 }
 
@@ -45,6 +51,8 @@ export function buildCompositorImageCoordinates(op:SourceCompositorOperation,ope
  const source=matches[0]!
  if(source.kind!=='render-pass'||source.type!=='RGBA'||source.source.nodeType!=='CompositorNodeRLayers'
   ||source.source.output!=='Image'||source.pass?.pass!=='Image')return fail('Image Coordinates Pixel requires a direct full-frame Render Layers Image')
+ if(image.isPassNode)image=image.getTextureNode()
+ if(!image.isTextureNode)return fail('Image Coordinates Pixel requires a texture-backed full-frame Image reference')
  const drawing=new Vector2()
  const guard=uniform(0,'int').onRenderUpdate((frame:TslEffectNode)=>{
   frame.renderer.getDrawingBufferSize(drawing)

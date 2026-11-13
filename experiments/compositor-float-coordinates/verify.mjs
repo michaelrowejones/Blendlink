@@ -3,13 +3,17 @@ import assert from 'node:assert/strict'
 import {readFile,writeFile,readdir} from 'node:fs/promises'
 import {join,resolve,relative} from 'node:path'
 import {captureRuntimeProvenance,hash} from '../../scripts/lib/runtime-provenance.mjs'
+import {loadRuntimeTransaction} from '../../scripts/lib/runtime-transaction-snapshot.mjs'
 import {assertBuiltRuntimeArchive} from '../../scripts/lib/runtime-proof-archive.mjs'
-import {assertFloatCoordinateQualification,assertFloatCoordinateFinal} from './protocol.mjs'
+import {browserProofContract,assertFloatCoordinateQualification,assertFloatCoordinateFinal} from './protocol.mjs'
 const root=resolve(import.meta.dirname,'../..'),directory=resolve(process.argv[2]??join(root,'artifacts/verification-float-coordinates'))
 const output=resolve(process.argv[3]??join(directory,'qualified.json'))
 const read=async path=>JSON.parse(await readFile(path,'utf8'))
 const pin=async(path,digest)=>assert.equal(hash(await readFile(path)),digest,'Proof input changed '+path)
-const {provenance:current}=await captureRuntimeProvenance({root,built:true,label:'Image Coordinates closed receipt'})
+const transactionPath=process.env.SCENETOWEB_RUNTIME_TRANSACTION,transactionSha256=process.env.SCENETOWEB_RUNTIME_TRANSACTION_SHA256
+const shared=transactionPath||transactionSha256?await loadRuntimeTransaction({root,path:transactionPath,sha256:transactionSha256}):null
+const {provenance:current}=await captureRuntimeProvenance({root,built:true,compilerInputs:!!shared,label:'Image Coordinates closed receipt'})
+if(shared)assert.deepEqual(current.compilerAttestation,shared.provenance.compilerAttestation,'Fresh closing compiler closure differs from captured transaction')
 const expectedNativeSources=['packages/blender-addon/tests/compositor_float_coordinates_check.py','packages/blender-addon/tests/compositor_reference.py']
 for(const directory of ['packages/blendlink/blender','packages/blender-addon'])for(const name of await readdir(join(root,directory)))if(name.endsWith('.py'))expectedNativeSources.push(directory+'/'+name)
 expectedNativeSources.sort()
@@ -29,9 +33,10 @@ for(const device of ['CPU','GPU']){
  sources.push({device,nativeCases:native.cases.length,savedFinalScenes:final.rows.length,native:{path:relative(root,nativePath),sha256:hash(await readFile(nativePath))},final:{path:relative(root,finalPath),sha256:hash(await readFile(finalPath))},sourceHashes:native.sourceHashes,nativeLauncherIdentity:final.nativeLauncherIdentity})
  for(const profile of ['metal','software'])for(const phase of ['raw','final']){
   const path=join(folder,'browser-'+phase+'-'+profile,'report.json'),report=await read(path)
-  assert.equal(report.status,'PASSED_FLOAT_COORDINATE_BUILT_PROOF');assert.equal(report.built,true);assert.equal(report.final,phase==='final');assert.equal(report.profile,profile);assert.equal(report.sourceDevice,device)
+  assert.equal(report.status,browserProofContract.browserStatus);assert.equal(report.built,true);assert.equal(report.final,phase==='final');assert.equal(report.profile,profile);assert.equal(report.sourceDevice,device)
   assert.equal(report.provenance.nativeQualificationSha256,hash(await readFile(nativePath)));if(phase==='final')assert.equal(report.provenance.finalProofSha256,hash(await readFile(finalPath)))
-  runtimeFingerprint=await assertBuiltRuntimeArchive({root,current,provenance:report.provenance,runtimeDirectory:join(folder,'browser-'+phase+'-'+profile,'runtime'),fixtureDirectory:join(folder,'browser-'+phase+'-'+profile,'fixture'),fixtureSourceDirectory:import.meta.dirname})
+  if(shared){assert.deepEqual(report.provenance.transaction,shared.transaction);assert.deepEqual(report.provenance.compilerAttestation,current.compilerAttestation)}else assert.equal(report.provenance.transaction,undefined)
+  runtimeFingerprint=await assertBuiltRuntimeArchive({root,current,provenance:report.provenance,runtimeDirectory:shared?shared.provenance.snapshot.directory:join(folder,'browser-'+phase+'-'+profile,'runtime'),fixtureDirectory:join(folder,'browser-'+phase+'-'+profile,'fixture'),fixtureSourceDirectory:import.meta.dirname})
   await pin(join(import.meta.dirname,'run.mjs'),report.provenance.runnerSha256);await pin(join(import.meta.dirname,'protocol.mjs'),report.provenance.protocolSha256)
   assert.equal(report.missingAdapterControl.refused,true);assert.deepEqual(report.rows.map(row=>row.backend).sort(),['webgl2','webgpu'])
   const wanted=(phase==='final'?final.rows:native.cases).map(row=>row.case).sort()
@@ -64,7 +69,8 @@ for(const device of ['CPU','GPU']){
 }
 assert.equal(caseRuns,448);assert.equal(words,596992)
 const numericContract=await read(join(import.meta.dirname,'numeric-contract.json'));assert.equal(numericContract.xy.maxUlps,2);assert.equal(numericContract.xy.maxAbsoluteError,2**-22)
-const result={status:'QUALIFIED_IMAGE_COORDINATES_FLOAT2',nativeGraphs:96,savedFinalScenes:16,builtCaseRuns:caseRuns,primaryFloat32Words:words,exactWordMismatches,contractViolations:0,maxUlps,maxAbsoluteError,exactControlWords,numericContract,numericContractSha256:hash(await readFile(join(import.meta.dirname,'numeric-contract.json'))),
+if(shared)await loadRuntimeTransaction({root,path:transactionPath,sha256:transactionSha256})
+const result={runtimeTransaction:shared?{sha256:shared.transaction.sha256,id:shared.transaction.id,independentlyReemittedAtClose:true}:null,status:'QUALIFIED_IMAGE_COORDINATES_FLOAT2',nativeGraphs:96,savedFinalScenes:16,builtCaseRuns:caseRuns,primaryFloat32Words:words,exactWordMismatches,contractViolations:0,maxUlps,maxAbsoluteError,exactControlWords,numericContract,numericContractSha256:hash(await readFile(join(import.meta.dirname,'numeric-contract.json'))),
  sourceProfile:'Blender5.3.0 02f0899d78e3 macOSarm64 CPU and Metal compositor image fields',
  scope:'Fresh Uniform/Normalized FLOAT_VECTOR2 outputs only, explicit RGBA and padded float3 edges through direct/reroute/group routes. Direct texture-backed full-frame Render Layers Image, square pixels, physical dimensions1..8192; pointwise consumers. Scalar/int conversion, arbitrary domains, transformed/static/computed references, borders and neighborhood operations remain unsupported. Pixel INT_VECTOR2 and legacy VECTOR3 remain unchanged.',
  resizeContract:'Same built raw graph and actual saved Final PassNode pipeline reused through seven physical resize/DPR frames per source/profile/API/phase. Raw control disposes its owned DataTexture GPU allocation before changing dimensions, retaining the same JavaScript Texture identity; actual pipeline uses normal RenderTarget.setSize. Mismatched physical extents refuse and recover.',

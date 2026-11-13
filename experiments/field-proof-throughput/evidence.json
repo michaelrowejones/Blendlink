@@ -1,0 +1,137 @@
+{
+  "status": "MEASURED_CPU_ATTESTATION_OVERHEAD",
+  "numericalCredit": 0,
+  "node": "v24.22.1",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "browserChildren": 8,
+  "runtimeFingerprint": "f067449ad15d223f61cf0f946ec0867503f3db131d719e50496126234a5d0973",
+  "compilerInputs": {
+    "sourceFiles": 961,
+    "operations": 4219
+  },
+  "wholeProgramEmissions": {
+    "before": 9,
+    "after": 2,
+    "retainedIndependentClosingEmissions": 1
+  },
+  "before": {
+    "children": [
+      {
+        "child": 0,
+        "milliseconds": 2475.671167,
+        "productionModules": 172
+      },
+      {
+        "child": 1,
+        "milliseconds": 2440.725917,
+        "productionModules": 172
+      },
+      {
+        "child": 2,
+        "milliseconds": 2113.614667,
+        "productionModules": 172
+      },
+      {
+        "child": 3,
+        "milliseconds": 2184.6748749999997,
+        "productionModules": 172
+      },
+      {
+        "child": 4,
+        "milliseconds": 2176.490167,
+        "productionModules": 172
+      },
+      {
+        "child": 5,
+        "milliseconds": 2278.047917,
+        "productionModules": 172
+      },
+      {
+        "child": 6,
+        "milliseconds": 2129.7844999999998,
+        "productionModules": 172
+      },
+      {
+        "child": 7,
+        "milliseconds": 2025.0897079999995,
+        "productionModules": 172
+      }
+    ],
+    "closingMilliseconds": 1982.9770419999986,
+    "totalMilliseconds": 19807.075959999995
+  },
+  "after": {
+    "captureMilliseconds": 2594.512125000001,
+    "children": [
+      {
+        "child": 0,
+        "milliseconds": 98.6684580000001,
+        "productionModules": 172
+      },
+      {
+        "child": 1,
+        "milliseconds": 104.53262499999983,
+        "productionModules": 172
+      },
+      {
+        "child": 2,
+        "milliseconds": 101.27358299999833,
+        "productionModules": 172
+      },
+      {
+        "child": 3,
+        "milliseconds": 97.765707999999,
+        "productionModules": 172
+      },
+      {
+        "child": 4,
+        "milliseconds": 98.6416250000002,
+        "productionModules": 172
+      },
+      {
+        "child": 5,
+        "milliseconds": 98.05400000000009,
+        "productionModules": 172
+      },
+      {
+        "child": 6,
+        "milliseconds": 97.13908400000219,
+        "productionModules": 172
+      },
+      {
+        "child": 7,
+        "milliseconds": 98.17000000000189,
+        "productionModules": 172
+      }
+    ],
+    "closingAndFinalRevalidationMilliseconds": 2592.388167000001,
+    "totalMilliseconds": 5981.145375000004
+  },
+  "reductionPercent": 69.80298663427752,
+  "transaction": {
+    "path": "/private/tmp/scenetoweb-field-proof-throughput-next/artifacts/verification-field-proof-throughput-closed/transaction/transaction.json",
+    "sha256": "a8da9d7d3755b66ef0dbe9a46bec453120c607f793c0a50d0991e77084584406"
+  },
+  "sourceHashes": {
+    "experiments/field-proof-throughput/profile.mjs": "f9cd7a0542bfe4fe5cb6f7eaba4a1f1f4119fcf0428050afac9fca5ca69d8884",
+    "scripts/lib/runtime-transaction-snapshot.mjs": "447ef4494d1f33b8ce1d9c0efd03cf1a77ed61fb4ac034b05793cf11fb9b247a",
+    "scripts/lib/runtime-provenance.mjs": "939d6ff241f49a82fc64a64822d831a1c7bbe5a2b4703ab95069ee3eaf17cdb1",
+    "scripts/lib/runtime-compiler-trace.mjs": "c0e1243747c89352e1f253b6fb216301ac6064681c243823a369ee5205f363f5",
+    "package.json": "d0452e13438bea15aa78a130a1e80ca6a3e8d84c20f7e043260b3ea487cc93a0",
+    "package-lock.json": "7e4810ca59644d37fa50750416518b129f6abef7dd5b8cdca7f8466efec50e87"
+  },
+  "limits": "One serial CPU-only whole-production-program sample. Baseline includes eight snapshot/vendor copies and a fresh close. Optimized includes compiler-traced capture, eight complete child revalidations, fresh compiler-traced close and closing revalidations. No native/export/numerical/browser/render performance claim.",
+  "rawArtifacts": {
+    "path": "artifacts/verification-field-proof-throughput-closed/measurement.json",
+    "sha256": "8bb23d6352671ccf6463f7bd135cfec03bd0eb398c62e2e8b7cc2dbddb97664a",
+    "machineLocal": true,
+    "ignored": true
+  },
+  "qualification": {
+    "numericalCredit": 0,
+    "nativeJobs": 0,
+    "browserJobs": 0,
+    "freshIntegratedMatricesRequired": true
+  }
+}

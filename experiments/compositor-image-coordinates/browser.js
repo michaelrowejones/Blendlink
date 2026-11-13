@@ -130,15 +130,17 @@ window.runPixelProof=async proof=>{
    return mismatch
   }
   device?.pushErrorScope('validation');await render();const mismatch=await compare();await render();await compare()
-  if(!proof.final&&entry.route==='rgba'&&entry.width===13){
+  const resizeEligible=entry.route==='rgba'||/^(scalar|integer|boolean)(-|$)/.test(entry.route)
+  if(!proof.final&&resizeEligible&&entry.width===13){
    renderer.setSize((width+1)/entry.pixelRatio,height/entry.pixelRatio)
    let refusal;try{await render()}catch(error){refusal=String(error)}
    renderer.setSize(width/entry.pixelRatio,height/entry.pixelRatio)
    if(!refusal?.includes('matching full-frame physical'))throw new Error('Mismatched live physical dimensions did not refuse '+refusal)
    extentRefused=true;await render();await compare()
   }
-  if(entry.route==='rgba'&&entry.width===13){
-   for(const resized of [...proof.resizeCases,proof.resizeCases[0]]){
+  if(resizeEligible&&entry.width===13){
+   const frames=proof.resizeCases.filter(row=>row.route===entry.route)
+   for(const resized of [...frames,frames[0]]){
     renderPhase="resize "+resized.width+"x"+resized.height; width=resized.width;height=resized.height;expected=new Uint32Array(await fetchPinned(resized.pixelUrl,resized.pixelSha256))
     renderer.setPixelRatio(resized.pixelRatio);renderer.setSize(width/resized.pixelRatio,height/resized.pixelRatio);target.setSize(width,height)
     if(ownedInput){ownedInput.dispose();ownedInput.image={data:new Float32Array(await fetchPinned(resized.inputUrl,resized.inputSha256)),width,height};ownedInput.needsUpdate=true}

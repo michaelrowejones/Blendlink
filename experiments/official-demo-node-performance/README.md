@@ -89,6 +89,8 @@ load, geometry and material planning on all three original demos after the
 selection/integer/Pixel batch. It preserves the remaining animated/repeat,
 Radial and Cycles normal/bake refusals. None of their used material graphs
 contains the newly added classes. This is no new Final or browser parity claim.
+The fresh [metadata/vector triage](./metadata-vector-triage.json) repeats the same read-only checks at the Image Info and broader compositor Vector Math source freeze. All original/copy hashes and the complete native planner source inventory remain stable; material outcomes and channel refusals are unchanged. Image Info is absent, and the demos' existing Vector Math nodes are in material trees rather than compositor trees, so this run adds no coverage for either new compositor port. No renders, stock exports, Final exports, browser checks or performance acceptance were performed.
+
 Fresh acquisition now uses a separate byte-pinned demo downloader: Blender's
 executable downloader intentionally rejects `/demo/` paths. Download tests cover
 wrong hashes, oversized/truncated bodies, redirects and non-demo hosts/paths.

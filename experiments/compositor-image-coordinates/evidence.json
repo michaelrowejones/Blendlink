@@ -1,32 +1,38 @@
 {
+  "runtimeTransaction": {
+    "sha256": "6ec8ba5dda1cc21f87af150453a1cda2de4aeea2b9e0aac5789490efb3dd333e",
+    "id": "df62b713-dece-4c24-9322-cf2da7168b49",
+    "independentlyReemittedAtClose": true
+  },
   "status": "QUALIFIED_IMAGE_COORDINATES_PIXEL_INT2",
-  "nativeGraphs": 32,
-  "savedFinalScenes": 8,
-  "builtCaseRuns": 160,
-  "primaryFloat32Words": 246080,
+  "nativeGraphs": 156,
+  "savedFinalScenes": 32,
+  "builtCaseRuns": 752,
+  "primaryFloat32Words": 1071200,
   "wordMismatches": 0,
+  "uniqueActualPythonPrefixes": 34,
   "sourceProfile": "Blender5.3.0 02f0899d78e3 macOSarm64 CPU and Metal compositor image fields",
-  "scope": "Fresh two-component Pixel INT_VECTOR2 output only; explicit RGBA and padded float3 edges through direct/reroute/group routes. Direct full-frame Render Layers Image with square pixels, dimensions1..8192; pointwise consumers only. Uniform/Normalized float2, scalar/int/midpoint conversion, arbitrary offsets/transforms, borders and neighborhood operations remain unsupported.",
-  "resizeContract": "Same built raw graph and actual saved Final PassNode pipeline reused through five physical resize/DPR frames per source/profile/API/phase. Raw control disposes its owned DataTexture GPU allocation before changing dimensions, retaining the same JavaScript Texture identity; actual pipeline uses normal RenderTarget.setSize. Mismatched physical extents refuse and recover.",
+  "scope": "Fresh two-component Pixel INT_VECTOR2 output; explicit RGBA, padded float3, exact scalar half-sum, integer midpoint ties toward X and Boolean either-component-nonzero edges through direct/reroute/group routes. Independent native analytic cast controls include odd-sum ties on both sides of X=Y. Direct full-frame Render Layers Image with square pixels, dimensions1..8192; pointwise consumers only. Floating coordinate scalar reduction, arbitrary offsets/transforms, borders and neighborhood operations remain unsupported.",
+  "resizeContract": "Same built raw graph and actual saved Final PassNode pipeline reused through seven physical resize/DPR frames per eligible route/source/profile/API/phase, including portrait and landscape. Raw control disposes its owned DataTexture GPU allocation before changing dimensions, retaining the same JavaScript Texture identity; actual pipeline uses normal RenderTarget.setSize. Mismatched physical extents refuse and recover.",
   "resourceContract": "No port-owned texture or RTT. Actual GLB source-scene control warms renderer-owned DFG_LUT16x16. Three apply/dispose cycles restore its exact identity set, source materials and callbacks, and zero render targets. Raw controls dispose all owned textures. No broad performance claim.",
   "closedReader": {
-    "runtimeFingerprint": "7f20ac4063ae70453c5d6625022b5da62240c78b2720cb8044ae96353e968bc4",
-    "verifierSha256": "88f533b632f7fba9c8b730e45e5dff7a2ae2ef7a1ddb150f612e383a92d43729",
+    "runtimeFingerprint": "6c018a70abdba552a25eb2d7112447a1657de722911ccaecc0265ac57a0e114a",
+    "verifierSha256": "77f0d4c0cde158380e81ba582224c93e548722cc8d3dc246fdc851ba72ca53ca",
     "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
     "runtimeProvenanceHelperSha256": "939d6ff241f49a82fc64a64822d831a1c7bbe5a2b4703ab95069ee3eaf17cdb1"
   },
   "sources": [
     {
       "device": "CPU",
-      "nativeCases": 16,
-      "savedFinalScenes": 4,
+      "nativeCases": 78,
+      "savedFinalScenes": 16,
       "native": {
-        "path": "artifacts/verification-next-pixel-regression-r2/cpu/qualification.json",
-        "sha256": "9589d374a99a79258e81c54e9a7f130283ac170008407a423908f7524142ccae"
+        "path": "artifacts/verification-next2-pixel-integrated/cpu/qualification.json",
+        "sha256": "0c0f9efa31c533b57c4fb21db71f935f05ebd727f1f7ff2125dd9bdd2fde08a6"
       },
       "final": {
-        "path": "artifacts/verification-next-pixel-regression-r2/cpu/final-proof.json",
-        "sha256": "2588965697e0690c4c5eec46ff8aee09aa020ee99a2a21e427031068a9262750"
+        "path": "artifacts/verification-next2-pixel-integrated/cpu/final-proof.json",
+        "sha256": "6815e98dc4545f8b899b96ca0d96a043bedd820991141196c1d931fa5159303d"
       },
       "sourceHashes": {
         "packages/blender-addon/__init__.py": "de0e8534abcb690cc935eda33b827312e65901d944a540bb839c77dc1e871538",
@@ -82,7 +88,7 @@
         "packages/blender-addon/syncrun.py": "b1a80d00f7a45846e6d246dcbd1f5632e76f17ef2ae18a9024f609b2cde12a1a",
         "packages/blender-addon/syncstatus.py": "517f07d9066f6a3b7cb4173a8b1c4847edb7ea149c7334c4883b0519024c336f",
         "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-        "packages/blender-addon/tests/compositor_image_coordinates_check.py": "4edb84b52b263c56a4e49eb16b630666005a5c603638ca4c3dab417b5dda52b3",
+        "packages/blender-addon/tests/compositor_image_coordinates_check.py": "01b269e7fae2dfb8bfea930bd723e3e717c6bcc8d21a0f32e2225f92c97a1c6a",
         "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
         "packages/blender-addon/tsl_ir.py": "842a2370673d2545bf789e6a847dc6c74f14d901116b3e4ff6cbc9133df0bd36",
         "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
@@ -111,9 +117,10 @@
         "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
         "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
         "packages/blendlink/blender/compositor_gpu.py": "9577b6df9abbf9820af6dab309b0ab2ec3a00db8a9bf60a4c5e0c9e4cb8600ae",
-        "packages/blendlink/blender/compositor_graph.py": "60eb5ff6be29509634a9bfc1d049d117defb6593dc0f622a406ac229ee9be14c",
+        "packages/blendlink/blender/compositor_graph.py": "3cd091a6aa0e2a834255c74d7581b7c0426f73779a673470fecc0e96254b9210",
         "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
         "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
+        "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
         "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
         "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
         "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
@@ -128,6 +135,7 @@
         "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
         "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
         "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
+        "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
         "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
         "packages/blendlink/blender/environment_compress.py": "397d332d28c72fbfc66ca5f4c85298efaf2a9dc23c8cf6ba7f020c22d09f8408",
         "packages/blendlink/blender/export_scene.py": "a592e88079601a95fbf0c287b31e9ec7c5f44e9d0ca004f8b361f437bd80aca2",
@@ -138,9 +146,7 @@
         "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
         "packages/blendlink/blender/uvgeometry.py": "2420caeccc225eddf3dce09c8dafe8ab9048d503689c0795c4a5513f7b3d705c"
       },
-      "nativeLauncherIdentity": {
-        "kind": "blendlink-proof-native-python-v1",
-        "platform": "darwin",
+      "nativeLauncher": {
         "native": {
           "path": "/Applications/Blender.app/Contents/MacOS/Blender",
           "bytes": 210043328,
@@ -151,41 +157,97 @@
           "bytes": 126827136,
           "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
         },
-        "launcher": {
-          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next-pixel-regression-r2/cpu/native-launchers/native-launcher-H3sv5s/blender-proof",
-          "bytes": 792,
-          "sha256": "01bd0a160776a3b86fef445f32cf1a023fff1c7acc402b6b8d36fa245bde3790"
-        },
-        "configuration": {
-          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next-pixel-regression-r2/cpu/native-launchers/native-launcher-H3sv5s/launcher.json",
-          "bytes": 1305,
-          "sha256": "02b3c9b8b146441b074c435a91e9fd33dc3b68a6cb92e33ab13df77d51debbed"
-        },
-        "helper": {
-          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next-pixel-regression-r2/cpu/native-launchers/native-launcher-H3sv5s/lib/node-port-python.mjs",
-          "bytes": 18685,
-          "sha256": "78a134a426314bc7867f82d9f8c9deb274f378ad2099d7d6416743eec8b0a56b"
-        },
-        "bridge": {
-          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next-pixel-regression-r2/cpu/native-launchers/native-launcher-H3sv5s/node-port-blender.mjs",
-          "bytes": 321,
-          "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
-        },
-        "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
-        "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+        "configurationSha256": "145b1dd5cd175869939253a55c74589527f59babc3f9428ca76d9982330bc637",
+        "invocations": [
+          {
+            "name": "03431539-a0b9-4553-b7c7-0024a1c146bc.json",
+            "sha256": "134dec46872a235cdfe8633a6dd37bf9f969d7f162d75c3f5f0014afba8a0c12"
+          },
+          {
+            "name": "1db2bdea-071f-439b-b0ee-1cf067c9ac38.json",
+            "sha256": "226db2f3424f6e6b73a421cdf607717da851447e557326a83c90a97038d75552"
+          },
+          {
+            "name": "4258e83f-a8a6-4a7b-8094-5ef4be09bb73.json",
+            "sha256": "7b97a2fb855a3700e4ef864fb2f08e2cb8593b93f62cdcfb65215764ae8de871"
+          },
+          {
+            "name": "515b4520-5d97-4be9-b1e2-c25614cdb735.json",
+            "sha256": "383414c1c33f18afc514ce7eaa69e07a94f60aef5e40704a585ebde0286e6fd5"
+          },
+          {
+            "name": "5631412c-7da9-49ed-b796-62473a0863c3.json",
+            "sha256": "529da64852efa7a7b31cf04c72f068f8930ba9db4ee23c16c4ae5904844b1459"
+          },
+          {
+            "name": "5f566c3e-049e-4a29-a777-8fb67d93bb9a.json",
+            "sha256": "4c4870e9e4827076378f436f5723b52f38d06f3cd7ef9ed6f31800af2de9fa58"
+          },
+          {
+            "name": "840c9d32-0e68-48eb-b94a-8efa4260585f.json",
+            "sha256": "8bfc2f5385b8ce630285f0b8b6cab4a1a705b56ab1867fe2d6214cb92d6b088f"
+          },
+          {
+            "name": "895f753e-d48f-4553-b6aa-6bbd5335fe24.json",
+            "sha256": "425f13b92f5e3048c886954ad769767dea1ad6d893f490fae655f1712a5f8198"
+          },
+          {
+            "name": "9146236e-1d03-49a5-99a6-200d38754cf2.json",
+            "sha256": "024606945956f2e326f501211e2b32887092334235ddbf640cde0f2ab84cb7b9"
+          },
+          {
+            "name": "9906a3bc-7bfa-4ea6-a95e-b21a27e99c8c.json",
+            "sha256": "6e6097f1e77a72f374930547c5ab16ff2292021f9f9a43bec492aedcd47816eb"
+          },
+          {
+            "name": "a79a419c-7457-47b8-b3ac-e7ab6acebd8d.json",
+            "sha256": "3a208e0b72c011b80fd9244f8bf5c04c983d180fdcbe12d56d34b7be254f1de1"
+          },
+          {
+            "name": "af8da4e2-3e44-4c23-977c-d40349f24c2b.json",
+            "sha256": "0b09d6b15118d89a475b9cfbf927ed171f4e65e361b62d6367b62ca383734149"
+          },
+          {
+            "name": "c5ec4690-1ef1-4cca-ac5d-ddfd1db865d6.json",
+            "sha256": "9635f74e9aa4ef7677b79bbae60b19b437bf5bba27ba50a8f361eb2d599bff0e"
+          },
+          {
+            "name": "d3212fe3-9af6-40e5-b7ba-2f55fd69f5b8.json",
+            "sha256": "271697eb8503adfa121fe2f65fb70fdfe2413ff749f66f446f75b4e49e53c360"
+          },
+          {
+            "name": "df03ba9d-0673-4b41-9249-a6e324bae4c6.json",
+            "sha256": "3844ea742406197f3c140f0dd66687d8964aea7ea863f9959a5132c390dabbaf"
+          },
+          {
+            "name": "e5a84d07-8915-404f-b3d6-9571808b8a93.json",
+            "sha256": "2f44e84198cfcdc3dd35955615e893232d4190a0333ef51537b84edfa8b01d43"
+          },
+          {
+            "name": "fb435507-4954-49e5-96be-aca4e3328cbc.json",
+            "sha256": "afae6403b34aa4bf363909516eed902bd8eca9254267cf3a03dced0037838f76"
+          },
+          {
+            "name": "fd8d06d0-e2b8-4d0f-85b6-83940e4eb19f.json",
+            "sha256": "8533dcd15c4d3872ba605b8b372b816f8a30e647550749ac4993135fe373f021"
+          }
+        ],
+        "exports": 16,
+        "captures": 1,
+        "versionProbes": 1
       }
     },
     {
       "device": "GPU",
-      "nativeCases": 16,
-      "savedFinalScenes": 4,
+      "nativeCases": 78,
+      "savedFinalScenes": 16,
       "native": {
-        "path": "artifacts/verification-next-pixel-regression-r2/gpu/qualification.json",
-        "sha256": "b93780fe847c912df54ae54e20f38e04e8bd31f9f7b99bc225a8857236d217b4"
+        "path": "artifacts/verification-next2-pixel-integrated/gpu/qualification.json",
+        "sha256": "57c70d61ba7e144fade2a0f3d9d01d4be87a1bb60ec9f60ef3c6ec58b500819e"
       },
       "final": {
-        "path": "artifacts/verification-next-pixel-regression-r2/gpu/final-proof.json",
-        "sha256": "2af8b22a86fa5a4841d71c50719135ccdacc36572d4eb2b9bdffb9a711f4205d"
+        "path": "artifacts/verification-next2-pixel-integrated/gpu/final-proof.json",
+        "sha256": "710c85ec462709d5d17d9952f3562076dcd83ce3ac0825dac2d345544e1270ac"
       },
       "sourceHashes": {
         "packages/blender-addon/__init__.py": "de0e8534abcb690cc935eda33b827312e65901d944a540bb839c77dc1e871538",
@@ -241,7 +303,7 @@
         "packages/blender-addon/syncrun.py": "b1a80d00f7a45846e6d246dcbd1f5632e76f17ef2ae18a9024f609b2cde12a1a",
         "packages/blender-addon/syncstatus.py": "517f07d9066f6a3b7cb4173a8b1c4847edb7ea149c7334c4883b0519024c336f",
         "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-        "packages/blender-addon/tests/compositor_image_coordinates_check.py": "4edb84b52b263c56a4e49eb16b630666005a5c603638ca4c3dab417b5dda52b3",
+        "packages/blender-addon/tests/compositor_image_coordinates_check.py": "01b269e7fae2dfb8bfea930bd723e3e717c6bcc8d21a0f32e2225f92c97a1c6a",
         "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
         "packages/blender-addon/tsl_ir.py": "842a2370673d2545bf789e6a847dc6c74f14d901116b3e4ff6cbc9133df0bd36",
         "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
@@ -270,9 +332,10 @@
         "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
         "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
         "packages/blendlink/blender/compositor_gpu.py": "9577b6df9abbf9820af6dab309b0ab2ec3a00db8a9bf60a4c5e0c9e4cb8600ae",
-        "packages/blendlink/blender/compositor_graph.py": "60eb5ff6be29509634a9bfc1d049d117defb6593dc0f622a406ac229ee9be14c",
+        "packages/blendlink/blender/compositor_graph.py": "3cd091a6aa0e2a834255c74d7581b7c0426f73779a673470fecc0e96254b9210",
         "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
         "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
+        "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
         "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
         "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
         "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
@@ -287,6 +350,7 @@
         "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
         "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
         "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
+        "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
         "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
         "packages/blendlink/blender/environment_compress.py": "397d332d28c72fbfc66ca5f4c85298efaf2a9dc23c8cf6ba7f020c22d09f8408",
         "packages/blendlink/blender/export_scene.py": "a592e88079601a95fbf0c287b31e9ec7c5f44e9d0ca004f8b361f437bd80aca2",
@@ -297,9 +361,7 @@
         "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
         "packages/blendlink/blender/uvgeometry.py": "2420caeccc225eddf3dce09c8dafe8ab9048d503689c0795c4a5513f7b3d705c"
       },
-      "nativeLauncherIdentity": {
-        "kind": "blendlink-proof-native-python-v1",
-        "platform": "darwin",
+      "nativeLauncher": {
         "native": {
           "path": "/Applications/Blender.app/Contents/MacOS/Blender",
           "bytes": 210043328,
@@ -310,38 +372,124 @@
           "bytes": 126827136,
           "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
         },
-        "launcher": {
-          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next-pixel-regression-r2/gpu/native-launchers/native-launcher-oVH1Kl/blender-proof",
-          "bytes": 792,
-          "sha256": "0a5987568efd3bc8f14b37fd86e767ecf77d73a818cbc2f39c533f8fe48554d2"
-        },
-        "configuration": {
-          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next-pixel-regression-r2/gpu/native-launchers/native-launcher-oVH1Kl/launcher.json",
-          "bytes": 1305,
-          "sha256": "4c5e8e28805ce55af9b9aef4ae3504b6aef725bf2ff466974d18e5da20c7739e"
-        },
-        "helper": {
-          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next-pixel-regression-r2/gpu/native-launchers/native-launcher-oVH1Kl/lib/node-port-python.mjs",
-          "bytes": 18685,
-          "sha256": "78a134a426314bc7867f82d9f8c9deb274f378ad2099d7d6416743eec8b0a56b"
-        },
-        "bridge": {
-          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next-pixel-regression-r2/gpu/native-launchers/native-launcher-oVH1Kl/node-port-blender.mjs",
-          "bytes": 321,
-          "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
-        },
-        "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
-        "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+        "configurationSha256": "7476fbdd9dc27cf4c832ad7cffb18bd4cd5a26cfa5a4c068c8967561eef5e774",
+        "invocations": [
+          {
+            "name": "08797c5b-9838-48b3-88a8-13ebdd015471.json",
+            "sha256": "9f328395c80e11bb7b7b896bd81ccb4209dcf577166a15218b482c2125d4e602"
+          },
+          {
+            "name": "0dab13a1-b1db-4423-97da-1fd036a87bad.json",
+            "sha256": "0d3b0e7367ac9e4242e650266ffa68e5362799156951a33eb2b8464f39f48693"
+          },
+          {
+            "name": "135010d3-f695-4efb-b7c0-f289084d3be6.json",
+            "sha256": "337d3a74093cc752caecae8f301e9755527ca1a8be967c7255791a5fd6e0ac5c"
+          },
+          {
+            "name": "14aa7ea5-1393-4ccc-a5f4-eb664350976c.json",
+            "sha256": "3346dfaa92d5ceff6dbba51c1c8515e5aec14aa337f3477013a18013cc7f45c8"
+          },
+          {
+            "name": "43ad9847-aba0-4a00-ac7c-2102ab2968a7.json",
+            "sha256": "349279c3b550c27369d07ebfaeb31cbdcf77840545663a6a5b17d35120b4645d"
+          },
+          {
+            "name": "76164727-1803-416d-a867-812a88de8ee6.json",
+            "sha256": "66d4a32c6fe58fd4e74c87b28592e19f9e409cef3f83cefb5a3d26a4a65388b9"
+          },
+          {
+            "name": "903ad803-aea7-48b5-9465-74e5b141397b.json",
+            "sha256": "08d626d92b28e9eb1024ee1ee22a6fcce7dc7fcab418ff40249deec2ef2d816a"
+          },
+          {
+            "name": "97074d4c-918e-41da-b03f-cbe3b7c0458b.json",
+            "sha256": "81e483412a4f415cccd61e1375c6e62228900bba261017698234be2fb3325adf"
+          },
+          {
+            "name": "a9bf08e3-8a79-49fe-b002-2bd411a262ee.json",
+            "sha256": "1ac14d85c2bcf4b47e329a6ea2a6f1247bb7863958468c16b18c8d8d175eb13f"
+          },
+          {
+            "name": "ae3dd0c9-eb40-4827-8d3c-ef6035c39f7f.json",
+            "sha256": "6829468141ad3fef11fc4b7216481e2efda353a33026cad9158165bbc43cb473"
+          },
+          {
+            "name": "c339863f-1c9f-4da6-a6e7-4dc1765c53d1.json",
+            "sha256": "006017cdf5c08959ef96364119a87bd6004ecffdd5ced7a634f81a6a385e9a05"
+          },
+          {
+            "name": "d366c5e3-3b82-4e65-aea6-823c84129117.json",
+            "sha256": "9933c6f4be6829a37c74e393758b914b7d849f6a248e48a86b19e2e76806e6f4"
+          },
+          {
+            "name": "d3a84d32-4522-4aae-9736-cc43c575e855.json",
+            "sha256": "f70e6f0aa056fb959998794778525ea672dbadeccbce496735ac7761a271ef20"
+          },
+          {
+            "name": "d4d40978-fde5-4050-8709-2e7665e2de96.json",
+            "sha256": "15992d0092675c01cbd1959f3d11de1d96c1b568dc8a7786315a9ba9ab7606f7"
+          },
+          {
+            "name": "e5151083-1a9b-4151-aee7-dee4376dfc58.json",
+            "sha256": "6f10a7be5a5aa7b24fcc9565d60c7ac7d2df5ffe589ffc2b6746bedf00c316e9"
+          },
+          {
+            "name": "e54cf8cd-680c-4d6f-bfb3-cfd1aa1fd3c3.json",
+            "sha256": "7c5e028f2c38d883161ae54e59d3504d690b6b7d364d6d72abeb14a4570e25d6"
+          },
+          {
+            "name": "ec96ba96-dd07-4ff6-aa4a-4e05039cf7c2.json",
+            "sha256": "77f0a7833dc731a00ebbd7516a0707fa589d76512a25651657e2e1ad11bb5483"
+          },
+          {
+            "name": "f263b31f-d02e-4d47-948a-2fed95f88e0d.json",
+            "sha256": "f035117574cee534adf544d2cb4a73014af98c43b2eed1c8d4161205d04a2da4"
+          }
+        ],
+        "exports": 16,
+        "captures": 1,
+        "versionProbes": 1
       }
     }
   ],
   "runs": [
     {
-      "path": "artifacts/verification-next-pixel-regression-r2/cpu/browser-raw-metal/report.json",
-      "sha256": "548d6f80ecae919f9d6c059e510acd57270006a590de0dfbabbefa369bd29f04",
+      "path": "artifacts/verification-next2-pixel-integrated/cpu/browser-raw-metal/report.json",
+      "sha256": "b4355712af5febfb276f70d9601967d3fd034cfb5176b279f66cc235116f84f1",
       "sourceDevice": "CPU",
       "profile": "metal",
       "phase": "raw",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 78
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 78
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-next2-pixel-integrated/cpu/browser-final-metal/report.json",
+      "sha256": "05f73f78e733bc0e6a36749823ab55a593513f0091447c661df616139cf6ce96",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "final",
       "actualApis": [
         {
           "backend": "webgpu",
@@ -367,38 +515,8 @@
       "browserVersion": "158.0.8127.18"
     },
     {
-      "path": "artifacts/verification-next-pixel-regression-r2/cpu/browser-final-metal/report.json",
-      "sha256": "35fac094a1e7d2c5137513e8ebb408ebe2af88701745b903ffd8757b361de006",
-      "sourceDevice": "CPU",
-      "profile": "metal",
-      "phase": "final",
-      "actualApis": [
-        {
-          "backend": "webgpu",
-          "gpu": {
-            "api": "WebGPU",
-            "vendor": "apple",
-            "architecture": "metal-3",
-            "device": "",
-            "description": ""
-          },
-          "cases": 4
-        },
-        {
-          "backend": "webgl2",
-          "gpu": {
-            "api": "WebGL2",
-            "vendor": "Google Inc. (Apple)",
-            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
-          },
-          "cases": 4
-        }
-      ],
-      "browserVersion": "158.0.8127.18"
-    },
-    {
-      "path": "artifacts/verification-next-pixel-regression-r2/cpu/browser-raw-software/report.json",
-      "sha256": "c599fbb3da0fa12ed8f88c1964d9b90da64d84bb5cbde949dc83bab19342fb70",
+      "path": "artifacts/verification-next2-pixel-integrated/cpu/browser-raw-software/report.json",
+      "sha256": "978ac3f749c67d2eb0ac398483c74525de0725b6225cc7bf34add1193e3cc80d",
       "sourceDevice": "CPU",
       "profile": "software",
       "phase": "raw",
@@ -412,7 +530,7 @@
             "device": "",
             "description": ""
           },
-          "cases": 16
+          "cases": 78
         },
         {
           "backend": "webgl2",
@@ -421,14 +539,14 @@
             "vendor": "Google Inc. (Google)",
             "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
           },
-          "cases": 16
+          "cases": 78
         }
       ],
       "browserVersion": "158.0.8127.18"
     },
     {
-      "path": "artifacts/verification-next-pixel-regression-r2/cpu/browser-final-software/report.json",
-      "sha256": "2b70ef8bb82d51ae0af75b36f9aaf61ab037d75222ff35c80265d2b8d883da22",
+      "path": "artifacts/verification-next2-pixel-integrated/cpu/browser-final-software/report.json",
+      "sha256": "b996b5a1ad9b73d65af232b3c58cd6ae1c86b07c73b658d9bf03cfd6407fd168",
       "sourceDevice": "CPU",
       "profile": "software",
       "phase": "final",
@@ -442,7 +560,7 @@
             "device": "",
             "description": ""
           },
-          "cases": 4
+          "cases": 16
         },
         {
           "backend": "webgl2",
@@ -451,17 +569,47 @@
             "vendor": "Google Inc. (Google)",
             "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
           },
-          "cases": 4
+          "cases": 16
         }
       ],
       "browserVersion": "158.0.8127.18"
     },
     {
-      "path": "artifacts/verification-next-pixel-regression-r2/gpu/browser-raw-metal/report.json",
-      "sha256": "81860c0f9eeb62a45780fd3c47045e2d0f1c2c0c90e1890ac1f7a5bf29ae8d36",
+      "path": "artifacts/verification-next2-pixel-integrated/gpu/browser-raw-metal/report.json",
+      "sha256": "52c79ab92f45494593dae37035b28b84b93801a45414ae0ea37fef928e4e4e05",
       "sourceDevice": "GPU",
       "profile": "metal",
       "phase": "raw",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 78
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 78
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-next2-pixel-integrated/gpu/browser-final-metal/report.json",
+      "sha256": "cd94482a9fdee9384a583bdd4d3ae78b274faca0c881d3aedc8c17274b688792",
+      "sourceDevice": "GPU",
+      "profile": "metal",
+      "phase": "final",
       "actualApis": [
         {
           "backend": "webgpu",
@@ -487,38 +635,8 @@
       "browserVersion": "158.0.8127.18"
     },
     {
-      "path": "artifacts/verification-next-pixel-regression-r2/gpu/browser-final-metal/report.json",
-      "sha256": "27665b6cb1bed03a3720945ba5223f65fdd986595b2d5620ee534b8f5526c22c",
-      "sourceDevice": "GPU",
-      "profile": "metal",
-      "phase": "final",
-      "actualApis": [
-        {
-          "backend": "webgpu",
-          "gpu": {
-            "api": "WebGPU",
-            "vendor": "apple",
-            "architecture": "metal-3",
-            "device": "",
-            "description": ""
-          },
-          "cases": 4
-        },
-        {
-          "backend": "webgl2",
-          "gpu": {
-            "api": "WebGL2",
-            "vendor": "Google Inc. (Apple)",
-            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
-          },
-          "cases": 4
-        }
-      ],
-      "browserVersion": "158.0.8127.18"
-    },
-    {
-      "path": "artifacts/verification-next-pixel-regression-r2/gpu/browser-raw-software/report.json",
-      "sha256": "834bccad09681b170b786b6e0be59d5afd88daacb8f099ab3897c71280ece605",
+      "path": "artifacts/verification-next2-pixel-integrated/gpu/browser-raw-software/report.json",
+      "sha256": "0fd7de3996e2fb41b569e1b3890b7dd5d9e4645b931b84cf8dd38c3e24f5c1b9",
       "sourceDevice": "GPU",
       "profile": "software",
       "phase": "raw",
@@ -532,7 +650,7 @@
             "device": "",
             "description": ""
           },
-          "cases": 16
+          "cases": 78
         },
         {
           "backend": "webgl2",
@@ -541,14 +659,14 @@
             "vendor": "Google Inc. (Google)",
             "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
           },
-          "cases": 16
+          "cases": 78
         }
       ],
       "browserVersion": "158.0.8127.18"
     },
     {
-      "path": "artifacts/verification-next-pixel-regression-r2/gpu/browser-final-software/report.json",
-      "sha256": "56974f03f2b8551fefcf86f3c125dc6c59a714a06155250ef4fb7d97c5de508a",
+      "path": "artifacts/verification-next2-pixel-integrated/gpu/browser-final-software/report.json",
+      "sha256": "69119197851f18899d47d206594d6085babfd8f399500b7cbf61a1007d76e86c",
       "sourceDevice": "GPU",
       "profile": "software",
       "phase": "final",
@@ -562,7 +680,7 @@
             "device": "",
             "description": ""
           },
-          "cases": 4
+          "cases": 16
         },
         {
           "backend": "webgl2",
@@ -571,7 +689,7 @@
             "vendor": "Google Inc. (Google)",
             "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
           },
-          "cases": 4
+          "cases": 16
         }
       ],
       "browserVersion": "158.0.8127.18"
@@ -588,13 +706,23 @@
       {
         "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc",
         "finding": "Native Pixel coordinates add the domain data offset to each texel. This first port qualifies only full-frame zero-offset domains. Uniform and Normalized use distinct float2 math and are excluded."
+      },
+      {
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/type_conversions.cc",
+        "sha256": "c5889d75c4de43abf51b35afca12b0545297f8d714f078220564f035dbfa9a83",
+        "finding": "Native CPU int2-to-float averages both components; int2-to-int uses math::midpoint, and Boolean tests whether either component is nonzero. The qualified Pixel coordinates are nonnegative <=8191, so half-sum and tie-toward-X midpoint are exactly representable."
+      },
+      {
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/library/gpu_shader_compositor_type_conversion.glsl",
+        "sha256": "b6f78a717091535214018db3ebfc9502655644185e6ea3812330a89b84f5741b",
+        "finding": "Native GPU int2 scalar conversion delegates to float2 averaging; int conversion calls midpoint; Boolean tests that the pair is not all zero. These are separate from float3 averaging."
       }
     ]
   },
   "rawArtifacts": {
     "machineLocal": true,
     "ignored": true,
-    "path": "artifacts/verification-image-coordinates"
+    "path": "artifacts/verification-next2-pixel-integrated"
   },
   "productionPromotion": false
 }

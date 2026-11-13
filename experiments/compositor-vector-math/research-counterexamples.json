@@ -1,0 +1,38 @@
+{
+  "researchOnly": true,
+  "qualificationCredit": 0,
+  "sourceProfile": "Blender5.3.0 02f0899d78e3 macOSarm64 nativeCPU",
+  "researchCases": 72,
+  "comparison": "Independent ordered NumPy Float32 primitives versus actual native compositor EXR words; not browser qualification.",
+  "retainedCounterexamples": [
+    {
+      "kind": "scale-negative-component-zero-scale",
+      "a": [
+        1.0,
+        -1.0,
+        0.0
+      ],
+      "scale": 0.0,
+      "nativeWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "independentIEEEWords": [
+        0,
+        2147483648,
+        0,
+        1065353216
+      ],
+      "decision": "Retain the pre-existing signed-zero product refusal; do not repair native or browser output."
+    }
+  ],
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "path": "artifacts/verification-vector-math-wide-research/native-cpu-independent.json",
+    "sha256": "fc7dad10c7425d62957cc667cd355c2d9001fd277645f01405765c9fa64c6798"
+  },
+  "scriptSha256": "811d2cdae2bd603f43824ad7c0c5fa9fedca1009eba8db636df603390f37d072"
+}

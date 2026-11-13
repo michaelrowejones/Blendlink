@@ -1,0 +1,37 @@
+[
+  {
+    "path": "source/blender/nodes/shader/nodes/node_shader_vector_math.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_vector_math.cc",
+    "sha256": "d8bcf65753929fd5e8adc1bd3bba45dafda2bef92e755aa6681c2f5693700561"
+  },
+  {
+    "path": "source/blender/nodes/intern/math_functions.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/intern/math_functions.cc",
+    "sha256": "2178ea319e0484ad8ea6247267396a728e1eec61d95149ed92d389dc1678c0a7"
+  },
+  {
+    "path": "source/blender/functions/intern/multi_function_common.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/functions/intern/multi_function_common.cc",
+    "sha256": "321f3358ffbe8fcb6fec7c77c212fbd25ba5be9a48ece096352520308fccd3a3"
+  },
+  {
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_vector_math.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_vector_math.bsl.hh",
+    "sha256": "70a387963272a0fbfa3489e7efccaf9dd5448136bf6c9005ab12d2c803d4d734"
+  },
+  {
+    "path": "source/blender/blenlib/BLI_math_vector.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_vector.hh",
+    "sha256": "ba7395d8cfb829edb074501d48642c744ee44656a2af1eb017757e03c8b064b0"
+  },
+  {
+    "path": "source/blender/blenlib/BLI_math_vector_types.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_vector_types.hh",
+    "sha256": "b11dd5e4fa77f1179956befdab71dc12d65120de878249f13b00e0643e6c4b39"
+  },
+  {
+    "path": "source/blender/blenlib/BLI_math_base.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_base.hh",
+    "sha256": "cd6bc90176a7070134377a276dc702a06355832d79947840033610cc6218d7e4"
+  }
+]

@@ -338,3 +338,155 @@ in Vanilla and R3F consumers. An independent install using an empty npm cache
 verified the archive SRI, CLI version, root import and browser build. This is
 local install verification; no release, publish, PR change or hosted workflow
 was requested or run.
+
+## Integrated Pixel conversions, practical Vector Math and Image Info
+
+Three fresh combined-root transactions passed on Blender 5.3.0 build
+`02f0899d78e3`, macOS arm64, with native CPU/GPU compositor settings and actual
+browser WebGPU/WebGL2 on Metal and SwiftShader. Each closes the same current
+runtime fingerprint `6c018a70abdba552a25eb2d7112447a1657de722911ccaecc0265ac57a0e114a`
+against its own newly captured native references, saved Final publications and
+browser results. The tracked [Pixel receipt](../experiments/compositor-image-coordinates/evidence.json),
+[Vector Math receipt](../experiments/compositor-vector-math/evidence.json) and
+[Image Info receipt](../experiments/compositor-image-info/evidence.json) retain
+their separate source, fixture, launcher and asset pins.
+
+| Fresh integrated family | Native graphs | Saved Final scenes | Browser case runs | Primary Float32 words | Exact-word differences | Contract violations |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Pixel INT2, including scalar/integer/Boolean edges | 156 | 32 | 752 | 1,071,200 | 0 | 0 |
+| Compositor Vector Math literals | 408 | 64 | 1,888 | 483,328 | 0 | 0 |
+| Image Info metadata and separate aspect consumers | 264 | 24 | 1,152 | 1,604,288 | 0 | 0 |
+
+Counts describe family matrices, not additional node classes. Existing Pixel
+scope is extended; Vector Math and Image Info add partial compositor routes.
+All three nodes remain partial, and the goal of porting all nodes is unfinished.
+Native availability, extraction refusals, private controls and protocol/unit
+tests contribute no numerical qualification credit. The 5.3 classification is
+46 supported, 92 partial, 14 structural and 180 unsupported; older-version
+classifications and the retained native inventory audit date are unchanged.
+Pixel, Vector Math and Image Info own 34, 66 and 26 unique disposed native Python
+prefixes respectively. Image Info exercises 728 actual resize/DPR frames.
+Native/export/browser resource checks preserve source ownership and restore the
+exact independently warmed renderer-owned DFG cache identities; no node-owned
+textures/RTTs or per-frame GPU readback are introduced.
+
+### Practical exact arithmetic and typed Pixel edges
+
+Twelve simple Vector Math modes now admit actual stored normal Float32 literal
+defaults with nonzero magnitude in [2^-32,2^16], or positive zero: ADD, SUBTRACT,
+MULTIPLY, SCALE, MINIMUM, MAXIMUM, ABSOLUTE, FLOOR, CEIL, FRACTION, ROUND and SIGN.
+Artist values such as 0.1, 0.8 and thirds use their real native RNA Float32
+representations. These ordinary rounded operations still require exact output
+words; no output tolerance is granted. Ordered staging is explicit, including
+`a-floor(a)` for FRACTION and `floor(Float32(a+.5))` for ROUND.
+
+Four compound modes retain tighter exactly representable domains:
+MULTIPLY_ADD, CROSS_PRODUCT, DOT_PRODUCT and DIVIDE use sixteenth-grid inputs
+within +/-16. Nonzero Divide denominators must be powers of two; native safe
+division by zero returns positive zero. The bounds keep admitted reductions
+exact across fused/unfused execution. Negative-zero inputs and operations that
+could produce unqualified negative-zero products/quotients refuse, as do CEIL
+inputs strictly between -1 and 0. The measured native SCALE zero-sign
+counterexample stays quarantined without output repair.
+
+Socket defaults, typed Input Vector, Value/CombineXYZ components, reroutes and
+artist groups retain bounded executable provenance checks. Computed Vector Math
+chains, image/coordinate fields, animation/drivers and remaining modes need
+separate contracts. Modern native CPU multi-function single values are the
+reference in both CPU/GPU-authored compositor settings; this does not qualify
+native GPU-field arithmetic or arbitrary downstream composition. Eleven actual
+extractor refusals and thirteen independent browser-program refusals guard the
+excluded domains.
+
+Pixel INT2 now has explicit scalar `(x+y)/2`, native integer midpoint and Boolean
+edges alongside RGBA/padded-float3. Native integer half-way ties round toward X;
+Boolean is true when either component is nonzero. Nonnegative integer Pixel
+components through 8191 make these reductions exact. Independent analytic native
+controls check odd-sum ties on both sides of X=Y. Direct, reroute and artist-group
+paths, portrait/landscape resize and DPR changes use the same built program and
+actual saved Final pipeline. Float2 scalar/integer reductions, transformed image
+domains and spatial/neighborhood consumers remain separate work.
+
+### Exact image metadata and a bounded aspect consumer
+
+Image Info exposes exact Dimensions, Resolution, Location, Rotation and Scale
+for a proved current-scene, direct full-frame Render Layers Image domain with
+identity transform, square pixels and no borders. Host single-value metadata is
+used even when the authored compositor device is GPU. Physical extents 1..8192
+convert exactly to Float32; live texture/drawing/target dimensions must agree.
+The source domain is rechecked during resize/DPR changes and hazardous settings
+refuse before drawing, with recovery after returning to an admitted domain.
+Static, transformed, single-value and arbitrary computed image inputs remain
+unqualified.
+
+The aspect example is an explicit existing consumer chain:
+Dimensions/Resolution -> padded VECTOR -> SeparateXYZ -> Math DIVIDE(X,Y).
+It is not an Image Info output socket. Only that ratio consumer uses both
+<=2ULP and absolute error<=2^-22*max(1,abs(nativeRatio)), with exact alpha 1 and
+exact upstream metadata. The measured matrix had zero exact-word differences and zero violations,
+including the ratio cases (maximum 0ULP / absolute 0). The declared ratio bound
+remains 2ULP with scaled absolute error; this observation does not promote the
+ratio consumer to a universal exact contract.
+Exact-word differences and contract violations are recorded separately. A
+bounded ratio result grants no arbitrary downstream graph tolerance.
+
+### Earlier failure detection and lower verification overhead
+
+All six browser-proof families now use frozen family descriptors from their
+already-pinned protocol modules: Pixel, Float2, default texture fields, Vector
+Math, Image Info and static Switch. Runners/readers share their own status
+constants. Parsed assembly checks reject copied labels, missing/foreign imports
+and comment-only substitutes. Strict native/Final schema tests reject missing,
+extra, duplicate and cross-family cases, wrong identities and failed/refused
+statuses. Both new matrix entrypoints run preflight before any output/native
+transaction. Sixteen focused tests passed before the corresponding expensive native/GPU
+phases,
+including subprocess controls proving all six entrypoints stop before a fake
+capture/native executable can run. Historical Texture report vocabulary remains
+compatible; its native/source/case closure stays distinct from Float2. Before
+Image Info capture, a copied negative-control reader still expected the
+Procedural Texture diagnostic family. A protocol-owned Image Info validator now
+requires its exact eight refusal names and own diagnostic family; focused tests
+reject missing/duplicate and foreign-family controls. Its matrix runs those
+checks before capture. This caught another harness assembly error without a
+native/browser recapture; share negative-control contracts as well as pass
+status constants.
+
+Pixel, Float2 and default texture-field matrices now use one fresh parent-owned
+runtime transaction. Each browser child receives an explicit manifest path and
+SHA256 and fully revalidates compiler inputs/resolution probes,
+source/dist/build/snapshot/maps/vendor bytes and helper/config/package pins.
+There is no automatic persisted-snapshot discovery or numerical/native reuse.
+Standalone callers retain independent capture when neither transaction variable
+is supplied. Partial pins, missing manifests, drift and source-mode attempts
+refuse. Closing readers independently emit the whole current program again and
+require exact transaction/compiler/archive closure before writing a receipt.
+
+A serial CPU-only measurement on the isolated 172-module production program
+(base `46c8cd5`)
+reduced compiler attestation overhead from 19.807s to 5.981s (69.80%) and whole
+program emissions from 9 to 2, retaining the fresh independent closing emission.
+The optimized cost includes capture, eight complete child revalidations and
+closing checks. Identical source/emitter fingerprints were required. This is
+verification overhead only, not artist export latency, rendering performance or
+node numerical evidence. The new Vector Math/Image Info numerical matrices
+retain their own frozen capture paths; the measurement does not claim their
+whole-job runtime improved by that percentage.
+
+### Installation checks and remaining artist-scene gaps
+
+The coordinated local checks passed 1,520 SDK tests with five optional skips,
+98 release-policy checks,119 Node pipeline tests and seven Python audit tests;
+the expanded six-family preflight also passed its sixteen focused checks. The
+packed SDK contains 803 files and compiled in Vanilla and R3F consumers. A fresh
+empty-cache install verified archive integrity, CLI version, root import and
+browser compilation. These are local package/install checks, not a release or
+real-user installation study. No PR, publication or hosted workflow is involved.
+
+Fresh read-only triage of the three pinned official Blender demos still finds
+Radial Tiling, animated/repeat transport and Cycles normal/bake-channel gaps.
+That triage earns no new Final publication or numerical parity credit. Broader
+image domain/window/origin algebra, remaining native casts and independently
+budgeted composed fields remain reusable prerequisites. Subsequent ports should
+keep new provenance/admission decisions ahead of the source freeze and run
+cheap assembly/schema checks before the serial native/browser proof queue.

@@ -4,7 +4,8 @@ import {join,resolve} from 'node:path'
 import {createServer} from 'vite'
 import {chromium} from '@playwright/test'
 import {captureRuntimeSnapshot,hash} from '../../scripts/lib/runtime-provenance.mjs'
-import {assertTextureFieldFinal,assertTextureFieldQualification} from './protocol.mjs'
+import {loadRuntimeTransaction} from '../../scripts/lib/runtime-transaction-snapshot.mjs'
+import {browserProofContract,assertTextureFieldFinal,assertTextureFieldQualification} from './protocol.mjs'
 const root=resolve(import.meta.dirname,'../..'),directory=resolve(process.env.SCENETOWEB_TEXTURE_FIELD_REFERENCES),built=process.argv.includes('--built'),final=process.argv.includes('--final')
 const profile=process.env.BLENDLINK_TEST_PROFILE??'software';assert.ok(['metal','software'].includes(profile))
 const qualification=assertTextureFieldQualification(JSON.parse(await readFile(join(directory,'qualification.json'))))
@@ -30,10 +31,14 @@ for(const entry of qualification.cases.filter(row=>row.width!==1920)){
  resizeCases.push({...entry,...(entry.controlFile?{controlUrl:'/@fs'+join(directory,entry.controlFile)}:{}),pixelUrl:'/@fs'+join(directory,entry.pixelFile),inputUrl:'/@fs'+join(directory,entry.inputFile)})
 }
 const destination=join(directory,`browser-${final?'final':'raw'}-${profile}`),fixture=join(destination,'fixture');await mkdir(fixture,{recursive:true})
-const {provenance}=await captureRuntimeSnapshot({root,built,destination:join(destination,'runtime'),label:'Image Coordinates float2 fields'})
+const transactionPath=process.env.SCENETOWEB_RUNTIME_TRANSACTION,transactionSha256=process.env.SCENETOWEB_RUNTIME_TRANSACTION_SHA256
+let provenance,runtimeDirectory=join(destination,'runtime')
+if(transactionPath||transactionSha256){
+ assert.equal(built,true);const shared=await loadRuntimeTransaction({root,path:transactionPath,sha256:transactionSha256});provenance=structuredClone(shared.provenance);provenance.transaction=shared.transaction;runtimeDirectory=shared.provenance.snapshot.directory
+}else({provenance}=await captureRuntimeSnapshot({root,built,destination:runtimeDirectory,label:'Image Coordinates float2 fields'}))
 provenance.nativeQualificationSha256=hash(await readFile(join(directory,'qualification.json')))
 if(final)provenance.finalProofSha256=hash(await readFile(join(directory,'final-proof.json')))
-if(built){
+if(built&&!transactionPath){
  await cp(join(root,'packages/blendlink/dist/vendor'),join(destination,'runtime/vendor'),{recursive:true})
  provenance.snapshot.vendorFiles=[]
  const record=async directory=>{for(const entry of await readdir(directory,{withFileTypes:true})){
@@ -46,8 +51,8 @@ provenance.fixturePins={}
 for(const name of ['browser.js','index.html']){const bytes=await readFile(join(import.meta.dirname,name));provenance.fixturePins[name]=hash(bytes);await copyFile(join(import.meta.dirname,name),join(fixture,name))}
 provenance.runnerSha256=hash(await readFile(join(import.meta.dirname,'run.mjs')))
 provenance.protocolSha256=hash(await readFile(join(import.meta.dirname,'protocol.mjs')))
-const extension=built?'.js':'.ts',module=name=>join(destination,'runtime',name+extension)
-const server=await createServer({root:fixture,configFile:false,publicDir:final?join(directory,'compiled/public'):false,logLevel:'warn',optimizeDeps:{noDiscovery:true},resolve:{dedupe:['three'],alias:{'@pixel-compositor':module('tslSourceCompositor'),'@pixel-source-display':module('sourceDisplay'),'@pixel-post-pipeline':module('threeWebgpuPostPipeline'),'@pixel-bindings':module('runtime')}},server:{host:'127.0.0.1',port:0,watch:null,hmr:false,fs:{allow:[root,directory]}}})
+const extension=built?'.js':'.ts',module=name=>join(runtimeDirectory,name+extension)
+const server=await createServer({root:fixture,configFile:false,publicDir:final?join(directory,'compiled/public'):false,logLevel:'warn',optimizeDeps:{noDiscovery:true},resolve:{dedupe:['three'],alias:{'@pixel-compositor':module('tslSourceCompositor'),'@pixel-source-display':module('sourceDisplay'),'@pixel-post-pipeline':module('threeWebgpuPostPipeline'),'@pixel-bindings':module('runtime')}},server:{host:'127.0.0.1',port:0,watch:null,hmr:false,fs:{allow:[root,directory,runtimeDirectory]}}})
 const report={status:'running',built,final,profile,sourceDevice:qualification.device,provenance,rows:[]};let browser
 const save=()=>writeFile(join(destination,'report.json'),JSON.stringify(report,null,2)+'\n')
 try{
@@ -68,6 +73,6 @@ try{
   if(profile==='metal'){assert.match(JSON.stringify(row.gpu),/apple|metal/i);assert.doesNotMatch(JSON.stringify(row.gpu),/swiftshader/i)}else assert.match(JSON.stringify(row.gpu),/swiftshader/i)
   await page.close()
  }
- assert.deepEqual(report.rows.map(row=>row.backend).sort(),['webgl2','webgpu']);report.status='PASSED_FLOAT_COORDINATE_BUILT_PROOF';await save()
+ assert.deepEqual(report.rows.map(row=>row.backend).sort(),['webgl2','webgpu']);report.status=browserProofContract.browserStatus;await save()
  console.log('SCENETOWEB_TEXTURE_FIELD_BROWSER_PASSED '+JSON.stringify(report.rows.map(row=>({backend:row.backend,gpu:row.gpu,cases:row.rows.length,negatives:row.negatives.length}))))
 }catch(error){report.status='failed';report.error=String(error);throw error}finally{await save();await browser?.close();await server.close()}

@@ -27,6 +27,8 @@ try{
   receipts.nativeInvocationReceipts.push(receipt)
  }
  assert.ok(receipts.nativeInvocationReceipts.some(receipt=>receipt.result.pythonGuardApplied))
+ await cp(launcher.directory,join(destination,'native-launcher-archive'),{recursive:true})
+ receipts.nativeLauncherArchive='native-launcher-archive'
  await writeFile(join(destination,'final-proof.json'),JSON.stringify(receipts,null,2)+'\n')
  console.log('SCENETOWEB_PIXEL_CAPTURE_PASSED '+JSON.stringify({device,native:native.cases.length,final:receipts.rows.length}))
 }finally{await launcher.dispose()}

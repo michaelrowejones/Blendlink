@@ -69,10 +69,14 @@ normalize_color_key = _sibling("compositor_color_key").normalize_color_key
 normalize_static_image = _sibling("compositor_image").normalize_image
 normalize_vector_component = _sibling("compositor_vector_component").normalize_vector_component
 normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_int
+normalize_vector_math = _sibling("compositor_vector_math").normalize_vector_math
+resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
 normalize_relative_to_pixel = _sibling("compositor_relative_to_pixel").normalize_relative_to_pixel
 normalize_image_coordinates = _sibling("compositor_image_coordinates").normalize_image_coordinates
+normalize_image_info = _sibling("compositor_image_info").normalize_image_info
+validate_image_info_edge = _sibling("compositor_image_info").validate_image_info_edge
 normalize_float_coordinates = _sibling("compositor_float_coordinates").normalize_float_coordinates
 validate_image_coordinate_graph = _sibling("compositor_image_coordinates").validate_image_coordinate_graph
 normalize_crop = _sibling("compositor_crop").normalize_crop
@@ -84,10 +88,12 @@ validate_static_image_graph = _sibling("compositor_image").validate_image_graph
 TYPES = {
     "FunctionNodeInputBool": "utility-constant",
     "FunctionNodeFloatToInt": "float-to-int",
+    "ShaderNodeVectorMath": "vector-math",
     "ShaderNodeTexGradient": "gradient-texture",
     "ShaderNodeTexChecker": "checker-texture",
     "CompositorNodeRelativeToPixel": "relative-to-pixel",
     "CompositorNodeImageCoordinates": "image-coordinates",
+    "CompositorNodeImageInfo": "image-info",
     "FunctionNodeInputVector": "value",
     "ShaderNodeCombineXYZ": "combine-vector",
     "ShaderNodeSeparateXYZ": "separate-vector",
@@ -335,6 +341,7 @@ def extract(scene):
         if not links:
             return const(socket)
         resolved = output_value(links[0].from_socket, ctx)
+        validate_image_info_edge(resolved, socket, result["ops"], lambda message: fail("unsupported-image-info-conversion", ctx["path"], socket.node, socket, message))
         target_type = socket.type
         if resolved.get("type") == "FLOAT_VECTOR2":
             default = getattr(socket, "default_value", None)
@@ -347,9 +354,9 @@ def extract(scene):
             default = getattr(socket, "default_value", None)
             if socket.type == "INT_VECTOR" and socket.bl_idname == "NodeSocketIntVector2D" and default is not None and len(default) == 2:
                 target_type = "INT_VECTOR2"
-            if socket.bl_idname == "NodeSocketVector2D" or target_type not in {"INT_VECTOR2", "RGBA", "VECTOR"}:
+            if socket.bl_idname == "NodeSocketVector2D" or target_type not in {"INT_VECTOR2", "RGBA", "VECTOR", "VALUE", "INT", "BOOLEAN"}:
                 fail("unsupported-int2-conversion", ctx["path"], socket.node, socket,
-                     "Image Coordinates INT_VECTOR2 currently supports only identity, RGBA and padded float3 edges; scalar/integer conversions remain unqualified")
+                     "Image Coordinates INT_VECTOR2 supports identity, RGBA, padded float3, scalar, integer midpoint and Boolean edges; other widths/conversions remain unqualified")
         if resolved.get("type") != target_type:
             return {
                 "kind": "convert",
@@ -511,6 +518,9 @@ def extract(scene):
                 elif node.bl_idname in ("FunctionNodeBitMath", "FunctionNodeHashValue"):
                     normalize_integer_bits(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-integer-bits", path, node, incoming, message))
+                elif node.bl_idname == "ShaderNodeVectorMath":
+                    normalize_vector_math(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-vector-math", path, node, incoming, message), resolve_vector_math_literal)
                 elif node.bl_idname in ("ShaderNodeTexGradient", "ShaderNodeTexChecker"):
                     normalize_procedural_texture(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-procedural-texture", path, node, incoming, message), scene)
@@ -520,6 +530,9 @@ def extract(scene):
                 elif node.bl_idname == "CompositorNodeRelativeToPixel":
                     normalize_relative_to_pixel(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-relative-to-pixel", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeImageInfo":
+                    normalize_image_info(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-image-info", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeImageCoordinates":
                     coordinate_normalizer = normalize_float_coordinates if socket.identifier in {"Uniform", "Normalized"} else normalize_image_coordinates
                     coordinate_normalizer(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
@@ -885,7 +898,7 @@ def extract(scene):
                                 "value": input_value(incoming, ctx),
                             }
                 # Assign only after dependencies are emitted, yielding topological order.
-                single = op["kind"] not in {"render-pass", "image-input"} and not op["properties"].get("procedural_texture_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values())
+                single = op["kind"] == "image-info" or (op["kind"] not in {"render-pass", "image-input"} and not op["properties"].get("procedural_texture_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
                 if single and op["kind"] == "alpha-crop" and bpy.app.version < (4, 5, 0) and device == "CPU":
                     fail("unsupported-crop-domain", path, node, socket,
                          "Legacy CPU Crop requires a finite image input; constant-image canvas evaluation remains unqualified")
@@ -897,7 +910,7 @@ def extract(scene):
                 result["ops"].append(op)
                 if single:
                     single_values.add(op["id"])
-                ref = {"kind": "ref", "node": op["id"], "type": op["type"] if op["kind"] == "image-coordinates" else socket.type}
+                ref = {"kind": "ref", "node": op["id"], "type": op["type"] if op["kind"] in {"image-coordinates", "image-info"} else socket.type}
             memo[key] = ref
             return ref
         finally:

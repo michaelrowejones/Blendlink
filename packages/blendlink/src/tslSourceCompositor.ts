@@ -1,3 +1,5 @@
+import {buildCompositorVectorMath} from './tslCompositorVectorMath.js'
+import {buildCompositorImageInfo,buildImageInfoConversion,imageInfoConversionSource} from './tslCompositorImageInfo.js'
 import {buildCompositorFloat2Conversion,buildCompositorFloatCoordinates} from './tslCompositorFloatCoordinates.js'
 import {validateTextureFieldGraph,textureFieldKind} from './tslCompositorTextureField.js'
 import {buildCompositorImageCoordinates,buildCompositorInt2Conversion,validateImageCoordinateGraph} from './tslCompositorImageCoordinates.js'
@@ -532,6 +534,7 @@ export function buildSourceCompositor(
         return nodes.get(v.node)
       }
       if (v.kind === 'convert' && v.input) {
+        if(imageInfoConversionSource(v,program.ops))return buildImageInfoConversion(v,program.ops,value,message=>{throw new SourceCompositorUnsupported(message)})
         if(v.fromType==='FLOAT_VECTOR2')return buildCompositorFloat2Conversion(v,program.ops,value,message=>{throw new SourceCompositorUnsupported(message)})
         if (v.fromType === 'INT_VECTOR2') return buildCompositorInt2Conversion(v, program.ops, value, message => { throw new SourceCompositorUnsupported(message) })
         const input = value(v.input)
@@ -571,7 +574,7 @@ export function buildSourceCompositor(
     for (const op of program.ops) {
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
-      const single = !['render-pass', 'image-input'].includes(op.kind) && !textureFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value))
+      const single = op.kind==='image-info'||(!['render-pass', 'image-input'].includes(op.kind) && !textureFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
       if (incoming.some(input => input.domain?.croppedWindow)
         && !['exposure', 'invert', 'posterize', 'alpha-over'].includes(op.kind))
@@ -650,11 +653,17 @@ export function buildSourceCompositor(
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
             break
+          case 'image-info':
+            node = buildCompositorImageInfo(op,program.ops,input('Image'),domainFail)
+            break
           case 'image-coordinates':
             node = op.type==='FLOAT_VECTOR2'?buildCompositorFloatCoordinates(op,program.ops,input('Image'),domainFail):buildCompositorImageCoordinates(op, program.ops, input('Image'), domainFail)
             break
           case 'relative-to-pixel':
             node = buildCompositorRelativeToPixel(op, program.ops, value, domainFail)
+            break
+          case 'vector-math':
+            node = buildCompositorVectorMath(op, program.ops, input, domainFail)
             break
           case 'gradient-texture':
           case 'checker-texture':

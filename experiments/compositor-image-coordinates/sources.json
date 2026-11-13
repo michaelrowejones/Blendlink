@@ -1,7 +1,24 @@
 {
- "blenderVersion":"5.3.0","commit":"02f0899d78e374b63e7181d9061e1f7ab03419cc",
- "sources":[
-  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc","finding":"Pixel is a two-component integer field. The Image domain controls the coordinates; this is not a constant vector."},
-  {"url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc","finding":"Native Pixel coordinates add the domain data offset to each texel. This first port qualifies only full-frame zero-offset domains. Uniform and Normalized use distinct float2 math and are excluded."}
- ]
+  "blenderVersion": "5.3.0",
+  "commit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "finding": "Pixel is a two-component integer field. The Image domain controls the coordinates; this is not a constant vector."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "finding": "Native Pixel coordinates add the domain data offset to each texel. This first port qualifies only full-frame zero-offset domains. Uniform and Normalized use distinct float2 math and are excluded."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/type_conversions.cc",
+      "sha256": "c5889d75c4de43abf51b35afca12b0545297f8d714f078220564f035dbfa9a83",
+      "finding": "Native CPU int2-to-float averages both components; int2-to-int uses math::midpoint, and Boolean tests whether either component is nonzero. The qualified Pixel coordinates are nonnegative <=8191, so half-sum and tie-toward-X midpoint are exactly representable."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/library/gpu_shader_compositor_type_conversion.glsl",
+      "sha256": "b6f78a717091535214018db3ebfc9502655644185e6ea3812330a89b84f5741b",
+      "finding": "Native GPU int2 scalar conversion delegates to float2 averaging; int conversion calls midpoint; Boolean tests that the pair is not all zero. These are separate from float3 averaging."
+    }
+  ]
 }

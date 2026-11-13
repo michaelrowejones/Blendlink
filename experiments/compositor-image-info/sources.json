@@ -1,0 +1,21 @@
+{
+  "revision": "02f0899d78e3",
+  "sources": [
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_image_info.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/composite/nodes/node_composite_image_info.cc",
+      "sha256": "6e2e8fd7aa80888eeba932c6ca7e0318807c810ab2a82d6ef9540991ac196cab"
+    },
+    {
+      "path": "source/blender/compositor/intern/domain.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/domain.cc",
+      "sha256": "f942718b88970678375f7e2b720cfcb12073934ccd568c2d7d1ed61a97c82e4d"
+    },
+    {
+      "path": "source/blender/compositor/intern/conversion_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/conversion_operation.cc",
+      "sha256": "881c848590ea8b3d0044db4db228221cce537886e365b3c1d6d751be40ade70f"
+    }
+  ],
+  "sourceStage": "ImageInfoOperation allocates host single-value metadata under both authored compositor devices; no native GPU arithmetic credit."
+}

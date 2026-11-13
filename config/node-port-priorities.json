@@ -212,7 +212,7 @@
     },
     "compositor:ShaderNodeVectorMath": {
       "priority": "P0 Enablers",
-      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "reason": "Practical Float32 literal arithmetic and a stricter exact dyadic compound slice now provide a partial compositor foundation. Computed fields/chains and remaining native modes still gate composition; retain P0 as a dependency judgment, not demonstrated demo usage.",
       "dependsOn": []
     },
     "compositor:FunctionNodeGetVectorComponent": {
@@ -299,7 +299,7 @@
     },
     "compositor:CompositorNodeImageCoordinates": {
       "priority": "P0 Enablers",
-      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "reason": "Exact Pixel scalar/integer/Boolean edges and bounded FLOAT2 outputs establish a partial field foundation. Finish FLOAT2 reductions, origin/domain algebra and separately qualified composition before dependent workflows; retain P0 as an engineering dependency judgment.",
       "dependsOn": [
         "typed-field-contracts",
         "image-sampling-lod"
@@ -307,7 +307,7 @@
     },
     "compositor:CompositorNodeImageInfo": {
       "priority": "P0 Enablers",
-      "reason": "Close the shared image sampling, storage and lod contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "reason": "Live identity-domain metadata and texture-size dependencies now have a partial exact output contract. Broader image-domain/cast/composition work still enables downstream sampling and layout; retain P0 as a dependency judgment, not observed demo demand.",
       "dependsOn": [
         "typed-field-contracts"
       ]
@@ -1428,16 +1428,19 @@
     "compositor:ShaderNodeRadialTiling": "Native context availability and separate shader research do not constitute a compositor port.",
     "shader:ShaderNodeLightFalloff": "Native EEVEE/Cycles differences justify an engine-fallback safety guard, not a live Light Falloff port.",
     "shader:ShaderNodeSqueeze": "Blender 4.2 owned-context initialization remains research and production source admission stays N/A. Existing qualified 5.2/5.3 slices remain limited as declared.",
-    "compositor:CompositorNodeImageCoordinates": "Pixel INT2 and fresh Uniform/Normalized FLOAT2 full-frame pointwise fields are qualified on measured Blender5.3 build02f0899d78e3, including real resize/DPR and explicit RGBA/padded-float3 edges. FLOAT2 XY uses both <=2ULP and abs<=2^-22, with exact zero centers/Z/alpha; this output contract does not qualify arbitrary downstream composition. Next shared work: native scalar/int reduction/casts, data-window/origin/domain algebra and independently budgeted composed fields. Preserve Pixel exact-word gates.",
+    "compositor:CompositorNodeImageCoordinates": "Qualified Pixel INT2 now has exact RGBA/padded-VECTOR3, VALUE half-sum, native INT midpoint ties toward X, and BOOLEAN either-component-nonzero edges through direct/reroute/group paths, real resize/DPR and analytic tie controls. Fresh Uniform/Normalized FLOAT2 stays separately bounded by<=2ULP AND abs<=2^-22 with exact zero centers/Z/alpha; no new FLOAT2 reduction or arbitrary composition credit. Next P0 work: FLOAT2 scalar/int/Boolean edges, data/display-window origins/domain algebra and independently budgeted composed fields. Preserve all Pixel exact-word gates.",
     "compositor:ShaderNodeTexGradient": "Existing exact literal slices now have separate partial implicit Uniform and linked Uniform/Normalized field contracts: LINEAR/QUADRATIC and admitted EASING are bounded by both <=8ULP and abs<=2^-20 with exact zero/one/alpha controls; Uniform DIAGONAL requires dyadic maximum physical extent and exact words. Endpoint-separation and extent guards are rechecked after resize. Other modes, mapping, domains and arbitrary downstream composition remain pending.",
     "compositor:ShaderNodeTexChecker": "Existing exact literal slice now has a separate exact implicit Uniform/linked Uniform/Normalized field slice at fixed integer Scale0..256. Rational phase-margin admission checks every extent before drawing and again after resize; near-boundary phases refuse without epsilon repair. Next work is safe broader coordinate/Scale provenance and independently qualified domains, not relaxation of branch gates.",
     "shader:FunctionNodeInputMenu": "Partial fixed native node.value selector for existing compile-time Menu Switch; direct, reroute and artist-group paths are measured on Blender5.3 build02f0899d78e3. Empty/conflicting menus, dynamic selectors, standalone Menu transport and other builds remain unqualified.",
-    "compositor:FunctionNodeInputMenu": "Partial fixed native node.value selector for existing compile-time Menu Switch; direct, reroute and artist-group paths are measured on Blender5.3 build02f0899d78e3. Empty/conflicting menus, dynamic selectors, standalone Menu transport and other builds remain unqualified."
+    "compositor:FunctionNodeInputMenu": "Partial fixed native node.value selector for existing compile-time Menu Switch; direct, reroute and artist-group paths are measured on Blender5.3 build02f0899d78e3. Empty/conflicting menus, dynamic selectors, standalone Menu transport and other builds remain unqualified.",
+    "compositor:ShaderNodeVectorMath": "Qualified partial compositor literal port in the measured5.3 slice: twelve simple modes accept practical exact normal Float32 defaults with nonzero magnitude[2^-32,2^16], or+0; four compound/division modes retain exact dyadic bounds. Exact output words, no tolerances. Next P0 gaps: computed producer chains/image fields, broader compound arithmetic, the remaining fourteen modes and native signed-zero/stage semantics. The three official demo triage has zero compositor Vector Math occurrences; shader occurrences4/2/10 use existing shader routes and grant no new compositor-port credit.",
+    "compositor:CompositorNodeImageInfo": "Qualified partial identity full-frame current-scene Render Layers metadata: five native outputs and explicit RGBA/padded-vector edges exact, dimensions live through resize/DPR with real PassNode dependency. Separately labelled existing width/height DIVIDE examples have their own bounded consumer contract; Aspect is not a native output. Next P0 gaps: nonidentity/static/computed image domains, metadata scalar/int/Boolean conversions and independently qualified composed-domain algebra. Image Info is absent from the three official demo physical inventories, so triage adds no new-port numerical/Final/browser/performance credit."
   },
   "observationEvidence": [
     "experiments/official-demo-node-performance/README.md",
     "experiments/official-demo-node-performance/receipt.json",
-    "experiments/official-demo-node-performance/integrated-node-triage.json"
+    "experiments/official-demo-node-performance/integrated-node-triage.json",
+    "experiments/official-demo-node-performance/metadata-vector-triage.json"
   ],
   "researchEvidencePaths": {
     "compositor:FunctionNodeFloatToInt": [
@@ -1485,6 +1488,17 @@
       "experiments/compositor-texture-fields/README.md",
       "experiments/compositor-texture-fields/evidence.json",
       "experiments/compositor-texture-fields/research-counterexamples.json"
+    ],
+    "compositor:ShaderNodeVectorMath": [
+      "experiments/compositor-vector-math/README.md",
+      "experiments/compositor-vector-math/numeric-contract.json",
+      "experiments/compositor-vector-math/research-counterexamples.json",
+      "experiments/compositor-vector-math/evidence.json"
+    ],
+    "compositor:CompositorNodeImageInfo": [
+      "experiments/compositor-image-info/README.md",
+      "experiments/compositor-image-info/numeric-contract.json",
+      "experiments/compositor-image-info/evidence.json"
     ]
   },
   "sceneObservations": {
@@ -1497,6 +1511,8 @@
     "shader:ShaderNodeMath": "Observed in the active surfaces of all three official demos; broader usage remains unknown.",
     "shader:ShaderNodeVectorMath": "Observed in the active surfaces of all three official demos; broader usage remains unknown.",
     "shader:ShaderNodeTexCoord": "Observed in the active surfaces of all three official demos; broader usage remains unknown.",
-    "shader:ShaderNodeBsdfPrincipled": "Observed in the active surfaces of all three official demos; this is not whole-material fidelity qualification."
+    "shader:ShaderNodeBsdfPrincipled": "Observed in the active surfaces of all three official demos; this is not whole-material fidelity qualification.",
+    "compositor:ShaderNodeVectorMath": "No compositor occurrences in the three byte-pinned official demo inventories. Material Vector Math counts4/2/10 concern existing shader paths; fresh read-only triage grants no new compositor-port or visual/performance qualification.",
+    "compositor:CompositorNodeImageInfo": "Absent from all three official demo physical graph inventories; no user-prevalence conclusion or new-port numerical/Final/browser/performance credit follows."
   }
 }

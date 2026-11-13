@@ -8,6 +8,9 @@ import {captureRuntimeTransaction} from '../../scripts/lib/runtime-transaction-s
 import {archiveNativeLauncher} from '../../scripts/lib/native-proof-archive.mjs'
 const root=resolve(import.meta.dirname,'../..'),args=process.argv.slice(2),output=resolve(process.env.SCENETOWEB_SWITCH_EVIDENCE??'artifacts/verification-switch-family'),blender=process.env.BLENDLINK_BLENDER??'/Applications/Blender.app/Contents/MacOS/Blender'
 assert.ok(args.every(x=>['--built'].includes(x)));assert.ok(args.includes('--built'))
+const preflight=await import('../../scripts/lib/browser-proof-contract.mjs')
+await preflight.preflightBrowserProofContracts(root,['static-switch-family'])
+const contracts=spawnSync(process.execPath,['--test','scripts/lib/browser-proof-contract.test.mjs'],{cwd:root,stdio:'inherit'});assert.equal(contracts.status,0,'Browser proof contract preflight failed')
 await mkdir(output,{recursive:true});const steps=[];let runtimeTransaction
 await assert.rejects(readFile(join(output,'native-python-proof.json')),{code:'ENOENT'},'Use a fresh guarded transaction')
 const launcher=await createNodePortBlenderLauncher({blender,directory:join(output,'native-python-active'),identityPolicy:process.env.SCENETOWEB_NATIVE_IDENTITY_POLICY??'per-invocation-sha256-v1'});let archived=false

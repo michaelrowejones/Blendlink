@@ -1,0 +1,8 @@
+{
+  "model":"identity-image-info-exact-metadata-v1",
+  "declaredBeforeBrowserProof":true,
+  "nativeOutputs":"Dimensions, Resolution, Location, Rotation and Scale require exact Float32 word equality through explicit metadata-to-RGBA/padded-vector edges.",
+  "nativeDomain":"Current-scene direct full-frame Render Layers Image with identity image-domain transform, square pixels and no borders. Outputs are host single-value metadata even when the authored compositor device is GPU.",
+  "aspectExample":{"nativeOutput":false,"consumer":"Dimensions/Resolution -> padded VECTOR -> SeparateXYZ -> existing Math DIVIDE(X,Y)","maxUlps":2,"maxAbsoluteError":"2^-22*max(1,abs(nativeRatio))","conjunction":true,"exactControls":"Alpha=1; native metadata dimensions remain exact before the ratio consumer."},
+  "rationale":"Metadata reads the live image texture size. All integer extents1..8192 convert exactly to Float32. Location/Rotation/Scale identity facts are emitted only after proving the input domain; single-value, static and transformed inputs are refused. The aspect example is an existing floating divide consumer, whose GPU division can differ from the native CPU-folded ratio; it is not a fabricated Image Info socket."
+}

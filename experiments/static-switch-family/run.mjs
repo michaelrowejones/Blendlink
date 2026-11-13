@@ -5,7 +5,7 @@ import {createServer} from 'vite'
 import {chromium} from '@playwright/test'
 import {loadRuntimeTransaction} from '../../scripts/lib/runtime-transaction-snapshot.mjs'
 import {captureRuntimeSnapshot,hash} from '../../scripts/lib/runtime-provenance.mjs'
-import {assertFinal,assertQualification} from './protocol.mjs'
+import {browserProofContract,assertFinal,assertQualification} from './protocol.mjs'
 const root=resolve(import.meta.dirname,'../..'),directory=resolve(process.env.SCENETOWEB_SWITCH_REFERENCES),built=process.argv.includes('--built'),final=process.argv.includes('--final')
 const profile=process.env.BLENDLINK_TEST_PROFILE??'software';assert.ok(['metal','software'].includes(profile))
 const qualification=assertQualification(JSON.parse(await readFile(join(directory,'qualification.json'))))
@@ -70,6 +70,6 @@ try{
   if(profile==='metal'){assert.match(JSON.stringify(row.gpu),/apple|metal/i);assert.doesNotMatch(JSON.stringify(row.gpu),/swiftshader/i)}else assert.match(JSON.stringify(row.gpu),/swiftshader/i)
   await page.close()
  }
- assert.deepEqual(report.rows.map(row=>row.backend).sort(),['webgl2','webgpu']);report.status='PASSED_STATIC_SELECTION_BUILT_PROOF';await save()
+ assert.deepEqual(report.rows.map(row=>row.backend).sort(),['webgl2','webgpu']);report.status=browserProofContract.browserStatus;await save()
  console.log('SCENETOWEB_STATIC_SELECTION_BROWSER_PASSED '+JSON.stringify(report.rows.map(row=>({backend:row.backend,gpu:row.gpu,cases:row.rows.length}))))
 }catch(error){report.status='failed';report.error=String(error);throw error}finally{await save();await browser?.close();await server.close()}
