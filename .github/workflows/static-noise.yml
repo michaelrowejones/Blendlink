@@ -103,56 +103,55 @@ jobs:
           BLENDLINK_NOISE_TYPES: '["FBM"]'
           BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/normalized-field
 
-      - name: Compare experimental nearest-field raw Noise overlay
+      - name: Compare prepared raw Noise with HDR and repeated UV controls
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
           BLENDLINK_NOISE_FIELD_FOCUS: '1'
-          BLENDLINK_NOISE_FIELD_TABLE_EXPERIMENT: '1'
+          BLENDLINK_NOISE_FIELD_TABLE_CONTROLS: '1'
+          BLENDLINK_NOISE_ENGINE: EEVEE
           BLENDLINK_NOISE_TYPES: '["FBM"]'
-          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/experimental-raw-field
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/prepared-raw-field
 
-      - name: Compare experimental nearest-field normalized Noise overlay
+      - name: Compare prepared normalized Noise with HDR and repeated UV controls
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
           BLENDLINK_NOISE_FIELD_FOCUS: '1'
-          BLENDLINK_NOISE_FIELD_TABLE_EXPERIMENT: '1'
+          BLENDLINK_NOISE_FIELD_TABLE_CONTROLS: '1'
           BLENDLINK_NOISE_NORMALIZED: '1'
           BLENDLINK_NOISE_ENGINE: EEVEE
           BLENDLINK_NOISE_TYPES: '["FBM"]'
-          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/experimental-normalized-field
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/prepared-normalized-field
 
-      - name: Compare experimental raw Noise at the full field-table limit
+      - name: Compare prepared raw Noise at the full field-table limit
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
           BLENDLINK_NOISE_FIELD_FOCUS: '1'
-          BLENDLINK_NOISE_FIELD_TABLE_EXPERIMENT: '1'
           BLENDLINK_NOISE_FIELD_TABLE_CONTROLS: '1'
           BLENDLINK_NOISE_FIELD_CAP: '1'
           BLENDLINK_NOISE_REFERENCE_SIZE: '128'
           BLENDLINK_NOISE_ENGINE: EEVEE
           BLENDLINK_NOISE_TYPES: '["FBM"]'
-          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/experimental-raw-cap
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/prepared-raw-cap
 
-      - name: Compare experimental normalized Noise at the full field-table limit
+      - name: Compare prepared normalized Noise at the full field-table limit
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
           BLENDLINK_NOISE_FIELD_FOCUS: '1'
-          BLENDLINK_NOISE_FIELD_TABLE_EXPERIMENT: '1'
           BLENDLINK_NOISE_FIELD_TABLE_CONTROLS: '1'
           BLENDLINK_NOISE_FIELD_CAP: '1'
           BLENDLINK_NOISE_REFERENCE_SIZE: '128'
           BLENDLINK_NOISE_NORMALIZED: '1'
           BLENDLINK_NOISE_ENGINE: EEVEE
           BLENDLINK_NOISE_TYPES: '["FBM"]'
-          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/experimental-normalized-cap
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/prepared-normalized-cap
 
       - name: Compare native MF large-coordinate Math Modulo
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}

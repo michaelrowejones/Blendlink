@@ -1,3 +1,5 @@
+export { prepareTslNoiseFields } from './tslNoiseFields.js'
+import { preparedNoiseField, NOISE_FIELD_PREPARATION_MESSAGE, type PreparedTslNoiseFields } from './tslNoiseFields.js'
 import { buildNativeMathModulo } from './tslMathModuloNative.js'
 import { buildTslBumpHeight } from './tslBumpHeight.js'
 import { nativeBumpInput, isNativeUnitNormal } from './tslBumpPassthrough.js'
@@ -332,6 +334,8 @@ export interface BuildTslOptions {
    * embedded tex_image pixels) so the applying runtime can dispose them
    * with the material. Create with createTslBuildResources(). */
   resources?: TslBuildResources
+  /** Attempt-owned asynchronous preparation for fresh finite nearest Noise fields. */
+  preparedNoiseFields?: PreparedTslNoiseFields
 }
 
 export interface TslBuildResources {
@@ -648,7 +652,7 @@ function build(expression: TslIrExpression): TslExpression {
       // contract violation and must fail loudly.
       const factorOp = (expression.factor as TslIrExpression | undefined)?.op
       const vectorProducers = new Set([
-        'const_vec3', 'combine', 'mix_color', 'curve_rgb', 'color_ramp',
+        'const_vec3', 'combine', 'mix_color', 'curve_rgb', 'color_ramp', 'noise_field_nearest',
         'vertex_color', 'hsv_to_rgb', 'color_convert', 'object_coords',
         'generated', 'uv', 'mapping', 'attribute_object', 'vector_rotate',
       ])
@@ -942,6 +946,10 @@ function build(expression: TslIrExpression): TslExpression {
         blenderDivide(tslFloat(0.5), tslOneMinus(clamped)),
       )
       return tslOneMinus(tslPow(facing, exponent))
+    }
+    case 'noise_field_nearest': {
+      const image = preparedNoiseField(activeOptions.preparedNoiseFields, expression)
+      return image ? build(image) : fail(NOISE_FIELD_PREPARATION_MESSAGE)
     }
     case 'noise':
     case 'noise_fractal':

@@ -59,7 +59,8 @@ The first-party native UV tangent and tangent-normal runtimes
 TypeScript are also Apache-2.0, as marked by their file-level headers.
 They use the same complete Apache license text linked above.
 
-The first-party bounded Math Modulo implementation `dist/tslMathModuloNative.js`
+The first-party bounded Math Modulo implementation `dist/tslMathModuloNative.js`,
+cooperative finite-image field preparation `dist/tslNoiseFields.js`,
 and experimental field barrier `dist/tslNoiseFieldBarrier.js`, with their source
 TypeScript, are Apache-2.0 as marked by their file-level headers,
 using the complete Apache license text linked above.

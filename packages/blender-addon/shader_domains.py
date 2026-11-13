@@ -8,7 +8,7 @@ Unknown operations remain opaque until their native evaluation is proved.
 """
 
 _CONSTANT = {"const_float", "const_vec3", "typed_const"}
-_SHADER = {"uv", "uv_active", "generated", "object_coords", "normal_view", "view_cos",
+_SHADER = {"noise_field_nearest", "uv", "uv_active", "generated", "object_coords", "normal_view", "view_cos",
            "attribute_object", "vertex_color", "normal_map", "object_info",
            "ambient_occlusion", "fresnel", "layer_weight", "shader_to_rgb_diffuse",
            "texture_ref", "tex_image", "vector_transform", "geometry_context", "normal_map_native", "normal_view_native", "tangent_native", "normal_map_tangent_native", "bump_passthrough_native", "bump_height_native"}

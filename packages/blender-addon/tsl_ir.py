@@ -2635,7 +2635,11 @@ def emit_output(node, from_socket, stack=()):
             else:
                 from noise_static_inputs import require_shader_constant_inputs
             require_shader_constant_inputs(expression, _refuse)
-        return expression
+        if __package__:
+            from .noise_field_ir import qualify_nearest_field
+        else:
+            from noise_field_ir import qualify_nearest_field
+        return qualify_nearest_field(expression, node=node)
 
     if idname == "ShaderNodeBump":
         if __package__:

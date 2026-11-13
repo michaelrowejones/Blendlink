@@ -1,3 +1,4 @@
+import { prepareTslNoiseFields } from './tslNoiseFields.js'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -156,7 +157,11 @@ export async function validatedBaseColorProgramMaterials(
   bytes?: Uint8Array,
   imageBytes?: MaterialProgramImageBytes,
   geometryData?: MaterialProgramGeometryData,
+  preparationOptions: { signal?: AbortSignal } = {},
 ): Promise<ReadonlySet<number>> {
+  if (preparationOptions.signal?.aborted) {
+    const error = new Error('Compiled material program preparation aborted');error.name='AbortError';throw error
+  }
   const accepted = new Set<number>()
   if (!bytes) return accepted
   const pointer = manifest.materialPrograms
@@ -232,7 +237,11 @@ export async function validatedBaseColorProgramMaterials(
     parent!.updateWorldMatrix(true, false)
     return parent!
   }
-  const textures = await loadProgramTextures(document as unknown as import('./materialProgramDocument.js').MaterialProgramsDocument, pointer.url, {
+  const preparation = await prepareTslNoiseFields(candidates, preparationOptions)
+  let textures: Awaited<ReturnType<typeof loadProgramTextures>> = null
+  try {
+    textures = await loadProgramTextures(document as unknown as import('./materialProgramDocument.js').MaterialProgramsDocument, pointer.url, {
+    ...(preparationOptions.signal ? {signal:preparationOptions.signal} : {}),
     loadProgramTexture: async name => {
       const image = decoded.get(name)!
       const texture = new THREE.DataTexture(image.data, image.width, image.height)
@@ -242,7 +251,6 @@ export async function validatedBaseColorProgramMaterials(
       return texture
     },
   })
-  try {
     for (const { index, ir, program,baseColorRequired,nativeNormal } of candidates) {
       let bindingCount = 0
       let valid = true
@@ -276,7 +284,7 @@ export async function validatedBaseColorProgramMaterials(
                 [...names].some(name => !Object.hasOwn(properties, name) || !objectAttributeValue(properties[name]))) {
               throw new TslIrError('Material program requires unavailable per-object properties or a non-mesh binding')
             }
-            const options = buildOptionsFor(extras, resources, `materials[${index}]`, textures?.resolver, objectAttributeResolver())
+            const options = { ...buildOptionsFor(extras, resources, `materials[${index}]`, textures?.resolver, objectAttributeResolver()), preparedNoiseFields:preparation }
             if(geometry.size){
               const accessors=Array.isArray(gltf.accessors)?gltf.accessors:[]
               const position=accessors[Number(attributes.POSITION)]
@@ -386,6 +394,6 @@ export async function validatedBaseColorProgramMaterials(
       if(!baseColorRequired&&!valid&&bindingCount>0)throw new Error(`Compiled live normal program on material[${index}] has no verified actual binding: ${refusal}`)
       if (baseColorRequired&&valid && bindingCount > 0) accepted.add(index)
     }
-  } finally { textures?.dispose() }
+  } finally { preparation.dispose();textures?.dispose() }
   return accepted
 }

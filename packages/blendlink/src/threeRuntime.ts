@@ -2199,6 +2199,7 @@ async function installLoadedThreeCompiledSceneNow(
       const { installTslMaterials } = await import('./tslMaterialRuntime.js')
       tslMaterials = await installTslMaterials({
         root,
+        ...(options.signal ? {signal:options.signal} : {}),
         descriptor: {
           ...descriptor,
           materialPrograms: {

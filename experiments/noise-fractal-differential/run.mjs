@@ -183,7 +183,7 @@ try {
       // is reproduced separately in the production shader.
       const tolerance = 2e-5
       const metrics = measure(flip, tolerance)
-      const row = { backend, id: cell.id, engine: cell.engine, fieldTables: rendered.fieldTables ?? [], actualFile, components: rendered.components, ...metrics, tolerance, derivedRawMaximum: metrics.maximum / (cell.oracleScale ?? 1), renderAndReadbackMs: Date.now() - renderStarted, flipRows: flip }
+      const row = { backend, id: cell.id, engine: cell.engine, fieldTables: [...(rendered.fieldTables ?? []), ...(rendered.preparedFieldTables ?? [])], noisePreparation: rendered.noisePreparation ?? null, actualFile, components: rendered.components, ...metrics, tolerance, derivedRawMaximum: metrics.maximum / (cell.oracleScale ?? 1), renderAndReadbackMs: Date.now() - renderStarted, flipRows: flip }
       row.browserEnvironment = await page.evaluate(() => window.__tslDiffEnvironment())
       rows.push(row)
       if (rows.length % 32 === 0) retainReport()
@@ -213,9 +213,11 @@ try {
   retainReport(true)
   assert.deepEqual(executionFailures, [], 'Noise browser execution failed; partial pixels and metrics were retained')
   assert.deepEqual(failures, [], 'Native Noise pixels differ; see report.json')
+  if (fieldTableExperiment) assert.ok(rows.every(row => !row.noisePreparation?.fields),
+    'Experimental overlay received a fresh production Noise field profile; run the default production canary or replay retained legacy IR')
   if (fieldTableExperiment) assert.ok(rows.some(row => row.fieldTables.length > 0),
     'Experimental field table selection lowered no native field; inspect source sampling/profile admission')
-  if (fieldTableExperiment && process.env.BLENDLINK_NOISE_FIELD_CAP === '1') {
+  if (process.env.BLENDLINK_NOISE_FIELD_CAP === '1') {
     for (const backend of ['webgpu', 'webgl2']) {
       const cap = rows.find(row => row.backend === backend && row.id.endsWith('-field-table-cap'))
       assert.ok(cap?.fieldTables.some(table => table.pixels === 16384 && table.uniquePoints === 16384

@@ -40,8 +40,8 @@ export async function fetchMaterialPrograms(pointer: {
   url: string
   bytes: number
   hash: string
-}): Promise<MaterialProgramsDocument> {
-  const response = await fetch(pointer.url)
+}, signal?: AbortSignal): Promise<MaterialProgramsDocument> {
+  const response = await fetch(pointer.url, signal ? {signal} : undefined)
   if (!response.ok) {
     throw new Error(
       `Blendlink material programs fetch failed (${response.status}) for ${pointer.url}`,

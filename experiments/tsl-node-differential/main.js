@@ -8,7 +8,8 @@
 import * as THREE from 'three'
 import { WebGPURenderer, MeshBasicNodeMaterial } from 'three/webgpu'
 import { mx_worley_noise_float, normalize, uv, vec3 } from 'three/tsl'
-import { buildTslColorNode, createTslBuildResources } from '@blendlink-tsl-recipe'
+import * as recipe from '@blendlink-tsl-recipe'
+const { buildTslColorNode, createTslBuildResources } = recipe
 
 // The view-dependent cell camera contract, mirrored from reference.py:
 // camera at (0, 0, 2) looking down -Z at the quad spanning [-1, 1]^2 at
@@ -105,6 +106,8 @@ window.__tslDiffRun = async (
 ) => {
   if (state.error) return { ok: false, error: state.error }
   let pendingResources = null
+  let noisePreparation = null
+  let preparationStatistics = null
   try {
     let colorNode
     if (pipeline === 'handwritten') {
@@ -127,9 +130,12 @@ window.__tslDiffRun = async (
       if (JSON.stringify(document).includes('"vertex_color"')) {
         ensureQuadVertexColors()
       }
+      noisePreparation = recipe.prepareTslNoiseFields ? await recipe.prepareTslNoiseFields(document) : null
+      preparationStatistics = noisePreparation?.statistics ?? null
       pendingResources = createTslBuildResources()
       colorNode = buildTslColorNode(document, {
         resources: pendingResources,
+        preparedNoiseFields: noisePreparation,
         // Native tile fixtures explicitly author their active-render map on UV0.
         activeUvChannel: 0,
         ...(analyticCamera ? { viewCos: analyticViewCos() } : {}),
@@ -207,6 +213,8 @@ window.__tslDiffRun = async (
       size: SIZE,
       components: pixels.length / (SIZE * SIZE),
       base64: btoa(binary),
+      noisePreparation: preparationStatistics,
+      preparedFieldTables: preparationStatistics?.tableStatistics ?? [],
     }
   } catch (error) {
     pendingResources?.dispose()
@@ -214,5 +222,5 @@ window.__tslDiffRun = async (
       ok: false,
       error: `${error?.name ?? 'Error'}: ${error?.message ?? error}`,
     }
-  }
+  } finally { noisePreparation?.dispose() }
 }

@@ -43,6 +43,29 @@ async function inspect(gltf: Record<string, unknown>, published = publication())
 const missing = 'conformance.base-color-carrier-missing'
 
 describe('validated live Base Color carrier evidence', () => {
+  it('prepares a fresh finite Noise program through the actual builder before granting Ready evidence', async () => {
+    const output={op:'noise_field_nearest',profile:'finite-nearest-f32-v1',sourceSamples:'native-float-data-v1',sourceColorSpace:'Non-Color',kernel:{op:'noise_fractal',dimensions:4,output:'color',
+      detail:6,roughness:1,lacunarity:1,evaluationModel:'shader',scale:{op:'const_float',value:40},w:{op:'const_float',value:.375},
+      colorOffsets:[[112.125,119.25,126.5,145.75],[142.5,128.25,166.125,103.75]],input:{op:'tex_image',sourceEngine:'EEVEE',
+        nativeGpuBackend:'METAL',sourceImageStorage:'rgba32f',sourceImageUploadRounding:'none',output:'color',
+        interpolation:'Closest',extension:'REPEAT',width:1,height:1,pixels:[.51171875,.5,.25,1],vector:{op:'uv'}}}}
+    const published=publication({'Base Color':{tslIr:{...checker,output}}})
+    expect((await inspect(fixture(),published)).issues).toEqual([])
+    const cancelled=new AbortController();cancelled.abort()
+    await expect(validatedBaseColorProgramMaterials(fixture(),published.manifest,published.bytes,undefined,undefined,{signal:cancelled.signal})).rejects.toMatchObject({name:'AbortError'})
+    const large=structuredClone(output)
+    large.kernel.input.width=4096
+    large.kernel.input.pixels=Array.from({length:4096},(_,index)=>{
+      const bits=0x400+index,value=2**(((bits>>>10)&31)-15)*(1+(bits&1023)/1024)
+      return[value,.5,.25,1]
+    }).flat()
+    const pending=publication({'Base Color':{tslIr:{...checker,output:large}}}),controller=new AbortController()
+    const audit=validatedBaseColorProgramMaterials(fixture(),pending.manifest,pending.bytes,undefined,undefined,{signal:controller.signal})
+    const refused=expect(audit).rejects.toMatchObject({name:'AbortError'})
+    setTimeout(()=>controller.abort(),2);await refused
+    const broken=structuredClone(output);broken.profile='unverified'
+    await expect(inspect(fixture(),publication({'Base Color':{tslIr:{...checker,output:broken}}}))).rejects.toThrow(/verified source/)
+  })
   it('accepts an actual shipped Mapping/Checker program on its exact GLB binding', async () => {
     expect((await inspect(fixture())).issues).toEqual([])
   })

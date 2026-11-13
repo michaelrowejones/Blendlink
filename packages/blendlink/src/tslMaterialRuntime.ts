@@ -1,3 +1,6 @@
+import { prepareTslNoiseFields, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
+export { createTslBuildResources } from './tslNodeRecipe.js'
+export { prepareTslNoiseFields, type PreparedTslNoiseFields, type PrepareTslNoiseFieldsOptions, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
 import { collectBumpHeights, validateBumpHeightBinding } from './tslBumpHeight.js'
 /**
  * Phase 4 Track C: apply shipped TSL IR programs to loaded materials.
@@ -61,6 +64,8 @@ import { collectObjectInfoOutputs, createObjectInfoResolver, validateObjectInfoB
 import type { MaterialProgramImage, MaterialProgramsDocument } from './materialProgramDocument.js'
 
 export interface InstallTslMaterialsOptions {
+  /** Cancel asynchronous field preparation before any material or draw callback changes. */
+  signal?: AbortSignal
   root: THREE.Object3D
   descriptor: {
     materialPrograms?: {
@@ -72,7 +77,8 @@ export interface InstallTslMaterialsOptions {
   }
   /** Override the fetch+hash-verify transport (tests, custom hosting).
    * The default fetches descriptor.materialPrograms.url and refuses on
-   * byte-count or sha256-prefix mismatch. */
+   * byte-count or sha256-prefix mismatch. Custom transports must keep their
+   * returned document immutable until this installation settles. */
   loadPrograms?: () => Promise<MaterialProgramsDocument>
   /** Baked-composition seam: keep clones connected to state machinery. */
   trackMaterialClone?: (
@@ -102,6 +108,8 @@ export interface InstalledTslMaterials {
   applied: number
   /** Named non-applications; never silent. */
   skipped: readonly TslMaterialSkip[]
+  /** CPU tables prepared cooperatively for this attempt, before material mutation. */
+  noisePreparation?: Readonly<NoiseFieldPreparationStatistics>
   dispose(): void
 }
 
@@ -181,8 +189,9 @@ export function installProgramIntoMaterial(
 async function defaultProgramTexture(
   entry: MaterialProgramImage,
   url: string,
+  signal?: AbortSignal,
 ): Promise<THREE.Texture> {
-  const response = await fetch(url)
+  const response = await fetch(url, signal ? {signal} : undefined)
   if (!response.ok) {
     throw new Error(`Blendlink program image fetch failed (${response.status}) for ${url}`)
   }
@@ -227,7 +236,7 @@ interface ProgramTextureSet {
 export async function loadProgramTextures(
   document: MaterialProgramsDocument,
   programsUrl: string,
-  options: Pick<InstallTslMaterialsOptions, 'loadProgramTexture'>,
+  options: Pick<InstallTslMaterialsOptions, 'loadProgramTexture' | 'signal'>,
 ): Promise<ProgramTextureSet | null> {
   const entries = Object.entries(document.images ?? {})
   if (entries.length === 0) return null
@@ -238,14 +247,23 @@ export async function loadProgramTextures(
       : 'http://blendlink.local/',
   )
   const decoded = new Map<string, THREE.Texture>()
-  for (const [name, entry] of entries) {
-    const url = new URL(entry.file, base).toString()
-    decoded.set(
-      name,
-      options.loadProgramTexture
+  const aborted = (): void => {
+    if (!options.signal?.aborted) return
+    const error = new Error('Blendlink program texture loading aborted')
+    error.name='AbortError';throw error
+  }
+  try {
+    for (const [name, entry] of entries) {
+      aborted()
+      const url = new URL(entry.file, base).toString()
+      decoded.set(name, options.loadProgramTexture
         ? await options.loadProgramTexture(name, entry, url)
-        : await defaultProgramTexture(entry, url),
-    )
+        : await defaultProgramTexture(entry, url, options.signal))
+      aborted()
+    }
+  } catch (error) {
+    for (const texture of decoded.values()) texture.dispose()
+    throw error
   }
   const configured = new Map<string, THREE.Texture>()
   return {
@@ -344,10 +362,30 @@ export async function installTslMaterials(
   if (!pointer) {
     return { materials: 0, applied: 0, skipped: [], dispose() {} }
   }
+  const aborted = (): void => {
+    if (!options.signal?.aborted) return
+    const error = new Error('Blendlink material installation aborted')
+    error.name = 'AbortError';throw error
+  }
+  aborted()
   const programs = options.loadPrograms
     ? await options.loadPrograms()
-    : await fetchMaterialPrograms(pointer)
-  const programTextures = await loadProgramTextures(programs, pointer.url, options)
+    : await fetchMaterialPrograms(pointer, options.signal)
+  aborted()
+  const used = new Set<string>()
+  options.root.traverse(object => {
+    const mesh = object as THREE.Mesh
+    if (!mesh.isMesh) return
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      const source = material?.userData?.blendlink_source_material
+      if (typeof source === 'string' && (material as THREE.MeshStandardMaterial).isMeshStandardMaterial) used.add(source)
+    }
+  })
+  const preparation = await prepareTslNoiseFields([...used].map(source => programs.materials[source]),
+    options.signal ? {signal:options.signal} : {})
+  let programTextures: ProgramTextureSet | null = null
+  try { aborted();programTextures = await loadProgramTextures(programs, pointer.url, options);aborted() }
+  catch (error) { programTextures?.dispose();preparation.dispose();throw error }
   const objectAttribute = objectAttributeResolver()
   // Per-material attribute needs, computed once: applied meshes must ship
   // the property in their exported extras or skip by name.
@@ -418,16 +456,19 @@ export async function installTslMaterials(
       variant.resources.dispose()
     }
     variants.clear()
+    installed.length = 0
     programTextures?.dispose()
   }
 
   try {
+    aborted()
     options.root.traverse((object) => {
       const mesh = object as THREE.Mesh
       if (!mesh.isMesh) return
       const extras = meshRuntimeExtras(mesh)
       const list = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
       list.forEach((material, index) => {
+        aborted()
         if (!material) return
         const source = material.userData?.blendlink_source_material
         if (typeof source !== 'string') return
@@ -551,35 +592,40 @@ export async function installTslMaterials(
         let variant = variants.get(variantKey)
         if (!variant) {
           const resources = createTslBuildResources()
-          // Build first, install second (the 8b.3 seam): the builder
-          // returns slot nodes and named skips; the installer constructs
-          // the clone only when something built, so the no-channel path
-          // never allocates a material at all.
-          const program = buildMaterialProgram(
-            Object.fromEntries(channels),
-            { ...buildOptionsFor(
-              extras, resources, source, programTextures?.resolver,
-              objectAttribute,
-            ), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
-              owner.userData?.blendlink_tsl_object, material.userData?.blendlink_tsl_material,
-            ) } : {}) },
-          )
-          for (const item of program.skipped) {
-            skipped.push({ material: source, ...item })
-          }
-          if (Object.keys(program.nodes).length === 0) {
+          try {
+            // Build first, install second (the 8b.3 seam): the builder
+            // returns slot nodes and named skips; the installer constructs
+            // the clone only when something built, so the no-channel path
+            // never allocates a material at all.
+            const program = buildMaterialProgram(
+              Object.fromEntries(channels),
+              { ...buildOptionsFor(
+                extras, resources, source, programTextures?.resolver,
+                objectAttribute,
+              ), preparedNoiseFields: preparation, normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
+                owner.userData?.blendlink_tsl_object, material.userData?.blendlink_tsl_material,
+              ) } : {}) },
+            )
+            for (const item of program.skipped) {
+              skipped.push({ material: source, ...item })
+            }
+            if (Object.keys(program.nodes).length === 0) {
+              resources.dispose()
+              skipped.push({
+                material: source,
+                reason: 'no channel produced a node; the shipped carrier stays',
+              })
+              return
+            }
+            variant = {
+              clone: installProgramIntoMaterial(material, program.nodes),
+              resources,
+            }
+            variants.set(variantKey, variant)
+          } catch (error) {
             resources.dispose()
-            skipped.push({
-              material: source,
-              reason: 'no channel produced a node; the shipped carrier stays',
-            })
-            return
+            throw error
           }
-          variant = {
-            clone: installProgramIntoMaterial(material, program.nodes),
-            resources,
-          }
-          variants.set(variantKey, variant)
         }
         const release = options.trackMaterialClone?.(material, variant.clone)
         installed.push({
@@ -589,6 +635,7 @@ export async function installTslMaterials(
           clone: variant.clone,
           ...(release ? { release } : {}),
         })
+        aborted()
         if (Array.isArray(mesh.material)) {
           mesh.material[index] = variant.clone
         } else {
@@ -596,6 +643,7 @@ export async function installTslMaterials(
         }
       })
     })
+    aborted()
     const drawMaterials = new Map<THREE.Mesh, Set<THREE.Material>>()
     for (const { mesh, clone } of installed) {
       let materials = drawMaterials.get(mesh)
@@ -607,12 +655,13 @@ export async function installTslMaterials(
   } catch (error) {
     rollback()
     throw error
-  }
+  } finally { preparation.dispose() }
 
   return {
     materials: matchedSources.size,
     applied: installed.length,
     skipped,
+    ...(preparation.statistics.fields ? {noisePreparation:preparation.statistics} : {}),
     dispose() {
       if (disposed) return
       disposed = true

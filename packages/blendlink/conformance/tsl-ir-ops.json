@@ -29,6 +29,7 @@
     "math_modulo_native",
     "mix_color",
     "noise",
+    "noise_field_nearest",
     "noise_fractal",
     "noise_normalized",
     "noise_varying",
