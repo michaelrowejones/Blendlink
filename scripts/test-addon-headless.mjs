@@ -420,6 +420,12 @@ try:
     compositor_program = compositor_module.extract(compositor_scene)
     assert compositor_program["status"] == "extracted", compositor_program
     assert {"set-alpha", "convert-alpha", "filter", "normal-direction", "luminance-key", "difference-key", "color-spill", "color-key", "chroma-key", "alpha-crop"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
+    if bpy.app.version[:2] in {(5, 2), (5, 3)}:
+        crop.inputs["Alpha Crop"].default_value = False
+        resized_program = compositor_module.extract(compositor_scene)
+        assert resized_program["status"] == "extracted", resized_program
+        assert "image-crop" in {op["kind"] for op in resized_program["ops"]}, resized_program
+        crop.inputs["Alpha Crop"].default_value = True
     assert before == (len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups))
 finally:
     bpy.data.scenes.remove(compositor_scene)

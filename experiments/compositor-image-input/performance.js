@@ -132,3 +132,76 @@ export async function imagePipelinePerformanceProof(create, render, renderer) {
   }catch(error){good?.dispose();throw error}
   finally{heartbeat=false;observer.disconnect()}
 }
+
+/** Full drawing-buffer proof. UI intervals end at the next animation frame;
+ * native readback/comparison and report transport run in later tasks. */
+export async function imageViewportPerformanceProof(create, submit, verify, renderer, changePublishedInput) {
+  const tasks=[],observer=new PerformanceObserver(list=>tasks.push(...list.getEntries().map(entry=>({startTime:entry.startTime,duration:entry.duration}))))
+  observer.observe({entryTypes:['longtask']})
+  let good,active=true,verifying=false,previous,frames=0
+  const gaps=[],windows=[],runs=[]
+  const frame=now=>{
+    if(!active)return
+    if(previous!==undefined)gaps.push({from:previous,to:now,duration:now-previous})
+    previous=now;frames++
+    if(good&&!verifying)submit(good)
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))
+  let textureBaseline
+  try{
+    for(let run=0;run<3;run++){
+      await pause()
+      window.imageStage='full-viewport-'+run+'-prepare'
+      const begin=performance.now(),candidate=await create(),preparedAt=performance.now()
+      const prior=good
+      try{
+        candidate.finalize();good=candidate
+        const finalizedAt=performance.now();submit(candidate);const submittedAt=performance.now()
+        await new Promise(resolve=>requestAnimationFrame(resolve))
+        const nextFrameAt=performance.now()
+        const interval={kind:'install',run,begin,preparedAt,finalizedAt,submittedAt,nextFrameAt}
+        windows.push(interval)
+        // This task boundary keeps readback, native comparison and teardown
+        // out of the normal preview's first-frame/long-task interval.
+        verifying=true;await pause()
+        window.imageStage='full-viewport-'+run+'-verification'
+        const verificationStart=performance.now(),maximum=await verify(candidate)
+        if(maximum>2e-5)throw new Error('Full viewport differs from native '+maximum)
+        prior?.dispose()
+        textureBaseline??=renderer.info.memory.textures
+        if(renderer.info.memory.textures!==textureBaseline)throw new Error('Full viewport replacement leaked GPU textures')
+        runs.push({run,prepareMs:preparedAt-begin,finalizeMs:finalizedAt-preparedAt,frameSubmissionMs:submittedAt-begin,
+          nextAnimationFrameMs:nextFrameAt-begin,verificationExcludedMs:performance.now()-verificationStart,maximum,
+          textures:renderer.info.memory.textures})
+        verifying=false
+      }catch(error){if(good===candidate)good=prior;candidate.dispose();throw error}
+      if(run===0){
+        changePublishedInput?.()
+        await pause()
+        window.imageStage='full-viewport-cancel'
+        const controller=new AbortController(),begin=performance.now();let dispatched
+        const timer=setTimeout(()=>{dispatched=performance.now();controller.abort()},16)
+        try{const unexpected=await create(controller.signal);unexpected.dispose();throw new Error('Full viewport canceled attempt unexpectedly installed')}
+        catch(error){if(error.name!=='AbortError')throw error}
+        finally{clearTimeout(timer)}
+        const rejectedAt=performance.now();windows.push({kind:'cancel',begin,nextFrameAt:rejectedAt})
+        verifying=true;await pause()
+        const maximum=await verify(good)
+        if(maximum>2e-5||renderer.info.memory.textures!==textureBaseline)throw new Error('Full viewport cancel changed last-good pixels/resources')
+        runs.push({cancelled:true,cancelDispatchMs:dispatched-begin,rejectionMs:rejectedAt-begin,lastGoodMaximum:maximum,textures:renderer.info.memory.textures})
+        verifying=false
+      }
+    }
+    await pause();await pause()
+    const overlaps=(from,to,window)=>from<window.nextFrameAt&&to>window.begin
+    const uiTasks=tasks.filter(task=>windows.some(window=>overlaps(task.startTime,task.startTime+task.duration,window)))
+    const uiGaps=gaps.filter(gap=>windows.some(window=>gap.from>=window.begin&&gap.to<=window.nextFrameAt))
+    return {pipeline:good,timings:{scope:'actual full1920x1080 visible drawing buffer; pinnedGLB/presentation/oracle fetch+hash+calibration complete before timing; normal preview renders during preparation; native Float32 readback/comparison/transport EXCLUDED from UI intervals; nextAnimationFrame is scheduling evidence, not GPU-completion or paint certification',
+      drawingBuffer:{width:renderer.domElement.width,height:renderer.domElement.height,
+        viewportWidth:innerWidth,viewportHeight:innerHeight,css:renderer.domElement.getBoundingClientRect().toJSON()},runs,windows,frames,
+      maximumUiRafGapMs:Math.max(0,...uiGaps.map(gap=>gap.duration)),uiLongTasks:uiTasks}}
+  }catch(error){good?.dispose();throw error}
+  finally{active=false;observer.disconnect()}
+}

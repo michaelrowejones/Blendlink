@@ -139,6 +139,51 @@ its resulting long tasks are not the normal installer path. The cancellation
 timestamp is taken before pixel verification. Use the Final fixture's
 `installationTimings` for the actual application path.
 
+## Fixed-image rendering and full-canvas proof
+
+An explicit allowlist permits caching only immutable Image-only pointwise
+programs with no scene passes. Unknown/future, scene, spatial and neighborhood
+operations stay uncached. The native input canvas renders once per renderer
+using RTT's public `autoUpdate` / `textureNeedsUpdate` contract. Context
+restoration invalidates that renderer; disposal removes its owned listener.
+First-draw failure remains dirty for a later retry. Changed publication or
+reinstallation creates a fresh graph and target rather than reusing old pixels.
+
+Equal drawing-buffer/native-image extents use a real uniform-controlled `If`
+branch to copy the RTT pixel. The unequal branch retains the original four
+samples and Float32/parity stages. Resize/DPR tests assert both unchanged final
+shader structure and exactly one native input pass initially, then zero repeat
+input passes, including resize away/back and invalid-resize recovery. Native
+signed/HDR RGBA and alpha cases remain part of the 290-graph matrix.
+
+The additional full-canvas fixture uses an actual **1920x1080 drawing buffer,
+CSS canvas and viewport** on Blender4.2/5.2/5.3 Final scenes, with recorded
+Metal and SwiftShader adapters and both WebGPU/WebGL2. All 12 cases compare
+five full native output frames (124,416,000 pixels total); maximum absolute
+error is 5.960464477539063e-8. Native input SHA256, source preservation, actual
+GLB/presentation pins, cancellation, replacement and GPU resource ownership
+remain required. A separately saved/exported, differently painted 5.3 packed
+image supplies a distinct pinned presentation: its cancellation preserves the
+old pixels, and successful reinstallation must match the new native pixels.
+
+Binary native reference files avoid JSON/Playwright transport of millions of
+floats. Oracle fetching/hashing/calibration and all GPU readback/comparison run
+outside the user-facing measurement windows. Those windows cover normal canvas
+rendering during preparation, frame submission and the next animation frame.
+The next animation frame is scheduling evidence, not a GPU-completion/paint
+certificate. Recorded steady UI gaps are about16.8ms and cancellations about
+21–22ms. A cold Metal/WebGL submission still produced a111ms task in one run;
+it is retained, so there is no universal first-frame deadline claim.
+
+Default macOS Chromium headless-shell Swift WebGPU canvas presentation failed
+with Skia `CompoundImageBacking` / `kDissociateMailboxForPresent`, followed by
+InstanceDropped during verification. Tiling readback, pausing diagnostic RAF
+rendering and retaining adapter/device objects did not resolve it. Full
+Chromium with an explicitly requested SwiftShader adapter passes the same full
+33,177,600-byte readback and visible-canvas proof. That shell failure is retained and is
+not represented as an image math fix. The shell's separate offscreen matrix
+remains an independent correctness check.
+
 ## Reproduce
 
 Use a built worker and an actual Blender executable:
@@ -178,6 +223,24 @@ feature-disabled playback. Optional
 adds isolated base64/inflate/checksum/finite timing using a native reference
 from the regular Image corpus. Reports and immutable runtime snapshots retain
 separate performance/fallback suffixes.
+
+Set `BLENDLINK_COMPOSITOR_IMAGE_FULL_VIEWPORT=1` alongside the1080p flag before
+native fixture generation/export to measure the full drawing buffer. A second
+fixture/export directory generated with
+`BLENDLINK_COMPOSITOR_IMAGE_PATTERN_SHIFT=97` supplies replacement input; pass
+it to playback with `BLENDLINK_IMAGE_REINSTALL_DIR=/absolute/replacement/dir`.
+For full Chromium software playback:
+
+```sh
+BLENDLINK_IMAGE_PROFILE=chromium-swift \
+BLENDLINK_TEST_CHROMIUM_CHANNEL=chromium \
+BLENDLINK_TEST_CHROMIUM_ARGS='["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader"]' \
+node experiments/compositor-image-input/run.mjs --built
+```
+
+Inspect the recorded adapter; the profile label alone is not evidence. Optional
+`BLENDLINK_IMAGE_BACKENDS=webgpu` and `BLENDLINK_IMAGE_READBACK_ROWS=32` isolate
+one backend or use tiled diagnostic readback without changing UI rendering.
 
 Primary contracts:
 

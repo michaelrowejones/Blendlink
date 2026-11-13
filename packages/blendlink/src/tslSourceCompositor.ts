@@ -1,9 +1,10 @@
 import { buildCompositorColorKey } from './tslCompositorColorKey.js'
 import { buildCompositorChromaKey } from './tslCompositorChromaKey.js'
 import { buildCompositorFilter } from './tslCompositorFilter.js'
-import { MAX_STATIC_PROGRAM_PIXELS, assertPreparedStaticCompositorImages, staticCompositorTexture, type PreparedStaticCompositorImages, type StaticCompositorWindow } from './tslCompositorStaticImage.js'
+import { MAX_STATIC_PROGRAM_PIXELS, assertPreparedStaticCompositorImages, staticCompositorTexture, staticImageCacheEligible, type PreparedStaticCompositorImages, type StaticCompositorWindow } from './tslCompositorStaticImage.js'
 import { buildCompositorFlip } from './tslCompositorSpatial.js'
 import { buildCompositorCrop } from './tslCompositorCrop.js'
+import { buildResizedCompositorCrop } from './tslCompositorCropResize.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
 import { buildCompositorLuminanceKey } from './tslCompositorLuminanceKey.js'
 import { buildCompositorDifferenceKey } from './tslCompositorDifferenceKey.js'
@@ -494,9 +495,10 @@ export function buildSourceCompositor(
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
     const nodes = new Map<string, TslEffectNode>()
     const images = new Map<string, ReturnType<typeof staticCompositorTexture>>()
+    const cacheImages = staticImageCacheEligible(program)
     let imagePixels = 0
     const origins = new Map<string, CompositorImageOrigin | null>()
-    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop')
+    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop' || op.kind === 'image-crop')
     if (program.ops.some(op => op.kind === 'image-input') && program.ops.some(op => op.kind === 'render-pass'))
       throw new SourceCompositorUnsupported('Static Image and Render Layers currently need separate canvas-domain realization')
     if (program.ops.some(op => op.kind === 'image-affine') && program.ops.some(op => op.kind === 'translate'
@@ -555,6 +557,14 @@ export function buildSourceCompositor(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
       const single = !['render-pass', 'image-input'].includes(op.kind) && Object.values(op.inputs).every(input => isSingleValue(input.value))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
+      if (incoming.some(input => input.domain?.croppedWindow)
+        && !['exposure', 'invert', 'posterize', 'alpha-over'].includes(op.kind))
+        domainFail('Resized Crop currently supports terminal output and Exposure, Invert, Posterize or Alpha Over pointwise consumers; other finite-window consumers remain unqualified')
+      if (incoming.some(input => input.domain?.croppedWindow)) {
+        const fields = incoming.flatMap(input => input.domain ? [input.domain] : [])
+        if (fields.some(field => field.croppedWindow !== fields[0]!.croppedWindow))
+          domainFail('Inputs with different resized Crop windows require native cross-domain realization')
+      }
       if (incoming.some(input => input.domain?.staticWindow)
         && ['translate', 'image-affine', 'blur', 'filter', 'flip', 'glare'].includes(op.kind))
         domainFail('Static Image neighborhood/transform consumers require native finite-window processing; only pointwise consumers are qualified')
@@ -610,7 +620,7 @@ export function buildSourceCompositor(
             }
             node = images.get(id as string)!.node
             if (op.source.output === 'Alpha') node = node.a
-            domain = { x: 0, y: 0, staticWindow: { width: record.width, height: record.height, model } as StaticCompositorWindow,
+            domain = { x: 0, y: 0, staticWindow: { width: record.width, height: record.height, model, cache: cacheImages } as StaticCompositorWindow,
               roots: [{ node }] }
             break
           }
@@ -869,6 +879,12 @@ export function buildSourceCompositor(
             node = buildCompositorCrop(op, input('Image'), isSingleValue(op.inputs.Image!.value), domain, resources,
               message => { throw new SourceCompositorUnsupported(message) })
             break
+          case 'image-crop': {
+            const cropped = buildResizedCompositorCrop(op, input('Image'), isSingleValue(op.inputs.Image!.value), domain, resources,
+              message => { throw new SourceCompositorUnsupported(message) })
+            node = cropped.node; domain = cropped.domain
+            break
+          }
           case 'rgb-to-bw':
             node = dot(input('Image').rgb, vec3(...(program.luminance ?? [0.2126, 0.7152, 0.0722])))
             break
@@ -1181,7 +1197,7 @@ export function buildSourceCompositor(
       }
     }
     const output = value(program.output), domain = origin(program.output)
-    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop')?.source
+    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop' || op.kind === 'image-crop')?.source
     const realized = usesImageDomains && domain ? realizeCompositorOrigin(output, domain, [0, 0], resources,
       message => { throw new SourceCompositorUnsupported(transformSource
         ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output

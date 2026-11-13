@@ -62,8 +62,9 @@ and authored source extent, so masking occurs before
 terminal padding/interpolation. Existing mixed Image/RenderLayers, unequal Image
 canvas, translated/affine incoming windows, custom borders and scalar/vector
 image conversion refusals remain. Size-changing Crop (the modern default) is
-not yet admitted; its output data/display-window behavior requires a separate
-model. No prior opcode or serialized document changes meaning.
+admitted only by the separate modern CPU profile below; legacy/GPU resize
+data/display-window behavior remains unqualified. No prior opcode or serialized
+document changes meaning.
 
 Run the repeatable fixture from the repository root:
 
@@ -106,3 +107,62 @@ legacy relative masks and fixed-size static Images. All rendered rows released
 their textures; the measured maximum was six passes and 14,073 fragment-source
 bytes. These counts describe this bounded masking corpus, not size-changing
 Crop or every possible graph composition.
+
+## Modern CPU size-changing Crop
+
+Blender 5.2/5.3 CPU also supports the default **Alpha Crop disabled** mode.
+Fresh documents use the separate `image-crop` opcode and closed
+`modern-cpu-size-v1` profile. The same native integer-bound rules above select
+the input pixels, but produce a smaller finite data canvas. Its native
+transformation stays unchanged: terminal realization centers that canvas in the
+physical output viewport, cropping or padding through native CPU bilinear
+sampling. The source X/Y select pixels; they do not translate the new canvas.
+Zero/negative authored Width/Height still select at least one pixel in these
+pinned releases. This must not inherit Blender development's newer empty-window
+semantics.
+
+The runtime keeps the cropped canvas separate from the viewport and resolves
+its actual dimensions on each frame. Static Image dimensions remain authored;
+Render Layers dimensions follow independently validated physical source/render
+extents. Exposure, Invert, Posterize and Alpha Over with constant/same-window
+inputs execute on the cropped canvas before terminal padding. Single-value
+inputs preserve native identity. Different crop/full-frame branches, cascaded
+resizing, Blur/Flip/transform and other downstream finite-window consumers are
+explicitly refused until their native realization is earned. Legacy and GPU
+size-changing modes remain separate, unqualified profiles; the transparent-mask
+port above remains available there. Fresh Crop emission is limited to the
+measured version families 4.2/5.2/5.3; unmeasured versions receive a named source
+refusal, while existing serialized documents keep their behavior.
+
+Generate the modern CPU references with:
+
+```sh
+BLENDER_USER_RESOURCES=/absolute/isolated-resources \
+BLENDLINK_COMPOSITOR_CROP_RESIZE_REFERENCES=/absolute/crop-size-cpu \
+  "$BLENDER" --background --factory-startup --python-exit-code 1 -t 1 \
+  --python packages/blender-addon/tests/compositor_crop_resize_check.py
+```
+
+The fixture emits an explicit not-applicable report for legacy/GPU profiles.
+It includes default/negative/zero/outside/single-pixel rectangles, even/odd
+cropped sizes, fixed-size Images, node groups, pointwise consumers, actual EEVEE
+Render Layers controls and same-graph DPR/resize/rejection/recovery. Source
+version refusal is tested by substituting only the helper's version view around
+current RNA; it is not presented as proof from a future Blender binary. No
+native output pixels are used to construct the runtime coordinate mappings.
+
+Verified resize corpus: **69 cases per modern CPU release**, 138 native cases
+and 276 built WebGPU/WebGL2 readbacks. Combined with the unchanged 285-case
+masking corpus, all 423 cases passed on both browser backends (846 readbacks),
+maximum error `2.384185791015625e-7`. The resize path used at most three passes
+and 14,167 fragment-source bytes and retained zero textures after disposal.
+Six same-graph resize sequences per backend cover fixed/clamped rectangles and
+static Images. Installed rectangles are privately copied so caller edits for
+reapplication cannot alter the currently installed window; caller IR remains
+unmodified. Image+Crop resize fixtures explicitly opt out of the independent
+static-Image cache contract.
+
+The masking fixture records refusal diagnostics in `refusals.json`, outside its
+numeric index. For modern GPU/non-Metal only, the known earlier Translate
+sampler refusal is accepted by exact code/node-type/message; this does not
+qualify transformed Crop inputs or loosen any numeric comparison.

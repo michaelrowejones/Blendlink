@@ -850,7 +850,7 @@ def extract(scene):
         if not modern and not sink.use_alpha:
             result["outputAlpha"] = "legacy-composite-opaque-v1"
         result["output"] = input_value(terminal, ctx)
-        crop_conflict = validate_crop_domains(result)
+        crop_conflict = validate_crop_domains(result, single_values)
         if crop_conflict:
             op, message = crop_conflict
             result["diagnostics"].append({"code": "unsupported-crop-domain", "path": op["source"]["path"],

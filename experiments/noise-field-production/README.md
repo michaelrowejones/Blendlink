@@ -153,10 +153,32 @@ Local worker evidence under `artifacts/verification-field-production/`:
   tasks, maximum measured CPU slice 5.5 ms. Cancellation completed in about 21 ms
   without clone callbacks or changed pixels. First installed readback took
   1.08–1.23 seconds while frames continued. That total includes yielding, validation,
-  ordinary material binding and first GPU compilation; the UI remains live.
+  ordinary material binding and first GPU compilation. This local result does
+  not establish a bound on hosted installation/first-draw long tasks.
 - `release-legacy`: 720,896 Float32 words match the pre-promotion runtime exactly.
 
 This is a bounded optimization for the certified immutable nearest-image family,
 not a generic Noise driver fix, support for arbitrary UV/working-space inputs,
 or a wider shader-kernel accuracy claim. New async production hosted-default
 canaries must remain part of integration verification.
+
+## Lifecycle phase diagnostics
+
+Hosted ownership run 43361880881 / job 131677061402 / artifact 14009281184
+reported a WebGPU 89 ms long task and a WebGL2 82 ms long task. That runner
+observed one combined interval from installation through the first installed
+draw and discarded the failing install result before recording it. The retained
+report therefore cannot attribute those stalls to preparation, material
+binding, the harness's source checks or GPU compilation. They remain an
+unexplained hosted lifecycle limitation; numeric Noise parity passed separately.
+
+The runner now records browser timestamps for fetch/parse, source snapshots,
+install start, clone tracking, install completion, source validation, fragment
+override, clear/render, readback, encoding and observer drain/disconnect. Every
+long task retains its full interval and task attribution. Abort and install/
+resize raw results are written under `attempts/` and included in `report.json`
+**before assertions**, so a failure retains its statistics, timings, pixels and
+driver identity. Pending observer records are drained before disconnection.
+The observation interval and all original preparation slice, RAF, abort and
+long-task assertions remain unchanged. No task is reclassified or excluded
+without a fresh phase-attributed hosted result.

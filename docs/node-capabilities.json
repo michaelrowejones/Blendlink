@@ -6691,6 +6691,9 @@
           "path": "packages/blendlink/src/tslCompositorStaticImage.test.ts"
         },
         {
+          "path": "packages/blendlink/src/tslCompositorStaticImageCache.test.ts"
+        },
+        {
           "path": "packages/blender-addon/tests/compositor_image_check.py"
         },
         {
@@ -6732,6 +6735,27 @@
           "cancelledReplacementPreservesLastGoodPixelsAndGpuResources": true,
           "finiteChecksumAndPayloadBindingChecked": true,
           "synchronousLowLevelApiRetained": true,
+          "fixedNativeCanvasCachedForKnownImmutableImageOnlyPrograms": true,
+          "sceneAndUnknownOperationsRemainUncached": true,
+          "identityUsesUniformBranchUnequalParityPathRetained": true,
+          "fullViewportProof": {
+            "nativeVersions": [
+              "4.2.0",
+              "5.2.0",
+              "5.3.0"
+            ],
+            "drawingBuffer": [
+              1920,
+              1080
+            ],
+            "browserCases": 12,
+            "nativeOutputFrameChecks": 60,
+            "pixelsCompared": 124416000,
+            "maximumAbsoluteError": 5.960464477539063e-08,
+            "changedPinnedPublicationAndCancelledReplacement": "Blender5.3 independently saved/exported shifted packed-PNG presentation",
+            "oracleFetchHashReadbackAndTransportExcludedFromUiIntervals": true,
+            "softwareVisibleCanvasProfile": "Full Chromium with explicit SwiftShader adapter; headless-shell Skia presentation failure retained separately"
+          },
           "coldShaderUploadDeadlineGuaranteed": false
         },
         "freshHostedLinux": {
@@ -6750,9 +6774,10 @@
       "category": "partial",
       "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
       "runtimeOps": [
-        "alpha-crop"
+        "alpha-crop",
+        "image-crop"
       ],
-      "limits": "Transparent masking only: Alpha Crop enabled in modern5.2/5.3, Crop Image Size disabled in legacy4.2. Closed modern integer, legacy absolute and Float32 relative models preserve the incoming canvas and full signed/HDR RGBA, with lower-inclusive/upper-exclusive native boundaries. Fixed unlinked settings, pixel controls within +/-1048576, relative factors [0,1], and validated nonempty source/render extents <=8192 per axis. GPU Full/final Automatic precision only. Actual RenderLayers extents are revalidated on resize; static Image keeps its CPU-only/even-legacy limits and is masked before final realization. Modern and legacy GPU single values pass through; legacy CPU constant-image canvases refuse. Resize-Crop/default modern mode, shifted/affine incoming windows, mixed/unequal Image domains, render borders, Half precision and scalar/vector image conversions remain refused. Groups, pointwise/spatial composition and responsive source mismatch rejection/recovery are measured. No previous serialized operation changes meaning.",
+      "limits": "Measured Blender 4.2/5.2/5.3 transparent masking plus modern 5.2/5.3 CPU resized Crop (the modern default). Closed modern integer, legacy absolute and Float32 relative mask models preserve signed/HDR RGBA and the incoming canvas. Modern CPU resizing preserves its finite input window through terminal realization, Exposure, Invert, Posterize and Alpha Over; source extents are revalidated on physical output resize and DPR changes. Fixed unlinked settings, pixel controls within +/-1048576, relative factors [0,1], nonempty source/render extents <=8192 per axis, and GPU Full/final Automatic precision only. Static Image retains its CPU-only/even-legacy limits. Modern and legacy GPU single values pass through; legacy CPU constant-image masking refuses. Legacy/GPU resizing, resized spatial/cascade consumers, shifted/affine input windows, mixed/unequal image domains, render borders, Half precision and scalar/vector image conversions remain refused. Actual source-version guards reject unmeasured rectangle semantics. No previous serialized operation changes meaning.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -6772,6 +6797,18 @@
         },
         {
           "path": "experiments/compositor-crop-differential/README.md"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCropResize.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCropDomain.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCropResize.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_crop_resize_check.py"
         }
       ],
       "verification": {
@@ -6781,8 +6818,8 @@
           "5.3.0"
         ],
         "nativeBackend": "METAL",
-        "nativeCpuGpuCases": 285,
-        "builtReadbacks": 570,
+        "nativeCpuGpuCases": 423,
+        "builtReadbacks": 846,
         "maximumAbsoluteError": 2.384185791015625e-07,
         "exactAlphaMaximumError": 0,
         "resizeSequencesPerBackend": 19,
@@ -6790,11 +6827,20 @@
         "maximumFragmentSourceBytes": 14073,
         "remainingTexturesAfterDisposal": 0,
         "sourcePreserved": true,
-        "freshHostedOpenGl": "pending",
+        "freshHostedOpenGl": {
+          "commit": "65263edf7f11d202983a3d98c6821593c6c483f9",
+          "run": 43361880881,
+          "cpuJob": 131677061657,
+          "cpuArtifact": 14009065522,
+          "cpuMaskCases": 50,
+          "gpuStatus": "fixture stopped before numeric replay on earlier unqualified Translate diagnostic; exact refusal assertion corrected, fresh run pending",
+          "resizeStatus": "fresh hosted qualification pending"
+        },
         "mainCombinedBuiltReadbacks52": 176,
         "mainCombinedMaximumAbsoluteError": 2.384185791015625e-07,
         "installedPackageExtraction52": true,
-        "installedReinstallToolsExportOffline52": true
+        "installedReinstallToolsExportOffline52": true,
+        "modernCpuResizeCases": 138
       }
     }
   },

@@ -11,6 +11,20 @@ export interface StaticCompositorWindow {
   width: number
   height: number
   model: 'legacy-cpu-even-v1' | 'modern-cpu-v1'
+  /** Internal deterministic-program proof, never inferred from a class name. */
+  cache?: boolean
+}
+const STATIC_IMAGE_POINTWISE_KINDS = new Set(['image-input', 'utility-constant', 'boolean-math', 'integer-math', 'compare',
+  'rgb', 'value', 'exposure', 'posterize', 'color-correction', 'hue-saturation-value', 'set-alpha', 'convert-alpha',
+  'luminance-key', 'difference-key', 'color-key', 'chroma-key', 'color-spill', 'combine-vector', 'separate-vector',
+  'normal-direction', 'switch', 'rgb-to-bw', 'color-ramp', 'curves', 'hue-correct', 'clamp', 'map-range', 'gamma',
+  'brightness-contrast', 'separate-color', 'combine-color', 'color-balance', 'mix-rgb', 'mix', 'invert', 'math', 'alpha-over'])
+
+/** Unknown/future operations stay uncached until their frame independence is
+ * earned. Image extraction separately refuses animation and changing sources. */
+export function staticImageCacheEligible(program: SourceCompositorProgram): boolean {
+  return program.passes.length === 0 && program.ops.some(op => op.kind === 'image-input')
+    && program.ops.every(op => STATIC_IMAGE_POINTWISE_KINDS.has(op.kind))
 }
 const { ivec2, textureLoad, uv, vec2 } = TSL as unknown as Record<
   'ivec2' | 'textureLoad' | 'uv' | 'vec2', (...args: TslEffectNode[]) => TslEffectNode>

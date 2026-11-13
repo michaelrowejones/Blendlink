@@ -9,6 +9,7 @@ import { resampleCompositorAffine } from './tslCompositorAffine.js'
 import { invertCompositorAffine, multiplyCompositorAffine, type CompositorAffineMatrix } from './tslCompositorAffineMath.js'
 import { realizeStaticCompositorWindow } from './tslCompositorStaticImageDomain.js'
 import type { StaticCompositorWindow } from './tslCompositorStaticImage.js'
+import { realizeCroppedCompositorWindow, type CroppedCompositorWindow } from './tslCompositorCropDomain.js'
 
 const { Fn, clamp, ivec2, rtt, select, textureSize, uv, vec4 } = TSL as unknown as Record<
   'Fn' | 'clamp' | 'ivec2' | 'rtt' | 'select' | 'textureSize' | 'uv' | 'vec4',
@@ -16,6 +17,7 @@ const { Fn, clamp, ivec2, rtt, select, textureSize, uv, vec4 } = TSL as unknown 
 
 /** A real finite pixel window with a deferred origin, not an already clipped field. */
 export interface CompositorImageOrigin {
+  croppedWindow?: CroppedCompositorWindow
   staticWindow?: StaticCompositorWindow
   x: number
   y: number
@@ -28,6 +30,8 @@ export function mergeImageOrigins(origins: (CompositorImageOrigin | null)[], fai
   const fields = origins.filter((value): value is CompositorImageOrigin => value !== null)
   if (!fields.length) return null
   const first = fields[0]!
+  if (fields.some(value => value.croppedWindow !== first.croppedWindow))
+    fail('Inputs with different resized Crop windows require native cross-domain realization')
   if (fields.some(value => JSON.stringify(value.staticWindow) !== JSON.stringify(first.staticWindow)))
     fail('Static Image inputs with different canvas sizes/models require native cross-domain realization')
   if (fields.some(value => value.x !== first.x || value.y !== first.y))
@@ -123,6 +127,11 @@ export function validateCompositorExtent(origin: CompositorImageOrigin, renderer
 
 export function realizeCompositorOrigin(input: TslEffectNode, from: CompositorImageOrigin,
   to: readonly [number, number], resources: { dispose(): void }[], fail: (message: string) => never): TslEffectNode {
+  if (from.croppedWindow) {
+    if (from.x !== 0 || from.y !== 0 || from.affineMatrix || to.some(value => value !== 0))
+      return fail('Resized Crop transform consumers require native finite-window processing')
+    return realizeCroppedCompositorWindow(input, from.croppedWindow, resources, fail)
+  }
   if (from.staticWindow) {
     if (from.x !== 0 || from.y !== 0 || from.affineMatrix || to.some(value => value !== 0))
       return fail('Static Image transform consumers require native finite-window processing')

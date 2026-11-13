@@ -17,7 +17,7 @@ from compositor_reference import NativeCompositorReference, compositor_graph
 
 def main(output):
     device = os.environ.get('BLENDLINK_COMPOSITOR_CROP_DEVICE', 'CPU')
-    rows, profiles = [], []
+    rows, profiles, refusal_records = [], [], []
     def oracle_for(width=8, height=8):
         pixels = np.random.default_rng(32513 + width * 13 + height).uniform(-.5, 3, (height, width, 4)).astype(np.float32)
         pixels[..., 3] = np.resize(np.asarray([0, -.5, .125, .5, 1, 2], np.float32), (height, width))
@@ -131,6 +131,9 @@ def main(output):
         if refusal == 'resize':
             if oracle.modern: node.inputs['Alpha Crop'].default_value = False
             else: node.use_crop_size = True
+            if oracle.modern and device == 'CPU':
+                assert compositor_graph.extract(oracle.scene)['status'] == 'extracted'
+                continue
         if refusal == 'linked':
             if not oracle.modern: continue
             tree.links.new(oracle.value(2), node.inputs['X'])
@@ -139,7 +142,16 @@ def main(output):
             if device != 'GPU' or 'HALF' not in oracle.scene.render.bl_rna.properties['compositor_precision'].enum_items.keys(): continue
             oracle.scene.render.compositor_precision = 'HALF'
         rejected = compositor_graph.extract(oracle.scene)
-        assert rejected['status'] == 'unsupported' and any('Crop' in item['message'] for item in rejected['diagnostics']), (refusal, rejected)
+        backend = getattr(bpy.context.preferences.system, 'gpu_backend', 'UNKNOWN')
+        upstream_translate = (refusal == 'translate' and oracle.modern and device == 'GPU' and backend != 'METAL'
+            and any(item.get('code') == 'unsupported-transform-mode'
+                and item.get('nodeType') == 'CompositorNodeTranslate'
+                and item.get('message') == 'Filtered/fractional Translate requires a verified native GPU sampler; this backend has not been calibrated'
+                for item in rejected['diagnostics']))
+        assert rejected['status'] == 'unsupported' and (upstream_translate
+            or any('Crop' in item['message'] for item in rejected['diagnostics'])), (refusal, rejected)
+        refusal_records.append({'case': refusal, 'device': device, 'backend': backend,
+            'upstreamTranslateDiagnostic': upstream_translate, 'diagnostics': rejected['diagnostics']})
         oracle.scene.render.use_border = False
         oracle.scene.render.compositor_precision = 'FULL'
 
@@ -209,12 +221,14 @@ def main(output):
                     'input': document['input'], 'expected': [], 'nativeOracle': False,
                     'expectError': 'even source and drawing-buffer dimensions'})
         first['case'] = oracle.prefix + '-crop-mask-responsive-' + mode; first['resizeFrames'] = frames
+        first['assertStaticImageCache'] = False
         (output / (first['case'] + '.json')).write_text(json.dumps(first, separators=(',', ':'))); rows.append({'case': first['case']})
         if mode != 'static':
             first.update(case=first['case'] + '-declared', sourceAsPointwise=True, passExtentMode='input-texture')
             (output / (first['case'] + '.json')).write_text(json.dumps(first, separators=(',', ':'))); rows.append({'case': first['case']})
     (output / 'index.json').write_text(json.dumps(rows, indent=2))
     (output / 'render-profile.json').write_text(json.dumps(profiles, indent=2))
+    (output / 'refusals.json').write_text(json.dumps(refusal_records, indent=2))
     print('BLENDLINK_COMPOSITOR_CROP_PASSED ' + json.dumps({'version': bpy.app.version_string, 'device': device, 'cases': len(rows)}))
 
 

@@ -195,7 +195,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        family: [Luminance Key, Difference Key, Color Spill, Color Key, Color Key GPU subset, Chroma Key, Image, Composite Output, Crop]
+        family: [Luminance Key, Difference Key, Color Spill, Color Key, Color Key GPU subset, Chroma Key, Image, Composite Output, Crop, Crop Resize]
         source_device: [CPU, GPU]
         exclude:
           - family: Color Key
@@ -205,6 +205,8 @@ jobs:
           - family: Chroma Key
             source_device: GPU
           - family: Image
+            source_device: GPU
+          - family: Crop Resize
             source_device: GPU
         include:
           - family: Luminance Key
@@ -242,6 +244,11 @@ jobs:
             device_variable: BLENDLINK_COMPOSITOR_CROP_DEVICE
             reference_variable: BLENDLINK_COMPOSITOR_CROP_REFERENCES
             evidence: crop
+          - family: Crop Resize
+            fixture: compositor_crop_resize_check.py
+            device_variable: BLENDLINK_COMPOSITOR_CROP_RESIZE_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_CROP_RESIZE_REFERENCES
+            evidence: crop-resize
           - family: Image
             fixture: compositor_image_check.py
             device_variable: BLENDLINK_COMPOSITOR_IMAGE_DEVICE

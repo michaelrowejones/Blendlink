@@ -25,6 +25,8 @@ export async function compositorResizeProof(test: any, renderer: WebGPURenderer,
   const activeMrt = mrt({ output, proof: vec4(0) })
   const row: any = { max: 0, channels: [0, 0, 0, 0], frames: [], maxPasses: 0, maxFragmentBytes: 0 }
   let initialShaders: string[] | undefined
+  const cachedImage = test.assertStaticImageCache !== false && test.program.passes.length === 0
+    && test.program.ops.some((op: any) => op.kind === 'image-input')
   let previousExtent = ''
   try {
     for (const frame of test.resizeFrames) {
@@ -93,15 +95,22 @@ export async function compositorResizeProof(test: any, renderer: WebGPURenderer,
           shaders.push((await renderer.debug.getShaderAsync(call.quad, call.quad.camera, call.quad)).fragmentShader)
         }
       } finally { renderer.setRenderTarget(target); renderer.setMRT(activeMrt) }
-      if (initialShaders && JSON.stringify(shaders) !== JSON.stringify(initialShaders))
+      // An immutable Image input pass renders once at native resolution. The
+      // terminal shader remains identical across viewport/DPR changes, while
+      // later frames deliberately omit that already-realized input pass.
+      const expectedShaders = cachedImage && initialShaders ? initialShaders.slice(0, 1) : initialShaders
+      if (expectedShaders && JSON.stringify(shaders) !== JSON.stringify(expectedShaders))
         throw new Error('Compositor changed shader structure while resizing')
+      if (cachedImage && calls.length !== (initialShaders ? 1 : 2))
+        throw new Error('Static Image did not cache exactly one native input pass')
       initialShaders ??= shaders
       row.maxPasses = Math.max(row.maxPasses, calls.length)
       row.maxFragmentBytes = Math.max(row.maxFragmentBytes, ...shaders.map(shader => new TextEncoder().encode(shader).length))
       if (calls.length > test.assertShaderCost.maxPasses || row.maxFragmentBytes > test.assertShaderCost.maxFragmentBytes)
         throw new Error('Compositor exceeded its resize shader/pass budget')
       row.frames.push({ width, height, pixelRatio: frame.pixelRatio ?? 1, max: error.max,
-        coefficientUploads: uploads.length, restoredState: true, shaderStructureUnchanged: true })
+        coefficientUploads: uploads.length, restoredState: true, shaderStructureUnchanged: true,
+        ...(cachedImage ? { nativeInputPasses: calls.length - 1 } : {}) })
     }
   } finally {
     renderer.setPixelRatio(1)
