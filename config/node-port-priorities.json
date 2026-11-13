@@ -1411,7 +1411,8 @@
     "shader:ShaderNodeRadialTiling": "Research only, no production emitter/runtime port. The actual official Radial demo is refused by Final; native and private kernel trials retain their separate domain limits.",
     "compositor:ShaderNodeRadialTiling": "Native context availability and separate shader research do not constitute a compositor port.",
     "shader:ShaderNodeLightFalloff": "Native EEVEE/Cycles differences justify an engine-fallback safety guard, not a live Light Falloff port.",
-    "shader:ShaderNodeSqueeze": "Blender 4.2 owned-context initialization remains research and production source admission stays N/A. Existing qualified 5.2/5.3 slices remain limited as declared."
+    "shader:ShaderNodeSqueeze": "Blender 4.2 owned-context initialization remains research and production source admission stays N/A. Existing qualified 5.2/5.3 slices remain limited as declared.",
+    "compositor:CompositorNodeImageCoordinates": "Native5.3 socket and conversion research establishes float2/int2 output widths; public group interfaces reject2D socket classes. Explicit typed field/provenance and native conversion edges are prerequisites. Native Pixel-to-Color/Vector3 and ordered INT2 midpoint controls are research only, not admitted live coverage. A separate isolated implementation is in progress."
   },
   "observationEvidence": [
     "experiments/official-demo-node-performance/README.md",
@@ -1434,6 +1435,11 @@
     "shader:ShaderNodeSqueeze": [
       "experiments/squeeze-node-differential/README.md",
       "experiments/light-falloff-engine-differential/README.md"
+    ],
+    "compositor:CompositorNodeImageCoordinates": [
+      "experiments/compositor-vector-width/discovery.json",
+      "experiments/compositor-vector-width/word-transport-evidence.json",
+      "docs/NODE_PORT_WORKLOG.md"
     ]
   },
   "sceneObservations": {

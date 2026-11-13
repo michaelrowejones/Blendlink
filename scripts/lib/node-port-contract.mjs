@@ -14,6 +14,10 @@ const strings = value => Array.isArray(value) && Array.from(value).every(item =>
 const plain = value => JSON.parse(JSON.stringify(value))
 const checkKeys = (value, keys, label) => { assert.ok(record(value), label + ' must be an object'); for (const key of Object.keys(value)) assert.ok(keys.includes(key), label + ' has unknown field ' + key) }
 function assertEvidenceAdapterScope(manifest) {
+  if (manifest.evidence?.adapter === 'float-to-int-literal-v1') {
+    assert.equal(manifest.nativeNode, 'FunctionNodeFloatToInt', 'Float to Integer evidence cannot qualify another native node')
+    assert.equal(manifest.domain, 'compositor', 'Float to Integer evidence cannot qualify another tree context')
+  }
   if (manifest.evidence?.adapter === 'squeeze-v1') {
     assert.equal(manifest.nativeNode, 'ShaderNodeSqueeze', 'Squeeze evidence cannot qualify another native node')
     assert.equal(manifest.domain, 'shader', 'Squeeze evidence cannot qualify another tree context')
@@ -57,11 +61,13 @@ export function validateNodePortManifest(value) {
     assert.match(profile.blenderVersion, /^\d+\.\d+\.\d+$/)
     if (profile.blenderBuildHash !== undefined) assert.match(profile.blenderBuildHash, /^[a-f0-9]{7,40}$/)
     assert.ok(profile.expectedStatus === undefined || profile.expectedStatus === 'not-applicable')
-    checkKeys(profile.nativeSource, ['profile', 'backend', 'renderer'], 'nativeSource')
+    checkKeys(profile.nativeSource, ['profile', 'backend', 'renderer', 'evaluator'], 'nativeSource')
     assert.ok(profile.nativeSource.profile === null || typeof profile.nativeSource.profile === 'string' && profile.nativeSource.profile.length > 0)
     assert.ok(profile.nativeSource.backend === null || ['METAL', 'OPENGL'].includes(profile.nativeSource.backend))
     if (profile.nativeSource.renderer !== undefined) assert.ok(typeof profile.nativeSource.renderer === 'string' && profile.nativeSource.renderer.length > 0)
-    if (profile.expectedStatus !== 'not-applicable') assert.ok(profile.nativeSource.profile && profile.nativeSource.backend, 'Numeric profiles need a declared native source model/backend')
+    if (profile.nativeSource.evaluator !== undefined) assert.equal(profile.nativeSource.evaluator, 'CPU-MF', 'Unknown source evaluator')
+    if (profile.expectedStatus !== 'not-applicable') assert.ok(profile.nativeSource.profile && (profile.nativeSource.backend || profile.nativeSource.evaluator === 'CPU-MF'), 'Numeric profiles need a declared native source model/backend or explicit CPU-MF evaluator')
+    if (profile.nativeSource.evaluator === 'CPU-MF') assert.equal(profile.nativeSource.backend, null, 'CPU-MF numerical evidence must not assert a GPU backend')
     assert.ok(Array.isArray(profile.runs) && profile.runs.length > 0); assert.equal(new Set(profile.runs.map(run => run.id)).size, profile.runs.length)
     for (const [index, run] of profile.runs.entries()) {
       checkKeys(run, ['id', 'adapter', 'env', 'args'], 'browser run'); assert.ok(slug(run.id)); assert.ok(['metal', 'software'].includes(run.adapter)); environment(run.env, 'browser run')

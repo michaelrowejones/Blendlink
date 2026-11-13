@@ -1,0 +1,12 @@
+{
+  "kind": "relative-to-pixel-negative-zero-boundary",
+  "productionCredit": false,
+  "nativeBuild": "02f0899d78e3",
+  "case": "blender-5-3-cpu-x--0p0",
+  "dimensions": [13, 9],
+  "nativeRgbWord": "80000000",
+  "observedWebGpuRgbWord": "00000000",
+  "differingRgbWords": 351,
+  "policy": "Reject negative-zero literals and Value/group constants independently in the native extractor and runtime. Positive zero and normal bounded values remain separate candidates; no numeric tolerance or expected-pixel rewrite is used.",
+  "rawArtifacts": "Machine-local artifacts/verification-relative-to-pixel/cpu retains the earlier negative-zero case JSON, program and rgba32f data. It is excluded from the admitted qualification matrix."
+}

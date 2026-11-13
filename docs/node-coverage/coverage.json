@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "790ab2e12c06d3ff3e17e5ad84e14d292ae7f5fddab05eba3a67f53b6d46dc0f",
+  "capabilityMapSha256": "4303acc81ff8cee27d1a6c8f7703c4f2b9ffcbb852ccb21c445cb7491815ca73",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -10,10 +10,15 @@
     "kind": "retained-reviewed-native-catalogs",
     "nativeInventoryAuditGeneratedAt": "2026-11-13T14:17:00.210721+00:00",
     "nativeInventoryRefreshed": false,
-    "reason": "Classify the reviewed Float to Integer literal production evidence and current renamed source against the unchanged reviewed native inventories; no fresh native availability/enum discovery is claimed."
+    "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-13T18:14:15.202528+00:00",
+  "generatedAt": "2026-11-13T19:43:21.466620+00:00",
   "nativeAvailabilityChanges": [],
+  "nativeCatalogSha256": {
+    "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
+    "docs/node-coverage/blender-5.2.0.json": "ba57b2f37b9f252203dec70a70c439f1b5b05e6387273379bc4123acff1c7469",
+    "docs/node-coverage/blender-5.3.0.json": "09f4e0473e1d6dfe6f978df418de82df7d8bca22b0ad665d0a7cbcdf916c6544"
+  },
   "nativeEnumerationUnresolved": [
     {
       "acknowledged": true,
@@ -8116,11 +8121,53 @@
                   "Y": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_relative_to_pixel.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorRelativeToPixel.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorRelativeToPixel.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_relative_to_pixel_check.py"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/README.md"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/capture.mjs"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/negative-zero-evidence.json"
+                }
+              ],
               "id": "CompositorNodeRelativeToPixel",
               "label": "Relative To Pixel",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "relative-to-pixel"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -9965,11 +10012,50 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_procedural_texture.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorProceduralTexture.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorProceduralTexture.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_texture_family_check.py"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/README.md"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/research-counterexamples.json"
+                }
+              ],
               "id": "ShaderNodeTexChecker",
               "label": "Checker Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "checker-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -10002,11 +10088,50 @@
                   "SPHERICAL": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_procedural_texture.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorProceduralTexture.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorProceduralTexture.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_texture_family_check.py"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/README.md"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/research-counterexamples.json"
+                }
+              ],
               "id": "ShaderNodeTexGradient",
               "label": "Gradient Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "gradient-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -13779,16 +13904,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 35,
+            "partial": 38,
             "structural": 7,
             "supported": 24,
-            "unsupported": 121
+            "unsupported": 118
           },
           "enumValueCounts": {
             "partial": 27,
             "structural": 3,
-            "supported": 230,
-            "unsupported": 672
+            "supported": 239,
+            "unsupported": 663
           },
           "nodes": [
             {
@@ -15834,27 +15959,69 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
-                  "FLOAT": "unsupported",
+                  "FLOAT": "supported",
                   "VECTOR": "unsupported"
                 },
                 "reference_dimension": {
                   "Diagonal": "unsupported",
-                  "Greater": "unsupported",
+                  "Greater": "supported",
                   "PER_DIMENSION": "unsupported",
-                  "Smaller": "unsupported",
-                  "X": "unsupported",
-                  "Y": "unsupported"
+                  "Smaller": "supported",
+                  "X": "supported",
+                  "Y": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_relative_to_pixel.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorRelativeToPixel.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorRelativeToPixel.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_relative_to_pixel_check.py"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/README.md"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/capture.mjs"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-relative-to-pixel/negative-zero-evidence.json"
+                }
+              ],
               "id": "CompositorNodeRelativeToPixel",
               "label": "Relative To Pixel",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. FLOAT X/Y/Greater/Smaller with exact normal Float32 or positive-zero literal, Value and group-default coefficients of magnitude <=65536, and a direct untransformed Render Layers Image reference. Image supplies only live reference dimensions; numerical output retains native single-value behavior. Native CPU single-value operation runs even in GPU-authored compositing; this is not a spatial GPU-field port. Runtime independently checks schema/profile, topological Image and Value producers within a 2048-op work bound. No port-owned textures or RTTs, no per-frame readback. Negative-zero literals explicitly refuse after measured native -0/WebGPU +0 word disagreement. Subnormal/nonfinite/F64/out-of-bound/computed coefficients, vector/per-dimension/diagonal modes, static/transformed/computed image references, render borders, non-square pixels, animation/drivers, and other native builds/platforms remain unqualified. Final resource evidence restores the exact actual-scene no-compositor DFG_LUT identity set over three apply/dispose cycles, rather than mislabeling renderer-owned caches as port resources.",
+              "runtimeOps": [
+                "relative-to-pixel"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -16690,6 +16857,9 @@
                 },
                 {
                   "path": "experiments/float-to-int-native/literal-evidence.json"
+                },
+                {
+                  "path": "experiments/float-to-int-native/pipeline-evidence.json"
                 }
               ],
               "id": "FunctionNodeFloatToInt",
@@ -18193,14 +18363,53 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_procedural_texture.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorProceduralTexture.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorProceduralTexture.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_texture_family_check.py"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/README.md"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/research-counterexamples.json"
+                }
+              ],
               "id": "ShaderNodeTexChecker",
               "label": "Checker Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Checker additionally requires sixteenth-grid vectors within +/-16 and fixed integer Scale0..256. Color1/Color2 are bounded exact Float32 literal/group colors; Color preserves independent signed/HDR RGB/alpha, while Fac prunes unused Color subtrees. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. Native CPU multi-function single values, including authored GPU compositing; not a spatial GPU-field port. Explicit linked literal, Value, reroute, CombineXYZ and group-default vectors only; exact normal Float32 words (magnitude >=2^-125) or positive zero, bounded magnitude <=65536. Negative zero, subnormal/nonfinite/F64/unknown-provenance values, implicit socket conversions, nonidentity texture mapping, animation/drivers, other native versions/builds/platforms and all computed/image fields refuse. Unlinked Vector uses native Uniform Image Coordinates and refuses rather than being replaced by literal zero. Runtime independently rederives actual prior-operation provenance with 2048-operation/64-visit/depth8 bounds. No port-owned textures/render targets or per-frame readback. Final disposal restores exact renderer-owned DFG_LUT identities established by a no-compositor PBR control, not a generic resource allowance.",
+              "runtimeOps": [
+                "checker-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -18220,24 +18429,63 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "gradient_type": {
-                  "DIAGONAL": "unsupported",
-                  "EASING": "unsupported",
-                  "LINEAR": "unsupported",
-                  "QUADRATIC": "unsupported",
+                  "DIAGONAL": "supported",
+                  "EASING": "supported",
+                  "LINEAR": "supported",
+                  "QUADRATIC": "supported",
                   "QUADRATIC_SPHERE": "unsupported",
                   "RADIAL": "unsupported",
                   "SPHERICAL": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_procedural_texture.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorProceduralTexture.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorProceduralTexture.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_texture_family_check.py"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/README.md"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-texture-family/research-counterexamples.json"
+                }
+              ],
               "id": "ShaderNodeTexGradient",
               "label": "Gradient Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "LINEAR accepts the bounded literal vector domain. QUADRATIC, EASING and DIAGONAL additionally require exact sixteenth-grid coordinates; RADIAL/SPHERICAL/QUADRATIC_SPHERE remain unqualified. Native Fac and RGBA Color (alpha1) outputs are independently verified. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. Native CPU multi-function single values, including authored GPU compositing; not a spatial GPU-field port. Explicit linked literal, Value, reroute, CombineXYZ and group-default vectors only; exact normal Float32 words (magnitude >=2^-125) or positive zero, bounded magnitude <=65536. Negative zero, subnormal/nonfinite/F64/unknown-provenance values, implicit socket conversions, nonidentity texture mapping, animation/drivers, other native versions/builds/platforms and all computed/image fields refuse. Unlinked Vector uses native Uniform Image Coordinates and refuses rather than being replaced by literal zero. Runtime independently rederives actual prior-operation provenance with 2048-operation/64-visit/depth8 bounds. No port-owned textures/render targets or per-frame readback. Final disposal restores exact renderer-owned DFG_LUT identities established by a no-compositor PBR control, not a generic resource allowance.",
+              "runtimeOps": [
+                "gradient-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -22556,13 +22804,15 @@
     "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "d6c40f80ce760f566e1442824a9ffd5e52d6957ce66103d6a1f66eca9888d6a3",
+    "packages/blendlink/blender/compositor_graph.py": "dcabedf408f42158e0fe3387b5abf6f00a3525f92eede589ff392bd4f2e502dd",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
+    "packages/blendlink/blender/compositor_procedural_texture.py": "a65589c148509e3fa000ce3db40719f4528c8ee30281a56899d316d1fe838cc6",
+    "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
     "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
     "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
@@ -22613,6 +22863,8 @@
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
     "packages/blendlink/src/tslCompositorMapValueDomain.ts": "325637bd5fb107ff49ce5aa8b45aa954be7a4411e9daf8cb79b4bb64ffa9ad0a",
     "packages/blendlink/src/tslCompositorPixelate.ts": "20feecc95d60c471e11428474bbcd3c214133652ecaafabc6b81a0486bc28b21",
+    "packages/blendlink/src/tslCompositorProceduralTexture.ts": "660c70a0689a27b9d88d5152cc67a467f296113428020bc9ae0666ae85126c4b",
+    "packages/blendlink/src/tslCompositorRelativeToPixel.ts": "0594bfe77a71f54c5526abc520b5ef6a9f59a864db07f1554c39133bf4153646",
     "packages/blendlink/src/tslCompositorResampling.ts": "6ff79d9bb5f31bee831e2491fe5cfb89582584c80026b1a3c0c302985377a1d6",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorSpill.ts": "df6393b864834cfb8a386c88ce52d3b45ed169df94b4c8724b501272d148903d",
@@ -22644,7 +22896,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "60edf0661513dcdd5c1f576baf24a7392532bef2d8d408065ca1f724c77a7aef",
+    "packages/blendlink/src/tslSourceCompositor.ts": "a6245b081682899ec3a69956340a9d8526abac1ff5794f9d24c5c7c303150da6",
     "packages/blendlink/src/tslSpectralNodes.ts": "0b3b12601a937d51544168acdde2ee721a25a926a4890d41b2c63b5b09013200",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

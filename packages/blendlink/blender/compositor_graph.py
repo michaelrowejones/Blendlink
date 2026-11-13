@@ -62,6 +62,8 @@ normalize_color_key = _sibling("compositor_color_key").normalize_color_key
 normalize_static_image = _sibling("compositor_image").normalize_image
 normalize_vector_component = _sibling("compositor_vector_component").normalize_vector_component
 normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_int
+normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
+normalize_relative_to_pixel = _sibling("compositor_relative_to_pixel").normalize_relative_to_pixel
 normalize_crop = _sibling("compositor_crop").normalize_crop
 normalize_split = _sibling("compositor_split").normalize_split
 validate_split_domains = _sibling("compositor_split").validate_split_domains
@@ -71,6 +73,9 @@ validate_static_image_graph = _sibling("compositor_image").validate_image_graph
 TYPES = {
     "FunctionNodeInputBool": "utility-constant",
     "FunctionNodeFloatToInt": "float-to-int",
+    "ShaderNodeTexGradient": "gradient-texture",
+    "ShaderNodeTexChecker": "checker-texture",
+    "CompositorNodeRelativeToPixel": "relative-to-pixel",
     "FunctionNodeInputVector": "value",
     "ShaderNodeCombineXYZ": "combine-vector",
     "ShaderNodeSeparateXYZ": "separate-vector",
@@ -457,9 +462,15 @@ def extract(scene):
                     normalize_utility(node, op, lambda incoming: input_value(incoming, ctx),
                                       lambda message: fail("unsupported-utility-mode", path, node, socket, message),
                                       getattr(scene.render, "compositor_device", "CPU"))
+                elif node.bl_idname in ("ShaderNodeTexGradient", "ShaderNodeTexChecker"):
+                    normalize_procedural_texture(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-procedural-texture", path, node, incoming, message))
                 elif node.bl_idname == "FunctionNodeFloatToInt":
                     normalize_float_to_int(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-float-to-int", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeRelativeToPixel":
+                    normalize_relative_to_pixel(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-relative-to-pixel", path, node, incoming, message))
                 elif node.bl_idname == "FunctionNodeInputVector":
                     op["value"] = list(node.vector)
                 elif node.bl_idname == "FunctionNodeGetVectorComponent":

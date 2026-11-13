@@ -1,0 +1,182 @@
+{
+  "kind": "scenetoweb-vector-width-discovery-v1",
+  "blenderVersion": [
+    5,
+    3,
+    0
+  ],
+  "blenderBuildHash": "02f0899d78e3",
+  "numericalCases": 0,
+  "sourceSha256": "c0784e8a000816a902c7b92063968d677a855c26b99e6a0da910eea7177c461a",
+  "nodes": {
+    "CompositorNodeImageCoordinates": [
+      {
+        "settings": {},
+        "sockets": [
+          {
+            "direction": "INPUT",
+            "identifier": "Image",
+            "nativeType": "RGBA",
+            "socketClass": "NodeSocketColor",
+            "default": null,
+            "enabled": true
+          },
+          {
+            "direction": "OUTPUT",
+            "identifier": "Uniform",
+            "nativeType": "VECTOR",
+            "socketClass": "NodeSocketVector2D",
+            "default": [
+              0.0,
+              0.0
+            ],
+            "enabled": true
+          },
+          {
+            "direction": "OUTPUT",
+            "identifier": "Normalized",
+            "nativeType": "VECTOR",
+            "socketClass": "NodeSocketVector2D",
+            "default": [
+              0.0,
+              0.0
+            ],
+            "enabled": true
+          },
+          {
+            "direction": "OUTPUT",
+            "identifier": "Pixel",
+            "nativeType": "INT_VECTOR",
+            "socketClass": "NodeSocketIntVector2D",
+            "default": [
+              0,
+              0
+            ],
+            "enabled": true
+          }
+        ]
+      }
+    ],
+    "CompositorNodeRelativeToPixel": [
+      {
+        "settings": {
+          "data_type": "VECTOR",
+          "reference_dimension": "PER_DIMENSION"
+        },
+        "sockets": [
+          {
+            "direction": "INPUT",
+            "identifier": "Vector Value",
+            "nativeType": "VECTOR",
+            "socketClass": "NodeSocketVectorFactor2D",
+            "default": [
+              0.0,
+              0.0
+            ],
+            "enabled": true
+          },
+          {
+            "direction": "INPUT",
+            "identifier": "Float Value",
+            "nativeType": "VALUE",
+            "socketClass": "NodeSocketFloatFactor",
+            "default": 0.0,
+            "enabled": false
+          },
+          {
+            "direction": "INPUT",
+            "identifier": "Image",
+            "nativeType": "RGBA",
+            "socketClass": "NodeSocketColor",
+            "default": null,
+            "enabled": true
+          },
+          {
+            "direction": "OUTPUT",
+            "identifier": "Float Value",
+            "nativeType": "VALUE",
+            "socketClass": "NodeSocketFloat",
+            "default": 0.0,
+            "enabled": false
+          },
+          {
+            "direction": "OUTPUT",
+            "identifier": "Vector Value",
+            "nativeType": "VECTOR",
+            "socketClass": "NodeSocketVector2D",
+            "default": [
+              0.0,
+              0.0
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "settings": {
+          "data_type": "FLOAT",
+          "reference_dimension": "PER_DIMENSION"
+        },
+        "sockets": [
+          {
+            "direction": "INPUT",
+            "identifier": "Vector Value",
+            "nativeType": "VECTOR",
+            "socketClass": "NodeSocketVectorFactor2D",
+            "default": [
+              0.0,
+              0.0
+            ],
+            "enabled": false
+          },
+          {
+            "direction": "INPUT",
+            "identifier": "Float Value",
+            "nativeType": "VALUE",
+            "socketClass": "NodeSocketFloatFactor",
+            "default": 0.0,
+            "enabled": true
+          },
+          {
+            "direction": "INPUT",
+            "identifier": "Image",
+            "nativeType": "RGBA",
+            "socketClass": "NodeSocketColor",
+            "default": null,
+            "enabled": true
+          },
+          {
+            "direction": "OUTPUT",
+            "identifier": "Float Value",
+            "nativeType": "VALUE",
+            "socketClass": "NodeSocketFloat",
+            "default": 0.0,
+            "enabled": false
+          },
+          {
+            "direction": "OUTPUT",
+            "identifier": "Vector Value",
+            "nativeType": "VECTOR",
+            "socketClass": "NodeSocketVector2D",
+            "default": [
+              0.0,
+              0.0
+            ],
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  },
+  "groupInterface": {
+    "NodeSocketVector2D": {
+      "accepted": false,
+      "error": "NodeTreeInterface.new_socket(): error with keyword argument \"socket_type\" -  enum \"NodeSocketVector2D\" not found in ('NodeSocketFloat', 'NodeSocketInt', 'NodeSocketBool', 'NodeSocketVector', 'NodeSocketIntVector3D', 'NodeSocketColor', 'NodeSocketRotation', 'NodeSocketMatrix', 'NodeSocketString', 'NodeSocketMenu', 'NodeSocketObject', 'NodeSocketFont', 'NodeSocketBundle')"
+    },
+    "NodeSocketIntVector2D": {
+      "accepted": false,
+      "error": "NodeTreeInterface.new_socket(): error with keyword argument \"socket_type\" -  enum \"NodeSocketIntVector2D\" not found in ('NodeSocketFloat', 'NodeSocketInt', 'NodeSocketBool', 'NodeSocketVector', 'NodeSocketIntVector3D', 'NodeSocketColor', 'NodeSocketRotation', 'NodeSocketMatrix', 'NodeSocketString', 'NodeSocketMenu', 'NodeSocketObject', 'NodeSocketFont', 'NodeSocketBundle')"
+    }
+  },
+  "conclusion": "Native float2/int2 socket widths must remain distinct from legacy VECTOR float3. Public group interfaces reject the two-component socket classes on this build. Qualify node-output field widths and each native conversion edge before Image Coordinates; Relative To Pixel vector defaults are a possible bounded native entrypoint. No port is promoted."
+}

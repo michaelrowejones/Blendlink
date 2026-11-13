@@ -1,0 +1,336 @@
+{
+  "status": "QUALIFIED_PARTIAL_COMPOSITOR_TEXTURE_FAMILY",
+  "nativeGraphs": 524,
+  "savedFinalScenes": 28,
+  "browserCaseRuns": 2208,
+  "primaryFloat32Words": 565248,
+  "wordMismatches": 0,
+  "perNode": {
+    "ShaderNodeTexGradient": {
+      "nativeGraphs": 240,
+      "savedFinalScenes": 20,
+      "browserCaseRuns": 1040
+    },
+    "ShaderNodeTexChecker": {
+      "nativeGraphs": 284,
+      "savedFinalScenes": 8,
+      "browserCaseRuns": 1168
+    }
+  },
+  "nativeReceipts": [
+    {
+      "device": "CPU",
+      "graphs": 262,
+      "savedFinalScenes": 14,
+      "qualificationSha256": "d9d9056ca43d25d68c7d8276960fd30959cdf30616ac306b00d21f7de42b4cfd",
+      "finalSha256": "0fd350fcb7c5b782491ba26d333b872cd0910e43f03bfa583eb907850504a358",
+      "native": {
+        "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+        "bytes": 210043328,
+        "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+      },
+      "sourceHashes": {
+        "packages/blender-addon/tests/compositor_texture_family_check.py": "65155b630de92a37e9cc49d81b767884295483eedba0386bfd57cb772887ea16",
+        "packages/blendlink/blender/compositor_procedural_texture.py": "a65589c148509e3fa000ce3db40719f4528c8ee30281a56899d316d1fe838cc6",
+        "packages/blendlink/blender/compositor_graph.py": "dcabedf408f42158e0fe3387b5abf6f00a3525f92eede589ff392bd4f2e502dd"
+      }
+    },
+    {
+      "device": "GPU",
+      "graphs": 262,
+      "savedFinalScenes": 14,
+      "qualificationSha256": "d37a921075abdf1593b66219db60e0407830c0bd907db4266ec5057901b8d820",
+      "finalSha256": "aa2eef00901b139614cb375d8e558a7b81d21fe3c7acc6507125fafd2e40de31",
+      "native": {
+        "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+        "bytes": 210043328,
+        "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+      },
+      "sourceHashes": {
+        "packages/blender-addon/tests/compositor_texture_family_check.py": "65155b630de92a37e9cc49d81b767884295483eedba0386bfd57cb772887ea16",
+        "packages/blendlink/blender/compositor_procedural_texture.py": "a65589c148509e3fa000ce3db40719f4528c8ee30281a56899d316d1fe838cc6",
+        "packages/blendlink/blender/compositor_graph.py": "dcabedf408f42158e0fe3387b5abf6f00a3525f92eede589ff392bd4f2e502dd"
+      }
+    }
+  ],
+  "receipts": [
+    {
+      "path": "artifacts/verification-compositor-texture53/cpu/browser-raw-metal/report.json",
+      "sha256": "a0aa4316737dd1cc87d84cc364d3134c914ed4d3316de18f850008bb478e6344",
+      "device": "CPU",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 262
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 262
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-compositor-texture53/cpu/browser-final-metal/report.json",
+      "sha256": "91fe0e2c00017068eee03f1eded942300500c54aff82f1cc17e48c68668ccef7",
+      "device": "CPU",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 14
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 14
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-compositor-texture53/cpu/browser-raw-software/report.json",
+      "sha256": "088f34e12f4f4c54a0c6b9365633632b712fe329f87b996659f1d22a1c85d3d4",
+      "device": "CPU",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 262
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 262
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-compositor-texture53/cpu/browser-final-software/report.json",
+      "sha256": "52b0e4014b7d26d1917ae0f3f0ac95788ec318b45885a5677db1977a412e9734",
+      "device": "CPU",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 14
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 14
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-compositor-texture53/gpu/browser-raw-metal/report.json",
+      "sha256": "0f5307394f0e04e7384b5ad8c37a1c44a5277fb5b53fc63c652c2fd923c3b93c",
+      "device": "GPU",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 262
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 262
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-compositor-texture53/gpu/browser-final-metal/report.json",
+      "sha256": "d48f7ab7fcea46c82a4add9adbabf648964659dcdf6df4b5f94e38eb658e23c4",
+      "device": "GPU",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 14
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 14
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-compositor-texture53/gpu/browser-raw-software/report.json",
+      "sha256": "08bbd8e56c8b03d2d73375aa5dcc6c3e61cf33ebd947733e5639af9cbc04d12e",
+      "device": "GPU",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 262
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 262
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-compositor-texture53/gpu/browser-final-software/report.json",
+      "sha256": "ab4797736c575ad7f3952a905b5c93af52feefb0effdc08130b0bb5ea62c57de",
+      "device": "GPU",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 14
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 14
+        }
+      ]
+    }
+  ],
+  "scope": "Blender5.3.0 build02f0899d78e3 macOSarm64 compositor. Gradient LINEAR bounded exact Float32 literal vectors without negative zero; QUADRATIC/DIAGONAL/EASING sixteenth-grid literals. Checker sixteenth-grid vectors within +/-16, fixed integerScale0..256 and finite bounded literalcolors. BothColor/Fac outputs. Default UniformImageCoordinates, all computed/image fields and Gradientradial/spheres remain unqualified.",
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "directory": "artifacts/verification-compositor-texture53"
+  },
+  "verifiedInputs": {
+    "packages/blendlink/blender/compositor_procedural_texture.py": "a65589c148509e3fa000ce3db40719f4528c8ee30281a56899d316d1fe838cc6",
+    "packages/blendlink/src/tslCompositorProceduralTexture.ts": "660c70a0689a27b9d88d5152cc67a467f296113428020bc9ae0666ae85126c4b",
+    "packages/blender-addon/tests/compositor_texture_family_check.py": "65155b630de92a37e9cc49d81b767884295483eedba0386bfd57cb772887ea16",
+    "experiments/compositor-texture-family/protocol.mjs": "84acbbd6411fb6af609e082dde248bc7d6e7fe39883edb885ae0acc61c18d3b6",
+    "experiments/compositor-texture-family/run.mjs": "0db4f7916413ef58dc9e5cc0afe60af80a9fca433c4da8c40c3f1c220b1bc7c2",
+    "experiments/compositor-texture-family/browser.js": "06a8fb554626e62a6cedb7cbd9aae6aaca2e463c3bd9caaf3fe6a49f48e5c313",
+    "experiments/compositor-texture-family/export.test.ts": "971470747c532de14f31a450cccf3c25251d941509d6a12583916905e84247bb",
+    "experiments/compositor-texture-family/verify.mjs": "bbfaaa8c5f32f2460b9a382c2ce69af366dad3a94e1b3d81d79aaa1f1ceb902c"
+  },
+  "upstream": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_tex_gradient.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/nodes/node_shader_tex_gradient.cc",
+      "sha256": "0cacd276b4ee29bf926257c5e9d4e95b95a3adce8ebecb8890718f1a98a8bbfa"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_tex_checker.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/nodes/node_shader_tex_checker.cc",
+      "sha256": "071abe965255ac86ba8b61408e1a327d0c3a5677775546e625eced32cafdfdf3"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_gradient.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_tex_gradient.bsl.hh",
+      "sha256": "b25510f053184931c1b914ed9f3205a5ff65e14b133106cef436964b035f6594"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_checker.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_tex_checker.bsl.hh",
+      "sha256": "1e82a6eb46e6b68e0a48983d82bf7a497e7096ed31b4886ac7a37bc80482c019"
+    }
+  ]
+}

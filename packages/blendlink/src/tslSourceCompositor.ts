@@ -1,3 +1,5 @@
+import { buildCompositorProceduralTexture } from './tslCompositorProceduralTexture.js'
+import { buildCompositorRelativeToPixel } from './tslCompositorRelativeToPixel.js'
 import { buildCompositorFloatToInt } from './tslCompositorFloatToInt.js'
 import { buildCompositorColorKey } from './tslCompositorColorKey.js'
 import { buildCompositorChannelKey } from './tslCompositorChannelKey.js'
@@ -639,6 +641,13 @@ export function buildSourceCompositor(
             break
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
+            break
+          case 'relative-to-pixel':
+            node = buildCompositorRelativeToPixel(op, program.ops, value, domainFail)
+            break
+          case 'gradient-texture':
+          case 'checker-texture':
+            node = buildCompositorProceduralTexture(op, program.ops, input, message => { throw new SourceCompositorUnsupported(message) })
             break
           case 'float-to-int':
             node = buildCompositorFloatToInt(op, program.ops, message => { throw new SourceCompositorUnsupported(message) })

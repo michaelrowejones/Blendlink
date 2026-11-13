@@ -58,3 +58,30 @@ export function assertLiteralFinal(packet,qualification,{built,nativeSha256}){
  }
  return packet
 }
+
+/** Closed browser census; a passing summary with missing APIs or cases is insufficient. */
+export function assertLiteralBrowserReport(report,{device,profile,final,cases}){
+ assert.equal(report.status,'PASSED_LITERAL_BUILT_PROOF');assert.equal(report.built,true)
+ assert.equal(report.final,final);assert.equal(report.profile,profile);assert.equal(report.sourceDevice,device)
+ assert.equal(report.missingAdapterControl.refused,true)
+ assert.deepEqual(report.rows.map(row=>row.backend).sort(),['webgl2','webgpu'])
+ const expected=[...cases].sort();let caseRuns=0
+ for(const row of report.rows){
+  assert.equal(row.gpu.api,row.backend==='webgpu'?'WebGPU':'WebGL2')
+  const identity=JSON.stringify(row.gpu)
+  if(profile==='metal'){assert.match(identity,/apple|metal/i);assert.doesNotMatch(identity,/swiftshader/i)}
+  else{assert.equal(profile,'software');assert.match(identity,/swiftshader/i)}
+  assert.deepEqual(row.errors,[]);assert.deepEqual(row.pageErrors,[])
+  assert.deepEqual(row.rows.map(result=>result.case).sort(),expected)
+  for(const result of row.rows){
+   assert.equal(result.wordMismatches,0);assert.equal(result.remainingTextures,0)
+   if(final){assert.equal(result.pinRejected,true);assert.ok(result.meshCount>0);assert.equal(result.pipeline,'blender-compositor');assert.equal(result.sourceMaterialsPreserved,true)}
+  }
+  assert.equal(row.negatives.length,10)
+  const names=['model','version','source-profile','evaluator','subnormal','nonfinite','f64','magnitude','color-conversion','depth']
+  assert.deepEqual(row.negatives.map(result=>result.kind).sort(),names.sort())
+  for(const negative of row.negatives){assert.match(negative.error,/Float to Integer/);assert.equal(negative.remainingTextures,0)}
+  caseRuns+=row.rows.length
+ }
+ return caseRuns
+}

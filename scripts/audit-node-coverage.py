@@ -687,6 +687,36 @@ def self_test():
     print("BLENDLINK_NODE_COVERAGE_POLICY_PASSED new nodes/enums remain unsupported and visible; schema drift is detected")
 
 
+def retained_catalogs(directory):
+    """Reclassification needs previously pinned full inventories, not probes."""
+    previous = json.loads((directory / 'coverage.json').read_text(encoding='utf8'))
+    pins = previous.get('nativeCatalogSha256') or previous.get('classificationRefresh', {}).get('catalogSha256')
+    if not isinstance(pins, dict) or not pins:
+        raise ValueError('Retained catalogs need reviewed content pins; run a native inventory audit first')
+    catalogs, actual_pins = [], {}
+    for name, expected in sorted(pins.items()):
+        filename = Path(name).name
+        if not re.fullmatch(r'blender-\d+\.\d+\.\d+\.json', filename):
+            raise ValueError('Unexpected retained catalog filename')
+        path = directory / filename
+        data = path.read_bytes()
+        digest = hashlib.sha256(data).hexdigest()
+        if digest != expected:
+            raise ValueError('Retained native catalog digest changed: ' + filename)
+        catalog = json.loads(data)
+        if catalog.get('selection') is not None or catalog.get('needsOracle'):
+            raise ValueError('A focused/partial catalog cannot become a retained full inventory')
+        version = '.'.join(map(str, catalog['blenderVersionTuple']))
+        if filename != 'blender-' + version + '.json' or set(catalog['domains']) != {'shader', 'compositor'}:
+            raise ValueError('Retained catalog identity/context mismatch')
+        catalogs.append(catalog)
+        actual_pins['docs/node-coverage/' + filename] = digest
+    inventory_date = previous.get('classificationRefresh', {}).get('nativeInventoryAuditGeneratedAt', previous['generatedAt'])
+    return catalogs, {'kind': 'retained-reviewed-native-catalogs', 'nativeInventoryRefreshed': False,
+        'nativeInventoryAuditGeneratedAt': inventory_date, 'catalogSha256': actual_pins,
+        'reason': 'Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed.'}
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--python" in sys.argv else sys.argv[1:]
     parser = argparse.ArgumentParser(description=__doc__)
@@ -698,9 +728,13 @@ def main():
     parser.add_argument("--update-baseline", action="store_true")
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--reclassify-retained", action="store_true",
+                        help="Reclassify content-pinned full catalogs without launching Blender; preserves the native audit date")
     parser.add_argument("--enum-state-budget", type=int, default=2048)
     parser.add_argument("--enum-transition-budget", type=int, default=100000)
     args = parser.parse_args(argv)
+    if args.reclassify_retained and (args.blender or args.catalog_output or args.node or args.update_baseline or args.self_test):
+        parser.error('--reclassify-retained cannot discover native nodes, select probes or update baselines')
     if args.node is not None:
         if not args.catalog_output or args.check or args.update_baseline or args.self_test or args.blender:
             parser.error("--node is only available with --catalog-output for partial schema discovery, not coverage checks or baseline updates")
@@ -719,11 +753,14 @@ def main():
     if args.self_test:
         self_test()
         return
-    if not args.blender:
+    if not args.blender and not args.reclassify_retained:
         parser.error("Pass one or more --blender executables")
     capabilities = json.loads(args.capabilities.read_text(encoding="utf8"))
     failures = verify_map(capabilities)
     catalogs = []
+    classification_refresh = None
+    if args.reclassify_retained:
+        catalogs, classification_refresh = retained_catalogs(args.output)
     unresolved_enumerations = []
     with tempfile.TemporaryDirectory(prefix="blendlink-native-node-inventory-") as temporary:
         for index, executable in enumerate(args.blender):
@@ -763,7 +800,8 @@ def main():
         changes += [version + ": " + item for item in baseline_changes(current, baseline.get(version, {}))]
         if args.update_baseline:
             baseline[version] = current
-        write_json(args.output / f"blender-{version}.json", catalog)
+        if not args.reclassify_retained:
+            write_json(args.output / f"blender-{version}.json", catalog)
     if args.update_baseline:
         write_json(baseline_path, baseline)
         changes = []
@@ -777,6 +815,8 @@ def main():
                 for prop, values in node["enumCoverage"].items():
                     if any(status == "unreviewed" for status in values.values()):
                         failures.append(prefix + ": native enum needs explicit review: " + prop)
+    if args.reclassify_retained and (failures or changes):
+        raise SystemExit('\n'.join(failures + changes))
     source_paths = set(SOURCE_FILES)
     for entry in capabilities["entries"].values():
         for evidence in entry.get("evidence", []):
@@ -790,6 +830,11 @@ def main():
               "sourceSha256": source_hashes, "reports": reports,
               "nativeEnumerationUnresolved": unresolved_enumerations,
               "nativeAvailabilityChanges": changes, "capabilityValidationFailures": failures}
+    output['nativeCatalogSha256'] = {'docs/node-coverage/blender-' + '.'.join(map(str, catalog['blenderVersionTuple'])) + '.json':
+        hashlib.sha256((args.output / ('blender-' + '.'.join(map(str, catalog['blenderVersionTuple'])) + '.json')).read_bytes()).hexdigest()
+        for catalog in catalogs}
+    if classification_refresh:
+        output['classificationRefresh'] = classification_refresh
     write_json(args.output / "coverage.json", output)
     (args.output / "README.md").write_text(render_markdown(reports, capabilities, changes), encoding="utf8")
     for report in reports:

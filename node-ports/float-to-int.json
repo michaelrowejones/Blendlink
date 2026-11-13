@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "id": "float-to-int",
+  "nativeNode": "FunctionNodeFloatToInt",
+  "domain": "compositor",
+  "lifecycle": "production",
+  "scope": "Partial Blender 5.3 macOS arm64 CPU-MF Float to Integer, including single values with compositor device GPU. All4 modes; exact normal-or-zero Float32 literal/Value/group inputs within +/-2^24. Spatial image/computed fields and other source platforms remain unqualified.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "source/blender/gpu/shaders/material/gpu_shader_material_float_to_int.glsl",
+      "source/blender/gpu/shaders/material/gpu_shader_material_float_to_int.bsl.hh"
+    ],
+    "shared": [
+      "source/blender/nodes/function/node_function_util.hh",
+      "source/blender/nodes/function/node_function_util.cc",
+      "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "source/blender/compositor/intern/shader_operation.cc",
+      "source/blender/blenlib/BLI_math_base.hh",
+      "source/blender/blenlib/intern/math_base.cc",
+      "source/blender/nodes/intern/node_multi_function.cc",
+      "source/blender/nodes/NOD_multi_function.hh",
+      "source/blender/compositor/intern/compile_state.cc",
+      "source/blender/compositor/intern/compile_state.hh",
+      "source/blender/compositor/intern/operation.cc",
+      "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "source/blender/blenkernel/BKE_type_conversions.hh",
+      "source/blender/blenkernel/intern/type_conversions.cc",
+      "source/blender/makesrna/intern/rna_nodetree.cc",
+      "source/blender/nodes/NOD_static_types.h"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blender-addon/*.py",
+      "packages/blender-addon/*.json",
+      "packages/blender-addon/tests/compositor_float_to_int_check.py",
+      "packages/blender-addon/tests/compositor_reference.py",
+      "packages/blendlink/blender/**/*.py",
+      "experiments/float-to-int-native/*.py"
+    ],
+    "runtime": [
+      "packages/blendlink/src/**/*.ts"
+    ],
+    "sdk": [
+      "package.json",
+      "package-lock.json",
+      "packages/blendlink/package.json",
+      "packages/blendlink/tsconfig.json",
+      "packages/blendlink/scripts/*.mjs",
+      "scripts/lib/runtime-provenance.mjs",
+      "docs/node-capabilities.json",
+      "scripts/test-node-port.mjs",
+      "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-python.mjs",
+      "scripts/node-port-blender.mjs",
+      "scripts/lib/node-port-evidence.mjs",
+      "experiments/float-to-int-native/literal_verify.mjs"
+    ],
+    "tests": [
+      "experiments/float-to-int-native/*.mjs",
+      "experiments/float-to-int-native/*.ts",
+      "experiments/float-to-int-native/*.js",
+      "experiments/float-to-int-native/*.html",
+      "experiments/float-to-int-native/sources.json",
+      "scripts/lib/node-port-contract.test.mjs",
+      "scripts/lib/node-port-python.*",
+      "scripts/lib/node-port-evidence*"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "experiments/float-to-int-native/literal_suite.mjs",
+        "--built",
+        "--blender",
+        "{blender}",
+        "--output",
+        "{evidence}"
+      ],
+      "timeoutMs": 1200000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-mf-v1",
+        "backend": null,
+        "evaluator": "CPU-MF"
+      },
+      "runs": [
+        {
+          "id": "metal",
+          "adapter": "metal",
+          "env": {
+            "BLENDLINK_TEST_PROFILE": "metal",
+            "BLENDLINK_TEST_CHROMIUM_CHANNEL": "chromium",
+            "BLENDLINK_TEST_CHROMIUM_ARGS": "[]"
+          }
+        },
+        {
+          "id": "software",
+          "adapter": "software",
+          "env": {
+            "BLENDLINK_TEST_PROFILE": "software",
+            "BLENDLINK_TEST_CHROMIUM_CHANNEL": null,
+            "BLENDLINK_TEST_CHROMIUM_ARGS": "[\"--use-angle=swiftshader\",\"--use-webgpu-adapter=swiftshader\"]"
+          },
+          "args": [
+            "--reuse-native"
+          ]
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "float-to-int-literal-v1",
+    "productionCases": 156,
+    "calibrationCases": 0,
+    "refusedNativeCases": 0
+  }
+}

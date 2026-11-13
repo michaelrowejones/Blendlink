@@ -100,7 +100,7 @@ try {
   provenance.browserChannel = channel
   provenance.browserVersion = browser.version()
   provenance.browserLaunchArgs = args
-  provenance.harnessSha256 = Object.fromEntries(await Promise.all(['browser.ts', 'run.mjs', 'relative-resize.ts'].map(async name =>
+  provenance.harnessSha256 = Object.fromEntries(await Promise.all(['browser.ts', 'run.mjs', 'relative-resize.ts', 'word-transport.mjs'].map(async name =>
     [name, hash(await readFile(join(import.meta.dirname, name)))])))
   for (const backend of ['webgl2', 'webgpu']) {
     const page = await browser.newPage()

@@ -1,9 +1,12 @@
 """Focused discovery routing and full-catalog compatibility without native RNA."""
 import importlib.util
+import hashlib
+import json
 from pathlib import Path
 import sys
 import types
 import unittest
+import tempfile
 
 
 spec = importlib.util.spec_from_file_location('node_catalog_test', Path(__file__).with_name('audit-node-coverage.py'))
@@ -76,6 +79,43 @@ class FocusedCatalogTests(unittest.TestCase):
         for selection in [[], (), 'Node', [''], ['bad/path'], [None], [True]]:
             with self.subTest(selection=selection), self.assertRaises(ValueError):
                 audit.native_catalog(node_ids=selection, _node_factory=self.unavailable)
+
+
+class RetainedCatalogTests(unittest.TestCase):
+    def fixture(self, directory, partial=False):
+        catalog = {'schemaVersion': 1, 'blenderVersion': '5.3.0', 'blenderVersionTuple': [5, 3, 0],
+                   'blenderBuildHash': 'a' * 12, 'domains': {'shader': {'nodes': []}, 'compositor': {'nodes': []}}}
+        if partial:
+            catalog['selection'] = {'completeInventory': False, 'nodeIds': ['Test']}
+        data = json.dumps(catalog).encode()
+        (directory / 'blender-5.3.0.json').write_bytes(data)
+        previous = {'generatedAt': '2026-11-13T18:00:00+00:00', 'classificationRefresh': {
+            'nativeInventoryAuditGeneratedAt': '2026-11-13T14:17:00+00:00',
+            'catalogSha256': {'docs/node-coverage/blender-5.3.0.json': hashlib.sha256(data).hexdigest()}}}
+        (directory / 'coverage.json').write_text(json.dumps(previous))
+
+    def test_classification_preserves_inventory_date_without_claiming_native_work(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            self.fixture(directory)
+            catalogs, provenance = audit.retained_catalogs(directory)
+            self.assertEqual(len(catalogs), 1)
+            self.assertFalse(provenance['nativeInventoryRefreshed'])
+            self.assertEqual(provenance['nativeInventoryAuditGeneratedAt'], '2026-11-13T14:17:00+00:00')
+
+    def test_changed_catalog_or_partial_probe_refuses_without_rewriting_the_report(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            self.fixture(directory)
+            before = (directory / 'coverage.json').read_bytes()
+            with (directory / 'blender-5.3.0.json').open('a') as stream:
+                stream.write(' ')
+            with self.assertRaisesRegex(ValueError, 'digest changed'):
+                audit.retained_catalogs(directory)
+            self.assertEqual((directory / 'coverage.json').read_bytes(), before)
+            self.fixture(directory, partial=True)
+            with self.assertRaisesRegex(ValueError, 'partial'):
+                audit.retained_catalogs(directory)
 
 
 if __name__ == '__main__':

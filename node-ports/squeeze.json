@@ -57,6 +57,7 @@
       "docs/node-capabilities.json",
       "scripts/test-node-port.mjs",
       "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-evidence.mjs",
       "scripts/lib/node-port-python.mjs",
       "scripts/node-port-blender.mjs"
     ],

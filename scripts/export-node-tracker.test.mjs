@@ -14,7 +14,7 @@ test('compact exporter retains exact target/legacy denominators without enum/sch
   const actual = await exportNodeTracker({ root, now: () => 'fixed-test-time' })
   assert.equal(actual.targetBlender, '5.3.0'); assert.equal(actual.summary.unionRows, 358); assert.equal(actual.summary.targetRows, 332); assert.equal(actual.summary.legacyRows, 26)
   assert.equal(actual.dependencyGroups.length, 9); assert.ok(JSON.stringify(actual).length < 1_000_000)
-  assert.deepEqual(actual.summary.contexts.shader.statuses, { supported: 22, partial: 41, 'bake-only': 0, unsupported: 75, structural: 7 })
+  assert.deepEqual(actual.summary.contexts.shader.statuses, coverage.reports.find(report => report.blenderVersion === '5.3.0').domains.shader.counts)
   assert.equal(new Set(actual.rows.map(row => row.key)).size, actual.rows.length)
   for (const row of actual.rows) { assert.ok(!Object.hasOwn(row, 'manualOverride') && !Object.hasOwn(row, 'effectivePriority') && !Object.hasOwn(row, 'userNotes')); assert.ok(!Object.hasOwn(row, 'socketSchemas')); assert.ok(row.evidenceUrls.every(url => url.startsWith('https://github.com/michaelrowejones/Blendlink/blob/' + actual.source.commit + '/'))) }
 })

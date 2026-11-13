@@ -1,0 +1,20 @@
+{
+  "primarySources": [
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_relative_to_pixel.cc",
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_relative_to_pixel.cc",
+      "sha256": "1256a7764e55e5299198fc13f66d1f185a3b1a243b1fd4b354594e4ad4c8ac5d",
+      "bytes": 14568
+    },
+    {
+      "path": "source/blender/compositor/intern/domain.cc",
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/domain.cc",
+      "sha256": "f942718b88970678375f7e2b720cfcb12073934ccd568c2d7d1ed61a97c82e4d",
+      "bytes": 5492
+    }
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "scope": "Scalar CPU-multifunction evaluation, including GPU-authored single values; transformed image references remain refused."
+}

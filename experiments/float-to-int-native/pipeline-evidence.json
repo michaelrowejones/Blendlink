@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 1,
+  "kind": "scenetoweb-node-port-execution-receipt-v1",
+  "manifestId": "float-to-int",
+  "profile": "mac-53",
+  "status": "qualified",
+  "productionCredit": true,
+  "supportPromotion": false,
+  "scope": "Blender5.3.0 build02f0899d78e3 macOSarm64 compositor FloatToInteger, CPU-MF including GPU single values; literal/Value/group normal-or-zero Float32 within +/-2^24, all4 rounding modes. No image/computed-field or other-platform promotion.",
+  "sourceBaseCommit": "36d12b93d6fc634f027718d0214317d5568787d3",
+  "sourceRevisionScope": "Base checkout commit only; exact working-tree inputDigest and per-file source pins identify tested code.",
+  "report": {
+    "path": "artifacts/node-ports/float-to-int/local-first-final-20261113/report.json",
+    "sha256": "415212c7022225c7a4861d2becfe767fd08c5e4d197494c81b1a0f4867857bb7",
+    "machineLocal": true
+  },
+  "inputDigest": "202e70005de8cc3f1d3d9ba6308422da6ba445d6f3d461babb453e70223c3487",
+  "nativeInputDigest": "cd45f9d5674f2083bc3ea7afdb4300a246ccd05aab979af81351ef9b294b2a8f",
+  "runtimeInputDigest": "8a6708a27d0fb9c29b66cfe08e4a63064382088dd5c51056a2d3de552a90c99e",
+  "requestKey": "dcaff6a858103064e10e68a40d6e8de169b9e77fd73cd36fc5174e52ac6ede96",
+  "evidenceKey": "2daeb1783d04e751d2223e518e8705abab3bdb6940f8bf75b3117837f0d85910",
+  "workspaceStable": true,
+  "summary": {
+    "productionCases": 156,
+    "nativeGraphs": 312,
+    "savedFinalScenes": 32,
+    "caseRuns": 1376,
+    "primaryFloat32Words": 352256,
+    "wordMismatches": 0
+  },
+  "native": {
+    "version": "5.3.0",
+    "buildHash": "02f0899d78e3",
+    "binarySha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+    "source": {
+      "profile": "darwin-arm64-mf-v1",
+      "evaluator": "CPU-MF including GPU single values",
+      "gpuNumericalBackend": null,
+      "authoredCompositorDevices": [
+        "CPU",
+        "GPU"
+      ]
+    }
+  },
+  "browsers": [
+    {
+      "profile": "metal",
+      "phase": "raw",
+      "sourceDevice": "CPU",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 156
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 156
+        }
+      ]
+    },
+    {
+      "profile": "metal",
+      "phase": "final",
+      "sourceDevice": "CPU",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 16
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "phase": "raw",
+      "sourceDevice": "CPU",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 156
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 156
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "phase": "final",
+      "sourceDevice": "CPU",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 16
+        }
+      ]
+    },
+    {
+      "profile": "metal",
+      "phase": "raw",
+      "sourceDevice": "GPU",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 156
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 156
+        }
+      ]
+    },
+    {
+      "profile": "metal",
+      "phase": "final",
+      "sourceDevice": "GPU",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 16
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "phase": "raw",
+      "sourceDevice": "GPU",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 156
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 156
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "phase": "final",
+      "sourceDevice": "GPU",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 16
+        }
+      ]
+    }
+  ],
+  "nativePython": {
+    "complete": true,
+    "pythonInvocations": 34,
+    "finalInvocations": 32,
+    "uniqueFinalSources": 32,
+    "launcherDisposed": true,
+    "freshCachePrefixPerInvocation": true,
+    "archiveDirectory": "artifacts/node-ports/float-to-int/local-first-final-20261113/native-python-proof"
+  },
+  "steps": [
+    {
+      "id": "identity-blender",
+      "exitCode": 0,
+      "elapsedMs": 231
+    },
+    {
+      "id": "clean",
+      "exitCode": 0,
+      "elapsedMs": 59
+    },
+    {
+      "id": "typescript",
+      "exitCode": 0,
+      "elapsedMs": 2390
+    },
+    {
+      "id": "assets",
+      "exitCode": 0,
+      "elapsedMs": 55
+    },
+    {
+      "id": "suite-metal",
+      "exitCode": 0,
+      "elapsedMs": 69651
+    },
+    {
+      "id": "suite-software",
+      "exitCode": 0,
+      "elapsedMs": 42035
+    }
+  ],
+  "reviewedPipelineFiles": {
+    "node-ports/float-to-int.json": "59f93337572b072fe123e1099c78714ae153b1258f216fbe112f1fab4123e72e",
+    "node-ports/squeeze.json": "9a7f088ca33070d67387c2c49987a413b0f2e7b42e387f09635b6d3d4fdf4087",
+    "scripts/test-node-port.mjs": "9ad7d94cf6f328cc8718e3bd779af3d21b062168d0ac097d80bcfbbf897c22d9",
+    "scripts/lib/node-port-contract.mjs": "d7a4164c449609bff47ddb45ecae31af07cd5888f19da80205d2bb30778a2be1",
+    "scripts/lib/node-port-evidence.mjs": "d665916fd90e4c61d37274747603b2e1bc742909d959deded060d78c8edc2c73",
+    "experiments/float-to-int-native/literal_suite.mjs": "cad406932c4ed6a4a239afa6ca2ff2cd611e737c17548a2fbd69401b476bb2fe",
+    "experiments/float-to-int-native/literal_verify.mjs": "c4b321ede34e11b531b3af6fe716feca10bdb60a77c56c2ab6575bda5892afd3",
+    "experiments/float-to-int-native/literal_protocol.mjs": "189b4e35397fe87c52ed231670af27e38140998bb8ea28992ac719754690da78"
+  },
+  "dependencyPolicy": "All native implementation modules and addon JSON payloads, FloatToInteger fixture plus shared compositor oracle; unrelated addon test edits do not invalidate native qualification. All runtime source and SDK/test dependencies remain fingerprinted.",
+  "reproduction": "PATH=<Node24-bin>:$PATH npm run nodes:verify -- float-to-int --profile mac-53 --blender <exact-Blender5.3-executable> --evidence <fresh-owned-directory>"
+}

@@ -3,6 +3,7 @@ import { WebGPURenderer, NodeMaterial, QuadMesh } from 'three/webgpu'
 import { textureLoad, uv, vec2, ivec2, mrt, output, vec4 } from 'three/tsl'
 import { buildSourceCompositor } from 'blendlink-compositor-under-test'
 import { compositorResizeProof } from './relative-resize.js'
+import { decodeFloat32Words } from './word-transport.mjs'
 
 const reports: unknown[] = []
 const result = document.querySelector('#results')!
@@ -53,7 +54,13 @@ try {
     }
     const { width, height } = test
     renderer.setSize(width, height)
-    const texture = new THREE.DataTexture(new Float32Array(test.input), width, height, THREE.RGBAFormat, THREE.FloatType)
+    const inputPixels = test.inputWords === undefined ? new Float32Array(test.input)
+      : decodeFloat32Words(test.inputWords, width * height * 4)
+    const expectedPixels = test.expectedWords === undefined ? test.expected
+      : decodeFloat32Words(test.expectedWords, width * height * 4)
+    const requireFloat32Bits = test.requireFloat32Bits === true
+      || test.inputWords !== undefined || test.expectedWords !== undefined
+    const texture = new THREE.DataTexture(inputPixels, width, height, THREE.RGBAFormat, THREE.FloatType)
     texture.needsUpdate = true
     const source = textureLoad(texture, ivec2(uv().mul(vec2(width, height))))
     const material = new NodeMaterial()
@@ -78,15 +85,15 @@ try {
       quad.render(renderer!)
       return await renderer!.readRenderTargetPixelsAsync(target, 0, 0, width, height) as Float32Array
     }
-    const errorFor = (actual: Float32Array, expected: number[], flip: boolean) => {
+    const errorFor = (actual: Float32Array, expected: number[] | Float32Array, flip: boolean) => {
       // Three aligns WebGPU rows to256 bytes but omits trailing padding on the
       // final row. Total array length therefore cannot determine the stride.
       const stride = webgl ? width : Math.ceil(width * 16 / 256) * 256 / 16
       if (actual.length < ((height - 1) * stride + width) * 4) throw new Error('Unexpected GPU readback layout')
       const channels = [0, 0, 0, 0]
       let worst: unknown
-      const actualBits = test.requireFloat32Bits ? new Uint32Array(actual.buffer, actual.byteOffset, actual.length) : null
-      const expectedBits = test.requireFloat32Bits ? new Uint32Array(new Float32Array(expected).buffer) : null
+      const actualBits = requireFloat32Bits ? new Uint32Array(actual.buffer, actual.byteOffset, actual.length) : null
+      const expectedBits = requireFloat32Bits ? new Uint32Array(new Float32Array(expected).buffer) : null
       let bitMismatches = 0, bitWorst: unknown
       for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) for (let c = 0; c < 4; c++) {
         const actualIndex = (y * stride + x) * 4 + c
@@ -103,15 +110,15 @@ try {
         channels[c] = Math.max(channels[c]!, error)
       }
       return { max: Math.max(...channels), channels, worst,
-        ...(test.requireFloat32Bits ? { bitMismatches, bitWorst } : {}) }
+        ...(requireFloat32Bits ? { bitMismatches, bitWorst } : {}) }
     }
     try {
       ;(window as any).__compositorProgress.phase = 'calibrating'
       // Establish row orientation with unchanged HDR/alpha input, independently
       // of the color grade. Never pick a different orientation to fit a case.
       const control = await render(source)
-      const forward = errorFor(control, test.input, false)
-      const reverse = errorFor(control, test.input, true)
+      const forward = errorFor(control, inputPixels, false)
+      const reverse = errorFor(control, inputPixels, true)
       const flip = reverse.max < forward.max
       const calibration = flip ? reverse : forward
       row.readback = { arrayType: control.constructor.name, arrayLength: control.length,
@@ -141,7 +148,7 @@ try {
         let actual: Float32Array
         try { actual = await render(built.node) }
         finally { QuadMesh.prototype.render = renderQuad }
-        Object.assign(row, errorFor(actual, test.expected, flip))
+        Object.assign(row, errorFor(actual, expectedPixels, flip))
         if (row.bitMismatches) throw new Error('GPU compositor float32 bits differ from native: ' + JSON.stringify(row.bitWorst))
         if (test.captureShader) row.fragmentShader = (await renderer.debug.getShaderAsync(quad, quad.camera, quad)).fragmentShader
         if (test.assertShaderCost) {

@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "kind": "unqualified-compositor-texture-boundaries",
+  "productionCredit": false,
+  "nativeProfile": "5.3.0 02f0899d78e3 macOS arm64",
+  "signedZero": {
+    "source": "Prior in-memory native CPU capture, raw image.pixels.foreach_get -> .rgba32f",
+    "InputVectorNegativeZeroFacWord": "00000000",
+    "InputVectorNegativeZeroColorRedWord": "80000000",
+    "ScalarValueNegativeZeroCombineXYZColorRedWord": "80000000",
+    "policy": "All negative-zero literal words now refuse in both native extraction and runtime. No mode is qualified by these counterexamples."
+  },
+  "wordTransport": {
+    "kind": "PRIVATE_ORACLE_WORD_TRANSPORT_CONTROL",
+    "nativeBuild": "02f0899d78e3",
+    "wantedWords": [
+      0,
+      2147483648,
+      1,
+      2147483649,
+      8388607,
+      2155872255,
+      8388608,
+      2155872256,
+      1056964608,
+      1065353216
+    ],
+    "sourceArrayWords": [
+      0,
+      2147483648,
+      1,
+      2147483649,
+      8388607,
+      2155872255,
+      8388608,
+      2155872256,
+      1056964608,
+      1065353216
+    ],
+    "imageForeachGetWords": [
+      0,
+      2147483648,
+      1,
+      2147483649,
+      8388607,
+      2155872255,
+      8388608,
+      2155872256,
+      1056964608,
+      1065353216
+    ],
+    "numpyToListPythonFloatHex": [
+      "0x0.0p+0",
+      "-0x0.0p+0",
+      "0x0.0p+0",
+      "-0x0.0p+0",
+      "0x0.0p+0",
+      "-0x0.0p+0",
+      "0x1.0000000000000p-126",
+      "-0x1.0000000000000p-126",
+      "0x1.0000000000000p-1",
+      "0x1.0000000000000p+0"
+    ],
+    "imageSlicePythonFloatHex": [
+      "0x0.0p+0",
+      "-0x0.0p+0",
+      "0x0.0p+0",
+      "-0x0.0p+0",
+      "0x0.0p+0",
+      "-0x0.0p+0",
+      "0x1.0000000000000p-126",
+      "-0x1.0000000000000p-126",
+      "0x1.0000000000000p-1",
+      "0x1.0000000000000p+0"
+    ],
+    "numpyListRoundTripWords": [
+      0,
+      2147483648,
+      0,
+      2147483648,
+      0,
+      2147483648,
+      8388608,
+      2155872256,
+      1056964608,
+      1065353216
+    ],
+    "imageSliceRoundTripWords": [
+      0,
+      2147483648,
+      0,
+      2147483648,
+      0,
+      2147483648,
+      8388608,
+      2155872256,
+      1056964608,
+      1065353216
+    ],
+    "numericalPortCredit": 0,
+    "rawControlSha256": "085460b4058dbe11791d8452181a18ed923bc1f836b43a9f5a7ae5aa46280ca6"
+  },
+  "bottleneck": "Shared JSON floating-list oracle transport is unsuitable for subnormal word claims: ndarray.tolist and Blender image.pixels[:] already flush subnormals to signed zero before JSON. Use foreach_get and raw rgba32f/uint32 serialization."
+}

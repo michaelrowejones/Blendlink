@@ -7,14 +7,14 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { randomUUID } from 'node:crypto'
 import { createRequire } from 'node:module'
 import { executeNodePortCommand, expandNodePortCommand, fingerprintNodePortInputs, nodePortFileIdentity,
-  nodePortHash, readNodePortManifest, readSqueezeNodePortEvidence } from './lib/node-port-contract.mjs'
+  nodePortHash, readNodePortManifest } from './lib/node-port-contract.mjs'
 import {createNodePortBlenderLauncher} from './lib/node-port-python.mjs'
+import { nodePortEvidenceAdapter, nativeFinalEvidenceHash } from './lib/node-port-evidence.mjs'
 
 class Refused extends Error {}
 const defaultRoot = resolve(fileURLToPath(new URL('../', import.meta.url)))
 const json = async path => JSON.parse(await readFile(path, 'utf8'))
 const message = error => ({ name: error.name, message: error.message, stack: error.stack })
-async function optionalFileHash(path) { try { return nodePortHash(await readFile(path)) } catch (error) { if (error.code === 'ENOENT') return null; throw error } }
 function gitCommit(root) { try { return execFileSync('git', ['-C', root, 'rev-parse', 'HEAD'], { encoding: 'utf8', timeout: 5000, stdio: ['ignore', 'pipe', 'ignore'] }).trim() } catch { return null } }
 async function browserIdentity(root, env) {
   let browser
@@ -99,6 +99,7 @@ async function executePort(options) {
   const manifest = await readNodePortManifest(join(root, 'node-ports', id + '.json'))
   if (manifest.id !== id) throw new Error('Manifest file/id mismatch')
   const profile = manifest.profiles.find(profile => profile.id === options.profile)
+  const adapter = nodePortEvidenceAdapter(manifest.evidence.adapter)
   const inputs = await fingerprintNodePortInputs(root, manifest)
   const catalog = options.catalog ? { path: resolve(options.catalog), sha256: nodePortHash(await readFile(resolve(options.catalog))), validation: 'opaque supplied input; this runner does not assert catalog/build equivalence' } : null
   let evidence = resolve(options.evidence ?? join(root, 'artifacts/node-ports', id, Date.now() + '-' + randomUUID().slice(0, 8)))
@@ -117,7 +118,7 @@ async function executePort(options) {
     let blenderStat = null
     if (options.blender) { try { const info = await stat(options.blender); blenderStat = { path: resolve(options.blender), bytes: info.size, sha256: null } } catch {} }
     return { ...report, status: 'planned', dryRun: true, nativeIdentity: blenderStat,
-      unknownIdentities: ['native build/driver', 'actual browser/adapter'], runnable: !!profile && !!manifest.commands.verify,
+      unknownIdentities: ['native build/driver', 'actual browser/adapter'], runnable: !!profile && !!manifest.commands.verify && !!adapter,
       inputDigest: inputs.inputDigest, nativeInputDigest: inputs.nativeInputDigest, runtimeInputDigest: inputs.runtimeInputDigest, commands: plan, exitCode: 0 }
   }
   await mkdir(resolve(evidence, '..'), { recursive: true })
@@ -134,7 +135,8 @@ async function executePort(options) {
   try {
     if (!profile) throw new Refused('Choose a declared --profile; no unmeasured profile is inferred')
     if (!profile.hostPlatforms.includes(process.platform)) throw new Refused('The selected source profile is not declared for this host platform')
-    if (!manifest.commands.verify || manifest.evidence.adapter !== 'squeeze-v1') throw new Refused('This entry has no implemented verification adapter; research/scaffold metadata grants no support')
+    if (!manifest.commands.verify || !adapter) throw new Refused('This entry has no implemented verification adapter; research/scaffold metadata grants no support')
+    adapter.validate?.({ manifest, profile })
     if (!options.blender) throw new Refused('Specify the actual --blender executable')
     if (!['darwin', 'linux'].includes(process.platform)) throw new Refused('The native proof launcher supports macOS/Linux; other hosts require independent qualification')
     report.nativeIdentity = await nodePortFileIdentity(options.blender)
@@ -159,7 +161,7 @@ async function executePort(options) {
       if (result.exitCode !== 0 || result.timedOut || result.error) throw new Error('Port command failed: ' + command.id)
     }
     for (const command of manifest.commands.build) await runStep(expandNodePortCommand(command, values))
-    let firstNativeHash = null, firstFinalHash = null
+    let firstNativeHash = null
     const completedRuns = []
     for (const run of profile.runs) {
       if (profile.expectedStatus !== 'not-applicable') { report.browserProbes.push({ run: run.id, ...await browserIdentity(root, { ...manifest.commands.verify.env, ...run.env }) }); await save() }
@@ -167,11 +169,11 @@ async function executePort(options) {
       completedRuns.push(run)
       const suite = await json(join(evidence, 'suite-' + run.id + '.json'))
       if (suite.status === 'SOURCE_ATTESTATION_NA') break
-      const nativeHash = await optionalFileHash(join(evidence, 'references.json')), finalHash = await optionalFileHash(join(evidence, 'final-proof.json'))
-      if (firstNativeHash !== null && (nativeHash !== firstNativeHash || finalHash !== firstFinalHash)) throw new Error('Native/Final evidence changed between browser runs')
-      firstNativeHash = nativeHash; firstFinalHash = finalHash
+      const nativeHash = await nativeFinalEvidenceHash(adapter, evidence)
+      if (firstNativeHash !== null && nativeHash !== firstNativeHash) throw new Error('Native/Final evidence changed between browser runs')
+      firstNativeHash = nativeHash
     }
-    const result = await readSqueezeNodePortEvidence({ root, evidence, manifest, profile, completedRuns })
+    const result = await adapter.read({ root, evidence, manifest, profile, completedRuns })
     Object.assign(report, result)
     const finalInputs = await fingerprintNodePortInputs(root, manifest)
     report.workspaceStable = finalInputs.inputDigest === inputs.inputDigest
@@ -184,8 +186,7 @@ async function executePort(options) {
         report.nativePythonArchiveDirectory = join(evidence, 'native-python-proof')
         report.nativePythonProof = await archiveNativeLauncher(launcher, evidence, ['qualified', 'not-applicable'].includes(report.status))
         if (report.status === 'qualified') {
-          const references = await json(join(evidence, 'references.json'))
-          const sources = await Promise.all(references.cases.map(item => realpath(join(evidence, item.file))))
+          const sources = await Promise.all((await adapter.finalSources(evidence)).map(path => realpath(path)))
           assert.deepEqual([...new Set(report.nativePythonProof.finalSources)].sort(), sources.sort(), 'Every Final source must traverse the native proof launcher')
         }
       } catch (error) {
@@ -239,7 +240,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   try {
     const result = await runNodePort(parseNodePortArguments(process.argv.slice(2)))
     const summary = Object.fromEntries(['manifestId', 'profile', 'status', 'exitCode', 'supportPromotion', 'productionCredit', 'reportPath',
-      'productionCases', 'caseRuns', 'rgbComparisons', 'maximumOutsideNativeInterval', 'workspaceStable', 'inputDigest', 'requestKey', 'evidenceKey', 'error',
+      'productionCases', 'nativeGraphs', 'savedFinalScenes', 'caseRuns', 'primaryFloat32Words', 'wordMismatches', 'rgbComparisons', 'maximumOutsideNativeInterval', 'workspaceStable', 'inputDigest', 'requestKey', 'evidenceKey', 'error',
       ...(result.dryRun ? ['dryRun', 'runnable', 'unknownIdentities', 'nativeIdentity', 'commands'] : [])].filter(key => result[key] !== undefined).map(key => [key, result[key]]))
     console.log('BLENDLINK_NODE_PORT_RESULT ' + JSON.stringify(summary)); process.exitCode = result.exitCode
   }

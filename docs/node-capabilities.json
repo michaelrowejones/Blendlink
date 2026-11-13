@@ -8626,6 +8626,9 @@
         },
         {
           "path": "experiments/float-to-int-native/literal-evidence.json"
+        },
+        {
+          "path": "experiments/float-to-int-native/pipeline-evidence.json"
         }
       ],
       "verification": {
@@ -8653,6 +8656,284 @@
           "SwiftShader"
         ],
         "coverageScope": "literal/group/Value input only; no image/field/Geometry/shader-context or other native-platform credit"
+      }
+    },
+    "compositor:CompositorNodeRelativeToPixel": {
+      "category": "unsupported",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "relative-to-pixel"
+      ],
+      "modes": {
+        "data_type": {
+          "supported": [
+            "FLOAT"
+          ],
+          "unsupported": [
+            "VECTOR"
+          ]
+        },
+        "reference_dimension": {
+          "supported": [
+            "X",
+            "Y",
+            "Greater",
+            "Smaller"
+          ],
+          "unsupported": [
+            "PER_DIMENSION",
+            "Diagonal"
+          ]
+        }
+      },
+      "renderer": "WebGPURenderer with actual WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_relative_to_pixel.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorRelativeToPixel.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorRelativeToPixel.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_relative_to_pixel_check.py"
+        },
+        {
+          "path": "experiments/compositor-relative-to-pixel/README.md"
+        },
+        {
+          "path": "experiments/compositor-relative-to-pixel/sources.json"
+        },
+        {
+          "path": "experiments/compositor-relative-to-pixel/capture.mjs"
+        },
+        {
+          "path": "experiments/compositor-relative-to-pixel/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-relative-to-pixel/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-relative-to-pixel/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-relative-to-pixel/negative-zero-evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "nativeNodeEvaluator": "CPU single-value operation, including single values in GPU source compositing",
+        "nativeGraphs": 64,
+        "savedFinalScenes": 8,
+        "builtCaseRuns": 288,
+        "primaryFloat32Words": 134784,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "scalar bounded literal/Value/group coefficients and direct Render Layers Image domain only"
+      },
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. FLOAT X/Y/Greater/Smaller with exact normal Float32 or positive-zero literal, Value and group-default coefficients of magnitude <=65536, and a direct untransformed Render Layers Image reference. Image supplies only live reference dimensions; numerical output retains native single-value behavior. Native CPU single-value operation runs even in GPU-authored compositing; this is not a spatial GPU-field port. Runtime independently checks schema/profile, topological Image and Value producers within a 2048-op work bound. No port-owned textures or RTTs, no per-frame readback. Negative-zero literals explicitly refuse after measured native -0/WebGPU +0 word disagreement. Subnormal/nonfinite/F64/out-of-bound/computed coefficients, vector/per-dimension/diagonal modes, static/transformed/computed image references, render borders, non-square pixels, animation/drivers, and other native builds/platforms remain unqualified. Final resource evidence restores the exact actual-scene no-compositor DFG_LUT identity set over three apply/dispose cycles, rather than mislabeling renderer-owned caches as port resources."
+        }
+      }
+    },
+    "compositor:ShaderNodeTexGradient": {
+      "category": "unsupported",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "gradient-texture"
+      ],
+      "modes": {
+        "gradient_type": {
+          "supported": [
+            "LINEAR",
+            "QUADRATIC",
+            "EASING",
+            "DIAGONAL"
+          ],
+          "unsupported": [
+            "RADIAL",
+            "SPHERICAL",
+            "QUADRATIC_SPHERE"
+          ]
+        }
+      },
+      "renderer": "WebGPURenderer with actual WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_procedural_texture.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorProceduralTexture.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorProceduralTexture.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_texture_family_check.py"
+        },
+        {
+          "path": "experiments/compositor-texture-family/sources.json"
+        },
+        {
+          "path": "experiments/compositor-texture-family/README.md"
+        },
+        {
+          "path": "experiments/compositor-texture-family/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-texture-family/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-texture-family/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-texture-family/research-counterexamples.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "nativeNodeEvaluator": "CPU-MF including GPU source single values",
+        "nativeGraphs": 240,
+        "savedFinalScenes": 20,
+        "browserCaseRuns": 1040,
+        "primaryFloat32Words": 266240,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Partial bounded literal family; no arbitrary fields/default implicit coordinates or additional platform credit."
+      },
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "LINEAR accepts the bounded literal vector domain. QUADRATIC, EASING and DIAGONAL additionally require exact sixteenth-grid coordinates; RADIAL/SPHERICAL/QUADRATIC_SPHERE remain unqualified. Native Fac and RGBA Color (alpha1) outputs are independently verified. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. Native CPU multi-function single values, including authored GPU compositing; not a spatial GPU-field port. Explicit linked literal, Value, reroute, CombineXYZ and group-default vectors only; exact normal Float32 words (magnitude >=2^-125) or positive zero, bounded magnitude <=65536. Negative zero, subnormal/nonfinite/F64/unknown-provenance values, implicit socket conversions, nonidentity texture mapping, animation/drivers, other native versions/builds/platforms and all computed/image fields refuse. Unlinked Vector uses native Uniform Image Coordinates and refuses rather than being replaced by literal zero. Runtime independently rederives actual prior-operation provenance with 2048-operation/64-visit/depth8 bounds. No port-owned textures/render targets or per-frame readback. Final disposal restores exact renderer-owned DFG_LUT identities established by a no-compositor PBR control, not a generic resource allowance."
+        }
+      }
+    },
+    "compositor:ShaderNodeTexChecker": {
+      "category": "unsupported",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "checker-texture"
+      ],
+      "modes": {},
+      "renderer": "WebGPURenderer with actual WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_procedural_texture.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorProceduralTexture.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorProceduralTexture.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_texture_family_check.py"
+        },
+        {
+          "path": "experiments/compositor-texture-family/sources.json"
+        },
+        {
+          "path": "experiments/compositor-texture-family/README.md"
+        },
+        {
+          "path": "experiments/compositor-texture-family/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-texture-family/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-texture-family/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-texture-family/research-counterexamples.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "nativeNodeEvaluator": "CPU-MF including GPU source single values",
+        "nativeGraphs": 284,
+        "savedFinalScenes": 8,
+        "browserCaseRuns": 1168,
+        "primaryFloat32Words": 299008,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "Partial bounded literal family; no arbitrary fields/default implicit coordinates or additional platform credit."
+      },
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Checker additionally requires sixteenth-grid vectors within +/-16 and fixed integer Scale0..256. Color1/Color2 are bounded exact Float32 literal/group colors; Color preserves independent signed/HDR RGB/alpha, while Fac prunes unused Color subtrees. Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. Native CPU multi-function single values, including authored GPU compositing; not a spatial GPU-field port. Explicit linked literal, Value, reroute, CombineXYZ and group-default vectors only; exact normal Float32 words (magnitude >=2^-125) or positive zero, bounded magnitude <=65536. Negative zero, subnormal/nonfinite/F64/unknown-provenance values, implicit socket conversions, nonidentity texture mapping, animation/drivers, other native versions/builds/platforms and all computed/image fields refuse. Unlinked Vector uses native Uniform Image Coordinates and refuses rather than being replaced by literal zero. Runtime independently rederives actual prior-operation provenance with 2048-operation/64-visit/depth8 bounds. No port-owned textures/render targets or per-frame readback. Final disposal restores exact renderer-owned DFG_LUT identities established by a no-compositor PBR control, not a generic resource allowance."
+        }
       }
     }
   },

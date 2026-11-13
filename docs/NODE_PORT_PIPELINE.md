@@ -14,6 +14,12 @@ contracts and run their regressions when shared code changes. The
 [node tracker refresh](NODE_TRACKER_REFRESH.md) keeps priorities and the Google
 Sheet aligned with audited coverage rather than unpromoted research.
 
+Current development uses local verification and ordinary checkpoint pushes,
+without pull requests or hosted workflow dispatch. The
+[batch worklog](NODE_PORT_WORKLOG.md) records the branch, investigation budgets
+and reusable bottlenecks. This temporary working policy does not weaken the
+native/Final/browser evidence required for support claims.
+
 ## Workflow
 
 1. **Discover upstream.** Resolve an official daily archive, its checksum, and
@@ -35,9 +41,17 @@ Sheet aligned with audited coverage rather than unpromoted research.
    refusal and ownership checks. Record inputs, actual identities, logs and a
    result. Update capability claims after the evidence is reviewed.
 
-The first execution adapter is **Squeeze**. Other nodes can have dependency and
-research manifests; unsupported execution adapters refuse. Expanding this
-registry is the next step toward a common workflow for every port.
+The execution registry includes **Squeeze** and the bounded **Float to Integer**
+compositor port. Each adapter owns its source identity, native receipts, actual
+saved Final sources and browser census. Float to Integer records its CPU-MF
+evaluator explicitly, including single values in GPU-authored compositing; it
+does not claim a native GPU numerical backend. Unknown adapters refuse.
+
+Native implementation and actual fixture dependencies are pinned separately.
+Editing an unrelated add-on test does not invalidate the Float to Integer
+transaction; editing its shared oracle does. Runtime source fingerprints remain
+strict. Prefer immutable worktrees for concurrent implementation so builders and
+proofs cannot overwrite one another's source or distribution files.
 
 Pair each port's numerical proof with the [performance protocol](NODE_PORT_PERFORMANCE.md):
 bounded structural analysis, actual scene coverage, observed browser timings,
@@ -74,6 +88,10 @@ npm run nodes:verify -- squeeze --profile mac-52 \
 npm run nodes:verify -- squeeze --profile mac-52 \
   --blender /absolute/path/to/Blender \
   --evidence artifacts/verification-node-port-squeeze
+
+npm run nodes:verify -- float-to-int --profile mac-53 \
+  --blender /absolute/path/to/Blender \
+  --evidence artifacts/node-ports/float-to-int/fresh-transaction
 ```
 
 The scaffold's `native-schema.py` requires `BLENDLINK_NODE_PORT_REPOSITORY` to
@@ -137,3 +155,16 @@ build: 5,153 watched source files, 145 shader/192 compositor types, 167 review
 items and 166 scaffolds. The [verification receipt](node-pipeline/verification-receipt.json)
 records the archive digest and independently recomputed queue. Its numerical
 porting credit is zero; observation success is distinct from node qualification.
+
+After a reviewed port, update classifications without requiring old Blender
+binaries to be downloaded again:
+
+```sh
+python3 scripts/audit-node-coverage.py --reclassify-retained --check
+node scripts/export-node-tracker.mjs --output /tmp/scenetoweb-node-tracker.json
+```
+
+This mode requires content-pinned full native catalogs and unchanged reviewed
+baselines. It rejects modified or focused catalogs, retains the native inventory
+audit date, and records a separate classification timestamp. It performs no
+native rediscovery and grants no numerical qualification by itself.

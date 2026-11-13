@@ -1,0 +1,22 @@
+[
+  {
+    "path": "source/blender/nodes/shader/nodes/node_shader_tex_gradient.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/nodes/node_shader_tex_gradient.cc",
+    "sha256": "0cacd276b4ee29bf926257c5e9d4e95b95a3adce8ebecb8890718f1a98a8bbfa"
+  },
+  {
+    "path": "source/blender/nodes/shader/nodes/node_shader_tex_checker.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/nodes/node_shader_tex_checker.cc",
+    "sha256": "071abe965255ac86ba8b61408e1a327d0c3a5677775546e625eced32cafdfdf3"
+  },
+  {
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_gradient.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_tex_gradient.bsl.hh",
+    "sha256": "b25510f053184931c1b914ed9f3205a5ff65e14b133106cef436964b035f6594"
+  },
+  {
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_checker.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_tex_checker.bsl.hh",
+    "sha256": "1e82a6eb46e6b68e0a48983d82bf7a497e7096ed31b4886ac7a37bc80482c019"
+  }
+]

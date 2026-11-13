@@ -1,0 +1,404 @@
+{
+  "status": "QUALIFIED_RELATIVE_TO_PIXEL_SCALAR",
+  "nativeGraphs": 64,
+  "savedFinalScenes": 8,
+  "builtCaseRuns": 288,
+  "primaryFloat32Words": 134784,
+  "wordMismatches": 0,
+  "sourceProfile": "Blender5.3.0 02f0899d78e3 macOSarm64 CPU single-value operation, including GPU-authored single values",
+  "scope": "FLOAT X/Y/Greater/Smaller with direct Render Layers Image reference and exact Float32 literal/Value/group coefficient: +0 or normal, magnitude<=65536. No -0/subnormal/nonfinite/F64/computed factors, vector/per-dimension/diagonal modes, static/shifted/transformed references, render borders or non-square pixels.",
+  "resourceContract": "No port-owned textures or RTTs. Final actual-GLB no-compositor warmup identifies the exact renderer-owned DFG_LUT16x16 object. Three apply/dispose cycles restore that identical cache set, all source materials/callbacks, and zero render targets; raw cases dispose all textures.",
+  "sources": [
+    {
+      "device": "CPU",
+      "nativeCases": 32,
+      "savedFinalScenes": 4,
+      "native": {
+        "path": "artifacts/verification-relative-to-pixel/cpu/qualification.json",
+        "sha256": "ac953a08dc89ec769a7696eba3531d7c2ff0da4f58e8d687be25dda9e6303293"
+      },
+      "final": {
+        "path": "artifacts/verification-relative-to-pixel/cpu/final-proof.json",
+        "sha256": "6b93447d3edff46c8d248013e18c2208adf362ae7cb34c25e6cd82b0c3fa7853"
+      },
+      "sourceHashes": {
+        "packages/blender-addon/tests/compositor_relative_to_pixel_check.py": "8d53af595d46fd00872870da5c74372d4c750d83d2d80b44df435c4331a632ea",
+        "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
+        "packages/blendlink/blender/compositor_graph.py": "dcabedf408f42158e0fe3387b5abf6f00a3525f92eede589ff392bd4f2e502dd"
+      },
+      "nativeLauncherIdentity": {
+        "kind": "blendlink-proof-native-python-v1",
+        "platform": "darwin",
+        "native": {
+          "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "bytes": 210043328,
+          "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+        },
+        "node": {
+          "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "bytes": 126827136,
+          "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+        },
+        "launcher": {
+          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-relative-to-pixel/cpu/native-launchers/native-launcher-qGVXO9/blender-proof",
+          "bytes": 778,
+          "sha256": "ed7f44486b2c1751252d8799f9e96024365304008d5e58aa9df1c41f9a310535"
+        },
+        "configuration": {
+          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-relative-to-pixel/cpu/native-launchers/native-launcher-qGVXO9/launcher.json",
+          "bytes": 1236,
+          "sha256": "ee4273cfe378b18dbb1f7f391edfd2a3c66307cc8efe1dd3a8a4db037ff15d38"
+        },
+        "helper": {
+          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-relative-to-pixel/cpu/native-launchers/native-launcher-qGVXO9/lib/node-port-python.mjs",
+          "bytes": 10196,
+          "sha256": "f9b018633d6663a39a5bd10d5b779fc3b1fee8c0ce0949c692154d183de0fdd5"
+        },
+        "bridge": {
+          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-relative-to-pixel/cpu/native-launchers/native-launcher-qGVXO9/node-port-blender.mjs",
+          "bytes": 321,
+          "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+        },
+        "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+        "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+      }
+    },
+    {
+      "device": "GPU",
+      "nativeCases": 32,
+      "savedFinalScenes": 4,
+      "native": {
+        "path": "artifacts/verification-relative-to-pixel/gpu/qualification.json",
+        "sha256": "52d7d41234ba0f0b1ea52dc0c3fd92593e403aeb819b3be7a66e98d112d106ef"
+      },
+      "final": {
+        "path": "artifacts/verification-relative-to-pixel/gpu/final-proof.json",
+        "sha256": "0e6554b560a1be53077d66d23155fe34401bcdbac87ba4f5f27aeafd01a793ad"
+      },
+      "sourceHashes": {
+        "packages/blender-addon/tests/compositor_relative_to_pixel_check.py": "8d53af595d46fd00872870da5c74372d4c750d83d2d80b44df435c4331a632ea",
+        "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
+        "packages/blendlink/blender/compositor_graph.py": "dcabedf408f42158e0fe3387b5abf6f00a3525f92eede589ff392bd4f2e502dd"
+      },
+      "nativeLauncherIdentity": {
+        "kind": "blendlink-proof-native-python-v1",
+        "platform": "darwin",
+        "native": {
+          "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "bytes": 210043328,
+          "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+        },
+        "node": {
+          "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "bytes": 126827136,
+          "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+        },
+        "launcher": {
+          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-relative-to-pixel/gpu/native-launchers/native-launcher-vV0Fmx/blender-proof",
+          "bytes": 778,
+          "sha256": "c3c59ee36437536c8460de949be1ce367364d03f39ae7b120297678c2f84ac25"
+        },
+        "configuration": {
+          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-relative-to-pixel/gpu/native-launchers/native-launcher-vV0Fmx/launcher.json",
+          "bytes": 1236,
+          "sha256": "d5d4b870d13666225675bb23b31d8f5d57f2ce247f51e77844d14e1d47c1a504"
+        },
+        "helper": {
+          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-relative-to-pixel/gpu/native-launchers/native-launcher-vV0Fmx/lib/node-port-python.mjs",
+          "bytes": 10196,
+          "sha256": "f9b018633d6663a39a5bd10d5b779fc3b1fee8c0ce0949c692154d183de0fdd5"
+        },
+        "bridge": {
+          "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-relative-to-pixel/gpu/native-launchers/native-launcher-vV0Fmx/node-port-blender.mjs",
+          "bytes": 321,
+          "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+        },
+        "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+        "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+      }
+    }
+  ],
+  "runs": [
+    {
+      "path": "artifacts/verification-relative-to-pixel/cpu/browser-raw-metal/report.json",
+      "sha256": "bdedaa73f201acc0adbd296f4f4380a463122dab52cab5e0c983cd20294e8414",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "raw",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 32
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 32
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-relative-to-pixel/cpu/browser-final-metal/report.json",
+      "sha256": "5ebf557b223420ee2b91fdb476bded500af0b8dec5811bca1faac24c6a38952c",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "final",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 4
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 4
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-relative-to-pixel/cpu/browser-raw-software/report.json",
+      "sha256": "46fa3da21c27cb2146a8c68dd2f1f38c908406cec38be4b2620f75aea3ce5e74",
+      "sourceDevice": "CPU",
+      "profile": "software",
+      "phase": "raw",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 32
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 32
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-relative-to-pixel/cpu/browser-final-software/report.json",
+      "sha256": "e2002a6782e1048c58cab44fbea515cb140946bf8e1b545f3692bd580cb2f893",
+      "sourceDevice": "CPU",
+      "profile": "software",
+      "phase": "final",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 4
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 4
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-relative-to-pixel/gpu/browser-raw-metal/report.json",
+      "sha256": "6431f76a7bcf79a40436426b8f14a83ace8a531213bf5f2084c39a0d3b20769c",
+      "sourceDevice": "GPU",
+      "profile": "metal",
+      "phase": "raw",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 32
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 32
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-relative-to-pixel/gpu/browser-final-metal/report.json",
+      "sha256": "f5c572c6e768a8e1ef01ac413cbb62c5241ba0e68fac1739b89338b736f1b508",
+      "sourceDevice": "GPU",
+      "profile": "metal",
+      "phase": "final",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 4
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 4
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-relative-to-pixel/gpu/browser-raw-software/report.json",
+      "sha256": "dd9dc7d9ffb726393198cf63fddb0411dd7fbf4fb76f68e6d00a22bef6a687e3",
+      "sourceDevice": "GPU",
+      "profile": "software",
+      "phase": "raw",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 32
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 32
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    },
+    {
+      "path": "artifacts/verification-relative-to-pixel/gpu/browser-final-software/report.json",
+      "sha256": "2f4ea21000bbd88c309e0fe7933f0c53b74d835e276aeb98d202a6a772c653c8",
+      "sourceDevice": "GPU",
+      "profile": "software",
+      "phase": "final",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 4
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 4
+        }
+      ],
+      "browserVersion": "158.0.8127.18"
+    }
+  ],
+  "negativeZeroBoundary": {
+    "kind": "relative-to-pixel-negative-zero-boundary",
+    "productionCredit": false,
+    "nativeBuild": "02f0899d78e3",
+    "case": "blender-5-3-cpu-x--0p0",
+    "dimensions": [
+      13,
+      9
+    ],
+    "nativeRgbWord": "80000000",
+    "observedWebGpuRgbWord": "00000000",
+    "differingRgbWords": 351,
+    "policy": "Reject negative-zero literals and Value/group constants independently in the native extractor and runtime. Positive zero and normal bounded values remain separate candidates; no numeric tolerance or expected-pixel rewrite is used.",
+    "rawArtifacts": "Machine-local artifacts/verification-relative-to-pixel/cpu retains the earlier negative-zero case JSON, program and rgba32f data. It is excluded from the admitted qualification matrix."
+  },
+  "upstream": {
+    "primarySources": [
+      {
+        "path": "source/blender/nodes/composite/nodes/node_composite_relative_to_pixel.cc",
+        "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_relative_to_pixel.cc",
+        "sha256": "1256a7764e55e5299198fc13f66d1f185a3b1a243b1fd4b354594e4ad4c8ac5d",
+        "bytes": 14568
+      },
+      {
+        "path": "source/blender/compositor/intern/domain.cc",
+        "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/domain.cc",
+        "sha256": "f942718b88970678375f7e2b720cfcb12073934ccd568c2d7d1ed61a97c82e4d",
+        "bytes": 5492
+      }
+    ],
+    "nativeBuild": "02f0899d78e3",
+    "scope": "Scalar CPU-multifunction evaluation, including GPU-authored single values; transformed image references remain refused."
+  },
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "path": "artifacts/verification-relative-to-pixel"
+  },
+  "productionPromotion": false
+}
