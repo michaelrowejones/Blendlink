@@ -73,11 +73,17 @@ Lift/Gamma/Gain controls through a different color model than modern socket-base
 Color Balance. Legacy compositor rounding also differs at negative half values.
 The exporter records these distinctions for the browser runtime.
 
-The current HDR audit has reproduced amplified CPU Difference Key and Luminance
-Key Image-output errors with authored alpha `2^60`. Their ordinary-value
-comparisons do not certify this boundary; corrections remain under native
-differential test. These are partial ports, and complete node parity remains
-unfinished.
+The HDR audit reproduced amplified CPU Difference Key and Luminance Key
+Image-output errors with authored alpha `2^60`. Fresh CPU Difference Key now
+uses a separately qualified exact model within its documented parameter domain;
+the previous serialized model remains compatible. Fresh Luminance Key now
+preserves this boundary within its measured Mac CPU profiles, including
+tiny-value behavior and final RGBA products. Unmeasured CPU/compiler profiles
+retain explicit legacy v1 precision and do not gain that HDR guarantee.
+Separate Linux/Windows native qualification remains pending; experimental
+kernel trials cannot promote production admission. Ordinary-value comparisons
+do not certify this boundary. These are partial ports, and complete node
+parity remains unfinished.
 
 ## How a port earns support
 

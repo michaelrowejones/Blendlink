@@ -15,7 +15,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from compositor_reference import NativeCompositorReference
 import compositor_graph
-from compositor_difference_key import native_gpu_profile, is_measured_rne_profile, UNVERIFIED_GPU_MESSAGE
+from compositor_difference_key import native_gpu_profile, is_measured_rne_profile, UNVERIFIED_GPU_MESSAGE, CPU_EXACT_MODEL
 
 
 def fingerprint(tree):
@@ -124,15 +124,17 @@ def main(output):
         else: node.tolerance, node.falloff = tolerance, falloff
         return sink, source, node
 
-    def save(label, source):
+    def save(label, source, cpu_fold=False):
         before = fingerprint(tree); groups = [(group.name, fingerprint(group)) for group in bpy.data.node_groups]
         result = compositor_graph.extract(oracle.scene)
         assert result['status'] == 'extracted', (label, result)
         assert before == fingerprint(tree) and groups == [(group.name, fingerprint(group)) for group in bpy.data.node_groups]
         differences = [op for op in result['ops'] if op['kind'] == 'difference-key']
         for op in differences:
-            expected_rne = oracle.device == 'GPU' and bpy.context.preferences.system.gpu_backend == 'OPENGL'
-            assert op['properties']['difference_key_model'] == ('native-difference-key-rne-v1' if expected_rne else 'native-difference-key-v1')
+            expected_cpu = oracle.device == 'CPU' or oracle.modern and cpu_fold
+            expected_rne = not expected_cpu and oracle.device == 'GPU' and bpy.context.preferences.system.gpu_backend == 'OPENGL'
+            assert op['properties']['difference_key_model'] == (CPU_EXACT_MODEL if expected_cpu else 'native-difference-key-rne-v1' if expected_rne else 'native-difference-key-v1')
+            if expected_cpu: assert op['properties']['difference_key_native_version'] == list(bpy.app.version[:3])
             if expected_rne:
                 assert is_measured_rne_profile(op['properties'].get('difference_key_gpu_profile'))
             else:
@@ -198,18 +200,23 @@ def main(output):
         print('BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_SOURCE_PROFILE_REFUSED ' + json.dumps({
             'blender': bpy.app.version_string, 'device': oracle.device, 'cases': 0, 'controlCases': len(oracle.rows)}))
         return
+    cpu_refusals = []
     for tolerance, falloff in [(0, .125), (.125, .25), (.5, 1/64), (.125, 0), (.1, .1)]:
         for name in ['Image', 'Matte']:
             for mode in ['field', 'constant', 'both-field']:
                 sink, source, node = setup(tolerance, falloff, mode)
                 tree.links.new(node.outputs[name], sink.inputs[0])
-                save(f'difference-key-{tolerance}-{falloff}-{name.lower()}-{mode}', source)
+                if tolerance == 0 and (oracle.device == 'CPU' or oracle.modern and mode == 'constant'):
+                    rejected = compositor_graph.extract(oracle.scene)
+                    assert rejected['status'] == 'unsupported' and 'positive Tolerance' in str(rejected), rejected
+                    cpu_refusals.append(rejected); continue
+                save(f'difference-key-{tolerance}-{falloff}-{name.lower()}-{mode}', source, cpu_fold=mode == 'constant')
     for name in ['Image', 'Matte']:
         sink, source, node = setup(.125, .25, linked=oracle.modern, key_alpha=3)
         tree.links.new(node.outputs[name], sink.inputs[0]); save('difference-key-ignored-key-alpha-' + name.lower(), source)
         for mode in ['field', 'constant']:
             sink, source, node = setup(.1, .1, mode, zero_key=True)
-            tree.links.new(node.outputs[name], sink.inputs[0]); save('difference-key-hdr-upper-boundary-' + name.lower() + '-' + mode, source)
+            tree.links.new(node.outputs[name], sink.inputs[0]); save('difference-key-hdr-upper-boundary-' + name.lower() + '-' + mode, source, cpu_fold=mode == 'constant')
     for name in ['Image', 'Matte']:
         sink, source, node = setup(.125, .25)
         second = tree.nodes.new('CompositorNodeDiffMatte')
@@ -239,13 +246,13 @@ def main(output):
                 sink, source, node = setup(.1, .1, color_mode='constant', zero_key=True,
                     constant_color=(*association['constantProbe']['rgb'], 2))
                 tree.links.new(node.outputs[name], sink.inputs[0])
-                save('difference-key-hdr-association-constant-' + name.lower(), source)
+                save('difference-key-hdr-association-constant-' + name.lower(), source, cpu_fold=True)
         finally:
             oracle.image, oracle.pixels = original_image, original_pixels
             tree.nodes.clear()
             bpy.data.images.remove(image)
 
-    refusals = []
+    refusals = list(cpu_refusals)
     sink, source, node = setup(.125, 1/128); tree.links.new(node.outputs[0], sink.inputs[0])
     before = fingerprint(tree); result = compositor_graph.extract(oracle.scene)
     assert result['status'] == 'unsupported' and any('Falloff must be' in d['message'] for d in result['diagnostics']), result

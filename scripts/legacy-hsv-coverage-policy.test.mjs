@@ -11,13 +11,15 @@ test('legacy HSV coverage records actual 4.2 classes and modern migration separa
     assert.equal(entry.category,'partial')
     assert.deepEqual(entry.runtimeOps,['color_convert'])
     assert.equal(entry.runtimePath,'packages/blendlink/src/tslColorConversion.ts')
-    for(const phrase of ['EEVEE 4.2.0 only','H/S/V','no Alpha socket','absent in 5.2.0/5.3.0','actual saved-file migration','Cycles uses baking','OpenGL source qualification remains pending'])assert.ok(entry.limits.includes(phrase),phrase)
+    for(const phrase of ['EEVEE 4.2.0 only','H/S/V','no Alpha socket','absent in 5.2.0/5.3.0','actual saved-file migration','Cycles uses baking','Linux 4.2.0 OpenGL'])assert.ok(entry.limits.includes(phrase),phrase)
     assert.ok(entry.evidence.some(item=>item.path==='experiments/legacy-shader-hsv/README.md'))
     assert.ok(entry.evidence.some(item=>item.path==='packages/blender-addon/tests/legacy_shader_hsv_check.py'))
     assert.ok(!map.knownUnsupported.includes('shader:'+id))
     assert.deepEqual(entry.verification.nativeNumericVersions,['4.2.0'])
     assert.deepEqual(entry.verification.actualMigrationVersions,['5.2.0','5.3.0'])
     assert.equal(entry.verification.nativeSourceBackend,'METAL')
+    assert.equal(entry.verification.hostedOpenGL42.sourceBackend,'OPENGL')
+    assert.equal(entry.verification.hostedOpenGL42.cases,50)
   }
 })
 

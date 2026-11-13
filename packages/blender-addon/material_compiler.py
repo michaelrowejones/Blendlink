@@ -543,6 +543,7 @@ def _constant_rgba(node, socket) -> tuple[float, float, float, float] | None:
 
 
 _MATERIALIZED_FIELD_NODES = frozenset({
+    "FunctionNodeGetVectorComponent",
     "NodeGroupInput",
     "NodeReroute",
     "ShaderNodeAttribute",

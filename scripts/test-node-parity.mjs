@@ -5,9 +5,11 @@ import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { readDifferenceProfileRefusal } from './lib/difference-profile-refusal.mjs'
+import { readDifferencePrecisionProfile, readDifferenceTinyRefusals, validateDifferenceMeanReference } from './lib/difference-precision-evidence.mjs'
 import { readChannelProfileRefusal } from './lib/channel-profile-refusal.mjs'
 import { readSplitSourceProfile } from './lib/split-source-profile.mjs'
 import { readMapValueSourceProfile, verifyMapValueCurrentSources } from './lib/map-value-profile.mjs'
+import { validateVectorComponentSource, validateVectorComponentBrowser } from './lib/vector-component-profile.mjs'
 import { NODE_PARITY_SUITES, nodeParityPlan } from './lib/node-parity-plan.mjs'
 
 const plan = nodeParityPlan(process.argv.slice(2))
@@ -58,6 +60,8 @@ for (const key of ['sharedUtilityShaderAvailable', 'sharedUtilityCompositorAvail
   assert.equal(typeof capabilities[key], 'boolean', `Native utility capability ${key} was not reported`)
 const references = []
 const referenceSets = []
+const independentArithmeticProofs = []
+const shaderSourceQualifications = []
 const inapplicableFamilies = []
 function recordAffineUnavailable(directory, family, device, rows) {
   const file = join(directory, 'not-applicable.json')
@@ -91,6 +95,7 @@ const compositorFamilies = [
   ['normal-direction', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES'],
   ['luminance-key', 'compositor_luminance_key_check.py', 'BLENDLINK_COMPOSITOR_LUMINANCE_KEY_REFERENCES'],
   ['difference-key', 'compositor_difference_key_check.py', 'BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_REFERENCES'],
+  ['difference-cpu-precision', 'compositor_difference_precision_check.py', 'BLENDLINK_DIFFERENCE_PRECISION_REFERENCES'],
   ['distance-key', 'compositor_distance_key_check.py', 'BLENDLINK_COMPOSITOR_DISTANCE_KEY_REFERENCES'],
   ['channel-key', 'compositor_channel_key_check.py', 'BLENDLINK_COMPOSITOR_CHANNEL_KEY_REFERENCES'],
   ['map-value', 'compositor_map_value_check.py', 'BLENDLINK_COMPOSITOR_MAP_VALUE_REFERENCES'],
@@ -142,7 +147,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   mkdirSync(directory, { recursive: true })
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
-    [variable]: directory, BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPLIT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DISTANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_PIXELATE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_RESIZE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_IMAGE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPILL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
+    [variable]: directory, BLENDLINK_DIFFERENCE_PRECISION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPLIT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DISTANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_PIXELATE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_RESIZE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_IMAGE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPILL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_AFFINE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
@@ -153,6 +158,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
     if (family === 'affine' && recordAffineUnavailable(directory, family, 'CPU', rows)) continue
     if (family === 'split') assert.equal(readSplitSourceProfile(directory, rows).status, 'qualified')
+    if (family === 'difference-cpu-precision') assert.equal(readDifferencePrecisionProfile(directory, rows).status, 'qualified')
     if (family === 'map-value') {
       const qualification = readMapValueSourceProfile(directory, rows)
       verifyMapValueCurrentSources(qualification, root)
@@ -168,11 +174,38 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
     referenceSets.push({ family, device: 'CPU', directory, cases: rows.length })
   }
 }
+if (plan.compositor) {
+  const tinyDirectory = join(evidence, 'difference-tiny-cpu')
+  rmSync(tinyDirectory, { recursive: true, force: true }); mkdirSync(tinyDirectory, { recursive: true })
+  attempt('difference-tiny-cpu', () => {
+    run('native-difference-tiny-cpu', blender, ['--background', '--factory-startup', '--python-exit-code', '1', '-t', '1',
+      '--python', join(root, 'experiments/compositor-difference-key-differential/native_tiny.py')], { BLENDLINK_DIFFERENCE_TINY_REFERENCES: tinyDirectory })
+    const rows = JSON.parse(readFileSync(join(tinyDirectory, 'index.json'), 'utf8'))
+    const qualification = readDifferenceTinyRefusals(tinyDirectory, rows)
+    inapplicableFamilies.push({ family: 'difference-zero-threshold-cpu', directory: tinyDirectory, ...qualification })
+    references.push(tinyDirectory)
+    referenceSets.push({ family: 'difference-tiny-cpu-independent-controls', device: 'CPU', directory: tinyDirectory,
+      cases: rows.length, numericalDifferenceCases: 0, controlCases: 2 })
+  })
+  const meanDirectory = join(evidence, 'difference-mean-cpu')
+  rmSync(meanDirectory, { recursive: true, force: true }); mkdirSync(meanDirectory, { recursive: true })
+  attempt('difference-mean-cpu', () => {
+    run('native-difference-mean-cpu', blender, ['--background', '--factory-startup', '--python-exit-code', '1', '-t', '1',
+      '--python', join(root, 'experiments/compositor-difference-key-differential/native_mean.py')], { BLENDLINK_DIFFERENCE_MEAN_REFERENCES: meanDirectory })
+    const reference = JSON.parse(readFileSync(join(meanDirectory, 'mean.json'), 'utf8'))
+    const qualification = validateDifferenceMeanReference(reference)
+    run('difference-mean-source-browser', process.execPath, ['experiments/compositor-difference-key-differential/mean-run.mjs',
+      meanDirectory, '--out', join(evidence, 'difference-mean-source-browser')])
+    independentArithmeticProofs.push({ family: 'difference-mean', runtime: 'immutable-production-TypeScript-helper-source',
+      directory: meanDirectory, ...qualification, browserBackends: ['webgpu', 'webgl2'] })
+  })
+}
 let nativeCompositorGpu
 if (!plan.compositor) {
   nativeCompositorGpu = { status: 'not-requested', reason: 'Explicit ' + plan.suite + ' suite' }
 } else if (capabilities.offlineGpuAvailable && capabilities.gpuParityVersionSupported) {
   const gpuFamilies = [
+    ['difference-cpu-fold-gpu', 'compositor_difference_precision_check.py', 'BLENDLINK_DIFFERENCE_PRECISION_REFERENCES', 'BLENDLINK_DIFFERENCE_PRECISION_DEVICE'],
     ['map-value-gpu-source-profile', 'compositor_map_value_check.py', 'BLENDLINK_COMPOSITOR_MAP_VALUE_REFERENCES', 'BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE'],
     ['split-gpu-source-profile', 'compositor_split_check.py', 'BLENDLINK_COMPOSITOR_SPLIT_REFERENCES', 'BLENDLINK_COMPOSITOR_SPLIT_DEVICE'],
     ['channel-key-gpu-source-profile', 'compositor_channel_key_check.py', 'BLENDLINK_COMPOSITOR_CHANNEL_KEY_REFERENCES', 'BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE'],
@@ -222,6 +255,17 @@ if (!plan.compositor) {
       '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory, [deviceVariable]: 'GPU' })
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
     if (family === 'affine-gpu' && recordAffineUnavailable(directory, family, 'GPU', rows)) return
+    if (family === 'difference-cpu-fold-gpu') {
+      const qualification = readDifferencePrecisionProfile(directory, rows)
+      if (qualification.status === 'not-applicable') {
+        assert.match(nativeOutput, /BLENDLINK_DIFFERENCE_CPU_PRECISION_NOT_APPLICABLE/)
+        inapplicableFamilies.push({ family, device: 'GPU', directory, ...qualification })
+        references.push(directory)
+        referenceSets.push({ family: 'difference-legacy-gpu-independent-control', device: 'GPU', directory, cases: 1, numericalCpuExactCases: 0 })
+        return
+      }
+      assert.equal(qualification.sourceDevice, 'GPU')
+    }
     if (family === 'map-value-gpu-source-profile') {
       const qualification = readMapValueSourceProfile(directory, rows)
       verifyMapValueCurrentSources(qualification, root)
@@ -341,6 +385,22 @@ const compositorComplete = references.length > 0 && attempt('compositor-browser'
 if (nativeCompositorGpu.status === 'generated') nativeCompositorGpu.status = compositorComplete &&
   !failures.some(item => item.label.endsWith('-gpu')) ? 'passed' : 'not-verified'
 if (plan.shaders) {
+  attempt('shader-vector-component', () => {
+    const directory = join(evidence, 'vector-component'), schema = join(directory, 'source-schema.json')
+    mkdirSync(directory, { recursive: true })
+    run('vector-component-source', blender, ['--background', '--factory-startup', '-t', '1', '--python-exit-code', '1',
+      '--python', join(root, 'packages/blender-addon/tests/vector_component_check.py')], {
+      BLENDLINK_VECTOR_COMPONENT_SCHEMA: schema, BLENDLINK_VECTOR_COMPONENT_PACKAGED_ADDON: join(root, 'packages/blendlink/dist/addon'),
+    })
+    const qualification = validateVectorComponentSource(JSON.parse(readFileSync(schema, 'utf8')))
+    shaderSourceQualifications.push({ family: 'vector-component', directory, ...qualification })
+    if (qualification.status === 'native-node-absent') {
+      inapplicableFamilies.push({ family: 'shader-vector-component', directory, ...qualification }); return
+    }
+    run('vector-component-browser', process.execPath, ['experiments/vector-component-differential/run.mjs', '--built'],
+      { BLENDLINK_BLENDER: blender, BLENDLINK_VECTOR_COMPONENT_EVIDENCE: join(directory, 'browser') })
+    validateVectorComponentBrowser(JSON.parse(readFileSync(join(directory, 'browser/report.json'), 'utf8')))
+  })
   for (const [family, flag] of [
     ['mapping', null], ['mix', '--mix'], ['map-range', '--map-range'],
     ['math', '--math'], ['math-boundary', '--boundary'], ['hue-ramp', '--hue-ramp'],
@@ -450,10 +510,11 @@ try { browser = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 
 writeFileSync(join(evidence, 'report.json'), JSON.stringify({
   requestedSuite: plan.suite, selectedSuites: plan.selected,
   nativeCompositorDevices: [...new Set(referenceSets.flatMap(set => set.device.split('+')))],
-  nativeCompositorGpu, nativeCapabilities: capabilities, references, referenceSets, inapplicableFamilies, compositorTimeout,
+  nativeCompositorGpu, nativeCapabilities: capabilities, references, referenceSets, inapplicableFamilies, independentArithmeticProofs, shaderSourceQualifications, compositorTimeout,
   compositor: browser.map(({ backend, rows, failure, error }) => ({ backend, cases: rows?.length ?? 0,
     maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
   shaderFamilies: [...(plan.shaders ? ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'color-conversions',
+    ...(shaderSourceQualifications.some(item => item.status === 'qualified-source-selection') ? ['vector-component'] : []),
     ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])] : []),
     ...(plan.geometry ? ['geometry', 'active-uv', 'normal-map', 'tangent', 'tangent-normal', 'geometry-normal', 'renderer-sign', 'normal-dot'] : []), ...(plan.shaders ? ['normal-input'] : []),
     ...(plan.noiseFbm ? ['noise-fractal', 'noise-normalized'] : []), ...(plan.noiseTypes ? ['noise-types', 'noise-varying', 'noise-native-varying'] : [])],

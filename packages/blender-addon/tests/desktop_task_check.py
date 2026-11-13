@@ -6,6 +6,7 @@ import math
 import queue
 import sys
 import tempfile
+from contextlib import ExitStack
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -23,6 +24,7 @@ addon = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = addon
 spec.loader.exec_module(addon)
 addon.register()
+native_state = ExitStack()
 
 
 try:
@@ -56,6 +58,14 @@ try:
         source = Path(temporary) / "Scene With Spaces.blend"
         bpy.ops.blendlink.setup_website_export()
         bpy.ops.wm.save_as_mainfile(filepath=str(source))
+        if bpy.app.background and bpy.app.version[:3] == (4, 2, 0):
+            # 4.2 clears file_saved through its GUI notification loop. Model
+            # the post-notification state for these task/measurement checks;
+            # the real native save and its disk contents are tested separately
+            # in save_before_publish_check.py. Nested dirty-state controls below
+            # still exercise actual measurement invalidation.
+            native_state.enter_context(patch.object(addon.syncrun, "bpy", SimpleNamespace(
+                data=SimpleNamespace(filepath=bpy.data.filepath, is_dirty=False))))
         calls, reports = [], []
 
         def capture_task(command, cwd, *, initial_label):
@@ -173,6 +183,7 @@ try:
         with patch.object(addon.syncstatus, "bake_plan", return_value=plan):
             assert addon.ui._atlas_capacity_plan() == {}, "A realtime-only measurement kept an old bake plan"
 finally:
+    native_state.close()
     addon.previewrun.reset_for_tests()
     addon.syncrun.reset_for_tests()
     addon.unregister()

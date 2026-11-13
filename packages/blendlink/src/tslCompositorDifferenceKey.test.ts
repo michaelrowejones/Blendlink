@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import * as TSL from 'three/tsl'
 import { buildSourceCompositor } from './tslSourceCompositor.js'
-import { isMeasuredDifferenceRneProfile } from './tslCompositorDifferenceKey.js'
+import { isMeasuredDifferenceRneProfile, buildCompositorDifferenceKey } from './tslCompositorDifferenceKey.js'
 import type { SourceCompositorProgram } from './sourceDisplay.js'
 
 function program(): SourceCompositorProgram {
@@ -36,6 +37,39 @@ describe('Difference Key document admission', () => {
       const document = program(); Object.assign(document.ops[0]!.properties, properties)
       expect(() => buildSourceCompositor(document, () => null)).toThrow(/Artist Difference Key.*native model/)
     }
+  })
+})
+
+function exactProgram(): SourceCompositorProgram {
+  const result=program()
+  Object.assign(result.ops[0]!.properties,{difference_key_model:'native-difference-key-cpu-exact-v2',
+    difference_key_native_version:[5,2,0],difference_key_settings:[.125,.25]})
+  return result
+}
+describe('fresh exact CPU Difference Key profile',()=>{
+  it('requires measured release/evaluator, positive native Float32 controls and actual output/input shapes',()=>{
+    for(const properties of [{difference_key_native_version:[5,2,1]}, {difference_key_native_version:[5,3]},
+      {difference_key_native_version:[4,2,0]}, {difference_key_schema:['modern']},
+      {difference_key_settings:[0,.125]}, {difference_key_settings:[2**-60,.125]},
+      {difference_key_settings:[.1,.1]}, {difference_key_settings:new Array(2)},
+      {evaluation_device:'GPU',single_value_device:'GPU'}, {evaluation_device:['CPU']}]) {
+      const graph=exactProgram();Object.assign(graph.ops[0]!.properties,properties)
+      expect(()=>buildSourceCompositor(graph,()=>null)).toThrow(/Artist Difference Key/)
+    }
+    const wrongOutput=exactProgram();wrongOutput.ops[0]!.source.output='Matte'
+    expect(()=>buildSourceCompositor(wrongOutput,()=>null)).toThrow(/matching Image/)
+    const valid=exactProgram();Object.assign(valid.ops[0]!.properties,{evaluation_device:'GPU',single_value_device:'CPU',native_gpu_backend:'OPENGL'})
+    const built=buildSourceCompositor(valid,()=>null);built.dispose();built.dispose()
+  })
+  it('owns fixed controls/output/input nodes before deferred construction while leaving source IR mutable',()=>{
+    const op=exactProgram().ops[0]!, image=TSL.vec4(.15,.15,.15,2), names:string[]=[]
+    op.source.output='Matte';op.type='VALUE'
+    let active=true
+    const node=buildCompositorDifferenceKey(op,name=>{if(!active)throw new Error('Deferred caller access');names.push(name);return image},'CPU',message=>{throw new Error(message)})
+    expect(names).toEqual(['Image 1','Image 2']);active=false
+    op.source.output='Image';op.properties.difference_key_settings=[0,0]
+    const previous=TSL.getCurrentStack();TSL.setCurrentStack(TSL.stack())
+    try{expect(node.node.shaderNode.jsFunc().isVarNode).toBe(true)}finally{TSL.setCurrentStack(previous)}
   })
 })
 

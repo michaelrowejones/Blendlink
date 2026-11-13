@@ -1,5 +1,5 @@
 {
-  "$comment": "The TSL IR op vocabulary: every op name packages/blender-addon/tsl_ir.py may emit and packages/blendlink/src/tslNodeRecipe.ts must build. Both sides assert their own set against this file, so an op added on one side of the language gap fails in milliseconds instead of surviving until a Blender e2e happens to exercise it. This is the same contract conformance/vocabulary.json holds for the node vocabulary, for the same measured reason: hand-mirrored parsers drift. Numeric fidelity per op is a separate proof and belongs to experiments/tsl-node-differential.",
+  "$comment": "Shared TSL IR vocabulary. ops contains fresh producer opcodes; legacyBuilderOps contains runtime-only compatibility opcodes. The Python producer and TypeScript builder independently verify these sets, so adding or retiring a producer route cannot silently drop serialized runtime support. Per-op native numerical fidelity is a separate proof; EEVEE is the reference for new live shading ports.",
   "ops": [
     "ambient_occlusion",
     "attribute_object",
@@ -52,7 +52,6 @@
     "tex_checker",
     "tex_gradient",
     "tex_image",
-    "tex_magic",
     "tex_magic_native",
     "tex_voronoi",
     "tex_wave",
@@ -72,6 +71,7 @@
   "legacyBuilderOps": [
     "curve_rgb",
     "hsv_to_rgb",
-    "rgb_to_hsv"
+    "rgb_to_hsv",
+    "tex_magic"
   ]
 }

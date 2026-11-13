@@ -21,6 +21,49 @@ epsilon or accepting undefined division. Animated/driven reachable controls
 retain the compositor's existing refusal. These limits make this a partial
 node port, rather than full arbitrary-graph coverage.
 
+## CPU precision and compatibility
+
+The original `native-luminance-key-v1` arithmetic has a retained HDR
+counterexample: RGB `(0.1414213478565216, …)` with thresholds `.1/.2` and alpha
+`2^60` exposes a one-ULP ramp difference. RGB `(.1,.2,.3)` also distinguishes
+the CPU's separately rounded dot stages from a GPU dot. The original 206-scene
+check below did not establish accuracy for arbitrary HDR amplification.
+
+Fresh **measured** CPU sources now use `native-luminance-key-cpu-rne-v1`.
+This is initially restricted to Blender 4.2.0, 5.2.0 and 5.3.0 on
+`darwin/arm64`, with the actual Rec.709 Float32 coefficient tuple and an
+independently checked source rounding-mode certificate. The measured 4.2/5.2
+profiles preserve gradual underflow; the measured 5.3 profile flushes
+subnormal inputs/results. The exporter checks the actual mode rather than
+selecting it from the version alone, and the runtime independently rejects
+unmeasured version/platform/mode combinations. Native compositor task controls
+correlate the certificate with actual RGBToBW, Multiply, Add and Divide
+outputs, including tiny values, cancellation and signed zeros.
+
+The new expression preserves the CPU's three rounded products and left-ordered
+adds, uses a private correctly rounded bounded ratio, and applies the source
+underflow behavior to the **final RGB and alpha products**. A private integer
+fallback recovers gradual underflow; ordinary normal pixels take the hardware
+path. The default zero-to-one ramp remains supported. No shared Math,
+Distance or generic division implementation changes.
+
+Modern GPU all-constant graphs use this path only through their actual CPU
+fold; spatial GPU and legacy GPU arithmetic retain v1. Existing v1 documents
+retain their original semantics. Unqualified fresh CPU sources also retain
+v1, explicitly tagged `legacy-unqualified-cpu-v1` with a
+`SOURCE_ADMISSION_NA` reason. Ordinary Linux/Windows workflows remain usable;
+they do **not** acquire the new HDR precision guarantee. Persisted legacy reversed CPU ramps also retain explicit v1+N/A; actual 4.2 RNA constrains reverse assignment, so no native reversed-authoring proof is claimed. Native Linux/Windows
+qualification and a subsequent production allowlist change are separate work.
+
+The final measured source corpus contains 358 scenes across all three native
+versions/devices. Both APIs on physical Metal and SwiftShader pass **1,432
+readbacks**, numeric maximum error **0**, with the original `2e-5` acceptance
+budget unchanged. Dense primitive checks additionally compare 655,360 scalar
+outputs across the four browser profiles, including exact IEEE word controls.
+These are finite-result scene-linear checks, not a claim about arbitrary
+unbounded graph amplification or NaN payloads. Dedicated source-admission and
+experimental-host evidence are deliberately counted separately.
+
 ## Native references and browser checks
 
 The fixture authors independent signed/HDR RGBA input, zero/tiny/negative alpha,

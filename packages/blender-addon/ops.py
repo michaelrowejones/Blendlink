@@ -3075,9 +3075,10 @@ class BLENDLINK_OT_materialize_atlas_uvs(bpy.types.Operator):
                     raise RuntimeError(
                         f"{target['obj'].name}: loop count changed during materialization"
                     )
+                layer = bakelib.set_uv_layer_pin_mask(layer, [False] * len(values))
+                target["layer"] = layer
                 for index, loop in enumerate(layer.data):
                     loop.uv = values[index]
-                    loop.pin_uv = False
                 target["mesh"].uv_layers.active = layer
                 made.append(target["obj"].name)
         except Exception as error:
@@ -3085,9 +3086,10 @@ class BLENDLINK_OT_materialize_atlas_uvs(bpy.types.Operator):
                 snapshot = target["snapshot"]
                 if snapshot is None:
                     continue
-                for loop, (uv, pinned) in zip(target["layer"].data, snapshot):
+                layer = bakelib.set_uv_layer_pin_mask(target["layer"], [pinned for _, pinned in snapshot])
+                target["layer"] = layer
+                for loop, (uv, _) in zip(layer.data, snapshot):
                     loop.uv = uv
-                    loop.pin_uv = pinned
             for created_mesh, created_layer in reversed(created):
                 created_mesh.uv_layers.remove(created_layer)
             restore_active_layers()
@@ -3873,6 +3875,7 @@ def _save_before_publish(assigned_ids: int, save_operation=None) -> bool:
     """Persist every byte the external compiler will read; return whether saved."""
     if not bpy.data.is_dirty and not assigned_ids:
         return False
+    native_save = save_operation is None
     save_operation = save_operation or bpy.ops.wm.save_mainfile
     try:
         result = save_operation()
@@ -3880,7 +3883,19 @@ def _save_before_publish(assigned_ids: int, save_operation=None) -> bool:
         raise RuntimeError(
             f"Blender could not save the scene: {type(error).__name__}: {error}"
         ) from error
-    if result != {"FINISHED"} or bpy.data.is_dirty:
+    # 4.2.0 marks file_saved only while processing ND_FILESAVE, after this
+    # synchronous operator returns (never in a headless notification loop).
+    # https://github.com/blender/blender/blob/v4.2.0/source/blender/windowmanager/intern/wm_event_system.cc#L528-L533
+    # Trust its actual native write result plus the saved file, never a
+    # custom/injected save operation. Modern immediate dirty checks remain.
+    legacy_saved = False
+    if native_save and tuple(bpy.app.version[:3]) == (4, 2, 0) and result == {"FINISHED"}:
+        try:
+            saved_path = Path(bpy.data.filepath)
+            legacy_saved = bool(bpy.data.filepath) and saved_path.is_file() and saved_path.stat().st_size >= 12
+        except OSError:
+            pass
+    if result != {"FINISHED"} or (bpy.data.is_dirty and not legacy_saved):
         raise RuntimeError(
             "Blender did not finish saving. Resolve the file or network-path "
             "problem before publishing"

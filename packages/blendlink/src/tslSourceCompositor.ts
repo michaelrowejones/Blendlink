@@ -805,10 +805,12 @@ export function buildSourceCompositor(
             node = buildCompositorAlphaConversion(op, input,
               message => { throw new SourceCompositorUnsupported(message) })
             break
-          case 'luminance-key':
+          case 'luminance-key': {
+            const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
             node = buildCompositorLuminanceKey(op, input('Image'), program.luminance ?? [0.2126, 0.7152, 0.0722],
-              message => { throw new SourceCompositorUnsupported(message) })
+              message => { throw new SourceCompositorUnsupported(message) }, compositorEvaluationDevice(op, single))
             break
+          }
           case 'difference-key': {
             const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
             node = buildCompositorDifferenceKey(op, input, compositorEvaluationDevice(op, single),

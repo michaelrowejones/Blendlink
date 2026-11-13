@@ -169,6 +169,7 @@ function runHeadlessSuite(label, testPath, sentinel) {
     throw new Error(
       `${label} did not publish its success sentinel` +
         `${result.status === null ? '' : ` (exit ${result.status})`}` +
+        `${result.signal ? ` (signal ${result.signal})` : ''}` +
         `${result.error ? `: ${result.error.message}` : ''}` +
       `${tail ? `\n--- Blender output tail ---\n${tail}` : ''}`,
     )
@@ -185,7 +186,7 @@ function runHeadlessSuite(label, testPath, sentinel) {
   }
   if (result.status !== 0) {
     console.warn(
-      `BLENDLINK_FULL_TEST addon: Blender exited ${String(result.status)} after ${label} passed; ` +
+      `BLENDLINK_FULL_TEST addon: Blender exited ${result.signal ?? String(result.status)} after ${label} passed; ` +
         'accepting the explicit success sentinel because Blender can fail during shutdown.',
     )
   }

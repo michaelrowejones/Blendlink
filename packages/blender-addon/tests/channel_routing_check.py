@@ -440,6 +440,15 @@ def main():
         f"pristine Principled must stay exact with constant channels: "
         f"{pristine_record['channels']}",
     )
+    native_scale = _principled.inputs["Subsurface Scale"].default_value
+    expected_scale = 0.05 if bpy.app.version[:3] == (4, 2, 0) else 0.005
+    expect(abs(native_scale - expected_scale) < 1e-8,
+           f"Unreviewed native Subsurface Scale default: {native_scale}")
+    _principled.inputs["Subsurface Scale"].default_value = 0.02
+    authored_scale = procedural.analyze_material(pristine_material)
+    expect(authored_scale["status"] != "exact" and any("Subsurface Scale" in reason
+           for reason in authored_scale["reasons"]), "Authored omitted Subsurface Scale lost its diagnostic")
+    _principled.inputs["Subsurface Scale"].default_value = native_scale
 
     # New sockets must not make an untouched Blender 5.3 material look lossy.
     dispersion = _principled.inputs.get("Transmission Dispersion Scale")

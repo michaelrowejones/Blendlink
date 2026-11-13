@@ -36,6 +36,7 @@ def native_gpu_profile():
 
 
 RNE_MODEL = 'native-difference-key-rne-v1'
+CPU_EXACT_MODEL = 'native-difference-key-cpu-exact-v2'
 UNVERIFIED_GPU_MESSAGE = 'Difference Key GPU OpenGL source precision profile is unverified; use source baking'
 # Actual hosted Blender GPU compositor context, not an environment inference.
 # The exact renderer/driver/native build remains part of this fresh capability.
@@ -61,7 +62,7 @@ def is_measured_rne_profile(profile):
     return True
 
 
-def normalize_difference_key(node, socket, op, scene, read, bounds, fail):
+def normalize_difference_key(node, socket, op, scene, read, bounds, fail, single=None):
     modern = node.inputs.get('Tolerance') is not None
     settings = []
     for name, attribute in [('Tolerance', 'tolerance'), ('Falloff', 'falloff')]:
@@ -83,13 +84,29 @@ def normalize_difference_key(node, socket, op, scene, read, bounds, fail):
     op['properties'].update({'difference_key_model': 'native-difference-key-v1',
         'difference_key_schema': 'legacy-cpu' if not modern and getattr(scene.render, 'compositor_device', 'CPU') == 'CPU' else 'modern',
         'difference_key_settings': settings})
-    if (getattr(scene.render, 'compositor_device', 'CPU') == 'GPU'
+    for name in ['Image 1', 'Image 2']:
+        incoming = node.inputs[name]
+        op['inputs'][name] = {'name': name, 'socketType': incoming.type, 'value': read(incoming)}
+    device = getattr(scene.render, 'compositor_device', 'CPU')
+    cpu = device == 'CPU' or modern and single is not None and all(single(item['value']) for item in op['inputs'].values())
+    if cpu:
+        import bpy
+        if bpy.app.version[:3] not in {(4, 2, 0), (5, 2, 0), (5, 3, 0)}:
+            fail(socket, 'Difference Key exact CPU profile requires measured Blender 4.2.0, 5.2.0 or 5.3.0')
+        if settings[0] < 2 ** -50:
+            fail(socket, 'Difference Key exact CPU profile requires positive Tolerance >=2^-50; tiny/zero thresholds need a native underflow model')
+        if modern:
+            for name in ['Tolerance', 'Falloff']:
+                incoming = node.inputs[name]
+                if incoming.is_linked:
+                    links = [link for link in incoming.links if link.is_valid and not getattr(link, 'is_muted', False)]
+                    if len(links) != 1 or links[0].from_node.bl_idname not in {'ShaderNodeValue', 'CompositorNodeValue'}:
+                        fail(incoming, 'Difference Key exact CPU controls must be unlinked or direct literal Value nodes; arithmetic staging remains unqualified')
+        op['properties'].update(difference_key_model=CPU_EXACT_MODEL, difference_key_native_version=list(bpy.app.version[:3]))
+    elif (device == 'GPU'
             and op['properties'].get('native_gpu_backend') == 'OPENGL'):
         profile = native_gpu_profile()
         if not is_measured_rne_profile(profile):
             fail(socket, UNVERIFIED_GPU_MESSAGE)
         op['properties']['difference_key_model'] = RNE_MODEL
         op['properties']['difference_key_gpu_profile'] = profile
-    for name in ['Image 1', 'Image 2']:
-        incoming = node.inputs[name]
-        op['inputs'][name] = {'name': name, 'socketType': incoming.type, 'value': read(incoming)}

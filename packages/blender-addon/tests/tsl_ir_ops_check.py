@@ -13,9 +13,10 @@ happens to exercise that exact node — the failure mode
 conformance/vocabulary.json already exists to prevent for the node
 vocabulary, after those parsers drifted three ways.
 
-Vocabulary only: per-op numeric fidelity belongs to
-experiments/tsl-node-differential, measured against Cycles.
+Vocabulary only: per-op native numeric fidelity has separate gates, with
+EEVEE the reference for new live shading ports.
 """
+import ast
 import json
 import re
 from pathlib import Path
@@ -43,19 +44,42 @@ expect(
     "the fixture lists a duplicate op",
 )
 
-# The emitter expresses its vocabulary as `"op": "<name>"` literals in the
-# documents it builds. A regex that stops matching fails this check loudly
-# rather than silently shrinking the compared set.
-emitter_source = EMITTER.read_text(encoding="utf-8")
-# Delegated emitter modules follow the same suffix/import convention. Follow
-# real imports rather than planting unused op strings in the central emitter.
-delegates = re.findall(r'^\s*from ([a-z0-9_]+_ir) import ', emitter_source, re.M)
-sources = [emitter_source]
-for name in delegates:
-    path = EMITTER.with_name(name + ".py")
-    expect(path.is_file(), "Missing delegated IR emitter " + name)
-    sources.append(path.read_text(encoding="utf-8"))
-emitted = set(re.findall(r'"op":\s*"([a-z0-9_]+)"', "\n".join(sources)))
+def literal_ops(tree):
+    """Read executable dictionary literals, independent of quote style."""
+    return {
+        value.value
+        for node in ast.walk(tree) if isinstance(node, ast.Dict)
+        for key, value in zip(node.keys, node.values)
+        if isinstance(key, ast.Constant) and key.value == "op"
+        and isinstance(value, ast.Constant) and isinstance(value.value, str)
+        and re.fullmatch(r"[a-z0-9_]+", value.value)
+    }
+
+
+# Comments and docstrings cannot manufacture producer support. In particular,
+# the native Magic delegate uses single quotes while the older emitter uses
+# double quotes; both are the same executable Python dictionary convention.
+sample = ast.parse('''"docstring: {\\"op\\": \\"not_emitted\\"}"
+# {"op": "also_not_emitted"}
+first = {"op": "first"}
+second = {'op': 'second'}
+''')
+expect(literal_ops(sample) == {"first", "second"}, "opcode discovery lost literal/comment semantics")
+
+pending, visited, emitted = [EMITTER], set(), set()
+while pending:
+    path = pending.pop()
+    if path in visited:
+        continue
+    visited.add(path)
+    expect(path.is_file(), "Missing delegated IR emitter " + path.stem)
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    emitted.update(literal_ops(tree))
+    # Follow actual imports, including package-relative delegates and their
+    # delegated emitters, without executing Blender or importing helpers.
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module and re.fullmatch(r"[a-z0-9_]+_ir", node.module):
+            pending.append(EMITTER.with_name(node.module + ".py"))
 expect(
     len(emitted) > 30,
     f"only {len(emitted)} ops parsed out of the emitter; the op-literal "

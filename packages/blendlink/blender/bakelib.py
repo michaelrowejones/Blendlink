@@ -2662,6 +2662,37 @@ def _uv_layer_has_pins(layer) -> bool:
     return any(_uv_layer_pin_mask(layer))
 
 
+def set_uv_layer_pin_mask(layer, values):
+    """Write pins without retaining UV references across attribute creation.
+
+    The optional pin attribute can be absent. Creating it through pin_uv
+    reallocates CustomData storage on Blender 4.2, invalidating an active
+    layer.data iterator (and sometimes the layer RNA pointer itself).
+    Return the reacquired layer so callers never retain that stale pointer.
+    """
+    values = [bool(value) for value in values]
+    if len(values) != len(layer.data):
+        raise RuntimeError("UV pin mask must match the mesh corner count")
+    mesh, name = layer.id_data, layer.name
+    pins = getattr(layer, "pin", None)
+    if pins is not None:
+        if not len(pins):
+            if not any(values):
+                return layer  # An absent pin attribute already means unpinned.
+            layer.data[0].pin_uv = True
+            layer = mesh.uv_layers[name]
+            pins = layer.pin
+        if len(pins) != len(values):
+            raise RuntimeError("UV pin storage must match the mesh corner count")
+        pins.foreach_set("value", values)
+        return layer
+    # Controlled/patched builds without the modern collection: reacquire
+    # after every write, rather than retaining a collection iterator.
+    for index, value in enumerate(values):
+        mesh.uv_layers[name].data[index].pin_uv = value
+    return mesh.uv_layers[name]
+
+
 def _copy_private_material_uv(obj, source_name: str, target_name: str) -> None:
     """Copy one source UV to a disposable target without copying live pins."""
     mesh = obj.data
@@ -3191,7 +3222,7 @@ def stage_atlas_layers(objs, uv_name: str = ATLAS_UV,
             else _atlas_seed_layer(obj, log)
         )
         values = [loop.uv.copy() for loop in source.data]
-        pins = [loop.pin_uv for loop in source.data] if authored is not None else None
+        pins = _uv_layer_pin_mask(source) if authored is not None else [False] * len(values)
         previous = mesh.uv_layers.get(uv_name)
         if previous is not None and previous != source:
             mesh.uv_layers.remove(previous)
@@ -3201,9 +3232,9 @@ def stage_atlas_layers(objs, uv_name: str = ATLAS_UV,
                 f"{obj.name}: could not add the {uv_name} UV layer "
                 "(Blender's 8-layer limit) — remove unused UV maps"
             )
+        layer = set_uv_layer_pin_mask(layer, pins)
         for index, loop in enumerate(layer.data):
             loop.uv = values[index]
-            loop.pin_uv = bool(pins[index]) if pins is not None else False
         mesh.uv_layers.active = layer
         if authored is not None:
             authored_names.append(obj.name)
@@ -6026,9 +6057,10 @@ def apply_packed_uv_evidence(scene_objects, evidence: dict,
                 raise RuntimeError(
                     f"{target['obj'].name}: loop count changed while loading atlas UVs"
                 )
+            layer = set_uv_layer_pin_mask(layer, [False] * len(values))
+            target["layer"] = layer
             for loop, (x, y) in zip(layer.data, values):
                 loop.uv = (x, y)
-                loop.pin_uv = False
             target["mesh"].uv_layers.active = layer
             applied.append(target["obj"].name)
     except Exception as error:
@@ -6038,9 +6070,10 @@ def apply_packed_uv_evidence(scene_objects, evidence: dict,
             if snapshot is None:
                 continue
             try:
-                for loop, (uv, pinned) in zip(target["layer"].data, snapshot):
+                layer = set_uv_layer_pin_mask(target["layer"], [pinned for _, pinned in snapshot])
+                target["layer"] = layer
+                for loop, (uv, _) in zip(layer.data, snapshot):
                     loop.uv = uv
-                    loop.pin_uv = pinned
             except Exception as rollback_error:
                 rollback_errors.append(
                     f"{target['obj'].name}: {type(rollback_error).__name__}: {rollback_error}"

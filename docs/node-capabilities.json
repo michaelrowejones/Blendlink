@@ -551,7 +551,7 @@
     },
     "shader:ShaderNodeCombineHSV": {
       "category": "partial",
-      "limits": "Actual legacy H/S/V combiner, EEVEE 4.2.0 only, with no Alpha socket. Uses the qualified native Color HSV helper through existing color_convert; existing runtime math is unchanged. Both legacy classes are absent in 5.2.0/5.3.0; actual saved-file migration upgrades them to modern Color HSV and preserves authored defaults/links. Fresh Cycles uses baking, and unknown source versions refuse. Automatic EEVEE-to-Cycles fallback cannot infer evaluator equivalence. Native Metal passes the 50-case shared corpus (46 bit-identical legacy/modern conversions) on physical/software WebGPU/WebGL2; OpenGL source qualification remains pending actual hosted evidence. Four independent carrier/input controls and a calibrated residual preserve the raw 6e-6 kernel budget; there is no arbitrary graph/threshold amplification claim.",
+      "limits": "Actual legacy H/S/V combiner, EEVEE 4.2.0 only, with no Alpha socket. Uses the qualified native Color HSV helper through existing color_convert; existing runtime math is unchanged. Both legacy classes are absent in 5.2.0/5.3.0; actual saved-file migration upgrades them to modern Color HSV and preserves authored defaults/links. Fresh Cycles uses baking, and unknown source versions refuse. Automatic EEVEE-to-Cycles fallback cannot infer evaluator equivalence. Native Metal passes the 50-case shared corpus (46 bit-identical legacy/modern conversions) on physical/software WebGPU/WebGL2; Fresh Linux 4.2.0 OpenGL passes the same 50-case shared corpus on both built browser APIs. Four independent carrier/input controls and a calibrated residual preserve the raw 6e-6 kernel budget; there is no arbitrary graph/threshold amplification claim.",
       "runtimePath": "packages/blendlink/src/tslColorConversion.ts",
       "runtimeOps": [
         "color_convert"
@@ -591,12 +591,29 @@
         "maximumRawConversionError": 3.814697265625e-06,
         "rawKernelBudget": 6e-06,
         "independentCarrierAllowance": "(2^-10/1024 + 2^-22) / .125",
-        "scope": "Shared legacy HSV conversion corpus, not a per-node percentage; modern class absence and file migration are separate source/schema proofs."
+        "scope": "Shared legacy HSV conversion corpus, not a per-node percentage; modern class absence and file migration are separate source/schema proofs.",
+        "hostedOpenGL42": {
+          "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+          "run": 43384203084,
+          "artifact": 14017798861,
+          "blender": "4.2.0",
+          "browserAPIs": [
+            "WebGPU",
+            "WebGL2"
+          ],
+          "browserAdapter": "SwiftShader/Subzero",
+          "sourceBackend": "OPENGL",
+          "cases": 50,
+          "legacyModernBitIdenticalConversions": 46,
+          "builtReadbacks": 100,
+          "maximumRawConversionError": 3.814697265625e-06,
+          "workspaceStable": true
+        }
       }
     },
     "shader:ShaderNodeSeparateHSV": {
       "category": "partial",
-      "limits": "Actual legacy H/S/V separator, EEVEE 4.2.0 only, with no Alpha socket. Uses the qualified native Color HSV helper through existing color_convert; existing runtime math is unchanged. Both legacy classes are absent in 5.2.0/5.3.0; actual saved-file migration upgrades them to modern Color HSV and preserves authored defaults/links. Fresh Cycles uses baking, and unknown source versions refuse. Automatic EEVEE-to-Cycles fallback cannot infer evaluator equivalence. Native Metal passes the 50-case shared corpus (46 bit-identical legacy/modern conversions) on physical/software WebGPU/WebGL2; OpenGL source qualification remains pending actual hosted evidence. Four independent carrier/input controls and a calibrated residual preserve the raw 6e-6 kernel budget; there is no arbitrary graph/threshold amplification claim.",
+      "limits": "Actual legacy H/S/V separator, EEVEE 4.2.0 only, with no Alpha socket. Uses the qualified native Color HSV helper through existing color_convert; existing runtime math is unchanged. Both legacy classes are absent in 5.2.0/5.3.0; actual saved-file migration upgrades them to modern Color HSV and preserves authored defaults/links. Fresh Cycles uses baking, and unknown source versions refuse. Automatic EEVEE-to-Cycles fallback cannot infer evaluator equivalence. Native Metal passes the 50-case shared corpus (46 bit-identical legacy/modern conversions) on physical/software WebGPU/WebGL2; Fresh Linux 4.2.0 OpenGL passes the same 50-case shared corpus on both built browser APIs. Four independent carrier/input controls and a calibrated residual preserve the raw 6e-6 kernel budget; there is no arbitrary graph/threshold amplification claim.",
       "runtimePath": "packages/blendlink/src/tslColorConversion.ts",
       "runtimeOps": [
         "color_convert"
@@ -636,7 +653,24 @@
         "maximumRawConversionError": 3.814697265625e-06,
         "rawKernelBudget": 6e-06,
         "independentCarrierAllowance": "(2^-10/1024 + 2^-22) / .125",
-        "scope": "Shared legacy HSV conversion corpus, not a per-node percentage; modern class absence and file migration are separate source/schema proofs."
+        "scope": "Shared legacy HSV conversion corpus, not a per-node percentage; modern class absence and file migration are separate source/schema proofs.",
+        "hostedOpenGL42": {
+          "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+          "run": 43384203084,
+          "artifact": 14017798861,
+          "blender": "4.2.0",
+          "browserAPIs": [
+            "WebGPU",
+            "WebGL2"
+          ],
+          "browserAdapter": "SwiftShader/Subzero",
+          "sourceBackend": "OPENGL",
+          "cases": 50,
+          "legacyModernBitIdenticalConversions": 46,
+          "builtReadbacks": 100,
+          "maximumRawConversionError": 3.814697265625e-06,
+          "workspaceStable": true
+        }
       }
     },
     "shader:ShaderNodeCombineRGB": {
@@ -1132,7 +1166,7 @@
     },
     "shader:ShaderNodeTexMagic": {
       "category": "partial",
-      "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. OpenGL source precision remains pending fresh hosted qualification; Metal evidence does not qualify it. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake.",
+      "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. Linux 5.2.0 OpenGL source precision is qualified by fresh native references and both built browser APIs. Other OpenGL versions remain unmeasured; Metal evidence does not qualify them. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake.",
       "runtimePath": "packages/blendlink/src/tslMagicNodes.ts",
       "runtimeOps": [
         "tex_magic_native"
@@ -1162,7 +1196,38 @@
           "path": "experiments/magic-node-differential/README.md"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "hostedLinux52": {
+          "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+          "run": 43384203084,
+          "artifact": 14018117469,
+          "blender": "5.2.0",
+          "browserAPIs": [
+            "WebGPU",
+            "WebGL2"
+          ],
+          "browserAdapter": "SwiftShader/Subzero",
+          "sourceBackend": "OPENGL",
+          "sourceGpuProfile": {
+            "backend": "OPENGL",
+            "vendor": "Mesa",
+            "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+            "version": "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4",
+            "source": "Blender gpu.platform",
+            "intrinsicModel": "mesa-glsl-v1"
+          },
+          "cases": 206,
+          "builtReadbacks": 412,
+          "maximumRawKernelError": 3.814697265625e-06,
+          "rawKernelBudget": 2e-05,
+          "workspaceStable": true
+        },
+        "unmeasuredOpenGLVersions": [
+          "4.2.0",
+          "5.3.0"
+        ]
+      }
     },
     "shader:ShaderNodeTexWave": {
       "category": "partial",
@@ -1677,6 +1742,27 @@
             "mode": "built",
             "experimentalOverlay": false,
             "actualWebGLRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "freshHostedLifecycle": {
+            "commit": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+            "run": 43384203084,
+            "artifact": 14018481084,
+            "report": "ownership/report.json",
+            "reportSha256": "53ab10d497d7c4a00b94b754378b41571064b77fd89e9ab6d1b6fdabcc0d9ea2",
+            "lifecycleRows": 14,
+            "browserApis": [
+              "WebGPU",
+              "WebGL2"
+            ],
+            "actualAdapter": "SwiftShader/LLVM",
+            "longTasks": 0,
+            "maximumSliceMilliseconds": 9.3,
+            "maximumRafGapMilliseconds": 16.8,
+            "maximumAbortMilliseconds": 24.6,
+            "actualCapUniquePointsPerBackend": 16384,
+            "actualCapBytes": 262144,
+            "sourceReplacementAndRestorationVerified": true,
+            "originalAssertionsUnchanged": true
           }
         },
         "bindingInspection": {
@@ -5690,6 +5776,95 @@
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
     },
+    "shader:FunctionNodeGetVectorComponent": {
+      "category": "partial",
+      "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but only shader extraction is ported here; compositor remains unsupported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication and OpenGL-source numerical qualification remain separate.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "separate"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/vector_component_ir.py",
+          "anchor": "def emit_vector_component"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "if idname == \"FunctionNodeGetVectorComponent\":"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'separate':"
+        },
+        {
+          "path": "packages/blender-addon/tests/vector_component_check.py"
+        },
+        {
+          "path": "experiments/vector-component-differential/README.md"
+        },
+        {
+          "path": "experiments/vector-component-differential/reference.py"
+        },
+        {
+          "path": "experiments/vector-component-differential/native-sources.json"
+        },
+        {
+          "path": "scripts/lib/vector-component-profile.mjs"
+        },
+        {
+          "path": "scripts/vector-component-coverage-policy.test.mjs"
+        }
+      ],
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeAbsentVersions": [
+          "4.2.0",
+          "5.2.0"
+        ],
+        "fixedIndices": [
+          0,
+          1,
+          2
+        ],
+        "portedContext": "shader",
+        "creationOnlyContexts": [
+          "compositor",
+          "geometry"
+        ],
+        "nativeSourceBackends": [
+          "METAL"
+        ],
+        "nativePairedSelectionGraphs": 42,
+        "independentNativeCarrierControls": 2,
+        "nativeComponentVsSeparateBitMismatches": 0,
+        "browserNativeCarrierReadbacks": 176,
+        "browserRawAlgebraicReadbacks": 168,
+        "rawMaximumAbsoluteError": 0,
+        "rawSignedZeroBitClaim": false,
+        "nativeCarrierMaximumAbsoluteError": 0.00048065185546875,
+        "nativeCarrierMaximumBudgetRatio": 0.9724258313839539,
+        "nativeCarrierAbsoluteBudget": 6e-06,
+        "additionalNativeCarrierAllowance": "one native scene-target half ULP per pixel",
+        "nativeTargetAllowanceIsNodePrecision": false,
+        "nativeCarrierIndependentSocketUvCalibration": true,
+        "nativeCarrierExactlyHalfRepresentable": true,
+        "adapterApiProfiles": [
+          "physical Metal WebGPU",
+          "physical ANGLE Metal WebGL2",
+          "software SwiftShader/LLVM WebGPU",
+          "software SwiftShader/LLVM WebGL2"
+        ],
+        "addedProgramTextures": 0,
+        "persistentHarnessOutputTextures": 1,
+        "packedAddonSourcePlan": true,
+        "sourcePlanningPreserved": true,
+        "freshHostedOpenGL": "pending"
+      }
+    },
     "shader:FunctionNodeInputVector": {
       "category": "supported",
       "limits": "Authored native Vector property, not a nonexistent output default. Blender 5.2+ actual shader-tree creation only; keyed/driven trees refuse. Signed and small vector components verified through native Cycles/EEVEE channel math and both built browser backends.",
@@ -6476,7 +6651,7 @@
       "runtimeOps": [
         "luminance-key"
       ],
-      "limits": "Image and Matte outputs preserve source OCIO luminance, native threshold ramp, alpha cap and whole-RGBA mask multiplication. Signed/HDR color and negative/above-one alpha remain native. Fixed finite thresholds in [0,1] must be separated by at least 1/64; modern proven constant Value/qualified Math links are allowed. Changing/unproved thresholds, collapsed/narrow intervals and animated/driven controls refuse. Legacy CPU endpoint branches remain separate from modern/GPU clamped ramps; modern reversed limits are measured. Groups, cascades, Matte-to-alpha and integer-shifted finite image windows are verified. This is a pointwise image/mask port, not full Keying or render-pass coverage.",
+      "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Actual Linux 5.2/Windows 4.2/5.2 CPU qualification remains pending in a separate experimental native workflow; successful private-kernel trials cannot promote source admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -6493,6 +6668,27 @@
         },
         {
           "path": "experiments/native-compositor-differential/LUMINANCE_KEY.md"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCpuLuminance.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCpuLuminanceKey.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCpuLuminanceRatio.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorLumaGradual.ts"
+        },
+        {
+          "path": "experiments/luma-cpu-precision/README.md"
+        },
+        {
+          "path": "experiments/luma-cpu-precision/precision-protocol.test.mjs"
+        },
+        {
+          "path": ".github/workflows/luma-cpu-precision.yml"
         }
       ],
       "verification": {
@@ -6501,12 +6697,17 @@
           "5.2.0",
           "5.3.0"
         ],
-        "nativeScenes": 206,
-        "physicalAndSoftwareReadbacks": 824,
-        "maximumAbsoluteError": 5.960464477539062e-07,
+        "nativeScenes": 358,
+        "physicalAndSoftwareReadbacks": 1432,
+        "maximumAbsoluteError": 0,
         "budget": 2e-05,
         "nativeGpuBackend": "METAL",
-        "sourcePreserved": true
+        "sourcePreserved": true,
+        "sourceCpuProfiles": "darwin/arm64:4.2.0+5.2.0 gradual-rne;5.3.0 ftz-daz-rne",
+        "privatePrimitiveScalarReadbacks": 655360,
+        "experimentalKernelReadbacks": 384,
+        "experimentalKernelProductionAdmissionCases": 0,
+        "unqualifiedCpuContract": "legacy-v1 / SOURCE_ADMISSION_NA; hosted qualification pending"
       }
     },
     "compositor:CompositorNodeDiffMatte": {
@@ -6515,7 +6716,7 @@
       "runtimeOps": [
         "difference-key"
       ],
-      "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime, GPU RGB sums use measured r+(g+b) association and division is explicitly rounded. Modern constant graphs retain the separate CPU (r+g)+b path. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh Linux emission retained 41 actual cases and exposed asymmetric RGB threshold failures in the first rounded-division candidate. The corrected reduction matches all 41 retained cases exactly on physical and software WebGPU/WebGL2. Fresh hosted Linux emission of the expanded 43-case corpus, including asymmetric fields and all-constant CPU-fold controls, passes both browser APIs with zero error under the original budget. Other source GPU identities remain unqualified.",
+      "limits": "Fresh CPU-evaluated Difference Key uses native-difference-key-cpu-exact-v2 on exact Blender 4.2.0/5.2.0/5.3.0. The source and runtime independently require positive Float32 Tolerance [2^-50,1], Falloff zero or [1/64,1], literal/unlinked modern controls, native Color inputs/output and actual effective CPU evaluation. Modern GPU constant graphs qualify only through the actual topology classifier; this never grants GPU-field parity. Exact staged CPU mean uses bounded sum/4/.75 and the independently earned integer ratio; the ramp is correctly rounded, preserving legacy keyed-zero versus modern alpha caps and original signed/HDR RGBA. Zero/tiny CPU thresholds refuse with native underflow counterexamples retained. Fixed settings, input nodes and output kind are snapshotted. Groups, cascades, real EEVEE inputs, HDR alpha, repeated resize/DPR, caller state and cleanup are measured. Serialized v1 and existing GPU rne-v1 arithmetic remain unchanged and do not acquire CPU-v2 guarantees; re-export with the current add-on/runtime for v2. GPU OpenGL fields retain the exact measured Blender 5.2 Linux Mesa llvmpipe profile and right-associated sum; unknown profiles retain hashed native refusals plus input-only controls, never numerical Difference coverage. Existing Metal field models remain separate. This is not full Keying, temporal coverage or native subnormal input arithmetic.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -6538,6 +6739,24 @@
         },
         {
           "path": "experiments/native-compositor-differential/probe-difference-refusal-protocol.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_difference_precision_check.py"
+        },
+        {
+          "path": "experiments/compositor-difference-key-differential/README.md"
+        },
+        {
+          "path": "experiments/compositor-difference-key-differential/native_mean.py"
+        },
+        {
+          "path": "experiments/compositor-difference-key-differential/native_tiny.py"
+        },
+        {
+          "path": "scripts/lib/difference-precision-evidence.mjs"
+        },
+        {
+          "path": "scripts/difference-precision-policy.test.mjs"
         }
       ],
       "verification": {
@@ -6546,8 +6765,8 @@
           "5.2.0",
           "5.3.0"
         ],
-        "nativeScenes": 234,
-        "physicalAndSoftwareReadbacks": 936,
+        "nativeScenes": 413,
+        "physicalAndSoftwareReadbacks": 1652,
         "maximumAbsoluteError": 0,
         "budget": 2e-05,
         "nativeGpuBackend": "METAL",
@@ -6575,6 +6794,40 @@
           "freshHostedNativeCases": 43,
           "freshHostedReadbacks": 86,
           "freshHostedMaximumAbsoluteError": 0
+        },
+        "legacyBaseline": {
+          "nativeScenes": 234,
+          "physicalAndSoftwareReadbacks": 936,
+          "scope": "Older serialized/GPU-profile corpus, not fresh CPU-v2 certification"
+        },
+        "cpuExactV2": {
+          "model": "native-difference-key-cpu-exact-v2",
+          "indexedRows": 413,
+          "freshCpuV2Programs": 305,
+          "existingGpuV1Programs": 90,
+          "independentControls": 18,
+          "adapterApiProfiles": [
+            "physical Metal WebGPU",
+            "physical ANGLE Metal WebGL2",
+            "software SwiftShader/LLVM WebGPU",
+            "software SwiftShader/LLVM WebGL2"
+          ],
+          "builtGraphChecks": 1652,
+          "maximumAbsoluteError": 0,
+          "nativeGpuFieldExpansion": false,
+          "maximumPasses": 1,
+          "maximumFragmentSourceBytes": 5905,
+          "shaderSourceGateBytes": 16000,
+          "remainingTexturesAfterDisposal": 0,
+          "nativeMeanPrimitiveValues": 49152,
+          "meanPrimitiveReadbacks": 196608,
+          "meanBitMismatches": 0,
+          "primitiveRuntimeProof": "immutable production TypeScript helper source, separate from built graphs",
+          "oldCpuV1CompatibilityRows": 6,
+          "legacyCompatibilityIsNativeParity": false,
+          "sourcePreserved": true,
+          "zeroToleranceGuard": "Refused for fresh effective-CPU profiles; four native outputs retained per version outside numeric index",
+          "freshHosted": "pending"
         }
       }
     },
@@ -6991,7 +7244,7 @@
       "runtimeOps": [
         "pixelate"
       ],
-      "limits": "Measured Blender 4.2/5.2/5.3 CPU/GPU block means with fixed integer Size 1..16, including partial edge blocks, original signed/HDR RGBA and alpha averaging. Legacy pixel_size and modern Size sockets normalize separately. Size1 and actual single values pass through without allocating Pixelate targets. Reduced Float32 block targets make total sampling work linear in input pixels. Actual unshifted render extents 1..8192 are independently validated on resize/DPR changes, with source mismatch refusal/recovery. Groups, Exposure/Posterize, Blur before/after, cascades and actual EEVEE Render Layers are measured; owned targets restore MRT/clear/viewport/scissor state and dispose fully. Linked Size, render borders, Half precision, scalar/vector conversions, static Images and transformed/resized input windows remain refused. Native GPU qualification is Metal; fresh hosted OpenGL proof remains pending. This is not complete renderer identity at every downstream threshold.",
+      "limits": "Measured Blender 4.2/5.2/5.3 CPU/GPU block means with fixed integer Size 1..16, including partial edge blocks, original signed/HDR RGBA and alpha averaging. Legacy pixel_size and modern Size sockets normalize separately. Size1 and actual single values pass through without allocating Pixelate targets. Reduced Float32 block targets make total sampling work linear in input pixels. Actual unshifted render extents 1..8192 are independently validated on resize/DPR changes, with source mismatch refusal/recovery. Groups, Exposure/Posterize, Blur before/after, cascades and actual EEVEE Render Layers are measured; owned targets restore MRT/clear/viewport/scissor state and dispose fully. Linked Size, render borders, Half precision, scalar/vector conversions, static Images and transformed/resized input windows remain refused. Native GPU qualification covers the measured Metal versions and Linux 5.2.0 OpenGL; other OpenGL versions remain unmeasured. This is not complete renderer identity at every downstream threshold.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -7026,7 +7279,29 @@
         "maximumPasses": 7,
         "remainingTexturesAfterDisposal": 0,
         "sourcePreserved": true,
-        "freshHostedOpenGl": "pending"
+        "freshHostedOpenGl": {
+          "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+          "run": 43384203084,
+          "artifact": [
+            14018940790,
+            14017883301
+          ],
+          "blender": "5.2.0",
+          "browserAPIs": [
+            "WebGPU",
+            "WebGL2"
+          ],
+          "browserAdapter": "SwiftShader/Subzero",
+          "sourceDevices": [
+            "CPU",
+            "GPU"
+          ],
+          "sourceBackend": "OPENGL",
+          "casesPerDevice": 46,
+          "builtReadbacks": 184,
+          "maximumAbsoluteError": 1.1920928955078125e-07,
+          "remainingTexturesAfterDisposal": 0
+        }
       }
     },
     "compositor:CompositorNodeSplit": {
@@ -7037,33 +7312,117 @@
       ],
       "modes": {
         "axis": {
-          "partial": ["X", "Y"]
+          "partial": [
+            "X",
+            "Y"
+          ]
         }
       },
       "limits": "Real Image-output Split on measured Blender 4.2/5.2/5.3. Legacy X/Y fixed integer percentage 0..100 preserves separate CPU truncated versus GPU Float32 boundaries, including odd extents. Modern fixed Position in [0,1] and Rotation within one full turn preserve the native default diagonal and producing CPU sinf/cosf coefficients with staged Float32 projection. Nonzero Position/normal components below 2^-50 refuse. CPU source profiles and measured modern Metal GPU profiles are distinct; non-Metal modern GPU sources retain an independently validated hashed native Image refusal plus an input-only control, never numerical Split coverage. Matching finite unshifted canvases within 1..8192, signed/HDR RGBA, alpha, groups, scalar-to-color input, Blur/Flip/Exposure composition, actual EEVEE Render Layers and existing CPU static Image contracts are measured. Constant-only, unequal/mixed/shifted/resized windows, linked modern controls, render borders, Half precision and unmeasured Blender versions remain refused. No previous opcode changes meaning.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
-        {"path": "packages/blendlink/blender/compositor_split.py"},
-        {"path": "packages/blendlink/blender/compositor_graph.py", "anchor": "normalize_split(node, socket"},
-        {"path": "packages/blendlink/src/tslCompositorSplit.ts"},
-        {"path": "packages/blendlink/src/tslCompositorSplit.test.ts"},
-        {"path": "packages/blender-addon/tests/compositor_split_check.py"},
-        {"path": "experiments/compositor-split-differential/README.md"},
-        {"path": "scripts/lib/split-source-profile.mjs"},
-        {"path": "scripts/split-source-profile.test.mjs"}
+        {
+          "path": "packages/blendlink/blender/compositor_split.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "normalize_split(node, socket"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorSplit.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorSplit.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_split_check.py"
+        },
+        {
+          "path": "experiments/compositor-split-differential/README.md"
+        },
+        {
+          "path": "scripts/lib/split-source-profile.mjs"
+        },
+        {
+          "path": "scripts/split-source-profile.test.mjs"
+        }
       ],
       "verification": {
-        "nativeVersions": ["4.2.0", "5.2.0", "5.3.0"],
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
         "nativeBackend": "METAL",
         "nativeCpuGpuCases": 594,
         "builtGraphChecks": 1188,
-        "maximumAbsoluteError": 3.5762786865234375e-7,
+        "maximumAbsoluteError": 3.5762786865234375e-07,
         "directSelectionBitMismatches": 0,
         "maximumPasses": 5,
         "remainingTexturesAfterDisposal": 0,
         "sourcePreserved": true,
         "modernGpuNonMetal": "source-profile-refused; numericalSplitCases=0; independentControls=1",
-        "freshHostedCpuAndLegacyGpu": "pending"
+        "freshHostedCpuAndLegacyGpu": {
+          "modernCpu": {
+            "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+            "run": 43384203084,
+            "artifact": 14018561360,
+            "blender": "5.2.0",
+            "browserAPIs": [
+              "WebGPU",
+              "WebGL2"
+            ],
+            "browserAdapter": "SwiftShader/Subzero",
+            "sourceDevice": "CPU",
+            "cases": 124,
+            "maximumAbsoluteError": 0
+          },
+          "legacyCpu": {
+            "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+            "run": 43384203084,
+            "artifact": 14017584299,
+            "blender": "4.2.0",
+            "browserAPIs": [
+              "WebGPU",
+              "WebGL2"
+            ],
+            "browserAdapter": "SwiftShader/Subzero",
+            "sourceDevice": "CPU",
+            "cases": 58,
+            "maximumAbsoluteError": 0
+          },
+          "legacyGpu": {
+            "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+            "run": 43384203084,
+            "artifact": 14017954718,
+            "blender": "4.2.0",
+            "browserAPIs": [
+              "WebGPU",
+              "WebGL2"
+            ],
+            "browserAdapter": "SwiftShader/Subzero",
+            "sourceDevice": "GPU",
+            "sourceBackend": "OPENGL",
+            "cases": 52,
+            "maximumAbsoluteError": 0
+          },
+          "modernGpuRefusal": {
+            "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+            "run": 43384203084,
+            "artifact": 14018781693,
+            "blender": "5.2.0",
+            "browserAPIs": [
+              "WebGPU",
+              "WebGL2"
+            ],
+            "browserAdapter": "SwiftShader/Subzero",
+            "sourceDevice": "GPU",
+            "sourceBackend": "OPENGL",
+            "status": "source-profile-refused",
+            "numericalSplitCases": 0,
+            "independentControls": 1
+          }
+        }
       }
     },
     "compositor:CompositorNodeDistanceMatte": {
@@ -7133,7 +7492,34 @@
         "shaderSourceGateBytes": 16000,
         "remainingTexturesAfterDisposal": 0,
         "sourcePreserved": true,
-        "freshHostedCpu": "pending",
+        "freshHostedCpu": {
+          "legacy42": {
+            "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+            "run": 43384203084,
+            "artifact": 14018601538,
+            "blender": "4.2.0",
+            "browserAPIs": [
+              "WebGPU",
+              "WebGL2"
+            ],
+            "browserAdapter": "SwiftShader/Subzero",
+            "casesIncludingAudits": 49,
+            "maximumAbsoluteError": 0
+          },
+          "modern52": {
+            "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+            "run": 43384203084,
+            "artifact": 14017918558,
+            "blender": "5.2.0",
+            "browserAPIs": [
+              "WebGPU",
+              "WebGL2"
+            ],
+            "browserAdapter": "SwiftShader/Subzero",
+            "casesIncludingAudits": 45,
+            "maximumAbsoluteError": 0
+          }
+        },
         "zeroToleranceAudit": {
           "modernZeroToleranceRefused": true,
           "legacyZeroTolerancePositiveFalloffRefused": true,
@@ -7150,7 +7536,22 @@
           "nativeSourceEvaluator": "CPU",
           "sharedDivisionChanged": false,
           "hdrAlphaOldDivisionCounterexample": 549755813888,
-          "freshHosted52": "pending"
+          "freshHosted52": {
+            "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+            "run": 43384203084,
+            "artifact": 14017918558,
+            "blender": "5.2.0",
+            "browserAPIs": [
+              "WebGPU",
+              "WebGL2"
+            ],
+            "browserAdapter": "SwiftShader/Subzero",
+            "nativePrimitiveValues": 32768,
+            "mathematicalBitControls": 73,
+            "browserReadbacks": 65682,
+            "float32BitMismatches": 0,
+            "runtimeProof": "immutable production TypeScript helper source; separate built Distance graph proof"
+          }
         }
       },
       "modes": {
@@ -7393,9 +7794,55 @@
         "nativePythonSourceHashes": 4,
         "modernAbsentProtocol": "blendlink-map-value-native-absence-v1",
         "unqualifiedGpuProtocol": "blendlink-map-value-gpu-source-profile-v1",
-        "freshHostedCpu": "pending",
-        "freshHostedGpuSourceProfile": "pending",
-        "freshHostedModernAbsence": "pending"
+        "freshHostedCpu": {
+          "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+          "run": 43384203084,
+          "artifact": 14017439812,
+          "blender": "4.2.0",
+          "browserAPIs": [
+            "WebGPU",
+            "WebGL2"
+          ],
+          "browserAdapter": "SwiftShader/Subzero",
+          "sourceDevice": "CPU",
+          "sourceBackend": "OPENGL",
+          "numericalMapValueCases": 81,
+          "independentControls": 1,
+          "builtReadbacks": 164,
+          "maximumAbsoluteError": 0,
+          "currentPythonSourceHashes": 4
+        },
+        "freshHostedGpuSourceProfile": {
+          "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+          "run": 43384203084,
+          "artifact": 14018141150,
+          "blender": "4.2.0",
+          "browserAPIs": [
+            "WebGPU",
+            "WebGL2"
+          ],
+          "browserAdapter": "SwiftShader/Subzero",
+          "sourceDevice": "GPU",
+          "sourceBackend": "OPENGL",
+          "status": "source-profile-refused",
+          "numericalMapValueCases": 0,
+          "independentControls": 1,
+          "currentPythonSourceHashes": 4
+        },
+        "freshHostedModernAbsence": {
+          "candidate": "9c31b318c1529f9c3a871b06c1497dfafd928f82",
+          "run": 43384203084,
+          "artifact": 14017433933,
+          "blender": "5.2.0",
+          "browserAPIs": [
+            "WebGPU",
+            "WebGL2"
+          ],
+          "browserAdapter": "SwiftShader/Subzero",
+          "status": "native-node-absent",
+          "numericalMapValueCases": 0,
+          "independentControls": 0
+        }
       }
     }
   },
@@ -7530,7 +7977,6 @@
     "compositor:ShaderNodeVectorRotate",
     "shader:FunctionNodeFindInString",
     "shader:FunctionNodeFormatString",
-    "shader:FunctionNodeGetVectorComponent",
     "shader:FunctionNodeInputMenu",
     "shader:FunctionNodeInputSpecialCharacters",
     "shader:FunctionNodeInputString",

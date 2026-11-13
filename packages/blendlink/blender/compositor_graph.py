@@ -614,11 +614,11 @@ def extract(scene):
                 elif node.bl_idname == "CompositorNodeLumaMatte":
                     normalize_luminance_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
-                        lambda incoming, message: fail("unsupported-luminance-key", path, node, incoming, message))
+                        lambda incoming, message: fail("unsupported-luminance-key", path, node, incoming, message), is_single_value)
                 elif node.bl_idname == "CompositorNodeDiffMatte":
                     normalize_difference_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
-                        lambda incoming, message: fail("unsupported-difference-key", path, node, incoming, message))
+                        lambda incoming, message: fail("unsupported-difference-key", path, node, incoming, message), is_single_value)
                 elif node.bl_idname == "CompositorNodeDistanceMatte":
                     normalize_distance_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
                         is_single_value,

@@ -669,6 +669,11 @@ def _principled_omissions(node, tree, capabilities):
     """Name non-default Principled details the stock glTF path omits."""
     omitted = []
     for socket_name, expected, artist_label in _PRINCIPLED_OMITTED_INPUTS:
+        if socket_name == "Subsurface Scale" and tuple(bpy.app.version[:3]) == (4, 2, 0):
+            # Actual 4.2 default is 0.05; measured 5.2/5.3 use 0.005.
+            # A pristine legacy material must not be labeled authored/lossy
+            # merely because its native default differs from the modern one.
+            expected = 0.05
         socket = _node_input(node, socket_name)
         if socket is None:
             continue

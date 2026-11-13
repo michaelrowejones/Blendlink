@@ -1375,6 +1375,14 @@ def emit_output(node, from_socket, stack=()):
             from utility_ir import emit_utility
         return emit_utility(node, lambda socket: emit_input(socket, stack=stack), _refuse, get_evaluation_engine())
 
+    if idname == "FunctionNodeGetVectorComponent":
+        if __package__:
+            from .vector_component_ir import emit_vector_component
+        else:
+            from vector_component_ir import emit_vector_component
+        return emit_vector_component(node, from_socket,
+            lambda socket, as_vector=False: emit_input(socket, stack=stack, as_vector=as_vector), _refuse)
+
     if idname == "ShaderNodeSeparateXYZ":
         return {
             "op": "separate",

@@ -91,8 +91,12 @@ try:
     for backend,device in [('OPENGL','CPU'),('METAL','GPU')]:
         with patch.object(model,'native_gpu_profile',side_effect=AssertionError('Unrelated evaluator sampled the profile')):
             op=normalize(backend,device)
-            assert op['properties']['difference_key_model']=='native-difference-key-v1'
+            assert op['properties']['difference_key_model']==(model.CPU_EXACT_MODEL if device=='CPU' else 'native-difference-key-v1')
             assert 'difference_key_gpu_profile' not in op['properties']
+    for version in [(4,2,1),(5,2,1),(5,3,1),(5,4,0)]:
+        with patch.dict(sys.modules,{'bpy':SimpleNamespace(app=SimpleNamespace(version=version))}):
+            try:normalize('OPENGL','CPU');raise AssertionError('Unmeasured CPU release acquired the exact profile')
+            except Refused as error:assert 'measured Blender' in str(error)
 finally:
     scene.render.compositor_device=previous;bpy.data.node_groups.remove(tree)
-print('BLENDLINK_DIFFERENCE_PROFILE_PASSED actual source RNA, exact recorded profile, unknown refusal, old CPU/Metal unchanged')
+print('BLENDLINK_DIFFERENCE_PROFILE_PASSED actual RNA, exact CPU release and GPU profile, unknown refusal, Metal field model retained')

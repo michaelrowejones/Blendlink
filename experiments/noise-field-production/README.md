@@ -21,7 +21,13 @@ native-pixel or hosted timing claim. The built optimized lifecycle replay passes
 all 14 cases without long tasks. The fresh [98ff98a hosted run](https://github.com/michaelrowejones/Blendlink/actions/runs/43366540747)
 also passes all 14 lifecycle cases and all 16 native canary jobs, with unchanged
 assertions: maximum slice 11 ms, maximum RAF gap 16.8 ms, cancellation at most
-20.4 ms and no observed long tasks on either browser API. The
+20.4 ms and no observed long tasks on either browser API. The subsequent
+[9c31b31 hosted run](https://github.com/michaelrowejones/Blendlink/actions/runs/43384203084)
+also passes all 14 lifecycle cases: maximum slice 9.3 ms, maximum RAF gap
+16.8 ms, cancellation at most 24.6 ms and zero observed long tasks. Its actual
+SwiftShader/LLVM reports verify source replacement/restoration and all three
+resize steps separately on each API; the original assertions remain unchanged.
+The
 regression tests use a throwing pixel-data getter while checking that actual
 UV/object/normal/tangent/Height dependencies inside image coordinates remain
 visible to each inspector.
