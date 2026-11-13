@@ -196,7 +196,22 @@ export async function validatedBaseColorProgramMaterials(
     throw new Error('Compiled material programs use an unsupported document schema/model.')
   }
   if (document.images !== undefined && !record(document.images)) throw new Error('Compiled material program images must be an object.')
-  if (record(document.images) && Object.keys(document.images).length > 0 && !imageBytes) return accepted
+  if (record(document.images) && Object.keys(document.images).length > 0 && !imageBytes) {
+    // Returning no Base Color exemption is sufficient for old live-only
+    // carriers, but a portable color must not hide a required Squeeze in
+    // Roughness or another channel. Only actual matched bindings require
+    // this preflight; unrelated/unbound programs keep the old no-proof path.
+    const bound = new Set(primitiveBindings(gltf).map(binding => binding.primitive.material))
+    const programs = document.materials
+    const materials = Array.isArray(gltf.materials) ? gltf.materials : []
+    if (materials.some((material, index) => {
+      if (!bound.has(index) || !record(material) || !record(material.extras)) return false
+      const source = material.extras.blendlink_source_material
+      const program = typeof source === 'string' && Object.hasOwn(programs, source) ? programs[source] : null
+      return record(program) && hasSqueeze(program.channels)
+    })) throw new Error('Squeeze Value CPU material preflight requires verified companion image bytes; supply the exact published image payloads before auditing this binding.')
+    return accepted
+  }
   const decoded = await verifiedImages(document, imageBytes ?? new Map())
   const programs = document.materials
   const materials = Array.isArray(gltf.materials) ? gltf.materials : []

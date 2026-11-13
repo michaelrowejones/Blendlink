@@ -4,6 +4,7 @@ import { squeezeScalarBounds,validSqueezeExpression } from './tslSqueeze.js'
 const scalar=(value:number):TslIrExpression=>({op:'const_float',value})
 const squeeze=(value:TslIrExpression=scalar(0)):TslIrExpression=>({op:'squeeze_native',model:'eevee-squeeze-f32-v1',sourceEngine:'EEVEE',sourceProfile:'darwin-arm64-metal-v1',nativeVersion:[5,2,0],nativeGpuBackend:'METAL',inputModel:'opaque-nearest-f32-data-or-literal-v1',value,width:scalar(1),center:scalar(0)})
 const image=():TslIrExpression=>({op:'separate',channel:'x',input:{op:'tex_image',sourceEngine:'EEVEE',nativeGpuBackend:'METAL',sourceImageStorage:'rgba32f',sourceImageUploadRounding:'none',width:2,height:1,pixels:[-8,0,0,1,8,1,0,1],interpolation:'Closest',extension:'REPEAT',output:'color',vector:{op:'const_vec3',value:[.25,.75,0]}}})
+const linux=(value:TslIrExpression=scalar(0)):TslIrExpression=>({...squeeze(value),sourceProfile:'linux-x86_64-llvmpipe20-opengl-v1',nativeGpuBackend:'OPENGL',sourceBuildHash:'fbe6228777e7',nativeGpuRenderer:'llvmpipe (LLVM 20.1.2, 256 bits)'})
 const build=(output:TslIrExpression)=>buildTslColorNode({schemaVersion:1,model:'blendlink-tsl-ir-v1',output})
 
 describe('bounded native EEVEE Squeeze',()=>{
@@ -62,5 +63,18 @@ describe('bounded native EEVEE Squeeze',()=>{
   expect(()=>build(squeeze(child))).toThrow(/Squeeze Value/)
   const matching=squeeze(child);matching.nativeVersion=[5,3,0]
   expect(build(matching).isNode).toBe(true)
+ })
+ it('admits only the measured Linux source build and actual llvmpipe renderer with matching image and nested profiles',()=>{
+  expect(build(linux()).isNode).toBe(true)
+  const channel=image();(channel.input as TslIrExpression).nativeGpuBackend='OPENGL'
+  expect(build(linux(channel)).isNode).toBe(true)
+  expect(build(linux(linux(channel))).isNode).toBe(true)
+  for(const patch of [{sourceBuildHash:'unknown'},{sourceBuildHash:undefined},{nativeGpuRenderer:'unmeasured OpenGL driver'},
+   {nativeGpuRenderer:undefined},{nativeGpuBackend:'METAL'},{nativeGpuBackend:'VULKAN'},{nativeVersion:[5,3,0]},
+   {sourceProfile:'linux-x86_64-opengl-trial-v1'},
+  ])expect(()=>build({...linux(),...patch})).toThrow(/Squeeze Value/)
+  expect(()=>build(linux(image()))).toThrow(/Squeeze Value/)
+  expect(()=>build(linux(squeeze()))).toThrow(/Squeeze Value/)
+  expect(()=>build(squeeze(linux()))).toThrow(/Squeeze Value/)
  })
 })

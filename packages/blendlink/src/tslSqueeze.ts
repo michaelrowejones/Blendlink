@@ -3,22 +3,26 @@
  * Source revisions/precision corpus are pinned in experiments/squeeze-node-differential. */
 import { Fn, float, pow } from 'three/tsl'
 import type { TslExpression, TslIrExpression } from './tslNodeRecipe.js'
-const MODEL='eevee-squeeze-f32-v1',SOURCE='linux-x86_64-opengl-trial-v1',INPUT='opaque-nearest-f32-data-or-literal-v1'
+const MODEL='eevee-squeeze-f32-v1',SOURCE='darwin-arm64-metal-v1',INPUT='opaque-nearest-f32-data-or-literal-v1'
+const LINUX_SOURCE='linux-x86_64-llvmpipe20-opengl-v1',LINUX_BUILD='fbe6228777e7',LINUX_RENDERER='llvmpipe (LLVM 20.1.2, 256 bits)'
 const versions=['5.2.0','5.3.0']
 const record=(value:unknown):value is TslIrExpression=>!!value&&typeof value==='object'&&!Array.isArray(value)&&typeof(value as TslIrExpression).op==='string'
 const literal=(value:unknown):value is number=>typeof value==='number'&&Number.isFinite(value)&&Math.abs(value)<=16&&Math.fround(value)===value
 function metadata(ir:TslIrExpression,version:readonly number[]):boolean {
-  return ir.op==='squeeze_native'&&ir.model===MODEL&&ir.sourceEngine==='EEVEE'&&ir.sourceProfile===SOURCE
-    &&ir.inputModel===INPUT&&ir.nativeGpuBackend==='OPENGL'&&Array.isArray(ir.nativeVersion)
+  const native=ir.sourceProfile===SOURCE&&ir.nativeGpuBackend==='METAL'
+    ||ir.sourceProfile===LINUX_SOURCE&&version.join('.')==='5.2.0'&&ir.nativeGpuBackend==='OPENGL'
+      &&ir.sourceBuildHash===LINUX_BUILD&&ir.nativeGpuRenderer===LINUX_RENDERER
+  return ir.op==='squeeze_native'&&ir.model===MODEL&&ir.sourceEngine==='EEVEE'&&native
+    &&ir.inputModel===INPUT&&Array.isArray(ir.nativeVersion)
     &&ir.nativeVersion.length===3&&version.every((part,index)=>Object.hasOwn(ir.nativeVersion as unknown[],index)&&(ir.nativeVersion as number[])[index]===part)
 }
-export function squeezeScalarBounds(ir:TslIrExpression,version:readonly number[],depth=0,work={nodes:0,pixels:0}):[number,number]|null {
+export function squeezeScalarBounds(ir:TslIrExpression,version:readonly number[],depth=0,work={nodes:0,pixels:0},profile=SOURCE):[number,number]|null {
   if(++work.nodes>64||depth>8||!record(ir))return null
   if(ir.op==='const_float'&&literal(ir.value))return[ir.value,ir.value]
-  if(ir.op==='squeeze_native')return validSqueezeExpression(ir,version,depth+1,work)?[0,1]:null
+  if(ir.op==='squeeze_native')return ir.sourceProfile===profile&&validSqueezeExpression(ir,version,depth+1,work)?[0,1]:null
   const axis=['x','y','z'].indexOf(String(ir.channel)),image=ir.input
   if(ir.op!=='separate'||axis<0||!record(image)||image.op!=='tex_image'||image.sourceEngine!=='EEVEE'
-    ||image.nativeGpuBackend!=='OPENGL'||image.sourceImageStorage!=='rgba32f'||image.sourceImageUploadRounding!=='none'
+    ||image.nativeGpuBackend!==(profile===LINUX_SOURCE?'OPENGL':'METAL')||image.sourceImageStorage!=='rgba32f'||image.sourceImageUploadRounding!=='none'
     ||image.interpolation!=='Closest'||image.output!=='color'||!['REPEAT','EXTEND','CLIP'].includes(String(image.extension))
     ||(image.projection??'flat')!=='flat')return null
   const vector=image.vector
@@ -36,7 +40,7 @@ export function squeezeScalarBounds(ir:TslIrExpression,version:readonly number[]
 }
 export function validSqueezeExpression(ir:TslIrExpression,version:readonly number[],depth=0,work={nodes:0,pixels:0}):boolean {
   if(++work.nodes>64||depth>8||version.length!==3||!versions.includes(version.join('.'))||!metadata(ir,version))return false
-  const ranges=['value','width','center'].map(key=>record(ir[key])?squeezeScalarBounds(ir[key] as TslIrExpression,version,depth+1,work):null)
+  const ranges=['value','width','center'].map(key=>record(ir[key])?squeezeScalarBounds(ir[key] as TslIrExpression,version,depth+1,work,String(ir.sourceProfile)):null)
   if(ranges.some(range=>!range||range.some(value=>Math.abs(value)>16)))return false
   const [value,width,center]=ranges as [number,number][]
   const delta=[Math.fround(value![0]-center![1]),Math.fround(value![1]-center![0])]

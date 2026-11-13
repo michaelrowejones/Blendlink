@@ -1,4 +1,4 @@
-name: Private Squeeze Linux OpenGL qualification
+name: Squeeze Linux production-profile candidate qualification
 
 on:
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   linux52:
-    name: Private native EEVEE 5.2 OpenGL trial
+    name: Native EEVEE 5.2 exact Linux source-profile candidate
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
@@ -78,24 +78,24 @@ jobs:
           const suite=JSON.parse(await readFile(directory+'/suite-software.json'))
           const references=JSON.parse(await readFile(directory+'/references.json'))
           assert.equal(suite.status,'passed')
-          assert.equal(suite.productionCases,0)
-          assert.equal(suite.experimentalTrialCases,25)
+          assert.equal(suite.productionCases,25)
           assert.equal(references.backend.backend,'OPENGL')
-          assert.match(references.backend.renderer,/llvmpipe/i)
+          assert.equal(references.backend.renderer,'llvmpipe (LLVM 20.1.2, 256 bits)')
+          assert.equal(references.build,'fbe6228777e7')
           for(const mode of ['raw','final']){
             const report=JSON.parse(await readFile(directory+'/browser-'+mode+'-software.json'))
             assert.equal(report.status,'passed')
             assert.deepEqual(report.rows.map(row=>row.backend).sort(),['webgl2','webgpu'])
             assert.ok(report.rows.every(row=>row.rows.length===26&&row.failures.length===0))
           }
-          await writeFile(directory+'/trial-receipt.json',JSON.stringify({proofRole:suite.proofRole,productionAdmissionCases:0,experimentalTrialCasesPerApiAndPath:suite.experimentalTrialCases,native:references.backend,publicSourceProfileUnchanged:true},null,2))
+          await writeFile(directory+'/trial-receipt.json',JSON.stringify({proofRole:'PRODUCTION_SOURCE_PROFILE_CANDIDATE',publicMainProductionAdmissionCases:0,candidateCasesPerApiAndPath:suite.productionCases,sourceProfile:'linux-x86_64-llvmpipe20-opengl-v1',native:references.backend,publicMainSourceProfileUnchanged:true},null,2))
           JS
 
       - name: Retain native, failed and Final evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: private-squeeze-opengl52
+          name: production-candidate-squeeze-opengl52
           path: artifacts/verification-squeeze-opengl52
           if-no-files-found: warn
           retention-days: 30

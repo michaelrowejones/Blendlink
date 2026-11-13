@@ -7,7 +7,10 @@ import sys
 import bpy
 
 MODEL = 'eevee-squeeze-f32-v1'
-SOURCE = 'linux-x86_64-opengl-trial-v1'
+SOURCE = 'darwin-arm64-metal-v1'
+LINUX_SOURCE = 'linux-x86_64-llvmpipe20-opengl-v1'
+LINUX_BUILD = 'fbe6228777e7'
+LINUX_RENDERER = 'llvmpipe (LLVM 20.1.2, 256 bits)'
 INPUT_MODEL = 'opaque-nearest-f32-data-or-literal-v1'
 VERSIONS = {(5, 2, 0), (5, 3, 0)}
 
@@ -21,13 +24,19 @@ def _literal(value):
 
 
 def _metadata(expression, version):
+    profile = expression.get('sourceProfile')
+    native = (profile == SOURCE and expression.get('nativeGpuBackend') == 'METAL'
+        or profile == LINUX_SOURCE and tuple(version) == (5, 2, 0)
+        and expression.get('nativeGpuBackend') == 'OPENGL'
+        and expression.get('sourceBuildHash') == LINUX_BUILD
+        and expression.get('nativeGpuRenderer') == LINUX_RENDERER)
     return (expression.get('op') == 'squeeze_native' and expression.get('model') == MODEL
-        and expression.get('sourceEngine') == 'EEVEE' and expression.get('sourceProfile') == SOURCE
-        and expression.get('inputModel') == INPUT_MODEL and expression.get('nativeGpuBackend') == 'OPENGL'
+        and expression.get('sourceEngine') == 'EEVEE' and native
+        and expression.get('inputModel') == INPUT_MODEL
         and expression.get('nativeVersion') == list(version))
 
 
-def scalar_bounds(expression, version, depth=0, work=None):
+def scalar_bounds(expression, version, depth=0, work=None, profile=SOURCE):
     work = {'nodes': 0, 'pixels': 0} if work is None else work
     work['nodes'] += 1
     if not isinstance(expression, dict) or depth > 8 or work['nodes'] > 64:
@@ -35,13 +44,14 @@ def scalar_bounds(expression, version, depth=0, work=None):
     if expression.get('op') == 'const_float' and _literal(expression.get('value')):
         return expression['value'], expression['value']
     if expression.get('op') == 'squeeze_native':
-        return (0, 1) if valid_expression(expression, version, depth + 1, work) else None
+        return (0, 1) if expression.get('sourceProfile') == profile and valid_expression(expression, version, depth + 1, work) else None
     axis = {'x': 0, 'y': 1, 'z': 2}.get(expression.get('channel'))
     image = expression.get('input')
     if expression.get('op') != 'separate' or axis is None or not isinstance(image, dict):
         return None
+    backend = 'OPENGL' if profile == LINUX_SOURCE else 'METAL'
     if (image.get('op') != 'tex_image' or image.get('sourceEngine') != 'EEVEE'
-            or image.get('nativeGpuBackend') != 'OPENGL' or image.get('sourceImageStorage') != 'rgba32f'
+            or image.get('nativeGpuBackend') != backend or image.get('sourceImageStorage') != 'rgba32f'
             or image.get('sourceImageUploadRounding') != 'none' or image.get('interpolation') != 'Closest'
             or image.get('output') != 'color' or image.get('extension') not in {'REPEAT', 'EXTEND', 'CLIP'}
             or image.get('projection', 'flat') != 'flat'):
@@ -70,7 +80,7 @@ def valid_expression(expression, version, depth=0, work=None):
     work = {'nodes': 0, 'pixels': 0} if work is None else work
     work['nodes'] += 1
     if depth > 8 or work['nodes'] > 64 or tuple(version) not in VERSIONS or not _metadata(expression, version): return False
-    ranges = [scalar_bounds(expression.get(key), version, depth + 1, work) for key in ['value', 'width', 'center']]
+    ranges = [scalar_bounds(expression.get(key), version, depth + 1, work, expression.get('sourceProfile')) for key in ['value', 'width', 'center']]
     if any(value is None or max(map(abs, value)) > 16 for value in ranges): return False
     value, width, center = ranges
     delta = [_f32(value[0] - center[1]), _f32(value[1] - center[0])]
@@ -81,16 +91,21 @@ def source_profile(refuse):
     version = tuple(bpy.app.version)
     if version == (4, 2, 0):
         refuse('Squeeze Value source attestation is N/A in Blender 4.2 background export; use verified Blender 5.2/5.3. Automatic Cycles baking cannot preserve this EEVEE node')
-    if version != (5, 2, 0) or sys.platform != 'linux' or platform.machine() != 'x86_64':
+    mac = sys.platform == 'darwin' and platform.machine() == 'arm64' and version in VERSIONS
+    linux = (sys.platform == 'linux' and platform.machine() == 'x86_64' and version == (5, 2, 0)
+        and bpy.app.build_hash == LINUX_BUILD.encode('ascii'))
+    if not mac and not linux:
         refuse('Squeeze Value has no verified live source profile for this Blender version/platform; automatic Cycles baking is not equivalent')
     import gpu
     try:
         if bpy.app.background: gpu.init()
         backend = gpu.platform.backend_type_get()
+        renderer = gpu.platform.renderer_get() if linux else None
     except Exception as error:
         refuse('Squeeze Value requires actual native GPU backend attestation: ' + str(error))
-    if backend != 'OPENGL' or 'llvmpipe' not in gpu.platform.renderer_get().lower():
-        refuse('Squeeze Value has no verified live source precision profile for actual GPU backend ' + str(backend))
+    if not (mac and backend == 'METAL' or linux and backend == 'OPENGL' and renderer == LINUX_RENDERER):
+        refuse('Squeeze Value has no verified live source precision profile for actual GPU backend '
+            + str(backend) + (' / ' + str(renderer) if linux else ''))
     return version
 
 
@@ -127,12 +142,16 @@ def emit_squeeze(node, output, *, scalar, refuse, evaluation_engine, stack=(), w
         refuse('Squeeze Value live translation requires EEVEE; Cycles evaluates this node differently')
     if output.identifier != 'Value': refuse('Squeeze Value has no verified output ' + output.identifier)
     version = source_profile(refuse)
+    linux = sys.platform == 'linux'
     # Reject large/native-processed images before generic IR image extraction
     # or pixel-array reconstruction. Inspection stays scoped to these inputs.
     _source_images(node, stack, walk, refuse)
     expression = {'op': 'squeeze_native', 'model': MODEL, 'sourceEngine': 'EEVEE',
-        'sourceProfile': SOURCE, 'nativeVersion': list(version), 'nativeGpuBackend': 'OPENGL', 'inputModel': INPUT_MODEL,
+        'sourceProfile': LINUX_SOURCE if linux else SOURCE, 'nativeVersion': list(version),
+        'nativeGpuBackend': 'OPENGL' if linux else 'METAL', 'inputModel': INPUT_MODEL,
         'value': scalar(node.inputs['Value']), 'width': scalar(node.inputs['Width']), 'center': scalar(node.inputs['Center'])}
+    if linux:
+        expression.update(sourceBuildHash=LINUX_BUILD, nativeGpuRenderer=LINUX_RENDERER)
     if not valid_expression(expression, version):
         refuse('Squeeze Value requires exact Float32 literals, direct scalar channels of qualified nearest data images with literal coordinates, or verified Squeeze outputs; inputs must stay within magnitude 16 and |(Value-Center)*Width| <=24; images are limited to 1024 texels and bounded validation work')
     return expression

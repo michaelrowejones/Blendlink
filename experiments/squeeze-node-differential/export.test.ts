@@ -41,10 +41,17 @@ it('publishes actual automatic Squeeze and embedded image bindings with exact Fi
    const bound=gltf.materials.find((value:any)=>value.extras?.blendlink_source_material===entry.material)
    expect(bound.pbrMetallicRoughness.baseColorFactor).toEqual([.125,.25,.5,1])
    expect(bound.pbrMetallicRoughness.roughnessFactor??1).toBe(1)
-   const forged=JSON.parse(programsBytes.toString())
-   forged.materials[entry.material].channels.Roughness.tslIr.output.nativeGpuBackend='METAL'
-   const bytes=Buffer.from(JSON.stringify(forged)),pointer={materialPrograms:{...manifest.materialPrograms!,bytes:bytes.length,hash:hash(bytes).slice(0,16)}}
-   await expect(validatedBaseColorProgramMaterials(gltf,pointer,bytes)).rejects.toThrow(/Squeeze Value/)
+   const patches:Record<string,unknown>[]=[{nativeGpuBackend:'VULKAN'}]
+   if(ir.output.sourceProfile==='linux-x86_64-llvmpipe20-opengl-v1')patches.push(
+    {sourceBuildHash:'unmeasured-build'},{nativeGpuRenderer:'unmeasured OpenGL driver'},
+    {sourceBuildHash:undefined},{nativeGpuRenderer:undefined},
+   )
+   for(const patch of patches){
+    const forged=JSON.parse(programsBytes.toString())
+    Object.assign(forged.materials[entry.material].channels.Roughness.tslIr.output,patch)
+    const bytes=Buffer.from(JSON.stringify(forged)),pointer={materialPrograms:{...manifest.materialPrograms!,bytes:bytes.length,hash:hash(bytes).slice(0,16)}}
+    await expect(validatedBaseColorProgramMaterials(gltf,pointer,bytes)).rejects.toThrow(/Squeeze Value/)
+   }
    const unmarked=structuredClone(gltf)
    for(const mesh of unmarked.meshes??[])if(mesh.extras?.blendlink_tsl_runtime)delete mesh.extras.blendlink_tsl_runtime.requiresNodeRenderer
    await expect(validatedBaseColorProgramMaterials(unmarked,manifest,programsBytes)).rejects.toThrow(/exported node-renderer declaration/)

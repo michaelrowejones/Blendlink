@@ -205,6 +205,51 @@ async function auditReal(fixture: Awaited<ReturnType<typeof realPublication>>, p
 }
 
 describe('exact external image and per-object program evidence', () => {
+  it('cannot skip a matched Squeeze Roughness audit when optional companion bytes are omitted',async()=>{
+    const fixture=await realPublication([[.8,.35,.1]])
+    const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes)
+    document.getRoot().listMaterials()[0]!.setBaseColorFactor([.125,.25,.5,1])
+    document.getRoot().listMeshes()[0]!.setExtras({blendlink_tsl_runtime:{schemaVersion:1,
+      requiresNodeRenderer:{schemaVersion:1,model:'squeeze-native-v1'}}})
+    const output={op:'squeeze_native',model:'eevee-squeeze-f32-v1',sourceEngine:'EEVEE',
+      sourceProfile:'darwin-arm64-metal-v1',nativeVersion:[5,2,0],nativeGpuBackend:'METAL',
+      inputModel:'opaque-nearest-f32-data-or-literal-v1',value:{op:'const_float',value:1},
+      width:{op:'const_float',value:1},center:{op:'const_float',value:0}}
+    Object.assign(fixture.sidecar.materials.Artist,{channels:{Roughness:{tslIr:{
+      schemaVersion:1,model:'blendlink-tsl-ir-v1',output}}}})
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    const missingCompanions=()=>auditCompiledSceneArtifact({manifest:fixture.manifest,
+      glbBytes:fixture.glbBytes,materialProgramsBytes:fixture.bytes})
+    await expect(missingCompanions()).rejects.toThrow(/Squeeze Value.*companion image/)
+    // A complete, pinned PNG must still reach the actual channel builder.
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+    output.nativeGpuBackend='OPENGL';repin(fixture)
+    await expect(missingCompanions()).rejects.toThrow(/Squeeze Value.*companion image/)
+    await expect(auditReal(fixture)).rejects.toThrow(/Squeeze Value requires its verified EEVEE/)
+    output.nativeGpuBackend='METAL'
+    document.getRoot().listMeshes()[0]!.setExtras({})
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    await expect(auditReal(fixture)).rejects.toThrow(/exported node-renderer declaration/)
+  })
+
+  it('keeps old portable image programs and unbound Squeeze programs on their existing missing-companion path',async()=>{
+    const fixture=await realPublication([[.8,.35,.1]])
+    const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes)
+    document.getRoot().listMaterials()[0]!.setBaseColorFactor([.125,.25,.5,1])
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    const missingCompanions=()=>auditCompiledSceneArtifact({manifest:fixture.manifest,
+      glbBytes:fixture.glbBytes,materialProgramsBytes:fixture.bytes})
+    expect((await missingCompanions()).conformance.issues).toEqual([])
+    Object.assign(fixture.sidecar.materials,{Unused:{channels:{Roughness:{tslIr:{
+      schemaVersion:1,model:'blendlink-tsl-ir-v1',output:{op:'squeeze_native',model:'eevee-squeeze-f32-v1'}}}}}})
+    document.createMaterial('Unused Squeeze').setExtras({blendlink_source_material:'Unused'})
+    fixture.glbBytes=await io.writeBinary(document)
+    repin(fixture)
+    fixture.manifest.materialPrograms!.materials=2
+    expect((await missingCompanions()).conformance.issues).toEqual([])
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+  })
+
   it('certifies fresh Magic against decoded positions and UVs without requiring a normal attribute',async()=>{
     const fixture=await realPublication([[.8,.35,.1]])
     const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes)

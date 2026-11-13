@@ -30,7 +30,7 @@ try{
   await run('raw-browser',process.execPath,['experiments/squeeze-node-differential/run.mjs',...(built?['--built']:[])])
   await run('final-browser',process.execPath,['experiments/squeeze-node-differential/run.mjs',...(built?['--built']:[]),'--final'])
   const references=JSON.parse(await readFile(join(output,'references.json')))
-  report.productionCases=0;report.experimentalTrialCases=references.cases.filter(entry=>entry.id!=='calibration').length;report.proofRole='PRIVATE_LINUX_OPENGL_TRIAL_NOT_PRODUCTION_ADMISSION';report.nativeVersion=references.version;report.status='passed'
+  report.productionCases=references.cases.filter(entry=>entry.id!=='calibration').length;report.nativeVersion=references.version;report.status='passed'
   console.log('BLENDLINK_SQUEEZE_SUITE_PASSED '+JSON.stringify({profile,nativeVersion:report.nativeVersion,productionCases:report.productionCases}))
  }
 }catch(error){report.status='failed';report.error=String(error);throw error}finally{await writeFile(join(output,'suite-'+profile+'.json'),JSON.stringify(report,null,2))}
