@@ -44,6 +44,9 @@ try {
   await native('word-native', 'experiments/luma-cpu-precision/word_reference.py', { BLENDLINK_LUMA_WORD_REFERENCES: words })
   await native('dot-native', 'experiments/luma-cpu-precision/dot_reference.py', { BLENDLINK_LUMA_DOT_REFERENCES: dot })
   await native('ratio-native', 'experiments/luma-cpu-precision/ratio_reference.py', { BLENDLINK_LUMA_RATIO_REFERENCES: ratio })
+  // Keep actual API/driver diagnostics even when the browser cannot start the
+  // numerical trial. Native source captures above remain intact on failure.
+  await run('browser-profile', process.execPath, ['experiments/luma-cpu-precision/browser-profile.mjs', join(evidence, 'browser-profile.json')])
   await run('ordinary-browser', process.execPath, ['experiments/native-compositor-differential/run.mjs', '--built', '--out', join(evidence, 'ordinary-browser'), ordinary])
   if(base.packet.productionAdmission==='PRODUCTION_QUALIFIED'){
     const productionResults=JSON.parse(await readFile(join(evidence,'ordinary-browser/results.json')))

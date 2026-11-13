@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { hash } from '../../scripts/lib/runtime-provenance.mjs'
 import { readCpuLumaQualification, verifyProductionLumaBrowser } from './precision-protocol.mjs'
+import { lumaBrowserLaunchOptions, requireLumaBrowserApis } from './browser-profile.mjs'
 
 function packet(qualified = true, experiment = false) {
   return { schemaVersion: 1, kind: 'blendlink-luma-cpu-precision-qualification-v1',
@@ -95,10 +96,27 @@ test('hosted trials retain all three source profiles and verify cached native ar
   const driver=await readFile(new URL('./qualify-host.mjs',import.meta.url),'utf8')
   assert.ok(driver.includes('assert.equal(base.packet.productionAdmission,expectedAdmission'))
   assert.ok(driver.indexOf("await run('ordinary-browser'")<driver.indexOf('report.productionAdmissionCases=verifyProductionLumaBrowser('))
+  assert.ok(driver.indexOf("await native('ratio-native'") < driver.indexOf("await run('browser-profile'"))
+  assert.ok(driver.indexOf("await run('browser-profile'") < driver.indexOf("await run('ordinary-browser'"))
+  assert.match(workflow, /BLENDLINK_TEST_CHROMIUM_CHANNEL: chromium\n\s+BLENDLINK_TEST_CHROMIUM_ARGS: '\["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader"\]'\n\s+DEBUG: pw:browser/)
 
   assert.equal(workflow.match(/node experiments\/luma-cpu-precision\/qualify-host.mjs/g)?.length, 2)
   assert.ok(workflow.includes('if: always()')); assert.ok(workflow.includes('artifacts/verification-luma-cpu-host'))
   assert.ok(!workflow.includes('continue-on-error')); assert.ok(!workflow.includes('disable-gpu-watchdog'))
+})
+
+test('browser availability uses the real requested APIs and cannot turn missing WebGPU into a pass', () => {
+  const args = ['--use-angle=swiftshader', '--use-webgpu-adapter=swiftshader']
+  assert.deepEqual(lumaBrowserLaunchOptions({ BLENDLINK_TEST_CHROMIUM_CHANNEL: 'chromium',
+    BLENDLINK_TEST_CHROMIUM_ARGS: JSON.stringify(args) }), {
+    headless: true, channel: 'chromium', args: ['--enable-unsafe-webgpu', '--enable-unsafe-swiftshader', ...args],
+  })
+  for (const env of [{ BLENDLINK_TEST_CHROMIUM_CHANNEL: 'chrome' }, { BLENDLINK_TEST_CHROMIUM_ARGS: '[false]' },
+    { BLENDLINK_TEST_CHROMIUM_ARGS: '{}' }]) assert.throws(() => lumaBrowserLaunchOptions(env))
+  const profile = { webgl2: { available: true }, webgpu: { adapterAvailable: true, deviceAvailable: true } }
+  requireLumaBrowserApis(profile)
+  for (const candidate of [{ ...profile, webgl2: { available: false } }, { ...profile, webgpu: { adapterAvailable: false } },
+    { ...profile, webgpu: { adapterAvailable: true, deviceAvailable: false } }]) assert.throws(() => requireLumaBrowserApis(candidate))
 })
 
 test('coverage separates measured CPU precision from legacy compatibility and private kernel exports', async () => {

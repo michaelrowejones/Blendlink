@@ -13,7 +13,7 @@ on:
       - 'scripts/lib/runtime-provenance.mjs'
       - 'package*.json'
   push:
-    branches: [main]
+    branches: [main, codex/qualify-windows-luma]
 
 permissions:
   contents: read
@@ -155,7 +155,10 @@ jobs:
       - name: Capture Windows native CPU and compare ordinary and experimental contracts
         if: runner.os == 'Windows'
         env:
+          # Use the full bundled browser's new headless mode, not headless-shell.
+          BLENDLINK_TEST_CHROMIUM_CHANNEL: chromium
           BLENDLINK_TEST_CHROMIUM_ARGS: '["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader"]'
+          DEBUG: pw:browser
         run: node experiments/luma-cpu-precision/qualify-host.mjs artifacts/verification-luma-cpu-host
 
       - name: Retain native source, mode controls, pixels and both browser API results
