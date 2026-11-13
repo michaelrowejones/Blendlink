@@ -25,7 +25,7 @@ try:
         cli.write_text("// fixture", encoding="utf8")
         descriptor = package / "package.json"
         version = addon.ops._addon_release_version()
-        descriptor.write_text(json.dumps({"name": "blendlink", "version": version}), encoding="utf8")
+        descriptor.write_text(json.dumps({"name": "scenetoweb", "version": version}), encoding="utf8")
         preferences = SimpleNamespace(preview_package=str(package))
         addon.prefs.get_prefs = lambda: preferences
         scene = Path(temporary) / "Unrelated Artist Folder" / "Scene.blend"
@@ -40,13 +40,13 @@ try:
             except RuntimeError as error:
                 assert message in str(error), str(error)
         preferences.preview_package = str(package)
-        descriptor.write_text(json.dumps({"name": "blendlink", "version": "99.0.0"}), encoding="utf8")
+        descriptor.write_text(json.dumps({"name": "scenetoweb", "version": "99.0.0"}), encoding="utf8")
         try:
             addon.ops._preview_studio_command(str(scene))
             raise AssertionError("Wrong version silently fell back to npm")
         except RuntimeError as error:
-            assert f"blendlink {version}" in str(error)
-        descriptor.write_text(json.dumps({"name": "blendlink", "version": version}), encoding="utf8")
+            assert f"scenetoweb {version}" in str(error)
+        descriptor.write_text(json.dumps({"name": "scenetoweb", "version": version}), encoding="utf8")
         cli.unlink()
         try:
             addon.ops._preview_studio_command(str(scene))

@@ -1,9 +1,9 @@
 # Release process
 
-This is the release interface for Blendlink. It produces two separately
+This is the release interface for SceneToWeb. It produces two separately
 installable artifacts from one tagged source revision:
 
-1. the mixed-license `blendlink` npm tarball, whose file-level map is
+1. the mixed-license `scenetoweb` npm tarball, whose file-level map is
    `LICENSES.md`; and
 2. the GPL-3.0-or-later Blender Extension ZIP.
 
@@ -16,6 +16,13 @@ does not merge the artifacts' distribution systems or erase those file-level
 licenses.
 
 ## Current release status
+
+The product is now SceneToWeb, distributed as `scenetoweb` and
+`scenetoweb-addon-<version>.zip`. Historical registry checks below refer to
+the former name; they do not establish ownership of the new package name.
+The repository slug and source directory remain `Blendlink` and
+`packages/blendlink`. Publishing requires the new package-specific trust
+binding and `SCENETOWEB_NPM_TRUSTED_PUBLISHING` gate.
 
 The [2026-09-07 first-user audit](FIRST_USER_AUDIT_2026-09-07.md) adds local
 installation, Blender, browser and isolated-consumer evidence. It is not a
@@ -94,7 +101,7 @@ preview deployment as a public release.
 
 ## Required repository evidence
 
-Run from the Blendlink repository:
+Run from the SceneToWeb repository:
 
 ```powershell
 npm ci
@@ -117,7 +124,7 @@ restore the old workaround exception to accommodate a failing audit.
 For an independent consumer installation, after retaining the archive run:
 
 ```sh
-npm run test:fresh-install -- artifacts/release/<version>/blendlink-<version>.tgz
+npm run test:fresh-install -- artifacts/release/<version>/scenetoweb-<version>.tgz
 ```
 
 This optional network gate installs the exact archive outside the repository
@@ -165,7 +172,7 @@ web server, loading/error UI, and Playwright test file. Until a caller commits
 and invokes that workflow, it is proposed CI rather than verified behavior.
 
 An application can invoke it from its own workflow after pinning a reviewed
-Blendlink commit:
+SceneToWeb commit:
 
 ```yaml
 jobs:
@@ -210,7 +217,7 @@ numeric artifact ID, checks the service digest, reruns the retained verifier,
 verifies GitHub build attestations, and invokes exactly:
 
 ```text
-npm publish ./artifacts/release/<version>/blendlink-<version>.tgz \
+npm publish ./artifacts/release/<version>/scenetoweb-<version>.tgz \
   --registry=https://registry.npmjs.org/ --access=public \
   --provenance --tag=<latest-or-beta>
 ```
@@ -226,7 +233,7 @@ Before enabling the job, bind npm's trusted publisher to the exact public
 repository, `.github/workflows/blender-contract.yml`, environment
 `npm-production`, and allowed action `npm publish`. Protect `v*` tags and the
 environment, then set its environment variable
-`BLENDLINK_NPM_TRUSTED_PUBLISHING=true`. Do not place `NODE_AUTH_TOKEN`,
+`SCENETOWEB_NPM_TRUSTED_PUBLISHING=true`. Do not place `NODE_AUTH_TOKEN`,
 `NPM_TOKEN`, or another write token in this steady-state job.
 
 npm currently requires a package to exist before its trusted publisher can be
@@ -253,7 +260,7 @@ ZIP, `release-manifest.json`, and `SHA256SUMS`; downloads and byte-compares the
 assets; then performs one publish transition. It never uses asset clobbering.
 
 Enable GitHub immutable releases first, protect the environment, and set
-`BLENDLINK_IMMUTABLE_RELEASES=true` there only after confirming the repository
+`SCENETOWEB_IMMUTABLE_RELEASES=true` there only after confirming the repository
 setting. The final verifier requires the REST release record to be non-draft,
 prerelease, immutable, targeted at the exact commit, and to expose the exact
 four server-side SHA-256 digests. Workflow definition and local policy tests

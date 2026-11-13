@@ -16,10 +16,10 @@ visual-parity pass. It exposed and closed two general silent-loss paths:
 
 1. render-visible legacy `HAIR` / `PATH` particle systems now stop export with
    object, system, count, transport consequence, and artist remedy; and
-2. a realtime `blendlink plan` with `plan: null` now exits red when a used
+2. a realtime `scenetoweb plan` with `plan: null` now exits red when a used
    material is still classified `needsBake`.
 
-Blendlink did not generate a Preview GLB from the source after these gates were
+SceneToWeb did not generate a Preview GLB from the source after these gates were
 added. The scene remains blocked until legacy paths have a verified transport
 or the artist converts them to a visually validated mesh/card representation.
 The active-camera adoption design remains **Prototype** and made no production
@@ -28,7 +28,7 @@ manifest or runtime change.
 | Capability | Relation | Implementation | Evidence |
 | --- | --- | --- | --- |
 | `NDL-DIAG-006` realtime `plan: null` material-loss gate | **Improvement** | **Shipped** | Five pure planner cases plus the existing two verifier cases and `experiments/realtime-plan-material-diagnostics/run.mjs`; 2026-07-24, Node 24.15.0 / Blender 5.2.0 |
-| `NDL-GEO-001` legacy `HAIR/PATH` transport | Stock/Needle export behavior **Match** for the underlying loss; early Blendlink refusal **Improvement** | **Shipped blocker**; renderable adapter **Future** | Eight-path stock-export fixture plus untouched 2.91 source; 2026-07-24, Blender 5.2.0 / glTF exporter 5.2.39 |
+| `NDL-GEO-001` legacy `HAIR/PATH` transport | Stock/Needle export behavior **Match** for the underlying loss; early SceneToWeb refusal **Improvement** | **Shipped blocker**; renderable adapter **Future** | Eight-path stock-export fixture plus untouched 2.91 source; 2026-07-24, Blender 5.2.0 / glTF exporter 5.2.39 |
 | `NDL-CAM-003` source-active camera as a bounded fallback | **Improvement candidate** over Needle's implicit all-camera candidates | **Prototype** | Four-case precedence prototype plus exact `Camera_1` mapping; no production gate |
 
 ## Primary-source scope
@@ -96,7 +96,7 @@ The source opens at frame 1 in Eevee with:
 - one `HAIR/OBJECT` system configured for 200 parents and evaluated to 1,000
   instances of `Mesh.008` at the authored frame.
 
-The exact active Blendlink export scope contains three of the four path
+The exact active SceneToWeb export scope contains three of the four path
 systems—`ForeGround_terrain`, `MidGround2_terrain`, and
 `MidGround_terrain`—for 93,000 configured parents. `BackGround_terrain` is
 outside that scope through the active View Layer, so the production blocker
@@ -144,7 +144,7 @@ Two credible designs were compared.
 
 This matches Needle's current ordinary-export floor and keeps the compiler
 small, but silently removes artist-authored grass while leaving a structurally
-valid GLB. It is rejected for Blendlink because loud, artist-readable failure
+valid GLB. It is rejected for SceneToWeb because loud, artist-readable failure
 is a core product promise.
 
 ### Design B — automatically convert legacy paths
@@ -257,7 +257,7 @@ acknowledges the multiple-camera/MainCamera ambiguity.
 Three designs were compared:
 
 1. **Require explicit Website Camera only.** Safest ownership, but needlessly
-   discards an unambiguous source-active camera when Blendlink would otherwise
+   discards an unambiguous source-active camera when SceneToWeb would otherwise
    create its own fallback.
 2. **Adopt Needle's implicit all-camera candidates.** Low configuration, but
    it does not select Blender's active camera and creates ambiguous candidates
@@ -294,7 +294,7 @@ The next high-value cells remain:
 
 Broader should mean orthogonal capability coverage, not merely more visually
 complex scenes. Each cell should remain zero-configuration until a named
-general gap is proven, then improve Blendlink rather than adding scene-specific
+general gap is proven, then improve SceneToWeb rather than adding scene-specific
 configuration.
 
 ## Commands

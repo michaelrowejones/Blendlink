@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Compile one artist-selected NLA track into a portable clip schedule.
 
-The NLA Editor remains the only strip editor. Blendlink records the selected
+The NLA Editor remains the only strip editor. SceneToWeb records the selected
 track's resolved, portable subset and Three.js composes the exported Actions;
 there is intentionally no second Animator graph to keep in sync.
 """
@@ -92,8 +92,8 @@ def collect_track(scene, source, track, *, name, loop, speed, easing):
     object_id = source.get("blendlink_id")
     if not isinstance(object_id, str) or not object_id:
         raise ValueError(
-            f"Animation Sequence source {source.name!r} has no stable Blendlink ID; "
-            "run Set Up Blendlink Scene and save once"
+            f"Animation Sequence source {source.name!r} has no stable SceneToWeb ID; "
+            "run Set Up SceneToWeb Scene and save once"
         )
     sequence_name = str(name).strip()
     if not sequence_name:
@@ -152,7 +152,7 @@ def collect_track(scene, source, track, *, name, loop, speed, easing):
         if bool(getattr(strip, "use_animated_influence", False)):
             raise ValueError(
                 f"Animation Sequence strip {strip.name!r} animates influence. "
-                "Use Blend In/Out plus the Blendlink easing control instead."
+                "Use Blend In/Out plus the SceneToWeb easing control instead."
             )
         blend_type = str(getattr(strip, "blend_type", "REPLACE"))
         if blend_type not in PORTABLE_BLEND_TYPES:
@@ -339,7 +339,7 @@ def _validate_structure(record):
         prior_end = at + strip_duration
     if len(easings) != 1:
         raise ValueError(
-            "animationSequence strips must share one Blendlink easing setting"
+            "animationSequence strips must share one SceneToWeb easing setting"
         )
     if abs(duration - prior_end) > max(1e-4, duration * 1e-4):
         raise ValueError("animationSequence.duration does not end with its last strip")
@@ -472,7 +472,7 @@ def prepare_action_export(record, scene):
         for index, (_slot_identity, strip) in enumerate(staged):
             action = strip.action
             temporary = animation.nla_tracks.new()
-            temporary.name = f"[Action Stash] Blendlink {index + 1:03d} {action.name}"
+            temporary.name = f"[Action Stash] SceneToWeb {index + 1:03d} {action.name}"
             state["temporaryTracks"].append(temporary)
             # Blender's ACTIONS discovery inspects non-muted strips even on a
             # muted track. Keep the staging tracks muted so they expose their

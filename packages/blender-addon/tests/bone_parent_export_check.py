@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Objects parented to bones survive the deform-only joint contract, or say so.
 
-Blendlink exports deforming joints only, because a control rig's mechanism
+SceneToWeb exports deforming joints only, because a control rig's mechanism
 bones produce a skin whose matrix buffer no web backend can bind. Blender's
 exporter keeps a non-deform BONE that parents an object, but it gathers the
 OBJECT only when that bone resolves to a joint reachable from the
@@ -11,7 +11,7 @@ line. On a rig that is exactly where sockets, hotspots and props live.
 
 This suite measures the mechanism rather than trusting a source reading:
 
-  1. the drop reproduces on the stock exporter with the flag Blendlink sets;
+  1. the drop reproduces on the stock exporter with the flag SceneToWeb sets;
   2. enabling Deform on the parent bone is sufficient to publish the object;
   3. doing so is joint-set neutral - byte-identical joints, inverse bind
      matrices, and skin weights - which is what makes it safe to do for the
@@ -295,7 +295,7 @@ def main():
             )
         else:
             raise AssertionError(
-                f"exporterOverrides silently replaced Blendlink's {key} contract"
+                f"exporterOverrides silently replaced SceneToWeb's {key} contract"
             )
 
     # The joint-budget preflight reads the shared registry, not a local number.

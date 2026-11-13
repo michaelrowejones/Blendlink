@@ -1,7 +1,7 @@
 {
-  "name": "blendlink",
+  "name": "scenetoweb",
   "version": "0.9.0",
-  "description": "Artist-first Blender to Three.js scene compiler.",
+  "description": "Publish Blender scenes to the web. Free and open source, powered by Three.js.",
   "keywords": [
     "blender",
     "three",
@@ -32,6 +32,7 @@
     "node": "^22.15.0 || ^24.0.0"
   },
   "bin": {
+    "scenetoweb": "./dist/cli.js",
     "blendlink": "./dist/cli.js"
   },
   "main": "./dist/index.js",

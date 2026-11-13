@@ -1652,7 +1652,7 @@ def main():
             instance_material = bpy.data.materials["Instanced Compiler Material"]
             expect(
                 len(compiler.marker_nodes(bpy.data.materials["Selected Vertex"])) == 1,
-                "Blendlink Web Color marker did not survive save/reopen",
+                "SceneToWeb Web Color marker did not survive save/reopen",
             )
             plan = compiler.plan_materials(
                 (
@@ -1948,7 +1948,7 @@ def main():
             )
             expect(
                 "BLENDLINK_PRIVATE_SELECTED" not in procedural_json
-                and "Blendlink Web Color" not in procedural_json
+                and "SceneToWeb Web Color" not in procedural_json
                 and "_BLENDLINK_WEB_" not in procedural_json
                 and "blendlink_private_materialization" not in procedural_json
                 and "blendlink_material_source_version" not in procedural_json

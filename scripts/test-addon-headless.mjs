@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 
@@ -141,7 +141,7 @@ if (discovery.error || discovery.status !== 0) {
   )
 }
 const blender = discovery.stdout.trim().split(/\r?\n/).filter(Boolean).at(-1)
-if (!blender) throw new Error('Blendlink discovery returned no Blender executable')
+if (!blender) throw new Error('SceneToWeb discovery returned no Blender executable')
 
 console.log(`BLENDLINK_FULL_TEST addon: ${blender}`)
 
@@ -226,9 +226,9 @@ if (!desktopSmoke) {
   console.log('BLENDLINK_DESKTOP_SMOKE: installation and managed tools only; not the full material gate')
 }
 
-const installRoot = mkdtempSync(join(tmpdir(), 'blendlink-addon-install-'))
+const installRoot = mkdtempSync(join(tmpdir(), 'scenetoweb-addon-install-'))
 const resources = join(installRoot, 'resources')
-const archive = join(installRoot, 'blendlink.zip')
+const archive = join(installRoot, 'scenetoweb.zip')
 const savedScene = join(installRoot, 'Scene With Spaces.blend')
 const installEnvironment = { ...process.env, BLENDER_USER_RESOURCES: resources, BLENDLINK_REINSTALL_NODE: process.execPath }
 mkdirSync(resources, { recursive: true })
@@ -259,15 +259,79 @@ try {
     '--output-filepath', archive,
   ])
   if (!existsSync(archive)) throw new Error(`Blender did not create the extension archive: ${archive}`)
-  runInstallStep('isolated extension install', [
-    '--command', 'extension', 'install-file', '-r', 'user_default', '-e', archive,
+  // Exercise the public install command across the identity change. This
+  // fixture retains the legacy extension ID and serialized RNA vocabulary;
+  // it is not evidence of a particular previously distributed binary.
+  const legacySource = join(installRoot, 'legacy-identity-source')
+  cpSync(join(root, 'packages', 'blendlink', 'dist', 'addon'), legacySource, { recursive: true })
+  const legacyManifest = join(legacySource, 'blender_manifest.toml')
+  writeFileSync(legacyManifest, readFileSync(legacyManifest, 'utf8')
+    .replace(/^id = "scenetoweb"$/m, 'id = "blendlink"')
+    .replace(/^name = "SceneToWeb"$/m, 'name = "Blendlink"'))
+  const legacyArchive = join(installRoot, 'legacy-blendlink.zip')
+  runInstallStep('legacy identity fixture build', [
+    '--command', 'extension', 'build', '--source-dir', legacySource,
+    '--output-filepath', legacyArchive,
   ])
+  runInstallStep('legacy identity fixture install', [
+    '--command', 'extension', 'install-file', '-r', 'user_default', '-e', legacyArchive,
+  ])
+  const migrationScene = join(installRoot, 'Legacy Artist Scene.blend')
+  const legacyPreferences = { category: 'Artist Tools', overlay_xray: true,
+    preview_package: join(root, 'packages', 'blendlink') }
+  const migrationState = join(installRoot, 'migration-before.json')
+  runInstallStep('legacy preferences and saved scene', [
+    '--background', '--python-exit-code', '1', '--python-expr', `
+import bpy, hashlib, json
+from pathlib import Path
+preferences = bpy.context.preferences.addons["bl_ext.user_default.blendlink"].preferences
+for key, value in json.loads(${JSON.stringify(JSON.stringify(legacyPreferences))}).items():
+    setattr(preferences, key, value)
+bpy.context.scene.blendlink_project.preview_samples = 37
+bpy.context.scene["blendlink_recipe"] = "legacy saved artist recipe"
+bpy.context.scene["artist_intent"] = "preserve this scene"
+bpy.data.objects[0]["blendlink_id"] = "legacy-migration-proof"
+bpy.ops.wm.save_userpref()
+bpy.ops.wm.save_as_mainfile(filepath=${JSON.stringify(migrationScene)})
+path = Path(${JSON.stringify(migrationScene)})
+Path(${JSON.stringify(migrationState)}).write_text(json.dumps({"sha256": hashlib.sha256(path.read_bytes()).hexdigest()}))
+`,
+  ])
+  const migration = spawnSync(process.execPath, [cli, 'addon', 'install'], {
+    cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true,
+    env: { ...installEnvironment, SCENETOWEB_BLENDER: blender, BLENDLINK_BLENDER: blender },
+  })
+  if (migration.error || migration.status !== 0) {
+    throw new Error(`SceneToWeb CLI legacy migration failed:\n${migration.error?.message ?? ''}\n${migration.stdout ?? ''}\n${migration.stderr ?? ''}`)
+  }
+  const migrated = runInstallStep('legacy identity migration verification', [
+    '--background', '--python-exit-code', '1', '--python-expr', `
+import bpy, hashlib, json
+from pathlib import Path
+assert "bl_ext.user_default.blendlink" not in bpy.context.preferences.addons
+assert "bl_ext.user_default.scenetoweb" in bpy.context.preferences.addons
+preferences = bpy.context.preferences.addons["bl_ext.user_default.scenetoweb"].preferences
+for key, value in json.loads(${JSON.stringify(JSON.stringify(legacyPreferences))}).items():
+    assert getattr(preferences, key) == value, (key, getattr(preferences, key), value)
+path = Path(${JSON.stringify(migrationScene)})
+assert hashlib.sha256(path.read_bytes()).hexdigest() == json.loads(Path(${JSON.stringify(migrationState)}).read_text())["sha256"]
+bpy.ops.wm.open_mainfile(filepath=str(path))
+assert bpy.context.scene.blendlink_project.preview_samples == 37
+assert bpy.context.scene["artist_intent"] == "preserve this scene"
+assert bpy.data.objects[0]["blendlink_id"] == "legacy-migration-proof"
+print("BLENDLINK_SCENETOWEB_MIGRATION_PASSED")
+`,
+  ])
+  if (!migrated.includes('BLENDLINK_SCENETOWEB_MIGRATION_PASSED')) {
+    throw new Error(`SceneToWeb migration did not preserve preferences and the saved scene:\n${migrated}`)
+  }
+  console.log('BLENDLINK_FULL_TEST addon: CLI legacy identity migration, preferences and scene preservation passed')
   const probeScript = `
 import bpy, importlib, json, tomllib
 from pathlib import Path
-module_name = "bl_ext.user_default.blendlink"
+module_name = "bl_ext.user_default.scenetoweb"
 repo = next(item for item in bpy.context.preferences.extensions.repos if item.module == "user_default")
-manifest = Path(repo.directory) / "blendlink" / "blender_manifest.toml"
+manifest = Path(repo.directory) / "scenetoweb" / "blender_manifest.toml"
 version = tomllib.loads(manifest.read_text(encoding="utf8"))["version"]
 module = importlib.import_module(module_name)
 # Exercise package-qualified compiler imports from the actual installed ZIP.
@@ -486,7 +550,7 @@ finally:
     if modern_compositor and compositor_tree is not None: bpy.data.node_groups.remove(compositor_tree)
 ${desktopSmoke ? `assert len(bpy.data.objects) > 0, "Expected Blender's default scene"
 bpy.ops.wm.save_as_mainfile(filepath=${JSON.stringify(savedScene)})` : ''}
-print("##blendlink-addon-install " + json.dumps({
+print("##scenetoweb-addon-install " + json.dumps({
     "enabled": module_name in bpy.context.preferences.addons,
     "operator": hasattr(bpy.ops.blendlink, "setup_website_export"),
     "package": bool(module.__file__),
@@ -507,10 +571,10 @@ print("##blendlink-addon-install " + json.dumps({
     '--background', '--python-exit-code', '1', '--python', probeFile,
   ])
   const sentinel = probeOutput.split(/\r?\n/).find(
-    (line) => line.startsWith('##blendlink-addon-install '),
+    (line) => line.startsWith('##scenetoweb-addon-install '),
   )
   if (!sentinel) throw new Error('Installed extension did not emit its verification sentinel')
-  const status = JSON.parse(sentinel.slice('##blendlink-addon-install '.length))
+  const status = JSON.parse(sentinel.slice('##scenetoweb-addon-install '.length))
   const tested = status.testedNodeFamilies
   const required = installedNodeFamilies.map(([name]) => name)
   const capabilities = status.testedNodeCapabilities
@@ -568,7 +632,7 @@ print("##blendlink-addon-install " + json.dumps({
   }
 } finally {
   const owned = resolve(installRoot)
-  if (resolve(tmpdir()) !== resolve(owned, '..') || !owned.includes('blendlink-addon-install-')) {
+  if (resolve(tmpdir()) !== resolve(owned, '..') || !owned.includes('scenetoweb-addon-install-')) {
     throw new Error(`Refusing to remove unexpected addon-test directory: ${owned}`)
   }
   rmSync(owned, { recursive: true, force: true })

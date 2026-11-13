@@ -17,7 +17,7 @@ graph, weights them by exported triangle coverage, and refuses to call the
 result faithful without a deliberate remedy. It is additive to the existing
 manifest contract.
 
-That staging has now begun. Blendlink implements explicit constant and direct
+That staging has now begun. SceneToWeb implements explicit constant and direct
 color-attribute selections as ordinary unlit glTF and has dogfooded both one
 DPM selection and 33 explicitly selected Splash materials. For remaining
 intrinsic color, the next route is still an artist-named socket whose dependency
@@ -28,7 +28,7 @@ compositor result. Those remain separate research cases.
 
 Keep Blender's stock glTF exporter as the authority for recognized Principled
 PBR graphs. A general Blender-node-to-Three shader compiler would take renderer
-ownership from the application and turn Blendlink into the proprietary engine
+ownership from the application and turn SceneToWeb into the proprietary engine
 the product boundary explicitly rejects.
 
 ## Evidence status
@@ -108,12 +108,12 @@ Two designs remained credible:
 2. preserve selected values through an exporter-neutral private carrier, then
    normalize the final GLB to ordinary `COLOR_0`.
 
-Blendlink chose the second design. The compiler copies each selected source
+SceneToWeb chose the second design. The compiler copies each selected source
 layer into a private VEC4 mesh attribute, lets the stock exporter own primitive
 splitting and accessor encoding, atomically points every generated-material
 primitive's `COLOR_0` at the matching accessor, and erases all private
 semantics. This avoids a source fork and keeps the public asset standard glTF.
-The final GLBs contain no `_BLENDLINK_WEB_*` strings. When Blendlink enabled
+The final GLBs contain no `_BLENDLINK_WEB_*` strings. When SceneToWeb enabled
 custom-attribute export only to carry that private data, unrelated custom
 semantics are removed; an explicit application-owned request to export custom
 attributes remains intact.
@@ -244,7 +244,7 @@ Blender render. The source is authored in EEVEE and uses:
 - an enabled view curve;
 - an active compositor graph containing an overlayed Film Grain group and Lens
   Distortion with dispersion `0.3`;
-- a World graph with Mix Shader, which Blendlink already records as omitted in
+- a World graph with Mix Shader, which SceneToWeb already records as omitted in
   the generated authoring-preview evidence.
 
 The generated module correctly warns that Filmic, its look, display gamma, and
@@ -254,7 +254,7 @@ should be evaluated after a material route has restored chroma.
 
 ## Why the existing Cycles bake is not a blanket fix
 
-Blendlink's Appearance route intentionally uses Cycles Combined baking; the
+SceneToWeb's Appearance route intentionally uses Cycles Combined baking; the
 mechanics live in [`bakelib.py`](../packages/blendlink/blender/bakelib.py), and
 [`export_scene.py`](../packages/blendlink/blender/export_scene.py) switches the
 private bake scene to Cycles before `bpy.ops.object.bake`. Blender's official
@@ -311,7 +311,7 @@ surface position still make a general exact UV-flattened result impossible.
 | Explicit selected-socket Cycles Emit bake | The artist-selected, Cycles-evaluable intrinsic color field, flattened through private proxy nodes into a standard texture | Can restore remaining chosen color without pretending to bake Shader to RGB, AO, shadows, or compositor output | Good as a narrow compiler-owned materialization pass | **Prototype second, only for explicit selections** |
 | General EEVEE UV-space materializer | Arbitrary EEVEE-evaluable surface graphs | Would require reconstructing position, normals, object coordinates, derivatives, masks, and scene/view dependencies before making fidelity claims | Too broad for the evidenced job and risks becoming a second renderer | **Do not make this the default route** |
 | EEVEE fixed-camera render plate | The authored camera, compositor, and screen-space result | Highest single-view pixel fidelity | Poor as a general 3D scene; freezes view/interactivity and duplicates website presentation ownership | **Application-owned fallback/reference only** |
-| Blender-node-to-TSL/GLSL runtime translator | Potentially dynamic procedural shading | Would require a large semantic/runtime surface and still must reproduce EEVEE lighting nodes | Conflicts with the non-engine product boundary | **Reject as a general Blendlink feature** |
+| Blender-node-to-TSL/GLSL runtime translator | Potentially dynamic procedural shading | Would require a large semantic/runtime surface and still must reproduce EEVEE lighting nodes | Conflicts with the non-engine product boundary | **Reject as a general SceneToWeb feature** |
 
 The last choice has weak standards support today. Khronos has ratified focused
 PBR material extensions, but arbitrary procedural textures are only an initial
@@ -325,7 +325,7 @@ ship an ordinary glTF scene. [Three migration guide][three-migration]
 
 ### 1. Implemented: block complete material payload collapse in Final/verify
 
-After the stock export, Blendlink inspects material bindings and the final GLB. If every
+After the stock export, SceneToWeb inspects material bindings and the final GLB. If every
 used authored material is Needs Bake and the artifact supplies no meaningful
 PBR/unlit/texture/emissive material payload, report an artist-readable failure
 before browser verification. The verified Splash diagnostic reports:
@@ -408,7 +408,7 @@ position, normals, object coordinates, alpha, derivatives, margins, and every
 scene/view dependency. AO, cast shadows, screen-space effects, Filmic/curves,
 and the compositor still need separate acceptance evidence. A fixed-camera
 EEVEE render is a visual reference or application-owned plate, not proof that
-the navigable Blendlink scene matches.
+the navigable SceneToWeb scene matches.
 
 ## Verified dogfood versus research
 
@@ -443,7 +443,7 @@ Still a bake research case:
 - general EEVEE UV-space materialization of scene/view-dependent graphs;
 - general graph translation to Three/TSL;
 - matching Filmic, view curves, film grain, chromatic dispersion, and World
-  shading inside Blendlink's scene runtime.
+  shading inside SceneToWeb's scene runtime.
 
 ## Primary sources and local source anchors
 
@@ -463,10 +463,10 @@ Still a bake research case:
   `check_if_is_linked_to_active_output`.
 - Installed Three inspected at
   `node_modules/three/examples/jsm/loaders/GLTFLoader.js`, npm version `0.184.0`.
-- Blendlink diagnostics: [`procedural.py`](../packages/blender-addon/procedural.py).
-- Blendlink canonical bake mechanics:
+- SceneToWeb diagnostics: [`procedural.py`](../packages/blender-addon/procedural.py).
+- SceneToWeb canonical bake mechanics:
   [`bakelib.py`](../packages/blendlink/blender/bakelib.py).
-- Blendlink bake orchestration:
+- SceneToWeb bake orchestration:
   [`export_scene.py`](../packages/blendlink/blender/export_scene.py).
 
 [blender-gltf-manual]: https://docs.blender.org/manual/en/5.1/addons/import_export/scene_gltf2.html

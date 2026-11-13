@@ -1,8 +1,8 @@
-# Build Blendlink as the artist-first scene compiler
+# Build SceneToWeb as the artist-first scene compiler
 
 Status: accepted on 2026-07-19; supersedes ADR 0003
 
-Blendlink is the primary Blender-to-Three.js publishing product. Its promise is
+SceneToWeb is the primary Blender-to-Three.js publishing product. Its promise is
 to let a technical artist make a beautiful web-ready scene in Blender and
 compile it into portable, efficient, developer-friendly artifacts without
 adopting a proprietary engine or cloud.

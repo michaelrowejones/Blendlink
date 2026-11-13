@@ -66,7 +66,7 @@ Effects & Behaviors is the deliberate exception to summary-only presentation:
 its contextual cards edit the same Scene-owned component collection shown in
 Scene and Object Properties. This is one canonical data model with multiple
 views, not competing project forms. Blender's selection and data-block model
-therefore remains useful while large scenes stay navigable as Blendlink grows.
+therefore remains useful while large scenes stay navigable as SceneToWeb grows.
 
 Pointer-authored behaviors use the existing cached consequence-overlay seam.
 Every enabled interaction target gets one small viewport marker, even when it
@@ -86,9 +86,9 @@ the artist encounters **Website Camera & Frames**, **Website Effects &
 Behaviors**, **Texture Atlases**, **Bake Quality**, **Lighting States**,
 **Animation**, **Realtime Shadows**, **Reflection Probes**, **Optimization**,
 then the less-frequent **Website Ownership** diagnostics. World Properties owns
-**Blendlink Web World** and **HDR Environment**; Object Properties owns
-**Blendlink Web Object**, **Semantic Designation**, and **Web Behaviors**;
-Material Properties owns **Blendlink Web Material**.
+**SceneToWeb Web World** and **HDR Environment**; Object Properties owns
+**SceneToWeb Web Object**, **Semantic Designation**, and **Web Behaviors**;
+Material Properties owns **SceneToWeb Web Material**.
 Do not drift back to older labels such as Scene Rendering, Derived Assets,
 Geometry Fidelity, or Ownership & Diagnostics. The N-panel routes to these
 owners with **Scene & Atlases**, **World & Environment**, and
@@ -220,7 +220,7 @@ registers the handlers; the offscreen test uses `gpu.init()` (5.2+).
 
 The original rule was "the addon never syncs". The refined rule: the addon
 never *implements* sync — but it may *invoke* the project's own CLI on an
-explicit user click. Blendlink's build actions run `npx blendlink compile` via
+explicit user click. SceneToWeb's build actions run `npx scenetoweb compile` via
 `subprocess.Popen` (never blocking the UI): a worker thread that touches no
 bpy forwards stdout into a `queue.Queue`, a `bpy.app.timers` pump drains it
 on the main thread — the exact thread pattern from the Blender docs. The

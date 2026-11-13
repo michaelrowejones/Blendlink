@@ -26,7 +26,7 @@ const manifest = {
   artifacts: [
     {
       kind: 'npm',
-      filename: `blendlink-${version}.tgz`,
+      filename: `scenetoweb-${version}.tgz`,
       license: 'SEE LICENSE IN LICENSES.md',
       licenseMap: 'LICENSES.md',
       fileLicenses: ['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'BSD-3-Clause', 'CC0-1.0'],
@@ -37,7 +37,7 @@ const manifest = {
     },
     {
       kind: 'blender-extension',
-      filename: `blendlink-addon-${version}.zip`,
+      filename: `scenetoweb-addon-${version}.zip`,
       license: 'GPL-3.0-or-later',
       bytes: addonBytes.length,
       sha256: sha(addonBytes),
@@ -79,8 +79,8 @@ test('requires the checksum document to be exact and complete', () => {
 const work = mkdtempSync(join(tmpdir(), 'blendlink-release-contract-test-'))
 try {
   for (const [name, bytes] of [
-    [`blendlink-${version}.tgz`, npmBytes],
-    [`blendlink-addon-${version}.zip`, addonBytes],
+    [`scenetoweb-${version}.tgz`, npmBytes],
+    [`scenetoweb-addon-${version}.zip`, addonBytes],
     ['release-manifest.json', Buffer.from('{}')],
     ['SHA256SUMS', Buffer.from('checksums')],
   ]) writeFileSync(join(work, name), bytes)
@@ -90,7 +90,7 @@ try {
     writeFileSync(downloaded, npmBytes)
     verifyRegistryContract({
       metadata: {
-        name: 'blendlink', version,
+        name: 'scenetoweb', version,
         repository: { url: 'git+https://github.com/michaelrowejones/Blendlink.git' },
         _npmUser: {
           name: 'GitHub Actions',
@@ -99,15 +99,15 @@ try {
         dist: {
           integrity: integrity(npmBytes),
           shasum: shasum(npmBytes),
-          tarball: `https://registry.npmjs.org/blendlink/-/blendlink-${version}.tgz`,
+          tarball: `https://registry.npmjs.org/scenetoweb/-/scenetoweb-${version}.tgz`,
           attestations: {
-            url: 'https://registry.npmjs.org/-/npm/v1/attestations/blendlink@0.8.0',
+            url: 'https://registry.npmjs.org/-/npm/v1/attestations/scenetoweb@0.8.0',
             provenance: { predicateType: 'https://slsa.dev/provenance/v1' },
           },
         },
       },
       downloadedArchive: downloaded,
-      retainedArchive: join(work, `blendlink-${version}.tgz`),
+      retainedArchive: join(work, `scenetoweb-${version}.tgz`),
       contract,
       repository,
     })
@@ -115,11 +115,11 @@ try {
   test('rejects registry repository casing drift', () => {
     assert.throws(() => verifyRegistryContract({
       metadata: {
-        name: 'blendlink', version,
-        repository: { url: 'git+https://github.com/MichaelRoweJones/Blendlink.git' },
+        name: 'scenetoweb', version,
+        repository: { url: 'git+https://github.com/MichaelRoweJones/SceneToWeb.git' },
       },
       downloadedArchive: join(work, 'registry.tgz'),
-      retainedArchive: join(work, `blendlink-${version}.tgz`),
+      retainedArchive: join(work, `scenetoweb-${version}.tgz`),
       contract,
       repository,
     }), /must exactly identify/)
@@ -128,7 +128,7 @@ try {
     const downloaded = join(work, 'registry.tgz')
     assert.throws(() => verifyRegistryContract({
       metadata: {
-        name: 'blendlink', version,
+        name: 'scenetoweb', version,
         repository: { url: 'git+https://github.com/michaelrowejones/Blendlink.git' },
         _npmUser: {
           name: 'GitHub Actions',
@@ -137,11 +137,11 @@ try {
         dist: {
           integrity: integrity(npmBytes),
           shasum: shasum(npmBytes),
-          tarball: `https://registry.npmjs.org/blendlink/-/blendlink-${version}.tgz`,
+          tarball: `https://registry.npmjs.org/scenetoweb/-/scenetoweb-${version}.tgz`,
         },
       },
       downloadedArchive: downloaded,
-      retainedArchive: join(work, `blendlink-${version}.tgz`),
+      retainedArchive: join(work, `scenetoweb-${version}.tgz`),
       contract,
       repository,
     }), /attestations|provenance/)
@@ -150,29 +150,29 @@ try {
     const downloaded = join(work, 'registry.tgz')
     assert.throws(() => verifyRegistryContract({
       metadata: {
-        name: 'blendlink', version,
+        name: 'scenetoweb', version,
         repository: { url: 'git+https://github.com/michaelrowejones/Blendlink.git' },
         _npmUser: { name: 'maintainer' },
         dist: {
           integrity: integrity(npmBytes),
           shasum: shasum(npmBytes),
-          tarball: `https://registry.npmjs.org/blendlink/-/blendlink-${version}.tgz`,
+          tarball: `https://registry.npmjs.org/scenetoweb/-/scenetoweb-${version}.tgz`,
           attestations: {
-            url: 'https://registry.npmjs.org/-/npm/v1/attestations/blendlink@0.8.0',
+            url: 'https://registry.npmjs.org/-/npm/v1/attestations/scenetoweb@0.8.0',
             provenance: { predicateType: 'https://slsa.dev/provenance/v1' },
           },
         },
       },
       downloadedArchive: downloaded,
-      retainedArchive: join(work, `blendlink-${version}.tgz`),
+      retainedArchive: join(work, `scenetoweb-${version}.tgz`),
       contract,
       repository,
     }), /trusted publishing/)
   })
   test('accepts only the exact four GitHub assets', () => {
     const names = [
-      `blendlink-${version}.tgz`,
-      `blendlink-addon-${version}.zip`,
+      `scenetoweb-${version}.tgz`,
+      `scenetoweb-addon-${version}.zip`,
       'release-manifest.json',
       'SHA256SUMS',
     ]
@@ -183,8 +183,8 @@ try {
       prerelease: true,
       assets: names.map((name) => {
         const path = join(work, name)
-        const bytes = name === `blendlink-${version}.tgz` ? npmBytes
-          : name === `blendlink-addon-${version}.zip` ? addonBytes
+        const bytes = name === `scenetoweb-${version}.tgz` ? npmBytes
+          : name === `scenetoweb-addon-${version}.zip` ? addonBytes
             : name === 'release-manifest.json' ? Buffer.from('{}') : Buffer.from('checksums')
         return { name, state: 'uploaded', size: bytes.length, digest: `sha256:${sha(bytes)}` }
       }),

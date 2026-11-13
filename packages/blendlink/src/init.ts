@@ -2,6 +2,7 @@ import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { readdirSync } from 'node:fs'
 import { dirname, extname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { findConfigPath } from './config.js'
 
 /** Bundled sample scene — resolves from src/ and dist/ alike. */
 const SAMPLE_BLEND = join(
@@ -50,24 +51,25 @@ export interface InitProjectOptions {
 }
 
 export function initProject(root: string, options: InitProjectOptions = {}): InitResult {
-  const configPath = join(root, 'blendlink.config.mjs')
-  if (existsSync(configPath) || existsSync(join(root, 'blendlink.config.js'))) {
-    return { configPath, scenes: [], created: false, sampleCopied: false }
+  const configPath = join(root, 'scenetoweb.config.mjs')
+  const existingConfigPath = findConfigPath(root)
+  if (existingConfigPath) {
+    return { configPath: existingConfigPath, scenes: [], created: false, sampleCopied: false }
   }
   let blends = options.sceneFiles?.map((file) => {
     const absolute = resolve(file)
     if (extname(absolute).toLowerCase() !== '.blend') {
-      throw new Error(`Blendlink connect expected a .blend file, received ${absolute}`)
+      throw new Error(`SceneToWeb connect expected a .blend file, received ${absolute}`)
     }
     if (!existsSync(absolute)) {
-      throw new Error(`Blendlink connect cannot find the selected scene: ${absolute}`)
+      throw new Error(`SceneToWeb connect cannot find the selected scene: ${absolute}`)
     }
     return relative(root, absolute).replace(/\\/g, '/')
   }) ?? findBlendFiles(root)
   let sampleCopied = false
   if (blends.length === 0 && existsSync(SAMPLE_BLEND)) {
     // No scene yet: drop in the bundled sample so the very first
-    // `blendlink compile` produces a working typed module to explore.
+    // `scenetoweb compile` produces a working typed module to explore.
     mkdirSync(join(root, 'assets'), { recursive: true })
     copyFileSync(SAMPLE_BLEND, join(root, 'assets', 'sample.blend'))
     blends = ['assets/sample.blend']
@@ -78,10 +80,10 @@ export function initProject(root: string, options: InitProjectOptions = {}): Ini
       ? blends.map((file) => `    { file: ${JSON.stringify(file)} },`).join('\n')
       : `    // { file: 'assets/scene.blend' },`
   const config = `// @ts-check
-// blendlink — artist-authored Blender scenes compiled for Three.js.
+// scenetoweb — artist-authored Blender scenes compiled for Three.js.
 // Docs: https://github.com/michaelrowejones/Blendlink
 // Each scene becomes <genDir>/<name>.gen.ts + .manifest.json and <outDir>/<name>.glb.
-/** @type {import('blendlink').BlendlinkConfig} */
+/** @type {import('scenetoweb').SceneToWebConfig} */
 const config = {
   // outDir: 'public/models',   // where GLBs land (served statically)
   // genDir: 'src/generated',   // where typed modules land

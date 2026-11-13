@@ -91,7 +91,7 @@ export async function watchBlenderNodes(options, { run = executeWatchCommand } =
   assert.ok(typeof baselineCatalog.blenderBuildHash === 'string' && config.baseline.commit.startsWith(baselineCatalog.blenderBuildHash), 'Baseline catalog build does not match exact source commit')
   assert.ok(options.output && options.cacheDir, 'Specify --output and --cache-dir')
   const output = resolve(options.output), cacheDir = resolve(options.cacheDir)
-  assert.ok(output !== root && !ownedPath(output, root), 'Output must not contain the Blendlink repository')
+  assert.ok(output !== root && !ownedPath(output, root), 'Output must not contain the SceneToWeb repository')
   await mkdir(dirname(output), { recursive: true })
   // Exclusive creation makes every checkout/scaffold/log below this directory owned.
   await mkdir(output)

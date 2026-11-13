@@ -14,7 +14,7 @@ blockers are primarily accessibility and platform coverage: interactive Canvas
 regions still have no generated keyboard/focus semantics, and audio autoplay has
 no application-facing blocked/resume state.
 
-The current implementation installs `click`, `pointermove`, and `pointerleave` listeners directly on `renderer.domElement` and raycasts only the configured target subtree. It does not create a DOM link/button, focus target, accessible name, keyboard handler, or focus-visible presentation. This is not made accessible by React Three Fiber: the R3F adapter passes the same renderer and scene into the same imperative installer. R3F's own event system supports pointer events with depth ordering, propagation, capture, custom event sources, and explicit event-manager connection, but Blendlink's raw listeners bypass those semantics. [R3F event system](https://r3f.docs.pmnd.rs/api/events)
+The current implementation installs `click`, `pointermove`, and `pointerleave` listeners directly on `renderer.domElement` and raycasts only the configured target subtree. It does not create a DOM link/button, focus target, accessible name, keyboard handler, or focus-visible presentation. This is not made accessible by React Three Fiber: the R3F adapter passes the same renderer and scene into the same imperative installer. R3F's own event system supports pointer events with depth ordering, propagation, capture, custom event sources, and explicit event-manager connection, but SceneToWeb's raw listeners bypass those semantics. [R3F event system](https://r3f.docs.pmnd.rs/api/events)
 
 This matters independently of framework taste. WCAG 2.1.1 requires pointer functionality to have a keyboard equivalent, and the HTML canvas specification tells authors to map interactive canvas regions one-to-one to focusable fallback content. The current adapter does neither. [WCAG keyboard requirement](https://www.w3.org/WAI/WCAG21/Understanding/keyboard.html) [HTML canvas fallback and focus model](https://html.spec.whatwg.org/multipage/canvas.html#the-canvas-element)
 
@@ -22,7 +22,7 @@ This matters independently of framework taste. WCAG 2.1.1 requires pointer funct
 
 The browser harness imports the built package's `dist/threeComponents.js`, creates a real `THREE.WebGLRenderer`, installs real portable component records, and drives trusted Playwright mouse, touchscreen, and keyboard input. It is not a mocked adapter-registry test.
 
-- Blendlink package version: `0.8.0`
+- SceneToWeb package version: `0.8.0`
 - Built behavior runtime SHA-256: `64FA45A4BF6FDBFE7923CE86257C60E2EE0712B94FCE2B884D2DDBF452A2C27B`
 - Browser Three.js: `0.184.0` (`REVISION 184`)
 - Installed R3F inspected: `9.6.1`; repository React: `19.0.0`; dogfood-site React: `19.2.4`
@@ -62,7 +62,7 @@ Legend: **Pass** = observed in the real browser harness; **Fail** = observed inc
 
 ### 1. One pointer coordinator is needed, not eight canvas listeners
 
-`onClick()` listens for DOM `click`; `onHover()` listens for `pointermove` and `pointerleave`. Both raycast `intersectObject(target, true)`, never the scene/root. The browser therefore confirmed that Hover and Open Link activate even when another mesh is visibly in front. R3F documents that its event system orders all raycast intersections by distance and uses propagation/`stopPropagation()` to let nearer objects occlude farther interactive objects. Blendlink currently opts out of that model. [R3F event propagation](https://r3f.docs.pmnd.rs/api/events)
+`onClick()` listens for DOM `click`; `onHover()` listens for `pointermove` and `pointerleave`. Both raycast `intersectObject(target, true)`, never the scene/root. The browser therefore confirmed that Hover and Open Link activate even when another mesh is visibly in front. R3F documents that its event system orders all raycast intersections by distance and uses propagation/`stopPropagation()` to let nearer objects occlude farther interactive objects. SceneToWeb currently opts out of that model. [R3F event propagation](https://r3f.docs.pmnd.rs/api/events)
 
 The use of DOM `click` explains why trusted touchscreen tap activates Open Link: Pointer Events defines click as a high-level activation event and encourages it over device-specific down/up events. It does not solve keyboard access when the receiving canvas is not focusable and has no activation behavior. The Pointer Events specification explicitly says keyboard interfaces may need keyboard handlers. [Pointer Events click and input guidance](https://www.w3.org/TR/pointerevents/#the-click-auxclick-and-contextmenu-events)
 
@@ -70,10 +70,10 @@ Recommended deep module: an installation-scoped `InteractionCoordinator` that ow
 
 Two credible accessibility designs were considered:
 
-1. **Package-generated DOM proxies.** Blendlink creates focusable links/buttons for interactive 3D objects. This can meet keyboard and assistive-technology requirements, but Blendlink currently lacks an accessible-name field and it risks taking over site layout/presentation.
-2. **Host-owned semantic controls with package intents.** Blendlink exposes stable interaction intents (`link`, `button`, label, disabled state, activate/focus/blur) and the application maps them to visible or visually-hidden DOM controls. This respects the product boundary that the site owns presentation, but it must be a required production contract, not an optional callback that leaves canvas-only interaction labeled Production.
+1. **Package-generated DOM proxies.** SceneToWeb creates focusable links/buttons for interactive 3D objects. This can meet keyboard and assistive-technology requirements, but SceneToWeb currently lacks an accessible-name field and it risks taking over site layout/presentation.
+2. **Host-owned semantic controls with package intents.** SceneToWeb exposes stable interaction intents (`link`, `button`, label, disabled state, activate/focus/blur) and the application maps them to visible or visually-hidden DOM controls. This respects the product boundary that the site owns presentation, but it must be a required production contract, not an optional callback that leaves canvas-only interaction labeled Production.
 
-The second design best matches Blendlink's product boundary. A small optional default proxy layer could support Preview, while Publish verification should reject interactive components without an accessible host binding or explicit documented opt-out.
+The second design best matches SceneToWeb's product boundary. A small optional default proxy layer could support Preview, while Publish verification should reject interactive components without an accessible host binding or explicit documented opt-out.
 
 ### 2. URL validation has a browser-confirmed scheme bypass
 

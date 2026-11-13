@@ -12,7 +12,7 @@ export type JsonPrimitive = string | number | boolean | null
 export type JsonValue = JsonPrimitive | readonly JsonValue[] | { readonly [key: string]: JsonValue }
 export type JsonObject = { readonly [key: string]: JsonValue }
 
-/** Object IDs are Blendlink's rename-stable IDs; objectName is only a useful
+/** Object IDs are SceneToWeb's rename-stable IDs; objectName is only a useful
  * artist-facing diagnostic when a manifest is inspected outside Blender. */
 export type PortableComponentTarget =
   | { kind: 'scene' }
@@ -103,7 +103,7 @@ export interface ParsePortableComponentsResult {
 }
 
 const objectReference: ComponentFieldMetadata = {
-  label: 'Object', description: 'Rename-stable Blendlink object ID.', kind: 'object-reference', default: '',
+  label: 'Object', description: 'Rename-stable SceneToWeb object ID.', kind: 'object-reference', default: '',
 }
 
 /** First-party records are deliberately small, but the registry is public and
@@ -117,7 +117,7 @@ export const CORE_COMPONENT_REGISTRY: Readonly<Record<string, PortableComponentD
     adapters: { webgl: 'preview', tsl: 'preview' },
     fallbacks: {},
     searchSynonyms: ['glow', 'halo', 'emission', 'neon', 'bright', 'post processing'],
-    consequence: 'Adds an HDR full-screen mip-chain render stage; Blendlink owns the website render path while enabled.',
+    consequence: 'Adds an HDR full-screen mip-chain render stage; SceneToWeb owns the website render path while enabled.',
     fields: {
       mode: {
         label: 'What Blooms',
@@ -141,7 +141,7 @@ export const CORE_COMPONENT_REGISTRY: Readonly<Record<string, PortableComponentD
     adapters: { webgl: 'preview', tsl: 'preview' },
     fallbacks: {},
     searchSynonyms: ['edges', 'frame', 'cinematic', 'focus', 'darken', 'post processing'],
-    consequence: 'Adds one full-screen color pass; Blendlink owns the website render path while enabled.',
+    consequence: 'Adds one full-screen color pass; SceneToWeb owns the website render path while enabled.',
     fields: {
       intensity: { label: 'Intensity', description: 'Edge treatment strength.', kind: 'number', default: 0.25, min: 0, max: 1 },
       softness: { label: 'Softness', description: 'Width of the vignette transition.', kind: 'number', default: 0.55, min: 0, max: 1 },
@@ -546,7 +546,7 @@ export const CORE_COMPONENT_REGISTRY: Readonly<Record<string, PortableComponentD
     phase: 'initial', cardinality: 'one-per-target',
     requires: [], conflicts: [], cost: 'free',
     adapters: { webgl: 'preview', tsl: 'unavailable' },
-    fallbacks: { tsl: 'The intent is renderer-neutral, but Blendlink does not ship a TSL runtime adapter yet.' },
+    fallbacks: { tsl: 'The intent is renderer-neutral, but SceneToWeb does not ship a TSL runtime adapter yet.' },
     searchSynonyms: ['visibility', 'disable', 'initial', 'hidden', 'inactive'],
     consequence: 'Changes only runtime visibility and restores the authored value on disposal.',
     fields: {},
@@ -557,7 +557,7 @@ export const CORE_COMPONENT_REGISTRY: Readonly<Record<string, PortableComponentD
     phase: 'update', cardinality: 'one-per-target',
     requires: ['camera'], conflicts: [], cost: 'low',
     adapters: { webgl: 'preview', tsl: 'unavailable' },
-    fallbacks: { tsl: 'The intent is renderer-neutral, but Blendlink does not ship a TSL runtime adapter yet.' },
+    fallbacks: { tsl: 'The intent is renderer-neutral, but SceneToWeb does not ship a TSL runtime adapter yet.' },
     searchSynonyms: ['track', 'constraint', 'billboard', 'face', 'target', 'camera facing'],
     consequence: 'Owns the target rotation every frame while leaving position and scale authored.',
     fields: {
@@ -587,7 +587,7 @@ export const CORE_COMPONENT_REGISTRY: Readonly<Record<string, PortableComponentD
     phase: 'initial', cardinality: 'one-per-target',
     requires: ['audio'], conflicts: [], cost: 'low',
     adapters: { webgl: 'preview', tsl: 'unavailable' },
-    fallbacks: { tsl: 'Web Audio is portable, but Blendlink does not ship a TSL runtime adapter yet.' },
+    fallbacks: { tsl: 'Web Audio is portable, but SceneToWeb does not ship a TSL runtime adapter yet.' },
     searchSynonyms: ['sound', 'music', 'positional', 'speaker', 'media', 'spatial'],
     consequence: 'Loads one audio asset; autoplay may wait for a visitor gesture and spatial sound adds a Web Audio panner.',
     fields: {

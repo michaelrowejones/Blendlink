@@ -63,7 +63,7 @@ interface PmremTargetLike {
 }
 
 /** Minimal constructor surface from the official Three WebGL classes. Pass
- * the application's imported `THREE` namespace; Blendlink stays peer/version
+ * the application's imported `THREE` namespace; SceneToWeb stays peer/version
  * agnostic and does not bundle a second renderer. */
 export interface ThreeWebGLReflectionCaptureNamespace {
   Vector3: new () => CaptureVectorLike
@@ -247,14 +247,14 @@ export async function applyCompiledSceneReflectionProbes<
     if (probeObjectId === undefined) continue
     if (typeof probeObjectId !== 'string' || !probeObjectId) {
       throw new Error(
-        `Blendlink object "${loadedName}" has an invalid blendlink_reflection_probe extra; ` +
+        `SceneToWeb object "${loadedName}" has an invalid blendlink_reflection_probe extra; ` +
           'reassign it from the Reflection Probes panel in Blender.',
       )
     }
     const definition = byObjectId.get(probeObjectId)
     if (!definition) {
       throw new Error(
-        `Blendlink object "${loadedName}" references missing reflection probe ${probeObjectId}. ` +
+        `SceneToWeb object "${loadedName}" references missing reflection probe ${probeObjectId}. ` +
           'Reassign it or remove the stale assignment in Blender.',
       )
     }
@@ -262,7 +262,7 @@ export async function applyCompiledSceneReflectionProbes<
     const object = (stableId ? allById[stableId] : undefined) ?? allByName[loadedName]
     if (!object) {
       throw new Error(
-        `Blendlink reflection assignment target "${loadedName}" is not present in the loaded scene.`,
+        `SceneToWeb reflection assignment target "${loadedName}" is not present in the loaded scene.`,
       )
     }
     const assigned = assignedByProbe.get(probeObjectId) ?? []
@@ -305,7 +305,7 @@ export async function applyCompiledSceneReflectionProbes<
     }
     if (errors.length > 0) {
       throw new Error(
-        'Could not fully dispose Blendlink reflection probes: ' +
+        'Could not fully dispose SceneToWeb reflection probes: ' +
           errors.map((error) => error instanceof Error ? error.message : String(error)).join('; '),
       )
     }
@@ -317,7 +317,7 @@ export async function applyCompiledSceneReflectionProbes<
       if (!probeObject) {
         throw new Error(
           `Reflection probe "${definition.name}" (${definition.objectName}) is not present in the loaded scene. ` +
-            'Re-run Blendlink export and ensure its helper empty is included.',
+            'Re-run SceneToWeb export and ensure its helper empty is included.',
         )
       }
       const anchorObject = definition.anchorId ? allById[definition.anchorId] : probeObject
@@ -343,7 +343,7 @@ export async function applyCompiledSceneReflectionProbes<
           if (!asset) {
             throw new Error(
               `Reflection probe "${definition.name}" uses ${source} source but its published texture is missing. ` +
-                'Re-run blendlink compile and publish the complete generated asset set.',
+                'Re-run scenetoweb compile and publish the complete generated asset set.',
             )
           }
           if (!options.loadTexture) {
@@ -401,7 +401,7 @@ export async function applyCompiledSceneReflectionProbes<
       dispose()
     } catch (cleanupError) {
       throw new Error(
-        `Could not apply Blendlink reflection probes: ${error instanceof Error ? error.message : String(error)}. ` +
+        `Could not apply SceneToWeb reflection probes: ${error instanceof Error ? error.message : String(error)}. ` +
           `Rollback also failed: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`,
       )
     }
@@ -441,7 +441,7 @@ function indexByStableId<TObject extends ReflectionProbeObjectLike>(root: TObjec
     const id = object.userData?.blendlink_id
     if (typeof id !== 'string') return
     if (result[id] && result[id] !== object) {
-      throw new Error(`Blendlink reflection binding found duplicate stable object ID ${id}.`)
+      throw new Error(`SceneToWeb reflection binding found duplicate stable object ID ${id}.`)
     }
     result[id] = object as TObject
   }

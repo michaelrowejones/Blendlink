@@ -36,7 +36,7 @@ presentation_ui.re_register_category("Web Art")
 expect(presentation_ui.BLENDLINK_PT_visual_references.bl_space_type == "PROPERTIES"
        and presentation_ui.BLENDLINK_PT_visual_references.bl_context == "scene",
        "visual-reference panel did not remain with scene-owned presentation settings")
-presentation_ui.re_register_category("Blendlink")
+presentation_ui.re_register_category("SceneToWeb")
 
 scene = bpy.context.scene
 bpy.ops.object.camera_add(location=(0.0, -6.0, 2.0), rotation=(1.25, 0.0, 0.0))

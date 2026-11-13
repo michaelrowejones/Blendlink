@@ -78,7 +78,7 @@ function readWebsitePackage(root: string): WebsitePackage {
   const path = join(root, 'package.json')
   if (!existsSync(path)) {
     throw new Error(
-      `Blendlink cannot build the website because ${path} does not exist. ` +
+      `SceneToWeb cannot build the website because ${path} does not exist. ` +
         'Use --assets-only for a custom/non-Node deployment pipeline.',
     )
   }
@@ -90,19 +90,19 @@ function readWebsitePackage(root: string): WebsitePackage {
     return parsed as WebsitePackage
   } catch (error) {
     throw new Error(
-      `Blendlink cannot read the website package at ${path}: ` +
+      `SceneToWeb cannot read the website package at ${path}: ` +
         (error instanceof Error ? error.message : String(error)),
     )
   }
 }
 
 export function websiteBuildCallsPublish(script: string): boolean {
-  return /\bblendlink(?:@[^\s]+)?\s+publish\b/i.test(script)
-    || /\b(?:npm|pnpm|yarn|bun)\s+(?:run\s+)?blendlink:publish\b/i.test(script)
+  return /\b(?:scenetoweb|blendlink)(?:@[^\s]+)?\s+publish\b/i.test(script)
+    || /\b(?:npm|pnpm|yarn|bun)\s+(?:run\s+)?(?:scenetoweb|blendlink):publish\b/i.test(script)
 }
 
 function formatVerificationFailure(issues: VerifyIssue[]): string {
-  return 'Blendlink refused to build the website because Final verification failed:\n' +
+  return 'SceneToWeb refused to build the website because Final verification failed:\n' +
     issues.map((issue) =>
       `  - ${issue.scene}: ${issue.problem}\n    fix: ${issue.fix}`,
     ).join('\n')
@@ -207,10 +207,10 @@ export async function publishWebsiteProjectWithDependencies(
     ? config.scenes.filter((scene) => scene.name === options.scene)
     : config.scenes
   if (options.scene && scenes.length === 0) {
-    throw new Error(`No scene named "${options.scene}" in blendlink.config.`)
+    throw new Error(`No scene named "${options.scene}" in scenetoweb.config.`)
   }
   if (scenes.length === 0) {
-    throw new Error('Blendlink publish needs at least one configured scene.')
+    throw new Error('SceneToWeb publish needs at least one configured scene.')
   }
   const publicationRoots = scenes.flatMap((scene) => {
     const sceneRoots = publicationRootsForScene(scene)
@@ -281,8 +281,8 @@ async function publishWebsiteProjectWithLease(
     }
     if (websiteBuildCallsPublish(buildScript)) {
       throw new Error(
-        'The website build script calls Blendlink publish and would recurse. Keep `build` ' +
-          'application-owned, call `blendlink publish` from a separate script, or use --assets-only.',
+        'The website build script calls SceneToWeb publish and would recurse. Keep `build` ' +
+          'application-owned, call `scenetoweb publish` from a separate script, or use --assets-only.',
       )
     }
     const command = `${websitePackageRunner(config.website.root, pkg)} build`
@@ -321,7 +321,7 @@ async function publishWebsiteProjectWithLease(
   } else {
     if (websiteBuildCallsPublish(smokeCommand)) {
       throw new Error(
-        'The website browser smoke command calls Blendlink publish and would recurse. ' +
+        'The website browser smoke command calls SceneToWeb publish and would recurse. ' +
           'Point website.browserSmoke.command at the application-owned browser test instead.',
       )
     }

@@ -7,11 +7,11 @@ export const DEFAULT_MESHOPT_WORKER_THRESHOLD_BYTES = 4 * 1024 * 1024
 
 /** A scene decoder should not consume every logical core on artist laptops or
  * mobile devices. Applications needing a larger global pool can own Meshopt's
- * lifecycle themselves and disable Blendlink's leases. */
+ * lifecycle themselves and disable SceneToWeb's leases. */
 export const MAX_MESHOPT_WORKERS = 4
 
 export interface MeshoptWorkerOptions {
-  /** Application-owned decoder override. Blendlink installs it as-is and
+  /** Application-owned decoder override. SceneToWeb installs it as-is and
    * never calls useWorkers() on it; the application retains complete pool
    * lifecycle ownership. */
   meshoptDecoder?: MeshoptDecoderLike
@@ -187,10 +187,10 @@ export function createMainThreadMeshoptDecoder(
   }
 }
 
-/** Owns only workers started by Blendlink high-level scene loads. Meshopt's JS
+/** Owns only workers started by SceneToWeb high-level scene loads. Meshopt's JS
  * API exposes one module-global pool and no ownership introspection, so this
  * manager holds its size steady while leases overlap and tears it down only
- * after every Blendlink load using it has settled. */
+ * after every SceneToWeb load using it has settled. */
 export class MeshoptWorkerManager {
   readonly mainThreadDecoder: MeshoptDecoderLike
   private activeLoadLeases = 0
@@ -226,7 +226,7 @@ export class MeshoptWorkerManager {
         this.activeWorkerCount = 0
         usesWorkers = false
         this.warnOnce(
-          'Blendlink could not start Meshopt decode workers; this scene will decode on the main thread. ' +
+          'SceneToWeb could not start Meshopt decode workers; this scene will decode on the main thread. ' +
             errorMessage(error) + (cleanupError === undefined
               ? ''
               : ` Cleanup of the partially-created pool also failed: ${errorMessage(cleanupError)}`),
@@ -252,7 +252,7 @@ export class MeshoptWorkerManager {
         this.activeWorkerCount = 0
         if (cleanupError !== undefined) {
           this.warnOnce(
-            'Blendlink could not stop its Meshopt decode workers cleanly. ' +
+            'SceneToWeb could not stop its Meshopt decode workers cleanly. ' +
               errorMessage(cleanupError),
           )
         }

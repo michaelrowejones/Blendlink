@@ -122,7 +122,7 @@ export function inspectRealtimePlanMaterialDiagnostics(
   return { errors: unresolved, warnings: [] }
 }
 
-/** Read the optional prior-build timing shown by `blendlink plan` through the
+/** Read the optional prior-build timing shown by `scenetoweb plan` through the
  * canonical manifest parser. In particular, an obsolete schema is a blocking
  * compatibility error rather than a missing estimate. */
 export function readPlanSyncDuration(path: string): number | undefined {

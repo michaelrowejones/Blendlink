@@ -71,7 +71,7 @@ node_id = ${JSON.stringify(item.nativeNode)}
 requested_domain = ${item.domain?JSON.stringify(item.domain):'None'}
 repository_value = os.environ.get('BLENDLINK_NODE_PORT_REPOSITORY')
 if not repository_value:
-    raise RuntimeError('Set BLENDLINK_NODE_PORT_REPOSITORY to the reviewed Blendlink checkout; run this probe in isolated factory Blender')
+    raise RuntimeError('Set BLENDLINK_NODE_PORT_REPOSITORY to the reviewed SceneToWeb checkout; run this probe in isolated factory Blender')
 repository = Path(repository_value).resolve()
 audit_path = repository / 'scripts/audit-node-coverage.py'
 capabilities_path = repository / 'docs/node-capabilities.json'

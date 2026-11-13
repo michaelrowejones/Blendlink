@@ -372,16 +372,16 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
                 pass
     domains = {}
     for domain, tree_type in (("shader", "ShaderNodeTree"), ("compositor", "CompositorNodeTree")):
-        group = bpy.data.node_groups.new("Blendlink isolated coverage " + domain, tree_type)
+        group = bpy.data.node_groups.new("SceneToWeb isolated coverage " + domain, tree_type)
         for direction in ("INPUT", "OUTPUT"):
             group.interface.new_socket(name="Image" if domain == "compositor" else "Color", in_out=direction, socket_type="NodeSocketColor")
         material = None
         if domain == "shader":
-            material = bpy.data.materials.new("Blendlink isolated native catalog")
+            material = bpy.data.materials.new("SceneToWeb isolated native catalog")
             material.use_nodes = True
             root_tree = material.node_tree
         elif hasattr(bpy.context.scene, "compositing_node_group"):
-            root_tree = bpy.data.node_groups.new("Blendlink isolated compositor root", tree_type)
+            root_tree = bpy.data.node_groups.new("SceneToWeb isolated compositor root", tree_type)
             bpy.context.scene.compositing_node_group = root_tree
         else:
             bpy.context.scene.use_nodes = True

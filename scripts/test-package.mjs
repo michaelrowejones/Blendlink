@@ -118,7 +118,7 @@ try {
   )
   if (extract.error) throw extract.error
   if (extract.status !== 0) {
-    throw new Error(`Could not extract the packed Blendlink archive:\n${extract.stderr.trim()}`)
+    throw new Error(`Could not extract the packed SceneToWeb archive:\n${extract.stderr.trim()}`)
   }
 
   verifyPackedBlendlinkLicenseContract(installed)
@@ -150,16 +150,16 @@ try {
   for (const [dependency, expectedRange] of Object.entries(expectedOptionalPeers)) {
     if (publishedManifest.dependencies?.[dependency]) {
       throw new Error(
-        `Packed Blendlink must not own ${dependency}; the website must own its runtime universe.`,
+        `Packed SceneToWeb must not own ${dependency}; the website must own its runtime universe.`,
       )
     }
     if (!publishedManifest.peerDependencies?.[dependency] ||
         publishedManifest.peerDependenciesMeta?.[dependency]?.optional !== true) {
-      throw new Error(`Packed Blendlink must declare optional peer ownership for ${dependency}.`)
+      throw new Error(`Packed SceneToWeb must declare optional peer ownership for ${dependency}.`)
     }
     if (publishedManifest.peerDependencies?.[dependency] !== expectedRange) {
       throw new Error(
-        `Packed Blendlink ${dependency} peer must be ${expectedRange}; got ` +
+        `Packed SceneToWeb ${dependency} peer must be ${expectedRange}; got ` +
           `${String(publishedManifest.peerDependencies?.[dependency])}.`,
       )
     }
@@ -171,7 +171,7 @@ try {
   for (const [dependency, expectedVersion] of Object.entries(expectedPostStack)) {
     if (publishedManifest.dependencies?.[dependency] !== expectedVersion) {
       throw new Error(
-        `Packed Blendlink must pin ${dependency} ${expectedVersion}; got ` +
+        `Packed SceneToWeb must pin ${dependency} ${expectedVersion}; got ` +
           `${String(publishedManifest.dependencies?.[dependency])}.`,
       )
     }

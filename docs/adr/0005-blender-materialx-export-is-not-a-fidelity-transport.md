@@ -38,10 +38,10 @@ edge cases.
 
 ## Why this is decisive
 
-Blendlink's whole contract is that authored intent is either preserved with
+SceneToWeb's whole contract is that authored intent is either preserved with
 proof or refused with a named remedy. An upstream stage that discards a third of
 a scene's shading nodes and still reports success cannot sit inside that
-contract; Blendlink would have to re-derive the coverage answer itself to know
+contract; SceneToWeb would have to re-derive the coverage answer itself to know
 what it had shipped, which is the same work as owning the compiler.
 
 ## Consequences
@@ -50,7 +50,7 @@ what it had shipped, which is the same work as owning the compiler.
   remains fine for its actual purpose, Hydra preview.
 - Wide material coverage on the current renderer is pursued through the
   **Material bake** (`MTL-BAKE-001`) instead.
-- A Blendlink-owned node compiler that constructs MaterialX or TSL documents
+- A SceneToWeb-owned node compiler that constructs MaterialX or TSL documents
   with its own proof discipline is **not** rejected by this decision; it is
   tracked separately as `MTLX-TSL-001` and depends on ADR 0006.
 - The conclusion is scoped to the installed Blender version. Re-run the probe

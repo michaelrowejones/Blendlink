@@ -22,17 +22,17 @@ drivers, 1,787 Geometry Nodes modifiers, and 271 materials. It has already
 found two independent boundaries that compact demo files did not:
 
 1. Blender 5.2.0 LTS crashes in its library-override read path before any
-   Blendlink Python can run.
+   SceneToWeb Python can run.
 2. Blender 5.1.2 opens the source, but five local objects using linked POLY
    Curve data and a `GN-Hide` Geometry Nodes modifier produce no evaluated
-   mesh. This first exposed an unhelpful Blendlink `AttributeError`; Blendlink
+   mesh. This first exposed an unhelpful SceneToWeb `AttributeError`; SceneToWeb
    now refuses with the object, data, spline type, linked source, fidelity
    consequence, and artist remedies.
 
 Do not work around either result by silently selecting Blender 5.1, enabling
 embedded Python, skipping the curves, localizing libraries, or resaving the
 source. The remaining high-confidence package improvement is a loud
-missing-linked-ID preflight. Blendlink deliberately does not fall back to raw
+missing-linked-ID preflight. SceneToWeb deliberately does not fall back to raw
 Curve points: they cannot represent bevels, Geometry Nodes, modifiers, or
 other evaluated geometry.
 
@@ -64,7 +64,7 @@ The official Blender manual explains that [Link][link] keeps a reference to
 data in another `.blend` and that a missing library becomes placeholder
 datablocks. It also explains that [library overrides][overrides] may be
 automatically resynchronized while a file is opened. These are load-time
-semantics, before a Blendlink or Needle exporter can inspect the scene.
+semantics, before a SceneToWeb or Needle exporter can inspect the scene.
 
 ### Blender executables
 
@@ -115,7 +115,7 @@ an edge case from the manual.
 
 No coherent full Needle run was made on this exact 3.6 bundle. Therefore:
 
-- the Blender 5.2 crash is a **platform boundary**, not a Blendlink-versus-Needle
+- the Blender 5.2 crash is a **platform boundary**, not a SceneToWeb-versus-Needle
   visual comparison;
 - the add-on source cannot intercept a crash that occurs while Blender is
   opening the file, before the add-on export operation;
@@ -131,8 +131,8 @@ No coherent full Needle run was made on this exact 3.6 bundle. Therefore:
 | `experiments/blender-36-linked-bundle-audit/output/source-inventory-blender-5.1.json` | read-only scene, dependency, material, geometry, animation, and lighting inventory |
 | `experiments/blender-36-linked-bundle-audit/output/load-integrity-blender-5.1.json` | exact Blender build, autoexec state, missing IDs, registered scripts, and evaluated-Curve failures; SHA-256 `9f0809ad51dbae82b41053a40a66002d14c4faae442d5d9052df44c2ca5480a6` |
 | `experiments/blender-36-linked-bundle-audit/output/blender-5.2-load-crash.txt` | native crash transcript; SHA-256 `af6f94f363b45d510726d31585cfb140ce86162ea0e3f8a4e33191d7dfa406b6` |
-| `experiments/blender-36-linked-bundle-audit/output/blendlink-plan-results.json` | exact Blendlink build identities and concise 5.1/5.2 plan outcomes |
-| `experiments/legacy-curve-sidecar-differential/evidence.json` | generated linked Curve-data fixture, exact Needle-style stock-export floor, named Blendlink refusal, cleanup, and source/state immutability |
+| `experiments/blender-36-linked-bundle-audit/output/blendlink-plan-results.json` | exact SceneToWeb build identities and concise 5.1/5.2 plan outcomes |
+| `experiments/legacy-curve-sidecar-differential/evidence.json` | generated linked Curve-data fixture, exact Needle-style stock-export floor, named SceneToWeb refusal, cleanup, and source/state immutability |
 
 `verify_evidence.ps1` rehashes the archive and every extracted file, validates
 the recorded closure and integrity facts, content-identifies both retained
@@ -145,7 +145,7 @@ named diagnostic, stock node/no-mesh floor, cleanup, and restoration facts.
 
 Blender 5.1.2 opens the untouched entry scene with auto-execution disabled.
 The source hash is unchanged before and after inventory, integrity inspection,
-and both Blendlink plan attempts.
+and both SceneToWeb plan attempts.
 
 The read-only inventory reports:
 
@@ -191,10 +191,10 @@ restricted-access failures. Therefore that flag is not sufficient evidence
 that a source evaluates faithfully with auto-execution disabled.
 
 Enabling scripts would make this stress scene look healthier, but it would
-cross a security boundary. Blendlink must instead name the dependency and let
+cross a security boundary. SceneToWeb must instead name the dependency and let
 the artist choose whether to trust and prepare it.
 
-### Blendlink plan gap found, then repaired
+### SceneToWeb plan gap found, then repaired
 
 The 5.1 plan exits `1` after source loading:
 
@@ -228,10 +228,10 @@ The generated differential reduced the condition to a local Object with
 linked beveled POLY Curve data and a render-enabled Geometry Nodes modifier
 that evaluates to no geometry. Blender 5.2.39's stock exporter, invoked with
 Needle 1.4.2's exact supported glTF arguments, returns `FINISHED` and emits the
-named node without a mesh. Blendlink now stops earlier with:
+named node without a mesh. SceneToWeb now stops earlier with:
 
 ```text
-Blendlink cannot compile render-visible Curve 'GEO-electrical_wire.blue'
+SceneToWeb cannot compile render-visible Curve 'GEO-electrical_wire.blue'
 (data 'NurbsPath.014', spline type POLY; source library
 '...\annecy_banner\annecy_banner.blend'): Blender returned no evaluated Mesh.
 ```
@@ -243,7 +243,7 @@ copy/Library Override, or convert a website-owned copy to Mesh.
 
 The untouched entry scene remains SHA-256
 `c65a4203f136ed2dabb076a0f13a347818da1e14ff73c84bd0b08caffbb36ef4`
-after the plan. Blendlink does not localize, convert, or save it.
+after the plan. SceneToWeb does not localize, convert, or save it.
 
 ## Blender 5.2 result
 
@@ -258,16 +258,16 @@ blender::BKE_libblock_free_data
 blender::read_libraries
 ```
 
-The isolated Blendlink 5.2 plan independently reproduces the same exception
+The isolated SceneToWeb 5.2 plan independently reproduces the same exception
 address and exits `1` with:
 
 ```text
 Blender exited abnormally (code 11).
 ```
 
-Blendlink includes Blender's stderr and stdout tails, including the last linked
+SceneToWeb includes Blender's stderr and stdout tails, including the last linked
 libraries read. No `BLENDLINK_OK` sentinel or plan artifact is produced. This
-is a verified loud process-boundary failure; Blendlink cannot improve the
+is a verified loud process-boundary failure; SceneToWeb cannot improve the
 native loader's wording from inside a Python script that never runs.
 
 Do not add this to `blender_known_issues.json` yet. That registry requires a
@@ -301,7 +301,7 @@ state.
 
 ## Capability register
 
-| ID | Needle baseline | Blendlink choice | Relation | Implementation state | Evidence state |
+| ID | Needle baseline | SceneToWeb choice | Relation | Implementation state | Evidence state |
 | --- | --- | --- | --- | --- | --- |
 | `NDL-B36-001` | No exact-bundle Needle run; audited exporter operates only after Blender has opened linked data | Retain a content-identified, read-only linked-closure stress lane | **No analogue** | **Prototype** | `verify_evidence.ps1` passed 2026-07-25: 48 files, 30/30 libraries, 24/24 images |
 | `NDL-B36-002` | Add-on 1.4.2 requires Blender 4.0+ but cannot intercept a native pre-export file-load crash | Keep configured Blender authoritative and surface abnormal exit plus ordered stderr/stdout tails | **Boundary** | **Shipped** | isolated 5.2 `plan --json`, exit 1, exact access-violation address, 2026-07-25 |
@@ -315,11 +315,11 @@ state.
 
 - reusable full-closure evidence verifier;
 - read-only Blender 5.1 load-integrity probe;
-- isolated 5.1 and 5.2 Blendlink plan configurations;
+- isolated 5.1 and 5.2 SceneToWeb plan configurations;
 - content-identified plan outcome record;
 - package-owned evaluated non-Bezier Curve sampling seam with guaranteed
   temporary-mesh cleanup and an artist-readable `None` diagnostic;
-- portable generated stock/Blendlink differential wired into the add-on
+- portable generated stock/SceneToWeb differential wired into the add-on
   headless gate.
 
 ### Verified
@@ -333,12 +333,12 @@ state.
 - five non-Bezier Curve objects violate the evaluated-mesh requirement;
 - stock Blender glTF invoked with Needle's arguments finishes but emits the
   generated Curve node without a mesh;
-- Blendlink refuses that condition with object/data/type/library/remedies and
+- SceneToWeb refuses that condition with object/data/type/library/remedies and
   never falls back to raw points;
 - source state and both generated/production `.blend` file hashes remain
   unchanged;
 - Blender 5.2.0 LTS crashes before the inventory/export script;
-- Blendlink surfaces that 5.2 crash loudly and does not silently fall back.
+- SceneToWeb surfaces that 5.2 crash loudly and does not silently fall back.
 
 ### Future work
 
@@ -352,7 +352,7 @@ state.
 4. Pin exact redistribution terms before publishing source assets,
    screenshots, or derivatives.
 5. Only after the loader and preflight gates pass, compare Blender Eevee,
-   stock glTF, Needle, and Blendlink browser renders. This audit contains no
+   stock glTF, Needle, and SceneToWeb browser renders. This audit contains no
    visual-parity evidence.
 
 ## Commands
@@ -362,7 +362,7 @@ From the repository root:
 ```powershell
 npm.cmd run verify:needle-baseline
 
-npm.cmd run build --workspace blendlink
+npm.cmd run build --workspace scenetoweb
 
 & 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' `
   --background --factory-startup --python-exit-code 1 `

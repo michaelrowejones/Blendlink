@@ -92,7 +92,7 @@ test('legacy DefNode resolves enum registration with its family rather than gues
 test('native snapshot reads actual source bytes, rejects incomplete checkouts, symlinks and mismatched builds',async()=>{
  const root=await mkdtemp(join(tmpdir(),'blendlink-upstream-node-test-'))
  const git=args=>execFileSync('git',['-C',root,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim()
- const commit=()=>{git(['add','.']);git(['-c','user.name=Blendlink test','-c','user.email=test@example.invalid','commit','--quiet','--allow-empty','-m','Source fixture']);return git(['rev-parse','HEAD'])}
+ const commit=()=>{git(['add','.']);git(['-c','user.name=SceneToWeb test','-c','user.email=test@example.invalid','commit','--quiet','--allow-empty','-m','Source fixture']);return git(['rev-parse','HEAD'])}
  try{
   git(['init','--quiet']);commit()
   await assert.rejects(snapshotBlenderSources({sourceDirectory:root}),/Required source root/)

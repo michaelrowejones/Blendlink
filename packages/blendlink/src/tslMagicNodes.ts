@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2011-2022 Blender Foundation
- * SPDX-FileCopyrightText: 2026 Blendlink contributors
+ * SPDX-FileCopyrightText: 2026 SceneToWeb contributors
  * SPDX-License-Identifier: Apache-2.0
  * Cascade adapted from Cycles kernel/svm/magic.h. Native EEVEE source audits
  * select the GLSL floor-mod stage or the no-mod material-MF stage separately.

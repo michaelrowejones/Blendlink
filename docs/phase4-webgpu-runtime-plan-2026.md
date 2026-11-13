@@ -16,7 +16,7 @@ WebGPURenderer, so the port replaces the stack, not the wrapper.
   backend is real and was actively hardened in r184 (multi_draw,
   normal-bias, NodeMaterial compat layer). The known many-draw-call UBO
   performance issue (three#30560) affects BOTH backends; the mitigation
-  is instancing/batching — which Blendlink's optimizer already produces
+  is instancing/batching — which SceneToWeb's optimizer already produces
   (BatchedMesh stays).
 - **Post-processing is the node system**: `PostProcessing` was renamed
   `RenderPipeline` in r183 (r184 keeps a deprecated wrapper — target
@@ -73,7 +73,7 @@ CoC vs view-Z units), and n8ao (`n8ao-webgpu` defaults vs old
 n8ao temporal accumulation needs convergence before a tight
 cross-backend threshold; upstream r184 `chromaticAberration`
 null-center bug (pass `vec2(0.5, 0.5)`); vignette/tilt-shift/kuwahara
-rows stay `pendingTrackB` until the Blendlink-owned nodes exist.
+rows stay `pendingTrackB` until the SceneToWeb-owned nodes exist.
 
 1. ~~Extend `experiments/wgpu-postprocessing-parity` into the
    per-effect fixture harness~~ — done (`node-main.js`/`node-run.mjs`;
@@ -105,7 +105,7 @@ except the deliberately deferred templates sub-task below.
 - ~~RectAreaLight LTC init~~ — resolved as a NAMED REFUSAL on
   WebGPURenderer (test-locked): the node system takes LTC through the
   write-only static `RectAreaLightNode.setLTC()` with no
-  introspection, so Blendlink's partial/complete/absent ownership
+  introspection, so SceneToWeb's partial/complete/absent ownership
   machine cannot protect shared state there. Revisit only if three
   grows a getter.
 - ~~R3F device-lost~~ — `subscribeRendererLoss()`: the WebGPU family
@@ -140,7 +140,7 @@ kuwahara quality knobs rebuild at finalize rather than live-update.
 `PostPipelineService` interface. What the census corrected in the old
 plan:
 
-- **Five Blendlink-owned TSL nodes, not three** — SHIPPED 2026-07-27
+- **Five SceneToWeb-owned TSL nodes, not three** — SHIPPED 2026-07-27
   as `blendlink/three/tsl-effects` (tslPostEffects.ts), all measured
   19/19 in WGPU-NODE-001 on both backends (cross-backend ≤ 0.015 mean
   luma; vignette/tilt-shift within 2 luma of the pmndrs control):
@@ -173,7 +173,7 @@ plan:
   promising parity.
 - **What transfers**: the POST_RENDERER_STATE ownership lease and the
   detached staging/rebind protocol (activate/setMainScene semantics)
-  are Blendlink-owned contracts and carry over; pmndrs fusion does not
+  are SceneToWeb-owned contracts and carry over; pmndrs fusion does not
   (effects compose as one TSL graph natively).
 
 ## Track C — materials: applying the shipped IR
@@ -321,7 +321,7 @@ items 1–2 are compiler-model decisions worth explicit prioritization.
    quality grounds). Ship via the author-endorsed `n8ao-webgpu`
    adaptation (CC0-1.0, peer `three@^0.182`, composes into the
    node-based PostProcessing chain). The CC0 license is the drift
-   hedge: the pass is small enough to vendor as a Blendlink-owned TSL
+   hedge: the pass is small enough to vendor as a SceneToWeb-owned TSL
    node the moment it lags a pinned three release, and the Track 0
    per-effect fixture harness gates it like every other effect.
    GTAONode remains the documented in-tree fallback.

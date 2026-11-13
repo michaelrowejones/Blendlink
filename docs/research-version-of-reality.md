@@ -1,10 +1,10 @@
-# aVersion of Reality technique ledger for Blendlink
+# aVersion of Reality technique ledger for SceneToWeb
 
 Research date: 2026-07-19
 
 ## Purpose
 
-This is a technique-mining ledger, not a product-positioning document. It extracts concrete Blender techniques from aVersion of Reality, classifies how each could cross the Blender-to-Three.js boundary, and gives Blendlink a falsifiable next action.
+This is a technique-mining ledger, not a product-positioning document. It extracts concrete Blender techniques from aVersion of Reality, classifies how each could cross the Blender-to-Three.js boundary, and gives SceneToWeb a falsifiable next action.
 
 The sources are the artist's own posts and videos plus current official Blender and glTF documentation. Recommendations are engineering judgments, not claims made by the artist.
 
@@ -28,8 +28,8 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Cycles baking adds sampling, noise, target-node setup, and high-to-low projection machinery even when the desired result is a deterministic procedural color, decal, attribute, or normal composition. The author explicitly limits the technique to mesh-to-self materialization, decals, superimpositions, procedural textures, and related data—not general world-space lighting. [Author's video description and limits](https://www.youtube.com/watch?v=wZyLNWT4spE)
 - **Blender requirements:** A non-overlapping destination UV map; Geometry Nodes `Named Attribute`, `Store Named Attribute`, `Set Position`, and `Split Edges`; an EEVEE-compatible material; an orthographic camera; compositor output and margin nodes. Current Blender 5.0 documentation still lists the relevant Geometry Nodes and named-attribute workflow, and now exposes `uv_seam` as a Boolean edge attribute, eliminating the video's Blender 4.0 workaround of copying seam state into bevel weights. [Blender 5.0 Geometry Nodes index](https://docs.blender.org/manual/en/5.0/modeling/geometry_nodes/index.html) [Blender 5.0 attributes, including `uv_seam`](https://docs.blender.org/manual/en/5.0/modeling/geometry_nodes/attributes_reference.html)
 - **Portable representation:** **Bake.** The output should be an ordinary color/data/normal texture on the committed atlas UVs. The UV-canvas object and helper camera are compiler temporaries, not exported scene content.
-- **Expected Blendlink benefit:** Hypothesis: a fast Preview/Final path for otherwise nonportable EEVEE procedural color, decals, masks, custom attributes, and custom-normal detail, without invoking Cycles for data that has no path-traced component. It also provides a natural materializer for artist-edited atlas layouts.
-- **Risks and limitations:** Flattening changes position, derivatives, adjacency, and the surface's relationship to lights and other objects. The author shows that world-space AO and lighting do not transfer correctly without reconstructing them; high-to-low projection is possible in principle but is explicitly not demonstrated. [World-space limitation](https://www.youtube.com/watch?v=wZyLNWT4spE&t=950s) [high-to-low deferred](https://www.youtube.com/watch?v=wZyLNWT4spE&t=1225s) Overlapping/mirrored UVs are ambiguous; face-corner interpolation and seam splitting must be correct; tangent-space normals require a proven basis; EEVEE node support remains finite. [Current EEVEE node limits](https://docs.blender.org/manual/en/5.0/render/eevee/limitations/nodes_support.html) Blendlink's existing post-lossy constant-background contract must not be replaced by the video's generic compositor inpaint.
+- **Expected SceneToWeb benefit:** Hypothesis: a fast Preview/Final path for otherwise nonportable EEVEE procedural color, decals, masks, custom attributes, and custom-normal detail, without invoking Cycles for data that has no path-traced component. It also provides a natural materializer for artist-edited atlas layouts.
+- **Risks and limitations:** Flattening changes position, derivatives, adjacency, and the surface's relationship to lights and other objects. The author shows that world-space AO and lighting do not transfer correctly without reconstructing them; high-to-low projection is possible in principle but is explicitly not demonstrated. [World-space limitation](https://www.youtube.com/watch?v=wZyLNWT4spE&t=950s) [high-to-low deferred](https://www.youtube.com/watch?v=wZyLNWT4spE&t=1225s) Overlapping/mirrored UVs are ambiguous; face-corner interpolation and seam splitting must be correct; tangent-space normals require a proven basis; EEVEE node support remains finite. [Current EEVEE node limits](https://docs.blender.org/manual/en/5.0/render/eevee/limitations/nodes_support.html) SceneToWeb's existing post-lossy constant-background contract must not be replaced by the video's generic compositor inpaint.
 - **Validation scene:** One mesh with two material slots, asymmetric islands, one intentionally mirrored island, alpha-cutout decals, UV/object/world-coordinate procedural colors, a stored color attribute, a custom-normal attribute, and a tangent normal decal. Render source EEVEE, UV-space output, and a Cycles emission bake at 256/1024 px. Measure interior RMSE, seam delta, alpha coverage, color transform, tangent response under a rotating light, render time, and repeatability. World-coordinate/AO cases must be expected failures or explicit blocks.
 - **Recommendation:** **Prototype**, narrowly as `Bake Material to Atlas (EEVEE)`. Do not use it for GI, AO, cast shadows, or as a blanket replacement for Cycles baking.
 
@@ -40,7 +40,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Hard toon boundaries magnify topology/interpolation artifacts, while a mesh optimized for deformation and silhouette rarely produces the simplified shading shapes an illustrator wants. Small deformations can also invalidate static custom-normal corrections. [Problem statement](https://www.aversionofreality.com/blog/2022/4/21/custom-normals-workflow)
 - **Blender requirements:** Source and destination meshes; Data Transfer or Geometry Nodes attribute transfer; stored vector attributes; optional detail textures; a stable destination UV map. Geometry Nodes can store, transform, transfer, and pass arbitrary attributes to shaders. [Geometry Nodes capabilities used by the workflow](https://www.aversionofreality.com/blog/2022/4/21/custom-normals-workflow)
 - **Portable representation:** **Preserve** evaluated split normals for rigid/static meshes; **Bake** layered high-detail normals for final quality; **Block** a supposedly deformation-safe static correction that fails representative poses.
-- **Expected Blendlink benefit:** A distinctive “stylized normal compiler” could preserve an artist's clean toon shading while making its Preview/Final representation explicit. This fits the existing atlas and bake pipeline better than general shader translation.
+- **Expected SceneToWeb benefit:** A distinctive “stylized normal compiler” could preserve an artist's clean toon shading while making its Preview/Final representation explicit. This fits the existing atlas and bake pipeline better than general shader translation.
 - **Risks and limitations:** Vertex-normal previews are density/interpolation limited. A tangent-space normal texture is only correct when the application basis matches the basis used at bake time; changing destination custom normals after baking can distort the result. [Vertex-density and tangent-basis warning](https://www.aversionofreality.com/blog/2022/4/21/custom-normals-workflow)
 - **Validation scene:** A toon head with a smooth proxy, nose/brow detail sources, jaw deformation, and three lighting angles. Compare source Blender, exported vertex-normal Preview, and baked-normal Final over neutral, smile, and open-jaw poses. Verify `NORMAL`/`TANGENT`, seam continuity, and silhouette-independent toon bands.
 - **Recommendation:** **Prototype** immediately after T01; this is the highest-value artist technique in the corpus.
@@ -52,7 +52,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Direct 3D proximity transfer becomes unreliable when source/destination shapes differ or topology is chosen for different purposes.
 - **Blender requirements:** Corresponding UV parameterizations, topology/attribute transfer, Geometry Nodes duplicates, and a clear policy for seams and overlapping islands.
 - **Portable representation:** **Bake** or **Realize** the transferred result; never export the flattened helpers.
-- **Expected Blendlink benefit:** This is the generalized primitive underneath T01 and T02: it could make decal projection, custom-normal transfer, and material-layer composition predictable on editable atlas UVs.
+- **Expected SceneToWeb benefit:** This is the generalized primitive underneath T01 and T02: it could make decal projection, custom-normal transfer, and material-layer composition predictable on editable atlas UVs.
 - **Risks and limitations:** UV distortion becomes transfer distortion; overlaps are ambiguous; different source/destination unwraps need a defined mapping; discontinuities require face-corner handling.
 - **Validation scene:** Transfer a circular normal/detail patch from a simple proxy onto a bent destination with uneven 3D topology but matching UVs. Compare direct 3D proximity against UV-space transfer near seams and high-curvature areas.
 - **Recommendation:** **Prototype** as an internal library primitive, not a separate artist feature.
@@ -64,7 +64,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Individually lit leaf cards look noisy and expose their construction instead of reading as a designed foliage volume.
 - **Blender requirements:** A stable crown center or controller, evaluated custom normals, correct normal-space transforms, leaf alpha textures, and optional per-island attributes.
 - **Portable representation:** **Preserve** evaluated vertex normals for rigid crowns; **Bake** high-frequency normal/color detail; **Runtime** only for camera-distance behavior that genuinely needs to change.
-- **Expected Blendlink benefit:** High visual payoff for portfolio scenes with little runtime complexity. It is also a strong stress test for custom normals, instancing, alpha coverage, and KTX texture handling.
+- **Expected SceneToWeb benefit:** High visual payoff for portfolio scenes with little runtime complexity. It is also a strong stress test for custom normals, instancing, alpha coverage, and KTX texture handling.
 - **Risks and limitations:** Non-uniform transforms and differently transformed instances can invalidate an object-space construction. Skinning or wind deformation can separate shipped normals from the intended volume. Camera-distance masks add a runtime shader dependency.
 - **Validation scene:** A crown made from instanced alpha cards under uniform and non-uniform instance scales, a rotating sun, two camera distances, and optional branch sway. Compare rigid Preserve, realized instances, and baked detail.
 - **Recommendation:** **Prototype** as the first non-character stylized-normal demo.
@@ -76,7 +76,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Applying a tangent normal map after replacing base normals can distort the detail because normal and tangent axes no longer match the bake basis.
 - **Blender requirements:** Explicit normal spaces, a tangent basis, vector math or node groups, and a data-texture color-space path.
 - **Portable representation:** Prefer **Bake** into one validated final normal texture. Use **Runtime** only if the detail mix must remain interactive.
-- **Expected Blendlink benefit:** Higher-fidelity normal atlases and a clear diagnostic for a subtle failure artists otherwise discover visually.
+- **Expected SceneToWeb benefit:** Higher-fidelity normal atlases and a clear diagnostic for a subtle failure artists otherwise discover visually.
 - **Risks and limitations:** A custom tangent implementation may not match MikkTSpace; normal textures must bypass display transforms; seams and mirrored islands need sign-correct tangents. The author calls out the compliance problem directly. [Custom tangent limitation](https://www.aversionofreality.com/blog/2022/4/21/custom-normals-workflow)
 - **Validation scene:** MikkTSpace reference asset with mirrored UVs, hard seams, a custom broad normal field, and a fine checker normal. Compare Blender, generated texture, glTF validator, and Three.js under a rotating light.
 - **Recommendation:** **Prototype** as part of T02; **Block** export when basis consistency cannot be proven.
@@ -88,9 +88,9 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Repeated props and foliage need variety without many manually duplicated materials or textures.
 - **Blender requirements:** A modular tile atlas, a stable identity/seed domain, UV transforms or tile indices, and material preview.
 - **Portable representation:** **Realize** deterministic choices into UVs, vertex/instance attributes, or atlas-tile indices; use **Runtime** only for deliberate changing variation.
-- **Expected Blendlink benefit:** More organic scenes at almost no texture cost, while source-controlled seeds prevent rebuilds from visually shuffling the scene.
+- **Expected SceneToWeb benefit:** More organic scenes at almost no texture cost, while source-controlled seeds prevent rebuilds from visually shuffling the scene.
 - **Risks and limitations:** Blender element indices are not a durable identity across topology/version changes; joining, realizing instances, or repacking can change randomness. Blender 5.0 warns that geometry element order is not guaranteed across algorithms or versions. [Geometry randomization warning](https://docs.blender.org/manual/en/5.0/modeling/geometry_nodes/inspection.html)
-- **Validation scene:** 100 instanced cards and 20 foliage islands. Rename/reorder objects, alter unrelated topology, rebuild twice, realize instances, and repack atlases. Hash chosen tiles/colors by stable Blendlink ID.
+- **Validation scene:** 100 instanced cards and 20 foliage islands. Rename/reorder objects, alter unrelated topology, rebuild twice, realize instances, and repack atlases. Hash chosen tiles/colors by stable SceneToWeb ID.
 - **Recommendation:** **Prototype** a stable `blendlink_*` seed materializer; do not preserve implicit Blender randomness.
 
 ### T07 — Projected texture eyes controlled by empties/bones
@@ -100,7 +100,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Large spherical or concave toon eyes deform poorly and require cumbersome shape keys if geometry itself performs every expression/look direction.
 - **Blender requirements:** Eye geometry, object-coordinate texture graph, controller empties/bones, constraints/drivers, masks, and sufficient subdivision for displacement.
 - **Portable representation:** **Runtime** a narrow projected-eye shader with stable controller bindings; **Bake** a fixed eye pose; **Block** unsupported material drivers if neither path is chosen.
-- **Expected Blendlink benefit:** A high-impact character feature that demonstrates stable semantic bindings between Blender controls and a thin Three.js shader.
+- **Expected SceneToWeb benefit:** A high-impact character feature that demonstrates stable semantic bindings between Blender controls and a thin Three.js shader.
 - **Risks and limitations:** Arbitrary Blender material drivers are not core glTF animation; procedural node parity is not guaranteed; dynamic displacement can be expensive or alias at silhouettes; eye tracking must be constrained consistently in both runtimes.
 - **Validation scene:** Two eyes with shared material, independent controllers, target tracking, limit constraints, blink shape keys, and three camera positions. Validate controller animation, projected iris position, silhouette, and close-up aliasing.
 - **Recommendation:** **Prototype** only after the control-binding contract exists; otherwise **Backlog**.
@@ -112,7 +112,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Generic physically based response does not reproduce deliberately illustrated value grouping and color design.
 - **Blender requirements:** EEVEE/Shader-to-RGB or equivalent NPR groups, light setup, per-material controls, and optional custom attributes/textures. EEVEE supports Shader to RGB but documents it as EEVEE-only. [Current EEVEE node support](https://docs.blender.org/manual/en/5.0/render/eevee/limitations/nodes_support.html)
 - **Portable representation:** **Bake** the final result for static lighting; optionally **Bake** named masks/layers; **Runtime** only an explicitly supported small stylized material contract.
-- **Expected Blendlink benefit:** Converts recognizable artist concepts into a portable result instead of silently degrading an unsupported graph to Principled PBR.
+- **Expected SceneToWeb benefit:** Converts recognizable artist concepts into a portable result instead of silently degrading an unsupported graph to Principled PBR.
 - **Risks and limitations:** Baking freezes light/view response; separate layers increase bytes and samplers; a runtime shader broad enough to accept arbitrary graphs becomes an engine.
 - **Validation scene:** Cloth, plastic, skin, and hair swatches under key/fill/rim lights with shadow hue shifts. Compare flattened bake, four packed effect masks, and one intentionally narrow runtime toon template.
 - **Recommendation:** **Backlog** the runtime shader; **Prototype** detection plus flattened EEVEE materialization through T01.
@@ -124,7 +124,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** NPR images often need local cleanup and additions that the renderer cannot conveniently produce; artists understand editable paint layers better than monolithic shader output.
 - **Blender requirements:** AOV or render-layer outputs, known blend formulas/color spaces, optional material overrides, and a compositing preview.
 - **Portable representation:** **Bake** effect layers and flatten by default; retain separate packed masks/textures only when the website actually changes them.
-- **Expected Blendlink benefit:** Artist-editable web textures and optional runtime recoloring/relighting without forcing every effect into a shader graph.
+- **Expected SceneToWeb benefit:** Artist-editable web textures and optional runtime recoloring/relighting without forcing every effect into a shader graph.
 - **Risks and limitations:** Layer count multiplies storage and texture sampling; blend modes and color transforms must be exact; painted corrections can become stale when UVs, pose, or lighting change.
 - **Validation scene:** Four material swatches and one hero prop; emit base, hard shade, soft/AO, rim, and line/detail. Verify Blender and Three.js recomposition numerically before channel packing and KTX encoding.
 - **Recommendation:** **Prototype** one four-layer recipe after T01; reject unlimited arbitrary AOV export.
@@ -136,7 +136,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Screen-space or baked reflections may be technically limited and stylistically too literal for toon materials.
 - **Blender requirements:** Reflection/view-normal coordinates, matcap or procedural texture, masks, and art-directed intensity/rotation.
 - **Portable representation:** **Runtime** a tiny matcap shader; **Bake** only for a locked camera.
-- **Expected Blendlink benefit:** Small implementation, strong stylized payoff, predictable cost.
+- **Expected SceneToWeb benefit:** Small implementation, strong stylized payoff, predictable cost.
 - **Risks and limitations:** Inherently view-dependent; differs between perspective/orthographic cameras; tangent/normal errors become visible; it is not ordinary glTF PBR.
 - **Validation scene:** Convex, concave, and thin metallic forms under rotating object/camera, with a Blender reference and Three.js matcap adapter.
 - **Recommendation:** **Backlog** as an optional stylized material module.
@@ -148,7 +148,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** A hero shot may need clean graphic shading and shadow shapes that general dynamic lighting does not produce.
 - **Blender requirements:** A named camera, projection coordinates, baked shadow image, and rig/material controls.
 - **Portable representation:** **Bake** for one declared camera; otherwise **Block**. Do not label it free-camera safe.
-- **Expected Blendlink benefit:** Enables extremely polished fixed-view website heroes while making the constraint honest and testable.
+- **Expected SceneToWeb benefit:** Enables extremely polished fixed-view website heroes while making the constraint honest and testable.
 - **Risks and limitations:** Breaks with camera, pose, or occluder changes; can double-shade if runtime lights remain enabled; projected data needs a defined aspect ratio and crop.
 - **Validation scene:** Hero camera plus ±5°, ±15°, and mobile aspect variants; pose and light change. Record the acceptable envelope and block outside it.
 - **Recommendation:** **Prototype** only as a `Hero Camera Bake` profile; **Reject** automatic use in free-camera scenes.
@@ -160,7 +160,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** No single line technique provides clean contours, internal marked lines, viewport feedback, editable layers, and camera-independent thickness.
 - **Blender requirements:** Marked edges/material masks, line renderer or Grease Pencil, camera/resolution controls, and manual cleanup as needed.
 - **Portable representation:** **Bake** a fixed-camera line overlay; **Realize** artist-authored curve/mesh lines; **Block** Blender-only line systems otherwise.
-- **Expected Blendlink benefit:** Honest preservation of lines for fixed 3D heroes without committing to a general NPR renderer.
+- **Expected SceneToWeb benefit:** Honest preservation of lines for fixed 3D heroes without committing to a general NPR renderer.
 - **Risks and limitations:** Resolution and distance dependence, external contour coverage, alpha ordering, and manual edits.
 - **Validation scene:** Character bust at desktop/mobile resolutions and three camera distances; compare baked overlay and exported curve geometry for thickness, gaps, and silhouette behavior.
 - **Recommendation:** **Backlog**. Start with diagnostics and fixed-camera bake; reject promised Freestyle/Grease Pencil parity.
@@ -172,7 +172,7 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** Render topology is too detailed or poorly structured for stable simulation and convenient rigging.
 - **Blender requirements:** Evaluated dependency graph, simulation caches, follower modifiers, hidden proxy classification, and an exportable final animation representation.
 - **Portable representation:** **Realize** a static evaluated result; **Cache** to armature/shape keys/bounded sequences where supported; **Block** live time-dependent modifiers with no selected conversion.
-- **Expected Blendlink benefit:** Prevents invisible helper meshes from leaking into the site and catches animation that looks correct in Blender but freezes on export.
+- **Expected SceneToWeb benefit:** Prevents invisible helper meshes from leaking into the site and catches animation that looks correct in Blender but freezes on export.
 - **Risks and limitations:** General mesh-cache export can be large; topology-changing modifiers cannot become ordinary morph targets; rebaking invalidates hand corrections.
 - **Validation scene:** Thin cloth proxy driving a detailed garment, lattice-driven hair, one topology-changing node, and one shape-key cache. Check exported object set and animation across the full frame range.
 - **Recommendation:** **Prototype** diagnostics and static realization; **Backlog** broad cache conversion.
@@ -184,12 +184,12 @@ Blender's glTF exporter supports a bounded Metal/Rough PBR and unlit material mo
 - **Artist problem:** A graphic energy/fire effect may not need or suit physically based volumetric rendering.
 - **Blender requirements:** Shell meshes, procedural/baked textures, displacement or animated UVs, transparency, and sorting-aware preview.
 - **Portable representation:** **Realize** shell geometry, **Bake** procedural textures, and optionally **Runtime** simple UV/time animation.
-- **Expected Blendlink benefit:** Converts an otherwise Blender-specific effect into ordinary web geometry and textures.
+- **Expected SceneToWeb benefit:** Converts an otherwise Blender-specific effect into ordinary web geometry and textures.
 - **Risks and limitations:** Transparency overdraw, sorting artifacts, mobile fill-rate, and mismatch between Blender and Three.js blend modes.
 - **Validation scene:** Four nested shells against light/dark backgrounds on mobile/desktop GPU budgets; record overdraw, draw calls, sorting, and KTX alpha quality.
 - **Recommendation:** **Backlog** with an explicit overdraw diagnostic.
 
-## Focused finding: should Blendlink prototype the EEVEE method?
+## Focused finding: should SceneToWeb prototype the EEVEE method?
 
 ### What the video actually demonstrates
 
@@ -224,7 +224,7 @@ ATTRIBUTES [..., 'UVMap', ..., 'uv_seam']
 UV_SEAM_VALUES [True, False, False]
 ```
 
-The probe created a triangle, a UV layer, and one seam, then checked the current RNA node types `GeometryNodeSetPosition`, `GeometryNodeInputNamedAttribute`, `GeometryNodeStoreNamedAttribute`, and `GeometryNodeSplitEdges`. This is reproducible local evidence that the specific construction primitives exist in Blender 5.2.0 LTS; it is not a claim that the full video node group has already passed Blendlink's color, tangent, or margin contracts.
+The probe created a triangle, a UV layer, and one seam, then checked the current RNA node types `GeometryNodeSetPosition`, `GeometryNodeInputNamedAttribute`, `GeometryNodeStoreNamedAttribute`, and `GeometryNodeSplitEdges`. This is reproducible local evidence that the specific construction primitives exist in Blender 5.2.0 LTS; it is not a claim that the full video node group has already passed SceneToWeb's color, tangent, or margin contracts.
 
 Current EEVEE still has engine-specific and unsupported shader-node behavior, so “the node group runs” is not equivalent to “every Blender material can be baked faithfully.” [Blender 5.0 EEVEE node support](https://docs.blender.org/manual/en/5.0/render/eevee/limitations/nodes_support.html) Cycles remains the documented bake path for AO, soft shadows, lightmaps, and other intensive light-transport results, using scene samples and bounces. [Blender render baking](https://docs.blender.org/manual/en/5.0/render/cycles/baking.html)
 
@@ -232,7 +232,7 @@ Current EEVEE still has engine-specific and unsupported shader-node behavior, so
 
 **Prototype it as a constrained EEVEE materializer.** The prototype should answer four questions before it becomes a feature:
 
-1. Does it preserve color/data transforms exactly under Blendlink's Standard/None/0 save contract?
+1. Does it preserve color/data transforms exactly under SceneToWeb's Standard/None/0 save contract?
 2. Can it produce seam-safe output without weakening the existing post-lossy constant-background rule?
 3. Can it produce MikkTSpace-compatible normal output across mirrored islands and custom normals?
 4. Is it materially faster than the existing Cycles emission/data path on representative procedural materials after setup and image I/O?
@@ -257,4 +257,4 @@ If those pass, ship it as `Preview/Final > Bake Material (EEVEE)` with supported
 5. **T09 four-layer stylized bake** with exact recomposition and visible cost.
 6. **T07 projected-eye controller binding** after stable runtime controls exist.
 
-Everything else remains a backlog item or a diagnostic until a real scene requires it. This ordering mines the artist's concrete techniques while keeping Blendlink focused on compiling them into portable, inspectable web assets rather than reproducing Blender's renderer in Three.js.
+Everything else remains a backlog item or a diagnostic until a real scene requires it. This ordering mines the artist's concrete techniques while keeping SceneToWeb focused on compiling them into portable, inspectable web assets rather than reproducing Blender's renderer in Three.js.

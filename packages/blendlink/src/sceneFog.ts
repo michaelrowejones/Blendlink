@@ -47,8 +47,8 @@ export function applyCompiledSceneFog(
 function createFog(recipe: FogRecipe, options?: CompiledSceneFogOptions): unknown {
   if (!options?.createFog) {
     throw new Error(
-      `This Blendlink scene owns ${recipe.mode} fog. Pass createFog(recipe) using ` +
-        'Three.Fog or Three.FogExp2; Blendlink will not guess a renderer constructor.',
+      `This SceneToWeb scene owns ${recipe.mode} fog. Pass createFog(recipe) using ` +
+        'Three.Fog or Three.FogExp2; SceneToWeb will not guess a renderer constructor.',
     )
   }
   const fog = options.createFog(recipe as FogRecipe & { mode: 'linear' | 'exponential' })

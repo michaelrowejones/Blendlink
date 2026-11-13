@@ -43,7 +43,7 @@ def runtime_platform() -> tuple[str, str]:
     key = (platform.system(), arch)
     if key not in NODE_ARCHIVES:
         raise RuntimeError("Automatic website setup supports Windows, macOS and Linux on x64/arm64. "
-                           "Use the Blendlink CLI on this platform instead.")
+                           "Use the SceneToWeb CLI on this platform instead.")
     return key
 
 
@@ -118,7 +118,7 @@ def ensure_runtime(cache: Path, *, online: bool = True) -> tuple[Path, Path]:
         archive = work / name
         digest = hashlib.sha256()
         request = urllib.request.Request("https://nodejs.org/dist/v" + NODE_VERSION + "/" + name,
-                                         headers={"User-Agent": "Blendlink desktop setup"})
+                                         headers={"User-Agent": "SceneToWeb desktop setup"})
         try:
             with urllib.request.urlopen(request, timeout=30) as response, archive.open("wb") as output:
                 total = 0
@@ -164,7 +164,7 @@ def main(argv: list[str]) -> int:
     args = parser.parse_args(argv)
     import re
     if re.fullmatch(r"\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?", args.version) is None:
-        raise RuntimeError("The installed Blendlink extension has an invalid compiler version")
+        raise RuntimeError("The installed SceneToWeb extension has an invalid compiler version")
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command:
         raise RuntimeError("No website action was requested")
@@ -180,17 +180,17 @@ def main(argv: list[str]) -> int:
     if args.cli:
         parts = [str(node), str(Path(args.cli).resolve()), *command]
     else:
-        progress("Setting up Blendlink " + args.version + " · first use may take a moment")
+        progress("Setting up SceneToWeb " + args.version + " · first use may take a moment")
         parts = [str(node), str(npm), "exec", "--yes", "--registry=https://registry.npmjs.org/",
                  *( ["--offline"] if args.offline else [] ),
-                 "--package=blendlink@" + args.version, "--", "blendlink", *command]
+                 "--package=scenetoweb@" + args.version, "--", "scenetoweb", *command]
     progress({
         "preview": "Opening your website preview",
         "export": "Preparing your website export",
         "publish": "Preparing the Final website build",
         "compile": "Compiling your saved scene",
         "plan": "Checking atlas fit",
-    }.get(command[0], "Starting Blendlink"))
+    }.get(command[0], "Starting SceneToWeb"))
     # On POSIX replace this background Blender so cancellation reaches the CLI.
     if os.name != "nt":
         os.execve(node, parts, env)
@@ -212,5 +212,5 @@ if __name__ == "__main__":
         raise SystemExit(main(arguments))
     except (OSError, RuntimeError) as error:
         progress("Website tools need attention")
-        print("Blendlink setup failed: " + str(error), flush=True)
+        print("SceneToWeb setup failed: " + str(error), flush=True)
         raise SystemExit(1)

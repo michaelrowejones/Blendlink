@@ -1,5 +1,5 @@
 import { irInspectionChildren } from './tslIrInspection.js'
-/* SPDX-FileCopyrightText: 2026 Blendlink contributors
+/* SPDX-FileCopyrightText: 2026 SceneToWeb contributors
  * SPDX-License-Identifier: Apache-2.0
  * Native UV tangent transforms, packing and interpolation expressed in Three TSL. */
 import { Matrix3, Vector3, type Mesh, type BufferGeometry, type Camera } from 'three'

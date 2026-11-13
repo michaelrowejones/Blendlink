@@ -31,7 +31,7 @@ The official Blender exporter already handles meshes, Principled/unlit materials
 
 The exporter is deliberately a glTF implementation, not a web-application contract. Custom properties are application-specific extras without a namespace imposed by glTF. Its own repository describes conversion through an intermediate glTF scene representation and tests export validity with the glTF validator. [Blender custom properties](https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html#custom-properties) [exporter tests](https://github.com/KhronosGroup/glTF-Blender-IO#continuous-integration-tests)
 
-This means Blendlink should not compete on “can export a GLB.” It should extend the official exporter with durable artistic intent, semantic validation, and web-specific derived artifacts.
+This means SceneToWeb should not compete on “can export a GLB.” It should extend the official exporter with durable artistic intent, semantic validation, and web-specific derived artifacts.
 
 ### Three.js
 
@@ -45,7 +45,7 @@ Three.js itself documents the remaining application seam. Its glTF tutorial insp
 
 For React teams, drei's `useGLTF` removes loader boilerplate. `gltfjsx` goes much further: it turns a GLB into reusable JSX, can emit TypeScript node/material types, and can invoke glTF Transform to compress, resize, deduplicate, instance, and prune assets. Its own README explicitly identifies traversal, mutation, reuse, compression, and unnecessary node structure as problems in the raw glTF workflow. [gltfjsx](https://github.com/pmndrs/gltfjsx) [drei](https://github.com/pmndrs/drei)
 
-Typed node/material access is therefore **not** a unique Blendlink feature. The opportunity is typed *meaning* — sockets, colliders, hotspots, curves, state names, light groups, custom properties — plus drift checks when the Blender source changes. Even here, care is required: the glTF specification does not promise unique names, and gltfjsx has reports involving duplicate-name breakage and larger-pipeline ergonomics. [glTF name contract](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-name) [gltfjsx issue #28](https://github.com/pmndrs/gltfjsx/issues/28) [gltfjsx issue #134](https://github.com/pmndrs/gltfjsx/issues/134)
+Typed node/material access is therefore **not** a unique SceneToWeb feature. The opportunity is typed *meaning* — sockets, colliders, hotspots, curves, state names, light groups, custom properties — plus drift checks when the Blender source changes. Even here, care is required: the glTF specification does not promise unique names, and gltfjsx has reports involving duplicate-name breakage and larger-pipeline ergonomics. [glTF name contract](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-name) [gltfjsx issue #28](https://github.com/pmndrs/gltfjsx/issues/28) [gltfjsx issue #134](https://github.com/pmndrs/gltfjsx/issues/134)
 
 ### Optimization and validation
 
@@ -53,13 +53,13 @@ glTF Transform already offers reproducible low-level editing, inspection, compre
 
 The Khronos glTF Validator already checks schema, references, buffers, accessors, animations, images, and supported extensions, with machine-readable reports and non-zero exit codes. [glTF Validator](https://github.com/KhronosGroup/glTF-Validator)
 
-Consequently, “optimization” and “valid glTF” are commodity building blocks. Blendlink should compose them and add validation that those tools cannot know: source drift, semantic naming, duplicate roles, dynamic-versus-baked eligibility, atlas capacity, topology staleness, and runtime manifest compatibility.
+Consequently, “optimization” and “valid glTF” are commodity building blocks. SceneToWeb should compose them and add validation that those tools cannot know: source drift, semantic naming, duplicate roles, dynamic-versus-baked eligibility, atlas capacity, topology staleness, and runtime manifest compatibility.
 
 ## Direct competitors and substitutes
 
 ### Needle Engine: the closest competitor
 
-Needle is the most important comparison because it challenges the broad Blendlink thesis directly. Its Blender integration can:
+Needle is the most important comparison because it challenges the broad SceneToWeb thesis directly. Its Blender integration can:
 
 - generate a web project, install dependencies, and start a local server;
 - re-export and refresh the browser when the `.blend` is saved;
@@ -72,13 +72,13 @@ Needle's lightmapping is currently labeled experimental and recommends backups a
 
 Needle is self-hostable and built on Three.js, so it should not be dismissed as “cloud lock-in.” However, full Needle applications use the Needle runtime and commercial use requires a license; uploaded standard glTF assets may also be used from Three.js or React Three Fiber. [Needle API](https://engine.needle.tools/docs/api/) [licensing FAQ](https://engine.needle.tools/docs/reference/faq) [cloud asset interoperability](https://engine.needle.tools/docs/blender/upload-to-needle-cloud)
 
-Implication: Blendlink wins only when a team specifically values **plain GLB plus user-owned TypeScript, an existing custom site architecture, CI/repository ownership, and deep baked-lighting control** more than Needle's broader integrated engine and component ecosystem.
+Implication: SceneToWeb wins only when a team specifically values **plain GLB plus user-owned TypeScript, an existing custom site architecture, CI/repository ownership, and deep baked-lighting control** more than Needle's broader integrated engine and component ecosystem.
 
 ### Verge3D
 
 Verge3D provides a Blender exporter, browser preview, application scaffolding, visual “Puzzles” logic, an application manager, and publishing. Its official beginner workflow still describes explicitly exporting after source changes and refreshing the browser; it is an application platform built around the Verge3D runtime rather than a typed bridge into an arbitrary existing Three.js codebase. [Verge3D Blender guide](https://www.soft8soft.com/docs/manual/en/blender/Beginners-Guide.html) [project structure](https://www.soft8soft.com/docs/manual/en/introduction/Project-Structure.html)
 
-Verge3D proves that artists want Blender-centered web tooling, but its no/low-code application-builder job is not the recommended Blendlink job. Verge3D is commercially licensed. [official store](https://www.soft8soft.com/store/)
+Verge3D proves that artists want Blender-centered web tooling, but its no/low-code application-builder job is not the recommended SceneToWeb job. Verge3D is commercially licensed. [official store](https://www.soft8soft.com/store/)
 
 ### PlayCanvas
 
@@ -90,7 +90,7 @@ This is a strong substitute for teams willing to move scene assembly and runtime
 
 ### Babylon.js
 
-Babylon's documentation recommends Blender's standard glTF exporter as one route into Babylon and also documents a Babylon-specific Blender exporter. It addresses a different runtime ecosystem. Its relevance is evidence that DCC-to-runtime workflow tooling is established, not that Blendlink should become engine-neutral immediately. [Babylon glTF export pipeline](https://doc.babylonjs.com/preparingArtForBabylon/dccToGltf/) [Babylon exporters](https://doc.babylonjs.com/features/featuresDeepDive/Exporters/)
+Babylon's documentation recommends Blender's standard glTF exporter as one route into Babylon and also documents a Babylon-specific Blender exporter. It addresses a different runtime ecosystem. Its relevance is evidence that DCC-to-runtime workflow tooling is established, not that SceneToWeb should become engine-neutral immediately. [Babylon glTF export pipeline](https://doc.babylonjs.com/preparingArtForBabylon/dccToGltf/) [Babylon exporters](https://doc.babylonjs.com/features/featuresDeepDive/Exporters/)
 
 ### Blender baking and specialist UV tools
 
@@ -98,7 +98,7 @@ Blender already supports Cycles baking to an active image texture, bake margins 
 
 Specialist tools such as UVPackmaster already offer sophisticated grouping, texel-density policies, pixel margins, locked groups, overlap checks, and custom target boxes. [UVPackmaster groups](https://uvpackmaster.com/doc3/blender/3.2.3/30-packing-modes/30-groups-to-tiles/) [packing features](https://uvpackmaster.com/doc4/blender/4.0.0/20-packing-functionalities/)
 
-Blendlink should not try to win a general-purpose UV-packing arms race. Its value is applying enough of those concepts to a specific web-lighting contract, preserving hand-authored layouts, diagnosing quality loss, and letting specialist UV tools remain usable.
+SceneToWeb should not try to win a general-purpose UV-packing arms race. Its value is applying enough of those concepts to a specific web-lighting contract, preserving hand-authored layouts, diagnosing quality loss, and letting specialist UV tools remain usable.
 
 ## Capability comparison
 
@@ -111,9 +111,9 @@ Legend: “yes” means the capability is directly documented; “partial” mea
 | Needle Engine | Yes | Component TypeScript; typed scene-name contract not documented | Yes | Integrated build/optimization; semantic contract not documented | Yes, experimental, automatic | Multiple scenarios documented; bounced additive layers not documented | Self-hostable, but full apps use licensed Needle runtime |
 | Verge3D | Yes, with explicit export/refresh loop | Not documented | Partial | Platform build checks | General Blender/export workflow; comparable atlas contract not documented | Not documented | Self-hostable application using Verge3D runtime/license |
 | PlayCanvas | Yes through upload and separate web editor | Engine/editor APIs, not Blender-generated scene literals | Re-upload updates assets | Import pipeline | Yes; runtime baker lacks offline GI | Baked/dynamic mixing; alternate baked states not documented | Self-hostable PlayCanvas application |
-| Blendlink today | Yes through CLI/add-on | Yes, including semantic vocabulary | Yes, source watch | Source drift + vocabulary + manifest checks | Yes: per-atlas Cycles indirect lightmaps preserve PBR/detail UVs; explicit Combined appearance fallback | Yes: full states on either output; normalized additive light-group layers on Appearance atlases | Standard GLB + manifest + user-owned Three.js helper; no required runtime |
+| SceneToWeb today | Yes through CLI/add-on | Yes, including semantic vocabulary | Yes, source watch | Source drift + vocabulary + manifest checks | Yes: per-atlas Cycles indirect lightmaps preserve PBR/detail UVs; explicit Combined appearance fallback | Yes: full states on either output; normalized additive light-group layers on Appearance atlases | Standard GLB + manifest + user-owned Three.js helper; no required runtime |
 
-Sources for Blendlink's present behavior are the repository [README](../README.md), [manifest contract](MANIFEST.md), and [baked composition recipe](../packages/blendlink/src/bakedRecipe.ts).
+Sources for SceneToWeb's present behavior are the repository [README](../README.md), [manifest contract](MANIFEST.md), and [baked composition recipe](../packages/blendlink/src/bakedRecipe.ts).
 
 ## Evidence of user pain
 
@@ -133,7 +133,7 @@ Verified conclusion: a durable scene recipe and repeatable incremental export ad
 - gltfjsx's own README frames traversal, mutation, reuse, and restructuring as deficiencies in the raw workflow. [gltfjsx](https://github.com/pmndrs/gltfjsx)
 - The glTF spec explicitly permits duplicate user-defined names, and gltfjsx has had duplicate-name failures. [glTF names](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-name) [gltfjsx issue #28](https://github.com/pmndrs/gltfjsx/issues/28)
 
-Verified conclusion: generated accessors and validation solve real integration problems. Product correction: Blendlink should distinguish stable semantic identity from display name. Name-derived roles may remain ergonomic, but durable IDs are needed anywhere a rename must not break application meaning.
+Verified conclusion: generated accessors and validation solve real integration problems. Product correction: SceneToWeb should distinguish stable semantic identity from display name. Name-derived roles may remain ergonomic, but durable IDs are needed anywhere a rename must not break application meaning.
 
 ### Atlas capacity and editability
 
@@ -143,7 +143,7 @@ Verified conclusion: generated accessors and validation solve real integration p
 
 Verified conclusion: automatic atlas generation alone is insufficient for every production scene. The proposed Main Atlas plus explicit additional atlases, visible density/capacity, and committed editable layouts are well aligned with the evidence. Inference: the exact UI still requires usability testing.
 
-## The exact job Blendlink should own
+## The exact job SceneToWeb should own
 
 ### Primary user and situation
 
@@ -153,9 +153,9 @@ The primary customer is not “any Blender artist.” It is a small team or arti
 
 > When an artist changes a Blender scene used by a custom Three.js website, help the team preview the web consequences, preserve intentional baked-light detail, and regenerate a stable typed package so that the developer can integrate the scene without traversal folklore, hand-maintained glue, or adopting another engine.
 
-### The package Blendlink owns
+### The package SceneToWeb owns
 
-Blendlink should own this boundary:
+SceneToWeb should own this boundary:
 
 ```text
 .blend (art + semantic recipe)
@@ -168,25 +168,25 @@ It should not own the website's component model, router, CMS, interaction framew
 
 ### Product pillars
 
-1. **Artist-visible contract.** Artistic export intent lives in Blender and explains itself there. Website paths, URLs, and CI selection remain in `blendlink.config.mjs`.
+1. **Artist-visible contract.** Artistic export intent lives in Blender and explains itself there. Website paths, URLs, and CI selection remain in `scenetoweb.config.mjs`.
 2. **Predictable scene identity.** Names remain friendly labels and a fast vocabulary, but important exported roles receive stable namespaced IDs. Duplicates, sanitized-name collisions, missing targets, and breaking renames fail before runtime.
 3. **Bake quality before bake cost.** A layout-only plan shows effective px/m, content area, padding cost, unused area, largest consumers, required resolution, texture count, and estimated bake count before Cycles starts.
 4. **One Main Atlas, intentional exceptions.** Every eligible mesh belongs to undeletable Main by default. `+ Atlas from Selection` is the primary escape hatch. Collection/camera/material rules are advanced templates, not the core mental model.
 5. **Automatic first, editable when needed.** Automatic layouts are disposable proposals. `Edit Atlas` materializes the exact complete layout into an artist-owned UV layer, protects it, and allows Blender or a specialist UV tool to edit it. Topology changes mark it stale; nothing silently repacks committed work.
 6. **No silent quality collapse.** Default fit policy preserves density and blocks an over-capacity export with choices. “Scale everything down to fit” is an explicit opt-in, not invisible behavior.
-7. **Portable baked lighting.** The default GLB remains viewable without Blendlink. Alternate states and additive light groups are described by a small versioned manifest and a user-owned Three.js reference implementation, not a required runtime package.
+7. **Portable baked lighting.** The default GLB remains viewable without SceneToWeb. Alternate states and additive light groups are described by a small versioned manifest and a user-owned Three.js reference implementation, not a required runtime package.
 8. **Repository-grade repeatability.** Sync, watch, CI drift verification, schema enforcement, actionable diagnostics, and deterministic plans are first-class. General glTF optimization/validation should reuse established tools.
 
 ## Recommended artist workflow
 
-1. **Set Up Blendlink Scene** creates a scene recipe, one Main Atlas, and Preview/Final quality profiles. The panel states what will export and what is excluded.
+1. **Set Up SceneToWeb Scene** creates a scene recipe, one Main Atlas, and Preview/Final quality profiles. The panel states what will export and what is excluded.
 2. **Check Scene** runs fast semantic and topology checks without baking.
 3. **Build Atlas Layout** computes the real export layout without Cycles. Main reports target and achieved density, occupancy, padding, unused area, lowest-detail objects, and total runtime texture cost.
 4. If Main is over capacity, the tool offers concrete decisions: increase resolution, lower target density, reduce padding, or select hero objects and choose **+ Atlas**. It does not silently reduce every object's detail.
 5. **Edit Atlas** opens the full resolved layout in Blender's UV workspace with a correctly scaled checker. The visible proposal becomes the committed layout; existing islands are protected and new/unlocked islands can pack around them.
 6. **Preview Bake** uses the same membership and layout at lower samples/resolution. State and light-group differences are previewable in Blender.
 7. **Bake & Sync** emits repository-owned artifacts and refreshes the local website. The result explains warnings and provides the stderr tail on failure.
-8. Website compilation or `blendlink verify` rejects semantic drift, stale generated artifacts, unsupported schema versions, and committed draft output.
+8. Website compilation or `scenetoweb verify` rejects semantic drift, stale generated artifacts, unsupported schema versions, and committed draft output.
 
 ## Validated gap
 
@@ -197,11 +197,11 @@ The evidence validates a gap at the intersection of four capabilities:
 - production-oriented, editable atlas and offline GI workflow;
 - standard, repository-owned output without a required application runtime or hosting platform.
 
-Each capability exists separately. Needle combines more of them than any other competitor, but couples full applications to its runtime/license and publicly documents an automatic, experimental lightmap workflow rather than Blendlink's proposed committed atlas contract. gltfjsx provides excellent typed React access but begins after GLB export and does not own Blender semantics or baking. PlayCanvas and Verge3D solve broader application-authoring jobs in their own runtimes/editors. This combination is therefore a plausible gap, not a proven business.
+Each capability exists separately. Needle combines more of them than any other competitor, but couples full applications to its runtime/license and publicly documents an automatic, experimental lightmap workflow rather than SceneToWeb's proposed committed atlas contract. gltfjsx provides excellent typed React access but begins after GLB export and does not own Blender semantics or baking. PlayCanvas and Verge3D solve broader application-authoring jobs in their own runtimes/editors. This combination is therefore a plausible gap, not a proven business.
 
 ## Non-gaps and commoditized features
 
-Blendlink should avoid positioning these as the product:
+SceneToWeb should avoid positioning these as the product:
 
 - GLB/glTF export;
 - raw node/material TypeScript types;
@@ -218,14 +218,14 @@ These are useful table stakes or integrations, but primary-source documentation 
 
 ## Strategic risks
 
-1. **Needle is moving directly into the space.** Its 2026 Blender workflow already combines hot reload, optimization, interactivity, deployment, and experimental lightmapping. Blendlink needs comparative tests, not assumptions based on older market maps.
+1. **Needle is moving directly into the space.** Its 2026 Blender workflow already combines hot reload, optimization, interactivity, deployment, and experimental lightmapping. SceneToWeb needs comparative tests, not assumptions based on older market maps.
 2. **The wedge may be too narrow.** Teams that need advanced baked-light control but refuse an integrated engine may be a small segment. Only interviews and observed projects can measure it.
 3. **Baking can overwhelm the rest of the value.** Cycles time, denoising, memory, color transforms, topology invalidation, and Blender-version differences create a high support burden.
 4. **Portable does not mean standard.** Alternate states and additive bounced light layers are not core glTF semantics. They remain portable only if the manifest and reference code are small, stable, documented, and user-owned.
 5. **Names are not identities.** A name-only typed API promises more stability than glTF provides. Stable IDs and explicit migration diagnostics are required.
 6. **Multiple atlases trade quality for runtime cost.** Every atlas can multiply texture downloads, material bindings, state maps, and light-group layers. The UI must show total cost before encouraging fragmentation.
 7. **Scene-owned settings create asset governance work.** They improve portability and artist ownership, but dirty `.blend` files and can conflict with multiple website targets. Build profiles should vary quality only; filesystem integration remains project-owned.
-8. **Scope creep toward an engine is fatal.** An unbounded component catalog, bundled physics/runtime ownership, visual scripting, hosting, collaboration, or CMS features would put Blendlink into direct competition with Needle, Verge3D, and PlayCanvas. Focused portable intent records are compatible with the source-contract advantage only while generated output remains readable, adapters stay replaceable, and multiplayer/application-framework behavior remains outside the product.
+8. **Scope creep toward an engine is fatal.** An unbounded component catalog, bundled physics/runtime ownership, visual scripting, hosting, collaboration, or CMS features would put SceneToWeb into direct competition with Needle, Verge3D, and PlayCanvas. Focused portable intent records are compatible with the source-contract advantage only while generated output remains readable, adapters stay replaceable, and multiplayer/application-framework behavior remains outside the product.
 
 ## Falsifiable validation plan
 
@@ -246,7 +246,7 @@ Interview 12–15 qualified participants, ideally six artist/developer pairs, wh
 
 ### Concierge pipeline test
 
-Recruit three real scenes from different target categories: interior/architecture, product/brand, and gallery/portfolio. Have each team perform the same material/geometry/name/lighting change with its current workflow and with a hand-operated Blendlink prototype.
+Recruit three real scenes from different target categories: interior/architecture, product/brand, and gallery/portfolio. Have each team perform the same material/geometry/name/lighting change with its current workflow and with a hand-operated SceneToWeb prototype.
 
 Measure:
 
@@ -268,9 +268,9 @@ Give five Blender artists a deliberately over-capacity scene. Without documentat
 
 ### Competitive switch test
 
-Build the same small interactive interior in Blendlink and current Needle. Include one day/night state, one tintable lamp with baked bounce, a hero-detail atlas, a renamed hotspot, and self-hosted deployment into an existing R3F app.
+Build the same small interactive interior in SceneToWeb and current Needle. Include one day/night state, one tintable lamp with baked bounce, a hero-detail atlas, a renamed hotspot, and self-hosted deployment into an existing R3F app.
 
-Measure setup time, iteration time, output size, runtime dependencies, code ownership, bake quality, and repair after a breaking rename/topology change. Publish the comparison internally even if Blendlink loses.
+Measure setup time, iteration time, output size, runtime dependencies, code ownership, bake quality, and repair after a breaking rename/topology change. Publish the comparison internally even if SceneToWeb loses.
 
 **Falsify differentiation** if Needle can deliver the required result with comparable code ownership and atlas control at lower total effort, or if participants prefer Needle's runtime tradeoff.
 
@@ -284,7 +284,7 @@ After a successful concierge project, ask for a costly signal: install the addon
 
 Proceed with the artist-first Main Atlas and embedded scene recipe, but change the positioning:
 
-> **Blendlink is the production handoff from Blender to a custom Three.js codebase — typed, checked, beautifully baked, and owned by your repository.**
+> **SceneToWeb is the production handoff from Blender to a custom Three.js codebase — typed, checked, beautifully baked, and owned by your repository.**
 
 The next product milestone should prove the narrow loop before expanding breadth:
 
@@ -295,4 +295,4 @@ The next product milestone should prove the narrow loop before expanding breadth
 5. Preview Bake and existing multi-state/additive-light contract;
 6. comparative user test against Needle on real scenes.
 
-If that loop does not beat current workflows on measured handoff time, atlas quality, and failure detection, Blendlink should retreat to a smaller developer CLI/typegen product rather than grow into another web engine.
+If that loop does not beat current workflows on measured handoff time, atlas quality, and failure detection, SceneToWeb should retreat to a smaller developer CLI/typegen product rather than grow into another web engine.

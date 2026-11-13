@@ -9,11 +9,11 @@ Evidence date: 2026-07-26
 
 ## Conclusion
 
-The Splash `already Final` result after repacking Blendlink was not caused by
+The Splash `already Final` result after repacking SceneToWeb was not caused by
 the scene compiler omitting `material_compiler.py` from its cache key. The new
 archive was written over the same local tarball pathname and retained the same
 package version, while npm left the already-installed package in place.
-Blendlink therefore executed the old package, computed the old compiler
+SceneToWeb therefore executed the old package, computed the old compiler
 signature, and correctly found the old artifact current relative to those
 installed bytes. A process cannot invalidate against compiler bytes that the
 package manager never installed.
@@ -49,7 +49,7 @@ The retained evidence is in the ignored Splash dogfood fixture:
    for that one locator. The path was mutable even though its name and package
    identity were stable.
 3. The 2026-07-24 17:43 npm 11.12.1 log reports `reify moves {}` and does not
-   fetch or replace Blendlink. It only adds a missing nested `meshoptimizer`.
+   fetch or replace SceneToWeb. It only adds a missing nested `meshoptimizer`.
 4. The later explicit forced installs at 17:49 and 17:59 report
    `placeDep ROOT blendlink@0.8.0 REPLACE`. Only then did the executing package
    receive the changed compiler.
@@ -143,7 +143,7 @@ the package replacement fix.
 
 ## Shipped implementation and evidence
 
-`scripts/prepare-dogfood-package.mjs` packs the real Blendlink package, names
+`scripts/prepare-dogfood-package.mjs` packs the real SceneToWeb package, names
 the retained archive with its full byte SHA-256, and optionally installs it
 into a named consumer with an ordinary saved npm install:
 

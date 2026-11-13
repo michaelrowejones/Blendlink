@@ -17,7 +17,7 @@ No. Ownership conceptually belongs to the material **occurrence**:
 
 Only the first occurrence is resolved by the bake. The current planner and
 diagnostic contract carries bare object names rather than stable occurrence
-IDs, so Blendlink exempts it only when that name maps to one unambiguous plan
+IDs, so SceneToWeb exempts it only when that name maps to one unambiguous plan
 occurrence. Duplicate or conflicting names refuse; they are never guessed.
 
 ## Designs compared
@@ -70,7 +70,7 @@ keeps per-object atlas transforms.
 That supports the object-occurrence ownership principle. No analogous
 material-portability publication gate was found in the audited Needle Blender
 export wrapper: ordinary materials flow through Blender's stock glTF exporter.
-Blendlink therefore matches the useful ownership model and adds a scoped,
+SceneToWeb therefore matches the useful ownership model and adds a scoped,
 artist-readable refusal rather than claiming material parity from a successful
 stock export.
 
@@ -106,7 +106,7 @@ The gate must prove all of the following:
    remain byte-identical.
 6. No `.blendlink-stage-*`, `.blendlink-next-*`, or
    `.blendlink-backup-*` artifact survives.
-7. Blender, exporter, Blendlink dist, fixture, config, runner, and Needle
+7. Blender, exporter, SceneToWeb dist, fixture, config, runner, and Needle
    source identities are recorded in `evidence.json`.
 
 ## Result
@@ -127,8 +127,8 @@ preview=1 final=1 compile=1 preserved=3
 The exact environment was Blender `5.2.0 LTS`, build
 `fbe6228777e7` (executable SHA-256
 `e27fbfea8564aa645d4463cb0949695fd85562b9de6df9561b06859a1074adf7`),
-installed glTF exporter `5.2.39`, Blendlink `0.8.0`, and Node
-`v24.15.0`. The ten-file Blendlink dist identity was
+installed glTF exporter `5.2.39`, SceneToWeb `0.8.0`, and Node
+`v24.15.0`. The ten-file SceneToWeb dist identity was
 `199693d5258136a981a531a72b0c6b132becaa37058aef023131f454afdff47c`.
 
 Preview and Final each returned the same two errors:

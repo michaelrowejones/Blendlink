@@ -9,7 +9,7 @@
 
 ## Result
 
-The settled WebGL mask from Blendlink is byte-for-byte identical to the mask
+The settled WebGL mask from SceneToWeb is byte-for-byte identical to the mask
 from the actual pinned Needle Engine `ContactShadows` class for the controlled
 manual-volume fixture:
 
@@ -37,25 +37,25 @@ similarity to real-browser differential evidence. It does **not** establish
 parity for auto-fit, backface-only geometry, below-ground occlusion, every
 material family, WebGPU, or a physical GPU.
 
-Blendlink also produced three independently failing improvements over the
+SceneToWeb also produced three independently failing improvements over the
 pinned Needle implementation:
 
-1. A static Blendlink installation performed five auxiliary renders on its
+1. A static SceneToWeb installation performed five auxiliary renders on its
    first frame and zero across 120 unchanged host frames. Three continuous
    frames performed `[5, 5, 5]`. Actual Needle `onBeforeRender()` performed
    `[5, 5, 5]` with its default `manualUpdate=false`.
-2. Needle's two default render targets have `depthBuffer=true`; Blendlink's
+2. Needle's two default render targets have `depthBuffer=true`; SceneToWeb's
    two targets have both `depthBuffer=false` and `stencilBuffer=false`.
    At `512 x 512`, this prevents two unused depth-renderbuffer allocations
    while preserving identical raw pixels. The browser-chosen depth format and
    driver memory are not inferred. This is configuration/allocation evidence,
    not a GPU-speed claim.
 3. With an application camera using only layer 6, Needle's hard-coded layer-2
-   display plane produced zero darkened pixels. Blendlink retained the camera
+   display plane produced zero darkened pixels. SceneToWeb retained the camera
    mask (`64`) on its owned display plane and produced the same 1,225 shadow
    pixels without mutating the camera.
 
-The exclusion cell also verifies Blendlink's public-API policy:
+The exclusion cell also verifies SceneToWeb's public-API policy:
 
 - a transparent caster produced zero regional mask sum;
 - an opaque control produced `1,323,260`; and
@@ -98,9 +98,9 @@ main-loop ordering is outside this fixture.
 | Needle `src/engine-components/ContactShadows.ts` | `5.1.7` | `e4bd8398c59d47ad3bd2eef66625b03c14f260e678d27a332a8ad73d4c17733b` |
 | Needle compiled `lib/engine-components/ContactShadows.js` | `5.1.7` | `23857e9563de47c2d5cedf9635bbcf33fcad637bbf7b2c37c118ff31295189fd` |
 | Needle Three fork | `0.169.19` / revision `169.19` | package identity in `docs/needle-baseline.json` |
-| Blendlink | `0.8.0` | local production build |
-| Blendlink `dist/threeContactShadows.js` | `0.8.0` | recorded in the run report because it changes with the build |
-| Blendlink Three | `0.184.0` / revision `184` | installed package |
+| SceneToWeb | `0.8.0` | local production build |
+| SceneToWeb `dist/threeContactShadows.js` | `0.8.0` | recorded in the run report because it changes with the build |
+| SceneToWeb Three | `0.184.0` / revision `184` | installed package |
 
 The pinned inventory gate remained the source-identity authority:
 
@@ -139,9 +139,9 @@ the technique ledger.
 | Capability ID | Narrow result | Relation supported | Evidence state |
 | --- | --- | --- | --- |
 | `NDL-CS-002` | Manual-volume five-pass WebGL mask | **Match** | **Verified** for this browser fixture: exact raw alpha and composite metrics |
-| `NDL-CS-003` | Static idle policy | **Improvement** | **Verified**: Blendlink `5 then 0/120`; continuous and Needle default `[5,5,5]` |
-| `NDL-CS-006` | Omit unused depth attachments | **Improvement** | **Verified allocation**: Needle `true`, Blendlink `false`; no GPU-time claim |
-| `NDL-CS-009` | Respect application camera layers without mutation | **Improvement** | **Verified**: layer-6 camera, Needle `0`, Blendlink `1,225` darkened pixels |
+| `NDL-CS-003` | Static idle policy | **Improvement** | **Verified**: SceneToWeb `5 then 0/120`; continuous and Needle default `[5,5,5]` |
+| `NDL-CS-006` | Omit unused depth attachments | **Improvement** | **Verified allocation**: Needle `true`, SceneToWeb `false`; no GPU-time claim |
+| `NDL-CS-009` | Respect application camera layers without mutation | **Improvement** | **Verified**: layer-6 camera, Needle `0`, SceneToWeb `1,225` darkened pixels |
 | `NDL-CS-010` | Exclude `allowOverride=false` through public material ownership | **Improvement** | **Verified** for the named fixture; broader custom-material matrix pending |
 
 ## Remaining differential work
@@ -156,4 +156,4 @@ the technique ledger.
 - Integrated R3F demand Canvas and post-processing host paths.
 - Physical integrated/mobile GPUs with
   `EXT_disjoint_timer_query_webgl2` before any GPU-speed claim.
-- A freshly packed Blendlink consumer rather than the local `dist` build.
+- A freshly packed SceneToWeb consumer rather than the local `dist` build.

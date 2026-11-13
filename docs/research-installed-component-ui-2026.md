@@ -1,12 +1,12 @@
-# Installed Blendlink component UI ground truth (2026-07-21)
+# Installed SceneToWeb component UI ground truth (2026-07-21)
 
 Status: pre-reinstall evidence complete. No extension reinstall, source replacement, saved `.blend`, or production-source edit was performed during this investigation.
 
 ## Result
 
-The user's “only Bloom and Vignette” report is exactly reproducible. Blender 5.2 is loading an enabled but stale, mixed-snapshot Blendlink extension. Its live catalog contains exactly two scene effects (Bloom and Vignette) and eight object behaviors. This is not only a discoverability problem: the other nine claimed scene effects are absent from the Python catalog Blender imports.
+The user's “only Bloom and Vignette” report is exactly reproducible. Blender 5.2 is loading an enabled but stale, mixed-snapshot SceneToWeb extension. Its live catalog contains exactly two scene effects (Bloom and Vignette) and eight object behaviors. This is not only a discoverability problem: the other nine claimed scene effects are absent from the Python catalog Blender imports.
 
-The installed manifest and current compiler both say `0.8.0`, so version equality is not enough to detect this drift. `blendlink doctor` reports the add-on as installed and enabled even though its catalog and files do not match the bundled add-on.
+The installed manifest and current compiler both say `0.8.0`, so version equality is not enough to detect this drift. `scenetoweb doctor` reports the add-on as installed and enabled even though its catalog and files do not match the bundled add-on.
 
 ## Live module and installation identity
 
@@ -67,8 +67,8 @@ Steps, before reinstall:
 1. Launch Blender 5.2 normally with user preferences.
 2. Dismiss the startup splash.
 3. Select the default Cube.
-4. Open the 3D View sidebar (`N`) and select the `Blendlink` tab.
-5. Click `Set Up Blendlink Scene` in the disposable unsaved scene.
+4. Open the 3D View sidebar (`N`) and select the `SceneToWeb` tab.
+5. Click `Set Up SceneToWeb Scene` in the disposable unsaved scene.
 6. Expand `Effects & Behaviors`.
 7. Observe the empty text: `No scene effects yet. Add Bloom or Vignette with +.`
 8. Click the Scene `+`. The complete menu contains only Bloom and Vignette.
@@ -86,13 +86,13 @@ Steps, before reinstall:
 
 **Object Properties (approximately 430 px wide)**
 
-- `Blendlink Web Object > Web Behaviors` uses the labeled control `Add Behavior to Selection`, which is more discoverable than the N-panel `+`.
-- With the pinned Cube outside the editable selection, `Blendlink Web Object` gives a useful explanation and `Select This Object` recovery button.
+- `SceneToWeb Web Object > Web Behaviors` uses the labeled control `Add Behavior to Selection`, which is more discoverable than the N-panel `+`.
+- With the pinned Cube outside the editable selection, `SceneToWeb Web Object` gives a useful explanation and `Select This Object` recovery button.
 - With the Cube selected, the panel has an honest empty state and a separate Physics box.
 
 **Scene Properties (approximately 430 px wide)**
 
-- `Blendlink Scene > Website Effects & Behaviors` uses the labeled `Add Scene Effect` control and the neutral empty text `No scene effects yet. The website keeps its normal renderer output.`
+- `SceneToWeb Scene > Website Effects & Behaviors` uses the labeled `Add Scene Effect` control and the neutral empty text `No scene effects yet. The website keeps its normal renderer output.`
 - Opening the control still proves that only Bloom and Vignette are installed.
 - The panel is buried below a large third-party Needle panel in this profile, so the N-panel is substantially easier to find.
 
@@ -125,7 +125,7 @@ $expr = "import importlib,sys,json; m=importlib.import_module('bl_ext.user_defau
 exit $LASTEXITCODE
 ```
 
-The diagnostic is intentionally stronger than the current doctor check. The observed `npx blendlink doctor` output said `✓ Blendlink addon 0.8.0 installed and enabled (...)` and only failed later because no config exists in the repository root; it did not detect content drift.
+The diagnostic is intentionally stronger than the current doctor check. The observed `npx scenetoweb doctor` output said `✓ SceneToWeb addon 0.8.0 installed and enabled (...)` and only failed later because no config exists in the repository root; it did not detect content drift.
 
 ## Required follow-up
 

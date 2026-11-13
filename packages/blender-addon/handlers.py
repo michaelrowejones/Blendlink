@@ -61,7 +61,7 @@ def _hydrate_recipe_if_needed(context=None) -> bool:
         loaded = props.load_legacy_recipe(scene)
     except Exception as error:
         message = (
-            "Embedded Blendlink settings could not be loaded: "
+            "Embedded SceneToWeb settings could not be loaded: "
             f"{type(error).__name__}: {error}"
         )
         project.recipe_error = message
@@ -72,7 +72,7 @@ def _hydrate_recipe_if_needed(context=None) -> bool:
         return True
     if not project.recipe_error:
         project.recipe_error = (
-            "Embedded Blendlink settings are invalid or use an unsupported schema."
+            "Embedded SceneToWeb settings are invalid or use an unsupported schema."
         )
         print(f"blendlink addon: {project.recipe_error} Scene: {scene.name!r}")
     return True
@@ -85,7 +85,7 @@ def note_bake_table_rebuilt():
 
 
 def _tag_redraw_ui():
-    """Refresh every Blendlink host after a cached snapshot changes."""
+    """Refresh every SceneToWeb host after a cached snapshot changes."""
     manager = bpy.context.window_manager
     if manager is None:
         return
@@ -231,7 +231,7 @@ def _save_pre(_filepath):
         except ValueError as error:
             project.recipe_error = str(error)
             print(
-                "blendlink addon: saved without refreshing Blendlink scene settings: "
+                "blendlink addon: saved without refreshing SceneToWeb scene settings: "
                 f"{error}"
             )
 

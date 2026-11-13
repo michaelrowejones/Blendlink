@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2011-2022 Blender Foundation
- * SPDX-FileCopyrightText: 2026 Blendlink contributors
+ * SPDX-FileCopyrightText: 2026 SceneToWeb contributors
  * SPDX-License-Identifier: Apache-2.0
  *
  * Adapted spectral color mathematics from Cycles kernel/svm/math_util.h.

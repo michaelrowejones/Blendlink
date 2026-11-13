@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Sync status: does the saved .blend match the last `blendlink sync`?
+"""Sync status: does the saved .blend match the last `scenetoweb sync`?
 
 blendlink's generated manifest records `blendBytesHash` — the first 16 hex
 chars of sha256 over the .blend bytes — and `sourceBlend`. We locate the
@@ -213,6 +213,7 @@ def _integration_handoff(path: Path, root: Path) -> dict:
     component = path.stem
     is_r3f_integration = (
         "@react-three/fiber" in source
+        or "scenetoweb/react-three-fiber" in source
         or "blendlink/react-three-fiber" in source
     ) and (
         re.search(
@@ -263,18 +264,28 @@ def _discover_website_handoff(
     """Find the exact generated handoff without parsing executable config JS."""
     if root is None:
         return None
-    directory = root / "src" / "blendlink"
+    directories = [root / "src" / "scenetoweb", root / "src" / "blendlink"]
+    if not any((root / name).is_file() for name in (
+        "scenetoweb.config.mjs", "scenetoweb.config.js",
+    )) and (
+        any((root / name).is_file() for name in (
+            "blendlink.config.mjs", "blendlink.config.js",
+        )) or (directories[1].is_dir() and not directories[0].is_dir())
+    ):
+        directories.reverse()
     expected = None
     if manifest_path is not None and manifest_path.name.endswith(".manifest.json"):
         scene_name = manifest_path.name[:-len(".manifest.json")]
-        expected = directory / f"{_scene_integration_name(scene_name)}.ts"
-        if expected.is_file():
-            return _integration_handoff(expected, root)
+        for directory in directories:
+            candidate = directory / f"{_scene_integration_name(scene_name)}.ts"
+            if candidate.is_file():
+                return _integration_handoff(candidate, root)
+        expected = directories[0] / f"{_scene_integration_name(scene_name)}.ts"
 
     candidates = []
     try:
         candidates = [
-            path for path in directory.glob("*.ts")
+            path for directory in directories for path in directory.glob("*.ts")
             if path.is_file() and not path.name.endswith((".gen.ts", ".baked.ts"))
         ]
     except OSError:
@@ -282,7 +293,7 @@ def _discover_website_handoff(
     if expected is None and len(candidates) == 1:
         return _integration_handoff(candidates[0], root)
 
-    expected_display = expected.relative_to(root).as_posix() if expected else "src/blendlink/<Scene>Scene.ts"
+    expected_display = expected.relative_to(root).as_posix() if expected else "src/scenetoweb/<Scene>Scene.ts"
     detail = (
         f"The expected generated integration {expected_display} was not found."
         if expected is not None else
@@ -292,7 +303,7 @@ def _discover_website_handoff(
         "kind": "missing" if expected is not None else "unknown",
         "path": expected_display,
         "instruction": (
-            f"Run npx blendlink connect from {root}, then follow its generated WebGL hookup "
+            f"Run npx scenetoweb connect from {root}, then follow its generated WebGL hookup "
             f"for {expected_display}."
         ),
         "detail": detail,
@@ -913,8 +924,10 @@ def _find_manifest(blend_path: Path) -> Path | None:
     directory = blend_path.parent
     root = None
     for _ in range(_MAX_WALK_UP):
-        if (directory / "blendlink.config.mjs").exists() \
-                or (directory / "blendlink.config.js").exists():
+        if any((directory / name).exists() for name in (
+            "scenetoweb.config.mjs", "scenetoweb.config.js",
+            "blendlink.config.mjs", "blendlink.config.js",
+        )):
             root = directory
             break
         if directory.parent == directory:
@@ -932,7 +945,7 @@ def _find_manifest(blend_path: Path) -> Path | None:
         `loud` also decides whether this is a PROBLEM. A manifest belonging to
         another scene of the same multi-scene website is an ordinary discovery
         outcome, and recording it as a rejection made the panel announce
-        "Last published result was rejected - Blendlink found website output
+        "Last published result was rejected - SceneToWeb found website output
         it could not safely use" the first time an artist opened the second
         scene of their own project, when nothing was wrong at all.
         """
@@ -1133,7 +1146,7 @@ def refresh(
         # Keep "we cannot read the manifest" out of the published-asset
         # integrity list. Mixing them made an unreadable or newer-schema
         # manifest accuse the artist's website files of having changed
-        # outside Blendlink, and never mentioned the real cause or remedy.
+        # outside SceneToWeb, and never mentioned the real cause or remedy.
         _state["asset_failures"] = []
         _state["derived_assets"] = []
     _update_asset_signature()

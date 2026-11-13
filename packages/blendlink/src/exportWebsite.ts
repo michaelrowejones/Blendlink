@@ -7,12 +7,12 @@ import { publishWebsiteProject } from './publish.js'
 import { emitProgress } from './progress.js'
 import { canonicalizePublicationRoot, withPublicationScopes } from './publicationScopes.js'
 
-const MARKER = '.blendlink-website.json'
+const MARKER = '.scenetoweb-website.json'
 
 function websiteLicenseNotices(workspace: string): string {
   const localRequire = createRequire(join(workspace, 'package.json'))
   const compilerRequire = createRequire(import.meta.url)
-  const notices = ['Blendlink\n' + readFileSync(new URL('../LICENSE', import.meta.url), 'utf8')]
+  const notices = ['SceneToWeb\n' + readFileSync(new URL('../LICENSE', import.meta.url), 'utf8')]
   for (const name of ['three', 'postprocessing', 'n8ao', 'meshoptimizer']) {
     let entry: string
     try { entry = localRequire.resolve(name) } catch { entry = compilerRequire.resolve(name) }
@@ -46,7 +46,7 @@ export function assertWebsiteExportDestination(output: string, sourceKey: string
     const marker = JSON.parse(readFileSync(join(output, MARKER), 'utf8'))
     if (marker.schemaVersion === 1 && marker.sourceKey === sourceKey) return
   } catch { /* An unknown folder is never an export target. */ }
-  throw new Error('Choose an empty folder, or the previous Blendlink website export for this scene. Existing files were left untouched.')
+  throw new Error('Choose an empty folder, or the previous SceneToWeb website export for this scene. Existing files were left untouched.')
 }
 
 export function resolveWebsiteExportDestination(output: string, blendPath: string): string {
@@ -64,7 +64,7 @@ export function resolveWebsiteExportDestination(output: string, blendPath: strin
 export function standaloneWebsiteMainSource(sceneName: string): string {
   return `import * as THREE from 'three'
 import { WebGPURenderer } from 'three/webgpu'
-import { installThreeCompiledScene } from 'blendlink/three'
+import { installThreeCompiledScene } from 'scenetoweb/three'
 import { ${sceneName} as descriptor } from './generated/${sceneName}.gen'
 import { createBakedScene } from './generated/${sceneName}.baked'
 import './style.css'
@@ -215,11 +215,11 @@ export async function exportStandaloneWebsite(options: { blendPath: string; outp
   }, async () => {
     assertWebsiteExportDestination(output, sourceKey)
     emitProgress(.02, 'Preparing your website · first export installs private tools')
-    const workspaceMarker = join(plan.workspace, '.blendlink-export-workspace.json')
+    const workspaceMarker = join(plan.workspace, '.scenetoweb-export-workspace.json')
     if (existsSync(plan.workspace) && readdirSync(plan.workspace).length && !existsSync(workspaceMarker)) {
       // Recognize only this scene's identity-proven former private scaffold.
       let identity: { sessionId?: string } = {}
-      try { identity = JSON.parse(readFileSync(join(plan.workspace, 'public/.blendlink-preview-studio.json'), 'utf8')) } catch {}
+      try { identity = JSON.parse(readFileSync(join(plan.workspace, 'public/.scenetoweb-preview-studio.json'), 'utf8')) } catch {}
       if (identity.sessionId !== plan.sessionId) throw new Error('The private website export cache is not owned by this scene. Choose another cache location.')
     }
     if (existsSync(workspaceMarker) && JSON.parse(readFileSync(workspaceMarker, 'utf8')).sourceKey !== sourceKey) {
@@ -228,12 +228,12 @@ export async function exportStandaloneWebsite(options: { blendPath: string; outp
     mkdirSync(join(plan.workspace, 'src'), { recursive: true })
     mkdirSync(join(plan.workspace, 'public'), { recursive: true })
     writeFileSync(workspaceMarker, JSON.stringify({ schemaVersion: 1, sourceKey }))
-    writeFileSync(join(plan.workspace, 'blendlink.config.mjs'), `export default { outDir: 'public/models', genDir: 'src/generated', urlPrefix: '/models', scenes: [{ file: ${JSON.stringify(blendPath)}, name: ${JSON.stringify(plan.sceneName)} }] }\n`)
+    writeFileSync(join(plan.workspace, 'scenetoweb.config.mjs'), `export default { outDir: 'public/models', genDir: 'src/generated', urlPrefix: '/models', scenes: [{ file: ${JSON.stringify(blendPath)}, name: ${JSON.stringify(plan.sceneName)} }] }\n`)
     const pkgPath = join(plan.workspace, 'package.json')
     const packageText = JSON.stringify({
-      name: `blendlink-website-${plan.sessionId}`, private: true, version: '0.0.0', type: 'module',
+      name: `scenetoweb-website-${plan.sessionId}`, private: true, version: '0.0.0', type: 'module',
       scripts: { build: 'vite build --base=./' },
-      dependencies: { blendlink: previewStudioPackageDependency(), three: '0.184.0' },
+      dependencies: { scenetoweb: previewStudioPackageDependency(), three: '0.184.0' },
       devDependencies: { vite: '7.3.8' },
     }, null, 2) + '\n'
     writeFileSync(pkgPath, packageText)
@@ -245,12 +245,12 @@ export async function exportStandaloneWebsite(options: { blendPath: string; outp
     const result = await publishWebsiteProject({ root: plan.workspace, ...(options.force ? { force: true } : {}) })
     emitProgress(.95, 'Saving your complete website')
     mkdirSync(dirname(output), { recursive: true })
-    const staging = mkdtempSync(join(dirname(output), '.blendlink-website-'))
+    const staging = mkdtempSync(join(dirname(output), '.scenetoweb-website-'))
     const backup = staging + '-previous'
     let movedPrevious = false
     try {
       cpSync(join(plan.workspace, 'dist'), staging, { recursive: true })
-      for (const file of readdirSync(staging).filter(name => name.startsWith('.blendlink-preview-'))) {
+      for (const file of readdirSync(staging).filter(name => name.startsWith('.scenetoweb-preview-'))) {
         rmSync(join(staging, file), { force: true })
       }
       writeFileSync(join(staging, MARKER), JSON.stringify({ schemaVersion: 1, sourceKey, scene: plan.sceneName }) + '\n')

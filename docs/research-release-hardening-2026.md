@@ -16,7 +16,7 @@ Date: 2026-07-22; implementation evidence refreshed 2026-07-25
   and zero critical findings for Sharp/libvips advisory
   `GHSA-f88m-g3jw-g9cj`, through
   `@gltf-transform/functions@4.4.1` -> `ndarray-pixels@5.0.1` ->
-  `sharp@0.34.5`. Blendlink implements the advisory's official GIF/TIFF/VIPS
+  `sharp@0.34.5`. SceneToWeb implements the advisory's official GIF/TIFF/VIPS
   loader blocks at every package-owned Sharp entry point, with behavioral
   refusal tests. The audit still reports the high findings: this is a reviewed
   public-beta workaround, not a patched dependency graph. The three direct
@@ -44,7 +44,7 @@ Date: 2026-07-22; implementation evidence refreshed 2026-07-25
 - A real production Next/Chromium fixture now loads the site's retained
   KTX2+Meshopt workbench GLB under paired response-header policies. It proved
   that Three r184's WorkerPool strands a KTX2 load when CSP asynchronously
-  blocks its Blob worker. Blendlink now watches only enforced Blob
+  blocks its Blob worker. SceneToWeb now watches only enforced Blob
   `worker-src`/fallback violations during package-owned KTX2 loading, aborts
   the private request graph, disposes the loader, and reports the policy remedy.
   The blocked route reaches Error instead of hanging; the allowed route reaches
@@ -52,7 +52,7 @@ Date: 2026-07-22; implementation evidence refreshed 2026-07-25
 
 ## Decision summary
 
-Blendlink has a credible **local release candidate gate** and an implemented
+SceneToWeb has a credible **local release candidate gate** and an implemented
 exact-artifact publication workflow, but it does not yet have hosted proof of a
 public release channel. The repository verifies the npm
 tarball, compiles Vanilla and React Three Fiber consumers from that tarball,
@@ -130,7 +130,7 @@ GitHub Actions run 30209329834 exposed that unit tests alone did not prove the
 original floor. The packed renderer-neutral root failed ESM instantiation on
 Node 22.12 because it imports `zstdDecompressSync`. Node's official
 documentation and release notes mark Zstandard support as added in Node
-22.15.0. Blendlink needs that API to inspect compressed `.blend` headers before
+22.15.0. SceneToWeb needs that API to inspect compressed `.blend` headers before
 invoking Blender and preserve the newer-file data-loss guard.
 [Node 22.15 Zstandard API](https://nodejs.org/download/release/v22.15.0/docs/api/zlib.html#zlibzstddecompresssyncbuffer-options),
 [Node 22.15 release notes](https://nodejs.org/en/blog/release/v22.15.0)
@@ -160,7 +160,7 @@ it is unrelated to Blender file inspection. `npm run verify:needle-baseline`
 passed 131 files and nine source identities on 2026-07-26.
 
 When Node 22 reaches EOL, removing it from `engines` is a breaking support
-decision for Blendlink users even if npm itself would still execute. Announce it
+decision for SceneToWeb users even if npm itself would still execute. Announce it
 in the changelog and support table. Do not add Node 26 to the supported range
 until its runtime, native dependencies, packed consumers, and real-tool gates
 pass; “Current” is not evidence of product support.
@@ -175,7 +175,7 @@ self-hosted GitHub runner for this flow. Trusted publishing automatically adds
 provenance for public packages built from public repositories.
 [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 
-That minimum is below Blendlink's corrected Node 22.15 consumer floor. Use the
+That minimum is below SceneToWeb's corrected Node 22.15 consumer floor. Use the
 newest Node 24 patch in the release job, update npm explicitly if
 needed, disable package-manager caching, and grant only `contents: read` plus
 `id-token: write`. Protect the release environment and `v*` tags, and configure
@@ -226,7 +226,7 @@ it. The manifest's minimum must be at least Blender 4.2.0.
 [Blender extension creation](https://docs.blender.org/manual/en/latest/advanced/extensions/getting_started.html),
 [Blender extension CLI](https://docs.blender.org/manual/en/latest/advanced/command_line/extension_arguments.html)
 
-Blendlink currently contains pure Python add-on code and no platform wheels, so
+SceneToWeb currently contains pure Python add-on code and no platform wheels, so
 one OS-neutral archive is the right release artifact. Do not produce per-platform
 archives until a native wheel or other real platform dependency exists. Omitting
 both `platforms` and `blender_version_max` makes a broad claim: the extension is
@@ -256,7 +256,7 @@ success must not be described as marketplace approval.
 The official repository also requires add-ons to work from a read-only extension
 directory, keep bundled modules inside their package namespace, respect
 `bpy.app.online_access`, and avoid installing packages or manipulating other
-add-ons at runtime. Blendlink's separately user-installed CLI should therefore
+add-ons at runtime. SceneToWeb's separately user-installed CLI should therefore
 remain a loud prerequisite, not something the add-on installs; moderator
 clarification before first submission is prudent.
 [Blender add-on guidelines](https://developer.blender.org/docs/handbook/extensions/addon_guidelines/),
@@ -312,7 +312,7 @@ the only immutable action reference. [GitHub Actions secure-use reference](https
   keep the expensive bake matrix scheduled/release-gated if timings demand it.
 - Hardware GPU/WebGL/driver equivalence is not established by a hosted runner.
   Any CUDA/Metal/driver performance claim needs labeled external hardware.
-- The dogfood site lives in another repository. A Blendlink release workflow
+- The dogfood site lives in another repository. A SceneToWeb release workflow
   cannot honestly gate on an unspecified moving checkout. Either trigger a
   pinned dogfood revision with an explicit compatibility input or maintain a
   package-owned production fixture. Cross-repository credentials and preview
@@ -365,7 +365,7 @@ correctly. [Playwright network caveat](https://playwright.dev/docs/network),
 Local production mode proves the built application, not its edge platform. A
 release candidate should optionally gate a real HTTPS preview/staging origin
 owned by the website. The deployed gate must discover the application-declared
-smoke route rather than asking Blendlink to own a route.
+smoke route rather than asking SceneToWeb to own a route.
 
 At minimum, verify:
 
@@ -415,7 +415,7 @@ change. RFC 8246's enabling pattern is a versioned URL: changed bytes receive a
 new URL, allowing a long freshness lifetime without revalidation.
 [RFC 8246](https://www.rfc-editor.org/info/rfc8246/)
 
-Blendlink therefore does not recommend a route-wide immutable header.
+SceneToWeb therefore does not recommend a route-wide immutable header.
 Internally compiled scenes now publish one canonical compiler-declared graph
 beneath `<scene>/<full-sha256>/`; stable compatibility paths can still refer to
 changed bytes and remain mutable. The addressed closure covers:
@@ -460,7 +460,7 @@ assets are outside the closure. Real deployed CDN/header retention remains
 
 ## SemVer, changelog, migration, security, and support
 
-Blendlink 0.8.0 is still in SemVer's initial-development range, where the public
+SceneToWeb 0.8.0 is still in SemVer's initial-development range, where the public
 API is not considered stable. That is not permission to make silent breakage.
 SemVer still requires released contents never be modified, and its major/minor/
 patch meanings should guide the path to 1.0.
@@ -547,7 +547,7 @@ inventory before declaring 1.0.
 
 ## Bottom line
 
-Blendlink is ready to create **local public-beta release candidates** and has a
+SceneToWeb is ready to create **local public-beta release candidates** and has a
 reproducible exact-artifact workflow definition, but it is not yet ready to
 claim a verified public release channel. The explicit dual-artifact assembler,
 fail-closed reviewed-audit gate, graph-addressed publication, and least-
@@ -575,7 +575,7 @@ version-scoped rehearsal bytes:
 | Artifact | Bytes | SHA-256 |
 | --- | ---: | --- |
 | `blendlink-0.8.0.tgz` | 1,445,402 | `6f1d1fb19ed5c89997c5a62f45839b0fed6b4ba38450873699523e91eca30c9b` |
-| `blendlink-addon-0.8.0.zip` | 384,146 | `af391fe5c36ec81bccba2029ce485b0df6469dca584623a613fbfcd56a3f802b` |
+| `scenetoweb-addon-0.8.0.zip` | 384,146 | `af391fe5c36ec81bccba2029ce485b0df6469dca584623a613fbfcd56a3f802b` |
 
 Both package surfaces contain add-on fingerprint
 `6ffb947cdef750d9fc74463081a988e625e965e4d42e9a085654cd557eedae02`.
@@ -588,6 +588,6 @@ commit and protected hosted release run remain required.
 
 The MichaelRoweJones dogfood site installed that exact npm SHA, completed a
 Final publish and production Next build, passed all 21 configured production
-browser checks, and then passed the focused Blendlink lab suite 3/3. This is
+browser checks, and then passed the focused SceneToWeb lab suite 3/3. This is
 current local browser evidence; deployed CDN, protected OIDC publication, and
 public-registry byte equality remain external.

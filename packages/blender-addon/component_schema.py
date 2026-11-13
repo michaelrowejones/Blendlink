@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Portable web-behaviour catalog shared by Blendlink's Blender UI.
+"""Portable web-behaviour catalog shared by SceneToWeb's Blender UI.
 
 The catalog is deliberately declarative.  Blender owns pleasant authoring,
 the scene recipe owns portable intent, and the website runtime owns behavior.
@@ -125,7 +125,7 @@ COMPONENT_DEFINITIONS = {
             "threshold": 0.8, "radius": 0.4,
         },
         "cost": "Full-screen effect · moderate GPU cost",
-        "consequence": "Adds an HDR full-screen mip chain; Blendlink owns the website render pass while this effect is enabled.",
+        "consequence": "Adds an HDR full-screen mip chain; SceneToWeb owns the website render pass while this effect is enabled.",
         "compatibility": "Three.js WebGL / Vanilla and R3F",
         "support": "Built-in",
         "docs_url": "https://pmndrs.github.io/postprocessing/public/docs/class/src/effects/BloomEffect.js~BloomEffect.html",
@@ -144,10 +144,10 @@ COMPONENT_DEFINITIONS = {
         "fields": ("intensity", "softness", "color"),
         "defaults": {"intensity": 0.25, "softness": 0.55, "color": [0.0, 0.0, 0.0]},
         "cost": "Full-screen effect · low GPU cost",
-        "consequence": "Blendlink owns the website render pass while this effect is enabled.",
+        "consequence": "SceneToWeb owns the website render pass while this effect is enabled.",
         "compatibility": "Three.js WebGL / Vanilla and R3F",
         "support": "Built-in",
-        # Blendlink's custom effect extends this concept with authored tint
+        # SceneToWeb's custom effect extends this concept with authored tint
         # and strict alpha preservation while remaining fuseable by pmndrs.
         "docs_url": "https://pmndrs.github.io/postprocessing/public/docs/class/src/effects/VignetteEffect.js~VignetteEffect.html",
     },
@@ -170,7 +170,7 @@ COMPONENT_DEFINITIONS = {
             "centerX": 0.5, "centerY": 0.5,
         },
         "cost": "Bounded full-screen color pass - low GPU cost",
-        "consequence": "Strong values can reduce text and silhouette readability; Blendlink warns before publishing them.",
+        "consequence": "Strong values can reduce text and silhouette readability; SceneToWeb warns before publishing them.",
         "compatibility": "Three.js WebGL / directional and radial lens patterns",
         "support": "Built-in",
         "docs_url": "https://pmndrs.github.io/postprocessing/public/docs/class/src/effects/ChromaticAberrationEffect.js~ChromaticAberrationEffect.html",
@@ -507,7 +507,7 @@ COMPONENT_DEFINITIONS = {
         ),
         "defaults": {"name": "surface", "colorTreatment": "display"},
         "cost": "One dynamic texture upload when application pixels change",
-        "consequence": "Adding this switches the mesh to Realtime and clears its atlas assignment. The target must be one dedicated mesh with one material and ordinary 0..1 UV0; Blendlink owns restoration and the application owns pixels.",
+        "consequence": "Adding this switches the mesh to Realtime and clears its atlas assignment. The target must be one dedicated mesh with one material and ordinary 0..1 UV0; SceneToWeb owns restoration and the application owns pixels.",
         "compatibility": "Three.js WebGL / Vanilla and R3F demand rendering",
         "support": "Built-in",
         "docs_url": "https://threejs.org/docs/#api/en/textures/CanvasTexture",
@@ -520,7 +520,7 @@ COMPONENT_DEFINITIONS = {
         "phase": "initial", "cardinality": "one-per-target",
         "requires": (), "conflicts": (), "cost_level": "free",
         "adapters": {"webgl": "preview", "tsl": "unavailable"},
-        "fallbacks": {"tsl": "The intent is renderer-neutral, but Blendlink does not ship a TSL runtime adapter yet."},
+        "fallbacks": {"tsl": "The intent is renderer-neutral, but SceneToWeb does not ship a TSL runtime adapter yet."},
         "targets": {"OBJECT"},
         "fields": (),
         "defaults": {},
@@ -538,7 +538,7 @@ COMPONENT_DEFINITIONS = {
         "phase": "update", "cardinality": "one-per-target",
         "requires": ("camera",), "conflicts": (), "cost_level": "low",
         "adapters": {"webgl": "preview", "tsl": "unavailable"},
-        "fallbacks": {"tsl": "The intent is renderer-neutral, but Blendlink does not ship a TSL runtime adapter yet."},
+        "fallbacks": {"tsl": "The intent is renderer-neutral, but SceneToWeb does not ship a TSL runtime adapter yet."},
         "targets": {"OBJECT"},
         "fields": ("reference_object", "keep_up"),
         "defaults": {"keepUp": True},
@@ -575,7 +575,7 @@ COMPONENT_DEFINITIONS = {
         "phase": "initial", "cardinality": "one-per-target",
         "requires": ("audio",), "conflicts": (), "cost_level": "low",
         "adapters": {"webgl": "preview", "tsl": "unavailable"},
-        "fallbacks": {"tsl": "Web Audio is portable, but Blendlink does not ship a TSL runtime adapter yet."},
+        "fallbacks": {"tsl": "Web Audio is portable, but SceneToWeb does not ship a TSL runtime adapter yet."},
         "targets": {"OBJECT"},
         "fields": (
             "audio_url", "autoplay", "audio_loop", "volume", "spatial",

@@ -168,7 +168,7 @@ export function packContentAddressedLocalPackage(packageRoot, outputRoot) {
         '--cache',
         join(tempRoot, 'npm-cache'),
       ],
-      { cwd: resolvedPackageRoot, label: 'npm pack local Blendlink archive' },
+      { cwd: resolvedPackageRoot, label: 'npm pack local SceneToWeb archive' },
     )
     let packed
     try {

@@ -2,7 +2,7 @@
 // blendlink — artist-authored Blender scenes compiled for Three.js.
 // Docs: https://github.com/michaelrowejones/Blendlink
 // Each scene becomes <genDir>/<name>.gen.ts + .manifest.json and <outDir>/<name>.glb.
-/** @type {import('blendlink').BlendlinkConfig} */
+/** @type {import('scenetoweb').BlendlinkConfig} */
 const config = {
   // outDir: 'public/models',   // where GLBs land (served statically)
   // genDir: 'src/generated',   // where typed modules land

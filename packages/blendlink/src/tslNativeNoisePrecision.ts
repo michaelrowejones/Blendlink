@@ -1,6 +1,6 @@
 /* SPDX-FileCopyrightText: 2009-2010 Sony Pictures Imageworks Inc., et al. All Rights Reserved.
  * SPDX-FileCopyrightText: 2011-2022 Blender Foundation
- * SPDX-FileCopyrightText: 2026 Blendlink contributors
+ * SPDX-FileCopyrightText: 2026 SceneToWeb contributors
  * SPDX-License-Identifier: BSD-3-Clause
  * SIMD Perlin fade adapted from Cycles kernel/svm/noise.h. */
 /** Bounded float32 arithmetic for the native Cycles SIMD Perlin kernel.

@@ -23,8 +23,8 @@ from . import material_compiler, probe_authoring, validation, vocab, weblights
 from .bakelib_loader import bakelib
 
 _SEP = "-"
-WEBSITE_CONNECT_COMMAND = "npx blendlink connect"
-WEBSITE_PUBLISH_COMMAND = "npx blendlink publish"
+WEBSITE_CONNECT_COMMAND = "npx scenetoweb connect"
+WEBSITE_PUBLISH_COMMAND = "npx scenetoweb publish"
 
 
 @lru_cache(maxsize=1)
@@ -36,20 +36,20 @@ def _addon_release_version() -> str:
             version = tomllib.load(stream).get("version")
     except (OSError, tomllib.TOMLDecodeError) as error:
         raise RuntimeError(
-            f"Blendlink cannot read its addon version from {manifest_path}: {error}"
+            f"SceneToWeb cannot read its addon version from {manifest_path}: {error}"
         ) from error
     if not isinstance(version, str) or re.fullmatch(
         r"\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?", version,
     ) is None:
         raise RuntimeError(
-            f"Blendlink addon version in {manifest_path} is not a safe npm version: "
+            f"SceneToWeb addon version in {manifest_path} is not a safe npm version: "
             f"{version!r}"
         )
     return version
 
 
 def _preview_cli_package_candidates(blend_path: Path):
-    """Yield nearby Blendlink package roots in artist-first priority order."""
+    """Yield nearby SceneToWeb package roots in artist-first priority order."""
     seen: set[Path] = set()
     anchors = (blend_path.parent, Path(__file__).resolve().parent)
     for anchor in anchors:
@@ -57,6 +57,7 @@ def _preview_cli_package_candidates(blend_path: Path):
             for candidate in (
                 parent,
                 parent / "packages" / "blendlink",
+                parent / "node_modules" / "scenetoweb",
                 parent / "node_modules" / "blendlink",
             ):
                 resolved = candidate.resolve()
@@ -74,14 +75,14 @@ def _local_preview_cli(blend_path: Path, release_version: str) -> Path | None:
     if configured:
         package_root = Path(os.path.expanduser(configured))
         if not package_root.is_absolute():
-            raise RuntimeError("Local Preview Package must be an absolute folder path in Blendlink preferences")
+            raise RuntimeError("Local Preview Package must be an absolute folder path in SceneToWeb preferences")
         package_root = package_root.resolve()
         try:
             descriptor = json.loads((package_root / "package.json").read_text(encoding="utf8"))
         except (OSError, UnicodeError, json.JSONDecodeError) as error:
             raise RuntimeError(f"Cannot read Local Preview Package at {package_root}: {error}") from error
-        if not isinstance(descriptor, dict) or descriptor.get("name") != "blendlink" or descriptor.get("version") != release_version:
-            raise RuntimeError(f"Local Preview Package must be blendlink {release_version}; update the folder in Blendlink preferences")
+        if not isinstance(descriptor, dict) or descriptor.get("name") not in {"scenetoweb", "blendlink"} or descriptor.get("version") != release_version:
+            raise RuntimeError(f"Local Preview Package must be scenetoweb {release_version}; update the folder in SceneToWeb preferences")
         cli_path = package_root / "dist" / "cli.js"
         if not cli_path.is_file():
             raise RuntimeError(f"Local Preview Package has no dist/cli.js at {package_root}; run npm run build")
@@ -96,14 +97,14 @@ def _local_preview_cli(blend_path: Path, release_version: str) -> Path | None:
             # Only a directory named blendlink is evidence that this malformed
             # descriptor was intended for us; unrelated website package files
             # are common along the search path and should not create noise.
-            if package_root.name.casefold() == "blendlink":
+            if package_root.name.casefold() in {"scenetoweb", "blendlink"}:
                 print(
                     "blendlink addon: skipped local Preview Studio package at "
                     f"{package_root}: package.json could not be read: {error}",
                     flush=True,
                 )
             continue
-        if not isinstance(descriptor, dict) or descriptor.get("name") != "blendlink":
+        if not isinstance(descriptor, dict) or descriptor.get("name") not in {"scenetoweb", "blendlink"}:
             continue
         package_version = descriptor.get("version")
         if package_version != release_version:
@@ -133,7 +134,7 @@ def _desktop_tools_directory() -> Path:
     try:
         return Path(bpy.utils.extension_path_user(__package__, path="tools", create=False))
     except (RuntimeError, ValueError):
-        return Path(bpy.utils.user_resource("CONFIG")) / "blendlink" / "tools"
+        return Path(bpy.utils.user_resource("CONFIG")) / "scenetoweb" / "tools"
 
 
 def _desktop_cli_command(blend_path: str, arguments: list[str], *, cwd: str | None = None) -> tuple[list[str], str]:
@@ -191,7 +192,7 @@ def _copy_with_feedback(operator, context, text: str, success: str):
     """Apply the verified clipboard contract shared by every copy operator."""
     error = _copy_to_system_clipboard(context, text)
     if error:
-        operator.report({"ERROR"}, f"{error}. The text remains visible in Blendlink")
+        operator.report({"ERROR"}, f"{error}. The text remains visible in SceneToWeb")
         return {"CANCELLED"}
     operator.report({"INFO"}, success)
     return {"FINISHED"}
@@ -212,7 +213,7 @@ def _scene_editability_issue(context) -> str | None:
     if scene is None:
         return "No active scene"
     if not getattr(scene, "is_editable", True):
-        return "Make this linked scene local before changing Blendlink settings"
+        return "Make this linked scene local before changing SceneToWeb settings"
     return None
 
 
@@ -414,7 +415,7 @@ class BLENDLINK_OT_use_website_camera(bpy.types.Operator):
             return {"CANCELLED"}
         project = getattr(context.scene, "blendlink_project", None)
         if project is None or not project.configured:
-            self.report({"ERROR"}, "Set up this Blendlink scene before choosing its website camera")
+            self.report({"ERROR"}, "Set up this SceneToWeb scene before choosing its website camera")
             return {"CANCELLED"}
         camera = bpy.data.objects.get(self.camera_name)
         if camera is None or camera.type != "CAMERA":
@@ -443,7 +444,7 @@ def _ensure_scene_ids(scene) -> int:
         if not isinstance(current, str) or not current or current in seen:
             raise ValueError(
                 f"Linked object {obj.name!r} needs a unique persistent web identity. "
-                "Open its source .blend with Blendlink enabled and save it once"
+                "Open its source .blend with SceneToWeb enabled and save it once"
             )
         seen.add(current)
 
@@ -461,7 +462,7 @@ def _ensure_scene_ids(scene) -> int:
 class BLENDLINK_OT_setup_website_export(bpy.types.Operator):
     """Create an artist-owned web recipe; existing scene art is untouched"""
     bl_idname = "blendlink.setup_website_export"
-    bl_label = "Set Up Blendlink Scene"
+    bl_label = "Set Up SceneToWeb Scene"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
@@ -472,7 +473,7 @@ class BLENDLINK_OT_setup_website_export(bpy.types.Operator):
             return False
         project = getattr(context.scene, "blendlink_project", None)
         if project is not None and project.configured:
-            cls.poll_message_set("This scene is already set up for Blendlink")
+            cls.poll_message_set("This scene is already set up for SceneToWeb")
             return False
         return True
 
@@ -481,7 +482,7 @@ class BLENDLINK_OT_setup_website_export(bpy.types.Operator):
         if not _require_editable_scene(self, context):
             return {"CANCELLED"}
         if context.scene.blendlink_project.configured:
-            self.report({"ERROR"}, "This scene is already set up for Blendlink")
+            self.report({"ERROR"}, "This scene is already set up for SceneToWeb")
             return {"CANCELLED"}
         try:
             _ensure_scene_ids(context.scene)
@@ -492,7 +493,7 @@ class BLENDLINK_OT_setup_website_export(bpy.types.Operator):
         recipe = props.setup_project(context.scene)
         self.report(
             {"INFO"},
-            f"Blendlink scene ready with a {recipe['atlases'][0]['size']}px Main atlas. "
+            f"SceneToWeb scene ready with a {recipe['atlases'][0]['size']}px Main atlas. "
             "Website connection is shown separately",
         )
         return {"FINISHED"}
@@ -512,7 +513,7 @@ class BLENDLINK_OT_add_composition(bpy.types.Operator):
             return False
         project = getattr(context.scene, "blendlink_project", None)
         if not project or not project.configured:
-            cls.poll_message_set("Run Set Up Blendlink Scene first")
+            cls.poll_message_set("Run Set Up SceneToWeb Scene first")
             return False
         return True
 
@@ -605,7 +606,7 @@ class BLENDLINK_OT_add_atlas(bpy.types.Operator):
             return False
         project = getattr(context.scene, "blendlink_project", None)
         if not project or not project.configured:
-            cls.poll_message_set("Run Set Up Blendlink Scene first")
+            cls.poll_message_set("Run Set Up SceneToWeb Scene first")
             return False
         if not any(obj.type == "MESH" for obj in context.selected_editable_objects):
             cls.poll_message_set("Select one or more hero meshes")
@@ -770,7 +771,7 @@ class BLENDLINK_OT_add_state(bpy.types.Operator):
             return False
         project = getattr(context.scene, "blendlink_project", None)
         if not project or not project.configured:
-            cls.poll_message_set("Run Set Up Blendlink Scene first")
+            cls.poll_message_set("Run Set Up SceneToWeb Scene first")
             return False
         return True
 
@@ -1059,7 +1060,7 @@ class BLENDLINK_OT_add_reflection_probe(bpy.types.Operator):
             return False
         project = getattr(context.scene, "blendlink_project", None)
         if not project or not project.configured:
-            cls.poll_message_set("Run Set Up Blendlink Scene first")
+            cls.poll_message_set("Run Set Up SceneToWeb Scene first")
             return False
         if not any(obj.type == "MESH" for obj in context.selected_editable_objects):
             cls.poll_message_set("Select one or more reflective meshes")
@@ -1636,7 +1637,7 @@ class BLENDLINK_OT_set_area_light_mode(bpy.types.Operator):
                 weblights.AREA_LIGHT_MODE_THREE_RECT
             obj.id_properties_ui(weblights.AREA_LIGHT_MODE_PROPERTY).update(
                 description=(
-                    "Blendlink opt-in for a shadowless Three.js RectAreaLight "
+                    "SceneToWeb opt-in for a shadowless Three.js RectAreaLight "
                     "approximation on live PBR receivers"
                 ),
             )
@@ -1646,7 +1647,7 @@ class BLENDLINK_OT_set_area_light_mode(bpy.types.Operator):
                 weblights.AREA_LIGHT_MODE_BAKE_ONLY
             obj.id_properties_ui(weblights.AREA_LIGHT_MODE_PROPERTY).update(
                 description=(
-                    "Blendlink artist override: keep this Area light in baked "
+                    "SceneToWeb artist override: keep this Area light in baked "
                     "artwork without a realtime website approximation"
                 ),
             )
@@ -2105,7 +2106,7 @@ class BLENDLINK_OT_set_texture_compression(bpy.types.Operator):
 class BLENDLINK_OT_clear_tag(bpy.types.Operator):
     """Remove the blendlink suffix or anchor prefix from selected object names"""
     bl_idname = "blendlink.clear_tag"
-    bl_label = "Clear Blendlink Tag"
+    bl_label = "Clear SceneToWeb Tag"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
@@ -2279,9 +2280,9 @@ class BLENDLINK_OT_fix_numbered(bpy.types.Operator):
 
 
 class BLENDLINK_OT_migrate_legacy_property(bpy.types.Operator):
-    """Move one deprecated bare custom property into Blendlink's namespace"""
+    """Move one deprecated bare custom property into SceneToWeb's namespace"""
     bl_idname = "blendlink.migrate_legacy_property"
-    bl_label = "Migrate Legacy Blendlink Setting"
+    bl_label = "Migrate Legacy SceneToWeb Setting"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     object_name: bpy.props.StringProperty(options={"HIDDEN", "SKIP_SAVE"})
@@ -2305,7 +2306,7 @@ class BLENDLINK_OT_migrate_legacy_property(bpy.types.Operator):
             self.report({"WARNING"}, f"{obj.name} no longer has the legacy {bare} setting")
             return {"CANCELLED"}
         if namespaced in obj:
-            self.report({"WARNING"}, f"{obj.name} already has the Blendlink {bare} setting")
+            self.report({"WARNING"}, f"{obj.name} already has the SceneToWeb {bare} setting")
             return {"CANCELLED"}
         value = obj[bare]
         metadata = {}
@@ -2710,7 +2711,7 @@ class BLENDLINK_OT_clear_web_material_source(bpy.types.Operator):
     semantic: bpy.props.EnumProperty(
         name="Website Field",
         items=(
-            ("ALL", "Color & Alpha", "Remove the Blendlink Web Color node"),
+            ("ALL", "Color & Alpha", "Remove the SceneToWeb Web Color node"),
             ("ALPHA", "Alpha Only", "Keep Web Color and clear only Web Alpha"),
         ),
         default="ALL",
@@ -2720,7 +2721,7 @@ class BLENDLINK_OT_clear_web_material_source(bpy.types.Operator):
     def poll(cls, context):
         material = _active_material(context)
         if material is None or not material_compiler.marker_nodes(material):
-            cls.poll_message_set("This material has no Blendlink Web Color selection")
+            cls.poll_message_set("This material has no SceneToWeb Web Color selection")
             return False
         if getattr(material, "library", None) is not None:
             cls.poll_message_set("Make the linked material local or create a library override")
@@ -2771,7 +2772,7 @@ class BLENDLINK_OT_toggle_tsl_program(bpy.types.Operator):
             return False
         if material_compiler.marker_nodes(material):
             cls.poll_message_set(
-                "Clear the Blendlink Web Color selection first; a TSL "
+                "Clear the SceneToWeb Web Color selection first; a TSL "
                 "Program translates proven channels instead of one "
                 "selected field"
             )
@@ -2817,7 +2818,7 @@ class BLENDLINK_OT_toggle_material_bake(bpy.types.Operator):
             return False
         if material_compiler.marker_nodes(material):
             cls.poll_message_set(
-                "Clear the Blendlink Web Color selection first; Material "
+                "Clear the SceneToWeb Web Color selection first; Material "
                 "Bake carries every channel instead of one selected field"
             )
             return False
@@ -2906,7 +2907,7 @@ class BLENDLINK_OT_preview_atlas_uvs(bpy.types.Operator):
         atlas_layout = plan.get("atlasLayout")
         if not isinstance(atlas_layout, dict) or atlas_layout.get("space") != "final-glb-decoded":
             cls.poll_message_set(
-                "The last build predates exact UV inspection — rebuild with this Blendlink version"
+                "The last build predates exact UV inspection — rebuild with this SceneToWeb version"
             )
             return False
         return context.mode == "OBJECT"
@@ -3835,7 +3836,7 @@ def rebuild_bake_table(context) -> int:
     session = getattr(window_manager, "blendlink", None) if window_manager else None
     view_layer = getattr(context, "view_layer", None)
     if session is None or view_layer is None:
-        raise RuntimeError("Blendlink session or active view layer is unavailable")
+        raise RuntimeError("SceneToWeb session or active view layer is unavailable")
     records = _bake_table_records(context)
     active_name = getattr(view_layer.objects.active, "name", "")
     rows = session.bake_rows
@@ -3909,7 +3910,7 @@ def _publish_settings_issue(context) -> str | None:
         return issue
     project = getattr(context.scene, "blendlink_project", None)
     if project is None or not project.configured:
-        return "Run Set Up Blendlink Scene first"
+        return "Run Set Up SceneToWeb Scene first"
     from . import component_validation
     component_issue = component_validation.first_blocking_issue(
         project, scene=context.scene,
@@ -3920,7 +3921,7 @@ def _publish_settings_issue(context) -> str | None:
             f"{component_issue.message}"
         )
     if str(getattr(project, "recipe_error", "") or "").strip():
-        return "Correct the highlighted Blendlink scene setting before publishing"
+        return "Correct the highlighted SceneToWeb scene setting before publishing"
     return None
 
 
@@ -3928,14 +3929,14 @@ def _website_task_command(quality: str) -> str:
     """Return the exact CLI workflow promised by one artist-facing action."""
     commands = {
         "FINAL": WEBSITE_PUBLISH_COMMAND,
-        "PREVIEW": "npx blendlink compile --preview",
-        "PLAN": "npx blendlink plan",
-        "WATCH": "npx blendlink compile --preview --watch",
+        "PREVIEW": "npx scenetoweb compile --preview",
+        "PLAN": "npx scenetoweb plan",
+        "WATCH": "npx scenetoweb compile --preview --watch",
     }
     try:
         return commands[quality]
     except KeyError as error:
-        raise ValueError(f"Unsupported Blendlink website task {quality!r}") from error
+        raise ValueError(f"Unsupported SceneToWeb website task {quality!r}") from error
 
 
 class BLENDLINK_OT_sync_now(bpy.types.Operator):
@@ -4304,7 +4305,7 @@ class BLENDLINK_OT_stop_preview(bpy.types.Operator):
         previewrun.cancel()
         self.report(
             {"INFO"},
-            "Stopping Blendlink live updates; the external website stays running"
+            "Stopping SceneToWeb live updates; the external website stays running"
             if external_server else "Stopping the local preview",
         )
         return {"FINISHED"}
@@ -4464,10 +4465,10 @@ class BLENDLINK_OT_copy_sync_hint(bpy.types.Operator):
 
 
 class BLENDLINK_OT_copy_connect_command(bpy.types.Operator):
-    """Copy `npx blendlink connect` to run in a terminal at your website's root
+    """Copy `npx scenetoweb connect` to run in a terminal at your website's root
 
     The command names this .blend, so the website is connected to this exact
-    scene. Blendlink never edits your repository itself
+    scene. SceneToWeb never edits your repository itself
     """
     bl_idname = "blendlink.copy_connect_command"
     bl_label = "Copy Website Connect Command"
@@ -4478,7 +4479,7 @@ class BLENDLINK_OT_copy_connect_command(bpy.types.Operator):
             self,
             context,
             WEBSITE_CONNECT_COMMAND,
-            "Copied npx blendlink connect — run it from the Three.js website folder",
+            "Copied npx scenetoweb connect — run it from the Three.js website folder",
         )
 
 

@@ -56,12 +56,12 @@ function compatibleTextureUse(left: THREE.Texture, right: THREE.Texture): boolea
 }
 
 /**
- * Rejoin GLTFLoader's per-TextureInfo clones for Blendlink's proved stock
+ * Rejoin GLTFLoader's per-TextureInfo clones for SceneToWeb's proved stock
  * Base Color/Emission carrier. GLTFLoader clones a glTF Texture independently
  * for each nonzero texCoord slot, even when both slots reference one index.
  *
  * The mutation is conditional and reversible for cache-owning applications.
- * It runs before Blendlink's prewarm/first render, so the redundant clone is
+ * It runs before SceneToWeb's prewarm/first render, so the redundant clone is
  * never intentionally uploaded by the package.
  */
 export function installThreeStaticShadeFloorTextureSharing(
@@ -95,7 +95,7 @@ export function installThreeStaticShadeFloorTextureSharing(
         if (material.isMeshStandardMaterial !== true
             || !material.map || !material.emissiveMap) {
           throw new Error(
-            `Blendlink static shade-floor material "${material.name || '(unnamed)'}" ` +
+            `SceneToWeb static shade-floor material "${material.name || '(unnamed)'}" ` +
             'did not load as MeshStandardMaterial with Base Color and Emission textures.',
           )
         }
@@ -105,7 +105,7 @@ export function installThreeStaticShadeFloorTextureSharing(
         }
         if (!compatibleTextureUse(material.map, material.emissiveMap)) {
           throw new Error(
-            `Blendlink static shade-floor material "${material.name || '(unnamed)'}" ` +
+            `SceneToWeb static shade-floor material "${material.name || '(unnamed)'}" ` +
             'loaded Base Color and Emission with different image, UV, sampler, or transform ' +
             'contracts; refusing to merge them.',
           )

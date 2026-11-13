@@ -586,7 +586,7 @@ function resolveKtxTool(explicit?: string): KtxTool {
   if (tool) return tool
   throw new Error(
     'GPU Texture Compression is enabled, but the free Khronos KTX tools were not found. ' +
-      `Install KTX-Software from ${KTX_SOFTWARE_URL}, restart Blender, then run \`blendlink doctor\`. ` +
+      `Install KTX-Software from ${KTX_SOFTWARE_URL}, restart Blender, then run \`scenetoweb doctor\`. ` +
       'A custom executable may be set with BLENDLINK_KTX_PATH.',
   )
 }

@@ -29,7 +29,7 @@ The supported direction is therefore a **precision-sliver rescue**:
    delivery UV map;
 2. identify a narrow suspect set independently, such as triangles whose
    evaluated world/UV quality has collapsed near float32 precision or whose
-   sampleability was lost by Blendlink's own packing step;
+   sampleability was lost by SceneToWeb's own packing step;
 3. use missing delivery-center coverage as confirmation, not selection;
 4. enlarge only affected compiler-owned polygons, repack once within a strict
    bound, and revalidate injectivity, gutters, and the candidate postcondition;
@@ -168,7 +168,7 @@ texel-center, raster-ownership, collapsed-UV, or equivalent post-pack
 validation was found in those two content-identified files or the adjacent
 `lightmapping` package.
 
-Blendlink's narrow post-pack rescue therefore has no matching validation
+SceneToWeb's narrow post-pack rescue therefore has no matching validation
 stage in the inspected Needle path. It is recorded as a scoped
 **Improvement** because the registered differential repairs a real
 compiler-induced loss, the ordinary-subpixel negative control remains
@@ -190,10 +190,10 @@ counterexample fails it decisively.
 **Adopted and shipped.** An independent numerical or compiler-regression
 predicate selects a very small suspect set. Missing delivery-center coverage
 then confirms that a suspect needs attention. A local minimum-footprint
-adjustment and one global repack are acceptable only for Blendlink-owned,
+adjustment and one global repack are acceptable only for SceneToWeb-owned,
 fully unpinned UVs. The compiler rechecks all packing invariants afterward.
 
-This preserves ordinary dense topology while giving Blendlink a place to
+This preserves ordinary dense topology while giving SceneToWeb a place to
 repair defects created or exposed by its own transformation. A geometric
 inradius bound can be used as a sufficient construction target for a selected
 triangle, but it must not become a global selection rule.
@@ -277,7 +277,7 @@ The shipped claim is bounded by the following evidence:
 3. The baked Appearance/Lighting and current-package production browser gates
    pass on the current dirty worktree.
 
-The truthful statement is: **Blendlink ships a bounded automatic rescue for a
+The truthful statement is: **SceneToWeb ships a bounded automatic rescue for a
 narrow, independently identified class of compiler-owned delivery-UV risks.**
 It does not promise a sample center for every source triangle, modify
 artist-owned pinned layouts, or infer overall visual parity from this local

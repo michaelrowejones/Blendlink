@@ -8,7 +8,7 @@ export interface PackageManagerDeclaration {
 /** Resolve the command prefix used to run a package.json script.
  *
  * Keep this module dependency-free: project setup needs the answer before a
- * website has installed Blendlink's compiler toolchain.
+ * website has installed SceneToWeb's compiler toolchain.
  */
 export function websitePackageRunner(
   root: string,

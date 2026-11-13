@@ -1,3 +1,4 @@
+import { buildCompositorFloatToInt } from './tslCompositorFloatToInt.js'
 import { buildCompositorColorKey } from './tslCompositorColorKey.js'
 import { buildCompositorChannelKey } from './tslCompositorChannelKey.js'
 import { buildCompositorMapValue } from './tslCompositorMapValue.js'
@@ -638,6 +639,9 @@ export function buildSourceCompositor(
             break
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
+            break
+          case 'float-to-int':
+            node = buildCompositorFloatToInt(op, program.ops, message => { throw new SourceCompositorUnsupported(message) })
             break
           case 'boolean-math':
             node = buildSharedBoolean(String(op.properties.operation), input('Boolean'),

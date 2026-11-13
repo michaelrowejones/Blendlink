@@ -27,7 +27,7 @@ assert os.environ.get('BLENDER_USER_RESOURCES') and resources.is_relative_to(wor
     'Reinstall checks require explicit isolated Blender resources beside the test workspace'
 work.mkdir(parents=True, exist_ok=True)
 archive = args.archive.resolve()
-package = 'bl_ext.user_default.blendlink'
+package = 'bl_ext.user_default.scenetoweb'
 rows, owned_processes = [], []
 
 

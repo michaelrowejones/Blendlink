@@ -198,7 +198,9 @@ describe('Preview to website publish transaction', () => {
   })
 
   it('recognizes direct and package-script publish recursion', () => {
-    expect(websiteBuildCallsPublish('blendlink publish && next build')).toBe(true)
+    expect(websiteBuildCallsPublish('scenetoweb publish && next build')).toBe(true)
+    expect(websiteBuildCallsPublish('npm run scenetoweb:publish')).toBe(true)
+    expect(websiteBuildCallsPublish('blendlink publish')).toBe(true)
     expect(websiteBuildCallsPublish('npm run blendlink:publish')).toBe(true)
     expect(websiteBuildCallsPublish('next build')).toBe(false)
   })

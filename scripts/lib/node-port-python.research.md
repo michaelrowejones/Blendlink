@@ -61,7 +61,7 @@ npm exec --yes --package=node@24 -- node scripts/lib/node-port-python.native.mjs
   --blender "$BLENDLINK_BLENDER42" --blender "$BLENDLINK_BLENDER52" \
   --blender "$BLENDLINK_BLENDER53" --output artifacts/python-launcher-native-new
 
-npm exec --yes --package=node@24 -- npm run build --workspace blendlink
+npm exec --yes --package=node@24 -- npm run build --workspace scenetoweb
 npm exec --yes --package=node@24 -- node scripts/lib/node-port-python.sdk.mjs \
   --blender "$BLENDLINK_BLENDER52" --output artifacts/python-launcher-sdk-new
 ```

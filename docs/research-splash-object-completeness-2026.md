@@ -11,7 +11,7 @@
 
 ## Outcome
 
-The reported doorway lamp and flowerpots are not missing from Blendlink's GLB.
+The reported doorway lamp and flowerpots are not missing from SceneToWeb's GLB.
 Their mesh nodes, primitive indices, transforms, and opaque alpha samples are
 present. They disappear visually because the selected-field compiler changes
 them from opaque lit materials to unlit `alphaMode: BLEND` materials, even
@@ -20,7 +20,7 @@ though every emitted alpha sample is exactly `1`.
 That distinction matters:
 
 - `208 / 208` reliably source-visible, render-participating direct mesh names
-  occur in both the Blendlink and Needle artifacts.
+  occur in both the SceneToWeb and Needle artifacts.
 - The lamp and three flowerpot focus groups are present in both artifacts.
 - The selected-field browser result collapses 30 meaningful direct objects
   below the registered contrast-retention threshold.
@@ -31,7 +31,7 @@ That distinction matters:
 
 The experiment is retained at
 [`experiments/splash-object-completeness`](../experiments/splash-object-completeness/README.md).
-Its diagnostic columns are Eevee, stock Blendlink, selected-field Blendlink,
+Its diagnostic columns are Eevee, stock SceneToWeb, selected-field SceneToWeb,
 bounded Needle, and the detached source object-ID render:
 
 ![Object appearance overview before opaque-alpha repair](../experiments/splash-object-completeness/output/object-appearance-overview.png)
@@ -45,13 +45,13 @@ The same crops after the one-variable opaque-alpha prototype are:
 | Input | Bytes | SHA-256 |
 | --- | ---: | --- |
 | Selected-sky source `.blend` | 33,387,129 | `9f9527030372e7f478bea487b59633af79be2bfaec4b57ff945aae56817c027a` |
-| Selected-field Blendlink GLB | 39,823,320 | `5f35c83835716a735deb39512013d3ada0d720b661cda48df44bf9830ba30d20` |
-| Stock/no-selected-lowering Blendlink GLB | 39,659,260 | `5f64b0689209b5defd1ad8ec38356526aad3fe88f3d0f4cda1474caa12a7647e` |
+| Selected-field SceneToWeb GLB | 39,823,320 | `5f35c83835716a735deb39512013d3ada0d720b661cda48df44bf9830ba30d20` |
+| Stock/no-selected-lowering SceneToWeb GLB | 39,659,260 | `5f64b0689209b5defd1ad8ec38356526aad3fe88f3d0f4cda1474caa12a7647e` |
 | Needle GLB | 39,759,032 | `ba66cf5c974bf5fb14740e42225de5030174e9ecbe2731d74b7ad0fb38660da9` |
 | Baseline prototype browser PNG | 810,588 | `325ec62b8f59eba6004366b10a7753b1bb74dba5e7f8c7f2c19f595249380001` |
 | Opaque-alpha prototype browser PNG | 831,301 | `f98284c67a038987545837c58e5a4431ee2bb717c31e1be5c51608328bc10f1f` |
 
-The retained stock Blendlink artifact comes from the 120-frame derivative. It
+The retained stock SceneToWeb artifact comes from the 120-frame derivative. It
 has the same authored camera and material graphs, but not the selected-sky
 source hash. It is a controlled pre-lowering proxy, not a byte-identical
 before/after transaction. The exact-source Needle cell independently supplies
@@ -90,7 +90,7 @@ useful behavior baseline, not a parity result.
 ## Exact focus mapping
 
 The source-object pass identifies confidently interior authored-camera pixels.
-All listed nodes occur in stock Blendlink, selected-field Blendlink, and
+All listed nodes occur in stock SceneToWeb, selected-field SceneToWeb, and
 Needle.
 
 | Visible part | Source object | Source materials | Source pixels | Stock retention | Selected-field retention | Needle retention | Opaque-alpha prototype |
@@ -115,18 +115,18 @@ not that its appearance is more correct.
 
 For the lamp shade/glass:
 
-- Stock Blendlink and Needle emit `DPMLeaf.006`, 180 vertices / 156 triangles,
+- Stock SceneToWeb and Needle emit `DPMLeaf.006`, 180 vertices / 156 triangles,
   opaque, lit, no base-color texture, and white `COLOR_0`.
-- Selected-field Blendlink emits
+- Selected-field SceneToWeb emits
   `BLENDLINK_WEB.d93f35eea5.DPMLeaf.006`,
   `KHR_materials_unlit`, `alphaMode: BLEND`, and constant
   `COLOR_0 = [0.64448005, 0.84687572, 1, 1]`.
 
 For the left hanging pot:
 
-- Stock Blendlink and Needle emit `DPM.003`, 540 vertices / 1,016 triangles,
+- Stock SceneToWeb and Needle emit `DPM.003`, 540 vertices / 1,016 triangles,
   opaque, lit, no base-color texture, and white `COLOR_0`.
-- Selected-field Blendlink emits
+- Selected-field SceneToWeb emits
   `BLENDLINK_WEB.039eb4a838.DPM.003`,
   `KHR_materials_unlit`, `alphaMode: BLEND`, and a varied RGB carrier whose
   alpha minimum, maximum, and mean are all exactly `1`.
@@ -163,11 +163,11 @@ occurrences:
 
 - 262 source Mesh objects exist; 259 participate in the source render rule.
 - 208 reliably object-ID-visible, render-participating direct Mesh names are
-  present in both Blendlink and Needle.
+  present in both SceneToWeb and Needle.
 - 22 Geometry Nodes emitter objects produce 247 evaluated instances.
 - `flowerA.001`, `leafA`, and `leafB` live in an excluded source collection and
   appear in Eevee only as Geometry Nodes instance sources. Needle additionally
-  exports those three source nodes; Blendlink does not. Needle's only other
+  exports those three source nodes; SceneToWeb does not. Needle's only other
   extra nodes are `Needle Extras` and `NEEDLE__skybox`.
 
 The detached material-ID pass cannot uniquely assign Geometry Nodes

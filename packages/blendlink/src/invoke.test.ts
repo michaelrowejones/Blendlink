@@ -31,7 +31,7 @@ describe('Blender process environment', () => {
     }
   })
 
-  it('honors explicit standard and Blendlink-specific cache ownership', () => {
+  it('honors explicit standard and SceneToWeb-specific cache ownership', () => {
     const root = mkdtempSync(join(tmpdir(), 'blendlink-optix-explicit-'))
     try {
       const standard = join(root, 'standard')

@@ -339,7 +339,7 @@ def _fixed_camera_card_mesh(
     card.data.materials.append(material)
     # The camera-ray branch intentionally makes the captured source invisible
     # to non-camera rays. Core glTF cannot express that object-level contract,
-    # so carry it through Blendlink's namespaced runtime flag as well as the
+    # so carry it through SceneToWeb's namespaced runtime flag as well as the
     # native Blender visibility channel. This prevents a transparent unlit
     # card from casting a solid rectangular website shadow.
     card.visible_shadow = False
@@ -380,7 +380,7 @@ def ensure_shader_node_tree(owner):
         tree = getattr(owner, "node_tree", None)
     except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
         raise RuntimeError(
-            f"Blendlink could not read the shader node tree for "
+            f"SceneToWeb could not read the shader node tree for "
             f"{owner_type} {owner_name!r}: {type(error).__name__}: {error}"
         ) from error
     if tree is not None:
@@ -390,19 +390,19 @@ def ensure_shader_node_tree(owner):
         owner.use_nodes = True
     except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
         raise RuntimeError(
-            f"Blendlink could not enable shader nodes for "
+            f"SceneToWeb could not enable shader nodes for "
             f"{owner_type} {owner_name!r}: {type(error).__name__}: {error}"
         ) from error
     try:
         tree = getattr(owner, "node_tree", None)
     except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
         raise RuntimeError(
-            f"Blendlink enabled shader nodes for {owner_type} {owner_name!r} "
+            f"SceneToWeb enabled shader nodes for {owner_type} {owner_name!r} "
             f"but could not read its node tree: {type(error).__name__}: {error}"
         ) from error
     if tree is None:
         raise RuntimeError(
-            f"Blendlink enabled shader nodes for {owner_type} {owner_name!r}, "
+            f"SceneToWeb enabled shader nodes for {owner_type} {owner_name!r}, "
             "but Blender did not create a node tree"
         )
     return tree
@@ -427,7 +427,7 @@ def active_shader_node_tree(owner):
         tree = getattr(owner, "node_tree", None)
     except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
         raise RuntimeError(
-            f"Blendlink could not read the shader node tree for "
+            f"SceneToWeb could not read the shader node tree for "
             f"{owner_type} {owner_name!r}: {type(error).__name__}: {error}"
         ) from error
     if tree is None:
@@ -437,7 +437,7 @@ def active_shader_node_tree(owner):
             enabled = bool(getattr(owner, "use_nodes", False))
         except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
             raise RuntimeError(
-                f"Blendlink could not read legacy shader-node state for "
+                f"SceneToWeb could not read legacy shader-node state for "
                 f"{owner_type} {owner_name!r}: {type(error).__name__}: {error}"
             ) from error
         if not enabled:
@@ -453,7 +453,7 @@ def file_sha256(path: str, length: int = 16) -> str:
     """Content identity for one published bake artifact.
 
     Dependency hashes answer whether pixels *should* change; this separately
-    proves the prior file still contains the bytes Blendlink published.
+    proves the prior file still contains the bytes SceneToWeb published.
     """
     digest = hashlib.sha256()
     with open(path, "rb") as handle:
@@ -1162,7 +1162,7 @@ def fingerprint_reflection_probe_dependencies(
         if not isinstance(object_id, str) or not object_id:
             raise ValueError(
                 "reflection probe receiver exclusion needs stable blendlink_id values; "
-                "run Set Up Blendlink Scene and save before baking"
+                "run Set Up SceneToWeb Scene and save before baking"
             )
         excluded_ids.append(object_id)
     if len(excluded_ids) != len(set(excluded_ids)):
@@ -1175,7 +1175,7 @@ def fingerprint_reflection_probe_dependencies(
         resolution,
         samples,
         tuple(sorted(excluded_ids)),
-        # Blendlink defines resolution as cubemap-face detail and therefore
+        # SceneToWeb defines resolution as cubemap-face detail and therefore
         # writes a 4R x 2R equirectangular source. Needle defines its field as
         # panorama width, so its smaller output is a distinct contract rather
         # than a violation of its own UI promise.
@@ -1767,7 +1767,7 @@ def save_denoised(image, path: str, albedo=None, normal=None) -> None:
     The stage scene is EMPTY (renders instantly under Workbench) and its
     compositor output becomes the written file, through the same Standard
     view + dither contract. Runs after margin dilation, sidestepping the
-    bake-time-denoise margin-darkening bug (blender#94573). Blendlink supplies
+    bake-time-denoise margin-darkening bug (blender#94573). SceneToWeb supplies
     the valid albedo guide only: Blender's encoded object-space NORMAL bake is
     not a truthful OIDN common-space guide and is intentionally not connected.
     """
@@ -1864,7 +1864,7 @@ def image_signal_coverage(
     if int(covered.sum()) == 0:
         raise RuntimeError(
             f"{label}: constant-white Cycles EMIT mask produced no covered RGB "
-            "signal; Blendlink refused to publish an empty material texture. "
+            "signal; SceneToWeb refused to publish an empty material texture. "
             "Check the bake target, selected objects, and UV layer"
         )
     return covered
@@ -1882,7 +1882,7 @@ def require_image_coverage(image, label: str):
     if int(covered.sum()) == 0:
         raise RuntimeError(
             f"{label}: Cycles produced no baked coverage for a populated "
-            "atlas proxy; Blendlink refused to publish an empty atlas. "
+            "atlas proxy; SceneToWeb refused to publish an empty atlas. "
             "Check the bake target, atlas UVs, and evaluated mesh"
         )
     return covered
@@ -2040,7 +2040,7 @@ def flatten_saved_background(
                 raise RuntimeError(
                     f"{tag}: saved atlas lost its visible RGB signal "
                     f"(source peak {source_peak:.6g}, saved peak {saved_peak:.6g}); "
-                    "Blendlink refused to publish a valid-but-black PNG"
+                    "SceneToWeb refused to publish a valid-but-black PNG"
                 )
         if covered.all():
             log(f"blendlink: background fill skipped for {tag} — alpha reports full coverage")
@@ -2477,7 +2477,7 @@ def plan_material_texture_resolution(
     """Zero-config screen-density policy for one private material texture.
 
     Needle 1.4.2 exposes a manual fixed 128..8192 choice (default 1024) and
-    relative object allocation, but does not prove screen density. Blendlink
+    relative object allocation, but does not prove screen density. SceneToWeb
     instead measures the receiver's clipped authored-camera pixel footprint,
     then compares it with the packed UV texel area. This handles camera-inside
     backgrounds without treating an enormous hidden world surface as visible
@@ -2569,7 +2569,7 @@ def plan_material_texture_resolution(
             **measurement,
             "densityThreshold": 0.95,
             "warning": (
-                "No valid Blender camera sees this receiver; Blendlink "
+                "No valid Blender camera sees this receiver; SceneToWeb "
                 f"uses Needle's 1024px default bounded to {fallback}px. Add an "
                 "authored Blender camera/composition to enable automatic "
                 "projected-coverage sizing."
@@ -2681,7 +2681,7 @@ def _uv_layer_pin_mask(layer) -> list[bool]:
         values = [False] * pin_count
         modern_pins.foreach_get("value", values)
         return values
-    # Blendlink requires Blender 4.2+, where ``MeshUVLoopLayer.pin`` exists.
+    # SceneToWeb requires Blender 4.2+, where ``MeshUVLoopLayer.pin`` exists.
     # Keep the fallback for controlled tests and unusually patched builds.
     return [bool(loop.pin_uv) for loop in layer.data]
 
@@ -2996,7 +2996,7 @@ def prepare_material_texture_uv(
                     f"{AUTHORED_UV} layout{attempted_label}: "
                     f"{_format_private_uv_issues(pinned)}. "
                     "Repair/unpin that layout or remove the authored atlas layer "
-                    "to let Blendlink pack a private one"
+                    "to let SceneToWeb pack a private one"
                 )
             try:
                 repairs, final_held = pack_with_evaluated_uv_repair(
@@ -4691,7 +4691,7 @@ def repair_evaluated_atlas_uvs(
         raise RuntimeError(
             f"evaluated geometry produced non-zero surface triangles with "
             f"zero-area {uv_name} UVs on pinned atlas layout(s): {details}. "
-            "Blendlink will not alter pinned artist UVs; apply/update the "
+            "SceneToWeb will not alter pinned artist UVs; apply/update the "
             "modifier UVs or unpin the authored atlas layout"
         )
 
@@ -6381,9 +6381,9 @@ def _pack_receiver_groups_mutating(
     multi-object gap belongs between receivers because separate bake writes can
     overwrite one another. Charging that gap to every chart reduces a complex
     scene to a tiny fraction of its atlas. Inside one receiver, retain
-    Blendlink's previously validated ``bake margin + 4px`` chart gap (stronger
+    SceneToWeb's previously validated ``bake margin + 4px`` chart gap (stronger
     than Needle's ``margin + 1px``); the deterministic outer rectangle pass
-    then keeps receiver ownership intact while preserving Blendlink's
+    then keeps receiver ownership intact while preserving SceneToWeb's
     precomputed UV-area ratios (surface density, camera weighting, and artist
     texel weight).
 
@@ -6847,7 +6847,7 @@ def _minimum_footprint_rescue_and_repack(
                 detail += f", and {len(pinned) - 8} more"
             raise RuntimeError(
                 f"{obj.name}: final atlas packing collapsed pinned polygon(s) "
-                f"{detail} below float32 UV precision. Blendlink will not move "
+                f"{detail} below float32 UV precision. SceneToWeb will not move "
                 "artist-owned pins; enlarge those UV islands, increase atlas "
                 "Resolution, reduce Padding, or unpin them"
             )
@@ -7309,7 +7309,7 @@ def bake_objects_to_image(
             + ", ".join(sorted(missing_uv))
         )
     if bake_type not in {"COMBINED", "DIFFUSE", "EMIT", "NORMAL"}:
-        raise ValueError(f"unsupported Blendlink bake pass {bake_type!r}")
+        raise ValueError(f"unsupported SceneToWeb bake pass {bake_type!r}")
     if int(margin_px) < 0:
         raise ValueError(f"bake margin cannot be negative: {margin_px}")
     if image is None or min(tuple(getattr(image, "size", (0, 0)))) <= 0:
@@ -7349,7 +7349,7 @@ def bake_objects_to_image(
             node.select = False
         target = nodes.new("ShaderNodeTexImage")
         target.name = "BLENDLINK_BAKE_TARGET"
-        target.label = "Blendlink temporary bake target"
+        target.label = "SceneToWeb temporary bake target"
         target.image = image
         target.select = True
         nodes.active = target
@@ -7365,7 +7365,7 @@ def bake_objects_to_image(
     try:
         # Viewport-only visibility and selection locks do not change Blender's
         # render result, but they prevent bpy.ops.object.bake from selecting an
-        # otherwise valid receiver. Needle omits those objects; Blendlink keeps
+        # otherwise valid receiver. Needle omits those objects; SceneToWeb keeps
         # render truth by temporarily exposing them and restoring the exact
         # artist interaction state after both success and failure.
         scene_collections = [bpy.context.scene.collection]
@@ -8645,7 +8645,7 @@ def freeze_evaluated_meshes(objs, log=print) -> list:
             for item in context_risks
         )
         raise RuntimeError(
-            "Blendlink cannot bake unrealized Geometry Nodes instances whose "
+            "SceneToWeb cannot bake unrealized Geometry Nodes instances whose "
             "materials use Object Info Random: realization would collapse "
             f"per-instance shader identity on {details}. Add an authored "
             "Realize Instances node if that collapse is intentional, or keep "

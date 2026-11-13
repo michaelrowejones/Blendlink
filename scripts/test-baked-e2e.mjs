@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '..')
 const cli = join(root, 'packages', 'blendlink', 'dist', 'cli.js')
 const discover = execFileSync(process.execPath, [cli, 'discover'], { encoding: 'utf8' }).trim().split(/\r?\n/)
 const blender = discover.at(-1)
-if (!blender) throw new Error('Blendlink did not discover Blender')
+if (!blender) throw new Error('SceneToWeb did not discover Blender')
 
 function readGlbJson(path) {
   const bytes = readFileSync(path)
@@ -55,7 +55,7 @@ execFileSync(blender, [
   '--background', '--factory-startup', '--python',
   join(root, 'scripts', 'make-baked-e2e-scene.py'), '--', blend,
 ], { stdio: 'inherit' })
-writeFileSync(join(work, 'blendlink.config.mjs'), `export default {
+writeFileSync(join(work, 'scenetoweb.config.mjs'), `export default {
   outDir: 'public/models',
   genDir: 'src/generated',
   urlPrefix: '/models',
@@ -400,7 +400,7 @@ execFileSync(blender, [
   join(root, 'scripts', 'make-baked-e2e-scene.py'), '--',
   lightingBlend, '12', 'lighting',
 ], { stdio: 'inherit' })
-writeFileSync(join(lightingWork, 'blendlink.config.mjs'), `export default {
+writeFileSync(join(lightingWork, 'scenetoweb.config.mjs'), `export default {
   outDir: 'public/models',
   genDir: 'src/generated',
   urlPrefix: '/models',
@@ -535,7 +535,7 @@ execFileSync(blender, [
   join(root, 'scripts', 'make-baked-e2e-scene.py'), '--',
   materialBlend, '12', 'material',
 ], { stdio: 'inherit' })
-writeFileSync(join(materialWork, 'blendlink.config.mjs'), `export default {
+writeFileSync(join(materialWork, 'scenetoweb.config.mjs'), `export default {
   outDir: 'public/models',
   genDir: 'src/generated',
   urlPrefix: '/models',

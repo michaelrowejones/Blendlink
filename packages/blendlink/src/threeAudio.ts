@@ -60,7 +60,7 @@ export function createThreeAudioCoordinator(): ThreeAudioCoordinator {
     publish()
   }
   const assertLive = (): void => {
-    if (disposed) throw new Error('This Blendlink audio coordinator has been disposed.')
+    if (disposed) throw new Error('This SceneToWeb audio coordinator has been disposed.')
   }
   const resumeNow = (): Promise<void> | null => {
     if (!context || context.state === 'running') return null
@@ -88,7 +88,7 @@ export function createThreeAudioCoordinator(): ThreeAudioCoordinator {
     attach(nextContext) {
       assertLive()
       if (context && context !== nextContext) {
-        throw new Error('One Blendlink scene cannot own multiple Web Audio contexts.')
+        throw new Error('One SceneToWeb scene cannot own multiple Web Audio contexts.')
       }
       if (!context) {
         context = nextContext

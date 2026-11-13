@@ -1,6 +1,6 @@
 import { irInspectionChildren } from './tslIrInspection.js'
 // Native packed-normal math adapts Cycles util/types_normal.h (Apache-2.0).
-// Copyright 2011-2026 Blender Foundation. Blendlink supplies Three.js bindings,
+// Copyright 2011-2026 Blender Foundation. SceneToWeb supplies Three.js bindings,
 // source-scene storage profiles, per-owner uniforms and runtime guards.
 // See assets/blender-spectral-NOTICE.txt and blender-spectral-apache-2.0.txt.
 import {

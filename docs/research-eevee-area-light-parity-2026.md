@@ -5,7 +5,7 @@ production-code change.
 
 ## Decision summary
 
-When the selected Blender render engine is Eevee, Blendlink should compile the
+When the selected Blender render engine is Eevee, SceneToWeb should compile the
 semantics that Eevee actually evaluates, not Cycles light-node semantics and
 not a renderer-neutral approximation.
 
@@ -33,8 +33,8 @@ The evidence therefore supports this product policy:
 
 A Blender-shader port is not the next default. Besides the renderer ownership
 and maintenance cost, Blender's relevant implementation files are
-GPL-2.0-or-later while Blendlink is MIT. Blender source is excellent behavioral
-evidence, but copying its shader implementation or lookup data into Blendlink
+GPL-2.0-or-later while SceneToWeb is MIT. Blender source is excellent behavioral
+evidence, but copying its shader implementation or lookup data into SceneToWeb
 would require a deliberate licensing decision. Any deeper web implementation
 should be independently derived from the cited papers or use permissively
 licensed Three code/data.
@@ -65,8 +65,8 @@ Representative local source hashes:
 | Three `RectAreaLight.js` | 2,612 | `3D602AFB9AF5A0D62CC94D2C6DF050DE1778711EFA9312566006E14FA0029D11` |
 | Three `WebGLLights.js` | 13,548 | `43C3EDBA697CBD764A82B42901960813BC04A0BE6D6B5B5442E9D592AE43F3A0` |
 | Three physical-light shader | 22,120 | `93C6FBB624F9ADBC0AC6EA0B01180A980ED11EEED7686BCADE07B631270E8A9B` |
-| Blendlink `threeRectAreaLights.ts` at audit | 24,644 | `2132C66325FB7AD82F193383A2EE51A7FC88086EA3FA657EAB1C7B7121C33C6C` |
-| Blendlink `weblights.py` at audit | 67,611 | `EEF1266E80CA944FC09D5B989D70F17EFB27FBB671F8AC59B2892B9C90BFCDE8` |
+| SceneToWeb `threeRectAreaLights.ts` at audit | 24,644 | `2132C66325FB7AD82F193383A2EE51A7FC88086EA3FA657EAB1C7B7121C33C6C` |
+| SceneToWeb `weblights.py` at audit | 67,611 | `EEF1266E80CA944FC09D5B989D70F17EFB27FBB671F8AC59B2892B9C90BFCDE8` |
 
 ## Eevee's source contract
 
@@ -84,7 +84,7 @@ Two small-light details are observable source semantics:
   zero (the light is culled); and
 - each half extent is then clamped to at least `0.003` for stable shading.
 
-Blendlink's current producer accepts any positive dimensions, and its runtime
+SceneToWeb's current producer accepts any positive dimensions, and its runtime
 uses the exact dimensions. That differs for extremely small emitters.
 
 Eevee is one-sided. `light_attenuation_common` returns zero for an area light
@@ -131,7 +131,7 @@ power = intensity * width * height * pi
 These are not physically interchangeable units. However, for visual
 calibration, assigning Blender's numeric normalized power to Three's `power`,
 or Blender's numeric unnormalized strength divided by `pi` to Three's
-`intensity`, produces the same pre-BRDF scalar. The current Blendlink producer
+`intensity`, produces the same pre-BRDF scalar. The current SceneToWeb producer
 and runtime implement exactly that algebra. It is a numeric renderer adapter,
 not a watts-to-lumens claim.
 
@@ -243,7 +243,7 @@ area-light scale is not included in this radius calculation.
 
 Three's RectArea uniform contains only color, position, half-width, and
 half-height. It has no distance, decay, threshold, or custom-cutoff field. The
-current Blendlink descriptor/runtime therefore continue lighting beyond the
+current SceneToWeb descriptor/runtime therefore continue lighting beyond the
 distance where Eevee fades to zero, and current diagnostics do not name this
 mismatch.
 
@@ -271,7 +271,7 @@ on scene ray/step counts, jitter/overblur, filter radius, maximum resolution,
 and shadow-map settings.
 
 Three's official class and source state that RectArea has no shadow support.
-`castShadow = false` in Blendlink is therefore correct and truthful, but it is
+`castShadow = false` in SceneToWeb is therefore correct and truthful, but it is
 a major visual difference whenever Eevee shadows affect a receiver. A
 companion Spot or Point shadow can be an artistic approximation; it is not the
 same emitter or penumbra and should never be called parity.
@@ -312,7 +312,7 @@ Three's native RectArea only changes the current direct PBR pass. It does not
 retroactively add Eevee's probe bake or diffuse GI, and it cannot recreate
 Cycles bounce.
 
-Blendlink can preserve static indirect intent by compiling probes and baked
+SceneToWeb can preserve static indirect intent by compiling probes and baked
 appearance, but the direct RectArea adapter itself must keep the current
 indirect limitation explicit.
 
@@ -339,10 +339,10 @@ Primary anchors:
 
 ## Semantic mismatch table
 
-| Concern | Eevee 5.2 | Three r184 / current Blendlink | Truthful result |
+| Concern | Eevee 5.2 | Three r184 / current SceneToWeb | Truthful result |
 | --- | --- | --- | --- |
 | Rectangle geometry | Square/rectangle with scaled half-extents | Runtime measures marker world X/Y scale and sets numeric width/height | Match for finite orthogonal positive transforms above Eevee's micro-light thresholds |
-| Disk/ellipse | Native LTC disk path | Native RectArea is rectangle-only; Blendlink refuses | Bake or future independently derived disk shader; do not box-approximate silently |
+| Disk/ellipse | Native LTC disk path | Native RectArea is rectangle-only; SceneToWeb refuses | Bake or future independently derived disk shader; do not box-approximate silently |
 | Direction | One-sided local `-Z` | One-sided local `-Z` | Match |
 | Energy/exposure | Radiant watts times `2**exposure` | Lumen/nit labels, but compatible `power = intensity*A*pi` algebra | Numeric visual mapping is sound; physical-unit equivalence is not claimed |
 | Normalize | Power constant with size when on; radiance constant when off | Current `power`/`intensity` descriptor split implements this | Match for the supported size subset |
@@ -359,9 +359,9 @@ Primary anchors:
 | Scene direct scale | Linear post-light multiplier | Not represented | Fold automatically into compiled strength |
 | Scene direct clamp | Nonlinear per-pixel direct clamp | Not represented | Bake or deeper pipeline; final tone mapping is not equivalent |
 | Receiver model | Eevee closure system | MeshStandard/Physical direct diffuse/specular/clearcoat only | Material/compiler differences remain even with identical light math |
-| GPU path | Eevee-owned shaders, culling, shadows | Current Blendlink adapter requires `WebGLRenderer`; Three also has a distinct WebGPU LTC path | Current interface is WebGL-only and should say so |
+| GPU path | Eevee-owned shaders, culling, shadows | Current SceneToWeb adapter requires `WebGLRenderer`; Three also has a distinct WebGPU LTC path | Current interface is WebGL-only and should say so |
 
-## Current Blendlink assessment
+## Current SceneToWeb assessment
 
 The existing `threeRectAreaLights.ts` is a good deep runtime **Module** at the
 right seam. Its compact interface hides descriptor validation, transformed
@@ -424,7 +424,7 @@ Limits: no area shadows, no Eevee cutoff, no masks, no ellipse/disk, no
 independent closure powers, and differing horizon/material evaluation. This
 adapter can be calibrated, but it cannot be relabeled “Eevee exact.”
 
-### Design B: Blendlink-owned Eevee-like shader/light adapter
+### Design B: SceneToWeb-owned Eevee-like shader/light adapter
 
 Introduce a richer compiled light representation and patch or replace the
 lighting implementation of compiled PBR materials. A narrow version could add
@@ -433,24 +433,24 @@ table. A broad version would also require emitter shapes, receiver masks,
 transmission/volume paths, probe integration, and a custom shadow pipeline.
 
 Benefits: closer direct-light behavior, support for controls native Three
-cannot express, and a path to disk/ellipse and linking for Blendlink-owned
+cannot express, and a path to disk/ellipse and linking for SceneToWeb-owned
 materials.
 
 Costs:
 
 - the interface grows to expose engine/version-specific facts;
 - every material variant, shader cache key, WebGL/WebGPU path, skin/morph/
-  instancing combination, and Three upgrade becomes Blendlink maintenance;
+  instancing combination, and Three upgrade becomes SceneToWeb maintenance;
 - application-owned PBR materials are outside the compiled-material seam;
 - `onBeforeCompile` ownership can conflict with application effects;
 - matching Eevee shadows and probes requires renderer-level ownership, pushing
-  Blendlink toward the proprietary-engine boundary the product rejects; and
+  SceneToWeb toward the proprietary-engine boundary the product rejects; and
 - Blender shader/table code is GPL, so direct copying is incompatible with a
   casual MIT implementation.
 
 This design has potential depth only if it remains narrow and has a second real
 adapter or compelling evidence. Today it mostly moves Eevee implementation
-complexity into Blendlink and enlarges the caller-visible compatibility
+complexity into SceneToWeb and enlarges the caller-visible compatibility
 contract.
 
 ### Recommendation
@@ -461,12 +461,12 @@ that native Three's horizon/cutoff differences remain a release blocker for
 live PBR receivers after static Eevee lighting is baked.
 
 If such a prototype is warranted, start with one independently derived feature
-at an internal seam: Eevee's finite influence fade on Blendlink-owned
+at an internal seam: Eevee's finite influence fade on SceneToWeb-owned
 materials. Do not begin with shadows or a wholesale Blender shader port.
 
 ## What can be automatic
 
-Blendlink can infer without artist configuration:
+SceneToWeb can infer without artist configuration:
 
 - active engine and therefore which light-node/Spread semantics matter;
 - shape, dimensions, transform, color, temperature, energy, exposure, and
@@ -497,7 +497,7 @@ Native Three RectArea alone cannot reproduce:
 - all near-horizon LTC output.
 
 For static content, baking is the artist-friendly parity path. For dynamic
-content, Blendlink must either surface the approximation, choose another
+content, SceneToWeb must either surface the approximation, choose another
 portable light, or explicitly enter a narrower custom-runtime contract.
 
 ## Source links

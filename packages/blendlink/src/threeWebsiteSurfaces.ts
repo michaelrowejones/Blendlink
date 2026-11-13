@@ -7,7 +7,7 @@ export type WebsiteSurfaceCanvas = HTMLCanvasElement | OffscreenCanvas
 export interface ThreeWebsiteSurfaceBinding {
   readonly name: string
   readonly active: boolean
-  /** Notify Blendlink after the application changes canvas pixels. This marks
+  /** Notify SceneToWeb after the application changes canvas pixels. This marks
    * the package-owned CanvasTexture dirty and asks a demand renderer for one
    * frame; it never takes ownership of the host render loop. */
   changed(): void
@@ -88,7 +88,7 @@ const WEBSITE_SURFACE_NAME = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/
 
 /** Scene-local Website Surface coordinator. A surface is a named receiver,
  * not an input/event system: Blender owns geometry, UVs, and fallback art;
- * the website supplies pixels; Blendlink owns Three mutation and cleanup. */
+ * the website supplies pixels; SceneToWeb owns Three mutation and cleanup. */
 export function createThreeWebsiteSurfaces(
   options: { requestFrame?(): unknown } = {},
 ): ThreeWebsiteSurfaces {
@@ -99,7 +99,7 @@ export function createThreeWebsiteSurfaces(
     if (disposed) {
       throw new ThreeWebsiteSurfaceError(
         'BL_SURFACE_DISPOSED', name,
-        'These Blendlink Website Surfaces have been disposed. Remount the compiled scene before binding again.',
+        'These SceneToWeb Website Surfaces have been disposed. Remount the compiled scene before binding again.',
       )
     }
   }
@@ -194,7 +194,7 @@ export function createThreeWebsiteSurfaces(
       }
 
       const texture = new THREE.CanvasTexture(canvas)
-      texture.name = `Blendlink Website Surface: ${name}`
+      texture.name = `SceneToWeb Website Surface: ${name}`
       texture.colorSpace = THREE.SRGBColorSpace
       configureLiveCanvasTexture(texture)
       const hadMap = entry.ownedMaterial.map !== null

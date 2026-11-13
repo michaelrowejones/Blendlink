@@ -35,6 +35,7 @@ describe('runtime adapters', () => {
 
   it('loads and binds with a Three-compatible loader', async () => {
     const loaded = await loadCompiledScene({ loadAsync: async () => ({ scene: root }) }, descriptor)
+    expect(loaded.scenetoweb).toBe(loaded.blendlink)
     expect(loaded.blendlink.byId['de305d54-75b4-431b-adb2-eb6b9e546014']).toBe(mesh)
   })
 

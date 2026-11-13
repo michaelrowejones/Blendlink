@@ -12,7 +12,7 @@ default is still to preserve the artist's active Surface graph through
 Blender's stock glTF exporter. It may automatically lower a graph only when it
 can prove that the complete active Surface is equivalent to a small standard
 glTF normal form. When that proof is impossible, the artist can identify the
-intended intrinsic web color through a visible, disconnected **Blendlink Web
+intended intrinsic web color through a visible, disconnected **SceneToWeb Web
 Color** sink node. The compiler chooses the cheapest faithful transport for
 that selected field: a factor, `COLOR_0`, an existing image, or a Cycles Emit
 materialization on the existing Appearance-atlas path.
@@ -23,7 +23,7 @@ full Blender-surface parity. `Shader to RGB`, lighting, AO, shadows, Filmic,
 and compositor treatment do not become part of that claim unless a later,
 separately evidenced compiler path supports them.
 
-Do not add a material-name-to-node-name mapping to `blendlink.config.mjs`, do
+Do not add a material-name-to-node-name mapping to `scenetoweb.config.mjs`, do
 not persist node/socket names, and do not add a website runtime shader. The
 compiled output remains ordinary glTF PBR or
 [`KHR_materials_unlit`][khr-unlit], so the website retains its route, Canvas,
@@ -31,7 +31,7 @@ renderer lifecycle, loading UI, framework, analytics, and deployment.
 
 ## Implementation update
 
-Blendlink now has one package-owned `material_compiler.py` with a read-only
+SceneToWeb now has one package-owned `material_compiler.py` with a read-only
 plan followed by scoped realization around the stock glTF exporter. Plan-only,
 Preview, and Final use the same decisions. The implemented selected-field
 normal forms are an unlit constant factor and an unlit direct Color/Alpha
@@ -49,7 +49,7 @@ syntactically valid but its `COLOR_0` values were all white. Setting
 `export_all_vertex_colors=False` fixed only one of the two slots, so that flag
 alone was rejected as a correctness strategy.
 
-Blendlink now materializes each selected source layer as a compiler-private
+SceneToWeb now materializes each selected source layer as a compiler-private
 VEC4 carrier attribute on the disposable mesh and asks the stock exporter to
 preserve custom attributes. After export, the compiler atomically rewrites each
 generated-material primitive to point standard `COLOR_0` at its exact carrier
@@ -118,7 +118,7 @@ and website adapters; its **Depth** is therefore real.
   `C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2`.
 - Three: npm `0.184.0`; the installed loader is
   `node_modules/three/examples/jsm/loaders/GLTFLoader.js`.
-- Blendlink dogfood package: `0.8.0`; retained tarball SHA-256
+- SceneToWeb dogfood package: `0.8.0`; retained tarball SHA-256
   `AEDCC65DA7D527DECE05EDB14FC903C6B147BF5CE14089ECE94FEFA8AE0A2B89`.
 - Splash derivative: SHA-256
   `7CD0993A56E55379DDDF2EFB786597061CCD78215C4207AC0B4E1EA4C666E050`.
@@ -144,7 +144,7 @@ manual:
   attribute key for a later material slot, while the fallback around lines
   824-840 can replace the material mapping when all vertex colors are exported.
   A real two-slot Splash binding proved that the result can be an all-white
-  `COLOR_0`; this is the reason for Blendlink's private carrier and exact
+  `COLOR_0`; this is the reason for SceneToWeb's private carrier and exact
   numeric attestation. See [the official primitive extractor][gltf-primitive-source].
 
 The Blender manual likewise says the exporter constructs Metal/Rough PBR or
@@ -231,7 +231,7 @@ the `.blend` was saved and reopened, and Blender preserved:
     ["Alpha", "Socket_1", false, []]
   ],
   "outputs": 0,
-  "tree": "Blendlink Web Color"
+  "tree": "SceneToWeb Web Color"
 }
 ```
 
@@ -288,7 +288,7 @@ input-only node. A single namespaced version property identifies the node;
 Blender links identify the sockets. No website config is required.
 
 **Usage.** Select a source node/output and click **Use as Web Color** in the
-Blendlink Shader Editor panel, or connect it manually to the visible sink. The
+SceneToWeb Shader Editor panel, or connect it manually to the visible sink. The
 Material Properties panel reports the computed result: **Direct constant**,
 **Direct vertex color**, **Bake selected field**, or a blocking reason.
 
@@ -364,7 +364,7 @@ hatch when the site truly replaces materials at runtime.
 
 ### Material Properties: consequence-first status
 
-Extend the existing **Blendlink Web Material** panel. Do not lead with modes.
+Extend the existing **SceneToWeb Web Material** panel. Do not lead with modes.
 Lead with the outcome:
 
 ```text
@@ -403,12 +403,12 @@ the artist click explicitly accepts dropping the downstream stylized layers.
 
 ### Shader Editor: semantic source selection
 
-Add a small Blendlink sidebar section:
+Add a small SceneToWeb sidebar section:
 
 1. select a node;
 2. choose one of its color/value output sockets;
 3. click **Use as Web Color** or **Use as Web Alpha**;
-4. Blendlink creates/reuses the input-only sink and links the chosen output.
+4. SceneToWeb creates/reuses the input-only sink and links the chosen output.
 
 The operator's socket dropdown is ephemeral UI. The saved Blender link is the
 contract. Shader outputs are not eligible; the artist must choose a color or
@@ -430,9 +430,9 @@ per material. `Base Color` is required; `Alpha` defaults to 1.
 No new runtime interface and no required config key. Developers continue to:
 
 ```bash
-blendlink preview --blend scene.blend
-blendlink publish sceneName
-blendlink verify sceneName
+scenetoweb preview --blend scene.blend
+scenetoweb publish sceneName
+scenetoweb verify sceneName
 ```
 
 CLI and browser verification should report how many used materials were
@@ -626,7 +626,7 @@ not become public manifest schema in the first implementation.
 
 | Issue | Artist-facing message and recovery |
 | --- | --- |
-| `MATERIAL_SOURCE_AMBIGUOUS` | “Material X has 2 Blendlink Web Color nodes. Keep one source marker.” Select both nodes. |
+| `MATERIAL_SOURCE_AMBIGUOUS` | “Material X has 2 SceneToWeb Web Color nodes. Keep one source marker.” Select both nodes. |
 | `MATERIAL_COLOR_UNCONNECTED` | “Web Color is not connected. Connect a Color/Value output or Clear Web Color.” Select the marker. |
 | `MATERIAL_SOURCE_SHADER_SOCKET` | “A Shader output cannot become base color. Choose an upstream Color output.” Select the offending source. |
 | `MATERIAL_CYCLES_BLOCKED` | “Selected color reaches Shader to RGB, which is EEVEE-only. Choose the upstream Color Attribute/group color, use a separately proven EEVEE route, or keep the material application-owned.” |
@@ -767,7 +767,7 @@ The implementation needs no manifest reshape or schema-version bump:
 - exact final-artifact audit already observes factors, textures, emissive,
   unlit extensions, and triangle coverage;
 - older schema-v3 manifests may omit the additive evidence; current runtime
-  rendering still consumes ordinary glTF rather than a Blendlink shader format.
+  rendering still consumes ordinary glTF rather than a SceneToWeb shader format.
 
 Durable evidence is implemented as one optional compilation object rather than
 reshaping every portability record. Its own schema version is 1, and it records
@@ -795,7 +795,7 @@ Choose design A.
   meaningful vertex colors, images, texture materialization, diagnostics,
   caching, and verification.
 - **Locality:** artist intent stays in Blender; compiler knowledge stays in
-  Blendlink; deployment/runtime knowledge stays in the website.
+  SceneToWeb; deployment/runtime knowledge stays in the website.
 - **Seam:** the marker sits at the material graph, the module at the disposable
   export scene, and the application seam remains the standard GLB.
 

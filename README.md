@@ -1,15 +1,15 @@
-# Blendlink
+# SceneToWeb
 
-> Make the scene in Blender. Publish a beautiful, interactive website for free.
+> Publish Blender scenes to the web. Free and open source.
 
-Blendlink is public source in pre-release development. An npm release and
+SceneToWeb (formerly Blendlink) is public source in pre-release development. An npm release and
 matching downloadable Blender extension have not been published yet.
 Start with [your first scene on a website](docs/FIRST_SCENE.md) for local
 installation, Blender preparation, preview, and an existing Three.js/R3F site.
 The [September first-user audit](docs/FIRST_USER_AUDIT_2026-09-07.md) records
 what was actually run and what remains before a public beta.
 
-Blendlink is a Blender-to-Three.js scene compiler for artists and small web
+SceneToWeb is a Blender-to-Three.js scene compiler for artists and small web
 teams. It turns a `.blend` into portable GLB/textures, a validated manifest,
 and typed bindings—without introducing an engine, cloud service, visual
 scripting runtime, or proprietary scene format.
@@ -38,11 +38,24 @@ Older Blender files retain explicit compatibility paths: the
 [legacy shader HSV proof](experiments/legacy-shader-hsv/README.md) covers actual
 4.2 EEVEE nodes and Blender's own upgrade to modern Color nodes in 5.2/5.3.
 
+## Existing Blendlink projects
+
+New installs use the `scenetoweb` npm package and command, the **SceneToWeb**
+Blender extension, and `scenetoweb.config.mjs`. Existing `blendlink.config.*`
+files remain readable. Saved Blender properties and compiled scene contracts
+retain their existing identifiers so the rename does not require reauthoring
+scenes. The `blendlink` executable remains a compatibility alias in the new
+package; website imports should use `scenetoweb` and its subpaths.
+
+The repository URL and local `packages/blendlink/` source directory currently
+retain their original names. Downloaded extension and npm archive names use
+`scenetoweb`. The rename does not publish a package or deploy a website.
+
 ## Start in Blender
 
 With a matching extension ZIP supplied by the maintainer, use **Preferences →
-Get Extensions → Install from Disk**, then enable Blendlink. Open a saved scene,
-choose **Set Up Blendlink Scene**, and click **Preview Website**. The first
+Get Extensions → Install from Disk**, then enable SceneToWeb. Open a saved scene,
+choose **Set Up SceneToWeb Scene**, and click **Preview Website**. The first
 preview downloads a verified private Node runtime and the matching compiler;
 there is no global Node/npm installation or terminal setup for this path.
 Blender's **Allow Online Access** setting is respected. Local unpublished builds
@@ -65,7 +78,7 @@ connect their own Three.js/R3F project using the guide below. See
 
 1. Follow the [local installation steps](docs/FIRST_SCENE.md#build-and-install-the-local-tools), then open the
    `.blend` and choose
-   **Set Up Blendlink Scene**. This creates the scene-owned publishing recipe
+   **Set Up SceneToWeb Scene**. This creates the scene-owned publishing recipe
    that **Website Readiness** evaluates; then follow that card until it is green.
 2. Leave the scene on **Hybrid** for the usual case: baked environments with
    realtime characters, glass, animation, and deliberate exceptions.
@@ -74,15 +87,15 @@ connect their own Three.js/R3F project using the guide below. See
    and reason continuously.
 4. Start with the undeletable **Main** atlas. Select important meshes and use
    **Add Atlas from Selection** only when they deserve an independent budget.
-   New atlases use **Bake Lighting (Recommended)**: Blendlink keeps the
+   New atlases use **Bake Lighting (Recommended)**: SceneToWeb keeps the
    material/detail UVs and PBR textures, creates a separate lightmap UV, and
    bakes only indirect diffuse GI. Choose **Bake Appearance** for a deliberately
    flattened, unlit capture of a procedural or highly stylized final look.
-5. Run **Preview Website**. With no connected site, Blendlink creates or reuses
+5. Run **Preview Website**. With no connected site, SceneToWeb creates or reuses
    a private, disposable Preview Studio for this saved `.blend`, compiles
    Preview quality, and opens it. If the scene is connected to a site, the same
    action keeps using that site's dev command and reported URL. The same action
-   stays running as Live Preview: save the `.blend` and Blendlink recompiles the
+   stays running as Live Preview: save the `.blend` and SceneToWeb recompiles the
    affected scene, after which the website refreshes. This is intentionally
    save-driven rather than unsaved depsgraph synchronization, so the browser
    always represents a real, reproducible `.blend` file. If an update fails,
@@ -93,18 +106,18 @@ connect their own Three.js/R3F project using the guide below. See
 6. Inspect density/UVs, and materialize the proposed atlas only if you want to
    edit or pin it.
 7. When the scene is ready for a real site, run
-   `npx blendlink connect . --blend <saved.blend>` from that website folder and
+   `npx scenetoweb connect . --blend <saved.blend>` from that website folder and
    complete its printed install and hookup actions. Connect safely attaches an
    existing Three/R3F site or creates a minimal Three/Vite starter when the
    folder is empty; it never edits application source. `setup` remains a
    compatibility alias.
-8. Run **Publish Website** or `npx blendlink publish [scene]`. Blendlink compiles
+8. Run **Publish Website** or `npx scenetoweb publish [scene]`. SceneToWeb compiles
    Final, verifies the exact artifacts, runs the site's own build, and verifies
    again. It blocks rather than silently lowering detail when an atlas cannot
    preserve **Target Detail**; remote deployment remains website-owned.
 
 Preview and Final quality, atlas resolution, **Target Detail (px/m)**, padding,
-fit policy, and lighting states all live in the `.blend`. `blendlink.config.mjs`
+fit policy, and lighting states all live in the `.blend`. `scenetoweb.config.mjs`
 does not act as a second, invisible art-directing interface.
 
 The atlas output choice is per atlas. Bake Lighting preserves base-color,
@@ -136,7 +149,7 @@ rebuild safely. The panel names every reused/rebuilt job and never attempts an
 unsafe selected-object patch bake that would lose cross-object bounce or
 shadows.
 
-The Blender Optimization panel can opt a scene into Meshopt. Blendlink uses the
+The Blender Optimization panel can opt a scene into Meshopt. SceneToWeb uses the
 same stage for Preview and Final, decodes the result before publishing, checks
 world bounds and rendered vertex counts, and reports bytes saved (including a
 warning when a tiny file grows instead). The loader adapter configures the
@@ -144,7 +157,7 @@ official decoder automatically.
 
 Supported shader graphs translate automatically and safe static channels are
 cached by the material compiler; manual route controls remain available for
-exceptions. In Material Properties, **Blendlink Web Material** reports the active material
+exceptions. In Material Properties, **SceneToWeb Web Material** reports the active material
 as **Exact glTF**, **Approximated**, or **Needs Bake** before showing image
 previews, source dimensions, color space, and the last published result.
 Supported Principled BSDF inputs and Blender's supported KHR material
@@ -177,14 +190,14 @@ validated against `KHR_texture_basisu`, and are decoded back to pixels before
 publishing. A nonconforming candidate warns loudly and remains in its original
 uncompressed format; KTX2 compression never resizes it. Individual images can
 use Scene Default, Uncompressed, Compact, or High Fidelity. Baked lighting
-atlases remain PNG to preserve Blendlink's constant-background mip-tail contract.
+atlases remain PNG to preserve SceneToWeb's constant-background mip-tail contract.
 Install the free [Khronos KTX-Software tools](https://github.com/KhronosGroup/KTX-Software/releases)
-locally and run `npx blendlink doctor`; no cloud codec is involved.
+locally and run `npx scenetoweb doctor`; no cloud codec is involved.
 
 **Geometry Conversion** explains how evaluated Blender features survive publishing.
 Ordinary meshes are Preserve, fixed Geometry Nodes results are Realize/Bake,
 and realtime-designated objects are Runtime. Finite-cache candidates are
-measured and explained, but remain blocked until Blendlink has a proven portable
+measured and explained, but remain blocked until SceneToWeb has a proven portable
 VAT or point-cache route; unsupported time/simulation behavior is surfaced in
 Web Checks instead of silently freezing one frame. The publish audit measures
 source-versus-evaluated topology, follows
@@ -193,7 +206,7 @@ time ranges. Changing topology, unvalidated finite caches, Simulation Zones,
 and destructive camera-culling for movable website cameras stop the export with
 the precise portable route that would be required.
 Material, light, camera, and World property animation also stops with a remedy:
-core Three.js does not bind `KHR_animation_pointer`, so Blendlink never labels
+core Three.js does not bind `KHR_animation_pointer`, so SceneToWeb never labels
 plugin-dependent animation as a portable clip or silently drops it.
 
 **LOD + Instance Consequences** separate authoring intent from optimization
@@ -224,7 +237,7 @@ preserves ordered Action strips, trim, scale/speed, fractional repeat, reverse,
 Replace/Add, blend envelopes, weight, easing, extrapolation, mute, loop, and
 duration. During export, reversible staging makes every sequence-referenced
 Action discoverable to Blender's stock exporter without filtering other
-scene-discoverable Actions. Blendlink rejects overlaps, stale tracks,
+scene-discoverable Actions. SceneToWeb rejects overlaps, stale tracks,
 Transition/Meta strips, animated time/influence, or Blender-only blend modes.
 `startAnimationSequence()` owns one
 mixer and deterministic seeking; the one-call Three installer gives this
@@ -244,7 +257,7 @@ grounded projection instead exposes capture height, radius, and rotation;
 linked HDRs are content-hashed, so an in-place byte change invalidates sync
 without forcing unchanged linked assets to rebuild forever. Website Look and the HDR panel hand off
 background ownership explicitly instead of relying on adapter call order. With
-KTX2 Auto, Blendlink also tries a 32-bit packed-float KTX2, decodes it back to
+KTX2 Auto, SceneToWeb also tries a 32-bit packed-float KTX2, decodes it back to
 linear radiance, and publishes it only when energy and highlight gates pass;
 the byte-exact source always remains the fallback.
 
@@ -255,15 +268,15 @@ enables the renderer and configures every exported shadow-capable light, while
 per-object Cast/Receive intent remains independent. A Blender Light whose
 native **Shadows** switch is off receives a portable namespaced opt-out after
 glTF export, so the preview/global budget cannot turn it back on; an explicit
-Blendlink value remains authoritative.
+SceneToWeb value remains authoritative.
 
 Realtime Point, Spot, and Sun lights use Blender's stock glTF exporter in
 `COMPAT` mode, so Blender 5.2's default `SPEC` conversion cannot make them 683
-times brighter in Three.js. Blendlink exports only the active Scene and honors
+times brighter in Three.js. SceneToWeb exports only the active Scene and honors
 the active View Layer, object visibility, every complete nested-collection
 path, and collection-instance sources; temporary export constraints are fully
 restored. The
-**Blendlink Web Light** panel in Light Data Properties reports **Exact Realtime
+**SceneToWeb Web Light** panel in Light Data Properties reports **Exact Realtime
 Light**, **Realtime · Web Approximation**, **Bake-only Light**, or **Not
 Published**; shows authored energy/exposure and website intensity/Three.js
 power when predictable and applicable; then explains the consequence and next
@@ -274,7 +287,7 @@ are named approximations rather than silently promised. Ordinary Point/Spot
 node defaults and direct Sun Emission strength retain the stock exporter's
 predictable behavior.
 
-**Reflection Probes** start from selected meshes: Blendlink centers a named,
+**Reflection Probes** start from selected meshes: SceneToWeb centers a named,
 visible box/sphere influence helper, assigns those meshes explicitly, and
 publishes capture detail, strength, and an optional stable anchor. Choose a
 one-shot Three runtime capture, a lossless high-detail Blender/Cycles EXR bake,
@@ -304,15 +317,15 @@ use the [local archive workflow](docs/FIRST_SCENE.md#attach-your-existing-websit
 Once that site has the local package installed, these commands are available:
 
 ```bash
-npx blendlink preview --blend assets/hero.blend  # private Live Preview Studio
-npx blendlink connect . --blend assets/hero.blend # attach this site; scaffold if empty
-npx blendlink compile --preview  # fast iteration profile
-npx blendlink preview            # open + watch the connected website
-npx blendlink publish            # Final + verify + site build + verify
-npx blendlink plan --preview     # inspect the Preview atlas plan without Cycles
-npx blendlink plan               # inspect the Final atlas plan without Cycles
-npx blendlink verify             # Blender-free CI drift check
-npx blendlink perf --tier mobile # static budget evidence; runtime remains measured
+npx scenetoweb preview --blend assets/hero.blend  # private Live Preview Studio
+npx scenetoweb connect . --blend assets/hero.blend # attach this site; scaffold if empty
+npx scenetoweb compile --preview  # fast iteration profile
+npx scenetoweb preview            # open + watch the connected website
+npx scenetoweb publish            # Final + verify + site build + verify
+npx scenetoweb plan --preview     # inspect the Preview atlas plan without Cycles
+npx scenetoweb plan               # inspect the Final atlas plan without Cycles
+npx scenetoweb verify             # Blender-free CI drift check
+npx scenetoweb perf --tier mobile # static budget evidence; runtime remains measured
 ```
 
 The CLI does not import a renderer, but the package includes its lazy WebGL
@@ -321,7 +334,7 @@ Three peer even in a CLI-only installation.
 
 `connect` is intentionally safe in an established codebase. It recognizes a
 declared `three` or `@react-three/fiber` renderer, creates the integration
-config and configured generated-asset directories, declares Blendlink without
+config and configured generated-asset directories, declares SceneToWeb without
 running a package manager, and adds only non-conflicting scripts. It also makes
 the website explicitly own exact `three@0.184.0`, the current source-audited
 runtime profile, plus a matching r184 `@types/three` patch; when an unusual
@@ -329,28 +342,28 @@ version range cannot be matched safely, connect prints
 the exact dependency action instead of guessing. Ordinary
 Three.js projects receive one user-owned `install<Scene>()` module per scene;
 WebGL R3F projects receive tiny client-safe association components backed by
-Blendlink's package-owned lifecycle adapter. Imports resolve from the actual
+SceneToWeb's package-owned lifecycle adapter. Imports resolve from the actual
 `genDir`. Connect never edits existing application source and
 refuses to guess when the current directory is not a Three.js site. In an empty
 directory it creates the smallest useful Three/Vite starter, including an
 authored-camera-first loader; dependency installation is still an explicit
-package-manager action. `blendlink init` remains available as the narrower
+package-manager action. `scenetoweb init` remains available as the narrower
 config-only command.
 
-`blendlink publish [scene]` is the preview-to-production boundary. It always
+`scenetoweb publish [scene]` is the preview-to-production boundary. It always
 compiles Final quality, verifies recipe/schema/input/companion integrity, runs
 the website's existing package-manager `build` script, and re-verifies scene
 artifacts after the build. A scene name scopes compilation and verification.
 `--assets-only` explicitly stops after deployable assets for a custom pipeline;
-Blendlink never infers permission to upload or deploy the website.
+SceneToWeb never infers permission to upload or deploy the website.
 
 `compile --watch` rebuilds on
 Blender saves and changes to each scene's declared `inputs`. Editing
-`blendlink.config.mjs` reloads validated config, updates the watched paths, and
+`scenetoweb.config.mjs` reloads validated config, updates the watched paths, and
 rebuilds only affected scenes; an invalid edit is reported while the last
 working watch graph stays active. Commit the generated GLB, textures, manifest,
-and TypeScript. Static hosting needs neither Blender nor a Blendlink service or
-CLI; websites using `blendlink/three` still keep the npm package as a normal
+and TypeScript. Static hosting needs neither Blender nor a SceneToWeb service or
+CLI; websites using `scenetoweb/three` still keep the npm package as a normal
 build dependency so their bundler can include the adapter.
 
 A minimal config is intentionally boring:
@@ -364,9 +377,9 @@ export default {
 }
 ```
 
-`blendlink preview --blend <saved.blend>` is the zero-setup Preview Studio. It
+`scenetoweb preview --blend <saved.blend>` is the zero-setup Preview Studio. It
 maps the absolute `.blend` path to a private user-local cache, creates a minimal
-Vite/Three/Blendlink viewer there, installs only that disposable viewer's
+Vite/Three/SceneToWeb viewer there, installs only that disposable viewer's
 dependencies when missing or stale, compiles Preview quality, opens its
 verified local URL, and keeps watching that saved scene. Each Blender save is
 compiled through the same single-flight Preview path; successful output
@@ -393,12 +406,12 @@ authoring controls: they do not add UI or policy to the connected website.
 
 Preview-quality atlas resolution follows the scene's Preview profile, but a
 reduced atlas stays at least 256 px unless its authored Final atlas is smaller.
-Blendlink scales the target detail and pixel margin by that atlas's actual
+SceneToWeb scales the target detail and pixel margin by that atlas's actual
 resolution ratio, so Final-size gutters cannot consume a low-resolution
 preview or collapse its islands. This is a readability floor for iteration,
-not a promise of Final detail. `blendlink plan <scene> --preview` resolves the
+not a promise of Final detail. `scenetoweb plan <scene> --preview` resolves the
 same settings without running Cycles; add `--json` for tooling or regression
-checks. Plain `blendlink plan <scene>` continues to report the Final plan.
+checks. Plain `scenetoweb plan <scene>` continues to report the Final plan.
 
 Preview Studio explicitly opts into Blender authoring evidence only where the
 published recipe leaves look, World, or shadows application-owned. AgX,
@@ -415,7 +428,7 @@ current OCIO transform, so the private preview carries a measured, explicit
 `-0.28`-stop adapter correction and labels the result approximate; the artist's
 authored exposure and every production recipe remain unchanged.
 
-Inside a connected website, `blendlink preview` preserves the existing project
+Inside a connected website, `scenetoweb preview` preserves the existing project
 workflow: it discovers a `dev`/`start` script, package manager, and the URL
 printed by Vite, Next, Astro, or another local server. It does not assume that
 an unrelated process on a framework's conventional port is this project. The
@@ -438,21 +451,21 @@ but new artistic settings belong to the Blender Scene Publishing panels.
 ### Current dogfood: the portfolio workbench
 
 The [MichaelRoweJonesSite](https://github.com/michaelrowejones/MichaelRoweJonesSite)
-hero is the current integration dogfood. Its Blendlink lane starts from the
+hero is the current integration dogfood. Its SceneToWeb lane starts from the
 isolated, provenance-guarded
 `assets/blender/dogfood/SiteDemo.blendlink-dogfood.blend`, publishes as the
 separate `workbenchDogfood` scene, and renders only at `/blendlink-lab` while
 the production source, assets, and homepage remain the control. This keeps old
-Blendlink metadata or an experimental migration from silently changing the
+SceneToWeb metadata or an experimental migration from silently changing the
 shipping hero.
 
 From a checkout of that site, the repeatable loop is:
 
 ```bash
-npx blendlink plan workbenchDogfood --preview --json
-npx blendlink preview --blend assets/blender/dogfood/SiteDemo.blendlink-dogfood.blend
+npx scenetoweb plan workbenchDogfood --preview --json
+npx scenetoweb preview --blend assets/blender/dogfood/SiteDemo.blendlink-dogfood.blend
 # In another terminal when the scene is approved:
-npx blendlink publish workbenchDogfood
+npx scenetoweb publish workbenchDogfood
 npm run dev                       # inspect /blendlink-lab
 npx playwright test e2e/blendlink-lab.spec.ts
 ```
@@ -466,8 +479,8 @@ isolated file can be audited or rebuilt without normalizing the production
 `.blend` in place.
 
 The addon's **Website Ownership** panel names who owns every important handoff:
-the `.blend`, website code, `blendlink.config.mjs`, or generated repository
-output. Application-owned defaults stay untouched. `blendlink doctor` and the
+the `.blend`, website code, `scenetoweb.config.mjs`, or generated repository
+output. Application-owned defaults stay untouched. `scenetoweb doctor` and the
 addon also consume the same bounded Blender-version known-issue registry; it
 accepts no entry without a primary evidence URL and concrete artist action.
 
@@ -479,7 +492,7 @@ and portable Components—and owns cleanup behind one call. Generated modules
 still expose readable names and stable IDs for application behavior.
 
 ```ts
-import { installThreeCompiledScene } from 'blendlink/three'
+import { installThreeCompiledScene } from 'scenetoweb/three'
 import { hero } from './generated/hero.gen'
 import { createBakedScene } from './generated/hero.baked'
 
@@ -525,13 +538,13 @@ developer lab can opt into adaptive delivery without lowering the same scene's
 public hero.
 
 For measured browser evidence, wrap the one render that would normally happen
-in the frame loop; do not render once for Blendlink and again for measurement:
+in the frame loop; do not render once for SceneToWeb and again for measurement:
 
 ```ts
 import {
   createRuntimePerformanceMonitor,
   collectThreeTextureEvidence,
-} from 'blendlink/three'
+} from 'scenetoweb/three'
 
 const performanceMonitor = createRuntimePerformanceMonitor()
 performanceMonitor.start()
@@ -555,7 +568,7 @@ const textureEvidence = collectThreeTextureEvidence(installed.root)
 The report separates observed transfer/decoded bytes, frame percentiles, long
 tasks, renderer counters, and non-blocking WebGL2 GPU timer evidence. Missing
 browser capabilities stay visibly unavailable; static scene counts are never
-reported as measured frame rate. Use `npx blendlink perf --tier mobile` for the
+reported as measured frame rate. Use `npx scenetoweb perf --tier mobile` for the
 separate compiled-artifact/build-budget report. It verifies manifest/GLB
 identity, decodes required Meshopt streams, separates all decoded accessors,
 the geometry-only subset, and embedded images, and ranks triangle and decoded-
@@ -581,7 +594,7 @@ scenes: [{
 ```
 
 Verification separately checks that the finished GLB fits the runtime
-Blendlink claims to support, because several ways of getting that wrong
+SceneToWeb claims to support, because several ways of getting that wrong
 produce no error at all in a browser: a material that samples a UV set the
 loader never binds renders from the gutter and can disappear entirely, a
 material with no base-colour carrier renders pure white, and a skin past the
@@ -647,7 +660,7 @@ response. V1 refuses multi-material/baked receivers. Add-on checks, background
 compile, and runtime independently require finite UV0 bounded to 0..1 within
 `1e-5` and reaching every square edge within `1e-4`.
 
-The website binds its own canvas and notifies Blendlink only after drawing:
+The website binds its own canvas and notifies SceneToWeb only after drawing:
 
 ```ts
 const binding = installed.websiteSurfaces.bindCanvas('monitor-screen', appCanvas)
@@ -662,11 +675,11 @@ The sRGB live canvas uses Clamp-to-Edge wrapping, Linear min/mag filters,
 anisotropy `1`, and no generated mipmaps. It deliberately uses identity
 transform/full UV0 rather than inheriting fallback `KHR_texture_transform`.
 For Display, the authored fallback texture object and tint remain intact while
-unbound; Blendlink neutralizes tint only while application pixels are bound
+unbound; SceneToWeb neutralizes tint only while application pixels are bound
 and conditionally restores the exact fallback on disposal.
 
 The generated R3F `use<Scene>Scene()` handle exposes the same typed
-`websiteSurfaces` interface. Blendlink owns semantic lookup, material
+`websiteSurfaces` interface. SceneToWeb owns semantic lookup, material
 isolation, invalidation, conditional restoration, and Three wrapper disposal;
 the website owns pixels, input, Canvas, DOM, route, accessibility, and
 analytics. This is deliberately separate from baked `setState()`, which
@@ -702,7 +715,7 @@ const installed = await installThreeCompiledScene({
 ```
 
 An enabled record with no adapter fails loudly instead of silently losing the
-artist's intent. Rigidbody and Collider continue using Blendlink's canonical
+artist's intent. Rigidbody and Collider continue using SceneToWeb's canonical
 object fields and generated metadata—the Components UI links to those controls
 rather than publishing a second, conflicting physics record. The website still
 chooses Rapier or another physics runtime. Multiplayer/network components are
@@ -713,8 +726,8 @@ including Realtime scenes where it is a harmless no-op. It is ordinary,
 user-owned Three.js code and is never overwritten. The one-call installer
 awaits its `ready` promise before attaching the scene, so the default GI cannot
 pop in one frame late and missing textures fail with state, atlas, and URL
-context. When Blendlink's owned template contract advances, `sync`/`verify`
-leave the editable file untouched; run `npx blendlink recipe update <scene>` to
+context. When SceneToWeb's owned template contract advances, `sync`/`verify`
+leave the editable file untouched; run `npx scenetoweb recipe update <scene>` to
 preserve its exact bytes in a deterministic `.bak` and install the current
 template. A Lighting scene cannot publish through a stale recipe.
 
@@ -743,7 +756,7 @@ const loaded = await loadCompiledScene(new GLTFLoader(), hero, {
 })
 ```
 
-Generic `blendlink typegen` pipelines get the same runtime contract: when the
+Generic `scenetoweb typegen` pipelines get the same runtime contract: when the
 decoded GLB requires `KHR_texture_basisu`, typegen transactionally publishes
 the complete attributed `blendlink-basis/` directory beside that local GLB.
 Applications that deliberately host the GLB at a different URL may instead
@@ -752,19 +765,19 @@ mirror that sibling directory there or pass an application-configured
 
 Typegen also records required `EXT_meshopt_compression` directly from generic
 GLBs. Both the one-call installer and `loadCompiledScene()` then configure the
-official Meshopt decoder even when no Blendlink optimization report exists.
+official Meshopt decoder even when no SceneToWeb optimization report exists.
 Generated descriptors also carry the exact total uncompressed Meshopt
 buffer-view bytes. Actual high-level loads keep small or unknown scenes on the
 main thread and lease a shared 1-2 worker pool only at 4 MiB or larger; the pool
-is bounded at four, shared by overlapping Blendlink loads, and stopped after
+is bounded at four, shared by overlapping SceneToWeb loads, and stopped after
 the last load settles. SSR and browsers without Blob workers fall back without
 touching `Worker`, `Blob`, or `URL`.
 
-Use `meshoptWorkerCount: false` (or `0`) to force Blendlink's isolated
+Use `meshoptWorkerCount: false` (or `0`) to force SceneToWeb's isolated
 main-thread decoder. If the application already owns Meshopt's module-global
-pool, pass that configured decoder as `meshoptDecoder`; Blendlink installs it
+pool, pass that configured decoder as `meshoptDecoder`; SceneToWeb installs it
 as-is and never calls `useWorkers()` on it. The owned-decoder option is mutually
-exclusive with Blendlink's worker count and threshold. `meshoptWorkerThresholdBytes: 0`
+exclusive with SceneToWeb's worker count and threshold. `meshoptWorkerThresholdBytes: 0`
 explicitly opts hand-authored descriptors without size evidence into workers.
 `configureCompiledSceneLoader()` alone always installs a main-thread adapter
 and never starts a worker; only the awaited `loadCompiledScene()` and
@@ -782,7 +795,7 @@ import {
   applyCompiledSceneShadows,
   installCompiledSceneCamera,
   startCompiledScenePlayback,
-} from 'blendlink/three'
+} from 'scenetoweb/three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js'
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js'
@@ -834,7 +847,7 @@ const environment = await applyCompiledSceneEnvironment(scene, hero, {
 
 const cameraControls = installCompiledSceneCamera(
   loaded.scene,
-  loaded.blendlink,
+  loaded.scenetoweb,
   hero,
   {
     createControls: ({ camera, targetPosition }) => {
@@ -875,14 +888,14 @@ look.dispose()
 playback?.dispose()
 ```
 
-For an existing R3F site, `blendlink connect` creates one tiny user-owned
+For an existing R3F site, `scenetoweb connect` creates one tiny user-owned
 association component per configured scene, such as
-`src/blendlink/HeroScene.ts`. Add the one you want inside a Canvas — the
+`src/scenetoweb/HeroScene.ts`. Add the one you want inside a Canvas — the
 installer accepts the WebGL renderer or an initialized `WebGPURenderer`,
 and R3F context-loss handling covers both families:
 
 ```tsx
-import { HeroScene } from './blendlink/HeroScene'
+import { HeroScene } from './scenetoweb/HeroScene'
 
 <Canvas>
   <HeroScene onReady={(scene) => {
@@ -906,7 +919,7 @@ ownership-safe application interface. Its renderer-neutral `animation`
 transport exposes available clips, immutable state, subscription, `play`,
 deterministic `playAll`, `pause`, authored-seconds `seek`, and replayable
 `stop`; mixer, frame-loop, and terminal disposal ownership remain inside
-Blendlink. Installation failures publish Failed and are rethrown during render
+SceneToWeb. Installation failures publish Failed and are rethrown during render
 for the nearest Error Boundary. Status and ready callbacks are isolated
 best-effort observers: their exceptions are logged instead of being routed
 through that boundary. The tiny
@@ -916,14 +929,14 @@ owner for that Canvas; a competing mount fails loudly because camera,
 environment, and composer are Canvas-global. React 19 / R3F 9 compatibility is
 checked during connect, and demand-mode canvases keep updating while the
 installed scene needs frames, then settle when its known systems are idle.
-Blendlink-owned R3F update/composer time starts at zero when an installed
+SceneToWeb-owned R3F update/composer time starts at zero when an installed
 runtime wakes and caps later frame deltas at 100 ms, matching Needle's stall
 bound without changing the website's R3F clock or exact low-level playback API.
 
-The output stays standard and inspectable. Remove Blendlink tomorrow and the
+The output stays standard and inspectable. Remove SceneToWeb tomorrow and the
 GLB, PNGs, and generated data still work.
 
-## What Blendlink understands
+## What SceneToWeb understands
 
 - Hybrid baked/realtime scenes and per-object Automatic, Realtime, or Baked
 - Main plus artist-created atlases, **Target Detail**, editable UV proposals,
@@ -1012,7 +1025,7 @@ static counts and software-renderer results do not qualify physical-device speed
 
 ## License
 
-Blendlink's npm tarball is a mixed aggregate with a file-level
+SceneToWeb's npm tarball is a mixed aggregate with a file-level
 [`LICENSES.md`](packages/blendlink/LICENSES.md): Node/compiler/runtime files are
 MIT, Blender-dependent files are GPL-3.0-or-later, and bundled Basis notices
 are Apache-2.0. The separately built Blender Extension is

@@ -59,7 +59,7 @@ jobs:
           BLENDLINK_BROWSER: ${{ matrix.browser }}
         run: npx --no-install playwright install --with-deps "$BLENDLINK_BROWSER"
 
-      - name: Run the application-owned Blendlink smoke
+      - name: Run the application-owned SceneToWeb smoke
         env:
           BLENDLINK_BROWSER: ${{ matrix.browser }}
           BLENDLINK_TEST_PATH: ${{ inputs.test_path }}

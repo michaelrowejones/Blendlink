@@ -27,7 +27,7 @@ verified by `npm run verify:needle-baseline` in the parent workstream.
 
 `InstalledThreeComponents.render()` is the only existing call site for the
 portable lifecycle's `beforeRender()`. The R3F adapter invokes
-`InstalledThreeCompiledScene.render()` only when Blendlink owns a
+`InstalledThreeCompiledScene.render()` only when SceneToWeb owns a
 post-processing renderer. With no post stack, R3F invokes
 `InstalledThreeCompiledScene.update()` and then performs its own automatic
 `gl.render(scene, camera)`.
@@ -40,11 +40,11 @@ frame can leave the boolean set and suppress a later context-restoration or
 render-only refresh.
 
 The deeper fix is a package-owned render-preparation phase that R3F calls
-before automatic rendering as well as before a Blendlink-owned composer
+before automatic rendering as well as before a SceneToWeb-owned composer
 render. Until that seam exists, tests must cover all three host sequences:
 
 1. `update()` followed by application-owned automatic rendering;
-2. `update()` followed by `beforeRender()` and a Blendlink-owned render; and
+2. `update()` followed by `beforeRender()` and a SceneToWeb-owned render; and
 3. render-only Vanilla use through `beforeRender()`.
 
 R3F 9.6.1 runs `useFrame` subscribers before its automatic render. Its
@@ -209,10 +209,10 @@ The UI should show:
 
 ## Browser evidence matrix
 
-One Blendlink-only screenshot can prove that the implementation renders, but
+One SceneToWeb-only screenshot can prove that the implementation renders, but
 it cannot promote Needle parity. Use the exact same geometry, transforms,
 camera, WebGL context settings, and pixel analysis for the pinned Needle
-runtime and Blendlink.
+runtime and SceneToWeb.
 
 ### Pixel cells
 
@@ -235,8 +235,8 @@ hashes.
 ### Scheduling and ownership cells
 
 - Needle default: five auxiliary renders per host frame.
-- Blendlink continuous: the same five.
-- Blendlink static: five on the first frame, zero for the next 120 unchanged
+- SceneToWeb continuous: the same five.
+- SceneToWeb static: five on the first frame, zero for the next 120 unchanged
   host frames.
 - No-post R3F demand Canvas: first mask is ready before the main render and
   the loop settles.
@@ -289,6 +289,6 @@ Browser and records:
 - `docs/COMPONENT_ACCEPTANCE.md`
 
 Promotion order is: deterministic module control flow, adapter/runtime
-integration, Blender round trip, Blendlink browser pixels, pinned Needle
+integration, Blender round trip, SceneToWeb browser pixels, pinned Needle
 differential, then performance/resource evidence. A lower layer must not be
 used to claim a higher one.

@@ -18,7 +18,7 @@ describe('plan manifest metadata', () => {
     const root = mkdtempSync(join(tmpdir(), 'blendlink-plan-manifest-'))
     const path = join(root, 'hero.manifest.json')
     writeFileSync(path, JSON.stringify({
-      generator: 'blendlink',
+      generator: 'scenetoweb',
       schemaVersion: 2,
       lastSyncDurationMs: 4200,
     }))
@@ -30,7 +30,7 @@ describe('plan manifest metadata', () => {
 
   it('accepts schema v3 Appearance range metadata', () => {
     const manifest = parseManifest(JSON.stringify({
-      generator: 'blendlink',
+      generator: 'scenetoweb',
       schemaVersion: MANIFEST_SCHEMA_VERSION,
       hash: 'appearance-v3',
       url: '/models/hero.glb',

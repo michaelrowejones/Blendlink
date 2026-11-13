@@ -74,7 +74,7 @@ describe('Meshopt optimization stage', () => {
       ).sort()
       expect(pairs(decodedUv!.getArray()!)).toEqual(pairs(texcoords))
 
-      // Generic typegen has no Blendlink optimization report to infer from.
+      // Generic typegen has no SceneToWeb optimization report to infer from.
       // Decoder intent must therefore come from the required GLB extension.
       const generated = await generateSceneModule({
         glbPath: path,

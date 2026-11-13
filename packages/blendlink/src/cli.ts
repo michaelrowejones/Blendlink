@@ -126,7 +126,7 @@ async function main(): Promise<number> {
   switch (command) {
     case 'recipe': {
       if (positional[0] !== 'update') {
-        console.error('usage: blendlink recipe update [scene]')
+        console.error('usage: scenetoweb recipe update [scene]')
         return 2
       }
       const config = await loadConfig(process.cwd())
@@ -135,7 +135,7 @@ async function main(): Promise<number> {
         ? config.scenes.filter((scene) => scene.name === requested)
         : config.scenes
       if (requested && scenes.length === 0) {
-        console.error(`No scene named "${requested}" in blendlink.config.`)
+        console.error(`No scene named "${requested}" in scenetoweb.config.`)
         return 2
       }
       for (const scene of scenes) {
@@ -168,13 +168,13 @@ async function main(): Promise<number> {
     }
     case 'addon': {
       if (positional[0] !== 'install') {
-        console.error('usage: blendlink addon install')
+        console.error('usage: scenetoweb addon install')
         return 2
       }
       const { installBlenderAddon } = await import('./addon.js')
       const result = await installBlenderAddon()
       console.log(
-        `✓ installed and enabled Blendlink ${result.addonVersion} in ${result.blenderVersion}`,
+        `✓ installed and enabled SceneToWeb ${result.addonVersion} in ${result.blenderVersion}`,
       )
       return 0
     }
@@ -212,7 +212,7 @@ async function main(): Promise<number> {
           allowNewerFile: flags.has('--allow-newer'),
           ...(positional[0] ? { only: positional[0] } : {}),
         })
-        console.log('watching scene sources, declared inputs, and blendlink.config — ctrl-c to stop')
+        console.log('watching scene sources, declared inputs, and scenetoweb.config — ctrl-c to stop')
         await new Promise(() => {}) // stay alive until interrupted
       }
       return 0
@@ -221,7 +221,7 @@ async function main(): Promise<number> {
       const blend = flagValue('--blend')
       const output = flagValue('--out')
       if (!blend || !output) {
-        console.error('usage: blendlink export --blend <saved-scene.blend> --out <website-folder>')
+        console.error('usage: scenetoweb export --blend <saved-scene.blend> --out <website-folder>')
         return 2
       }
       const { exportStandaloneWebsite } = await import('./exportWebsite.js')
@@ -235,7 +235,7 @@ async function main(): Promise<number> {
         const requestedBlend = flagValue('--blend')
         if (flags.has('--blend')) {
           if (!requestedBlend) {
-            console.error('usage: blendlink preview --blend <saved-scene.blend> [--no-open]')
+            console.error('usage: scenetoweb preview --blend <saved-scene.blend> [--no-open]')
             return 2
           }
           const { runPreviewStudio } = await import('./preview.js')
@@ -268,7 +268,7 @@ async function main(): Promise<number> {
       const blocking = issues.filter(isBlockingVerifyIssue)
       if (blocking.length === 0) {
         console.log(
-          `✓ blendlink verify${positional[0] ? ` ${positional[0]}` : ''}: ` +
+          `✓ scenetoweb verify${positional[0] ? ` ${positional[0]}` : ''}: ` +
             (issues.length > 0
               ? 'sources and artifacts are in sync with explicit accepted-risk warnings'
               : 'sources and artifacts are in sync'),
@@ -320,12 +320,12 @@ async function main(): Promise<number> {
         ? config.scenes.filter((scene) => scene.name === requested)
         : config.scenes
       if (requested && scenes.length === 0) {
-        console.error(`No scene named "${requested}" in blendlink.config.`)
+        console.error(`No scene named "${requested}" in scenetoweb.config.`)
         return 2
       }
       const rawTier = flagValue('--tier') ?? 'balanced'
       if (rawTier !== 'mobile' && rawTier !== 'balanced' && rawTier !== 'showcase') {
-        console.error('usage: blendlink perf [scene] [--tier mobile|balanced|showcase] [--json] [--fail]')
+        console.error('usage: scenetoweb perf [scene] [--tier mobile|balanced|showcase] [--json] [--fail]')
         return 2
       }
       const { analyzeCompiledScenePerformance, defaultPerformanceBudgets } = await import('./performance.js')
@@ -340,16 +340,16 @@ async function main(): Promise<number> {
       }> = []
       for (const scene of scenes) {
         if (!existsSync(scene.manifestPath)) {
-          reports.push({ scene: scene.name, error: `missing manifest ${scene.manifestPath}; run blendlink compile` })
+          reports.push({ scene: scene.name, error: `missing manifest ${scene.manifestPath}; run scenetoweb compile` })
           continue
         }
         const manifest = parseManifest(readFileSync(scene.manifestPath, 'utf8'))
         if (!manifest) {
-          reports.push({ scene: scene.name, error: `${scene.manifestPath} is not a Blendlink manifest` })
+          reports.push({ scene: scene.name, error: `${scene.manifestPath} is not a SceneToWeb manifest` })
           continue
         }
         if (!existsSync(scene.glbPath)) {
-          reports.push({ scene: scene.name, error: `missing GLB ${scene.glbPath}; run blendlink compile` })
+          reports.push({ scene: scene.name, error: `missing GLB ${scene.glbPath}; run scenetoweb compile` })
           continue
         }
         const programsPath = manifest.materialPrograms
@@ -444,7 +444,7 @@ async function main(): Promise<number> {
       // GLB-generic mode: no Blender, no config required.
       const glbPath = positional[0]
       if (!glbPath) {
-        console.error('usage: blendlink typegen <file.glb> [--name n] [--url u] [--out dir] [--blend file.blend]')
+        console.error('usage: scenetoweb typegen <file.glb> [--name n] [--url u] [--out dir] [--blend file.blend]')
         return 2
       }
       const name = flagValue('--name') ?? basename(glbPath).replace(/\.glb$/i, '')
@@ -459,7 +459,7 @@ async function main(): Promise<number> {
       }
       if (!url.startsWith('/') && !/^https?:/.test(url)) url = `/${url}`
       const outDir = resolve(process.cwd(), flagValue('--out') ?? dirname(glbPath))
-      // --blend stamps provenance so `blendlink verify` and the Blender addon
+      // --blend stamps provenance so `scenetoweb verify` and the Blender addon
       // can detect drift even when an external pipeline produced the GLB.
       const blend = flagValue('--blend')
       // Parse external bake evidence before typegen so atlas-layout evidence
@@ -473,7 +473,7 @@ async function main(): Promise<number> {
           // Accept either a bare BakePlan or the envelope `plan --json`
           // actually writes ({ scenes: [{ scene, quality, plan }] }). The
           // flag used to accept only the bare shape, which nothing in
-          // Blendlink produced, so the one command that could feed it did
+          // SceneToWeb produced, so the one command that could feed it did
           // not fit it.
           const parsed = JSON.parse(readFileSync(planPath, 'utf8')) as
             BakePlan | { scenes?: Array<{ scene?: string; plan?: BakePlan }> }
@@ -546,7 +546,7 @@ async function main(): Promise<number> {
             status.kind === 'future'
               ? `! ${recipePath} uses newer baked recipe template v${status.version}; it was left untouched`
               : `! ${recipePath} predates baked composition template v${BAKED_RECIPE_TEMPLATE_VERSION}; ` +
-                'it was left untouched. In a configured project, run `blendlink recipe update <scene>`.',
+                'it was left untouched. In a configured project, run `scenetoweb recipe update <scene>`.',
           )
         }
       }
@@ -573,7 +573,7 @@ async function main(): Promise<number> {
     case 'plan': {
       const requestedBlend = flagValue('--blend')
       if (flags.has('--blend') && (!requestedBlend || positional.length > 0)) {
-        console.error('usage: blendlink plan --blend <saved-scene.blend> [--preview] [--json]')
+        console.error('usage: scenetoweb plan --blend <saved-scene.blend> [--preview] [--json]')
         return 2
       }
       const absoluteBlend = requestedBlend ? resolve(process.cwd(), requestedBlend) : undefined
@@ -595,7 +595,7 @@ async function main(): Promise<number> {
         ? config.scenes.filter((scene) => scene.name === positional[0])
         : config.scenes
       if (positional[0] && scenes.length === 0) {
-        console.error(`No scene named "${positional[0]}" in blendlink.config.`)
+        console.error(`No scene named "${positional[0]}" in scenetoweb.config.`)
         return 2
       }
       const exportableScenes = scenes.filter((scene) => !scene.external)
@@ -805,10 +805,10 @@ async function main(): Promise<number> {
       const { initProject } = await import('./init.js')
       const result = initProject(process.cwd())
       if (!result.created) {
-        console.log('blendlink.config already exists — nothing to do.')
+        console.log('scenetoweb.config already exists — nothing to do.')
         return 0
       }
-      console.log(`✓ created blendlink.config.mjs`)
+      console.log(`✓ created scenetoweb.config.mjs`)
       if (result.sampleCopied) {
         console.log('  ◦ no .blend files found — copied the bundled sample to assets/sample.blend')
       } else {
@@ -816,15 +816,15 @@ async function main(): Promise<number> {
       }
       console.log(
         '\nnext steps:\n' +
-          '  1. open each .blend and click Blendlink > Set Up Blendlink Scene\n' +
-          '  2. blendlink compile       publish a Final build + typed integration data\n' +
+          '  1. open each .blend and click SceneToWeb > Set Up SceneToWeb Scene\n' +
+          '  2. scenetoweb compile       publish a Final build + typed integration data\n' +
           '  3. commit the generated artifacts (plain git, no LFS needed)\n' +
-          '  4. blendlink verify        add the Blender-free drift check to CI\n' +
-          '  5. run blendlink setup when you want the guided website attachment',
+          '  4. scenetoweb verify        add the Blender-free drift check to CI\n' +
+          '  5. run scenetoweb setup when you want the guided website attachment',
       )
       if (result.sampleCopied) {
         console.log(
-          '\nstart with assets/sample.blend: the Blendlink workspace explains scene readiness, ' +
+          '\nstart with assets/sample.blend: the SceneToWeb workspace explains scene readiness, ' +
             'object bake choices, Main atlas ownership, Preview, and Final without requiring website code first.',
         )
       }
@@ -835,7 +835,7 @@ async function main(): Promise<number> {
       const { setupWebsiteProject } = await import('./projectSetup.js')
       const selectedBlend = flagValue('--blend')
       if (flags.has('--blend') && !selectedBlend) {
-        console.error('usage: blendlink connect [site-dir] --blend <saved-scene.blend>')
+        console.error('usage: scenetoweb connect [site-dir] --blend <saved-scene.blend>')
         return 2
       }
       const root = resolve(process.cwd(), positional[0] ?? '.')
@@ -847,7 +847,7 @@ async function main(): Promise<number> {
         'three': 'existing Three.js website',
         'react-three-fiber': 'existing React Three Fiber website',
       }[result.stack]
-      console.log(`✓ Blendlink connected ${stack} at ${result.root}`)
+      console.log(`✓ SceneToWeb connected ${stack} at ${result.root}`)
       for (const change of result.changes) console.log(`  ◦ ${change}`)
       for (const warning of result.warnings) console.warn(`  ! ${warning}`)
       console.log('\nnext actions:')
@@ -873,13 +873,13 @@ async function main(): Promise<number> {
     }
     default: {
       const usage =
-        'blendlink — make the scene in Blender; ship it beautifully in Three.js\n\n' +
+        'scenetoweb — make the scene in Blender; ship it beautifully in Three.js\n\n' +
         'commands:\n' +
         '  connect [site-dir] [--blend saved-scene.blend]\n' +
         '                           connect an existing Three/R3F site, or scaffold a minimal Three/Vite site\n' +
         '                           (creates a thin scene binding; never overwrites app source)\n' +
         '  setup [site-dir]         compatibility alias for connect\n' +
-        '  addon install            install and enable the Blendlink artist workspace in Blender\n' +
+        '  addon install            install and enable the SceneToWeb artist workspace in Blender\n' +
         '  compile [scene] [--preview] [--force] [--watch] [--allow-newer]\n' +
         '                           publish Final by default; --preview uses the scene-owned Preview profile\n' +
         '  preview [scene] [--no-open]\n' +

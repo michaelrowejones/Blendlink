@@ -4,9 +4,9 @@ Status: audit complete; implementation in progress, 2026-07-21
 
 ## Decision
 
-Blendlink should pursue useful component parity, not literal Needle component-count parity.
+SceneToWeb should pursue useful component parity, not literal Needle component-count parity.
 
-The installed Needle add-on exposes a broad and well-organized catalog, but the source audit shows that several cards are thin wrappers, infrastructure disguised as artist features, coupled to networking or Needle's application shell, or weaker than Blendlink's existing behavior. The right product is a smaller coherent core that covers the recurring jobs of a Blender artist making a polished website:
+The installed Needle add-on exposes a broad and well-organized catalog, but the source audit shows that several cards are thin wrappers, infrastructure disguised as artist features, coupled to networking or Needle's application shell, or weaker than SceneToWeb's existing behavior. The right product is a smaller coherent core that covers the recurring jobs of a Blender artist making a polished website:
 
 1. make the scene look intentional;
 2. make it responsive and interactive;
@@ -14,7 +14,7 @@ The installed Needle add-on exposes a broad and well-organized catalog, but the 
 4. preview the exact website result quickly;
 5. ship without inheriting a game engine or cloud platform.
 
-The immediate technical move is to keep Blendlink's authored component records renderer-neutral and put implementation choice behind shared runtime services. WebGL should remain the production path. A TSL adapter should be developed alongside it, but not become the default while Three.js still describes `WebGPURenderer` as experimental and notes that `WebGLRenderer` can remain faster or more complete for some scenes. TSL is nevertheless the right future seam: it transpiles to WGSL or GLSL and its post stack can combine passes automatically ([Three.js WebGPU guide](https://threejs.org/manual/en/webgpurenderer), [TSL post-processing reference](https://threejs.org/docs/TSL.html#post-processing)).
+The immediate technical move is to keep SceneToWeb's authored component records renderer-neutral and put implementation choice behind shared runtime services. WebGL should remain the production path. A TSL adapter should be developed alongside it, but not become the default while Three.js still describes `WebGPURenderer` as experimental and notes that `WebGLRenderer` can remain faster or more complete for some scenes. TSL is nevertheless the right future seam: it transpiles to WGSL or GLSL and its post stack can combine passes automatically ([Three.js WebGPU guide](https://threejs.org/manual/en/webgpurenderer), [TSL post-processing reference](https://threejs.org/docs/TSL.html#post-processing)).
 
 This plan deliberately does not import Needle source. It uses the installed source as behavioral evidence, then chooses the best suitable public implementation or technical reference for each job.
 
@@ -22,11 +22,11 @@ This plan deliberately does not import Needle source. It uses the installed sour
 
 The audit used the locally installed Blender add-on `Needle Engine Exporter for Blender` version 1.4.2 and the locally installed `@needle-tools/engine` runtime version 5.1.7. The add-on's `builtin.component.json` contains 85 Blender schemas and `components.needle.json` contains 146 runtime metadata records. Their selectable, non-abstract intersection is 84 components; `PlayerState` is the one schema without matching selectable runtime metadata.
 
-The catalog below records every one of those 84 selectable components. Multiplayer, rooms, voice, synchronization, and the networked Avatar are explicitly excluded from Blendlink's product promise. XR is recorded so the comparison stays honest, but remains deferred because the current product is Blender-to-Three.js websites rather than an XR application framework.
+The catalog below records every one of those 84 selectable components. Multiplayer, rooms, voice, synchronization, and the networked Avatar are explicitly excluded from SceneToWeb's product promise. XR is recorded so the comparison stays honest, but remains deferred because the current product is Blender-to-Three.js websites rather than an XR application framework.
 
 Classification means:
 
-- **Already in Blendlink** — the component or a stronger system-level equivalent exists now.
+- **Already in SceneToWeb** — the component or a stronger system-level equivalent exists now.
 - **Parity gap** — useful recurring artist capability that should be added.
 - **Improve beyond Needle** — worth adding or extending, but the inspected Needle behavior is not the target implementation.
 - **Defer** — valid but niche, application-owned, expensive relative to demand, or outside the current promise.
@@ -35,16 +35,16 @@ Classification means:
 
 ### Animation, assets, cameras, characters, and constraints
 
-| Needle component | Classification | Blendlink disposition |
+| Needle component | Classification | SceneToWeb disposition |
 |---|---|---|
-| Animation | Already in Blendlink | Existing exported clips and Three `AnimationMixer` support cover direct clip playback. Add crossfade, randomized offset, speed range, and clamp controls to the animation action rather than a second animation system. |
+| Animation | Already in SceneToWeb | Existing exported clips and Three `AnimationMixer` support cover direct clip playback. Add crossfade, randomized offset, speed range, and clamp controls to the animation action rather than a second animation system. |
 | Animator | Defer | A full parameterized state-machine editor is a product of its own. First ship a typed trigger/action graph and clip crossfades; revisit a state machine only after real projects exceed that model. |
-| PlayableDirector | Already in Blendlink | Blendlink's authored animation sequence/timeline is the system-level equivalent. Keep the data renderer-neutral and expose markers/events incrementally. |
+| PlayableDirector | Already in SceneToWeb | SceneToWeb's authored animation sequence/timeline is the system-level equivalent. Keep the data renderer-neutral and expose markers/events incrementally. |
 | DropListener | Defer | Drag-and-drop import is a website/application concern, not portable scene behavior. Offer an application hook later. |
 | SceneSwitcher | Defer | Multi-scene routing belongs in the delivery graph and site shell. A future component can request a stable scene ID without owning loading UI or URLs. |
-| Camera | Already in Blendlink | Blender cameras, website look, environment ownership, and responsive framing already cover the recurring job. Add render-to-texture only when a mirror/portal use case justifies it. |
-| OrbitControls | Already in Blendlink | Existing Orbit/Fly controls and responsive frames are stronger defaults. Retain official Three controls and add polished transition/fit presets; Three documents both auto-rotate and damping in the official [`OrbitControls`](https://threejs.org/docs/pages/OrbitControls.html). |
-| ViewBox | Improve beyond Needle | Needle temporarily mutates a perspective camera's view/projection. Blendlink should keep responsive frames as the primary artist model and later add a named viewport-region adapter that supports perspective and orthographic cameras without persistent camera mutation. |
+| Camera | Already in SceneToWeb | Blender cameras, website look, environment ownership, and responsive framing already cover the recurring job. Add render-to-texture only when a mirror/portal use case justifies it. |
+| OrbitControls | Already in SceneToWeb | Existing Orbit/Fly controls and responsive frames are stronger defaults. Retain official Three controls and add polished transition/fit presets; Three documents both auto-rotate and damping in the official [`OrbitControls`](https://threejs.org/docs/pages/OrbitControls.html). |
+| ViewBox | Improve beyond Needle | Needle temporarily mutates a perspective camera's view/projection. SceneToWeb should keep responsive frames as the primary artist model and later add a named viewport-region adapter that supports perspective and orthographic cameras without persistent camera mutation. |
 | CharacterController | Improve beyond Needle | Use Rapier's real kinematic character controller instead of moving the object transform directly. It includes move-and-slide, slopes, stairs, small obstacles, moving platforms, and collision results ([Rapier character controller](https://rapier.rs/docs/user_guides/javascript/character_controller/)). |
 | CharacterControllerInput | Improve beyond Needle | Separate input mapping from motion. Supply an optional keyboard/touch preset, but let sites inject actions; include reduced-motion and focus/typing guards. |
 | AlignmentConstraint | Parity gap | Add a low-priority `Span Between Objects` constraint with from/to references, axis, width, and centering. Use time-independent transforms and clear missing-reference diagnostics. |
@@ -52,7 +52,7 @@ Classification means:
 
 ### Post-processing and common actions
 
-| Needle component | Classification | Blendlink disposition |
+| Needle component | Classification | SceneToWeb disposition |
 |---|---|---|
 | Antialiasing | Implemented runtime policy | The shared WebGL post target now requests 2x/4x/8x MSAA for Low/Balanced/High, clamps to the renderer's actual `maxSamples`, and reports the resolved count. It remains runtime quality rather than an artist-authored effect; a physical-device fallback study and TSL TRAA remain future work. |
 | BloomEffect | Implemented core; collection gap | The shared WebGL stack now maps Bright Pixels and Emissive Objects to pmndrs `BloomEffect`/`SelectiveBloomEffect`, with mipmapped blur, quality policy, and selection cleanup. Selected Collection still needs a stable exported collection-membership contract; future target: TSL `bloom`. |
@@ -60,17 +60,17 @@ Classification means:
 | DepthOfField | Implemented | pmndrs `DepthOfFieldEffect` now supports physical focus distance or a rename-stable moving focus object, focus range, blur strength, quality policy, and clipping-range diagnostics. Needle's non-behavioral Gaussian/Bokeh selector was not copied. |
 | PixelationEffect | Implemented | Pixel size is authored in CSS pixels and remains stable across DPR. Zero edge strengths use pmndrs' cheaper color-only effect; optional depth/normal emphasis shares buffers and warns about transparent-edge limits. TSL's `pixelationPass` remains the future renderer reference ([TSL reference](https://threejs.org/docs/pages/TSL.html#pixelationPass)). |
 | ScreenSpaceAmbientOcclusionN8 | Implemented core | The WebGL adapter pins N8AO 1.10.2, provides world/screen radius, tint/intensity, transparency diagnostics, depth-aware half resolution, and bounded adaptive profiles. The inspected published package does **not** implement neural presets; controls from examples, branches, or future releases remain excluded. |
-| SharpeningEffect | Implemented beyond Needle | Blendlink does not port Needle's dynamic `(2r+1)^2` blur loop. One bounded amount controls a fixed-footprint FidelityFX-CAS-style WebGL pass; TSL `sharpen(..., denoise)` remains the future path. |
+| SharpeningEffect | Implemented beyond Needle | SceneToWeb does not port Needle's dynamic `(2r+1)^2` blur loop. One bounded amount controls a fixed-footprint FidelityFX-CAS-style WebGL pass; TSL `sharpen(..., denoise)` remains the future path. |
 | TiltShiftEffect | Implemented | The photographic pmndrs `TiltShiftEffect` adapter exposes focus position, angle, feather, strength, and bounded quality policy before tone mapping. |
-| ToneMappingEffect | Already in Blendlink | Keep one owner: Website Look/render settings. Do not create a second component that can double-apply exposure or tone mapping. |
-| Vignette | Already in Blendlink | Keep Blendlink's intensity, softness, and tint. The inspected Needle runtime only applies intensity-derived offset/darkness even though its schema exposes center/color, so Blendlink already has the more truthful contract. |
-| ChangeMaterialOnClick | Improve beyond Needle | Implement a material-variant action addressed by stable material/slot IDs. Needle's browser path replaces matching materials but its exposed fade is only used by USDZ behavior; Blendlink should either perform a real crossfade or label the switch instant. |
+| ToneMappingEffect | Already in SceneToWeb | Keep one owner: Website Look/render settings. Do not create a second component that can double-apply exposure or tone mapping. |
+| Vignette | Already in SceneToWeb | Keep SceneToWeb's intensity, softness, and tint. The inspected Needle runtime only applies intensity-derived offset/darkness even though its schema exposes center/color, so SceneToWeb already has the more truthful contract. |
+| ChangeMaterialOnClick | Improve beyond Needle | Implement a material-variant action addressed by stable material/slot IDs. Needle's browser path replaces matching materials but its exposed fade is only used by USDZ behavior; SceneToWeb should either perform a real crossfade or label the switch instant. |
 | ChangeTransformOnClick | Parity gap | Add a reusable transform action with position/rotation/scale target, local/world space, duration, easing, interrupt policy, and physics handoff. Use quaternion slerp for rotation. |
 | EmphasizeOnClick | Improve beyond Needle | Implement actual browser hover/click/focus emphasis. The inspected Needle class registers accessibility metadata but its emphasis execution is a USDZ behavior, not a browser click handler. |
-| HideOnStart | Already in Blendlink | Retain. Express internally as initial active state so it composes with later Set Active actions. |
-| LookAt | Already in Blendlink | Retain and extend with aim axis, up policy, invert, and optional damping. |
-| PlayAnimationOnClick | Already in Blendlink | Retain; add crossfade, restart/ignore/queue policy, speed, and clip completion events. |
-| PlayAudioOnClick | Already in Blendlink | Retain; add play/pause/stop/restart and fade duration through the shared audio service. |
+| HideOnStart | Already in SceneToWeb | Retain. Express internally as initial active state so it composes with later Set Active actions. |
+| LookAt | Already in SceneToWeb | Retain and extend with aim axis, up policy, invert, and optional damping. |
+| PlayAnimationOnClick | Already in SceneToWeb | Retain; add crossfade, restart/ignore/queue policy, speed, and clip completion events. |
+| PlayAudioOnClick | Already in SceneToWeb | Retain; add play/pause/stop/restart and fade duration through the shared audio service. |
 | SetActiveOnClick | Parity gap | Add a generic Set/Toggle Visibility action that targets stable IDs and optionally affects interactivity and audio, not only `Object3D.visible`. |
 | AxesHelper | Defer | Provide as a Preview Studio debug overlay, never a shipped component. |
 | GridHelper | Defer | Provide as a Preview Studio debug overlay, never a shipped component. |
@@ -78,7 +78,7 @@ Classification means:
 
 ### Interaction, media, physics, rendering, UI, and web integration
 
-| Needle component | Classification | Blendlink disposition |
+| Needle component | Classification | SceneToWeb disposition |
 |---|---|---|
 | CursorFollow | Parity gap | Add a low-cost `Follow Pointer` constraint with screen/world plane modes, max travel, and reduced-motion fallback. |
 | Deletable | Defer | Its inspected runtime is intertwined with network destruction. A local product-configurator deletion action can be added after the generic action system. |
@@ -86,25 +86,25 @@ Classification means:
 | DragControls | Improve beyond Needle | Split `Drag on Surface` from editor `Transform Gizmo`. Use Pointer Events, ray/plane or surface constraints, pointer capture, and Rapier kinematic motion when physics is present. XR dragging is a separate adapter. |
 | Duplicatable | Defer | Useful for configurators but not foundational. A future local-only version should clone from a stable template, allocate fresh runtime IDs, apply pooling/limits, and avoid networking imports. |
 | EventTrigger | Improve beyond Needle | Build a typed trigger/action graph instead of serializing arbitrary method callbacks. Initial triggers: click, double click, hover enter/leave, focus, key activate, visibility, timer, animation marker, sensor enter/exit. |
-| HoverAnimation | Already in Blendlink | Keep the simple accessible Hover component, then let it author emphasis actions rather than owning a parallel animation subsystem. |
+| HoverAnimation | Already in SceneToWeb | Keep the simple accessible Hover component, then let it author emphasis actions rather than owning a parallel animation subsystem. |
 | ObjectRaycaster | Defer | This is runtime infrastructure. A target should become interactive automatically when it has an interaction component. Accelerate dense static meshes with `three-mesh-bvh` when profiling warrants it. |
-| OpenURL | Already in Blendlink | Retain Blendlink's URL scheme validation and controlled application hook. Provide a semantic link in the accessibility overlay; new tabs must use safe opener isolation. |
+| OpenURL | Already in SceneToWeb | Retain SceneToWeb's URL scheme validation and controlled application hook. Provide a semantic link in the accessibility overlay; new tabs must use safe opener isolation. |
 | SmoothFollow | Parity gap | Add a `Follow Object` constraint with position/rotation channels, dead zone, local/world offsets, and exponential damping. |
 | SpatialTrigger | Improve beyond Needle | Implement as a Rapier sensor/event subscription when physics is enabled and a broadphase spatial index otherwise. Do not repeat Needle's per-frame receiver-by-trigger `BoxHelper` intersection loop. |
 | SpatialTriggerReceiver | Improve beyond Needle | Fold into typed sensor filters on the receiving object; expose layer/tag filters and enter/stay/exit triggers. |
-| AudioSource | Already in Blendlink | Keep the component but port Needle's strongest runtime ideas: one shared listener/context, gesture-safe resume, page-visibility lifecycle, click-free gain ramps, and a dual spatial/non-spatial gain graph. |
-| VideoPlayer | Shipped Boundary plus remaining parity gap | Exact Needle Engine 5.1.7 source (`experiments/needle-spike/node_modules/@needle-tools/engine/src/engine-components/VideoPlayer.ts`, `engine-video-player`, SHA-256 `5307ddd7a03938d32ee46bf5fb13fa5bb7bd1666231f7b096d6111904711249a`) creates an sRGB `VideoTexture`, clones and replaces one scalar target material, and owns playback/media policy. Blendlink's shipped [Website Surface](research-website-surface-needle-2026.md) keeps arbitrary canvas pixels and hover/focus/route state in the application while owning semantic binding, material isolation, invalidation, restoration, and disposal; v1 requires a dedicated Realtime one-material mesh with authored UV0 and keeps baked `setState()` separate. Focused package/Blender/production-browser dogfood passed on 2026-07-25, but no same-fixture Needle execution exists, so cleanup remains an Improvement candidate rather than proven comparative Improvement. A full `Video Surface` with URL/CORS, muted autoplay, audio, loop, poster, fit/crop, and visibility-aware pause remains a parity gap. Three's `VideoTexture` must be recreated when its video source changes ([Three.js `VideoTexture`](https://threejs.org/docs/pages/VideoTexture.html)). |
+| AudioSource | Already in SceneToWeb | Keep the component but port Needle's strongest runtime ideas: one shared listener/context, gesture-safe resume, page-visibility lifecycle, click-free gain ramps, and a dual spatial/non-spatial gain graph. |
+| VideoPlayer | Shipped Boundary plus remaining parity gap | Exact Needle Engine 5.1.7 source (`experiments/needle-spike/node_modules/@needle-tools/engine/src/engine-components/VideoPlayer.ts`, `engine-video-player`, SHA-256 `5307ddd7a03938d32ee46bf5fb13fa5bb7bd1666231f7b096d6111904711249a`) creates an sRGB `VideoTexture`, clones and replaces one scalar target material, and owns playback/media policy. SceneToWeb's shipped [Website Surface](research-website-surface-needle-2026.md) keeps arbitrary canvas pixels and hover/focus/route state in the application while owning semantic binding, material isolation, invalidation, restoration, and disposal; v1 requires a dedicated Realtime one-material mesh with authored UV0 and keeps baked `setState()` separate. Focused package/Blender/production-browser dogfood passed on 2026-07-25, but no same-fixture Needle execution exists, so cleanup remains an Improvement candidate rather than proven comparative Improvement. A full `Video Surface` with URL/CORS, muted autoplay, audio, loop, poster, fit/crop, and visibility-aware pause remains a parity gap. Three's `VideoTexture` must be recreated when its video source changes ([Three.js `VideoTexture`](https://threejs.org/docs/pages/VideoTexture.html)). |
 | Attractor | Defer | Niche physics behavior. It becomes easy to add as a force action after the physics service exists. |
 | BoxCollider | Parity gap | Add to the Rapier batch with trigger mode, friction, restitution, density, collision groups, and visible preview shape. |
 | MeshCollider | Improve beyond Needle | Add with safe defaults: fixed/static trimesh only; offer convex hull for moving bodies; warn on non-applied scale, excessive triangles, and dynamic concave meshes. Rapier documents the supported collider shapes and their tradeoffs ([Rapier colliders](https://rapier.rs/docs/user_guides/javascript/colliders/)). |
 | Rigidbody | Parity gap | Add fixed/dynamic/kinematic modes, gravity scale, damping, axis locks, sleep, CCD, initial velocities, and explicit fixed timestep ownership. |
 | SphereCollider | Parity gap | Add to the Rapier batch. Also add Capsule Collider because it is a common, cheap shape and the Needle Blender catalog omits it despite runtime support. |
 | ContactShadows | Improve beyond Needle | Add optional ground contact shadows with auto-fit, static/on-change update, half-resolution quality, blur, opacity, and an explicit warning when baked grounding already exists. |
-| Fog | Already in Blendlink | Blendlink already supports linear and exponential-squared fog with explicit ownership; the inspected Needle component ultimately installs Three linear `Fog` despite a broader-looking enum. |
-| GroundProjectedEnv | Already in Blendlink | Retain the existing `GroundedSkybox` adapter and artist-facing environment controls. Three provides the reference implementation as [`GroundedSkybox`](https://threejs.org/docs/pages/GroundedSkybox.html). |
-| ReflectionProbe | Already in Blendlink | Retain Blendlink's baked/runtime/custom probe workflow and deterministic ownership. Needle's runtime applies PMREM plus per-renderer material overrides; it does not require a competing component model. |
-| RemoteSkybox | Already in Blendlink | Existing environment/source controls cover the useful behavior. URL/file-drop plumbing stays application-owned. |
-| SeeThrough | Already in Blendlink | Blendlink's camera-to-subject ray test is stronger than Needle's inspected forward-direction dot-product check. Improve it with BVH acceleration, alpha hash/dither mode, and temporary shadow/raycast suppression while faded. |
+| Fog | Already in SceneToWeb | SceneToWeb already supports linear and exponential-squared fog with explicit ownership; the inspected Needle component ultimately installs Three linear `Fog` despite a broader-looking enum. |
+| GroundProjectedEnv | Already in SceneToWeb | Retain the existing `GroundedSkybox` adapter and artist-facing environment controls. Three provides the reference implementation as [`GroundedSkybox`](https://threejs.org/docs/pages/GroundedSkybox.html). |
+| ReflectionProbe | Already in SceneToWeb | Retain SceneToWeb's baked/runtime/custom probe workflow and deterministic ownership. Needle's runtime applies PMREM plus per-renderer material overrides; it does not require a competing component model. |
+| RemoteSkybox | Already in SceneToWeb | Existing environment/source controls cover the useful behavior. URL/file-drop plumbing stays application-owned. |
+| SeeThrough | Already in SceneToWeb | SceneToWeb's camera-to-subject ray test is stronger than Needle's inspected forward-direction dot-product check. Improve it with BVH acceleration, alpha hash/dither mode, and temporary shadow/raycast suppression while faded. |
 | ShadowCatcher | Improve beyond Needle | Ship `Shadow Mask` using Three `ShadowMaterial` and `Occluder` depth-only mode. Keep additive relighting experimental: Needle's path patches shader source with a fixed `6.6` multiplier and `onBeforeCompile`, which is not a portable WebGPU strategy. |
 | Button | Improve beyond Needle | Do not create a separate mesh-button runtime. Any object with an activation trigger can opt into an accessible label, description, role, disabled state, focus treatment, and Space/Enter activation. |
 | DeviceFlag | Improve beyond Needle | Replace UA-based mobile/desktop flags with `Runtime Visibility`: viewport class, coarse/fine pointer, reduced motion, save-data, memory/performance tier, and optional application feature flags. |
@@ -115,7 +115,7 @@ Classification means:
 
 These nine components are excluded, not missing parity: `Networking`, `PlayerColor`, `ScreenCapture`, `SpectatorCamera`, `SyncedCamera`, `SyncedRoom`, `SyncedTransform`, `Voip`, and the networked `Avatar`. Screen capture can be offered later by Preview Studio or the host site without adopting Needle's room/player architecture.
 
-| Needle component | Classification | Blendlink disposition |
+| Needle component | Classification | SceneToWeb disposition |
 |---|---|---|
 | TeleportTarget | Defer | Only useful after a deliberate XR runtime exists. |
 | USDZExporter | Defer | Treat USDZ/Quick Look as a separate compiler/export target, not a Three runtime component. Apple's model-preview path has its own Quick Look contract ([Apple AR Quick Look](https://developer.apple.com/augmented-reality/quick-look/)). |
@@ -138,27 +138,27 @@ The add-on's layout is worth learning from; the runtime implementation should no
 
 - The component picker is target-aware, grouped by outcome, searchable, and driven by declarative field metadata.
 - Post effects register into one `PostProcessingHandler`, and compatible pmndrs effects can be combined in an `EffectPass`. pmndrs explicitly designs `EffectPass` to merge effects and reduce fullscreen render operations, using a single fullscreen triangle ([pmndrs postprocessing](https://github.com/pmndrs/postprocessing#performance)).
-- Runtime-heavy systems are loaded dynamically. Blendlink should preserve that property: a scene without physics, post effects, video, or XR should not download those adapters.
+- Runtime-heavy systems are loaded dynamically. SceneToWeb should preserve that property: a scene without physics, post effects, video, or XR should not download those adapters.
 - `AudioSource` handles browser reality unusually well: gesture unlock, tab visibility, entry ramps, and spatial/non-spatial crossfade are all worth porting as behavior.
-- The installed runtime uses Rapier, N8AO, pmndrs postprocessing, `three-mesh-bvh`, and official Three helpers rather than reinventing every primitive. Blendlink should keep making similarly selective dependencies.
+- The installed runtime uses Rapier, N8AO, pmndrs postprocessing, `three-mesh-bvh`, and official Three helpers rather than reinventing every primitive. SceneToWeb should keep making similarly selective dependencies.
 
 ### Places to exceed Needle
 
 - **Catalog truthfulness:** exposed controls must affect the browser result. In the inspected Vignette runtime, center/color fields are not applied; Depth of Field presents two modes that instantiate the same effect; Change Material's fade does not fade in the normal browser path.
 - **Physics correctness:** Needle's inspected Character Controller moves `gameObject.position` directly and derives grounded state from contact normals. Rapier's built-in KCC already solves motion with shape casts and reports slopes, stairs, moving platforms, and collisions.
 - **Trigger scalability:** Needle's inspected Spatial Trigger loops through receivers/triggers and intersects `BoxHelper`s every frame. Rapier sensor intersections and event queues are both more scalable and semantically correct; collision groups filter work early in the pipeline ([Rapier collision groups](https://rapier.rs/docs/user_guides/javascript/collider_collision_groups/), [simulation events](https://rapier.rs/docs/user_guides/javascript/simulation_structures/)).
-- **Occlusion correctness:** Needle's See Through checks obstacle direction against camera forward every 20 frames. Blendlink already performs the meaningful camera-to-subject query. Three's [`Raycaster`](https://threejs.org/docs/pages/Raycaster.html) plus optional [`three-mesh-bvh`](https://github.com/gkjohnson/three-mesh-bvh) is the better scaling path.
+- **Occlusion correctness:** Needle's See Through checks obstacle direction against camera forward every 20 frames. SceneToWeb already performs the meaningful camera-to-subject query. Three's [`Raycaster`](https://threejs.org/docs/pages/Raycaster.html) plus optional [`three-mesh-bvh`](https://github.com/gkjohnson/three-mesh-bvh) is the better scaling path.
 - **Bounded shader cost:** Needle's sharpening shader uses a radius-dependent nested sample loop. Artist sliders should not accidentally create quadratic GPU work. A fixed-footprint contrast-adaptive pass is safer.
 - **Renderer portability:** Needle's additive shadow catcher uses `onBeforeCompile`; Three documents that custom `ShaderMaterial`, `RawShaderMaterial`, and `onBeforeCompile` modifications do not migrate to `WebGPURenderer` and must be expressed as nodes/TSL ([Three.js WebGPU migration notes](https://threejs.org/manual/en/webgpurenderer#migration)).
-- **Separation of scene and app:** click-through, dropped files, top-window scrolling, QR codes, cloud rooms, and editor gizmos should be host/preview adapters. Keeping them out of the portable scene contract makes Blendlink usable in React, vanilla Three, a custom render loop, and future renderers.
+- **Separation of scene and app:** click-through, dropped files, top-window scrolling, QR codes, cloud rooms, and editor gizmos should be host/preview adapters. Keeping them out of the portable scene contract makes SceneToWeb usable in React, vanilla Three, a custom render loop, and future renderers.
 
 ## Best implementation targets
 
 ### Shared post-processing pipeline first
 
-Blendlink currently creates a Three `EffectComposer` and independent passes for Bloom and Vignette. Before adding more effects, replace that with one `PostPipelineService` that owns color/depth targets, order, resolution, alpha behavior, resize, disposal, and quality changes.
+SceneToWeb currently creates a Three `EffectComposer` and independent passes for Bloom and Vignette. Before adding more effects, replace that with one `PostPipelineService` that owns color/depth targets, order, resolution, alpha behavior, resize, disposal, and quality changes.
 
-For production WebGL, use `postprocessing` 6.39.3 while Blendlink remains on a compatible Three release. That exact published package accepts Three `>=0.168.0 <0.186.0` ([6.39.3 package manifest](https://raw.githubusercontent.com/pmndrs/postprocessing/v6.39.3/package.json)). Pin the compatible pair and enforce it in tests; do not float either independently.
+For production WebGL, use `postprocessing` 6.39.3 while SceneToWeb remains on a compatible Three release. That exact published package accepts Three `>=0.168.0 <0.186.0` ([6.39.3 package manifest](https://raw.githubusercontent.com/pmndrs/postprocessing/v6.39.3/package.json)). Pin the compatible pair and enforce it in tests; do not float either independently.
 
 Canonical phases should be semantic, not an arbitrary artist-reorderable list:
 
@@ -175,7 +175,7 @@ Some effects need a limited `before tone map`/`after tone map` expert option, bu
 | Artist effect | Production WebGL target | Future TSL/WebGPU target | Artist controls and policy |
 |---|---|---|---|
 | Bloom | pmndrs `BloomEffect`; `SelectiveBloomEffect` for collection/selection masks; mipmapped blur | TSL `bloom` | What blooms, intensity, threshold, softness/radius; preview false-color threshold mask. |
-| Vignette | Existing Blendlink tint shader reimplemented as a pmndrs custom `Effect`, so it can fuse with compatible effects | Small TSL node | Amount, softness, roundness/aspect behavior, tint. Keep transparent canvas alpha unchanged. |
+| Vignette | Existing SceneToWeb tint shader reimplemented as a pmndrs custom `Effect`, so it can fuse with compatible effects | Small TSL node | Amount, softness, roundness/aspect behavior, tint. Keep transparent canvas alpha unchanged. |
 | Chromatic aberration | pmndrs `ChromaticAberrationEffect` | TSL `chromaticAberration`/`rgbShift` | Amount in visually bounded units, radial toggle, center. Strong-value warning. |
 | Depth of field | pmndrs `DepthOfFieldEffect` | TSL `dof`, which Three describes as the newer renderer's improved path | Focus object/distance, focus picker, blur strength, quality. Warn for alpha-heavy scenes and tiny near/far ranges. |
 | Pixelation | pmndrs `PixelationEffect` | TSL `pixelationPass` | Pixel size in CSS pixels, optional geometry edges, DPR-stable result. |
@@ -204,7 +204,7 @@ Implementation should therefore have three internal stages: structure tensor/ori
 - **Contact shadows:** keep Needle's useful orthographic depth + separable blur concept, but update only when required. `Static`, `On Change`, and `Every Frame` must be explicit. Auto-fit should ignore collision proxies/helpers and use the rendered subject bounds. Disable or warn when the baked appearance already includes grounding.
 - **Shadow catcher:** Three's [`ShadowMaterial`](https://threejs.org/docs/pages/ShadowMaterial.html) is the production basis for a transparent shadow mask. An occluder uses depth write with color write disabled. Additive relighting remains experimental until it has a physically explainable composition and a TSL path.
 - **See through:** keep camera-to-subject ray or shapecast semantics. Use a shared material override cache, dither/alpha-hash option, and a stable set-diff so entering/leaving obstacles do not allocate every frame. Dense static meshes can opt into BVH acceleration.
-- **Reflection/environment:** stay system-owned. Ground projection, probes, tone mapping, and fog should not be duplicated as arbitrary stack components when Blendlink already has deterministic scene-level ownership.
+- **Reflection/environment:** stay system-owned. Ground projection, probes, tone mapping, and fog should not be duplicated as arbitrary stack components when SceneToWeb already has deterministic scene-level ownership.
 
 ### Physics and spatial interaction
 
@@ -242,8 +242,8 @@ Sensor Enter(DoorZone, layer=Visitor) -> Play Clip(Door, "Open")
 Scroll Progress(Hero) -> Set Timeline Progress(HeroReveal)
 ```
 
-Keep that graph as Blendlink's artist-facing model, but lower the portable
-subset to standards instead of trapping every behavior in a Blendlink-only
+Keep that graph as SceneToWeb's artist-facing model, but lower the portable
+subset to standards instead of trapping every behavior in a SceneToWeb-only
 runtime. The first compiler target to evaluate is Khronos
 [`KHR_interactivity`](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_interactivity/Specification.adoc).
 Where a behavior is more specifically represented by a ratified glTF
@@ -253,10 +253,10 @@ hierarchical active state through
 [`KHR_node_visibility`](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_node_visibility/README.md),
 and material/camera/extension-property animation through
 [`KHR_animation_pointer`](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_animation_pointer/README.md).
-Blendlink still needs its own runtime adapter and validation because Three.js
+SceneToWeb still needs its own runtime adapter and validation because Three.js
 support is not universal, but the authored graph should have a deterministic,
 inspectable standard lowering whenever its semantics fit. Unsupported nodes
-remain explicit Blendlink extensions rather than being approximated silently.
+remain explicit SceneToWeb extensions rather than being approximated silently.
 
 Pointer handling should use the device-agnostic Pointer Events model rather than separate mouse/touch paths ([W3C Pointer Events](https://www.w3.org/TR/pointerevents3/)). Any object with Activate must also create or integrate with a DOM accessibility target. A button activates on Space and Enter and needs an accessible name; a navigation action should be a semantic link rather than a button-shaped div ([WAI-ARIA button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/)). Focus, disabled/toggle state, keyboard activation, visible focus treatment, and `prefers-reduced-motion` are acceptance criteria, not optional polish.
 
@@ -297,7 +297,7 @@ interface PortableComponentRecord {
 }
 ```
 
-New component types and optional definition metadata are additive. Object/material/collection/asset references can initially follow the current `...Id` plus diagnostic `...Name` convention. If Blendlink later introduces a tagged reference object, per-type schema versions, material targets, or an authored graph envelope, that is a real schema reshape and must bump the relevant manifest/component version with a migration; readers must refuse unsupported versions loudly.
+New component types and optional definition metadata are additive. Object/material/collection/asset references can initially follow the current `...Id` plus diagnostic `...Name` convention. If SceneToWeb later introduces a tagged reference object, per-type schema versions, material targets, or an authored graph envelope, that is a real schema reshape and must bump the relevant manifest/component version with a migration; readers must refuse unsupported versions loudly.
 
 Unknown namespaced records must continue to round-trip. An enabled component with no installed runtime adapter remains a loud publish/runtime error, never a silent skip.
 
@@ -488,7 +488,7 @@ Exit criterion: Bloom and Vignette run through the service with identical or bet
 6. Color Grade LUT, Chromatic Aberration, Pixelation, and bounded Sharpen.
 7. AA as runtime policy and a canonical single tone/output stage.
 
-This batch intentionally goes beyond Needle in the area most aligned with Blendlink's promise: giving Blender artists a beautiful website result without shader engineering.
+This batch intentionally goes beyond Needle in the area most aligned with SceneToWeb's promise: giving Blender artists a beautiful website result without shader engineering.
 
 ### Batch 2 — photographic presentation and grounding
 
@@ -503,7 +503,7 @@ Exit criterion: every effect documents transparency, orthographic support, quali
 
 ### Batch 3 — coherent interaction instead of one-off click scripts
 
-1. Typed triggers, conditions, and actions. Define and test a standards-lowering table for `KHR_interactivity`, `KHR_materials_variants`, `KHR_node_visibility`, and `KHR_animation_pointer`; retain explicit Blendlink adapters for semantics outside those contracts.
+1. Typed triggers, conditions, and actions. Define and test a standards-lowering table for `KHR_interactivity`, `KHR_materials_variants`, `KHR_node_visibility`, and `KHR_animation_pointer`; retain explicit SceneToWeb adapters for semantics outside those contracts.
 2. Set Active, Transform, Material Variant, Emphasize, animation/audio action upgrades.
 3. DOM accessibility overlay with button/link semantics, focus, keyboard, labels, and reduced-motion behavior.
 4. Follow Pointer, Follow Object, Span Between, and constraint smoothing.
@@ -633,4 +633,4 @@ XR/export files inspected include `webxr\WebXR.ts`, its controller/session compa
 
 ## Bottom line
 
-The market-worthy version of component parity is not “84 cards.” It is a dependable visual and interaction language that an artist can author in Blender, preview immediately, and trust across ordinary Three.js sites. The highest-leverage sequence is shared renderer/runtime foundations, then a visibly superior effects stack—especially selective bloom, modern AO, outlines, LUT grading, and a research-grounded Kuwahara—followed by one coherent trigger/action system and robust Rapier/audio services. That path covers more real scenes than copying Needle's component surface one class at a time, while keeping Blendlink small enough for solo developers and small teams.
+The market-worthy version of component parity is not “84 cards.” It is a dependable visual and interaction language that an artist can author in Blender, preview immediately, and trust across ordinary Three.js sites. The highest-leverage sequence is shared renderer/runtime foundations, then a visibly superior effects stack—especially selective bloom, modern AO, outlines, LUT grading, and a research-grounded Kuwahara—followed by one coherent trigger/action system and robust Rapier/audio services. That path covers more real scenes than copying Needle's component surface one class at a time, while keeping SceneToWeb small enough for solo developers and small teams.

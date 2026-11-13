@@ -170,7 +170,7 @@ describe('compiled scene conformance', () => {
     const report = inspectCompiledSceneConformance({
       gltf: gltf({
         materials: [{
-          name: 'Blendlink Blender Default',
+          name: 'SceneToWeb Blender Default',
           pbrMetallicRoughness: { baseColorFactor: [0.8, 0.8, 0.8, 1] },
           extras: { blendlink_generated: 'blender-default-material' },
         }],

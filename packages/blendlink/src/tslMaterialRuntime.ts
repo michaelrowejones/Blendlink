@@ -196,13 +196,13 @@ async function defaultProgramTexture(
 ): Promise<THREE.Texture> {
   const response = await fetch(url, signal ? {signal} : undefined)
   if (!response.ok) {
-    throw new Error(`Blendlink program image fetch failed (${response.status}) for ${url}`)
+    throw new Error(`SceneToWeb program image fetch failed (${response.status}) for ${url}`)
   }
   const payload = new Uint8Array(await response.arrayBuffer())
   if (payload.byteLength !== entry.bytes) {
     throw new Error(
-      `Blendlink program image at ${url} is ${payload.byteLength} bytes; the sidecar pins ` +
-        `${entry.bytes}. Re-run blendlink compile and republish together.`,
+      `SceneToWeb program image at ${url} is ${payload.byteLength} bytes; the sidecar pins ` +
+        `${entry.bytes}. Re-run scenetoweb compile and republish together.`,
     )
   }
   const digest = await crypto.subtle.digest(
@@ -212,7 +212,7 @@ async function defaultProgramTexture(
     .map((item) => item.toString(16).padStart(2, '0')).join('').slice(0, 16)
   if (hash !== entry.hash) {
     throw new Error(
-      `Blendlink program image at ${url} hash ${hash}; the sidecar pins ${entry.hash}.`,
+      `SceneToWeb program image at ${url} hash ${hash}; the sidecar pins ${entry.hash}.`,
     )
   }
   const bitmap = await createImageBitmap(
@@ -252,7 +252,7 @@ export async function loadProgramTextures(
   const decoded = new Map<string, THREE.Texture>()
   const aborted = (): void => {
     if (!options.signal?.aborted) return
-    const error = new Error('Blendlink program texture loading aborted')
+    const error = new Error('SceneToWeb program texture loading aborted')
     error.name='AbortError';throw error
   }
   try {
@@ -367,7 +367,7 @@ export async function installTslMaterials(
   }
   const aborted = (): void => {
     if (!options.signal?.aborted) return
-    const error = new Error('Blendlink material installation aborted')
+    const error = new Error('SceneToWeb material installation aborted')
     error.name = 'AbortError';throw error
   }
   aborted()

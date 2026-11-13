@@ -46,14 +46,14 @@ export async function fetchMaterialPrograms(pointer: {
   const response = await fetch(pointer.url, signal ? {signal} : undefined)
   if (!response.ok) {
     throw new Error(
-      `Blendlink material programs fetch failed (${response.status}) for ${pointer.url}`,
+      `SceneToWeb material programs fetch failed (${response.status}) for ${pointer.url}`,
     )
   }
   const payload = new Uint8Array(await response.arrayBuffer())
   if (payload.byteLength !== pointer.bytes) {
     throw new Error(
-      `Blendlink material programs at ${pointer.url} are ${payload.byteLength} bytes; ` +
-        `the descriptor pins ${pointer.bytes}. Re-run blendlink compile and republish together.`,
+      `SceneToWeb material programs at ${pointer.url} are ${payload.byteLength} bytes; ` +
+        `the descriptor pins ${pointer.bytes}. Re-run scenetoweb compile and republish together.`,
     )
   }
   const digest = await crypto.subtle.digest(
@@ -63,15 +63,15 @@ export async function fetchMaterialPrograms(pointer: {
     .map((item) => item.toString(16).padStart(2, '0')).join('').slice(0, 16)
   if (hash !== pointer.hash) {
     throw new Error(
-      `Blendlink material programs at ${pointer.url} hash ${hash}; the descriptor pins ` +
-        `${pointer.hash}. Re-run blendlink compile and republish together.`,
+      `SceneToWeb material programs at ${pointer.url} hash ${hash}; the descriptor pins ` +
+        `${pointer.hash}. Re-run scenetoweb compile and republish together.`,
     )
   }
   const document = JSON.parse(new TextDecoder().decode(payload)) as MaterialProgramsDocument
   if (document?.schemaVersion !== 1
     || document.model !== 'blendlink-material-programs-v1') {
     throw new Error(
-      `Blendlink material programs at ${pointer.url} use unsupported model ` +
+      `SceneToWeb material programs at ${pointer.url} use unsupported model ` +
         `${JSON.stringify({ schemaVersion: document?.schemaVersion, model: document?.model })}.`,
     )
   }

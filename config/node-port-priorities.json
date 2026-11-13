@@ -1407,7 +1407,7 @@
     }
   },
   "researchNotes": {
-    "compositor:FunctionNodeFloatToInt": "Native research only: compositor exists in 5.3; earlier Geometry-only tests and browser trials do not promote live support. Shader creation is rejected in all audited versions.",
+    "compositor:FunctionNodeFloatToInt": "Qualified partial literal production port on measured Blender 5.3 macOS arm64: all four modes, native typed consumers and actual saved Final/browser proof. Computed/image fields, other platforms and implicit conversions remain unqualified; native subnormal and save/reopen image counterexamples are retained. Earlier Geometry-only/private kernel trials grant no additional support. Shader creation is rejected in all audited versions.",
     "shader:ShaderNodeRadialTiling": "Research only, no production emitter/runtime port. The actual official Radial demo is refused by Final; native and private kernel trials retain their separate domain limits.",
     "compositor:ShaderNodeRadialTiling": "Native context availability and separate shader research do not constitute a compositor port.",
     "shader:ShaderNodeLightFalloff": "Native EEVEE/Cycles differences justify an engine-fallback safety guard, not a live Light Falloff port.",
@@ -1419,7 +1419,8 @@
   ],
   "researchEvidencePaths": {
     "compositor:FunctionNodeFloatToInt": [
-      "experiments/float-to-int-native/README.md"
+      "experiments/float-to-int-native/README.md",
+      "experiments/float-to-int-native/literal-evidence.json"
     ],
     "shader:ShaderNodeRadialTiling": [
       "experiments/radial-tiling-research/README.md"

@@ -1,5 +1,5 @@
 {
-  "name": "blendlink-monorepo",
+  "name": "scenetoweb-monorepo",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -8,7 +8,7 @@
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test:unit",
     "test:unit": "npm run test --workspaces --if-present && npm run test:release-policy",
-    "test:release-policy": "node --test scripts/runtime-provenance.test.mjs scripts/source-hygiene.test.mjs scripts/production-audit-policy.test.mjs scripts/package-license-contract.test.mjs scripts/verify-retained-release.test.mjs scripts/release-workflow-policy.test.mjs scripts/node-parity-plan.test.mjs scripts/difference-profile-refusal.test.mjs scripts/channel-profile-refusal.test.mjs scripts/split-source-profile.test.mjs scripts/magic-coverage-policy.test.mjs scripts/map-value-profile.test.mjs scripts/legacy-hsv-coverage-policy.test.mjs scripts/distance-arithmetic-policy.test.mjs scripts/difference-precision-policy.test.mjs scripts/vector-component-coverage-policy.test.mjs scripts/compositor-component-policy.test.mjs experiments/luma-cpu-precision/precision-protocol.test.mjs scripts/camera-data-coverage-policy.test.mjs experiments/squeeze-node-differential/protocol.test.mjs",
+    "test:release-policy": "node --test scripts/runtime-provenance.test.mjs scripts/source-hygiene.test.mjs scripts/production-audit-policy.test.mjs scripts/package-license-contract.test.mjs scripts/verify-retained-release.test.mjs scripts/release-workflow-policy.test.mjs scripts/node-parity-plan.test.mjs scripts/difference-profile-refusal.test.mjs scripts/channel-profile-refusal.test.mjs scripts/split-source-profile.test.mjs scripts/magic-coverage-policy.test.mjs scripts/map-value-profile.test.mjs scripts/legacy-hsv-coverage-policy.test.mjs scripts/distance-arithmetic-policy.test.mjs scripts/difference-precision-policy.test.mjs scripts/vector-component-coverage-policy.test.mjs scripts/compositor-component-policy.test.mjs experiments/luma-cpu-precision/precision-protocol.test.mjs scripts/camera-data-coverage-policy.test.mjs experiments/squeeze-node-differential/protocol.test.mjs experiments/float-to-int-native/literal_protocol.test.mjs",
     "test:map-value-profile": "node --test scripts/map-value-profile.test.mjs",
     "audit:production": "node scripts/verify-production-audit.mjs",
     "test:consumer": "npm run build && node scripts/test-consumer-builds.mjs",
@@ -28,7 +28,7 @@
     "test:r3f-animation-transport-browser": "node experiments/r3f-animation-transport-browser/run.mjs",
     "test:r3f-orbit-demand-browser": "node experiments/r3f-orbit-demand-browser/run.mjs",
     "test:r3f-missing-companion-browser": "npm run build && node experiments/r3f-missing-companion-browser/run.mjs",
-    "test:fixed-camera-surface-browser": "npm run build --workspace blendlink && node experiments/fixed-camera-surface-browser/run.mjs",
+    "test:fixed-camera-surface-browser": "npm run build --workspace scenetoweb && node experiments/fixed-camera-surface-browser/run.mjs",
     "test:static-shade-floor-browser": "node experiments/static-shade-floor-browser/run.mjs",
     "test:graph-deployment-browser": "node experiments/graph-deployment-browser-gate/run.mjs",
     "test:wgpu-postprocessing-parity": "node experiments/wgpu-postprocessing-parity/run.mjs",

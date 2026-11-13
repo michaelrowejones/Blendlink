@@ -9,35 +9,35 @@
 ## Conclusion
 
 The user-supplied [Blender 5.2 glTF manual][blender-manual] is directly useful
-to Blendlink. It describes an exporter grammar, not merely a file command:
+to SceneToWeb. It describes an exporter grammar, not merely a file command:
 portable materials include specific node patterns. This audit found three
-places where Blendlink's material diagnostic grammar was narrower than the
+places where SceneToWeb's material diagnostic grammar was narrower than the
 pinned exporter, then closed them without making the grammar generally
 permissive.
 
 The compact differential found three actionable results:
 
-1. Blendlink already preserves the tested stock material path extremely well.
+1. SceneToWeb already preserves the tested stock material path extremely well.
    The broad compiled GLB is byte-for-byte identical to a direct stock export
    using the pinned Needle 1.4.2 argument family. Blender emitted the tested
    core material fields plus twelve material/texture extensions, and installed
    Three r184 loaded every result into the expected material fields.
-2. Blendlink had one verified **false-positive blocker**: Blender 5.2's
+2. SceneToWeb had one verified **false-positive blocker**: Blender 5.2's
    documented/exporter-recognized textured alpha-clip `Math` graph emits
    `alphaMode: "MASK"` and `alphaCutoff`, and Three r184 loads it as
-   `alphaTest`. Blendlink now recognizes only the five direct exporter
+   `alphaTest`. SceneToWeb now recognizes only the five direct exporter
    topologies covered by the focused headless matrix. Arbitrary Math, reused
    clip output, and a Noise source remain loud blockers.
 3. Two nonblocking diagnostics overstated loss. Full `Sheen Weight = 1` and a
    correctly paired `glTF Material Output` thin-film/iridescence setup are
-   emitted and loaded. Blendlink now marks those verified contexts Exact while
+   emitted and loaded. SceneToWeb now marks those verified contexts Exact while
    keeping partial/linked sheen and unpaired/linked thin film non-Exact.
 
 The deliberately unsupported Noise Texture control is also valuable:
 Blender's stock path emits a fallback material with no procedural texture,
-whereas Blendlink refuses publication and names the loss. The inspected Needle
+whereas SceneToWeb refuses publication and names the loss. The inspected Needle
 1.4.2 export wrapper has no analogous preflight at that seam. This is a
-verified Blendlink improvement in failure behavior, not a visual comparison.
+verified SceneToWeb improvement in failure behavior, not a visual comparison.
 
 Production diagnostics, focused add-on regressions, and this experiment were
 changed. The shared technique ledger and feature-parity record now carry the
@@ -61,8 +61,8 @@ not inferred from TypeScript declarations.
 | Exporter material search grammar | `blender/exp/material/search_node_tree.py`; SHA-256 `0c037d078db37da3b6d65054206a9f55d19fa5f8ca6542f5add614230c39f7e9` |
 | Pinned Needle add-on | 1.4.2 |
 | Needle export wrapper | `blender_export.py`; SHA-256 `6272997cfb4f1d740ea33a7c2512983b9993dedf93c9c8240ca0ff7f82925d77` |
-| Blendlink | package 0.8.0; tested built CLI SHA-256 `c9ee7428199d964f5e1599fb913f4267772ab85aec76730c780086c3be2f47a9` |
-| Blendlink diagnostic module | `packages/blender-addon/procedural.py`; SHA-256 `fa5a921e74316aa437751baed9066d737125229f945df359dd9447c178d6d042` |
+| SceneToWeb | package 0.8.0; tested built CLI SHA-256 `c9ee7428199d964f5e1599fb913f4267772ab85aec76730c780086c3be2f47a9` |
+| SceneToWeb diagnostic module | `packages/blender-addon/procedural.py`; SHA-256 `fa5a921e74316aa437751baed9066d737125229f945df359dd9447c178d6d042` |
 | Three | 0.184.0; `package.json` SHA-256 `8308e43d6d6dd4c636c2dfe2e724da07dcd9fe4349bba6afb56f2c5ba6625391` |
 | Installed Three loader | `node_modules/three/examples/jsm/loaders/GLTFLoader.js`; SHA-256 `97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2` |
 
@@ -81,7 +81,7 @@ Blender release family.
 
 The three relaxed diagnostics are enabled only when the runtime exporter
 reports the exact `io_scene_gltf2.bl_info.version` tuple `(5, 2, 39)`.
-Blendlink's add-on still supports Blender 4.2 and later, but this experiment
+SceneToWeb's add-on still supports Blender 4.2 and later, but this experiment
 does not claim that 4.2 through 5.1—or a future exporter after 5.2.39—uses the
 same material grammar. Unknown, older, and newer exporter revisions therefore
 retain the pre-fix conservative behavior:
@@ -136,7 +136,7 @@ editor warning.
 
 `create_fixtures.py` regenerates three small `.blend` files with factory
 startup, Eevee as source engine, one frame, packed 2×2 textures, and no
-scene-specific Blendlink configuration:
+scene-specific SceneToWeb configuration:
 
 | Fixture | Purpose |
 | --- | --- |
@@ -150,7 +150,7 @@ The runner:
 2. records source, fixture, and output hashes;
 3. parses GLB JSON without rewriting it;
 4. calls the installed Three r184 `GLTFLoader`;
-5. runs zero-configuration Blendlink plans for all three cells;
+5. runs zero-configuration SceneToWeb plans for all three cells;
 6. compiles the accepted broad and alpha-mask cells;
 7. checks both compiled GLBs against the direct stock bytes; and
 8. asserts the positive contexts and the independent negative controls.
@@ -199,12 +199,12 @@ observations include:
 | Unlit | `KHR_materials_unlit` | `MeshBasicMaterial` |
 | Texture transform | offset `[0.102239..., 0.397331...]`, rotation `0.3`, scale `[2, 0.5]` | matching map offset/rotation/repeat |
 
-Blendlink compiled this cell successfully. Its stable GLB and addressed copy
+SceneToWeb compiled this cell successfully. Its stable GLB and addressed copy
 are both 19,192 bytes with the **same SHA-256 as the direct stock GLB**. This
 is verified byte preservation for this fixture and toolchain, not a universal
 claim about all Blender scenes.
 
-Blendlink's manifest now records all ten materials as `Exact glTF`, zero as
+SceneToWeb's manifest now records all ten materials as `Exact glTF`, zero as
 `Approximated`, and zero as `Needs Bake`. Focused regressions separately keep
 partial/linked sheen and unpaired/linked thin film non-Exact.
 
@@ -225,7 +225,7 @@ It contains:
 Three r184 creates a `MeshStandardMaterial` with `alphaTest: 0.41999999` and
 the base-color/alpha texture attached.
 
-Blendlink plan now exits 0. Compile succeeds, the stable and addressed output
+SceneToWeb plan now exits 0. Compile succeeds, the stable and addressed output
 remain byte-for-byte identical to the direct stock GLB, and the manifest
 contains one `Exact glTF` material.
 
@@ -243,7 +243,7 @@ The stock GLB is 2,616 bytes with SHA-256
 The Noise Texture has no editable glTF representation; the resulting material
 contains only fallback core factors and Three loads that fallback.
 
-Blendlink plan exits 1 with:
+SceneToWeb plan exits 1 with:
 
 ```text
 material.used-needs-bake
@@ -263,12 +263,12 @@ The local evidence cells below map into the shared technique ledger as follows:
 
 | ID | Capability | Relation to pinned Needle export seam | Implementation | Evidence |
 | --- | --- | --- | --- | --- |
-| B52-MAT-001 | Core Principled, direct alpha blend, unlit, image, UV mapping/transform | **Match** | **Shipped** | **Verified 2026-07-25**: direct stock structure, Three r184 load, Blendlink compile, byte-identical broad GLB |
+| B52-MAT-001 | Core Principled, direct alpha blend, unlit, image, UV mapping/transform | **Match** | **Shipped** | **Verified 2026-07-25**: direct stock structure, Three r184 load, SceneToWeb compile, byte-identical broad GLB |
 | B52-MAT-002 | Clearcoat, transmission, volume, IOR, specular, anisotropy, emissive strength, sheen, iridescence, dispersion | **Match** for tested constants | **Shipped** | **Verified 2026-07-25** structurally and through Three r184; browser pixels not tested |
-| B52-MAT-003 | Exporter-recognized alpha-clip Math topology | **Match** | **Shipped** | **Verified 2026-07-25**: stock `MASK` + cutoff; Three `alphaTest`; Blendlink plan/compile pass; byte-identical GLB; five positive and three negative headless shapes |
+| B52-MAT-003 | Exporter-recognized alpha-clip Math topology | **Match** | **Shipped** | **Verified 2026-07-25**: stock `MASK` + cutoff; Three `alphaTest`; SceneToWeb plan/compile pass; byte-identical GLB; five positive and three negative headless shapes |
 | B52-MAT-004 | Full `Sheen Weight = 1` diagnostic | **Match** | **Shipped** | **Verified 2026-07-25**: exporter/Three represent full sheen; manifest Exact; 0/1, partial, linked, older-exporter, and newer-exporter headless matrix |
 | B52-MAT-005 | Paired glTF Material Output thin-film/iridescence diagnostic | **Match** | **Shipped** | **Verified 2026-07-25**: factors emitted/loaded; manifest Exact; paired, disabled, noncanonical, unpaired, linked, older-exporter, and newer-exporter headless matrix |
-| B52-MAT-006 | Unsupported procedural material refusal | **Improvement** | **Shipped** | **Verified 2026-07-25** at the export seam: stock fallback vs Blendlink named exit 1; authenticated Needle browser run not performed |
+| B52-MAT-006 | Unsupported procedural material refusal | **Improvement** | **Shipped** | **Verified 2026-07-25** at the export seam: stock fallback vs SceneToWeb named exit 1; authenticated Needle browser run not performed |
 
 ## Implemented general fixes
 
@@ -284,7 +284,7 @@ matcher accepts only the installed exporter's direct clip patterns:
 
 The matcher exempts only the structural Math nodes; ordinary traversal still
 inspects the upstream source. Arbitrary Math and a recognized clip fed by
-Noise remain `Needs Bake`. Blendlink additionally requires exclusive clip
+Noise remain `Needs Bake`. SceneToWeb additionally requires exclusive clip
 output use, a stricter guard than the exporter that prevents an alpha helper
 from making an unrelated PBR socket look portable.
 
@@ -310,7 +310,7 @@ Both changes are keyed to tested exporter behavior. The thin-film matcher
 requires the canonical `glTF Material Output*` datablock prefix, enabled
 unlinked factor, minimum input, and constant positive Principled thickness.
 The installed exporter 5.2.39 contains a nested-`any` bug that can accept an
-arbitrarily named group. Blendlink intentionally does not bless that accidental
+arbitrarily named group. SceneToWeb intentionally does not bless that accidental
 shape: the headless matrix keeps a noncanonical group `Approximated`.
 
 ### 3. Preserved negative control
@@ -327,7 +327,7 @@ This audit proves:
 - exact installed-source identity;
 - emitted GLB structure;
 - Three r184 loader field construction;
-- Blendlink planning behavior; and
+- SceneToWeb planning behavior; and
 - byte preservation for the broad and alpha-mask compiled fixtures.
 
 It does not prove:
@@ -361,9 +361,9 @@ Expected sentinel:
 BLENDLINK_BLENDER_52_EXPORTER_CELLS_PASSED exporter=06ad0a3f28605ab8d52aea0703c522488b2821cb9e2d6d91b70673a1c967a66a stock=3 compiled=ae8f231eb6294831e371aad9ec3477a3b18a0971264e5bd7772bd1d18b65c27d alpha=5c8c57460d18c09f56722f95a577f674fb65bc32852fb95b9fb2ccb2c03095ba
 ```
 
-On Windows, Blendlink compilation also writes its normal publication lease
+On Windows, SceneToWeb compilation also writes its normal publication lease
 under the user's local AppData directory. A restricted sandbox therefore needs
-the same permission as any ordinary `blendlink compile`.
+the same permission as any ordinary `scenetoweb compile`.
 
 Evidence files:
 

@@ -34,7 +34,7 @@ const carrierMissing = {
   subject: 'eyes',
   affects: ['Eyes'],
   summary: 'Material "eyes" reaches the runtime with no carrier.',
-  fix: 'Give the material a colour Blendlink can carry.',
+  fix: 'Give the material a colour SceneToWeb can carry.',
 }
 
 describe('glb conformance verification', () => {
@@ -89,7 +89,7 @@ describe('glb conformance verification', () => {
     expect(partlyWaived[0]?.problem).toContain('A waiver already covers "eyes"')
   })
 
-  it('warns rather than blocks where Blendlink substituted on purpose', () => {
+  it('warns rather than blocks where SceneToWeb substituted on purpose', () => {
     // A mesh with no material of its own gets a neutral dielectric so the
     // surface is visible. Naming that is useful; refusing to publish it is
     // not, and the same is true of a joint count the classic WebGL runtime
@@ -99,7 +99,7 @@ describe('glb conformance verification', () => {
       conformance([{
         code: 'conformance.blender-default-material-bound',
         location: '/materials/0',
-        subject: 'Blendlink Blender Default',
+        subject: 'SceneToWeb Blender Default',
         affects: ['hair.scalp'],
         summary: '2 primitive(s) had no material of their own.',
         fix: 'Assign a material to those meshes in Blender.',

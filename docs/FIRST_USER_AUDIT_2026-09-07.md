@@ -1,6 +1,6 @@
 # First-user audit, 2026-09-07
 
-Blendlink can already take a saved, authored Blender scene through a local
+SceneToWeb can already take a saved, authored Blender scene through a local
 browser preview and into an existing Three.js or React Three Fiber website.
 The useful next step is a small private artist pilot. Public distribution still
 needs independent release evidence and a clearer supported scene/device scope.
@@ -22,7 +22,7 @@ This inventory does not imply that every feature received fresh visual testing.
 The main integration boundary is useful: Blender owns authored scene intent;
 the website owns its renderer, Canvas, page UI and hosting. The generated
 installer follows the manifest's companion assets. A generic GLB loader alone
-does not reproduce every authored Blendlink setting.
+does not reproduce every authored SceneToWeb setting.
 
 ## Failures found and fixed
 
@@ -73,7 +73,7 @@ Environment: Windows, Node 24.15.0, npm 11.12.1, Blender 5.2.0 LTS, Three
 | `node scripts/test-baked-e2e.mjs` after build | Passed the real Blender multi-state bake/export/verify paths, including HDR decoding |
 | `environment_payload_check.py` in real Blender | Bad packed/linked payloads refused before publication; valid HDR/EXR bytes preserved |
 | Isolated add-on installation | Installed and enabled compiler-matching 0.9.0 in a disposable Blender profile |
-| Actual Set Up Blendlink Scene operator | Finished on the default scene, created the Main atlas recipe, saved a real `.blend` |
+| Actual Set Up SceneToWeb Scene operator | Finished on the default scene, created the Main atlas recipe, saved a real `.blend` |
 | First-scene Live Preview | Browser-verified Ready; a material change and Blender save produced a different verified generation automatically |
 | Existing Three and R3F sites | Local archive installation, connect, Preview compilation and Final publish/build passed; connect preserved application source |
 | Production browsers | Visible scene and no page errors in both sites; WebGPU-family examples and WebGL variants checked, plus independent installed consumers outside the checkout |
@@ -334,7 +334,7 @@ for a cold two-sample compile, retaining 2,314,974 triangles. A subsequent fresh
 Blender process missed the preparation cache. Two isolated input probes found
 different evaluated UV bytes on 17 meshes, including Bevel-affected furniture
 and beams; their reported changed attributes were source UVs and the staged
-atlas layer. Blendlink retains exact matching and falls back to preparation.
+atlas layer. SceneToWeb retains exact matching and falls back to preparation.
 No cache speedup is claimed for this file. The earlier 398.1-second run is not
 a controlled comparison against this cold run.
 

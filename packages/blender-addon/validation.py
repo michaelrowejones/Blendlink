@@ -373,7 +373,7 @@ def _material_fidelity(item: dict) -> FidelityItem:
             f"Material: {name}",
             "Realize",
             (
-                f"Blendlink Web Color {source_label or 'selection'} will compile through "
+                f"SceneToWeb Web Color {source_label or 'selection'} will compile through "
                 f"{transport}. {limitations}"
             ).strip(),
         )
@@ -721,7 +721,7 @@ def recompute(scene) -> bool:
             object_name=warning.object_name,
             blocking=warning.blocking,
             remedy=(
-                "Open this light's Data Properties and review Blendlink Web "
+                "Open this light's Data Properties and review SceneToWeb Web "
                 "Light; an Area light also has a Website Area Light mode there."
             ),
         ))
@@ -740,13 +740,13 @@ def recompute(scene) -> bool:
                 severity="WARNING",
                 message=(
                     f'Linked object "{obj.name}" has no persistent web identity. '
-                    "Open its source .blend with Blendlink enabled and save it once."
+                    "Open its source .blend with SceneToWeb enabled and save it once."
                 ),
                 object_name=obj.name,
             ))
         elif isinstance(identity, str) and identity and identity_counts[identity] > 1:
             remedy = (
-                "Open its source .blend with Blendlink enabled and save it once."
+                "Open its source .blend with SceneToWeb enabled and save it once."
                 if not getattr(obj, "is_editable", True)
                 else "Save this .blend once before publishing."
             )

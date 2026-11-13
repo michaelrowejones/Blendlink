@@ -137,7 +137,7 @@ async function publication(aligned = false, declared = true) {
   const bytes = new TextEncoder().encode(JSON.stringify(programs))
   const manifest = {
     schemaVersion: 3,
-    generator: 'blendlink',
+    generator: 'scenetoweb',
     url: '/normal.glb',
     hash: createHash('sha256').update(glbBytes).digest('hex').slice(0, 16),
     stats: { bytes: glbBytes.length, triangles: 1, meshes: 1, texturesBytes: 0 },

@@ -101,10 +101,10 @@ export interface CompiledSceneDescriptor {
     lossless: true
   }[]>>
   /** Direct evidence from the decoded GLB. External KTX2 scenes may require
-   * a decoder without having a Blendlink optimization report. */
+   * a decoder without having a SceneToWeb optimization report. */
   requiresKtx2?: boolean
   /** Direct evidence from the decoded GLB. External Meshopt scenes may
-   * require a decoder without having a Blendlink optimization report. */
+   * require a decoder without having a SceneToWeb optimization report. */
   requiresMeshopt?: boolean
   /** Exact compiler-owned request graph. The current descriptor may still
    * point at a mutable directory until graph-addressed publication is enabled. */
@@ -251,7 +251,7 @@ export interface CompiledSceneDescriptor {
 
 export interface CompiledSceneLoaderOptions extends MeshoptWorkerOptions {
   /** A Three.js KTX2Loader already configured with transcoder path and
-   * detectSupport(renderer). Blendlink cannot infer the site's renderer. */
+   * detectSupport(renderer). SceneToWeb cannot infer the site's renderer. */
   ktx2Loader?: unknown
 }
 
@@ -365,7 +365,7 @@ export interface RendererLookLike {
   toneMappingExposure?: number
   setClearAlpha?(alpha: number): unknown
   /** Three.js exposes this alongside setClearAlpha(). It is required when
-   * Blendlink owns transparency so the previous application value can be
+   * SceneToWeb owns transparency so the previous application value can be
    * restored without guessing. */
   getClearAlpha?(): number
   getContextAttributes?(): { alpha?: boolean } | null
@@ -417,7 +417,7 @@ export interface CompiledSceneEnvironmentOptions {
   /** Receives a recoverable KTX2 load failure before the raw fallback loads. */
   onWarning?(message: string): unknown
   /** Pass Three's LinearFilter constant. KTX2Loader conservatively gives raw
-   * packed-float DataTextures nearest filtering; Blendlink will not prefer the
+   * packed-float DataTextures nearest filtering; SceneToWeb will not prefer the
    * derivative unless it can restore correct environment interpolation. */
   linearFilter?: unknown
   /** Pass Three's EquirectangularReflectionMapping constant. */
@@ -592,7 +592,7 @@ export function configureCompiledSceneLoader(
   if (descriptor.requiresMeshopt === true || descriptor.optimization?.geometry === 'meshopt') {
     if (!loader.setMeshoptDecoder) {
       throw new Error(
-        'This Blendlink scene uses Meshopt compression, but the supplied loader ' +
+        'This SceneToWeb scene uses Meshopt compression, but the supplied loader ' +
           'does not expose setMeshoptDecoder(). Use Three.js GLTFLoader or turn ' +
           'Geometry Compression off in Blender.',
       )
@@ -613,13 +613,13 @@ export function configureCompiledSceneLoader(
   if (descriptor.requiresKtx2 === true || descriptor.textureCompression?.format === 'ktx2') {
     if (!loader.setKTX2Loader) {
       throw new Error(
-        'This Blendlink scene uses KTX2 GPU textures, but the supplied loader ' +
+        'This SceneToWeb scene uses KTX2 GPU textures, but the supplied loader ' +
           'does not expose setKTX2Loader(). Use Three.js GLTFLoader or set GPU Textures to Original in Blender.',
       )
     }
     if (!options.ktx2Loader) {
       throw new Error(
-        'This Blendlink scene uses KTX2 GPU textures. Pass a shared Three.js KTX2Loader through ' +
+        'This SceneToWeb scene uses KTX2 GPU textures. Pass a shared Three.js KTX2Loader through ' +
           '{ ktx2Loader } after calling setTranscoderPath() and detectSupport(renderer).',
       )
     }
@@ -644,7 +644,7 @@ export function startCompiledScenePlayback<TMixer extends AnimationMixerLike>(
   })))
   let disposed = false
   const ensureLive = (): void => {
-    if (disposed) throw new Error('This Blendlink animation transport has been disposed.')
+    if (disposed) throw new Error('This SceneToWeb animation transport has been disposed.')
   }
   const requestFrame = (): void => { options.requestFrame?.() }
 
@@ -652,7 +652,7 @@ export function startCompiledScenePlayback<TMixer extends AnimationMixerLike>(
   if (sequence) {
     if (!options.createSequenceClip) {
       throw new Error(
-        `Blendlink animation sequence "${sequence.name}" needs a createSequenceClip adapter. ` +
+        `SceneToWeb animation sequence "${sequence.name}" needs a createSequenceClip adapter. ` +
           'The official Three.js installer supplies it automatically.',
       )
     }
@@ -690,7 +690,7 @@ export function startCompiledScenePlayback<TMixer extends AnimationMixerLike>(
         ensureLive()
         if (clip !== undefined && clip !== sequence.name) {
           throw new Error(
-            `Blendlink scene uses authored NLA sequence "${sequence.name}"; ` +
+            `SceneToWeb scene uses authored NLA sequence "${sequence.name}"; ` +
               `play() cannot select ordinary clip "${clip}". Remove the Website NLA Sequence ` +
               'in Blender when the application must select independent clips.',
           )
@@ -711,7 +711,7 @@ export function startCompiledScenePlayback<TMixer extends AnimationMixerLike>(
       playAll() {
         ensureLive()
         throw new Error(
-          `Blendlink scene uses authored NLA sequence "${sequence.name}"; ` +
+          `SceneToWeb scene uses authored NLA sequence "${sequence.name}"; ` +
             'playAll() would bypass Blender-authored strip timing.',
         )
       },
@@ -769,13 +769,13 @@ export function startCompiledScenePlayback<TMixer extends AnimationMixerLike>(
   if (available.length === 0) {
     if (recipe.start === 'manual') return null
     throw new Error(
-      `Blendlink animation startup is set to ${recipe.start}, but this GLB contains no animation clips. ` +
+      `SceneToWeb animation startup is set to ${recipe.start}, but this GLB contains no animation clips. ` +
         'Set When the Page Loads to Start Still in Blender or export an action.',
     )
   }
   if (recipe.start === 'named' && !available.some((candidate) => candidate.name === recipe.clip)) {
     throw new Error(
-      `Blendlink autoplay clip "${recipe.clip ?? ''}" was not exported. ` +
+      `SceneToWeb autoplay clip "${recipe.clip ?? ''}" was not exported. ` +
         `Available clips: ${available.map((candidate) => candidate.name || '(unnamed)').join(', ') || 'none'}.`,
     )
   }
@@ -853,13 +853,13 @@ export function startCompiledScenePlayback<TMixer extends AnimationMixerLike>(
     const matches = available.filter((candidate) => candidate.name === name)
     if (matches.length === 0) {
       throw new Error(
-        `Blendlink animation clip "${name}" was not exported. ` +
+        `SceneToWeb animation clip "${name}" was not exported. ` +
           `Available clips: ${available.map((candidate) => candidate.name || '(unnamed)').join(', ') || 'none'}.`,
       )
     }
     if (matches.length > 1) {
       throw new Error(
-        `Blendlink animation clip name "${name}" is ambiguous (${matches.length} exported clips). ` +
+        `SceneToWeb animation clip name "${name}" is ambiguous (${matches.length} exported clips). ` +
           'Rename the Blender Actions so application transport names are unique.',
       )
     }
@@ -1018,8 +1018,8 @@ function createAnimationStateNotifier(
       throw new AggregateError(
         failures,
         failures.length === 1
-          ? `Blendlink animation observer failed: ${animationObserverMessage(failures[0])}`
-          : `${failures.length} Blendlink animation observers failed: ` +
+          ? `SceneToWeb animation observer failed: ${animationObserverMessage(failures[0])}`
+          : `${failures.length} SceneToWeb animation observers failed: ` +
             failures.map(animationObserverMessage).join('; '),
       )
     }
@@ -1033,14 +1033,14 @@ function animationObserverMessage(reason: unknown): string {
 function assertAnimationTransportTime(value: number, operation: string): void {
   if (!Number.isFinite(value) || value < 0) {
     throw new Error(
-      `Blendlink animation ${operation} needs a non-negative finite time in seconds; got ${value}.`,
+      `SceneToWeb animation ${operation} needs a non-negative finite time in seconds; got ${value}.`,
     )
   }
 }
 
 function assertAnimationTransportDelta(value: number): void {
   if (!Number.isFinite(value) || value < 0) {
-    throw new Error(`Blendlink playback update needs a non-negative delta in seconds; got ${value}.`)
+    throw new Error(`SceneToWeb playback update needs a non-negative delta in seconds; got ${value}.`)
   }
 }
 
@@ -1139,7 +1139,7 @@ function installCompiledSceneLook(
   if (look.toneMapping !== 'application') {
     if (!options.toneMappings) {
       throw new Error(
-        'This Blendlink scene owns tone mapping. Pass Three\'s AgXToneMapping, NeutralToneMapping, ' +
+        'This SceneToWeb scene owns tone mapping. Pass Three\'s AgXToneMapping, NeutralToneMapping, ' +
           'ACESFilmicToneMapping, and NoToneMapping constants to applyCompiledSceneLook().',
       )
     }
@@ -1151,7 +1151,7 @@ function installCompiledSceneLook(
   if (look.background === 'transparent') {
     if (!renderer.setClearAlpha || !renderer.getClearAlpha) {
       throw new Error(
-        'This Blendlink scene requests a transparent page background, but the supplied renderer ' +
+        'This SceneToWeb scene requests a transparent page background, but the supplied renderer ' +
           'does not expose both setClearAlpha() and getClearAlpha() for lifecycle-safe restoration.',
       )
     }
@@ -1162,7 +1162,7 @@ function installCompiledSceneLook(
       : renderer.alpha
     if (attributesAlpha === false) {
       throw new Error(
-        'This Blendlink scene requests a transparent page background. Construct the Three renderer ' +
+        'This SceneToWeb scene requests a transparent page background. Construct the Three renderer ' +
           'with { alpha: true } before applying the scene look.',
       )
     }
@@ -1171,7 +1171,7 @@ function installCompiledSceneLook(
   } else if (look.background === 'color') {
     if (!look.backgroundColor || !options.createColor) {
       throw new Error(
-        'This Blendlink scene owns a solid background color. Pass createColor(rgb) to ' +
+        'This SceneToWeb scene owns a solid background color. Pass createColor(rgb) to ' +
           'applyCompiledSceneLook() so the renderer adapter can construct its native Color.',
       )
     }
@@ -1203,7 +1203,7 @@ function installCompiledSceneLook(
     }
     if (rollbackErrors.length > 0) {
       throw new Error(
-        `Could not apply the Blendlink scene look: ${cleanupErrorMessage(error)}. ` +
+        `Could not apply the SceneToWeb scene look: ${cleanupErrorMessage(error)}. ` +
           `Rollback also failed: ${rollbackErrors.map(cleanupErrorMessage).join('; ')}`,
       )
     }
@@ -1238,7 +1238,7 @@ function installCompiledSceneLook(
           attemptCleanup(cleanupErrors, () => restoreProperty(installation, true))
         }
       }
-      throwFirstCleanupError('Could not fully dispose the Blendlink scene look', cleanupErrors)
+      throwFirstCleanupError('Could not fully dispose the SceneToWeb scene look', cleanupErrors)
     },
   }
 }
@@ -1257,27 +1257,27 @@ export function prepareCompiledSceneLook(
   if (look?.toneMapping !== undefined && look.toneMapping !== 'application'
       && !options.toneMappings) {
     throw new Error(
-      'This Blendlink scene owns tone mapping. Pass Three\'s AgXToneMapping, NeutralToneMapping, ' +
+      'This SceneToWeb scene owns tone mapping. Pass Three\'s AgXToneMapping, NeutralToneMapping, ' +
         'ACESFilmicToneMapping, and NoToneMapping constants to applyCompiledSceneLook().',
     )
   }
   if (look?.background === 'transparent') {
     if (!renderer.setClearAlpha || !renderer.getClearAlpha) {
       throw new Error(
-        'This Blendlink scene requests a transparent page background, but the supplied renderer ' +
+        'This SceneToWeb scene requests a transparent page background, but the supplied renderer ' +
           'does not expose both setClearAlpha() and getClearAlpha() for lifecycle-safe restoration.',
       )
     }
     if (renderer.getContextAttributes?.()?.alpha === false) {
       throw new Error(
-        'This Blendlink scene requests a transparent page background. Construct the Three renderer ' +
+        'This SceneToWeb scene requests a transparent page background. Construct the Three renderer ' +
           'with { alpha: true } before applying the scene look.',
       )
     }
   } else if (look?.background === 'color') {
     if (!look.backgroundColor || !options.createColor) {
       throw new Error(
-        'This Blendlink scene owns a solid background color. Pass createColor(rgb) to ' +
+        'This SceneToWeb scene owns a solid background color. Pass createColor(rgb) to ' +
           'applyCompiledSceneLook() so the renderer adapter can construct its native Color.',
       )
     }
@@ -1290,7 +1290,7 @@ export function prepareCompiledSceneLook(
     get state() { return state },
     commit() {
       if (state !== 'prepared') {
-        throw new Error(`This prepared Blendlink scene look is ${state}; commit() may run exactly once.`)
+        throw new Error(`This prepared SceneToWeb scene look is ${state}; commit() may run exactly once.`)
       }
       try {
         const inner = installCompiledSceneLook(renderer, scene, descriptor, {
@@ -1356,7 +1356,7 @@ function applyCompiledSceneShadowsNow(
   if (!recipe || recipe.preset === 'application') return noOp()
   if (!renderer.shadowMap) {
     throw new Error(
-      'This Blendlink scene owns realtime shadow quality, but the supplied renderer does not expose shadowMap.',
+      'This SceneToWeb scene owns realtime shadow quality, but the supplied renderer does not expose shadowMap.',
     )
   }
   const installations: PropertyInstallation[] = []
@@ -1383,7 +1383,7 @@ function applyCompiledSceneShadowsNow(
       dispose() {
         if (disposed) return
         disposed = true
-        throwFirstCleanupError('Could not fully dispose Blendlink shadows', rollback(true))
+        throwFirstCleanupError('Could not fully dispose SceneToWeb shadows', rollback(true))
       },
     }
   }
@@ -1420,7 +1420,7 @@ function applyCompiledSceneShadowsNow(
     const rollbackErrors = rollback(false)
     if (rollbackErrors.length > 0) {
       throw new Error(
-        `Could not apply Blendlink shadows: ${cleanupErrorMessage(error)}. ` +
+        `Could not apply SceneToWeb shadows: ${cleanupErrorMessage(error)}. ` +
           `Rollback also failed: ${rollbackErrors.map(cleanupErrorMessage).join('; ')}`,
       )
     }
@@ -1433,7 +1433,7 @@ function applyCompiledSceneShadowsNow(
     dispose() {
       if (disposed) return
       disposed = true
-      throwFirstCleanupError('Could not fully dispose Blendlink shadows', rollback(true))
+      throwFirstCleanupError('Could not fully dispose SceneToWeb shadows', rollback(true))
     },
   }
 }
@@ -1450,7 +1450,7 @@ export function prepareCompiledSceneShadows(
   const recipe = descriptor.shadows
   if (recipe && recipe.preset !== 'application' && !renderer.shadowMap) {
     throw new Error(
-      'This Blendlink scene owns realtime shadow quality, but the supplied renderer does not expose shadowMap.',
+      'This SceneToWeb scene owns realtime shadow quality, but the supplied renderer does not expose shadowMap.',
     )
   }
 
@@ -1482,14 +1482,14 @@ export function prepareCompiledSceneShadows(
     commit() {
       if (state !== 'prepared') {
         throw new Error(
-          `This prepared Blendlink scene shadow policy is ${state}; commit() may run exactly once.`,
+          `This prepared SceneToWeb scene shadow policy is ${state}; commit() may run exactly once.`,
         )
       }
       let rendererInstallation: CompiledSceneShadowReport
       try {
         rendererInstallation = applyCompiledSceneShadowsNow(
           renderer,
-          { name: 'Blendlink detached shadow renderer policy', children: [] },
+          { name: 'SceneToWeb detached shadow renderer policy', children: [] },
           descriptor,
           options,
         )
@@ -1498,7 +1498,7 @@ export function prepareCompiledSceneShadows(
         const cleanupErrors = releaseRoot()
         if (cleanupErrors.length > 0) {
           throw new Error(
-            `Could not commit the prepared Blendlink scene shadows: ${cleanupErrorMessage(error)}. ` +
+            `Could not commit the prepared SceneToWeb scene shadows: ${cleanupErrorMessage(error)}. ` +
               `Detached light cleanup also failed: ${cleanupErrors.map(cleanupErrorMessage).join('; ')}`,
           )
         }
@@ -1518,7 +1518,7 @@ export function prepareCompiledSceneShadows(
           attemptCleanup(cleanupErrors, () => rendererInstallation.dispose())
           cleanupErrors.push(...releaseRoot())
           throwFirstCleanupError(
-            'Could not fully dispose prepared Blendlink scene shadows',
+            'Could not fully dispose prepared SceneToWeb scene shadows',
             cleanupErrors,
           )
         },
@@ -1537,7 +1537,7 @@ export function prepareCompiledSceneShadows(
       }
       state = 'disposed'
       throwFirstCleanupError(
-        'Could not dispose prepared Blendlink scene shadows',
+        'Could not dispose prepared SceneToWeb scene shadows',
         releaseRoot(),
       )
     },
@@ -1569,7 +1569,7 @@ function validateReadableEuler(euler: EulerLike | undefined, label: string): voi
   if (![euler.x, euler.y, euler.z].every((value) => typeof value === 'number' && Number.isFinite(value))) {
     throw new Error(
       `The supplied scene exposes ${label}, but it does not expose readable finite x/y/z values. ` +
-        'Blendlink needs Three-compatible Euler state to restore the application rotation safely.',
+        'SceneToWeb needs Three-compatible Euler state to restore the application rotation safely.',
     )
   }
 }
@@ -1656,7 +1656,7 @@ export async function prepareCompiledSceneEnvironment(
       groundedBackground: null,
       commit() {
         if (state !== 'prepared') {
-          throw new Error(`This prepared Blendlink scene environment is ${state}; commit() may run exactly once.`)
+          throw new Error(`This prepared SceneToWeb scene environment is ${state}; commit() may run exactly once.`)
         }
         state = 'committed'
         let disposed = false
@@ -1683,13 +1683,13 @@ export async function prepareCompiledSceneEnvironment(
   const asset = descriptor.environmentAsset
   if (needsImage && (recipe.source !== 'image' || !asset)) {
     throw new Error(
-      'This Blendlink scene uses a published HDR environment, but its generated descriptor has no environmentAsset. Re-run blendlink compile.',
+      'This SceneToWeb scene uses a published HDR environment, but its generated descriptor has no environmentAsset. Re-run scenetoweb compile.',
     )
   }
   if (recipe.background === 'grounded' &&
       (!options.createGroundedBackground || !scene.add || !scene.remove)) {
     throw new Error(
-      'This Blendlink scene requests a grounded HDR backdrop. Pass createGroundedBackground() ' +
+      'This SceneToWeb scene requests a grounded HDR backdrop. Pass createGroundedBackground() ' +
         '(using three/addons/objects/GroundedSkybox) and a scene with add() and remove().',
     )
   }
@@ -1776,7 +1776,7 @@ export async function prepareCompiledSceneEnvironment(
     if (texture) attemptCleanup(cleanupErrors, () => { texture?.dispose?.() })
     if (cleanupErrors.length > 0) {
       throw new Error(
-        `Could not prepare the Blendlink scene environment: ${cleanupErrorMessage(error)}. ` +
+        `Could not prepare the SceneToWeb scene environment: ${cleanupErrorMessage(error)}. ` +
           `Preparation cleanup also failed: ${cleanupErrors.map(cleanupErrorMessage).join('; ')}`,
       )
     }
@@ -1791,7 +1791,7 @@ export async function prepareCompiledSceneEnvironment(
       attemptCleanup(cleanupErrors, () => options.disposeGroundedBackground!(groundedBackground))
     }
     if (texture) attemptCleanup(cleanupErrors, () => { texture?.dispose?.() })
-    throwFirstCleanupError('Could not dispose the prepared Blendlink scene environment', cleanupErrors)
+    throwFirstCleanupError('Could not dispose the prepared SceneToWeb scene environment', cleanupErrors)
   }
 
   return {
@@ -1801,7 +1801,7 @@ export async function prepareCompiledSceneEnvironment(
     groundedBackground,
     commit() {
       if (state !== 'prepared') {
-        throw new Error(`This prepared Blendlink scene environment is ${state}; commit() may run exactly once.`)
+        throw new Error(`This prepared SceneToWeb scene environment is ${state}; commit() may run exactly once.`)
       }
       const lightingProperties: PropertyInstallation[] = []
       const lightingEulers: EulerInstallation[] = []
@@ -1874,7 +1874,7 @@ export async function prepareCompiledSceneEnvironment(
         }
         if (rollbackErrors.length > 0) {
           throw new Error(
-            `Could not commit the prepared Blendlink scene environment: ${cleanupErrorMessage(error)}. ` +
+            `Could not commit the prepared SceneToWeb scene environment: ${cleanupErrorMessage(error)}. ` +
               `Rollback also failed: ${rollbackErrors.map(cleanupErrorMessage).join('; ')}`,
           )
         }
@@ -1932,7 +1932,7 @@ export async function prepareCompiledSceneEnvironment(
               scene.environment !== texture && scene.background !== texture) {
             attemptCleanup(cleanupErrors, () => { texture?.dispose?.() })
           }
-          throwFirstCleanupError('Could not fully dispose the Blendlink scene environment', cleanupErrors)
+          throwFirstCleanupError('Could not fully dispose the SceneToWeb scene environment', cleanupErrors)
         },
       }
       return installed
@@ -1966,7 +1966,7 @@ export async function applyCompiledSceneEnvironment(
 }
 
 /** Index a loaded scene using both readable Blender names and rename-stable
- * Blendlink IDs. This is deliberately renderer-agnostic: Three.js and R3F
+ * SceneToWeb IDs. This is deliberately renderer-agnostic: Three.js and R3F
  * objects both satisfy the tiny structural contract. */
 export function bindCompiledScene<TObject extends Object3DLike>(
   root: TObject,
@@ -1980,7 +1980,7 @@ export function bindCompiledScene<TObject extends Object3DLike>(
     if (typeof id === 'string') {
       if (loadedById[id] && loadedById[id] !== object) {
         throw new Error(
-          `Blendlink loaded duplicate stable object ID "${id}"; run Set Up Blendlink Scene in Blender to repair IDs.`,
+          `SceneToWeb loaded duplicate stable object ID "${id}"; run Set Up SceneToWeb Scene in Blender to repair IDs.`,
         )
       }
       loadedById[id] = object as TObject
@@ -2070,7 +2070,7 @@ export function bindCompiledScene<TObject extends Object3DLike>(
     }
     if (rollbackErrors.length > 0) {
       throw new Error(
-        `Could not bind the Blendlink scene: ${cleanupErrorMessage(error)}. ` +
+        `Could not bind the SceneToWeb scene: ${cleanupErrorMessage(error)}. ` +
           `Rollback also failed: ${rollbackErrors.map(cleanupErrorMessage).join('; ')}`,
       )
     }
@@ -2082,7 +2082,7 @@ export function bindCompiledScene<TObject extends Object3DLike>(
     byId,
     object(idOrName) {
       const found = byId[idOrName] ?? byName[idOrName] ?? all[idOrName]
-      if (!found) throw new Error(`Blendlink object "${idOrName}" is not present in the loaded scene`)
+      if (!found) throw new Error(`SceneToWeb object "${idOrName}" is not present in the loaded scene`)
       return found
     },
     shadowIntent(object) {
@@ -2095,7 +2095,7 @@ export function bindCompiledScene<TObject extends Object3DLike>(
       for (const installation of installations.slice().reverse()) {
         attemptCleanup(cleanupErrors, () => restoreProperty(installation, true))
       }
-      throwFirstCleanupError('Could not fully dispose Blendlink scene bindings', cleanupErrors)
+      throwFirstCleanupError('Could not fully dispose SceneToWeb scene bindings', cleanupErrors)
     },
   }
 }
@@ -2109,7 +2109,7 @@ export async function loadCompiledScene<TLoaded extends LoadedSceneLike>(
   },
   descriptor: CompiledSceneDescriptor,
   options: CompiledSceneLoaderOptions = {},
-): Promise<TLoaded & { blendlink: SceneBindings<TLoaded['scene']> }> {
+): Promise<TLoaded & { scenetoweb: SceneBindings<TLoaded['scene']>; blendlink: SceneBindings<TLoaded['scene']> }> {
   configureCompiledSceneLoader(loader, descriptor, options)
   const needsMeshopt = descriptor.requiresMeshopt === true
     || descriptor.optimization?.geometry === 'meshopt'
@@ -2121,7 +2121,8 @@ export async function loadCompiledScene<TLoaded extends LoadedSceneLike>(
         () => loader.loadAsync(descriptor.url),
       )
     : await loader.loadAsync(descriptor.url)
-  return Object.assign(loaded, { blendlink: bindCompiledScene(loaded.scene, descriptor) })
+  const bindings = bindCompiledScene(loaded.scene, descriptor)
+  return Object.assign(loaded, { scenetoweb: bindings, blendlink: bindings })
 }
 
 function walk(object: Object3DLike, visitor: (object: Object3DLike) => void): void {

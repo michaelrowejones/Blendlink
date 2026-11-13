@@ -64,7 +64,7 @@ export interface CompiledScenePerformanceReport extends StaticPerformanceReport 
 }
 
 /** Deliberately conservative starting profiles, not universal web limits.
- * `blendlink perf` prints the selected profile and real projects may supply
+ * `scenetoweb perf` prints the selected profile and real projects may supply
  * explicit budgets derived from their representative target devices. */
 export function defaultPerformanceBudgets(tier: PerformanceTier): PerformanceBudgets {
   if (tier === 'mobile') {

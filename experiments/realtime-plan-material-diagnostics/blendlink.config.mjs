@@ -1,4 +1,4 @@
-/** @type {import('blendlink').BlendlinkConfig} */
+/** @type {import('scenetoweb').BlendlinkConfig} */
 const config = {
   scenes: [{
     name: 'realtimeNeedsBake',

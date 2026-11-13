@@ -44,7 +44,7 @@ vi.mock('node:fs', async importOriginal => {
 })
 
 function tempPlan(): PreviewStudioHostPlan {
-  const workspace = mkdtempSync(join(tmpdir(), 'blendlink-preview-host-'))
+  const workspace = mkdtempSync(join(tmpdir(), 'scenetoweb-preview-host-'))
   return {
     workspace,
     sessionId: 'test-session',

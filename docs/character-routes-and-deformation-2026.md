@@ -7,7 +7,7 @@ Every number here was measured against `showcases/ellie` (a CloudRig character),
 
 ## 1. The model: three axes, not one
 
-Blendlink has three ways to carry a Blender look, but they are not alternatives on one axis:
+SceneToWeb has three ways to carry a Blender look, but they are not alternatives on one axis:
 
 - **Lighting** — baked lighting atlas, or realtime lights.
 - **Surface** — stock glTF PBR, baked material maps, or TSL translation. These three *are*
@@ -19,7 +19,7 @@ Two corrections that follow from source:
 
 **Lighting and TSL are not exclusive.** `NodeMaterial.setupLightMap` builds an `IrradianceNode`
 whenever `material.lightMap` is set, and `TextureNode.getDefaultUV` honours the TEXCOORD_1..3
-binding `fork_lighting_materials` emits. A node material can carry a Blendlink lightmap *and* a
+binding `fork_lighting_materials` emits. A node material can carry a SceneToWeb lightmap *and* a
 TSL `colorNode`. The exclusivity is ours alone: the `compile_objects` subtraction in
 `export_scene.py` removes atlas-owned objects from material compilation.
 
@@ -158,7 +158,7 @@ refusal. Two separate things are true about it and they point opposite ways:
   actions with every keyframe 0.0**, single distinct value set, current value 0. Exactly the §6e
   pattern. So the branch is provably resolved to one live cage,
   `GEO-ellie_fannypack_zipper_combined_deformer.001`, and the refusal could be relaxed with the
-  constant-driver predicate Blendlink already applies elsewhere.
+  constant-driver predicate SceneToWeb already applies elsewhere.
 - **Relaxing it would not unblock ellie.** The same mesh carries two animated LATTICE modifiers,
   `Lattice Front` and `Lattice Top`, following cages the timeline moves through `RIG-Ellie.001`.
   Those are Phase 3, which §6a leaves blocked. The zipper mesh is refused for a second reason that

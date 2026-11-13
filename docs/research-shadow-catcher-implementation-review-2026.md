@@ -16,7 +16,7 @@ required.
 - Needle Blender component catalog
   `data/builtin.component.json`, SHA-256
   `d32f28bc6beb4379dcce1b12e114c389f56e493e4e0820123c9a500dfb867382`
-- Blendlink-installed `three` and `@types/three` `0.184.0`
+- SceneToWeb-installed `three` and `@types/three` `0.184.0`
 - Three `src/materials/ShadowMaterial.js`, SHA-256
   `9de4022504a8da0934569c8d125e00d6309892af78d3c485dac0c02e909efc40`
 - Three `src/renderers/shaders/ShaderLib/meshphysical.glsl.js`, SHA-256
@@ -57,12 +57,12 @@ this kind of modification.
 [Three Material](https://threejs.org/docs/pages/Material.html#onBeforeCompile)
 [Three WebGPU migration](https://threejs.org/manual/en/webgpurenderer#migration)
 
-Blendlink improves several ownership properties in source:
+SceneToWeb improves several ownership properties in source:
 
 - a Group can apply the catcher to existing descendant meshes instead of
   silently ignoring them;
 - layers and default raycasting are left application-owned;
-- each replacement material is Blendlink-owned and disposed;
+- each replacement material is SceneToWeb-owned and disposed;
 - original material, `receiveShadow`, and `renderOrder` values are restored
   conditionally; and
 - outer scene installation invokes `compileAsync()` before ready by default,
@@ -90,7 +90,7 @@ does not make their visual status Verified.
 ### Release blockers
 
 1. **Occluder loses source coverage.** Needle modifies a clone of the source
-   material. Blendlink creates a blank `MeshBasicMaterial`, copying only
+   material. SceneToWeb creates a blank `MeshBasicMaterial`, copying only
    `side`. Alpha maps/tests, clipping, displacement, vertex colors, and other
    geometry-affecting material behavior can therefore change. A cutout
    occluder can write full-triangle depth instead of the authored silhouette.
@@ -105,8 +105,8 @@ does not make their visual status Verified.
 
 3. **Empty targets pass authoring compatibility but fail at runtime.** The
    Blender schema allows any Object and has no Shadow Catcher mesh-descendant
-   validation. Needle creates a quad for a non-Mesh target; Blendlink throws
-   when an Empty has no mesh descendants. Blendlink should either lint this
+   validation. Needle creates a quad for a non-Mesh target; SceneToWeb throws
+   when an Empty has no mesh descendants. SceneToWeb should either lint this
    before publish, deliberately author a plane, or record the missing auto-quad
    behavior under its own stable capability ID.
 
@@ -120,7 +120,7 @@ does not make their visual status Verified.
 ### Ownership and performance risks
 
 1. Material restoration compares only the material/array object identity. If
-   an application mutates one slot of Blendlink's installed material array,
+   an application mutates one slot of SceneToWeb's installed material array,
    disposal still replaces the entire array and loses that later slot owner.
    The supported ownership granularity needs to be explicit and tested.
 
@@ -178,12 +178,12 @@ npm.cmd exec --workspace packages/blendlink -- vitest run src/threeComponents.te
 ```
 
 At the time of this review, those files covered the new catalog defaults but
-did not yet contain Shadow Catcher material/lifecycle tests. The Blendlink
+did not yet contain Shadow Catcher material/lifecycle tests. The SceneToWeb
 workspace build also passed.
 
 ## Minimal browser visual-evidence fixture
 
-Build a production Vite consumer from a freshly packed Blendlink tarball, serve
+Build a production Vite consumer from a freshly packed SceneToWeb tarball, serve
 the built output, and test it in system Chrome through Playwright. The page must
 own a transparent WebGL Canvas over a high-contrast checkerboard DOM
 background, use DPR 1, a fixed camera, fixed tone mapping/output color space,
@@ -206,7 +206,7 @@ Use four deterministic cells:
    the actual pinned Needle runtime under identical renderer settings.
 
 For exact parity, run flat-Mesh Mask/Occluder/Additive cells once through the
-actual pinned Needle class and once through the packed Blendlink adapter.
+actual pinned Needle class and once through the packed SceneToWeb adapter.
 Store both source identity/hashes in the evidence JSON. Treat the Group cell as
 a separate improvement test because Needle creates/uses its own target rather
 than mutating those descendants.
@@ -245,7 +245,7 @@ Implemented behavior:
   descendant groups preserve their separate material slots, transforms, and
   layer masks instead of inheriting Needle's layer-2 takeover.
 - Overlapping Preview generations use a lease stack. Disposal is idempotent,
-  restores only values Blendlink still owns, retains a later application
+  restores only values SceneToWeb still owns, retains a later application
   material assignment, and disposes every owned material/geometry exactly
   once. Partial installation rolls back transactionally.
 - Blender serialization, validation, native controls, Component search, and
@@ -267,7 +267,7 @@ Verified behavior:
 Evidence boundary:
 
 - The browser run records the pinned Needle source SHA-256 but does not execute
-  the Needle class side by side. It proves Blendlink effectiveness and
+  the Needle class side by side. It proves SceneToWeb effectiveness and
   source-structure parity, not exact cross-version pixel identity.
 - Additive remains Preview because its source algorithm is explicitly
   heuristic and its output depends on light, tone-mapping, and material

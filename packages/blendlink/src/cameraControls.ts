@@ -50,7 +50,7 @@ export interface InteractiveCameraControls {
   update(deltaSeconds?: number): unknown
   dispose(): unknown
   /** Optional live activity proof for demand-mode rendering. Omit this when
-   * the controls cannot prove they are idle; Blendlink then conservatively
+   * the controls cannot prove they are idle; SceneToWeb then conservatively
    * keeps frames active for as long as the controls are installed. */
   readonly requiresContinuousFrames?: boolean
   /** Required for fit() after installation so controls and camera cannot drift. */
@@ -71,7 +71,7 @@ export interface CameraControlsContext<TObject extends Object3DLike = Object3DLi
 
 export interface InstallCompiledSceneCameraOptions<TObject extends Object3DLike = Object3DLike> {
   /** Required only for Orbit/Free. Usually creates OrbitControls, MapControls,
-   * or the site's existing navigation adapter. Blendlink imports none of them. */
+   * or the site's existing navigation adapter. SceneToWeb imports none of them. */
   createControls?(context: CameraControlsContext<TObject>): InteractiveCameraControls
   /** Required when the recipe has a target. Must return world, not local, coordinates. */
   getWorldPosition?(object: TObject): readonly [number, number, number]
@@ -114,7 +114,7 @@ export interface CompiledSceneCamera<TObject extends Object3DLike = Object3DLike
    * cameras are already complete, so activation is a no-op for them. */
   activate(): void
   update(deltaSeconds?: number): void
-  /** Explicitly reframe; it is never called on resize by Blendlink. */
+  /** Explicitly reframe; it is never called on resize by SceneToWeb. */
   fit(viewport: CameraViewport, scope?: 'scene' | 'target'): CameraFitReport
   reset(): void
   dispose(): void
@@ -127,7 +127,7 @@ export interface CameraCompiledDescriptor {
 /**
  * Resolve a generated camera by stable ID and install an application-supplied
  * controls adapter. The installer itself is the opt-in: importing or loading a
- * Blendlink scene never attaches listeners or moves a camera.
+ * SceneToWeb scene never attaches listeners or moves a camera.
  */
 export function installCompiledSceneCamera<TObject extends Object3DLike>(
   root: TObject,
@@ -140,23 +140,23 @@ export function installCompiledSceneCamera<TObject extends Object3DLike>(
   const resolved = bindings.byId[recipe.objectId]
   if (!resolved) {
     throw new Error(
-      `Blendlink presentation camera "${recipe.objectName}" (${recipe.objectId}) is not present ` +
+      `SceneToWeb presentation camera "${recipe.objectName}" (${recipe.objectId}) is not present ` +
         'in the loaded scene. Re-export the camera or choose another Presentation Camera in Blender.',
     )
   }
   const camera = resolved as unknown as PresentationCameraLike
   if (!camera.position) {
-    throw new Error(`Blendlink object "${recipe.objectName}" resolved by ID but is not a camera-like object.`)
+    throw new Error(`SceneToWeb object "${recipe.objectName}" resolved by ID but is not a camera-like object.`)
   }
   const target = recipe.targetId ? bindings.byId[recipe.targetId] : undefined
   if (recipe.targetId && !target) {
     throw new Error(
-      `Blendlink camera target "${recipe.targetName ?? recipe.targetId}" (${recipe.targetId}) ` +
+      `SceneToWeb camera target "${recipe.targetName ?? recipe.targetId}" (${recipe.targetId}) ` +
         'is not present in the loaded scene.',
     )
   }
   if (recipe.behavior === 'orbit' && !target) {
-    throw new Error('Blendlink Orbit camera has no resolved stable target. Choose an Orbit Target in Blender.')
+    throw new Error('SceneToWeb Orbit camera has no resolved stable target. Choose an Orbit Target in Blender.')
   }
 
   let disposed = false
@@ -169,7 +169,7 @@ export function installCompiledSceneCamera<TObject extends Object3DLike>(
     if (!target) return undefined
     if (!options.getWorldPosition) {
       throw new Error(
-        'This Blendlink camera uses a stable target. Pass getWorldPosition(object) to ' +
+        'This SceneToWeb camera uses a stable target. Pass getWorldPosition(object) to ' +
           'installCompiledSceneCamera(); local object.position is not safe under transformed parents.',
       )
     }
@@ -212,7 +212,7 @@ export function installCompiledSceneCamera<TObject extends Object3DLike>(
     const focus = stableTarget ?? center
     if (controls && recipe.behavior === 'orbit' && !controls.setTarget) {
       throw new Error(
-        'Re-fitting an interactive Blendlink Orbit camera requires controls.setTarget(x, y, z). ' +
+        'Re-fitting an interactive SceneToWeb Orbit camera requires controls.setTarget(x, y, z). ' +
           'Add it to the Orbit controls adapter so camera and interaction state stay synchronized.',
       )
     }
@@ -290,8 +290,8 @@ export function installCompiledSceneCamera<TObject extends Object3DLike>(
     if (recipe.behavior === 'fixed' || controls) return
     if (!options.createControls) {
       throw new Error(
-        `Blendlink camera behavior is ${recipe.behavior}. Pass createControls(context); ` +
-          'Blendlink never imports or injects browser controls on its own.',
+        `SceneToWeb camera behavior is ${recipe.behavior}. Pass createControls(context); ` +
+          'SceneToWeb never imports or injects browser controls on its own.',
       )
     }
     const worldTarget = lastFitTarget ?? preparedControlsTarget
@@ -324,7 +324,7 @@ export function installCompiledSceneCamera<TObject extends Object3DLike>(
       }
       if (cleanupErrors.length > 0) {
         throw new Error(
-          `Could not activate Blendlink camera controls: ${cameraErrorMessage(error)}. ` +
+          `Could not activate SceneToWeb camera controls: ${cameraErrorMessage(error)}. ` +
             `Partial controls cleanup also failed: ${cleanupErrors.map(cameraErrorMessage).join('; ')}.`,
           { cause: error },
         )
@@ -336,7 +336,7 @@ export function installCompiledSceneCamera<TObject extends Object3DLike>(
   if (recipe.framing !== 'authored') {
     if (!options.initialViewport) {
       throw new Error(
-        `Blendlink camera framing is ${recipe.framing}. Pass initialViewport to apply that explicit ` +
+        `SceneToWeb camera framing is ${recipe.framing}. Pass initialViewport to apply that explicit ` +
           'artist choice, or change Framing to Preserve Authored View in Blender.',
       )
     }
@@ -346,8 +346,8 @@ export function installCompiledSceneCamera<TObject extends Object3DLike>(
   if (recipe.behavior !== 'fixed') {
     if (!options.createControls) {
       throw new Error(
-        `Blendlink camera behavior is ${recipe.behavior}. Pass createControls(context); ` +
-          'Blendlink never imports or injects browser controls on its own.',
+        `SceneToWeb camera behavior is ${recipe.behavior}. Pass createControls(context); ` +
+          'SceneToWeb never imports or injects browser controls on its own.',
       )
     }
     // Resolve the target while the camera is still being prepared. Commit-time
@@ -469,13 +469,13 @@ function assertClipPlanes(camera: PresentationCameraLike, distanceToFocus: numbe
   if (typeof camera.near === 'number' && camera.near >= nearest) {
     throw new Error(
       `Auto-fit would clip the subject: camera near=${camera.near}, required below ${nearest.toFixed(3)}. ` +
-        'Lower Clip Start on the Blender camera; Blendlink will not silently change depth precision.',
+        'Lower Clip Start on the Blender camera; SceneToWeb will not silently change depth precision.',
     )
   }
   if (typeof camera.far === 'number' && camera.far <= farthest) {
     throw new Error(
       `Auto-fit would clip the subject: camera far=${camera.far}, required above ${farthest.toFixed(3)}. ` +
-        'Raise Clip End on the Blender camera; Blendlink will not silently change it.',
+        'Raise Clip End on the Blender camera; SceneToWeb will not silently change it.',
     )
   }
 }
@@ -537,7 +537,7 @@ function restoreTransform(camera: PresentationCameraLike, snapshot: TransformSna
 }
 
 function assertLive(disposed: boolean): void {
-  if (disposed) throw new Error('Blendlink camera controls have been disposed.')
+  if (disposed) throw new Error('SceneToWeb camera controls have been disposed.')
 }
 
 function cameraErrorMessage(error: unknown): string {

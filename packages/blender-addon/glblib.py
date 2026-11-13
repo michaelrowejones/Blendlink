@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Small, lossless GLB JSON transaction primitives.
 
-Blendlink has several Blender-side passes that need to inspect or adjust glTF
+SceneToWeb has several Blender-side passes that need to inspect or adjust glTF
 JSON after the stock exporter has finished.  They must preserve the binary and
 every unknown/extension chunk byte-for-byte and replace the artifact
 atomically.  Keep that mechanical contract here instead of open-coding subtly

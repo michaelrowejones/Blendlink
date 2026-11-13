@@ -38,13 +38,13 @@ interface PackageJson {
 }
 
 const SETUP_SCRIPTS = {
-  'blendlink:connect': 'blendlink connect',
-  'blendlink:preview': 'blendlink preview',
-  'blendlink:publish': 'blendlink publish',
-  'blendlink:check': 'blendlink verify',
+  'scenetoweb:connect': 'scenetoweb connect',
+  'scenetoweb:preview': 'scenetoweb preview',
+  'scenetoweb:publish': 'scenetoweb publish',
+  'scenetoweb:check': 'scenetoweb verify',
 } as const
 
-const STARTER_MARKER = '// Blendlink starter: this entry point is application-owned and safe to edit.'
+const STARTER_MARKER = '// SceneToWeb starter: this entry point is application-owned and safe to edit.'
 const DEFAULT_THREE_RANGE = '0.184.0'
 const DEFAULT_THREE_TYPES_RANGE = '^0.184.0'
 const REQUIRED_THREE_RELEASE = 184
@@ -60,7 +60,7 @@ function assertSupportedThreeRange(range: string): void {
   const normalized = range.trim().replace(/\s+/g, ' ')
   if (normalized === DEFAULT_THREE_RANGE) return
   throw new Error(
-    `This website declares three=${JSON.stringify(range)}, but Blendlink requires the exact ` +
+    `This website declares three=${JSON.stringify(range)}, but SceneToWeb requires the exact ` +
       `source-audited Three ${DEFAULT_THREE_RANGE} runtime. Version ranges can resolve to ` +
       'unaudited executable bytes. Declare exact "0.184.0", then rerun setup.',
   )
@@ -93,7 +93,7 @@ function assertSupportedMajorRange(
   }
 
   throw new Error(
-    `This website declares ${dependency}=${JSON.stringify(range)}, but Blendlink's generated ` +
+    `This website declares ${dependency}=${JSON.stringify(range)}, but SceneToWeb's generated ` +
       `R3F adapter requires ${dependency} ${expectedMajor}.x. Align React 19 with React Three ` +
       'Fiber 9 before connecting this site.',
   )
@@ -117,7 +117,7 @@ function packageVersion(): string {
     return packageJson.version
   } catch (error) {
     throw new Error(
-      'Blendlink cannot determine its package version; reinstall the package before setup: ' +
+      'SceneToWeb cannot determine its package version; reinstall the package before setup: ' +
         (error instanceof Error ? error.message : String(error)),
     )
   }
@@ -132,7 +132,7 @@ function readPackage(path: string): PackageJson {
     return value as PackageJson
   } catch (error) {
     throw new Error(
-      `Blendlink found ${path}, but it is not valid package JSON: ` +
+      `SceneToWeb found ${path}, but it is not valid package JSON: ` +
         (error instanceof Error ? error.message : String(error)),
     )
   }
@@ -154,7 +154,7 @@ function detectExistingStack(pkg: PackageJson): Exclude<WebsiteStack, 'new-three
     )
     if (!packages.react) {
       throw new Error(
-        'This R3F website does not declare `react`. Blendlink requires the website to own ' +
+        'This R3F website does not declare `react`. SceneToWeb requires the website to own ' +
           'React 19 with React Three Fiber 9 before connecting it.',
       )
     }
@@ -164,7 +164,7 @@ function detectExistingStack(pkg: PackageJson): Exclude<WebsiteStack, 'new-three
   if ('three' in packages) return 'three'
   throw new Error(
     'This directory already contains a website, but package.json does not declare `three` ' +
-      'or `@react-three/fiber`. Blendlink will not replace its renderer. Run setup from the ' +
+      'or `@react-three/fiber`. SceneToWeb will not replace its renderer. Run setup from the ' +
       'actual Three.js site directory (or add the renderer deliberately), then try again.',
   )
 }
@@ -182,14 +182,14 @@ function writeNewSite(root: string, sceneName: string, changes: string[]): void 
   const conflicts = guarded.filter((path) => existsSync(join(root, path)))
   if (conflicts.length > 0) {
     throw new Error(
-      'Blendlink will not overwrite an incomplete website scaffold. Move or remove these ' +
+      'SceneToWeb will not overwrite an incomplete website scaffold. Move or remove these ' +
         `files, then retry: ${conflicts.join(', ')}`,
     )
   }
 
   const version = packageVersion()
   const packageJson = {
-    name: basename(root).toLowerCase().replace(/[^a-z0-9-]+/g, '-') || 'blendlink-scene',
+    name: basename(root).toLowerCase().replace(/[^a-z0-9-]+/g, '-') || 'scenetoweb-scene',
     private: true,
     version: '0.0.0',
     type: 'module',
@@ -199,7 +199,7 @@ function writeNewSite(root: string, sceneName: string, changes: string[]): void 
       ...SETUP_SCRIPTS,
     },
     dependencies: {
-      blendlink: `^${version}`,
+      scenetoweb: `^${version}`,
       three: DEFAULT_THREE_RANGE,
     },
     devDependencies: {
@@ -213,7 +213,7 @@ function writeNewSite(root: string, sceneName: string, changes: string[]): void 
 
   writeFileSync(join(root, 'index.html'), `<!doctype html>
 <html lang="en">
-  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Blendlink Scene</title></head>
+  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SceneToWeb Scene</title></head>
   <body><canvas id="scene" aria-label="3D scene"></canvas><script type="module" src="/src/main.ts"></script></body>
 </html>
 `)
@@ -230,15 +230,15 @@ function writeNewSite(root: string, sceneName: string, changes: string[]): void 
   writeFileSync(join(root, 'src', 'main.ts'), `${STARTER_MARKER}
 import * as THREE from 'three'
 import { WebGPURenderer } from 'three/webgpu'
-import { install${integrationName} } from './blendlink/${integrationName}'
+import { install${integrationName} } from './scenetoweb/${integrationName}'
 import './style.css'
 
 const canvasElement = document.querySelector<HTMLCanvasElement>('#scene')
-if (!canvasElement) throw new Error('Blendlink starter: #scene canvas is missing')
+if (!canvasElement) throw new Error('SceneToWeb starter: #scene canvas is missing')
 const canvas: HTMLCanvasElement = canvasElement
 
 // WebGPURenderer renders on native WebGPU where available and falls back
-// to WebGL2 on its own; on the WebGPU family Blendlink also applies any
+// to WebGL2 on its own; on the WebGPU family SceneToWeb also applies any
 // published TSL material programs automatically. Prefer a classic
 // \`new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })\`
 // (and drop the init() await) to stay on the classic renderer.
@@ -320,7 +320,7 @@ function assertUniqueIntegrationNames(scenes: ResolvedScene[]): void {
     const previous = seen.get(integrationName.toLowerCase())
     if (previous) {
       throw new Error(
-        `Blendlink scenes "${previous.sceneName}" and "${scene.name}" both map to the ` +
+        `SceneToWeb scenes "${previous.sceneName}" and "${scene.name}" both map to the ` +
           `website integration ${integrationName}.ts. Give one scene a distinct name so setup ` +
           'cannot silently connect both scenes to the same module.',
       )
@@ -342,7 +342,7 @@ function writeThreeIntegration(
 ): string {
   const integrationName = sceneIntegrationName(sceneName)
   const installName = `install${integrationName}`
-  const directory = join(root, 'src', 'blendlink')
+  const directory = join(root, 'src', 'scenetoweb')
   const path = join(directory, `${integrationName}.ts`)
   if (existsSync(path)) return relative(root, path).replace(/\\/g, '/')
   mkdirSync(directory, { recursive: true })
@@ -355,7 +355,7 @@ function writeThreeIntegration(
   installThreeCompiledScene,
   type InstallThreeCompiledSceneOptions,
   type InstalledThreeCompiledScene,
-} from 'blendlink/three'
+} from 'scenetoweb/three'
 import { ${sceneName} as compiledScene } from '${generatedImport}'
 import { createBakedScene } from '${bakedImport}'
 
@@ -364,7 +364,7 @@ export type ${integrationName}Options = Omit<
   'descriptor' | 'createBakedScene'
 >
 
-/** Blendlink generated this integration once; it is application-owned and
+/** SceneToWeb generated this integration once; it is application-owned and
  * safe to edit. Call update() in the website frame loop and dispose() when
  * the route or scene is removed. */
 export function ${installName}(
@@ -389,7 +389,7 @@ function writeR3fIntegration(
   changes: string[],
 ): string {
   const componentName = sceneIntegrationName(sceneName)
-  const directory = join(root, 'src', 'blendlink')
+  const directory = join(root, 'src', 'scenetoweb')
   const path = join(directory, `${componentName}.ts`)
   if (existsSync(path)) return relative(root, path).replace(/\\/g, '/')
   mkdirSync(directory, { recursive: true })
@@ -403,13 +403,13 @@ function writeR3fIntegration(
 import {
   createR3FCompiledScene,
   type R3FCompiledSceneProps,
-} from 'blendlink/react-three-fiber'
+} from 'scenetoweb/react-three-fiber'
 import { ${sceneName} as compiledScene } from '${generatedImport}'
 import { createBakedScene } from '${bakedImport}'
 
 export type ${componentName}Props = R3FCompiledSceneProps
 
-/** Application-owned association; Blendlink's adapter owns loader, camera,
+/** Application-owned association; SceneToWeb's adapter owns loader, camera,
  * resize, frame, composer, error, and disposal lifecycle behind this seam. */
 export const ${componentName} = createR3FCompiledScene({
   descriptor: compiledScene,
@@ -439,7 +439,7 @@ function attachScripts(
   for (const [name, command] of Object.entries(SETUP_SCRIPTS)) {
     const current = scripts[name]
     if (current && current !== command) {
-      warnings.push(`kept existing package script ${name}=${JSON.stringify(current)}; Blendlink did not overwrite it`)
+      warnings.push(`kept existing package script ${name}=${JSON.stringify(current)}; SceneToWeb did not overwrite it`)
       continue
     }
     if (!current) {
@@ -450,14 +450,14 @@ function attachScripts(
   }
   const declared = dependencies(pkg)
   const packageChanges: PackageJson = { ...pkg, scripts }
-  if (!('blendlink' in declared)) {
+  if (!('scenetoweb' in declared)) {
     packageChanges.dependencies = {
       ...pkg.dependencies,
-      blendlink: `^${packageVersion()}`,
+      scenetoweb: `^${packageVersion()}`,
     }
     changed = true
     dependenciesChanged = true
-    changes.push('declared Blendlink as a website dependency (installation remains package-manager owned)')
+    changes.push('declared SceneToWeb as a website dependency (installation remains package-manager owned)')
   }
 
   let threeRange = pkg.dependencies?.three ?? pkg.devDependencies?.three
@@ -486,7 +486,7 @@ function attachScripts(
         changes.push(`declared app-owned @types/three ${typesRange} to match Three.js`)
       } else {
         warnings.push(
-          `Three.js is declared as ${JSON.stringify(threeRange)}, so Blendlink did not guess a type ` +
+          `Three.js is declared as ${JSON.stringify(threeRange)}, so SceneToWeb did not guess a type ` +
             'release. Declare a matching @types/three version before compiling the generated TypeScript.',
         )
       }
@@ -497,7 +497,7 @@ function attachScripts(
       if (runtimeRelease !== null && typesRelease !== null && runtimeRelease !== typesRelease) {
         warnings.push(
           `Three.js r${runtimeRelease} and @types/three r${typesRelease} do not match. ` +
-            'Align them before compiling Blendlink integrations to avoid duplicate renderer types.',
+            'Align them before compiling SceneToWeb integrations to avoid duplicate renderer types.',
         )
       }
     }
@@ -505,13 +505,13 @@ function attachScripts(
   if (!changed) return dependenciesChanged
   writeFileSync(packagePath, JSON.stringify(packageChanges, null, 2) + '\n')
   if (scriptsAdded) {
-    changes.push('added available blendlink:connect, blendlink:preview, blendlink:publish, and blendlink:check package scripts')
+    changes.push('added available scenetoweb:connect, scenetoweb:preview, scenetoweb:publish, and scenetoweb:check package scripts')
   }
   return dependenciesChanged
 }
 
 /**
- * Attach Blendlink to a real Three.js/R3F site, or create the smallest useful
+ * Attach SceneToWeb to a real Three.js/R3F site, or create the smallest useful
  * vanilla Three.js/Vite site when the directory has no package.json. Existing
  * application source is never edited and ambiguous renderers fail loudly.
  */
@@ -535,7 +535,7 @@ export async function setupWebsiteProject(
     ].filter((path) => existsSync(join(root, path)))
     if (conflicts.length > 0) {
       throw new Error(
-        'Blendlink will not overwrite an incomplete website scaffold. Move or remove these ' +
+        'SceneToWeb will not overwrite an incomplete website scaffold. Move or remove these ' +
           `files, then retry: ${conflicts.join(', ')}`,
       )
     }
@@ -545,16 +545,9 @@ export async function setupWebsiteProject(
   // setup composes that contract instead of growing a second scanner.
   const selectedBlendPath = options.blendPath ? resolve(options.blendPath) : undefined
   const initialized = initProject(root, selectedBlendPath ? { sceneFiles: [selectedBlendPath] } : {})
-  const config: InitResult = initialized.created
-    ? initialized
-    : {
-        ...initialized,
-        configPath: existsSync(join(root, 'blendlink.config.mjs'))
-          ? join(root, 'blendlink.config.mjs')
-          : join(root, 'blendlink.config.js'),
-      }
+  const config: InitResult = initialized
   if (config.created) changes.push(`created ${basename(config.configPath)}`)
-  else warnings.push('kept the existing Blendlink config; setup never rewrites integration paths')
+  else warnings.push('kept the existing SceneToWeb config; setup never rewrites integration paths')
   if (config.sampleCopied) changes.push('copied the bundled sample scene to assets/sample.blend')
 
   const resolvedConfig = await loadConfig(root)
@@ -565,7 +558,7 @@ export async function setupWebsiteProject(
   if (!scene) {
     throw new Error(selectedBlendPath
       ? `${basename(config.configPath)} already exists but does not declare the selected scene ` +
-        `${selectedBlendPath}. Add it to scenes, then rerun connect; Blendlink never rewrites executable config.`
+        `${selectedBlendPath}. Add it to scenes, then rerun connect; SceneToWeb never rewrites executable config.`
       : `${basename(config.configPath)} does not declare a scene. Add one .blend file, then rerun connect.`)
   }
   const sceneFile = relative(root, scene.blendPath).replace(/\\/g, '/')
@@ -587,7 +580,7 @@ export async function setupWebsiteProject(
   } else if (pkg) {
     dependencyInstallRequired = attachScripts(packagePath, pkg, stack, changes, warnings)
     if (existingStarter) {
-      warnings.push('recognized the Blendlink starter and kept its application-owned entry point')
+      warnings.push('recognized the SceneToWeb starter and kept its application-owned entry point')
     } else {
       changes.push(
         `attached the ${stack === 'react-three-fiber' ? 'React Three Fiber' : 'Three.js'} site without editing application source`,
@@ -629,15 +622,15 @@ export async function setupWebsiteProject(
     warnings,
     nextActions: [
       ...(dependencyInstallRequired ? ['install the declared website dependencies with your package manager'] : []),
-      `open ${sceneFile} and click Blendlink > Set Up Blendlink Scene`,
+      `open ${sceneFile} and click SceneToWeb > Set Up SceneToWeb Scene`,
       ...r3fIntegrations.map((integration) =>
         `render the exported scene inside your existing R3F Canvas with <${basename(integration, '.ts')} /> from ${integration}; keep its renderer (WebGLRenderer or an initialized WebGPURenderer)`),
       ...threeIntegrations.slice(stack === 'new-three-vite' || existingStarter ? 1 : 0).map((integration) => {
         const integrationName = basename(integration, '.ts')
         return `load the exported scene with await install${integrationName}({ renderer, scene }) from ${integration}; pass your existing WebGLRenderer or an initialized WebGPURenderer, then call installed.update(delta) and installed.render(delta) in your frame loop`
       }),
-      `run ${run('blendlink:preview')} to compile Preview quality and open the real site`,
-      `run ${run('blendlink:publish')} when the scene is approved; it compiles Final, verifies it, and runs the website build`,
+      `run ${run('scenetoweb:preview')} to compile Preview quality and open the real site`,
+      `run ${run('scenetoweb:publish')} when the scene is approved; it compiles Final, verifies it, and runs the website build`,
       `commit ${commitDirectories}, and ${basename(config.configPath)}`,
     ],
   }

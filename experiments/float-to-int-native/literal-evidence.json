@@ -1,0 +1,413 @@
+{
+  "status": "QUALIFIED_LITERAL_BUILT_PORT",
+  "sourceProfile": "Blender 5.3.0 02f0899d78e3 macOS arm64 native CPU MF, including GPU single values",
+  "nativeGraphs": 312,
+  "savedFinalScenes": 32,
+  "builtCaseRuns": 1376,
+  "primaryFloat32Words": 352256,
+  "wordMismatches": 0,
+  "nativeReceipts": [
+    {
+      "device": "CPU",
+      "qualification": {
+        "path": "artifacts/float-to-int/literal53-cpu/qualification.json",
+        "sha256": "ecce51c190cf2d58a42caf092c42eb9e7f887fe6d965e55b3f723672421ae1a5"
+      },
+      "final": {
+        "path": "artifacts/float-to-int/literal53-cpu/final-proof.json",
+        "sha256": "96538554b160fde0316a40b83231990a863e77f01b29291f152ebfb734de8085"
+      },
+      "nativeGraphs": 156,
+      "savedFinalScenes": 16,
+      "sourceHashes": {
+        "packages/blender-addon/tests/compositor_float_to_int_check.py": "c71fd2d7b16dea012a798a855851de3c588e2eddba66438690217e7b44038efd",
+        "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
+        "packages/blendlink/blender/compositor_graph.py": "d6c40f80ce760f566e1442824a9ffd5e52d6957ce66103d6a1f66eca9888d6a3",
+        "experiments/float-to-int-native/values.py": "2b0bef591fcbdc89ee35850905780523e9c78e34ac86d176620d50fdbdd12214"
+      },
+      "exporterInputs": [
+        {
+          "source": "packages/blendlink/blender/compositor_graph.py",
+          "artifact": "packages/blendlink/dist/blender/compositor_graph.py",
+          "sha256": "d6c40f80ce760f566e1442824a9ffd5e52d6957ce66103d6a1f66eca9888d6a3"
+        },
+        {
+          "source": "packages/blendlink/blender/compositor_float_to_int.py",
+          "artifact": "packages/blendlink/dist/blender/compositor_float_to_int.py",
+          "sha256": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d"
+        },
+        {
+          "source": "packages/blendlink/blender/source_presentation.py",
+          "artifact": "packages/blendlink/dist/blender/source_presentation.py",
+          "sha256": "ee6d03a6aa52b4828cc38dd795a6fbf17371f599695ac69605aa7f9b3179a96e"
+        },
+        {
+          "source": "packages/blendlink/blender/export_scene.py",
+          "artifact": "packages/blendlink/dist/blender/export_scene.py",
+          "sha256": "a592e88079601a95fbf0c287b31e9ec7c5f44e9d0ca004f8b361f437bd80aca2"
+        }
+      ]
+    },
+    {
+      "device": "GPU",
+      "qualification": {
+        "path": "artifacts/float-to-int/literal53-gpu/qualification.json",
+        "sha256": "0fe53705778bca41a81ba220e92968b2ebd4829f665933a7e2a2afe017784a3b"
+      },
+      "final": {
+        "path": "artifacts/float-to-int/literal53-gpu/final-proof.json",
+        "sha256": "15695a02c3d1f1a5e2a5f20d16c67821ab86dfaa11ba0842ba7838e04aa167b8"
+      },
+      "nativeGraphs": 156,
+      "savedFinalScenes": 16,
+      "sourceHashes": {
+        "packages/blender-addon/tests/compositor_float_to_int_check.py": "c71fd2d7b16dea012a798a855851de3c588e2eddba66438690217e7b44038efd",
+        "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
+        "packages/blendlink/blender/compositor_graph.py": "d6c40f80ce760f566e1442824a9ffd5e52d6957ce66103d6a1f66eca9888d6a3",
+        "experiments/float-to-int-native/values.py": "2b0bef591fcbdc89ee35850905780523e9c78e34ac86d176620d50fdbdd12214"
+      },
+      "exporterInputs": [
+        {
+          "source": "packages/blendlink/blender/compositor_graph.py",
+          "artifact": "packages/blendlink/dist/blender/compositor_graph.py",
+          "sha256": "d6c40f80ce760f566e1442824a9ffd5e52d6957ce66103d6a1f66eca9888d6a3"
+        },
+        {
+          "source": "packages/blendlink/blender/compositor_float_to_int.py",
+          "artifact": "packages/blendlink/dist/blender/compositor_float_to_int.py",
+          "sha256": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d"
+        },
+        {
+          "source": "packages/blendlink/blender/source_presentation.py",
+          "artifact": "packages/blendlink/dist/blender/source_presentation.py",
+          "sha256": "ee6d03a6aa52b4828cc38dd795a6fbf17371f599695ac69605aa7f9b3179a96e"
+        },
+        {
+          "source": "packages/blendlink/blender/export_scene.py",
+          "artifact": "packages/blendlink/dist/blender/export_scene.py",
+          "sha256": "a592e88079601a95fbf0c287b31e9ec7c5f44e9d0ca004f8b361f437bd80aca2"
+        }
+      ]
+    }
+  ],
+  "receipts": [
+    {
+      "path": "artifacts/float-to-int/literal53-cpu/browser-raw-metal/report.json",
+      "sha256": "fb8cdfea0e037204a93f1540e0cbc242d9d376e0aefd87a8f40ea6d71668a3a8",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 156
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 156
+        }
+      ]
+    },
+    {
+      "path": "artifacts/float-to-int/literal53-cpu/browser-final-metal/report.json",
+      "sha256": "10649e0486a80206f07776943d2dfb190878bc363c45ea8c36bb86e719d42292",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 16
+        }
+      ]
+    },
+    {
+      "path": "artifacts/float-to-int/literal53-cpu/browser-raw-software/report.json",
+      "sha256": "fed8dfc6c8c6174e86826dc1f69eeeda87d0e57a27181bb24fb7ecc14c3d2300",
+      "sourceDevice": "CPU",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 156
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 156
+        }
+      ]
+    },
+    {
+      "path": "artifacts/float-to-int/literal53-cpu/browser-final-software/report.json",
+      "sha256": "1d921e01b099eb364ad0b9b0e018c75076b8469abad699aeff85ed65236390df",
+      "sourceDevice": "CPU",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 16
+        }
+      ]
+    },
+    {
+      "path": "artifacts/float-to-int/literal53-gpu/browser-raw-metal/report.json",
+      "sha256": "ff9475a6b62cc2bfd90070116229ad03b833b650ebb99af2237f28aaa3e8d0f8",
+      "sourceDevice": "GPU",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 156
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 156
+        }
+      ]
+    },
+    {
+      "path": "artifacts/float-to-int/literal53-gpu/browser-final-metal/report.json",
+      "sha256": "71134236360f3268b7e89642065ff0ab90321e3ad21251b7fbaf332593f3c28f",
+      "sourceDevice": "GPU",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 16
+        }
+      ]
+    },
+    {
+      "path": "artifacts/float-to-int/literal53-gpu/browser-raw-software/report.json",
+      "sha256": "882751b35e7ffec0dbd8b8f514aff74c81ea292badff973b6b6d98143e8bc831",
+      "sourceDevice": "GPU",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 156
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 156
+        }
+      ]
+    },
+    {
+      "path": "artifacts/float-to-int/literal53-gpu/browser-final-software/report.json",
+      "sha256": "f8efefba7e289f02f8b938b4e312ba4705145d33a89d97ede1b938c7cbe3708d",
+      "sourceDevice": "GPU",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 16
+        }
+      ]
+    }
+  ],
+  "reviewedInputs": {
+    "packages/blendlink/src/tslCompositorFloatToInt.ts": "8e39857c7d79d0233e4f29163052f6dcc3ef14585ee05425be3405d924989aac",
+    "packages/blendlink/src/tslSourceCompositor.ts": "60edf0661513dcdd5c1f576baf24a7392532bef2d8d408065ca1f724c77a7aef",
+    "experiments/float-to-int-native/literal_export.test.ts": "ae78459efbc55271fa31cc41b611857a763bb62434fe63d383553cda5788b979",
+    "experiments/float-to-int-native/literal_run.mjs": "201479fcc8c6b0d1ea6be08fed18b827701a996fad2ca2d7fa0eb3153dc5014a",
+    "experiments/float-to-int-native/literal_browser.js": "416906b991fd30308640bdf8f90d58f91a1ec6f42511b7f379ab8ef01b90e8d4",
+    "experiments/float-to-int-native/literal_protocol.mjs": "62556f167a86f00ddae2cf830b64ae7baa10c5b89c144ad93da5f8064802bf9b",
+    "experiments/float-to-int-native/literal_verify.mjs": "a8b26c5c77208773ac452cec1dd6187590c9e786259bf7b50bda2ae9839f2907"
+  },
+  "upstream": [
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "sha256": "f47ecc37305a7863837dbfbe37678a860fc0e49572cbe9958d1f631f05510c8a"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/nodes/function/node_function_util.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/function/node_function_util.cc",
+      "sha256": "bdb24aeed80d10bf9d4a45a6c431f05a988ea8220c95bc86603f27346eb9a923"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_float_to_int.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_float_to_int.bsl.hh",
+      "sha256": "20b66c471a307f4c27957dcac907c19e8fad5c02ff879bd6cdeb5946dce3037d"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/node_tree_evaluator.cc",
+      "sha256": "370c09bdaf564780a208a0a4498b9760830c96f10ef85a4dbb2358f533a5aab2"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/compositor/intern/shader_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/shader_operation.cc",
+      "sha256": "e224a1074a3bf7b221c536b239f642ed8e912d35af82c1c3bf1a2f9385f8949c"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9"
+    }
+  ],
+  "refusalChecks": {
+    "distinctCasesPerApiTransaction": 10,
+    "missingWebGpuAdapterRefused": true,
+    "resourcesAllocatedByRefusals": 0,
+    "cases": [
+      "model",
+      "version",
+      "source-profile",
+      "evaluator",
+      "subnormal",
+      "nonfinite",
+      "f64",
+      "magnitude",
+      "color-conversion",
+      "depth"
+    ]
+  },
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "directory": "artifacts/float-to-int",
+    "immutableRuntimeSnapshotsCommitted": false
+  },
+  "reproduction": {
+    "native": "BLENDLINK_FLOAT_TO_INT_REFERENCES=<cpu-or-gpu-directory> BLENDLINK_FLOAT_TO_INT_DEVICE=<CPU-or-GPU> BLENDLINK_FLOAT_TO_INT_ADDON=$PWD/packages/blendlink/dist/addon <Blender-5.3> --background --factory-startup -t 1 --python-exit-code 1 --python packages/blender-addon/tests/compositor_float_to_int_check.py",
+    "final": "BLENDLINK_FLOAT_TO_INT_REFERENCES=<directory> BLENDLINK_FLOAT_TO_INT_BUILT=1 BLENDLINK_BLENDER=<Blender-5.3> node node_modules/vitest/vitest.mjs run experiments/float-to-int-native/literal_export.test.ts",
+    "browser": "BLENDLINK_FLOAT_TO_INT_REFERENCES=<directory> BLENDLINK_TEST_PROFILE=<metal-or-software> node experiments/float-to-int-native/literal_run.mjs --built [--final]",
+    "verify": "node experiments/float-to-int-native/literal_verify.mjs artifacts/float-to-int experiments/float-to-int-native/literal-evidence.json"
+  },
+  "scope": "Partial compositor port: literal/group/Value constants only, exact normal-or-zero Float32 within +/-2^24; all four modes. No image, field, shader-context or general-platform qualification.",
+  "performance": "No per-frame readback, owned textures or render targets in this opcode. Literal resolution is bounded to 2048 operations, depth 8 and 64 input visits. Browser disposal and reapply are checked; no FPS claim."
+}

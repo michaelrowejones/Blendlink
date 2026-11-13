@@ -4,7 +4,7 @@ Date: 2026-07-24
 
 ## Production atomic-activation update (2026-07-24)
 
-Blendlink now uses the two-phase architecture selected by this research in its
+SceneToWeb now uses the two-phase architecture selected by this research in its
 production Three and R3F paths:
 
 - `startThreeCompiledScenePreparation()` and
@@ -53,7 +53,7 @@ The deep adapter now transfers its auto-fit helper and capture pass to the
 committed Scene/camera synchronously; focused module/component tests and the
 production 21-component browser lab verify the fix.
 
-The public MichaelRoweJonesSite dogfood also now carries Blendlink's real
+The public MichaelRoweJonesSite dogfood also now carries SceneToWeb's real
 attempt identity through its site-specific lamp preparation and keeps its
 application-owned painter Canvas at `frameloop="never"` while a deliberately
 stalled GLB is loading. A production Playwright differential observes no
@@ -121,7 +121,7 @@ transaction. The 2026-07-24 update above is authoritative where they differ.
   transferring mixer/disposal ownership. The transport owns its phase instead
   of inferring from `AnimationAction.isRunning()`. That fixes a real
   demand-mode correctness hole for NLA: its actions are intentionally paused
-  while Blendlink samples exact strip time, so action-level liveness used to
+  while SceneToWeb samples exact strip time, so action-level liveness used to
   misclassify a running sequence as idle. Focused package/Three tests are green;
   a production-dist ReactDOM/R3F 9.6.1/Three 0.184 Chromium gate now proves the
   actual demand-frame behavior. It also found a first-frame handoff race: the
@@ -140,7 +140,7 @@ transaction. The 2026-07-24 update above is authoritative where they differ.
   remains available after the application or external state changes;
 - a real production Chromium test exposed Three r184 WorkerPool leaving its
   KTX2 promise pending after CSP asynchronously blocks a Blob worker. During a
-  package-owned KTX2 load, Blendlink now observes only enforced Blob
+  package-owned KTX2 load, SceneToWeb now observes only enforced Blob
   `worker-src`/fallback violations, aborts the private graph, disposes the
   loader, and emits an actionable terminal failure. The identical allowed route
   reaches Ready with decoded `CompressedTexture` maps.
@@ -170,10 +170,10 @@ BLENDLINK_R3F_ANIMATION_TRANSPORT_BROWSER_PASSED
   seekPixelDelta=207.0 sequenceRenders=128 sequenceAfterFinish=0
 ```
 
-Likewise, "private manager abort" means Blendlink invokes only its private
+Likewise, "private manager abort" means SceneToWeb invokes only its private
 manager. Three r184 can attach same-URL consumers from other managers to the
-first request. If the application initiated that request, Blendlink cannot
-abort it; if Blendlink initiated it, private cancellation also rejects the
+first request. If the application initiated that request, SceneToWeb cannot
+abort it; if SceneToWeb initiated it, private cancellation also rejects the
 coalesced application subscriber. The focused two-order differential in
 `threeRuntime.test.ts` preserves this limit against Three upgrades.
 
@@ -185,21 +185,21 @@ remain designs. `useGLTF.preload`, Drei `<Preload>`, a completed download, and
 
 ## Scope and version evidence
 
-This note audits the current Blendlink React Three Fiber adapter against the
+This note audits the current SceneToWeb React Three Fiber adapter against the
 deeper lifecycle questions left open in
 `research-preview-to-website-2026.md`. It is deliberately limited to runtime
-lifecycle and does not propose that Blendlink own the application's Canvas,
+lifecycle and does not propose that SceneToWeb own the application's Canvas,
 route, loading presentation, or deployment.
 
 The source inspection used the versions actually installed in the two working
 trees:
 
-- Blendlink: React 19.0.0, `@react-three/fiber` 9.6.1, Three 0.184.0.
+- SceneToWeb: React 19.0.0, `@react-three/fiber` 9.6.1, Three 0.184.0.
 - MichaelRoweJonesSite: React 19.2.4, `@react-three/fiber` 9.6.1,
   `@react-three/drei` 10.7.7, Three 0.184.0.
 
 The React minor mismatch is worth retaining as test evidence: the package's
-declared React 19 peer range is correct, but Blendlink's own R3F lifecycle tests
+declared React 19 peer range is correct, but SceneToWeb's own R3F lifecycle tests
 currently exercise 19.0.0 rather than the dogfood site's 19.2.4. Primary
 sources below are official documentation and the exact tagged library source,
 not assumptions based on older releases.
@@ -209,7 +209,7 @@ not assumptions based on older releases.
 The current adapter now has an atomic presentation transaction and
 generation-safe cancellation at the right ownership seam:
 `createR3FCompiledScene()` leaves Canvas, route, layout, loading UI, and
-deployment with the website while Blendlink concentrates loader, renderer,
+deployment with the website while SceneToWeb concentrates loader, renderer,
 camera, Component, and cleanup knowledge. Cancellation of underlying work is
 bounded by the loader/browser operation; cancellation of stale commit is
 guaranteed.
@@ -237,8 +237,8 @@ post-process target, and first visible frame is GPU-ready."
 Cancellation must be described as two separate guarantees:
 
 - **Commit cancellation:** after unmount/replace, the obsolete generation will
-  never become the active scene. Blendlink can and should guarantee this.
-- **Work cancellation:** manager-backed fetches can be aborted when Blendlink
+  never become the active scene. SceneToWeb can and should guarantee this.
+- **Work cancellation:** manager-backed fetches can be aborted when SceneToWeb
   owns a private Three r184 `LoadingManager` and the runtime supports
   `AbortSignal.any()`. Image-element loads, already-running CPU decodes,
   KTX2/Meshopt worker jobs, audio decode, and shader compilation are not all
@@ -295,16 +295,16 @@ disposes Three resources. The R3F documentation therefore warns callers not to
 mutate or dispose cached assets casually. Sources: [R3F loader documentation](https://r3f.docs.pmnd.rs/api/hooks#useloader)
 and [R3F 9.6.1 loader source](https://github.com/pmndrs/react-three-fiber/blob/v9.6.1/packages/fiber/src/core/hooks.tsx).
 
-Consequences for Blendlink:
+Consequences for SceneToWeb:
 
 - `useGLTF.preload(url)` proves only that the cached Three load/parse promise
   ran. It does not establish the baked state, environment, probes, components,
   camera, post-processing, texture uploads, or shader readiness.
-- Reusing R3F's constructor-global loader is unsafe as the primary Blendlink
+- Reusing R3F's constructor-global loader is unsafe as the primary SceneToWeb
   seam when the same URL may be requested with different managers, URL
   modifiers, headers, credentials, KTX2 paths, or component adapters. Those
   settings are not all cache keys.
-- A cached GLTF scene is mutable. Blendlink patches materials, visibility,
+- A cached GLTF scene is mutable. SceneToWeb patches materials, visibility,
   cameras, controls, probes, and ownership metadata. A shared cached scene
   cannot be treated as a private disposable install. Either cache immutable
   bytes and parse per installed generation, or define explicit shared-resource
@@ -335,7 +335,7 @@ arbitrary shader uniform textures, upload every texture, initialize every
 EffectComposer render target/pass, finish PMREM generation, or render a valid
 visible pixel. Source: [Three r184 WebGLRenderer source](https://github.com/mrdoob/three.js/blob/r184/src/renderers/WebGLRenderer.js).
 
-Blendlink should therefore call the internal barrier **prepared**, not
+SceneToWeb should therefore call the internal barrier **prepared**, not
 **GPU-ready**. A prepared generation means:
 
 1. all declared asset promises settled;
@@ -403,7 +403,7 @@ for Effects. React's stated requirement is that cleanup make that sequence
 indistinguishable from one setup. Sources: [React StrictMode](https://react.dev/reference/react/StrictMode)
 and [React `useEffect`](https://react.dev/reference/react/useEffect).
 
-Today the first Blendlink setup keeps running after its cleanup. It can attach
+Today the first SceneToWeb setup keeps running after its cleanup. It can attach
 its root and mutate world globals while the second setup is in flight; only
 after its entire promise resolves does the adapter dispose it. The WeakMap does
 not prevent this because cleanup immediately releases the owner key. This is a
@@ -429,7 +429,7 @@ React lifecycle operation.
 The current `catch -> setError -> throw on render` pattern makes installation
 errors catchable by an application Error Boundary. React does not generally
 route errors from event handlers or arbitrary asynchronous callbacks through
-Error Boundaries, so Blendlink also needs a status subscription for post-ready
+Error Boundaries, so SceneToWeb also needs a status subscription for post-ready
 runtime failures. Error Boundaries and loading visuals remain website-owned.
 
 ## Cancellation and loading ownership
@@ -469,7 +469,7 @@ The exact limits are important:
   browser prototype proves a safe cancel wrapper. Sources:
   [Three KTX2Loader](https://threejs.org/docs/pages/KTX2Loader.html) and
   [r184 KTX2Loader source](https://github.com/mrdoob/three.js/blob/r184/examples/jsm/loaders/KTX2Loader.js).
-- Blendlink's Meshopt worker lease intentionally waits for the load promise to
+- SceneToWeb's Meshopt worker lease intentionally waits for the load promise to
   settle before releasing the module-global worker pool. Cancellation cannot
   truthfully mean immediate Meshopt worker termination without a new decoder
   contract.
@@ -484,20 +484,20 @@ have one locality.
 
 Application-owned loader behavior is a distinct adapter at the same seam:
 
-- Blendlink must never abort or dispose an application-owned manager/loader or
+- SceneToWeb must never abort or dispose an application-owned manager/loader or
   clear an application-owned cache.
 - The application adapter supplies URL modification, headers, credentials,
-  CORS policy, and progress semantics. Blendlink may abandon its generation
+  CORS policy, and progress semantics. SceneToWeb may abandon its generation
   and dispose only private installed mutations after a late result.
 - A supplied loader must declare whether returned resources are shared. The
   existing `installLoadedThreeCompiledScene()` behavior—caller owns loaded
   resources—is the correct low-level rule.
-- If an application wants Blendlink's progress interface, adapt its manager
-  into Blendlink events; do not overwrite global callback properties silently.
+- If an application wants SceneToWeb's progress interface, adapt its manager
+  into SceneToWeb events; do not overwrite global callback properties silently.
 
 Drei `useProgress` assigns the callback properties of Three's
 `DefaultLoadingManager`. That is convenient for one global owner, but it is not
-a subscriber hub and it would miss a Blendlink-private manager. Blendlink
+a subscriber hub and it would miss a SceneToWeb-private manager. SceneToWeb
 should expose its own attempt-scoped status, leaving the website free to map it
 to any visual. Source: [Drei 10.7.7 progress source](https://github.com/pmndrs/drei/blob/v10.7.7/src/core/Progress.tsx).
 
@@ -529,7 +529,7 @@ R3F demand mode reacts to React prop changes, not arbitrary Three mutations.
 `invalidate()` schedules a frame rather than rendering immediately, and calls
 coalesce. Source: [R3F on-demand rendering](https://r3f.docs.pmnd.rs/advanced/scaling-performance).
 The installed 9.6.1 loop confirms that an `invalidate()` issued inside
-`useFrame` leaves another frame queued. Blendlink uses that behavior only
+`useFrame` leaves another frame queued. SceneToWeb uses that behavior only
 while a live subsystem proves it remains active; it does not infer idleness
 from a static descriptor flag.
 
@@ -548,9 +548,9 @@ at runtime:
   until their keyboard/pointer activity can be observed without missing an
   application mutation;
 - look-at, LOD, instance synchronization, positional audio, and depth effects
-  depend on camera/object changes that may originate outside Blendlink;
+  depend on camera/object changes that may originate outside SceneToWeb;
 - custom component adapters may contain time-based shaders or imperative
-  updates Blendlink cannot infer.
+  updates SceneToWeb cannot infer.
 
 The internal module should therefore own a small activity arbiter, not expose
 all subsystem details:
@@ -582,7 +582,7 @@ resource owner remains the one installed scene. This is Chromium 150 with
 ANGLE SwiftShader, not physical-GPU power evidence.
 
 Unknown external imperative mutations remain the host's responsibility. The
-interface documentation should say that a host that mutates Blendlink objects
+interface documentation should say that a host that mutates SceneToWeb objects
 directly in demand mode must call R3F `invalidate`, just as it must for any
 other Three object. Do not claim automatic observation.
 
@@ -764,7 +764,7 @@ Interface invariants, ordering, and errors:
 - A Canvas-local controller permits one active definition; changing descriptor
   identity prepares the replacement and atomically swaps it when ready.
 - The controller owns retry generation and status. The hook throws outside the
-  Blendlink scene/controller context.
+  SceneToWeb scene/controller context.
 - Errors follow the same prepare/Error Boundary and post-ready/status split as
   design A.
 
@@ -808,7 +808,7 @@ host distinction already justify internal adapters.
   conservative recoverability (`false` unless the failure is explicitly known
   to be transient).
 - Serialized replay for shared Three caches, generation-aware stale-progress
-  rejection, and private-manager abort for requests Blendlink owns.
+  rejection, and private-manager abort for requests SceneToWeb owns.
 - A renderer-neutral scene-installation transaction with cooperative
   generation cancellation, preparation-owned resources, exact-once synchronous
   commit, reverse rollback, and structured cleanup errors, consumed by both

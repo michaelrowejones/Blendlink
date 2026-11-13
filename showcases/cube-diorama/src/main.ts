@@ -1,11 +1,11 @@
-// Blendlink starter: this entry point is application-owned and safe to edit.
+// SceneToWeb starter: this entry point is application-owned and safe to edit.
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { installCubeDioramaScene } from './blendlink/CubeDioramaScene'
 import './style.css'
 
 const canvasElement = document.querySelector<HTMLCanvasElement>('#scene')
-if (!canvasElement) throw new Error('Blendlink starter: #scene canvas is missing')
+if (!canvasElement) throw new Error('SceneToWeb starter: #scene canvas is missing')
 const canvas: HTMLCanvasElement = canvasElement
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })

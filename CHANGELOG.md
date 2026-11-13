@@ -1,13 +1,19 @@
 # Changelog
 
-All notable user-facing changes to Blendlink will be recorded here.
+All notable user-facing changes to SceneToWeb will be recorded here.
 
 This project follows [Semantic Versioning](https://semver.org/) and keeps an
 Unreleased section using the categories from
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Blendlink is still
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). SceneToWeb is still
 pre-1.0; breaking changes must still be called out with a migration note.
 
 ## [Unreleased]
+
+### Changed
+
+- Rename public product, Blender extension, CLI, npm package and new project templates to SceneToWeb (`scenetoweb`).
+- Keep existing Blender scene metadata and compiled contracts, a legacy CLI alias, and legacy config discovery for existing projects.
+- Update retained package verification, release artifact names, documentation and node coverage tracker branding.
 
 ### Fixed
 

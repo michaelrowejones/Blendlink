@@ -46,6 +46,12 @@ account secret, public sharing or Google credentials are stored in the repositor
    after read-back verification. On authentication or extraction failure leave
    coverage intact and report the failed refresh.
 
+Use `source.nativeInventoryAuditGeneratedAt` for the native inventory date and
+`source.coverageGeneratedAt` for the classification report date. A
+`retained-reviewed-native-catalogs` refresh reclassifies existing inventories
+against reviewed port evidence; it does not rediscover nodes or enum states.
+Display that distinction whenever `source.nativeInventoryRefreshed` is false.
+
 ## Work ordering
 
 Prioritize reusable enabling work first, then common artist workflows, then

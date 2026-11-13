@@ -290,7 +290,7 @@ def replace(
     blend_path: str,
     session_id: str | None = None,
 ) -> str | None:
-    """Stop a stale Blendlink child and start the requested source afterward.
+    """Stop a stale SceneToWeb child and start the requested source afterward.
 
     Only the process launched by this module is terminated.  When that child
     merely watches an explicitly configured external website, the unrelated

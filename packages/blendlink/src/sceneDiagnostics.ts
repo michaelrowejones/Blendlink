@@ -105,7 +105,7 @@ export interface ProceduralDiagnostic {
   estimatedMorphBytes?: number
 }
 
-/** Phase 0c evidence: what Blendlink's pinned `export_apply=True` actually
+/** Phase 0c evidence: what SceneToWeb's pinned `export_apply=True` actually
  * does to one shape-keyed mesh. Blender's own property text
  * (io_scene_gltf2 __init__.py:679-684) claims applying modifiers always
  * prevents exporting shape keys; measured, it does not — 7 of
@@ -982,7 +982,7 @@ function compileGpuBatches(
 
 function materialEvidenceFailure(source: string, detail: string): never {
   throw new Error(
-    `Blendlink refused the final GLB because selected Website Material "${source}" ` +
+    `SceneToWeb refused the final GLB because selected Website Material "${source}" ` +
     `${detail} Re-run Preview; if this persists, disable the changing optimizer stage ` +
     'and report the compiler mismatch.',
   )
@@ -1383,7 +1383,7 @@ function uvGeometryAssociationEvidence(
     )
   } catch (error) {
     if (error instanceof Error
-        && error.message.startsWith('Blendlink refused the final GLB')) {
+        && error.message.startsWith('SceneToWeb refused the final GLB')) {
       throw error
     }
     materialEvidenceFailure(
@@ -1403,17 +1403,17 @@ export function verifyMaterialCompilationEvidence(
 ): void {
   if ((compilation as { schemaVersion?: unknown }).schemaVersion !== 1) {
     throw new Error(
-      `Blendlink refused material compilation evidence schemaVersion ` +
+      `SceneToWeb refused material compilation evidence schemaVersion ` +
       `${String((compilation as { schemaVersion?: unknown }).schemaVersion)} is unsupported; ` +
-      'expected 1. Re-run Preview with this Blendlink version to regenerate the evidence.',
+      'expected 1. Re-run Preview with this SceneToWeb version to regenerate the evidence.',
     )
   }
   if (compilation.attestationModel !== undefined
       && compilation.attestationModel !== 'primitive-corner-v1') {
     throw new Error(
-      `Blendlink refused material compilation attestation model ` +
+      `SceneToWeb refused material compilation attestation model ` +
       `${String(compilation.attestationModel)}; expected primitive-corner-v1. ` +
-      'Re-run Preview with this Blendlink version to regenerate the evidence.',
+      'Re-run Preview with this SceneToWeb version to regenerate the evidence.',
     )
   }
   const currentAttestation = compilation.attestationModel === 'primitive-corner-v1'

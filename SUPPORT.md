@@ -1,6 +1,6 @@
 # Support policy
 
-Blendlink is pre-1.0 and has not yet been published to npm or approved on
+SceneToWeb is pre-1.0 and has not yet been published to npm or approved on
 extensions.blender.org. This file distinguishes the intended compatibility
 contract from environments that have actually been exercised.
 
@@ -11,7 +11,7 @@ contract from environments that have actually been exercised.
 | Node.js | `22.15.0` or newer Node 22; Node 24 | Declared by the npm package. The CI matrix covers exact 22.15, latest 22, and latest 24; 22.15 is the first Node 22 release with the Zstandard API required to inspect compressed `.blend` headers. |
 | Blender | 4.2.0 and newer | The extension manifest is the compatibility floor. Windows Blender 5.2 evidence is retained. macOS Blender 5.2 passes the full contract with a CPU override, and Blender 5.3 has a verified first-preview/standalone flow; the complete material compatibility suite intentionally requires Blender 5.2 / exporter 5.2.39. |
 | Operating systems | Windows, Linux, and macOS are intended | Hosted Linux/Windows x64 checks pass extension installation, private tools, website export and offline tool reuse on Blender 4.2.0/5.2.0. The full pinned 5.2/KTX suite passes on hosted Linux. macOS arm64 has local CPU-only 5.2 and preview/export 5.3 evidence; hosted macOS remains pending. |
-| Three.js / `@types/three` | runtime exact `three@0.184.0`; declarations `>=0.184.0 <0.185.0` | Declared optional peer contract. Blendlink's compiled and loaded capability profiles were audited against the exact r184 runtime source. Declaration-only r184 patch releases do not change loader behavior; the dogfood site exercises `@types/three@0.184.1`. Other runtime releases are unsupported until separately profiled. |
+| Three.js / `@types/three` | runtime exact `three@0.184.0`; declarations `>=0.184.0 <0.185.0` | Declared optional peer contract. SceneToWeb's compiled and loaded capability profiles were audited against the exact r184 runtime source. Declaration-only r184 patch releases do not change loader behavior; the dogfood site exercises `@types/three@0.184.1`. Other runtime releases are unsupported until separately profiled. |
 | React | `>=19.0.0 <20.0.0` | Declared optional peer range for React adapters. |
 | React Three Fiber | `>=9.0.0 <10.0.0` | Declared optional peer range; packed R3F consumer is locally compiled. |
 | Browsers | Modern Chromium, Firefox, and WebKit are intended | The standalone fixture renders in Playwright Chromium, Firefox, and WebKit on macOS and hosted Linux, including a deployment subfolder. Linux uses a software renderer with Xvfb. Branded Safari/Firefox, real mobile hardware, and wider scene coverage still need verification. |
@@ -44,7 +44,7 @@ runner even when its normal preview workflow succeeds.
 
 ## What support means
 
-Once publishing begins, the latest Blendlink minor release is the supported
+Once publishing begins, the latest SceneToWeb minor release is the supported
 pre-1.0 line. Compatible bug fixes are released as patches. Older pre-1.0
 minors may receive critical security fixes at the maintainer's discretion but
 are not promised general maintenance.
@@ -61,6 +61,6 @@ announced in `CHANGELOG.md` and `docs/MIGRATIONS.md` before release.
 - Use `SECURITY.md` rather than a public issue for vulnerabilities.
 
 Website layout, routes, Canvas ownership, deployment configuration, CDN policy,
-analytics, and loading UI remain application-owned. Blendlink can diagnose its
+analytics, and loading UI remain application-owned. SceneToWeb can diagnose its
 compiler/runtime integration but does not provide hosting or general framework
 support.

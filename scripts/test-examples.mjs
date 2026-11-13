@@ -3,7 +3,7 @@
 // inside the repository (so three/react resolve from the root
 // node_modules), receives the workspace-built blendlink package, has its
 // src/blendlink + src/generated modules produced by setupWebsiteProject +
-// `blendlink typegen`, and must pass tsc and a Vite build. Drift between
+// `scenetoweb typegen`, and must pass tsc and a Vite build. Drift between
 // the generated bindings and the committed example source fails here, not
 // in a user project.
 import { spawnSync } from 'node:child_process'
@@ -52,7 +52,7 @@ async function prepare(exampleName) {
   const directory = join(work, exampleName)
   cpSync(source, directory, { recursive: true })
 
-  const target = join(directory, 'node_modules', 'blendlink')
+  const target = join(directory, 'node_modules', 'scenetoweb')
   mkdirSync(join(directory, 'node_modules'), { recursive: true })
   cpSync(packageUnderTest, target, { recursive: true, errorOnExist: true })
 

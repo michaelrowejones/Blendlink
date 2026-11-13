@@ -176,12 +176,12 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   async addEffect(
     effect: Readonly<PostEffectDescriptor>,
   ): Promise<RuntimeComponentInstallation> {
-    if (this.disposed) throw new Error('The Blendlink post pipeline has already been disposed.')
+    if (this.disposed) throw new Error('The SceneToWeb post pipeline has already been disposed.')
     if (this.finalized) {
-      throw new Error('Blendlink post effects must be registered before the pipeline is finalized.')
+      throw new Error('SceneToWeb post effects must be registered before the pipeline is finalized.')
     }
     if (this.registrations.has(effect.id)) {
-      throw new Error(`Blendlink post effect ID ${effect.id} is registered more than once.`)
+      throw new Error(`SceneToWeb post effect ID ${effect.id} is registered more than once.`)
     }
     const registration = await this.createRegistration(effect)
     registration.generatesHardPostEdges = effect.type === 'blendlink.ambient-occlusion'
@@ -206,7 +206,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   }
 
   finalize(): void {
-    if (this.disposed) throw new Error('The Blendlink post pipeline has already been disposed.')
+    if (this.disposed) throw new Error('The SceneToWeb post pipeline has already been disposed.')
     if (this.finalized) return
     this.options.signal?.throwIfAborted()
     const registrations = [...this.registrations.values()]
@@ -321,8 +321,8 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   }
 
   activate(scene: THREE.Scene, camera: THREE.Camera): void {
-    if (this.disposed) throw new Error('The Blendlink post pipeline has already been disposed.')
-    if (!this.finalized) throw new Error('The Blendlink post pipeline must be finalized before activation.')
+    if (this.disposed) throw new Error('The SceneToWeb post pipeline has already been disposed.')
+    if (!this.finalized) throw new Error('The SceneToWeb post pipeline must be finalized before activation.')
     if (this.activated) return
     this.options.scene = scene
     this.options.camera = camera
@@ -364,7 +364,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   }
 
   render(_deltaSeconds?: number): void {
-    if (!this.pipeline) throw new Error('The Blendlink post pipeline renders only after finalize().')
+    if (!this.pipeline) throw new Error('The SceneToWeb post pipeline renders only after finalize().')
     this.pipeline.render()
   }
 
@@ -383,7 +383,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
     try { this.sourceCompositor?.dispose() } catch (error) { errors.push(error) }
     if (errors.length > 0) {
       throw new Error(
-        `Blendlink post-pipeline disposal failed: ${errors
+        `SceneToWeb post-pipeline disposal failed: ${errors
           .map((error) => error instanceof Error ? error.message : String(error)).join('; ')}`,
       )
     }
@@ -418,19 +418,19 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   ): Promise<THREE.Data3DTexture> {
     const url = descriptor.values.lutUrl
     if (typeof url !== 'string' || url.length === 0) {
-      throw new Error(`Blendlink Color Grading ${descriptor.id} needs a LUT URL.`)
+      throw new Error(`SceneToWeb Color Grading ${descriptor.id} needs a LUT URL.`)
     }
     const protocol = /^([a-z][a-z0-9+.-]*):/i.exec(url)?.[1]?.toLowerCase()
     if (protocol && !['http', 'https', 'blob', 'data'].includes(protocol)) {
       throw new Error(
-        `Blendlink Color Grading ${descriptor.id} LUT URL uses unsupported protocol ${protocol}.`,
+        `SceneToWeb Color Grading ${descriptor.id} LUT URL uses unsupported protocol ${protocol}.`,
       )
     }
     if (this.options.loadLut) {
       const texture = await this.options.loadLut(url)
       if (!(texture instanceof THREE.Data3DTexture)) {
         throw new Error(
-          `Blendlink Color Grading ${descriptor.id} LUT resolver did not return a Data3DTexture.`,
+          `SceneToWeb Color Grading ${descriptor.id} LUT resolver did not return a Data3DTexture.`,
         )
       }
       return texture
@@ -445,7 +445,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       return (await new LUT3dlLoader(this.options.loadingManager).loadAsync(url)).texture3D
     }
     throw new Error(
-      `Blendlink Color Grading ${descriptor.id} needs a .cube or .3dl LUT URL; got ${JSON.stringify(url)}.`,
+      `SceneToWeb Color Grading ${descriptor.id} needs a .cube or .3dl LUT URL; got ${JSON.stringify(url)}.`,
     )
   }
 
@@ -469,7 +469,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       case 'blendlink.bloom': {
         const mode = stringValue(values.mode, 'bright-pixels')
         if (mode !== 'bright-pixels' && mode !== 'emissive-objects') {
-          throw new Error(`Blendlink Bloom ${descriptor.id} uses unsupported mode ${JSON.stringify(mode)}.`)
+          throw new Error(`SceneToWeb Bloom ${descriptor.id} uses unsupported mode ${JSON.stringify(mode)}.`)
         }
         const intensity = clampNumber(finite(values.intensity, 0.5), 0, 100)
         const threshold = clampNumber(finite(values.threshold, 0.8), 0, 100)
@@ -507,7 +507,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
         }
         if (mode !== 'directional') {
           throw new Error(
-            `Blendlink Chromatic Aberration ${descriptor.id} uses unsupported Pattern ${JSON.stringify(mode)}.`,
+            `SceneToWeb Chromatic Aberration ${descriptor.id} uses unsupported Pattern ${JSON.stringify(mode)}.`,
           )
         }
         const angle = THREE.MathUtils.degToRad(clampNumber(finite(values.angle, 0), -180, 180))
@@ -624,7 +624,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
         const radiusMode = stringValue(values.radiusMode, 'world')
         if (radiusMode !== 'world' && radiusMode !== 'screen') {
           throw new Error(
-            `Blendlink Ambient Occlusion ${descriptor.id} uses unsupported Radius mode ${radiusMode}.`,
+            `SceneToWeb Ambient Occlusion ${descriptor.id} uses unsupported Radius mode ${radiusMode}.`,
           )
         }
         let node: InstanceType<N8AOWebgpuModule['N8AONode']> | null = null
@@ -649,7 +649,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
               ? clampNumber(finite(values.screenRadius, 32), 1, 512)
               : clampNumber(finite(values.worldRadius, 1), 0.0001, 1_000_000)
             configuration.intensity = clampNumber(finite(values.intensity, 2), 0, 100)
-            // Blendlink colors are linear; the upstream N8AO convention (and
+            // SceneToWeb colors are linear; the upstream N8AO convention (and
             // this port) interprets the public color as sRGB.
             const [r, g, b] = colorTriple(values.color)
             configuration.color = new THREE.Color(r, g, b).convertLinearToSRGB()
@@ -725,7 +725,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
         const mode = stringValue(values.focusMode, 'distance')
         if (mode !== 'distance' && mode !== 'object') {
           throw new Error(
-            `Blendlink Depth of Field ${descriptor.id} uses unsupported focus mode ${mode}.`,
+            `SceneToWeb Depth of Field ${descriptor.id} uses unsupported focus mode ${mode}.`,
           )
         }
         const focusRange = clampNumber(finite(values.focusRange, 2), 0.0001, 1_000_000)
@@ -738,7 +738,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
           const focusObject = descriptor.resources?.focusObject
           if (!(focusObject instanceof THREE.Object3D)) {
             throw new Error(
-              `Blendlink Depth of Field ${descriptor.id} could not resolve its object focus target.`,
+              `SceneToWeb Depth of Field ${descriptor.id} could not resolve its object focus target.`,
             )
           }
           const target = new THREE.Vector3()

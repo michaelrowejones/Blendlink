@@ -78,7 +78,7 @@ function packedFixture() {
   return root
 }
 
-describe('packed Blendlink license contract', () => {
+describe('packed SceneToWeb license contract', () => {
   it('accepts a complete mixed-license aggregate', () => {
     const root = packedFixture()
 

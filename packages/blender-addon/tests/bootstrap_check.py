@@ -68,6 +68,24 @@ class BootstrapChecks(unittest.TestCase):
                 patch.object(bootstrap.platform, "machine", return_value="arm64"):
             self.assertEqual(bootstrap.runtime_platform(), ("Darwin", "arm64"))
 
+    def test_first_use_requests_the_matching_scenetoweb_compiler(self):
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(bootstrap, "ensure_runtime", return_value=(Path('/node'), Path('/npm.js'))), \
+                patch.object(bootstrap.os, "name", "posix"), \
+                patch.object(bootstrap.os, "execve", side_effect=SystemExit(0)) as launch:
+            with self.assertRaises(SystemExit):
+                bootstrap.main([
+                    '--cache', temporary, '--version', '0.9.0',
+                    '--blender', '/Blender', '--', 'preview', '--blend', '/Artist Scene.blend',
+                ])
+            executable, arguments, environment = launch.call_args.args
+            self.assertEqual(executable, Path('/node'))
+            self.assertEqual(arguments[-6:], [
+                '--package=scenetoweb@0.9.0', '--', 'scenetoweb',
+                'preview', '--blend', '/Artist Scene.blend',
+            ])
+            self.assertEqual(environment['BLENDLINK_BLENDER'], '/Blender')
+
 
 if __name__ == "__main__":
     result = unittest.TextTestRunner().run(unittest.defaultTestLoader.loadTestsFromTestCase(BootstrapChecks))

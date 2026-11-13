@@ -23,7 +23,7 @@ produce a named bake-only reason. **Bake Only** preserves that result by artist
 choice. **Three Rect Area** knowingly accepts the reported semantic
 approximations, but still fails loudly when the source descriptor cannot be
 computed truthfully. Point, Spot, and Sun remain the portability recommendation:
-they use standard `KHR_lights_punctual`, work in non-Blendlink viewers, and keep
+they use standard `KHR_lights_punctual`, work in non-SceneToWeb viewers, and keep
 Three's available shadow path.
 
 Compile the selected light into an ordinary glTF node extra, not a fake
@@ -189,7 +189,7 @@ produce invalid glTF and mislead every generic loader.
 
 glTF permits application data in `extras`; Khronos recommends extensions for
 broadly interoperable behavior and `extras` for application-specific data.
-Blendlink's renderer-specific, guarded lowering is the latter. A namespaced node
+SceneToWeb's renderer-specific, guarded lowering is the latter. A namespaced node
 extra is therefore the smallest standards-honest seam. [glTF extension
 registry guidance][khr-extensions]
 
@@ -220,7 +220,7 @@ point-or-spot intensity = effective / (4 * pi)
 sun intensity = effective
 ```
 
-In `SPEC` mode the exporter additionally converts watts to lumens; Blendlink
+In `SPEC` mode the exporter additionally converts watts to lumens; SceneToWeb
 deliberately selects `COMPAT`, avoiding that 683x conversion and matching its
 existing presentation fixtures. The implemented adapter follows the same
 **numeric COMPAT convention**. It does not claim that a Blender watt is
@@ -234,7 +234,7 @@ must not try to interpret Blender node graphs.
 
 The subsequent Eevee 5.2 source audit sharpened that policy. Eevee does not
 consume Area Spread or the light node graph, but it does multiply the final
-direct surface result by `scene.eevee.direct_light_intensity`. Blendlink folds a
+direct surface result by `scene.eevee.direct_light_intensity`. SceneToWeb folds a
 static finite non-negative value into descriptor strength and ignores
 animation that affects only Eevee-unused Spread/node switches; animation of the
 direct scale or effective light data keeps Automatic bake-only. Eevee also
@@ -244,7 +244,7 @@ results instead of letting Three illuminate with different dimensions, and the
 explicit Three mode cannot force that unproven divergence.
 
 Eevee and Three both use LTC-based rectangle evaluation, but the pinned sources
-do not have identical horizon clipping and receiver-facing fades. Blendlink
+do not have identical horizon clipping and receiver-facing fades. SceneToWeb
 therefore records `rect-area-eevee-ltc-horizon-approximation` even for an
 otherwise safe Automatic descriptor. Grazing angles and rough highlights can
 differ; this is an allowed named approximation, not calibration evidence.
@@ -252,7 +252,7 @@ differ; this is an allowed named approximation, not calibration evidence.
 Cycles does consume Area Spread and its active light surface. V1 accepts
 nodes-off data-block semantics or a direct constant Emission route. Constant
 Emission color can be composed with the data/temperature color, but linked,
-grouped, or indirect routes are not a closed static fact. Blendlink has not
+grouped, or indirect routes are not a closed static fact. SceneToWeb has not
 established the exact Area algebra for a Cycles Emission Strength other than
 the default `1`; Automatic therefore falls back to baked output and explicit
 Three fails rather than multiplying by an assumed factor. Non-default Cycles
@@ -341,13 +341,13 @@ boundary; do not restore the reproduced deadlock merely to improve one bundle
 number.
 
 The four LTC textures belong to the Three process/application, not an installed
-Blendlink scene. Scene disposal must never dispose or clear them. Renderer
+SceneToWeb scene. Scene disposal must never dispose or clear them. Renderer
 disposal remains application-owned.
 
 ### Strict Mode exposes lifecycle mistakes
 
 React [StrictMode][react-strict] deliberately performs an extra development
-setup/cleanup cycle for Effects. Blendlink's R3F adapter already serializes
+setup/cleanup cycle for Effects. SceneToWeb's R3F adapter already serializes
 installations per Canvas through `slot.tail`, and a stale installation disposes
 instead of committing. The RectArea module adds its own idempotent ownership
 contract so Vanilla and direct Three consumers do not depend on the R3F guard.
@@ -708,7 +708,7 @@ final compile because they can introduce supported PBR materials or
 post-processing.
 
 `compileAsync` is a shader-program barrier only. The targeted LTC
-`initTexture` calls are what prevent first-use LTC upload. Blendlink must not
+`initTexture` calls are what prevent first-use LTC upload. SceneToWeb must not
 rename either claim to "the complete scene is GPU ready."
 
 ### Materials and report
@@ -743,7 +743,7 @@ marker fails before mutation. This contract is sufficient for React Strict
 Mode's setup-cleanup-setup sequence and for direct Three consumers.
 
 `RectAreaLight` has no shadow resource. The runtime sets `castShadow=false` and
-does not allocate a helper mesh. The existing Blendlink shadow adapter already
+does not allocate a helper mesh. The existing SceneToWeb shadow adapter already
 ignores lights without a `.shadow` implementation, while the compiler
 diagnostic states that an authored Area shadow request is not represented.
 

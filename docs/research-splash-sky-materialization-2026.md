@@ -15,7 +15,7 @@ bad CDN response, insufficient selected-field resolution, or mip bleed.
 `DP-SkyPaint.MAT` deliberately combines a painted corner color with
 object-space Noise and Voronoi grain, then Blender displays the result through
 Filmic, `Medium High Contrast`, exposure `-0.105541`, and gamma `1.183119`.
-Blendlink materializes the intrinsic field to a valid stock-glTF texture, but
+SceneToWeb materializes the intrinsic field to a valid stock-glTF texture, but
 two independent losses remain:
 
 1. the website-owned renderer does not reproduce that authored Blender display
@@ -69,7 +69,7 @@ The read-only Blender inventory proves:
 - `Texture Coordinate.002.Object` drives `Voronoi Texture.001`, scale `6`;
 - the Voronoi color is mixed at factor `0.571944`;
 - Hue/Saturation/Value then feeds the active unlit Surface and the selected
-  `Blendlink Web Color` marker;
+  `SceneToWeb Web Color` marker;
 - the receiver has 21,318 vertices, 21,263 polygons, 42,632 loop triangles,
   and approximately 1,200-unit bounds on every axis; and
 - the source `UVMap` is degenerate/self-overlapping for this delivery.
@@ -100,7 +100,7 @@ The user-supplied
 [Blender 5.2 glTF exporter manual](https://docs.blender.org/manual/en/5.2/addons/scene_gltf2.html)
 is directly useful here: Blender exports the recognized core PBR/unlit
 arrangements rather than arbitrary shader graphs, which explains both
-Blendlink's explicit materialization need and Needle's empty stock material.
+SceneToWeb's explicit materialization need and Needle's empty stock material.
 
 The browser uses Three `0.184.0`. Exact inspected sources:
 
@@ -163,7 +163,7 @@ loss.
 
 This could remain camera-independent, but matching Blender's procedural
 algorithms, node coercions, antialiasing, and version changes would create a
-growing shader translator. It pushes Blendlink toward the proprietary-engine
+growing shader translator. It pushes SceneToWeb toward the proprietary-engine
 boundary and still leaves exact OCIO display transport unresolved.
 
 **Not recommended as the near-term fallback.** This remains Future Work unless
@@ -203,7 +203,7 @@ bind:
 - a loud camera/aspect mismatch policy.
 
 The website must continue owning its route, Canvas, renderer, and presentation.
-Blendlink should install a small `toneMapped=false`, depth-testing projected
+SceneToWeb should install a small `toneMapped=false`, depth-testing projected
 material only after validating the declared camera contract. A camera/aspect
 change must fail or invoke an explicit application fallback; it must not
 silently stretch the capture.

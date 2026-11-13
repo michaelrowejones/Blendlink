@@ -62,8 +62,8 @@ if (dirname(outputRoot) !== resolve(outputParent) || basename(outputRoot) !== ve
 }
 mkdirSync(outputRoot, { recursive: true })
 
-const npmArchive = join(outputRoot, `blendlink-${version}.tgz`)
-const addonArchive = join(outputRoot, `blendlink-addon-${version}.zip`)
+const npmArchive = join(outputRoot, `scenetoweb-${version}.tgz`)
+const addonArchive = join(outputRoot, `scenetoweb-addon-${version}.zip`)
 const releaseManifestPath = join(outputRoot, 'release-manifest.json')
 const checksumPath = join(outputRoot, 'SHA256SUMS')
 for (const path of [npmArchive, addonArchive, releaseManifestPath, checksumPath]) {
@@ -122,10 +122,10 @@ try {
   }
 
   const discovery = run(process.execPath, [join(packageRoot, 'dist', 'cli.js'), 'discover'], {
-    label: 'Blendlink Blender discovery',
+    label: 'SceneToWeb Blender discovery',
   })
   const blender = discovery.trim().split(/\r?\n/).filter(Boolean).at(-1)
-  if (!blender || !existsSync(blender)) throw new Error('Blendlink discovery returned no Blender executable')
+  if (!blender || !existsSync(blender)) throw new Error('SceneToWeb discovery returned no Blender executable')
 
   const resources = join(tempRoot, 'blender-resources')
   mkdirSync(resources, { recursive: true })
@@ -145,16 +145,16 @@ try {
   const probe = `
 import bpy, hashlib, importlib, json, tomllib
 from pathlib import Path
-name = "bl_ext.user_default.blendlink"
+name = "bl_ext.user_default.scenetoweb"
 repo = next(item for item in bpy.context.preferences.extensions.repos if item.module == "user_default")
-manifest = Path(repo.directory) / "blendlink" / "blender_manifest.toml"
+manifest = Path(repo.directory) / "scenetoweb" / "blender_manifest.toml"
 module = importlib.import_module(name)
 tree = hashlib.sha256()
 runtime_files = []
-for path in (Path(repo.directory) / "blendlink").rglob("*"):
+for path in (Path(repo.directory) / "scenetoweb").rglob("*"):
     if not path.is_file():
         continue
-    relative = path.relative_to(Path(repo.directory) / "blendlink")
+    relative = path.relative_to(Path(repo.directory) / "scenetoweb")
     if any(part in {"__pycache__", ".git", "tests"} for part in relative.parts):
         continue
     if relative.name.endswith((".pyc", ".zip", "_test.py")):

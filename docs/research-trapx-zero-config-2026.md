@@ -5,7 +5,7 @@ Verified; no TrapX appearance transport was added.**
 
 This note audits the private local scene
 `C:/Users/micha/Downloads/TrapX - Stylized Painting Shader.blend`. The goal is
-not to hand-configure one attractive sphere. It is to find reusable Blendlink
+not to hand-configure one attractive sphere. It is to find reusable SceneToWeb
 behavior for Cycles-authored Fresnel, glass, transparency, painterly
 procedurals, packed images, and camera-space presentation.
 
@@ -32,7 +32,7 @@ failure that a successful GLB load can hide:
 - the resulting GLB is structurally healthy but materially opaque and has no
   transmission/volume/custom-shader representation.
 
-The untouched Blendlink Final planner correctly identifies that semantic loss:
+The untouched SceneToWeb Final planner correctly identifies that semantic loss:
 it exits `1` with one `material.used-needs-bake` error and fourteen concrete
 reasons. The first identical Final compile exposed a real consistency bug: it
 published the stock floor while its manifest still said `needsBake`. The
@@ -116,7 +116,7 @@ black.
 
 The camera has a CamFX participation property, but its generated bokeh and
 lens-dirt object references are null in this saved scene. Two unpacked CamFX
-images are missing and report `0 x 0`; Blendlink proves they are used only by
+images are missing and report `0 x 0`; SceneToWeb proves they are used only by
 material graphs outside the render-visible export scope and warns without
 blocking. The other 45 of 47 images are packed.
 
@@ -191,7 +191,7 @@ The broad Needle inventory is mixed-source. Only the named official Preview
 cell is coherent; production compression findings remain source-audited, not a
 TrapX production-browser claim.
 
-## Untouched Blendlink Final plan
+## Untouched SceneToWeb Final plan
 
 Configuration contains only:
 
@@ -264,7 +264,7 @@ The current exact command now returns:
 
 - exit code `1`;
 - source hash unchanged;
-- one `Blendlink Material Fidelity refused to publish trapxUntouched` error;
+- one `SceneToWeb Material Fidelity refused to publish trapxUntouched` error;
 - the same material, user, summary, and fourteen reasons as `plan`;
 - explicit next actions: Website Material, portable glTF, or supported
   Appearance;
@@ -313,7 +313,7 @@ warning and browser-gate requirement.
 Exact focused command, passed 2026-07-25:
 
 ```text
-npm.cmd run test --workspace blendlink -- syncMaterialPortability.integration.test.ts
+npm.cmd run test --workspace scenetoweb -- syncMaterialPortability.integration.test.ts
 ```
 
 Result: one test file and one test passed (`172 ms` test time, `812 ms`
@@ -322,7 +322,7 @@ total).
 ## Retained pre-fix stock structural floor
 
 The pre-fix GLB is retained only as a stock/Needle-equivalent structural
-floor. It is not a successful publication under the current Blendlink Final
+floor. It is not a successful publication under the current SceneToWeb Final
 gate.
 
 The retained GLB:
@@ -382,7 +382,7 @@ no Needle post stack or Blender compositor.
 
 ### Compile-gate design A: run a second plan-only Blender pass
 
-Credible but rejected. Compile could invoke `blendlink plan` first, then start
+Credible but rejected. Compile could invoke `scenetoweb plan` first, then start
 the real export only after the plan succeeds. That is easy to describe, but it
 duplicates Blender startup and scene evaluation. Drivers, dependency state,
 temporary resources, or source edits between passes could make the inspected
@@ -409,7 +409,7 @@ view-dependent shader composition. “Full-surface preserved” would be false.
 ### Material transport B: compile arbitrary graphs to custom GLSL or MaterialX
 
 Rejected as a default product direction. It could preserve interactive
-Fresnel/glass behavior for some graphs, but would make Blendlink responsible
+Fresnel/glass behavior for some graphs, but would make SceneToWeb responsible
 for a proprietary renderer/material engine, shader portability, security,
 backend differences, and long-term node compatibility. Needle itself does not
 perform this conversion in the inspected Blender add-on.
@@ -470,7 +470,7 @@ presentation, controls, interactivity, and deployment.
 
 Artist workflow should remain nearly zero-configuration:
 
-1. Blendlink inspects the active Surface closure.
+1. SceneToWeb inspects the active Surface closure.
 2. It selects portable transport only when proved exact.
 3. For a one-frame fixed-camera source like TrapX, it can recommend Fixed
    Camera Appearance with its interaction limits visible.
@@ -487,7 +487,7 @@ local research-only ID; this note does not promote Prototype/Future work.
 
 | ID | Capability | Needle relation | State | Evidence |
 | --- | --- | --- | --- | --- |
-| `NDL-MAT-002` | Name and transactionally block linked-but-unrepresented active-Surface loss in plan and Final compile | **Improvement** over Needle's silent stock subset | **Shipped** | **Verified 2026-07-25:** `node run_blendlink_plan.mjs`, `node run_blendlink_compile.mjs`, and `npm.cmd run test --workspace blendlink -- syncMaterialPortability.integration.test.ts`; identical fourteen reasons; unchanged stable/addressed GLBs, manifest, generated module, and baked recipe |
+| `NDL-MAT-002` | Name and transactionally block linked-but-unrepresented active-Surface loss in plan and Final compile | **Improvement** over Needle's silent stock subset | **Shipped** | **Verified 2026-07-25:** `node run_blendlink_plan.mjs`, `node run_blendlink_compile.mjs`, and `npm.cmd run test --workspace scenetoweb -- syncMaterialPortability.integration.test.ts`; identical fourteen reasons; unchanged stable/addressed GLBs, manifest, generated module, and baked recipe |
 | `NDL-MAT-009` | Fixed-camera display-referred appearance on retained geometry | **No analogue / Improvement candidate** | **Prototype** | `npm.cmd run test:fixed-camera-surface-browser` browser-verified 2026-07-24; TrapX transparency/compositor path **Pending** |
 | `NDL-MAT-013` | Canonical portable optical closure lowering, keeping transmission distinct from alpha coverage | **Match** for stock Principled/KHR semantics; **Improvement** for exact recognition/refusal | **Future** | `npm.cmd run verify:needle-baseline` source identity verified 2026-07-25; tiny Blender/browser differential **Pending** |
 | `TRAPX-AUD-001` | Immutable private Cycles painterly corpus case | **No Needle visual result claimed** | **Research only** | **Verified locally 2026-07-25:** inventory/source render, `node run_blendlink_plan.mjs`, `node run_blendlink_compile.mjs`, GLB inspection, and `node run_stock_floor_browser.mjs` |
@@ -537,7 +537,7 @@ integration.
 
 Final evidence toolchain, 2026-07-25:
 
-- Blendlink `0.8.0`;
+- SceneToWeb `0.8.0`;
 - Node `v24.15.0`, npm `11.12.1`, Vitest `3.2.7`;
 - Blender `5.2.0 LTS`, build `fbe6228777e7`;
 - Chrome `150.0.7871.182`, Playwright `1.60.0`, Three `0.184.0`;
@@ -558,7 +558,7 @@ node inspect_compiled_glb.mjs
 node run_stock_floor_browser.mjs
 Pop-Location
 
-npm.cmd run test --workspace blendlink -- syncMaterialPortability.integration.test.ts
+npm.cmd run test --workspace scenetoweb -- syncMaterialPortability.integration.test.ts
 ```
 
 The final plan runner exits `0` after verifying the wrapped CLI exit is `1`,

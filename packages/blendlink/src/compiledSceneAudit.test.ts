@@ -51,7 +51,7 @@ function manifest(
   materials?: readonly TestMaterialDiagnostic[],
 ): SceneManifest {
   return {
-    generator: 'blendlink',
+    generator: 'scenetoweb',
     schemaVersion: 3,
     hash: createHash('sha256').update(bytes).digest('hex').slice(0, 16),
     url: '/models/test.glb',
@@ -167,7 +167,7 @@ describe('compiled scene artifact audit', () => {
       manifest: manifest(bytes),
       glbBytes: bytes,
     })).rejects.toThrow(
-      /no renderable mesh primitives.*Cameras, lights, Worlds.*non-empty evaluated geometry.*`blendlink plan`/s,
+      /no renderable mesh primitives.*Cameras, lights, Worlds.*non-empty evaluated geometry.*`scenetoweb plan`/s,
     )
   })
 

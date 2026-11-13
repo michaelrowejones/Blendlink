@@ -8,7 +8,7 @@ Use all three files, but do not call them interchangeable demo scenes.
 They exercise three different compiler boundaries:
 
 1. **`pip_shader.blend` should become the next permanent conformance target.**
-   It is tiny, officially CC-BY 4.0, and proves whether Blendlink refuses an
+   It is tiny, officially CC-BY 4.0, and proves whether SceneToWeb refuses an
    animated EEVEE-only material honestly. It is initially a negative test, not
    a visual-success showcase.
 2. **`TrapX - Stylized Painting Shader.blend` should be the next private visual
@@ -25,7 +25,7 @@ They exercise three different compiler boundaries:
 
 This is an evidence ladder: first prove a truthful refusal on a redistributable
 fixture, then prove one bounded material success privately, then keep the much
-larger Grease Pencil capability cliff loud. It fits Blendlink's product boundary
+larger Grease Pencil capability cliff loud. It fits SceneToWeb's product boundary
 better than choosing the visually richest file first and quietly flattening or
 dropping what makes it distinctive.
 
@@ -64,7 +64,7 @@ Additional provenance checks:
 
 ## Comparative value
 
-| Target | Core authored feature | Stock GLB result | Best Blendlink value now | Main reason not to overreach |
+| Target | Core authored feature | Stock GLB result | Best SceneToWeb value now | Main reason not to overreach |
 | --- | --- | --- | --- | --- |
 | Pip | Frame-driven, camera/object-aware painterly EEVEE material | A loadable 909,516-byte GLB with two plain emissive materials, no textures, and no animations | Permanent refusal and material-animation fixture; later, an explicit static selected-socket experiment | `Shader to RGB` is EEVEE-only and the visible procedural pattern genuinely changes with frame |
 | TrapX | Static layered painterly Cycles material on one sphere | A loadable 5,242,288-byte GLB containing one image and an approximate PBR/normal material; most layered shading is gone | Private fixed-camera Appearance or selected-socket materialization experiment | Fresnel, transparency, glass, mixed shaders, and unknown redistribution rights |
@@ -96,7 +96,7 @@ family is one nested `Stylized Painterly Shader - TrapX` group with:
   Emission, and Principled branches;
 - two image dependencies: `among us.png` and `painting texture6.png`.
 
-Blendlink's current analysis correctly reports **Needs Bake**. Cycles can
+SceneToWeb's current analysis correctly reports **Needs Bake**. Cycles can
 evaluate the active graph, so this is not the same blocker as an EEVEE
 `Shader to RGB` material. It is nevertheless view-dependent: the active
 Fresnel, transparency, and glass behavior cannot be flattened once and then
@@ -240,7 +240,7 @@ A separate Empty rotation driver uses
 `frame/bpy.context.scene.frame_end*2*pi`. Blender refuses that expression when
 opening the downloaded file with auto-execution disabled. Blender's manual
 recommends driver variables instead of direct Python data access and documents
-why untrusted `.blend` Python is disabled. Blendlink must report this condition;
+why untrusted `.blend` Python is disabled. SceneToWeb must report this condition;
 it must not enable auto-execution on the artist's behalf.
 
 The file contains `cloudrig.py.004` and `rig_ui.py.004` text datablocks, but
@@ -279,7 +279,7 @@ compilation or application-owned adapter supplies and verifies a replacement.
 2. Default Preview/Final never labels the stock white/gray GLB faithful. Final
    refuses payload collapse with `Sphere`, material names, and the concrete
    `Shader to RGB`/animation reasons.
-3. No Blendlink command enables Python auto-execution. A derivative may replace
+3. No SceneToWeb command enables Python auto-execution. A derivative may replace
    the Empty expression with a simple expression or explicit driver variable,
    but that change must be recorded and must not be presented as a compiler
    repair.
@@ -287,7 +287,7 @@ compilation or application-owned adapter supplies and verifies a replacement.
    the selected frame plus the lost frame-driven material behavior. It may only
    bake a target-local socket that Cycles can actually evaluate.
 5. Full animated parity remains future work unless a bounded representation is
-   designed and browser-verified. Blendlink must not create a general EEVEE
+   designed and browser-verified. SceneToWeb must not create a general EEVEE
    interpreter or website shader engine to pass this fixture.
 6. A committed derivative or screenshot carries attribution to Simon Thommes
    and Blender Studio, links the source asset, and includes CC-BY 4.0. Record
@@ -317,7 +317,7 @@ The focused Blender 5.2 gate proves that:
   material slots through the property-animation policy, while the private
   authoring Preview says exactly which Blender frame it froze;
 - evaluating the direct-Python Empty driver sets Blender's restricted-
-  execution failure without Blendlink enabling Python auto-execution; and
+  execution failure without SceneToWeb enabling Python auto-execution; and
 - a temporary stock glTF export is loadable and contains both named materials,
   but contains no material animation, textures, or images. That export is
   evidence of collapse, never an accepted visual result.
@@ -363,7 +363,7 @@ The ten modifiers reported as Geometry Nodes are all the same Blender 5.x
 `Auto Smooth` compatibility node group. They are generated when the old file
 is opened; this is not a scene built around authored Geometry Nodes.
 
-Before the 2026-07-22 follow-up, Blendlink classified `trainDoorL` as a
+Before the 2026-07-22 follow-up, SceneToWeb classified `trainDoorL` as a
 `Cache` candidate because the object has a location action and also has the
 converted Auto Smooth modifier.
 The node group itself uses no Scene Time, simulation, camera, animated node
@@ -482,7 +482,7 @@ Any future Grease Pencil adapter must separately prove:
   authored camera.
 
 If satisfying that list requires a bespoke renderer, animation runtime, or
-visual-scripting system, Blendlink should keep the scene unsupported. A
+visual-scripting system, SceneToWeb should keep the scene unsupported. A
 fixed-camera raster/video or an artist-authored mesh proxy can be a deliberate
 website asset, but must not be mislabeled as a general Blender-scene compile.
 
@@ -517,7 +517,7 @@ library scene do not satisfy the gate.
 The refusal explains that cameras, lights, Worlds, and helpers do not create
 visible geometry; tells the artist to make non-empty evaluated mesh geometry
 render-visible and not excluded by `-noimp`; and directs intentional helper or
-asset-library files to `blendlink plan`. Plan-only inspection therefore remains
+asset-library files to `scenetoweb plan`. Plan-only inspection therefore remains
 available, while Final compilation and later `verify` cannot publish the empty
 artifact. The final staged audit runs before any generated file can replace the
 last known-good website artifact set.
@@ -550,7 +550,7 @@ adapter only after those contracts are stable.
 
 This starts with a fixture that can live in tests, then isolates the first
 visual compiler success, then returns to the legally reusable animated material
-for an opt-in static experiment. The final scene proves Blendlink can say “not
+for an opt-in static experiment. The final scene proves SceneToWeb can say “not
 yet” before it silently deletes most of an artist's work.
 
 **Decision:** use this order.
@@ -565,7 +565,7 @@ yet” before it silently deletes most of an artist's work.
   driver counts, not source binaries where licensing forbids them.
 - Preserve the three temporary stock-export outcomes in test assertions or
   generated evidence, clearly labeled as stock-export evidence rather than
-  accepted Blendlink output.
+  accepted SceneToWeb output.
 
 ### Stage 1 - Pip as a permanent refusal fixture
 
@@ -611,14 +611,14 @@ yet” before it silently deletes most of an artist's work.
 
 ## What this adds to the release docket
 
-These demos do not justify broadening Blendlink into an EEVEE clone or Grease
+These demos do not justify broadening SceneToWeb into an EEVEE clone or Grease
 Pencil engine. They do justify four release-quality diagnostics:
 
 1. **Unsupported renderable objects are a Final blocker**, not empty glTF
    nodes that pass browser smoke.
 2. **Material animation is first-class evidence.** An animated node tree cannot
    be silently frozen by an otherwise successful material bake/export.
-3. **Untrusted driver policy is explicit.** Blendlink reports restricted or
+3. **Untrusted driver policy is explicit.** SceneToWeb reports restricted or
    invalid expressions and never enables `.blend` Python automatically.
 4. **Procedural geometry time-dependence is data-path aware.** An object's
    transform action does not make a time-independent Auto Smooth graph a mesh

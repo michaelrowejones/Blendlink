@@ -1,14 +1,14 @@
-# Blendlink web-scene performance research
+# SceneToWeb web-scene performance research
 
 Research date: 2026-07-21
 
 ## Executive finding
 
-Blendlink already has the correct foundation: standard glTF, semantic KTX2,
+SceneToWeb already has the correct foundation: standard glTF, semantic KTX2,
 Meshopt, authored LOD, identity-aware instancing, baked Appearance and Lighting
 paths, reflection probes, and a generated Three.js runtime. The next major gain
 will not come from replacing Three.js or immediately building a meshlet engine.
-It will come from making Blendlink a **measured progressive compiler**: show a
+It will come from making SceneToWeb a **measured progressive compiler**: show a
 small trustworthy image immediately, stream only detail the current screen can
 use, eliminate avoidable runtime work, and prove the exact format and pixels the
 device rendered.
@@ -29,11 +29,11 @@ A local Sharp benchmark also found an immediate lossless transfer win:
 
 This reduces transfer, not GPU residency: lossless WebP still uploads as
 ordinary RGBA. It is nevertheless a production-worthy atlas derivative if the
-browser matrix and Blendlink's post-save constant-background/hash contract pass.
+browser matrix and SceneToWeb's post-save constant-background/hash contract pass.
 The larger improvement remains a downscaled 128-512 px first-visible atlas shell,
 followed by the full lossless image only when useful.
 
-## What Blendlink already solves
+## What SceneToWeb already solves
 
 Do not rebuild existing strengths. The repository already provides semantic
 ETC1S/UASTC choice with alpha/normal/mip gates, KTX2 HDR derivatives with source
@@ -68,7 +68,7 @@ textures remain pinned.
 
 | Priority | Recommendation | Maturity | Why now / acceptance gate |
 | --- | --- | --- | --- |
-| P0 | Extend implemented performance evidence into a deterministic browser acceptance harness | Foundation implemented | `blendlink perf` reports static budgets and the opt-in runtime monitor captures bytes, frame percentiles, long tasks, renderer counters, and GPU timers; cold-ready phases, camera/state scripts, and image evidence still need one reproducible browser gate. |
+| P0 | Extend implemented performance evidence into a deterministic browser acceptance harness | Foundation implemented | `scenetoweb perf` reports static budgets and the opt-in runtime monitor captures bytes, frame percentiles, long tasks, renderer counters, and GPU timers; cold-ready phases, camera/state scripts, and image evidence still need one reproducible browser gate. |
 | P0 | Publish baked atlas PNG plus lossless WebP and select supported WebP | Implemented with exact-byte/pixel contracts | Measured 44.25% Main transfer saving with exact pixels; PNG fallback, saved background, hashes, and every multires variant are verified. |
 | P0 | Validate the actual ASTC/BC7/ETC2/BC3 KTX target | Runtime evidence implemented; browser matrix remains | `collectThreeTextureEvidence()` reports the live Three loader-selected target family, explicit/generated mip chain, and block-aware format payload; deterministic physical-device screenshots and driver-private allocation remain outside the current automated gate. |
 | P0 | Upgrade Meshoptimizer 0.24 -> 1.2 and use bounded decode workers | Implemented conservatively; browser tuning remains | Meshoptimizer 1.2 runs behind decoded-geometry, bounds, identity/extras, UV, and animation validation. Generated descriptors carry exact decoded bytes; high-level loads lease a shared 1-2 worker pool only from 4 MiB, cap overrides at four, release after all overlapping loads settle, and fall back safely for SSR/unsupported workers. The browser matrix must still validate the threshold. |
@@ -88,7 +88,7 @@ textures remain pinned.
 
 ### 1. Measure what ships
 
-`blendlink perf` should drive a deterministic camera path and state/light-group
+`scenetoweb perf` should drive a deterministic camera path and state/light-group
 sequence in a real browser. Record transferred and decoded bytes, first proxy
 and final-ready frame, GLB parse, Meshopt decode, KTX transcode, upload, PMREM,
 shader compile, p50/p95/p99 CPU and GPU frame time, calls, triangles, active
@@ -99,7 +99,7 @@ timing. [Three renderer info](https://threejs.org/docs/pages/WebGLRenderer.html#
 
 Avoid one universal triangle limit. Start the hero contract with a bootstrap
 under 500 KiB and under 10% of final bytes, p95 at 16.67 ms on its target tier
-and 33.33 ms on its declared fallback, no Blendlink-attributable 50 ms task
+and 33.33 ms on its declared fallback, no SceneToWeb-attributable 50 ms task
 after the proxy is visible, no warmed state-switch compilation, and no texture
 growth after a repeated state cycle. The W3C Long Tasks threshold is 50 ms.
 [Long Tasks](https://www.w3.org/TR/longtasks-1/)
@@ -117,7 +117,7 @@ normal or ORM map.
 [KHR_texture_basisu](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_texture_basisu/README.md#using-ktx-v2-images-with-basis-universal-supercompression-for-material-textures)
 [Three r184 KTX2Loader](https://github.com/mrdoob/three.js/blob/r184/examples/jsm/loaders/KTX2Loader.js#L770-L881)
 
-The remaining gate is to run Blendlink's existing normal/channel/alpha/mip
+The remaining gate is to run SceneToWeb's existing normal/channel/alpha/mip
 visual checks on representative physical ASTC, BC7, ETC2, and BC3 targets. If a
 target fails, choose a content-hashed data-safe GLB from detected GPU
 capabilities or add a semantic loader policy; never sniff the user agent. Also
@@ -137,7 +137,7 @@ simultaneously active groups, not authored groups. Bind active layers into a
 small fixed slot set, keep strength/tint as uniforms, and specialize only when
 the active-set signature changes. Add a byte-bounded LRU for inactive state and
 group textures, excluding current or application-transferred resources. This
-preserves Blendlink's sRGB-decode then linear-add formula.
+preserves SceneToWeb's sRGB-decode then linear-add formula.
 
 Only set `material.needsUpdate` when map/lightMap presence or another program
 key changes; swapping one non-null texture for another can update the sampler
@@ -150,14 +150,14 @@ The Meshoptimizer 1.2 runtime now calls `MeshoptDecoder.useWorkers()` only
 around actual large loads. Typegen sums `count * byteStride` for every
 `EXT_meshopt_compression` buffer view; the default keeps totals below 4 MiB and
 unknown external descriptors on the main thread, leases 1-2 workers above the
-threshold, caps explicit overrides at four, holds the pool while Blendlink
+threshold, caps explicit overrides at four, holds the pool while SceneToWeb
 loads overlap, then calls `useWorkers(0)` after the last load settles. Small
 concurrent loads use an isolated synchronous adapter, and configure-only/SSR
 paths never touch browser worker primitives. Applications that own
-Meshoptimizer's module-global pool pass their decoder explicitly; Blendlink
+Meshoptimizer's module-global pool pass their decoder explicitly; SceneToWeb
 installs that override without calling `useWorkers()` on it. The owned decoder
-and Blendlink worker-policy options are mutually exclusive. Setting the worker
-count to false or zero instead selects Blendlink's isolated main-thread adapter.
+and SceneToWeb worker-policy options are mutually exclusive. Setting the worker
+count to false or zero instead selects SceneToWeb's isolated main-thread adapter.
 Its release reports 5-10% faster JS decode and a worker-race fix.
 
 The remaining performance gate is to measure the 4 MiB crossover on the
@@ -194,7 +194,7 @@ compositions can prioritize only detail visible in their authored frames.
 Needle's MIT `@needle-tools/gltf-progressive` is a useful reference or optional
 interoperability adapter: low proxies, external LODs, screen-density selection,
 caching, throttling, and low-poly raycasts. Its documented standalone asset
-generation uses Needle Cloud or Needle integrations. Blendlink should own the
+generation uses Needle Cloud or Needle integrations. SceneToWeb should own the
 deterministic local generator and standard fallback rather than require its
 vendor extension. [gltf-progressive docs](https://engine.needle.tools/docs/gltf-progressive/)
 [source](https://github.com/needle-tools/gltf-progressive)
@@ -229,7 +229,7 @@ shadows, reflections, and dynamic lights with hysteresis. R3F documents the
 same demand/invalidation and adaptive-performance pattern; provide both plain
 Three and R3F helpers. [R3F scaling performance](https://r3f.docs.pmnd.rs/advanced/scaling-performance)
 
-Blendlink now pins `postprocessing` 6.39.3 and merges compatible effects into an
+SceneToWeb now pins `postprocessing` 6.39.3 and merges compatible effects into an
 `EffectPass`. The shared service lazy-loads only for authored post effects,
 separates multiple convolution stages, keeps the supported authored tone mapper
 exactly once after HDR work, exposes the resolved order, and uses mipmapped
@@ -241,7 +241,7 @@ library migration itself as visual acceptance.
 
 WebGPU is an architecture seam, not a checkbox. Three's `WebGPURenderer` offers
 TSL, a WebGL2 fallback backend, and modern combined post-processing, but remains
-experimental and does not support Blendlink's current `onBeforeCompile` or
+experimental and does not support SceneToWeb's current `onBeforeCompile` or
 legacy `EffectComposer` path. First express Appearance, Lighting, state, probe,
 and component behavior as renderer-neutral graphs; then add a TSL adapter and
 promote it only after pixel and device benchmarks.
@@ -290,7 +290,7 @@ promote it only after pixel and device benchmarks.
 4. **Modern renderer research:** build the TSL/WebGPU adapter and benchmark KHR
    Meshopt or meshlets only on fixtures large enough to justify them.
 
-Blendlink's durable advantage is not the longest list of codec checkboxes. It
+SceneToWeb's durable advantage is not the longest list of codec checkboxes. It
 is knowing the artist's composition, creating the smallest trustworthy version
 for the current screen, proving what the browser actually sampled, and making
 every compromise visible and reversible.

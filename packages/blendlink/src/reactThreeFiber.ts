@@ -40,7 +40,7 @@ interface RenderedInstallRequest {
 
 const compiledSceneSlots = new WeakMap<object, CanvasInstallSlot>()
 // Needle Engine 5.1.7 caps its engine/composer delta at 100 ms. Keep the same
-// stability bound at Blendlink's R3F ownership seam without changing the
+// stability bound at SceneToWeb's R3F ownership seam without changing the
 // application's clock or the exact low-level playback.update(delta) API.
 const MAX_RUNTIME_FRAME_DELTA_SECONDS = 0.1
 
@@ -63,7 +63,7 @@ type R3FOwnedInstallKey =
   | 'onProgress'
   | 'requestFrame'
 
-/** Stable association between generated scene data and Blendlink's R3F
+/** Stable association between generated scene data and SceneToWeb's R3F
  * lifecycle adapter. Define it once at module scope; the returned component
  * can then be mounted in any application-owned WebGL Canvas. */
 export interface R3FCompiledSceneDefinition extends Omit<
@@ -123,7 +123,7 @@ export type R3FWebsiteSurfaceName<TDescriptor extends CompiledSceneDescriptor> =
     : AuthoredWebsiteSurfaceName<TDescriptor>
 
 /** Ready-only application view of a compiled scene. Resource ownership and
- * disposal stay inside Blendlink; custom behavior receives only stable nodes
+ * disposal stay inside SceneToWeb; custom behavior receives only stable nodes
  * and the scene operations intended for application integration. */
 export interface R3FCompiledSceneHandle<
   TDescriptor extends CompiledSceneDescriptor = CompiledSceneDescriptor,
@@ -133,13 +133,13 @@ export interface R3FCompiledSceneHandle<
   readonly nodes: R3FCompiledSceneNodes<TDescriptor>
   readonly requiresContinuousFrames: boolean
   /** Bounded application transport for ordinary clips or the authored NLA
-   * sequence. Blender retains timing/loop ownership; Blendlink retains mixer
+   * sequence. Blender retains timing/loop ownership; SceneToWeb retains mixer
    * and disposal ownership. */
   readonly animation: InstalledThreeCompiledScene['animation']
   /** Read-only evidence for optional authored shadowless Rect Area lights.
-   * Blendlink retains LTC, synchronization, and disposal ownership. */
+   * SceneToWeb retains LTC, synchronization, and disposal ownership. */
   readonly rectAreaLights: InstalledThreeCompiledScene['rectAreaLights']
-  /** True when authored portable effects make Blendlink the Canvas render
+  /** True when authored portable effects make SceneToWeb the Canvas render
    * owner. Application composers must refuse or deliberately coordinate. */
   readonly hasPostprocessing: boolean
   /** App-owned DOM links/buttons may bind these semantic scene actions. */
@@ -166,7 +166,7 @@ export interface R3FCompiledSceneHandle<
     name: string,
     options?: { strength?: number; color?: THREE.ColorRepresentation },
   ): Promise<boolean>
-  /** Register application cleanup that must run before Blendlink disposes its
+  /** Register application cleanup that must run before SceneToWeb disposes its
    * generated materials and scene resources. The returned function unregisters
    * it; cleanup functions must be idempotent. */
   addCleanup(cleanup: () => void): () => void
@@ -240,7 +240,7 @@ function subscribeRendererLoss(
  * Create the complete React Three Fiber adapter for one compiled scene.
  *
  * The host owns Canvas, routing, fallbacks, and when this component is loaded.
- * Blendlink owns loader setup, late-load disposal, resize, camera handoff,
+ * SceneToWeb owns loader setup, late-load disposal, resize, camera handoff,
  * updates, conditional post-processing render ownership, errors, and cleanup.
  */
 export function createR3FCompiledScene<
@@ -330,7 +330,7 @@ export function createR3FCompiledScene<
     const installed = useRef<InstalledThreeCompiledScene | null>(null)
     // R3F's demand-mode delta spans the time since its previous rendered
     // frame. That includes an arbitrarily long idle/loading interval. Track
-    // whether Blendlink itself was continuously updating on the preceding
+    // whether SceneToWeb itself was continuously updating on the preceding
     // frame so the first wake frame establishes a fresh animation origin
     // instead of consuming dormant wall time.
     const continuouslyUpdating = useRef(false)
@@ -388,7 +388,7 @@ export function createR3FCompiledScene<
             presented: this.presented,
           }
           try { onPresentationStateChangeRef.current?.(state) } catch (observerError) {
-            console.error('Blendlink onPresentationStateChange callback failed:', observerError)
+            console.error('SceneToWeb onPresentationStateChange callback failed:', observerError)
           }
         },
       }
@@ -404,7 +404,7 @@ export function createR3FCompiledScene<
           error: failure,
         }
         try { onPresentationStateChangeRef.current?.(state) } catch (observerError) {
-          console.error('Blendlink onPresentationStateChange callback failed:', observerError)
+          console.error('SceneToWeb onPresentationStateChange callback failed:', observerError)
         }
       }
       const publishState = (state: R3FCompiledSceneLoadState): void => {
@@ -413,7 +413,7 @@ export function createR3FCompiledScene<
         // to the abandoned generation and must not regress application UI.
         if (cancelled || attemptRef.current !== attempt) return
         try { onLoadStateChangeRef.current?.(state) } catch (observerError) {
-          console.error('Blendlink onLoadStateChange callback failed:', observerError)
+          console.error('SceneToWeb onLoadStateChange callback failed:', observerError)
         }
       }
       const failAttempt = (reason: unknown): void => {
@@ -429,7 +429,7 @@ export function createR3FCompiledScene<
       }
       if (slot.mountedOwner) {
         const ownershipError = new Error(
-          'Only one Blendlink compiled scene may be mounted in an R3F Canvas at a time. ' +
+          'Only one SceneToWeb compiled scene may be mounted in an R3F Canvas at a time. ' +
             'Unmount the active scene before mounting another so camera, environment, and ' +
             'post-processing ownership stay deterministic.',
         )
@@ -447,7 +447,7 @@ export function createR3FCompiledScene<
       const contextLost = () => {
         if (cancelled) return
         const contextError = new Error(
-          'The Blendlink rendering device was lost (WebGL context or WebGPU device). ' +
+          'The SceneToWeb rendering device was lost (WebGL context or WebGPU device). ' +
             'Remount the application-owned Canvas, then retry the scene.',
         )
         task?.cancel()
@@ -537,14 +537,14 @@ export function createR3FCompiledScene<
               })
               publishState({ phase: 'ready', attempt, scene: value })
               try { onReadyRef.current?.(value) } catch (observerError) {
-                console.error('Blendlink onReady callback failed:', observerError)
+                console.error('SceneToWeb onReady callback failed:', observerError)
               }
               if (pendingCommitRef.current === pending) pendingCommitRef.current = null
               setPreparedAttempt(null)
             },
             fail(reason: unknown) {
               try { prepared.dispose() } catch (cleanupError) {
-                console.error('Blendlink prepared scene cleanup failed:', cleanupError)
+                console.error('SceneToWeb prepared scene cleanup failed:', cleanupError)
               }
               if (pendingCommitRef.current === pending) pendingCommitRef.current = null
               setPreparedAttempt(null)
@@ -572,7 +572,7 @@ export function createR3FCompiledScene<
         if (pending?.attempt === attempt) {
           pendingCommitRef.current = null
           try { pending.dispose() } catch (cleanupError) {
-            console.error('Blendlink prepared scene cleanup failed:', cleanupError)
+            console.error('SceneToWeb prepared scene cleanup failed:', cleanupError)
           }
           setPreparedAttempt(null)
         }
@@ -589,7 +589,7 @@ export function createR3FCompiledScene<
         }
         applicationCleanups.values.clear()
         for (const cleanupError of cleanupErrors) {
-          console.error('Blendlink application scene cleanup failed:', cleanupError)
+          console.error('SceneToWeb application scene cleanup failed:', cleanupError)
         }
         value?.dispose()
       }
@@ -655,10 +655,10 @@ export function createR3FCompiledScene<
         : Math.min(delta, MAX_RUNTIME_FRAME_DELTA_SECONDS)
       value.update(runtimeDelta)
       continuouslyUpdating.current = value.requiresContinuousFrames
-      // Positive priority disables Fiber's automatic renderer. Blendlink
+      // Positive priority disables Fiber's automatic renderer. SceneToWeb
       // takes ownership only when the authored component stack has a composer.
       if (ownsRendering) value.render(runtimeDelta)
-      // Blendlink animation, camera controls, LODs, and portable components
+      // SceneToWeb animation, camera controls, LODs, and portable components
       // mutate Three imperatively. Requeue only while the installed runtime can
       // prove one of those systems still needs continuous frames; unknown
       // custom work remains conservative.

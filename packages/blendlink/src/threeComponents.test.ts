@@ -211,8 +211,8 @@ describe('installThreeComponents', () => {
     expect(installed.requiresContinuousFrames).toBe(false)
     installed.render()
     expect(f.render).toHaveBeenCalledTimes(6)
-    const helper = f.scene.getObjectByName('Blendlink Contact Shadows Root')!
-    expect(helper.getObjectByName('Blendlink Contact Shadows Plane')?.layers.mask)
+    const helper = f.scene.getObjectByName('SceneToWeb Contact Shadows Root')!
+    expect(helper.getObjectByName('SceneToWeb Contact Shadows Plane')?.layers.mask)
       .toBe(f.camera.layers.mask)
 
     surface.dispatchEvent(new Event('webglcontextlost'))
@@ -223,7 +223,7 @@ describe('installThreeComponents', () => {
     installed.update(1 / 60)
     expect(f.render).toHaveBeenCalledTimes(11)
     installed.dispose()
-    expect(f.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(f.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
   })
 
   it('keeps Contact Shadows Canvas listeners out of a deferred component preparation', async () => {
@@ -255,20 +255,20 @@ describe('installThreeComponents', () => {
     const committedScene = new THREE.Scene()
     const committedCamera = new THREE.PerspectiveCamera()
     committedCamera.layers.set(5)
-    expect(f.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeDefined()
+    expect(f.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeDefined()
     committed.activate(committedScene, committedCamera)
     committed.activate(committedScene, committedCamera)
     expect(surface.addEventListener).toHaveBeenCalledTimes(2)
     expect(committed.requiresContinuousFrames).toBe(true)
-    expect(f.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(f.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
     const committedHelper =
-      committedScene.getObjectByName('Blendlink Contact Shadows Root')
+      committedScene.getObjectByName('SceneToWeb Contact Shadows Root')
     expect(committedHelper).toBeDefined()
-    expect(committedHelper?.getObjectByName('Blendlink Contact Shadows Plane')?.layers.mask)
+    expect(committedHelper?.getObjectByName('SceneToWeb Contact Shadows Plane')?.layers.mask)
       .toBe(committedCamera.layers.mask)
     committed.dispose()
     expect(surface.removeEventListener).toHaveBeenCalledTimes(2)
-    expect(committedScene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(committedScene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
   })
 
   it('rejects manual Scene Contact Shadows before taking renderer ownership', async () => {
@@ -819,7 +819,7 @@ describe('installThreeComponents', () => {
     installed.dispose()
   })
 
-  it('adapts Blendlink linear AO tint to the sRGB-facing N8AO configuration boundary', async () => {
+  it('adapts SceneToWeb linear AO tint to the sRGB-facing N8AO configuration boundary', async () => {
     const setQualityMode = N8AOPostPass.prototype.setQualityMode
     let configuredColor: THREE.Color | undefined
     const qualitySpy = vi.spyOn(N8AOPostPass.prototype, 'setQualityMode').mockImplementation(function (

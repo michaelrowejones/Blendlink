@@ -729,8 +729,8 @@ export async function withPublicationLease<T>(
       throw new PublicationLeaseError(
         'RECOVERY_FAILED',
         `Publication lease owner metadata ${observed.metadataProblem ?? 'is invalid'} at ` +
-          `${options.lockPath}. Blendlink refused to steal a lease whose owner cannot be ` +
-          'proven dead. Confirm that no Blendlink publish/preview process is using this ' +
+          `${options.lockPath}. SceneToWeb refused to steal a lease whose owner cannot be ` +
+          'proven dead. Confirm that no SceneToWeb publish/preview process is using this ' +
           'project, then remove the malformed lock file and retry.',
       )
     }

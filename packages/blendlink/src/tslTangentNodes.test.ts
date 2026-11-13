@@ -126,7 +126,7 @@ async function artifact(valid = true) {
     hash = createHash('sha256').update(glb).digest('hex')
   const manifest = {
     schemaVersion: 3,
-    generator: 'blendlink',
+    generator: 'scenetoweb',
     hash: hash.slice(0, 16),
     url: '/actual.glb',
     stats: { bytes: glb.length },

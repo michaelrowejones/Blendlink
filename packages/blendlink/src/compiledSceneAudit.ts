@@ -143,7 +143,7 @@ export interface CompiledSceneAudit {
   materialPortability: CompiledMaterialPortabilityCoverage
   materialPayloadCollapse: MaterialPayloadCollapseEvidence
   /**
-   * Whether the finished artifact fits the runtime Blendlink claims to
+   * Whether the finished artifact fits the runtime SceneToWeb claims to
    * support. Evidence only: this audit runs on the Preview path too, and
    * refusing there would take away the loop an artist needs to fix it. `sync`
    * turns these into blocking verify issues at publication.
@@ -341,7 +341,7 @@ export async function auditCompiledSceneArtifact(
       'Cameras, lights, Worlds, and helper/library data do not create visible Three.js geometry. ' +
       'Make at least one mesh with non-empty evaluated geometry render-visible in the exported ' +
       'Scene or Collection (and not excluded by -noimp), then rebuild. If this .blend is ' +
-      'intentionally a helper or asset library, inspect it with `blendlink plan` instead of publishing it.',
+      'intentionally a helper or asset library, inspect it with `scenetoweb plan` instead of publishing it.',
     )
   }
 

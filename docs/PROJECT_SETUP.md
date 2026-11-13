@@ -1,14 +1,14 @@
 # Project setup contract
 
-`blendlink connect [site-dir] --blend <saved.blend>` is the artist-facing
+`scenetoweb connect [site-dir] --blend <saved.blend>` is the artist-facing
 website attachment flow. It has two deliberate routes and never silently
 switches between them. `blendlink setup` remains a compatibility alias for
 existing scripts.
 
 Website attachment is not required for an artist's first browser preview.
-`blendlink preview --blend <saved.blend>` creates or reuses a disposable
+`scenetoweb preview --blend <saved.blend>` creates or reuses a disposable
 Preview Studio in a private user-local cache keyed by the absolute `.blend`
-path. It scaffolds a minimal Vite/Three/Blendlink viewer, installs only that
+path. It scaffolds a minimal Vite/Three/SceneToWeb viewer, installs only that
 cache's dependencies when missing or stale, compiles the scene's Preview
 profile, verifies the serving process with a session marker, and opens the
 reported loopback URL. `--no-open` performs the same work without launching a
@@ -20,12 +20,12 @@ When a later export fails, the error remains loud but the prior published files
 and last good browser scene stay available. The cache never becomes a
 production project and no file is created beside the artist's `.blend`.
 
-Once a real site is connected, ordinary `blendlink preview` preserves the site
+Once a real site is connected, ordinary `scenetoweb preview` preserves the site
 workflow: compile Preview quality, start its configured/discovered dev command,
 trust the URL that process reports, and reuse a reachable URL only when the site
 declares ownership explicitly. It also remains active as the same save watcher,
 including when the site declares an already-running URL; stopping Preview ends
-the watcher and any server process Blendlink owns.
+the watcher and any server process SceneToWeb owns.
 
 ## Existing Three.js or React Three Fiber site
 
@@ -33,14 +33,14 @@ When `package.json` declares `three` or `@react-three/fiber`, connect:
 
 1. uses the exact saved `.blend` supplied with `--blend`, otherwise discovers
    nearby `.blend` files (or supplies the inspectable sample when none exists);
-2. creates `blendlink.config.mjs` unless the repository already owns one;
+2. creates `scenetoweb.config.mjs` unless the repository already owns one;
 3. creates the standard generated/output directories;
-4. declares the current Blendlink version when the package has not already
+4. declares the current SceneToWeb version when the package has not already
    chosen one;
 5. adds `blendlink:connect`, `blendlink:preview`, `blendlink:publish`, and
    `blendlink:check` scripts only where those names are free;
 6. makes the website explicitly own exact `three@0.184.0` plus a matching
-   r184 `@types/three` patch instead of allowing Blendlink to install a private
+   r184 `@types/three` patch instead of allowing SceneToWeb to install a private
    runtime or type universe.
 
 It does not install dependencies, edit an application component, create a
@@ -54,7 +54,7 @@ connection boundary rather than during a later install or site build.
 Existing `genDir` and `outDir` choices are followed exactly. In an ordinary
 Three.js project, connect creates one user-owned `install<Scene>({ renderer,
 scene })` module per configured scene. In an R3F project it creates a tiny
-association component for each scene; Blendlink's package-owned adapter keeps
+association component for each scene; SceneToWeb's package-owned adapter keeps
 loader setup, late-load disposal, camera handoff, resize, frame updates, conditional
 post-processing ownership, errors, and cleanup out of generated application
 code. Both calculate imports from the real generated-module path; neither
@@ -76,7 +76,7 @@ The empty-directory starter uses an initialized `WebGPURenderer`.
 ## Empty directory
 
 Without `package.json`, connect creates a minimal, ordinary Three.js + Vite site.
-The starter calls the same user-owned `src/blendlink/<Scene>Scene.ts`
+The starter calls the same user-owned `src/scenetoweb/<Scene>Scene.ts`
 integration used when attaching an existing Vanilla site. That integration
 imports the scene's actual configured generated-module path, including a custom
 `genDir`, then installs it through `blendlink/three`. This single seam makes a
@@ -89,7 +89,7 @@ post-processing effects therefore participate in both preview and final site
 rendering. Existing scaffold files are blockers, never overwrite targets.
 
 For an existing React Three Fiber site, connect still never edits an application
-component. It creates user-owned `src/blendlink/<Scene>Scene.ts` integrations
+component. It creates user-owned `src/scenetoweb/<Scene>Scene.ts` integrations
 instead and prints the exact element for each configured scene to add inside an
 existing Canvas. A name already ending in `Scene` is not doubled into
 `SceneScene`. Each component restores the prior R3F camera and every owned scene
@@ -98,7 +98,7 @@ installed handle for integration code such as `setStateAsync`, `setLightGroup`, 
 the renderer-neutral `animation` transport. Application UI can read
 `availableClips` and immutable `state`, subscribe, then call `play`,
 deterministic `playAll`, `pause`, authored-seconds `seek`, or replayable `stop`;
-Blendlink retains mixer, frame-loop, and terminal-disposal ownership. Changing
+SceneToWeb retains mixer, frame-loop, and terminal-disposal ownership. Changing
 an inline callback does not reinstall the scene; the callback runs once for each
 successful installation and the component retains disposal ownership.
 `onLoadStateChange` separately reports attempt-scoped Loading,
@@ -128,9 +128,9 @@ light-group texture preparation are asynchronous; already prepared light-group
 strength/tint changes are synchronous so an application animation loop does
 not create promises every frame. `hasPostprocessing` lets an application-owned
 composer refuse a competing authored render owner. `addCleanup()` gives advanced site adapters a
-way to restore composed material hooks before Blendlink disposes the generated
+way to restore composed material hooks before SceneToWeb disposes the generated
 materials. Children do not mount during Loading or
-Preparing, and the view deliberately exposes no `dispose`: Blendlink retains
+Preparing, and the view deliberately exposes no `dispose`: SceneToWeb retains
 resource ownership. This is the preferred seam for camera choreography,
 site-specific interaction, and other imperative R3F behavior that must never
 observe a partially configured scene. The callback remains available for
@@ -138,7 +138,7 @@ integration code that cannot be nested, but the component still owns that
 borrowed handle's disposal.
 
 ```tsx
-import { useCompiledScenePresentation } from 'blendlink/react'
+import { useCompiledScenePresentation } from 'scenetoweb/react'
 
 function HeroExperience() {
   const presentation = useCompiledScenePresentation()
@@ -176,7 +176,7 @@ function HeroBehavior() {
 ```
 
 Render `presentation.accessibleControls` as application-owned native links or
-buttons. Their `activate()` callbacks share Blendlink's authored behavior, while
+buttons. Their `activate()` callbacks share SceneToWeb's authored behavior, while
 the site retains navigation, focus visuals, analytics, and modified-link-click
 policy. Call audio `resume()` directly from the trusted DOM gesture; observing a
 blocked state does not grant user activation.
@@ -187,14 +187,14 @@ deliberate overrides without discarding the generated one-call path. The
 package-owned manager refuses Ready when any glTF companion reports an error,
 even though Three r184 may recover from a missing image with a null texture.
 Application-owned loaders keep their own callback and dependency-failure
-policy; Blendlink does not overwrite their manager hooks.
+policy; SceneToWeb does not overwrite their manager hooks.
 One compiled scene owns a Canvas at a time because camera, environment, look,
 and composer are Canvas-global; a competing mount fails with that explanation.
 Demand-mode canvases requeue continuous frames only while playback, interactive
 controls, Components, or post-processing conservatively require them; Ready,
 seek, stop, and semantic commands may still request one-shot frames. A provably
 static scene can settle without freezing unknown dynamic behavior. On every R3F
-Canvas mode, newly active Blendlink-owned runtime work starts at delta zero and
+Canvas mode, newly active SceneToWeb-owned runtime work starts at delta zero and
 later update/composer deltas are capped at 100 ms. This matches Needle's
 slow-frame bound while leaving the application's R3F clock and explicit
 low-level playback updates untouched.
@@ -205,13 +205,13 @@ Connect declares dependencies but leaves installation to the chosen package
 manager. Whenever it adds one, the install action is printed first; hookup is
 printed before Preview so the first browser view cannot legitimately contain
 no scene. It also prints every filesystem change and the remaining Blender and
-commit actions. The older `blendlink init` remains the config-only primitive
+commit actions. The older `scenetoweb init` remains the config-only primitive
 for custom automation.
 
 ## From Preview to a deployable website
 
-`blendlink publish [scene]` is the deliberate production transaction. It does
-not deploy to a Blendlink service or take ownership of hosting. It:
+`scenetoweb publish [scene]` is the deliberate production transaction. It does
+not deploy to a SceneToWeb service or take ownership of hosting. It:
 
 1. compiles the selected scene (or every configured scene) with the Final
    profile;
@@ -224,7 +224,7 @@ not deploy to a Blendlink service or take ownership of hosting. It:
 
 A selected scene scopes both compilation and verification, so an unrelated
 legacy lane cannot block a deliberate publish. A missing build script, failed
-build, changed artifact, or recursive `build -> blendlink publish` hook is a
+build, changed artifact, or recursive `build -> scenetoweb publish` hook is a
 loud failure. Custom deployment pipelines can use `--assets-only`, which skips
 only the application build and reports that choice explicitly. Uploading or
 deploying the resulting repository remains an intentional, website-owned next
@@ -257,7 +257,7 @@ website can opt into immutable caching without copying that digest:
 
 ```ts
 // next.config.ts
-import { compiledSceneImmutableAssetPolicy } from 'blendlink/assets'
+import { compiledSceneImmutableAssetPolicy } from 'scenetoweb/assets'
 import { hero } from './src/generated/hero.gen'
 
 const assets = compiledSceneImmutableAssetPolicy(hero)
@@ -274,11 +274,11 @@ export default {
 
 For Vite static output or a CDN, install the same returned prefix/header in the
 production host. Do not apply it to the stable compatibility files, all of
-`public/models`, HTML, or generated source. Blendlink retains prior graph
+`public/models`, HTML, or generated source. SceneToWeb retains prior graph
 directories so old deployments remain addressable; automatic retention cleanup
 is not yet provided. If `verify` reports corruption inside one addressed graph,
 remove exactly the complete digest directory named in the error and compile
-again; Blendlink never overwrites part of an immutable graph. During that
+again; SceneToWeb never overwrites part of an immutable graph. During that
 recovery only, intact stable compatibility atlases may act as fingerprint- and
 hash-checked incremental bake inputs. They never become the generated URL or
 cache authority, and a missing or changed atlas rebuilds only its independent
@@ -287,7 +287,7 @@ bake job.
 ## Blender setup
 
 Website attachment does not mutate artistic source. Open each scene, choose
-**Blendlink > Set Up Blendlink Scene**, then review the Main atlas, Preview/Final
+**SceneToWeb > Set Up SceneToWeb Scene**, then review the Main atlas, Preview/Final
 profiles, camera, **Website Effects & Behaviors**, and the **Website Ownership**
 panel. **Preview Website** uses Preview Studio until a real site is connected.
 
@@ -303,7 +303,7 @@ for Blender-version warnings. An entry must have:
 - at least one HTTPS primary-source URL from Blender's official documentation
   or tracker, or the official Khronos glTF-Blender-IO repository.
 
-Both the addon and `blendlink doctor` validate and consume the registry. A
+Both the addon and `scenetoweb doctor` validate and consume the registry. A
 malformed registry is a loud packaging failure. An empty registry is correct
 when no bounded issue has enough evidence; absence of evidence never becomes a
 speculative warning.

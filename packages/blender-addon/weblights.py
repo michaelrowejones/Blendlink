@@ -198,7 +198,7 @@ def exporter_policy(
     supported_properties: Iterable[str],
     overrides: Mapping[str, object] | None = None,
 ) -> dict[str, object]:
-    """Compile the glTF options Blendlink must own for faithful web lights.
+    """Compile the glTF options SceneToWeb must own for faithful web lights.
 
     Callers merge ordinary exporter options first and this returned mapping
     last.  Conflicting raw overrides fail loudly instead of silently restoring
@@ -209,7 +209,7 @@ def exporter_policy(
     if mode_key is None:
         raise RuntimeError(
             "This Blender glTF exporter exposes no compatible light-conversion "
-            "mode; Blendlink cannot guarantee that authored light energy will "
+            "mode; SceneToWeb cannot guarantee that authored light energy will "
             "match the website."
         )
 
@@ -217,7 +217,7 @@ def exporter_policy(
     missing = sorted(required - supported)
     if missing:
         raise RuntimeError(
-            "This Blender glTF exporter cannot enforce Blendlink's realtime-light "
+            "This Blender glTF exporter cannot enforce SceneToWeb's realtime-light "
             "contract; missing exporter option(s): " + ", ".join(missing)
         )
 
@@ -240,8 +240,8 @@ def exporter_policy(
     )
     if conflicts:
         raise ValueError(
-            "exporterOverrides cannot replace Blendlink's light-fidelity "
-            f"contract ({', '.join(sorted(conflicts))}). Blendlink owns "
+            "exporterOverrides cannot replace SceneToWeb's light-fidelity "
+            f"contract ({', '.join(sorted(conflicts))}). SceneToWeb owns "
             "punctual-light export, render visibility, and Blender-compatible "
             "energy conversion."
         )
@@ -774,7 +774,7 @@ def _transform_issue(obj) -> RectAreaLightIssue | None:
     if matrix is None:
         return RectAreaLightIssue(
             "rect-area-transform-unavailable",
-            "The light has no readable world transform, so Blendlink cannot "
+            "The light has no readable world transform, so SceneToWeb cannot "
             "validate its rectangular source plane.",
         )
     values = [
@@ -1117,7 +1117,7 @@ def _approximation_reasons(obj, data, scene, light_type: str) -> tuple[str, ...]
             ") are not represented by KHR_lights_punctual."
         )
 
-    # Blendlink post-processes native ``use_shadow=False`` into the namespaced
+    # SceneToWeb post-processes native ``use_shadow=False`` into the namespaced
     # ``blendlink_cast_shadow=False`` node extra (an explicit object extra wins),
     # so the ordinary Blender switch is portable even though core glTF has no
     # shadow field. Blender-only tuning matters only while native shadows are on.
@@ -1166,7 +1166,7 @@ def _approximation_reasons(obj, data, scene, light_type: str) -> tuple[str, ...]
         reasons.append(
             "The Cycles light graph owns exported intensity through "
             + ("Emission Strength" if light_type == "SUN" else "Light Falloff")
-            + "; Blendlink cannot predict it from the light data-block Energy."
+            + "; SceneToWeb cannot predict it from the light data-block Energy."
         )
     if _linked_emission_color(data, scene):
         reasons.append(
@@ -1189,7 +1189,7 @@ def _approximation_reasons(obj, data, scene, light_type: str) -> tuple[str, ...]
     if _cycles_group_boundary(data, scene):
         reasons.append(
             "The active Cycles light surface crosses a Shader Node Group; "
-            "Blender's exporter evaluates that group, but Blendlink cannot "
+            "Blender's exporter evaluates that group, but SceneToWeb cannot "
             "predict its website intensity from the outer light data-block."
         )
     return tuple(reasons)
@@ -1216,7 +1216,7 @@ def _rect_area_effective_color(data, scene):
             refusals.append(RectAreaLightIssue(
                 "rect-area-node-group-unresolved",
                 "The active Cycles Light Output crosses a Shader Node Group, so "
-                "Blendlink cannot prove one constant RectArea color and strength.",
+                "SceneToWeb cannot prove one constant RectArea color and strength.",
             ))
         if _indirect_emission_surface(data, scene):
             refusals.append(RectAreaLightIssue(
@@ -1262,7 +1262,7 @@ def _rect_area_effective_color(data, scene):
             elif getattr(strength_socket, "is_linked", False):
                 refusals.append(RectAreaLightIssue(
                     "rect-area-emission-strength-linked",
-                    "The Cycles Emission Strength input is linked. Blendlink cannot "
+                    "The Cycles Emission Strength input is linked. SceneToWeb cannot "
                     "compile that routed graph into a static RectArea descriptor.",
                 ))
             else:
@@ -1280,7 +1280,7 @@ def _rect_area_effective_color(data, scene):
                     refusals.append(RectAreaLightIssue(
                         "rect-area-emission-strength-nondefault",
                         f"Cycles Emission Strength is {emission_strength:g}. "
-                        "Blendlink has not yet proven the exact Area-light "
+                        "SceneToWeb has not yet proven the exact Area-light "
                         "strength algebra beyond Blender's default value 1.",
                     ))
 
@@ -1660,7 +1660,7 @@ def plan_rect_area_light(obj, scene, *, source_version=None) -> RectAreaLightPla
     if not isinstance(normalize, bool):
         refusals.append(RectAreaLightIssue(
             "rect-area-normalize-invalid",
-            "Area Normalize must be a boolean so Blendlink can choose exactly "
+            "Area Normalize must be a boolean so SceneToWeb can choose exactly "
             "one power or intensity strength form.",
         ))
 
@@ -1855,7 +1855,7 @@ def _diagnose_light(
                 issue.detail for issue in rect_area_plan.approximations
             )
             detail = (
-                "Blendlink attached the validated Three Rect Area v1 descriptor "
+                "SceneToWeb attached the validated Three Rect Area v1 descriptor "
                 "to exactly one finalized glTF node. The package runtime installs "
                 "a shadowless Three RectAreaLight for live PBR receivers. "
                 + " ".join(approximation_reasons)
@@ -1893,7 +1893,7 @@ def _diagnose_light(
             descriptor = rect_area_plan.descriptor
             detail = (
                 f"The {selection} Three Rect Area source plan is valid. Final export "
-                "will attach this descriptor to exactly one glTF node, then Blendlink "
+                "will attach this descriptor to exactly one glTF node, then SceneToWeb "
                 "will attest it again after optimization before the package runtime "
                 "installs a shadowless Three RectAreaLight. "
             ) + approximation
@@ -1928,7 +1928,7 @@ def _diagnose_light(
             source_energy=energy, source_exposure=exposure,
             outcome=OUTCOME_NOT_PUBLISHED,
             remedy=(
-                "Re-export so Blendlink can attach and attest the finalized Rect "
+                "Re-export so SceneToWeb can attach and attest the finalized Rect "
                 f"Area descriptor, set {AREA_LIGHT_MODE_PROPERTY} to "
                 f"{AREA_LIGHT_MODE_BAKE_ONLY!r}, or use Point, Spot, or Sun for "
                 "portable realtime lighting."

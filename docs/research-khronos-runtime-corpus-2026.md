@@ -73,7 +73,7 @@ they do not each grow a script.
 | Official Khronos Sample Viewer | revision [`313db85fa5c79f1c64c82ad0082dd0870103b0b1`](https://github.com/KhronosGroup/glTF-Sample-Viewer/tree/313db85fa5c79f1c64c82ad0082dd0870103b0b1) |
 | Installed Three runtime | `three@0.184.0` |
 | Installed Three loader | `node_modules/three/examples/jsm/loaders/GLTFLoader.js`, 114,959 bytes, SHA-256 `97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2` |
-| Built Blendlink compatibility module | `packages/blendlink/dist/gltfRuntimeCompatibility.js`, SHA-256 `d4a5374b1fc8f06244205bc2b364293bfc8611ddb783c2dd16bbedaddf78aee4` |
+| Built SceneToWeb compatibility module | `packages/blendlink/dist/gltfRuntimeCompatibility.js`, SHA-256 `d4a5374b1fc8f06244205bc2b364293bfc8611ddb783c2dd16bbedaddf78aee4` |
 
 The [Khronos extension mechanics](https://github.com/KhronosGroup/glTF/blob/77b44be7bef26e01fb0b140e3d5bb1716421c5e9/extensions/README.md)
 distinguish `extensionsUsed` from `extensionsRequired`. Required extensions
@@ -144,7 +144,7 @@ BLENDLINK_KHRONOS_RUNTIME_CORPUS_PASSED assets=20 files=26 bytes=6703746 browser
 
 The real browser command then passed with Chrome
 `150.0.7871.182`, the exact installed Three loader, and the exact built
-Blendlink production compatibility module:
+SceneToWeb production compatibility module:
 
 ```text
 BLENDLINK_KHRONOS_RUNTIME_CORPUS_PASSED assets=20 files=26 bytes=6703746 browser=yes
@@ -217,10 +217,10 @@ separate:
 
 1. reject every required extension absent from the concrete runtime capability
    profile; and
-2. reject unsupported pointer channels when Blendlink claims to transport that
+2. reject unsupported pointer channels when SceneToWeb claims to transport that
    authored behavior, even when Khronos allows a partial core fallback.
 
-This is the same distinction Blendlink already makes at Blender compile time:
+This is the same distinction SceneToWeb already makes at Blender compile time:
 standard Three cannot bind material/light/camera property animation, so the
 compiler blocks it rather than calling a partial GLB successful.
 
@@ -243,14 +243,14 @@ It dynamically imports and registers
 has SHA-256
 `9b6ed41c2bee905a0b1f2d48a7fd80b9408ad6ee17918467b366eaa904030617`.
 
-Needle therefore has a real pointer-import path. Blendlink's early compile-time
+Needle therefore has a real pointer-import path. SceneToWeb's early compile-time
 refusal is safer than raw core Three's silent partial result, but it does not
 match Needle's ability to transport the property animation. That is a
 production **Gap**, not parity.
 
 ## Production seam: implemented decision
 
-Blendlink did not paste an experiment-local allowlist into every loader call.
+SceneToWeb did not paste an experiment-local allowlist into every loader call.
 
 ### Design A: static final-artifact allowlist
 
@@ -259,7 +259,7 @@ different facts:
 
 - an extension class exists in Three source;
 - the configured loader has its required decoder/plugin; and
-- Blendlink promises the extension's visible behavior.
+- SceneToWeb promises the extension's visible behavior.
 
 For example, Draco, Meshopt, and Basis support depends on configured adapters,
 while `KHR_animation_pointer` can be added by an application-owned loader.
@@ -276,14 +276,14 @@ classify artifact(document evidence, runtime capability profile)
 ```
 
 The profile belongs to the concrete loader adapter and records built-in
-handlers, configured decoders, and semantics Blendlink actually promises.
+handlers, configured decoders, and semantics SceneToWeb actually promises.
 Unknown registered plugin names are not capabilities. The classifier owns
 required-extension checks and loss-sensitive channel checks. Compiler verification, Preview, Final publish,
 and browser smoke consume the same result. An application-owned loader may
 declare additional capabilities, but the optional browser gate must validate
 them; a declaration alone is not evidence.
 
-Blendlink chose and shipped **B** in
+SceneToWeb chose and shipped **B** in
 `packages/blendlink/src/gltfRuntimeCompatibility.ts`. Exact final/typegen
 bytes use the pinned r184 compiled profile; already-loaded Three scenes derive
 a non-mutating profile from exact r184 built-ins and configured KTX2/Meshopt

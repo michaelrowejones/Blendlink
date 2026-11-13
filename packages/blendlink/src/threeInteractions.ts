@@ -69,14 +69,14 @@ export function createThreeInteractionServices(options: {
   }>()
   const tapMovementThreshold = options.tapMovementThreshold ?? 8
   if (!(Number.isFinite(tapMovementThreshold) && tapMovementThreshold >= 0)) {
-    throw new Error(`Blendlink tapMovementThreshold must be a non-negative CSS-pixel value; got ${tapMovementThreshold}.`)
+    throw new Error(`SceneToWeb tapMovementThreshold must be a non-negative CSS-pixel value; got ${tapMovementThreshold}.`)
   }
 
   const surface = (): InteractiveSurface => {
     const candidate = options.surface as Partial<InteractiveSurface>
     if (!candidate?.getBoundingClientRect || !candidate.addEventListener || !candidate.removeEventListener) {
       throw new Error(
-        'Blendlink interactive components need a browser event surface. Use a WebGLRenderer canvas ' +
+        'SceneToWeb interactive components need a browser event surface. Use a WebGLRenderer canvas ' +
           'or pass application-owned interaction/accessibility services.',
       )
     }
@@ -193,7 +193,7 @@ export function createThreeInteractionServices(options: {
         }
       }
       throw new Error(
-        `Blendlink could not activate its Canvas interaction listeners: ${
+        `SceneToWeb could not activate its Canvas interaction listeners: ${
           error instanceof Error ? error.message : String(error)
         }${cleanupErrors.length > 0
           ? `. Listener rollback also failed: ${cleanupErrors.map(String).join('; ')}`
@@ -217,9 +217,9 @@ export function createThreeInteractionServices(options: {
   return {
     interaction: {
       addTarget(target) {
-        if (disposed) throw new Error('These Blendlink interaction services have been disposed.')
+        if (disposed) throw new Error('These SceneToWeb interaction services have been disposed.')
         if (registrations.has(target.id)) {
-          throw new Error(`Blendlink interaction target ${target.id} was registered more than once.`)
+          throw new Error(`SceneToWeb interaction target ${target.id} was registered more than once.`)
         }
         registrations.set(target.id, target)
         connect()
@@ -236,9 +236,9 @@ export function createThreeInteractionServices(options: {
     },
     accessibility: {
       addControl(control) {
-        if (disposed) throw new Error('These Blendlink interaction services have been disposed.')
+        if (disposed) throw new Error('These SceneToWeb interaction services have been disposed.')
         if (controls.has(control.id)) {
-          throw new Error(`Blendlink accessible control ${control.id} was registered more than once.`)
+          throw new Error(`SceneToWeb accessible control ${control.id} was registered more than once.`)
         }
         controls.set(control.id, control)
         let active = true
@@ -269,7 +269,7 @@ export function createThreeInteractionServices(options: {
       })))
     },
     activate() {
-      if (disposed) throw new Error('These Blendlink interaction services have been disposed.')
+      if (disposed) throw new Error('These SceneToWeb interaction services have been disposed.')
       if (activated) return
       activated = true
       try {

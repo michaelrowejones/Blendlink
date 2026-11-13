@@ -34,14 +34,14 @@ export function allocateLoadedNodeNames(document: Document): Map<Node, string> {
     const base = sanitizeLoadedNodeName(raw)
     if (!base) {
       throw new Error(
-        `Blendlink cannot publish node "${raw}": Three.js sanitizes its entire name away. ` +
+        `SceneToWeb cannot publish node "${raw}": Three.js sanitizes its entire name away. ` +
         'Rename it in Blender to include at least one letter or number.',
       )
     }
     const prior = used.get(base)
     if (prior !== undefined) {
       throw new Error(
-        `Blendlink cannot publish ${prior} and node "${raw}": both reserve the ` +
+        `SceneToWeb cannot publish ${prior} and node "${raw}": both reserve the ` +
         `sanitized Three.js name "${base}". Rename one in Blender so generated bindings stay deterministic.`,
       )
     }

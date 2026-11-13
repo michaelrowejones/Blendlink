@@ -6,13 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "blendlink:connect": "blendlink connect",
-    "blendlink:preview": "blendlink preview",
-    "blendlink:publish": "blendlink publish",
-    "blendlink:check": "blendlink verify"
+    "scenetoweb:connect": "scenetoweb connect",
+    "scenetoweb:preview": "scenetoweb preview",
+    "scenetoweb:publish": "scenetoweb publish",
+    "scenetoweb:check": "scenetoweb verify"
   },
   "dependencies": {
-    "blendlink": "^0.8.0",
+    "scenetoweb": "^0.8.0",
     "three": "0.184.0"
   },
   "devDependencies": {

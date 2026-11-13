@@ -197,7 +197,7 @@ describe('final renderable-artifact publication gate', () => {
     await expect(syncScene(scene, {
       executable: 'mock-blender', version: '5.2.0', semver: [5, 2, 0],
     }, { force: true })).rejects.toThrow(
-      /no renderable mesh primitives.*helper or asset library.*`blendlink plan`/s,
+      /no renderable mesh primitives.*helper or asset library.*`scenetoweb plan`/s,
     )
 
     expect(readFileSync(scene.glbPath)).toEqual(previous.glb)

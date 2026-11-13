@@ -334,7 +334,7 @@ def main():
 
         expect(
             not bpy.context.preferences.filepaths.use_scripts_auto_execute,
-            "Blendlink enabled Python auto-execution while inspecting Pip",
+            "SceneToWeb enabled Python auto-execution while inspecting Pip",
         )
         print("BLENDLINK_PIP_REFUSAL_CHECK_PASSED")
     finally:

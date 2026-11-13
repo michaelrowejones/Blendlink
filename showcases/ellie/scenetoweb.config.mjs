@@ -1,6 +1,6 @@
 // @ts-check
 // blendlink showcase: the ellie character scene (Phase 4 acceptance).
-/** @type {import('blendlink').BlendlinkConfig} */
+/** @type {import('scenetoweb').BlendlinkConfig} */
 const config = {
   scenes: [
     {

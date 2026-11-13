@@ -36,10 +36,10 @@ const addonManifestText = readFileSync(
 const addonVersion = addonManifestText.match(/^version\s*=\s*"([^"]+)"/m)?.[1]
 const addonId = addonManifestText.match(/^id\s*=\s*"([^"]+)"/m)?.[1]
 const semver = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
-if (addonId !== 'blendlink' || !semver.test(packageVersion) ||
+if (addonId !== 'scenetoweb' || !semver.test(packageVersion) ||
     !addonVersion || !semver.test(addonVersion) || addonVersion !== packageVersion) {
   throw new Error(
-    `Blendlink release identity mismatch: npm ${String(packageVersion)}, ` +
+    `SceneToWeb release identity mismatch: npm ${String(packageVersion)}, ` +
       `Blender addon ${String(addonId)}@${String(addonVersion)}`,
   )
 }

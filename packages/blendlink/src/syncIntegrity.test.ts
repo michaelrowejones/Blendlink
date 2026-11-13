@@ -141,7 +141,7 @@ describe('unchanged-scene external dependency gate', () => {
 describe('Python compiler signature', () => {
   it('invalidates source checkouts when canonical web-light policy changes', () => {
     const directory = mkdtempSync(join(tmpdir(), 'blendlink-python-signature-'))
-    const moduleDirectory = join(directory, 'packages', 'blendlink', 'src')
+    const moduleDirectory = join(directory, 'packages', 'scenetoweb', 'src')
     const blenderDirectory = join(moduleDirectory, 'blender')
     const addonDirectory = join(directory, 'packages', 'blender-addon')
     try {
@@ -163,7 +163,7 @@ describe('Python compiler signature', () => {
 
   it('invalidates source checkouts when the material compiler changes', () => {
     const directory = mkdtempSync(join(tmpdir(), 'blendlink-material-signature-'))
-    const moduleDirectory = join(directory, 'packages', 'blendlink', 'src')
+    const moduleDirectory = join(directory, 'packages', 'scenetoweb', 'src')
     const blenderDirectory = join(moduleDirectory, 'blender')
     const addonDirectory = join(directory, 'packages', 'blender-addon')
     try {
@@ -184,7 +184,7 @@ describe('Python compiler signature', () => {
 
   it('invalidates source checkouts when the shared GLB helper changes', () => {
     const directory = mkdtempSync(join(tmpdir(), 'blendlink-glblib-signature-'))
-    const moduleDirectory = join(directory, 'packages', 'blendlink', 'src')
+    const moduleDirectory = join(directory, 'packages', 'scenetoweb', 'src')
     const blenderDirectory = join(moduleDirectory, 'blender')
     const addonDirectory = join(directory, 'packages', 'blender-addon')
     try {
@@ -205,7 +205,7 @@ describe('Python compiler signature', () => {
 
   it('hashes the copied policy actually executed by a built CLI', () => {
     const directory = mkdtempSync(join(tmpdir(), 'blendlink-built-python-signature-'))
-    const moduleDirectory = join(directory, 'packages', 'blendlink', 'dist')
+    const moduleDirectory = join(directory, 'packages', 'scenetoweb', 'dist')
     const blenderDirectory = join(moduleDirectory, 'blender')
     const addonDirectory = join(directory, 'packages', 'blender-addon')
     try {

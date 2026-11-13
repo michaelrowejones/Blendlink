@@ -1,6 +1,6 @@
-# Blendlink
+# SceneToWeb
 
-Blendlink is an artist-first Blender-to-Three.js scene compiler. Artistic
+SceneToWeb is an artist-first Blender-to-Three.js scene compiler. Artistic
 publishing intent lives in the `.blend`; the website receives ordinary GLB,
 textures, a readable manifest, typed bindings, and a small user-owned baked
 composition recipe.
@@ -10,17 +10,17 @@ maintainer into your website, then connect it. The source checkout's
 `docs/FIRST_SCENE.md` explains how to build that archive locally.
 
 ```bash
-npm install "/absolute/path/to/blendlink-0.9.0-<hash>.tgz"
-npx blendlink addon install
-npx blendlink preview --blend assets/hero.blend  # private cached Live Preview Studio
-npx blendlink connect . --blend assets/hero.blend # attach the real website
+npm install "/absolute/path/to/scenetoweb-0.9.0-<hash>.tgz"
+npx scenetoweb addon install
+npx scenetoweb preview --blend assets/hero.blend  # private cached Live Preview Studio
+npx scenetoweb connect . --blend assets/hero.blend # attach the real website
 npm install                  # connect declares site dependencies; you keep ownership
-npx blendlink plan --preview # inspect the connected scene's atlas plan without Cycles
-npx blendlink preview        # open + watch the connected website
-npx blendlink publish        # Final + verify + site build + verify
+npx scenetoweb plan --preview # inspect the connected scene's atlas plan without Cycles
+npx scenetoweb preview        # open + watch the connected website
+npx scenetoweb publish        # Final + verify + site build + verify
 ```
 
-Before previewing, open the saved scene in Blender, choose **Set Up Blendlink
+Before previewing, open the saved scene in Blender, choose **Set Up SceneToWeb
 Scene**, and save. In an existing website, mount the generated integration
 before running its Preview command; connect prints the import and call to add.
 
@@ -31,7 +31,7 @@ EEVEE scene transfer now automatically translates supported procedural material
 channels into live Three node materials. Static channels that cannot translate
 can use texture bakes alongside those live channels. Explicit Web Color,
 Material Bake and TSL Program choices still take precedence. Set
-`automaticMaterials: false` on a scene in `blendlink.config.ts` to opt out, or
+`automaticMaterials: false` on a scene in `scenetoweb.config.ts` to opt out, or
 set the material custom property `blendlink_live_translation` to false.
 
 To test an unpublished local build with scenes saved anywhere, set the Blender
@@ -64,7 +64,7 @@ CLI commands do not import a renderer. The npm package also carries the lazy
 post-processing implementations used by the standard WebGL adapter, so npm may
 resolve their compatible `three` peer even in a CLI-only install. A connected
 website explicitly owns `three` at exact runtime version `0.184.0` and a
-matching r184 `@types/three` patch (`>=0.184.0 <0.185.0`). Blendlink declares
+matching r184 `@types/three` patch (`>=0.184.0 <0.185.0`). SceneToWeb declares
 both as optional peers and never lists either package as a direct dependency.
 Only the executable Three package is byte/source-profiled; allowing declaration
 patches within the same type release avoids pinning websites to an unrelated
@@ -72,27 +72,27 @@ declaration-file bugfix. Broader Three runtime ranges are not claimed until
 their loader/runtime capability profiles and packed consumers are independently
 verified.
 
-The root `blendlink` entry is renderer-neutral and does not load the optional
+The root `scenetoweb` entry is renderer-neutral and does not load the optional
 React or React Three Fiber peers. Import React lifecycle helpers, including
-`createUseBlendlink`, from `blendlink/react`; import the Canvas adapter from
-`blendlink/react-three-fiber`. This explicit boundary keeps CLI, compiler, and
+`createUseSceneToWeb`, from `scenetoweb/react`; import the Canvas adapter from
+`scenetoweb/react-three-fiber`. This explicit boundary keeps CLI, compiler, and
 framework-neutral consumers usable without installing a UI framework.
 
 For the standard Three.js runtime integration, import
-`installThreeCompiledScene` from `blendlink/three`. It applies the authored
+`installThreeCompiledScene` from `scenetoweb/three`. It applies the authored
 look, camera, environment, shadows, playback, LODs, reflection probes, portable
-Components, and baked states behind one disposable handle. `blendlink connect`
+Components, and baked states behind one disposable handle. `scenetoweb connect`
 generates a minimal Vanilla integration or a tiny user-owned React Three Fiber
-association component. The package-owned `blendlink/react-three-fiber` adapter
+association component. The package-owned `scenetoweb/react-three-fiber` adapter
 keeps loader setup, late-load disposal, camera handoff, resizing, frame updates,
 conditional post-processing ownership, errors, and cleanup in one maintained
-implementation. `blendlink setup` remains a compatibility alias.
+implementation. `scenetoweb setup` remains a compatibility alias.
 Connect validates React 19 with React Three Fiber 9 before mutation. The
 adapter enforces one compiled-scene owner per Canvas and keeps demand-mode
 frames active only while installed systems truthfully require them. The ready
 handle exposes explicit `fitCamera()` / `resetCamera()` operations and immutable
 semantic `accessibleControls` for application-owned anchors and buttons;
-Blendlink owns picking and scene behavior, while the website keeps DOM, router,
+SceneToWeb owns picking and scene behavior, while the website keeps DOM, router,
 analytics, focus presentation, layout, and loading UI. Its
 attempt-scoped `onLoadStateChange` reports Loading, renderer Preparing, Ready,
 and recoverable Failed facts without owning the website's loading screen.
@@ -100,33 +100,33 @@ and recoverable Failed facts without owning the website's loading screen.
 `bootstrap`, promoted `full`, or `failed` quality and the first completed-frame
 observation. A completed frame is not a pixel-fidelity, GPU-fence, or display-
 compositor guarantee. Applications may pass both callbacks to
-`useCompiledScenePresentation()` from `blendlink/react`; it also exposes the
+`useCompiledScenePresentation()` from `scenetoweb/react`; it also exposes the
 installed scene, immutable accessible controls, baked-quality settlement, Web
 Audio readiness, post-processing ownership, and continuous-frame policy. Its
 `sceneProps` is one stable generated-scene binding per retry epoch. `retry()`
 revokes every old callback synchronously, returns the view to Idle, and
 advances `retryKey`; the website still decides whether that key remounts only
 the scene or its Error Boundary and Canvas. The same framework-neutral store
-is available from `blendlink/scene-presentation`.
+is available from `scenetoweb/scene-presentation`.
 Unmount abandons the attempt and aborts private manager-backed requests where
 Three and the browser support it; non-abortable decode/compile work is disposed
-after it settles rather than mislabeled canceled. Blendlink's private manager
+after it settles rather than mislabeled canceled. SceneToWeb's private manager
 also treats any failed glTF companion as terminal even when Three recovers with
 a null texture. An application-supplied loader retains that validation policy
 along with its URL, header, credential, progress, and abort ownership.
 
-`blendlink publish [scene]` is the production boundary: it compiles Final,
+`scenetoweb publish [scene]` is the production boundary: it compiles Final,
 verifies the selected artifact set, runs the website's own package-manager
 `build` script, and verifies again afterward. Use `--assets-only` for an
 explicit custom deployment pipeline. An optional
 `website.browserSmoke.command` then runs the application's production browser
 gate against the verified build. `website.browserSmoke.portEnv` can receive an
 OS-assigned loopback port to isolate concurrent runs. Browser/test code can
-import `compiledSceneAssetUrls` from `blendlink/assets` without pulling in the
+import `compiledSceneAssetUrls` from `scenetoweb/assets` without pulling in the
 Node compiler barrel. `createBrowserSmokeEvidence` from
-`blendlink/browser-smoke` classifies application-recorded asset, console/page,
+`scenetoweb/browser-smoke` classifies application-recorded asset, console/page,
 worker-CSP, decoder/CORS, Canvas, WebGL, visible-pixel, and service-worker facts;
-it owns no route, browser, server, or universal pixel threshold. Blendlink does
+it owns no route, browser, server, or universal pixel threshold. SceneToWeb does
 not upload or infer a hosting provider.
 
 New atlases default to **Bake Lighting**: authored PBR textures and their UVs
@@ -142,7 +142,7 @@ This standard integration is deliberately WebGL-only. It fails clearly for a
 `WebGPURenderer`; WebGPU applications consume the portable assets and typed
 descriptor through an application-owned renderer adapter.
 
-`blendlink preview --blend <saved.blend>` needs no website project. It creates
+`scenetoweb preview --blend <saved.blend>` needs no website project. It creates
 or reuses a disposable Vite/Three viewer in a private per-scene user cache,
 installs that viewer's declared dependencies when needed, compiles Preview
 quality, opens the verified local URL, and remains active as a save watcher.
@@ -163,16 +163,16 @@ do not modify a connected site's UI.
 Preview resolution uses a 256 px per-atlas readability floor unless the Final
 atlas itself is smaller. Target detail and pixel margins scale with each
 atlas's actual Preview ratio, preventing a Final-size gutter from swallowing a
-reduced preview island. `blendlink plan <scene> --preview [--json]` reports
+reduced preview island. `scenetoweb plan <scene> --preview [--json]` reports
 those exact Preview settings without Cycles; the unqualified `plan` reports
 Final.
-`--no-open` leaves browser control to the caller. A normal `blendlink preview`
+`--no-open` leaves browser control to the caller. A normal `scenetoweb preview`
 provides the same save-driven loop while keeping the connected site's own dev
 command and reported URL.
 
 Realtime and PBR-preserving Hybrid materials publish through Blender's stock
 glTF exporter, including the Principled inputs and KHR material extensions it
-supports. Blendlink does not claim a separate shader translator: Material
+supports. SceneToWeb does not claim a separate shader translator: Material
 Properties reports **Exact glTF**, **Approximated**, or **Needs Bake** from the
 active surface graph. Unsupported procedural branches are named so the artist
 can simplify them, choose an Appearance bake, or intentionally provide a
@@ -200,7 +200,7 @@ ownership-safe application interface:
 
 The renderer-neutral animation transport also exposes immutable `state`,
 `subscribe`, deterministic `playAll`, `pause`, authored-seconds `seek`, and
-replayable `stop`. Blendlink retains the mixer, frame loop, and terminal
+replayable `stop`. SceneToWeb retains the mixer, frame loop, and terminal
 disposal. Callback identity changes do not reinstall the scene; the component
 retains disposal ownership. Installation failures publish Failed and are
 rethrown during render for the nearest React Error Boundary; status and ready
@@ -209,14 +209,14 @@ while an authored post-processing
 component needs the installed composer; otherwise Fiber keeps its normal render
 ownership. Demand-mode Canvases render the initial visible static frame, stay
 awake while known installed systems require continuous frames, and settle
-again when they are idle. Newly active Blendlink-owned runtime work begins at
+again when they are idle. Newly active SceneToWeb-owned runtime work begins at
 delta zero, and later R3F update/composer deltas are capped at 100 ms so a
 blocked tab or slow frame cannot skip a complete one-shot action. The
 application's R3F clock and explicit low-level playback updates remain exact.
 For an application-owned loading/error/control surface:
 
 ```tsx
-import { useCompiledScenePresentation } from 'blendlink/react'
+import { useCompiledScenePresentation } from 'scenetoweb/react'
 
 const presentation = useCompiledScenePresentation()
 
@@ -234,7 +234,7 @@ const presentation = useCompiledScenePresentation()
 Render `presentation.accessibleControls` as native links/buttons and call
 `presentation.scene?.components.audio.resume()` directly from the site's
 trusted Enable Sound click when `presentation.presentation?.audio.state` is
-`blocked`. Blendlink observes readiness; the site owns the gesture and UI.
+`blocked`. SceneToWeb observes readiness; the site owns the gesture and UI.
 Use `assetBaseUrl` on the generated definition for a Next/Vite base path or CDN
 root. The package rebases only compiler-owned scene/Basis requests; a supplied
 application manager or loader keeps its own URL, headers, credentials, cache,
@@ -243,12 +243,12 @@ progress, dependency-failure enforcement, abort, and disposal ownership.
 Internally compiled scenes are activated from a complete
 `<scene>/<full-sha256>/` graph. Hosts may import
 `compiledSceneImmutableAssetPolicy(scene[, assetBaseUrl])` from
-`blendlink/assets` to obtain the exact graph prefix and
-`public, max-age=31536000, immutable`. Blendlink returns policy data; it does
+`scenetoweb/assets` to obtain the exact graph prefix and
+`public, max-age=31536000, immutable`. SceneToWeb returns policy data; it does
 not edit Next, Vite, CDN, or deployment configuration. Stable compatibility
 paths and old graph retention remain deliberately separate from this header.
 If an addressed graph is corrupt, remove the exact complete digest directory
-reported by `blendlink verify` before compiling again; Blendlink will not
+reported by `scenetoweb verify` before compiling again; SceneToWeb will not
 mutate an immutable graph in place. Valid stable compatibility atlases can seed
 the existing fingerprint/hash-checked incremental bake cache during that
 repair, without becoming runtime authority.
@@ -261,7 +261,7 @@ Kuwahara treatment, Keep Visible Through Objects, click/hover/visibility
 behaviors, Website Surface, Look At, click-to-play animation, and spatial or non-spatial audio.
 Installed audio reports `unavailable`, `blocked`, `ready`, or `failed`, resumes
 the shared Web Audio context synchronously from trusted activation, and begins
-authored playback only after the context is running. Disposal removes Blendlink
+authored playback only after the context is running. Disposal removes SceneToWeb
 listeners and leases but never closes the application/global Three context.
 Records use stable
 IDs, a separate component schema version, scene/object targets, and plain JSON
@@ -272,7 +272,7 @@ lifecycle through the installed scene; call `installed.render(deltaSeconds)`
 in place of direct `renderer.render(...)` so authored post-processing can run.
 Sites may add namespaced `componentAdapters`; an enabled type without an
 adapter fails loudly. Rigidbody/Collider stay in their existing canonical
-object metadata, and multiplayer components are outside Blendlink's scope.
+object metadata, and multiplayer components are outside SceneToWeb's scope.
 In Blender, the categorized task search shows consequence, cost,
 compatibility, docs, and target readiness. Safe versioned copy/paste preserves
 extension JSON and reports changed/already-matching/skipped/error targets;
@@ -282,7 +282,7 @@ the authored outer radius.
 
 A Website Surface is one separate Realtime, single-material Mesh with finite,
 full-square 0..1 UV0 and a scene-unique lowercase name. The application supplies and retains an
-`HTMLCanvasElement` or `OffscreenCanvas`; Blendlink isolates the Three material,
+`HTMLCanvasElement` or `OffscreenCanvas`; SceneToWeb isolates the Three material,
 wraps the canvas as sRGB, requests a demand frame when pixels change, and
 restores/disposes only its own resources:
 
@@ -314,7 +314,7 @@ and restores the authored stack; unsupported or overlapping strip semantics
 fail before publication. The one-call installer schedules the sequence
 deterministically and gives it precedence over simple autoplay.
 
-For KTX2 scenes, internal sync and generic `blendlink typegen` both publish the
+For KTX2 scenes, internal sync and generic `scenetoweb typegen` both publish the
 attributed Three/Basis transcoder directory beside the local GLB; the one-call
 installer configures and owns `KTX2Loader` automatically. A deployment that
 relocates the GLB must mirror that sibling directory or provide an
@@ -322,20 +322,20 @@ application-owned loader.
 
 Generic Meshopt GLBs are equally self-describing: typegen records required
 `EXT_meshopt_compression`, and the runtime configures the official decoder even
-when the asset has no Blendlink optimization report. Generated descriptors
+when the asset has no SceneToWeb optimization report. Generated descriptors
 include exact decoded Meshopt bytes. Awaited high-level loads use a bounded
-1-2 worker lease only at 4 MiB or larger, share it across concurrent Blendlink
+1-2 worker lease only at 4 MiB or larger, share it across concurrent SceneToWeb
 loads, and release it after the last load settles; small, unknown-size, SSR,
 and worker-incompatible loads decode on the main thread. Pass
 `meshoptWorkerCount: false`/`0` to force main-thread decoding, or pass an
 application-configured `meshoptDecoder` to retain ownership of its global pool;
-Blendlink never calls `useWorkers()` on that override. The owned decoder is
-mutually exclusive with Blendlink's worker count/threshold. You can instead override
+SceneToWeb never calls `useWorkers()` on that override. The owned decoder is
+mutually exclusive with SceneToWeb's worker count/threshold. You can instead override
 `meshoptWorkerCount` (maximum four) and
 `meshoptWorkerThresholdBytes` after measuring representative devices.
 Configure-only loader calls never start workers.
 
-Use `npx blendlink perf [scene] --tier mobile|balanced|showcase` for a truthful
+Use `npx scenetoweb perf [scene] --tier mobile|balanced|showcase` for a truthful
 compiled-artifact/build-budget report. It validates the manifest against the
 exact GLB, decodes required Meshopt streams, separates GLB bytes, decoded
 accessors, the geometry-only accessor subset, embedded images, GPU-texture
@@ -359,8 +359,8 @@ failure; the application browser gate must prove that named adapter. The
 acknowledgement is intentionally not a general material-warning suppression.
 
 ```ts
-import { createRuntimePerformanceMonitor } from 'blendlink'
-import { collectThreeTextureEvidence } from 'blendlink/three'
+import { createRuntimePerformanceMonitor } from 'scenetoweb'
+import { collectThreeTextureEvidence } from 'scenetoweb/three'
 
 const performanceMonitor = createRuntimePerformanceMonitor()
 performanceMonitor.start()
@@ -391,7 +391,7 @@ explicitly unknown.
 Generated `<scene>.baked.ts` files remain editable and are never silently
 overwritten. The installer awaits their `ready` contract; use
 `setStateAsync()` when a UI transition must know decoding succeeded. If
-`verify` reports an older template, `blendlink recipe update <scene>` first
+`verify` reports an older template, `scenetoweb recipe update <scene>` first
 backs up the exact file and then installs the current baked-composition template.
 Current recipes also bound inactive loader-owned state textures with a
 device-aware decoded RGBA+mipmap LRU. Override it with
@@ -409,10 +409,21 @@ that Canvas mount—for example, a developer lab can use `"adaptive"` while the
 public hero keeps the authored default.
 
 The complete artist workflow, Blender UI guide, contracts, and research live
-in the [Blendlink repository](https://github.com/michaelrowejones/Blendlink).
+in the [SceneToWeb repository](https://github.com/michaelrowejones/Blendlink).
 
 The npm tarball is a mixed-license aggregate and declares
 `SEE LICENSE IN LICENSES.md`. Its Node/compiler/runtime files are MIT;
 Blender-dependent Python and the add-on aggregate are GPL-3.0-or-later; bundled
 Basis notices are Apache-2.0. The tarball's `LICENSES.md` maps those file-level
 licenses and points to their complete texts/notices.
+
+## SceneToWeb naming compatibility
+
+Install and import `scenetoweb`; use the `scenetoweb` CLI and
+`scenetoweb.config.mjs` for new projects. Existing `blendlink.config.mjs` and
+`.js` files continue to load, and `blendlink` remains a CLI alias in this
+package. Existing Blender custom properties and compiled scene metadata keep
+their stable `blendlink_*` identifiers so saved scenes remain readable.
+`SceneToWebConfig` and `createUseSceneToWeb` are the canonical API names;
+their previous names remain available. Loaded bindings are accessible through
+`loaded.scenetoweb`, with `loaded.blendlink` retained as the same object.

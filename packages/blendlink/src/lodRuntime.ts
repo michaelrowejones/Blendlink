@@ -32,7 +32,7 @@ export interface CompiledSceneLodOptions {
 export interface CompiledSceneLods {
   active: Record<string, number>
   update(): void
-  /** Restore every level's visibility from before Blendlink took ownership. */
+  /** Restore every level's visibility from before SceneToWeb took ownership. */
   stop(): void
 }
 
@@ -56,7 +56,7 @@ function byStableId(root: LodObjectLike): Map<string, LodObjectLike> {
   visit(root, (object) => {
     const id = object.userData?.blendlink_id
     if (typeof id !== 'string') return
-    if (objects.has(id)) throw new Error(`Blendlink LOD binding found duplicate stable object ID ${id}.`)
+    if (objects.has(id)) throw new Error(`SceneToWeb LOD binding found duplicate stable object ID ${id}.`)
     objects.set(id, object)
   })
   return objects
@@ -99,16 +99,16 @@ export function startCompiledSceneLods(
   const invalid = chains.filter((chain) => !chain.valid)
   if (invalid.length) {
     throw new Error(
-      `Blendlink cannot start LOD switching: ${invalid.map((chain) =>
+      `SceneToWeb cannot start LOD switching: ${invalid.map((chain) =>
         `${chain.base}: ${chain.warnings.join('; ')}`).join(' | ')}`,
     )
   }
   if (!camera.getWorldPosition) {
-    throw new Error('Blendlink LOD switching needs a Three-compatible camera.getWorldPosition().')
+    throw new Error('SceneToWeb LOD switching needs a Three-compatible camera.getWorldPosition().')
   }
   const hysteresis = options.hysteresis ?? 0.05
   if (!Number.isFinite(hysteresis) || hysteresis < 0 || hysteresis >= 0.5) {
-    throw new Error('Blendlink LOD hysteresis must be finite and in the range 0..<0.5.')
+    throw new Error('SceneToWeb LOD hysteresis must be finite and in the range 0..<0.5.')
   }
   const objects = byName(root)
   const objectsById = byStableId(root)
@@ -118,12 +118,12 @@ export function startCompiledSceneLods(
       const object = (level.id ? objectsById.get(level.id) : undefined) ?? objects.get(level.loadedName)
       if (!object) {
         throw new Error(
-          `Blendlink LOD ${chain.base} cannot find exported level ${level.loadedName}.`,
+          `SceneToWeb LOD ${chain.base} cannot find exported level ${level.loadedName}.`,
         )
       }
       if (!object.getWorldPosition) {
         throw new Error(
-          `Blendlink LOD ${chain.base} level ${level.loadedName} needs getWorldPosition().`,
+          `SceneToWeb LOD ${chain.base} level ${level.loadedName} needs getWorldPosition().`,
         )
       }
       return object
@@ -149,13 +149,13 @@ export function startCompiledSceneLods(
   let stopped = false
 
   const update = (): void => {
-    if (stopped) throw new Error('Blendlink LOD switching has already been stopped.')
+    if (stopped) throw new Error('SceneToWeb LOD switching has already been stopped.')
     camera.getWorldPosition!(cameraPosition)
     for (const { chain, levels } of resolved) {
       levels[0]!.getWorldPosition!(anchorPosition)
       const distance = anchorPosition.distanceTo(cameraPosition)
       if (!Number.isFinite(distance) || distance < 0) {
-        throw new Error(`Blendlink LOD ${chain.base} produced invalid camera distance ${distance}.`)
+        throw new Error(`SceneToWeb LOD ${chain.base} produced invalid camera distance ${distance}.`)
       }
       const next = selectedLevel(chain.levels, distance, active[chain.base], hysteresis)
       active[chain.base] = next

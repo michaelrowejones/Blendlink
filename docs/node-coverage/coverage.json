@@ -1,7 +1,18 @@
 {
-  "capabilityMapSha256": "1cd7e686b73d58b6c0f165a2b69ef98b3f970b4c668ab73a16aaafaa5ac8ffd8",
+  "capabilityMapSha256": "790ab2e12c06d3ff3e17e5ad84e14d292ae7f5fddab05eba3a67f53b6d46dc0f",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T14:17:00.210721+00:00",
+  "classificationRefresh": {
+    "catalogSha256": {
+      "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
+      "docs/node-coverage/blender-5.2.0.json": "ba57b2f37b9f252203dec70a70c439f1b5b05e6387273379bc4123acff1c7469",
+      "docs/node-coverage/blender-5.3.0.json": "09f4e0473e1d6dfe6f978df418de82df7d8bca22b0ad665d0a7cbcdf916c6544"
+    },
+    "kind": "retained-reviewed-native-catalogs",
+    "nativeInventoryAuditGeneratedAt": "2026-11-13T14:17:00.210721+00:00",
+    "nativeInventoryRefreshed": false,
+    "reason": "Classify the reviewed Float to Integer literal production evidence and current renamed source against the unchanged reviewed native inventories; no fresh native availability/enum discovery is claimed."
+  },
+  "generatedAt": "2026-11-13T18:14:15.202528+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -13768,16 +13779,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 34,
+            "partial": 35,
             "structural": 7,
             "supported": 24,
-            "unsupported": 122
+            "unsupported": 121
           },
           "enumValueCounts": {
             "partial": 27,
             "structural": 3,
-            "supported": 226,
-            "unsupported": 676
+            "supported": 230,
+            "unsupported": 672
           },
           "nodes": [
             {
@@ -16636,21 +16647,57 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "rounding_mode": {
-                  "CEILING": "unsupported",
-                  "FLOOR": "unsupported",
-                  "ROUND": "unsupported",
-                  "TRUNCATE": "unsupported"
+                  "CEILING": "supported",
+                  "FLOOR": "supported",
+                  "ROUND": "supported",
+                  "TRUNCATE": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_float_to_int.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFloatToInt.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorFloatToInt.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_float_to_int_check.py"
+                },
+                {
+                  "path": "experiments/float-to-int-native/sources.json"
+                },
+                {
+                  "path": "experiments/float-to-int-native/README.md"
+                },
+                {
+                  "path": "experiments/float-to-int-native/literal_protocol.mjs"
+                },
+                {
+                  "path": "experiments/float-to-int-native/literal_verify.mjs"
+                },
+                {
+                  "path": "experiments/float-to-int-native/literal-evidence.json"
+                }
+              ],
               "id": "FunctionNodeFloatToInt",
               "label": "Float to Integer",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. All four ROUND/FLOOR/CEILING/TRUNCATE modes with exact Float32 literal, Value, reroute and group-default inputs that are normal or zero and within +/-2^24. Preserves native halves-away-from-zero Round and typed INT outputs into Integer Math/Compare/color consumers. Source evaluation is CPU MF even when compositor device is GPU; this is not a spatial GPU-field port. Independent runtime checks rederive actual input provenance within bounded work, reject forged models/profiles/evaluators/schemas, and allocate no owned textures or render targets. Computed or image fields, implicit Boolean/Integer/color/vector conversion, subnormal/nonfinite/F64/out-of-bound values, animated/driven trees, unmeasured versions/builds/platforms and shader/geometry contexts remain unqualified. Generated float images can lose words on save/reopen; packed EXR transport remains a separate refused boundary. Partial scope is not whole-node or whole-scene parity.",
+              "runtimeOps": [
+                "float-to-int"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -22473,7 +22520,7 @@
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
     "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
     "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
-    "packages/blender-addon/material_compiler.py": "f85a22fb9f23a618e0224007d72cf1f0db6db39199571655bd0194a2bc363104",
+    "packages/blender-addon/material_compiler.py": "a2bd3b7cfdcb1cebb98c462200a89f0a260526d16e6f31d92ae2c066cc4ab694",
     "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
     "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
@@ -22485,9 +22532,9 @@
     "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
     "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
     "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
-    "packages/blender-addon/procedural.py": "cb6b850ff5c284aab982cbff4f22ea1bb4352e65572d613aeb8816b049a208bf",
+    "packages/blender-addon/procedural.py": "6af8a5848965a72d99ab039de18491c87feb0b45114a74d184d93453d4888750",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
-    "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
+    "packages/blender-addon/shader_color_band.py": "dc9bf6130aaf4d972787aa5a7779500fb5ed6718b199d7c5069578d5bdc10508",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
@@ -22508,7 +22555,8 @@
     "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
     "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
-    "packages/blendlink/blender/compositor_graph.py": "e0f79b7a83d4cada74e162a4e84008c197fa5c6d1bc467309cc34309f61adb99",
+    "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
+    "packages/blendlink/blender/compositor_graph.py": "d6c40f80ce760f566e1442824a9ffd5e52d6957ce66103d6a1f66eca9888d6a3",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
@@ -22525,18 +22573,18 @@
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
     "packages/blendlink/src/compiledMaterialPrograms.ts": "3a054779d78a4b7e8361653c5d980b5bb8324544c539a0b0ed691ffb66a8c173",
-    "packages/blendlink/src/compiledSceneAudit.ts": "e50ccf4daee1f7ea17cad4ec7a1f4828dfa401b1f8627a829b3de4d9e2857760",
-    "packages/blendlink/src/materialProgramDocument.ts": "bfef1c2c44efabd8036caa75577b3136b3f9f52800c3d2fca16551522733ffd4",
+    "packages/blendlink/src/compiledSceneAudit.ts": "52bce41d9b3afee724a00d06981ebec1e68cc0748da41cec1c09cdb834b60c57",
+    "packages/blendlink/src/materialProgramDocument.ts": "39ec3435678480a0c1074f55b3fee1340ec91710d384b76b0e9757ef0d181e63",
     "packages/blendlink/src/materialProgramRendererRequirements.ts": "314789847bdbad525d98e46613258527424cbafa4679437e2cb92c2996f11376",
-    "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
-    "packages/blendlink/src/staticNoise4d.ts": "8101c6f4eedaf76b907a9fb98c7ed9f7b52aa0b9690f7b4ffbdaf393882406b5",
-    "packages/blendlink/src/threeRuntime.ts": "f6238c57d537dbc3218b135f6aaf80b00de819f362298cadbd2825ad18451538",
-    "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
+    "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
+    "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
+    "packages/blendlink/src/threeRuntime.ts": "4ca05fb2b46239e30a434591c3ecfa42531b179c20e946828921a419e64db3b4",
+    "packages/blendlink/src/tslBrickNodes.ts": "5b61f5565af2b818d3a507b3cc0b408f1ef3537d5d8cb64517280f8473afde9b",
     "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
     "packages/blendlink/src/tslBumpPassthrough.ts": "33607d6c8638df6490950c56375a7c004ac737d2241b40b5db1da71ccbc6ffb9",
     "packages/blendlink/src/tslCameraData.ts": "357a3d5db89e630d9cabf12f5e7f2d88ccdf79a5cfaa1c0597cf2e81427168f6",
     "packages/blendlink/src/tslCameraGeometry.ts": "45102cb42b0f5d0ee22740931d549e3ebe54ff4559e812fd73b8d381783ad7b8",
-    "packages/blendlink/src/tslColorConversion.ts": "dab1c34326c1e3da91d598444062205b0ad2016172f7278121cdab007fd59e80",
+    "packages/blendlink/src/tslColorConversion.ts": "1c2186bff30ee2d46bb6867285db835a10c307004236276085ab7a9a7ce92671",
     "packages/blendlink/src/tslCompositorAffine.ts": "8b2ce8dbe3468882fbbf9f5077d8c2d4bb3dfc0cb48e221b1a36d4688045b2e3",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
     "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
@@ -22544,7 +22592,7 @@
     "packages/blendlink/src/tslCompositorChromaKey.ts": "f69481feb37448ad02f7873091a540eb18bf1564620489e2a0d7010fd0fc6875",
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
     "packages/blendlink/src/tslCompositorColorKey.ts": "6453d7f41612cef2aa92e449f5357ffa0ff1c77ae3025fc40d82812da26e5941",
-    "packages/blendlink/src/tslCompositorCoordinateFma.ts": "6916359803b825eecd65595d1fa694a8b3db0800be78db0568b9168e20b55d88",
+    "packages/blendlink/src/tslCompositorCoordinateFma.ts": "667b10f0d3dbcdeb79f324b36aa0c8a3bf49a71a94a7afa38e03f8e9f17b8ec7",
     "packages/blendlink/src/tslCompositorCpuDistanceRatio.ts": "ff22cc7efaf066f724d6c86215c57fa8f6911c12ca5fc595a4a148d52a15a43d",
     "packages/blendlink/src/tslCompositorCpuLuminance.ts": "5f00d71b9d6e7aecfdca8a03f2cfa99e53482249c808387cf0ec1bc155b4eb51",
     "packages/blendlink/src/tslCompositorCpuLuminanceKey.ts": "ebccac24e5cdb0464ba0a4f394650f1ab48618c8f74d97147ab69b45fd3f38b1",
@@ -22556,6 +22604,7 @@
     "packages/blendlink/src/tslCompositorDifferenceKey.ts": "4604b8aa1de7300739d602eec4a94e04cfe660491beea34dea23c690fd00b4de",
     "packages/blendlink/src/tslCompositorDistanceKey.ts": "8a2aebf7105274f8d02fd9b68b358bdb3cb89a6b43a60edda00a0fd30a5aa2fa",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
+    "packages/blendlink/src/tslCompositorFloatToInt.ts": "8e39857c7d79d0233e4f29163052f6dcc3ef14585ee05425be3405d924989aac",
     "packages/blendlink/src/tslCompositorGray.ts": "e32c05ec6deb9a8a793d3de4751ebac288a7fe0ab1d90555f8ec4504562975d1",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
     "packages/blendlink/src/tslCompositorImageDomain.ts": "50eb4b114dcb565a22df1c13821179d879881df87e33bed52f98b565ef7e5016",
@@ -22573,34 +22622,34 @@
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
-    "packages/blendlink/src/tslGeometryContext.ts": "c0277d3eec99b9c6c7aa8f3cd97252dbe88204a36c271e5b7c6b3943d62745ec",
+    "packages/blendlink/src/tslGeometryContext.ts": "ab7a4b79761b817fea3d680e26a9f1b069dc26ec6db6d511e8dc3d8f15b9c01b",
     "packages/blendlink/src/tslIrInspection.ts": "976cdc3ae2f8a9bfde73f466b912f7acef17223288dfd6b8f61acb311750e3c7",
     "packages/blendlink/src/tslMagicBounds.ts": "f5ef0d1c3d5ef83a5d427d6a185d838226b201fe40d4dcdafb1e0001894a8614",
-    "packages/blendlink/src/tslMagicNodes.ts": "679f4a4af8928e06baed6fd7716fefde872ef7ddcce14b744da77f7f0320464b",
+    "packages/blendlink/src/tslMagicNodes.ts": "58d4cb15216d438225438ae06ed5784a20c85c73bc205cd2f63b8ba6771a4cb1",
     "packages/blendlink/src/tslMaterialProgram.ts": "e46f8b8d25a2644b9b507a132b12aea75e36ec3fb326c8beaf9d29adeceeea89",
-    "packages/blendlink/src/tslMaterialRuntime.ts": "1dbdec1d78331a2a88a5eec550b6afa8a400d9ddd53031f210a34c11d2d0168b",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "902e17bb5865e0bb5ef755f30d62007de376c3d4913c3765102bed1902eed7ba",
     "packages/blendlink/src/tslMathModuloNative.ts": "f56ae4c332f93d0f597242607d02fdc8938af1d877392da3f4e3481b2e030da2",
     "packages/blendlink/src/tslMfNoiseCoordinates.ts": "3d697e3dd7a01418263fa7edac3154db127b669f4212cf533b15c94ed53046a7",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
-    "packages/blendlink/src/tslNativeNoisePrecision.ts": "95614a5d2f97400665d05861e1e648874ae1feddc30c1144549cdd16e84764b0",
+    "packages/blendlink/src/tslNativeNoisePrecision.ts": "7b64b75c45d38815d7d0cb9c1f74b4abae9352612edd2d7c6b615e4df1c495dd",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
     "packages/blendlink/src/tslNodeRecipe.ts": "cf50122cfe15d43e1af1bc7c279d970ca48498bd1692884a6494bd3374867a87",
-    "packages/blendlink/src/tslNoiseCoordinates.ts": "c3cd1a2b5549dd7edf83937dfeb1b57d8e564c6fce8dd15ad36c17a222760b1f",
+    "packages/blendlink/src/tslNoiseCoordinates.ts": "f0eb9e256f75be2915f0d2d78509fe3d638fbcb0936fc6c79099b19a1472f9f4",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
-    "packages/blendlink/src/tslNoiseFields.ts": "006b0581ca5816eacbe5695b0c9d901168a4b35292d4d10bef792ba7dd094316",
+    "packages/blendlink/src/tslNoiseFields.ts": "a66cf44b0298add1ab3db195085629788060a9005df14757d283228e703416d1",
     "packages/blendlink/src/tslNoiseInputPrecision.ts": "1d69da52f38a4743352dc18f5e808fe9a198f213bfc0d20cef2dc5d3f9a56f02",
     "packages/blendlink/src/tslNormalInputBounds.ts": "238dd8753e6b2962a0977f7128e394b69ce771eda99a8a76450e34ea033813db",
-    "packages/blendlink/src/tslNormalNodes.ts": "44bdea1ec6aa909effafa67ad627086b3272e6c89767d6c38da4828003ea1126",
+    "packages/blendlink/src/tslNormalNodes.ts": "eef12849bb8d62f45079765f382a6ba95d27687d87a6dbb7f78025b760771192",
     "packages/blendlink/src/tslNormalNoiseBounds.ts": "d077612c85a079e3f0cbc337510b241753744d4896cadf0f7c373015453bbc1c",
     "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
-    "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "45d948748da0a8951bdb218f34810c1063c1f8cb6d06d319043cad5014d81554",
-    "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
+    "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
+    "packages/blendlink/src/tslSourceCompositor.ts": "60edf0661513dcdd5c1f576baf24a7392532bef2d8d408065ca1f724c77a7aef",
+    "packages/blendlink/src/tslSpectralNodes.ts": "0b3b12601a937d51544168acdde2ee721a25a926a4890d41b2c63b5b09013200",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
-    "packages/blendlink/src/tslTangentNodes.ts": "248c6f398b631f479370f30a2dda91437a8269ed805e7f1767c700ec29ed952d",
-    "packages/blendlink/src/tslTangentNormalMap.ts": "b054680f158299006576d6d1b889fededd1f37b3c8941c0fe7c38b734508a287",
-    "packages/blendlink/src/tslVaryingNoise.ts": "efd845e383882a33a1d82bce543ea2f36144d40a6a54a9192a30905fda48f5c5",
+    "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",
+    "packages/blendlink/src/tslTangentNormalMap.ts": "c4eebac717ecb6a4e9a1963f280346d9575be6c7c12d8a502c209bac2775e346",
+    "packages/blendlink/src/tslVaryingNoise.ts": "46094f81620d78c89e094913782cd84fa489f6792d513b5be42d4fd1606a0f63",
     "packages/blendlink/src/tslVectorTransform.ts": "6301a09b66a535ebdd595bd94912e58db8435ce785d3ceac8691e1886e3bd96f"
   }
 }

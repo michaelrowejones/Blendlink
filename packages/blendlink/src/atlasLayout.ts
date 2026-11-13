@@ -55,7 +55,7 @@ function finalUvs(node: Node): Array<[number, number]> {
     }
     if (accessor.getComponentType() !== Accessor.ComponentType.FLOAT || accessor.getNormalized()) {
       throw new Error(
-        `${semantic} is quantized in the final GLB; Blendlink requires lossless Float32 atlas UVs`,
+        `${semantic} is quantized in the final GLB; SceneToWeb requires lossless Float32 atlas UVs`,
       )
     }
     const value = [0, 0]

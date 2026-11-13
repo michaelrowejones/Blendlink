@@ -13,7 +13,7 @@ except ModuleNotFoundError as error:
         raise
     _source = Path(__file__).resolve().parent.parent / 'blendlink/blender/native_color_band.py'
     if not _source.is_file():
-        raise ModuleNotFoundError('This Blendlink package is incomplete: native_color_band.py is missing beside its Blender helpers') from error
+        raise ModuleNotFoundError('This SceneToWeb package is incomplete: native_color_band.py is missing beside its Blender helpers') from error
     _spec = importlib.util.spec_from_file_location(_name, _source)
     _module = importlib.util.module_from_spec(_spec)
     sys.modules[_name] = _module

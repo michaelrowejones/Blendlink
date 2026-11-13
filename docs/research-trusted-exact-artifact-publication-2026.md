@@ -7,7 +7,7 @@ and a real tagged publication remain pending.**
 
 ## Scope and conclusion
 
-This note answers one narrow release question: how Blendlink can publish the
+This note answers one narrow release question: how SceneToWeb can publish the
 already-built, already-tested `blendlink-<version>.tgz` to npm, prove that the
 registry serves those exact bytes with provenance, and attach that same tarball
 plus the retained Blender Extension ZIP to an immutable GitHub release.
@@ -57,7 +57,7 @@ record; it must not silently become the permanent path.
 
 ## What already exists
 
-Blendlink already has most of the byte-level verifier needed by the release
+SceneToWeb already has most of the byte-level verifier needed by the release
 jobs:
 
 - `npm run release:artifacts` writes exactly four files beneath
@@ -92,7 +92,7 @@ exact owner, repository, workflow filename, optional environment name, and one
 or both allowed actions (`npm publish` and `npm stage publish`). Only one
 trusted publisher can be configured per package. [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 
-For Blendlink, configure the final publication workflow's **filename only**
+For SceneToWeb, configure the final publication workflow's **filename only**
 (including `.yml` or `.yaml`) and the exact protected environment name. Keep
 the actual publish job in that top-level workflow instead of hiding it behind a
 reusable publisher: npm documents that reusable workflows are validated against
@@ -100,7 +100,7 @@ the calling workflow name, and both caller and callee need OIDC permission.
 
 The publisher should use a current Node 24 and explicitly update npm to a
 reviewed version at or above the trusted-publishing minimum. This does not
-change Blendlink's Node consumer floor. Give the job only:
+change SceneToWeb's Node consumer floor. Give the job only:
 
 ```yaml
 permissions:
@@ -123,11 +123,11 @@ post-publish verification must not interpret `npm whoami` as an OIDC test.
 [npm trusted publishing limitations](https://docs.npmjs.com/trusted-publishers/#limitations-and-future-improvements)
 
 For a public package in a public repository, trusted publishing automatically
-generates npm provenance. The flag is not required, but the selected Blendlink
+generates npm provenance. The flag is not required, but the selected SceneToWeb
 command should still include `--provenance`: it makes accidental
 `provenance=false` configuration fail loudly and documents the release
 contract. npm's provenance prerequisites also require the case-sensitive
-`repository` URL to match the publishing repository. Blendlink currently
+`repository` URL to match the publishing repository. SceneToWeb currently
 declares `git+https://github.com/michaelrowejones/Blendlink.git`; confirm that the
 public repository owner and casing match before publication.
 [npm trusted-publisher provenance](https://docs.npmjs.com/trusted-publishers/#automatic-provenance-generation),
@@ -234,7 +234,7 @@ The official release identities observed on 2026-07-25 were:
 | `actions/attest` | [`v4.2.0`](https://github.com/actions/attest/releases/tag/v4.2.0) | `f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6` |
 
 Recheck these official tag-to-commit mappings at implementation time rather
-than treating a dated research note as an update mechanism. Blendlink's
+than treating a dated research note as an update mechanism. SceneToWeb's
 existing workflow currently pins upload-artifact v6; upgrading should be a
 reviewed workflow dependency change, not an unrecorded substitution.
 
@@ -396,7 +396,7 @@ release evidence.
 3. Confirm the remote tag exists and resolves to the manifest commit.
 4. Create a draft prerelease with `--verify-tag` and attach exactly:
    - `blendlink-<version>.tgz`;
-   - `blendlink-addon-<version>.zip`;
+   - `scenetoweb-addon-<version>.zip`;
    - `release-manifest.json`; and
    - `SHA256SUMS`.
 5. Fetch release metadata and run `verify-retained-release.mjs github` in
@@ -482,6 +482,6 @@ Primary sources reviewed on 2026-07-25:
 - [GitHub CLI release creation](https://cli.github.com/manual/gh_release_create)
 - [GitHub release integrity verification](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/verify-release-integrity)
 
-Needle Engine has no relevant analogue in this scope: this is Blendlink's npm
+Needle Engine has no relevant analogue in this scope: this is SceneToWeb's npm
 and GitHub supply-chain boundary, not a Blender-to-runtime behavior. No Needle
 parity claim is made.

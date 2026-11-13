@@ -198,7 +198,7 @@ try {
   assert.ok(readFileSync(planningScene).equals(planningBytes), 'Atlas planning modified the saved source')
   // Blender may create its own shader/driver cache on Linux. The website
   // workspace and its dependencies must still be absent after a plan-only run.
-  assert.ok(!existsSync(join(work, 'cache/blendlink')) && !existsSync(join(work, 'node_modules')),
+  assert.ok(!existsSync(join(work, 'cache/scenetoweb')) && !existsSync(join(work, 'node_modules')),
     'Atlas planning installed website dependencies')
   assert.ok(!existsSync(join(work, 'src')) && !existsSync(join(work, 'public')), 'Atlas planning generated website files')
   report.push({ flow: 'standalone atlas planning', final: true, preview: true, noBake: true, sourceUnchanged: true, noWebsiteRequired: true })
@@ -395,7 +395,7 @@ try {
   assert.ok(existsSync(join(output, 'index.html')))
   assert.ok(existsSync(join(output, 'HOSTING.txt')))
   assert.match(readFileSync(join(output, 'THIRD_PARTY_NOTICES.txt'), 'utf8'), /MIT License/)
-  assert.ok(!existsSync(join(output, '.blendlink-preview-control.json')))
+  assert.ok(!existsSync(join(output, '.scenetoweb-preview-control.json')))
   const previousExport = snapshotWebsite(output)
   writeFileSync(blend, 'intentional invalid export fixture')
   const failedExport = await runCliResult(['export', '--blend', blend, '--out', output])

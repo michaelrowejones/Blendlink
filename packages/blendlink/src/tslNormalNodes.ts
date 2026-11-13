@@ -1,7 +1,7 @@
 import { irInspectionChildren } from './tslIrInspection.js'
 // Native normal-map functions adapt Cycles svm/tex_coord.h (Apache-2.0).
 // Copyright 2011-2026 Blender Foundation. Three.js bindings and domain guards
-// are supplied by Blendlink. See assets/blender-spectral-NOTICE.txt and license.
+// are supplied by SceneToWeb. See assets/blender-spectral-NOTICE.txt and license.
 import { Matrix3, Vector3, type BufferGeometry, type Mesh, type Camera, type Object3D } from 'three'
 import { dot, frontFacing, max, mix, select, uniform, vec3 } from 'three/tsl'
 import { TslIrError, type TslExpression, type TslIrExpression } from './tslNodeRecipe.js'

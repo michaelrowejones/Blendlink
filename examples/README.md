@@ -1,8 +1,8 @@
-# Blendlink examples
+# SceneToWeb examples
 
-Working consumers that compile against Blendlink's generated bindings in CI.
-Each example is a real minimal project — the same shape `blendlink connect`
-scaffolds — whose `src/blendlink/` and `src/generated/` modules are produced
+Working consumers that compile against SceneToWeb's generated bindings in CI.
+Each example is a real minimal project — the same shape `scenetoweb connect`
+scaffolds — whose `src/scenetoweb/` and `src/generated/` modules are produced
 by the CLI, not hand-written.
 
 | Example | Stack | Entry |
@@ -18,7 +18,7 @@ Follow [the first-scene guide](../docs/FIRST_SCENE.md) to install the local
 compiler/add-on, prepare the scene, connect that folder, and install the local
 archive. Do this before running `npm install` in the copied example; the
 declared registry version is a release placeholder while the project is private.
-Then run `npx blendlink compile --preview` and `npm run dev` from your copy.
+Then run `npx scenetoweb compile --preview` and `npm run dev` from your copy.
 
 Both examples use WebGPURenderer. An existing WebGL site can keep its renderer;
 the R3F example's `gl` prop is optional for that case. The R3F component uses
@@ -32,12 +32,12 @@ npm run test:examples
 ```
 
 copies each example into a temp directory, installs the workspace-built
-`blendlink` package, runs `setupWebsiteProject` + `blendlink typegen` against
+`scenetoweb` package, runs `setupWebsiteProject` + `scenetoweb typegen` against
 a deterministic GLB to produce the generated modules the example imports,
 then runs `tsc` and `vite build`. The committed source therefore always
 compiles against the bindings the *current* compiler generates — drift fails
 CI, not a user.
 
-The generated `src/blendlink/` and `src/generated/` directories are not
-committed; run the gate (or `blendlink connect` with your own `.blend`) to
+The generated `src/scenetoweb/` and `src/generated/` directories are not
+committed; run the gate (or `scenetoweb connect` with your own `.blend`) to
 produce them locally before opening an example in an editor.

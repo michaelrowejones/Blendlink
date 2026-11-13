@@ -317,7 +317,7 @@ it('audits actual pinned PNG ranges on an actual GLB normal-only program with po
       bytes = new TextEncoder().encode(JSON.stringify(programs)),
       manifest = {
         schemaVersion: 3,
-        generator: 'blendlink',
+        generator: 'scenetoweb',
         hash: hash(sceneBytes),
         url: '/actual.glb',
         stats: { bytes: sceneBytes.length },

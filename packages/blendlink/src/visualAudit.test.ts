@@ -27,7 +27,7 @@ async function fixture() {
     references: [{ id: 'hero', blender: { status: 'captured', path: 'blender/hero.png', bytes: reference.length } }],
     comparisons: [{
       id: 'hero--preview', referenceId: 'hero', quality: 'preview',
-      buildCommand: 'npx blendlink compile --preview',
+      buildCommand: 'npx scenetoweb compile --preview',
       browser: {
         status: 'required', path: 'browser/preview/hero.png',
         viewport: { width: 4, height: 2, devicePixelRatio: 1 },
@@ -52,7 +52,7 @@ describe('visual reference audit', () => {
     })
     const report = await runVisualReferenceAudit(manifestPath, { prepareQuality, captureBrowser })
     expect(report).toMatchObject({ captured: 1, compared: 1 })
-    expect(prepareQuality).toHaveBeenCalledWith('preview', 'npx blendlink compile --preview')
+    expect(prepareQuality).toHaveBeenCalledWith('preview', 'npx scenetoweb compile --preview')
     expect(report.comparisons[0]!.comparison).toMatchObject({
       status: 'compared', metrics: {
         width: 4, height: 2, comparisonSpace: 'premultiplied-rgba',

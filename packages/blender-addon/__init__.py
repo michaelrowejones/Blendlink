@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Blendlink companion addon: author the blendlink vocabulary in Blender.
+"""SceneToWeb companion addon: author the blendlink vocabulary in Blender.
 
 Thin and authoring-only by design — it never exports and never syncs. It
 tags names, adds anchor empties, sets physics properties with native slider
 metadata, lints the vocabulary live, shows whether the saved file matches
-the last `blendlink sync`, and draws what blendlink sees in the viewport.
+the last `scenetoweb sync`, and draws what blendlink sees in the viewport.
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def register():
     props.register_pointers()
     presentation_ui.register_pointers()
     preferences = prefs.get_prefs()
-    if preferences and preferences.category != "Blendlink":
+    if preferences and preferences.category != "SceneToWeb":
         presentation_ui.re_register_category(preferences.category)
     handlers.register()
     overlay.register()

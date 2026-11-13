@@ -43,3 +43,11 @@ CONTEXT.md
 
 # Local browser performance captures include model copies and runtime snapshots.
 /artifacts/runtime-perf-*/
+
+# SceneToWeb canonical cache and interrupted verification workspaces.
+.scenetoweb-cache/
+.scenetoweb-consumer-*/
+.scenetoweb-examples-*/
+
+# Regenerable Float to Integer native/browser captures and runtime snapshots.
+/artifacts/float-to-int/

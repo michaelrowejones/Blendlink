@@ -23,7 +23,7 @@ const publishedPackageArchive = process.env.BLENDLINK_CONSUMER_PACKAGE_ARCHIVE
   ? resolve(process.env.BLENDLINK_CONSUMER_PACKAGE_ARCHIVE)
   : null
 if (publishedPackageRoot && !existsSync(join(publishedPackageRoot, 'package.json'))) {
-  throw new Error(`BLENDLINK_CONSUMER_PACKAGE_ROOT is not a packed Blendlink package: ${publishedPackageRoot}`)
+  throw new Error(`BLENDLINK_CONSUMER_PACKAGE_ROOT is not a packed SceneToWeb package: ${publishedPackageRoot}`)
 }
 if (publishedPackageArchive && !existsSync(publishedPackageArchive)) {
   throw new Error(`BLENDLINK_CONSUMER_PACKAGE_ARCHIVE does not exist: ${publishedPackageArchive}`)
@@ -38,7 +38,7 @@ const { setupWebsiteProject } = await import(pathToFileURL(
 ).href)
 
 function installPublishedPackage(directory) {
-  const target = join(directory, 'node_modules', 'blendlink')
+  const target = join(directory, 'node_modules', 'scenetoweb')
   mkdirSync(join(directory, 'node_modules'), { recursive: true })
   // test-package.mjs has already npm-packed and exactly extracted this root.
   // Copying that artifact keeps this release gate deterministic and offline;
@@ -48,11 +48,11 @@ function installPublishedPackage(directory) {
   // validates the published manifest and complete tarball file list.
   cpSync(packageUnderTest, target, { recursive: true, errorOnExist: true })
   if (publishedPackageArchive) {
-    const nestedThree = join(directory, 'node_modules', 'blendlink', 'node_modules', 'three')
-    const nestedTypes = join(directory, 'node_modules', 'blendlink', 'node_modules', '@types', 'three')
+    const nestedThree = join(directory, 'node_modules', 'scenetoweb', 'node_modules', 'three')
+    const nestedTypes = join(directory, 'node_modules', 'scenetoweb', 'node_modules', '@types', 'three')
     if (existsSync(nestedThree) || existsSync(nestedTypes)) {
       throw new Error(
-        'Packed Blendlink installed a private Three.js/type copy instead of using the website-owned peers.',
+        'Packed SceneToWeb installed a private Three.js/type copy instead of using the website-owned peers.',
       )
     }
   }
@@ -75,7 +75,7 @@ function run(label, command, args, cwd) {
 
 async function writeGenerated(directory, name) {
   const cli = publishedPackageRoot
-    ? join(directory, 'node_modules', 'blendlink', 'dist', 'cli.js')
+    ? join(directory, 'node_modules', 'scenetoweb', 'dist', 'cli.js')
     : workspaceCli
   const generated = join(directory, 'src', 'generated')
   const models = join(directory, 'public', 'models')
@@ -126,15 +126,15 @@ export async function resolve(specifier, context, nextResolve) {
     specifier === '@react-three/fiber' ||
     specifier.startsWith('@react-three/fiber/')
   ) {
-    throw new Error('root Blendlink import reached optional peer ' + specifier)
+    throw new Error('root SceneToWeb import reached optional peer ' + specifier)
   }
   return nextResolve(specifier, context)
 }
 `)
   writeFileSync(entry, `
-import { defineConfig } from 'blendlink'
+import { defineConfig } from 'scenetoweb'
 if (typeof defineConfig !== 'function') {
-  throw new Error('root Blendlink import lost its renderer-neutral API')
+  throw new Error('root SceneToWeb import lost its renderer-neutral API')
 }
 `)
   run(
@@ -147,12 +147,12 @@ if (typeof defineConfig !== 'function') {
 
 function writeReadonlyDescriptorContract(directory) {
   writeFileSync(join(directory, 'src', 'readonly-descriptor-contract.ts'), `
-import type { CompiledSceneDescriptor } from 'blendlink'
-import { componentDefinition } from 'blendlink/components'
+import type { CompiledSceneDescriptor } from 'scenetoweb'
+import { componentDefinition } from 'scenetoweb/components'
 import {
   collectThreeTextureEvidence,
   type ThreeTextureEvidenceReport,
-} from 'blendlink/three'
+} from 'scenetoweb/three'
 import type { Object3D } from 'three'
 
 // Typegen publishes one deeply readonly literal. Keep non-null camera and
@@ -240,7 +240,7 @@ try {
   installPublishedPackage(attachedThree)
   await writeGenerated(attachedThree, 'hero')
   writeFileSync(join(attachedThree, 'src', 'main.ts'), `
-export { installHeroScene } from './blendlink/HeroScene'
+export { installHeroScene } from './scenetoweb/HeroScene'
 `)
   build(attachedThree, 'generated existing Vanilla Three integration')
 
@@ -278,8 +278,8 @@ export { installHeroScene } from './blendlink/HeroScene'
   await writeGenerated(r3f, 'hero')
   writeFileSync(join(r3f, 'src', 'main.tsx'), `import { createRoot } from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
-import { createUseBlendlink } from 'blendlink/react'
-import { HeroScene } from './blendlink/HeroScene'
+import { createUseBlendlink } from 'scenetoweb/react'
+import { HeroScene } from './scenetoweb/HeroScene'
 
 void createUseBlendlink
 const element = document.querySelector('#root')

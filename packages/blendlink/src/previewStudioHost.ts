@@ -11,21 +11,21 @@ import { dirname, join } from 'node:path'
 import { renderBakedRecipe } from './bakedRecipe.js'
 import type { CompileProgress } from './progress.js'
 
-export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
-export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
-export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
+export const PREVIEW_STUDIO_STATUS = '.scenetoweb-preview-status.json'
+export const PREVIEW_STUDIO_CONTROL = '.scenetoweb-preview-control.json'
+export const PREVIEW_STUDIO_ACK = '.scenetoweb-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
 export const PREVIEW_STUDIO_HOST_VERSION = 21
 export const PREVIEW_STUDIO_MAIN_MARKER =
-  '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
+  '// SceneToWeb Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
-  '// Blendlink Preview Studio host template:'
+  '// SceneToWeb Preview Studio host template:'
 export const PREVIEW_STUDIO_INDEX_VERSION_MARKER =
-  '<!-- Blendlink Preview Studio host template:'
+  '<!-- SceneToWeb Preview Studio host template:'
 export const PREVIEW_STUDIO_STYLE_VERSION_MARKER =
-  '/* Blendlink Preview Studio host template:'
+  '/* SceneToWeb Preview Studio host template:'
 export const PREVIEW_STUDIO_VITE_VERSION_MARKER =
-  '// Blendlink Preview Studio host template:'
+  '// SceneToWeb Preview Studio host template:'
 
 export interface PreviewStudioHostPlan {
   workspace: string
@@ -119,8 +119,8 @@ function writeTextAtomic(path: string, contents: string): void {
 }
 
 export const LEGACY_PREVIEW_STUDIO_INDEX_WITH_FAVICON = `<!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23101116'/%3E%3Cpath d='M4 4h8v8H4z' fill='%2366d9ef'/%3E%3C/svg%3E"><title>Blendlink Preview</title></head>
-<body><canvas id="scene" aria-label="Blendlink web preview"></canvas><script type="module" src="/src/main.ts"></script></body></html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23101116'/%3E%3Cpath d='M4 4h8v8H4z' fill='%2366d9ef'/%3E%3C/svg%3E"><title>SceneToWeb Preview</title></head>
+<body><canvas id="scene" aria-label="SceneToWeb web preview"></canvas><script type="module" src="/src/main.ts"></script></body></html>
 `
 
 export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PREVIEW_STUDIO_HOST_VERSION} -->
@@ -131,13 +131,13 @@ export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PR
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="dark">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='4' fill='%230d1016'/%3E%3Cpath d='M3.5 4.2h5.2a3.3 3.3 0 0 1 0 6.6H3.5z' fill='%236ee7c7'/%3E%3C/svg%3E">
-  <title>Blendlink Preview Studio</title>
+  <title>SceneToWeb Preview Studio</title>
 </head>
 <body>
   <main id="studio" data-background="dark" data-viewport="fill">
-    <section id="viewport" aria-label="Blendlink Web Presentation"><img id="reference-image" alt="Blender reference render" hidden></section>
+    <section id="viewport" aria-label="SceneToWeb Web Presentation"><img id="reference-image" alt="Blender reference render" hidden></section>
     <header class="studio-bar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Blendlink</span><span class="muted">Preview Studio</span></div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>SceneToWeb</span><span class="muted">Preview Studio</span></div>
       <div id="status-chip" class="status-chip" role="status"><span class="status-dot"></span><span id="status-label">Opening preview…</span></div>
       <nav class="toolbar" aria-label="Preview controls">
         <button id="pause" type="button" title="Pause animation" aria-pressed="false">Pause</button>
@@ -294,7 +294,7 @@ export function previewStudioBakedBridgeSource(plan: PreviewStudioHostPlan): str
 }
 
 export function unversionedPreviewStudioViteConfigSource(): string {
-  return `// Blendlink Preview Studio owns this disposable host adapter.
+  return `// SceneToWeb Preview Studio owns this disposable host adapter.
 import { existsSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
@@ -317,7 +317,7 @@ function writeAck(ack) {
 
 function previewControlPlugin() {
   return {
-    name: 'blendlink-preview-control',
+    name: 'scenetoweb-preview-control',
     handleHotUpdate(context) {
       const path = context.file.replace(/\\\\/g, '/')
       if (path.includes('/src/generated/') || path.includes('/public/models/') ||
@@ -326,7 +326,7 @@ function previewControlPlugin() {
           path.includes('/public/${PREVIEW_STUDIO_ACK}')) return []
     },
     configureServer(server) {
-      server.middlewares.use('/__blendlink/preview-client', (request, response, next) => {
+      server.middlewares.use('/__scenetoweb/preview-client', (request, response, next) => {
         if (request.method !== 'POST') return next()
         let body = ''
         request.setEncoding('utf8')
@@ -416,7 +416,7 @@ ${PREVIEW_STUDIO_MAIN_VERSION_MARKER} ${PREVIEW_STUDIO_HOST_VERSION}
 import * as THREE from 'three'
 import { WebGPURenderer } from 'three/webgpu'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { installThreeCompiledScene } from 'blendlink/three'
+import { installThreeCompiledScene } from 'scenetoweb/three'
 import { bindPreviewDescriptor, createBakedScene } from './previewBaked'
 import './style.css'
 
@@ -425,7 +425,7 @@ const SCENE_NAME = ${JSON.stringify(plan.sceneName)}
 const GENERATED_MODULE = ${JSON.stringify(generatedModule)}
 const STATUS_URL = '/${PREVIEW_STUDIO_STATUS}'
 const CONTROL_URL = '/${PREVIEW_STUDIO_CONTROL}'
-const CLIENT_URL = '/__blendlink/preview-client'
+const CLIENT_URL = '/__scenetoweb/preview-client'
 
 type StudioStatus = {
   schemaVersion: 1
@@ -462,7 +462,7 @@ type Presentation = {
 
 const element = <T extends HTMLElement>(id: string): T => {
   const value = document.getElementById(id)
-  if (!value) throw new Error('Blendlink Preview Studio is missing #' + id)
+  if (!value) throw new Error('SceneToWeb Preview Studio is missing #' + id)
   return value as T
 }
 const studio = element<HTMLElement>('studio')
@@ -731,7 +731,7 @@ function reportRuntimeFailure(error: unknown, source = 'Scene runtime'): void {
     failureKind: 'runtime',
     error: message,
   }).catch(ackError => {
-    console.error('Blendlink Preview Studio could not report its runtime failure:', ackError)
+    console.error('SceneToWeb Preview Studio could not report its runtime failure:', ackError)
   })
 }
 
@@ -887,9 +887,9 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
       try { await validationDevice!.popErrorScope() } catch { /* retain the original failure */ }
     }
     try { installed?.dispose() }
-    catch (disposeError) { console.warn('Blendlink Preview Studio install cleanup failed:', disposeError) }
+    catch (disposeError) { console.warn('SceneToWeb Preview Studio install cleanup failed:', disposeError) }
     try { renderer?.dispose() }
-    catch (disposeError) { console.warn('Blendlink Preview Studio renderer cleanup failed:', disposeError) }
+    catch (disposeError) { console.warn('SceneToWeb Preview Studio renderer cleanup failed:', disposeError) }
     canvas.remove()
     throw error
   }
@@ -982,7 +982,7 @@ async function promote(status: StudioStatus): Promise<void> {
     }
     if (previous) {
       try { disposePresentation(previous) }
-      catch (error) { console.warn('Blendlink Preview Studio could not completely release the previous scene:', error) }
+      catch (error) { console.warn('SceneToWeb Preview Studio could not completely release the previous scene:', error) }
     }
     if (retainedAfterFailure) {
       setPhase('failed', 'Saved update failed · showing last good scene')
@@ -993,7 +993,7 @@ async function promote(status: StudioStatus): Promise<void> {
   } catch (error) {
     if (candidate) {
       try { disposePresentation(candidate) }
-      catch (disposeError) { console.warn('Blendlink Preview Studio candidate cleanup failed:', disposeError) }
+      catch (disposeError) { console.warn('SceneToWeb Preview Studio candidate cleanup failed:', disposeError) }
     }
     if (desiredGeneration !== generation) return
     const message = errorText(error)
@@ -1018,7 +1018,7 @@ async function promote(status: StudioStatus): Promise<void> {
         error: message,
       })
     } catch (ackError) {
-      console.error('Blendlink Preview Studio could not report its runtime failure:', ackError)
+      console.error('SceneToWeb Preview Studio could not report its runtime failure:', ackError)
     }
   } finally {
     loadingGeneration = ''
@@ -1109,7 +1109,7 @@ function applyStatus(status: StudioStatus): void {
         phase: failed ? 'failed' : 'ready',
         ...(failed && runtimeFailureMessage ? { error: runtimeFailureMessage } : {}),
       }).catch(error => {
-        console.warn('Blendlink Preview Studio could not refresh its ready acknowledgement:', error)
+        console.warn('SceneToWeb Preview Studio could not refresh its ready acknowledgement:', error)
       })
     } else if (runtimeFailedGeneration !== active.generation) {
       setPhase('ready', 'Ready · updates when you save')
@@ -1134,7 +1134,7 @@ async function pollStatus(): Promise<void> {
       }
     } else throw new Error('Preview status returned ' + response.status)
   } catch (error) {
-    console.warn('Blendlink Preview Studio status retry:', error)
+    console.warn('SceneToWeb Preview Studio status retry:', error)
     statusPollFailures += 1
     if (statusPollFailures >= 3 && active && runtimeFailedGeneration !== active.generation) {
       statusConnectionLost = true

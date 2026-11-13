@@ -6,20 +6,20 @@ import { assertWebsiteExportDestination, resolveWebsiteExportDestination } from 
 
 describe('standalone website destination ownership', () => {
   it('preserves unrelated files and another scene’s exported website', () => {
-    const root = mkdtempSync(join(tmpdir(), 'blendlink-website-destination-'))
+    const root = mkdtempSync(join(tmpdir(), 'scenetoweb-website-destination-'))
     try {
       expect(() => assertWebsiteExportDestination(root, 'this-scene')).not.toThrow()
       writeFileSync(join(root, 'index.html'), 'artist website')
       expect(() => assertWebsiteExportDestination(root, 'this-scene')).toThrow(/empty folder/)
-      writeFileSync(join(root, '.blendlink-website.json'), JSON.stringify({ schemaVersion: 1, sourceKey: 'another-scene' }))
+      writeFileSync(join(root, '.scenetoweb-website.json'), JSON.stringify({ schemaVersion: 1, sourceKey: 'another-scene' }))
       expect(() => assertWebsiteExportDestination(root, 'this-scene')).toThrow(/left untouched/)
       expect(readFileSync(join(root, 'index.html'), 'utf8')).toBe('artist website')
-      writeFileSync(join(root, '.blendlink-website.json'), JSON.stringify({ schemaVersion: 1, sourceKey: 'this-scene' }))
+      writeFileSync(join(root, '.scenetoweb-website.json'), JSON.stringify({ schemaVersion: 1, sourceKey: 'this-scene' }))
       expect(() => assertWebsiteExportDestination(root, 'this-scene')).not.toThrow()
     } finally { rmSync(root, { recursive: true, force: true }) }
   })
   it('explains an existing file destination without changing it', () => {
-    const root = mkdtempSync(join(tmpdir(), 'blendlink-website-destination-'))
+    const root = mkdtempSync(join(tmpdir(), 'scenetoweb-website-destination-'))
     try {
       const file = join(root, 'artist.txt')
       writeFileSync(file, 'keep me')
@@ -28,7 +28,7 @@ describe('standalone website destination ownership', () => {
     } finally { rmSync(root, { recursive: true, force: true }) }
   })
   it('resolves folder aliases before checking source containment or choosing a missing export folder', () => {
-    const root = realpathSync(mkdtempSync(join(tmpdir(), 'blendlink-website-destination-')))
+    const root = realpathSync(mkdtempSync(join(tmpdir(), 'scenetoweb-website-destination-')))
     try {
       const actual = join(root, 'actual')
       const alias = join(root, 'alias')

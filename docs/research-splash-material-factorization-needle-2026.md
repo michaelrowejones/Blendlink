@@ -8,10 +8,10 @@ The Blender 4 Splash failure is not an image-loading bug and it is not solved
 by copying one more texture into the deployment. The active EEVEE surfaces are
 custom stylized graphs. The dominant building graph combines two independent
 vertex fields with a mapped, ramped image field and then passes the result
-through EEVEE-only lighting. Neither the current Blendlink selection nor
+through EEVEE-only lighting. Neither the current SceneToWeb selection nor
 Needle's stock-glTF export preserves that graph.
 
-Blendlink should add a deep material-portability planner with three deliberately
+SceneToWeb should add a deep material-portability planner with three deliberately
 different outcomes:
 
 1. **Exact standard tuple:** recognize and preserve only expressions that are
@@ -48,7 +48,7 @@ whole-surface bake. The initial audit proposed:
 
 This preserves EEVEE as source truth, stays within the maintainer-approved
 selected-intrinsic Cycles exception, and keeps the runtime ordinary Three/glTF
-instead of turning Blendlink into a shader engine.
+instead of turning SceneToWeb into a shader engine.
 
 ## Production follow-up: one selected field, two stock slots
 
@@ -84,11 +84,11 @@ metallic-roughness lighting is explicitly recorded as an approximation of the
 source Shader-to-RGB direct term. A proposed second compiler-derived bake was
 rejected: it would widen the maintainer-approved exception beyond the selected
 socket, duplicate texture payload, and add another UV/image ownership surface
-without improving the exact term. No Blendlink material extension or custom
+without improving the exact term. No SceneToWeb material extension or custom
 runtime shader is introduced.
 
 Blender 5.2's stock exporter initially serialized two Texture records pointing
-at the same image/sampler. Blendlink now performs one narrow, lossless
+at the same image/sampler. SceneToWeb now performs one narrow, lossless
 post-export normalization only after proving both TextureInfo records,
 Texture records, source image, explicit sampler, texCoord, name, extras, and
 extension state are equivalent. It redirects the Emission TextureInfo to the
@@ -100,7 +100,7 @@ Installed Three 0.184.0 `GLTFLoader` clones a Texture independently for every
 nonzero `TextureInfo.texCoord` assignment, even when both slots reference one
 glTF Texture index (`examples/jsm/loaders/GLTFLoader.js`, SHA-256
 `97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2`).
-Blendlink therefore rejoins only this attested material rule before prewarm:
+SceneToWeb therefore rejoins only this attested material rule before prewarm:
 the Base Color and Emission textures must share one decoded source and have
 identical channel, sampler, color-space, transform, and upload contracts. The
 cache-aware lease restores the original GLTFLoader clone on disposal and
@@ -152,7 +152,7 @@ Evidence:
   bundle used by the coherent official Preview browser cell are identified
   below.
 - **Verified actual exports:** the selected Splash derivative was exported by
-  Needle's add-on and Blendlink, and both resulting GLBs were inspected.
+  Needle's add-on and SceneToWeb, and both resulting GLBs were inspected.
 - **Verified browser pixels:** both candidates were evaluated against the same
   EEVEE reference and semantic masks. The visual differential has isolated
   positive and negative controls.
@@ -272,7 +272,7 @@ Both candidates use:
 
 ### Emitted payload
 
-| Result | Blendlink selected-field artifact | Needle add-on export |
+| Result | SceneToWeb selected-field artifact | Needle add-on export |
 | --- | ---: | ---: |
 | GLB SHA-256 | `8023CC4CADA546F0B68DECD87B274118424C03A87D42D25001CAAAE1650CBBAC` | `BA66CF5C974BF5FB14740E42225DE5030174E9ECBE2731D74B7AD0FB38660DA9` |
 | Materials | 33 | 36 |
@@ -284,7 +284,7 @@ Both candidates use:
 | Runtime lightmapped materials | 0 | 0 |
 
 Needle's other 35 materials are effectively untextured stock/default PBR.
-Blendlink's other materials carry the artist-selected direct fields, mostly
+SceneToWeb's other materials carry the artist-selected direct fields, mostly
 `COLOR_0`, but transport all of them as unlit. Neither artifact contains the
 packed `noiseA.jpg` through `noiseE.jpg` material contribution.
 
@@ -309,24 +309,24 @@ That proves an actual result, not its visual correctness.
 
 ![Needle Splash differential overview](../experiments/needle-splash-official-preview/visual-gates/diagnostic-overview.png)
 
-![Blendlink Splash differential overview](../experiments/splash-visual-fidelity-differential/output/diagnostic-overview.png)
+![SceneToWeb Splash differential overview](../experiments/splash-visual-fidelity-differential/output/diagnostic-overview.png)
 
 Reference-relative results:
 
-| Semantic gate | Blendlink | Needle official Preview | Threshold | Outcome |
+| Semantic gate | SceneToWeb | Needle official Preview | Threshold | Outcome |
 | --- | ---: | ---: | ---: | --- |
-| Shadow broad-band ratio | 0.268233 | 1.066283 | >= 0.72 | Blendlink fails; Needle submetric passes |
+| Shadow broad-band ratio | 0.268233 | 1.066283 | >= 0.72 | SceneToWeb fails; Needle submetric passes |
 | Shadow luma-range ratio | 0.154057 | 0.550198 | >= 0.72 | both fail |
 | Sky local-noise ratio | 1.630712 | 1.371534 | <= 1.25 | both fail |
 | Sky color error, reference spreads | 3.458311 | 5.037634 | <= 2.0 | both fail |
-| Building mid-frequency detail ratio | 0.042990 | 0.879401 | >= 0.70 | Blendlink fails; Needle submetric passes |
-| Building local-color detail ratio | 0.040908 | 0.925291 | >= 0.70 | Blendlink fails; Needle submetric passes |
+| Building mid-frequency detail ratio | 0.042990 | 0.879401 | >= 0.70 | SceneToWeb fails; Needle submetric passes |
+| Building local-color detail ratio | 0.040908 | 0.925291 | >= 0.70 | SceneToWeb fails; Needle submetric passes |
 | Building reference-pattern correlation | 0.045046 | 0.595708 | >= 0.65 | both fail |
 | Building pattern error | 0.999061 | 0.852540 | <= 0.70 | both fail |
 
 All three complete semantic gates fail for both candidates. Needle retains much
 more generic building-frequency variation and some live-lighting structure,
-but it still does not recover the reference pattern. Blendlink retains the
+but it still does not recover the reference pattern. SceneToWeb retains the
 selected chroma more intentionally, but its unlit transport removes the
 possibility of ordinary realtime shadow response and its selected vertex field
 bypasses the packed building field.
@@ -372,7 +372,7 @@ exact stock-glTF tuple even when one of its upstream color fields is portable.
 
 ### Dominant building material: `DPM.002`
 
-The current Blendlink fixture marks:
+The current SceneToWeb fixture marks:
 
 ```text
 Color Attribute.001 ("Attribute")
@@ -561,7 +561,7 @@ Limits:
 - baked cast shadows and AO freeze assumptions that become wrong under
   interaction;
 - a camera plate freezes the camera and stops being a general 3D scene; and
-- it risks creating a second rendering system inside Blendlink.
+- it risks creating a second rendering system inside SceneToWeb.
 
 **Decision:** retain as Prototype/Future Work for narrowly declared appearance
 receivers or visual-reference capture. Do not generalize the Cycles intrinsic
@@ -571,7 +571,7 @@ exception and do not make it the default.
 
 Compile node graphs to TSL/GLSL and ship a custom runtime material system.
 
-This would make the website depend on a Blendlink shader engine, expand the
+This would make the website depend on a SceneToWeb shader engine, expand the
 compatibility surface to EEVEE lighting semantics, and conflict with the
 product boundary.
 
@@ -703,7 +703,7 @@ evidence are intentionally separate.
 
 | ID | Capability | Relation | Implementation | Evidence |
 | --- | --- | --- | --- | --- |
-| NDL-MAT-007 | Automatic preservation of unsupported custom EEVEE Splash surfaces | **Match (shared gap, not a positive parity claim)**: Needle's stock-export path and Blendlink's current selected-field path both fail complete EEVEE parity, through different lossy representations | **Shipped limitation**; complete support **Future** | **Verified 2026-07-24** with Blender 5.2, Needle add-on 1.4.2, the coherent official Preview Engine 5.1.4/Vite 8.0.3 cell, immutable GLBs/screenshots, and controlled browser differential. All three complete semantic gates fail; the licensed production transform remains Pending |
+| NDL-MAT-007 | Automatic preservation of unsupported custom EEVEE Splash surfaces | **Match (shared gap, not a positive parity claim)**: Needle's stock-export path and SceneToWeb's current selected-field path both fail complete EEVEE parity, through different lossy representations | **Shipped limitation**; complete support **Future** | **Verified 2026-07-24** with Blender 5.2, Needle add-on 1.4.2, the coherent official Preview Engine 5.1.4/Vite 8.0.3 cell, immutable GLBs/screenshots, and controlled browser differential. All three complete semantic gates fail; the licensed production transform remains Pending |
 | NDL-MAT-008 | Preserve lit versus deliberately unlit response for an explicitly materialized intrinsic field | **Match / scoped Improvement** against Needle's ordinary stock-PBR/unlit carrier semantics | **Shipped bounded classifier**; specialized stylized responses remain separate | Cross-reference only: the authoritative record and differential are in [`research-selected-field-surface-response-needle-2026.md`](research-selected-field-surface-response-needle-2026.md) |
 | NDL-MAT-010 | Exact static shade-floor extraction from one exactly recognized selected-field response family, using one selected-field bake and one shared stock-glTF Base Color/Emission Texture | Needle has no inspected selected-socket/factorization analogue: **No analogue / scoped Improvement** | **Shipped bounded compiler/runtime carrier**; real Splash DPM family **Future** | Headless Blender exact/near-miss/muted/animated/umbrella/final-GLB gate, final glTF-Transform shared-Texture reattestation, and `npm run test:static-shade-floor-browser` pass on 2026-07-24. Chromium loads the exact 9,704 B GLB as `MeshStandardMaterial`, rejoins Three's nonzero-texCoord clones before upload, retains a 121,032-pixel light-off floor, and adds a 121,032-pixel direct response. The real `DPM.002` diagnostic correctly names `Mix.001 -> Result (Color)` but does not recognize the broader response; 18-binding support and the production Splash crop remain Pending |
 

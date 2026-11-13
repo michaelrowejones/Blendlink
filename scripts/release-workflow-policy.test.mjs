@@ -61,7 +61,7 @@ test('npm publisher uses OIDC and only the retained tarball', () => {
   assert.match(publisher, /--provenance/)
   assert.match(publisher, /verify-retained-release\.mjs registry/)
   assert.match(publisher, /npm audit signatures/)
-  assert.match(publisher, /BLENDLINK_NPM_TRUSTED_PUBLISHING/)
+  assert.match(publisher, /SCENETOWEB_NPM_TRUSTED_PUBLISHING/)
   assert.doesNotMatch(publisher, /npm pack/)
   assert.doesNotMatch(publisher, /NODE_AUTH_TOKEN:\s*\$\{\{\s*secrets\./)
   assert.doesNotMatch(publisher, /--force|--ignore-scripts=false/)
@@ -77,12 +77,12 @@ test('GitHub publisher attaches only the same four files and refuses mutation', 
   assert.match(publisher, /gh release create "\$GITHUB_REF_NAME"/)
   assert.match(publisher, /--verify-tag/)
   assert.match(publisher, /--draft/)
-  assert.match(publisher, /BLENDLINK_IMMUTABLE_RELEASES/)
+  assert.match(publisher, /SCENETOWEB_IMMUTABLE_RELEASES/)
   assert.match(publisher, /verify-retained-release\.mjs github/)
   assert.doesNotMatch(publisher, /--clobber|gh release upload/)
   for (const filename of [
-    'blendlink-$RELEASE_VERSION.tgz',
-    'blendlink-addon-$RELEASE_VERSION.zip',
+    'scenetoweb-$RELEASE_VERSION.tgz',
+    'scenetoweb-addon-$RELEASE_VERSION.zip',
     'release-manifest.json',
     'SHA256SUMS',
   ]) {

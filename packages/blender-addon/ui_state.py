@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Pure selection state used by Blendlink's Blender UI.
+"""Pure selection state used by SceneToWeb's Blender UI.
 
 The UI must not imply that one active object's settings apply to an entire
 selection.  This module reduces only the objects it is given; it never reads

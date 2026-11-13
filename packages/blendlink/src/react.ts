@@ -35,8 +35,8 @@ export interface CompiledScenePresentationSceneProps {
 }
 
 export interface UseCompiledScenePresentationResult extends CompiledScenePresentationSnapshot {
-  /** Key the application-selected retry boundary and/or Blendlink scene with
-   * this value. Blendlink does not choose whether the Canvas is remounted. */
+  /** Key the application-selected retry boundary and/or SceneToWeb scene with
+   * this value. SceneToWeb does not choose whether the Canvas is remounted. */
   readonly retryKey: number
   /** Spread directly onto a generated R3F scene. */
   readonly sceneProps: Readonly<CompiledScenePresentationSceneProps>
@@ -145,15 +145,17 @@ export function useCompiledScenePresentation(
 
 /** Adapt drei's useGLTF (or any equivalent hook) without taking an R3F
  * dependency. React remains isolated to this optional package subpath. The
- * resulting hook returns the familiar GLTF plus `blendlink.byId`, `byName`,
+ * resulting hook returns the familiar GLTF plus `scenetoweb.byId`, `byName`,
  * and a loud `object()` lookup. */
-export function createUseBlendlink<TLoaded extends LoadedSceneLike<Object3DLike>>(
+export function createUseSceneToWeb<TLoaded extends LoadedSceneLike<Object3DLike>>(
   useGLTF: (url: string) => TLoaded,
 ) {
-  return function useBlendlink(descriptor: CompiledSceneDescriptor) {
+  return function useSceneToWeb(descriptor: CompiledSceneDescriptor) {
     const loaded = useGLTF(descriptor.url)
-    return Object.assign(loaded, {
-      blendlink: bindCompiledScene(loaded.scene, descriptor),
-    })
+    const bindings = bindCompiledScene(loaded.scene, descriptor)
+    return Object.assign(loaded, { scenetoweb: bindings, blendlink: bindings })
   }
 }
+
+/** Compatibility alias for existing integrations. */
+export const createUseBlendlink = createUseSceneToWeb

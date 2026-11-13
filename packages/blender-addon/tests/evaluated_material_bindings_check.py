@@ -204,7 +204,7 @@ def select_objects(*objects):
 
 
 def export_stock(path):
-    """Export with the material-relevant subset of Blendlink's owned kwargs."""
+    """Export with the material-relevant subset of SceneToWeb's owned kwargs."""
     return bpy.ops.export_scene.gltf(
         filepath=str(path),
         check_existing=False,
@@ -336,7 +336,7 @@ def run():
                     item.get("name")
                     for item in modifier_document.get("materials", ())
                 ] == [used.name],
-                "Blendlink's modifier-used materials diverged from stock GLB: "
+                "SceneToWeb's modifier-used materials diverged from stock GLB: "
                 f"{modifier_document.get('materials', ())}",
             )
 
@@ -393,7 +393,7 @@ def run():
                     item.get("name")
                     for item in generated_document.get("materials", ())
                 ] == [evaluated_material.name],
-                "Blendlink's evaluated-only material diverged from stock GLB: "
+                "SceneToWeb's evaluated-only material diverged from stock GLB: "
                 f"{generated_document.get('materials', ())}",
             )
 
@@ -424,7 +424,7 @@ def run():
                     )
                     for use in fallback_uses
                 ] == [(fallback_material.name, 0)],
-                "Blendlink did not mirror stock [None] material fallback: "
+                "SceneToWeb did not mirror stock [None] material fallback: "
                 f"{fallback_uses}",
             )
             fallback_report = procedural.analyze_scene(
@@ -532,7 +532,7 @@ def run():
                     enabled_armature.show_viewport,
                     disabled_armature.show_viewport,
                 ) == original_states,
-                "Blendlink did not restore every ARMATURE show_viewport value "
+                "SceneToWeb did not restore every ARMATURE show_viewport value "
                 "after evaluated material inspection",
             )
             expect(
@@ -544,7 +544,7 @@ def run():
                     use.material.name if use.material is not None else None
                     for use in skin_uses
                 ] == [skin_source.name],
-                "Blendlink did not evaluate material ownership with skin "
+                "SceneToWeb did not evaluate material ownership with skin "
                 f"ARMATURE modifiers disabled: {skin_uses}",
             )
             skin_report = procedural.analyze_scene(
@@ -601,7 +601,7 @@ def run():
                 expect(
                     used_material_names(skin_document)
                     == [skin_source.name],
-                    "Blendlink's skin ownership did not agree with the stock "
+                    "SceneToWeb's skin ownership did not agree with the stock "
                     f"GLB primitive material: {used_material_names(skin_document)}",
                 )
 

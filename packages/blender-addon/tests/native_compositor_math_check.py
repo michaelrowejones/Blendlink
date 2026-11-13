@@ -27,11 +27,11 @@ def verify_native_math(chroma, affine, blur):
         ('atan2f','ARCTAN2',repeat([-.75,-.25,-2**-20,-0.,0.,2**-20,.25,.75]),repeat([-.5,.5,1,-1]),[atan2f]),
         ('expf','EXPONENT',repeat([-4.5,-4,-3.2,-2,-1,-.5,-.1,0]),None,[blur_exp]),
     ]
-    mesh=bpy.data.meshes.new('Blendlink native C math field inputs')
+    mesh=bpy.data.meshes.new('SceneToWeb native C math field inputs')
     mesh.from_pydata([(index,0,0) for index in range(count)],[],[])
-    owner=bpy.data.objects.new('Blendlink native C math field probe',mesh)
+    owner=bpy.data.objects.new('SceneToWeb native C math field probe',mesh)
     bpy.context.scene.collection.objects.link(owner)
-    group=bpy.data.node_groups.new('Blendlink native C math field evaluation','GeometryNodeTree')
+    group=bpy.data.node_groups.new('SceneToWeb native C math field evaluation','GeometryNodeTree')
     group.interface.new_socket(name='Geometry',in_out='INPUT',socket_type='NodeSocketGeometry')
     group.interface.new_socket(name='Geometry',in_out='OUTPUT',socket_type='NodeSocketGeometry')
     incoming=group.nodes.new('NodeGroupInput');outgoing=group.nodes.new('NodeGroupOutput')

@@ -84,7 +84,7 @@ detector refuses to treat that partial output as a complete catalog.
 
 The source snapshot checks actual Git HEAD, tracked bytes and source cleanliness.
 It refuses stale digests, mismatched native catalogs and incomplete checkouts.
-Keep the source checkout separate from the Blendlink working tree. The
+Keep the source checkout separate from the SceneToWeb working tree. The
 generated upstream caches and work packets under `artifacts` are ignored.
 
 ## Manifest and evidence contract

@@ -1,9 +1,87 @@
-# Float to Integer native research
+# Float to Integer: bounded production port and native research
 
-This corpus researches `FunctionNodeFloatToInt`. It adds no public opcode,
-extractor/runtime handler or coverage promotion. Native captures establish a
-candidate domain; browser execution and enforceable live input proofs remain
-separate work.
+`FunctionNodeFloatToInt` now has a **partial Blender 5.3 compositor port**.
+The research captures below establish candidate domains and counterexamples;
+they grant no additional production credit. The independently qualified
+literal-only production transaction is recorded in
+[literal-evidence.json](literal-evidence.json).
+
+## Qualified production slice
+
+The measured source is Blender 5.3.0 build `02f0899d78e3` on macOS arm64.
+All four Round, Floor, Ceiling and Truncate modes preserve typed Integer output
+from exact Float32 literal, Value, reroute and group-default inputs that are
+normal or zero with magnitude at most `2**24`. Round halves go away from zero,
+including negative halves. Integer Math, Compare and color consumers retain
+the native typed socket conversions. Animated/driven trees refuse.
+
+These are native **CPU multi-function** inputs even when the authored
+compositor device is GPU. This does not qualify spatial GPU Float to Integer,
+shader/Geometry execution, arbitrary computed fields or other native platforms.
+There is no image bake. A fresh `float-to-int` operation and
+`native-mf-f32-int24-v1` model carry a bounded live runtime implementation.
+The extractor and runtime independently inspect the actual input descriptor,
+source class, Float32 word, model, native version and evaluation stage. Unknown
+fields, interval assertions, implicit Boolean/Integer/vector/color conversions,
+nonfinite values, subnormals and out-of-bound values refuse. Runtime traversal
+is bounded to 2048 operations, depth 8 and 64 input visits. The opcode owns no
+textures/render targets and performs no per-frame readback; this is structural
+cost evidence, not an FPS result.
+
+The complete current-build proof includes 156 native graphs per authored source
+device, 16 actual saved-scene Final publications per device, and 1,376 primary
+browser case runs. Apple Metal and SwiftShader each run actual WebGPU and
+WebGL2 through `WebGPURenderer`. All 352,256 primary Float32 output words match
+exactly. Repeated render, dispose and reapply, ten malformed input refusals per
+API transaction, missing-WebGPU-adapter refusal, publication-pin rejection and
+source-material/callback ownership are checked. Final cases load their actual
+published GLB and source presentation through the production post pipeline.
+The [closed receipt verifier](literal_verify.mjs) checks source/snapshot hashes,
+complete case sets, distinct actual APIs/adapters and refusal/resource results.
+
+The compact receipt is tracked. Raw native pixels, saved `.blend` files,
+published Final bundles, reports and immutable runtime snapshots are
+**machine-local ignored artifacts** under `artifacts/float-to-int/`; they are
+not embedded in the repository. Earlier native/private-kernel subnormal and
+saved-image counterexamples are retained under its `research-baseline/`
+subdirectory. The existing current native catalogs retain actual 4.2/5.2
+compositor absence and shader absence; those cases have zero numerical credit.
+
+To regenerate after a coordinated package build, use Node 24 and the exact
+measured Blender executable, starting each native process with a fresh Python
+cache prefix as described in the node-port pipeline. Repeat this capture with
+`DEVICE=GPU` and a different `REFERENCES` directory:
+
+```sh
+npm run build
+BLENDLINK_FLOAT_TO_INT_REFERENCES="$PWD/artifacts/float-to-int/literal53-cpu" \
+BLENDLINK_FLOAT_TO_INT_DEVICE=CPU \
+BLENDLINK_FLOAT_TO_INT_ADDON="$PWD/packages/blendlink/dist/addon" \
+  "$BLENDER" --background --factory-startup -t 1 --python-exit-code 1 \
+  --python packages/blender-addon/tests/compositor_float_to_int_check.py
+
+BLENDLINK_FLOAT_TO_INT_REFERENCES="$PWD/artifacts/float-to-int/literal53-cpu" \
+BLENDLINK_FLOAT_TO_INT_BUILT=1 BLENDLINK_BLENDER="$BLENDER" \
+  node node_modules/vitest/vitest.mjs run \
+  experiments/float-to-int-native/literal_export.test.ts
+
+BLENDLINK_FLOAT_TO_INT_REFERENCES="$PWD/artifacts/float-to-int/literal53-cpu" \
+BLENDLINK_TEST_PROFILE=metal BLENDLINK_TEST_CHROMIUM_CHANNEL=chromium \
+BLENDLINK_TEST_CHROMIUM_ARGS='[]' \
+  node experiments/float-to-int-native/literal_run.mjs --built
+```
+
+Repeat the browser command with `--final`. Repeat both phases for the GPU
+source directory, then repeat all four runs with `BLENDLINK_TEST_PROFILE=software`,
+no Chromium channel and
+`BLENDLINK_TEST_CHROMIUM_ARGS='["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader"]'`.
+Finally verify all eight browser receipts and their native/Final dependencies:
+
+```sh
+node --test experiments/float-to-int-native/literal_protocol.test.mjs
+node experiments/float-to-int-native/literal_verify.mjs \
+  artifacts/float-to-int experiments/float-to-int-native/literal-evidence.json
+```
 
 ## Actual availability and sources
 

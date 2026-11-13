@@ -16,10 +16,10 @@ function urlParts(value: string): { pathname: string; search: string; hash: stri
   try {
     parsed = new URL(value, 'https://blendlink.invalid/')
   } catch {
-    throw new Error(`Blendlink asset URL is invalid: ${value}`)
+    throw new Error(`SceneToWeb asset URL is invalid: ${value}`)
   }
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    throw new Error(`Blendlink asset URL must use HTTP(S) or a public path: ${value}`)
+    throw new Error(`SceneToWeb asset URL must use HTTP(S) or a public path: ${value}`)
   }
   return { pathname: parsed.pathname, search: parsed.search, hash: parsed.hash }
 }
@@ -30,13 +30,13 @@ function urlParts(value: string): { pathname: string; search: string; hash: stri
 export function runtimeAssetGraphRoot(descriptor: CompiledSceneDescriptor): URL {
   const graph = descriptor.runtimeAssetGraph
   if (!graph) {
-    throw new Error('Blendlink cannot resolve a runtime asset graph root without a graph.')
+    throw new Error('SceneToWeb cannot resolve a runtime asset graph root without a graph.')
   }
 
   const sceneEntries = graph.entries.filter((entry) => entry.role === 'scene')
   if (sceneEntries.length !== 1) {
     throw new Error(
-      `Blendlink runtime asset graph must declare exactly one scene entry; found ${sceneEntries.length}.`,
+      `SceneToWeb runtime asset graph must declare exactly one scene entry; found ${sceneEntries.length}.`,
     )
   }
   const scenePath = sceneEntries[0]!.path
@@ -44,7 +44,7 @@ export function runtimeAssetGraphRoot(descriptor: CompiledSceneDescriptor): URL 
   if (!scenePath || scenePath.includes('\\') || scenePath.startsWith('/') ||
       scenePathSegments.some((segment) => !segment || segment === '.' || segment === '..')) {
     throw new Error(
-      `Blendlink runtime asset graph scene path must be a plain relative POSIX path: ${scenePath}`,
+      `SceneToWeb runtime asset graph scene path must be a plain relative POSIX path: ${scenePath}`,
     )
   }
 
@@ -52,11 +52,11 @@ export function runtimeAssetGraphRoot(descriptor: CompiledSceneDescriptor): URL 
   try {
     scene = new URL(descriptor.url, 'https://blendlink.invalid/')
   } catch {
-    throw new Error(`Blendlink scene descriptor URL is invalid: ${descriptor.url}`)
+    throw new Error(`SceneToWeb scene descriptor URL is invalid: ${descriptor.url}`)
   }
   if (scene.protocol !== 'http:' && scene.protocol !== 'https:') {
     throw new Error(
-      `Blendlink scene descriptor URL must use HTTP(S) or a public path: ${descriptor.url}`,
+      `SceneToWeb scene descriptor URL must use HTTP(S) or a public path: ${descriptor.url}`,
     )
   }
 
@@ -73,19 +73,19 @@ export function runtimeAssetGraphRoot(descriptor: CompiledSceneDescriptor): URL 
     })
   } catch {
     throw new Error(
-      `Blendlink scene descriptor URL cannot be matched safely to graph scene path ${scenePath}: ` +
+      `SceneToWeb scene descriptor URL cannot be matched safely to graph scene path ${scenePath}: ` +
         descriptor.url,
     )
   }
   if (decodedSceneSegments.length !== scenePathSegments.length ||
       decodedSceneSegments.some((segment, index) => segment !== scenePathSegments[index])) {
     throw new Error(
-      `Blendlink scene descriptor URL must end with graph scene path ${scenePath}: ${descriptor.url}`,
+      `SceneToWeb scene descriptor URL must end with graph scene path ${scenePath}: ${descriptor.url}`,
     )
   }
 
   // Directory-only resolution is Needle's current companion model and works
-  // when the scene is at the graph root. For Blendlink's exact graph, stripping
+  // when the scene is at the graph root. For SceneToWeb's exact graph, stripping
   // the declared scene path is the only design that also preserves root-level
   // companions when the scene itself is nested.
   const rootSegments = urlSegments.slice(0, -scenePathSegments.length)
@@ -105,17 +105,17 @@ export function resolveCompiledAssetUrl(value: string, baseUrl: string | URL): s
   try {
     parsedBase = new URL(base, 'https://blendlink.invalid/')
   } catch {
-    throw new Error(`Blendlink assetBaseUrl is invalid: ${base}`)
+    throw new Error(`SceneToWeb assetBaseUrl is invalid: ${base}`)
   }
   if (parsedBase.protocol !== 'http:' && parsedBase.protocol !== 'https:') {
-    throw new Error(`Blendlink assetBaseUrl must use HTTP(S) or an origin-root path: ${base}`)
+    throw new Error(`SceneToWeb assetBaseUrl must use HTTP(S) or an origin-root path: ${base}`)
   }
   if (parsedBase.search || parsedBase.hash) {
-    throw new Error('Blendlink assetBaseUrl cannot contain a query or fragment.')
+    throw new Error('SceneToWeb assetBaseUrl cannot contain a query or fragment.')
   }
   if (!base.startsWith('/') && parsedBase.origin === 'https://blendlink.invalid') {
     throw new Error(
-      `Blendlink assetBaseUrl must be origin-rooted or absolute; got ${base}. ` +
+      `SceneToWeb assetBaseUrl must be origin-rooted or absolute; got ${base}. ` +
         'Pass Vite import.meta.env.BASE_URL or the configured Next base path.',
     )
   }
@@ -140,14 +140,14 @@ export function compiledSceneImmutableAssetPolicy(
   if (!graph || graph.algorithm !== 'sha256' ||
       !/^[a-f0-9]{64}$/u.test(graph.fingerprint)) {
     throw new Error(
-      'Blendlink immutable caching requires a complete runtime graph with a full lower-case SHA-256 fingerprint.',
+      'SceneToWeb immutable caching requires a complete runtime graph with a full lower-case SHA-256 fingerprint.',
     )
   }
   const graphRoot = runtimeAssetGraphRoot(descriptor)
   const segments = graphRoot.pathname.split('/').filter(Boolean)
   if (segments.at(-1) !== graph.fingerprint) {
     throw new Error(
-      `Blendlink descriptor URL is not graph-addressed by ${graph.fingerprint}: ${descriptor.url}`,
+      `SceneToWeb descriptor URL is not graph-addressed by ${graph.fingerprint}: ${descriptor.url}`,
     )
   }
   const originalPrefix = graphRoot.origin === 'https://blendlink.invalid'

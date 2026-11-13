@@ -15,8 +15,8 @@ const ktx = textureCompression.findKtxTool()
 
 if (!ktx) {
   throw new Error(
-    'The full Blendlink release gate requires Khronos KTX-Software so real KTX2 ' +
-      'texture and HDR fidelity tests cannot be silently skipped. Run `blendlink doctor` ' +
+    'The full SceneToWeb release gate requires Khronos KTX-Software so real KTX2 ' +
+      'texture and HDR fidelity tests cannot be silently skipped. Run `scenetoweb doctor` ' +
       'after installing KTX-Software.',
   )
 }
@@ -36,7 +36,7 @@ if (discovery.error || discovery.status !== 0) {
   )
 }
 const blender = discovery.stdout.trim().split(/\r?\n/).filter(Boolean).at(-1)
-if (!blender) throw new Error('Blendlink discovery returned no Blender executable')
+if (!blender) throw new Error('SceneToWeb discovery returned no Blender executable')
 
 const work = mkdtempSync(join(tmpdir(), 'blendlink-real-tools-'))
 
@@ -111,7 +111,7 @@ try {
   ])
   const emptyProject = join(work, 'empty-scene-project')
   mkdirSync(emptyProject, { recursive: true })
-  writeFileSync(join(emptyProject, 'blendlink.config.mjs'), `export default ${JSON.stringify({
+  writeFileSync(join(emptyProject, 'scenetoweb.config.mjs'), `export default ${JSON.stringify({
     blenderPath: blender,
     outDir: 'public/models',
     genDir: 'src/generated',
@@ -121,7 +121,7 @@ try {
     'CLI refuses a real Standard export with no renderable mesh primitives',
     process.execPath,
     [cli, 'compile', 'emptyScene', '--force'],
-    /no renderable mesh primitives.*helper or asset library.*blendlink plan/is,
+    /no renderable mesh primitives.*helper or asset library.*scenetoweb plan/is,
     { cwd: emptyProject },
   )
   for (const path of [
@@ -139,7 +139,7 @@ try {
 
   const vitest = join(root, 'node_modules', 'vitest', 'vitest.mjs')
   if (!existsSync(vitest)) {
-    throw new Error(`The full Blendlink release gate could not find its pinned Vitest executable: ${vitest}`)
+    throw new Error(`The full SceneToWeb release gate could not find its pinned Vitest executable: ${vitest}`)
   }
   run(
     `KTX ${ktx.version} texture and HDR round trips`,

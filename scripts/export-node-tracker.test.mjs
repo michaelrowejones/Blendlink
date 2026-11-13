@@ -21,7 +21,7 @@ test('compact exporter retains exact target/legacy denominators without enum/sch
 
 test('priority is separate from support, dependencies and usage evidence; research never promotes a node', () => {
   const get = key => tracker.rows.find(row => row.key === key)
-  assert.equal(get('compositor:FunctionNodeFloatToInt').recommendedPriority, 'P0 Enablers'); assert.equal(get('compositor:FunctionNodeFloatToInt').targetStatus, 'unsupported'); assert.match(get('compositor:FunctionNodeFloatToInt').researchNote, /research only/i)
+  assert.equal(get('compositor:FunctionNodeFloatToInt').recommendedPriority, 'P0 Enablers'); assert.equal(get('compositor:FunctionNodeFloatToInt').targetStatus, 'partial'); assert.match(get('compositor:FunctionNodeFloatToInt').researchNote, /qualified partial literal production port/i)
   assert.equal(get('shader:ShaderNodeRadialTiling').recommendedPriority, 'P1 Artist workflows'); assert.equal(get('shader:ShaderNodeRadialTiling').targetStatus, 'unsupported'); assert.match(get('shader:ShaderNodeRadialTiling').usageBasis, /official Radial/)
   assert.equal(get('shader:ShaderNodeMath').recommendedPriority, 'Done'); assert.match(get('shader:ShaderNodeMath').priorityReason, /within.*limits/)
   assert.equal(get('shader:ShaderNodeCombineHSV').recommendedPriority, 'Legacy'); assert.equal(get('shader:ShaderNodeCombineHSV').targetStatus, 'not-available'); assert.equal(get('shader:ShaderNodeCombineHSV').versions['4.2.0'], 'partial')
@@ -43,4 +43,13 @@ test('a stale generated capability map refuses automatic local export', async t 
   await mkdir(join(directory, 'config')); await mkdir(join(directory, 'docs/node-coverage'), { recursive: true })
   await writeFile(join(directory, 'config/node-port-priorities.json'), JSON.stringify(priorities)); await writeFile(join(directory, 'docs/node-coverage/coverage.json'), JSON.stringify(coverage)); await writeFile(join(directory, 'docs/node-capabilities.json'), '{}')
   await assert.rejects(exportNodeTracker({ root: directory }), /Coverage\/capability map disagree/)
+})
+
+test('classification refresh preserves the native inventory audit date', async () => {
+  const tracker = await exportNodeTracker({ root })
+  assert.equal(tracker.source.coverageGeneratedAt, coverage.generatedAt)
+  assert.equal(tracker.source.nativeInventoryAuditGeneratedAt,
+    coverage.classificationRefresh?.nativeInventoryAuditGeneratedAt ?? coverage.generatedAt)
+  assert.equal(tracker.source.nativeInventoryRefreshed,
+    coverage.classificationRefresh?.nativeInventoryRefreshed ?? true)
 })

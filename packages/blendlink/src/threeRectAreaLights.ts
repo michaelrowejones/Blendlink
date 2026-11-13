@@ -91,7 +91,7 @@ interface RectAreaLightRuntime {
 }
 
 function abortError(): Error {
-  const error = new Error('Blendlink Rect Area light installation was canceled.')
+  const error = new Error('SceneToWeb Rect Area light installation was canceled.')
   error.name = 'AbortError'
   return error
 }
@@ -128,7 +128,7 @@ function requiredTuple(
 }
 
 function parseDescriptor(marker: THREE.Object3D, value: unknown): RectAreaLightDescriptor {
-  const label = `Blendlink Rect Area light marker "${marker.name || marker.uuid}"`
+  const label = `SceneToWeb Rect Area light marker "${marker.name || marker.uuid}"`
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new Error(`${label} has a non-object ${DESCRIPTOR_KEY} descriptor.`)
   }
@@ -172,7 +172,7 @@ function validateTransform(marker: THREE.Object3D): void {
   marker.updateWorldMatrix(true, false)
   const e = marker.matrixWorld.elements
   if (e.some((value) => !Number.isFinite(value))) {
-    throw new Error(`Blendlink Rect Area light marker "${markerLabel(marker)}" has a non-finite world transform.`)
+    throw new Error(`SceneToWeb Rect Area light marker "${markerLabel(marker)}" has a non-finite world transform.`)
   }
   const x = new THREE.Vector3(e[0], e[1], e[2])
   const y = new THREE.Vector3(e[4], e[5], e[6])
@@ -182,7 +182,7 @@ function validateTransform(marker: THREE.Object3D): void {
   const sz = z.length()
   if (sx <= AXIS_EPSILON || sy <= AXIS_EPSILON || sz <= AXIS_EPSILON) {
     throw new Error(
-      `Blendlink Rect Area light marker "${markerLabel(marker)}" has a singular world transform. ` +
+      `SceneToWeb Rect Area light marker "${markerLabel(marker)}" has a singular world transform. ` +
         'Use finite positive scale on every axis.',
     )
   }
@@ -195,13 +195,13 @@ function validateTransform(marker: THREE.Object3D): void {
   // changes the rectangle itself and remains a refusal.
   if (Math.abs(x.dot(y)) > ORTHOGONAL_TOLERANCE) {
     throw new Error(
-      `Blendlink Rect Area light marker "${markerLabel(marker)}" has sheared world X/Y emitter axes. ` +
+      `SceneToWeb Rect Area light marker "${markerLabel(marker)}" has sheared world X/Y emitter axes. ` +
         'Apply or remove that shear so the emitted rectangle remains orthogonal.',
     )
   }
   if (x.dot(new THREE.Vector3().crossVectors(y, z)) <= 0) {
     throw new Error(
-      `Blendlink Rect Area light marker "${markerLabel(marker)}" has a reflected world transform. ` +
+      `SceneToWeb Rect Area light marker "${markerLabel(marker)}" has a reflected world transform. ` +
         'Remove negative scale before publishing or keep the Area light bake-only.',
     )
   }
@@ -214,7 +214,7 @@ function nextLightState(entry: InstalledLight): NextLightState {
   const height = entry.descriptor.size[1] * Math.hypot(e[4], e[5], e[6])
   if (!Number.isFinite(width) || width <= 0 || !Number.isFinite(height) || height <= 0) {
     throw new Error(
-      `Blendlink Rect Area light marker "${markerLabel(entry.marker)}" produced non-finite or zero ` +
+      `SceneToWeb Rect Area light marker "${markerLabel(entry.marker)}" produced non-finite or zero ` +
         `world dimensions (${String(width)} x ${String(height)}). Use representable positive source sizes and scales.`,
     )
   }
@@ -225,7 +225,7 @@ function nextLightState(entry: InstalledLight): NextLightState {
     if (!Number.isFinite(powerArea) || powerArea <= 0 || !Number.isFinite(intensity)
         || (entry.descriptor.strength.value > 0 && intensity === 0)) {
       throw new Error(
-        `Blendlink Rect Area light marker "${markerLabel(entry.marker)}" produced an unrepresentable ` +
+        `SceneToWeb Rect Area light marker "${markerLabel(entry.marker)}" produced an unrepresentable ` +
           'power-to-area intensity. Use less extreme source dimensions, scale, or power.',
       )
     }
@@ -259,7 +259,7 @@ function ltcState(uniforms: LtcUniforms):
   if (invalid.length > 0) {
     throw new Error(
       `Three's Rect Area LTC globals are not Texture instances (${invalid.join(', ')}). ` +
-        'Align the application and Blendlink to one evaluated Three peer before installing the scene.',
+        'Align the application and SceneToWeb to one evaluated Three peer before installing the scene.',
     )
   }
   return { kind: 'complete', textures: Object.fromEntries(entries) as unknown as LtcTextures }
@@ -329,7 +329,7 @@ function createRuntime(
         if (state.kind === 'partial') {
           throw new Error(
             `Three's Rect Area LTC globals are only partially initialized (${state.present.join(', ')}). ` +
-              'Blendlink will not replace application-owned shader textures. Align Three versions/aliases, ' +
+              'SceneToWeb will not replace application-owned shader textures. Align Three versions/aliases, ' +
               'remove the competing initializer, and reload the page.',
           )
         }
@@ -342,11 +342,11 @@ function createRuntime(
           if (error instanceof Error && error.name === 'AbortError') throw error
           const detail = error instanceof Error ? error.message : String(error)
           throw new Error(
-            'Blendlink could not access Three RectArea LTC support from the installed Three peer. ' +
-              `Align the application and Blendlink Three versions, then retry. ${detail}`,
+            'SceneToWeb could not access Three RectArea LTC support from the installed Three peer. ' +
+              `Align the application and SceneToWeb Three versions, then retry. ${detail}`,
           )
         }
-        // A second evaluated Blendlink module may have completed initialization
+        // A second evaluated SceneToWeb module may have completed initialization
         // while the initializer provider settled. Re-check before calling the
         // allocation-heavy, non-idempotent Three initializer.
         state = ltcState(peer.UniformsLib)
@@ -361,7 +361,7 @@ function createRuntime(
         if (state.kind !== 'complete') {
           throw new Error(
             'Three RectAreaLightUniformsLib.init() did not publish all four LTC textures. ' +
-              'Check that Blendlink and the renderer resolve the same Three peer.',
+              'Check that SceneToWeb and the renderer resolve the same Three peer.',
           )
         }
         return state.textures
@@ -379,9 +379,9 @@ function createRuntime(
       const current = ltcState(peer.UniformsLib)
       if (current.kind !== 'complete' || !sameLtcTextures(current.textures, expected)) {
         throw new Error(
-          'Three Rect Area LTC texture ownership changed after Blendlink initialized it. ' +
+          'Three Rect Area LTC texture ownership changed after SceneToWeb initialized it. ' +
             'A duplicate Three peer or non-idempotent RectAreaLightUniformsLib.init() call replaced shared ' +
-            'shader state; dedupe/alias `three` and initialize Rect Area lights through Blendlink only.',
+            'shader state; dedupe/alias `three` and initialize Rect Area lights through SceneToWeb only.',
         )
       }
       return expected
@@ -408,20 +408,20 @@ function createRuntime(
         validateTransform(plan.marker)
         if (activeInstallation(plan.marker) !== undefined) {
           throw new Error(
-            `Blendlink Rect Area light marker "${markerLabel(plan.marker)}" already has an active installation. ` +
+            `SceneToWeb Rect Area light marker "${markerLabel(plan.marker)}" already has an active installation. ` +
               'Dispose the previous scene handle before reinstalling it.',
           )
         }
         if ((plan.marker as THREE.Light).isLight === true) {
           throw new Error(
-            `Blendlink Rect Area descriptor marker "${markerLabel(plan.marker)}" is already a Three light. ` +
+            `SceneToWeb Rect Area descriptor marker "${markerLabel(plan.marker)}" is already a Three light. ` +
               'A tampered punctual-light node cannot also own a Rect Area child.',
           )
         }
         if (plan.marker.children.some((child) => (child as THREE.RectAreaLight).isRectAreaLight === true)) {
           throw new Error(
-            `Blendlink Rect Area descriptor marker "${markerLabel(plan.marker)}" already contains a RectAreaLight. ` +
-              'Remove the application-created duplicate and let Blendlink own the authored lowering.',
+            `SceneToWeb Rect Area descriptor marker "${markerLabel(plan.marker)}" already contains a RectAreaLight. ` +
+              'Remove the application-created duplicate and let SceneToWeb own the authored lowering.',
           )
         }
       }
@@ -433,7 +433,7 @@ function createRuntime(
           ? ` and ${lightingReceivers.length - 3} more`
           : ''
         throw new Error(
-          `Blendlink will not install authored Rect Area direct lights over a Lighting atlas without ` +
+          `SceneToWeb will not install authored Rect Area direct lights over a Lighting atlas without ` +
             `compiled per-light bake-exclusion evidence. Probable double illumination affects ${sample}${remainder}. ` +
             'Keep these Area lights bake-only, use Appearance for static baked surfaces with explicit live PBR ' +
             'exceptions, or author a portable Point/Spot/Sun light. Re-sync after choosing one contract.',
@@ -443,22 +443,22 @@ function createRuntime(
       if ((renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer) {
         // The node system takes LTC data through the static, write-only
         // RectAreaLightNode.setLTC(); three exposes no way to inspect or
-        // co-own that state, so Blendlink's LTC ownership machine cannot
+        // co-own that state, so SceneToWeb's LTC ownership machine cannot
         // protect it yet. Named refusal instead of the misleading
         // duplicate-peer diagnosis below.
         throw new Error(
-          'Blendlink authored Rect Area lights do not support WebGPURenderer yet: three\'s node ' +
+          'SceneToWeb authored Rect Area lights do not support WebGPURenderer yet: three\'s node ' +
             'renderer initializes LTC through the write-only RectAreaLightNode.setLTC(), which ' +
-            'Blendlink cannot own without clobbering application state. Initialize ' +
+            'SceneToWeb cannot own without clobbering application state. Initialize ' +
             'RectAreaLightTexturesLib and RectAreaLightNode.setLTC() in the application, keep these ' +
             'lights bake-only, or stay on WebGLRenderer for this scene.',
         )
       }
       if (!(renderer instanceof peer.WebGLRenderer)) {
         throw new Error(
-          'Blendlink Rect Area lights require the renderer and Blendlink runtime to share one evaluated Three peer. ' +
+          'SceneToWeb Rect Area lights require the renderer and SceneToWeb runtime to share one evaluated Three peer. ' +
             'The supplied WebGLRenderer comes from another copy. Dedupe/alias `three` in the site bundler and align ' +
-            'the application version with Blendlink before publishing.',
+            'the application version with SceneToWeb before publishing.',
         )
       }
 
@@ -486,7 +486,7 @@ function createRuntime(
         get supportedReceiverCount() { return reportState.supportedReceiverCount },
         get unsupportedReceiverCount() { return reportState.unsupportedReceiverCount },
       })
-      const token = Symbol('Blendlink Rect Area light installation')
+      const token = Symbol('SceneToWeb Rect Area light installation')
 
       const cleanup = (): unknown[] => {
         const errors: unknown[] = []
@@ -504,7 +504,7 @@ function createRuntime(
               )
               if (!cleared) {
                 throw new Error(
-                  `Blendlink Rect Area light marker "${markerLabel(entry.marker)}" could not release its ` +
+                  `SceneToWeb Rect Area light marker "${markerLabel(entry.marker)}" could not release its ` +
                     'private ownership token. Keep installed markers writable until scene disposal completes.',
                 )
               }
@@ -521,7 +521,7 @@ function createRuntime(
         for (const plan of plans) {
           if (activeInstallation(plan.marker) !== undefined) {
             throw new Error(
-              `Blendlink Rect Area light marker "${markerLabel(plan.marker)}" was claimed by a concurrent installation. ` +
+              `SceneToWeb Rect Area light marker "${markerLabel(plan.marker)}" was claimed by a concurrent installation. ` +
                 'Dispose that scene handle before retrying.',
             )
           }
@@ -536,7 +536,7 @@ function createRuntime(
           if (!reserved) {
             light.dispose()
             throw new Error(
-              `Blendlink Rect Area light marker "${markerLabel(plan.marker)}" cannot store its private ` +
+              `SceneToWeb Rect Area light marker "${markerLabel(plan.marker)}" cannot store its private ` +
                 'installation ownership token. Keep the loaded Object3D extensible until installation completes.',
             )
           }
@@ -559,7 +559,7 @@ function createRuntime(
         const cleanupErrors = cleanup()
         if (cleanupErrors.length > 0) {
           throw new Error(
-            `Could not install Blendlink Rect Area lights: ${error instanceof Error ? error.message : String(error)}. ` +
+            `Could not install SceneToWeb Rect Area lights: ${error instanceof Error ? error.message : String(error)}. ` +
               `Rollback also failed: ${cleanupErrors.map(String).join('; ')}`,
           )
         }
@@ -569,17 +569,17 @@ function createRuntime(
       return {
         report,
         sync() {
-          if (disposed) throw new Error('This Blendlink Rect Area light installation has been disposed.')
+          if (disposed) throw new Error('This SceneToWeb Rect Area light installation has been disposed.')
           syncLights(installed)
         },
         auditReceivers() {
-          if (disposed) throw new Error('This Blendlink Rect Area light installation has been disposed.')
+          if (disposed) throw new Error('This SceneToWeb Rect Area light installation has been disposed.')
           const counts = receiverCounts(root)
           reportState.supportedReceiverCount = counts.supported
           reportState.unsupportedReceiverCount = counts.unsupported
           if (counts.supported === 0) {
             const message =
-              `Blendlink installed ${plans.length} authored Rect Area light${plans.length === 1 ? '' : 's'}, ` +
+              `SceneToWeb installed ${plans.length} authored Rect Area light${plans.length === 1 ? '' : 's'}, ` +
               'but the finalized scene has no visible MeshStandardMaterial or MeshPhysicalMaterial receiver. ' +
               `${counts.unsupported} visible material${counts.unsupported === 1 ? '' : 's'} will ignore these lights; ` +
               'Appearance MeshBasicMaterial surfaces intentionally remain unchanged.'
@@ -593,7 +593,7 @@ function createRuntime(
           const errors = cleanup()
           if (errors.length > 0) {
             throw new Error(
-              `Could not fully dispose Blendlink Rect Area lights: ${errors.map(String).join('; ')}`,
+              `Could not fully dispose SceneToWeb Rect Area lights: ${errors.map(String).join('; ')}`,
             )
           }
         },

@@ -152,14 +152,14 @@ export function verifyReviewedDependencyChain(lockfile) {
   requireValue(
     workspace.dependencies?.['@gltf-transform/functions'],
     '4.4.1',
-    'Blendlink @gltf-transform/functions version',
+    'SceneToWeb @gltf-transform/functions version',
   )
   requireValue(
     workspace.dependencies?.['ndarray-pixels'],
     '5.2.0',
-    'Blendlink ndarray-pixels version',
+    'SceneToWeb ndarray-pixels version',
   )
-  requireValue(workspace.dependencies?.sharp, '0.35.5', 'Blendlink Sharp version')
+  requireValue(workspace.dependencies?.sharp, '0.35.5', 'SceneToWeb Sharp version')
   requireValue(functionsPackage.version, '4.4.1', '@gltf-transform/functions version')
   requireValue(
     functionsPackage.dependencies?.['ndarray-pixels'],

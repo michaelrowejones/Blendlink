@@ -7,7 +7,7 @@ an exactly attested compiler carrier from scene-wide KTX2 compression.
 
 ## Question
 
-Blendlink's selected-field compiler can emit an ordinary PNG or JPEG
+SceneToWeb's selected-field compiler can emit an ordinary PNG or JPEG
 base-color texture and attest its exact bytes, MIME type, dimensions, sampler,
 UV field, material response, and primitive ownership. Scene-wide KTX2
 compression previously ran before final scene diagnostics and considered that
@@ -51,14 +51,14 @@ Pending in the baseline record.
 
 Needle 1.4.2 has no audited selected-socket compiler or exact selected-field
 image attestation. Therefore there is no direct Needle analogue for deriving
-the exclusion from such proof. Blendlink matches Needle's explicit
+the exclusion from such proof. SceneToWeb matches Needle's explicit
 do-not-compress behavior and improves the scoped workflow by deriving it
 automatically from compiler-owned evidence rather than asking the artist to
 configure the generated texture.
 
 ## Reproduction
 
-A focused 4x4 PNG fixture is deliberately eligible for Blendlink's ETC1S
+A focused 4x4 PNG fixture is deliberately eligible for SceneToWeb's ETC1S
 path. It is bound to an unlit generated stock-glTF material and carries valid
 selected-field material evidence.
 
@@ -127,19 +127,19 @@ the existing ETC1S/UASTC policy and rate-distortion gates.
 
 Verified on 2026-07-25:
 
-- `npm.cmd test --workspace blendlink -- src/textureCompression.test.ts -t
+- `npm.cmd test --workspace scenetoweb -- src/textureCompression.test.ts -t
   "exactly attested selected-field"`: the focused red/green regression passes;
   the GLB and embedded PNG remain byte-for-byte unchanged and a deliberately
   unusable explicit encoder path is never consulted.
 - With
   `BLENDLINK_KTX_PATH=C:\Program Files\KTX-Software\bin\ktx.exe`,
-  `npm.cmd test --workspace blendlink -- src/textureCompression.test.ts`
+  `npm.cmd test --workspace scenetoweb -- src/textureCompression.test.ts`
   passes all 11 tests against KTX-Software `v4.3.2~6`, including ordinary
   ETC1S/UASTC conversion, fidelity/mip validation, baked-atlas protection, and
   the selected-field exclusion.
-- `npm.cmd test --workspace blendlink -- src/sceneDiagnostics.test.ts` passes
+- `npm.cmd test --workspace scenetoweb -- src/sceneDiagnostics.test.ts` passes
   17/17.
-- `npm.cmd run build --workspace blendlink` passes TypeScript compilation and
+- `npm.cmd run build --workspace scenetoweb` passes TypeScript compilation and
   asset copying.
 
 ## Honest boundary

@@ -1,4 +1,4 @@
-# Reflection-probe parity: Needle 1.4.2, Engine 5.1.7, and Blendlink
+# Reflection-probe parity: Needle 1.4.2, Engine 5.1.7, and SceneToWeb
 
 Date: 2026-07-23  
 Status: implementation plus focused Blender, TypeScript, and runtime
@@ -7,12 +7,12 @@ cross-browser/device pixels remain future work.
 
 ## Decision summary
 
-Blendlink now follows Needle's sound core choice for offline probes: render one
+SceneToWeb now follows Needle's sound core choice for offline probes: render one
 equirectangular panorama with Cycles and use GPU compute when available, with a
 truthful CPU fallback. This is the one approved exception to the rule that
 Eevee owns an Eevee-authored scene's appearance.
 
-Blendlink deliberately differs where the evidence supports a safer contract:
+SceneToWeb deliberately differs where the evidence supports a safer contract:
 
 - a face-detail value `R` produces a lossless half-float ZIP EXR at `4R × 2R`;
   Needle's field is panorama width and produces a lossy 32-bit DWAA EXR at
@@ -33,7 +33,7 @@ Blendlink deliberately differs where the evidence supports a safer contract:
 
 Needle Engine's runtime `ReflectionProbe.ts` does not capture the web scene. It
 loads or accepts a texture, registers influence/anchor lookup, and applies
-material-property overrides. Blendlink matches that published-source outcome
+material-property overrides. SceneToWeb matches that published-source outcome
 and additionally provides an opt-in package-owned one-shot
 `CubeCamera → PMREM` runtime route. Runtime capture is therefore a
 **No analogue / Improvement**, not a Needle parity claim.
@@ -82,7 +82,7 @@ engines. Eevee produced only the red `+X` view; Cycles placed `+X` at center,
 
 | Design | Consequence | Decision |
 | --- | --- | --- |
-| Hide only the probe helper/owner | Works when the probe component itself is the receiver; fails for Blendlink's separate helper plus explicit assigned meshes | Rejected for Blendlink |
+| Hide only the probe helper/owner | Works when the probe component itself is the receiver; fails for SceneToWeb's separate helper plus explicit assigned meshes | Rejected for SceneToWeb |
 | Hide each assigned receiver in the artist scene and restore in `finally` | Smallest mutation, preserves the exact evaluated scene, and is testable on failure | Selected |
 | Duplicate the complete scene and remove receivers in a staging copy | Strong isolation, but duplicates heavy evaluated data and changes dependency/instance semantics | Future only if live-scene visibility mutation proves unsafe |
 
@@ -109,7 +109,7 @@ backend.
 | --- | --- | --- | --- |
 | NDL-PRB-001 | **Improvement** | **Shipped** | Runtime/Baked/Custom authoring, exact-byte publication, atomic multi-probe commit, and source staleness. Focused real Blender fixture passed 2026-07-23 |
 | NDL-PRB-002 | **Boundary / Match** | **Shipped Cycles exception** | Blender 5.2 Eevee/Cycles cardinal differential plus official Cycles panoramic-camera contract. Eevee remains authoritative everywhere outside offline probe capture |
-| NDL-PRB-003 | **No analogue / Improvement** | **Shipped** | Needle runtime source proves texture loading/application only. Blendlink's production one-shot CubeCamera/PMREM route passes unit lifecycle tests and a real Chromium gate: exact six-face source orientation, `0 → 14,434` chromatic presentation pixels after PMREM, temporary-resource cleanup, owned-PMREM disposal, and idempotent teardown |
+| NDL-PRB-003 | **No analogue / Improvement** | **Shipped** | Needle runtime source proves texture loading/application only. SceneToWeb's production one-shot CubeCamera/PMREM route passes unit lifecycle tests and a real Chromium gate: exact six-face source orientation, `0 → 14,434` chromatic presentation pixels after PMREM, temporary-resource cleanup, owned-PMREM disposal, and idempotent teardown |
 | NDL-PRB-004 | **Improvement** | **Shipped** | Assigned receiver hidden during offline and runtime capture and restored after success/forced failure; assignment membership changes the source hash. The Blender fixture captures through a closed receiver at the origin, and the browser fixture observes zero receiver renders during CubeCamera capture versus two after restoration |
 | NDL-PRB-005 | **Improvement** | **Shipped** | Canonical exact-backend GPU selection with CPU fallback; live capture restores scene device, compute backend, and device flags. Physical cross-vendor performance remains pending |
 | NDL-PRB-006 | **Improvement** | **Shipped known-blocker gate** | Reachable Shader to RGB contributor refuses offline Cycles capture with material/object context and a Custom Texture remedy. The diagnostic does not claim universal compatibility |
@@ -159,10 +159,10 @@ events. The generated screenshot and machine-readable evidence live under
 - Repeat the browser gate in Firefox/WebKit/mobile and on a physical GPU. The
   current run used Chromium 150 with WebGL2 ANGLE SwiftShader.
 - Add explicit WebGL-context-loss evidence. The injected failure proves
-  Blendlink-owned rollback, not Three's internal renderer-state restoration if
+  SceneToWeb-owned rollback, not Three's internal renderer-state restoration if
   `renderer.render()` itself throws.
 - Test CPU plus CUDA/HIP/oneAPI/Metal hosts. The current selection policy is
   source- and state-tested but physical evidence is OptiX-only.
-- Blendlink does not yet provide box-projected parallax, probe blending, or
+- SceneToWeb does not yet provide box-projected parallax, probe blending, or
   automatic overlap assignment. Those remain explicit custom-adapter work and
   must not be implied by the influence gizmo.

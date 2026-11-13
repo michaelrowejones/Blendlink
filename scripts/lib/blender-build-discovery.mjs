@@ -28,7 +28,7 @@ export function officialUrl(value, purpose = 'archive') {
 export async function officialResponse(value, { purpose = 'archive', fetchImpl = fetch, maxRedirects = 5, timeoutMs = 30_000 } = {}) {
   let url = officialUrl(value, purpose)
   for (let redirects = 0; redirects <= maxRedirects; redirects++) {
-    const response = await fetchImpl(url, { redirect: 'manual', signal: AbortSignal.timeout(timeoutMs), headers: { 'User-Agent': 'Blendlink-Upstream-Discovery/1', ...(purpose === 'source' ? { Accept: 'application/vnd.github+json' } : {}) } })
+    const response = await fetchImpl(url, { redirect: 'manual', signal: AbortSignal.timeout(timeoutMs), headers: { 'User-Agent': 'SceneToWeb-Upstream-Discovery/1', ...(purpose === 'source' ? { Accept: 'application/vnd.github+json' } : {}) } })
     if (response.redirected) fail('Transport followed a redirect without official-host validation')
     if (response.url) officialUrl(response.url, purpose)
     if (response.status >= 300 && response.status < 400) {

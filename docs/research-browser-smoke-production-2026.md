@@ -15,7 +15,7 @@ on 2026-07-21 were:
   MichaelRoweJonesSite;
 - Next `16.2.6` in MichaelRoweJonesSite;
 - Three `0.184.0` in both repositories;
-- Meshoptimizer `1.2.0` in Blendlink.
+- Meshoptimizer `1.2.0` in SceneToWeb.
 
 Primary evidence includes the installed source and documentation for those
 exact versions, plus the current official React, R3F, Three, Playwright,
@@ -28,7 +28,7 @@ The implementation has advanced beyond the original audit below:
 - `publish` now optionally runs the website's declared browser-smoke command
   after its existing production build and the second static artifact
   verification. The MichaelRoweJones command exercises the application-owned
-  routes and Canvas rather than a generated Blendlink route;
+  routes and Canvas rather than a generated SceneToWeb route;
 - the production R3F adapter now prepares an exclusively owned root on a
   private Scene and commits Scene/renderer/camera/Component/host policy
   synchronously from a layout effect. Loading, failure/retry, bootstrap/full
@@ -45,7 +45,7 @@ The implementation has advanced beyond the original audit below:
   missing assets and retry, relocated compiler-owned assets, blocked/allowed
   KTX2 Blob workers, context loss, WebGL creation failure, zero-height versus
   visibly-empty classification, real CORS failure, and the public hero.
-  Application-authored visual thresholds remain deliberate; Blendlink still
+  Application-authored visual thresholds remain deliberate; SceneToWeb still
   does not impose a universal nonblack-pixel oracle.
 
 The 2026-07-24 publish run initially caught a real Contact Shadows activation
@@ -57,7 +57,7 @@ owned and executable, rather than treating a green build as render proof.
 
 ## Conclusion
 
-Blendlink should not generate or own an application route. The strongest
+SceneToWeb should not generate or own an application route. The strongest
 production smoke seam is an **optional application-declared route contract**:
 the application supplies a production start command or script, a route, and a
 DOM marker for one compiled scene; a package-owned Playwright implementation
@@ -91,14 +91,14 @@ Three important limits must remain explicit:
 | Concern | Implemented now | Verified now | Remaining gap |
 | --- | --- | --- | --- |
 | Publish transaction | `publishWebsiteProject()` compiles Final, verifies artifacts, runs the application's `build`, verifies again, then optionally runs its declared browser-smoke command. | Unit coverage plus repeated production Next dogfood publishes. | A local smoke still proves only the exercised origin/routes; deployed CDN/header evidence is separate. |
-| Preview browser validation | Preview Studio creates a candidate Canvas/renderer, installs the scene, resizes, updates, calls `compileAsync`, renders, waits one animation frame, checks context loss and shader logs, then atomically promotes the candidate. | Preview tests and the save-driven Studio workflow. | It is a disposable Blendlink-owned viewer, not the application's route, layout, CSP, loader overrides, or production build. It does not use a visual pixel oracle. |
+| Preview browser validation | Preview Studio creates a candidate Canvas/renderer, installs the scene, resizes, updates, calls `compileAsync`, renders, waits one animation frame, checks context loss and shader logs, then atomically promotes the candidate. | Preview tests and the save-driven Studio workflow. | It is a disposable SceneToWeb-owned viewer, not the application's route, layout, CSP, loader overrides, or production build. It does not use a visual pixel oracle. |
 | Atomic application activation | R3F prepares on a private Scene and synchronously commits the complete reversible presentation/host journal from a layout effect. | Coordinator/atomic tests and the production-source competing-renderer Chromium differential. | Real external texture/decoder/postprocessing pixels, physical GPU, and cross-browser evidence remain. |
 | Application readiness | R3F exposes attempt-scoped Loading/Preparing/Ready/Failed plus Bootstrap/Full/Failed presentation quality and first-completed-frame acknowledgement. | Dogfood routes drive loading, ready, retry, progressive quality, and failure states. | No shared/ref-counted Suspense preload interface; `compileAsync` is not a presented-frame guarantee. |
 | Application failure UX | Dogfood owns React error boundaries, visible alerts, recoverability policy, retry keys, and Canvas remount after context loss. | Missing GLB, worker CSP, context-loss, WebGL-creation, and retry scenarios. | Generic structured recoverability remains intentionally conservative; application policy still decides when external state is repaired. |
 | Page/runtime errors | Dogfood records page errors, console output, response/request failures, CSP violations, and context evidence. | Main, failure, component, and public-hero production scenarios. | Package classification is still split between reusable evidence helpers and application Playwright adapters. |
 | Asset requests | Dogfood records failed requests and HTTP `>=400` for scene-name/Basis URL patterns, and requires the dogfood GLB request. | The default scene and an intentional GLB abort are exercised. | URL regexes are application-specific and cannot prove unrequested/lazy companions. `requestfailed` alone does not include HTTP 404/500. |
 | Canvas layout | Dogfood requires visible browser bounds and >90% viewport height/width on desktop/mobile. | Two production-browser scenarios. | No generic marker/threshold contract; zero CSS height and zero drawing-buffer size should be reported separately. |
-| Visibly empty render | Dogfood screenshots the Canvas with Sharp and requires >2% non-black pixels plus content below 45% height. | The current workbench composition. | These are artwork-specific thresholds, not safe defaults for every Blendlink scene. |
+| Visibly empty render | Dogfood screenshots the Canvas with Sharp and requires >2% non-black pixels plus content below 45% height. | The current workbench composition. | These are artwork-specific thresholds, not safe defaults for every SceneToWeb scene. |
 | WebGL failure | Preview and R3F observe context loss; application owns fallback/remount. | Dogfood intentionally forces context loss and WebGL creation failure. | Physical-device loss/recovery and wider browser evidence remain. |
 | KTX2 | The runtime installs/configures KTX2 and ships the Basis companions; dogfood request matching includes `blendlink-basis`. | A production Next/Chromium pair loads the same real required-KTX2 GLB under blocked and allowed Blob-worker policies; allowed reaches Ready with decoded `CompressedTexture` maps. | Missing/corrupt JS/WASM/KTX2 and unsupported-transcoder scenarios remain. |
 | Meshopt | Runtime worker policy has main-thread fallback and bounded worker ownership. | Unit tests and normal dogfood scene load. | No browser scenario distinguishes successful worker decode, expected main-thread fallback, or a CSP-blocked worker warning. |
@@ -309,7 +309,7 @@ the final product interface.
 ### Design 2 — flexible Playwright scenario adapter seam
 
 This design maximizes extension. Applications provide scenario adapters while
-Blendlink provides collection and report helpers.
+SceneToWeb provides collection and report helpers.
 
 ```ts
 interface BrowserSmokeHarness {
@@ -350,7 +350,7 @@ export default defineBrowserSmoke([{
 
 **Invariants and ordering.** Global listeners are installed before navigation.
 Every scenario must call `markReady()` exactly once or end in a declared
-application fallback. Blendlink owns trace/screenshot/report finalization even
+application fallback. SceneToWeb owns trace/screenshot/report finalization even
 when the scenario throws.
 
 **Errors.** Scenario exceptions become checks with adapter source/name and the
@@ -557,7 +557,7 @@ The smallest warranted prototype is:
 
 Do not add a generated temporary route, a default pixel threshold, or a claim
 that local success proves CDN deployment. Do not make Playwright a required
-runtime dependency for normal Blendlink consumers; resolve it only for the
+runtime dependency for normal SceneToWeb consumers; resolve it only for the
 opt-in smoke command/adapter and fail with installation guidance when missing.
 
 ## Acceptance evidence for the eventual module

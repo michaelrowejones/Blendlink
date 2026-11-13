@@ -1,4 +1,4 @@
-# Blender 4 Splash: Eevee, Blendlink, and Needle visual differential
+# Blender 4 Splash: Eevee, SceneToWeb, and Needle visual differential
 
 - Audit date: 2026-07-24
 - Fixture: `artifacts/release-dogfood/blender-4-splash/fixtures/blender-4.0-splash-selected-sky.blend`
@@ -22,18 +22,18 @@ problem.
 The result is mixed:
 
 - Needle preserves substantially more broad shadow structure and
-  building-region frequency detail than the current Blendlink selected-sky
+  building-region frequency detail than the current SceneToWeb selected-sky
   result.
-- Blendlink preserves dramatically more of the authored palette than Needle.
+- SceneToWeb preserves dramatically more of the authored palette than Needle.
 - Needle's exported graph has 36 materials, but only its generated `skybox`
   material has a base-color texture. The other 35 materials are untextured and
   omit a base-color factor, so stock glTF defaults them to white. This explains
   the almost monochrome browser result.
 - Neither result passes the three fixture-specific, Eevee-relative visual
-  checks. Needle is not a visual-parity waiver for Blendlink's current shadow,
+  checks. Needle is not a visual-parity waiver for SceneToWeb's current shadow,
   sky, or building-surface gaps.
 
-The comparison image is ordered Eevee, Blendlink, Needle:
+The comparison image is ordered Eevee, SceneToWeb, Needle:
 
 ![Three-way Splash comparison](../artifacts/release-dogfood/blender-4-splash/needle-three-way-2026/three-way-overview.png)
 
@@ -133,7 +133,7 @@ integration basis for the visual findings in this note.
 
 ## Source files inspected
 
-No Needle implementation text was copied into Blendlink. These hashes identify
+No Needle implementation text was copied into SceneToWeb. These hashes identify
 the behavior summarized below.
 
 ### Add-on 1.4.2
@@ -285,7 +285,7 @@ appearance comparison below.
 
 The final GLB reports `Khronos glTF Blender I/O v5.2.39` and contains:
 
-| Field | Needle | Current Blendlink selected-sky GLB |
+| Field | Needle | Current SceneToWeb selected-sky GLB |
 | --- | ---: | ---: |
 | Nodes | 271 | 266 |
 | Meshes | 240 | 236 |
@@ -353,7 +353,7 @@ lightmaps existed in this source scene, so treating the browser result as
 "Needle lightmapped Splash" would be false.
 
 The actual result nevertheless retains more shadow structure than the current
-Blendlink selected-sky path. Blendlink should study the realtime Sun and
+SceneToWeb selected-sky path. SceneToWeb should study the realtime Sun and
 contact-shadow combination before changing its shadow policy, then prove any
 deviation with the same mask-based differential. This does not imply that
 Needle meets Eevee parity; it does not.
@@ -380,7 +380,7 @@ ordinary scene geometry using `DP-SkyPaint.MAT`. Because that material's Eevee
 graph did not become a texture in Needle's GLB, Needle's visible sky is also
 wrong.
 
-Blendlink deliberately treats the artist-selected Eevee World/scene as source
+SceneToWeb deliberately treats the artist-selected Eevee World/scene as source
 truth rather than silently adopting a Material Preview studio light. That is a
 product boundary, not permission to keep the current noisy selected-sky
 result. The visible sky material still needs a portable Eevee-safe route.
@@ -407,7 +407,7 @@ The add-on contains compatibility paths for Eevee bloom and GTAO, but Blender
 `scene.eevee.use_gtao` for this loaded scene. The actual GLB consequently has
 no Bloom or SSAO component. Its only image effect is Tone Mapping.
 
-Blendlink's current private authoring-preview metadata instead records:
+SceneToWeb's current private authoring-preview metadata instead records:
 
 - Filmic approximated by Three ACES;
 - the exact authored exposure;
@@ -437,7 +437,7 @@ node experiments/splash-visual-fidelity-differential/run.mjs `
   'experiments/needle-splash-official-preview/visual-gates'
 ```
 
-Current Blendlink command:
+Current SceneToWeb command:
 
 ```powershell
 node experiments/splash-visual-fidelity-differential/run.mjs `
@@ -450,7 +450,7 @@ node experiments/splash-visual-fidelity-differential/run.mjs `
 Both commands correctly exit `1`: all three isolated negative controls pass,
 then all three real candidates fail.
 
-| Eevee-relative symptom | Acceptance | Current Blendlink | Needle actual |
+| Eevee-relative symptom | Acceptance | Current SceneToWeb | Needle actual |
 | --- | --- | ---: | ---: |
 | Broad shadow-band ratio | at least `0.72x` | `0.268233x` | `1.066283x` |
 | Shadow luma-range ratio | at least `0.72x` | `0.154057x` | `0.550198x` |
@@ -465,7 +465,7 @@ Evidence identities:
 
 | Candidate | Screenshot SHA-256 | Differential JSON SHA-256 |
 | --- | --- | --- |
-| Current Blendlink | `853d883dac57506c45a23cbc06056a691e19a22199ec2387d35baa902ae55621` | `2278a4a7e55417a5ddf58838dd6baf30354c231113bebfb23277bfec5958d633` |
+| Current SceneToWeb | `853d883dac57506c45a23cbc06056a691e19a22199ec2387d35baa902ae55621` | `2278a4a7e55417a5ddf58838dd6baf30354c231113bebfb23277bfec5958d633` |
 | Needle official Preview | `54e30ecaa0342611122288efbf6ffe9c7440709d6d613c67adf77d37fe0efcbc` | `ac538adc31de0a7d4446c54890cdbaa2907793484c91f112f94b2f573f0d5e9d` |
 
 A separate whole-image sRGB chroma diagnostic quantifies the obvious palette
@@ -474,7 +474,7 @@ loss without presenting it as a perceptual-parity score:
 | Candidate | Mean channel chroma | Pixels with chroma at least `0.05` | Pixels with chroma at least `0.15` |
 | --- | ---: | ---: | ---: |
 | Eevee | `0.188088` | `72.1972%` | `50.7250%` |
-| Current Blendlink | `0.169929` | `61.1914%` | `44.2307%` |
+| Current SceneToWeb | `0.169929` | `61.1914%` | `44.2307%` |
 | Needle actual | `0.025078` | `24.3428%` | `0.0061%` |
 
 The diagnostic is
@@ -484,30 +484,30 @@ SHA-256
 
 ## Capability ledger
 
-The relation describes current Blendlink behavior relative to the exact Needle
+The relation describes current SceneToWeb behavior relative to the exact Needle
 path. Implementation and evidence are separate.
 
 | Capability ID | Capability | Relation | Implementation state | Evidence state |
 | --- | --- | --- | --- | --- |
-| `SPL-NDL-CAM-001` | Preserve an authored fixed camera for a scene with large backdrop/sky geometry | **Improvement** | **Shipped** | Browser verified 2026-07-24. Needle default auto-fit produces the frozen white-sphere control; `autoFit=false` restores the authored composition. Current Blendlink selected-sky composition uses the authored camera without that Needle-specific setting. |
-| `SPL-NDL-MAT-001` | Retain the authored Splash palette when ordinary glTF cannot express the material graph | **Improvement** | **Shipped** | Bounded fixture diagnostic verified 2026-07-24: strong-color pixel fraction is `44.2307%` for Blendlink versus `0.0061%` for Needle and `50.7250%` for Eevee. This does not prove material parity. |
-| `SPL-NDL-MAT-002` | Preserve the authored building-surface pattern | **Gap** | **Shipped** | Current implementation is insufficient: fixture differential red 2026-07-24. Needle correlation is `0.595708`; current Blendlink is `0.045046`; both miss `0.65`. The next material-compiler route must beat Needle and pass Eevee-relative acceptance. |
-| `SPL-NDL-LIT-001` | Preserve Eevee-like shadow information in the unbaked realtime presentation | **Gap** | **Shipped** | Current implementation is insufficient: fixture differential red 2026-07-24. Needle retains `0.550198x` luma range versus Blendlink `0.154057x`; both miss `0.72x`. Needle's realtime Sun plus contact-shadow behavior is the required next differential baseline. |
-| `SPL-NDL-LMAP-001` | Avoid falsely claiming an offline lightmap when the source has no marked/baked receivers | **Match** | **Shipped** | Browser verified 2026-07-24: Needle exported zero receiver lightmaps and runtime found zero `lightMap` materials; the Blendlink selected-sky case is likewise realtime, not a baked-lighting result. A configured same-receiver Needle-vs-Blendlink bake remains Pending. |
-| `SPL-NDL-ENV-001` | Choose environment authority for an Eevee-authored scene | **Boundary** | **Shipped** | Source and browser verified 2026-07-24. Needle copies Material Preview `forest.exr`; Blendlink treats the Eevee World/scene as authoritative and warns when that World is not portable. Current visible-sky fidelity remains red and is not excused by the boundary. |
-| `SPL-NDL-PP-001` | Report unsupported Filmic/look reproduction honestly | **Improvement** | **Shipped** | Diagnostic behavior is source verified 2026-07-24. Needle maps this Filmic fixture to mode `0` plus exposure and omits `Medium High Contrast`; Blendlink records ACES as an approximation and names Filmic, look, gamma, curve, and World limitations. Pixel superiority of the Filmic substitute remains **Pending** a ramp/patch differential. |
-| `SPL-NDL-ASSET-001` | Publish the complete environment companion graph safely | **Improvement** | **Shipped** | Needle actual requires stable relative `scene.glb` plus `forest.exr`; Blendlink's complete content-addressed graph and CDN/subpath gates are verified separately in [`research-asset-addressing-deployment-2026.md`](research-asset-addressing-deployment-2026.md). The Needle authenticated transform remains Pending. |
+| `SPL-NDL-CAM-001` | Preserve an authored fixed camera for a scene with large backdrop/sky geometry | **Improvement** | **Shipped** | Browser verified 2026-07-24. Needle default auto-fit produces the frozen white-sphere control; `autoFit=false` restores the authored composition. Current SceneToWeb selected-sky composition uses the authored camera without that Needle-specific setting. |
+| `SPL-NDL-MAT-001` | Retain the authored Splash palette when ordinary glTF cannot express the material graph | **Improvement** | **Shipped** | Bounded fixture diagnostic verified 2026-07-24: strong-color pixel fraction is `44.2307%` for SceneToWeb versus `0.0061%` for Needle and `50.7250%` for Eevee. This does not prove material parity. |
+| `SPL-NDL-MAT-002` | Preserve the authored building-surface pattern | **Gap** | **Shipped** | Current implementation is insufficient: fixture differential red 2026-07-24. Needle correlation is `0.595708`; current SceneToWeb is `0.045046`; both miss `0.65`. The next material-compiler route must beat Needle and pass Eevee-relative acceptance. |
+| `SPL-NDL-LIT-001` | Preserve Eevee-like shadow information in the unbaked realtime presentation | **Gap** | **Shipped** | Current implementation is insufficient: fixture differential red 2026-07-24. Needle retains `0.550198x` luma range versus SceneToWeb `0.154057x`; both miss `0.72x`. Needle's realtime Sun plus contact-shadow behavior is the required next differential baseline. |
+| `SPL-NDL-LMAP-001` | Avoid falsely claiming an offline lightmap when the source has no marked/baked receivers | **Match** | **Shipped** | Browser verified 2026-07-24: Needle exported zero receiver lightmaps and runtime found zero `lightMap` materials; the SceneToWeb selected-sky case is likewise realtime, not a baked-lighting result. A configured same-receiver Needle-vs-SceneToWeb bake remains Pending. |
+| `SPL-NDL-ENV-001` | Choose environment authority for an Eevee-authored scene | **Boundary** | **Shipped** | Source and browser verified 2026-07-24. Needle copies Material Preview `forest.exr`; SceneToWeb treats the Eevee World/scene as authoritative and warns when that World is not portable. Current visible-sky fidelity remains red and is not excused by the boundary. |
+| `SPL-NDL-PP-001` | Report unsupported Filmic/look reproduction honestly | **Improvement** | **Shipped** | Diagnostic behavior is source verified 2026-07-24. Needle maps this Filmic fixture to mode `0` plus exposure and omits `Medium High Contrast`; SceneToWeb records ACES as an approximation and names Filmic, look, gamma, curve, and World limitations. Pixel superiority of the Filmic substitute remains **Pending** a ramp/patch differential. |
+| `SPL-NDL-ASSET-001` | Publish the complete environment companion graph safely | **Improvement** | **Shipped** | Needle actual requires stable relative `scene.glb` plus `forest.exr`; SceneToWeb's complete content-addressed graph and CDN/subpath gates are verified separately in [`research-asset-addressing-deployment-2026.md`](research-asset-addressing-deployment-2026.md). The Needle authenticated transform remains Pending. |
 
-## Design consequence for Blendlink
+## Design consequence for SceneToWeb
 
 The evidence supports a three-part target rather than copying the Needle
 screenshot:
 
-1. **Keep Blendlink's better palette retention and loud material diagnostics.**
+1. **Keep SceneToWeb's better palette retention and loud material diagnostics.**
    Needle's ordinary stock-glTF path demonstrates exactly why silent white
    material fallback is not acceptable for an artist-first compiler.
 2. **Adopt or beat Needle's retained shadow and surface-frequency behavior.**
-   The current Blendlink result is measurably behind Needle in those two
+   The current SceneToWeb result is measurably behind Needle in those two
    dimensions even though Needle is visibly wrong overall. The realtime Sun,
    receiver/caster flags, contact-shadow fit, tone-mapping order, and material
    field realization must be tested independently.
@@ -526,11 +526,11 @@ The highest-confidence next fixtures are:
   environment lighting;
 - a Filmic/Medium-High-Contrast ramp and colored-patch comparison; and
 - a configured, identical receiver set baked through Needle lightmapping and
-  Blendlink Lighting bake, tested at equal delivery resolution.
+  SceneToWeb Lighting bake, tested at equal delivery resolution.
 
 No schema or production behavior should change from this browser result alone.
 Each implementation should land only after its focused differential can make
-the Needle-style and Blendlink-style designs fail independently.
+the Needle-style and SceneToWeb-style designs fail independently.
 
 ## Limitations and pending work
 

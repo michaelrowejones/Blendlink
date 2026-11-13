@@ -99,7 +99,11 @@ export async function exportNodeTracker({ root = defaultRoot, prioritiesPath = '
   const commit = execFileSync('git', ['-C', root, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), branch = execFileSync('git', ['-C', root, 'branch', '--show-current'], { encoding: 'utf8' }).trim()
   const sourceFingerprintDrift = []
   for (const [path, expected] of Object.entries(coverage.sourceSha256)) { assert.ok(pathSafe(path)); let actual; try { actual = sha(await readFile(join(root, path))) } catch (error) { if (error.code !== 'ENOENT') throw error; actual = null }; if (actual !== expected) sourceFingerprintDrift.push({ path, expectedSha256: expected, actualSha256: actual }) }
-  return buildNodeTracker({ coverage, capabilities, catalogs, priorities, now, source: { repository: 'michaelrowejones/Blendlink', commit, branch, remoteVerification: 'Not performed; this exporter is local only. Automation should run a published checkout.', coverageGeneratedAt: coverage.generatedAt, files: [...files].map(([path, sha256]) => ({ path, sha256 })), sourceFingerprintDrift, validationFailures: coverage.capabilityValidationFailures, nativeAvailabilityChanges: coverage.nativeAvailabilityChanges } })
+  return buildNodeTracker({ coverage, capabilities, catalogs, priorities, now, source: { repository: 'michaelrowejones/Blendlink', commit, branch, remoteVerification: 'Not performed; this exporter is local only. Automation should run a published checkout.', coverageGeneratedAt: coverage.generatedAt,
+    nativeInventoryAuditGeneratedAt: coverage.classificationRefresh?.nativeInventoryAuditGeneratedAt ?? coverage.generatedAt,
+    nativeInventoryRefreshed: coverage.classificationRefresh?.nativeInventoryRefreshed ?? true,
+    coverageRefreshKind: coverage.classificationRefresh?.kind ?? 'native-catalog-audit',
+    files: [...files].map(([path, sha256]) => ({ path, sha256 })), sourceFingerprintDrift, validationFailures: coverage.capabilityValidationFailures, nativeAvailabilityChanges: coverage.nativeAvailabilityChanges } })
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {

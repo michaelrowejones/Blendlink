@@ -1,7 +1,7 @@
 # Selected-field density evidence contract
 
 Date: 2026-07-24
-Status: density contract and earlier aggregate Blendlink release matrix passed
+Status: density contract and earlier aggregate SceneToWeb release matrix passed
 on 2026-07-24; additive current material attestation is implemented and
 focused-verified, with its optimizer differential and aggregate rerun
 **Pending current run**
@@ -123,9 +123,9 @@ a nonblank 1200×600 WebGL2 Canvas, and no relevant browser errors.
 
 ## Capability record
 
-| ID | Needle behavior | Blendlink behavior | Relation | Implementation | Evidence |
+| ID | Needle behavior | SceneToWeb behavior | Relation | Implementation | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| `NDL-MAT-002` | No selected-field final-payload attestation analogue was found in the pinned add-on/runtime paths; ordinary portable materials use Blender's stock glTF export, while the native combined lightmap uses Needle-specific transport. | Blendlink's current selected-field producer attests exact emitted primitive ownership and rendered POSITION/UV corner association before optimization, then re-attests the transformed Document before publication. | **Improvement** for this scoped portable route | `primitive-corner-v1` is **Shipped** in the current worktree; legacy schema-1 evidence remains readable with explicitly weaker semantics | Unsupported-version, same-mesh primitive-swap, same-set UV-permutation, and Blender producer fixtures pass. Weld/reorder/14-bit POSITION-quantization preservation and the current aggregate gate are **Pending current run**; no browser-pixel claim is made by this unit/compiler evidence. |
+| `NDL-MAT-002` | No selected-field final-payload attestation analogue was found in the pinned add-on/runtime paths; ordinary portable materials use Blender's stock glTF export, while the native combined lightmap uses Needle-specific transport. | SceneToWeb's current selected-field producer attests exact emitted primitive ownership and rendered POSITION/UV corner association before optimization, then re-attests the transformed Document before publication. | **Improvement** for this scoped portable route | `primitive-corner-v1` is **Shipped** in the current worktree; legacy schema-1 evidence remains readable with explicitly weaker semantics | Unsupported-version, same-mesh primitive-swap, same-set UV-permutation, and Blender producer fixtures pass. Weld/reorder/14-bit POSITION-quantization preservation and the current aggregate gate are **Pending current run**; no browser-pixel claim is made by this unit/compiler evidence. |
 | `NDL-MAT-005` | Needle Blender add-on `1.4.2` exposes a fixed `128..8192` lightmap resolution, default `1024`; the audited selected-field analogue is absent. | The selected-field compiler derives a private texture resolution from projected triangle-area demand and packed UV texel area, a scoped comparative advantage recorded in the evidence column. | **No analogue** | Computation and truthful additive schema-1 evidence are **Shipped** in the current worktree | Needle identity and registered Blender 5.2/TypeScript fixtures pass; `npm.cmd run test:full` passed on 2026-07-24. The Splash timing above remains an observed dogfood measurement, not a regression benchmark. |
 
 Needle primary source:
@@ -152,7 +152,7 @@ BLENDLINK_NEEDLE_BASELINE_VERIFIED 111 files, 5 source version identities
 This is a per-package source conclusion, not a coherent Needle end-to-end
 runtime claim.
 
-## Audited Blendlink implementation
+## Audited SceneToWeb implementation
 
 Dirty-worktree snapshot identities captured at
 `2026-07-24 11:24:30 -04:00`:
@@ -189,7 +189,7 @@ It does not:
 - apply backface/material-alpha/render-visibility coverage;
 - count raster samples or fragments;
 - use the active render camera specifically;
-- use Blendlink's designated Website Camera specifically.
+- use SceneToWeb's designated Website Camera specifically.
 
 `plan_material_texture_resolution()` sorts every scene object whose type is
 `CAMERA`, ignores panoramic cameras, retains perspective/orthographic cameras
@@ -722,12 +722,12 @@ base positions. `reorder.ts` calls the installed Meshopt encoder's
 `reorderMesh()` and remaps the index/attribute layout. `weld.ts` merges only
 bitwise-equal complete vertex streams on its lossless path. These source facts
 define the optimizer-preservation differential; source identity alone is not
-test evidence that Blendlink's implementation survives the transforms.
+test evidence that SceneToWeb's implementation survives the transforms.
 
 ### Proof boundary
 
 The Python compiler generates current evidence from the staged GLB produced by
-Blender's stock exporter, after Blendlink's private carrier rewrite and before
+Blender's stock exporter, after SceneToWeb's private carrier rewrite and before
 Node optimization. The TypeScript verifier reconstructs it from the
 fully transformed glTF-Transform Document after texture resizing, optional
 KTX2 work, and optional Meshopt transforms, before manifest publication.
@@ -735,7 +735,7 @@ KTX2 work, and optional Meshopt transforms, before manifest publication.
 That is an emitted-preoptimizer-to-final-transform preservation proof. It
 proves that the selected stock-glTF material payload, exact emitted
 material-to-primitive ownership, and rendered POSITION/UV corner association
-survived Blendlink's transformation transaction. It does not prove:
+survived SceneToWeb's transformation transaction. It does not prove:
 
 - correspondence to Blender source loop ordinals;
 - that two different source loops with the same rendered POSITION/UV facts can
@@ -760,12 +760,12 @@ product's explicit Website Camera ownership.
 
 This follows Blender's `scene.camera` at the evaluated frame. Timeline markers
 can make another camera active on a frame. It is simple, but can disagree with
-Blendlink's designated Website Camera and does not express website-responsive
+SceneToWeb's designated Website Camera and does not express website-responsive
 compositions or application-controlled transitions.
 
 ### Declarative Website Camera plus declared compositions
 
-Blendlink already has a rename-stable Website Camera and responsive
+SceneToWeb already has a rename-stable Website Camera and responsive
 composition records. This most closely matches the shipped website contract
 and avoids decoy-camera cost. It also permits a future explicit set of
 transition/shot cameras without treating every scene camera as public intent.
@@ -839,7 +839,7 @@ browser-visible pixels and must not be cited as such.
 Create:
 
 - a far/small-footprint camera as `scene.camera`;
-- the same camera as Blendlink's designated Website Camera;
+- the same camera as SceneToWeb's designated Website Camera;
 - a close/full-footprint unused decoy camera.
 
 For current behavior, assert:

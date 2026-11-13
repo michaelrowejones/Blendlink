@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2011-2022 Blender Foundation
- * SPDX-FileCopyrightText: 2026 Blendlink contributors
+ * SPDX-FileCopyrightText: 2026 SceneToWeb contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted from Cycles kernel/svm/brick.h for Three.js node expressions.
  * See assets/blender-spectral-NOTICE.txt and LICENSES.md. */

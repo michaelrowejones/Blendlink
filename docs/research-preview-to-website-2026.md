@@ -1,11 +1,11 @@
-# Preview to website: the 2026 Blendlink publishing seam
+# Preview to website: the 2026 SceneToWeb publishing seam
 
 Date: 2026-07-21
 
 ## Question
 
 What is the lowest-friction, most portable way to move an artist-authored
-Blendlink scene from the disposable Preview Studio into a real Three.js
+SceneToWeb scene from the disposable Preview Studio into a real Three.js
 website, without taking ownership of the website or introducing a cloud
 service?
 
@@ -20,14 +20,14 @@ new minimal Vite site must all receive the same scene contract.
 React Three Fiber's `Canvas` owns the renderer, scene, camera, resize policy,
 and render loop. Its hooks are valid only beneath that Canvas. A positive
 `useFrame` priority deliberately transfers render-loop ownership to effects
-such as a composer. This supports a small Blendlink adapter mounted *inside*
+such as a composer. This supports a small SceneToWeb adapter mounted *inside*
 an application-owned Canvas; generating a second Canvas would fight the host
 application's lifecycle. Sources: [R3F Canvas](https://r3f.docs.pmnd.rs/api/canvas),
 [R3F hooks and render-loop ownership](https://r3f.docs.pmnd.rs/api/hooks).
 
 Next.js App Router pages are Server Components by default, while state,
 lifecycle, and browser APIs belong in a narrow Client Component. A generated
-Blendlink R3F binding should therefore carry its own `use client` boundary,
+SceneToWeb R3F binding should therefore carry its own `use client` boundary,
 leaving the route and surrounding page server-renderable. Next also recommends
 lazy-loading heavy Client Components and libraries when they are not needed
 for the initial route render. Sources: [Next.js Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components),
@@ -54,7 +54,7 @@ Vercel likewise preserves hashed static files across deployments. Sources:
 [MDN HTTP caching and cache busting](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching#cache_busting),
 [Vercel CDN static-file caching](https://vercel.com/docs/caching/cdn-cache#static-files-caching).
 
-Blendlink first appended verified content hashes to generated asset URLs as a
+SceneToWeb first appended verified content hashes to generated asset URLs as a
 cache-busting baseline. Internal compilation now additionally seals every
 compiler-owned request, including concrete decoder files, beneath one complete
 graph SHA-256 directory. `compiledSceneImmutableAssetPolicy` returns the exact
@@ -83,7 +83,7 @@ file. Sources: [EXT_meshopt_compression](https://github.com/KhronosGroup/glTF/bl
 `gltfjsx` demonstrates the value of a generated, typed, drop-in R3F binding
 and preloading, but its generated JSX expands the complete scene graph into
 application code. That is appropriate when a developer wants to restructure
-individual model nodes. It is a poor fit for Blendlink's artist-owned scene,
+individual model nodes. It is a poor fit for SceneToWeb's artist-owned scene,
 where camera policy, baked states, light groups, components, post-processing,
 and future schema evolution should remain behind one runtime interface.
 Source: [pmndrs gltfjsx](https://github.com/pmndrs/gltfjsx).
@@ -93,7 +93,7 @@ first-party `settings_scene.py`, `panels_project.py`, `operators_web.py`, and
 `utils_web_project.py` establish the useful UX pattern: store a project path,
 generate or choose a project, start a preview server, export to the browser,
 and expose production build separately. Its implementation also shows what
-Blendlink should avoid: template ownership as the primary integration seam,
+SceneToWeb should avoid: template ownership as the primary integration seam,
 fixed-port assumptions, hidden `npm update`/install work, and framework logic
 inside Blender Python.
 
@@ -113,7 +113,7 @@ reappears in every site. It is the current friction we are trying to remove.
 Interface: `Generate Web Project`, then all editing happens inside the owned
 template.
 
-This makes a blank demo easy and is worth retaining for Blendlink's minimal
+This makes a blank demo easy and is worth retaining for SceneToWeb's minimal
 Vite starter. It is the wrong primary seam for existing sites: it duplicates
 routes, design systems, dependency choices, analytics, accessibility, and
 deployment configuration. Template migrations also become a product burden.
@@ -123,7 +123,7 @@ deployment configuration. Template migrations also become a product burden.
 Interface: emit a complete Vanilla installer or an 80-line R3F lifecycle
 component into every website.
 
-This is functional but moves Blendlink implementation into user-owned files.
+This is functional but moves SceneToWeb implementation into user-owned files.
 Every lifecycle fix must either leave old sites broken or overwrite artist
 code. The MichaelRoweJones dogfood component currently demonstrates this
 problem.
@@ -133,16 +133,16 @@ problem.
 Interface:
 
 ```text
-blendlink connect [site] --blend scene.blend  # one-time project attachment
-blendlink preview [scene]                     # Preview profile + real site HMR
-blendlink publish [scene]                     # Final + verify + site build
+scenetoweb connect [site] --blend scene.blend  # one-time project attachment
+scenetoweb preview [scene]                     # Preview profile + real site HMR
+scenetoweb publish [scene]                     # Final + verify + site build
 ```
 
 The generated application-owned file should be only the stable association:
 
 ```ts
 'use client'
-import { createR3FCompiledScene } from 'blendlink/react-three-fiber'
+import { createR3FCompiledScene } from 'scenetoweb/react-three-fiber'
 import { hero } from '../generated/hero.gen'
 import { createBakedScene } from '../generated/hero.baked'
 
@@ -165,7 +165,7 @@ in tests.
 ## Publish transaction
 
 `publish` should mean "the repository is ready for its normal deployment",
-not "upload to Blendlink cloud". In order:
+not "upload to SceneToWeb cloud". In order:
 
 1. Compile the selected scene(s) with the Final profile.
 2. Refuse stale recipes, Preview artifacts, schema mismatches, missing
@@ -173,11 +173,11 @@ not "upload to Blendlink cloud". In order:
 3. When a scene name is supplied, verify that scene only. An unrelated legacy
    or bespoke scene must not prevent a deliberate scoped publish.
 4. Run the website's existing `build` script unless `--assets-only` is used.
-5. Refuse recursive build scripts that call `blendlink publish` again.
+5. Refuse recursive build scripts that call `scenetoweb publish` again.
 6. Re-verify after the site build and report the exact artifact and build
    outcome.
 
-Remote deployment stays application-owned. Blendlink may later add explicit
+Remote deployment stays application-owned. SceneToWeb may later add explicit
 provider adapters, but must not infer permission to deploy, create cloud
 resources, or alter hosting configuration.
 
@@ -186,11 +186,11 @@ resources, or alter hosting configuration.
 The site is a useful worst-case integration, not a toy fixture:
 
 - Next 16 App Router + R3F + Three r184.
-- A bespoke production workbench pipeline and a reversible Blendlink lane
+- A bespoke production workbench pipeline and a reversible SceneToWeb lane
   coexist in one config.
 - The current R3F binding duplicates lifecycle implementation that belongs in
   the package.
-- `blendlink verify` is currently project-wide: an old schema in the bespoke
+- `scenetoweb verify` is currently project-wide: an old schema in the bespoke
   `workbenchScene` blocks checking `workbenchDogfood`.
 - The dogfood recipe can lag the installed template, which Preview does not
   present as a Final-readiness transaction.
@@ -200,7 +200,7 @@ The site is a useful worst-case integration, not a toy fixture:
   logical symlink resolution for types and aliases all renderer peers to its
   own singletons; normal registry consumers need neither workaround.
 - A large family of project-specific `workbench:*` scripts shows which
-  optimization and publishing knowledge should move into Blendlink over time;
+  optimization and publishing knowledge should move into SceneToWeb over time;
   the website's composition and painterly shaders should remain site-owned.
 
 The immediate dogfood target is the isolated `/blendlink-lab` route. It lets
@@ -216,7 +216,7 @@ the production hero or destroying the bespoke lane.
   requested canonical scene name and fail on an unknown name.
 - **Broken site build:** surface the package manager command and exit code;
   do not claim readiness.
-- **Recursive build hook:** detect `build` scripts containing Blendlink
+- **Recursive build hook:** detect `build` scripts containing SceneToWeb
   publish and fail with an `--assets-only` correction.
 - **KTX2 decoder missing:** keep the existing loud companion-integrity check.
 - **SSR executes WebGL:** generated R3F binding is a Client Component and
@@ -239,7 +239,7 @@ important distinctions that a build-only workflow can hide:
 1. React Three Fiber 9 is the React 19 line. Connect must reject an R3F 8 /
    React 18 site before it writes config or bindings, rather than leaving npm
    or TypeScript to explain the mismatch later. Source: [R3F installation compatibility](https://r3f.docs.pmnd.rs/getting-started/installation).
-2. `frameloop="demand"` does not observe imperative Three mutations. Blendlink
+2. `frameloop="demand"` does not observe imperative Three mutations. SceneToWeb
    must invalidate while its animation, camera-control, LOD, or Component
    lifecycle is active; otherwise an apparently supported Canvas freezes.
    Source: [R3F on-demand rendering](https://r3f.docs.pmnd.rs/advanced/scaling-performance).
@@ -324,7 +324,7 @@ per Canvas is the truthful contract.
 - A cancelable installation task now generation-gates ready publication and
   uses one private `LoadingManager` across package-owned GLB, KTX2, HDR/EXR,
   probe, baked-atlas, audio, and LUT loaders. Application-owned managers and
-  loaders are never aborted or disposed by Blendlink.
+  loaders are never aborted or disposed by SceneToWeb.
 - R3F attempts are serialized per Canvas, closing the Strict Mode overlap in
   which an obsolete first effect could mutate the same world as its
   replacement. Loading, renderer preparation, ready, and recoverable failure
@@ -373,7 +373,7 @@ committed Scene/camera through the same synchronous Component activation seam.
 The browser command is a dogfoodable adapter, not yet the destination browser
 module. A local Next production success does not prove deployed CDN headers,
 CORS, redirects, or credentials. Visual failure uses application-authored
-evidence; Blendlink does not impose a universal non-black-pixel threshold.
+evidence; SceneToWeb does not impose a universal non-black-pixel threshold.
 
 Complete graph-addressed publication is now shipped for compiler-owned scene
 closures. The generated Splash selected-sky browser gate requested its GLB
@@ -388,7 +388,7 @@ Canvas owner rule, but static imports placed every installer/runtime in a
 1,650.54 kB minified entry chunk. Dynamic imports kept the route map equally
 small for developers, reduced the entry to 2.36 kB, and emitted each scene
 binding as an independent roughly 40 kB on-demand chunk; all four production
-browser cases still loaded exactly one GLB. Blendlink should document this
+browser cases still loaded exactly one GLB. SceneToWeb should document this
 ordinary framework code-splitting pattern, not take ownership of the route or
 invent a global multi-scene registry.
 
@@ -396,7 +396,7 @@ invent a global multi-scene registry.
 
 Three independent interface designs were compared before changing the public
 MichaelRoweJones hero. All rejected a direct component swap: the existing site
-uses `WebGPURenderer` plus a TSL finishing graph, while Blendlink's standard
+uses `WebGPURenderer` plus a TSL finishing graph, while SceneToWeb's standard
 installer and portable Components intentionally require `WebGLRenderer`.
 Also, the first dogfood Final contained no Components or light groups, so it
 could not represent the animated lamp contribution or the site's route wipe.
@@ -405,7 +405,7 @@ The selected boundary keeps one application-owned WebGL Canvas and one
 compiled scene per Canvas. A private website module owns camera choreography,
 projected DOM hit rectangles, lamp motion, route transitions, adaptive DPR,
 loading presentation, analytics, and a WebGL translation of the site's
-painterly finishing pass. Blendlink owns installation, the compiled root,
+painterly finishing pass. SceneToWeb owns installation, the compiled root,
 authored presentation, baked states/light groups, cancellation, and disposal.
 The generated binding stays tiny.
 
@@ -417,7 +417,7 @@ light-group operations. They cannot dispose package resources. This was chosen
 over leaking the raw installed handle through route code or adding a generic
 website/control plugin registry before a second real caller exists.
 
-The public site now selects Blendlink by default while retaining explicit
+The public site now selects SceneToWeb by default while retaining explicit
 `workbenchRenderer=legacy` and `workbenchRenderer=needle` diagnostic/rollback
 lanes. The query must be selected after hydration; reading
 it in an SSR `useState` initializer was proven to pin every request to legacy
@@ -429,7 +429,7 @@ site snapshotted position/target but read FOV back from the live selected
 camera; an aspect resize therefore mutated the value used on the next resize.
 The contract now snapshots FOV as immutable authored evidence. Second, the
 public lane switched among wide/compact/portrait authored cameras even though
-the website promised one stable hero composition. Blendlink continues to type
+the website promised one stable hero composition. SceneToWeb continues to type
 all authored cameras, but this application now keeps its selected camera and
 converts that lens across aspect ratios. A DPR-2 browser probe measures the
 monitor at exactly 11.9375% of Canvas width at both 1600x900 and 800x900, keeps
@@ -465,9 +465,9 @@ making ordinary CLI output noisy.
 **Evidence status:** the measurements below are browser observations from the
 MichaelRoweJones public hero and `/blendlink-lab`, not conclusions inferred from
 the bake settings. The lifecycle guard described under “Implemented” is present
-in the current Blendlink worktree and has a unit regression test; that fix still
+in the current SceneToWeb worktree and has a unit regression test; that fix still
 needs the public-hero browser reproduction repeated. DPR remains application
-policy, atlas allocation remains future Blendlink work, and the package-owned
+policy, atlas allocation remains future SceneToWeb work, and the package-owned
 anisotropy change is in progress but not yet verified green.
 
 #### Browser evidence
@@ -528,13 +528,13 @@ network failure. [`LoadingManager.onProgress`](https://threejs.org/docs/pages/Lo
 runs when an individual item completes, and r184's
 [`itemEnd` source](https://github.com/mrdoob/three.js/blob/r184/src/loaders/LoadingManager.js)
 invokes it before testing whether all known items are complete. A generated
-background `qualityReady` promotion can start and finish after Blendlink's
+background `qualityReady` promotion can start and finish after SceneToWeb's
 install promise has published ready; the manager has no concept of that
 application lifecycle terminal state.
 
 #### Implemented, verified, and future boundaries
 
-- **Implemented, unit-verified, and browser-reverified in the current Blendlink worktree:**
+- **Implemented, unit-verified, and browser-reverified in the current SceneToWeb worktree:**
   `installThreeCompiledScene()` now disables attempt-scoped progress in its
   `finally` block. A regression test starts and ends a late manager item after
   installation settles and proves that no new progress event is published.
@@ -576,7 +576,7 @@ application lifecycle terminal state.
   RTX-class browser to DPR 1 after ten seconds. The flagship site therefore
   removed that adaptive fallback and now holds its existing capped native DPR
   (maximum 2) across full, half, and restored viewports. The same ten-second
-  production probe measured a 2x backing buffer in all three states. Blendlink
+  production probe measured a 2x backing buffer in all three states. SceneToWeb
   exposes truthful renderer and asset readiness facts; it does not seize the
   website's Canvas-quality policy.
 
@@ -601,7 +601,7 @@ Two credible implementations were compared:
 1. Build one private Blender material around the already loaded Image and let
    Blender's official glTF exporter gather `KHR_materials_unlit`, texture,
    sampler, and UV variants, then independently attest the GLB.
-2. Serialize or patch glTF image/material records inside Blendlink.
+2. Serialize or patch glTF image/material records inside SceneToWeb.
 
 The first design was selected. The second would duplicate MIME selection,
 sampler defaults, buffer alignment, UV-set variants, extension bookkeeping, and
@@ -621,7 +621,7 @@ version-specific evidence: its unlit gatherer recognizes the Background/Image
 shape, unlinked Image Vector resolves through the active render UV, direct UV
 Map nodes resolve a named layer, UV-layer order becomes `TEXCOORD_n`, and the
 no-conversion image path reuses original PNG/JPEG bytes. Because those are
-implementation facts rather than a permanent public guarantee, Blendlink does
+implementation facts rather than a permanent public guarantee, SceneToWeb does
 not trust them implicitly.
 
 The Python compiler now fingerprints the exact source byte hash/MIME/dimensions

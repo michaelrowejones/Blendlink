@@ -251,8 +251,8 @@ def build_reference_matrix(
                             "referenceId": reference_id,
                             "quality": quality,
                             "buildCommand": (
-                                "npx blendlink compile --preview"
-                                if quality == "preview" else "npx blendlink compile"
+                                "npx scenetoweb compile --preview"
+                                if quality == "preview" else "npx scenetoweb compile"
                             ),
                             "browser": {
                                 "status": "required",
@@ -282,7 +282,7 @@ def build_reference_matrix(
             "website captures and are never synthesized or marked complete by Blender."
         ),
         "browserAuditAdapter": {
-            "package": "blendlink",
+            "package": "scenetoweb",
             "export": "runVisualReferenceAudit",
             "comparisonSpace": "premultiplied-rgba",
             "acceptance": "project-owned; omitted means measured without pass/fail",

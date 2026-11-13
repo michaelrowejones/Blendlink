@@ -9,7 +9,7 @@ import { join, resolve } from 'node:path'
 
 const archive = resolve(process.argv[2] || '')
 if (!process.argv[2] || !archive.endsWith('.tgz') || !existsSync(archive)) {
-  throw new Error('usage: npm run test:fresh-install -- <retained-blendlink.tgz>')
+  throw new Error('usage: npm run test:fresh-install -- <retained-scenetoweb.tgz>')
 }
 const work = mkdtempSync(join(tmpdir(), 'blendlink-fresh-install-'))
 const npmCli = process.env.npm_execpath
@@ -22,18 +22,18 @@ function run(label, args) {
 try {
   writeFileSync(join(work, 'package.json'), JSON.stringify({
     name: 'blendlink-independent-consumer', private: true, type: 'module',
-    dependencies: { blendlink: 'file:' + archive, three: '0.184.0' },
+    dependencies: { scenetoweb: 'file:' + archive, three: '0.184.0' },
     devDependencies: { vite: '7.3.8' },
   }, null, 2))
   run('independent npm install', [npmCli, 'install', '--cache', join(work, 'empty-cache'), '--no-fund', '--no-audit'])
   const lock = JSON.parse(readFileSync(join(work, 'package-lock.json'), 'utf8'))
   const sri = 'sha512-' + createHash('sha512').update(readFileSync(archive)).digest('base64')
-  assert.equal(lock.packages['node_modules/blendlink'].integrity, sri)
-  run('packed CLI version', [join(work, 'node_modules/blendlink/dist/cli.js'), 'version'])
-  run('framework-neutral root import', ['--input-type=module', '-e', 'await import("blendlink")'])
+  assert.equal(lock.packages['node_modules/scenetoweb'].integrity, sri)
+  run('packed CLI version', [join(work, 'node_modules/scenetoweb/dist/cli.js'), 'version'])
+  run('framework-neutral root import', ['--input-type=module', '-e', 'await import("scenetoweb")'])
   writeFileSync(join(work, 'index.html'), '<!doctype html><html lang="en"><head><meta charset="UTF-8"></head><body><script type="module" src="/src/main.js"></script></body></html>')
   mkdirSync(join(work, 'src'))
-  writeFileSync(join(work, 'src/main.js'), 'import { installThreeCompiledScene } from "blendlink/three"; import { WebGPURenderer } from "three/webgpu"; window.blendlinkConsumer = { installThreeCompiledScene, WebGPURenderer };')
+  writeFileSync(join(work, 'src/main.js'), 'import { installThreeCompiledScene } from "scenetoweb/three"; import { WebGPURenderer } from "three/webgpu"; window.blendlinkConsumer = { installThreeCompiledScene, WebGPURenderer };')
   run('independent browser build', [join(work, 'node_modules/vite/bin/vite.js'), 'build'])
   assert.ok(existsSync(join(work, 'dist/index.html')))
   console.log('BLENDLINK_FRESH_INSTALL_PASSED exact archive SRI, independent dependencies, root import and browser build')

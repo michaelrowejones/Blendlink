@@ -8,7 +8,7 @@ The public seam is deliberately small:
 materials for one export continuation, attests the emitted GLB, and restores
 every source binding in ``finally``.
 
-This production slice supports the visible ``Blendlink Web Color`` sink with
+This production slice supports the visible ``SceneToWeb Web Color`` sink with
 direct constant, vertex-color, image, and a deliberately narrow private
 selected-field materialization. All UV, Cycles EMIT, coverage, save, and device
 mechanics remain in canonical ``bakelib.py``.
@@ -43,7 +43,7 @@ MARKER_VERSION = 1
 MARKER_NODE_PROPERTY = "blendlink_material_source_version"
 MARKER_GROUP_PROPERTY = "blendlink_material_source_group_version"
 MARKER_SURFACE_RESPONSE_PROPERTY = "blendlink_surface_response"
-MARKER_GROUP_NAME = "Blendlink Web Color"
+MARKER_GROUP_NAME = "SceneToWeb Web Color"
 COLOR_INPUT = "Base Color"
 ALPHA_INPUT = "Alpha"
 GENERATED_MATERIAL_PREFIX = "BLENDLINK_WEB."
@@ -375,13 +375,13 @@ def _marker_group():
     group = bpy.data.node_groups.new(MARKER_GROUP_NAME, "ShaderNodeTree")
     group[MARKER_GROUP_PROPERTY] = MARKER_VERSION
     group.description = (
-        "Blendlink compiler input. Links select intrinsic website color and alpha; "
+        "SceneToWeb compiler input. Links select intrinsic website color and alpha; "
         "the node does not participate in Blender's active Surface."
     )
     color = group.interface.new_socket(
         name=COLOR_INPUT, in_out="INPUT", socket_type="NodeSocketColor",
     )
-    color.description = "Color/value field Blendlink should compile for the website"
+    color.description = "Color/value field SceneToWeb should compile for the website"
     alpha = group.interface.new_socket(
         name=ALPHA_INPUT, in_out="INPUT", socket_type="NodeSocketFloat",
     )
@@ -404,7 +404,7 @@ def ensure_marker_node(material):
     markers = marker_nodes(material)
     if len(markers) > 1:
         raise MaterialCompileError(
-            f'Material "{material.name}" has {len(markers)} Blendlink Web Color nodes. Keep one.'
+            f'Material "{material.name}" has {len(markers)} SceneToWeb Web Color nodes. Keep one.'
         )
     if markers:
         marker = markers[0]
@@ -472,7 +472,7 @@ def set_web_source(
     if tree is None or source_node is None or source_node.id_data != tree:
         raise MaterialCompileError("Select a node in this material's root Shader Editor first.")
     if source_node.get(MARKER_NODE_PROPERTY) is not None:
-        raise MaterialCompileError("Choose a source node, not the Blendlink Web Color sink.")
+        raise MaterialCompileError("Choose a source node, not the SceneToWeb Web Color sink.")
     source = next((
         socket for socket in source_node.outputs
         if socket.identifier == socket_identifier
@@ -493,7 +493,7 @@ def set_web_source(
     target = marker.inputs.get(target_name)
     if target is None:
         raise MaterialCompileError(
-            f'Blendlink Web Color node is missing its "{target_name}" input; clear and recreate it.'
+            f'SceneToWeb Web Color node is missing its "{target_name}" input; clear and recreate it.'
         )
     for link in list(target.links):
         tree.links.remove(link)
@@ -742,7 +742,7 @@ def _classify_materialized_source(
                 "material.selected-field-eevee-only", material_name,
                 f'Selected field reaches EEVEE-only Shader to RGB '
                 f'"{dependency.name}".',
-                "Select an upstream intrinsic Color/Value field. Blendlink will "
+                "Select an upstream intrinsic Color/Value field. SceneToWeb will "
                 "not claim a Cycles bake can reproduce Shader to RGB.",
             )
         if node_type in _MATERIALIZED_VIEW_NODES:
@@ -771,7 +771,7 @@ def _classify_materialized_source(
                     "is outside this first materialization plan.",
                     "Clear the Object field to use the material receiver's own "
                     "coordinates, or keep this field application-owned until "
-                    "Blendlink can fingerprint external shader dependencies.",
+                    "SceneToWeb can fingerprint external shader dependencies.",
                 )
             view_outputs = sorted(
                 set(used_outputs.get(dependency.as_pointer(), ()))
@@ -1059,7 +1059,7 @@ def _classify_source(material_name: str, linked, semantic: str):
             return None, MaterialIssue(
                 "material.source-conversion-unsupported", material_name,
                 f'Web Alpha selects the color output "{node.name} -> {socket.name}". '
-                "Blendlink will not guess which color channel represents alpha.",
+                "SceneToWeb will not guess which color channel represents alpha.",
                 "Select a Value output, or select the Alpha output of the same color attribute.",
             )
         if semantic == "alpha":
@@ -1554,7 +1554,7 @@ def _materialized_binding_issues(
             "material.selected-field-face-ownership", material.name,
             f'Object "{obj.name}" does not give the selected slot every source face.',
             "Use one complete one-material mesh for this first materialization "
-            "route. Blendlink will not bake unrelated slots into the same texture.",
+            "route. SceneToWeb will not bake unrelated slots into the same texture.",
             (obj.name,),
         ))
     modifiers = [
@@ -2328,7 +2328,7 @@ def _infer_surface_response(material, color_link):
                 f'that response is "{candidate[0].name} -> '
                 f'{candidate[1].name} ({socket_type})". Select that output as '
                 f'Website Color to '
-                "preserve its pattern and masks; Blendlink will not change the "
+                "preserve its pattern and masks; SceneToWeb will not change the "
                 "artist-selected socket automatically"
             )
         return None, problem
@@ -2415,7 +2415,7 @@ def _plan_selected_material(
     if tsl_ir_requested(material) and not material_bake_requested(material):
         issues.append(MaterialIssue(
             "material.tsl-conflicts-with-web-color", material.name,
-            "TSL Program and a Blendlink Web Color marker are both set.",
+            "TSL Program and a SceneToWeb Web Color marker are both set.",
             "Clear one intent: the Web Color marker lowers one selected "
             "field, while a TSL Program translates proven channels.",
             object_names,
@@ -2428,7 +2428,7 @@ def _plan_selected_material(
     if material_bake_requested(material):
         issues.append(MaterialIssue(
             "material.bake-conflicts-with-web-color", material.name,
-            "Material Bake and a Blendlink Web Color marker are both set.",
+            "Material Bake and a SceneToWeb Web Color marker are both set.",
             "Clear one intent: the Web Color marker lowers one selected field, "
             "while Material Bake carries every Principled channel.",
             object_names,
@@ -2441,8 +2441,8 @@ def _plan_selected_material(
     if len(markers) != 1:
         issues.append(MaterialIssue(
             "material.source-ambiguous", material.name,
-            f"Material has {len(markers)} Blendlink Web Color nodes.",
-            "Keep exactly one Blendlink Web Color node.", object_names,
+            f"Material has {len(markers)} SceneToWeb Web Color nodes.",
+            "Keep exactly one SceneToWeb Web Color node.", object_names,
         ))
         return MaterialDecision(
             material.name, "webColor", "blocked", None, "selected-field", None,
@@ -2454,20 +2454,20 @@ def _plan_selected_material(
         issues.append(MaterialIssue(
             "material.source-version-unsupported", material.name,
             f"Web Color marker version {marker.get(MARKER_NODE_PROPERTY)!r} is unsupported.",
-            "Clear and recreate the Blendlink Web Color node.", object_names,
+            "Clear and recreate the SceneToWeb Web Color node.", object_names,
         ))
     if marker.type != "GROUP" or marker.node_tree is None \
             or marker.node_tree.get(MARKER_GROUP_PROPERTY) != MARKER_VERSION:
         issues.append(MaterialIssue(
             "material.source-invalid", material.name,
-            "The marked node is not a valid Blendlink Web Color sink.",
-            "Clear and recreate the Blendlink Web Color node.", object_names,
+            "The marked node is not a valid SceneToWeb Web Color sink.",
+            "Clear and recreate the SceneToWeb Web Color node.", object_names,
         ))
     color_link = _linked_source(marker, COLOR_INPUT)
     if color_link is None:
         issues.append(MaterialIssue(
             "material.color-unconnected", material.name,
-            "Blendlink Web Color is not connected.",
+            "SceneToWeb Web Color is not connected.",
             "Connect a Color/Value output or clear the Web Color node.", object_names,
         ))
     color, color_issue = _classify_source(material.name, color_link, "color")
@@ -2484,7 +2484,7 @@ def _plan_selected_material(
             "material.selected-field-surface-response-invalid",
             material.name,
             f"Website Material surface response {response_setting!r} is unsupported.",
-            "Choose Automatic, Lit, or Unlit in Blendlink Web Material.",
+            "Choose Automatic, Lit, or Unlit in SceneToWeb Web Material.",
             object_names,
         ))
     surface_response = None
@@ -2509,7 +2509,7 @@ def _plan_selected_material(
             issues.append(MaterialIssue(
                 "material.selected-field-surface-response-ambiguous",
                 material.name,
-                f"Blendlink cannot choose an automatic portable surface "
+                f"SceneToWeb cannot choose an automatic portable surface "
                 f"response for Website Color: {response_problem}.",
                 "Select a complete intrinsic field and a supported response "
                 "strategy, or explicitly choose Lit/Unlit when a stock-glTF "
@@ -2576,7 +2576,7 @@ def _plan_selected_material(
             if not getattr(obj, "is_editable", True):
                 issues.append(MaterialIssue(
                     "material.binding-read-only", material.name,
-                    f'Object "{obj.name}" is linked read-only, so Blendlink cannot install '
+                    f'Object "{obj.name}" is linked read-only, so SceneToWeb cannot install '
                     "a private export-only material binding.",
                     "Make the object local or create a library override before selecting Web Color.",
                     (obj.name,),
@@ -2743,7 +2743,7 @@ _CHANNEL_REFUSED_ROUTINGS = {
         "captures scene lighting, which a Material bake input must never "
         "include — the runtime would light it again"
     ),
-    "unknown": "contains a node Blendlink has not classified for baking",
+    "unknown": "contains a node SceneToWeb has not classified for baking",
 }
 
 # Report order and per-channel bake colorspace.  glTF samples ORM and normal
@@ -4352,7 +4352,7 @@ def _materialized_bake_material(
     if len(markers) != 1:
         raise MaterialCompileError(
             f'Private copy of "{decision.material_name}" has {len(markers)} '
-            "Blendlink Web Color markers."
+            "SceneToWeb Web Color markers."
         )
     linked = _linked_source(markers[0], COLOR_INPUT)
     if linked is None:
@@ -5059,7 +5059,7 @@ def _resolve_generated_material(document: dict, generated_name: str, fact: dict)
     if not matches:
         raise MaterialCompileError(
             f'Material output mismatch for "{fact["source"]}": generated material '
-            f'"{generated_name}" is absent. Blendlink cannot attest an omitted binding.'
+            f'"{generated_name}" is absent. SceneToWeb cannot attest an omitted binding.'
         )
     if len(matches) != 1:
         raise MaterialCompileError(
@@ -5088,7 +5088,7 @@ def _buffer_view_payload(document: dict, binary: bytes, view_index: int) -> byte
 # Three r184's GLTFLoader maps only TEXCOORD_0..3 onto geometry (its
 # ATTRIBUTES table stops at 'uv3'); a material that asks for a higher
 # channel gets vec2(0,0) and silently samples the atlas gutter, which is
-# transparent. Blendlink refuses instead of shipping that.
+# transparent. SceneToWeb refuses instead of shipping that.
 MAX_BINDABLE_TEX_COORD = 3
 
 
@@ -5117,7 +5117,7 @@ def _prune_unpublished_uv_layers(data_swaps, generated_facts, log=print) -> int:
     past the TEXCOORD_0..3 that Three can bind.  Meshes routed entirely
     through the bake carry those authored sets for nothing.
 
-    The keep set is deliberately conservative: every Blendlink-owned layer,
+    The keep set is deliberately conservative: every SceneToWeb-owned layer,
     every layer a surviving artist material names, every layer the TSL
     runtime resolves, and — whenever any artist material survives on the
     mesh — the active-render layer, because a texture with no explicit UV
@@ -6032,7 +6032,7 @@ def _rewrite_private_color_carriers(
     })
     if leaked:
         raise MaterialCompileError(
-            "Material output contains attributes in Blendlink's reserved private "
+            "Material output contains attributes in SceneToWeb's reserved private "
             f"namespace: {', '.join(leaked)}. Rename the authored attributes."
         )
     try:

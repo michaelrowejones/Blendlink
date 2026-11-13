@@ -1,5 +1,5 @@
 /* SPDX-FileCopyrightText: 2026 Blender Authors
- * SPDX-FileCopyrightText: 2026 Blendlink contributors
+ * SPDX-FileCopyrightText: 2026 SceneToWeb contributors
  * SPDX-License-Identifier: Apache-2.0
  * Integer operations adapted from Cycles kernel/svm/integer_math.h. */
 import * as TSL from 'three/tsl'

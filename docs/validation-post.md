@@ -21,9 +21,9 @@ I keep hitting the same two problems moving Blender scenes into three.js:
 So I built a small CLI that treats the `.blend` as the source of truth:
 
 ```
-blendlink compile            # .blend → .glb + manifest + typed module
-blendlink compile --watch    # re-syncs on save (~2.6s on a real 17MB file)
-blendlink typegen x.glb   # types for ANY GLB — no Blender needed
+scenetoweb compile            # .blend → .glb + manifest + typed module
+scenetoweb compile --watch    # re-syncs on save (~2.6s on a real 17MB file)
+scenetoweb typegen x.glb   # types for ANY GLB — no Blender needed
 ```
 
 The generated module exports every object, material, animation clip, and

@@ -14,7 +14,7 @@ const keys = (value: object, allowed: readonly string[]): boolean => Object.keys
 function fail(): never { throw new Error('Native nearest Noise field exceeds its verified source sampling, kernel or resource profile; use source baking') }
 const abort = (signal?: AbortSignal): void => {
   if (!signal?.aborted) return
-  const error = new Error('Blendlink Noise preparation aborted')
+  const error = new Error('SceneToWeb Noise preparation aborted')
   error.name = 'AbortError'
   throw error
 }

@@ -8574,6 +8574,86 @@
         "numericalCases": 0,
         "automaticMaterialPlanUnchanged": true
       }
+    },
+    "compositor:FunctionNodeFloatToInt": {
+      "category": "partial",
+      "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 compositor only. All four ROUND/FLOOR/CEILING/TRUNCATE modes with exact Float32 literal, Value, reroute and group-default inputs that are normal or zero and within +/-2^24. Preserves native halves-away-from-zero Round and typed INT outputs into Integer Math/Compare/color consumers. Source evaluation is CPU MF even when compositor device is GPU; this is not a spatial GPU-field port. Independent runtime checks rederive actual input provenance within bounded work, reject forged models/profiles/evaluators/schemas, and allocate no owned textures or render targets. Computed or image fields, implicit Boolean/Integer/color/vector conversion, subnormal/nonfinite/F64/out-of-bound values, animated/driven trees, unmeasured versions/builds/platforms and shader/geometry contexts remain unqualified. Generated float images can lose words on save/reopen; packed EXR transport remains a separate refused boundary. Partial scope is not whole-node or whole-scene parity.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "float-to-int"
+      ],
+      "modes": {
+        "rounding_mode": {
+          "supported": [
+            "ROUND",
+            "FLOOR",
+            "CEILING",
+            "TRUNCATE"
+          ]
+        }
+      },
+      "renderer": "WebGPURenderer with actual WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_float_to_int.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorFloatToInt.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorFloatToInt.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_float_to_int_check.py"
+        },
+        {
+          "path": "experiments/float-to-int-native/sources.json"
+        },
+        {
+          "path": "experiments/float-to-int-native/README.md"
+        },
+        {
+          "path": "experiments/float-to-int-native/literal_protocol.mjs"
+        },
+        {
+          "path": "experiments/float-to-int-native/literal_verify.mjs"
+        },
+        {
+          "path": "experiments/float-to-int-native/literal-evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "nativeNodeEvaluator": "CPU-MF including single values in GPU source compositing",
+        "nativeGraphs": 312,
+        "savedFinalScenes": 32,
+        "builtCaseRuns": 1376,
+        "primaryFloat32Words": 352256,
+        "wordMismatches": 0,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "coverageScope": "literal/group/Value input only; no image/field/Geometry/shader-context or other native-platform credit"
+      }
     }
   },
   "knownUnsupported": [
@@ -8637,7 +8717,6 @@
     "compositor:FunctionNodeCombineTransform",
     "compositor:FunctionNodeEulerToRotation",
     "compositor:FunctionNodeFindInString",
-    "compositor:FunctionNodeFloatToInt",
     "compositor:FunctionNodeFormatString",
     "compositor:FunctionNodeHashValue",
     "compositor:FunctionNodeInputIntVector",

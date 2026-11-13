@@ -724,14 +724,14 @@ function protectNamedResourcesForPrune(document: Document): Map<Property, Record
  * `material_compiler.py:6454-6543` writes `channel-<token>-<slot>.png` for the
  * base, orm, emissive and normal slots; the token is the variant hash (or,
  * for `page-` names, the shared-surface-page content hash). Nothing
- * else in a Blendlink asset carries this shape, and an artist cannot author it
+ * else in a SceneToWeb asset carries this shape, and an artist cannot author it
  * from Blender, so matching on it can never claim a hand-named texture. */
 const GENERATED_CHANNEL_TEXTURE = /^(?:channel|page)-[0-9a-f]+-(?:base|orm|emissive|normal)$/
 
 /** Merge compiler-generated channel textures whose payloads are byte-identical.
  *
  * The general `dedup` pass runs with `keepUniqueNames: true` and every texture
- * in a Blendlink asset has a unique name, so it merges none of them. That is
+ * in a SceneToWeb asset has a unique name, so it merges none of them. That is
  * deliberate — the policy below `prune` refuses to "discard a named resource
  * that may be addressed by application code", and `TextureResizePolicy`
  * (:746) really does address textures by name and throws when one is missing.
@@ -994,7 +994,7 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
     refusePass('Texture de-duplication was skipped because at least one texture has authored extras.')
   }
   // Runs before the general pass and is accounted separately: this is the one
-  // place Blendlink drops a resource name, and it must never be hidden inside
+  // place SceneToWeb drops a resource name, and it must never be hidden inside
   // the dedup delta.
   const mergedGeneratedTextures = mergeGeneratedChannelTextures(document)
   const beforeDedup = resourceCounts(document)

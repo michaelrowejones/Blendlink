@@ -191,7 +191,7 @@ async function realPublication(values: unknown[] = [[0.8, 0.35, 0.1], 0.6], prim
 
 function repin(fixture: Awaited<ReturnType<typeof realPublication>>) {
   fixture.bytes = new TextEncoder().encode(JSON.stringify(fixture.sidecar))
-  fixture.manifest = { generator: 'blendlink', schemaVersion: 3, url: '/scene.glb',
+  fixture.manifest = { generator: 'scenetoweb', schemaVersion: 3, url: '/scene.glb',
     hash: createHash('sha256').update(fixture.glbBytes).digest('hex').slice(0, 16),
     stats: { bytes: fixture.glbBytes.length, triangles: 2, meshes: 1, texturesBytes: 0 },
     materialPrograms: { url: '/scene.materials.json', materials: 1, bytes: fixture.bytes.length,

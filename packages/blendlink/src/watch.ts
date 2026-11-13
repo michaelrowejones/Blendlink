@@ -13,7 +13,7 @@ export interface WatchHandle {
 
 export interface WatchOptions {
   draft?: boolean
-  /** Surface source-look/World warnings for Blendlink's private viewer. */
+  /** Surface source-look/World warnings for SceneToWeb's private viewer. */
   authoringPreview?: boolean
   allowNewerFile?: boolean
   /** Keep `compile sceneName --watch` scoped to the scene the artist chose. */
@@ -63,6 +63,8 @@ export async function watchScenes(
 ): Promise<WatchHandle> {
   const configRoot = initialConfig.root
   const configPaths = [
+    join(configRoot, 'scenetoweb.config.mjs'),
+    join(configRoot, 'scenetoweb.config.js'),
     join(configRoot, 'blendlink.config.mjs'),
     join(configRoot, 'blendlink.config.js'),
   ]

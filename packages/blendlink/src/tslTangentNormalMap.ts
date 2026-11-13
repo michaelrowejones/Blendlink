@@ -1,5 +1,5 @@
 import { irInspectionChildren } from './tslIrInspection.js'
-/* SPDX-FileCopyrightText: 2026 Blendlink contributors
+/* SPDX-FileCopyrightText: 2026 SceneToWeb contributors
  * SPDX-License-Identifier: Apache-2.0
  * Native tangent-normal composition with independently checked finite inputs. */
 import { Matrix3, type Mesh, type Camera } from 'three'

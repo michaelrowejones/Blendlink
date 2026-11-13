@@ -76,7 +76,7 @@ Keep these measurements separate:
   or CPU wall clock as GPU timing.
 - Draws, triangles, material/program counts and renderer resource counters.
   Observe after install, steady rendering, disposal and repeated disposal.
-- Exact shipped bytes and decoded resources, using the existing `blendlink perf`
+- Exact shipped bytes and decoded resources, using the existing `scenetoweb perf`
   final-artifact analysis. Compression can reduce transfer without reducing
   triangles, draw submission, shader work or decoded memory.
 

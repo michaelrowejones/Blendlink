@@ -1,6 +1,6 @@
 /* SPDX-FileCopyrightText: 2009-2010 Sony Pictures Imageworks Inc., et al. All Rights Reserved.
  * SPDX-FileCopyrightText: 2011-2022 Blender Foundation
- * SPDX-FileCopyrightText: 2026 Blendlink contributors
+ * SPDX-FileCopyrightText: 2026 SceneToWeb contributors
  * SPDX-License-Identifier: BSD-3-Clause
  * The product residual follows tslNativeNoisePrecision; affine coordinates also
  * retain the second residual through halfway/sticky-bit rounding. */
