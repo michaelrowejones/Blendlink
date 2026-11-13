@@ -77,7 +77,10 @@ test('an experimental native v1 program cannot masquerade as a production exact 
 })
 
 test('hosted trials retain all three source profiles and verify cached native archives unconditionally', async () => {
-  const workflow = await readFile(new URL('../../.github/workflows/luma-cpu-precision.yml', import.meta.url), 'utf8')
+  // Git's Windows checkout can use CRLF; checksum placement is independent
+  // of that text representation. Keep the structural assertions unchanged.
+  const source = await readFile(new URL('../../.github/workflows/luma-cpu-precision.yml', import.meta.url), 'utf8')
+  const workflow = source.replace(/\r\n/g, '\n')
   for (const profile of ['linux-5.2', 'windows-4.2', 'windows-5.2']) assert.ok(workflow.includes('profile: ' + profile))
   assert.ok(workflow.includes('actions/cache@caa296126883cff596d87d8935842f9db880ef25'))
   assert.match(workflow, /fi\n\s+# Always verify[^\n]*\n\s+echo[^\n]*sha256sum --check --strict/)
