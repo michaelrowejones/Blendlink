@@ -5,6 +5,8 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 import { verifyCameraDataSource } from './lib/camera-data-source.mjs'
+import { CAMERA_LINUX_BROWSER_ARGS, CAMERA_LINUX_BROWSER_PROFILE, cameraDataBrowserEnvironment,
+  validateCameraLinuxBrowserIdentity, validateCameraLinuxCanvas, validateCameraLinuxBrowserReport } from './lib/camera-data-browser.mjs'
 const root=new URL('../',import.meta.url),read=path=>readFileSync(new URL(path,root),'utf8')
 const hash=value=>createHash('sha256').update(value).digest('hex')
 
@@ -17,8 +19,8 @@ test('Camera Data credits only the measured View Vector slice and retains its st
   assert.equal(entry.verification.privateGeometryOwnership,true);assert.equal(entry.verification.nativeSourceBackend,'METAL')
   assert.deepEqual(entry.verification.nativeSourceBackendVersions,['5.2.0','5.3.0'])
   assert.equal(entry.verification.nativeLegacyBackendAttestation.status,'SOURCE_ATTESTATION_NA')
-  assert.equal(entry.verification.nativeOpenGL.status,'pending');assert.equal(entry.verification.nativeOpenGL.canary,'native-camera-data')
-  for(const text of ['installTslMaterials','extra private CPU/GPU memory','Static-geometry/single-renderer','angular footprint<=1/256','bounds within +/-64','staging<=128','distance>=1','View Z Depth and View Distance remain','OpenGL source qualification remains pending'])assert.ok(entry.limits.includes(text),text)
+  assert.equal(entry.verification.nativeOpenGL.status,'qualified-ordinary-headed-x11');assert.equal(entry.verification.nativeOpenGL.canary,'native-camera-data')
+  for(const text of ['installTslMaterials','extra private CPU/GPU memory','Static-geometry/single-renderer','angular footprint<=1/256','bounds within +/-64','staging<=128','distance>=1','View Z Depth and View Distance remain','Fresh Linux5.2 OpenGL ordinary-source qualification passed'])assert.ok(entry.limits.includes(text),text)
   assert.ok(!map.knownUnsupported.includes('shader:ShaderNodeCameraData'))
   for(const path of ['packages/blender-addon/camera_data_ir.py','packages/blendlink/src/tslCameraGeometry.ts','experiments/camera-data/ownership.js'])assert.ok(entry.evidence.some(item=>item.path===path))
 })
@@ -36,10 +38,109 @@ test('the central geometry shard and lightweight Linux canary exercise fresh sou
   assert.match(job,/--profiles ordinary --output artifacts\/verification-camera-data-linux52/)
   assert.match(job,/check-camera-data-source\.mjs artifacts\/verification-camera-data-linux52\/ordinary OPENGL/)
   assert.match(job,/run\.mjs --built --ownership/);assert.match(job,/package_probe\.py/)
-  assert.match(job,/env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run/)
+  assert.match(job,/BLENDLINK_TEST_CHROMIUM_HEADLESS: '0'/)
+  assert.match(job,/BLENDLINK_TEST_CHROMIUM_CHANNEL: chromium/)
+  assert.match(job,/--ozone-platform=x11/)
+  assert.ok(job.indexOf('canvas-probe.mjs') < job.indexOf('suite.mjs'))
+  assert.match(job,/check-camera-data-browser\.mjs artifacts\/verification-camera-data-linux52 --canvas-only/)
+  assert.match(job,/check-camera-data-browser\.mjs artifacts\/verification-camera-data-linux52\n/)
+  assert.match(gate,/const cameraEnvironment=cameraDataBrowserEnvironment\(\)/)
+  assert.match(gate,/camera-data-public-canvas/)
+  assert.match(gate,/check-camera-data-browser\.mjs',directory,'--all-profiles'/)
+  assert.doesNotMatch(job,/--gpu-launcher|--disable-gpu-sandbox/)
   assert.doesNotMatch(job,/--skip-native|--skip-export|--reuse|--disable-gpu-watchdog/)
   assert.match(job,/if: always\(\)/)
   assert.match(read('experiments/camera-data/suite.mjs'),/native_backend\.py/)
+})
+
+function browserIdentity() {
+  return { requestedHeadless: false, browserVersion: '158.0.8127.18',
+    systemInfo: { commandLine: 'chrome ' + CAMERA_LINUX_BROWSER_ARGS.join(' '),
+      gpu: { featureStatus: { skia_graphite: 'enabled_on' },
+        auxAttributes: { skiaBackendType: 'GraphiteDawnVulkan', glRenderer: 'ANGLE SwiftShader Subzero' } } } }
+}
+function browserReport(kind='browser') {
+  return { ...browserIdentity(), built: true, complete: true, completedAllBackends: true, diagnosticDeviceLoss: false,
+    failures: [], provenance: { mode: 'built', modules: [{ emitterMatchesSource: true }] },
+    backendRuns: ['webgpu','webgl2'].map(backend=>({backend,status:'completed',errors:[]})),
+    rows: ['webgpu','webgl2'].map(backend=>({ backend,cases:kind==='ownership'?8:240,failures:[],gpu:'SwiftShader' })) }
+}
+function canvasReport() {
+  return { ...browserIdentity(), kind: 'public-WebGPU-canvas-control-no-Three-no-Camera-Data',
+    complete: true, errors: [], result: { complete: true, rgba: [255,0,0,255],
+      adapter: { architecture: 'swiftshader' }, uncapturedErrors: [], deviceLosses: [] } }
+}
+
+test('Camera Linux overrides are child-only and other platforms retain their requested profile',()=>{
+  const before={...process.env},environment=cameraDataBrowserEnvironment('linux')
+  assert.equal(environment.BLENDLINK_TEST_PROFILE,CAMERA_LINUX_BROWSER_PROFILE)
+  assert.equal(environment.BLENDLINK_TEST_CHROMIUM_HEADLESS,'0')
+  assert.equal(environment.BLENDLINK_TEST_CHROMIUM_CHANNEL,'chromium')
+  assert.deepEqual(JSON.parse(environment.BLENDLINK_TEST_CHROMIUM_ARGS),CAMERA_LINUX_BROWSER_ARGS)
+  assert.deepEqual(cameraDataBrowserEnvironment('darwin'),{})
+  assert.deepEqual(cameraDataBrowserEnvironment('win32'),{})
+  assert.deepEqual({...process.env},before)
+  environment.BLENDLINK_TEST_PROFILE='changed'
+  assert.equal(cameraDataBrowserEnvironment('linux').BLENDLINK_TEST_PROFILE,CAMERA_LINUX_BROWSER_PROFILE)
+  const gate=read('scripts/test-node-parity.mjs'),camera=gate.match(/if \(plan\.geometry\) \{[\s\S]*?\n\}/)?.[0]
+  assert.ok(camera)
+  assert.equal(gate.replace(camera,'').includes('cameraEnvironment'),false)
+})
+
+test('Camera presentation requires actual pinned headed X11 Graphite identity, not requested flags alone',()=>{
+  validateCameraLinuxBrowserIdentity(browserIdentity())
+  for(const mutate of [
+    r=>r.requestedHeadless=true,
+    r=>r.browserVersion='159.0.0.0',
+    r=>r.systemInfo.commandLine+=' --headless=new',
+    r=>r.systemInfo.commandLine=r.systemInfo.commandLine.replace('--ozone-platform=x11','--ozone-platform=headless'),
+    r=>r.systemInfo.commandLine+=' --gpu-launcher=/tmp/debugger',
+    r=>r.systemInfo.commandLine+=' --disable-gpu-sandbox',
+    r=>r.systemInfo.commandLine=r.systemInfo.commandLine.replace('--enable-skia-graphite',''),
+    r=>r.systemInfo.gpu.auxAttributes.skiaBackendType='GaneshGL',
+    r=>r.systemInfo.gpu.auxAttributes.glRenderer='hardware',
+    r=>r.systemInfo.gpu.featureStatus.skia_graphite='disabled_off',
+  ]) { const report=browserIdentity();mutate(report);assert.throws(()=>validateCameraLinuxBrowserIdentity(report)) }
+})
+
+test('Camera profile proof retains strict canvas, complete API, numeric and ownership failures',()=>{
+  validateCameraLinuxCanvas(canvasReport())
+  validateCameraLinuxBrowserReport(browserReport())
+  validateCameraLinuxBrowserReport(browserReport('ownership'),'ownership')
+  for(const mutate of [r=>r.result.rgba=[0,0,0,255],r=>r.result.complete=false,
+    r=>r.errors.push('validation'),r=>r.result.deviceLosses.push({reason:'unknown'}),
+    r=>r.result.adapter.architecture='hardware']) {
+    const report=canvasReport();mutate(report);assert.throws(()=>validateCameraLinuxCanvas(report))
+  }
+  for(const mutate of [r=>r.built=false,r=>r.completedAllBackends=false,r=>r.diagnosticDeviceLoss=true,
+    r=>r.failures.push({error:'numeric'}),r=>r.rows.pop(),r=>r.rows[1].backend='webgpu',
+    r=>r.rows[0].cases=239,r=>r.backendRuns[0].status='failed',r=>r.backendRuns[0].errors.push('validation'),
+    r=>r.rows[0].deviceLosses=[{reason:'unknown'}],r=>r.provenance.modules=[],
+    r=>r.provenance.modules[0].emitterMatchesSource=false]) {
+    const report=browserReport();mutate(report);assert.throws(()=>validateCameraLinuxBrowserReport(report))
+  }
+  const ownership=browserReport('ownership');ownership.rows[0].cases=7
+  assert.throws(()=>validateCameraLinuxBrowserReport(ownership,'ownership'))
+})
+
+test('the hosted X11 receipt binds its exact source/profile and keeps partial qualification explicit',()=>{
+  const receipt=JSON.parse(read('experiments/camera-data/linux-x11-qualification.json'))
+  assert.equal(receipt.runId,43421749306);assert.equal(receipt.artifactId,14034642003)
+  assert.equal(receipt.artifactSha256,'51b4d16fa67cdf0590a7f3a4ae6e5cee89a56763e560e56be8785960eb17aa0a')
+  assert.deepEqual(receipt.native.version,[5,2,0]);assert.equal(receipt.native.backend.backend,'OPENGL')
+  assert.equal(receipt.native.nativeSamples,120);assert.equal(receipt.native.packingControls,256)
+  assert.equal(receipt.native.fixtureSha256,hash(read('packages/blender-addon/tests/camera_data_check.py')))
+  assert.equal(receipt.native.wrapperSha256,hash(read('experiments/camera-data/native_backend.py')))
+  assert.equal(receipt.browser.requestedHeadless,false);assert.equal(receipt.browser.actualOzone,'x11')
+  assert.equal(receipt.browser.skiaBackend,'GraphiteDawnVulkan')
+  assert.equal(receipt.results.actualFinalGlbs,8)
+  assert.deepEqual(receipt.results.numeric.map(row=>[row.backend,row.cases,row.maximumOutsideNativeQuantization,row.failures]),
+    [['webgpu',240,0,0],['webgl2',240,0,0]])
+  assert.deepEqual(receipt.results.ownership.map(row=>[row.backend,row.cases,row.maximum,row.failures]),
+    [['webgpu',8,0,0],['webgl2',8,0,0]])
+  assert.equal(receipt.retainedReports.length,6)
+  assert.ok(receipt.auditLimitations.some(value=>value.includes('not retained in this ZIP')))
+  assert.ok(receipt.priorFailuresRetained.some(value=>value.artifactId===14033915425))
 })
 
 function corpus(){

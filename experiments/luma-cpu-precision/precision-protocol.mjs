@@ -6,6 +6,7 @@ import { hash } from '../../scripts/lib/runtime-provenance.mjs'
 const packetKeys = ['schemaVersion', 'kind', 'productionAdmission', 'ordinaryCases', 'precisionCases', 'productionExactCases',
   'experimentalKernelTrial', 'sourceCpuProfile', 'sourceCoefficients', 'sourceVersion', 'sourceBuildHash', 'sourceEngine', 'sourcePreserved', 'files']
 const profileKeys = ['schemaVersion', 'mode', 'underflowWord', 'denormalInputWord', 'tieWords', 'sourcePlatform', 'sourceArchitecture']
+const windowsBuilds = { '[4,2,0]': 'a51f293548ad', '[5,2,0]': 'fbe6228777e7' }
 const closed = (object, keys) => {
   assert.ok(object && typeof object === 'object' && !Array.isArray(object))
   assert.deepEqual(Object.keys(object).sort(), [...keys].sort())
@@ -33,7 +34,10 @@ export async function readCpuLumaQualification(directory) {
   if (packet.productionAdmission === 'PRODUCTION_QUALIFIED') {
     assert.ok(profile.sourcePlatform === 'darwin' && profile.sourceArchitecture === 'arm64'
       || profile.sourcePlatform === 'linux' && profile.sourceArchitecture === 'x86_64'
-        && JSON.stringify(packet.sourceVersion) === '[5,2,0]' && packet.sourceBuildHash === 'fbe6228777e7',
+        && JSON.stringify(packet.sourceVersion) === '[5,2,0]' && packet.sourceBuildHash === 'fbe6228777e7'
+      || profile.sourcePlatform === 'win32' && profile.sourceArchitecture === 'AMD64'
+        && Object.hasOwn(windowsBuilds, JSON.stringify(packet.sourceVersion))
+        && packet.sourceBuildHash === windowsBuilds[JSON.stringify(packet.sourceVersion)],
       'Unmeasured CPU/compiler source profile cannot claim production admission')
     assert.equal(profile.mode, packet.sourceVersion[0] === 5 && packet.sourceVersion[1] === 3 ? 'ftz-daz-rne' : 'gradual-rne')
     assert.equal(packet.precisionCases, 32); assert.equal(packet.productionExactCases, 32)
@@ -59,14 +63,14 @@ export async function readCpuLumaQualification(directory) {
     assert.equal(keys[0].properties.luminance_key_model, packet.productionAdmission === 'PRODUCTION_QUALIFIED'
       ? 'native-luminance-key-cpu-rne-v1' : 'native-luminance-key-v1')
     if (packet.productionAdmission === 'PRODUCTION_QUALIFIED') {
-      if(profile.sourcePlatform==='linux')assert.equal(record.requireFloat32Bits, true)
+      if(['linux','win32'].includes(profile.sourcePlatform))assert.equal(record.requireFloat32Bits, true)
       assert.equal(keys[0].properties.evaluation_device,'CPU')
       assert.equal(keys[0].properties.single_value_device,'CPU')
       assert.deepEqual(keys[0].properties.luminance_key_cpu_profile, profile)
       assert.deepEqual(keys[0].properties.luminance_key_source_version, packet.sourceVersion)
       assert.deepEqual(keys[0].properties.luminance_key_coefficients, packet.sourceCoefficients)
       assert.equal(keys[0].properties.luminance_key_precision, 'native-cpu-rne-v1')
-      if (profile.sourcePlatform === 'linux') assert.equal(keys[0].properties.luminance_key_source_build, packet.sourceBuildHash)
+      if (['linux','win32'].includes(profile.sourcePlatform)) assert.equal(keys[0].properties.luminance_key_source_build, packet.sourceBuildHash)
     }
     else assert.equal(keys[0].properties.luminance_key_precision, 'legacy-unqualified-cpu-v1')
     files.push({ ...row, bytes })

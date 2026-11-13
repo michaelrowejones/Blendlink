@@ -51,11 +51,12 @@ Modern GPU all-constant graphs use this path only through their actual CPU
 fold; spatial GPU and legacy GPU arithmetic retain v1. Existing v1 documents
 retain their original semantics. Unqualified fresh CPU sources also retain
 v1, explicitly tagged `legacy-unqualified-cpu-v1` with a
-`SOURCE_ADMISSION_NA` reason. Ordinary Linux/Windows workflows remain usable;
-they do **not** acquire the new HDR precision guarantee. Persisted legacy reversed CPU ramps also retain explicit v1+N/A; actual 4.2 RNA constrains reverse assignment, so no native reversed-authoring proof is claimed. Native Linux/Windows
-qualification and a subsequent production allowlist change are separate work.
+`SOURCE_ADMISSION_NA` reason. Separately qualified Linux and Windows CPU sources
+are listed below; all unmeasured profiles retain v1. Persisted legacy reversed
+CPU ramps also retain explicit v1+N/A; actual 4.2 RNA constrains reverse
+assignment, so no native reversed-authoring proof is claimed.
 
-The final measured source corpus contains 358 scenes across all three native
+The initial three-version source corpus contains 358 scenes across all three native
 versions/devices. Both APIs on physical Metal and SwiftShader pass **1,432
 readbacks**, numeric maximum error **0**, with the original `2e-5` acceptance
 budget unchanged. Dense primitive checks additionally compare 655,360 scalar
@@ -119,11 +120,15 @@ the runtime independently expresses the elementary luminance-ramp mathematics:
 - [Blender 5.3 native function](https://github.com/blender/blender/blob/v5.3.0/source/blender/nodes/composite/nodes/node_composite_luminance_key.cc)
 - [Blender 5.3 GPU compositor](https://github.com/blender/blender/blob/v5.3.0/source/blender/compositor/shaders/library/gpu_shader_compositor_luminance_matte.glsl)
 
-Linux5.2 `x86_64` build`fbe6228777e7`, actual gradual-RNE and Rec.709 now has a
-reviewed production-admission **candidate**, with independent source/runtime
-build checks. Its old47 ordinary/32 private-kernel trial receipt remains
-`SOURCE_ADMISSION_NA`; fresh production qualification is pending the required
-Linux canary. That gate must emit actual production IR and pass32 bit-exact
-precision cases through the production compositor on both browser APIs.
-Windows and every unmeasured source profile keep their previous v1 fallback.
-See [the candidate and retained receipt](../luma-cpu-precision/README.md#linux52-production-admission-candidate).
+Linux5.2 `x86_64` build`fbe6228777e7`, actual gradual-RNE and Rec.709 is now
+qualified by a fresh actual-production receipt:79 cases/API, including32
+bit-exact precision programs, zero error on WebGPU and WebGL2. Source/runtime
+build checks remain independent. Its old47 ordinary/32 private-kernel trial
+receipt stays `SOURCE_ADMISSION_NA`; no historical receipt was relabelled.
+Windows CPU compositor sources also qualify only `win32/AMD64`, actual
+gradual-RNE/Rec.709, Blender 4.2.0 build `a51f293548ad` or 5.2.0 build
+`fbe6228777e7`. Fresh production verification passed 53/79 cases per browser API,
+each including 32 bit-exact precision cases, with zero error. Windows GPU
+single-value CPU folding and every unmeasured profile retain v1+N/A. The earlier
+Windows private trials retain zero production admission; the initial Mac counts
+above are unchanged. See [the production receipts and scope](../luma-cpu-precision/README.md#windows-cpu-production-qualification).

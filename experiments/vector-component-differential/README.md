@@ -110,13 +110,15 @@ Separate pixel mismatches were zero. The largest native carrier difference was
 (largest budget ratio 0.9724258314); it is not described as exact native Float32
 output. No browser execution errors/device loss or added program textures were
 observed. The worker build, 1,418 unit tests (five skipped), 59 release policies
-and isolated copied-add-on source/planning test passed. Native OpenGL-source
-qualification and actual visitor Final pixel publication are not claimed.
+and isolated copied-add-on source/planning test passed. The original Metal-only
+receipt did not claim native OpenGL-source qualification. That qualification is
+now earned separately below; actual visitor Final pixel publication remains separate.
 
 ## Registration and native canaries
 
 The capability map records only partial shader support and removes only that
-shader key from `knownUnsupported`; compositor creation remains unsupported.
+shader key from `knownUnsupported`; compositor fixed selection has a separate
+qualified gate, while geometry execution remains unsupported.
 `validateVectorComponentSource` independently checks actual measured build and
 schema, typed literal/reroute/group paths, unknown-version/schema mutations,
 converted/computed/live index refusals and copied-add-on planning. Its source
@@ -136,8 +138,8 @@ all three versions and refreshed built software/physical checks. Final reports
 are `calibrated-built-{swift,physical}/report.json`; all 44 refreshed native pixel
 files are byte-identical to the first reference capture, as retained in
 `native-reference-refresh.json`. No new native pixel values or tolerance change
-were introduced by the independent calibration. Hosted OpenGL remains pending
-until its fresh canary completes.
+were introduced by the independent calibration. Hosted OpenGL qualification
+is now recorded in the reviewed receipt below.
 
 The first Linux 5.3 canary passed all numerical/raw checks, then failed its
 backend audit: the factory preference defaulted to Vulkan and the separate
@@ -147,3 +149,16 @@ native render process; the canary explicitly requests OpenGL and checks that
 the recorded backend matches. `BLENDLINK_VECTOR_COMPONENT_NATIVE_BACKEND`
 accepts `OPENGL`, `VULKAN` or `METAL`; local Metal replay passes with its actual
 renderer/vendor recorded, without changing the numerical budgets.
+
+### Reviewed Linux OpenGL receipt
+
+Checkpoint `9d137e3`, run43411851888/job131839951921 passed with actual
+Blender5.3 OpenGL/llvmpipe. The [shared receipt](../vector-component-differential/opengl53-receipt.json)
+binds artifact14029991998 and its verified archive digest. Shader proof retains
+42 paired selections and two independent native carrier controls (88 browser
+carrier reads), plus84 exact raw algebraic controls. Its maximum carrier budget
+ratio is0.972426; the independent half-target allowance is not node precision.
+The separate compositor CPU/GPU proof contains256 native graphs and512
+browser readbacks, maximum error zero. Current-source/ZIP guards and strict
+browser readers pass; geometry execution, dynamic selectors, signed-zero
+browser parity and actual visitor Final pixel publication remain outside scope.

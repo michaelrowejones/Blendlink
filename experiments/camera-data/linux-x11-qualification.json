@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "kind": "qualified-camera-linux-browser-presentation-profile",
+  "scope": "Blender5.2.0 ordinary EEVEE OPENGL native source and actual Final Camera View Vector only; no new math or admission. Five-profile geometry shard and legacy backend attestations remain separate.",
+  "runId": 43421749306,
+  "jobId": 131873166687,
+  "commit": "223108bb7ee1680c54eebad77614212ed1e15cfd",
+  "runUrl": "https://github.com/michaelrowejones/Blendlink/actions/runs/43421749306",
+  "artifactId": 14034642003,
+  "artifactSha256": "51b4d16fa67cdf0590a7f3a4ae6e5cee89a56763e560e56be8785960eb17aa0a",
+  "browser": {
+    "version": "158.0.8127.18",
+    "requestedHeadless": false,
+    "actualOzone": "x11",
+    "skiaBackend": "GraphiteDawnVulkan",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)",
+    "binaryPins": [
+      {
+        "name": "chrome",
+        "sha256": "76bcde21a2f8c9d4fbbf42afbeab011817d000552d093e5f5e89c9b8808f4231"
+      },
+      {
+        "name": "libEGL.so",
+        "sha256": "9ad76c7187748a2fa05b41e9714a6583c13711fa4b5b07196c959507a5794d95"
+      },
+      {
+        "name": "libGLESv2.so",
+        "sha256": "35e242eca702e2ce9295f13d497ee3e215488fff57766c5a4c45aa15fec87efb"
+      },
+      {
+        "name": "libvk_swiftshader.so",
+        "sha256": "1e5936d0130bfb7a6142ace5b6d6164cd36dbb874ebe6bea627a7148312c67b8"
+      }
+    ]
+  },
+  "native": {
+    "version": [
+      5,
+      2,
+      0
+    ],
+    "build": "fbe6228777e7",
+    "backend": {
+      "backend": "OPENGL",
+      "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+      "vendor": "Mesa"
+    },
+    "nativeSamples": 120,
+    "packingControls": 256,
+    "nativeReferenceSha256": "e02cfbcb8b727ed817fcc198cc8d2fc0483d9b61b3c8afeef32a9be2521ee397",
+    "fixtureSha256": "bf21ee28bf92a5b9a58ff8e53ce8d52da6f7671f62bb008ae1238ca19510f556",
+    "wrapperSha256": "ac939351f1163f8b72d64b241f7579346ddcd2868a22c7213f31457360b37d34"
+  },
+  "results": {
+    "canvasRgba": [
+      255,
+      0,
+      0,
+      255
+    ],
+    "actualFinalGlbs": 8,
+    "pythonSourcePins": 9,
+    "runtimeModulesIndependentlyRederivedPerSnapshot": 163,
+    "sourceUnchanged": true,
+    "numeric": [
+      {
+        "backend": "webgpu",
+        "cases": 240,
+        "maximumAbsoluteError": 1.519918441772461e-05,
+        "maximumOutsideNativeQuantization": 0,
+        "failures": 0
+      },
+      {
+        "backend": "webgl2",
+        "cases": 240,
+        "maximumAbsoluteError": 1.519918441772461e-05,
+        "maximumOutsideNativeQuantization": 0,
+        "failures": 0
+      }
+    ],
+    "ownership": [
+      {
+        "backend": "webgpu",
+        "cases": 8,
+        "maximum": 0,
+        "failures": 0
+      },
+      {
+        "backend": "webgl2",
+        "cases": 8,
+        "maximum": 0,
+        "failures": 0
+      }
+    ]
+  },
+  "retainedReports": [
+    {
+      "name": "native-backend.json",
+      "sha256": "ff82a1c37a791d0f59f567a89a616eefd34a5f8f50e92afbbd31d36f7704e60b"
+    },
+    {
+      "name": "native-reference.json",
+      "sha256": "e02cfbcb8b727ed817fcc198cc8d2fc0483d9b61b3c8afeef32a9be2521ee397"
+    },
+    {
+      "name": "compiled/proof.json",
+      "sha256": "bd27979a2768bef53d7b0977e263607656c816286601ba78ddd55603cd06ca27"
+    },
+    {
+      "name": "canvas-control-software-headed-x11-graphite-swiftshader.json",
+      "sha256": "d1d4c9f1808f39a8ca330603b3f14d3df371d4832fcafd46222de5642bb02ca2"
+    },
+    {
+      "name": "browser-report-software-headed-x11-graphite-swiftshader.json",
+      "sha256": "c05679d74a7d46124fd4ffd210e2b54e4f37015940b4ef502a343584bfbbabea"
+    },
+    {
+      "name": "ownership-report-software-headed-x11-graphite-swiftshader.json",
+      "sha256": "4944bc5616727ef9c04fe492c9ce6ba6c045a05511d587d3db2d0be4068eeb6f"
+    }
+  ],
+  "auditLimitations": [
+    "Copied Python artifacts were verified by the actual hosted reader and package probe, but those copies are not retained in this ZIP; offline audit verifies recorded Python hashes against exact QA source.",
+    "This receipt grants no credit to source versions, native GPU backends, output domains or browser releases beyond its stated Blender5.2 OPENGL ordinary corpus and exact Chrome158 headedX11 profile."
+  ],
+  "priorFailuresRetained": [
+    {
+      "runId": 43411851888,
+      "artifactId": 14029837703,
+      "failure": "Original headless Camera device loss after valid native/Final source proof."
+    },
+    {
+      "runId": 43419636094,
+      "artifactId": 14033915425,
+      "artifactSha256": "58089a53e6da5b54fbd9a8b130a99a5012b2dec0a7f414b4e3f8f23a684c9e21",
+      "failure": "Actual Chrome GPU int3 at ELF0xf0cfbe1 on Graphite OzoneHeadless presentation; independent known-signal control separate."
+    }
+  ]
+}

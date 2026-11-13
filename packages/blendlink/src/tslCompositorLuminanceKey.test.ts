@@ -136,7 +136,7 @@ describe('Linux52 CPU luminance admission candidate',()=>{
     expect(built.node.isNode).toBe(true);built.dispose()
   })
 
-  it('refuses other Linux versions, builds, architectures, modes and Windows profiles independently',()=>{
+  it('refuses other Linux versions, builds, architectures and modes independently',()=>{
     for(const mutate of [
       (p: SourceCompositorProgram)=>{p.ops[0]!.properties.luminance_key_source_build=undefined},
       (p: SourceCompositorProgram)=>{p.ops[0]!.properties.luminance_key_source_build='000000000000'},
@@ -146,10 +146,56 @@ describe('Linux52 CPU luminance admission candidate',()=>{
       (p: SourceCompositorProgram)=>{Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{sourceArchitecture:'aarch64'})},
       (p: SourceCompositorProgram)=>{Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{sourceArchitecture:'AMD64'})},
       (p: SourceCompositorProgram)=>{Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{mode:'ftz-daz-rne',underflowWord:0,denormalInputWord:0})},
-      (p: SourceCompositorProgram)=>{Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{sourcePlatform:'win32',sourceArchitecture:'AMD64'})},
     ]){
       const document=linuxCpuProgram();mutate(document)
       expect(()=>buildSourceCompositor(document,()=>null)).toThrow(/Artist Luminance Key/)
     }
+  })
+})
+
+function windowsCpuProgram(version: 4 | 5): SourceCompositorProgram {
+  const document = cpuProgram(), properties = document.ops[0]!.properties
+  Object.assign(properties.luminance_key_cpu_profile as object, { sourcePlatform: 'win32', sourceArchitecture: 'AMD64' })
+  properties.luminance_key_source_version = [version, 2, 0]
+  properties.luminance_key_source_build = version === 4 ? 'a51f293548ad' : 'fbe6228777e7'
+  properties.luminance_key_schema = version === 4 ? 'legacy-branch' : 'linear-ramp'
+  return document
+}
+
+describe('Windows CPU luminance admission candidates', () => {
+  it('accepts only the measured CPU source certificates for both native schemas and outputs', () => {
+    for (const version of [4, 5] as const) for (const output of ['Image', 'Matte'] as const) {
+      const document = windowsCpuProgram(version), operation = document.ops[0]!
+      operation.source.output = output
+      operation.type = output === 'Image' ? 'RGBA' : 'VALUE'; document.output!.type = operation.type
+      const built = buildSourceCompositor(document, () => null)
+      expect(built.node.isNode).toBe(true); built.dispose()
+    }
+  })
+
+  it('independently rejects unknown Windows versions, mismatched builds, architectures and FP modes', () => {
+    for (const version of [4, 5] as const) for (const mutate of [
+      (p: SourceCompositorProgram) => { delete p.ops[0]!.properties.luminance_key_source_build },
+      (p: SourceCompositorProgram) => { p.ops[0]!.properties.luminance_key_source_build = '000000000000' },
+      (p: SourceCompositorProgram) => { p.ops[0]!.properties.luminance_key_source_build = version === 4 ? 'fbe6228777e7' : 'a51f293548ad' },
+      (p: SourceCompositorProgram) => { p.ops[0]!.properties.luminance_key_source_version = [version, 2, 1] },
+      (p: SourceCompositorProgram) => { p.ops[0]!.properties.luminance_key_source_version = [5, 3, 0] },
+      (p: SourceCompositorProgram) => { Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object, { sourceArchitecture: 'x86_64' }) },
+      (p: SourceCompositorProgram) => { Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object, { sourceArchitecture: 'arm64' }) },
+      (p: SourceCompositorProgram) => { Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object, { mode: 'ftz-daz-rne', underflowWord: 0, denormalInputWord: 0 }) },
+    ]) {
+      const document = windowsCpuProgram(version); mutate(document)
+      expect(() => buildSourceCompositor(document, () => null)).toThrow(/Artist Luminance Key/)
+    }
+  })
+
+  it('keeps unmeasured Windows GPU single-value folding on the original serialized model', () => {
+    const document = windowsCpuProgram(5), properties = document.ops[0]!.properties
+    properties.evaluation_device = 'GPU'
+    expect(() => buildSourceCompositor(document, () => null)).toThrow(/Windows Luminance Key.*GPU single-value folding/)
+    properties.luminance_key_model = 'native-luminance-key-v1'
+    properties.luminance_key_precision = 'legacy-unqualified-cpu-v1'
+    const built = buildSourceCompositor(document, () => null)
+    expect(built.node.isNode).toBe(true); built.dispose()
   })
 })

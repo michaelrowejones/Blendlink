@@ -103,7 +103,7 @@ test('registration keeps fixed compositor scope, version N/A, package source pro
   assert.deepEqual(entry.verification.nativeAbsentVersions, ['4.2.0', '5.2.0'])
   assert.equal(entry.verification.nativeScenes, 256); assert.equal(entry.verification.physicalAndSoftwareReadbacks, 1024)
   assert.equal(entry.verification.browserZeroSignClaim, false); assert.equal(entry.verification.packedNamespaceSourceOnly, true)
-  assert.equal(entry.verification.freshHostedOpenGL, 'pending')
+  assert.equal(entry.verification.freshHostedOpenGL.status, 'qualified-opengl'); assert.equal(entry.verification.freshHostedOpenGL.artifact, 14029991998)
   assert.ok(!map.knownUnsupported.includes('compositor:FunctionNodeGetVectorComponent'))
   assert.ok(entry.limits.includes('computed/spatial')); assert.ok(entry.limits.includes('geometry execution'))
   const gate = read('scripts/test-node-parity.mjs')

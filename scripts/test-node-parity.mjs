@@ -12,6 +12,7 @@ import { readMapValueSourceProfile, verifyMapValueCurrentSources } from './lib/m
 import { validateVectorComponentSource, validateVectorComponentBrowser } from './lib/vector-component-profile.mjs'
 import { readCompositorComponentProfile, verifyCompositorComponentCurrentSources, validateCompositorComponentBrowser } from './lib/compositor-vector-component-profile.mjs'
 import { NODE_PARITY_SUITES, nodeParityPlan } from './lib/node-parity-plan.mjs'
+import { cameraDataBrowserEnvironment } from './lib/camera-data-browser.mjs'
 
 const plan = nodeParityPlan(process.argv.slice(2))
 if (process.argv.includes('--list-suites')) {
@@ -486,14 +487,26 @@ if (plan.shaders) {
 }
 if (plan.geometry) {
   const directory=join(evidence,'camera-data')
+  // Camera presents a real canvas; Linux Chromium158 needs a headed X11
+  // Graphite path. These child-only overrides never change other families.
+  const cameraEnvironment=cameraDataBrowserEnvironment()
+  if (process.platform === 'linux') {
+    attempt('camera-data-public-canvas',()=>run('camera-data-public-canvas',process.execPath,
+      ['experiments/camera-data/canvas-probe.mjs'],
+      {...cameraEnvironment,BLENDLINK_CAMERA_DATA_NATIVE:join(directory,'ordinary')}))
+    attempt('camera-data-public-canvas-profile',()=>run('camera-data-public-canvas-profile',process.execPath,
+      ['scripts/check-camera-data-browser.mjs',directory,'--canvas-only']))
+  }
   attempt('camera-data-addon',()=>run('camera-data-addon',blender,
     ['--background','--factory-startup','--python-exit-code','1','--python','experiments/camera-data/package_probe.py'],
     {BLENDLINK_CAMERA_DATA_ADDON:join(root,'packages/blendlink/dist/addon')}))
   if(attempt('camera-data',()=>run('camera-data',process.execPath,
-    ['experiments/camera-data/suite.mjs','--built','--blender',blender,'--output',directory],{},1_800_000)))
+    ['experiments/camera-data/suite.mjs','--built','--blender',blender,'--output',directory],cameraEnvironment,1_800_000)))
     attempt('camera-data-ownership',()=>run('camera-data-ownership',process.execPath,
       ['experiments/camera-data/run.mjs','--built','--ownership'],
-      {BLENDLINK_CAMERA_DATA_NATIVE:join(directory,'ordinary')},600_000))
+      {...cameraEnvironment,BLENDLINK_CAMERA_DATA_NATIVE:join(directory,'ordinary')},600_000))
+  if (process.platform === 'linux') attempt('camera-data-browser-profile',()=>run('camera-data-browser-profile',process.execPath,
+    ['scripts/check-camera-data-browser.mjs',directory,'--all-profiles']))
 }
 if (plan.geometry) attempt('geometry', () => run('geometry', process.execPath,
   ['experiments/geometry-context-differential/suite.mjs', '--built'],

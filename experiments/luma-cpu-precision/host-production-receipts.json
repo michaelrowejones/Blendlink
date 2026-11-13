@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "status": "qualified-production-receipts",
+  "sourceGuardCommit": "502a5673f6a0741496fe3d3aa402b758aff0aac7",
+  "testedCommit": "d31d3d186a485765ca115ca590e3ca2210550de9",
+  "testedTree": "37b84969c3e224bd1cc9bb1af901bdd749c52448",
+  "run": 43418329637,
+  "proofRole": "actual-production-compositor",
+  "profiles": {
+    "windows-4.2": {
+      "status": "qualified-production-receipt",
+      "job": 131861726085,
+      "artifact": 14032319095,
+      "archiveSha256": "89daa217fd054add8b6eaf707ad03b209e936475786888f688f7d72ee71427ef",
+      "sourcePlatform": "win32",
+      "sourceArchitecture": "AMD64",
+      "sourceVersion": [
+        4,
+        2,
+        0
+      ],
+      "sourceBuildHash": "a51f293548ad",
+      "sourceCpuProfile": {
+        "schemaVersion": 1,
+        "mode": "gradual-rne",
+        "underflowWord": 4194304,
+        "denormalInputWord": 8388608,
+        "tieWords": [
+          1065353216,
+          1065353218
+        ],
+        "sourcePlatform": "win32",
+        "sourceArchitecture": "AMD64"
+      },
+      "sourceCoefficients": [
+        0.2125999927520752,
+        0.7152000069618225,
+        0.0722000002861023
+      ],
+      "sourceEngine": "CYCLES",
+      "compositorDevice": "CPU",
+      "productionAdmission": "PRODUCTION_QUALIFIED",
+      "productionPrecisionCasesPerBrowserApi": 32,
+      "ordinaryCasesPerBrowserApi": 21,
+      "totalProductionCasesPerBrowserApi": 53,
+      "browserApis": [
+        "webgl2",
+        "webgpu"
+      ],
+      "productionPrecisionBitMismatches": 0,
+      "maximumAbsoluteError": 0,
+      "sourcePreserved": true,
+      "nativeTaskProfileStable": true,
+      "nativeDotStagesBitIdentical": true,
+      "nativePrimitiveComparisonsPerBrowserApi": 65536,
+      "nativePrimitiveBitMismatches": 0,
+      "experimentalKernelCasesPerBrowserApi": 32,
+      "experimentalKernelBitMismatches": 0,
+      "experimentalKernelProductionAdmissionCases": 0,
+      "browserVersion": "158.0.8127.18",
+      "actualWebGl2": {
+        "available": true,
+        "vendor": "Google Inc. (Microsoft)",
+        "renderer": "ANGLE (Microsoft, Microsoft Basic Render Driver (0x0000008C) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      },
+      "actualWebGpu": {
+        "apiAvailable": true,
+        "adapterAvailable": true,
+        "deviceAvailable": true,
+        "info": {
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "device": "",
+          "description": "",
+          "isFallbackAdapter": true
+        }
+      },
+      "pinAudit": {
+        "runtimeSourceCommit": "502a5673f6a0741496fe3d3aa402b758aff0aac7",
+        "modulesPerBuiltSnapshot": 163,
+        "builtSnapshotsChecked": 2,
+        "sourceAndEmitterHashesMatch": true,
+        "snapshotFilesAndSourceMapHashesMatch": true,
+        "nativeSourcePinsChecked": 3,
+        "ordinaryWorkspaceStable": true,
+        "checkoutEncoding": "Git CRLF text; NUL-containing sync.ts retains LF"
+      },
+      "nativeSourceSha256": {
+        "compositor_luminance_key_check.py": "26762e9be7bdc2bc6d6b178acd4debe8eba611571ce706bf8d92ee3d2958e84f",
+        "compositor_graph.py": "183f1d138e08f142c1279bdb54a97cc9aed6f0d3ba36d9121d68a3d101f0e0d7",
+        "compositor_luminance_key.py": "6b562900e95d4eaa8300d1d2c8c1680040d5b24b1c9c1a0a065341f787aed6fb"
+      },
+      "files": {
+        "report.json": "6f26e07f55e4f8ae97bf655c1c0975aa50f0215dc8e2edca73baf3fd6a5a3d67",
+        "browser-profile.json": "43b62e78a1d697e6d7884abef16f045ac1f355710b86536282de4161d9bc1c6a",
+        "ordinary/precision-qualification.json": "a9ba1e4e11da7f7cf9e71d822c225b27b68a29bad34979eb5f43a30d0a5da533",
+        "ordinary/qualification.json": "b92748cf32342272276db0e04bb22ddbedd8df4476c5bdde1a4efcaf12a3b5a6",
+        "ordinary-browser/results.json": "2c36a2ad16995b4ae630679680ecc1b32d9e1eecb9a09921a335a6a910981d8d",
+        "ordinary-browser/provenance.json": "f8f398d10d2f241a9e29aa4a45a68e04b65800cb86da8d7adad8c135e2b4cec5",
+        "experimental-browser/results.json": "a22adc8de62de6c7c821f35a8505eb34f935869aedd5f6a4453d25cfda77a70f",
+        "experimental-browser/provenance.json": "f7168a60c3e6ded558cf53fb0aa08713f2806d1e61df5e24536bbd9e9b2a4555",
+        "primitive-browser/results.json": "9292a2ba78a793600fe036e16ea94b8382b08af1238118927aedbd438a99c3c1",
+        "primitive-browser/provenance.json": "f408c12ac57f621a67f2067d62d8ec46140acf0f8dae5bea0f89d407dbc8549d",
+        "dot/dot.json": "6695ef4439b97ec329d13010bf48a017cfd851b682fe4636327d1c174320a27e",
+        "ratio/ratio.json": "c665e1f42bf94adfa3cc1a0de9e032bc4e8f7b981fe2f094e805b15fb25cc02a",
+        "words/add/word.json": "8fbcf3d4d7721d9ed616beec6c4dd7813ae6c3b8d9615dbe6752f6b26277910c",
+        "words/multiply/word.json": "8fd8db4d766f5edac12af23025b7520ac785103de55fd046f4bfc5d68dbd8510"
+      }
+    },
+    "windows-5.2": {
+      "status": "qualified-production-receipt",
+      "job": 131861725874,
+      "artifact": 14032698123,
+      "archiveSha256": "4fa8ecdfd1dcd7bfd30dd8af783ce5be0f3ecf952491721b6130323a68ada473",
+      "sourcePlatform": "win32",
+      "sourceArchitecture": "AMD64",
+      "sourceVersion": [
+        5,
+        2,
+        0
+      ],
+      "sourceBuildHash": "fbe6228777e7",
+      "sourceCpuProfile": {
+        "schemaVersion": 1,
+        "mode": "gradual-rne",
+        "underflowWord": 4194304,
+        "denormalInputWord": 8388608,
+        "tieWords": [
+          1065353216,
+          1065353218
+        ],
+        "sourcePlatform": "win32",
+        "sourceArchitecture": "AMD64"
+      },
+      "sourceCoefficients": [
+        0.2125999927520752,
+        0.7152000069618225,
+        0.0722000002861023
+      ],
+      "sourceEngine": "CYCLES",
+      "compositorDevice": "CPU",
+      "productionAdmission": "PRODUCTION_QUALIFIED",
+      "productionPrecisionCasesPerBrowserApi": 32,
+      "ordinaryCasesPerBrowserApi": 47,
+      "totalProductionCasesPerBrowserApi": 79,
+      "browserApis": [
+        "webgl2",
+        "webgpu"
+      ],
+      "productionPrecisionBitMismatches": 0,
+      "maximumAbsoluteError": 0,
+      "sourcePreserved": true,
+      "nativeTaskProfileStable": true,
+      "nativeDotStagesBitIdentical": true,
+      "nativePrimitiveComparisonsPerBrowserApi": 65536,
+      "nativePrimitiveBitMismatches": 0,
+      "experimentalKernelCasesPerBrowserApi": 32,
+      "experimentalKernelBitMismatches": 0,
+      "experimentalKernelProductionAdmissionCases": 0,
+      "browserVersion": "158.0.8127.18",
+      "actualWebGl2": {
+        "available": true,
+        "vendor": "Google Inc. (Microsoft)",
+        "renderer": "ANGLE (Microsoft, Microsoft Basic Render Driver (0x0000008C) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      },
+      "actualWebGpu": {
+        "apiAvailable": true,
+        "adapterAvailable": true,
+        "deviceAvailable": true,
+        "info": {
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "device": "",
+          "description": "",
+          "isFallbackAdapter": true
+        }
+      },
+      "pinAudit": {
+        "runtimeSourceCommit": "502a5673f6a0741496fe3d3aa402b758aff0aac7",
+        "modulesPerBuiltSnapshot": 163,
+        "builtSnapshotsChecked": 2,
+        "sourceAndEmitterHashesMatch": true,
+        "snapshotFilesAndSourceMapHashesMatch": true,
+        "nativeSourcePinsChecked": 3,
+        "ordinaryWorkspaceStable": true,
+        "checkoutEncoding": "Git CRLF text; NUL-containing sync.ts retains LF"
+      },
+      "nativeSourceSha256": {
+        "compositor_luminance_key_check.py": "26762e9be7bdc2bc6d6b178acd4debe8eba611571ce706bf8d92ee3d2958e84f",
+        "compositor_graph.py": "183f1d138e08f142c1279bdb54a97cc9aed6f0d3ba36d9121d68a3d101f0e0d7",
+        "compositor_luminance_key.py": "6b562900e95d4eaa8300d1d2c8c1680040d5b24b1c9c1a0a065341f787aed6fb"
+      },
+      "files": {
+        "report.json": "5e480379eec0cf2fec1dce724d9e45390adb294f540f64ffc6332a4ae88a9bea",
+        "browser-profile.json": "4e7f21b486eb63448669e328451f1ffbb2667c437d8e80b5ea54c6a339af37a8",
+        "ordinary/precision-qualification.json": "3e49a40df6376cccc75645f038e478e2ca0cd0851b701d27a6f7ecf07f7664ff",
+        "ordinary/qualification.json": "1e70a235236d77ba2b03406060e517a07c96c14b563972cf70649ba73dc21150",
+        "ordinary-browser/results.json": "3d64ed7f401e86e67b5e61bc2161fdd71488a5be1d7266cf5689fc2d67e8627a",
+        "ordinary-browser/provenance.json": "72dae0c4869f2ac075dfc4a81347669b3fcb0c7d9e008f14d277b7667dd22942",
+        "experimental-browser/results.json": "cfdc45caa37d41ec2c61597455815cf6f8f82438e2744c10973d1a090e1c0e6c",
+        "experimental-browser/provenance.json": "999df3dcf3a41d6a7d5da438c623c598b3bb898fb84772be5a22b4336b45a6f8",
+        "primitive-browser/results.json": "8788bcac470c9b8b651d1a3fbb4824bf3d7b372d888da4323fe190d0194d7eaf",
+        "primitive-browser/provenance.json": "b4638e2d9da5619df9612137a1dafe3460e3e5a20a6d14346b3b3592b7d6edbf",
+        "dot/dot.json": "41e250494ecf20a8d2cdff7beceae18ba52f21927ce8c46269061148ece42439",
+        "ratio/ratio.json": "82dfdbc8bbf73db0b068cab605a91cc82309ef6a4aed722212eb43e1e2c90853",
+        "words/add/word.json": "b982b72b5fe1849185134105c53b2dd57e871bd87ec677581057d1dfbb1fbd3d",
+        "words/multiply/word.json": "765944aa5dae0263e480b9531f5f7d2792a8f01cbf247e16d6046e2673a02093"
+      }
+    },
+    "linux-5.2": {
+      "status": "qualified-production-receipt",
+      "job": 131861726290,
+      "artifact": 14033192176,
+      "archiveSha256": "0402d5c184c9b0cfd3872c0466bb9a9408050dc572f9be8794915395f3e65430",
+      "sourcePlatform": "linux",
+      "sourceArchitecture": "x86_64",
+      "sourceVersion": [
+        5,
+        2,
+        0
+      ],
+      "sourceBuildHash": "fbe6228777e7",
+      "sourceCpuProfile": {
+        "schemaVersion": 1,
+        "mode": "gradual-rne",
+        "underflowWord": 4194304,
+        "denormalInputWord": 8388608,
+        "tieWords": [
+          1065353216,
+          1065353218
+        ],
+        "sourcePlatform": "linux",
+        "sourceArchitecture": "x86_64"
+      },
+      "sourceCoefficients": [
+        0.2125999927520752,
+        0.7152000069618225,
+        0.0722000002861023
+      ],
+      "sourceEngine": "CYCLES",
+      "compositorDevice": "CPU",
+      "productionAdmission": "PRODUCTION_QUALIFIED",
+      "productionPrecisionCasesPerBrowserApi": 32,
+      "ordinaryCasesPerBrowserApi": 47,
+      "totalProductionCasesPerBrowserApi": 79,
+      "browserApis": [
+        "webgl2",
+        "webgpu"
+      ],
+      "productionPrecisionBitMismatches": 0,
+      "maximumAbsoluteError": 0,
+      "sourcePreserved": true,
+      "nativeTaskProfileStable": true,
+      "nativeDotStagesBitIdentical": true,
+      "nativePrimitiveComparisonsPerBrowserApi": 65536,
+      "nativePrimitiveBitMismatches": 0,
+      "experimentalKernelCasesPerBrowserApi": 32,
+      "experimentalKernelBitMismatches": 0,
+      "experimentalKernelProductionAdmissionCases": 0,
+      "browserVersion": "158.0.8127.18",
+      "actualWebGl2": {
+        "available": true,
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      },
+      "actualWebGpu": {
+        "apiAvailable": true,
+        "adapterAvailable": true,
+        "deviceAvailable": true,
+        "info": {
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "device": "",
+          "description": "",
+          "isFallbackAdapter": true
+        }
+      },
+      "pinAudit": {
+        "runtimeSourceCommit": "502a5673f6a0741496fe3d3aa402b758aff0aac7",
+        "modulesPerBuiltSnapshot": 163,
+        "builtSnapshotsChecked": 2,
+        "sourceAndEmitterHashesMatch": true,
+        "snapshotFilesAndSourceMapHashesMatch": true,
+        "nativeSourcePinsChecked": 3,
+        "ordinaryWorkspaceStable": true,
+        "checkoutEncoding": "LF"
+      },
+      "nativeSourceSha256": {
+        "compositor_luminance_key_check.py": "6e9fc0968439aed8b4eb6110f952bae3fcea683fb77aaa7879b8e2b1803bd290",
+        "compositor_graph.py": "e0f79b7a83d4cada74e162a4e84008c197fa5c6d1bc467309cc34309f61adb99",
+        "compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd"
+      },
+      "files": {
+        "report.json": "65f744423f1a1619d131ebe1cb7ffe31dc321f198a9a8182b786a5cdc64a1159",
+        "browser-profile.json": "c8357df071de906b57f1194d834e097050447098832d16ba8022bd479b545fed",
+        "ordinary/precision-qualification.json": "793a7305e1105652885340c6166b9064675c83416d3e0fa75b85d6f25e11bad9",
+        "ordinary/qualification.json": "627407f3e27298ac91f05d2594233059cc4e771e4fa74e98f64f412f10a162a6",
+        "ordinary-browser/results.json": "a26a3d89905dffe017367af030640cf91a227a421e380ab967e78359fd839086",
+        "ordinary-browser/provenance.json": "39c18113f5166aa32b1cc37779ad91172b0457776d9a34118fee019de1f035b1",
+        "experimental-browser/results.json": "db140225c5bcf8ad3c09bf23f4ac70b57dbfcb012c9b870c89cfb88129bd1aad",
+        "experimental-browser/provenance.json": "3e5bbd00023a85efc4f7673b04dc96662948b9a08b4678c385fe1fe106dee563",
+        "primitive-browser/results.json": "5a52559e149c9afadd4c0ebd54b9c53253cf4b8646723e7e094c199d8bbe7d6b",
+        "primitive-browser/provenance.json": "42ffae347946d6764c69615ff348c65f2428f6d47f423cfa4a0fc025efd45f30",
+        "dot/dot.json": "9e121d7b7c9bdc2d7d782cdde34d679fb926828f20aa55e34d39788093bee701",
+        "ratio/ratio.json": "58944cb4390741010f91f5d90bedac9a15af3735ac63e0241704f6cae6b9581b",
+        "words/add/word.json": "261c711c87597a4de6fee1562541c39ef7b962c161f8073f4f181ea080fcf4b5",
+        "words/multiply/word.json": "570ef41a91cad95d6d216c1ba8499f96b88820549a4870141ab06ff547f6cd7a"
+      }
+    }
+  },
+  "limits": "Only the recorded native builds, architectures, actual Float32 mode and measured Rec.709 coefficients. Windows admission is limited to CPU compositor sources; Windows GPU single-value CPU folding retains legacy v1 with SOURCE_ADMISSION_NA. Earlier N/A/private-trial receipts retain zero production admission. The empty Cycles scene is an unused CPU compositor carrier. These software browser profiles do not qualify physical Windows GPUs or Cycles live shaders."
+}

@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "7b3f2a4f7e967d35780f6cda0963d5c2c32374ffb2111228e73a2decdc6f75cb",
+  "capabilityMapSha256": "119e43263625bdaa53661080c49ec659dc1404bfe28919d0419dd38c46f8278c",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T10:30:55.680314+00:00",
+  "generatedAt": "2026-11-13T12:32:48.906153+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -1630,11 +1630,19 @@
                 },
                 {
                   "path": ".github/workflows/luma-cpu-precision.yml"
+                },
+                {
+                  "anchor": "qualified-production-receipt",
+                  "path": "experiments/luma-cpu-precision/linux52-production.json"
+                },
+                {
+                  "anchor": "qualified-production-receipts",
+                  "path": "experiments/luma-cpu-precision/host-production-receipts.json"
                 }
               ],
               "id": "CompositorNodeLumaMatte",
               "label": "Luminance Key",
-              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 now has a narrowly scoped gradual-RNE/Rec.709 admission candidate, independently checked by source/runtime build and profile guards; fresh production qualification remains pending until the mandatory actual-production compositor browser rerun passes. The retained Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
+              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Existing measured Mac/Linux modern GPU constants require all consumed Image/Minimum/Maximum expressions to be actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux 5.2.0 x86_64 build fbe6228777e7 has independently checked source/runtime build and profile guards; fresh production qualification passed 79 actual production cases per browser API, including 32 bit-exact precision cases, with zero error on WebGPU and WebGL2. Windows CPU compositor sources qualify only win32/AMD64, actual gradual-RNE and Rec.709, Blender 4.2.0 build a51f293548ad or 5.2.0 build fbe6228777e7; fresh production receipts passed 53/79 cases per API respectively, each including 32 bit-exact precision cases with zero error. Windows GPU single-value CPU folding remains unqualified and retains v1 with SOURCE_ADMISSION_NA; no physical Windows GPU qualification is claimed. The earlier Linux N/A trial and Windows browser/private-kernel receipts retain zero production admission. Other source versions/builds/architectures retain v1 fallback. Groups, cascades, Matte-to-alpha and integer image windows are measured. This remains a partial pointwise image/mask port with bounded source precision, rather than full Keying/render-pass or arbitrary graph amplification coverage.",
               "runtimeOps": [
                 "luminance-key"
               ],
@@ -3476,11 +3484,15 @@
                 },
                 {
                   "path": "experiments/camera-data/native_backend.py"
+                },
+                {
+                  "anchor": "qualified-camera-linux-browser-presentation-profile",
+                  "path": "experiments/camera-data/linux-x11-qualification.json"
                 }
               ],
               "id": "ShaderNodeCameraData",
               "label": "Camera Data",
-              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. OpenGL source qualification remains pending until the separate Linux5.2 actual-Final canary earns it.",
+              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. Fresh Linux5.2 OpenGL ordinary-source qualification passed native capture, eight actual Final GLBs, both browser APIs and owned GPU storage on actual headed X11/Graphite. The complete five-profile normal geometry matrix remains pending its fresh main run; no broader backend or source-version claim is added.",
               "runtimeOps": [
                 "camera_data_native"
               ],
@@ -7672,11 +7684,19 @@
                 },
                 {
                   "path": ".github/workflows/luma-cpu-precision.yml"
+                },
+                {
+                  "anchor": "qualified-production-receipt",
+                  "path": "experiments/luma-cpu-precision/linux52-production.json"
+                },
+                {
+                  "anchor": "qualified-production-receipts",
+                  "path": "experiments/luma-cpu-precision/host-production-receipts.json"
                 }
               ],
               "id": "CompositorNodeLumaMatte",
               "label": "Luminance Key",
-              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 now has a narrowly scoped gradual-RNE/Rec.709 admission candidate, independently checked by source/runtime build and profile guards; fresh production qualification remains pending until the mandatory actual-production compositor browser rerun passes. The retained Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
+              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Existing measured Mac/Linux modern GPU constants require all consumed Image/Minimum/Maximum expressions to be actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux 5.2.0 x86_64 build fbe6228777e7 has independently checked source/runtime build and profile guards; fresh production qualification passed 79 actual production cases per browser API, including 32 bit-exact precision cases, with zero error on WebGPU and WebGL2. Windows CPU compositor sources qualify only win32/AMD64, actual gradual-RNE and Rec.709, Blender 4.2.0 build a51f293548ad or 5.2.0 build fbe6228777e7; fresh production receipts passed 53/79 cases per API respectively, each including 32 bit-exact precision cases with zero error. Windows GPU single-value CPU folding remains unqualified and retains v1 with SOURCE_ADMISSION_NA; no physical Windows GPU qualification is claimed. The earlier Linux N/A trial and Windows browser/private-kernel receipts retain zero production admission. Other source versions/builds/architectures retain v1 fallback. Groups, cascades, Matte-to-alpha and integer image windows are measured. This remains a partial pointwise image/mask port with bounded source precision, rather than full Keying/render-pass or arbitrary graph amplification coverage.",
               "runtimeOps": [
                 "luminance-key"
               ],
@@ -11072,11 +11092,15 @@
                 },
                 {
                   "path": "experiments/camera-data/native_backend.py"
+                },
+                {
+                  "anchor": "qualified-camera-linux-browser-presentation-profile",
+                  "path": "experiments/camera-data/linux-x11-qualification.json"
                 }
               ],
               "id": "ShaderNodeCameraData",
               "label": "Camera Data",
-              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. OpenGL source qualification remains pending until the separate Linux5.2 actual-Final canary earns it.",
+              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. Fresh Linux5.2 OpenGL ordinary-source qualification passed native capture, eight actual Final GLBs, both browser APIs and owned GPU storage on actual headed X11/Graphite. The complete five-profile normal geometry matrix remains pending its fresh main run; no broader backend or source-version claim is added.",
               "runtimeOps": [
                 "camera_data_native"
               ],
@@ -13629,9 +13653,9 @@
           "counts": {
             "bake-only": 0,
             "partial": 34,
-            "structural": 6,
+            "structural": 7,
             "supported": 24,
-            "unsupported": 123
+            "unsupported": 122
           },
           "enumValueCounts": {
             "partial": 27,
@@ -15335,11 +15359,19 @@
                 },
                 {
                   "path": ".github/workflows/luma-cpu-precision.yml"
+                },
+                {
+                  "anchor": "qualified-production-receipt",
+                  "path": "experiments/luma-cpu-precision/linux52-production.json"
+                },
+                {
+                  "anchor": "qualified-production-receipts",
+                  "path": "experiments/luma-cpu-precision/host-production-receipts.json"
                 }
               ],
               "id": "CompositorNodeLumaMatte",
               "label": "Luminance Key",
-              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 now has a narrowly scoped gradual-RNE/Rec.709 admission candidate, independently checked by source/runtime build and profile guards; fresh production qualification remains pending until the mandatory actual-production compositor browser rerun passes. The retained Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
+              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Existing measured Mac/Linux modern GPU constants require all consumed Image/Minimum/Maximum expressions to be actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux 5.2.0 x86_64 build fbe6228777e7 has independently checked source/runtime build and profile guards; fresh production qualification passed 79 actual production cases per browser API, including 32 bit-exact precision cases, with zero error on WebGPU and WebGL2. Windows CPU compositor sources qualify only win32/AMD64, actual gradual-RNE and Rec.709, Blender 4.2.0 build a51f293548ad or 5.2.0 build fbe6228777e7; fresh production receipts passed 53/79 cases per API respectively, each including 32 bit-exact precision cases with zero error. Windows GPU single-value CPU folding remains unqualified and retains v1 with SOURCE_ADMISSION_NA; no physical Windows GPU qualification is claimed. The earlier Linux N/A trial and Windows browser/private-kernel receipts retain zero production admission. Other source versions/builds/architectures retain v1 fallback. Groups, cascades, Matte-to-alpha and integer image windows are measured. This remains a partial pointwise image/mask port with bounded source precision, rather than full Keying/render-pass or arbitrary graph amplification coverage.",
               "runtimeOps": [
                 "luminance-key"
               ],
@@ -16547,11 +16579,15 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/VECTOR_COMPONENT.md"
+                },
+                {
+                  "anchor": "qualified-opengl",
+                  "path": "experiments/vector-component-differential/opengl53-receipt.json"
                 }
               ],
               "id": "FunctionNodeGetVectorComponent",
               "label": "Get Vector Component",
-              "limits": "Exact Blender 5.3.0 compositor Get Vector Component, fixed typed integer Index 0/1/2, using existing Separate XYZ swizzles without new arithmetic/opcode. Unlinked integer defaults and actual Input Integer literals through reroutes/groups qualify. Converted Float/Boolean, computed/spatial and out-of-range selectors, animation/drivers, unknown versions and unverified socket shapes refuse. Runtime independently rechecks source/model, exact active Vector/Index types and literal provenance; ordinary Separate XYZ remains unchanged. Actual 4.2.0/5.2.0 creation is absent, zero-case N/A rather than a numerical pass. Native CPU and GPU each retain 63 selections, 63 independent Separate XYZ pairs and 2 carrier controls. The unused oracle scene is empty Cycles CPU; compositor device is independent. ZIP-isolated namespaced package extraction is source-only evidence. Browser checks are numeric-zero on physical Metal and SwiftShader through both APIs; signed-zero browser words, dynamic selectors, geometry execution and whole-node/all-graph coverage are not claimed. Fresh hosted OpenGL compositor qualification remains pending.",
+              "limits": "Exact Blender 5.3.0 compositor Get Vector Component, fixed typed integer Index 0/1/2, using existing Separate XYZ swizzles without new arithmetic/opcode. Unlinked integer defaults and actual Input Integer literals through reroutes/groups qualify. Converted Float/Boolean, computed/spatial and out-of-range selectors, animation/drivers, unknown versions and unverified socket shapes refuse. Runtime independently rechecks source/model, exact active Vector/Index types and literal provenance; ordinary Separate XYZ remains unchanged. Actual 4.2.0/5.2.0 creation is absent, zero-case N/A rather than a numerical pass. Native CPU and GPU each retain 63 selections, 63 independent Separate XYZ pairs and 2 carrier controls. The unused oracle scene is empty Cycles CPU; compositor device is independent. ZIP-isolated namespaced package extraction is source-only evidence. Browser checks are numeric-zero on physical Metal and SwiftShader through both APIs; signed-zero browser words, dynamic selectors, geometry execution and whole-node/all-graph coverage are not claimed. Fresh hosted OpenGL compositor qualification passed both native devices and both browser APIs: 512 readbacks with maximum error zero.",
               "runtimeOps": [
                 "separate-vector"
               ],
@@ -17330,13 +17366,18 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "structural",
+              "declaredCategory": "structural",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "BLENDLINK_EDITOR_COMMENT_PASSED",
+                  "path": "packages/blender-addon/tests/editor_comment_check.py"
+                }
+              ],
               "id": "NodeComment",
               "label": "Comment",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Native Blender5.3 editor-only Comment annotation with editable text and no input/output sockets. Root and nested-group shader/compositor comments, frame parenting, text/label/color/custom-note preservation and save/reload leave emitted programs and automatic material decisions identical. Actual4.2.0/5.2.0 creation is absent. Existing static graph rules remain; no shading/compositing operator, runtime opcode or numerical case is introduced. This does not promise unchanged export-cache timing.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18345,9 +18386,9 @@
           "counts": {
             "bake-only": 0,
             "partial": 40,
-            "structural": 6,
+            "structural": 7,
             "supported": 22,
-            "unsupported": 77
+            "unsupported": 76
           },
           "enumValueCounts": {
             "partial": 25,
@@ -18462,11 +18503,15 @@
                 },
                 {
                   "path": "scripts/vector-component-coverage-policy.test.mjs"
+                },
+                {
+                  "anchor": "qualified-opengl",
+                  "path": "experiments/vector-component-differential/opengl53-receipt.json"
                 }
               ],
               "id": "FunctionNodeGetVectorComponent",
               "label": "Get Vector Component",
-              "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but shader and compositor fixed selection have separate qualified gates; geometry execution remains unported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication and OpenGL-source numerical qualification remain separate.",
+              "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but shader and compositor fixed selection have separate qualified gates; geometry execution remains unported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication remains separate. Fresh native EEVEE OpenGL qualification passed on Linux with both browser APIs; the independent half-target carrier allowance remains distinct from node precision.",
               "runtimeOps": [
                 "separate"
               ],
@@ -18940,13 +18985,18 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "structural",
+              "declaredCategory": "structural",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "BLENDLINK_EDITOR_COMMENT_PASSED",
+                  "path": "packages/blender-addon/tests/editor_comment_check.py"
+                }
+              ],
               "id": "NodeComment",
               "label": "Comment",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Native Blender5.3 editor-only Comment annotation with editable text and no input/output sockets. Root and nested-group shader/compositor comments, frame parenting, text/label/color/custom-note preservation and save/reload leave emitted programs and automatic material decisions identical. Actual4.2.0/5.2.0 creation is absent. Existing static graph rules remain; no shading/compositing operator, runtime opcode or numerical case is introduced. This does not promise unchanged export-cache timing.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19607,11 +19657,15 @@
                 },
                 {
                   "path": "experiments/camera-data/native_backend.py"
+                },
+                {
+                  "anchor": "qualified-camera-linux-browser-presentation-profile",
+                  "path": "experiments/camera-data/linux-x11-qualification.json"
                 }
               ],
               "id": "ShaderNodeCameraData",
               "label": "Camera Data",
-              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. OpenGL source qualification remains pending until the separate Linux5.2 actual-Final canary earns it.",
+              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. Fresh Linux5.2 OpenGL ordinary-source qualification passed native capture, eight actual Final GLBs, both browser APIs and owned GPU storage on actual headed X11/Graphite. The complete five-profile normal geometry matrix remains pending its fresh main run; no broader backend or source-version claim is added.",
               "runtimeOps": [
                 "camera_data_native"
               ],
@@ -22280,7 +22334,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_graph.py": "e0f79b7a83d4cada74e162a4e84008c197fa5c6d1bc467309cc34309f61adb99",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
-    "packages/blendlink/blender/compositor_luminance_key.py": "a3fb0df098e7afab236a421b0fd266cca2eb48fb48ef9de22d6887d0c6144d85",
+    "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
@@ -22329,7 +22383,7 @@
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
     "packages/blendlink/src/tslCompositorImageDomain.ts": "50eb4b114dcb565a22df1c13821179d879881df87e33bed52f98b565ef7e5016",
     "packages/blendlink/src/tslCompositorLumaGradual.ts": "f6497d953d2371b323fbfb0c1d4e98b543d2387528b49c7538ccb1e25ee491ed",
-    "packages/blendlink/src/tslCompositorLuminanceKey.ts": "8f28fc9c3384cbbddb8e319696ed147a940eeb0c1633f80fc835c60dc8a89979",
+    "packages/blendlink/src/tslCompositorLuminanceKey.ts": "3858b364150d9dc847ea05ee4ef768cb9b2ef5fae3c0ece240f3c3c1016e23c4",
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
     "packages/blendlink/src/tslCompositorMapValueDomain.ts": "325637bd5fb107ff49ce5aa8b45aa954be7a4411e9daf8cb79b4bb64ffa9ad0a",
     "packages/blendlink/src/tslCompositorPixelate.ts": "20feecc95d60c471e11428474bbcd3c214133652ecaafabc6b81a0486bc28b21",

@@ -24,7 +24,8 @@ each through WebGPU/WebGL2, have numeric maximum error **0** under the unchanged
 The oracle's unused scene uses empty one-sample Cycles CPU. Compositor CPU/GPU
 is an independent evaluation choice; the fixture records actual graphics
 context identity after initialization rather than inferring it from requested
-preferences. Fresh hosted OpenGL compositor qualification is separately pending.
+preferences. Fresh hosted OpenGL compositor qualification is separately earned
+in the reviewed receipt below.
 
 Source extraction is fingerprinted before/after with input **and output**
 defaults, literal properties, groups and links. Eleven actual refusal graphs
@@ -65,3 +66,16 @@ existing native Vector Component 5.3 canary also runs both compositor devices.
 
 This remains a partial fixed-selector port. Arbitrary selectors, geometry
 execution, all-node parity and whole-scene display equivalence are not implied.
+
+### Reviewed Linux OpenGL receipt
+
+Checkpoint `9d137e3`, run43411851888/job131839951921 passed with actual
+Blender5.3 OpenGL/llvmpipe. The [shared receipt](../vector-component-differential/opengl53-receipt.json)
+binds artifact14029991998 and its verified archive digest. Shader proof retains
+42 paired selections and two independent native carrier controls (88 browser
+carrier reads), plus84 exact raw algebraic controls. Its maximum carrier budget
+ratio is0.972426; the independent half-target allowance is not node precision.
+The separate compositor CPU/GPU proof contains256 native graphs and512
+browser readbacks, maximum error zero. Current-source/ZIP guards and strict
+browser readers pass; geometry execution, dynamic selectors, signed-zero
+browser parity and actual visitor Final pixel publication remain outside scope.

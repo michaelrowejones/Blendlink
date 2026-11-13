@@ -33,7 +33,7 @@ The extra private CPU/GPU memory is proportional to the full attributes and U32 
 
 Five profiles cover ordinary, translated, distant and close cameras plus the angular-footprint boundary. Each exercises perspective/orthographic, front/back camera views, positive nonuniform camera scale, parented reflected/nonuniform shared owners, animated owner/camera transforms, a nested group, scalar composition and an unchanged-owner check after the other owner moves. Each browser run verifies actual pins, live camera/viewport refusal and recovery, DPR, repeated draws, material/callback cleanup/reapply, and the legacy-renderer refusal. Default native checks also prove automatic unmarked-material routing and source preservation. Copied built add-on package probes pass all three versions.
 
-Native EEVEE reference rendering here uses **Metal**. The browser software/Metal comparison does not certify a native OpenGL source renderer; a separate native OpenGL canary is still needed. Browser mobile-size checks are layout/viewport tests, not phone hardware certification.
+The original five-profile native EEVEE reference corpus uses **Metal**. The independent Linux ordinary-profile OpenGL and actual SwiftShader Subzero presentation proof is recorded below; it does not retroactively turn local Metal references into OpenGL references. Browser mobile-size checks are layout/viewport tests, not phone hardware certification.
 
 Native output is packed into RGB digits `k/256`, exactly representable in the scene-half carrier. All 256 digit values are independently rendered/calibrated before each corpus. The raw scalar interval is `[decoded, decoded + 2^-16]`, plus the independently bounded `2^-23` bias-add rounding for signed vector components. The kernel budget is measured outside that interval; it is not widened by a generic half-ULP/raster allowance. The exported program remains the authored live vector/composition, not the oracle's packing graph or rendered pixels.
 
@@ -79,7 +79,7 @@ For copied-package imports, pass `BLENDLINK_CAMERA_DATA_ADDON=<copied dist/addon
 
 The central `geometry` parity shard runs the complete five-profile Camera Data source/Final suite, copied add-on namespace probe and owned-storage proof. Fresh native runs use `native_backend.py` around the unchanged native fixture. It selects an explicitly requested backend before initialization, records `gpu.platform` before and after that same process renders the oracle, and binds fixture/wrapper/reference bytes. `check-camera-data-source.mjs <profile> [OPENGL|METAL]` independently checks that attestation, current canonical Python and all eight actual Final GLB/manifest/program pins. Refusal, an unknown version, a missing request or a switched actual backend cannot count as the requested source proof.
 
-The separate `native-camera-data` Linux canary requests `OPENGL` on Blender5.2.0, generates an ordinary corpus from scratch, exports eight actual Final GLBs, compares both browser APIs, and exercises owned GPU storage. It does not reuse local Metal references or widen tolerances. Native OpenGL qualification stays **pending** in the capability map until that canary passes and its evidence is reviewed. `BLENDLINK_CAMERA_DATA_NATIVE_BACKEND=METAL` runs the same requested-backend path locally; omitting the variable still records actual backend identity without pretending an explicit request.
+The separate `native-camera-data` Linux canary requests `OPENGL` on Blender5.2.0, generates an ordinary corpus from scratch, exports eight actual Final GLBs, compares both browser APIs, and exercises owned GPU storage. It does not reuse local Metal references or widen tolerances. The isolated hosted X11 proof below qualifies that ordinary source/browser environment. The normal-trigger canary and complete five-profile geometry shard must still produce fresh receipts after integration. `BLENDLINK_CAMERA_DATA_NATIVE_BACKEND=METAL` runs the same requested-backend path locally; omitting the variable still records actual backend identity without pretending an explicit request.
 
 Blender4.2.0 background mode has no `gpu.init`, and its `gpu.platform` queries
 raise instead of identifying the renderer. The wrapper still runs the actual
@@ -89,3 +89,90 @@ native oracle, Final export and browser comparison, but records
 legacy numerical/Final pins separately and refuses to credit them as a
 requested Metal/OpenGL backend qualification. A request remains a selected
 preference, never a replacement for the unavailable actual platform query.
+
+### Browser execution diagnostics
+
+The runner saves `browser-report-<profile>.json` before assertions and retains
+partial numeric rows, the current source/frame/owner phase, adapter/limit data,
+renderer resource counts, device-loss/uncaptured-error events and page errors.
+An execution failure stays a failed proof. The other requested API is attempted
+independently; `completedAllBackends` requires both complete, and unexpected GPU
+or context events fail the run. `complete` means both attempts ended, not that
+the proof passed. No retry or alternate renderer substitutes for a failed API.
+
+The explicit harness negative control below deliberately destroys the WebGPU
+device at the first sample. It **must exit nonzero**, retaining its failure and
+partial phase while WebGL2 can still finish. This control is not native parity
+or a successful source-backend qualification:
+
+```sh
+BLENDLINK_CAMERA_DATA_NATIVE=/absolute/path/to/compiled/ordinary \
+BLENDLINK_TEST_PROFILE=device-loss-control \
+BLENDLINK_TEST_CHROMIUM_ARGS='["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader"]' \
+  npm exec --yes --package=node@24 -- node experiments/camera-data/run.mjs \
+  --built --diagnostic-device-loss
+```
+
+Hosted run `43411851888`, artifact `14029837703` at `9d137e3`, completed the
+native5.2 OpenGL attestation (Mesa llvmpipe LLVM20.1.2), 120 native samples and
+eight actual Final GLBs. Its browser step then threw a mapped-at-creation
+48-byte buffer `RangeError` before writing the old report. Archive SHA-256 is
+`e8b6d9bdc97c68977d6c5748a6a8578c70eed21f468bd3d4f3268dab6d1f2621`.
+[Chromium's implementation](https://chromium.googlesource.com/chromium/src/+/128493b77655aa20856b77cc7950097eff5924d6/third_party/blink/renderer/modules/webgpu/gpu_buffer.cc)
+uses that error when Dawn wire returns no buffer for the initialization mapping;
+it does not demonstrate that 48 exceeds the advertised buffer-size limit or
+establish a shader numeric error. Device loss versus host allocation pressure
+is unproven by the old log, which lacks those events and the failing phase.
+
+The exact retained runtime modules passed independent whole-program byte
+verification and the unchanged Linux native/Final bytes replayed locally on
+Mac SwiftShader LLVM10: 240 reads/API, zero errors outside native quantization,
+no uncaptured errors or device losses. This does **not** replace hosted
+SwiftShader Subzero execution proof. That original failed configuration remains
+unqualified; the separately earned headed X11 receipt follows. The diagnostic
+change does not alter runtime, native fixtures, numeric budgets or admission.
+
+Research receipts are retained in the isolated worker
+`/tmp/blendlink-camera-opengl-canary/artifacts/retained-14029837703/ordinary`,
+including the original browser log and separate `software-replay`,
+`software-instrumented` and deliberately failed `software-device-loss-control`
+reports. The ZIP is `/tmp/blendlink-camera-opengl-14029837703.zip`; its exact
+archive digest was verified before extraction. Original archived native/Final
+and runtime bytes are retained unchanged.
+
+## Qualified Linux Camera presentation
+
+[Hosted run 43421749306](https://github.com/michaelrowejones/Blendlink/actions/runs/43421749306)
+passes full Chromium158.0.8127.18 **headed** under Xvfb with actual Ozone X11,
+GraphiteDawnVulkan and SwiftShader Subzero. The independent plain public WebGPU
+canvas passes exact RGBA `[255,0,0,255]` before Blender or Three is tested.
+Fresh Blender5.2.0 EEVEE OpenGL contributes 120 native samples and 256 exact
+packing controls. Eight actual Final GLBs then pass 240 reads/API and 8 private
+GPU ownership cases/API. Both numeric APIs have zero error outside the native
+quantization interval; ownership is exact. The unchanged budgets still apply.
+The retained archive and source/runtime/report hashes are in
+[`linux-x11-qualification.json`](linux-x11-qualification.json).
+
+The environment correction has a pinned source basis. Chromium's
+[`InitializeForDawn()`](https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/components/viz/service/display_embedder/skia_output_surface_impl_on_gpu.cc)
+requires Linux X11 fallback support, or reaches `NOTREACHED()`.
+[`OzonePlatformHeadless`](https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/ui/ozone/platform/headless/ozone_platform_headless.cc)
+leaves that property false, while
+[`OzonePlatformX11`](https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/ui/ozone/platform/x11/ozone_platform_x11.cc)
+sets it true. The separately retained native GPU SIGTRAP occurs at the matching
+conditional branch in the independently verified official Chrome ELF. Merely
+running a headless browser inside Xvfb did not select X11. An official Google
+Chrome debug archive had a different build ID from Chrome-for-Testing and was
+explicitly **not** used to symbolize this fault. All primary source hashes are
+in `chromium158-sources.json`; older headless failures remain failed receipts.
+
+Only Camera children of the Linux geometry shard and the dedicated Camera
+canary use this profile. Other families, macOS and Windows keep their existing
+launch options. `BLENDLINK_TEST_CHROMIUM_HEADLESS=0|1` is an explicit test-only
+option; unset keeps the prior headless default. `check-camera-data-browser.mjs`
+requires actual CDP headed/X11/Graphite identity, all rendering flags, complete
+API reports, the plain canvas, and ownership. Debugger launcher/sandbox flags
+are refused. New Chromium versions require renewed presentation qualification.
+Source math, admission, serialized programs and numeric budgets are unchanged.
+This proof certifies the recorded ordinary5.2 OpenGL scope; legacy4.2 backend
+attestation remains explicitly unavailable.

@@ -294,6 +294,15 @@ jobs:
     name: Native Camera Data / EEVEE OpenGL / Blender 5.2.0 / actual Final / Linux SwiftShader
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    # Camera-only: an actual X11 window is required for Chromium158's
+    # Graphite/Dawn presentation. Other native node jobs keep their profiles.
+    env:
+      LIBGL_ALWAYS_SOFTWARE: '1'
+      BLENDLINK_CAMERA_DATA_NATIVE_BACKEND: OPENGL
+      BLENDLINK_TEST_PROFILE: software-camera-headed-x11-graphite
+      BLENDLINK_TEST_CHROMIUM_HEADLESS: '0'
+      BLENDLINK_TEST_CHROMIUM_CHANNEL: chromium
+      BLENDLINK_TEST_CHROMIUM_ARGS: '["--ozone-platform=x11","--enable-gpu","--use-gl=angle","--use-angle=swiftshader","--enable-skia-graphite","--skia-graphite-dawn-backend=swiftshader","--use-webgpu-adapter=swiftshader"]'
     steps:
       - name: Check out the exact candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -332,18 +341,21 @@ jobs:
       # Ordinary profile only: fresh EEVEE source -> 8 actual Final GLBs ->
       # both browser APIs and exact private GPU storage. This earns native
       # OpenGL independently; the local Metal coverage does not credit it.
-      - name: Generate actual OpenGL source and Final/browser proof
+      - name: Verify the actual public WebGPU X11 presentation path first
         env:
-          LIBGL_ALWAYS_SOFTWARE: '1'
-          BLENDLINK_CAMERA_DATA_NATIVE_BACKEND: OPENGL
-          BLENDLINK_TEST_PROFILE: software
-          BLENDLINK_TEST_CHROMIUM_ARGS: '[]'
+          BLENDLINK_CAMERA_DATA_NATIVE: artifacts/verification-camera-data-linux52/ordinary
         run: |
-          env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run --auto-servernum node experiments/camera-data/suite.mjs \
+          xvfb-run --auto-servernum node experiments/camera-data/canvas-probe.mjs
+          node scripts/check-camera-data-browser.mjs artifacts/verification-camera-data-linux52 --canvas-only
+
+      - name: Generate actual OpenGL source and Final/browser proof
+        run: |
+          xvfb-run --auto-servernum node experiments/camera-data/suite.mjs \
             --built --blender "$BLENDLINK_BLENDER" --profiles ordinary --output artifacts/verification-camera-data-linux52
           node scripts/check-camera-data-source.mjs artifacts/verification-camera-data-linux52/ordinary OPENGL
           BLENDLINK_CAMERA_DATA_NATIVE=artifacts/verification-camera-data-linux52/ordinary \
-            env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run --auto-servernum node experiments/camera-data/run.mjs --built --ownership
+            xvfb-run --auto-servernum node experiments/camera-data/run.mjs --built --ownership
+          node scripts/check-camera-data-browser.mjs artifacts/verification-camera-data-linux52
           BLENDLINK_CAMERA_DATA_ADDON=packages/blendlink/dist/addon \
             "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 --python experiments/camera-data/package_probe.py
 

@@ -62,7 +62,7 @@ test('metadata and fresh native canaries retain fixed shader scope, absence and 
   assert.deepEqual(entry.verification.nativeNumericVersions, ['5.3.0']); assert.deepEqual(entry.verification.nativeAbsentVersions, ['4.2.0', '5.2.0'])
   assert.equal(entry.verification.browserNativeCarrierReadbacks, 176); assert.equal(entry.verification.browserRawAlgebraicReadbacks, 168)
   assert.equal(entry.verification.nativeTargetAllowanceIsNodePrecision, false); assert.equal(entry.verification.rawMaximumAbsoluteError, 0)
-  assert.equal(entry.verification.freshHostedOpenGL, 'pending'); assert.ok(!map.knownUnsupported.includes(key))
+  assert.equal(entry.verification.freshHostedOpenGL.status, 'qualified-opengl'); assert.equal(entry.verification.freshHostedOpenGL.artifact, 14029991998); assert.ok(!map.knownUnsupported.includes(key))
   assert.equal(map.entries['compositor:FunctionNodeGetVectorComponent'].category, 'partial'); assert.ok(!map.knownUnsupported.includes('compositor:FunctionNodeGetVectorComponent'))
   const gate = read('scripts/test-node-parity.mjs')
   for (const name of ['validateVectorComponentSource', 'validateVectorComponentBrowser', 'shaderSourceQualifications', "qualification.status === 'native-node-absent'"]) assert.ok(gate.includes(name))

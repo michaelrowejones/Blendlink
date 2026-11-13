@@ -12,6 +12,22 @@ const C = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 
   inverseC = C.clone().transpose()
 const digest=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),byte=>byte.toString(16).padStart(2,'0')).join('')
 window.runProof = async (proof) => {
+  // Experiment evidence survives an execution failure; no renderer object is
+  // exposed or substituted for the installed production runtime.
+  const evidence = window.cameraDataProof = {
+    complete: false, startedAt: performance.now(), phase: null, phases: [],
+    diagnosticDeviceLoss: new URLSearchParams(location.search).get('diagnosticDeviceLoss') === '1',
+    deviceLosses: [], uncapturedErrors: [], contextEvents: [],
+    errors: [], failures: [], rows: [], negativeChecks: [],
+  }
+  const mark = (name, details = {}) => {
+    const phase = { name, at: performance.now(), cases: evidence.rows.length, ...details }
+    evidence.phase = phase
+    evidence.phases.push(phase)
+    // The Node host retains the latest phase even if the renderer process dies.
+    window.cameraDataProgress?.(phase).catch(() => {})
+  }
+  mark('renderer-init')
   const renderer = new WebGPURenderer({
     antialias: false,
     forceWebGL: new URLSearchParams(location.search).get('backend') === 'webgl2',
@@ -19,15 +35,39 @@ window.runProof = async (proof) => {
   await renderer.init()
   const info=renderer.backend?.device?.adapterInfo, gl=renderer.backend?.gl, debug=gl?.getExtension('WEBGL_debug_renderer_info')
   const gpu=info?{api:'WebGPU',vendor:info.vendor,architecture:info.architecture,device:info.device,description:info.description}:gl?{api:'WebGL2',vendor:gl.getParameter(debug?.UNMASKED_VENDOR_WEBGL??gl.VENDOR),renderer:gl.getParameter(debug?.UNMASKED_RENDERER_WEBGL??gl.RENDERER)}:null
+  evidence.gpu = gpu
   renderer.setPixelRatio(1)
   renderer.setSize(1024, 512)
   renderer.toneMapping = THREE.NoToneMapping
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace
   const backend = renderer.backend.isWebGPUBackend ? 'webgpu' : 'webgl2',
     device = renderer.backend.device,
-    errors = [],
-    failures = [],
-    rows = [], negativeChecks = []
+    errors = evidence.errors,
+    failures = evidence.failures,
+    rows = evidence.rows, negativeChecks = evidence.negativeChecks
+  evidence.backend = backend
+  evidence.deviceLimits = device ? {
+    maxBufferSize: device.limits.maxBufferSize,
+    maxStorageBufferBindingSize: device.limits.maxStorageBufferBindingSize,
+  } : null
+  device?.lost.then(({ reason, message }) => {
+    const event = { reason, message, at: performance.now(), phase: evidence.phase }
+    evidence.deviceLosses.push(event)
+    window.cameraDataProgress?.({ name: 'device-lost', ...event }).catch(() => {})
+  })
+  device?.addEventListener('uncapturederror', event => {
+    const error = { name: event.error.name, message: event.error.message,
+      at: performance.now(), phase: evidence.phase }
+    evidence.uncapturedErrors.push(error)
+    window.cameraDataProgress?.({ name: 'uncaptured-gpu-error', ...error }).catch(() => {})
+  })
+  for (const name of ['webglcontextlost', 'webglcontextrestored'])
+    renderer.domElement.addEventListener(name, event => {
+      evidence.contextEvents.push({ name, statusMessage: event.statusMessage,
+        at: performance.now(), phase: evidence.phase })
+    })
+  const memory = () => ({ ...renderer.info.memory })
+  mark('renderer-ready', { backend, gpu, memory: memory() })
   renderer.debug.onShaderError = (gl, program, vertex, fragment) =>
     errors.push(
       [gl.getProgramInfoLog(program), gl.getShaderInfoLog(vertex), gl.getShaderInfoLog(fragment)]
@@ -38,6 +78,7 @@ window.runProof = async (proof) => {
     cases = 0,
     flip
   for (const source of proof.scenes) {
+    mark('source-load', { source: source.name, memory: memory() })
     const manifestBytes=await (await fetch(source.manifestUrl)).arrayBuffer()
     if(await digest(manifestBytes)!==source.manifestSha256)throw new Error('Final manifest bytes changed')
     const manifest=JSON.parse(new TextDecoder().decode(manifestBytes))
@@ -64,6 +105,7 @@ window.runProof = async (proof) => {
     })
     if (installed.applied !== proof.references.cases.length * owners.length || installed.skipped.length)
       throw new Error('Geometry context install refused ' + JSON.stringify(installed.skipped))
+    mark('source-installed', { source: source.name, applied: installed.applied, memory: memory() })
     const materials = new Set()
     for (const owner of owners)
       owner.traverse((mesh) => {
@@ -133,10 +175,17 @@ window.runProof = async (proof) => {
               }),
           )
         device?.pushErrorScope('validation')
+        mark('sample-render', { source: source.name, frame, owner: name, memory: memory() })
+        if (device && evidence.diagnosticDeviceLoss && !evidence.diagnosticDeviceLossInjected) {
+          evidence.diagnosticDeviceLossInjected = true
+          device.destroy()
+          await device.lost
+        }
         renderer.setRenderTarget(target)
         renderer.setClearColor(new THREE.Color(1, 0, 1), 0)
         renderer.render(gltf.scene, camera)
         const pixels = await renderer.readRenderTargetPixelsAsync(target, 0, 0, 1024, 512)
+        mark('sample-readback', { source: source.name, frame, owner: name, memory: memory() })
         const sample = (point, flipped) => {
           const [x, y] = point
           return Array.from(
@@ -225,6 +274,7 @@ window.runProof = async (proof) => {
       }
     }
     if (errors.length) throw new Error(errors.join('\n'))
+    mark('live-camera-negative', { source: source.name, memory: memory() })
     const saved=camera.position.clone(),culling=callbacks.map(row=>[row.mesh,row.mesh.frustumCulled]),owned=callbacks.map(row=>[row.mesh.material,row.mesh.onBeforeRender,row.mesh.material.version])
     callbacks.forEach(row=>row.mesh.frustumCulled=false);camera.position.x+=1000;camera.updateMatrixWorld(true)
     let error;try{renderer.render(gltf.scene,camera)}catch(value){error=String(value)}
@@ -233,6 +283,7 @@ window.runProof = async (proof) => {
     renderer.render(gltf.scene,camera)
     if(callbacks.some((row,index)=>row.mesh.material!==owned[index][0]||row.mesh.onBeforeRender!==owned[index][1]||row.mesh.material.version!==owned[index][2]))throw new Error('Failed draw changed owned materials/callbacks or invalidated pipelines')
     negativeChecks.push({source:source.name,kind:'live-camera-range',error,recovered:true})
+    mark('live-viewport-negative', { source: source.name, memory: memory() })
     const viewport=target.viewport.clone()
     target.viewport.set(0,0,1,1);callbacks.forEach(row=>row.mesh.frustumCulled=false)
     let resizeError;try{renderer.render(gltf.scene,camera)}catch(value){resizeError=String(value)}
@@ -245,6 +296,7 @@ window.runProof = async (proof) => {
     if(renderer.info.memory.textures!==textureCount)throw new Error('Repeated Camera Data draws grew texture resources')
     renderer.setPixelRatio(1);renderer.setSize(1024,512);renderer.setRenderTarget(target);renderer.render(gltf.scene,camera)
     negativeChecks.push({source:source.name,kind:'actual-viewport-dpr-recovery',error:resizeError,dpr:2,css:[512,256],drawingBuffer:[1024,512],textureCount,recovered:true})
+    mark('cleanup-reapply', { source: source.name, memory: memory() })
     installed.dispose();installed.dispose()
     if(callbacks.some(row=>row.mesh.material!==row.material||row.mesh.onBeforeRender!==row.observer||!row.calls))throw new Error('Actual Camera Data material/callback ownership was not restored')
     const again=await installTslMaterials({root:gltf.scene,descriptor:{materialPrograms:manifest.materialPrograms}})
@@ -254,7 +306,11 @@ window.runProof = async (proof) => {
     negativeChecks.push({source:source.name,kind:'material-callback-cleanup-reapply',callbacks:callbacks.length})
     target.dispose()
     mixer.stopAllAction()
+    mark('source-completed', { source: source.name, memory: memory() })
   }
+  mark('renderer-dispose', { memory: memory() })
   renderer.dispose()
-  return { backend, gpu, cases, maximum, maximumKernelError:Math.max(...rows.map(row=>row.kernelError)), rows, negativeChecks, failures }
+  evidence.complete = true
+  evidence.finishedAt = performance.now()
+  return { ...evidence, backend, gpu, cases, maximum, maximumKernelError:Math.max(...rows.map(row=>row.kernelError)), rows, negativeChecks, failures }
 }

@@ -13,14 +13,15 @@ documents, spatial GPU evaluation and unqualified fresh CPU sources keep v1.
 Persisted legacy reversed CPU ramps also retain the explicit v1 contract; current 4.2 RNA constrains reverse authoring. Unqualified fresh CPU sources are explicitly tagged `legacy-unqualified-cpu-v1`
 and `SOURCE_ADMISSION_NA`; they do not gain an HDR precision claim.
 
-## Linux5.2 production-admission candidate
+## Linux5.2 production qualification
 
-The allowlist candidate is **only** Linux `x86_64`, Blender5.2.0 build
+The qualified allowlist is **only** Linux `x86_64`, Blender5.2.0 build
 `fbe6228777e7`, actual gradual-RNE and the measured Float32 Rec.709 tuple.
 Source extraction adds `luminance_key_source_build` for this profile; runtime
 independently requires that exact identity. Existing Mac documents retain
-their profile shape and semantics. Windows and all unmeasured Linux
-versions/builds/architectures retain `legacy-unqualified-cpu-v1`.
+their profile shape and semantics. Unmeasured Linux versions/builds/architectures
+retain `legacy-unqualified-cpu-v1`; the separately qualified Windows CPU sources
+are listed below.
 
 The basis is retained native trial run43400812538/job131802895572,
 artifact14024667969, archive SHA256
@@ -31,14 +32,63 @@ on both browser APIs, with stable native dot/multiply/add controls and
 unchanged source programs/pixels. Those receipts remain **SOURCE_ADMISSION_NA
 with zero production exact cases**; they are not rewritten or relabelled.
 
-Fresh production qualification remains **pending**. The Linux canary now
-requires `PRODUCTION_QUALIFIED`,32 actual source-emitted production precision
-programs and a fresh production compositor comparison on both browser APIs.
+Fresh production qualification **passed** on checkpoint `9d137e3`, run43411851852/job131839951001.
+The [reviewed receipt](linux52-production.json) binds artifact14030161909, archive
+SHA256 `4bf0d1cad0d4c86eac69570d95c0a77c6a2c695587b6fd8f70e12cd2aa1f52d1`.
+Both actual WebGPU and WebGL2 passed79 unchanged production programs, including
+32 bit-exact precision cases/API, with zero error. All163 archived runtime source
+hashes match the reviewed tree. The mandatory Linux canary continues to require
+`PRODUCTION_QUALIFIED` and a fresh actual-production comparison on both APIs.
 Precision outputs must be bit-exact, including subnormal and signed-zero
 results; merely falling inside a tolerance cannot qualify them. The driver
 counts production cases only after that production browser step succeeds.
-Windows canaries still require `SOURCE_ADMISSION_NA`. The private-kernel trial
-continues to report zero production admission cases independently.
+The private-kernel trial continues to report zero production admission cases
+independently. The original Linux production receipt stays unchanged; the
+fresh host run below revalidated the same 79 cases/API against the expanded
+source guard, with 32 bit-exact precision cases and zero error.
+
+## Windows CPU production qualification
+
+Fresh actual-production run [43418329637](https://github.com/michaelrowejones/Blendlink/actions/runs/43418329637)
+qualified these two **CPU compositor source** profiles:
+
+| Source | Exact native build | Production cases/API | Bit-exact precision cases/API |
+| --- | --- | ---: | ---: |
+| Windows 4.2.0, `win32/AMD64`, gradual-RNE | `a51f293548ad` | 53 | 32 |
+| Windows 5.2.0, `win32/AMD64`, gradual-RNE | `fbe6228777e7` | 79 | 32 |
+
+The [production receipts](host-production-receipts.json) bind each actual archive
+SHA256, native source/version/build/mode/Rec.709 tuple, program pin, immutable
+runtime snapshot and browser result. Both WebGL2 and WebGPU passed every actual
+production program with numeric error zero and all 32 precision outputs
+bit-exact. Independent native task controls and 65,536 primitive comparisons/API
+also passed with zero mismatches; the separate 32-case private trial still
+contributes zero production admission cases.
+
+Source extraction and runtime admission independently require the exact Windows
+build, AMD64 architecture, actual gradual-RNE mode and Float32 Rec.709 tuple.
+Only native CPU compositor sources are qualified. Windows GPU single-value CPU
+folding keeps v1 with `SOURCE_ADMISSION_NA`; other Windows versions, builds,
+architectures and modes retain the existing v1 contract. Mac and Linux admission
+routes remain unchanged. The canaries require fresh `PRODUCTION_QUALIFIED` IR
+and a successful actual-production comparison before counting 32 precision cases.
+
+The recorded Windows browser devices are software D3D11 WARP for WebGL2 and
+SwiftShader for WebGPU. Chromium requires ANGLE's D3D11 device before selecting
+the WebGPU adapter, so Windows uses `--use-angle=d3d11-warp` together with
+`--use-webgpu-adapter=swiftshader`. The actual API/driver receipt is separate
+from numerical qualification. Unavailable adapters still fail. These receipts
+do not qualify physical Windows GPUs or Cycles live shaders; the empty Cycles
+scene carries independent native CPU compositor evaluation.
+
+The same run revalidated Linux 5.2.0 `x86_64` build `fbe6228777e7`: 79 production
+cases/API, including 32 bit-exact precision cases, with zero error on both APIs.
+Both built snapshots on each host contain 163 source/emitter/module pins and
+verified snapshot/map hashes. Native fixture/extractor/helper pins match the
+reviewed source. Windows hashes reflect Git's CRLF text checkout; the
+NUL-containing `sync.ts` remains byte-preserved. The initial Mac 358-scene /
+1,432-readback proof and the earlier Linux and Windows N/A receipts retain their
+original counts and statuses.
 
 ## Counterexamples and derivation
 
@@ -74,7 +124,8 @@ actual compositor task outputs separately validate Multiply, Add, RGBToBW and
 Divide; the certificate is checked before/after those tasks. The source build
 flags are supporting evidence only. In particular, the inspected Blender 4.2
 Windows CMake file lacks the explicit contraction-off flag found in the pinned
-Apple source. Windows bit parity remains unearned until its native trial.
+Apple source. Windows qualification therefore rests on the actual native task
+controls and fresh production receipts above.
 
 ## Measured proof
 
@@ -180,3 +231,20 @@ node --test experiments/luma-cpu-precision/precision-protocol.test.mjs
 - [5.3 vector dot implementation](https://github.com/blender/blender/blob/v5.3.0/source/blender/blenlib/BLI_math_vector.hh)
 - [4.2 Apple build flags](https://github.com/blender/blender/blob/v4.2.0/build_files/cmake/platform/platform_apple.cmake)
 - [4.2 Windows build flags](https://github.com/blender/blender/blob/v4.2.0/build_files/cmake/platform/platform_win32.cmake)
+
+## Historical Windows browser interop receipt
+
+The [reviewed Windows receipt](windows-browser-receipt.json) records fresh
+run43415307659 with full Chromium158. The software ANGLE backend uses
+D3D11 WARP, satisfying Chromium's required D3D11 interop query before Dawn
+selects its actual SwiftShader WebGPU adapter. Both Windows4.2 and5.2 passed
+ordinary21/47 cases/API exactly,32 private kernel cases/API bit-exactly and
+4x16384 primitive comparisons/API with zero mismatches. Linux regression
+checks passed separately. The normal-trigger fix retains actual API, driver
+and device diagnostics; an unavailable adapter still fails the gate.
+
+Those retained Windows source programs remain **SOURCE_ADMISSION_NA**, with zero
+production precision admission cases. Successful private trials and browser
+availability did not promote them. The separate production receipt above is
+the subsequent proof. Earlier failed adapter receipts are preserved; no physical
+Windows GPU or general hardware claim is made.

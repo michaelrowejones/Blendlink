@@ -7,6 +7,7 @@ const { Fn, clamp, dot, min, select, vec3 } = TSL as unknown as Record<
   'Fn' | 'clamp' | 'dot' | 'min' | 'select' | 'vec3', (...values: TslEffectNode[]) => TslEffectNode>
 
 export const CPU_LUMINANCE_KEY_MODEL = 'native-luminance-key-cpu-rne-v1'
+const windowsBuilds: Readonly<Record<string, string>> = { '4,2,0': 'a51f293548ad', '5,2,0': 'fbe6228777e7' }
 
 function cpuProfile(value: unknown, version: readonly number[], sourceBuild: unknown): 'gradual-rne' | 'ftz-daz-rne' | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null
@@ -17,7 +18,9 @@ function cpuProfile(value: unknown, version: readonly number[], sourceBuild: unk
       Object.hasOwn(p.tieWords as number[], index) && (p.tieWords as number[])[index] === word)
     || !(p.sourcePlatform === 'darwin' && p.sourceArchitecture === 'arm64'
       || p.sourcePlatform === 'linux' && p.sourceArchitecture === 'x86_64'
-        && version[0] === 5 && version[1] === 2 && version[2] === 0 && sourceBuild === 'fbe6228777e7')) return null
+        && version[0] === 5 && version[1] === 2 && version[2] === 0 && sourceBuild === 'fbe6228777e7'
+      || p.sourcePlatform === 'win32' && p.sourceArchitecture === 'AMD64'
+        && Object.hasOwn(windowsBuilds, version.join(',')) && sourceBuild === windowsBuilds[version.join(',')])) return null
   if (p.mode === 'gradual-rne' && p.underflowWord === 0x00400000 && p.denormalInputWord === 0x00800000) return p.mode
   if (p.mode === 'ftz-daz-rne' && p.underflowWord === 0 && p.denormalInputWord === 0) return p.mode
   return null
@@ -53,6 +56,9 @@ export function buildCompositorLuminanceKey(op: SourceCompositorOperation,
       return fail('Luminance Key CPU precision requires its measured source Rec.709 coefficients')
     const profile = cpuProfile(op.properties.luminance_key_cpu_profile, version as number[], op.properties.luminance_key_source_build)
     if (profile === null || profile !== (version[0] === 5 && version[1] === 3 ? 'ftz-daz-rne' : 'gradual-rne')) return fail('Luminance Key CPU precision requires its verified Float32 mode certificate')
+    if ((op.properties.luminance_key_cpu_profile as Record<string, unknown>).sourcePlatform === 'win32'
+      && op.properties.evaluation_device !== 'CPU')
+      return fail('Windows Luminance Key precision requires its measured CPU compositor source; GPU single-value folding remains unqualified')
     const output = op.source.output, [low, high] = limits.map(Math.fround)
     if (schema === 'legacy-branch' && (version[0] !== 4 || low! >= high!) || version[0] === 4 && schema !== 'legacy-branch')
       return fail('Legacy Luminance Key CPU precision requires its ordered native thresholds')
