@@ -30,6 +30,14 @@ test('new PR revisions can supersede stale checks without cancelling tagged dist
   assert.match(workflow, /concurrency:\n  group: release-candidate-\$\{\{ github\.ref \}\}\n(?:  #[^\n]*\n)?  cancel-in-progress: \$\{\{ github\.event_name == 'pull_request' \}\}/)
 })
 
+test('only the compositor shard gets expanded-corpus timeout headroom', () => {
+  const linux = job('linux', 'windows')
+  const timeouts = [...linux.matchAll(/^    timeout-minutes: (.+)$/gm)].map(match => match[1])
+  assert.deepEqual(timeouts, ["${{ matrix.suite == 'compositor' && 90 || 75 }}"])
+  assert.match(linux, /suite: \[compositor, shaders, geometry, noise-fbm, noise-types\]/)
+  assert.match(linux, /suite: noise-watchdog-diagnostic/)
+})
+
 test('release candidate attests and retains one exact carrier', () => {
   const candidate = job('release-candidate', 'publish-npm')
   assert.match(candidate, /verify-retained-release\.mjs retained/)

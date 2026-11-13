@@ -104,7 +104,8 @@ jobs:
   linux:
     name: Linux x64 / Blender ${{ matrix.blender.version }} / ${{ matrix.suite }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 75
+    # The expanded compositor corpus took 68 minutes on Linux 5.2; allow host variance.
+    timeout-minutes: ${{ matrix.suite == 'compositor' && 90 || 75 }}
     strategy:
       fail-fast: false
       matrix:
