@@ -3328,12 +3328,14 @@ def _plan_tsl_program(
         from . import normal_map_tangent_ir
         from . import bump_height_ir
         from . import magic_bounds
+        from . import camera_data_ir
     else:
         import geometry_ir
         import tangent_ir
         import normal_map_tangent_ir
         import bump_height_ir
         import magic_bounds
+        import camera_data_ir
     for entry in channels:
         magic_requirements=[];magic_bounds.requirements(entry.get('tslIr'),magic_requirements)
         if not magic_requirements:continue
@@ -3352,6 +3354,8 @@ def _plan_tsl_program(
         if outputs:
             try:
                 for obj, _slot in raw_bindings: geometry_ir.validate_owner(obj, outputs)
+                if camera_data_ir.required(entry['tslIr']):
+                    for obj, _slot in raw_bindings: camera_data_ir.validate_owner(obj)
                 geometry_ir.bind_normal_model(entry['tslIr'], [obj for obj, _slot in raw_bindings])
                 tangent_ir.bind_owners(entry['tslIr'],[obj for obj,_slot in raw_bindings],tangent_uv_choices)
                 normal_map_tangent_ir.validate_owners(entry['tslIr'],[obj for obj,_slot in raw_bindings])

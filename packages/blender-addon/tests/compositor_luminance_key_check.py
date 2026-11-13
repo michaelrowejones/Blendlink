@@ -237,8 +237,19 @@ def main(output):
         from types import SimpleNamespace
         sink, source, node = setup(.1, .2); tree.links.new(node.outputs['Image'], sink.inputs[0])
         before = fingerprint(tree); original_bpy, original_coefficients, original_profile, original_sys = helper.bpy, helper._cpu_coefficients, helper._cpu_profile, helper.sys
+        # Admission policy checks are pure tests, separate from every actual
+        # source/native numerical record. No oracle program is relabelled.
+        assert helper._cpu_source_allowed((5, 2, 0), 'linux', 'x86_64', 'fbe6228777e7')
+        for arguments in [((4, 2, 0), 'linux', 'x86_64', 'fbe6228777e7'),
+                ((5, 3, 0), 'linux', 'x86_64', 'fbe6228777e7'),
+                ((5, 2, 1), 'linux', 'x86_64', 'fbe6228777e7'),
+                ((5, 2, 0), 'linux', 'aarch64', 'fbe6228777e7'),
+                ((5, 2, 0), 'linux', 'x86_64', '000000000000'),
+                ((5, 2, 0), 'win32', 'AMD64', 'fbe6228777e7')]:
+            assert not helper._cpu_source_allowed(*arguments), arguments
+
         try:
-            helper.bpy = SimpleNamespace(app=SimpleNamespace(version=(5, 2, 1)))
+            helper.bpy = SimpleNamespace(app=SimpleNamespace(version=(5, 2, 1), build_hash=bpy.app.build_hash))
             rejected = compositor_graph.extract(oracle.scene)
             assert rejected['status'] == 'extracted' and any(op['properties'].get('luminance_key_exact_qualification', {}).get('reason') == 'unmeasured source version' for op in rejected['ops']), rejected
             helper.bpy = original_bpy
@@ -282,7 +293,12 @@ def main(output):
             record = json.loads((output / filename).read_text())
             keys = [op for op in record['program']['ops'] if op['kind'] == 'luminance-key']
             assert len(keys) == 1, record['case']
-            if keys[0]['properties']['luminance_key_model'] == 'native-luminance-key-cpu-rne-v1': production_exact_cases += 1
+            if keys[0]['properties']['luminance_key_model'] == 'native-luminance-key-cpu-rne-v1':
+                production_exact_cases += 1
+                # Actual production compositor, not the private-kernel trial:
+                # preserve every finite bit including signed/subnormal output.
+                record['requireFloat32Bits'] = True
+                (output / filename).write_text(json.dumps(record, separators=(',', ':')))
             else:
                 assert experimental_precision and keys[0]['properties']['luminance_key_precision'] == 'legacy-unqualified-cpu-v1'
             precision_files.append({'case': row['case'], 'file': filename,

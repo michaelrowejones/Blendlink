@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "cf031cfde0fa0cef96ed2d5a62d3709cc0bf27f511f8cd5cdf43f62042e3d99f",
+  "capabilityMapSha256": "7b3f2a4f7e967d35780f6cda0963d5c2c32374ffb2111228e73a2decdc6f75cb",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T09:15:00.734706+00:00",
+  "generatedAt": "2026-11-13T10:30:55.680314+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -1634,7 +1634,7 @@
               ],
               "id": "CompositorNodeLumaMatte",
               "label": "Luminance Key",
-              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Actual Linux 5.2/Windows 4.2/5.2 CPU qualification remains pending in a separate experimental native workflow; successful private-kernel trials cannot promote source admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
+              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 now has a narrowly scoped gradual-RNE/Rec.709 admission candidate, independently checked by source/runtime build and profile guards; fresh production qualification remains pending until the mandatory actual-production compositor browser rerun passes. The retained Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
               "runtimeOps": [
                 "luminance-key"
               ],
@@ -2913,10 +2913,10 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 40,
+            "partial": 41,
             "structural": 6,
             "supported": 19,
-            "unsupported": 38
+            "unsupported": 37
           },
           "enumValueCounts": {
             "partial": 21,
@@ -3438,14 +3438,52 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_camera_data",
+                  "path": "packages/blender-addon/camera_data_ir.py"
+                },
+                {
+                  "anchor": "camera_data_ir.validate_owner",
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "anchor": "ShaderNodeCameraData",
+                  "path": "packages/blender-addon/engine_fallback.py"
+                },
+                {
+                  "anchor": "export function buildNativeCameraData",
+                  "path": "packages/blendlink/src/tslCameraData.ts"
+                },
+                {
+                  "anchor": "export function trackCameraDataGeometry",
+                  "path": "packages/blendlink/src/tslCameraGeometry.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCameraGeometry.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/camera_data_check.py"
+                },
+                {
+                  "path": "experiments/camera-data/README.md"
+                },
+                {
+                  "path": "experiments/camera-data/ownership.js"
+                },
+                {
+                  "path": "experiments/camera-data/native_backend.py"
+                }
+              ],
               "id": "ShaderNodeCameraData",
               "label": "Camera Data",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. OpenGL source qualification remains pending until the separate Linux5.2 actual-Final canary earns it.",
+              "runtimeOps": [
+                "camera_data_native"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -7638,7 +7676,7 @@
               ],
               "id": "CompositorNodeLumaMatte",
               "label": "Luminance Key",
-              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Actual Linux 5.2/Windows 4.2/5.2 CPU qualification remains pending in a separate experimental native workflow; successful private-kernel trials cannot promote source admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
+              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 now has a narrowly scoped gradual-RNE/Rec.709 admission candidate, independently checked by source/runtime build and profile guards; fresh production qualification remains pending until the mandatory actual-production compositor browser rerun passes. The retained Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
               "runtimeOps": [
                 "luminance-key"
               ],
@@ -10191,10 +10229,10 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 37,
+            "partial": 38,
             "structural": 6,
             "supported": 21,
-            "unsupported": 54
+            "unsupported": 53
           },
           "enumValueCounts": {
             "partial": 23,
@@ -10996,14 +11034,52 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_camera_data",
+                  "path": "packages/blender-addon/camera_data_ir.py"
+                },
+                {
+                  "anchor": "camera_data_ir.validate_owner",
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "anchor": "ShaderNodeCameraData",
+                  "path": "packages/blender-addon/engine_fallback.py"
+                },
+                {
+                  "anchor": "export function buildNativeCameraData",
+                  "path": "packages/blendlink/src/tslCameraData.ts"
+                },
+                {
+                  "anchor": "export function trackCameraDataGeometry",
+                  "path": "packages/blendlink/src/tslCameraGeometry.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCameraGeometry.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/camera_data_check.py"
+                },
+                {
+                  "path": "experiments/camera-data/README.md"
+                },
+                {
+                  "path": "experiments/camera-data/ownership.js"
+                },
+                {
+                  "path": "experiments/camera-data/native_backend.py"
+                }
+              ],
               "id": "ShaderNodeCameraData",
               "label": "Camera Data",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. OpenGL source qualification remains pending until the separate Linux5.2 actual-Final canary earns it.",
+              "runtimeOps": [
+                "camera_data_native"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -13552,10 +13628,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 33,
+            "partial": 34,
             "structural": 6,
             "supported": 24,
-            "unsupported": 124
+            "unsupported": 123
           },
           "enumValueCounts": {
             "partial": 27,
@@ -15263,7 +15339,7 @@
               ],
               "id": "CompositorNodeLumaMatte",
               "label": "Luminance Key",
-              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Actual Linux 5.2/Windows 4.2/5.2 CPU qualification remains pending in a separate experimental native workflow; successful private-kernel trials cannot promote source admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
+              "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 now has a narrowly scoped gradual-RNE/Rec.709 admission candidate, independently checked by source/runtime build and profile guards; fresh production qualification remains pending until the mandatory actual-production compositor browser rerun passes. The retained Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
               "runtimeOps": [
                 "luminance-key"
               ],
@@ -16441,14 +16517,44 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_vector_component.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorVectorComponent.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_vector_component_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_component_packaged.py"
+                },
+                {
+                  "path": "scripts/lib/compositor-vector-component-profile.mjs"
+                },
+                {
+                  "path": "scripts/compositor-component-policy.test.mjs"
+                },
+                {
+                  "path": "experiments/native-compositor-differential/VECTOR_COMPONENT.md"
+                }
+              ],
               "id": "FunctionNodeGetVectorComponent",
               "label": "Get Vector Component",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Exact Blender 5.3.0 compositor Get Vector Component, fixed typed integer Index 0/1/2, using existing Separate XYZ swizzles without new arithmetic/opcode. Unlinked integer defaults and actual Input Integer literals through reroutes/groups qualify. Converted Float/Boolean, computed/spatial and out-of-range selectors, animation/drivers, unknown versions and unverified socket shapes refuse. Runtime independently rechecks source/model, exact active Vector/Index types and literal provenance; ordinary Separate XYZ remains unchanged. Actual 4.2.0/5.2.0 creation is absent, zero-case N/A rather than a numerical pass. Native CPU and GPU each retain 63 selections, 63 independent Separate XYZ pairs and 2 carrier controls. The unused oracle scene is empty Cycles CPU; compositor device is independent. ZIP-isolated namespaced package extraction is source-only evidence. Browser checks are numeric-zero on physical Metal and SwiftShader through both APIs; signed-zero browser words, dynamic selectors, geometry execution and whole-node/all-graph coverage are not claimed. Fresh hosted OpenGL compositor qualification remains pending.",
+              "runtimeOps": [
+                "separate-vector"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -18238,10 +18344,10 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 39,
+            "partial": 40,
             "structural": 6,
             "supported": 22,
-            "unsupported": 78
+            "unsupported": 77
           },
           "enumValueCounts": {
             "partial": 25,
@@ -18360,7 +18466,7 @@
               ],
               "id": "FunctionNodeGetVectorComponent",
               "label": "Get Vector Component",
-              "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but only shader extraction is ported here; compositor remains unsupported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication and OpenGL-source numerical qualification remain separate.",
+              "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but shader and compositor fixed selection have separate qualified gates; geometry execution remains unported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication and OpenGL-source numerical qualification remain separate.",
               "runtimeOps": [
                 "separate"
               ],
@@ -19463,14 +19569,52 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_camera_data",
+                  "path": "packages/blender-addon/camera_data_ir.py"
+                },
+                {
+                  "anchor": "camera_data_ir.validate_owner",
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "anchor": "ShaderNodeCameraData",
+                  "path": "packages/blender-addon/engine_fallback.py"
+                },
+                {
+                  "anchor": "export function buildNativeCameraData",
+                  "path": "packages/blendlink/src/tslCameraData.ts"
+                },
+                {
+                  "anchor": "export function trackCameraDataGeometry",
+                  "path": "packages/blendlink/src/tslCameraGeometry.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCameraGeometry.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/camera_data_check.py"
+                },
+                {
+                  "path": "experiments/camera-data/README.md"
+                },
+                {
+                  "path": "experiments/camera-data/ownership.js"
+                },
+                {
+                  "path": "experiments/camera-data/native_backend.py"
+                }
+              ],
               "id": "ShaderNodeCameraData",
               "label": "Camera Data",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. OpenGL source qualification remains pending until the separate Linux5.2 actual-Final canary earns it.",
+              "runtimeOps": [
+                "camera_data_native"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -22092,14 +22236,15 @@
     "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
     "packages/blender-addon/bump_height_ir.py": "c634d0eed632ffc62293ce1cd0985bc115951b02bdef88901b3e59ec164cd5d6",
     "packages/blender-addon/bump_ir.py": "438d0422d6106a489bb001ad65904e26f4861dd699f00eed559fa38d2ee19590",
+    "packages/blender-addon/camera_data_ir.py": "956a074bad662f2a643335666ec62823643f955d6da8c75d056fa5f75928f1c8",
     "packages/blender-addon/color_ir.py": "0b6fd4f61a5ce22d5fe84135b2fbdd484b5bc805889ff952e87e573053797e69",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
-    "packages/blender-addon/engine_fallback.py": "2c41ad5a9d9aec716b311fc5ca1cfb42840bef59427a9faf85818952ebc0566a",
+    "packages/blender-addon/engine_fallback.py": "f084377928fd0b3ea741dc84c0282997a11b1ac476fc51fc4a97c80f2950f88a",
     "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
     "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
     "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
-    "packages/blender-addon/material_compiler.py": "174921d29f94ff6323664a17bbc488768c11cd29d7094180ae37e6ff0bf24643",
+    "packages/blender-addon/material_compiler.py": "950c217f1efb1412302861c9383d81ab63385e0f09d859e0278651b352261bd2",
     "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
     "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
@@ -22111,12 +22256,12 @@
     "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
     "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
     "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
-    "packages/blender-addon/procedural.py": "05a415da6433bd4b810e2c764610785dcc11173f093b30730c597cb24f41e807",
+    "packages/blender-addon/procedural.py": "cb6b850ff5c284aab982cbff4f22ea1bb4352e65572d613aeb8816b049a208bf",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-    "packages/blender-addon/tsl_ir.py": "acdd1c3f041c02ec6b5c5dc490fea4fe0d12bbe332ca8bf0e27d12867607a5ba",
+    "packages/blender-addon/tsl_ir.py": "2b9df4d04dc4a2cf63e815f6397ddee3fa98b66a77ac8b8a11229c494c57ea98",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
@@ -22133,9 +22278,9 @@
     "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
     "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
-    "packages/blendlink/blender/compositor_graph.py": "c7032b0d27b2dd0dffa79310017b0deb131c88dddda511c025ae3d6d3b1379a1",
+    "packages/blendlink/blender/compositor_graph.py": "e0f79b7a83d4cada74e162a4e84008c197fa5c6d1bc467309cc34309f61adb99",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
-    "packages/blendlink/blender/compositor_luminance_key.py": "49e199f0c3c8619347ba995c87f29b3d99b6775b0fbe9d59021f057f3d1cc1d0",
+    "packages/blendlink/blender/compositor_luminance_key.py": "a3fb0df098e7afab236a421b0fd266cca2eb48fb48ef9de22d6887d0c6144d85",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
@@ -22144,19 +22289,22 @@
     "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
     "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
     "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
+    "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
-    "packages/blendlink/src/compiledMaterialPrograms.ts": "ca0fbc32ec52df9766120c8a98dc1488de0156713b910dbf9eb216c351b4a062",
+    "packages/blendlink/src/compiledMaterialPrograms.ts": "130483c43090ffe143fe7db157ce54dd720a2ba6e8b24ae3d8a5fc922856236f",
     "packages/blendlink/src/compiledSceneAudit.ts": "e50ccf4daee1f7ea17cad4ec7a1f4828dfa401b1f8627a829b3de4d9e2857760",
-    "packages/blendlink/src/materialProgramDocument.ts": "71dce3562f4556e1f364799495f407f4a6a81f3d34dcf19206790fcaaa8f6627",
+    "packages/blendlink/src/materialProgramDocument.ts": "796e10719929ca92914572dd89f16f2c00b54e673179a940dcab9f31f5cb06c0",
     "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
     "packages/blendlink/src/staticNoise4d.ts": "8101c6f4eedaf76b907a9fb98c7ed9f7b52aa0b9690f7b4ffbdaf393882406b5",
     "packages/blendlink/src/threeRuntime.ts": "f6238c57d537dbc3218b135f6aaf80b00de819f362298cadbd2825ad18451538",
     "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
     "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
     "packages/blendlink/src/tslBumpPassthrough.ts": "33607d6c8638df6490950c56375a7c004ac737d2241b40b5db1da71ccbc6ffb9",
+    "packages/blendlink/src/tslCameraData.ts": "357a3d5db89e630d9cabf12f5e7f2d88ccdf79a5cfaa1c0597cf2e81427168f6",
+    "packages/blendlink/src/tslCameraGeometry.ts": "45102cb42b0f5d0ee22740931d549e3ebe54ff4559e812fd73b8d381783ad7b8",
     "packages/blendlink/src/tslColorConversion.ts": "dab1c34326c1e3da91d598444062205b0ad2016172f7278121cdab007fd59e80",
     "packages/blendlink/src/tslCompositorAffine.ts": "8b2ce8dbe3468882fbbf9f5077d8c2d4bb3dfc0cb48e221b1a36d4688045b2e3",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
@@ -22181,7 +22329,7 @@
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
     "packages/blendlink/src/tslCompositorImageDomain.ts": "50eb4b114dcb565a22df1c13821179d879881df87e33bed52f98b565ef7e5016",
     "packages/blendlink/src/tslCompositorLumaGradual.ts": "f6497d953d2371b323fbfb0c1d4e98b543d2387528b49c7538ccb1e25ee491ed",
-    "packages/blendlink/src/tslCompositorLuminanceKey.ts": "b32f50ab7fe9fc351170f58d7beeb532923b645b752378f5bcff9edb24c66550",
+    "packages/blendlink/src/tslCompositorLuminanceKey.ts": "8f28fc9c3384cbbddb8e319696ed147a940eeb0c1633f80fc835c60dc8a89979",
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
     "packages/blendlink/src/tslCompositorMapValueDomain.ts": "325637bd5fb107ff49ce5aa8b45aa954be7a4411e9daf8cb79b4bb64ffa9ad0a",
     "packages/blendlink/src/tslCompositorPixelate.ts": "20feecc95d60c471e11428474bbcd3c214133652ecaafabc6b81a0486bc28b21",
@@ -22199,13 +22347,13 @@
     "packages/blendlink/src/tslMagicBounds.ts": "f5ef0d1c3d5ef83a5d427d6a185d838226b201fe40d4dcdafb1e0001894a8614",
     "packages/blendlink/src/tslMagicNodes.ts": "679f4a4af8928e06baed6fd7716fefde872ef7ddcce14b744da77f7f0320464b",
     "packages/blendlink/src/tslMaterialProgram.ts": "9488803e03dcc7fdfb3c48d1d162c01ef1413249fd4043ce3cdc3423b3f4f109",
-    "packages/blendlink/src/tslMaterialRuntime.ts": "3c9d5e59abf398b87f59f7159f4ee03bb40a2c4b5a0ee3b31ac47e093c6144f4",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "1dbdec1d78331a2a88a5eec550b6afa8a400d9ddd53031f210a34c11d2d0168b",
     "packages/blendlink/src/tslMathModuloNative.ts": "f56ae4c332f93d0f597242607d02fdc8938af1d877392da3f4e3481b2e030da2",
     "packages/blendlink/src/tslMfNoiseCoordinates.ts": "3d697e3dd7a01418263fa7edac3154db127b669f4212cf533b15c94ed53046a7",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "95614a5d2f97400665d05861e1e648874ae1feddc30c1144549cdd16e84764b0",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
-    "packages/blendlink/src/tslNodeRecipe.ts": "4bb8b19a3ad6e5d5796e74010e689decffbd7cb7bdae7396559eba87a12f810f",
+    "packages/blendlink/src/tslNodeRecipe.ts": "3451f3c559fbf3001cbe4ce16a521c9d6abe7dda546abd531314767678a902e9",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "c3cd1a2b5549dd7edf83937dfeb1b57d8e564c6fce8dd15ad36c17a222760b1f",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
     "packages/blendlink/src/tslNoiseFields.ts": "006b0581ca5816eacbe5695b0c9d901168a4b35292d4d10bef792ba7dd094316",
@@ -22216,7 +22364,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "88a8654c49f34cdf69554501f064a57dd2e2f8d80acbbab022370f99d0c5a1a9",
+    "packages/blendlink/src/tslSourceCompositor.ts": "45d948748da0a8951bdb218f34810c1063c1f8cb6d06d319043cad5014d81554",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
     "packages/blendlink/src/tslTangentNodes.ts": "248c6f398b631f479370f30a2dda91437a8269ed805e7f1767c700ec29ed952d",
     "packages/blendlink/src/tslTangentNormalMap.ts": "b054680f158299006576d6d1b889fededd1f37b3c8941c0fe7c38b734508a287",

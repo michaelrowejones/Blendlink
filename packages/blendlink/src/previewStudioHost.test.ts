@@ -9,6 +9,7 @@ import {
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PassThrough } from 'node:stream'
+import { createHash } from 'node:crypto'
 import { runInNewContext } from 'node:vm'
 import * as fs from 'node:fs'
 import { describe, expect, it, vi } from 'vitest'
@@ -21,6 +22,7 @@ import {
   ensurePreviewStudioControl,
   previewStudioMainSource,
   previewStudioViteConfigSource,
+  readPreviewStudioGeneration,
   watchPreviewStudioAcknowledgements,
   type PreviewStudioClientAck,
   type PreviewStudioHostPlan,
@@ -60,6 +62,50 @@ async function eventually(predicate: () => boolean, timeoutMs = 1_000): Promise<
 }
 
 describe('Preview Studio host protocol', () => {
+  it('identifies sidecar/display/material/recipe changes with unchanged GLB bytes and ignores compile telemetry', () => {
+    const plan = tempPlan(), directory = join(plan.workspace, 'src', 'generated')
+    mkdirSync(directory, { recursive: true })
+    const manifestPath = join(directory, 'Hero.manifest.json'), modulePath = join(directory, 'Hero.gen.ts')
+    const descriptor = { hash: 'same-glb', sourcePresentation: { url: '/display-a.json', hash: 'display-a' },
+      materialPrograms: { url: '/materials-a.json', hash: 'materials-a' }, recipe: { camera: { behavior: 'fixed' } } }
+    const publish = (value: unknown, duration = 10) => {
+      const module = `export const Hero = ${JSON.stringify(value)} as const\n`
+      writeFileSync(modulePath, module)
+      writeFileSync(manifestPath, JSON.stringify({ hash: 'same-glb', generatedModuleHash: createHash('sha256').update(module).digest('hex').slice(0, 16), lastSyncDurationMs: duration }))
+      return readPreviewStudioGeneration(plan)
+    }
+    try {
+      const baseline = publish(descriptor)
+      expect(baseline).toMatch(/^[a-f0-9]{16}$/)
+      expect(publish(descriptor, 500)).toBe(baseline)
+      for (const value of [
+        { ...descriptor, sourcePresentation: { url: '/display-b.json', hash: 'display-b' } },
+        { ...descriptor, materialPrograms: { url: '/materials-b.json', hash: 'materials-b' } },
+        { ...descriptor, recipe: { camera: { behavior: 'orbit' } } },
+      ]) expect(publish(value)).not.toBe(baseline)
+      expect(publish(descriptor)).toBe(baseline)
+      const status = new PreviewStudioStatusWriter(plan)
+      status.write({ phase: 'ready', label: 'ready', generation: baseline })
+      writeFileSync(modulePath, 'incomplete descriptor publication')
+      expect(readPreviewStudioGeneration(plan)).toBeUndefined()
+      status.write({ phase: 'failed', label: 'descriptor identity failed' })
+      expect(JSON.parse(readFileSync(status.path, 'utf8'))).toMatchObject({ phase: 'failed', retainedGeneration: baseline })
+    } finally { rmSync(plan.workspace, { recursive: true, force: true }) }
+  })
+
+  it('retains legacy cache identity but rejects an explicit malformed descriptor pin', () => {
+    const plan = tempPlan(), directory = join(plan.workspace, 'src', 'generated')
+    mkdirSync(directory, { recursive: true }); const path = join(directory, 'Hero.manifest.json')
+    try {
+      writeFileSync(path, JSON.stringify({ hash: 'old-carrier-generation' }))
+      expect(readPreviewStudioGeneration(plan)).toBe('old-carrier-generation')
+      for (const generatedModuleHash of ['', null, 'not-a-descriptor-hash']) {
+        writeFileSync(path, JSON.stringify({ hash: 'old-carrier-generation', generatedModuleHash }))
+        expect(readPreviewStudioGeneration(plan)).toBeUndefined()
+      }
+    } finally { rmSync(plan.workspace, { recursive: true, force: true }) }
+  })
+
   it('retains the previous progress during a lock and accepts the next heartbeat', () => {
     const plan = tempPlan()
     try {

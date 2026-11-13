@@ -1,0 +1,80 @@
+[
+  {
+    "revision": "v4.2.0",
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_camera.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/gpu/shaders/material/gpu_shader_material_camera.glsl",
+    "sha256": "4509ff3548a08924e6e963aca756dd9173ac0901644d9acb8195dfbc65aab675"
+  },
+  {
+    "revision": "v4.2.0",
+    "path": "source/blender/nodes/shader/nodes/node_shader_camera.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/nodes/shader/nodes/node_shader_camera.cc",
+    "sha256": "311e6194cf518ab659ce1201b1f4e8718c1f4e0c8b55b59992f5aad3085303ae"
+  },
+  {
+    "revision": "v4.2.0",
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_transform_utils.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/gpu/shaders/material/gpu_shader_material_transform_utils.glsl",
+    "sha256": "8e30f06a77215c7d9816aacbc4117c6680b5449df635265cbfbc612bef7d7e89"
+  },
+  {
+    "revision": "v5.2.0",
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_camera.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/gpu/shaders/material/gpu_shader_material_camera.glsl",
+    "sha256": "1fd8ed7051e1e1a53692000988e7e73f0f60353b4f294b2c65a6c60a4fb2dcd4"
+  },
+  {
+    "revision": "v5.2.0",
+    "path": "source/blender/nodes/shader/nodes/node_shader_camera.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/nodes/shader/nodes/node_shader_camera.cc",
+    "sha256": "18bbef86d561d41749daf34b14d837180b069a0bcbb0ee0a6a26795e2edec689"
+  },
+  {
+    "revision": "v5.2.0",
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_transform_utils.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/gpu/shaders/material/gpu_shader_material_transform_utils.glsl",
+    "sha256": "9b0961744c5a599b3f95b662b3e41d23d104dcc58c3678472b1a1ae8c01ff43c"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_camera.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_camera.bsl.hh",
+    "sha256": "56ea4d72479db63fdcab0a97d4f24cd7920134961bf6b39b2f09a0e24dc4a919"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "source/blender/nodes/shader/nodes/node_shader_camera.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/nodes/node_shader_camera.cc",
+    "sha256": "5873f61c4fe8555b338742d25a2856337b475377ece5a28c95c81d5e16bbde5d"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_transform_utils.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_transform_utils.bsl.hh",
+    "sha256": "880e62e75cdaea754974272a889b62bfb5716f5eda09fa73fe8ef952a3fcc41f"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "intern/cycles/kernel/svm/camera.h",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/intern/cycles/kernel/svm/camera.h",
+    "sha256": "51c67768868271d9e5b56ec168e48c056eeb93f13baef97f0d24a54a15b23748"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "source/blender/draw/engines/eevee/shaders/eevee_geom_mesh.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/draw/engines/eevee/shaders/eevee_geom_mesh.bsl.hh",
+    "sha256": "880e75767ef2699015af8ac381248e1c2a13619895f5f62ad8e4893a4f0f4e8e"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "source/blender/draw/engines/eevee/shaders/eevee_surf_common.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/draw/engines/eevee/shaders/eevee_surf_common.bsl.hh",
+    "sha256": "6bcd581abc2197eccba2fb6d905e8542c98392b69597019e3ec48e1d06e5c599"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "source/blender/draw/engines/eevee/shaders/eevee_surf_deferred.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/draw/engines/eevee/shaders/eevee_surf_deferred.bsl.hh",
+    "sha256": "caeee538798e40aba863c5ec495954cd00023da9c8149445110fb80c10791387"
+  }
+]

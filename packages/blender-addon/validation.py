@@ -618,6 +618,7 @@ def recompute(scene) -> bool:
     )
     light_analysis = weblights.analyze_scene(
         scene,
+        source_version=bpy.app.version[:3],
         view_layer=active_view_layer,
         instance_source_objects=instance_source_objects,
     )

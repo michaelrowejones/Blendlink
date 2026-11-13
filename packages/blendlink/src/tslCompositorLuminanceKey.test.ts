@@ -122,3 +122,34 @@ describe('fresh CPU luminance arithmetic admission', () => {
     expect(built.node.isNode).toBe(true); built.dispose()
   })
 })
+
+function linuxCpuProgram(): SourceCompositorProgram {
+  const document=cpuProgram(),properties=document.ops[0]!.properties
+  Object.assign(properties.luminance_key_cpu_profile as object,{sourcePlatform:'linux',sourceArchitecture:'x86_64'})
+  properties.luminance_key_source_build='fbe6228777e7'
+  return document
+}
+
+describe('Linux52 CPU luminance admission candidate',()=>{
+  it('admits only the measured binary and gradual Rec709 certificate through the real production builder',()=>{
+    const built=buildSourceCompositor(linuxCpuProgram(),()=>null)
+    expect(built.node.isNode).toBe(true);built.dispose()
+  })
+
+  it('refuses other Linux versions, builds, architectures, modes and Windows profiles independently',()=>{
+    for(const mutate of [
+      (p: SourceCompositorProgram)=>{p.ops[0]!.properties.luminance_key_source_build=undefined},
+      (p: SourceCompositorProgram)=>{p.ops[0]!.properties.luminance_key_source_build='000000000000'},
+      (p: SourceCompositorProgram)=>{p.ops[0]!.properties.luminance_key_source_version=[4,2,0];p.ops[0]!.properties.luminance_key_schema='legacy-branch'},
+      (p: SourceCompositorProgram)=>{p.ops[0]!.properties.luminance_key_source_version=[5,3,0];Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{mode:'ftz-daz-rne',underflowWord:0,denormalInputWord:0})},
+      (p: SourceCompositorProgram)=>{p.ops[0]!.properties.luminance_key_source_version=[5,2,1]},
+      (p: SourceCompositorProgram)=>{Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{sourceArchitecture:'aarch64'})},
+      (p: SourceCompositorProgram)=>{Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{sourceArchitecture:'AMD64'})},
+      (p: SourceCompositorProgram)=>{Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{mode:'ftz-daz-rne',underflowWord:0,denormalInputWord:0})},
+      (p: SourceCompositorProgram)=>{Object.assign(p.ops[0]!.properties.luminance_key_cpu_profile as object,{sourcePlatform:'win32',sourceArchitecture:'AMD64'})},
+    ]){
+      const document=linuxCpuProgram();mutate(document)
+      expect(()=>buildSourceCompositor(document,()=>null)).toThrow(/Artist Luminance Key/)
+    }
+  })
+})

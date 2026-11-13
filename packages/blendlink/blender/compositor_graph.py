@@ -60,6 +60,7 @@ normalize_map_value = _sibling("compositor_map_value").normalize_map_value
 normalize_spill = _sibling("compositor_spill").normalize_spill
 normalize_color_key = _sibling("compositor_color_key").normalize_color_key
 normalize_static_image = _sibling("compositor_image").normalize_image
+normalize_vector_component = _sibling("compositor_vector_component").normalize_vector_component
 normalize_crop = _sibling("compositor_crop").normalize_crop
 normalize_split = _sibling("compositor_split").normalize_split
 validate_split_domains = _sibling("compositor_split").validate_split_domains
@@ -71,6 +72,7 @@ TYPES = {
     "FunctionNodeInputVector": "value",
     "ShaderNodeCombineXYZ": "combine-vector",
     "ShaderNodeSeparateXYZ": "separate-vector",
+    "FunctionNodeGetVectorComponent": "separate-vector",
     "FunctionNodeInputInt": "utility-constant",
     "FunctionNodeBooleanMath": "boolean-math",
     "FunctionNodeIntegerMath": "integer-math",
@@ -455,6 +457,9 @@ def extract(scene):
                                       getattr(scene.render, "compositor_device", "CPU"))
                 elif node.bl_idname == "FunctionNodeInputVector":
                     op["value"] = list(node.vector)
+                elif node.bl_idname == "FunctionNodeGetVectorComponent":
+                    normalize_vector_component(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-vector-component", path, node, incoming, message))
                 elif node.bl_idname in ("ShaderNodeCombineXYZ", "ShaderNodeSeparateXYZ"):
                     for incoming in node.inputs:
                         op["inputs"][incoming.identifier] = {"name": incoming.name, "socketType": incoming.type,

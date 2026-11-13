@@ -1473,7 +1473,21 @@ def _rect_area_auto_fallbacks(
     return tuple(issue for issue in issues if issue.code in blocking_codes)
 
 
-def plan_rect_area_light(obj, scene) -> RectAreaLightPlan:
+def _area_strength_settings(data, source_version=None):
+    """42Eevee directly multiplies energy and always divides by pi*area.
+
+    Modern/malformed fields remain authoritative. Missing fields qualify only
+    with the explicitly measured native4.2.0 source profile; pure callers do
+    not acquire guessed exposure/normalization defaults.
+    """
+    legacy = tuple(source_version or ()) == (4, 2, 0) \
+        and not hasattr(data, "exposure") and not hasattr(data, "normalize")
+    if legacy:
+        return 0.0, True
+    return _number(getattr(data, "exposure", None)), getattr(data, "normalize", None)
+
+
+def plan_rect_area_light(obj, scene, *, source_version=None) -> RectAreaLightPlan:
     """Compile one Area light into an automatic or authored web plan.
 
     Missing metadata selects the supported native-Three subset. Artists can
@@ -1612,7 +1626,7 @@ def plan_rect_area_light(obj, scene) -> RectAreaLightPlan:
                 ))
 
     energy = _number(getattr(data, "energy", None))
-    exposure = _number(getattr(data, "exposure", None))
+    exposure, normalize = _area_strength_settings(data, source_version)
     direct_scale, direct_scale_issue = _eevee_direct_light_scale(scene)
     if direct_scale_issue is not None:
         refusals.append(direct_scale_issue)
@@ -1643,7 +1657,6 @@ def plan_rect_area_light(obj, scene) -> RectAreaLightPlan:
             ))
             effective_strength = None
 
-    normalize = getattr(data, "normalize", None)
     if not isinstance(normalize, bool):
         refusals.append(RectAreaLightIssue(
             "rect-area-normalize-invalid",
@@ -1720,6 +1733,7 @@ def _diagnose_light(
     view_layer=None,
     instance_source_identities: frozenset[int] = frozenset(),
     rect_area_artifact_fallback: RectAreaLightIssue | None = None,
+    source_version=None,
 ) -> tuple[LightDiagnostic, LightWarning | None]:
     belongs_to_scene = _object_in_scene(obj, scene)
     object_identity = _identity(obj)
@@ -1751,7 +1765,7 @@ def _diagnose_light(
     light_type = str(getattr(data, "type", "UNKNOWN")).upper()
     energy = _number(getattr(data, "energy", None))
     exposure = _number(getattr(data, "exposure", None))
-    rect_area_plan = plan_rect_area_light(obj, scene)
+    rect_area_plan = plan_rect_area_light(obj, scene, source_version=source_version)
     if rect_area_plan.refusals:
         detail = " ".join(issue.detail for issue in rect_area_plan.refusals)
         diagnostic = LightDiagnostic(
@@ -2039,6 +2053,7 @@ def analyze_scene(
     view_layer=None,
     instance_source_objects: Iterable[object] | None = None,
     rect_area_artifact_fallbacks: Mapping[str, RectAreaLightIssue] | None = None,
+    source_version=None,
 ) -> SceneLightAnalysis:
     """Return stable light decisions and nonblocking warnings for ``scene``.
 
@@ -2104,6 +2119,7 @@ def analyze_scene(
             view_layer,
             instance_source_identities,
             (rect_area_artifact_fallbacks or {}).get(_name(obj, "Light")),
+            source_version,
         )
         diagnostics.append(diagnostic)
         if warning is not None:

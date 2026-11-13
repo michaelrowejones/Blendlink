@@ -118,3 +118,12 @@ the runtime independently expresses the elementary luminance-ramp mathematics:
 - [Blender 4.2 GPU compositor](https://github.com/blender/blender/blob/v4.2.0/source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_luminance_matte.glsl)
 - [Blender 5.3 native function](https://github.com/blender/blender/blob/v5.3.0/source/blender/nodes/composite/nodes/node_composite_luminance_key.cc)
 - [Blender 5.3 GPU compositor](https://github.com/blender/blender/blob/v5.3.0/source/blender/compositor/shaders/library/gpu_shader_compositor_luminance_matte.glsl)
+
+Linux5.2 `x86_64` build`fbe6228777e7`, actual gradual-RNE and Rec.709 now has a
+reviewed production-admission **candidate**, with independent source/runtime
+build checks. Its old47 ordinary/32 private-kernel trial receipt remains
+`SOURCE_ADMISSION_NA`; fresh production qualification is pending the required
+Linux canary. That gate must emit actual production IR and pass32 bit-exact
+precision cases through the production compositor on both browser APIs.
+Windows and every unmeasured source profile keep their previous v1 fallback.
+See [the candidate and retained receipt](../luma-cpu-precision/README.md#linux52-production-admission-candidate).

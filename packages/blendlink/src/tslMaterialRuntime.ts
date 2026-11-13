@@ -23,6 +23,8 @@ import { MeshStandardNodeMaterial, MeshPhysicalNodeMaterial } from 'three/webgpu
 import { uniform } from 'three/tsl'
 import { collectVectorTransformRequirements, validateVectorTransformBinding, type VectorTransformRequirement } from './tslVectorTransform.js'
 import { collectGeometryContextOutputs, validateGeometryContextBinding, type GeometryContextOutput } from './tslGeometryContext.js'
+import { trackCameraDataGeometry } from './tslCameraGeometry.js'
+import { hasNativeCameraData, validateCameraDataBinding } from './tslCameraData.js'
 import { collectNormalMapRequirements, validateNormalMapBinding } from './tslNormalNodes.js'
 import {collectTangentRequirements,validateTangentBinding} from './tslTangentNodes.js'
 import {collectTangentNormalMaps,validateTangentNormalMapBinding} from './tslTangentNormalMap.js'
@@ -406,12 +408,14 @@ export async function installTslMaterials(
   }
 
   const geometryContexts = new Map<string, Set<GeometryContextOutput>>()
+  const cameraDataContexts = new Set<string>()
   const normalMapContexts = new Map<string,TslIrExpression[]>()
   const tangentContexts=new Map<string,TslIrExpression[]>()
   const tangentMapContexts=new Map<string,TslIrExpression[]>()
   const magicContexts=new Map<string,TslIrExpression[]>()
   const activeUvPrograms = new Set<string>()
   for(const [name,program] of Object.entries(programs.materials)){
+    if(hasNativeCameraData(program.channels))cameraDataContexts.add(name)
     if (requiresActiveUv(program.channels)) activeUvPrograms.add(name)
     const magics:TslIrExpression[]=[];collectMagicTextures(program.channels,magics)
     if(magics.length)magicContexts.set(name,magics)
@@ -510,6 +514,13 @@ export async function installTslMaterials(
           catch(error){
             if(!(error instanceof TslIrError))throw error
             skipped.push({material:source,reason:`mesh "${mesh.name}" Geometry context refused: ${error.message}; its carrier stays`});return
+          }
+        }
+        if(cameraDataContexts.has(source)){
+          try{validateCameraDataBinding(mesh,extras?.objectSpace)}
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" Camera Data refused: ${error.message}; its carrier stays`});return
           }
         }
         const normalMaps=normalMapContexts.get(source)
@@ -671,6 +682,11 @@ export async function installTslMaterials(
     }
     for (const [mesh, materials] of drawMaterials) {
       releaseDrawCallbacks.push(trackMaterialDrawOrientation(mesh, materials))
+      if(installed.some(item=>item.mesh===mesh&&cameraDataContexts.has(item.clone.userData.blendlink_source_material))){
+        const basis=meshRuntimeExtras(mesh)?.objectSpace
+        const allMaterials=new Set(Array.isArray(mesh.material)?mesh.material:[mesh.material])
+        releaseDrawCallbacks.push(trackCameraDataGeometry(mesh,allMaterials,basis,()=>validateCameraDataBinding(mesh,basis)))
+      }
       const contexts=new Map(installed.filter(item=>item.mesh===mesh&&item.magic).map(item=>[item.clone,item.magic!]))
       const firstDraw=new Set(contexts.keys())
       if(contexts.size)releaseDrawCallbacks.push(trackMaterialDrawCallback(mesh,new Set(contexts.keys()),function(...args){

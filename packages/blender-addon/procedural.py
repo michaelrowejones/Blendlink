@@ -1610,10 +1610,29 @@ def _expression_uses_frame(expression):
 def _driver_time_dependent(curve, seen):
     if getattr(curve, "mute", False):
         return False
-    if any(not getattr(modifier, "mute", False)
+    # Native4.2 creates a linear Generator on every new driver. It maps the
+    # driver result to itself; BKE evaluate_fcurve_driver uses that result in
+    # place of timeline time before evaluating F-Curve modifiers. Keep this
+    # narrow identity case separate from unknown/nonidentity modifiers.
+    def identity_generator(modifier):
+        return (
+            getattr(modifier, "type", None) == "GENERATOR"
+            and getattr(modifier, "mode", None) == "POLYNOMIAL"
+            and getattr(modifier, "poly_order", None) == 1
+            and getattr(modifier, "use_additive", None) is False
+            and tuple(getattr(modifier, "coefficients", ())) == (0.0, 1.0)
+        )
+    if any(not getattr(modifier, "mute", False) and not identity_generator(modifier)
            for modifier in getattr(curve, "modifiers", ())):
         return True
     driver = curve.driver
+    # A Python driver can read scene time through bpy, self or a registered
+    # namespace function without naming frame/time in its AST or variables.
+    # Only Blender's verified simple-expression subset admits this static
+    # classification; missing/unknown representations remain conservative.
+    if getattr(driver, "type", None) == "SCRIPTED" \
+            and getattr(driver, "is_simple_expression", False) is not True:
+        return True
     if _expression_uses_frame(getattr(driver, "expression", "")):
         return True
     for variable in driver.variables:

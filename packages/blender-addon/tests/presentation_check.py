@@ -105,7 +105,8 @@ expect(
     "composition preview did not restore prior render state",
 )
 
-scene.render.engine = "BLENDER_EEVEE"
+engines = {item.identifier for item in scene.render.bl_rna.properties["engine"].enum_items}
+scene.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
 with tempfile.TemporaryDirectory(prefix="blendlink-presentation-") as temporary:
     root = Path(temporary)
     manifest_path = root / "comparison-manifest.json"

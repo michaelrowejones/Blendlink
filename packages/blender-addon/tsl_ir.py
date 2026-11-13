@@ -1340,6 +1340,13 @@ def emit_output(node, from_socket, stack=()):
             f"Texture Coordinate {socket_name!r} has no TSL cell yet"
         )
 
+    if idname == "ShaderNodeCameraData":
+        if __package__:
+            from .camera_data_ir import emit_camera_data
+        else:
+            from camera_data_ir import emit_camera_data
+        return emit_camera_data(node, from_socket, engine=get_evaluation_engine(), refuse=_refuse)
+
     if idname == "ShaderNodeNewGeometry":
         if __package__:
             from .geometry_ir import emit_geometry

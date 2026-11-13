@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto'
+import { createHash, randomBytes } from 'node:crypto'
 import {
   existsSync,
   mkdirSync,
@@ -1494,7 +1494,18 @@ export function readPreviewStudioGeneration(plan: PreviewStudioHostPlan): string
   const path = join(plan.workspace, 'src', 'generated', `${plan.sceneName}.manifest.json`)
   if (!existsSync(path)) return undefined
   try {
-    const manifest = JSON.parse(readFileSync(path, 'utf8')) as { hash?: unknown }
+    const manifest = JSON.parse(readFileSync(path, 'utf8')) as { hash?: unknown; generatedModuleHash?: unknown }
+    if (Object.hasOwn(manifest, 'generatedModuleHash')) {
+      if (typeof manifest.generatedModuleHash !== 'string' || !/^[a-f0-9]{16}$/.test(manifest.generatedModuleHash)) return undefined
+      // The generated descriptor binds every runtime sidecar, display setting,
+      // material program and recipe. A GLB-only hash misses authored changes
+      // that leave the geometry/material carrier bytes unchanged.
+      const module = readFileSync(join(plan.workspace, 'src', 'generated', `${plan.sceneName}.gen.ts`))
+      const actual = createHash('sha256').update(module).digest('hex').slice(0, 16)
+      return actual === manifest.generatedModuleHash ? actual : undefined
+    }
+    // Older cache manifests predate the descriptor-byte pin; compilation
+    // upgrades them before future publications. Preserve their read contract.
     return typeof manifest.hash === 'string' && manifest.hash.length > 0 ? manifest.hash : undefined
   } catch {
     return undefined

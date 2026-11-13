@@ -35,6 +35,18 @@ def _cpu_profile():
         'sourcePlatform': sys.platform, 'sourceArchitecture': platform.machine()}
 
 
+# Exact downloaded Linux binary measured by the retained native trial. This is
+# a source-admission candidate; the hosted gate must now earn production IR.
+_LINUX52_BUILD = 'fbe6228777e7'
+
+
+def _cpu_source_allowed(version, source_platform, architecture, build_hash):
+    if source_platform == 'darwin' and architecture == 'arm64':
+        return version in {(4, 2, 0), (5, 2, 0), (5, 3, 0)}
+    return (version == (5, 2, 0) and source_platform == 'linux'
+        and architecture == 'x86_64' and build_hash == _LINUX52_BUILD)
+
+
 def normalize_luminance_key(node, socket, op, scene, read, bounds, fail, single=None):
     if socket.identifier not in {"Image", "Matte"}:
         fail(socket, "Luminance Key requires Image or Matte output")
@@ -67,12 +79,14 @@ def normalize_luminance_key(node, socket, op, scene, read, bounds, fail, single=
         # Ordinary unqualified workflows retain the serialized v1 contract.
         # Only the measured source profile may claim the new exact arithmetic.
         version = tuple(bpy.app.version)
+        build_hash = bpy.app.build_hash.decode()
+        source_platform, architecture = sys.platform, platform.machine()
         reason = None
         if version == (4, 2, 0) and limits[0] >= limits[1]:
             reason = 'unmeasured legacy reversed CPU ramp'
         elif version not in {(4, 2, 0), (5, 2, 0), (5, 3, 0)}:
             reason = 'unmeasured source version'
-        elif (sys.platform, platform.machine()) != ('darwin', 'arm64'):
+        elif not _cpu_source_allowed(version, source_platform, architecture, build_hash):
             reason = 'unmeasured CPU/compiler profile'
         else:
             try:
@@ -96,3 +110,5 @@ def normalize_luminance_key(node, socket, op, scene, read, bounds, fail, single=
             luminance_key_precision='native-cpu-rne-v1',
             luminance_key_source_version=list(version), luminance_key_coefficients=coefficients,
             luminance_key_cpu_profile=profile)
+        if source_platform == 'linux':
+            op['properties']['luminance_key_source_build'] = build_hash

@@ -879,6 +879,102 @@
         "maximumAbsoluteError": 3.934e-06
       }
     },
+    "shader:ShaderNodeCameraData": {
+      "category": "partial",
+      "limits": "EEVEE 4.2.0/5.2.0/5.3.0 View Vector only: primary camera triangle surfaces; secondary-ray/strand/volume contexts remain unqualified. Signed normalized camera-space surface point, including varying orthographic output; no [0,1]/HSL/Roughness range certificate. View Z Depth and View Distance remain named raw-unit precision refusals. Cycles live programs refuse and automatic EEVEE-to-Cycles fallback is not assumed equivalent. Requires the node renderer and installTslMaterials-owned private geometry; low-level direct rendering without that storage refuses. Actual unquantized Float32 triangle positions, explicit Y-up/Z-up basis, finite invertible owner matrices (existing component/condition limits), world owner/camera bounds within +/-64, absolute object-position staging<=128 and camera-to-owner AABB distance>=1. Single unshifted/nonreflected/nonsheared perspective/orthographic camera, square source pixels, static camera data/projection and origin-zero actual viewport including DPR; angular footprint<=1/256 per pixel. No modifiers, skin/morph or generated/GPU instances. Before render-object construction, a managed post-callback copy owns all attributes and U32 indices: extra private CPU/GPU memory per matched rendered mesh, including separate copies for shared owners. Static-geometry/single-renderer ownership; versioned edits acquire/dispose replacement copies, later geometry/attribute replacement requires reinstall, unversioned array replacement refuses. Source arrays remain untouched; disposal/retry restores adopted source pointers, handles partial failure and out-of-order leases. Earlier single-material first-draw swaps are independently validated; stale multi-material groups refuse. Live owner/camera transforms remain bounded and rechecked. Channel-function proof, not whole Blender lighting/BSDF parity. Native source backend is attested Metal on5.2/5.3;4.2 retains actual numerical/Final proof with SOURCE_ATTESTATION_NA because background gpu.init/platform queries are unavailable. OpenGL source qualification remains pending until the separate Linux5.2 actual-Final canary earns it.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "camera_data_native"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/camera_data_ir.py",
+          "anchor": "def emit_camera_data"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "camera_data_ir.validate_owner"
+        },
+        {
+          "path": "packages/blender-addon/engine_fallback.py",
+          "anchor": "ShaderNodeCameraData"
+        },
+        {
+          "path": "packages/blendlink/src/tslCameraData.ts",
+          "anchor": "export function buildNativeCameraData"
+        },
+        {
+          "path": "packages/blendlink/src/tslCameraGeometry.ts",
+          "anchor": "export function trackCameraDataGeometry"
+        },
+        {
+          "path": "packages/blendlink/src/tslCameraGeometry.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/camera_data_check.py"
+        },
+        {
+          "path": "experiments/camera-data/README.md"
+        },
+        {
+          "path": "experiments/camera-data/ownership.js"
+        },
+        {
+          "path": "experiments/camera-data/native_backend.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeEngines": [
+          "EEVEE Metal"
+        ],
+        "nativeSourceBackend": "METAL",
+        "nativeSourceBackendVersions": ["5.2.0", "5.3.0"],
+        "nativeLegacyBackendAttestation": {
+          "nativeVersion": "4.2.0",
+          "status": "SOURCE_ATTESTATION_NA",
+          "numericAndFinalRetained": true,
+          "reason": "No gpu.init or background gpu.platform query; preferences are not actual backend attestation"
+        },
+        "outputs": {
+          "supported": [
+            "View Vector"
+          ],
+          "refused": [
+            "View Z Depth",
+            "View Distance"
+          ]
+        },
+        "actualFinalScenes": 120,
+        "nativeFieldAndControlSamples": 1800,
+        "browserReadbacks": 14400,
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "runtimeAdapters": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "maximumKernelErrorOutsideNativeQuantizationInterval": 4.329252988100052e-06,
+        "kernelBudget": 2e-05,
+        "nativeCarrier": "Independently calibrated k/256 digits; interval width2^-16 plus bounded2^-23 bias-add rounding, separate from kernel budget",
+        "ownershipScenarios": 32,
+        "privateGeometryOwnership": true,
+        "nativeOpenGL": {
+          "status": "pending",
+          "canary": "native-camera-data",
+          "nativeVersion": "5.2.0",
+          "scope": "Fresh EEVEE OpenGL source -> ordinary actual Final GLBs -> WebGPU/WebGL2 + owned GPU storage; not credited before CI passes"
+        }
+      }
+    },
     "shader:ShaderNodeNewGeometry": {
       "category": "partial",
       "limits": "Primary triangle Position/Normal/True Normal/Incoming/Backfacing outputs are live with actual owner/camera matrices and explicit Y-up/Z-up bases. Cycles float/OCT16 and shared/single-owner interpolation plus EEVEE SNORM10/HQ16 vertex normalization are modeled separately. Unit authored normals require outward triangle cosine>0.05; finite invertible object matrices require linear/inverse components<=1e8 and Frobenius condition bound<=100. No modifiers, skin/morph, animated mesh-data, material displacement, Simplify Normals, secondary-ray/strand/volume or generated/GPU-instance context. Cycles normal routes refuse mixed flat/smooth topology, mixed shared/single-owner bindings, SSS/displacement geometry-key exceptions, motion blur and animated render visibility. View outputs refuse reflected/sheared and shifted/cropped authored camera projections. Parametric, Tangent, Pointiness and Random Per Island remain unsupported. Named refusals preserve source graphs and prohibit an automatic UV-ray capture from masquerading as the primary field. These are channel functions, not full lighting/BSDF pixel parity. Fresh EEVEE direct Geometry Normal feeding material Normal/Coat Normal uses the verified native view adapter; rotated/nonuniform cameras are checked through actual Final export. Legacy serialized normal_view and Cycles extraction are unchanged.",
@@ -5778,7 +5874,7 @@
     },
     "shader:FunctionNodeGetVectorComponent": {
       "category": "partial",
-      "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but only shader extraction is ported here; compositor remains unsupported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication and OpenGL-source numerical qualification remain separate.",
+      "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but shader and compositor fixed selection have separate qualified gates; geometry execution remains unported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication and OpenGL-source numerical qualification remain separate.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "separate"
@@ -6645,13 +6741,75 @@
         }
       }
     },
+    "compositor:FunctionNodeGetVectorComponent": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "separate-vector"
+      ],
+      "limits": "Exact Blender 5.3.0 compositor Get Vector Component, fixed typed integer Index 0/1/2, using existing Separate XYZ swizzles without new arithmetic/opcode. Unlinked integer defaults and actual Input Integer literals through reroutes/groups qualify. Converted Float/Boolean, computed/spatial and out-of-range selectors, animation/drivers, unknown versions and unverified socket shapes refuse. Runtime independently rechecks source/model, exact active Vector/Index types and literal provenance; ordinary Separate XYZ remains unchanged. Actual 4.2.0/5.2.0 creation is absent, zero-case N/A rather than a numerical pass. Native CPU and GPU each retain 63 selections, 63 independent Separate XYZ pairs and 2 carrier controls. The unused oracle scene is empty Cycles CPU; compositor device is independent. ZIP-isolated namespaced package extraction is source-only evidence. Browser checks are numeric-zero on physical Metal and SwiftShader through both APIs; signed-zero browser words, dynamic selectors, geometry execution and whole-node/all-graph coverage are not claimed. Fresh hosted OpenGL compositor qualification remains pending.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_vector_component.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorVectorComponent.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_vector_component_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_component_packaged.py"
+        },
+        {
+          "path": "scripts/lib/compositor-vector-component-profile.mjs"
+        },
+        {
+          "path": "scripts/compositor-component-policy.test.mjs"
+        },
+        {
+          "path": "experiments/native-compositor-differential/VECTOR_COMPONENT.md"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeAbsentVersions": [
+          "4.2.0",
+          "5.2.0"
+        ],
+        "nativeCompositorDevices": [
+          "CPU",
+          "GPU"
+        ],
+        "nativeSelectionGraphs": 126,
+        "pairedSeparateGraphs": 126,
+        "independentControlGraphs": 4,
+        "nativeScenes": 256,
+        "physicalAndSoftwareReadbacks": 1024,
+        "maximumAbsoluteError": 0,
+        "budget": 2e-05,
+        "nativeComponentSeparateWordMismatches": 0,
+        "browserZeroSignClaim": false,
+        "packedNamespaceSourceOnly": true,
+        "freshHostedOpenGL": "pending"
+      }
+    },
     "compositor:CompositorNodeLumaMatte": {
       "category": "partial",
       "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
       "runtimeOps": [
         "luminance-key"
       ],
-      "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Actual Linux 5.2/Windows 4.2/5.2 CPU qualification remains pending in a separate experimental native workflow; successful private-kernel trials cannot promote source admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
+      "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 now has a narrowly scoped gradual-RNE/Rec.709 admission candidate, independently checked by source/runtime build and profile guards; fresh production qualification remains pending until the mandatory actual-production compositor browser rerun passes. The retained Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -6707,7 +6865,29 @@
         "privatePrimitiveScalarReadbacks": 655360,
         "experimentalKernelReadbacks": 384,
         "experimentalKernelProductionAdmissionCases": 0,
-        "unqualifiedCpuContract": "legacy-v1 / SOURCE_ADMISSION_NA; hosted qualification pending"
+        "unqualifiedCpuContract": "legacy-v1 / SOURCE_ADMISSION_NA for Windows and every unmeasured profile",
+        "linux52ProductionCandidate": {
+          "status": "pending-fresh-production-receipt",
+          "sourcePlatform": "linux",
+          "sourceArchitecture": "x86_64",
+          "sourceVersion": [5, 2, 0],
+          "sourceBuildHash": "fbe6228777e7",
+          "mode": "gradual-rne",
+          "sourceCoefficients": "Rec.709 Float32",
+          "basisReceipt": {
+            "run": "43400812538",
+            "job": "131802895572",
+            "artifact": "14024667969",
+            "archiveSha256": "fe5439bba9286fcf59f9075ba8b1bf4d5f1eb1984537f69478a0c943d6f3bf0d",
+            "productionAdmission": "SOURCE_ADMISSION_NA",
+            "productionExactCases": 0,
+            "ordinaryCasesPerBrowserApi": 47,
+            "experimentalKernelCasesPerBrowserApi": 32,
+            "primitiveCasesPerBrowserApi": "4 x 16384",
+            "maximumError": 0
+          },
+          "requiredReceipt": "Fresh actual Linux52 source must emit PRODUCTION_QUALIFIED with 32 production precision programs; untouched production compositor must pass ordinary and bit-exact precision outputs on both browser APIs"
+        }
       }
     },
     "compositor:CompositorNodeDiffMatte": {
@@ -7909,7 +8089,6 @@
     "compositor:FunctionNodeFindInString",
     "compositor:FunctionNodeFloatToInt",
     "compositor:FunctionNodeFormatString",
-    "compositor:FunctionNodeGetVectorComponent",
     "compositor:FunctionNodeHashValue",
     "compositor:FunctionNodeInputIntVector",
     "compositor:FunctionNodeInputMenu",
@@ -8017,7 +8196,6 @@
     "shader:ShaderNodeBsdfSheen",
     "shader:ShaderNodeBsdfToon",
     "shader:ShaderNodeBsdfTranslucent",
-    "shader:ShaderNodeCameraData",
     "shader:ShaderNodeDisplacement",
     "shader:ShaderNodeEeveeSpecular",
     "shader:ShaderNodeHairInfo",

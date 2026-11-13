@@ -31,7 +31,10 @@ export async function readCpuLumaQualification(directory) {
     || profile.mode === 'ftz-daz-rne' && profile.underflowWord === 0 && profile.denormalInputWord === 0)
   for (const name of ['sourcePlatform', 'sourceArchitecture']) assert.match(profile[name], /^[a-zA-Z0-9_.-]{1,64}$/)
   if (packet.productionAdmission === 'PRODUCTION_QUALIFIED') {
-    assert.equal(profile.sourcePlatform, 'darwin'); assert.equal(profile.sourceArchitecture, 'arm64')
+    assert.ok(profile.sourcePlatform === 'darwin' && profile.sourceArchitecture === 'arm64'
+      || profile.sourcePlatform === 'linux' && profile.sourceArchitecture === 'x86_64'
+        && JSON.stringify(packet.sourceVersion) === '[5,2,0]' && packet.sourceBuildHash === 'fbe6228777e7',
+      'Unmeasured CPU/compiler source profile cannot claim production admission')
     assert.equal(profile.mode, packet.sourceVersion[0] === 5 && packet.sourceVersion[1] === 3 ? 'ftz-daz-rne' : 'gradual-rne')
     assert.equal(packet.precisionCases, 32); assert.equal(packet.productionExactCases, 32)
   } else {
@@ -55,9 +58,42 @@ export async function readCpuLumaQualification(directory) {
     assert.equal(output.node, keys[0].id)
     assert.equal(keys[0].properties.luminance_key_model, packet.productionAdmission === 'PRODUCTION_QUALIFIED'
       ? 'native-luminance-key-cpu-rne-v1' : 'native-luminance-key-v1')
-    if (packet.productionAdmission === 'PRODUCTION_QUALIFIED') assert.deepEqual(keys[0].properties.luminance_key_cpu_profile, profile)
+    if (packet.productionAdmission === 'PRODUCTION_QUALIFIED') {
+      if(profile.sourcePlatform==='linux')assert.equal(record.requireFloat32Bits, true)
+      assert.equal(keys[0].properties.evaluation_device,'CPU')
+      assert.equal(keys[0].properties.single_value_device,'CPU')
+      assert.deepEqual(keys[0].properties.luminance_key_cpu_profile, profile)
+      assert.deepEqual(keys[0].properties.luminance_key_source_version, packet.sourceVersion)
+      assert.deepEqual(keys[0].properties.luminance_key_coefficients, packet.sourceCoefficients)
+      assert.equal(keys[0].properties.luminance_key_precision, 'native-cpu-rne-v1')
+      if (profile.sourcePlatform === 'linux') assert.equal(keys[0].properties.luminance_key_source_build, packet.sourceBuildHash)
+    }
     else assert.equal(keys[0].properties.luminance_key_precision, 'legacy-unqualified-cpu-v1')
     files.push({ ...row, bytes })
   }
   return { packet, packetSha256: hash(bytes), files }
+}
+
+/** A native admission packet is not a production-render receipt. Require the
+ * untouched production compositor results on both actual browser backends. */
+export function verifyProductionLumaBrowser(results, packet) {
+  assert.equal(packet.productionAdmission, 'PRODUCTION_QUALIFIED')
+  assert.equal(packet.productionExactCases, 32)
+  assert.ok(Array.isArray(results));assert.equal(results.length, 2)
+  assert.deepEqual(results.map(row=>row.backend).sort(), ['webgl2','webgpu'])
+  for(const result of results){
+    assert.equal(result.error, undefined);assert.deepEqual(result.pageErrors, []);assert.deepEqual(result.consoleErrors, [])
+    assert.equal(result.rows.length,packet.ordinaryCases+packet.precisionCases)
+    const cases=new Map()
+    for(const row of result.rows){
+      assert.equal(typeof row.case,'string');assert.ok(!cases.has(row.case));cases.set(row.case,row)
+      assert.equal(row.max,0);assert.equal(row.calibration,0)
+      assert.deepEqual(row.shaderErrors,[])
+    }
+    for(const file of packet.files){
+      const row=cases.get(file.case);assert.ok(row,'Missing production precision case '+file.case)
+      assert.equal(row.bitMismatches,0,'Production precision must be bit-exact, not just inside a numerical tolerance')
+    }
+  }
+  return packet.productionExactCases
 }

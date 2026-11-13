@@ -94,6 +94,7 @@ export async function assertLegacyMaterialCarriers(
   if (!pointer) return
   const missing = new Map<string, Set<string>>()
   const primaryNormals = new Map<string,Set<string>>()
+  const primaryCameras = new Map<string,Set<string>>()
   options.root.traverse(object => {
     const mesh = object as THREE.Mesh
     if (!mesh.isMesh) return
@@ -106,6 +107,10 @@ export async function assertLegacyMaterialCarriers(
         const names=primaryNormals.get(source)??new Set<string>()
         names.add(material.name||source);primaryNormals.set(source,names)
       }
+      if(Array.isArray(context)&&context.includes('camera')){
+        const names=primaryCameras.get(source)??new Set<string>()
+        names.add(material.name||source);primaryCameras.set(source,names)
+      }
       const surface = material as THREE.MeshStandardMaterial
       if (surface.map || (surface.color &&
           [surface.color.r, surface.color.g, surface.color.b].some(value => value !== 1)) ||
@@ -115,8 +120,17 @@ export async function assertLegacyMaterialCarriers(
       missing.set(source, names)
     }
   })
-  if (!missing.size&&!primaryNormals.size) return
+  if (!missing.size&&!primaryNormals.size&&!primaryCameras.size) return
   const programs = options.loadPrograms ? await options.loadPrograms() : await fetchMaterialPrograms(pointer)
+  const nativeCamera=(value:unknown):boolean=>{
+    if(Array.isArray(value))return value.some(nativeCamera)
+    if(!value||typeof value!=='object')return false
+    return (value as Record<string,unknown>).op==='camera_data_native'||irInspectionChildren(value).some(nativeCamera)
+  }
+  const cameraNames=[...primaryCameras].filter(([source])=>Object.hasOwn(programs.materials,source)&&nativeCamera(programs.materials[source]?.channels))
+    .flatMap(([,names])=>[...names]).sort()
+  if(cameraNames.length)throw new Error(`Legacy WebGLRenderer cannot render the shipped live Camera Data program for ${cameraNames.map(name=>JSON.stringify(name)).join(', ')}. `+
+    'Its portable base color does not carry the view-dependent function. Use WebGPURenderer (including its WebGL2 fallback).')
   const nativeNormal=(value:unknown):boolean=>{
     if(Array.isArray(value))return value.some(nativeNormal)
     if(!value||typeof value!=='object')return false

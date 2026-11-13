@@ -7,6 +7,7 @@
     "bright_contrast",
     "bump_height_native",
     "bump_passthrough_native",
+    "camera_data_native",
     "clamp01",
     "clamp_minmax",
     "color_convert",

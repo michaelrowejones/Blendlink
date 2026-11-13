@@ -48,7 +48,7 @@ try {
     await page.waitForFunction(() => window.__lumaTrialRows || window.__lumaTrialError, null, { timeout: 180000 })
     const report = await page.evaluate(() => ({ rows: window.__lumaTrialRows, error: window.__lumaTrialError }))
     results.push({ backend, ...report, errors }); await writeFile(join(evidence, 'results.json'), JSON.stringify(results, null, 2))
-    if (report.error || errors.length || report.rows?.length !== index.length || report.rows?.some(row => row.max !== 0 || row.calibration !== 0 || row.remainingTextures !== 0)) failures.push({ backend, ...report, errors })
+    if (report.error || errors.length || report.rows?.length !== index.length || report.rows?.some(row => row.max !== 0 || row.bitMismatches !== 0 || row.calibration !== 0 || row.remainingTextures !== 0)) failures.push({ backend, ...report, errors })
     await page.close()
   }
   assert.deepEqual(failures, []); console.log('BLENDLINK_LUMA_PRIVATE_KERNEL_TRIAL_PASSED ' + index.length * 2 + ' productionAdmissionCases=0')

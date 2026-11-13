@@ -136,7 +136,14 @@ with tempfile.TemporaryDirectory(prefix="blendlink-component-oracle-") as tempor
         (output / "ir" / (case["id"] + ".json")).write_text(json.dumps(document))
         bpy.data.materials.remove(material, do_unlink=True); bpy.data.materials.remove(independent, do_unlink=True)
         for group in set(bpy.data.node_groups) - groups: bpy.data.node_groups.remove(group)
+import gpu
+if hasattr(gpu, "init"):
+    gpu.init()
+native_gpu_platform = {"backend": gpu.platform.backend_type_get(), "renderer": gpu.platform.renderer_get(),
+    "vendor": gpu.platform.vendor_get()}
+assert native_gpu_platform["backend"] in {"METAL", "OPENGL", "VULKAN"}, native_gpu_platform
 (output / "index.json").write_text(json.dumps({"native": bpy.app.version_string, "hash": bpy.app.build_hash.decode(),
+    "nativeGpuPlatform": native_gpu_platform,
     "sourceEngine": scene.render.engine, "size": SIZE, "cases": cases,
     "nativeCarrierCalibration": {"independentSocketUvFormula": True, "halfRepresentable": True,
         "maximumBudgetRatio": max(case["independentNativeCarrierCalibration"]["maximumBudgetRatio"] for case in cases)},

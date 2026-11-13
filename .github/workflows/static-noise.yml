@@ -11,6 +11,9 @@ on:
       - 'experiments/magic-node-differential/**'
       - 'experiments/legacy-shader-hsv/**'
       - 'experiments/vector-component-differential/**'
+      - 'experiments/camera-data/**'
+      - 'scripts/check-camera-data-source.mjs'
+      - 'scripts/camera-data-coverage-policy.test.mjs'
       - 'scripts/lib/**'
       - 'package*.json'
   push:
@@ -285,6 +288,71 @@ jobs:
         with:
           name: legacy-hsv-opengl-linux-4.2
           path: artifacts/verification-legacy-hsv-linux42
+          if-no-files-found: warn
+
+  native-camera-data:
+    name: Native Camera Data / EEVEE OpenGL / Blender 5.2.0 / actual Final / Linux SwiftShader
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out the exact candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Download and verify Blender 5.2.0
+        env:
+          BLENDER_SHA256: '96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48'
+        run: |
+          archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
+            'https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz' \
+            --output "$archive"
+          echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/blender"
+          tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
+          "$RUNNER_TEMP/blender/blender" --version
+          echo "BLENDLINK_BLENDER=$RUNNER_TEMP/blender/blender" >> "$GITHUB_ENV"
+
+      - name: Install locked tools and software rendering libraries
+        run: |
+          npm ci
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 mesa-utils
+          npx --no-install playwright install --with-deps chromium
+          npm run build
+
+      # Ordinary profile only: fresh EEVEE source -> 8 actual Final GLBs ->
+      # both browser APIs and exact private GPU storage. This earns native
+      # OpenGL independently; the local Metal coverage does not credit it.
+      - name: Generate actual OpenGL source and Final/browser proof
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_CAMERA_DATA_NATIVE_BACKEND: OPENGL
+          BLENDLINK_TEST_PROFILE: software
+          BLENDLINK_TEST_CHROMIUM_ARGS: '[]'
+        run: |
+          env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run --auto-servernum node experiments/camera-data/suite.mjs \
+            --built --blender "$BLENDLINK_BLENDER" --profiles ordinary --output artifacts/verification-camera-data-linux52
+          node scripts/check-camera-data-source.mjs artifacts/verification-camera-data-linux52/ordinary OPENGL
+          BLENDLINK_CAMERA_DATA_NATIVE=artifacts/verification-camera-data-linux52/ordinary \
+            env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run --auto-servernum node experiments/camera-data/run.mjs --built --ownership
+          BLENDLINK_CAMERA_DATA_ADDON=packages/blendlink/dist/addon \
+            "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 --python experiments/camera-data/package_probe.py
+
+      - name: Retain actual backend, native references, Final pins and private GPU proof
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: camera-data-opengl-linux-5.2
+          path: artifacts/verification-camera-data-linux52
           if-no-files-found: warn
 
   native-magic:
@@ -740,14 +808,34 @@ jobs:
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
           BLENDLINK_VECTOR_COMPONENT_EVIDENCE: artifacts/verification-vector-component-linux53/browser
+          BLENDLINK_VECTOR_COMPONENT_NATIVE_BACKEND: OPENGL
           BLENDLINK_TEST_CHROMIUM_ARGS: '[]'
         run: |
           env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run --auto-servernum node experiments/vector-component-differential/run.mjs --built
           node scripts/check-vector-component-profile.mjs --browser "$BLENDLINK_VECTOR_COMPONENT_EVIDENCE/report.json"
-          xvfb-run --auto-servernum "$BLENDLINK_BLENDER" --background --factory-startup -t 1 --python-exit-code 1 \
+          xvfb-run --auto-servernum "$BLENDLINK_BLENDER" --background --factory-startup --gpu-backend opengl -t 1 --python-exit-code 1 \
+            --python-expr 'import gpu; gpu.init()' \
             --python experiments/native-compositor-differential/capabilities.py \
             -- artifacts/verification-vector-component-linux53/native-capabilities.json
           node -e 'const assert = require("node:assert/strict"); const fs = require("node:fs"); const record = JSON.parse(fs.readFileSync("artifacts/verification-vector-component-linux53/native-capabilities.json")); assert.equal(record.gpuPlatform.backend, "OPENGL"); assert.equal(record.blenderHash, "02f0899d78e3")'
+
+      - name: Compare native compositor fixed selections and independent Separate XYZ
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_COMPOSITOR_COMPONENT_PACKAGED_ADDON: ${{ github.workspace }}/packages/blendlink/dist/addon
+        run: |
+          for device in CPU GPU; do
+            export BLENDLINK_COMPOSITOR_COMPONENT_DEVICE="$device"
+            export BLENDLINK_COMPOSITOR_COMPONENT_REFERENCES="artifacts/verification-vector-component-linux53/compositor-$device"
+            xvfb-run --auto-servernum "$BLENDLINK_BLENDER" --background --factory-startup --gpu-backend opengl -t 1 --python-exit-code 1 \
+              --python packages/blender-addon/tests/compositor_vector_component_check.py
+            node scripts/check-compositor-component.mjs --source "$BLENDLINK_COMPOSITOR_COMPONENT_REFERENCES"
+          done
+          env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run --auto-servernum node experiments/native-compositor-differential/run.mjs --built \
+            --out artifacts/verification-vector-component-linux53/compositor-browser \
+            artifacts/verification-vector-component-linux53/compositor-CPU artifacts/verification-vector-component-linux53/compositor-GPU
+          node scripts/check-compositor-component.mjs --browser artifacts/verification-vector-component-linux53/compositor-browser/results.json \
+            artifacts/verification-vector-component-linux53/compositor-CPU artifacts/verification-vector-component-linux53/compositor-GPU
 
       - name: Retain source, native pixels, immutable runtime and both proof roles
         if: always()

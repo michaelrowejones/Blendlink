@@ -137,6 +137,14 @@ These gates prove the listed fixtures and declared parameter domains. They do
 not certify all combinations of arbitrary graphs, every browser/device, or
 whole-scene pixel parity with Blender.
 
+Fixed Get Vector Component selection is live in shader and compositor contexts
+on Blender 5.3.0 only. Typed Index 0/1/2 defaults or Input Integer literals can
+pass through qualified reroutes/groups; dynamic/computed selectors and geometry
+execution remain outside this port. Older native versions report actual node
+absence rather than a numerical pass. The [compositor selector proof](../experiments/native-compositor-differential/VECTOR_COMPONENT.md)
+keeps native selection/Separate XYZ pairs, browser numeric checks and ZIP source
+extraction evidence distinct. It does not claim signed-zero browser word parity.
+
 ## Work toward full coverage
 
 The inventory groups remaining work into common pointwise operations, missing

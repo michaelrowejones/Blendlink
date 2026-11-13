@@ -138,3 +138,12 @@ files are byte-identical to the first reference capture, as retained in
 `native-reference-refresh.json`. No new native pixel values or tolerance change
 were introduced by the independent calibration. Hosted OpenGL remains pending
 until its fresh canary completes.
+
+The first Linux 5.3 canary passed all numerical/raw checks, then failed its
+backend audit: the factory preference defaulted to Vulkan and the separate
+background GPU module was uninitialized. That run is not counted as OpenGL
+qualification. Fresh captures record the initialized platform from the actual
+native render process; the canary explicitly requests OpenGL and checks that
+the recorded backend matches. `BLENDLINK_VECTOR_COMPONENT_NATIVE_BACKEND`
+accepts `OPENGL`, `VULKAN` or `METAL`; local Metal replay passes with its actual
+renderer/vendor recorded, without changing the numerical budgets.

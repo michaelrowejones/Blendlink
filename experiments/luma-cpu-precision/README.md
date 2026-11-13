@@ -13,6 +13,33 @@ documents, spatial GPU evaluation and unqualified fresh CPU sources keep v1.
 Persisted legacy reversed CPU ramps also retain the explicit v1 contract; current 4.2 RNA constrains reverse authoring. Unqualified fresh CPU sources are explicitly tagged `legacy-unqualified-cpu-v1`
 and `SOURCE_ADMISSION_NA`; they do not gain an HDR precision claim.
 
+## Linux5.2 production-admission candidate
+
+The allowlist candidate is **only** Linux `x86_64`, Blender5.2.0 build
+`fbe6228777e7`, actual gradual-RNE and the measured Float32 Rec.709 tuple.
+Source extraction adds `luminance_key_source_build` for this profile; runtime
+independently requires that exact identity. Existing Mac documents retain
+their profile shape and semantics. Windows and all unmeasured Linux
+versions/builds/architectures retain `legacy-unqualified-cpu-v1`.
+
+The basis is retained native trial run43400812538/job131802895572,
+artifact14024667969, archive SHA256
+`fe5439bba9286fcf59f9075ba8b1bf4d5f1eb1984537f69478a0c943d6f3bf0d`.
+Its actual source was Linux/x86_64 buildfbe6228777e7. Ordinary47 cases/API,
+private-kernel32 cases/API and4x16384 primitive controls/API passed exactly
+on both browser APIs, with stable native dot/multiply/add controls and
+unchanged source programs/pixels. Those receipts remain **SOURCE_ADMISSION_NA
+with zero production exact cases**; they are not rewritten or relabelled.
+
+Fresh production qualification remains **pending**. The Linux canary now
+requires `PRODUCTION_QUALIFIED`,32 actual source-emitted production precision
+programs and a fresh production compositor comparison on both browser APIs.
+Precision outputs must be bit-exact, including subnormal and signed-zero
+results; merely falling inside a tolerance cannot qualify them. The driver
+counts production cases only after that production browser step succeeds.
+Windows canaries still require `SOURCE_ADMISSION_NA`. The private-kernel trial
+continues to report zero production admission cases independently.
+
 ## Counterexamples and derivation
 
 The old shared division and generic GPU dot each have an actual CPU-native
@@ -121,10 +148,11 @@ remains native CPU, with unchanged authored nodes and full Float32 native
 output; this avoids a Windows OpenGL scene dependency. Default local scene
 engine is EEVEE when the override is omitted.
 
-The driver first checks ordinary production v1 compatibility. It then captures
+The driver first checks the actual source-emitted production contract (or v1
+compatibility for an unqualified source). It then captures
 extra native HDR/tiny cases using the **fixture-only**
-`BLENDLINK_LUMA_CPU_EXACT_EXPERIMENT=1` switch. The actual unqualified v1 IR is
-retained byte-for-byte. A separate direct private-kernel trial resolves the
+`BLENDLINK_LUMA_CPU_EXACT_EXPERIMENT=1` switch. For unqualified sources, the actual v1 IR is retained byte-for-byte.
+Qualified sources retain their actual source-emitted production IR. A separate direct private-kernel trial resolves the
 untouched upstream graph, calls the production arithmetic kernel, and always
 records `productionAdmissionCases: 0`. It never spoofs source platform tags,
 rewrites the source program, or grants production support.

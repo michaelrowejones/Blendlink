@@ -2,11 +2,14 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { readCpuLumaQualification } from './precision-protocol.mjs'
+import { readCpuLumaQualification, verifyProductionLumaBrowser } from './precision-protocol.mjs'
 
 const root = resolve(import.meta.dirname, '../..'), evidence = resolve(process.argv[2] || 'artifacts/verification-luma-cpu-host')
 const blender = process.env.BLENDLINK_BLENDER
 assert.ok(blender, 'BLENDLINK_BLENDER must name the actual native executable')
+const expectedAdmission=process.env.BLENDLINK_LUMA_EXPECTED_SOURCE_ADMISSION
+assert.ok(expectedAdmission===undefined||['PRODUCTION_QUALIFIED','SOURCE_ADMISSION_NA'].includes(expectedAdmission),
+  'Expected source admission must be an explicit production or N/A outcome')
 await mkdir(evidence, { recursive: true })
 const report = { schemaVersion: 1, kind: 'native-cpu-luma-host-qualification', status: 'running',
   hostPlatform: process.platform, hostArchitecture: process.arch, productionAdmissionCases: 0, steps: [] }
@@ -26,6 +29,9 @@ try {
   await native('experimental-native', fixture, { BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_REFERENCES: trial, BLENDLINK_LUMA_CPU_EXACT_EXPERIMENT: '1' })
   const base = await readCpuLumaQualification(ordinary), experiment = await readCpuLumaQualification(trial)
   assert.equal(base.packet.productionAdmission, experiment.packet.productionAdmission)
+  if(expectedAdmission!==undefined)assert.equal(base.packet.productionAdmission,expectedAdmission,
+    'The requested source admission was not emitted by actual production extraction')
+  assert.equal(base.packet.experimentalKernelTrial,false);assert.equal(experiment.packet.experimentalKernelTrial,true)
   assert.deepEqual(base.packet.sourceCpuProfile, experiment.packet.sourceCpuProfile)
   const original = JSON.parse(await readFile(join(ordinary, 'index.json'))), expanded = JSON.parse(await readFile(join(trial, 'index.json')))
   assert.ok(expanded.length >= original.length)
@@ -39,6 +45,11 @@ try {
   await native('dot-native', 'experiments/luma-cpu-precision/dot_reference.py', { BLENDLINK_LUMA_DOT_REFERENCES: dot })
   await native('ratio-native', 'experiments/luma-cpu-precision/ratio_reference.py', { BLENDLINK_LUMA_RATIO_REFERENCES: ratio })
   await run('ordinary-browser', process.execPath, ['experiments/native-compositor-differential/run.mjs', '--built', '--out', join(evidence, 'ordinary-browser'), ordinary])
+  if(base.packet.productionAdmission==='PRODUCTION_QUALIFIED'){
+    const productionResults=JSON.parse(await readFile(join(evidence,'ordinary-browser/results.json')))
+    report.productionAdmissionCases=verifyProductionLumaBrowser(productionResults,base.packet)
+    report.productionBrowserContract='actual-production-compositor-bit-exact-v1'
+  }
   await run('experimental-kernel-browser', process.execPath, ['experiments/luma-cpu-precision/kernel-trial-run.mjs', '--built', '--out', join(evidence, 'experimental-browser'), trial])
   const primitives = [join(dot, 'dot.json'), join(ratio, 'ratio.json')]
   if (base.packet.sourceCpuProfile.mode === 'gradual-rne') primitives.push(join(words, 'multiply/word.json'), join(words, 'add/word.json'))

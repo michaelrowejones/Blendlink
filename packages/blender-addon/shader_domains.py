@@ -11,7 +11,7 @@ _CONSTANT = {"const_float", "const_vec3", "typed_const"}
 _SHADER = {"noise_field_nearest", "uv", "uv_active", "generated", "object_coords", "normal_view", "view_cos",
            "attribute_object", "vertex_color", "normal_map", "object_info",
            "ambient_occlusion", "fresnel", "layer_weight", "shader_to_rgb_diffuse",
-           "texture_ref", "tex_image", "vector_transform", "geometry_context", "normal_map_native", "normal_view_native", "tangent_native", "normal_map_tangent_native", "bump_passthrough_native", "bump_height_native"}
+           "texture_ref", "tex_image", "vector_transform", "geometry_context", "camera_data_native", "normal_map_native", "normal_view_native", "tangent_native", "normal_map_tangent_native", "bump_passthrough_native", "bump_height_native"}
 _FUNCTION = {"math_modulo_native", "math", "vector_math", "mapping", "vector_rotate", "vector_scale",
              "combine", "separate", "clamp01", "clamp_minmax", "mix_color",
              "rgb_to_bw", "hue_sat", "hsv_to_rgb", "rgb_to_hsv", "gamma",

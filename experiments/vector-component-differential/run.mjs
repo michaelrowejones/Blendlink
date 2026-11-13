@@ -12,6 +12,8 @@ const root = resolve(import.meta.dirname, '../..')
 const evidence = resolve(process.env.BLENDLINK_VECTOR_COMPONENT_EVIDENCE || join(root, 'artifacts/verification-vector-component'))
 const references = resolve(process.env.BLENDLINK_VECTOR_COMPONENT_REFERENCES || join(evidence, 'reference'))
 const built = process.argv.includes('--built'), snapshot = join(evidence, 'runtime-' + Date.now() + '-' + process.pid)
+const nativeBackend = process.env.BLENDLINK_VECTOR_COMPONENT_NATIVE_BACKEND
+assert.ok(nativeBackend === undefined || ['METAL', 'OPENGL', 'VULKAN'].includes(nativeBackend), 'Unknown requested native backend')
 mkdirSync(evidence, { recursive: true })
 const { provenance } = await captureRuntimeSnapshot({ root, built, destination: snapshot, label: 'Get Vector Component' })
 const native = join(snapshot, 'native'); mkdirSync(native)
@@ -27,13 +29,16 @@ for (const directory of built ? ['packages/blendlink/dist/blender'] : ['packages
 }
 if (!process.argv.includes('--reuse-reference')) {
   const blender = process.env.BLENDLINK_BLENDER; assert.ok(blender && existsSync(blender))
-  const log = execFileSync(blender, ['--background', '--factory-startup', '-t', '1', '--python-exit-code', '1',
+  const log = execFileSync(blender, ['--background', '--factory-startup', ...(nativeBackend ? ['--gpu-backend', nativeBackend.toLowerCase()] : []), '-t', '1', '--python-exit-code', '1',
     '--python', join(import.meta.dirname, 'reference.py')], { cwd: root, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
     env: { ...process.env, BLENDLINK_VECTOR_COMPONENT_MODULES: native, BLENDLINK_VECTOR_COMPONENT_REFERENCES: references } })
   writeFileSync(join(evidence, 'native.log'), log); assert.match(log, /BLENDLINK_VECTOR_COMPONENT_REFERENCES_PASSED 44/)
 }
 const manifest = JSON.parse(readFileSync(join(references, 'index.json'), 'utf8'))
 assert.equal(manifest.native, '5.3.0'); assert.equal(manifest.hash, '02f0899d78e3'); assert.equal(manifest.sourceEngine, 'BLENDER_EEVEE')
+assert.ok(['METAL', 'OPENGL', 'VULKAN'].includes(manifest.nativeGpuPlatform?.backend))
+for (const field of ['vendor', 'renderer']) assert.ok(typeof manifest.nativeGpuPlatform[field] === 'string' && manifest.nativeGpuPlatform[field].length)
+if (nativeBackend) assert.equal(manifest.nativeGpuPlatform.backend, nativeBackend, 'Actual native renderer must match the requested backend')
 assert.equal(manifest.size, 64); assert.equal(manifest.cases.length, 44)
 assert.equal(manifest.nativeCarrierCalibration.independentSocketUvFormula, true)
 assert.equal(manifest.nativeCarrierCalibration.halfRepresentable, true)
@@ -141,6 +146,7 @@ try {
 } catch (error) { failures.push({ execution: String(error.stack || error) }) }
 finally {
   writeFileSync(join(evidence, 'report.json'), JSON.stringify({ built, provenance, harness, native: manifest.native, nativeHash: manifest.hash,
+    nativeGpuPlatform: manifest.nativeGpuPlatform,
     nativeSelectionGraphs: manifest.cases.length - 2, independentCarrierControls: 2, nativeComponentVsSeparateBitMismatches: 0,
     carrierAllowance: { absolute: 6e-6, additional: 'one native scene-target half ULP' },
     nativeCarrierCalibration: manifest.nativeCarrierCalibration,

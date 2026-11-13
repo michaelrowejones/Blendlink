@@ -36,6 +36,12 @@ function hasMagic(value:unknown):boolean {
   return value.op==='tex_magic_native'||irInspectionChildren(value).some(hasMagic)
 }
 
+function hasCameraData(value:unknown):boolean {
+  if(Array.isArray(value))return value.some(hasCameraData)
+  if(!record(value))return false
+  return value.op==='camera_data_native'||irInspectionChildren(value).some(hasCameraData)
+}
+
 function imageFile(value: unknown): string {
   if (typeof value !== 'string' || !value || value === '.' || value === '..' || /[\\/\u0000?#:%]/.test(value)) {
     throw new Error('Compiled material program image must name a basename beside its sidecar.')
@@ -199,13 +205,14 @@ export async function validatedBaseColorProgramMaterials(
     const program = programs[source]
     const nativeNormal=record(program)&&hasNativeNormal(program.channels)
     const magic=record(program)&&hasMagic(program.channels)
-    if(!baseColorRequired&&!nativeNormal&&!magic)return []
+    const cameraData=record(program)&&hasCameraData(program.channels)
+    if(!baseColorRequired&&!nativeNormal&&!magic&&!cameraData)return []
     const channel = record(program) && record(program.channels) ? program.channels['Base Color'] : null
     if (baseColorRequired&&(!record(channel) || !record(channel.tslIr))) return []
     // GLTFLoader creates MeshBasicMaterial for an unlit carrier; the actual
     // program installer only swaps MeshStandardMaterial-compatible carriers.
     if (record(material.extensions) && Object.hasOwn(material.extensions, 'KHR_materials_unlit')) return []
-    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal,magic }]
+    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal,magic,cameraData }]
   })
   if (!candidates.length) return accepted
   const { buildTslColorNode, createTslBuildResources, TslIrError } = await import('./tslNodeRecipe.js')
@@ -219,6 +226,7 @@ export async function validatedBaseColorProgramMaterials(
   const {collectTangentNormalMaps,validateTangentNormalMapBinding}=await import('./tslTangentNormalMap.js')
   const {collectBumpHeights,validateBumpHeightBinding}=await import('./tslBumpHeight.js')
   const {collectMagicTextures,validateMagicCoordinates}=await import('./tslMagicBounds.js')
+  const {validateCameraDataBinding}=await import('./tslCameraData.js')
   const THREE = await import('three')
   const objectForBinding = (binding: PrimitiveBinding): import('three').Object3D => {
     if (binding.hierarchyIssue || !binding.nodeChain?.length) throw new TslIrError('Vector Transform needs actual default-scene object matrices: ' + (binding.hierarchyIssue ?? 'node hierarchy is missing'))
@@ -260,7 +268,7 @@ export async function validatedBaseColorProgramMaterials(
       return texture
     },
   })
-    for (const { index, ir, program,baseColorRequired,nativeNormal,magic } of candidates) {
+    for (const { index, ir, program,baseColorRequired,nativeNormal,magic,cameraData } of candidates) {
       let bindingCount = 0
       let valid = true
       let refusal=''
@@ -307,12 +315,12 @@ export async function validatedBaseColorProgramMaterials(
                 throw new TslIrError('Geometry context requires actual triangle position/normal attributes without skin, morph or GPU instances')
               validateGeometryContextMatrix(objectForBinding(binding),extras?.objectSpace)
             }
-            if(normalMaps.length||tangents.length||heights.length||magicTextures.some(item=>item.evaluationModel==='shader')){
+            if(normalMaps.length||tangents.length||heights.length||cameraData||magicTextures.some(item=>item.evaluationModel==='shader')){
               const needsNormal=normalMaps.length||tangents.length||heights.length
               if(needsNormal&&!extras?.geometryContext?.includes('normal'))throw new TslIrError('Native Normal Map requires its exported primary-normal context declaration')
               if(magicTextures.some(item=>item.evaluationModel==='shader')&&(instanced||binding.nodeChain?.some(node=>node.skin!==undefined)||primitive.targets!==undefined))
                 throw new TslIrError('Magic Texture coordinate proof currently requires static authored primitive attributes without skin/morph/instances')
-              const owner=needsNormal?objectForBinding(binding):new THREE.Object3D(),data=geometryData?.get(`${binding.meshIndex}:${binding.primitiveIndex}`)
+              const owner=needsNormal||cameraData?objectForBinding(binding):new THREE.Object3D(),data=geometryData?.get(`${binding.meshIndex}:${binding.primitiveIndex}`)
               let bound:import('three').Object3D=owner
               if(data?.position&&(!needsNormal||data.normal)){
                 const actual=new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(data.position,3))
@@ -330,6 +338,10 @@ export async function validatedBaseColorProgramMaterials(
                 if(!(bound as import('three').Mesh).isMesh)throw new TslIrError('UV Tangent needs actual decoded primitive geometry')
                 validateTangentBinding(tangents,bound as import('three').Mesh,extras?.objectSpace,extras)
               }
+            }
+            if(cameraData){
+              if(!actualGeometry)throw new TslIrError('Camera Data needs actual decoded primitive geometry')
+              validateCameraDataBinding(actualGeometry,extras?.objectSpace)
             }
             if(magicTextures.length){
               options.validateMagicCoordinates=expression=>validateMagicCoordinates(expression,actualGeometry??undefined,options)
@@ -394,10 +406,10 @@ export async function validatedBaseColorProgramMaterials(
             }
             inspect(record(program) ? program.channels : ir)
             if(ir)buildTslColorNode(ir, options)
-            if((nativeNormal||magic)&&record(program)&&record(program.channels)){
+            if((nativeNormal||magic||cameraData)&&record(program)&&record(program.channels)){
               const built=buildMaterialProgram(program.channels as unknown as Record<string,import('./tslMaterialProgram.js').MaterialProgramChannel>,options)
               for(const [name,channel] of Object.entries(program.channels)){
-                if(hasNativeNormal(channel)||hasMagic(channel)){
+                if(hasNativeNormal(channel)||hasMagic(channel)||hasCameraData(channel)){
                   const skipped=built.skipped.find(item=>item.channel===name)
                   if(skipped)throw new TslIrError(`Native material channel ${name}: ${skipped.reason}`)
                 }

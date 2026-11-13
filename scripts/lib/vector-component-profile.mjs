@@ -44,6 +44,8 @@ const caseIds = () => {
 export function validateVectorComponentBrowser(record) {
   assert.equal(record.built, true); assert.equal(record.provenance.mode, 'built')
   assert.equal(record.native, '5.3.0'); assert.equal(record.nativeHash, builds['5.3.0'])
+  assert.ok(['METAL', 'OPENGL', 'VULKAN'].includes(record.nativeGpuPlatform?.backend))
+  for (const field of ['vendor', 'renderer']) assert.ok(typeof record.nativeGpuPlatform[field] === 'string' && record.nativeGpuPlatform[field].length)
   assert.equal(record.nativeSelectionGraphs, 42); assert.equal(record.independentCarrierControls, 2)
   assert.equal(record.nativeComponentVsSeparateBitMismatches, 0)
   assert.deepEqual(record.carrierAllowance, { absolute: 6e-6, additional: 'one native scene-target half ULP' })

@@ -29,6 +29,7 @@ import { buildNativeColorBandSample } from './tslNativeColorBand.js'
 import { buildTslBrickNode } from './tslBrickNodes.js'
 import { buildTslVectorTransformNode } from './tslVectorTransform.js'
 import { buildGeometryContext } from './tslGeometryContext.js'
+import { buildNativeCameraData } from './tslCameraData.js'
 import { buildTslNativeNormalMap, buildNativeNormalView } from './tslNormalNodes.js'
 import {buildTslNativeTangent} from './tslTangentNodes.js'
 import {buildTslTangentNormalMap} from './tslTangentNormalMap.js'
@@ -561,6 +562,8 @@ function child(expression: TslIrExpression, key: string): TslIrExpression {
 
 function build(expression: TslIrExpression): TslExpression {
   switch (expression.op) {
+    case 'camera_data_native':
+      return buildNativeCameraData(expression, activeOptions.objectSpace?.basis)
     case 'geometry_context':
       return buildGeometryContext(expression, activeOptions.objectSpace?.basis)
     case 'typed_const':

@@ -10,6 +10,7 @@ import { readChannelProfileRefusal } from './lib/channel-profile-refusal.mjs'
 import { readSplitSourceProfile } from './lib/split-source-profile.mjs'
 import { readMapValueSourceProfile, verifyMapValueCurrentSources } from './lib/map-value-profile.mjs'
 import { validateVectorComponentSource, validateVectorComponentBrowser } from './lib/vector-component-profile.mjs'
+import { readCompositorComponentProfile, verifyCompositorComponentCurrentSources, validateCompositorComponentBrowser } from './lib/compositor-vector-component-profile.mjs'
 import { NODE_PARITY_SUITES, nodeParityPlan } from './lib/node-parity-plan.mjs'
 
 const plan = nodeParityPlan(process.argv.slice(2))
@@ -62,6 +63,8 @@ const references = []
 const referenceSets = []
 const independentArithmeticProofs = []
 const shaderSourceQualifications = []
+const compositorComponentQualifications = []
+let compositorComponentBrowser
 const inapplicableFamilies = []
 function recordAffineUnavailable(directory, family, device, rows) {
   const file = join(directory, 'not-applicable.json')
@@ -83,6 +86,7 @@ function recordAffineUnavailable(directory, family, device, rows) {
   return true
 }
 const compositorFamilies = [
+  ['vector-component', 'compositor_vector_component_check.py', 'BLENDLINK_COMPOSITOR_COMPONENT_REFERENCES'],
   ['image', 'compositor_image_check.py', 'BLENDLINK_COMPOSITOR_IMAGE_REFERENCES'],
   ['crop', 'compositor_crop_check.py', 'BLENDLINK_COMPOSITOR_CROP_REFERENCES'],
   ['pixelate', 'compositor_pixelate_check.py', 'BLENDLINK_COMPOSITOR_PIXELATE_REFERENCES'],
@@ -147,7 +151,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   mkdirSync(directory, { recursive: true })
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
-    [variable]: directory, BLENDLINK_DIFFERENCE_PRECISION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPLIT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DISTANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_PIXELATE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_RESIZE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_IMAGE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPILL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
+    [variable]: directory, BLENDLINK_COMPOSITOR_COMPONENT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_COMPONENT_PACKAGED_ADDON: join(root, 'packages/blendlink/dist/addon'), BLENDLINK_DIFFERENCE_PRECISION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPLIT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DISTANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_PIXELATE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_RESIZE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_IMAGE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPILL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_AFFINE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
@@ -157,6 +161,15 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   if (complete) {
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
     if (family === 'affine' && recordAffineUnavailable(directory, family, 'CPU', rows)) continue
+    if (family === 'vector-component') {
+      const qualification = readCompositorComponentProfile(directory, rows)
+      verifyCompositorComponentCurrentSources(qualification, root)
+      compositorComponentQualifications.push({ family, directory, ...qualification })
+      if (qualification.status === 'native-node-absent') {
+        inapplicableFamilies.push({ family: 'compositor-vector-component', directory, ...qualification })
+        console.log('BLENDLINK_COMPOSITOR_COMPONENT_NATIVE_ABSENT device=CPU numericalComponentCases=0'); continue
+      }
+    }
     if (family === 'split') assert.equal(readSplitSourceProfile(directory, rows).status, 'qualified')
     if (family === 'difference-cpu-precision') assert.equal(readDifferencePrecisionProfile(directory, rows).status, 'qualified')
     if (family === 'map-value') {
@@ -205,6 +218,7 @@ if (!plan.compositor) {
   nativeCompositorGpu = { status: 'not-requested', reason: 'Explicit ' + plan.suite + ' suite' }
 } else if (capabilities.offlineGpuAvailable && capabilities.gpuParityVersionSupported) {
   const gpuFamilies = [
+    ['vector-component-gpu', 'compositor_vector_component_check.py', 'BLENDLINK_COMPOSITOR_COMPONENT_REFERENCES', 'BLENDLINK_COMPOSITOR_COMPONENT_DEVICE'],
     ['difference-cpu-fold-gpu', 'compositor_difference_precision_check.py', 'BLENDLINK_DIFFERENCE_PRECISION_REFERENCES', 'BLENDLINK_DIFFERENCE_PRECISION_DEVICE'],
     ['map-value-gpu-source-profile', 'compositor_map_value_check.py', 'BLENDLINK_COMPOSITOR_MAP_VALUE_REFERENCES', 'BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE'],
     ['split-gpu-source-profile', 'compositor_split_check.py', 'BLENDLINK_COMPOSITOR_SPLIT_REFERENCES', 'BLENDLINK_COMPOSITOR_SPLIT_DEVICE'],
@@ -252,9 +266,18 @@ if (!plan.compositor) {
     mkdirSync(directory, { recursive: true })
     attempt('native-' + family, () => {
     const nativeOutput = run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
-      '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory, [deviceVariable]: 'GPU' })
+      '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory, [deviceVariable]: 'GPU', BLENDLINK_COMPOSITOR_COMPONENT_PACKAGED_ADDON: join(root, 'packages/blendlink/dist/addon') })
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
     if (family === 'affine-gpu' && recordAffineUnavailable(directory, family, 'GPU', rows)) return
+    if (family === 'vector-component-gpu') {
+      const qualification = readCompositorComponentProfile(directory, rows)
+      verifyCompositorComponentCurrentSources(qualification, root)
+      compositorComponentQualifications.push({ family, directory, ...qualification })
+      if (qualification.status === 'native-node-absent') {
+        inapplicableFamilies.push({ family: 'compositor-vector-component-gpu', directory, ...qualification })
+        console.log('BLENDLINK_COMPOSITOR_COMPONENT_NATIVE_ABSENT device=GPU numericalComponentCases=0'); return
+      }
+    }
     if (family === 'difference-cpu-fold-gpu') {
       const qualification = readDifferencePrecisionProfile(directory, rows)
       if (qualification.status === 'not-applicable') {
@@ -382,6 +405,13 @@ const compositorCases = referenceSets.reduce((sum, set) => sum + set.cases, 0)
 const compositorTimeout = Math.max(600_000, compositorCases * 500 + 60_000)
 const compositorComplete = references.length > 0 && attempt('compositor-browser', () => run('compositor-browser', process.execPath, ['experiments/native-compositor-differential/run.mjs',
   '--built', '--out', join(evidence, 'browser'), ...references], {}, compositorTimeout))
+if (compositorComplete && compositorComponentQualifications.some(profile => profile.status === 'qualified-fixed-selection')) {
+  attempt('compositor-component-exact-browser', () => {
+    const ids = new Set(compositorComponentQualifications.flatMap(profile => profile.caseIds))
+    const results = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 'utf8')).map(record => ({ ...record, rows: record.rows.filter(row => ids.has(row.case)) }))
+    compositorComponentBrowser = validateCompositorComponentBrowser(results, compositorComponentQualifications)
+  })
+}
 if (nativeCompositorGpu.status === 'generated') nativeCompositorGpu.status = compositorComplete &&
   !failures.some(item => item.label.endsWith('-gpu')) ? 'passed' : 'not-verified'
 if (plan.shaders) {
@@ -454,6 +484,17 @@ if (plan.shaders) {
   } else inapplicableFamilies.push({ family: 'shader-shared-utilities',
     reason: 'Native node creation probe found no shared Boolean/Integer input nodes in this shader context' })
 }
+if (plan.geometry) {
+  const directory=join(evidence,'camera-data')
+  attempt('camera-data-addon',()=>run('camera-data-addon',blender,
+    ['--background','--factory-startup','--python-exit-code','1','--python','experiments/camera-data/package_probe.py'],
+    {BLENDLINK_CAMERA_DATA_ADDON:join(root,'packages/blendlink/dist/addon')}))
+  if(attempt('camera-data',()=>run('camera-data',process.execPath,
+    ['experiments/camera-data/suite.mjs','--built','--blender',blender,'--output',directory],{},1_800_000)))
+    attempt('camera-data-ownership',()=>run('camera-data-ownership',process.execPath,
+      ['experiments/camera-data/run.mjs','--built','--ownership'],
+      {BLENDLINK_CAMERA_DATA_NATIVE:join(directory,'ordinary')},600_000))
+}
 if (plan.geometry) attempt('geometry', () => run('geometry', process.execPath,
   ['experiments/geometry-context-differential/suite.mjs', '--built'],
   { BLENDLINK_GEOMETRY_BLENDER: blender, BLENDLINK_GEOMETRY_NATIVE: join(evidence, 'geometry') }, 1_800_000))
@@ -510,13 +551,13 @@ try { browser = JSON.parse(readFileSync(join(evidence, 'browser/results.json'), 
 writeFileSync(join(evidence, 'report.json'), JSON.stringify({
   requestedSuite: plan.suite, selectedSuites: plan.selected,
   nativeCompositorDevices: [...new Set(referenceSets.flatMap(set => set.device.split('+')))],
-  nativeCompositorGpu, nativeCapabilities: capabilities, references, referenceSets, inapplicableFamilies, independentArithmeticProofs, shaderSourceQualifications, compositorTimeout,
+  nativeCompositorGpu, nativeCapabilities: capabilities, references, referenceSets, inapplicableFamilies, independentArithmeticProofs, shaderSourceQualifications, compositorComponentQualifications, compositorComponentBrowser, compositorTimeout,
   compositor: browser.map(({ backend, rows, failure, error }) => ({ backend, cases: rows?.length ?? 0,
     maximumAbsoluteError: rows?.length ? Math.max(...rows.map(row => row.max)) : null, failure: failure ?? error ?? null })),
   shaderFamilies: [...(plan.shaders ? ['mapping', 'mix', 'map-range', 'math', 'math-boundary', 'hue-ramp', 'vectors', 'brick', 'clamp', 'images', 'spectral', 'curves', 'vector-transform', 'published-images', 'wave', 'color-conversions',
     ...(shaderSourceQualifications.some(item => item.status === 'qualified-source-selection') ? ['vector-component'] : []),
     ...(capabilities.sharedUtilityShaderAvailable ? ['shared-utilities'] : [])] : []),
-    ...(plan.geometry ? ['geometry', 'active-uv', 'normal-map', 'tangent', 'tangent-normal', 'geometry-normal', 'renderer-sign', 'normal-dot'] : []), ...(plan.shaders ? ['normal-input'] : []),
+    ...(plan.geometry ? ['camera-data', 'camera-data-ownership', 'geometry', 'active-uv', 'normal-map', 'tangent', 'tangent-normal', 'geometry-normal', 'renderer-sign', 'normal-dot'] : []), ...(plan.shaders ? ['normal-input'] : []),
     ...(plan.noiseFbm ? ['noise-fractal', 'noise-normalized'] : []), ...(plan.noiseTypes ? ['noise-types', 'noise-varying', 'noise-native-varying'] : [])],
   builtRuntime: true, failures,
 }, null, 2) + '\n')

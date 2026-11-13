@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { validateVectorComponentSource, validateVectorComponentBrowser } from './lib/vector-component-profile.mjs'
-const read = name => readFileSync(new URL('../' + name, import.meta.url), 'utf8')
+const read = name => readFileSync(new URL('../' + name, import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 const clone = value => structuredClone(value)
 const contexts = ['ShaderNodeTree', 'CompositorNodeTree', 'GeometryNodeTree']
 function source() {
@@ -19,6 +19,7 @@ function browser() {
   for (let v = 0; v < 2; v++) for (let i = 0; i < 3; i++) ids.push(`constant-extra-${v}-${i}`)
   const backends = ['webgpu', 'webgl2']
   return { built: true, provenance: { mode: 'built' }, native: '5.3.0', nativeHash: '02f0899d78e3', nativeSelectionGraphs: 42,
+    nativeGpuPlatform: { backend: 'METAL', vendor: 'measured-native-profile', renderer: 'native-test-renderer' },
     independentCarrierControls: 2, nativeComponentVsSeparateBitMismatches: 0, failures: [],
     carrierAllowance: { absolute: 6e-6, additional: 'one native scene-target half ULP' },
     nativeCarrierCalibration: { independentSocketUvFormula: true, halfRepresentable: true, maximumBudgetRatio: .7 },
@@ -49,6 +50,7 @@ test('native half-target allowance never substitutes for exact raw controls or b
   for (const mutate of [r => r.rawSelectionRows[0].maximum = 1e-8, r => r.rawSelectionRows[0].mismatches = 1,
     r => r.rows[0].ratio = 1.001, r => r.rows[0].id = 'wrong-case', r => r.carrierAllowance.absolute = .01,
     r => r.nativeCarrierCalibration.independentSocketUvFormula = false,
+    r => r.nativeGpuPlatform.backend = 'UNKNOWN', r => delete r.nativeGpuPlatform,
     r => r.rows = r.rows.filter(row => row.backend === 'webgpu'), r => r.built = false,
     r => r.environments[0].resourceCheck.addedProgramTextures = 1]) {
     const changed = clone(valid); mutate(changed); assert.throws(() => validateVectorComponentBrowser(changed))
@@ -61,13 +63,13 @@ test('metadata and fresh native canaries retain fixed shader scope, absence and 
   assert.equal(entry.verification.browserNativeCarrierReadbacks, 176); assert.equal(entry.verification.browserRawAlgebraicReadbacks, 168)
   assert.equal(entry.verification.nativeTargetAllowanceIsNodePrecision, false); assert.equal(entry.verification.rawMaximumAbsoluteError, 0)
   assert.equal(entry.verification.freshHostedOpenGL, 'pending'); assert.ok(!map.knownUnsupported.includes(key))
-  assert.ok(map.knownUnsupported.includes('compositor:FunctionNodeGetVectorComponent'))
+  assert.equal(map.entries['compositor:FunctionNodeGetVectorComponent'].category, 'partial'); assert.ok(!map.knownUnsupported.includes('compositor:FunctionNodeGetVectorComponent'))
   const gate = read('scripts/test-node-parity.mjs')
   for (const name of ['validateVectorComponentSource', 'validateVectorComponentBrowser', 'shaderSourceQualifications', "qualification.status === 'native-node-absent'"]) assert.ok(gate.includes(name))
   const workflow = read('.github/workflows/static-noise.yml'), job = workflow.split('  native-vector-component:\n')[1]
   assert.ok(job); assert.match(job, /blender-5\.3\.0-linux-x64\.tar\.xz/)
   assert.match(job, /dacb8264197a3f7fda6001285a5a506fc97ee943881261c2c3bd63c882f22e05/)
-  for (const text of ['sha256sum --check --strict', 'check-vector-component-profile.mjs --source', 'check-vector-component-profile.mjs --browser', 'run.mjs --built', 'record.gpuPlatform.backend, "OPENGL"']) assert.ok(job.includes(text), text)
+  for (const text of ['sha256sum --check --strict', 'check-vector-component-profile.mjs --source', 'check-vector-component-profile.mjs --browser', 'run.mjs --built', 'record.gpuPlatform.backend, "OPENGL"', 'BLENDLINK_VECTOR_COMPONENT_NATIVE_BACKEND: OPENGL', '--gpu-backend opengl', 'import gpu; gpu.init()']) assert.ok(job.includes(text), text)
   assert.doesNotMatch(job, /--reuse-reference|--disable-gpu-watchdog/)
   assert.equal((workflow.match(/check-vector-component-profile\.mjs --absent/g) || []).length, 2)
 })

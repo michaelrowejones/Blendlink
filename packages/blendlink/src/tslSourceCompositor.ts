@@ -852,7 +852,21 @@ export function buildSourceCompositor(
             node = vec3(input('X'), input('Y'), input('Z'))
             break
           case 'separate-vector': {
-            const channel = ({ X: 'x', Y: 'y', Z: 'z' } as Record<string, string>)[op.source.output]
+            let channel = ({ X: 'x', Y: 'y', Z: 'z' } as Record<string, string>)[op.source.output]
+            if (op.source.nodeType === 'FunctionNodeGetVectorComponent' || op.properties.vector_component_model !== undefined) {
+              const selector = op.inputs.Index?.value, version = op.properties.vector_component_source_version
+              const literal = selector?.kind === 'ref' ? program.ops.find(item => item.id === selector.node) : null
+              const index = selector?.kind === 'constant' ? selector.value
+                : literal?.kind === 'utility-constant' && literal.type === 'INT' ? literal.value : null
+              if (op.source.nodeType !== 'FunctionNodeGetVectorComponent' || op.properties.vector_component_model !== 'native-fixed-vector-component-v1'
+                || !Array.isArray(version) || version.length !== 3 || ![5, 3, 0].every((part, i) => Object.hasOwn(version, i) && version[i] === part)
+                || op.source.output !== 'Value' || op.type !== 'VALUE' || op.inputs.Vector?.socketType !== 'VECTOR' || op.inputs.Vector?.value.type !== 'VECTOR'
+                || Object.keys(op.inputs).length !== 2 || !['Vector', 'Index'].every(name => Object.hasOwn(op.inputs, name))
+                || op.inputs.Index?.socketType !== 'INT' || selector?.type !== 'INT'
+                || typeof index !== 'number' || !Number.isInteger(index) || index < 0 || index > 2)
+                throw new SourceCompositorUnsupported('Get Vector Component requires its measured Blender 5.3.0 model, native Vector/Value types and fixed typed integer Index 0, 1 or 2')
+              channel = 'xyz'[index]!
+            }
             if (!channel) throw new SourceCompositorUnsupported('Separate XYZ requires X, Y or Z output')
             node = input('Vector')[channel]
             break

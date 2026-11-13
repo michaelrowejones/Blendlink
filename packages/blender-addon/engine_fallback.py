@@ -10,6 +10,7 @@ _ENGINE_SENSITIVE = {
     "ShaderNodeTexImage",
     "ShaderNodeTexNoise",
     "ShaderNodeTexMagic",
+    "ShaderNodeCameraData",
     "ShaderNodeVectorTransform",
     "ShaderNodeNormalMap", "ShaderNodeNormal", "ShaderNodeBump", "ShaderNodeTangent",
 }

@@ -1502,7 +1502,7 @@ def collect_sidecar(
         and camera_recipe.get("objectId") == scene.camera.get("blendlink_id")
     )
     light_analysis = weblights.analyze_scene(
-        scene, view_layer=bpy.context.view_layer,
+        scene, view_layer=bpy.context.view_layer, source_version=bpy.app.version[:3],
     )
     return {
         "fps": fps,
@@ -5151,7 +5151,10 @@ def realizable_renderable_plan(objects) -> dict:
             )
             entry = {**issue, "kind": "greasePencil",
                      "estimatedTriangles": triangles}
-            if triangles <= bakelib.MAX_REALIZED_TRIANGLES:
+            if issue.get("objectType") == "GPENCIL":
+                entry["refusalReason"] = "legacy-grease-pencil"
+                refuse.append(entry)
+            elif triangles <= bakelib.MAX_REALIZED_TRIANGLES:
                 realize.append(entry)
             else:
                 refuse.append(entry)
@@ -5256,6 +5259,12 @@ def enforce_supported_renderable_transport(objects) -> None:
             "the scene blocked until a dedicated Grease Pencil adapter can prove "
             "strokes, fills, opacity, depth order, and animation."
         )
+        if any(item.get("refusalReason") == "legacy-grease-pencil" for item in grease_pencil):
+            details.append(
+                "  - Legacy GPENCIL stroke data has no native Grease Pencil "
+                "to Curves converter in Blender4.2; convert it to supported "
+                "geometry before publishing."
+            )
     if hair_curves:
         total_curves = sum(item["evaluatedCurves"] for item in hair_curves)
         total_points = sum(item["evaluatedPoints"] for item in hair_curves)
@@ -5274,7 +5283,10 @@ def enforce_supported_renderable_transport(objects) -> None:
             "dedicated Hair Curves adapter can prove evaluated strands, radii, "
             "materials, Geometry Nodes, and animation."
         )
-    budgeted = [item for item in issues if item.get("estimatedTriangles")]
+    budgeted = [
+        item for item in issues if item.get("estimatedTriangles")
+        and item.get("refusalReason") != "legacy-grease-pencil"
+    ]
     if budgeted:
         examples = "; ".join(
             f"{item['object']!r}"
@@ -5830,7 +5842,7 @@ def normalize_light_shadow_extras_glb(
     for obj in export_objects:
         if getattr(obj, "type", None) != "LIGHT":
             continue
-        plan = weblights.plan_rect_area_light(obj, scene)
+        plan = weblights.plan_rect_area_light(obj, scene, source_version=bpy.app.version[:3])
         if plan.refusals:
             details = "; ".join(issue.detail for issue in plan.refusals)
             raise ValueError(
@@ -6788,6 +6800,7 @@ def main() -> None:
         )
     sidecar["lightDiagnostics"] = weblights.analyze_scene(
         bpy.context.scene,
+        source_version=bpy.app.version[:3],
         published_object_names=published_light_names,
         published_source_objects=published_light_objects,
         published_rect_area_objects=published_rect_area_objects,

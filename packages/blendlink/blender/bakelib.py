@@ -2004,7 +2004,7 @@ def normalize_light_image(image, covered=None) -> float:
 
 def flatten_saved_background(
         path: str, covered, label: str = "", log=print,
-        source_peak: float | None = None) -> None:
+        source_peak: float | None = None, source_resolution=None) -> None:
     """Rewrite the saved atlas's background to ONE constant byte value.
 
     Mip level N keeps only 1/2^N of the authored island padding, so deep
@@ -2061,6 +2061,12 @@ def flatten_saved_background(
             rgba[:, :, :3] = mean
         rgba[:, :, 3] = 1.0
         image.pixels.foreach_set(pixels)
+        if source_resolution is not None:
+            # A PNG reload rounds physical resolution through integer pHYs.
+            # Preserve the original live image's metadata through this private
+            # pixel edit, rather than introducing a different EXIF resolution
+            # from a later native glTF channel re-encode (Blender4.2).
+            image.resolution = source_resolution
         image.filepath_raw = path
         image.file_format = "PNG"
         image.save()
@@ -2277,7 +2283,8 @@ def save_resolved(
                 save_dithered(target, path)
         else:
             save_dithered(target, path)
-        flatten_saved_background(path, covered, source_peak=source_peak)
+        flatten_saved_background(path, covered, source_peak=source_peak,
+                                 source_resolution=tuple(image.resolution))
         return publish_delivery_variants(
             path, covered,
             delivery_variant_sizes(final_size) if delivery_sizes is None else delivery_sizes,
@@ -2638,8 +2645,29 @@ def _material_texture_source_uv(obj):
     )
 
 
+_VERIFIED_UV_PIN_STORAGE_VERSIONS = {(4, 2, 0), (5, 2, 0), (5, 3, 0)}
+
+
 def _uv_layer_pin_mask(layer) -> list[bool]:
     """Read UV pins without the deprecated per-loop reverse lookup."""
+    mesh = getattr(layer, "id_data", None)
+    attributes = getattr(mesh, "attributes", None)
+    if attributes is not None and tuple(bpy.app.version[:3]) in _VERIFIED_UV_PIN_STORAGE_VERSIONS:
+        # Blender 4.2 reports one pin entry per corner even when storage is
+        # absent. Iterating that collection/foreach_get allocates it. Use the
+        # native BKE_uv_map_pin_name_get storage name without a writable RNA
+        # accessor so inspection cannot change a mesh or its bake identity.
+        attribute = attributes.get(".pn." + layer.name)
+        if attribute is None:
+            return [False] * len(layer.data)
+        if attribute.data_type != "BOOLEAN" or attribute.domain != "CORNER" \
+                or len(attribute.data) != len(layer.data):
+            raise RuntimeError(f"UV layer {layer.name!r} has invalid pin storage")
+        values = [False] * len(attribute.data)
+        attribute.data.foreach_get("value", values)
+        return values
+    # Other native versions keep the authoritative public collection path;
+    # never infer absent pins from an unmeasured private attribute name.
     modern_pins = getattr(layer, "pin", None)
     if modern_pins is not None:
         pin_count = len(modern_pins)
@@ -2674,6 +2702,18 @@ def set_uv_layer_pin_mask(layer, values):
     if len(values) != len(layer.data):
         raise RuntimeError("UV pin mask must match the mesh corner count")
     mesh, name = layer.id_data, layer.name
+    attributes = getattr(mesh, "attributes", None)
+    if attributes is not None and tuple(bpy.app.version[:3]) in _VERIFIED_UV_PIN_STORAGE_VERSIONS:
+        attribute = attributes.get(".pn." + name)
+        if attribute is None:
+            if not any(values):
+                return layer
+            attribute = attributes.new(name=".pn." + name, type="BOOLEAN", domain="CORNER")
+        if attribute.data_type != "BOOLEAN" or attribute.domain != "CORNER" \
+                or len(attribute.data) != len(values):
+            raise RuntimeError(f"UV layer {name!r} has invalid pin storage")
+        attribute.data.foreach_set("value", values)
+        return mesh.uv_layers[name]
     pins = getattr(layer, "pin", None)
     if pins is not None:
         if not len(pins):
@@ -6161,6 +6201,32 @@ def average(objs) -> None:
         bpy.ops.uv.average_islands_scale()
 
 
+@contextlib.contextmanager
+def _linked_uv_selection_context():
+    """Blender4.2's linked UV operator dereferences its SpaceImage context."""
+    if bpy.app.version[:2] != (4, 2) or getattr(bpy.context.space_data, "type", None) == "IMAGE_EDITOR":
+        yield
+        return
+    window = bpy.context.window
+    if window is None or window.screen is None or not window.screen.areas:
+        raise RuntimeError("Blender4.2 linked UV selection requires a window with a UV editor context")
+    area = next((item for item in window.screen.areas if item.type == "IMAGE_EDITOR"), None)
+    if area is None:
+        area = next((item for item in window.screen.areas if item.type == "VIEW_3D"), window.screen.areas[0])
+    prior_type, prior_ui = area.type, area.ui_type
+    try:
+        area.type = "IMAGE_EDITOR"
+        area.ui_type = "UV"
+        region = next((item for item in area.regions if item.type == "WINDOW"), None)
+        if region is None:
+            raise RuntimeError("Blender4.2 linked UV selection has no UV editor window region")
+        with bpy.context.temp_override(window=window, area=area, region=region):
+            yield
+    finally:
+        area.type = prior_type
+        area.ui_type = prior_ui
+
+
 def average_unpinned(objs, uv_name: str) -> dict:
     """Equalize px/m across islands EXCEPT pinned ones — a pinned island is
     an authored placement whose scale must survive untouched.
@@ -6191,7 +6257,8 @@ def average_unpinned(objs, uv_name: str) -> dict:
     with scoped_uv_edit(packable, sync=False, select_uvs=False):
         bpy.ops.uv.select_all(action="DESELECT")
         bpy.ops.uv.select_pinned()
-        bpy.ops.uv.select_linked()
+        with _linked_uv_selection_context():
+            bpy.ops.uv.select_linked()
         bpy.ops.uv.pin(clear=False)
         bpy.ops.uv.select_all(action="INVERT")
         bpy.ops.uv.average_islands_scale()
@@ -8075,7 +8142,10 @@ def _realize_geometry_node_group(source, kind: str, profile_sides: int):
         geometry = realize.outputs[0]
     tree.links.new(geometry, to_mesh.inputs["Curve"])
     tree.links.new(circle.outputs["Curve"], to_mesh.inputs["Profile Curve"])
-    tree.links.new(radius.outputs["Attribute"], to_mesh.inputs["Scale"])
+    if to_mesh.inputs.get("Scale") is not None:
+        tree.links.new(radius.outputs["Attribute"], to_mesh.inputs["Scale"])
+    # Native4.2 Curve to Mesh applies the curve's radius attribute internally;
+    # modern Blender exposes Scale and needs the explicit radius field above.
     tree.links.new(to_mesh.outputs["Mesh"], group_out.inputs["Geometry"])
     return tree
 

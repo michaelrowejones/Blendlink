@@ -1674,7 +1674,8 @@ def main():
             scene.render.resolution_x = 256
             scene.render.resolution_y = 144
             scene.render.resolution_percentage = 100
-            scene.render.engine = "BLENDER_EEVEE"
+            engines = {item.identifier for item in scene.render.bl_rna.properties["engine"].enum_items}
+            scene.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
             scene.cycles.samples = 13
             materialization_unit_state = (
                 scene.unit_settings.system,
