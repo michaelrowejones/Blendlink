@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "f1eb588f0fa5df6f07d0694af4380c548f4b266fba0197ae6e1209be7d79d69a",
+  "capabilityMapSha256": "84f7adfc821e2e66669c268dd945eb50a28a5c0f4729e24ea0e90f0b2564c758",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T03:19:04.081063+00:00",
+  "generatedAt": "2026-11-13T03:49:47.145690+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -60,10 +60,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 20,
+            "partial": 21,
             "structural": 7,
             "supported": 25,
-            "unsupported": 52
+            "unsupported": 51
           },
           "enumValueCounts": {
             "partial": 2,
@@ -740,14 +740,35 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_crop.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCrop.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCrop.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_crop_check.py"
+                },
+                {
+                  "path": "experiments/compositor-crop-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeCrop",
               "label": "Crop",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Transparent masking only: Alpha Crop enabled in modern5.2/5.3, Crop Image Size disabled in legacy4.2. Closed modern integer, legacy absolute and Float32 relative models preserve the incoming canvas and full signed/HDR RGBA, with lower-inclusive/upper-exclusive native boundaries. Fixed unlinked settings, pixel controls within +/-1048576, relative factors [0,1], and validated nonempty source/render extents <=8192 per axis. GPU Full/final Automatic precision only. Actual RenderLayers extents are revalidated on resize; static Image keeps its CPU-only/even-legacy limits and is masked before final realization. Modern and legacy GPU single values pass through; legacy CPU constant-image canvases refuse. Resize-Crop/default modern mode, shifted/affine incoming windows, mixed/unequal Image domains, render borders, Half precision and scalar/vector image conversions remain refused. Groups, pointwise/spatial composition and responsive source mismatch rejection/recovery are measured. No previous serialized operation changes meaning.",
+              "runtimeOps": [
+                "alpha-crop"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -5812,10 +5833,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 26,
+            "partial": 27,
             "structural": 6,
             "supported": 23,
-            "unsupported": 113
+            "unsupported": 112
           },
           "enumValueCounts": {
             "partial": 12,
@@ -6501,14 +6522,35 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_crop.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCrop.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCrop.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_crop_check.py"
+                },
+                {
+                  "path": "experiments/compositor-crop-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeCrop",
               "label": "Crop",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Transparent masking only: Alpha Crop enabled in modern5.2/5.3, Crop Image Size disabled in legacy4.2. Closed modern integer, legacy absolute and Float32 relative models preserve the incoming canvas and full signed/HDR RGBA, with lower-inclusive/upper-exclusive native boundaries. Fixed unlinked settings, pixel controls within +/-1048576, relative factors [0,1], and validated nonempty source/render extents <=8192 per axis. GPU Full/final Automatic precision only. Actual RenderLayers extents are revalidated on resize; static Image keeps its CPU-only/even-legacy limits and is masked before final realization. Modern and legacy GPU single values pass through; legacy CPU constant-image canvases refuse. Resize-Crop/default modern mode, shifted/affine incoming windows, mixed/unequal Image domains, render borders, Half precision and scalar/vector image conversions remain refused. Groups, pointwise/spatial composition and responsive source mismatch rejection/recovery are measured. No previous serialized operation changes meaning.",
+              "runtimeOps": [
+                "alpha-crop"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -13098,10 +13140,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 28,
+            "partial": 29,
             "structural": 6,
             "supported": 24,
-            "unsupported": 129
+            "unsupported": 128
           },
           "enumValueCounts": {
             "partial": 17,
@@ -13921,14 +13963,35 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_crop.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCrop.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorCrop.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_crop_check.py"
+                },
+                {
+                  "path": "experiments/compositor-crop-differential/README.md"
+                }
+              ],
               "id": "CompositorNodeCrop",
               "label": "Crop",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Transparent masking only: Alpha Crop enabled in modern5.2/5.3, Crop Image Size disabled in legacy4.2. Closed modern integer, legacy absolute and Float32 relative models preserve the incoming canvas and full signed/HDR RGBA, with lower-inclusive/upper-exclusive native boundaries. Fixed unlinked settings, pixel controls within +/-1048576, relative factors [0,1], and validated nonempty source/render extents <=8192 per axis. GPU Full/final Automatic precision only. Actual RenderLayers extents are revalidated on resize; static Image keeps its CPU-only/even-legacy limits and is masked before final realization. Modern and legacy GPU single values pass through; legacy CPU constant-image canvases refuse. Resize-Crop/default modern mode, shifted/affine incoming windows, mixed/unequal Image domains, render borders, Half precision and scalar/vector image conversions remain refused. Groups, pointwise/spatial composition and responsive source mismatch rejection/recovery are measured. No previous serialized operation changes meaning.",
+              "runtimeOps": [
+                "alpha-crop"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -21433,9 +21496,10 @@
     "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
     "packages/blendlink/blender/compositor_color_key.py": "3d905f6f46171a0c9beb48edf280d3969d8f53ef77a11a0334124cdc176e84f5",
+    "packages/blendlink/blender/compositor_crop.py": "8679289639bc06c96a306e2b5d3e653adb3b66e16075ea957190ec2fdb48ca83",
     "packages/blendlink/blender/compositor_difference_key.py": "fb6ed344f0f524ab8fe958978bad80f2938f7816b972653cc9f85b68a5f6c727",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
-    "packages/blendlink/blender/compositor_graph.py": "5545c2cb8a531c6fce38d9c7c5b45ec0c81355f72ee61f792fe72c96e316939f",
+    "packages/blendlink/blender/compositor_graph.py": "8c3a19c7523ae65c4ef68c6d1a82008b9acbd96c69b0d256a77254149022cb86",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_luminance_key.py": "d264bc0f2011484945e2dc14937198e4664cee7971967ced4b3c38eb765afaef",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
@@ -21463,6 +21527,7 @@
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
     "packages/blendlink/src/tslCompositorColorKey.ts": "6453d7f41612cef2aa92e449f5357ffa0ff1c77ae3025fc40d82812da26e5941",
     "packages/blendlink/src/tslCompositorCoordinateFma.ts": "6916359803b825eecd65595d1fa694a8b3db0800be78db0568b9168e20b55d88",
+    "packages/blendlink/src/tslCompositorCrop.ts": "1e68316e5374e4a4721d606a813103aced1a679acf8f9b915834f95bcb94c4ff",
     "packages/blendlink/src/tslCompositorDifferenceKey.ts": "a0a3529fa5b2c5855c15ef5b4e196aa0214827608ed4ff5d4e00322d30cd4607",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorGray.ts": "e32c05ec6deb9a8a793d3de4751ebac288a7fe0ab1d90555f8ec4504562975d1",
@@ -21496,7 +21561,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "aa3f83127e82dc937e4ac1c437df446d7c8ffe884379481d6556b759ab5ec94c",
+    "packages/blendlink/src/tslSourceCompositor.ts": "8e328ea63187514eb063fb233aa2d59b632cac4db40bf5e80a28c98c35d1edab",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
     "packages/blendlink/src/tslTangentNodes.ts": "517c0e9d33d838d381fafb311d6289282860f8fe6fcae3b1b6bd10c59b424831",
     "packages/blendlink/src/tslTangentNormalMap.ts": "ac9b769015f51c282bd5b6bf3a98bb52f7cf950befa86c6042ec2eb79de9030d",

@@ -153,6 +153,15 @@ jobs:
           BLENDLINK_NOISE_TYPES: '["FBM"]'
           BLENDLINK_NOISE_EVIDENCE: artifacts/verification-static-noise-ci/prepared-normalized-cap
 
+      - name: Verify prepared Noise installation, cancellation and resource cleanup
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: >-
+          xvfb-run --auto-servernum node experiments/noise-field-production/run.mjs
+          artifacts/verification-static-noise-ci/prepared-raw-cap/reference
+          artifacts/verification-static-noise-ci/ownership
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+
       - name: Compare native MF large-coordinate Math Modulo
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built
@@ -186,7 +195,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        family: [Luminance Key, Difference Key, Color Spill, Color Key, Color Key GPU subset, Chroma Key, Image, Composite Output]
+        family: [Luminance Key, Difference Key, Color Spill, Color Key, Color Key GPU subset, Chroma Key, Image, Composite Output, Crop]
         source_device: [CPU, GPU]
         exclude:
           - family: Color Key
@@ -228,6 +237,11 @@ jobs:
             device_variable: BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE
             reference_variable: BLENDLINK_COMPOSITOR_CHROMA_KEY_REFERENCES
             evidence: chroma-key
+          - family: Crop
+            fixture: compositor_crop_check.py
+            device_variable: BLENDLINK_COMPOSITOR_CROP_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_CROP_REFERENCES
+            evidence: crop
           - family: Image
             fixture: compositor_image_check.py
             device_variable: BLENDLINK_COMPOSITOR_IMAGE_DEVICE

@@ -1531,7 +1531,7 @@
           "defaultFieldShadersStillFail": true
         },
         "finiteNearestFields": {
-          "status": "locally-qualified-fresh-hosted-default-pending",
+          "status": "fresh-hosted-default-qualified",
           "opcode": "noise_field_nearest",
           "profile": "finite-nearest-f32-v1",
           "sourceSamples": "native-float-data-v1",
@@ -1553,7 +1553,24 @@
           "actualReadyBuilderVerified": true,
           "mainFreshCapNativeCases52": 9,
           "mainFreshCapBuiltReadbacks": 18,
-          "noExperimentalOverlay": true
+          "noExperimentalOverlay": true,
+          "freshHostedDefault": {
+            "commit": "44e42df7fceff02fbe99b4d78e73ff2a68124b44",
+            "run": 43358729490,
+            "job": 131666957138,
+            "artifact": 14008090421,
+            "noiseSuiteReadbacks": 196,
+            "preparedFieldReadbacks": 56,
+            "fullCapReadbacks": 36,
+            "maximumBudgetRatio": 0.9796917718867592,
+            "maximumSliceMilliseconds": 8.600000000034925,
+            "originalBudgetsUnchanged": true,
+            "actualCapUniquePointsPerBackend": 16384,
+            "actualCapBytes": 262144,
+            "mode": "built",
+            "experimentalOverlay": false,
+            "actualWebGLRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+          }
         }
       }
     },
@@ -6579,7 +6596,15 @@
           "explicitRefusalsPerVersion": 4,
           "sourcePreserved": true,
           "generalChromaticGpuQualified": false,
-          "freshHostedProof": "pending"
+          "freshHostedProof": {
+            "commit": "44e42df7fceff02fbe99b4d78e73ff2a68124b44",
+            "run": 43358729490,
+            "job": 131666957568,
+            "artifact": 14007610705,
+            "nativeCases": 67,
+            "browserReadbacks": 134,
+            "maximumAbsoluteError": 0
+          }
         }
       }
     },
@@ -6720,6 +6745,57 @@
           "actualWebGLRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
         }
       }
+    },
+    "compositor:CompositorNodeCrop": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "alpha-crop"
+      ],
+      "limits": "Transparent masking only: Alpha Crop enabled in modern5.2/5.3, Crop Image Size disabled in legacy4.2. Closed modern integer, legacy absolute and Float32 relative models preserve the incoming canvas and full signed/HDR RGBA, with lower-inclusive/upper-exclusive native boundaries. Fixed unlinked settings, pixel controls within +/-1048576, relative factors [0,1], and validated nonempty source/render extents <=8192 per axis. GPU Full/final Automatic precision only. Actual RenderLayers extents are revalidated on resize; static Image keeps its CPU-only/even-legacy limits and is masked before final realization. Modern and legacy GPU single values pass through; legacy CPU constant-image canvases refuse. Resize-Crop/default modern mode, shifted/affine incoming windows, mixed/unequal Image domains, render borders, Half precision and scalar/vector image conversions remain refused. Groups, pointwise/spatial composition and responsive source mismatch rejection/recovery are measured. No previous serialized operation changes meaning.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_crop.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCrop.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCrop.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_crop_check.py"
+        },
+        {
+          "path": "experiments/compositor-crop-differential/README.md"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeBackend": "METAL",
+        "nativeCpuGpuCases": 285,
+        "builtReadbacks": 570,
+        "maximumAbsoluteError": 2.384185791015625e-07,
+        "exactAlphaMaximumError": 0,
+        "resizeSequencesPerBackend": 19,
+        "maximumPasses": 6,
+        "maximumFragmentSourceBytes": 14073,
+        "remainingTexturesAfterDisposal": 0,
+        "sourcePreserved": true,
+        "freshHostedOpenGl": "pending",
+        "mainCombinedBuiltReadbacks52": 176,
+        "mainCombinedMaximumAbsoluteError": 2.384185791015625e-07,
+        "installedPackageExtraction52": true,
+        "installedReinstallToolsExportOffline52": true
+      }
     }
   },
   "knownUnsupported": [
@@ -6735,7 +6811,6 @@
     "compositor:CompositorNodeConvertToDisplay",
     "compositor:CompositorNodeConvolve",
     "compositor:CompositorNodeCornerPin",
-    "compositor:CompositorNodeCrop",
     "compositor:CompositorNodeCryptomatte",
     "compositor:CompositorNodeCryptomatteV2",
     "compositor:CompositorNodeDBlur",

@@ -55,6 +55,8 @@ normalize_chroma_key = _sibling("compositor_chroma_key").normalize_chroma_key
 normalize_spill = _sibling("compositor_spill").normalize_spill
 normalize_color_key = _sibling("compositor_color_key").normalize_color_key
 normalize_static_image = _sibling("compositor_image").normalize_image
+normalize_crop = _sibling("compositor_crop").normalize_crop
+validate_crop_domains = _sibling("compositor_crop").validate_crop_domains
 validate_static_image_graph = _sibling("compositor_image").validate_image_graph
 
 TYPES = {
@@ -125,6 +127,7 @@ TYPES = {
     "CompositorNodeGlare": "glare",
     "CompositorNodeRLayers": "render-pass",
     "CompositorNodeImage": "image-input",
+    "CompositorNodeCrop": "alpha-crop",
 }
 PROPERTIES = (
     "operation",
@@ -417,6 +420,9 @@ def extract(scene):
                 if node.bl_idname == "CompositorNodeImage":
                     normalize_static_image(node, socket, op, scene, result, static_image_cache,
                         lambda incoming, message: fail("unsupported-static-image", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeCrop":
+                    normalize_crop(node, op, scene, lambda incoming: input_value(incoming, ctx),
+                        lambda incoming, message: fail("unsupported-crop-domain", path, node, incoming, message))
                 elif node.bl_idname in ("ShaderNodeMath", "CompositorNodeMath"):
                     for incoming in node.inputs:
                         if not incoming.enabled or getattr(incoming, "is_unavailable", False):
@@ -778,6 +784,9 @@ def extract(scene):
                             }
                 # Assign only after dependencies are emitted, yielding topological order.
                 single = op["kind"] not in {"render-pass", "image-input"} and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values())
+                if single and op["kind"] == "alpha-crop" and bpy.app.version < (4, 5, 0) and device == "CPU":
+                    fail("unsupported-crop-domain", path, node, socket,
+                         "Legacy CPU Crop requires a finite image input; constant-image canvas evaluation remains unqualified")
                 if op["kind"] == "math":
                     effective = op["properties"]["single_value_device"] if single else device
                     op["properties"].update(validate_math_domain(node, effective,
@@ -841,6 +850,12 @@ def extract(scene):
         if not modern and not sink.use_alpha:
             result["outputAlpha"] = "legacy-composite-opaque-v1"
         result["output"] = input_value(terminal, ctx)
+        crop_conflict = validate_crop_domains(result)
+        if crop_conflict:
+            op, message = crop_conflict
+            result["diagnostics"].append({"code": "unsupported-crop-domain", "path": op["source"]["path"],
+                "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
+            raise Unsupported()
         image_conflict = validate_static_image_graph(result)
         if image_conflict:
             op, message = image_conflict

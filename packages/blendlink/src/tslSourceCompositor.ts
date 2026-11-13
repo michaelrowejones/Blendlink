@@ -3,6 +3,7 @@ import { buildCompositorChromaKey } from './tslCompositorChromaKey.js'
 import { buildCompositorFilter } from './tslCompositorFilter.js'
 import { MAX_STATIC_PROGRAM_PIXELS, assertPreparedStaticCompositorImages, staticCompositorTexture, type PreparedStaticCompositorImages, type StaticCompositorWindow } from './tslCompositorStaticImage.js'
 import { buildCompositorFlip } from './tslCompositorSpatial.js'
+import { buildCompositorCrop } from './tslCompositorCrop.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
 import { buildCompositorLuminanceKey } from './tslCompositorLuminanceKey.js'
 import { buildCompositorDifferenceKey } from './tslCompositorDifferenceKey.js'
@@ -495,7 +496,7 @@ export function buildSourceCompositor(
     const images = new Map<string, ReturnType<typeof staticCompositorTexture>>()
     let imagePixels = 0
     const origins = new Map<string, CompositorImageOrigin | null>()
-    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input')
+    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop')
     if (program.ops.some(op => op.kind === 'image-input') && program.ops.some(op => op.kind === 'render-pass'))
       throw new SourceCompositorUnsupported('Static Image and Render Layers currently need separate canvas-domain realization')
     if (program.ops.some(op => op.kind === 'image-affine') && program.ops.some(op => op.kind === 'translate'
@@ -864,6 +865,10 @@ export function buildSourceCompositor(
             node = buildCompositorFlip(op, input('Image'), isSingleValue(op.inputs.Image!.value), resources,
               message => { throw new SourceCompositorUnsupported(message) })
             break
+          case 'alpha-crop':
+            node = buildCompositorCrop(op, input('Image'), isSingleValue(op.inputs.Image!.value), domain, resources,
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
           case 'rgb-to-bw':
             node = dot(input('Image').rgb, vec3(...(program.luminance ?? [0.2126, 0.7152, 0.0722])))
             break
@@ -1176,7 +1181,7 @@ export function buildSourceCompositor(
       }
     }
     const output = value(program.output), domain = origin(program.output)
-    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input')?.source
+    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop')?.source
     const realized = usesImageDomains && domain ? realizeCompositorOrigin(output, domain, [0, 0], resources,
       message => { throw new SourceCompositorUnsupported(transformSource
         ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output

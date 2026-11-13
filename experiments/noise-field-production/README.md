@@ -131,6 +131,16 @@ local LLVM implementation:
   These are the retained synchronous experiment prerequisites, not claims that
   the promoted async plumbing has already run on that hosted driver.
 
+The promoted default path subsequently passed [hosted run 43358729490](https://github.com/michaelrowejones/Blendlink/actions/runs/43358729490)
+at commit `44e42df7fceff02fbe99b4d78e73ff2a68124b44`, artifact `14008090421`.
+All 196 Noise-suite readbacks completed with unchanged budgets; 56 exercised
+actual prepared fields. Both raw/normalized cap corpora contain 16,384 unique
+points and 262,144-byte tables on each API. The largest measured hosted CPU slice
+was 8.6 ms; maximum native error/budget ratio was 0.980. Reports identify the built
+production runtime and actual Subzero/WebGPU SwiftShader profiles, with no
+overlay. The same run passed every compositor canary, including the exact GPU
+Color Key subset. Higher-level lifecycle proof remains separately documented.
+
 Local worker evidence under `artifacts/verification-field-production/`:
 
 - Fresh native source→built default runtime:4.2 / 5.2 / 5.3, 120 native graphs and

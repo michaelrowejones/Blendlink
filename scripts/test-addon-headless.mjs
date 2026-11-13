@@ -31,7 +31,7 @@ const installedNodeFamilies = [
   ['ShaderNodeTexCoord', 'uv_active'],
 ]
 const installedCompositorFamilies = ['CompositorNodeSetAlpha', 'CompositorNodePremulKey',
-  'CompositorNodeFilter', 'CompositorNodeNormal', 'CompositorNodeLumaMatte', 'CompositorNodeDiffMatte']
+  'CompositorNodeFilter', 'CompositorNodeNormal', 'CompositorNodeLumaMatte', 'CompositorNodeDiffMatte', 'CompositorNodeCrop']
 
 // Human labels for discovered modules. A missing label degrades the console
 // line to a derived one; it can never make a suite silently not run, which
@@ -396,6 +396,9 @@ try:
     spill = compositor_tree.nodes.new("CompositorNodeColorSpill")
     color_key = compositor_tree.nodes.new("CompositorNodeColorMatte")
     chroma_key = compositor_tree.nodes.new("CompositorNodeChromaMatte")
+    crop = compositor_tree.nodes.new("CompositorNodeCrop")
+    if modern_compositor: crop.inputs["Alpha Crop"].default_value = True
+    else: crop.use_crop_size = False
     chroma_key.inputs["Key Color"].default_value = (0, 1, 0, 1)
     if modern_compositor: chroma_key.inputs["Minimum"].default_value = 0
     else: chroma_key.threshold = 0
@@ -410,12 +413,13 @@ try:
     compositor_tree.links.new(difference_key.outputs["Image"], spill.inputs["Image"])
     compositor_tree.links.new(spill.outputs["Image"], color_key.inputs["Image"])
     compositor_tree.links.new(color_key.outputs["Image"], chroma_key.inputs["Image"])
-    compositor_tree.links.new(chroma_key.outputs["Image"], sink.inputs[0])
+    compositor_tree.links.new(chroma_key.outputs["Image"], crop.inputs["Image"])
+    compositor_tree.links.new(crop.outputs["Image"], sink.inputs[0])
     before = len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups)
     compositor_module = importlib.import_module(module_name + ".compositor_graph")
     compositor_program = compositor_module.extract(compositor_scene)
     assert compositor_program["status"] == "extracted", compositor_program
-    assert {"set-alpha", "convert-alpha", "filter", "normal-direction", "luminance-key", "difference-key", "color-spill", "color-key", "chroma-key"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
+    assert {"set-alpha", "convert-alpha", "filter", "normal-direction", "luminance-key", "difference-key", "color-spill", "color-key", "chroma-key", "alpha-crop"} <= {op["kind"] for op in compositor_program["ops"]}, compositor_program
     assert before == (len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups))
 finally:
     bpy.data.scenes.remove(compositor_scene)
