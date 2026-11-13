@@ -980,6 +980,15 @@ separate release fact from this local command. The baked e2e creates a real two-
 headless Blender under an empty owned user profile, checks the bake plan and manifest, verifies constant atlas
 background corners, and proves the lighting states visibly differ.
 
+## Maintaining node ports
+
+The [node-port pipeline](docs/NODE_PORT_PIPELINE.md) detects upstream source and
+native-schema changes, generates focused work packets, and verifies declared
+ports with recorded native/browser identities and actual Final artifacts.
+`npm run nodes:verify -- squeeze --profile mac-52 --blender /path/to/Blender --dry-run`
+shows the focused plan. Use `npm run test:node-pipeline` for the automation's own
+checks; the complete release bar remains `test:full`.
+
 ## Living product research
 
 - [Needle feature parity ledger](docs/FEATURE_PARITY.md) tracks every relevant

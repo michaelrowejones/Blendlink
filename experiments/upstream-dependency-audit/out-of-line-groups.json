@@ -1,0 +1,874 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Read-only upstream source-impact group proposal; no native/runtime support or source-profile admission follows from a path match.",
+  "repository": "https://github.com/blender/blender",
+  "references": {
+    "4.2.0": {
+      "commit": "a51f293548adba0dda086f5771401e8d8ab66227",
+      "gitTree": "8b1616da91af89680c1633cf82013c3c8c74c0c0",
+      "files": {
+        "source/blender/blenkernel/BKE_type_conversions.hh": {
+          "sha256": "e862a9695ba083e896d17693245b1b6a29017a369c9aecf03be1c319e5b20c4d",
+          "gitBlobShaFromTree": "43824b739178845962ffb4ce4f716433ad23b816",
+          "computedGitBlobSha": "43824b739178845962ffb4ce4f716433ad23b816",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/blenkernel/BKE_type_conversions.hh"
+        },
+        "source/blender/blenkernel/intern/image_gpu.cc": {
+          "sha256": "f44b7b8a9b89c3b41ad3500f0bfbd6f34d9bb5006bb40efcf2e3d343e6f000af",
+          "gitBlobShaFromTree": "ff63ed32701880914409cd1d488c5f18f170c714",
+          "computedGitBlobSha": "ff63ed32701880914409cd1d488c5f18f170c714",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/blenkernel/intern/image_gpu.cc"
+        },
+        "source/blender/blenkernel/intern/type_conversions.cc": {
+          "sha256": "ec350605f9308e39ef3a80b166091e849cb4c3476df1c67a727e6168b4fdb222",
+          "gitBlobShaFromTree": "eeee4658abff5b5157162f7fa51b74bd7ddec02d",
+          "computedGitBlobSha": "eeee4658abff5b5157162f7fa51b74bd7ddec02d",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/blenkernel/intern/type_conversions.cc"
+        },
+        "source/blender/compositor/realtime_compositor/intern/compile_state.cc": {
+          "sha256": "3e76371ab414e409fb13774fb771c7af94458e7a702920ae82d9846279494639",
+          "gitBlobShaFromTree": "cdac5ca45324a2d8aad779727c3c488ebb8a17d6",
+          "computedGitBlobSha": "cdac5ca45324a2d8aad779727c3c488ebb8a17d6",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/compositor/realtime_compositor/intern/compile_state.cc"
+        },
+        "source/blender/compositor/realtime_compositor/intern/evaluator.cc": {
+          "sha256": "a7c34b0035d0337c05770efc5493e201b81e582da224dfb3d7519082fa6a49d3",
+          "gitBlobShaFromTree": "cb0e52cdc5e984a3385616d731caa898a4c93229",
+          "computedGitBlobSha": "cb0e52cdc5e984a3385616d731caa898a4c93229",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/compositor/realtime_compositor/intern/evaluator.cc"
+        },
+        "source/blender/compositor/realtime_compositor/intern/shader_operation.cc": {
+          "sha256": "66f25d8a3eba9ebb11c14eed18330a842e72d59ebfd604fe7214a07bfd72f4dd",
+          "gitBlobShaFromTree": "46da9a259af77263654f37fbb0554ee549fc4f8c",
+          "computedGitBlobSha": "46da9a259af77263654f37fbb0554ee549fc4f8c",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/compositor/realtime_compositor/intern/shader_operation.cc"
+        },
+        "source/blender/gpu/intern/gpu_codegen.cc": {
+          "sha256": "328dd40a57baa2e7372c3e12418dbf6f85e6613698859c61af76c2b7d518d6c3",
+          "gitBlobShaFromTree": "e5c418e9cd7cdf28a8b9114e0ad25e357945a1a8",
+          "computedGitBlobSha": "e5c418e9cd7cdf28a8b9114e0ad25e357945a1a8",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/intern/gpu_codegen.cc"
+        },
+        "source/blender/gpu/intern/gpu_codegen.hh": {
+          "sha256": "a829fc0d491e9d15cd1dd4f1a28fc6079859295f0514cc067cd1761b4be053b9",
+          "gitBlobShaFromTree": "38bee7975dbd81527075cd3be306c2a0d6391666",
+          "computedGitBlobSha": "38bee7975dbd81527075cd3be306c2a0d6391666",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/intern/gpu_codegen.hh"
+        },
+        "source/blender/gpu/intern/gpu_material.cc": {
+          "sha256": "de7896354c3abf0c008b193e00e8ebf71f40bb82e06d3cc4bebb0a63c3c73569",
+          "gitBlobShaFromTree": "231584d644349311830b0b8d75729398e813f493",
+          "computedGitBlobSha": "231584d644349311830b0b8d75729398e813f493",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/intern/gpu_material.cc"
+        },
+        "source/blender/gpu/intern/gpu_material_library.hh": {
+          "sha256": "91a1f0dab074c8e4d2f72b745933cc99288e6744a124dc8316ab81d62cd7c640",
+          "gitBlobShaFromTree": "7ac0610460de5c15beb2a8d79cf26d1c464bd7b8",
+          "computedGitBlobSha": "7ac0610460de5c15beb2a8d79cf26d1c464bd7b8",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/intern/gpu_material_library.hh"
+        },
+        "source/blender/gpu/intern/gpu_node_graph.cc": {
+          "sha256": "c51e31164a61120e8413cf05ddf07d6d046f0adf5817f7b04dc0895c51b7f954",
+          "gitBlobShaFromTree": "d30ba4388678c1746e80e7fa6a785af02aa8fbe3",
+          "computedGitBlobSha": "d30ba4388678c1746e80e7fa6a785af02aa8fbe3",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/intern/gpu_node_graph.cc"
+        },
+        "source/blender/gpu/intern/gpu_node_graph.hh": {
+          "sha256": "bad6d6047a2d826a010449732cafa522ee6b99e7bdea1d1da7e5dab60e971e33",
+          "gitBlobShaFromTree": "0367f594f041c2422ff9eb1bac44cf413dab6c6d",
+          "computedGitBlobSha": "0367f594f041c2422ff9eb1bac44cf413dab6c6d",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/intern/gpu_node_graph.hh"
+        },
+        "source/blender/gpu/intern/gpu_shader_dependency.cc": {
+          "sha256": "e6516134cf14d398e0e8a978049767361a954376f99193d23c55987fa5e23070",
+          "gitBlobShaFromTree": "254c291fb25cd5bad1868bf4ab05d976c0d34910",
+          "computedGitBlobSha": "254c291fb25cd5bad1868bf4ab05d976c0d34910",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/intern/gpu_shader_dependency.cc"
+        },
+        "source/blender/gpu/metal/mtl_texture.mm": {
+          "sha256": "4ecafe6e7ae50f56278b803da0fa0ffba40c825c6ea52d8e4278551f774b7a34",
+          "gitBlobShaFromTree": "96037e6a14f1b2df062449c10d54e9182d1797e0",
+          "computedGitBlobSha": "96037e6a14f1b2df062449c10d54e9182d1797e0",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/metal/mtl_texture.mm"
+        },
+        "source/blender/gpu/opengl/gl_texture.cc": {
+          "sha256": "1e777c4bde3be25233318107546e80d54121178733a7d7c49717241a1ea10170",
+          "gitBlobShaFromTree": "0c06c200ad8e883515a6074f79485bc6de7be50a",
+          "computedGitBlobSha": "0c06c200ad8e883515a6074f79485bc6de7be50a",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/opengl/gl_texture.cc"
+        },
+        "source/blender/gpu/shaders/material/gpu_shader_material_tex_image.glsl": {
+          "sha256": "fcc22f7c09821680ed0667438735b9314297f8f6268b20dcc9ee9a6c5abfeb4c",
+          "gitBlobShaFromTree": "31145bbe8d9d39accfc1e4c4bea7b4f465ef30e4",
+          "computedGitBlobSha": "31145bbe8d9d39accfc1e4c4bea7b4f465ef30e4",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/gpu/shaders/material/gpu_shader_material_tex_image.glsl"
+        },
+        "source/blender/nodes/function/node_function_util.cc": {
+          "sha256": "a6103c8eec3fa963287ee2253a310095bb5d62ec67e95a4e431b4543d1e513af",
+          "gitBlobShaFromTree": "84ad1fe0448d95cfa759bec14761c8b7d9193cd8",
+          "computedGitBlobSha": "84ad1fe0448d95cfa759bec14761c8b7d9193cd8",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/nodes/function/node_function_util.cc"
+        },
+        "source/blender/nodes/function/node_function_util.hh": {
+          "sha256": "7138dbb4068ac7892cefc991cb2b32284eddb627fffe0e3bb964b83b272a5799",
+          "gitBlobShaFromTree": "5a00064ea825dfcaf2a22956dc86760aadc3ae90",
+          "computedGitBlobSha": "5a00064ea825dfcaf2a22956dc86760aadc3ae90",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/nodes/function/node_function_util.hh"
+        },
+        "source/blender/nodes/shader/node_shader_util.cc": {
+          "sha256": "ee7fbfd3695e4d81f6736585ebd65d8067bdddf819bfcbe543ee4e8a608c51b9",
+          "gitBlobShaFromTree": "18e3047c300a028570862f480d04688b9056ea66",
+          "computedGitBlobSha": "18e3047c300a028570862f480d04688b9056ea66",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/nodes/shader/node_shader_util.cc"
+        },
+        "source/blender/nodes/shader/node_shader_util.hh": {
+          "sha256": "6c98a16889bf4305675387529ba12cae6e9e2eb3480828b197ea022bd9110308",
+          "gitBlobShaFromTree": "454084c472bf8bc96c2a3d95a670aef75bdab899",
+          "computedGitBlobSha": "454084c472bf8bc96c2a3d95a670aef75bdab899",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/nodes/shader/node_shader_util.hh"
+        },
+        "source/blender/nodes/shader/nodes/node_shader_tex_image.cc": {
+          "sha256": "d1880d602aa1a47ce5493599367d4b446b32f5cb86c9cbce10cc756e853ae8b7",
+          "gitBlobShaFromTree": "17c05e170163433d0e7a12a0d2394679bb81cee9",
+          "computedGitBlobSha": "17c05e170163433d0e7a12a0d2394679bb81cee9",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/a51f293548adba0dda086f5771401e8d8ab66227/source/blender/nodes/shader/nodes/node_shader_tex_image.cc"
+        }
+      }
+    },
+    "5.2.0": {
+      "commit": "fbe6228777e7d9afefcd61a413844e790ae75db7",
+      "gitTree": "8a0e127915a507f86fe2852c8d3f4529b4369eb7",
+      "files": {
+        "source/blender/blenkernel/BKE_type_conversions.hh": {
+          "sha256": "3e39078fabbe1cb4b480ad3ff0dee20afdf7dbc121a53a1c88f7010c5757de68",
+          "gitBlobShaFromTree": "b45e6ab19a6787a3b3befcdc183551f79b0edd7d",
+          "computedGitBlobSha": "b45e6ab19a6787a3b3befcdc183551f79b0edd7d",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/blenkernel/BKE_type_conversions.hh"
+        },
+        "source/blender/blenkernel/intern/image_gpu.cc": {
+          "sha256": "ea4659abafcc3710b1f51d20e67d87e192408da1cc6aee236ad6951817985b6a",
+          "gitBlobShaFromTree": "ac12bc4ab4d9b696a11be205154701f086405dc5",
+          "computedGitBlobSha": "ac12bc4ab4d9b696a11be205154701f086405dc5",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/blenkernel/intern/image_gpu.cc"
+        },
+        "source/blender/blenkernel/intern/type_conversions.cc": {
+          "sha256": "8e37631f0b9c00ddfb71ee9a63d7df3fb8643cc794a2189cbc73c13401580934",
+          "gitBlobShaFromTree": "6620274322bf3dc28927b9cff9c45835dcb11687",
+          "computedGitBlobSha": "6620274322bf3dc28927b9cff9c45835dcb11687",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/blenkernel/intern/type_conversions.cc"
+        },
+        "source/blender/blenlib/BLI_radial_tiling.hh": {
+          "sha256": "ce0100bdea47d2fe8bb356d7083a0c8ad55ebb4bd73ac86c6d3dc3832a901561",
+          "gitBlobShaFromTree": "1190fa29549bb146bd01a5dfc59eb4c2455cdcc2",
+          "computedGitBlobSha": "1190fa29549bb146bd01a5dfc59eb4c2455cdcc2",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/blenlib/BLI_radial_tiling.hh"
+        },
+        "source/blender/blenlib/intern/radial_tiling_shared.hh": {
+          "sha256": "adab763a5772baca55f40e9ad0aa0cc1942b8bee87f898fe3e4aaa0601ebeeb3",
+          "gitBlobShaFromTree": "1b3199e374ef23002c978e527f53a4897e7ba184",
+          "computedGitBlobSha": "1b3199e374ef23002c978e527f53a4897e7ba184",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/blenlib/intern/radial_tiling_shared.hh"
+        },
+        "source/blender/blenlib/intern/radial_tiling_wrapper.cc": {
+          "sha256": "9d7e20a73aa3545c99089a25c32a7df3adf0111b41b1f54b8b50185e3b7fb8b8",
+          "gitBlobShaFromTree": "bd45e7befbd9a49aee7f258476ffd19ed7e81b2d",
+          "computedGitBlobSha": "bd45e7befbd9a49aee7f258476ffd19ed7e81b2d",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/blenlib/intern/radial_tiling_wrapper.cc"
+        },
+        "source/blender/compositor/intern/compile_state.cc": {
+          "sha256": "a24171b4612deabbe0f259d0832c171a4ccc276030fa3ca6c6b7c0c2c68d4054",
+          "gitBlobShaFromTree": "1282d7c15e580b7948610664ad4727bcb4df74f8",
+          "computedGitBlobSha": "1282d7c15e580b7948610664ad4727bcb4df74f8",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/compositor/intern/compile_state.cc"
+        },
+        "source/blender/compositor/intern/multi_function_procedure_operation.cc": {
+          "sha256": "b7781067f68ecea93f71b2116a6f35d1cf55b96c6cc4d67255a0ab917811eb47",
+          "gitBlobShaFromTree": "bd6c00cd465c06bb77a9584819e73effb746a684",
+          "computedGitBlobSha": "bd6c00cd465c06bb77a9584819e73effb746a684",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/compositor/intern/multi_function_procedure_operation.cc"
+        },
+        "source/blender/compositor/intern/node_group_operation.cc": {
+          "sha256": "0bc6086cafeb2f42154e001b068785a45f7809713a12da345b9de07247193f76",
+          "gitBlobShaFromTree": "98fcaad79ace5330defe7f5d4e56c1a2d91e5066",
+          "computedGitBlobSha": "98fcaad79ace5330defe7f5d4e56c1a2d91e5066",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/compositor/intern/node_group_operation.cc"
+        },
+        "source/blender/compositor/intern/shader_operation.cc": {
+          "sha256": "7dcb56bd0d270547343977b032330832081bec0f96b0224dc424e746638b35a8",
+          "gitBlobShaFromTree": "644d51d1c7dbf8293f386755506f4d454d08771e",
+          "computedGitBlobSha": "644d51d1c7dbf8293f386755506f4d454d08771e",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/compositor/intern/shader_operation.cc"
+        },
+        "source/blender/gpu/intern/gpu_codegen.cc": {
+          "sha256": "8b99afaf010bf6149d7445d1c885663e768e3e104ca3e217dbd96e824ba97db2",
+          "gitBlobShaFromTree": "f9fe1ec07a2f540a1bc6e6fa39e16adbecbbf589",
+          "computedGitBlobSha": "f9fe1ec07a2f540a1bc6e6fa39e16adbecbbf589",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/intern/gpu_codegen.cc"
+        },
+        "source/blender/gpu/intern/gpu_codegen.hh": {
+          "sha256": "7f76d466753dadd3dd0713b1e9f17d5b7f2cb6139a4e90d2ea658421c85f09ee",
+          "gitBlobShaFromTree": "f06e91b76cd74c4a96a251c36e682960e6de73a4",
+          "computedGitBlobSha": "f06e91b76cd74c4a96a251c36e682960e6de73a4",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/intern/gpu_codegen.hh"
+        },
+        "source/blender/gpu/intern/gpu_material.cc": {
+          "sha256": "2874fc39f428b3fd1ba10a30baf9975d48261545f36e51a9cfd4460611e506e3",
+          "gitBlobShaFromTree": "5c0fccc859b1d5060b410eb3a9300d79220c7939",
+          "computedGitBlobSha": "5c0fccc859b1d5060b410eb3a9300d79220c7939",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/intern/gpu_material.cc"
+        },
+        "source/blender/gpu/intern/gpu_material_library.hh": {
+          "sha256": "cc19e421a841a5e3e242e4ccc7b501591a345c070502b21cc94c2c450a97a074",
+          "gitBlobShaFromTree": "fc8cb14ce28623a3c25c5b824c7e02d39c589d17",
+          "computedGitBlobSha": "fc8cb14ce28623a3c25c5b824c7e02d39c589d17",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/intern/gpu_material_library.hh"
+        },
+        "source/blender/gpu/intern/gpu_node_graph.cc": {
+          "sha256": "eb9dc357005f8df63c83975d7cd569a4b4abb91c4e19118db1eb05c5cffd2196",
+          "gitBlobShaFromTree": "47ec7778ca09d64b5a331829d3fa2edfc461ef40",
+          "computedGitBlobSha": "47ec7778ca09d64b5a331829d3fa2edfc461ef40",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/intern/gpu_node_graph.cc"
+        },
+        "source/blender/gpu/intern/gpu_node_graph.hh": {
+          "sha256": "d7fe590f1a3f5a1d9dbd5c2532ffb097b3d6fcb07f0b12426e24d017d6dd2f67",
+          "gitBlobShaFromTree": "1710cbe4345736e0e4158ed841f74e07934aafea",
+          "computedGitBlobSha": "1710cbe4345736e0e4158ed841f74e07934aafea",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/intern/gpu_node_graph.hh"
+        },
+        "source/blender/gpu/intern/gpu_shader_dependency.cc": {
+          "sha256": "61e1b8a2d105f8f62c26f3b3f073aab23ae9f4e5a93845dac63a27095bc22ef6",
+          "gitBlobShaFromTree": "ba4716f1763a2975f527c5c3f8e54d02d6e4cbf5",
+          "computedGitBlobSha": "ba4716f1763a2975f527c5c3f8e54d02d6e4cbf5",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/intern/gpu_shader_dependency.cc"
+        },
+        "source/blender/gpu/metal/mtl_texture.mm": {
+          "sha256": "a96c90690ddaf4b8f970179e1bb3edf812937eeaf91eb57ecb6d4275ad0763df",
+          "gitBlobShaFromTree": "835d88933b6267062ce0f041242a2c17e2df5068",
+          "computedGitBlobSha": "835d88933b6267062ce0f041242a2c17e2df5068",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/metal/mtl_texture.mm"
+        },
+        "source/blender/gpu/opengl/gl_texture.cc": {
+          "sha256": "3ae2775becbd4fd253d08424cbd933b537f310c77cf6cb1ea1e48fe1f07172ed",
+          "gitBlobShaFromTree": "b9d45d050ba824c68d29879cbf96d6a237a4cb98",
+          "computedGitBlobSha": "b9d45d050ba824c68d29879cbf96d6a237a4cb98",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/opengl/gl_texture.cc"
+        },
+        "source/blender/gpu/shaders/gpu_shader_compat.hh": {
+          "sha256": "c25c74b2ed44f6df9237139a5ef12be59230e5ed9c151f60838fcc8c49acdd6f",
+          "gitBlobShaFromTree": "aef1b0b4c41dcaa84ed69c792ca55089d7e493e3",
+          "computedGitBlobSha": "aef1b0b4c41dcaa84ed69c792ca55089d7e493e3",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/shaders/gpu_shader_compat.hh"
+        },
+        "source/blender/gpu/shaders/material/gpu_shader_material_tex_image.glsl": {
+          "sha256": "f1346eb77adf7213d85a39fc11d0cdb0da6071d201324a2a0f77164b8721bc2b",
+          "gitBlobShaFromTree": "cbb5b5aa9fbe6aed88de668016717c3cefa5ec8d",
+          "computedGitBlobSha": "cbb5b5aa9fbe6aed88de668016717c3cefa5ec8d",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/gpu/shaders/material/gpu_shader_material_tex_image.glsl"
+        },
+        "source/blender/nodes/NOD_shader_nodes_inline.hh": {
+          "sha256": "a5a6ba842b72074d5ede3a6f514e895aae053fcedc20a89ea6f334fcb9d6ab70",
+          "gitBlobShaFromTree": "3559038c978a17ca8236327b5ebe9cdca4e6dc2b",
+          "computedGitBlobSha": "3559038c978a17ca8236327b5ebe9cdca4e6dc2b",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/nodes/NOD_shader_nodes_inline.hh"
+        },
+        "source/blender/nodes/function/node_function_util.cc": {
+          "sha256": "8e58d1140a2c1b397b994883e4ec9088a06c8b29ab5de88ee3f7b084c54249ea",
+          "gitBlobShaFromTree": "46421cb98c6cac781289dcf92bbf9c4cac7b70e7",
+          "computedGitBlobSha": "46421cb98c6cac781289dcf92bbf9c4cac7b70e7",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/nodes/function/node_function_util.cc"
+        },
+        "source/blender/nodes/function/node_function_util.hh": {
+          "sha256": "cb027049aff52eb48f49b684bf425d85abeab6be234a47494bfba1c3b3c036a4",
+          "gitBlobShaFromTree": "28173f34738bb1a0f0a84fcd7a4692b2b0aeeef2",
+          "computedGitBlobSha": "28173f34738bb1a0f0a84fcd7a4692b2b0aeeef2",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/nodes/function/node_function_util.hh"
+        },
+        "source/blender/nodes/intern/shader_nodes_inline.cc": {
+          "sha256": "0bbb29bfe75a47886eaee7e90e422078bc601577a3c5a57043f883a735a1cd24",
+          "gitBlobShaFromTree": "1d2e8a858a8383c5b415c0455d29b86147594fdc",
+          "computedGitBlobSha": "1d2e8a858a8383c5b415c0455d29b86147594fdc",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/nodes/intern/shader_nodes_inline.cc"
+        },
+        "source/blender/nodes/shader/node_shader_util.cc": {
+          "sha256": "6f9e668b93cbf964e79d917f281357db803b74510f60ee75ad8b440ebddb78c2",
+          "gitBlobShaFromTree": "6d7fff7b3eeb0f61a42c9654cfd06707a002c3db",
+          "computedGitBlobSha": "6d7fff7b3eeb0f61a42c9654cfd06707a002c3db",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/nodes/shader/node_shader_util.cc"
+        },
+        "source/blender/nodes/shader/node_shader_util.hh": {
+          "sha256": "2961b799685140a1695fc13ec3a6088c1181ddb4d77da3167d37849215336594",
+          "gitBlobShaFromTree": "18a9a14296cf5452fec40e21de7eb13da1cf44a0",
+          "computedGitBlobSha": "18a9a14296cf5452fec40e21de7eb13da1cf44a0",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/nodes/shader/node_shader_util.hh"
+        },
+        "source/blender/nodes/shader/nodes/node_shader_tex_image.cc": {
+          "sha256": "bd7d25727f19e43b37a28b79ac6c9de0c05b748fec036509b259d4b361b8c8cc",
+          "gitBlobShaFromTree": "0f6f3511e1e3dbe4d5ed10423a803988d26e1627",
+          "computedGitBlobSha": "0f6f3511e1e3dbe4d5ed10423a803988d26e1627",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/fbe6228777e7d9afefcd61a413844e790ae75db7/source/blender/nodes/shader/nodes/node_shader_tex_image.cc"
+        }
+      }
+    },
+    "5.3.0": {
+      "commit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "gitTree": "e05e50cc9d58ca09b36a8ed9352c489092436fe1",
+      "files": {
+        "source/blender/blenkernel/BKE_type_conversions.hh": {
+          "sha256": "3e39078fabbe1cb4b480ad3ff0dee20afdf7dbc121a53a1c88f7010c5757de68",
+          "gitBlobShaFromTree": "b45e6ab19a6787a3b3befcdc183551f79b0edd7d",
+          "computedGitBlobSha": "b45e6ab19a6787a3b3befcdc183551f79b0edd7d",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/BKE_type_conversions.hh"
+        },
+        "source/blender/blenkernel/intern/image_gpu.cc": {
+          "sha256": "ac70c9579558e633f48e1321ddd7ef956fee57d7f5b72b583da377ead5cae7ff",
+          "gitBlobShaFromTree": "de273a4429bcf690e403c691c26359554e5aeaed",
+          "computedGitBlobSha": "de273a4429bcf690e403c691c26359554e5aeaed",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/image_gpu.cc"
+        },
+        "source/blender/blenkernel/intern/type_conversions.cc": {
+          "sha256": "c5889d75c4de43abf51b35afca12b0545297f8d714f078220564f035dbfa9a83",
+          "gitBlobShaFromTree": "84e32f71c7324f4c20d928984c7d65f4651577f2",
+          "computedGitBlobSha": "84e32f71c7324f4c20d928984c7d65f4651577f2",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/type_conversions.cc"
+        },
+        "source/blender/blenlib/BLI_radial_tiling.hh": {
+          "sha256": "ce0100bdea47d2fe8bb356d7083a0c8ad55ebb4bd73ac86c6d3dc3832a901561",
+          "gitBlobShaFromTree": "1190fa29549bb146bd01a5dfc59eb4c2455cdcc2",
+          "computedGitBlobSha": "1190fa29549bb146bd01a5dfc59eb4c2455cdcc2",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_radial_tiling.hh"
+        },
+        "source/blender/blenlib/intern/radial_tiling_shared.hh": {
+          "sha256": "00651ad6e30e716fe904176336715807016bb2497a7f0aad995bea7028d85f38",
+          "gitBlobShaFromTree": "eb867a564a926bf366be51d4f81fc8a7d3dc455e",
+          "computedGitBlobSha": "eb867a564a926bf366be51d4f81fc8a7d3dc455e",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/radial_tiling_shared.hh"
+        },
+        "source/blender/blenlib/intern/radial_tiling_wrapper.cc": {
+          "sha256": "5cbd9bce87b4f327729eb99bad8e1c7c446a85d632a0bb6c47f9cf6ff4fc6b55",
+          "gitBlobShaFromTree": "112cd8652ed3015deef4690570ad2bcbf34ae410",
+          "computedGitBlobSha": "112cd8652ed3015deef4690570ad2bcbf34ae410",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/radial_tiling_wrapper.cc"
+        },
+        "source/blender/compositor/intern/multi_function_procedure_operation.cc": {
+          "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9",
+          "gitBlobShaFromTree": "dbb79f59c4253b8c2b82c2a126feac0635deb6cc",
+          "computedGitBlobSha": "dbb79f59c4253b8c2b82c2a126feac0635deb6cc",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/multi_function_procedure_operation.cc"
+        },
+        "source/blender/compositor/intern/node_tree_evaluator.cc": {
+          "sha256": "370c09bdaf564780a208a0a4498b9760830c96f10ef85a4dbb2358f533a5aab2",
+          "gitBlobShaFromTree": "67b69d996ca78aa5e5db2c87b8879730f661bbf0",
+          "computedGitBlobSha": "67b69d996ca78aa5e5db2c87b8879730f661bbf0",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/node_tree_evaluator.cc"
+        },
+        "source/blender/compositor/intern/shader_operation.cc": {
+          "sha256": "e224a1074a3bf7b221c536b239f642ed8e912d35af82c1c3bf1a2f9385f8949c",
+          "gitBlobShaFromTree": "95fc8e8537d155f57aa8ecba3c152c4443b75d86",
+          "computedGitBlobSha": "95fc8e8537d155f57aa8ecba3c152c4443b75d86",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/shader_operation.cc"
+        },
+        "source/blender/gpu/intern/gpu_codegen.cc": {
+          "sha256": "c7de419f1cc1dc256d7fdb4d2a8c371546c32a7a70a9b2008896800e91ba03f8",
+          "gitBlobShaFromTree": "9a801a8d90455fec7086bfe315c3c9cd60fc410e",
+          "computedGitBlobSha": "9a801a8d90455fec7086bfe315c3c9cd60fc410e",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_codegen.cc"
+        },
+        "source/blender/gpu/intern/gpu_codegen.hh": {
+          "sha256": "f20d40c09d4db6317a65ddd387ed10005d603b0a23977af21eeffa9f881ae026",
+          "gitBlobShaFromTree": "7ac6554fd3443da3527cd968f20392c9e9e744b4",
+          "computedGitBlobSha": "7ac6554fd3443da3527cd968f20392c9e9e744b4",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_codegen.hh"
+        },
+        "source/blender/gpu/intern/gpu_material.cc": {
+          "sha256": "ee26a2c3904d4bd8a789867cdaff23a28da61a209ac32ec85e83fb9a011cddb3",
+          "gitBlobShaFromTree": "24488c3a81dd15eda664af14ed4cfdc9cede7ada",
+          "computedGitBlobSha": "24488c3a81dd15eda664af14ed4cfdc9cede7ada",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_material.cc"
+        },
+        "source/blender/gpu/intern/gpu_material_library.hh": {
+          "sha256": "e41b5953a2c6aa240aaf59ae6d51f098da2ee36d71198a687114c68ff2135efb",
+          "gitBlobShaFromTree": "1787fa1e3352474b39f6d35b16e30e73f9499ea8",
+          "computedGitBlobSha": "1787fa1e3352474b39f6d35b16e30e73f9499ea8",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_material_library.hh"
+        },
+        "source/blender/gpu/intern/gpu_node_graph.cc": {
+          "sha256": "d0ff696fbfec30200d886ce009b232407593cd5bcabaf9643e8ed0602138de2d",
+          "gitBlobShaFromTree": "41d5d874bc3cac115d9c789f6bf05dac464b7a2c",
+          "computedGitBlobSha": "41d5d874bc3cac115d9c789f6bf05dac464b7a2c",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_node_graph.cc"
+        },
+        "source/blender/gpu/intern/gpu_node_graph.hh": {
+          "sha256": "82f2a59b489edc47970ed4052a837d3d3a2bdebe03f936ac3e820587c5f70ac5",
+          "gitBlobShaFromTree": "d67a8ae1e9151f604199b0236ff3133aba1cd023",
+          "computedGitBlobSha": "d67a8ae1e9151f604199b0236ff3133aba1cd023",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_node_graph.hh"
+        },
+        "source/blender/gpu/intern/gpu_shader_dependency.cc": {
+          "sha256": "33b09b53470eb775e511cec776529159802396bdc18658f96b2d40fa7af9fb67",
+          "gitBlobShaFromTree": "f101b8609cb261fc91770867b088c54faa06c80c",
+          "computedGitBlobSha": "f101b8609cb261fc91770867b088c54faa06c80c",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_shader_dependency.cc"
+        },
+        "source/blender/gpu/metal/mtl_texture.mm": {
+          "sha256": "9fa5e635828eae791b09f49317381b5b80dfa8b632850e6af2db44ce34244ab2",
+          "gitBlobShaFromTree": "98a55563125f599c15391ab773bc87698d4bf62a",
+          "computedGitBlobSha": "98a55563125f599c15391ab773bc87698d4bf62a",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/metal/mtl_texture.mm"
+        },
+        "source/blender/gpu/opengl/gl_texture.cc": {
+          "sha256": "fe399797f0b9bf151e3d49838f85be7c2592d851761a2d5ffcc6a48d90dddaee",
+          "gitBlobShaFromTree": "139dc581aae72b0effcc32f03d0bf1392fcc69b1",
+          "computedGitBlobSha": "139dc581aae72b0effcc32f03d0bf1392fcc69b1",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/opengl/gl_texture.cc"
+        },
+        "source/blender/gpu/shaders/compat/gpu_shader_compat.hh": {
+          "sha256": "c25c74b2ed44f6df9237139a5ef12be59230e5ed9c151f60838fcc8c49acdd6f",
+          "gitBlobShaFromTree": "aef1b0b4c41dcaa84ed69c792ca55089d7e493e3",
+          "computedGitBlobSha": "aef1b0b4c41dcaa84ed69c792ca55089d7e493e3",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/compat/gpu_shader_compat.hh"
+        },
+        "source/blender/gpu/shaders/material/gpu_shader_material_tex_image.bsl.hh": {
+          "sha256": "06c11e2bbb4f1297c5be3722479ec07614420485960f4617f515212babb858a6",
+          "gitBlobShaFromTree": "39696b2f5fe5d5b9f3a6bcf5236cc064472f8413",
+          "computedGitBlobSha": "39696b2f5fe5d5b9f3a6bcf5236cc064472f8413",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_tex_image.bsl.hh"
+        },
+        "source/blender/nodes/NOD_shader_nodes_inline.hh": {
+          "sha256": "94978d119cafd56637314e4cb88a11f6edd0255e1574646c36d4cdcce16e4814",
+          "gitBlobShaFromTree": "f3e6105d03cfa8a052db19f825a3cebe399b608d",
+          "computedGitBlobSha": "f3e6105d03cfa8a052db19f825a3cebe399b608d",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/NOD_shader_nodes_inline.hh"
+        },
+        "source/blender/nodes/NOD_shader_nodes_multi_function.hh": {
+          "sha256": "ce9d1373089d9013ba46c1f7f4142ad6a52f13c2e4d9fc98807bf69f5e23c186",
+          "gitBlobShaFromTree": "324ffb294de08e95cc4b9795fbd4d3ddeb14858d",
+          "computedGitBlobSha": "324ffb294de08e95cc4b9795fbd4d3ddeb14858d",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/NOD_shader_nodes_multi_function.hh"
+        },
+        "source/blender/nodes/function/node_function_util.cc": {
+          "sha256": "bdb24aeed80d10bf9d4a45a6c431f05a988ea8220c95bc86603f27346eb9a923",
+          "gitBlobShaFromTree": "5840eaf22aafd0c29fb7dce4145ea47d2d3dcaa5",
+          "computedGitBlobSha": "5840eaf22aafd0c29fb7dce4145ea47d2d3dcaa5",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/node_function_util.cc"
+        },
+        "source/blender/nodes/function/node_function_util.hh": {
+          "sha256": "cb027049aff52eb48f49b684bf425d85abeab6be234a47494bfba1c3b3c036a4",
+          "gitBlobShaFromTree": "28173f34738bb1a0f0a84fcd7a4692b2b0aeeef2",
+          "computedGitBlobSha": "28173f34738bb1a0f0a84fcd7a4692b2b0aeeef2",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/node_function_util.hh"
+        },
+        "source/blender/nodes/intern/shader_nodes_inline.cc": {
+          "sha256": "c7828d3eea17ff0e5c6ba9fde8c0034d15c1b2412a53d389c6524105f8774bad",
+          "gitBlobShaFromTree": "78c80e43040db21ee5a40b32ef01a619716142b2",
+          "computedGitBlobSha": "78c80e43040db21ee5a40b32ef01a619716142b2",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/intern/shader_nodes_inline.cc"
+        },
+        "source/blender/nodes/shader/node_shader_util.cc": {
+          "sha256": "ca8cc21ff2de73ed00b1180145a8e85e6c7c1f4197689c330ed04cc830966df4",
+          "gitBlobShaFromTree": "3b364f35d98d2b86025cf39206feed876d0a2fe1",
+          "computedGitBlobSha": "3b364f35d98d2b86025cf39206feed876d0a2fe1",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/node_shader_util.cc"
+        },
+        "source/blender/nodes/shader/node_shader_util.hh": {
+          "sha256": "5e9343f2c158fe8968a5b9a2c9a6e15595058a81a167d146d0de21abb0c00859",
+          "gitBlobShaFromTree": "7f43ef714728c1fc1c0934c1f3a56300be226310",
+          "computedGitBlobSha": "7f43ef714728c1fc1c0934c1f3a56300be226310",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/node_shader_util.hh"
+        },
+        "source/blender/nodes/shader/nodes/node_shader_tex_image.cc": {
+          "sha256": "92e98aa4093786d68b1e6083c342daa0810270babeea7a25766c390e8036e714",
+          "gitBlobShaFromTree": "6ede65eefa980666ff4170417b984cd32470abcd",
+          "computedGitBlobSha": "6ede65eefa980666ff4170417b984cd32470abcd",
+          "blobMatchesRaw": true,
+          "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_tex_image.cc"
+        }
+      }
+    }
+  },
+  "groups": [
+    {
+      "id": "shader-node-context-and-implicit-inputs",
+      "reason": "Out-of-line sh_node_type_base/common_node_type_base poll, default texture coordinates and texture mapping helpers.",
+      "suggestedNativeConsumers": [
+        "ShaderNodeSqueeze",
+        "ShaderNodeTexMagic",
+        "ShaderNodeRadialTiling"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [
+          "source/blender/nodes/shader/node_shader_util.cc",
+          "source/blender/nodes/shader/node_shader_util.hh"
+        ],
+        "5.2.0": [
+          "source/blender/nodes/shader/node_shader_util.cc",
+          "source/blender/nodes/shader/node_shader_util.hh"
+        ],
+        "5.3.0": [
+          "source/blender/nodes/shader/node_shader_util.cc",
+          "source/blender/nodes/shader/node_shader_util.hh"
+        ]
+      },
+      "symbols": [
+        "sh_node_type_base",
+        "common_node_type_base",
+        "node_shader_gpu_default_tex_coord",
+        "node_shader_gpu_tex_mapping"
+      ],
+      "notes": []
+    },
+    {
+      "id": "function-node-context-routing",
+      "reason": "Registration helper defines which tree contexts accept a FunctionNode; node class availability alone is insufficient.",
+      "suggestedNativeConsumers": [
+        "FunctionNodeFloatToInt"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [
+          "source/blender/nodes/function/node_function_util.cc",
+          "source/blender/nodes/function/node_function_util.hh"
+        ],
+        "5.2.0": [
+          "source/blender/nodes/function/node_function_util.cc",
+          "source/blender/nodes/function/node_function_util.hh"
+        ],
+        "5.3.0": [
+          "source/blender/nodes/function/node_function_util.cc",
+          "source/blender/nodes/function/node_function_util.hh"
+        ]
+      },
+      "symbols": [
+        "fn_node_type_base",
+        "fn_cmp_node_type_base"
+      ],
+      "notes": [
+        "fn_cmp_node_type_base is present in the measured53 source, not inferred for older revisions. Actual context creation still needs native probes."
+      ]
+    },
+    {
+      "id": "gpu-material-library-binding",
+      "reason": "GPU_stack_link/GPU_link resolve shader function symbols through out-of-line library lookup and code generation.",
+      "suggestedNativeConsumers": [
+        "ShaderNodeSqueeze",
+        "ShaderNodeTexMagic",
+        "ShaderNodeRadialTiling",
+        "FunctionNodeFloatToInt"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [
+          "source/blender/gpu/intern/gpu_node_graph.cc",
+          "source/blender/gpu/intern/gpu_node_graph.hh",
+          "source/blender/gpu/intern/gpu_shader_dependency.cc",
+          "source/blender/gpu/intern/gpu_material_library.hh",
+          "source/blender/gpu/intern/gpu_codegen.cc",
+          "source/blender/gpu/intern/gpu_codegen.hh",
+          "source/blender/gpu/intern/gpu_material.cc"
+        ],
+        "5.2.0": [
+          "source/blender/gpu/intern/gpu_node_graph.cc",
+          "source/blender/gpu/intern/gpu_node_graph.hh",
+          "source/blender/gpu/intern/gpu_shader_dependency.cc",
+          "source/blender/gpu/intern/gpu_material_library.hh",
+          "source/blender/gpu/intern/gpu_codegen.cc",
+          "source/blender/gpu/intern/gpu_codegen.hh",
+          "source/blender/gpu/intern/gpu_material.cc"
+        ],
+        "5.3.0": [
+          "source/blender/gpu/intern/gpu_node_graph.cc",
+          "source/blender/gpu/intern/gpu_node_graph.hh",
+          "source/blender/gpu/intern/gpu_shader_dependency.cc",
+          "source/blender/gpu/intern/gpu_material_library.hh",
+          "source/blender/gpu/intern/gpu_codegen.cc",
+          "source/blender/gpu/intern/gpu_codegen.hh",
+          "source/blender/gpu/intern/gpu_material.cc"
+        ]
+      },
+      "symbols": [
+        "GPU_stack_link",
+        "GPU_link",
+        "gpu_material_library_get_function",
+        "gpu_material_library_use_function"
+      ],
+      "notes": [
+        "There is no gpu_material_library.cc in the measured53 tree; its function implementations are in gpu_shader_dependency.cc."
+      ]
+    },
+    {
+      "id": "shader-constant-and-multifunction-routing",
+      "reason": "Inlining chooses primitive constant evaluation using a node MF callback when all consumed inputs are primitive.",
+      "suggestedNativeConsumers": [
+        "ShaderNodeTexMagic",
+        "ShaderNodeRadialTiling"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [],
+        "5.2.0": [
+          "source/blender/nodes/intern/shader_nodes_inline.cc",
+          "source/blender/nodes/NOD_shader_nodes_inline.hh"
+        ],
+        "5.3.0": [
+          "source/blender/nodes/intern/shader_nodes_inline.cc",
+          "source/blender/nodes/NOD_shader_nodes_inline.hh",
+          "source/blender/nodes/NOD_shader_nodes_multi_function.hh"
+        ]
+      },
+      "symbols": [
+        "inline_shader_node_tree",
+        "handle_output_socket__eval_multi_function"
+      ],
+      "notes": [
+        "These files are absent42; that is known version structure, not unresolved proof.",
+        "Squeeze has no own MF evaluator; input folding may affect its graph, but do not declare a Squeeze MF profile."
+      ]
+    },
+    {
+      "id": "modern-compositor-single-value-routing",
+      "reason": "Pixel-unit routing selects native CPU MF for all-single-value units even when compositor device is GPU; shader and typed procedure code are out-of-line.",
+      "suggestedNativeConsumers": [
+        "FunctionNodeFloatToInt",
+        "ShaderNodeRadialTiling"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [],
+        "5.2.0": [
+          "source/blender/compositor/intern/node_group_operation.cc",
+          "source/blender/compositor/intern/compile_state.cc",
+          "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+          "source/blender/compositor/intern/shader_operation.cc"
+        ],
+        "5.3.0": [
+          "source/blender/compositor/intern/node_tree_evaluator.cc",
+          "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+          "source/blender/compositor/intern/shader_operation.cc"
+        ]
+      },
+      "symbols": [
+        "create_pixel_operation",
+        "is_pixel_compile_unit_single_value"
+      ],
+      "notes": [
+        "52 routing is node_group_operation.cc;53 is node_tree_evaluator.cc. Do not copy a53 path into a52 manifest.",
+        "No modern42 MF compositor route is claimed by this group. FloatToInt has no compositor creation in42/52."
+      ]
+    },
+    {
+      "id": "legacy-realtime-compositor-routing",
+      "reason": "Legacy realtime compositor evaluation/compile/shader routing differs from modern pixel-unit dispatch.",
+      "suggestedNativeConsumers": [],
+      "pathsByVersion": {
+        "4.2.0": [
+          "source/blender/compositor/realtime_compositor/intern/evaluator.cc",
+          "source/blender/compositor/realtime_compositor/intern/compile_state.cc",
+          "source/blender/compositor/realtime_compositor/intern/shader_operation.cc"
+        ],
+        "5.2.0": [],
+        "5.3.0": []
+      },
+      "symbols": [],
+      "notes": [
+        "A source-impact group only, not evidence that a particular legacy CPU or GPU operation is supported."
+      ]
+    },
+    {
+      "id": "typed-link-conversion-implementation",
+      "reason": "Header-only include discovery misses the out-of-line implicit type-conversion registry implementation.",
+      "suggestedNativeConsumers": [
+        "ShaderNodeSqueeze",
+        "ShaderNodeTexMagic",
+        "ShaderNodeRadialTiling",
+        "FunctionNodeFloatToInt"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [
+          "source/blender/blenkernel/BKE_type_conversions.hh",
+          "source/blender/blenkernel/intern/type_conversions.cc"
+        ],
+        "5.2.0": [
+          "source/blender/blenkernel/BKE_type_conversions.hh",
+          "source/blender/blenkernel/intern/type_conversions.cc"
+        ],
+        "5.3.0": [
+          "source/blender/blenkernel/BKE_type_conversions.hh",
+          "source/blender/blenkernel/intern/type_conversions.cc"
+        ]
+      },
+      "symbols": [],
+      "notes": []
+    },
+    {
+      "id": "radial-native-mf-wrapper",
+      "reason": "BLI_radial_tiling.hh declares the algorithm; the actual MF implementation is wrapper.cc including the CPU shared header.",
+      "suggestedNativeConsumers": [
+        "ShaderNodeRadialTiling"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [],
+        "5.2.0": [
+          "source/blender/blenlib/BLI_radial_tiling.hh",
+          "source/blender/blenlib/intern/radial_tiling_wrapper.cc",
+          "source/blender/blenlib/intern/radial_tiling_shared.hh"
+        ],
+        "5.3.0": [
+          "source/blender/blenlib/BLI_radial_tiling.hh",
+          "source/blender/blenlib/intern/radial_tiling_wrapper.cc",
+          "source/blender/blenlib/intern/radial_tiling_shared.hh"
+        ]
+      },
+      "symbols": [
+        "calculate_out_variables",
+        "calculate_out_segment_id"
+      ],
+      "notes": [
+        "A dependency of native MF research/source models, not admission of MF to the shader-only Radial proposal. GPU shared header must also be watched independently."
+      ]
+    },
+    {
+      "id": "data-image-source-and-upload",
+      "reason": "Image-bearing slices also depend on native mapping/filter/color handling, actual image GPU upload and the measured source backend texture path.",
+      "suggestedNativeConsumers": [
+        "ShaderNodeSqueeze",
+        "ShaderNodeTexMagic",
+        "ShaderNodeRadialTiling"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [
+          "source/blender/nodes/shader/nodes/node_shader_tex_image.cc",
+          "source/blender/gpu/shaders/material/gpu_shader_material_tex_image.glsl",
+          "source/blender/blenkernel/intern/image_gpu.cc",
+          "source/blender/gpu/metal/mtl_texture.mm",
+          "source/blender/gpu/opengl/gl_texture.cc"
+        ],
+        "5.2.0": [
+          "source/blender/nodes/shader/nodes/node_shader_tex_image.cc",
+          "source/blender/gpu/shaders/material/gpu_shader_material_tex_image.glsl",
+          "source/blender/blenkernel/intern/image_gpu.cc",
+          "source/blender/gpu/metal/mtl_texture.mm",
+          "source/blender/gpu/opengl/gl_texture.cc"
+        ],
+        "5.3.0": [
+          "source/blender/nodes/shader/nodes/node_shader_tex_image.cc",
+          "source/blender/gpu/shaders/material/gpu_shader_material_tex_image.bsl.hh",
+          "source/blender/blenkernel/intern/image_gpu.cc",
+          "source/blender/gpu/metal/mtl_texture.mm",
+          "source/blender/gpu/opengl/gl_texture.cc"
+        ]
+      },
+      "symbols": [],
+      "notes": [
+        "Conditional on an image-bearing source slice. Filter backend-specific impact by measured native profile; listing a backend path does not qualify that backend."
+      ]
+    },
+    {
+      "id": "gpu-shader-compat-aliases",
+      "reason": "BSL/material compatibility declarations moved paths; resolve at each revision rather than assuming one filename.",
+      "suggestedNativeConsumers": [
+        "ShaderNodeSqueeze",
+        "ShaderNodeTexMagic",
+        "ShaderNodeRadialTiling",
+        "FunctionNodeFloatToInt"
+      ],
+      "pathsByVersion": {
+        "4.2.0": [],
+        "5.2.0": [
+          "source/blender/gpu/shaders/gpu_shader_compat.hh"
+        ],
+        "5.3.0": [
+          "source/blender/gpu/shaders/compat/gpu_shader_compat.hh"
+        ]
+      },
+      "symbols": [],
+      "notes": [
+        "This group has no compat.hh file in42; legacy GLSL uses its own include closure."
+      ]
+    }
+  ],
+  "legacyRnaMapping": {
+    "version": "4.2.0",
+    "path": "source/blender/nodes/NOD_static_types.h",
+    "example": "DefNode(ShaderNode, SH_NODE_SQUEEZE, 0, \"SQUEEZE\", Squeeze, \"Squeeze Value\", \"\")",
+    "nativeIdRule": "concatenate macro arguments1and5 after parsing balanced macro arguments",
+    "legacyTypeRule": "argument2; preserve family/registration-context because expressions can overlap across Shader/Texture domains",
+    "regexFastPath": "^\\s*DefNode\\s*\\(\\s*([A-Za-z_]\\w*)\\s*,\\s*([^,]+)\\s*,\\s*[^,]+,\\s*\"[^\"]*\"\\s*,\\s*([A-Za-z_]\\w*)\\s*,"
+  },
+  "limits": [
+    "Quoted include/pragma closure and GPU literal-symbol discovery remain necessary; these groups address known non-include edges only.",
+    "Retain unresolved symbol/path changes for review; do not infer a closed graph when resolution is incomplete.",
+    "New binary/compiler/backend profile still requires native qualification even with unchanged source/RNA hashes.",
+    "Group paths are coarse review triggers, not a proof that every change modifies numerical semantics."
+  ]
+}

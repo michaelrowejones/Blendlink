@@ -42,7 +42,14 @@
     "prototype:content-addressed-bundle": "node --test experiments/content-addressed-bundle-prototype/publisher.test.mjs",
     "test:preview-ux": "npm run build && node scripts/test-preview-ux.mjs",
     "test:node-parity": "npm run build && node scripts/test-node-parity.mjs",
-    "test:fresh-install": "node scripts/test-fresh-install.mjs"
+    "test:fresh-install": "node scripts/test-fresh-install.mjs",
+    "nodes:snapshot": "node scripts/node-ports.mjs snapshot",
+    "nodes:diff": "node scripts/node-ports.mjs diff",
+    "nodes:scaffold": "node scripts/node-ports.mjs scaffold",
+    "nodes:verify": "node scripts/test-node-port.mjs",
+    "nodes:discover-build": "node scripts/discover-blender-build.mjs",
+    "nodes:watch": "node scripts/watch-blender-nodes.mjs",
+    "test:node-pipeline": "node --test scripts/blender-node-changes.test.mjs scripts/node-port-scaffold.test.mjs scripts/lib/node-port-contract.test.mjs scripts/lib/node-port-python.test.mjs scripts/lib/blender-build-discovery.test.mjs scripts/lib/blender-build-acquisition.test.mjs scripts/lib/blender-build-cli.test.mjs scripts/watch-blender-nodes.test.mjs scripts/blender-node-watch-policy.test.mjs && python3 scripts/audit-node-coverage.test.py"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",

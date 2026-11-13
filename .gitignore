@@ -32,3 +32,11 @@ CONTEXT.md
 /e2e*.txt
 /compile_*.manifest.json
 /NUL
+
+# Reproducible upstream node-watch inputs and generated port work packets.
+/artifacts/node-pipeline/
+/artifacts/upstream-source-watch/
+/artifacts/blender-node-watch/
+/artifacts/upstream/
+
+/artifacts/node-ports/
