@@ -1,0 +1,22 @@
+{
+  "source": "Chromium official primary Gitiles sources",
+  "version": "158.0.8127.18",
+  "scope": "QA-only forced Graphite/Dawn SwiftShader presentation candidate, no shader/kernel semantics",
+  "sources": [
+    {
+      "path": "gpu/config/gpu_switches.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/gpu/config/gpu_switches.cc",
+      "sha256": "7dd32bc9ea4fc4ee7697a0e3a4a3acdcd6a9849257b0c31bff2b78609029bc5b"
+    },
+    {
+      "path": "gpu/command_buffer/service/service_utils.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/gpu/command_buffer/service/service_utils.cc",
+      "sha256": "cb6cfcdeadb1875ad24b66a8a8a6e9c5a26aa242812cb5371476ba1164c82f2f"
+    },
+    {
+      "path": "gpu/command_buffer/service/shared_image/wrapped_sk_image_backing_factory.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/gpu/command_buffer/service/shared_image/wrapped_sk_image_backing_factory.cc",
+      "sha256": "0b47bf9bd30d4f8254395d430f96cd8e02f372582d092b965242a11a095f0d42"
+    }
+  ]
+}

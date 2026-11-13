@@ -24,14 +24,11 @@ jobs:
           - browser: headless-shell
             channel: ''
             arguments: '[]'
-          - browser: full-chromium-swiftshader
+          # Chromium158's Graphite/Dawn SwiftShader presentation path.
+          # Prior full/Vulkan failures stay retained as QA1/QA2 evidence.
+          - browser: full-chromium-graphite-swiftshader
             channel: chromium
-            arguments: '["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader"]'
-          # Chrome's documented Linux headless Vulkan presentation path.
-          # This remains a diagnostic candidate until all strict reports pass.
-          - browser: full-chromium-vulkan-swiftshader
-            channel: chromium
-            arguments: '["--enable-gpu","--enable-features=Vulkan","--use-angle=vulkan","--use-vulkan=swiftshader","--disable-vulkan-surface","--use-webgpu-adapter=swiftshader"]'
+            arguments: '["--enable-gpu","--use-gl=angle","--use-angle=swiftshader","--enable-skia-graphite","--skia-graphite-dawn-backend=swiftshader","--use-webgpu-adapter=swiftshader"]'
     env:
       LIBGL_ALWAYS_SOFTWARE: '1'
       BLENDLINK_CAMERA_DATA_NATIVE_BACKEND: OPENGL
@@ -164,6 +161,17 @@ jobs:
           import assert from 'node:assert/strict'
           import { readFileSync } from 'node:fs'
           import { join } from 'node:path'
+          const canvas = JSON.parse(readFileSync(join(process.env.BLENDLINK_CAMERA_DATA_NATIVE,
+            `canvas-control-${process.env.BLENDLINK_TEST_PROFILE}.json`), 'utf8'))
+          assert.equal(canvas.complete, true)
+          assert.equal(canvas.result.complete, true)
+          assert.deepEqual(canvas.result.rgba, [255, 0, 0, 255])
+          if (process.env.BLENDLINK_TEST_PROFILE.includes('graphite')) {
+            assert.equal(canvas.browserVersion, '158.0.8127.18')
+            assert.match(canvas.systemInfo.gpu.featureStatus.skia_graphite, /^enabled/)
+            assert.equal(canvas.systemInfo.gpu.auxAttributes.skiaBackendType, 'GraphiteDawnVulkan')
+            assert.equal(canvas.result.adapter.architecture, 'swiftshader')
+          }
           for (const [kind, cases] of [['browser', 240], ['ownership', 8]]) {
             const path = join(process.env.BLENDLINK_CAMERA_DATA_NATIVE, `${kind}-report-${process.env.BLENDLINK_TEST_PROFILE}.json`)
             const report = JSON.parse(readFileSync(path, 'utf8'))

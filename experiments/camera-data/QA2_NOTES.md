@@ -51,3 +51,34 @@ The temporary workflow still triggers only pushes to
 remain failing jobs, and artifacts are always retained. The plain control is
 attempted after existing steps even when a browser check fails. Main's release
 checks and support metadata remain untouched.
+
+## QA2 result and QA3 bounded candidate
+
+QA2 run `43415661971` at `4a83ce8ffe7db3943e4d7e60a8394e43453f9fd0`
+failed all three profiles, including the plain public canvas. Verified archives:
+Vulkan `14032001130` / `ceb7dc70999b2068e415c2b70dd9c9679320ddf758f3e69303da2b121128ecd2`,
+shell `14031378722` / `492bf2ff314bf7ada2d2452a2aacee662bb9b1a79c476f6fe17b9529e9cf8bc2`,
+full `14031258399` / `770fb27f11c89ec5c19982c6ba017490a3c7ab04d34c9e2067a86b317e34fbb0`.
+Each native/Final source reader passed; all 163 production modules were independently
+rederived and every archived runtime snapshot/source hash was checked. The full
+WebGL2 results remain 240 native samples and 8 ownership cases. Each WebGPU path
+passed 30 samples then lost its device when first presenting the canvas. No
+profile qualifies. CDP reports actual Chromium 158.0.8127.18, Skia GaneshGL or None,
+Graphite disabled, and Vulkan disabled even in the Vulkan-flag candidate.
+
+QA3 keeps the original shell baseline and tries only one new candidate: full
+Chromium with forced Graphite and Dawn SwiftShader. The version-pinned primary
+sources and their decoded SHA-256 values are in `chromium158-sources.json`.
+`gpu_switches.cc` declares the exact flags; `service_utils.cc` selects
+GraphiteDawn for the SwiftShader value. The wrapped Skia backing factory adds
+WebGPU read/write and swapchain usage for the Graphite/Dawn Vulkan backend.
+This gives a concrete source basis for testing that presentation path rather
+than changing node math to compensate for a browser device loss.
+
+The plain local Mac SwiftShader control passes with actual CDP
+`skia_graphite=enabled_on` and `skiaBackendType=GraphiteDawnVulkan`, including
+exact RGBA 255/0/0/255. This is preparation evidence only. QA3 must record the
+same actual backend and finish all native/Final/numeric/ownership/package and
+plain-canvas checks on Linux before it can earn that CI configuration. Prior
+failed profiles remain retained; their absence from this smaller matrix is not
+a retroactive pass. A normal-trigger CI fix remains separate and unpromoted.
