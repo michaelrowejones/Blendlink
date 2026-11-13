@@ -27,6 +27,26 @@
       "path": "content/public/common/content_switches.cc",
       "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/content/public/common/content_switches.cc",
       "sha256": "b382d678d144da4d658fa6aba65a5658f78cbe1102d158ca617582ef9651a6cc"
+    },
+    {
+      "path": "components/viz/service/display_embedder/skia_output_surface_impl_on_gpu.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/components/viz/service/display_embedder/skia_output_surface_impl_on_gpu.cc",
+      "sha256": "9076a86c3f43d5ccd2500bab9cf7628cea08c0cd2d22eb65c2c73d9759f5ee48"
+    },
+    {
+      "path": "ui/ozone/public/ozone_platform.h",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/ui/ozone/public/ozone_platform.h",
+      "sha256": "2aec06d9543c69d62a7a12a3781a04bb8c38e9aa13b1f090841ccbaa2f5bebba"
+    },
+    {
+      "path": "ui/ozone/platform/headless/ozone_platform_headless.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/ui/ozone/platform/headless/ozone_platform_headless.cc",
+      "sha256": "254040186a4f4efbc5743ea77fb6ba3404df7782639459c41cf112d2ac2ac5de"
+    },
+    {
+      "path": "ui/ozone/platform/x11/ozone_platform_x11.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/ui/ozone/platform/x11/ozone_platform_x11.cc",
+      "sha256": "4937abca213a167ca637922cf3ed88d6c2d1a80b064bf4c5ea1886da26abf18f"
     }
   ]
 }

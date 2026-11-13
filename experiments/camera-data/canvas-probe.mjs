@@ -6,12 +6,15 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { chromium } from '@playwright/test'
 
+const headlessValue = process.env.BLENDLINK_TEST_CHROMIUM_HEADLESS ?? '1'
+assert.ok(['0', '1'].includes(headlessValue), 'BLENDLINK_TEST_CHROMIUM_HEADLESS must be 0 or 1')
+const headless = headlessValue === '1'
 const path = resolve(process.env.BLENDLINK_CAMERA_DATA_NATIVE ?? 'artifacts/camera-data/canvas-control'),
   profile = process.env.BLENDLINK_TEST_PROFILE ?? 'default',
   output = join(path, 'canvas-control-' + profile + '.json')
 await mkdir(dirname(output), { recursive: true })
 const report = { schemaVersion: 1, kind: 'public-WebGPU-canvas-control-no-Three-no-Camera-Data',
-  profile, complete: false, errors: [], fixtureSha256: createHash('sha256').update(await readFile(import.meta.filename)).digest('hex') }
+  profile, requestedHeadless: headless, complete: false, errors: [], fixtureSha256: createHash('sha256').update(await readFile(import.meta.filename)).digest('hex') }
 const server = createServer((_request, response) => {
   response.writeHead(200, { 'content-type': 'text/html' })
   response.end('<!doctype html><meta charset="utf-8"><title>Plain WebGPU canvas control</title>')
@@ -19,7 +22,7 @@ const server = createServer((_request, response) => {
 let browser
 try {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
-  browser = await chromium.launch({ headless: true,
+  browser = await chromium.launch({ headless,
     ...(process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL ? { channel: process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL } : {}),
     args: ['--enable-unsafe-webgpu', '--enable-unsafe-swiftshader',
       ...JSON.parse(process.env.BLENDLINK_TEST_CHROMIUM_ARGS ?? '[]')],

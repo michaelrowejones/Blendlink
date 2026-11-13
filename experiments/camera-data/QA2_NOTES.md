@@ -124,3 +124,64 @@ browser witness checks only top-level GPU logs for actual wrapper entry,
 SIGTRAP and native frame 0; a control signal cannot satisfy browser evidence.
 Missing instrumentation remains a failed diagnostic. Previous raw node/native
 and plain-canvas failures stay unchanged.
+
+## Actual native trap and source-qualified X11 candidate
+
+Routed run `43419636094` at `12123313d3ac347b293897ce811f8bf61ea327ed`
+retains artifact `14033915425`, SHA-256
+`58089a53e6da5b54fbd9a8b130a99a5012b2dec0a7f414b4e3f8f23a684c9e21`.
+The separate known-signal control passes. Two actual browser GPU processes
+independently stop on SIGTRAP with a native frame 0. Their Chrome mapping bases
+are `0x55d40f482000` and `0x56068064f000`; both stopped instruction pointers
+resolve to ELF virtual offset `0xf0cfbe2`. The preceding `0xf0cfbe1` is `int3`,
+followed by `ud2`. SwiftShader worker threads are waiting; this trap is in the
+Chrome GPU main thread, not a generated shader. There is no printed FATAL text.
+
+The complete Chrome ELF was independently extracted from the official
+158.0.8127.18 Chrome-for-Testing archive and matches the hosted SHA-256
+`76bcde21a2f8c9d4fbbf42afbeab011817d000552d093e5f5e89c9b8808f4231`.
+The hosted EGL/GLES/SwiftShader hashes also match that archive. The exact
+incoming branch at `0xf0cf99b` jumps to the trap when a virtual property getter
+returns a structure whose byte at offset `0x0d` is not 1. The getter follows the
+global Ozone platform instance. The pinned `OzonePlatform::PlatformProperties`
+layout places `skia_can_fall_back_to_x11` at that byte (one bool, padding, two
+32-bit message-pump enums, then `supports_vulkan_swap_chain` and this bool).
+The function's offscreen branch and X11 device construction match
+`SkiaOutputSurfaceImplOnGpu::InitializeForDawn()`.
+
+The pinned primary source gives the condition without guessing an error string:
+`MayFallBackToSkiaOutputDeviceX11()` reads that property (lines 187–194), and
+`InitializeForDawn()` calls `NOTREACHED()` if it is false on this Linux build
+(lines 2159–2169). Ozone Headless leaves the default false; Ozone X11 explicitly
+sets it true (lines 185–204 of `ozone_platform_x11.cc`). The actual CDP command
+line includes `--headless` and `--ozone-platform=headless`. Running Xvfb around a
+headless browser therefore does not provide the required X11 presentation path.
+The four version-pinned source hashes are included in `chromium158-sources.json`.
+
+The Chromium-documented Google Chrome debug-info archive for this version was
+also checked, but **its build ID does not match this Chrome-for-Testing ELF**:
+debug `fbf44c42c6ed72dd5cb095215c99a3c64e5446aa`, actual
+`c1d797c512c8fe910085e56edca2a9b21ad0e34d`. It was not used to symbolize this
+address. Sparse nearest-symbol labels in the stripped ELF are not function
+attribution, and the limited native unwind is retained as a limitation.
+
+The next bounded QA candidate runs full Chromium **headed** under Xvfb with
+explicit Ozone X11 and the same Graphite/Dawn SwiftShader rendering flags. It
+does not use the gdb launcher or its GPU-sandbox diagnostic flag. The plain
+public canvas runs first. Actual CDP must then demonstrate X11, absence of
+headless switches, and GraphiteDawnVulkan; unchanged native/Final source pins,
+240 samples per API, 8 ownership cases per API and copied-package proof remain
+mandatory. This is an unqualified environment candidate until that actual
+Linux run completes. No math, tolerance, source admission or normal-trigger
+workflow changed, and every prior failure receipt remains valid.
+
+Preparation on macOS with full headed Chromium, the same Graphite flags and
+its native Cocoa platform passes the plain exact-red control, 240 retained
+native samples per API, and 8 ownership cases per API. Reports record
+`requestedHeadless=false`, actual absence of `--headless`, and
+GraphiteDawnVulkan. This is not Linux/X11 qualification. Invalid values for the
+new explicit `BLENDLINK_TEST_CHROMIUM_HEADLESS=0|1` test option are refused;
+unset remains the existing headless default. The temporary hosted candidate
+also requires the actual CDP `--ozone-platform=x11` identity and rejects the
+debugger launcher/sandbox diagnostic flags. Workflow structure and embedded
+JavaScript syntax were checked locally; no production build was performed.

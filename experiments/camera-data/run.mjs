@@ -4,6 +4,9 @@ import { join, resolve } from 'node:path'
 import { createServer } from 'vite'
 import { chromium } from '@playwright/test'
 import { captureRuntimeSnapshot, hash } from '../../scripts/lib/runtime-provenance.mjs'
+const headlessValue = process.env.BLENDLINK_TEST_CHROMIUM_HEADLESS ?? '1'
+assert.ok(['0', '1'].includes(headlessValue), 'BLENDLINK_TEST_CHROMIUM_HEADLESS must be 0 or 1')
+const headless = headlessValue === '1'
 const root = resolve(import.meta.dirname, '../..'),
   built = process.argv.includes('--built'), ownership=process.argv.includes('--ownership'),
   diagnosticDeviceLoss = process.argv.includes('--diagnostic-device-loss')
@@ -64,7 +67,7 @@ let browser
 const rows = [],
   failures = []
 const reportPath = join(native, (ownership?'ownership-report-':'browser-report-')+(process.env.BLENDLINK_TEST_PROFILE??'default')+'.json')
-const report = { schemaVersion: 1, built, provenance, diagnosticDeviceLoss, complete: false,
+const report = { schemaVersion: 1, built, provenance, diagnosticDeviceLoss, requestedHeadless: headless, complete: false,
   completedAllBackends: false, rows, failures, backendRuns: [] }
 const save = () => writeFile(reportPath, JSON.stringify(report, null, 2))
 const describe = error => ({ name: error.name, message: error.message, stack: error.stack })
@@ -72,7 +75,7 @@ await save()
 try {
   await server.listen()
   browser = await chromium.launch({
-    headless: true,
+    headless,
     ...(process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL ? {channel:process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL} : {}),
     args: [
       '--enable-unsafe-webgpu',
@@ -80,6 +83,13 @@ try {
       ...JSON.parse(process.env.BLENDLINK_TEST_CHROMIUM_ARGS ?? '[]'),
     ],
   })
+  report.browserVersion = browser.version()
+  const session = await browser.newBrowserCDPSession()
+  report.systemInfo = await session.send('SystemInfo.getInfo')
+  report.commandLine = await session.send('Browser.getBrowserCommandLine')
+    .then(result => result.arguments).catch(error => ({ unavailable: error.message }))
+  await session.detach()
+  await save()
   for (const backend of ['webgpu', 'webgl2']) {
     const page = await browser.newPage(),
       errors = []
