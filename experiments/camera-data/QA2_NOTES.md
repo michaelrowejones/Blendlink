@@ -107,3 +107,20 @@ There is no Blender, build, native reference generation or node qualification
 in this diagnostic job, and its result cannot replace a failed numeric test.
 Prior complete native/Final artifacts remain unchanged. A bounded diagnostic
 150-second timeout does not change any production or numeric-suite watchdog.
+
+The first debugger attempt, run 43418708545 / artifact 14032727414 SHA-256
+`d1237bf30973bd9625c30dc1c22331939245cac7eda69523b74332334e7894c1`,
+retains exact Chrome/library hashes but contains **no gdb wrapper logs**. It is
+failed instrumentation, not a captured native backtrace. Pinned
+`GpuSandboxedProcessLauncherDelegate::GetZygote` still selects the GPU zygote
+unless the GPU-specific sandbox type is disabled; a wrapper prefix is not an
+exec on that fork path, despite the existing global no-sandbox browser flag.
+The diagnostic follow-up adds only `--disable-gpu-sandbox` to route the GPU
+subprocess through the launcher under gdb. This is not a proposed normal
+rendering configuration or an earned support change.
+
+A separate debugger-control directory calibrates a known SIGTRAP. The required
+browser witness checks only top-level GPU logs for actual wrapper entry,
+SIGTRAP and native frame 0; a control signal cannot satisfy browser evidence.
+Missing instrumentation remains a failed diagnostic. Previous raw node/native
+and plain-canvas failures stay unchanged.

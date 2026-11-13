@@ -53,6 +53,7 @@ jobs:
           #!/usr/bin/env bash
           set -eu
           log="$BLENDLINK_GPU_CRASH_EVIDENCE/gpu-gdb-$$.log"
+          printf 'BLENDLINK_GPU_DEBUGGER_WRAPPER_STARTED pid=%s\n' "$$" > "$log"
           exec gdb --quiet --batch \
             -ex 'set pagination off' \
             -ex 'set confirm off' \
@@ -69,7 +70,7 @@ jobs:
             -ex 'info symbol $pc' \
             -ex 'x/20i $pc-32' \
             -ex 'thread apply all bt 48' \
-            --args "$@" > "$log" 2>&1
+            --args "$@" >> "$log" 2>&1
           SH
           chmod +x "$wrapper"
           export BLENDLINK_GPU_GDB_WRAPPER="$wrapper"
@@ -81,11 +82,17 @@ jobs:
           # Only debugger and logging instrumentation is added; renderer flags
           # are identical to the already-failed QA3 Graphite configuration.
           flags += ['--gpu-launcher=' + os.environ['BLENDLINK_GPU_GDB_WRAPPER'],
+                    '--disable-gpu-sandbox',
                     '--enable-logging=stderr','--log-level=0']
           with open(os.environ['GITHUB_ENV'],'a') as stream:
               stream.write('BLENDLINK_TEST_CHROMIUM_ARGS=' + json.dumps(flags) + '\n')
           PY
           cp "$wrapper" "$BLENDLINK_CAMERA_DATA_NATIVE/gpu-debugger-wrapper.sh"
+          # Calibrate debugger routing with a known signal in a separate folder;
+          # it must never count as the browser's native-fault witness.
+          mkdir -p "$evidence/debugger-control"
+          BLENDLINK_GPU_CRASH_EVIDENCE="$evidence/debugger-control" \
+            "$wrapper" /bin/sh -c 'kill -TRAP $$' || true
           gdb --version > "$BLENDLINK_CAMERA_DATA_NATIVE/gdb-version.txt"
           uname -a > "$BLENDLINK_CAMERA_DATA_NATIVE/host.txt"
           lscpu >> "$BLENDLINK_CAMERA_DATA_NATIVE/host.txt"
@@ -110,6 +117,29 @@ jobs:
             exit 1
           fi
           cat "$BLENDLINK_CAMERA_DATA_NATIVE/plain-canvas-gdb.log"
+
+      - name: Require actual debugger routing and browser signal evidence
+        if: always()
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict'
+          import {readdirSync,readFileSync,writeFileSync} from 'node:fs'
+          import {join} from 'node:path'
+          const root=process.env.BLENDLINK_CAMERA_DATA_NATIVE
+          const logs=directory=>readdirSync(directory).filter(name=>/^gpu-gdb-.*\.log$/.test(name)).map(name=>({
+            name,text:readFileSync(join(directory,name),'utf8'),
+          }))
+          const controls=logs(join(root,'debugger-control')),browser=logs(root)
+          const witnessed=rows=>rows.filter(row=>row.text.includes('BLENDLINK_GPU_DEBUGGER_WRAPPER_STARTED')&&/received signal SIGTRAP/.test(row.text)&&/^#0\s/m.test(row.text)).map(row=>row.name)
+          const result={kind:'native-debugger-signal-evidence-not-node-qualification',
+            controlLogs:controls.map(row=>row.name),controlWitnesses:witnessed(controls),
+            browserLogs:browser.map(row=>row.name),browserWitnesses:witnessed(browser)}
+          writeFileSync(join(root,'native-signal-witness.json'),JSON.stringify(result,null,2))
+          assert.ok(result.controlWitnesses.length,'The separate known SIGTRAP control must calibrate gdb')
+          assert.ok(result.browserLogs.length,'GPU launcher was not actually executed; no native backtrace captured')
+          assert.ok(result.browserWitnesses.length,'No actual browser SIGTRAP/native backtrace captured')
+          console.log('BLENDLINK_CAMERA_NATIVE_GPU_SIGNAL_CAPTURED',JSON.stringify(result))
+          JS
 
       - name: Retain native backtraces, exact binary pins and public API report
         if: always()
