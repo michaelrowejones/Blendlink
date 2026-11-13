@@ -8,6 +8,12 @@ EEVEE remains the reference for live shading. Compositor CPU/GPU execution is
 an independent contract. Cycles generally uses deliberate baking; an automatic
 engine switch still needs evidence that it preserves the channel.
 
+New port development now focuses on Blender **5.3.0** first. Qualify a bounded
+5.3 implementation before optional backports; preserve existing older-version
+contracts and run their regressions when shared code changes. The
+[node tracker refresh](NODE_TRACKER_REFRESH.md) keeps priorities and the Google
+Sheet aligned with audited coverage rather than unpromoted research.
+
 ## Workflow
 
 1. **Discover upstream.** Resolve an official daily archive, its checksum, and

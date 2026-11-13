@@ -1,0 +1,1450 @@
+{
+  "schemaVersion": 1,
+  "targetBlender": "5.3.0",
+  "auditedVersions": [
+    "4.2.0",
+    "5.2.0",
+    "5.3.0"
+  ],
+  "legacyPolicy": "Preserve existing qualified legacy routes and all refusal guards; prioritize new qualification on Blender 5.3. This tracker does not change source/runtime admission.",
+  "priorityBasis": "Qualitative engineering dependency/workflow judgments, not user telemetry, numeric popularity scores, guaranteed EEVEE viability or support promotion. Only the three official demo observations are actual scene-use evidence.",
+  "priorityOrder": [
+    "P0 Enablers",
+    "P1 Artist workflows",
+    "P2 Completion",
+    "P3 Later",
+    "Done",
+    "Legacy"
+  ],
+  "defaultPendingPriority": "P2 Completion",
+  "dependencyGroups": {
+    "typed-field-contracts": {
+      "label": "Typed field and precision contracts",
+      "rationale": "Scalar/vector/color/Boolean/Integer conversion, staged arithmetic, bounded validation and constant-versus-field execution unlock composed factors, selectors and procedural kernels. Existing supported operations are reused, not re-ported.",
+      "requires": [],
+      "nodeKeys": [
+        "shader:ShaderNodeMath",
+        "shader:ShaderNodeVectorMath",
+        "shader:FunctionNodeBooleanMath",
+        "shader:FunctionNodeIntegerMath",
+        "compositor:ShaderNodeMath",
+        "compositor:FunctionNodeBooleanMath",
+        "compositor:FunctionNodeIntegerMath",
+        "compositor:FunctionNodeCompare",
+        "compositor:FunctionNodeFloatToInt",
+        "compositor:ShaderNodeVectorMath",
+        "compositor:FunctionNodeGetVectorComponent"
+      ]
+    },
+    "image-sampling-lod": {
+      "label": "Image sampling, storage and LOD contracts",
+      "rationale": "Native alpha/color association, coordinate/filter/mip/LOD behavior, publication pins and cache ownership underpin image-driven normals and fields. Existing evidence is not assumed to cover arbitrary minification.",
+      "requires": [
+        "typed-field-contracts"
+      ],
+      "nodeKeys": [
+        "shader:ShaderNodeTexImage",
+        "shader:ShaderNodeTexEnvironment",
+        "compositor:CompositorNodeImage",
+        "compositor:CompositorNodeImageInfo"
+      ]
+    },
+    "normal-function-sampling": {
+      "label": "Normal and re-evaluable Height sampling",
+      "rationale": "Bounded Height functions with native derivative scope unlock image/Noise-to-Bump and composed Normal/Coat Normal. Original Cube and Mandelbrot show channel blockers; these are not gaps in the ShaderNodeNormal class alone. Earn EEVEE first.",
+      "requires": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ],
+      "nodeKeys": [
+        "shader:ShaderNodeNormalMap",
+        "shader:ShaderNodeBump",
+        "shader:ShaderNodeTangent",
+        "shader:ShaderNodeNormal"
+      ]
+    },
+    "material-channel-routing": {
+      "label": "Material channel routing and engine-preserving fallback",
+      "rationale": "Per-channel fidelity, portable carriers and renderer markers must be paired with truthful source-engine-preserving bake intent. Original Cube Cycles refusals are an acceptance target; an EEVEE override is not Cycles parity.",
+      "requires": [
+        "typed-field-contracts"
+      ],
+      "nodeKeys": [
+        "shader:ShaderNodeBsdfPrincipled",
+        "shader:ShaderNodeEmission",
+        "shader:ShaderNodeMixShader",
+        "shader:ShaderNodeBackground",
+        "shader:ShaderNodeOutputWorld"
+      ]
+    },
+    "bounded-graph-execution": {
+      "label": "Bounded graph execution and time",
+      "rationale": "Typed Switch/Menu/Index and bounded Repeat state with explicit iteration/cost caps unlock composition. Qualify static Repeat before authored animation. Mandelbrot has both tree-animation and unported Repeat blockers.",
+      "requires": [
+        "typed-field-contracts"
+      ],
+      "nodeKeys": [
+        "shader:GeometryNodeRepeatInput",
+        "shader:GeometryNodeRepeatOutput",
+        "shader:GeometryNodeInputSceneTime",
+        "shader:GeometryNodeSwitch",
+        "shader:GeometryNodeMenuSwitch",
+        "shader:NodeImplicitConversion",
+        "compositor:GeometryNodeSwitch",
+        "compositor:GeometryNodeMenuSwitch",
+        "compositor:NodeImplicitConversion",
+        "compositor:CompositorNodeSceneTime"
+      ]
+    },
+    "coordinate-procedural-fields": {
+      "label": "Coordinate and procedural field contracts",
+      "rationale": "Actual owner/UV/Generated coordinates and bounded field precision enable reusable procedural composition. The official Radial demo is one observed target, not a popularity estimate; useful Voronoi/Noise domains share this foundation.",
+      "requires": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ],
+      "nodeKeys": [
+        "shader:ShaderNodeTexCoord",
+        "shader:ShaderNodeUVMap",
+        "shader:ShaderNodeMapping",
+        "shader:ShaderNodeVectorTransform",
+        "shader:ShaderNodeNewGeometry",
+        "shader:ShaderNodeObjectInfo",
+        "shader:ShaderNodeCameraData",
+        "shader:ShaderNodeRadialTiling",
+        "shader:ShaderNodeTexVoronoi",
+        "shader:ShaderNodeTexNoise"
+      ]
+    },
+    "compositor-domain-algebra": {
+      "label": "Compositor domain algebra and intermediate resampling",
+      "rationale": "Finite data/display windows, origins, extent priority, broadcast and intermediate resampling let spatial operations feed Mix, Alpha Over and filters. This is a dependency/workflow heuristic, not demand demonstrated by the three demos.",
+      "requires": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ],
+      "nodeKeys": [
+        "compositor:CompositorNodeImageCoordinates",
+        "compositor:CompositorNodeRelativeToPixel",
+        "compositor:CompositorNodeTransform",
+        "compositor:CompositorNodeTranslate",
+        "compositor:CompositorNodeRotate",
+        "compositor:CompositorNodeScale",
+        "compositor:CompositorNodeCrop",
+        "compositor:CompositorNodeMapUV",
+        "compositor:CompositorNodeAlphaOver",
+        "compositor:ShaderNodeMix"
+      ]
+    },
+    "compositor-pass-sources": {
+      "label": "Compositor pass sources and camera/encoding contracts",
+      "rationale": "Image/Alpha/Depth/Normal pass and camera/encoding contracts enable later Z Combine, Defocus and Vector Blur consumers. This is an engineering inference, not a corpus-observed demand ranking.",
+      "requires": [
+        "compositor-domain-algebra"
+      ],
+      "nodeKeys": [
+        "compositor:CompositorNodeRLayers",
+        "compositor:CompositorNodeNormal",
+        "compositor:CompositorNodeZcombine",
+        "compositor:CompositorNodeDefocus",
+        "compositor:CompositorNodeVecBlur"
+      ]
+    },
+    "compositor-neighborhood-kernels": {
+      "label": "Compositor neighborhood and footprint kernels",
+      "rationale": "Reusable separable/footprint/cache contracts enable variable or relative Blur, Dilate/Erode and remaining Glare domains. Workflow value is inferred; no scene-frequency claim is made.",
+      "requires": [
+        "compositor-domain-algebra"
+      ],
+      "nodeKeys": [
+        "compositor:CompositorNodeBlur",
+        "compositor:CompositorNodeGlare",
+        "compositor:CompositorNodeFilter",
+        "compositor:CompositorNodeDilateErode"
+      ]
+    }
+  },
+  "nodeRules": {
+    "shader:ShaderNodeMath": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "shader:ShaderNodeVectorMath": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "shader:FunctionNodeBooleanMath": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "shader:FunctionNodeIntegerMath": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "compositor:ShaderNodeMath": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "compositor:FunctionNodeBooleanMath": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "compositor:FunctionNodeIntegerMath": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "compositor:FunctionNodeCompare": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "compositor:FunctionNodeFloatToInt": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "compositor:ShaderNodeVectorMath": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "compositor:FunctionNodeGetVectorComponent": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared typed field and precision contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": []
+    },
+    "shader:ShaderNodeTexCoord": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared coordinate and procedural field contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeUVMap": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared coordinate and procedural field contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeMapping": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared coordinate and procedural field contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeVectorTransform": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared coordinate and procedural field contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeNewGeometry": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared coordinate and procedural field contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeObjectInfo": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared coordinate and procedural field contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeCameraData": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared coordinate and procedural field contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexImage": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared image sampling, storage and lod contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:ShaderNodeTexEnvironment": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared image sampling, storage and lod contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:CompositorNodeImage": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared image sampling, storage and lod contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:CompositorNodeImageCoordinates": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:CompositorNodeImageInfo": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared image sampling, storage and lod contracts contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:CompositorNodeRelativeToPixel": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeNormalMap": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared normal and re-evaluable height sampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeBump": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared normal and re-evaluable height sampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTangent": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared normal and re-evaluable height sampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeNormal": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared normal and re-evaluable height sampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeBsdfPrincipled": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared material channel routing and engine-preserving fallback contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:ShaderNodeEmission": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared material channel routing and engine-preserving fallback contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:ShaderNodeMixShader": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared material channel routing and engine-preserving fallback contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:CompositorNodeRLayers": {
+      "priority": "P0 Enablers",
+      "reason": "Expand the source/pass contract before dependent depth, normal and spatial effects. Corpus usage of compositor passes is unknown.",
+      "dependsOn": [
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeTransform": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:CompositorNodeTranslate": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:CompositorNodeRotate": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:CompositorNodeScale": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:CompositorNodeCrop": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:CompositorNodeMapUV": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:CompositorNodeZcombine": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor source/pass and domain pipeline contract before widening dependent node families.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:GeometryNodeRepeatInput": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:GeometryNodeRepeatOutput": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:GeometryNodeInputSceneTime": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:GeometryNodeSwitch": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:GeometryNodeMenuSwitch": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:NodeImplicitConversion": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:GeometryNodeSwitch": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:GeometryNodeMenuSwitch": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:NodeImplicitConversion": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:CompositorNodeSceneTime": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:CompositorNodeAlphaOver": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:ShaderNodeMix": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared compositor domain algebra and intermediate resampling contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
+    },
+    "compositor:ShaderNodeValToRGB": {
+      "priority": "P1 Artist workflows",
+      "reason": "Complete a common compositing workflow on top of the source/domain and typed-math foundations.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeCurveRGB": {
+      "priority": "P1 Artist workflows",
+      "reason": "Complete a common compositing workflow on top of the source/domain and typed-math foundations.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeBlur": {
+      "priority": "P1 Artist workflows",
+      "reason": "Extend common filters through reusable footprint/domain contracts; commonness is an engineering inference, not user telemetry.",
+      "dependsOn": [
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeGlare": {
+      "priority": "P1 Artist workflows",
+      "reason": "Extend common filters through reusable footprint/domain contracts; commonness is an engineering inference, not user telemetry.",
+      "dependsOn": [
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeBoxMask": {
+      "priority": "P1 Artist workflows",
+      "reason": "Complete a common compositing workflow on top of the source/domain and typed-math foundations.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeEllipseMask": {
+      "priority": "P1 Artist workflows",
+      "reason": "Complete a common compositing workflow on top of the source/domain and typed-math foundations.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeDilateErode": {
+      "priority": "P1 Artist workflows",
+      "reason": "Extend common filters through reusable footprint/domain contracts; commonness is an engineering inference, not user telemetry.",
+      "dependsOn": [
+        "compositor-domain-algebra"
+      ]
+    },
+    "shader:ShaderNodeTexNoise": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexVoronoi": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexWave": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexBrick": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexChecker": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexGradient": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexWhiteNoise": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexMagic": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexGabor": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeTexSky": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeRadialTiling": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeValToRGB": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeSeparateColor": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeMapRange": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeMix": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeMixRGB": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeFloatCurve": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeVectorCurve": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeRGBCurve": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
+      ]
+    },
+    "shader:ShaderNodeBackground": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared material channel routing and engine-preserving fallback contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "shader:ShaderNodeOutputWorld": {
+      "priority": "P0 Enablers",
+      "reason": "Close the shared material channel routing and engine-preserving fallback contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:ShaderNodeTexNoise": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:ShaderNodeTexVoronoi": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:ShaderNodeTexWave": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:ShaderNodeTexBrick": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:ShaderNodeTexChecker": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:ShaderNodeTexGradient": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:ShaderNodeRadialTiling": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeFilter": {
+      "priority": "P1 Artist workflows",
+      "reason": "Extend common filters through reusable footprint/domain contracts; commonness is an engineering inference, not user telemetry.",
+      "dependsOn": [
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeColorBalance": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeColorSpill": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeLumaMatte": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeDiffMatte": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeDistanceMatte": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeColorMatte": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeChromaMatte": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeChannelMatte": {
+      "priority": "P1 Artist workflows",
+      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "shader:ShaderNodeBsdfHair": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeBsdfHairPrincipled": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeBsdfRayPortal": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeBsdfToon": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeBsdfSheen": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeRaycast": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeShadowRaycast": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeLightFalloff": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeLightPath": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeLightInfo": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeLightEvaluation": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeLightAccumulation": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeLightIterInternalInput": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeLightIterInternalOutput": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeVolumeAbsorption": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeVolumeScatter": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeVolumePrincipled": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeVolumeCoefficients": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeVolumeInfo": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeScript": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "shader:ShaderNodeTexIES": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "coordinate-procedural-fields",
+        "image-sampling-lod",
+        "normal-function-sampling"
+      ]
+    },
+    "compositor:CompositorNodeCryptomatte": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeCryptomatteV2": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeMovieClip": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeMovieDistortion": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodePlaneTrackDeform": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeStabilize": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeTrackPos": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeVecBlur": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "compositor:CompositorNodeOutputFile": {
+      "priority": "P3 Later",
+      "reason": "Specialist light/ray/volume/media/tracking or file-output contract; defer until common transport and composition foundations are established. This is a roadmap judgment, not an EEVEE viability or usage claim.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod",
+        "compositor-domain-algebra"
+      ]
+    },
+    "shader:FunctionNodeFindInString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeFormatString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeInputSpecialCharacters": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeInputString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeMatchString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeReplaceString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeReverseString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeSetStringCase": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeSliceString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeStringLength": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeStringToValue": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeTrimString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "shader:FunctionNodeValueToString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeFindInString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeFormatString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeInputSpecialCharacters": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeInputString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeMatchString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeReplaceString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeReverseString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeSetStringCase": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeSliceString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeStringLength": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeStringToValue": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeTrimString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    },
+    "compositor:FunctionNodeValueToString": {
+      "priority": "P3 Later",
+      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "bounded-graph-execution"
+      ]
+    }
+  },
+  "researchNotes": {
+    "compositor:FunctionNodeFloatToInt": "Native research only: compositor exists in 5.3; earlier Geometry-only tests and browser trials do not promote live support. Shader creation is rejected in all audited versions.",
+    "shader:ShaderNodeRadialTiling": "Research only, no production emitter/runtime port. The actual official Radial demo is refused by Final; native and private kernel trials retain their separate domain limits.",
+    "compositor:ShaderNodeRadialTiling": "Native context availability and separate shader research do not constitute a compositor port.",
+    "shader:ShaderNodeLightFalloff": "Native EEVEE/Cycles differences justify an engine-fallback safety guard, not a live Light Falloff port.",
+    "shader:ShaderNodeSqueeze": "Blender 4.2 owned-context initialization remains research and production source admission stays N/A. Existing qualified 5.2/5.3 slices remain limited as declared."
+  },
+  "observationEvidence": [
+    "experiments/official-demo-node-performance/README.md",
+    "experiments/official-demo-node-performance/receipt.json"
+  ],
+  "researchEvidencePaths": {
+    "compositor:FunctionNodeFloatToInt": [
+      "experiments/float-to-int-native/README.md"
+    ],
+    "shader:ShaderNodeRadialTiling": [
+      "experiments/radial-tiling-research/README.md"
+    ],
+    "compositor:ShaderNodeRadialTiling": [
+      "experiments/radial-tiling-research/README.md"
+    ],
+    "shader:ShaderNodeLightFalloff": [
+      "experiments/light-falloff-engine-differential/README.md"
+    ],
+    "shader:ShaderNodeSqueeze": [
+      "experiments/squeeze-node-differential/README.md",
+      "experiments/light-falloff-engine-differential/README.md"
+    ]
+  },
+  "sceneObservations": {
+    "shader:GeometryNodeRepeatInput": "Observed in the official Mandelbrot Grow active shader; Final refused its animated Normal transport. This does not prove loop-port support.",
+    "shader:GeometryNodeRepeatOutput": "Observed in the official Mandelbrot Grow active shader; Final refused its animated Normal transport. This does not prove loop-port support.",
+    "shader:ShaderNodeBump": "Observed in original Cube and Mandelbrot active surfaces; their actual Final normal-channel refusals are retained.",
+    "shader:ShaderNodeRadialTiling": "Observed in the official Radial Tiling active surface; its actual Final material-fidelity refusal is retained.",
+    "shader:ShaderNodeTexNoise": "Observed in original Cube active surfaces; this one scene is not user-frequency evidence.",
+    "shader:ShaderNodeTexImage": "Observed in original Cube and official Radial active surfaces; these scenes do not establish general user prevalence.",
+    "shader:ShaderNodeMath": "Observed in the active surfaces of all three official demos; broader usage remains unknown.",
+    "shader:ShaderNodeVectorMath": "Observed in the active surfaces of all three official demos; broader usage remains unknown.",
+    "shader:ShaderNodeTexCoord": "Observed in the active surfaces of all three official demos; broader usage remains unknown.",
+    "shader:ShaderNodeBsdfPrincipled": "Observed in the active surfaces of all three official demos; this is not whole-material fidelity qualification."
+  }
+}
