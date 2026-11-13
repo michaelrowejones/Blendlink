@@ -35,14 +35,18 @@ def _cpu_profile():
         'sourcePlatform': sys.platform, 'sourceArchitecture': platform.machine()}
 
 
-# Exact downloaded Linux binary measured by the retained native trial. This is
-# a source-admission candidate; the hosted gate must now earn production IR.
+# Exact Linux binary qualified by retained native production-path receipts.
 _LINUX52_BUILD = 'fbe6228777e7'
+# Actual win32/AMD64 native trial packets, not hashes inferred from another OS.
+# These remain admission candidates until the untouched production path passes.
+_WINDOWS_BUILDS = {(4, 2, 0): 'a51f293548ad', (5, 2, 0): 'fbe6228777e7'}
 
 
 def _cpu_source_allowed(version, source_platform, architecture, build_hash):
     if source_platform == 'darwin' and architecture == 'arm64':
         return version in {(4, 2, 0), (5, 2, 0), (5, 3, 0)}
+    if source_platform == 'win32':
+        return architecture == 'AMD64' and version in _WINDOWS_BUILDS and _WINDOWS_BUILDS[version] == build_hash
     return (version == (5, 2, 0) and source_platform == 'linux'
         and architecture == 'x86_64' and build_hash == _LINUX52_BUILD)
 
@@ -88,6 +92,8 @@ def normalize_luminance_key(node, socket, op, scene, read, bounds, fail, single=
             reason = 'unmeasured source version'
         elif not _cpu_source_allowed(version, source_platform, architecture, build_hash):
             reason = 'unmeasured CPU/compiler profile'
+        elif source_platform == 'win32' and device != 'CPU':
+            reason = 'unmeasured Windows GPU single-value CPU fold'
         else:
             try:
                 coefficients = _cpu_coefficients()
@@ -110,5 +116,5 @@ def normalize_luminance_key(node, socket, op, scene, read, bounds, fail, single=
             luminance_key_precision='native-cpu-rne-v1',
             luminance_key_source_version=list(version), luminance_key_coefficients=coefficients,
             luminance_key_cpu_profile=profile)
-        if source_platform == 'linux':
+        if source_platform in {'linux', 'win32'}:
             op['properties']['luminance_key_source_build'] = build_hash

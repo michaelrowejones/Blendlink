@@ -29,7 +29,7 @@ async function fixture(body) {
             luminance_key_precision: qualified ? 'native-cpu-rne-v1' : 'legacy-unqualified-cpu-v1', luminance_key_cpu_profile: value.sourceCpuProfile,
             luminance_key_source_version: value.sourceVersion, luminance_key_coefficients: value.sourceCoefficients,
             evaluation_device:'CPU',single_value_device:'CPU',
-            ...(value.sourceCpuProfile.sourcePlatform==='linux'?{luminance_key_source_build:value.sourceBuildHash}:{}) } }] } }
+            ...(qualified&&['linux','win32'].includes(value.sourceCpuProfile.sourcePlatform)?{luminance_key_source_build:value.sourceBuildHash}:{}) } }] } }
       const bytes = JSON.stringify(record); await writeFile(join(directory, file), bytes); value.files.push({ case: name, file, sha256: hash(bytes) })
     }
     await writeFile(join(directory, 'precision-qualification.json'), JSON.stringify(value))
@@ -91,7 +91,7 @@ test('hosted trials retain all three source profiles and verify cached native ar
   assert.match(workflow, /}\n\s+# Always verify[^\n]*\n\s+\$actual = \(Get-FileHash/)
   assert.ok(workflow.includes('BLENDLINK_LUMA_CPU_ORACLE_ENGINE: CYCLES'))
   assert.match(workflow,/profile: linux-5\.2\n\s+expected_admission: PRODUCTION_QUALIFIED/)
-  for(const version of ['4.2','5.2'])assert.ok(workflow.includes('profile: windows-'+version+'\n            expected_admission: SOURCE_ADMISSION_NA'))
+  for(const version of ['4.2','5.2'])assert.ok(workflow.includes('profile: windows-'+version+'\n            expected_admission: PRODUCTION_QUALIFIED'))
   assert.ok(workflow.includes('BLENDLINK_LUMA_EXPECTED_SOURCE_ADMISSION: ${{ matrix.expected_admission }}'))
   const driver=await readFile(new URL('./qualify-host.mjs',import.meta.url),'utf8')
   assert.ok(driver.includes('assert.equal(base.packet.productionAdmission,expectedAdmission'))
@@ -127,9 +127,13 @@ test('coverage separates measured CPU precision from legacy compatibility and pr
   assert.equal(entry.verification.physicalAndSoftwareReadbacks, 1432)
   assert.equal(entry.verification.experimentalKernelProductionAdmissionCases, 0)
   assert.ok(entry.limits.includes('legacy-unqualified-cpu-v1')); assert.ok(entry.limits.includes('SOURCE_ADMISSION_NA'))
-  assert.ok(entry.limits.includes('qualification remains pending')); assert.ok(entry.limits.includes('darwin/arm64'))
-  const candidate=entry.verification.linux52ProductionCandidate
-  assert.equal(candidate.status,'pending-fresh-production-receipt')
+  assert.ok(entry.limits.includes('fresh production qualification passed')); assert.ok(entry.limits.includes('darwin/arm64'))
+  const candidate=entry.verification.linux52ProductionQualification
+  assert.equal(candidate.status,'qualified-production-receipt')
+  assert.equal(candidate.productionReceipt.productionAdmission,'PRODUCTION_QUALIFIED')
+  assert.equal(candidate.productionReceipt.productionPrecisionCasesPerBrowserApi,32)
+  assert.equal(candidate.productionReceipt.productionPrecisionBitMismatches,0)
+  assert.deepEqual(candidate.productionReceipt.browserApis,['webgl2','webgpu'])
   assert.equal(candidate.sourcePlatform,'linux');assert.equal(candidate.sourceArchitecture,'x86_64')
   assert.deepEqual(candidate.sourceVersion,[5,2,0]);assert.equal(candidate.sourceBuildHash,'fbe6228777e7')
   assert.equal(candidate.basisReceipt.productionAdmission,'SOURCE_ADMISSION_NA');assert.equal(candidate.basisReceipt.productionExactCases,0)
@@ -189,6 +193,56 @@ function productionResults(value){
     ...value.files.map(file=>({case:file.case,max:0,calibration:0,bitMismatches:0,shaderErrors:[]})),
   ]}))
 }
+
+function windowsPacket(version) {
+  const value = packet()
+  Object.assign(value.sourceCpuProfile, { sourcePlatform: 'win32', sourceArchitecture: 'AMD64' })
+  value.sourceVersion = [version, 2, 0]
+  value.sourceBuildHash = version === 4 ? 'a51f293548ad' : 'fbe6228777e7'
+  value.ordinaryCases = version === 4 ? 21 : 47
+  return value
+}
+
+test('Windows production candidates require exact CPU binaries and keep earlier N/A trial receipts distinct', async () => {
+  for (const version of [4, 5]) await fixture(async ({ directory, write }) => {
+    await write(windowsPacket(version))
+    const { packet: value } = await readCpuLumaQualification(directory)
+    assert.equal(value.productionExactCases, 32)
+    assert.equal(verifyProductionLumaBrowser(productionResults(value), value), 32)
+    for (const mutate of [
+      p => { p.sourceBuildHash = version === 4 ? 'fbe6228777e7' : 'a51f293548ad' },
+      p => { p.sourceBuildHash = '000000000000' },
+      p => { p.sourceVersion = [version, 2, 1] },
+      p => { p.sourceVersion = [5, 3, 0]; p.ordinaryCases = 47; Object.assign(p.sourceCpuProfile, { mode: 'ftz-daz-rne', underflowWord: 0, denormalInputWord: 0 }) },
+      p => { p.sourceCpuProfile.sourceArchitecture = 'x86_64' },
+      p => { p.sourceCpuProfile.sourceArchitecture = 'arm64' },
+      p => { Object.assign(p.sourceCpuProfile, { mode: 'ftz-daz-rne', underflowWord: 0, denormalInputWord: 0 }) },
+    ]) { const changed = windowsPacket(version); mutate(changed); await write(changed); await assert.rejects(readCpuLumaQualification(directory)) }
+  })
+  await fixture(async ({ directory, write }) => {
+    await write(packet(false, true)); const { packet: value } = await readCpuLumaQualification(directory)
+    assert.equal(value.productionAdmission, 'SOURCE_ADMISSION_NA'); assert.equal(value.productionExactCases, 0)
+    assert.throws(() => verifyProductionLumaBrowser(productionResults(value), value))
+  })
+})
+
+test('Windows packets cannot relabel unpinned, old, GPU-folded or non-bit-exact per-file IR as production', async () => {
+  for (const version of [4, 5]) for (const mutate of [
+    record => { delete record.program.ops[0].properties.luminance_key_source_build },
+    record => { record.program.ops[0].properties.luminance_key_source_build = '000000000000' },
+    record => { record.program.ops[0].properties.luminance_key_model = 'native-luminance-key-v1' },
+    record => { record.program.ops[0].properties.luminance_key_source_version = [5, 3, 0] },
+    record => { record.program.ops[0].properties.luminance_key_coefficients = [.3, .6, .1] },
+    record => { record.program.ops[0].properties.evaluation_device = 'GPU' },
+    record => { record.requireFloat32Bits = false },
+  ]) await fixture(async ({ directory, write }) => {
+    const value = windowsPacket(version); await write(value)
+    const file = value.files[0], record = JSON.parse(await readFile(join(directory, file.file)))
+    mutate(record); const bytes = JSON.stringify(record); await writeFile(join(directory, file.file), bytes); file.sha256 = hash(bytes)
+    await writeFile(join(directory, 'precision-qualification.json'), JSON.stringify(value))
+    await assert.rejects(readCpuLumaQualification(directory))
+  })
+})
 
 test('production qualification requires both real production browser rows and bit-exact precision outputs',async()=>{
   await fixture(async({directory,write})=>{

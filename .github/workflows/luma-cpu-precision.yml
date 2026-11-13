@@ -39,14 +39,14 @@ jobs:
             extension: tar.xz
             sha256: '96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48'
           - profile: windows-4.2
-            expected_admission: SOURCE_ADMISSION_NA
+            expected_admission: PRODUCTION_QUALIFIED
             os: windows-2025
             version: '4.2.0'
             series: '4.2'
             extension: zip
             sha256: 'b6e72874f8cb5c4ed77f9b03d7f1fde851b9455a7ff02a1e1119c876318ebc65'
           - profile: windows-5.2
-            expected_admission: SOURCE_ADMISSION_NA
+            expected_admission: PRODUCTION_QUALIFIED
             os: windows-2025
             version: '5.2.0'
             series: '5.2'
@@ -145,9 +145,8 @@ jobs:
       - name: Validate source-admission and trial evidence protocol
         run: node --test experiments/luma-cpu-precision/precision-protocol.test.mjs
 
-      # Linux52 is now an admission candidate and MUST emit production IR and
-      # pass its bit-exact production browser path. Windows still retains v1
-      # SOURCE_ADMISSION_NA; private-kernel trials cannot promote either profile.
+      # These exact native profiles MUST emit production IR and pass the
+      # bit-exact production browser path. Private trials cannot qualify them.
       - name: Capture Linux native CPU and compare ordinary and experimental contracts
         if: runner.os == 'Linux'
         run: xvfb-run --auto-servernum node experiments/luma-cpu-precision/qualify-host.mjs artifacts/verification-luma-cpu-host

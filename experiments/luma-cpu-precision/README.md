@@ -13,9 +13,9 @@ documents, spatial GPU evaluation and unqualified fresh CPU sources keep v1.
 Persisted legacy reversed CPU ramps also retain the explicit v1 contract; current 4.2 RNA constrains reverse authoring. Unqualified fresh CPU sources are explicitly tagged `legacy-unqualified-cpu-v1`
 and `SOURCE_ADMISSION_NA`; they do not gain an HDR precision claim.
 
-## Linux5.2 production-admission candidate
+## Linux5.2 production qualification
 
-The allowlist candidate is **only** Linux `x86_64`, Blender5.2.0 build
+The qualified allowlist is **only** Linux `x86_64`, Blender5.2.0 build
 `fbe6228777e7`, actual gradual-RNE and the measured Float32 Rec.709 tuple.
 Source extraction adds `luminance_key_source_build` for this profile; runtime
 independently requires that exact identity. Existing Mac documents retain
@@ -31,9 +31,13 @@ on both browser APIs, with stable native dot/multiply/add controls and
 unchanged source programs/pixels. Those receipts remain **SOURCE_ADMISSION_NA
 with zero production exact cases**; they are not rewritten or relabelled.
 
-Fresh production qualification remains **pending**. The Linux canary now
-requires `PRODUCTION_QUALIFIED`,32 actual source-emitted production precision
-programs and a fresh production compositor comparison on both browser APIs.
+Fresh production qualification **passed** on checkpoint `9d137e3`, run43411851852/job131839951001.
+The [reviewed receipt](linux52-production.json) binds artifact14030161909, archive
+SHA256 `4bf0d1cad0d4c86eac69570d95c0a77c6a2c695587b6fd8f70e12cd2aa1f52d1`.
+Both actual WebGPU and WebGL2 passed79 unchanged production programs, including
+32 bit-exact precision cases/API, with zero error. All163 archived runtime source
+hashes match the reviewed tree. The mandatory Linux canary continues to require
+`PRODUCTION_QUALIFIED` and a fresh actual-production comparison on both APIs.
 Precision outputs must be bit-exact, including subnormal and signed-zero
 results; merely falling inside a tolerance cannot qualify them. The driver
 counts production cases only after that production browser step succeeds.

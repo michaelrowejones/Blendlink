@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "status": "qualified-production-receipt",
+  "candidate": "9d137e32897f9114e779d8a3c63870171fb3be4f",
+  "run": 43411851852,
+  "job": 131839951001,
+  "artifact": 14030161909,
+  "archiveSha256": "4bf0d1cad0d4c86eac69570d95c0a77c6a2c695587b6fd8f70e12cd2aa1f52d1",
+  "sourcePlatform": "linux",
+  "sourceArchitecture": "x86_64",
+  "sourceVersion": [
+    5,
+    2,
+    0
+  ],
+  "sourceBuildHash": "fbe6228777e7",
+  "sourceCpuProfile": {
+    "schemaVersion": 1,
+    "mode": "gradual-rne",
+    "underflowWord": 4194304,
+    "denormalInputWord": 8388608,
+    "tieWords": [
+      1065353216,
+      1065353218
+    ],
+    "sourcePlatform": "linux",
+    "sourceArchitecture": "x86_64"
+  },
+  "sourceCoefficients": [
+    0.2125999927520752,
+    0.7152000069618225,
+    0.0722000002861023
+  ],
+  "productionAdmission": "PRODUCTION_QUALIFIED",
+  "ordinaryCasesPerBrowserApi": 47,
+  "productionPrecisionCasesPerBrowserApi": 32,
+  "totalProductionCasesPerBrowserApi": 79,
+  "browserApis": [
+    "webgl2",
+    "webgpu"
+  ],
+  "productionPrecisionBitMismatches": 0,
+  "maximumAbsoluteError": 0,
+  "currentRuntimeSourceModules": 163,
+  "nativeSourceSha256": {
+    "compositor_luminance_key_check.py": "43c146d9aa84b565b4207aa9540837731e1e69a6d31fcb643e5a07f5c672b8d7",
+    "compositor_graph.py": "e0f79b7a83d4cada74e162a4e84008c197fa5c6d1bc467309cc34309f61adb99",
+    "compositor_luminance_key.py": "a3fb0df098e7afab236a421b0fd266cca2eb48fb48ef9de22d6887d0c6144d85"
+  },
+  "files": {
+    "report.json": "aca53f0278b565916c5576968c580827ee9b83ef1a60eb1f3be4134e8b34f83b",
+    "ordinary/precision-qualification.json": "793a7305e1105652885340c6166b9064675c83416d3e0fa75b85d6f25e11bad9",
+    "ordinary-browser/results.json": "a26a3d89905dffe017367af030640cf91a227a421e380ab967e78359fd839086",
+    "ordinary-browser/provenance.json": "9fb838556e8607ba222e0b976dd8ffdf973bdc83b6a43feeba1900cbad4b94b7"
+  },
+  "limits": "Only this exact native build, architecture, actual gradual-RNE profile and measured Rec.709 coefficients. Historical N/A trial receipts remain N/A; Windows and every unmeasured profile retain v1. The empty Cycles scene is an unused carrier for CPU compositor evaluation, not Cycles live-shader proof."
+}

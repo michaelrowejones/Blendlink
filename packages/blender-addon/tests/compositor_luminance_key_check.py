@@ -236,16 +236,27 @@ def main(output):
         helper = compositor_graph._sibling('compositor_luminance_key')
         from types import SimpleNamespace
         sink, source, node = setup(.1, .2); tree.links.new(node.outputs['Image'], sink.inputs[0])
-        before = fingerprint(tree); original_bpy, original_coefficients, original_profile, original_sys = helper.bpy, helper._cpu_coefficients, helper._cpu_profile, helper.sys
+        before = fingerprint(tree)
+        original_bpy, original_coefficients, original_profile, original_sys, original_platform = (
+            helper.bpy, helper._cpu_coefficients, helper._cpu_profile, helper.sys, helper.platform)
         # Admission policy checks are pure tests, separate from every actual
         # source/native numerical record. No oracle program is relabelled.
         assert helper._cpu_source_allowed((5, 2, 0), 'linux', 'x86_64', 'fbe6228777e7')
+        assert helper._cpu_source_allowed((4, 2, 0), 'win32', 'AMD64', 'a51f293548ad')
+        assert helper._cpu_source_allowed((5, 2, 0), 'win32', 'AMD64', 'fbe6228777e7')
         for arguments in [((4, 2, 0), 'linux', 'x86_64', 'fbe6228777e7'),
                 ((5, 3, 0), 'linux', 'x86_64', 'fbe6228777e7'),
                 ((5, 2, 1), 'linux', 'x86_64', 'fbe6228777e7'),
                 ((5, 2, 0), 'linux', 'aarch64', 'fbe6228777e7'),
                 ((5, 2, 0), 'linux', 'x86_64', '000000000000'),
-                ((5, 2, 0), 'win32', 'AMD64', 'fbe6228777e7')]:
+                ((4, 2, 0), 'win32', 'AMD64', 'fbe6228777e7'),
+                ((5, 2, 0), 'win32', 'AMD64', 'a51f293548ad'),
+                ((5, 2, 0), 'win32', 'AMD64', '000000000000'),
+                ((5, 2, 0), 'win32', 'x86_64', 'fbe6228777e7'),
+                ((5, 2, 0), 'win32', 'arm64', 'fbe6228777e7'),
+                ((5, 2, 1), 'win32', 'AMD64', 'fbe6228777e7'),
+                ((5, 3, 0), 'win32', 'AMD64', 'fbe6228777e7'),
+                ((5, 3, 0), 'win32', 'AMD64', None)]:
             assert not helper._cpu_source_allowed(*arguments), arguments
 
         try:
@@ -269,11 +280,31 @@ def main(output):
             rejected = compositor_graph.extract(oracle.scene)
             assert rejected['status'] == 'extracted' and any(op['properties'].get('luminance_key_precision') == 'legacy-unqualified-cpu-v1' for op in rejected['ops']), rejected
             helper._cpu_profile = original_profile
-            helper.sys = SimpleNamespace(platform='win32')
+            helper.sys = SimpleNamespace(platform='unmeasured-test-platform')
             rejected = compositor_graph.extract(oracle.scene)
             assert rejected['status'] == 'extracted' and any(op['properties'].get('luminance_key_exact_qualification', {}).get('reason') == 'unmeasured CPU/compiler profile' for op in rejected['ops']), rejected
+
+            # Pure admission regression, not a Windows/native pixel oracle:
+            # a measured CPU certificate must not admit an unmeasured GPU fold.
+            helper.bpy = SimpleNamespace(app=SimpleNamespace(version=(5, 2, 0), build_hash=b'fbe6228777e7'))
+            helper.sys = SimpleNamespace(platform='win32')
+            helper.platform = SimpleNamespace(machine=lambda: 'AMD64')
+            image_socket = SimpleNamespace(name='Image', type='RGBA')
+            minimum = SimpleNamespace(name='Minimum', type='VALUE', default_value=.1)
+            maximum = SimpleNamespace(name='Maximum', type='VALUE', default_value=.2)
+            simulated = SimpleNamespace(inputs={'Image': image_socket, 'Minimum': minimum, 'Maximum': maximum})
+            fake_scene = SimpleNamespace(render=SimpleNamespace(compositor_device='GPU'))
+            operation = {'properties': {}, 'inputs': {}}
+            read_constant = lambda incoming: {'kind': 'constant', 'type': incoming.type,
+                'value': [.1, .2, .3, 1] if incoming.type == 'RGBA' else incoming.default_value}
+            helper.normalize_luminance_key(simulated, SimpleNamespace(identifier='Image'), operation, fake_scene,
+                read_constant, lambda incoming: (incoming.default_value, incoming.default_value),
+                lambda incoming, message: (_ for _ in ()).throw(AssertionError(message)), lambda incoming: True)
+            assert operation['properties']['luminance_key_model'] == 'native-luminance-key-v1', operation
+            assert operation['properties']['luminance_key_exact_qualification']['reason'] == 'unmeasured Windows GPU single-value CPU fold', operation
         finally:
-            helper.bpy, helper._cpu_coefficients, helper._cpu_profile, helper.sys = original_bpy, original_coefficients, original_profile, original_sys
+            helper.bpy, helper._cpu_coefficients, helper._cpu_profile, helper.sys, helper.platform = (
+                original_bpy, original_coefficients, original_profile, original_sys, original_platform)
         assert fingerprint(tree) == before, 'CPU precision refusal changed authored values or links'
     (output / 'refusals.json').write_text(json.dumps(refusals, indent=2))
     paths = [Path(__file__).resolve(), Path(compositor_graph.__file__).resolve(),

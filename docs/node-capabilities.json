@@ -935,7 +935,10 @@
           "EEVEE Metal"
         ],
         "nativeSourceBackend": "METAL",
-        "nativeSourceBackendVersions": ["5.2.0", "5.3.0"],
+        "nativeSourceBackendVersions": [
+          "5.2.0",
+          "5.3.0"
+        ],
         "nativeLegacyBackendAttestation": {
           "nativeVersion": "4.2.0",
           "status": "SOURCE_ATTESTATION_NA",
@@ -5874,7 +5877,7 @@
     },
     "shader:FunctionNodeGetVectorComponent": {
       "category": "partial",
-      "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but shader and compositor fixed selection have separate qualified gates; geometry execution remains unported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication and OpenGL-source numerical qualification remain separate.",
+      "limits": "EEVEE fixed Get Vector Component selection on exact Blender 5.3.0: Index 0/1/2 becomes existing separate x/y/z IR, with no new math/opcode or old serialized behavior change. Unlinked integer sockets and typed Input Integer literals through reroutes/groups qualify; float/boolean conversion, computed or dynamic Index, out-of-range values, animation, unknown versions and unknown socket schemas refuse. Actual 4.2.0/5.2.0 shader/compositor/geometry creation is absent, not numerical coverage. The node is creatable in all three 5.3 contexts, but shader and compositor fixed selection have separate qualified gates; geometry execution remains unported. Native EEVEE Component versus independent Separate XYZ pixels match bitwise for 42 selection graphs. Browser native-carrier comparison retains the separate half-float scene-target allowance; 168 additional raw Float32 algebraic controls match exactly and are not extra native graph references. Packed add-on source emission and automatic Final planning are verified; actual visitor Final pixel publication remains separate. Fresh native EEVEE OpenGL qualification passed on Linux with both browser APIs; the independent half-target carrier allowance remains distinct from node precision.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "separate"
@@ -5910,6 +5913,10 @@
         },
         {
           "path": "scripts/vector-component-coverage-policy.test.mjs"
+        },
+        {
+          "path": "experiments/vector-component-differential/opengl53-receipt.json",
+          "anchor": "qualified-opengl"
         }
       ],
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
@@ -5928,11 +5935,11 @@
         ],
         "portedContext": "shader",
         "creationOnlyContexts": [
-          "compositor",
           "geometry"
         ],
         "nativeSourceBackends": [
-          "METAL"
+          "METAL",
+          "OPENGL"
         ],
         "nativePairedSelectionGraphs": 42,
         "independentNativeCarrierControls": 2,
@@ -5958,7 +5965,57 @@
         "persistentHarnessOutputTextures": 1,
         "packedAddonSourcePlan": true,
         "sourcePlanningPreserved": true,
-        "freshHostedOpenGL": "pending"
+        "freshHostedOpenGL": {
+          "schemaVersion": 1,
+          "status": "qualified-opengl",
+          "candidate": "9d137e32897f9114e779d8a3c63870171fb3be4f",
+          "run": 43411851888,
+          "job": 131839951921,
+          "artifact": 14029991998,
+          "archiveSha256": "e6e9c84e0dee06c0019c6e48e04c3dc419c40caaf69a4dc2429da24458bd1ee4",
+          "nativeVersion": "5.3.0",
+          "nativeBuildHash": "02f0899d78e3",
+          "nativeGpuPlatform": {
+            "backend": "OPENGL",
+            "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+            "vendor": "Mesa"
+          },
+          "shader": {
+            "nativeSelectionGraphs": 42,
+            "independentCarrierControls": 2,
+            "nativeComponentVsSeparateBitMismatches": 0,
+            "nativeCarrierReadbacks": 88,
+            "rawAlgebraicReadbacks": 84,
+            "nativeCarrierMaximumAbsoluteError": 0.00048065185546875,
+            "nativeCarrierMaximumBudgetRatio": 0.9724258313839539,
+            "rawMaximumAbsoluteError": 0,
+            "signedZeroBitClaim": false,
+            "additionalCarrierAllowanceIsNodePrecision": false
+          },
+          "compositor": {
+            "nativeDevices": [
+              "CPU",
+              "GPU"
+            ],
+            "nativeSelectionGraphs": 126,
+            "pairedSeparateGraphs": 126,
+            "independentControlGraphs": 4,
+            "nativeIndexedScenes": 256,
+            "browserReadbacks": 512,
+            "maximumAbsoluteError": 0,
+            "browserZeroSignClaim": false,
+            "sceneEngineIsCompositorDevice": false
+          },
+          "files": {
+            "source-schema.json": "43f9d962337f79df993f5f9b3562750788d1d64fdcc5b8011540ae53c1575f45",
+            "browser/report.json": "49f36e1029dc4bcbfe37782c26a1767a91b4a89fcf8836effd8de82185b9a455",
+            "compositor-CPU/qualification.json": "aa77272de4f90bd630a74a10cb256ecbbfba9517f9087282e4dc7856a598e214",
+            "compositor-GPU/qualification.json": "7e94cb8f1e1c803d76b98218e7553f28afd2b9c8156bbe8c04d68e5b8200347f",
+            "compositor-browser/results.json": "5610b7e3b8582e092d628e68e371138df32bb1e36f386edcf9ed37f9c8b4f03e",
+            "compositor-browser/provenance.json": "915ba179345ee1978e0df31491f4c6fc37c11f0516bb6679aafa67b1f9707e91"
+          },
+          "scope": "Fixed typed Index0/1/2 only. Shader and compositor proofs are separate; geometry execution, dynamic selectors, browser signed-zero words, and actual visitor Final pixel publication remain outside this receipt. Native OpenGL shader source is attested; compositor CPU/GPU evaluation is independent of the unused Cycles carrier scene."
+        }
       }
     },
     "shader:FunctionNodeInputVector": {
@@ -6747,7 +6804,7 @@
       "runtimeOps": [
         "separate-vector"
       ],
-      "limits": "Exact Blender 5.3.0 compositor Get Vector Component, fixed typed integer Index 0/1/2, using existing Separate XYZ swizzles without new arithmetic/opcode. Unlinked integer defaults and actual Input Integer literals through reroutes/groups qualify. Converted Float/Boolean, computed/spatial and out-of-range selectors, animation/drivers, unknown versions and unverified socket shapes refuse. Runtime independently rechecks source/model, exact active Vector/Index types and literal provenance; ordinary Separate XYZ remains unchanged. Actual 4.2.0/5.2.0 creation is absent, zero-case N/A rather than a numerical pass. Native CPU and GPU each retain 63 selections, 63 independent Separate XYZ pairs and 2 carrier controls. The unused oracle scene is empty Cycles CPU; compositor device is independent. ZIP-isolated namespaced package extraction is source-only evidence. Browser checks are numeric-zero on physical Metal and SwiftShader through both APIs; signed-zero browser words, dynamic selectors, geometry execution and whole-node/all-graph coverage are not claimed. Fresh hosted OpenGL compositor qualification remains pending.",
+      "limits": "Exact Blender 5.3.0 compositor Get Vector Component, fixed typed integer Index 0/1/2, using existing Separate XYZ swizzles without new arithmetic/opcode. Unlinked integer defaults and actual Input Integer literals through reroutes/groups qualify. Converted Float/Boolean, computed/spatial and out-of-range selectors, animation/drivers, unknown versions and unverified socket shapes refuse. Runtime independently rechecks source/model, exact active Vector/Index types and literal provenance; ordinary Separate XYZ remains unchanged. Actual 4.2.0/5.2.0 creation is absent, zero-case N/A rather than a numerical pass. Native CPU and GPU each retain 63 selections, 63 independent Separate XYZ pairs and 2 carrier controls. The unused oracle scene is empty Cycles CPU; compositor device is independent. ZIP-isolated namespaced package extraction is source-only evidence. Browser checks are numeric-zero on physical Metal and SwiftShader through both APIs; signed-zero browser words, dynamic selectors, geometry execution and whole-node/all-graph coverage are not claimed. Fresh hosted OpenGL compositor qualification passed both native devices and both browser APIs: 512 readbacks with maximum error zero.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -6776,6 +6833,10 @@
         },
         {
           "path": "experiments/native-compositor-differential/VECTOR_COMPONENT.md"
+        },
+        {
+          "path": "experiments/vector-component-differential/opengl53-receipt.json",
+          "anchor": "qualified-opengl"
         }
       ],
       "verification": {
@@ -6800,7 +6861,57 @@
         "nativeComponentSeparateWordMismatches": 0,
         "browserZeroSignClaim": false,
         "packedNamespaceSourceOnly": true,
-        "freshHostedOpenGL": "pending"
+        "freshHostedOpenGL": {
+          "schemaVersion": 1,
+          "status": "qualified-opengl",
+          "candidate": "9d137e32897f9114e779d8a3c63870171fb3be4f",
+          "run": 43411851888,
+          "job": 131839951921,
+          "artifact": 14029991998,
+          "archiveSha256": "e6e9c84e0dee06c0019c6e48e04c3dc419c40caaf69a4dc2429da24458bd1ee4",
+          "nativeVersion": "5.3.0",
+          "nativeBuildHash": "02f0899d78e3",
+          "nativeGpuPlatform": {
+            "backend": "OPENGL",
+            "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+            "vendor": "Mesa"
+          },
+          "shader": {
+            "nativeSelectionGraphs": 42,
+            "independentCarrierControls": 2,
+            "nativeComponentVsSeparateBitMismatches": 0,
+            "nativeCarrierReadbacks": 88,
+            "rawAlgebraicReadbacks": 84,
+            "nativeCarrierMaximumAbsoluteError": 0.00048065185546875,
+            "nativeCarrierMaximumBudgetRatio": 0.9724258313839539,
+            "rawMaximumAbsoluteError": 0,
+            "signedZeroBitClaim": false,
+            "additionalCarrierAllowanceIsNodePrecision": false
+          },
+          "compositor": {
+            "nativeDevices": [
+              "CPU",
+              "GPU"
+            ],
+            "nativeSelectionGraphs": 126,
+            "pairedSeparateGraphs": 126,
+            "independentControlGraphs": 4,
+            "nativeIndexedScenes": 256,
+            "browserReadbacks": 512,
+            "maximumAbsoluteError": 0,
+            "browserZeroSignClaim": false,
+            "sceneEngineIsCompositorDevice": false
+          },
+          "files": {
+            "source-schema.json": "43f9d962337f79df993f5f9b3562750788d1d64fdcc5b8011540ae53c1575f45",
+            "browser/report.json": "49f36e1029dc4bcbfe37782c26a1767a91b4a89fcf8836effd8de82185b9a455",
+            "compositor-CPU/qualification.json": "aa77272de4f90bd630a74a10cb256ecbbfba9517f9087282e4dc7856a598e214",
+            "compositor-GPU/qualification.json": "7e94cb8f1e1c803d76b98218e7553f28afd2b9c8156bbe8c04d68e5b8200347f",
+            "compositor-browser/results.json": "5610b7e3b8582e092d628e68e371138df32bb1e36f386edcf9ed37f9c8b4f03e",
+            "compositor-browser/provenance.json": "915ba179345ee1978e0df31491f4c6fc37c11f0516bb6679aafa67b1f9707e91"
+          },
+          "scope": "Fixed typed Index0/1/2 only. Shader and compositor proofs are separate; geometry execution, dynamic selectors, browser signed-zero words, and actual visitor Final pixel publication remain outside this receipt. Native OpenGL shader source is attested; compositor CPU/GPU evaluation is independent of the unused Cycles carrier scene."
+        }
       }
     },
     "compositor:CompositorNodeLumaMatte": {
@@ -6809,7 +6920,7 @@
       "runtimeOps": [
         "luminance-key"
       ],
-      "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 now has a narrowly scoped gradual-RNE/Rec.709 admission candidate, independently checked by source/runtime build and profile guards; fresh production qualification remains pending until the mandatory actual-production compositor browser rerun passes. The retained Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
+      "limits": "Image and Matte preserve native threshold ramps, alpha caps and whole-RGBA mask multiplication within the documented source precision domain. Fixed finite thresholds in [0,1] require separation >=1/64; proven fixed Value/Math controls are allowed, while changing/unproved controls, animation/drivers and collapsed/narrow ramps refuse. Fresh CPU precision uses native-luminance-key-cpu-rne-v1 only for measured Blender 4.2.0/5.2.0 gradual-RNE and 5.3.0 FTZ/DAZ-RNE on darwin/arm64 with the actual Rec.709 Float32 coefficient tuple and independently checked mode certificate. Separate dot products/adds, bounded exact RNE ratio and final RGBA multiplication preserve measured HDR and tiny-value semantics; default zero-to-one remains live. Modern GPU constants use that CPU model only when all consumed Image/Minimum/Maximum expressions are actually single-valued; fixed field bounds do not imply CPU folding. Spatial GPU and existing serialized v1 keep their prior arithmetic. Unqualified fresh CPU/compiler/OCIO/mode profiles and persisted legacy reversed CPU ramps keep explicit legacy-unqualified-cpu-v1 with SOURCE_ADMISSION_NA, not a new HDR guarantee. Current 4.2 RNA constrains reversed assignment; no native reversed-authoring proof is claimed. Linux5.2 x86_64 build fbe6228777e7 has independently checked source/runtime build and profile guards; fresh production qualification passed 79 actual production cases per browser API, including 32 bit-exact precision cases, with zero error on WebGPU and WebGL2. The retained earlier Linux trial still has SOURCE_ADMISSION_NA and zero production exact cases. Windows4.2/5.2 and all other unmeasured Linux builds/versions/architectures retain v1 fallback; a native capture or successful private-kernel trial cannot grant them admission. Groups, cascades, Matte-to-alpha and integer image windows are measured. This is a partial pointwise image/mask port, not full Keying/render-pass or arbitrary graph amplification coverage.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -6847,6 +6958,10 @@
         },
         {
           "path": ".github/workflows/luma-cpu-precision.yml"
+        },
+        {
+          "path": "experiments/luma-cpu-precision/linux52-production.json",
+          "anchor": "qualified-production-receipt"
         }
       ],
       "verification": {
@@ -6861,16 +6976,20 @@
         "budget": 2e-05,
         "nativeGpuBackend": "METAL",
         "sourcePreserved": true,
-        "sourceCpuProfiles": "darwin/arm64:4.2.0+5.2.0 gradual-rne;5.3.0 ftz-daz-rne",
+        "sourceCpuProfiles": "darwin/arm64:4.2.0+5.2.0 gradual-rne;5.3.0 ftz-daz-rne;linux/x86_64:5.2.0 buildfbe6228777e7 gradual-rne",
         "privatePrimitiveScalarReadbacks": 655360,
         "experimentalKernelReadbacks": 384,
         "experimentalKernelProductionAdmissionCases": 0,
         "unqualifiedCpuContract": "legacy-v1 / SOURCE_ADMISSION_NA for Windows and every unmeasured profile",
-        "linux52ProductionCandidate": {
-          "status": "pending-fresh-production-receipt",
+        "linux52ProductionQualification": {
+          "status": "qualified-production-receipt",
           "sourcePlatform": "linux",
           "sourceArchitecture": "x86_64",
-          "sourceVersion": [5, 2, 0],
+          "sourceVersion": [
+            5,
+            2,
+            0
+          ],
           "sourceBuildHash": "fbe6228777e7",
           "mode": "gradual-rne",
           "sourceCoefficients": "Rec.709 Float32",
@@ -6886,7 +7005,64 @@
             "primitiveCasesPerBrowserApi": "4 x 16384",
             "maximumError": 0
           },
-          "requiredReceipt": "Fresh actual Linux52 source must emit PRODUCTION_QUALIFIED with 32 production precision programs; untouched production compositor must pass ordinary and bit-exact precision outputs on both browser APIs"
+          "requiredReceipt": "Fresh actual Linux52 source must emit PRODUCTION_QUALIFIED with 32 production precision programs; untouched production compositor must pass ordinary and bit-exact precision outputs on both browser APIs",
+          "productionReceipt": {
+            "schemaVersion": 1,
+            "status": "qualified-production-receipt",
+            "candidate": "9d137e32897f9114e779d8a3c63870171fb3be4f",
+            "run": 43411851852,
+            "job": 131839951001,
+            "artifact": 14030161909,
+            "archiveSha256": "4bf0d1cad0d4c86eac69570d95c0a77c6a2c695587b6fd8f70e12cd2aa1f52d1",
+            "sourcePlatform": "linux",
+            "sourceArchitecture": "x86_64",
+            "sourceVersion": [
+              5,
+              2,
+              0
+            ],
+            "sourceBuildHash": "fbe6228777e7",
+            "sourceCpuProfile": {
+              "schemaVersion": 1,
+              "mode": "gradual-rne",
+              "underflowWord": 4194304,
+              "denormalInputWord": 8388608,
+              "tieWords": [
+                1065353216,
+                1065353218
+              ],
+              "sourcePlatform": "linux",
+              "sourceArchitecture": "x86_64"
+            },
+            "sourceCoefficients": [
+              0.2125999927520752,
+              0.7152000069618225,
+              0.0722000002861023
+            ],
+            "productionAdmission": "PRODUCTION_QUALIFIED",
+            "ordinaryCasesPerBrowserApi": 47,
+            "productionPrecisionCasesPerBrowserApi": 32,
+            "totalProductionCasesPerBrowserApi": 79,
+            "browserApis": [
+              "webgl2",
+              "webgpu"
+            ],
+            "productionPrecisionBitMismatches": 0,
+            "maximumAbsoluteError": 0,
+            "currentRuntimeSourceModules": 163,
+            "nativeSourceSha256": {
+              "compositor_luminance_key_check.py": "43c146d9aa84b565b4207aa9540837731e1e69a6d31fcb643e5a07f5c672b8d7",
+              "compositor_graph.py": "e0f79b7a83d4cada74e162a4e84008c197fa5c6d1bc467309cc34309f61adb99",
+              "compositor_luminance_key.py": "a3fb0df098e7afab236a421b0fd266cca2eb48fb48ef9de22d6887d0c6144d85"
+            },
+            "files": {
+              "report.json": "aca53f0278b565916c5576968c580827ee9b83ef1a60eb1f3be4134e8b34f83b",
+              "ordinary/precision-qualification.json": "793a7305e1105652885340c6166b9064675c83416d3e0fa75b85d6f25e11bad9",
+              "ordinary-browser/results.json": "a26a3d89905dffe017367af030640cf91a227a421e380ab967e78359fd839086",
+              "ordinary-browser/provenance.json": "9fb838556e8607ba222e0b976dd8ffdf973bdc83b6a43feeba1900cbad4b94b7"
+            },
+            "limits": "Only this exact native build, architecture, actual gradual-RNE profile and measured Rec.709 coefficients. Historical N/A trial receipts remain N/A; Windows and every unmeasured profile retain v1. The empty Cycles scene is an unused carrier for CPU compositor evaluation, not Cycles live-shader proof."
+          }
         }
       }
     },

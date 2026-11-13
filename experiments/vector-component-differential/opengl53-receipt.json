@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "status": "qualified-opengl",
+  "candidate": "9d137e32897f9114e779d8a3c63870171fb3be4f",
+  "run": 43411851888,
+  "job": 131839951921,
+  "artifact": 14029991998,
+  "archiveSha256": "e6e9c84e0dee06c0019c6e48e04c3dc419c40caaf69a4dc2429da24458bd1ee4",
+  "nativeVersion": "5.3.0",
+  "nativeBuildHash": "02f0899d78e3",
+  "nativeGpuPlatform": {
+    "backend": "OPENGL",
+    "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "vendor": "Mesa"
+  },
+  "shader": {
+    "nativeSelectionGraphs": 42,
+    "independentCarrierControls": 2,
+    "nativeComponentVsSeparateBitMismatches": 0,
+    "nativeCarrierReadbacks": 88,
+    "rawAlgebraicReadbacks": 84,
+    "nativeCarrierMaximumAbsoluteError": 0.00048065185546875,
+    "nativeCarrierMaximumBudgetRatio": 0.9724258313839539,
+    "rawMaximumAbsoluteError": 0,
+    "signedZeroBitClaim": false,
+    "additionalCarrierAllowanceIsNodePrecision": false
+  },
+  "compositor": {
+    "nativeDevices": [
+      "CPU",
+      "GPU"
+    ],
+    "nativeSelectionGraphs": 126,
+    "pairedSeparateGraphs": 126,
+    "independentControlGraphs": 4,
+    "nativeIndexedScenes": 256,
+    "browserReadbacks": 512,
+    "maximumAbsoluteError": 0,
+    "browserZeroSignClaim": false,
+    "sceneEngineIsCompositorDevice": false
+  },
+  "files": {
+    "source-schema.json": "43f9d962337f79df993f5f9b3562750788d1d64fdcc5b8011540ae53c1575f45",
+    "browser/report.json": "49f36e1029dc4bcbfe37782c26a1767a91b4a89fcf8836effd8de82185b9a455",
+    "compositor-CPU/qualification.json": "aa77272de4f90bd630a74a10cb256ecbbfba9517f9087282e4dc7856a598e214",
+    "compositor-GPU/qualification.json": "7e94cb8f1e1c803d76b98218e7553f28afd2b9c8156bbe8c04d68e5b8200347f",
+    "compositor-browser/results.json": "5610b7e3b8582e092d628e68e371138df32bb1e36f386edcf9ed37f9c8b4f03e",
+    "compositor-browser/provenance.json": "915ba179345ee1978e0df31491f4c6fc37c11f0516bb6679aafa67b1f9707e91"
+  },
+  "scope": "Fixed typed Index0/1/2 only. Shader and compositor proofs are separate; geometry execution, dynamic selectors, browser signed-zero words, and actual visitor Final pixel publication remain outside this receipt. Native OpenGL shader source is attested; compositor CPU/GPU evaluation is independent of the unused Cycles carrier scene."
+}
