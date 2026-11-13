@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-squeeze-performance-screen-v1",
+  "status": "measured",
+  "correctnessQualification": false,
+  "performanceQualification": false,
+  "scope": "One diagnostic repeat of an existing Final Squeeze image-all artifact, six material channels. No speed comparison, numerical requalification or complete scene fidelity. Counters describe tracked resources, not total driver VRAM.",
+  "retainedReport": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-performance-squeeze-integrated/results.json",
+  "reportSha256": "2f9284b2cf0afe4d23cea6c561aa6d0e073eeca4295f6049d4f42ce1839d40fa",
+  "comparisonIdentity": {
+    "profile": "metal",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpuModel": "Apple M5 Pro",
+    "hostOpaqueId": "6bb95d94b26394e75d19afeb81ba6cd704e005a9815f669b98b16b37324da6ee",
+    "browserVersion": "158.0.8127.18",
+    "threeVersion": "0.184.0",
+    "threeSourceDigest": "bde67d375a393bd846e5b3d5c2abe446c0a23ed794f097979558de6378b160ae",
+    "harnessDigest": "8742d579123bcc38cbf9dab97c6befe8f08c10a0b5b9dc5045671df50c45495e",
+    "artifactsDigest": "628d197e01e0d231d63d2ff7ef403addb8259b10168dd2a4cdbbb1604982c20f",
+    "config": {
+      "width": 320,
+      "height": 180,
+      "dpr": 1,
+      "warmupFrames": 5,
+      "measuredFrames": 30,
+      "repeats": 1,
+      "gpuSamples": 3,
+      "animation": "paused",
+      "fixedDeltaSeconds": 0.016666666666666666,
+      "camera": "authored-or-fit-static",
+      "antialias": false,
+      "variants": [
+        "program"
+      ],
+      "lighting": "authored manifest; otherwise imported lights or deterministic hemisphere+directional rig",
+      "gpuTimingPolicy": "separate-serial-query-pass-after-uninstrumented-RAF-window",
+      "loadPolicy": "fresh-page-HTTP-cache-disabled; OS/browser-driver-shader-cache-state-unknown",
+      "browserLaunch": {
+        "headless": true,
+        "requestedArgs": [],
+        "nodeVersion": "24.22.3",
+        "osRelease": "25.5.0",
+        "viteVersion": "8.3.8",
+        "playwrightVersion": "1.65.0",
+        "requestedChannel": "chromium"
+      }
+    }
+  },
+  "inputArtifacts": {
+    "glb": {
+      "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-squeeze-main52/compiled/public/models/squeeze7.glb",
+      "bytes": 5516,
+      "sha256": "e4737f7ce161dd3afd89d018ec7a4c67e977e72d3517935271371bc1a3aab134"
+    },
+    "materials": {
+      "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-squeeze-main52/compiled/public/models/squeeze7.materials.json",
+      "bytes": 112089,
+      "sha256": "62ff00a95df9fe5a50340353c21250dae38d6d6ddbb379505b4c161027e3cce5"
+    }
+  },
+  "harnessInputsMatchIntegratedSources": true,
+  "runtimeSourceModulesMatchIntegratedSources": true,
+  "rows": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": "",
+        "isFallbackAdapter": false,
+        "features": [
+          "atomic-vec2u-min-max",
+          "bgra8unorm-storage",
+          "chromium-experimental-sampling-resource-table",
+          "chromium-experimental-subgroup-matrix",
+          "clip-distances",
+          "core-features-and-limits",
+          "depth-clip-control",
+          "depth32float-stencil8",
+          "dual-source-blending",
+          "float32-blendable",
+          "float32-filterable",
+          "indirect-first-instance",
+          "primitive-index",
+          "rg11b10ufloat-renderable",
+          "shader-f16",
+          "subgroup-size-control",
+          "subgroups",
+          "texture-component-swizzle",
+          "texture-compression-astc",
+          "texture-compression-astc-sliced-3d",
+          "texture-compression-bc",
+          "texture-compression-bc-sliced-3d",
+          "texture-compression-etc2",
+          "texture-compression-unaligned",
+          "texture-formats-tier1",
+          "texture-formats-tier2",
+          "timestamp-query"
+        ]
+      },
+      "materials": {
+        "applied": 1,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 1,
+        "drawnProgramMeshes": 1,
+        "drawnProgramMaterials": 1,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "steadyMemory": {
+        "geometries": 2,
+        "textures": 6,
+        "programs": 4,
+        "renderTargets": 1,
+        "attributes": 3,
+        "indexAttributes": 1,
+        "storageAttributes": 0,
+        "indirectStorageAttributes": 0,
+        "uniformBuffers": null,
+        "readbackBuffers": 0,
+        "texturesSize": 741376,
+        "programsSize": 22340,
+        "total": 763872
+      },
+      "afterDisposeMemory": {
+        "geometries": 2,
+        "textures": 3,
+        "programs": 2,
+        "renderTargets": 1,
+        "attributes": 3,
+        "indexAttributes": 1,
+        "storageAttributes": 0,
+        "indirectStorageAttributes": 0,
+        "uniformBuffers": null,
+        "readbackBuffers": 0,
+        "texturesSize": 692224,
+        "programsSize": 2391,
+        "total": 694771
+      },
+      "afterReapplyDisposeMemory": {
+        "geometries": 2,
+        "textures": 3,
+        "programs": 2,
+        "renderTargets": 1,
+        "attributes": 3,
+        "indexAttributes": 1,
+        "storageAttributes": 0,
+        "indirectStorageAttributes": 0,
+        "uniformBuffers": null,
+        "readbackBuffers": 0,
+        "texturesSize": 692224,
+        "programsSize": 2391,
+        "total": 694771
+      },
+      "cpuSamples": 30,
+      "gpuTimestamp": {
+        "available": false,
+        "reason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+        "distribution": null,
+        "rejectedSamples": 1,
+        "measurement": "separate serial timestamp-query pass; resolver wait excluded from CPU submission samples"
+      }
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "WebKit",
+        "renderer": "WebKit WebGL",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "shadingLanguageVersion": "WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)",
+        "unmaskedVendor": "Google Inc. (Apple)",
+        "unmaskedRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "materials": {
+        "applied": 1,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 1,
+        "drawnProgramMeshes": 1,
+        "drawnProgramMaterials": 1,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "steadyMemory": {
+        "geometries": 2,
+        "textures": 6,
+        "programs": 4,
+        "renderTargets": 1,
+        "attributes": 3,
+        "indexAttributes": 1,
+        "storageAttributes": 0,
+        "indirectStorageAttributes": 0,
+        "uniformBuffers": null,
+        "readbackBuffers": 0,
+        "texturesSize": 741376,
+        "programsSize": 20858,
+        "total": 762378
+      },
+      "afterDisposeMemory": {
+        "geometries": 2,
+        "textures": 3,
+        "programs": 2,
+        "renderTargets": 1,
+        "attributes": 3,
+        "indexAttributes": 1,
+        "storageAttributes": 0,
+        "indirectStorageAttributes": 0,
+        "uniformBuffers": null,
+        "readbackBuffers": 0,
+        "texturesSize": 692224,
+        "programsSize": 2982,
+        "total": 695350
+      },
+      "afterReapplyDisposeMemory": {
+        "geometries": 2,
+        "textures": 3,
+        "programs": 2,
+        "renderTargets": 1,
+        "attributes": 3,
+        "indexAttributes": 1,
+        "storageAttributes": 0,
+        "indirectStorageAttributes": 0,
+        "uniformBuffers": null,
+        "readbackBuffers": 0,
+        "texturesSize": 692224,
+        "programsSize": 2982,
+        "total": 695350
+      },
+      "cpuSamples": 30,
+      "gpuTimestamp": {
+        "available": true,
+        "reason": null,
+        "distribution": {
+          "samples": [
+            0.111958,
+            0.106249,
+            0.112916
+          ],
+          "count": 3,
+          "minMs": 0.106249,
+          "maxMs": 0.112916,
+          "p50Ms": 0.111958,
+          "p95Ms": 0.112916
+        },
+        "rejectedSamples": 0,
+        "measurement": "separate serial timestamp-query pass; resolver wait excluded from CPU submission samples"
+      }
+    }
+  ]
+}

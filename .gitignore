@@ -40,3 +40,6 @@ CONTEXT.md
 /artifacts/upstream/
 
 /artifacts/node-ports/
+
+# Local browser performance captures include model copies and runtime snapshots.
+/artifacts/runtime-perf-*/

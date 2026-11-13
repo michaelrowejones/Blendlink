@@ -1,0 +1,73 @@
+name: Node performance tooling
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/node-performance.yml'
+      - 'scripts/lib/node-performance-*'
+      - 'scripts/lib/node-port-cost*'
+      - 'scripts/compare-node-performance.mjs'
+      - 'scripts/audit-node-port-cost.mjs'
+      - 'experiments/runtime-performance/**'
+      - 'experiments/official-demo-node-performance/**'
+      - 'config/node-performance-policy.json'
+      - 'package*.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: node-performance-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  protocol:
+    name: Structural cost and timing comparison protocols
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Validate comparisons and bounded structural analysis
+        run: node --test scripts/lib/node-performance-comparison.test.mjs scripts/lib/node-port-cost*.test.mjs experiments/runtime-performance/*.test.mjs experiments/official-demo-node-performance/corpus-policy.test.mjs
+
+  browser-observation:
+    name: Software renderer observation; no device speed qualification
+    if: github.event_name == 'workflow_dispatch'
+    needs: protocol
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      LIBGL_ALWAYS_SOFTWARE: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Observe exact production builders on both requested APIs
+        run: |
+          node experiments/runtime-performance/run.mjs --built \
+            --profile software --backend both --width 640 --height 360 --dpr 1 \
+            --warmup 30 --frames 60 --repeats 3 --gpu-samples 30 \
+            --output artifacts/verification-node-performance-ci
+      - name: Retain reports without scene assets or runtime snapshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: node-performance-observation-${{ github.run_id }}
+          path: |
+            artifacts/verification-node-performance-ci/results.json
+            artifacts/verification-node-performance-ci/provenance.json
+          if-no-files-found: warn
+          retention-days: 30

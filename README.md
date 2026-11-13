@@ -989,6 +989,13 @@ ports with recorded native/browser identities and actual Final artifacts.
 shows the focused plan. Use `npm run test:node-pipeline` for the automation's own
 checks; the complete release bar remains `test:full`.
 
+The [performance protocol](docs/NODE_PORT_PERFORMANCE.md) pairs bounded graph
+analysis with fresh-context preparation timings, warmed browser measurements,
+and repeated resource-ownership checks. Use `nodes:cost`, `nodes:benchmark`,
+`nodes:compare-performance`, and `test:node-performance` for these maintainer
+tools. Timing comparisons require matching observed device and input identities;
+static counts and software-renderer results do not qualify physical-device speed.
+
 ## Living product research
 
 - [Needle feature parity ledger](docs/FEATURE_PARITY.md) tracks every relevant

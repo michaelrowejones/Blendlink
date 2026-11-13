@@ -1,0 +1,6 @@
+{
+  "relativeTolerance": 0.1,
+  "absoluteToleranceMs": 0.2,
+  "minimumSamples": 30,
+  "minimumTrials": 3
+}

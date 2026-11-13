@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import ast
 import contextlib
+from array import array
 from dataclasses import dataclass
 import hashlib
 import struct
@@ -2958,7 +2959,7 @@ def evaluated_material_uses(obj, depsgraph=None):
     armature_states = []
     try:
         if len(getattr(obj, "modifiers", ())) == 0:
-            polygons = tuple(getattr(obj.data, "polygons", ()))
+            polygons = obj.data.polygons
             exported_materials = source_materials
         else:
             armature_states = [
@@ -2984,16 +2985,22 @@ def evaluated_material_uses(obj, depsgraph=None):
                 raise EvaluatedMaterialUseError(
                     f'Evaluated Mesh for "{obj.name}" is unavailable.'
                 )
-            polygons = tuple(mesh.polygons)
+            polygons = mesh.polygons
             exported_materials = tuple(
                 _original_material(material) for material in mesh.materials
             )
             if exported_materials == (None,):
                 exported_materials = source_materials
 
-        used_indices = sorted({
-            int(polygon.material_index) for polygon in polygons
-        })
+        # Read native integer storage in one RNA operation. Material planning
+        # needs only the used slot indices; creating one Python RNA wrapper per
+        # evaluated face can dominate large real scenes (e.g. a subdivided
+        # planar floor). This does not cache evaluation or change slot order,
+        # modifier suppression, sentinel handling, or temporary-mesh ownership.
+        material_indices = array("i", [0]) * len(polygons)
+        if material_indices:
+            polygons.foreach_get("material_index", material_indices)
+        used_indices = sorted(set(material_indices))
         if any(index < 0 for index in used_indices):
             raise EvaluatedMaterialUseError(
                 f'Evaluated Mesh for "{obj.name}" contains a negative material index.'

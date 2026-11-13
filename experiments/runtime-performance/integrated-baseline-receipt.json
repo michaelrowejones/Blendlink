@@ -1,0 +1,626 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-integrated-performance-baseline-v1",
+  "status": "measured",
+  "correctnessQualification": false,
+  "performanceQualification": false,
+  "scope": "Current integrated harness observations after mixed-slot witness hardening. Identical-report comparison is reader integration only; no speed improvement is inferred.",
+  "retainedReport": "artifacts/verification-performance-micro-integrated/results.json",
+  "reportSha256": "af413809f490fd0b8415e840b21f23da861d4ff07869f3db345947e201fa1663",
+  "comparisonIdentity": {
+    "profile": "metal",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpuModel": "Apple M5 Pro",
+    "hostOpaqueId": "6bb95d94b26394e75d19afeb81ba6cd704e005a9815f669b98b16b37324da6ee",
+    "browserVersion": "158.0.8127.18",
+    "threeVersion": "0.184.0",
+    "threeSourceDigest": "bde67d375a393bd846e5b3d5c2abe446c0a23ed794f097979558de6378b160ae",
+    "harnessDigest": "8742d579123bcc38cbf9dab97c6befe8f08c10a0b5b9dc5045671df50c45495e",
+    "artifactsDigest": "7383b6db6d1674fffd11c070c11666def45c6f747309ba75ffe3e2f2d472e158",
+    "config": {
+      "width": 320,
+      "height": 180,
+      "dpr": 1,
+      "warmupFrames": 30,
+      "measuredFrames": 60,
+      "repeats": 3,
+      "gpuSamples": 30,
+      "animation": "paused",
+      "fixedDeltaSeconds": 0.016666666666666666,
+      "camera": "authored-or-fit-static",
+      "antialias": false,
+      "variants": [
+        "carrier",
+        "program"
+      ],
+      "lighting": "authored manifest; otherwise imported lights or deterministic hemisphere+directional rig",
+      "gpuTimingPolicy": "separate-serial-query-pass-after-uninstrumented-RAF-window",
+      "loadPolicy": "fresh-page-HTTP-cache-disabled; OS/browser-driver-shader-cache-state-unknown",
+      "browserLaunch": {
+        "headless": true,
+        "requestedArgs": [],
+        "nodeVersion": "24.22.3",
+        "osRelease": "25.5.0",
+        "viteVersion": "8.3.8",
+        "playwrightVersion": "1.65.0",
+        "requestedChannel": "chromium"
+      }
+    }
+  },
+  "gpuByApi": {
+    "webgpu": {
+      "api": "WebGPU",
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": "",
+      "isFallbackAdapter": false,
+      "features": [
+        "atomic-vec2u-min-max",
+        "bgra8unorm-storage",
+        "chromium-experimental-sampling-resource-table",
+        "chromium-experimental-subgroup-matrix",
+        "clip-distances",
+        "core-features-and-limits",
+        "depth-clip-control",
+        "depth32float-stencil8",
+        "dual-source-blending",
+        "float32-blendable",
+        "float32-filterable",
+        "indirect-first-instance",
+        "primitive-index",
+        "rg11b10ufloat-renderable",
+        "shader-f16",
+        "subgroup-size-control",
+        "subgroups",
+        "texture-component-swizzle",
+        "texture-compression-astc",
+        "texture-compression-astc-sliced-3d",
+        "texture-compression-bc",
+        "texture-compression-bc-sliced-3d",
+        "texture-compression-etc2",
+        "texture-compression-unaligned",
+        "texture-formats-tier1",
+        "texture-formats-tier2",
+        "timestamp-query"
+      ]
+    },
+    "webgl2": {
+      "api": "WebGL2",
+      "vendor": "WebKit",
+      "renderer": "WebKit WebGL",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "shadingLanguageVersion": "WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)",
+      "unmaskedVendor": "Google Inc. (Apple)",
+      "unmaskedRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+    }
+  },
+  "harnessInputsMatchIntegratedSources": true,
+  "runtimeSourceModulesMatchIntegratedSources": true,
+  "readerSelfCheck": {
+    "status": "within-threshold",
+    "resourceGrowth": [],
+    "unmeasuredMetrics": [
+      "gpuTimestamp"
+    ]
+  },
+  "rows": [
+    {
+      "backend": "webgpu",
+      "variant": "carrier",
+      "repeat": 0,
+      "status": "measured",
+      "materials": {
+        "applied": 0,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 0,
+        "drawnProgramMeshes": 0,
+        "drawnProgramMaterials": 0,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 0.2999999523162842,
+        "loadMs": 0,
+        "installMs": 0.09999996423721313,
+        "compileMs": 14.799999952316284,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 2.800000011920929,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 500.30000001192093,
+        "reapplyMs": 0,
+        "harnessModuleLoadMs": 204.62066700000014
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5,
+        "p95Ms": 0.699999988079071
+      },
+      "gpuTimestamp": {
+        "available": false,
+        "reason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+        "summary": null
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgpu",
+      "variant": "program",
+      "repeat": 0,
+      "status": "measured",
+      "materials": {
+        "applied": 1,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 1,
+        "drawnProgramMeshes": 1,
+        "drawnProgramMaterials": 1,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 0.30000001192092896,
+        "loadMs": 0,
+        "installMs": 1.800000011920929,
+        "compileMs": 14.699999988079071,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 2.700000047683716,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 501.10000002384186,
+        "reapplyMs": 0.5,
+        "harnessModuleLoadMs": 106.47929199999999
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5,
+        "p95Ms": 0.699999988079071
+      },
+      "gpuTimestamp": {
+        "available": false,
+        "reason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+        "summary": null
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgl2",
+      "variant": "carrier",
+      "repeat": 0,
+      "status": "measured",
+      "materials": {
+        "applied": 0,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 0,
+        "drawnProgramMeshes": 0,
+        "drawnProgramMaterials": 0,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 6,
+        "loadMs": 0,
+        "installMs": 0.10000002384185791,
+        "compileMs": 29.100000023841858,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 4.300000011920929,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 500.89999997615814,
+        "reapplyMs": 0,
+        "harnessModuleLoadMs": 108.6070409999993
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5,
+        "p95Ms": 0.699999988079071
+      },
+      "gpuTimestamp": {
+        "available": true,
+        "reason": null,
+        "summary": {
+          "count": 30,
+          "p50Ms": 0.104541,
+          "p95Ms": 0.794499
+        }
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgl2",
+      "variant": "program",
+      "repeat": 0,
+      "status": "measured",
+      "materials": {
+        "applied": 1,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 1,
+        "drawnProgramMeshes": 1,
+        "drawnProgramMaterials": 1,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 4.800000011920929,
+        "loadMs": 0,
+        "installMs": 1.9000000357627869,
+        "compileMs": 25.100000023841858,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 3.699999988079071,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 500.69999998807907,
+        "reapplyMs": 0.30000001192092896,
+        "harnessModuleLoadMs": 111.12116699999933
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5999999642372131,
+        "p95Ms": 0.699999988079071
+      },
+      "gpuTimestamp": {
+        "available": true,
+        "reason": null,
+        "summary": {
+          "count": 30,
+          "p50Ms": 0.108416,
+          "p95Ms": 0.504499
+        }
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgpu",
+      "variant": "program",
+      "repeat": 1,
+      "status": "measured",
+      "materials": {
+        "applied": 1,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 1,
+        "drawnProgramMeshes": 1,
+        "drawnProgramMaterials": 1,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 0.19999998807907104,
+        "loadMs": 0,
+        "installMs": 1.899999976158142,
+        "compileMs": 15.800000011920929,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 2.800000011920929,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 501,
+        "reapplyMs": 0.5,
+        "harnessModuleLoadMs": 114.98875000000044
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.30000001192092896,
+        "p95Ms": 0.6000000238418579
+      },
+      "gpuTimestamp": {
+        "available": false,
+        "reason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+        "summary": null
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgpu",
+      "variant": "carrier",
+      "repeat": 1,
+      "status": "measured",
+      "materials": {
+        "applied": 0,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 0,
+        "drawnProgramMeshes": 0,
+        "drawnProgramMaterials": 0,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 0.10000002384185791,
+        "loadMs": 0,
+        "installMs": 0.19999998807907104,
+        "compileMs": 15.099999964237213,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 2.800000011920929,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 501.69999998807907,
+        "reapplyMs": 0,
+        "harnessModuleLoadMs": 106.95187500000065
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.6000000238418579,
+        "p95Ms": 0.800000011920929
+      },
+      "gpuTimestamp": {
+        "available": false,
+        "reason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+        "summary": null
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgl2",
+      "variant": "program",
+      "repeat": 1,
+      "status": "measured",
+      "materials": {
+        "applied": 1,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 1,
+        "drawnProgramMeshes": 1,
+        "drawnProgramMaterials": 1,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 4.699999988079071,
+        "loadMs": 0,
+        "installMs": 1.9000000357627869,
+        "compileMs": 20.099999964237213,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 3.900000035762787,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 500.60000002384186,
+        "reapplyMs": 0.3999999761581421,
+        "harnessModuleLoadMs": 109.94895800000086
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.3999999761581421,
+        "p95Ms": 0.5999999642372131
+      },
+      "gpuTimestamp": {
+        "available": true,
+        "reason": null,
+        "summary": {
+          "count": 30,
+          "p50Ms": 0.107291,
+          "p95Ms": 1.8355
+        }
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgl2",
+      "variant": "carrier",
+      "repeat": 1,
+      "status": "measured",
+      "materials": {
+        "applied": 0,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 0,
+        "drawnProgramMeshes": 0,
+        "drawnProgramMaterials": 0,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 4.399999976158142,
+        "loadMs": 0,
+        "installMs": 0.30000001192092896,
+        "compileMs": 26.099999964237213,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 4,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 500.2999999523163,
+        "reapplyMs": 0,
+        "harnessModuleLoadMs": 107.9596249999995
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5,
+        "p95Ms": 0.699999988079071
+      },
+      "gpuTimestamp": {
+        "available": true,
+        "reason": null,
+        "summary": {
+          "count": 30,
+          "p50Ms": 0.107166,
+          "p95Ms": 0.894875
+        }
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgpu",
+      "variant": "carrier",
+      "repeat": 2,
+      "status": "measured",
+      "materials": {
+        "applied": 0,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 0,
+        "drawnProgramMeshes": 0,
+        "drawnProgramMaterials": 0,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 0.20000004768371582,
+        "loadMs": 0,
+        "installMs": 0.19999998807907104,
+        "compileMs": 15.199999988079071,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 2.699999988079071,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 500.2999999523163,
+        "reapplyMs": 0,
+        "harnessModuleLoadMs": 102.97479100000055
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5999999642372131,
+        "p95Ms": 0.800000011920929
+      },
+      "gpuTimestamp": {
+        "available": false,
+        "reason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+        "summary": null
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgpu",
+      "variant": "program",
+      "repeat": 2,
+      "status": "measured",
+      "materials": {
+        "applied": 1,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 1,
+        "drawnProgramMeshes": 1,
+        "drawnProgramMaterials": 1,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 0.30000001192092896,
+        "loadMs": 0,
+        "installMs": 1.800000011920929,
+        "compileMs": 15,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 2.800000011920929,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 500.69999998807907,
+        "reapplyMs": 0.40000003576278687,
+        "harnessModuleLoadMs": 106.10895800000071
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5999999642372131,
+        "p95Ms": 0.800000011920929
+      },
+      "gpuTimestamp": {
+        "available": false,
+        "reason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+        "summary": null
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgl2",
+      "variant": "carrier",
+      "repeat": 2,
+      "status": "measured",
+      "materials": {
+        "applied": 0,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 0,
+        "drawnProgramMeshes": 0,
+        "drawnProgramMaterials": 0,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 4.5,
+        "loadMs": 0,
+        "installMs": 0.20000004768371582,
+        "compileMs": 17.5,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 3.899999976158142,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 501.10000002384186,
+        "reapplyMs": 0,
+        "harnessModuleLoadMs": 100.17216600000029
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5,
+        "p95Ms": 0.6000000238418579
+      },
+      "gpuTimestamp": {
+        "available": true,
+        "reason": null,
+        "summary": {
+          "count": 30,
+          "p50Ms": 0.108874,
+          "p95Ms": 0.861833
+        }
+      },
+      "repeatedResourceGrowth": false
+    },
+    {
+      "backend": "webgl2",
+      "variant": "program",
+      "repeat": 2,
+      "status": "measured",
+      "materials": {
+        "applied": 1,
+        "skipped": []
+      },
+      "drawCoverage": {
+        "validationFrames": 1,
+        "programMeshBindings": 1,
+        "drawnProgramMeshes": 1,
+        "drawnProgramMaterials": 1,
+        "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+      },
+      "sourceRestored": true,
+      "phases": {
+        "rendererInitMs": 4.699999988079071,
+        "loadMs": 0,
+        "installMs": 1.899999976158142,
+        "compileMs": 31.399999976158142,
+        "compileScope": "world-scene materials; authored post-pipeline can compile lazily in firstFrameMs",
+        "firstFrameMs": 3.800000011920929,
+        "firstFrameMeaning": "CPU submission wall time, not GPU completion/presentation",
+        "warmupMs": 500.80000001192093,
+        "reapplyMs": 0.30000001192092896,
+        "harnessModuleLoadMs": 110.24720800000068
+      },
+      "cpuSubmission": {
+        "count": 60,
+        "p50Ms": 0.5,
+        "p95Ms": 0.699999988079071
+      },
+      "gpuTimestamp": {
+        "available": true,
+        "reason": null,
+        "summary": {
+          "count": 30,
+          "p50Ms": 0.111749,
+          "p95Ms": 1.357708
+        }
+      },
+      "repeatedResourceGrowth": false
+    }
+  ]
+}

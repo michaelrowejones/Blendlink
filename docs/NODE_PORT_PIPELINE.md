@@ -33,6 +33,11 @@ The first execution adapter is **Squeeze**. Other nodes can have dependency and
 research manifests; unsupported execution adapters refuse. Expanding this
 registry is the next step toward a common workflow for every port.
 
+Pair each port's numerical proof with the [performance protocol](NODE_PORT_PERFORMANCE.md):
+bounded structural analysis, actual scene coverage, observed browser timings,
+and repeated install/dispose checks. These remain separate evidence; neither a
+small graph nor a fast fallback carrier qualifies a port's source appearance.
+
 ## Commands
 
 Use Node 24 and the locked repository dependencies. These are maintainer tools.
