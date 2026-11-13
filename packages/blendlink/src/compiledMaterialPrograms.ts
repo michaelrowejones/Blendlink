@@ -8,6 +8,7 @@ import type { TslRuntimeMeshExtras } from './tslMaterialProgram.js'
 import { hasBaseColorCarrier } from './compiledSceneConformance.js'
 import { materialProgramObjectOwner } from './materialProgramDocument.js'
 import { irInspectionChildren } from './tslIrInspection.js'
+import { matchingNodeRendererPrograms, nodeRendererProgramLabel, validateNodeRendererRequirement } from './materialProgramRendererRequirements.js'
 
 /** Exact image companions, keyed by their published basename, not by an IR name. */
 export type MaterialProgramImageBytes = ReadonlyMap<string, Uint8Array>
@@ -40,6 +41,12 @@ function hasCameraData(value:unknown):boolean {
   if(Array.isArray(value))return value.some(hasCameraData)
   if(!record(value))return false
   return value.op==='camera_data_native'||irInspectionChildren(value).some(hasCameraData)
+}
+
+function hasSqueeze(value:unknown):boolean {
+  if(Array.isArray(value))return value.some(hasSqueeze)
+  if(!record(value))return false
+  return value.op==='squeeze_native'||irInspectionChildren(value).some(hasSqueeze)
 }
 
 function imageFile(value: unknown): string {
@@ -190,7 +197,28 @@ export async function validatedBaseColorProgramMaterials(
     throw new Error('Compiled material programs use an unsupported document schema/model.')
   }
   if (document.images !== undefined && !record(document.images)) throw new Error('Compiled material program images must be an object.')
-  if (record(document.images) && Object.keys(document.images).length > 0 && !imageBytes) return accepted
+  if (record(document.images) && Object.keys(document.images).length > 0 && !imageBytes) {
+    // Returning no Base Color exemption is sufficient for old live-only
+    // carriers, but a portable color must not hide required live programs in
+    // Roughness or another channel. Only actual matched bindings require
+    // this preflight; unrelated/unbound programs keep the old no-proof path.
+    const bindings = primitiveBindings(gltf)
+    const programs = document.materials
+    const materials = Array.isArray(gltf.materials) ? gltf.materials : []
+    materials.forEach((material, index) => {
+      if (!record(material) || !record(material.extras)) return
+      const source = material.extras.blendlink_source_material
+      const program = typeof source === 'string' && Object.hasOwn(programs, source) ? programs[source] : null
+      if(!record(program))return
+      for(const binding of bindings){
+        if(binding.primitive.material!==index)continue
+        const requirement=validateNodeRendererRequirement(program.channels,binding.runtime?.requiresNodeRenderer)
+        if(requirement.issue)throw new Error(requirement.issue)
+        if(requirement.required.length)throw new Error(`${nodeRendererProgramLabel(requirement.required)} CPU material preflight requires verified companion image bytes; supply the exact published image payloads before auditing this binding.`)
+      }
+    })
+    return accepted
+  }
   const decoded = await verifiedImages(document, imageBytes ?? new Map())
   const programs = document.materials
   const materials = Array.isArray(gltf.materials) ? gltf.materials : []
@@ -206,13 +234,22 @@ export async function validatedBaseColorProgramMaterials(
     const nativeNormal=record(program)&&hasNativeNormal(program.channels)
     const magic=record(program)&&hasMagic(program.channels)
     const cameraData=record(program)&&hasCameraData(program.channels)
-    if(!baseColorRequired&&!nativeNormal&&!magic&&!cameraData)return []
+    const squeeze=record(program)&&hasSqueeze(program.channels)
+    const rendererRequired=record(program)&&bindings.some(binding=>{
+      if(binding.primitive.material!==index)return false
+      const validation=validateNodeRendererRequirement(program.channels,binding.runtime?.requiresNodeRenderer)
+      return !!validation.issue||validation.required.length>0
+    })
+    if(!baseColorRequired&&!nativeNormal&&!magic&&!cameraData&&!squeeze&&!rendererRequired)return []
     const channel = record(program) && record(program.channels) ? program.channels['Base Color'] : null
     if (baseColorRequired&&(!record(channel) || !record(channel.tslIr))) return []
     // GLTFLoader creates MeshBasicMaterial for an unlit carrier; the actual
     // program installer only swaps MeshStandardMaterial-compatible carriers.
-    if (record(material.extensions) && Object.hasOwn(material.extensions, 'KHR_materials_unlit')) return []
-    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal,magic,cameraData }]
+    if (record(material.extensions) && Object.hasOwn(material.extensions, 'KHR_materials_unlit')) {
+      if(squeeze||rendererRequired)throw new Error(`${nodeRendererProgramLabel(validateNodeRendererRequirement(record(program)?program.channels:null,undefined).required)} requires a lit material carrier compatible with its node renderer`)
+      return []
+    }
+    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal,magic,cameraData,squeeze,rendererRequired }]
   })
   if (!candidates.length) return accepted
   const { buildTslColorNode, createTslBuildResources, TslIrError } = await import('./tslNodeRecipe.js')
@@ -268,7 +305,7 @@ export async function validatedBaseColorProgramMaterials(
       return texture
     },
   })
-    for (const { index, ir, program,baseColorRequired,nativeNormal,magic,cameraData } of candidates) {
+    for (const { index, ir, program,baseColorRequired,nativeNormal,magic,cameraData,squeeze,rendererRequired } of candidates) {
       let bindingCount = 0
       let valid = true
       let refusal=''
@@ -304,6 +341,8 @@ export async function validatedBaseColorProgramMaterials(
                 [...names].some(name => !Object.hasOwn(properties, name) || !objectAttributeValue(properties[name]))) {
               throw new TslIrError('Material program requires unavailable per-object properties or a non-mesh binding')
             }
+            const rendererRequirement=validateNodeRendererRequirement(record(program)?program.channels:null,extras?.requiresNodeRenderer)
+            if(rendererRequirement.issue)throw new TslIrError(rendererRequirement.issue)
             const options:import('./tslNodeRecipe.js').BuildTslOptions = { ...buildOptionsFor(extras, resources, `materials[${index}]`, textures?.resolver, objectAttributeResolver()), preparedNoiseFields:preparation }
             if(geometry.size){
               const accessors=Array.isArray(gltf.accessors)?gltf.accessors:[]
@@ -406,10 +445,10 @@ export async function validatedBaseColorProgramMaterials(
             }
             inspect(record(program) ? program.channels : ir)
             if(ir)buildTslColorNode(ir, options)
-            if((nativeNormal||magic||cameraData)&&record(program)&&record(program.channels)){
+            if((nativeNormal||magic||cameraData||squeeze||rendererRequired)&&record(program)&&record(program.channels)){
               const built=buildMaterialProgram(program.channels as unknown as Record<string,import('./tslMaterialProgram.js').MaterialProgramChannel>,options)
               for(const [name,channel] of Object.entries(program.channels)){
-                if(hasNativeNormal(channel)||hasMagic(channel)||hasCameraData(channel)){
+                if(hasNativeNormal(channel)||hasMagic(channel)||hasCameraData(channel)||hasSqueeze(channel)||matchingNodeRendererPrograms(channel,rendererRequirement.required).length){
                   const skipped=built.skipped.find(item=>item.channel===name)
                   if(skipped)throw new TslIrError(`Native material channel ${name}: ${skipped.reason}`)
                 }

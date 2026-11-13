@@ -1,3 +1,4 @@
+import { buildTslSqueeze } from './tslSqueeze.js'
 export { validateMagicCoordinates as validateTslMagicCoordinates } from './tslMagicBounds.js'
 export { prepareTslNoiseFields } from './tslNoiseFields.js'
 import { preparedNoiseField, NOISE_FIELD_PREPARATION_MESSAGE, type PreparedTslNoiseFields } from './tslNoiseFields.js'
@@ -562,6 +563,8 @@ function child(expression: TslIrExpression, key: string): TslIrExpression {
 
 function build(expression: TslIrExpression): TslExpression {
   switch (expression.op) {
+    case 'squeeze_native':
+      return buildTslSqueeze(expression, build, fail)
     case 'camera_data_native':
       return buildNativeCameraData(expression, activeOptions.objectSpace?.basis)
     case 'geometry_context':

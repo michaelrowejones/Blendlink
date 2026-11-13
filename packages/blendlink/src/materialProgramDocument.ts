@@ -1,4 +1,5 @@
 import { irInspectionChildren } from './tslIrInspection.js'
+import { nodeRendererProgramLabel, validateNodeRendererRequirement } from './materialProgramRendererRequirements.js'
 import type * as THREE from 'three'
 import type { MaterialProgramChannel } from './tslMaterialProgram.js'
 
@@ -95,6 +96,7 @@ export async function assertLegacyMaterialCarriers(
   const missing = new Map<string, Set<string>>()
   const primaryNormals = new Map<string,Set<string>>()
   const primaryCameras = new Map<string,Set<string>>()
+  const requiredPrograms = new Map<string,{ name: string; declaration: unknown }[]>()
   options.root.traverse(object => {
     const mesh = object as THREE.Mesh
     if (!mesh.isMesh) return
@@ -103,6 +105,12 @@ export async function assertLegacyMaterialCarriers(
       const source = material?.userData?.blendlink_source_material
       if (typeof source !== 'string') continue
       const context=mesh.userData?.blendlink_tsl_runtime?.geometryContext
+      const runtime=mesh.userData?.blendlink_tsl_runtime
+      if(runtime&&Object.hasOwn(runtime,'requiresNodeRenderer')){
+        const declarations=requiredPrograms.get(source)??[]
+        declarations.push({name:material.name||source,declaration:runtime.requiresNodeRenderer})
+        requiredPrograms.set(source,declarations)
+      }
       if(Array.isArray(context)&&context.includes('normal')){
         const names=primaryNormals.get(source)??new Set<string>()
         names.add(material.name||source);primaryNormals.set(source,names)
@@ -120,8 +128,17 @@ export async function assertLegacyMaterialCarriers(
       missing.set(source, names)
     }
   })
-  if (!missing.size&&!primaryNormals.size&&!primaryCameras.size) return
+  if (!missing.size&&!primaryNormals.size&&!primaryCameras.size&&!requiredPrograms.size) return
   const programs = options.loadPrograms ? await options.loadPrograms() : await fetchMaterialPrograms(pointer)
+  for(const [source,declarations] of requiredPrograms){
+    if(!Object.hasOwn(programs.materials,source))continue
+    for(const {name,declaration} of declarations){
+      const requirement=validateNodeRendererRequirement(programs.materials[source]?.channels,declaration)
+      if(requirement.issue)throw new Error(`Legacy WebGLRenderer cannot verify the required material program for ${JSON.stringify(name)}: ${requirement.issue}. Use WebGPURenderer (including its WebGL2 fallback).`)
+      if(requirement.required.length)throw new Error(`Legacy WebGLRenderer cannot render the shipped live ${nodeRendererProgramLabel(requirement.required)} program for ${JSON.stringify(name)}. `+
+        'Its portable material does not carry every live channel. Use WebGPURenderer (including its WebGL2 fallback).')
+    }
+  }
   const nativeCamera=(value:unknown):boolean=>{
     if(Array.isArray(value))return value.some(nativeCamera)
     if(!value||typeof value!=='object')return false

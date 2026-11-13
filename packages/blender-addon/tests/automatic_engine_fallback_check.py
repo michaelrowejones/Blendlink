@@ -77,4 +77,28 @@ group.links.new(inner.outputs[0], output.inputs[0])
 instance = tree.nodes.new("ShaderNodeGroup"); instance.node_tree = group
 tree.links.new(instance.outputs[0], root.inputs["Base Color"])
 assert "ShaderNodeBlackbody" in compiler._automatic_channel_bake_refusal(tree, root, "Base Color")
+# Actual native 4.2/5.2/5.3 EEVEE returns Strength for every Light Falloff
+# output. Cycles Linear/Constant depend on ray distance, and Smooth changes
+# even Quadratic. An ALL output is not an equivalent channel bake.
+tree.links.remove(root.inputs["Base Color"].links[0])
+falloff = tree.nodes.new("ShaderNodeLightFalloff")
+falloff.inputs["Strength"].default_value = 2
+falloff.inputs["Smooth"].default_value = 1
+for socket in falloff.outputs:
+    tree.links.new(socket, root.inputs["Base Color"])
+    before = (len(tree.nodes), len(tree.links), tuple(material.keys()), scene.render.engine)
+    assert "ShaderNodeLightFalloff" in compiler._automatic_channel_bake_refusal(tree, root, "Base Color")
+    assert compiler._automatic_channel_bake_refusal(tree, root, "Roughness") is None
+    decision = compiler.plan_materials([obj], purpose="preview", automatic_programs=True).decisions[0]
+    assert any(issue.code == "material.automatic-fallback-engine-unproven" for issue in decision.issues), decision.as_dict()
+    assert not any(item.get("route") == "bake" and item["channel"] == "Base Color" for item in decision.channel_plan["channels"]), decision.as_dict()
+    assert before == (len(tree.nodes), len(tree.links), tuple(material.keys()), scene.render.engine)
+scene.render.engine = "CYCLES"
+assert compiler._automatic_channel_bake_refusal(tree, root, "Base Color") is None
+scene.render.engine = eevee
+tree.links.remove(root.inputs["Base Color"].links[0])
+inner_falloff = group.nodes.new("ShaderNodeLightFalloff")
+group.links.new(inner_falloff.outputs["Linear"], output.inputs[0])
+tree.links.new(instance.outputs[0], root.inputs["Base Color"])
+assert "ShaderNodeLightFalloff" in compiler._automatic_channel_bake_refusal(tree, root, "Base Color")
 print("BLENDLINK_AUTOMATIC_ENGINE_FALLBACK_PASSED " + bpy.app.version_string)

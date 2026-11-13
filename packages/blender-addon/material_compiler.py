@@ -5666,6 +5666,11 @@ def _ir_runtime_needs(value, needs) -> None:
         op = value.get("op")
         if op == "uv" and value.get("uvMap"):
             needs["uvMaps"].add(str(value["uvMap"]))
+        if (op, value.get("model")) in (
+            ("squeeze_native", "eevee-squeeze-f32-v1"),
+            ("tex_magic_native", "eevee-magic-f32-v1"),
+        ):
+            needs["requiresNodeRendererPrograms"].add((op, value["model"]))
         if op == "uv_active":
             needs["usesActiveUv"] = True
         if op == "vertex_color" and value.get("layer"):
@@ -5708,7 +5713,7 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
     needs = {
         "uvMaps": set(), "usesActiveUv": False, "colorLayers": set(), "objectAttributes": set(), "objectInfo": set(),
         "texspace": False, "objectSpace": False, "vectorTransformOwner": False,
-        "geometryContext": set(),"tangentFrames": set(),
+        "geometryContext": set(),"tangentFrames": set(), "requiresNodeRendererPrograms": set(),
     }
     for item in (decision.channel_plan or {}).get("channels", ()):
         ir = item.get("tslIr")
@@ -5716,7 +5721,8 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
             _ir_runtime_needs(ir, needs)
     if not needs["uvMaps"] and not needs["usesActiveUv"] and not needs["colorLayers"] \
             and not needs["texspace"] and not needs["objectSpace"] \
-            and not needs["objectAttributes"] and not needs["objectInfo"]:
+            and not needs["objectAttributes"] and not needs["objectInfo"] \
+            and not needs["requiresNodeRendererPrograms"]:
         return None
     mesh = getattr(obj, "data", None)
     if mesh is None:
@@ -5725,6 +5731,9 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
             f'data on "{getattr(obj, "name", "?")}", which has none.'
         )
     entry = {"schemaVersion": 1}
+    if needs["requiresNodeRendererPrograms"]:
+        entry["requiresNodeRenderer"] = {"schemaVersion": 1, "model": "live-material-programs-v1",
+            "programs": [{"op": op, "model": model} for op, model in sorted(needs["requiresNodeRendererPrograms"])]}
     if needs["usesActiveUv"]:
         layers = getattr(mesh, "uv_layers", None)
         active_name = source_uv_state.get("activeRenderUv") if source_uv_state is not None else None
@@ -5872,6 +5881,15 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict, object_space="gl
                         merged[key] = value
                     elif key in {"objectAttributes", "geometryContext"}:
                         merged[key] = sorted(set(merged[key]) | set(value))
+                    elif key == "requiresNodeRenderer" and all(
+                        isinstance(marker, dict) and marker.get("schemaVersion") == 1
+                        and marker.get("model") == "live-material-programs-v1"
+                        for marker in (merged[key], value)
+                    ):
+                        programs = {(item["op"], item["model"]) for marker in (merged[key], value)
+                                    for item in marker["programs"]}
+                        merged[key] = {"schemaVersion": 1, "model": "live-material-programs-v1",
+                            "programs": [{"op": op, "model": model} for op, model in sorted(programs)]}
                     elif key in {"uvChannels", "colorLayers"} and all(
                         name not in merged[key] or merged[key][name] == target
                         for name, target in value.items()

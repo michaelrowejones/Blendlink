@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "119e43263625bdaa53661080c49ec659dc1404bfe28919d0419dd38c46f8278c",
+  "capabilityMapSha256": "1cd7e686b73d58b6c0f165a2b69ef98b3f970b4c668ab73a16aaafaa5ac8ffd8",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T12:32:48.906153+00:00",
+  "generatedAt": "2026-11-13T14:17:00.210721+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -4848,10 +4848,63 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_squeeze",
+                  "path": "packages/blender-addon/squeeze_ir.py"
+                },
+                {
+                  "anchor": "ShaderNodeSqueeze",
+                  "path": "packages/blender-addon/engine_fallback.py"
+                },
+                {
+                  "anchor": "export function buildTslSqueeze",
+                  "path": "packages/blendlink/src/tslSqueeze.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/squeeze_translation_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSqueeze.test.ts"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/README.md"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/sources.json"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/protocol.test.mjs"
+                },
+                {
+                  "anchor": "requiresNodeRendererPrograms",
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "anchor": "requiredPrograms",
+                  "path": "packages/blendlink/src/materialProgramDocument.ts"
+                },
+                {
+                  "anchor": "function hasSqueeze",
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramDocument.test.ts"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/opengl52-production-receipt.json"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/production-receipt.json"
+                },
+                {
+                  "anchor": "export function validateNodeRendererRequirement",
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
+                }
+              ],
               "id": "ShaderNodeSqueeze",
               "label": "Squeeze Value (Legacy)",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Native EEVEE Squeeze is viable and numerical research is retained, but the current 4.2 producer does not initialize and attest its GPU backend. Separate owned-context initialization research does not grant live admission. The fresh producer returns SOURCE_ATTESTATION_NA and 0 production cases. Metal qualification is not inferred from a preference or platform; automatic Cycles baking differs.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -5237,11 +5290,15 @@
                 },
                 {
                   "path": "experiments/magic-node-differential/README.md"
+                },
+                {
+                  "anchor": "export function validateNodeRendererRequirement",
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
                 }
               ],
               "id": "ShaderNodeTexMagic",
               "label": "Magic Texture",
-              "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. Linux 5.2.0 OpenGL source precision is qualified by fresh native references and both built browser APIs. Other OpenGL versions remain unmeasured; Metal evidence does not qualify them. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake.",
+              "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. Linux 5.2.0 OpenGL source precision is qualified by fresh native references and both built browser APIs. Other OpenGL versions remain unmeasured; Metal evidence does not qualify them. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake. Fresh exports declare the required live program on the actual mesh in every channel. Legacy rendering refuses matched Magic even when Base Color is portable; CPU Final preflight checks its actual binding, declaration and companion assets. Ordinary old/unmarked portable scenes retain their no-fetch path.",
               "runtimeOps": [
                 "tex_magic_native"
               ],
@@ -10249,10 +10306,10 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 38,
+            "partial": 39,
             "structural": 6,
             "supported": 21,
-            "unsupported": 53
+            "unsupported": 52
           },
           "enumValueCounts": {
             "partial": 23,
@@ -12373,14 +12430,69 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_squeeze",
+                  "path": "packages/blender-addon/squeeze_ir.py"
+                },
+                {
+                  "anchor": "ShaderNodeSqueeze",
+                  "path": "packages/blender-addon/engine_fallback.py"
+                },
+                {
+                  "anchor": "export function buildTslSqueeze",
+                  "path": "packages/blendlink/src/tslSqueeze.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/squeeze_translation_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSqueeze.test.ts"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/README.md"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/sources.json"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/protocol.test.mjs"
+                },
+                {
+                  "anchor": "requiresNodeRendererPrograms",
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "anchor": "requiredPrograms",
+                  "path": "packages/blendlink/src/materialProgramDocument.ts"
+                },
+                {
+                  "anchor": "function hasSqueeze",
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramDocument.test.ts"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/opengl52-production-receipt.json"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/production-receipt.json"
+                },
+                {
+                  "anchor": "export function validateNodeRendererRequirement",
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
+                }
+              ],
               "id": "ShaderNodeSqueeze",
               "label": "Squeeze Value (Legacy)",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Fresh eevee-squeeze-f32-v1 only: Blender 5.2.0/5.3.0 on macOS arm64 with actual METAL attestation, or Linux x86_64 Blender 5.2.0 build fbe6228777e7 with actual OPENGL and exact renderer llvmpipe (LLVM 20.1.2, 256 bits). The Linux profile independently requires source build/renderer tags and matching image/nested profiles; other Linux builds, renderers and versions refuse. Inputs may be exact Float32 literals, qualified Squeeze outputs, or direct RGB channels of opaque full-float Non-Color nearest images with literal coordinates. UV, Generated, Object and other spatial coordinates remain unqualified. Static FILE/GENERATED images require flat projection, Closest interpolation, REPEAT/EXTEND/CLIP, straight alpha 1 and Half Precision off. Image payload <= 1024 pixels; validation <= 12288 values, 64 visits and depth 8 (at most 4 nested Squeeze nodes). Steep near-midpoint Width 16 stresses are proved; 5..8-node chains refuse. Source and runtime independently prove finite exact Float32 magnitude <= 16 for actual inputs/pixels/coordinates and staged abs((Value-Center)*Width) <= 24, including Clip zero. Unknown graphs, ranges, images, profiles or versions refuse before texture allocation; asserted unit intervals grant no admission. No Cycles live parity: the actual default ALL output differs, so automatic EEVEE-to-Cycles bake fallback is engine-sensitive. Blender 4.2 retains native numerical research, but source attestation is N/A and production admission is unavailable. Browser Metal and SwiftShader are verified on both APIs; this is channel-function proof, not whole-look lighting parity. CPU Final preflight requires the fresh exporter-owned mesh renderer marker. A matched Squeeze program in any channel refuses legacy rendering even when Base Color is portable. Literal/image-driven Roughness-only actual Final programs are verified; ordinary unmarked portable/old-IR no-fetch behavior remains unchanged.",
+              "runtimeOps": [
+                "squeeze_native"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -12782,11 +12894,15 @@
                 },
                 {
                   "path": "experiments/magic-node-differential/README.md"
+                },
+                {
+                  "anchor": "export function validateNodeRendererRequirement",
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
                 }
               ],
               "id": "ShaderNodeTexMagic",
               "label": "Magic Texture",
-              "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. Linux 5.2.0 OpenGL source precision is qualified by fresh native references and both built browser APIs. Other OpenGL versions remain unmeasured; Metal evidence does not qualify them. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake.",
+              "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. Linux 5.2.0 OpenGL source precision is qualified by fresh native references and both built browser APIs. Other OpenGL versions remain unmeasured; Metal evidence does not qualify them. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake. Fresh exports declare the required live program on the actual mesh in every channel. Legacy rendering refuses matched Magic even when Base Color is portable; CPU Final preflight checks its actual binding, declaration and companion assets. Ordinary old/unmarked portable scenes retain their no-fetch path.",
               "runtimeOps": [
                 "tex_magic_native"
               ],
@@ -18385,10 +18501,10 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 40,
+            "partial": 41,
             "structural": 7,
             "supported": 22,
-            "unsupported": 76
+            "unsupported": 75
           },
           "enumValueCounts": {
             "partial": 25,
@@ -21009,14 +21125,69 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def emit_squeeze",
+                  "path": "packages/blender-addon/squeeze_ir.py"
+                },
+                {
+                  "anchor": "ShaderNodeSqueeze",
+                  "path": "packages/blender-addon/engine_fallback.py"
+                },
+                {
+                  "anchor": "export function buildTslSqueeze",
+                  "path": "packages/blendlink/src/tslSqueeze.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/squeeze_translation_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSqueeze.test.ts"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/README.md"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/sources.json"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/protocol.test.mjs"
+                },
+                {
+                  "anchor": "requiresNodeRendererPrograms",
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "anchor": "requiredPrograms",
+                  "path": "packages/blendlink/src/materialProgramDocument.ts"
+                },
+                {
+                  "anchor": "function hasSqueeze",
+                  "path": "packages/blendlink/src/compiledMaterialPrograms.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramDocument.test.ts"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/opengl52-production-receipt.json"
+                },
+                {
+                  "path": "experiments/squeeze-node-differential/production-receipt.json"
+                },
+                {
+                  "anchor": "export function validateNodeRendererRequirement",
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
+                }
+              ],
               "id": "ShaderNodeSqueeze",
               "label": "Squeeze Value (Legacy)",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Fresh eevee-squeeze-f32-v1 only: Blender 5.2.0/5.3.0 on macOS arm64 with actual METAL attestation, or Linux x86_64 Blender 5.2.0 build fbe6228777e7 with actual OPENGL and exact renderer llvmpipe (LLVM 20.1.2, 256 bits). The Linux profile independently requires source build/renderer tags and matching image/nested profiles; other Linux builds, renderers and versions refuse. Inputs may be exact Float32 literals, qualified Squeeze outputs, or direct RGB channels of opaque full-float Non-Color nearest images with literal coordinates. UV, Generated, Object and other spatial coordinates remain unqualified. Static FILE/GENERATED images require flat projection, Closest interpolation, REPEAT/EXTEND/CLIP, straight alpha 1 and Half Precision off. Image payload <= 1024 pixels; validation <= 12288 values, 64 visits and depth 8 (at most 4 nested Squeeze nodes). Steep near-midpoint Width 16 stresses are proved; 5..8-node chains refuse. Source and runtime independently prove finite exact Float32 magnitude <= 16 for actual inputs/pixels/coordinates and staged abs((Value-Center)*Width) <= 24, including Clip zero. Unknown graphs, ranges, images, profiles or versions refuse before texture allocation; asserted unit intervals grant no admission. No Cycles live parity: the actual default ALL output differs, so automatic EEVEE-to-Cycles bake fallback is engine-sensitive. Blender 4.2 retains native numerical research, but source attestation is N/A and production admission is unavailable. Browser Metal and SwiftShader are verified on both APIs; this is channel-function proof, not whole-look lighting parity. CPU Final preflight requires the fresh exporter-owned mesh renderer marker. A matched Squeeze program in any channel refuses legacy rendering even when Base Color is portable. Literal/image-driven Roughness-only actual Final programs are verified; ordinary unmarked portable/old-IR no-fetch behavior remains unchanged.",
+              "runtimeOps": [
+                "squeeze_native"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -21418,11 +21589,15 @@
                 },
                 {
                   "path": "experiments/magic-node-differential/README.md"
+                },
+                {
+                  "anchor": "export function validateNodeRendererRequirement",
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
                 }
               ],
               "id": "ShaderNodeTexMagic",
               "label": "Magic Texture",
-              "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. Linux 5.2.0 OpenGL source precision is qualified by fresh native references and both built browser APIs. Other OpenGL versions remain unmeasured; Metal evidence does not qualify them. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake.",
+              "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. Linux 5.2.0 OpenGL source precision is qualified by fresh native references and both built browser APIs. Other OpenGL versions remain unmeasured; Metal evidence does not qualify them. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake. Fresh exports declare the required live program on the actual mesh in every channel. Legacy rendering refuses matched Magic even when Base Color is portable; CPU Final preflight checks its actual binding, declaration and companion assets. Ordinary old/unmarked portable scenes retain their no-fetch path.",
               "runtimeOps": [
                 "tex_magic_native"
               ],
@@ -22293,12 +22468,12 @@
     "packages/blender-addon/camera_data_ir.py": "956a074bad662f2a643335666ec62823643f955d6da8c75d056fa5f75928f1c8",
     "packages/blender-addon/color_ir.py": "0b6fd4f61a5ce22d5fe84135b2fbdd484b5bc805889ff952e87e573053797e69",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
-    "packages/blender-addon/engine_fallback.py": "f084377928fd0b3ea741dc84c0282997a11b1ac476fc51fc4a97c80f2950f88a",
+    "packages/blender-addon/engine_fallback.py": "c5f9c9a31f5b26f4dc7929e672b1b03835d6eda1f3882de738d87cfafd622037",
     "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
     "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
     "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
-    "packages/blender-addon/material_compiler.py": "950c217f1efb1412302861c9383d81ab63385e0f09d859e0278651b352261bd2",
+    "packages/blender-addon/material_compiler.py": "f85a22fb9f23a618e0224007d72cf1f0db6db39199571655bd0194a2bc363104",
     "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
     "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
@@ -22314,8 +22489,9 @@
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/shader_color_band.py": "06741105e83570de81d16040bd4aca7a2e09a018d62c6a0d5c19a1fb82be6600",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
+    "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-    "packages/blender-addon/tsl_ir.py": "2b9df4d04dc4a2cf63e815f6397ddee3fa98b66a77ac8b8a11229c494c57ea98",
+    "packages/blender-addon/tsl_ir.py": "0958888afb14802144a89f2bc149c9939311789fda2d71dcb642b6f72d2ee231",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
@@ -22348,9 +22524,10 @@
     "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
-    "packages/blendlink/src/compiledMaterialPrograms.ts": "130483c43090ffe143fe7db157ce54dd720a2ba6e8b24ae3d8a5fc922856236f",
+    "packages/blendlink/src/compiledMaterialPrograms.ts": "3a054779d78a4b7e8361653c5d980b5bb8324544c539a0b0ed691ffb66a8c173",
     "packages/blendlink/src/compiledSceneAudit.ts": "e50ccf4daee1f7ea17cad4ec7a1f4828dfa401b1f8627a829b3de4d9e2857760",
-    "packages/blendlink/src/materialProgramDocument.ts": "796e10719929ca92914572dd89f16f2c00b54e673179a940dcab9f31f5cb06c0",
+    "packages/blendlink/src/materialProgramDocument.ts": "bfef1c2c44efabd8036caa75577b3136b3f9f52800c3d2fca16551522733ffd4",
+    "packages/blendlink/src/materialProgramRendererRequirements.ts": "314789847bdbad525d98e46613258527424cbafa4679437e2cb92c2996f11376",
     "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
     "packages/blendlink/src/staticNoise4d.ts": "8101c6f4eedaf76b907a9fb98c7ed9f7b52aa0b9690f7b4ffbdaf393882406b5",
     "packages/blendlink/src/threeRuntime.ts": "f6238c57d537dbc3218b135f6aaf80b00de819f362298cadbd2825ad18451538",
@@ -22400,14 +22577,14 @@
     "packages/blendlink/src/tslIrInspection.ts": "976cdc3ae2f8a9bfde73f466b912f7acef17223288dfd6b8f61acb311750e3c7",
     "packages/blendlink/src/tslMagicBounds.ts": "f5ef0d1c3d5ef83a5d427d6a185d838226b201fe40d4dcdafb1e0001894a8614",
     "packages/blendlink/src/tslMagicNodes.ts": "679f4a4af8928e06baed6fd7716fefde872ef7ddcce14b744da77f7f0320464b",
-    "packages/blendlink/src/tslMaterialProgram.ts": "9488803e03dcc7fdfb3c48d1d162c01ef1413249fd4043ce3cdc3423b3f4f109",
+    "packages/blendlink/src/tslMaterialProgram.ts": "e46f8b8d25a2644b9b507a132b12aea75e36ec3fb326c8beaf9d29adeceeea89",
     "packages/blendlink/src/tslMaterialRuntime.ts": "1dbdec1d78331a2a88a5eec550b6afa8a400d9ddd53031f210a34c11d2d0168b",
     "packages/blendlink/src/tslMathModuloNative.ts": "f56ae4c332f93d0f597242607d02fdc8938af1d877392da3f4e3481b2e030da2",
     "packages/blendlink/src/tslMfNoiseCoordinates.ts": "3d697e3dd7a01418263fa7edac3154db127b669f4212cf533b15c94ed53046a7",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "95614a5d2f97400665d05861e1e648874ae1feddc30c1144549cdd16e84764b0",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
-    "packages/blendlink/src/tslNodeRecipe.ts": "3451f3c559fbf3001cbe4ce16a521c9d6abe7dda546abd531314767678a902e9",
+    "packages/blendlink/src/tslNodeRecipe.ts": "cf50122cfe15d43e1af1bc7c279d970ca48498bd1692884a6494bd3374867a87",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "c3cd1a2b5549dd7edf83937dfeb1b57d8e564c6fce8dd15ad36c17a222760b1f",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
     "packages/blendlink/src/tslNoiseFields.ts": "006b0581ca5816eacbe5695b0c9d901168a4b35292d4d10bef792ba7dd094316",
@@ -22420,6 +22597,7 @@
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
     "packages/blendlink/src/tslSourceCompositor.ts": "45d948748da0a8951bdb218f34810c1063c1f8cb6d06d319043cad5014d81554",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
+    "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "248c6f398b631f479370f30a2dda91437a8269ed805e7f1767c700ec29ed952d",
     "packages/blendlink/src/tslTangentNormalMap.ts": "b054680f158299006576d6d1b889fededd1f37b3c8941c0fe7c38b734508a287",
     "packages/blendlink/src/tslVaryingNoise.ts": "efd845e383882a33a1d82bce543ea2f36144d40a6a54a9192a30905fda48f5c5",

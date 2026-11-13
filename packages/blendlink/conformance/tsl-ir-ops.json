@@ -48,6 +48,7 @@
     "separate",
     "shader_to_rgb_diffuse",
     "spectral",
+    "squeeze_native",
     "tangent_native",
     "tex_brick",
     "tex_checker",

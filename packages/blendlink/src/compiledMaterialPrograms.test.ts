@@ -80,6 +80,22 @@ describe('validated live Base Color carrier evidence', () => {
     gltf.materials[0].extras.blendlink_source_material = 'Unrelated'
     expect((await inspect(gltf)).issues.map(issue => issue.code)).toContain(missing)
   })
+  it('validates fresh Squeeze Roughness on a portable color and every actual marked binding',async()=>{
+    const output={op:'squeeze_native',model:'eevee-squeeze-f32-v1',sourceEngine:'EEVEE',sourceProfile:'darwin-arm64-metal-v1',nativeVersion:[5,2,0],nativeGpuBackend:'METAL',inputModel:'opaque-nearest-f32-data-or-literal-v1',value:{op:'const_float',value:1},width:{op:'const_float',value:1},center:{op:'const_float',value:0}}
+    const gltf:any=fixture();gltf.materials[0].pbrMetallicRoughness={baseColorFactor:[.125,.25,.5,1]}
+    gltf.meshes[0].extras={blendlink_tsl_runtime:{schemaVersion:1,requiresNodeRenderer:{schemaVersion:1,model:'squeeze-native-v1'}}}
+    const publish=(expression:unknown)=>publication({Roughness:{tslIr:{...checker,output:expression}}})
+    expect((await inspect(gltf,publish(output))).issues).toEqual([])
+    for(const patch of [{nativeGpuBackend:'OPENGL'},{value:{op:'const_float',value:16},width:{op:'const_float',value:16}},{value:{op:'attribute_object',name:'unbound',output:'fac'}}])
+      await expect(inspect(gltf,publish({...output,...patch}))).rejects.toThrow(/Compiled live material program/)
+    const image={op:'tex_image',sourceEngine:'EEVEE',nativeGpuBackend:'METAL',sourceImageStorage:'rgba32f',sourceImageUploadRounding:'none',width:1,height:1,pixels:[.25,.5,.125,1],interpolation:'Closest',extension:'REPEAT',output:'color',vector:{op:'const_vec3',value:[.25,.75,0]}}
+    const imageOutput={...output,value:{op:'separate',channel:'x',input:image}}
+    expect((await inspect(gltf,publish(imageOutput))).issues).toEqual([])
+    image.pixels[0]=32;await expect(inspect(gltf,publish(imageOutput))).rejects.toThrow(/Squeeze Value/)
+    delete gltf.meshes[0].extras;await expect(inspect(gltf,publish(output))).rejects.toThrow(/exported node-renderer declaration/)
+    gltf.meshes[0].extras={blendlink_tsl_runtime:{schemaVersion:1,requiresNodeRenderer:{schemaVersion:1,model:'squeeze-native-v1'}}}
+    gltf.materials[0].extensions={KHR_materials_unlit:{}};await expect(inspect(gltf,publish(output))).rejects.toThrow(/lit material carrier/)
+  })
   it('does not accept a material program that only supplies Roughness', async () => {
     expect((await inspect(fixture(), publication({ Roughness: { tslIr: checker } }))).issues.map(issue => issue.code)).toContain(missing)
   })
@@ -189,10 +205,98 @@ async function auditReal(fixture: Awaited<ReturnType<typeof realPublication>>, p
 }
 
 describe('exact external image and per-object program evidence', () => {
+  it('requires complete generic Magic channel evidence on every bound primitive, even with portable Base Color',async()=>{
+    const fixture=await realPublication([[.8,.35,.1]])
+    const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes),mesh=document.getRoot().listMeshes()[0]!
+    document.getRoot().listMaterials()[0]!.setBaseColorFactor([.125,.25,.5,1])
+    const selector={op:'tex_magic_native',model:'eevee-magic-f32-v1'}
+    const declaration={schemaVersion:1,model:'live-material-programs-v1',programs:[selector]}
+    const magic={...selector,sourceEngine:'EEVEE',nativeGpuBackend:'METAL',evaluationModel:'shader',depth:2,output:'fac',
+      vector:{op:'uv'},scale:{op:'const_float',value:1},distortion:{op:'const_float',value:1}}
+    Object.assign(fixture.sidecar.materials.Artist,{channels:{Roughness:{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:magic}}}})
+    mesh.setExtras({blendlink_tsl_runtime:{schemaVersion:1,requiresNodeRenderer:declaration}})
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    await expect(auditCompiledSceneArtifact({manifest:fixture.manifest,glbBytes:fixture.glbBytes,
+      materialProgramsBytes:fixture.bytes})).rejects.toThrow(/Magic Texture.*companion image/)
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+    for(const marker of [undefined,null,{...declaration,schemaVersion:2},{...declaration,model:'future'},
+      {...declaration,programs:[{...selector,model:'unmatched-model'}]}]){
+      mesh.setExtras({blendlink_tsl_runtime:{schemaVersion:1,...(marker===undefined?{}:{requiresNodeRenderer:marker})}})
+      fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+      await expect(auditReal(fixture)).rejects.toThrow(/node-renderer declaration/)
+    }
+    // One valid owner cannot certify another actual binding to the material.
+    mesh.setExtras({blendlink_tsl_runtime:{schemaVersion:1,requiresNodeRenderer:declaration}})
+    const second=document.createMesh('Unmarked binding').addPrimitive(document.createPrimitive()
+      .setMaterial(document.getRoot().listMaterials()[0]!).setAttribute('POSITION',mesh.listPrimitives()[0]!.getAttribute('POSITION')!)
+      .setAttribute('TEXCOORD_0',mesh.listPrimitives()[0]!.getAttribute('TEXCOORD_0')!))
+    document.getRoot().getDefaultScene()!.addChild(document.createNode('Second owner').setMesh(second))
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    await expect(auditReal(fixture)).rejects.toThrow(/Magic Texture requires its exported node-renderer declaration/)
+  })
+
+  it('uses the actual channel builder for generic declarations instead of approving an unknown opcode',async()=>{
+    const fixture=await realPublication([[.8,.35,.1]])
+    const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes)
+    document.getRoot().listMaterials()[0]!.setBaseColorFactor([.125,.25,.5,1])
+    const selector={op:'unsupported_renderer_probe',model:'test-only-v1'}
+    document.getRoot().listMeshes()[0]!.setExtras({blendlink_tsl_runtime:{schemaVersion:1,
+      requiresNodeRenderer:{schemaVersion:1,model:'live-material-programs-v1',programs:[selector]}}})
+    Object.assign(fixture.sidecar.materials.Artist,{channels:{Roughness:{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:selector}}}})
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    await expect(auditReal(fixture)).rejects.toThrow(/Native material channel Roughness.*unsupported_renderer_probe/)
+  })
+
+  it('cannot skip a matched Squeeze Roughness audit when optional companion bytes are omitted',async()=>{
+    const fixture=await realPublication([[.8,.35,.1]])
+    const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes)
+    document.getRoot().listMaterials()[0]!.setBaseColorFactor([.125,.25,.5,1])
+    document.getRoot().listMeshes()[0]!.setExtras({blendlink_tsl_runtime:{schemaVersion:1,
+      requiresNodeRenderer:{schemaVersion:1,model:'squeeze-native-v1'}}})
+    const output={op:'squeeze_native',model:'eevee-squeeze-f32-v1',sourceEngine:'EEVEE',
+      sourceProfile:'darwin-arm64-metal-v1',nativeVersion:[5,2,0],nativeGpuBackend:'METAL',
+      inputModel:'opaque-nearest-f32-data-or-literal-v1',value:{op:'const_float',value:1},
+      width:{op:'const_float',value:1},center:{op:'const_float',value:0}}
+    Object.assign(fixture.sidecar.materials.Artist,{channels:{Roughness:{tslIr:{
+      schemaVersion:1,model:'blendlink-tsl-ir-v1',output}}}})
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    const missingCompanions=()=>auditCompiledSceneArtifact({manifest:fixture.manifest,
+      glbBytes:fixture.glbBytes,materialProgramsBytes:fixture.bytes})
+    await expect(missingCompanions()).rejects.toThrow(/Squeeze Value.*companion image/)
+    // A complete, pinned PNG must still reach the actual channel builder.
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+    output.nativeGpuBackend='OPENGL';repin(fixture)
+    await expect(missingCompanions()).rejects.toThrow(/Squeeze Value.*companion image/)
+    await expect(auditReal(fixture)).rejects.toThrow(/Squeeze Value requires its verified EEVEE/)
+    output.nativeGpuBackend='METAL'
+    document.getRoot().listMeshes()[0]!.setExtras({})
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    await expect(auditReal(fixture)).rejects.toThrow(/exported node-renderer declaration/)
+  })
+
+  it('keeps old portable image programs and unbound Squeeze programs on their existing missing-companion path',async()=>{
+    const fixture=await realPublication([[.8,.35,.1]])
+    const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes)
+    document.getRoot().listMaterials()[0]!.setBaseColorFactor([.125,.25,.5,1])
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    const missingCompanions=()=>auditCompiledSceneArtifact({manifest:fixture.manifest,
+      glbBytes:fixture.glbBytes,materialProgramsBytes:fixture.bytes})
+    expect((await missingCompanions()).conformance.issues).toEqual([])
+    Object.assign(fixture.sidecar.materials,{Unused:{channels:{Roughness:{tslIr:{
+      schemaVersion:1,model:'blendlink-tsl-ir-v1',output:{op:'squeeze_native',model:'eevee-squeeze-f32-v1'}}}}}})
+    document.createMaterial('Unused Squeeze').setExtras({blendlink_source_material:'Unused'})
+    fixture.glbBytes=await io.writeBinary(document)
+    repin(fixture)
+    fixture.manifest.materialPrograms!.materials=2
+    expect((await missingCompanions()).conformance.issues).toEqual([])
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+  })
+
   it('certifies fresh Magic against decoded positions and UVs without requiring a normal attribute',async()=>{
     const fixture=await realPublication([[.8,.35,.1]])
     const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes)
-    document.getRoot().listMeshes()[0]!.setExtras({blendlink_tsl_runtime:{objectSpace:'gltf-y-up',texspace:{location:[0,0,0],size:[1,1,1]}}})
+    document.getRoot().listMeshes()[0]!.setExtras({blendlink_tsl_runtime:{objectSpace:'gltf-y-up',texspace:{location:[0,0,0],size:[1,1,1]},
+      requiresNodeRenderer:{schemaVersion:1,model:'live-material-programs-v1',programs:[{op:'tex_magic_native',model:'eevee-magic-f32-v1'}]}}})
     const magic={op:'tex_magic_native',model:'eevee-magic-f32-v1',sourceEngine:'EEVEE',nativeGpuBackend:'METAL',evaluationModel:'shader',depth:2,output:'color',
       vector:{op:'generated'},scale:{op:'const_float',value:5},distortion:{op:'const_float',value:1}}
     fixture.sidecar.materials.Artist.channels['Base Color'].tslIr.output=magic as any

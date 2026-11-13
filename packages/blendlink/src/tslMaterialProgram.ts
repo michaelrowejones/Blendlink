@@ -18,6 +18,7 @@ import { irInspectionChildren } from './tslIrInspection.js'
  * the seam makes the contract explicit instead of incidental.
  */
 import type { BufferGeometry } from 'three'
+import type { MaterialProgramRendererRequirement } from './materialProgramRendererRequirements.js'
 import {
   buildTslColorNode,
   buildTslScalarNode,
@@ -35,6 +36,7 @@ export interface MaterialProgramChannel {
 /** The mesh extras stamped by the exporter (blendlink_tsl_runtime). */
 export interface TslRuntimeMeshExtras {
   schemaVersion?: number
+  requiresNodeRenderer?: MaterialProgramRendererRequirement
   uvChannels?: Record<string, number>
   activeRenderUv?: { schemaVersion: 1; model: 'source-active-render-v1'; uvMap: string; channel: number }
   colorLayers?: Record<string, string>

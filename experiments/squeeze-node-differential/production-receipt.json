@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-squeeze-production-proof-receipt-v1",
+  "status": "passed",
+  "scope": "Partial EEVEE squeeze_native/eevee-squeeze-f32-v1 only; qualified macOS arm64 native METAL5.2.0/5.3.0, bounded literal or opaque nearest-data-image inputs with literal coordinates. Channel functions and required carrier/preflight behavior, not full lighting/BSDF equivalence.",
+  "errorContract": {
+    "nativePackedIntervalWidth": 5.960464477539063e-08,
+    "kernelBudget": 2e-05,
+    "genericToleranceWidening": false
+  },
+  "evidenceLayout": "File hashes are relative to each retainedRoot in the named origin checkout; the Blender4.2 file is relative to its worker root. The integrated rerun reuses unchanged native and Final bytes; older worker rows overlap and must not be counted as additional unique source coverage.",
+  "integratedMain52": {
+    "origin": "integrated main",
+    "testedRuntimeCommit": "414d663fc04db2d3c915da2e9fa06561877050c3",
+    "retainedRoot": "artifacts/verification-squeeze-main52",
+    "nativeVersion": [
+      5,
+      2,
+      0
+    ],
+    "nativeSourceBackend": {
+      "backend": "METAL",
+      "renderer": "Metal API",
+      "vendor": "Apple M5 Pro"
+    },
+    "productionCases": 25,
+    "independentCalibrationCases": 1,
+    "refusedNativeStressCases": 12,
+    "actualFinalGlbs": 26,
+    "caseRuns": 208,
+    "rgbComparisons": 638976,
+    "maximumDistanceOutsideNativeInterval": 0,
+    "maximumDistanceToNativeIntervalLowerBound": 2.9802322387695312e-08,
+    "numericFailures": 0,
+    "executionOrValidationFailures": 0,
+    "ownedTexturesRemaining": 0,
+    "finalNegativeChecks": 212,
+    "matchedLegacyRendererRefusals": 100,
+    "adapters": [
+      "metal/webgpu",
+      "metal/webgl2",
+      "software/webgpu",
+      "software/webgl2"
+    ],
+    "snapshotSourceVerification": {
+      "commitSourcesVerified": true,
+      "allBuiltSnapshotsHashVerified": true,
+      "modulesPerReport": 164,
+      "canonicalPythonAndFixtureHashesVerified": 7
+    },
+    "files": {
+      "references.json": "06e0b6e2f76aff84b25bd8ec26c9077649121b98b8d338b642cc03ab2fc57f40",
+      "final-proof.json": "df50ec7c0b180deb94aa9b1a4d97fb503999e8a9521bfb9ef452313e9960f6f0",
+      "suite-metal.json": "348d5dc5db384b169b8709c52782c88f10d56e623f5043af6aba5bf0c8a625bc",
+      "suite-software.json": "1b5153b05281e7b70365c8c7f61be570b30cb00dbcd0d57dafcbf96e8db0541a",
+      "browser-raw-metal.json": "44b2e77cceff478b31a9d2b6bce37dbc1c32ebb25d2a6f6bf8d01f6ba7a21ffc",
+      "browser-final-metal.json": "d71dd0f315db3bb053ca53415c6bd59d46726ec96059d152410c35acea149932",
+      "browser-raw-software.json": "4b60131b56947995606e7e7100d545dcdf8615bd399b7ecbfdd0da897e21de1a",
+      "browser-final-software.json": "1f88ca7a089b88393edd0bd2637cae4320404b0e880637e852cd0499c72530db",
+      "companion-preflight-negative.json": "577563a3eeee39346fe65b98c38885adfdadc768d9b752151d2e9c20adf2085f"
+    },
+    "reuseNativeAndFinal": true,
+    "earlierProofPreservedAt": "artifacts/verification-squeeze-main52-pre-companion-6d3182d",
+    "actualFinalCompanionAudit": {
+      "missingOptionalPayloadRefused": true,
+      "badProfileWithValidPayloadRefused": true,
+      "validProfileAndPayloadAccepted": true
+    },
+    "compiledPreflightSourceSha256": "451b7f8129ceacecefdacd08098d6bd3eea2678152d6ed1e82031146f6259f55",
+    "previousPreflightSourceSha256": "7f44680dd71c1efc3e64da94da514e80b6f10acf6c2950b0666451f871a9b889"
+  },
+  "workerNativeMathProofs": [
+    {
+      "origin": "isolated native Squeeze qualification worker",
+      "retainedRoot": "artifacts/squeeze/carrier52",
+      "nativeVersion": [
+        5,
+        2,
+        0
+      ],
+      "nativeSourceBackend": {
+        "backend": "METAL",
+        "renderer": "Metal API",
+        "vendor": "Apple M5 Pro"
+      },
+      "productionCases": 25,
+      "independentCalibrationCases": 1,
+      "refusedNativeStressCases": 12,
+      "actualFinalGlbs": 26,
+      "caseRuns": 208,
+      "rgbComparisons": 638976,
+      "maximumDistanceOutsideNativeInterval": 0,
+      "maximumDistanceToNativeIntervalLowerBound": 2.9802322387695312e-08,
+      "numericFailures": 0,
+      "executionOrValidationFailures": 0,
+      "ownedTexturesRemaining": 0,
+      "finalNegativeChecks": 212,
+      "matchedLegacyRendererRefusals": 100,
+      "adapters": [
+        "metal/webgpu",
+        "metal/webgl2",
+        "software/webgpu",
+        "software/webgl2"
+      ],
+      "snapshotSourceVerification": {
+        "commitSourcesVerified": true,
+        "allBuiltSnapshotsHashVerified": true,
+        "modulesPerReport": 164,
+        "canonicalPythonAndFixtureHashesVerified": 7
+      },
+      "files": {
+        "references.json": "a234840890bb07514e57c2cf98202adb9b03a610bf0a3693ccd3cc8f217bf36a",
+        "final-proof.json": "0932c9ba33e23b4d053df91245845307a91dceb0ee464f7ab61e9c8500b12dca",
+        "suite-metal.json": "9fbf1f2d2f1941b7324aa3103effedc9efc90dc41799c2e2e79c859159e1c9b4",
+        "suite-software.json": "1b5153b05281e7b70365c8c7f61be570b30cb00dbcd0d57dafcbf96e8db0541a",
+        "browser-raw-metal.json": "3955942f9c244305ef03ec19b3b348f300d06b16cc42f07be8a30ed1b7f6bc4e",
+        "browser-final-metal.json": "1426fddd20275d6903797b6abff928deb0c67f129031a5e1f2433bf2b770eb8d",
+        "browser-raw-software.json": "2134fac03ead300ebd73ecd329a3e8eb7d7a5e2ae3a2c60e015893184f21b6c4",
+        "browser-final-software.json": "ecca61962e232f0eb68a84a8868856c138c7def6e13e2233c996611cd816b0a7"
+      },
+      "verifiedProducerCommit": "182643e1c9fbc4956831701ec595ad84cb08183f"
+    },
+    {
+      "origin": "isolated native Squeeze qualification worker",
+      "retainedRoot": "artifacts/squeeze/carrier53",
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeSourceBackend": {
+        "backend": "METAL",
+        "renderer": "Metal API",
+        "vendor": "Apple M5 Pro"
+      },
+      "productionCases": 25,
+      "independentCalibrationCases": 1,
+      "refusedNativeStressCases": 12,
+      "actualFinalGlbs": 26,
+      "caseRuns": 208,
+      "rgbComparisons": 638976,
+      "maximumDistanceOutsideNativeInterval": 0,
+      "maximumDistanceToNativeIntervalLowerBound": 2.9802322387695312e-08,
+      "numericFailures": 0,
+      "executionOrValidationFailures": 0,
+      "ownedTexturesRemaining": 0,
+      "finalNegativeChecks": 212,
+      "matchedLegacyRendererRefusals": 100,
+      "adapters": [
+        "metal/webgpu",
+        "metal/webgl2",
+        "software/webgpu",
+        "software/webgl2"
+      ],
+      "snapshotSourceVerification": {
+        "commitSourcesVerified": true,
+        "allBuiltSnapshotsHashVerified": true,
+        "modulesPerReport": 164,
+        "canonicalPythonAndFixtureHashesVerified": 7
+      },
+      "files": {
+        "references.json": "7dd0a2c0b21cb1ba1a953bff4ac5fc8d1f8a73d348dd1fc0c033c88a9c64f493",
+        "final-proof.json": "bb2b69d5b5e4bbb7afd152d59279b709661910b97b2a0f64dd0671496725cf67",
+        "suite-metal.json": "94daf394a64fbe70cf5b060e7e51551390ab36eeca66133935947c1a0f1c3da7",
+        "suite-software.json": "5b595c0d97347d167c825bea57c9fdc839a096a8162ff7c6411e3a75b608a6be",
+        "browser-raw-metal.json": "f04021b725be1f77ab89c44fb93818645fda59268adea5100af1feac5e4a9250",
+        "browser-final-metal.json": "7fbe7c6b9e086ff575ec944bb99fe2b09e7b60f0232f9e31a69ef2bd78bfb6fd",
+        "browser-raw-software.json": "83f1b338a2c46692de41a82c008679527c0e165d6d391854145cf7cde5de4841",
+        "browser-final-software.json": "116150f36510dd6fb737ad52c37beabb7abd3c2688cf15988b59499f12386b27"
+      },
+      "verifiedProducerCommit": "182643e1c9fbc4956831701ec595ad84cb08183f"
+    }
+  ],
+  "source42": {
+    "origin": "isolated native Squeeze qualification worker",
+    "producerSourceCommit": "182643e1c9fbc4956831701ec595ad84cb08183f",
+    "status": "SOURCE_ATTESTATION_NA",
+    "nativeVersion": [
+      4,
+      2,
+      0
+    ],
+    "productionCases": 0,
+    "productionAdmission": false,
+    "reason": "Squeeze Value source attestation is N/A in Blender 4.2 background export; use verified Blender 5.2/5.3. Automatic Cycles baking cannot preserve this EEVEE node",
+    "file": "artifacts/squeeze/carrier42/not-applicable.json",
+    "sha256": "854210d540d96de50856d579b96f4a086f3981295438d2afcf0e5ed2f16d7134"
+  },
+  "limits": [
+    "No native OpenGL, Windows or other source backend/version admission is granted by this proof.",
+    "Blender4.2 retains native research only; source attestation N/A is not a numeric production pass.",
+    "Software adapters below were measured on macOS and do not claim Linux/Subzero coverage.",
+    "The main proof was rerun after the companion-audit fix; prior main reports and snapshots remain preserved separately."
+  ],
+  "measuredBrowserAdapters": {
+    "metal/webgpu": {
+      "api": "WebGPU",
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": ""
+    },
+    "metal/webgl2": {
+      "api": "WebGL2",
+      "vendor": "Google Inc. (Apple)",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+    },
+    "software/webgpu": {
+      "api": "WebGPU",
+      "vendor": "google",
+      "architecture": "swiftshader",
+      "device": "",
+      "description": ""
+    },
+    "software/webgl2": {
+      "api": "WebGL2",
+      "vendor": "Google Inc. (Google)",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+    }
+  },
+  "workerCommitIdentity": "Worker captures predate their commit: all report-pinned production module source bytes, browser fixture and canonical Python/fixture hashes independently match the stated verifiedProducerCommit. This is committed byte identity, not a recorded clean-HEAD-at-capture claim.",
+  "integratedGenericRenderer52": {
+    "testedCommit": "a676fc048b62dede86cdf67e8412e044ccd7c589",
+    "retainedRoot": "artifacts/verification-squeeze-coherent52",
+    "nativeVersion": [
+      5,
+      2,
+      0
+    ],
+    "nativeGpu": {
+      "backend": "METAL",
+      "renderer": "Metal API",
+      "vendor": "Apple M5 Pro"
+    },
+    "actualFinalGlbs": 26,
+    "caseRuns": 208,
+    "productionCasesPerPathAndApi": 25,
+    "independentControlsPerPathAndApi": 1,
+    "refusedNativeStressCases": 12,
+    "maximumDistanceOutsideNativeInterval": 0,
+    "maximumDistanceToNativeIntervalLowerBound": 2.9802322387695312e-08,
+    "ownedTexturesRemaining": 0,
+    "sourceModulesPerReport": 165,
+    "allCurrentSourceHashesVerified": true,
+    "files": {
+      "references.json": "48091f1c98cd2ec53387391b385f0ea7da72382f76da0cdb17e0503d41c5c7d9",
+      "final-proof.json": "7be1244401e1333899cee931f050bd5de5724251a6857ee11d7690194448b134",
+      "suite-metal.json": "9fbf1f2d2f1941b7324aa3103effedc9efc90dc41799c2e2e79c859159e1c9b4",
+      "suite-software.json": "1b5153b05281e7b70365c8c7f61be570b30cb00dbcd0d57dafcbf96e8db0541a",
+      "browser-raw-metal.json": "956acbd771dd47a027e47ffd901045dcc5154e78f2438e211aaa3be89748ef62",
+      "browser-raw-software.json": "9a48e141a4764c9a65d5499bc6dbdb4c7c566e8bbd1f631009ee690698300bff",
+      "browser-final-metal.json": "92709b13ddcc0be75041a60010f857aba785bfdfe329ba1b6475e18305495bbe",
+      "browser-final-software.json": "2ad0603d6b34787cfcd42244846cc86a8eafaf2746d25b9d036837f4a887e096"
+    },
+    "note": "Fresh native and Final capture with generic live-material-programs-v1 markers and exact Linux source-profile validator present. Earlier receipts remain distinct and overlapping."
+  }
+}

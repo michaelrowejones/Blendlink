@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "status": "qualified-production-source-profile-receipt",
+  "testedCommit": "225d13b4c0069efeb877994417a9e8eb0b72a6a4",
+  "testedTree": "6f1f08396584d73eef9518edafbd2c5efc90266f",
+  "sourceGuardCommit": "453a431e7f06080f3e3d13049e4952ce0bbf412e",
+  "sourceProfile": "linux-x86_64-llvmpipe20-opengl-v1",
+  "nativeVersion": [
+    5,
+    2,
+    0
+  ],
+  "nativeBuild": "fbe6228777e7",
+  "sourcePlatform": "linux",
+  "sourceArchitecture": "x86_64",
+  "actualNativeGpu": {
+    "backend": "OPENGL",
+    "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "vendor": "Mesa"
+  },
+  "workflowRun": 43436850328,
+  "job": 131924073058,
+  "artifact": 14043054195,
+  "archiveSha256": "3fe48c143cc57c460921903919adfeca96b2be0a93623909b9473319ac3a5abc",
+  "retainedRoot": "artifacts/hosted-43436850328/receipt (Linux source-profile worker)",
+  "caseRuns": 104,
+  "squeezeCasesPerPathAndApi": 25,
+  "independentCalibrationCasesPerPathAndApi": 1,
+  "actualFinalGlbs": 26,
+  "refusedNativeStressCases": 12,
+  "nativePackedIntervalWidth": 5.960464477539063e-08,
+  "kernelBudget": 2e-05,
+  "maximumDistanceOutsideNativeInterval": 0,
+  "maximumDistanceToNativeIntervalLowerBound": 5.960464477539063e-08,
+  "finalNegativeChecks": 106,
+  "ownedTexturesRemaining": 0,
+  "actualBrowserApisAndAdapters": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "device": "",
+        "description": ""
+      }
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      }
+    }
+  ],
+  "sourceAndEmitterSnapshotsIndependentlyChecked": 328,
+  "sourceMapsIndependentlyChecked": 328,
+  "copiedPythonArtifactEquality": "passed-in-hosted-suite; copied Python artifacts absent from archive so not independently rehashed offline",
+  "files": {
+    "references.json": "44584afed470b28eb2a87bcf6bcdc13050b2be8066dee1de17c6675ee2572cdb",
+    "final-proof.json": "24a8f912cd3423d3af7c0301873b840066ce5d1c80af22a3aa4c1df04a50e159",
+    "suite-software.json": "f9004b4c6187d1fac6bbd8630cb253f1652945ed90cf9e40fd290aa6fedb2526",
+    "browser-raw-software.json": "f56a52dc950cc80f19c7f5a955d7b3fcca4c9ad5a33ca497938b0c8617e9526e",
+    "browser-final-software.json": "ac590d4da090fe00e6b72fc4d7657dccc670b2055e98710c5d2df29d3290a8fa",
+    "trial-receipt.json": "12b6f313a50d92f4904c5c58c3bff2904e9c3eab9b0742c2e3a2f50d58f3da81"
+  },
+  "independentAuditSha256": "e6f03f70c51db2613521315cdbbed7c86623ddfc4c8efd96c91d8b741d889104",
+  "historicalPrivateTrial": {
+    "testedCommit": "1673186777c55f6f78c087bfb5d40e007375852a",
+    "run": 43433825183,
+    "artifact": 14042061664,
+    "archiveSha256": "b09882052f311a79b53804562e4964a6c8198ba32b3e52af08d284db3cfd596f",
+    "productionAdmissionCases": 0,
+    "scope": "Different provisional guard; never relabeled as production evidence."
+  },
+  "scope": "Same bounded EEVEE channel-function contract, literal image coordinates and four-node depth limit. This exact native Linux Blender/build/renderer profile only. No other Linux build, physical GPU, Windows profile, Blender 4.2 source, Cycles or whole-scene lighting qualification."
+}

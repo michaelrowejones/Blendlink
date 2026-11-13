@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "kind": "actual-Final-required-node-renderer-contract-proof",
+  "testedCodeCommit": "7198ccb93a2e5223fa34fbb8118d68f88f0fb3bb",
+  "baselineSourceCommit": "83224b19",
+  "nativeVersion": [
+    5,
+    2,
+    0
+  ],
+  "nativeSourceBackend": {
+    "backend": "METAL",
+    "renderer": "Metal API",
+    "vendor": "Apple M5 Pro"
+  },
+  "scope": "Actual material-channel carrier/renderer requirement and producer union only; no new Magic/Squeeze numeric parity or native backend admission.",
+  "results": {
+    "beforeLegacySidecarLoads": 0,
+    "beforeLegacyRefused": false,
+    "afterLegacySidecarLoads": 1,
+    "afterLegacyRefused": true,
+    "programSidecarUnchanged": true,
+    "savedMagicSourceUnchanged": true,
+    "installedChannelValuesExactlyUnchanged": true,
+    "browserApis": [
+      "webgpu",
+      "webgl2"
+    ],
+    "browserAdapters": [
+      {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3"
+      },
+      {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      }
+    ],
+    "errors": 0,
+    "ownedTexturesRemaining": 0,
+    "mixedMeshPrimitives": 2,
+    "mixedMatchedLegacyRefusals": 2,
+    "mixedNodeMaterialsInstalled": 2,
+    "mixedCallerStateRestored": true
+  },
+  "files": {
+    "artifacts/verification-magic-roughness-before-contract/before-marker.json": "ae146fa0dac0fb887c7924d24b9713268945e09f8e72e546afb6acee21d8404c",
+    "artifacts/verification-magic-roughness/native.json": "195d60a4e4aecaf3ed14373d699a75a06c71511fec55b35cb1076b843cafa7ed",
+    "artifacts/verification-magic-roughness/after-contract.json": "7a27199eee119e6360df1dcd4e96d8935dbf583b70c83f3f170f8cb13986b145",
+    "artifacts/verification-magic-roughness/multi-contract.json": "87074f7e8b068c5d0d05a673b38ef3caae15968907563394cb55b93613f45a08",
+    "artifacts/verification-magic-roughness/website/models/MagicRoughness.glb": "8ca4413943d9ceee6c99c0b747f56428340598a78f43aa0f8d14567e40fc7518",
+    "artifacts/verification-magic-roughness/website/models/MagicRoughness.materials.json": "6be32a628e85bb62f76b89ab1a7cc6146d7f5a5f5a171d76937c7125d1ebad1e",
+    "artifacts/verification-magic-roughness/multi-website/models/MagicSqueezeMulti.glb": "1bca4265f11cc4a11099bb782bb57b6d6cf38097483e972c40f3c8039ef5596d",
+    "artifacts/verification-magic-roughness/multi-website/models/MagicSqueezeMulti.materials.json": "4518949809a7af3ecf67626b9996a7d99fc47ae2cc36e7d197cf0439e8e90c80"
+  },
+  "limitations": [
+    "The scalar native witness uses the native scene-color carrier and is not a high-precision kernel oracle.",
+    "The baseline research capture predates immutable browser-fixture copying; it is preserved as its original proof, not retroactively assigned a newer fixture hash."
+  ]
+}

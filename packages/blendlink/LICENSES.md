@@ -65,6 +65,10 @@ and experimental field barrier `dist/tslNoiseFieldBarrier.js`, with their source
 TypeScript, are Apache-2.0 as marked by their file-level headers,
 using the complete Apache license text linked above.
 
+The first-party bounded EEVEE Squeeze runtime `dist/tslSqueeze.js` and its
+source TypeScript are Apache-2.0, as marked by the file-level header, using
+the complete Apache license text linked above.
+
 `dist/vendor/n8ao-webgpu/` contains the unchanged runtime from
 `n8ao-webgpu@0.1.0`, licensed CC0-1.0. Its complete `LICENSE`, upstream
 `NOTICE.md`, and original package metadata ship in that directory. The build
