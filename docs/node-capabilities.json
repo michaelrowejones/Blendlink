@@ -6265,7 +6265,7 @@
       "runtimeOps": [
         "difference-key"
       ],
-      "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime and mean division is explicitly rounded. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh hosted emission and asymmetric RGB threshold cases are pending; retained Linux-reference overlay tests alone are not fresh-source certification.",
+      "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime, GPU RGB sums use measured r+(g+b) association and division is explicitly rounded. Modern constant graphs retain the separate CPU (r+g)+b path. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh Linux emission retained 41 actual cases and exposed asymmetric RGB threshold failures in the first rounded-division candidate. The corrected reduction matches all 41 retained cases exactly on physical and software WebGPU/WebGL2. Fresh hosted verification of the expanded 43-case corpus, including all-constant CPU-fold controls, is pending; retained-reference replay alone is not fresh-source certification.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -6309,7 +6309,15 @@
           "retainedLinuxDiagnosticReadbacks": 156,
           "maximumDiagnosticAbsoluteError": 5.960464477539062e-07,
           "originalSerializedV1Unchanged": true,
-          "newAsymmetricFieldCases": 2
+          "newAsymmetricFieldCases": 2,
+          "retainedAsymmetricFailureArtifact": 13999568927,
+          "freshNativeCasesRetained": 41,
+          "correctedRetainedLinuxReadbacks": 164,
+          "maximumCorrectedRetainedAbsoluteError": 0,
+          "newAsymmetricConstantCases": 2,
+          "requestedFreshNativeCases": 43,
+          "gpuSumAssociation": "r+(g+b)",
+          "effectiveCpuSumAssociation": "(r+g)+b"
         }
       }
     },

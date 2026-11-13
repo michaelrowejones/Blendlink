@@ -1043,3 +1043,18 @@ including sequence RGBA values and Value-node outputs. ID defaults use type
 and name. Both extraction and the native-refusal render restore that full
 source fingerprint; the routing test explicitly changes key RGBA/Value
 output defaults to verify that either mutation is detected.
+
+The measured llvmpipe GPU dot3 reduces `r + (g + b)` before rounded division.
+Fresh hosted asymmetric pixels (run 43342259860, artifact 13999568927) match
+that order in all sixteen boundary decisions; none match `(r + g) + b`.
+The versioned profile's effective GPU evaluator therefore has its own staged
+right-associated mean. Effective CPU evaluation retains the original left
+mean, including modern GPU-authored all-constant nodes. The old v1 GPU path
+and every existing CPU/Metal path keep their arithmetic.
+
+A further all-constant Image/Matte pair uses an actual asymmetric RGB triple
+selected from the independent constructor, with alpha 2/key 0. Modern native
+GPU requests fold it through CPU. The positive matching-profile fixture now
+requests 43 cases: the original 39, two asymmetric field outputs, and two
+asymmetric constant outputs. This catches applying GPU association to the
+CPU-fold route. Native expected pixels are rendered normally for both paths.

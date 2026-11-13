@@ -51,7 +51,13 @@ tree.links.new(bump.outputs[0],bsdf.inputs['Normal']);assert not plan().errors
 # Even a linked constant height follows Blender's derivative path.
 height=tree.nodes.new('ShaderNodeValue');height.outputs[0].default_value=0
 tree.links.new(height.outputs[0],bump.inputs['Height']);result=plan()
-assert result.errors and 'unlinked Strength' in str(result.as_dict()),result.as_dict()
+# Height evaluation first checks its native renderer profile. The unrelated
+# no-height route above remains valid on every platform; linking Height must
+# keep the actual profile/control refusal rather than become a passthrough.
+qualified_height_profile=(tuple(bpy.app.version[:2]) in {(4,2),(5,2),(5,3)}
+    and bpy.context.preferences.system.gpu_backend=='METAL')
+expected_refusal='unlinked Strength' if qualified_height_profile else 'measured Blender'
+assert result.errors and expected_refusal in str(result.as_dict()),result.as_dict()
 # Source inspection never removes links or rewrites source input data.
 assert bump.inputs['Height'].links[0].from_node==height and bump.invert
 assert bump.inputs['Height'].default_value==-123

@@ -215,5 +215,13 @@ try {
   assert.deepEqual(failures, [], 'Native Noise pixels differ; see report.json')
   if (fieldTableExperiment) assert.ok(rows.some(row => row.fieldTables.length > 0),
     'Experimental field table selection lowered no native field; inspect source sampling/profile admission')
+  if (fieldTableExperiment && process.env.BLENDLINK_NOISE_FIELD_CAP === '1') {
+    for (const backend of ['webgpu', 'webgl2']) {
+      const cap = rows.find(row => row.backend === backend && row.id.endsWith('-field-table-cap'))
+      assert.ok(cap?.fieldTables.some(table => table.pixels === 16384 && table.uniquePoints === 16384
+        && table.inputBytes === 262144 && table.outputBytes === 262144),
+      `${backend} cap proof did not lower an actual16384-unique-point/262144-byte native field`)
+    }
+  }
   console.log(`BLENDLINK_NOISE_DIFFERENTIAL_PASSED ${cases.length} cases on both backends`)
 } finally { await browser?.close(); await server.close() }

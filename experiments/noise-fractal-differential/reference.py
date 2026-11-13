@@ -755,7 +755,8 @@ with tempfile.TemporaryDirectory(prefix='blendlink-native-noise-') as temporary:
             assert any(case['kind'] == 'noise' for case in cases), 'Field focus selected no actual native field'
         if os.environ.get('BLENDLINK_NOISE_FIELD_CAP'):
             assert SIZE == 128 and engine != 'CYCLES', 'Field cap requires128px EEVEE references'
-            cases = [case for case in cases if case['kind'] in {'constant','image-control'}]
+            cases = [case for case in cases if case['kind'] in {'constant','image-control'}
+                     or case['id'].startswith(engine.lower() + '-field-table-')]
             cases.append({'id':f'{engine.lower()}-field-table-cap','kind':'noise','stage':'image','dimensions':'4D',
                 'output':'Color','type':'FBM','Detail':6,'Roughness':1,'Lacunarity':2,'Scale':40,'normalize':normalized,
                 'inputPrecision':'field-cap','oracleScale':.0625,'residual':True})

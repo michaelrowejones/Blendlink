@@ -104,10 +104,11 @@ def main(output):
     oracle.scene.render.engine = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT'
     tree = oracle.tree
 
-    def setup(tolerance, falloff, color_mode='field', linked=False, key_alpha=0, zero_key=False):
+    def setup(tolerance, falloff, color_mode='field', linked=False, key_alpha=0, zero_key=False, constant_color=None):
         sink, source = oracle.reset()
         node = tree.nodes.new('CompositorNodeDiffMatte'); node.name = 'Artist Difference Key'
-        color = source.outputs['Image'] if color_mode != 'constant' else oracle.color((.2, .2, .2, 2) if zero_key else (.375, .625, .875, -.5))
+        color = source.outputs['Image'] if color_mode != 'constant' else oracle.color(
+            constant_color if constant_color is not None else (.2, .2, .2, 2) if zero_key else (.375, .625, .875, -.5))
         if color_mode == 'both-field':
             channels = oracle.separate(source.outputs['Image'])
             combine = tree.nodes.new('CompositorNodeCombineColor')
@@ -220,6 +221,7 @@ def main(output):
     # the original 39 graphs. A private image avoids stale texture-cache data.
     if oracle.device == 'GPU' and bpy.context.preferences.system.gpu_backend == 'OPENGL':
         supplement, association = association_probe_pixels()
+        association['constantProbe'] = next(row for row in association['triples'] if row['leftOpaque'])
         (output / 'association-inputs.json').write_text(json.dumps(association, indent=2))
         original_image, original_pixels = oracle.image, oracle.pixels
         image = bpy.data.images.new('Difference association inputs', width=16, height=8, alpha=True, float_buffer=True)
@@ -231,6 +233,13 @@ def main(output):
                 sink, source, node = setup(.1, .1, zero_key=True)
                 tree.links.new(node.outputs[name], sink.inputs[0])
                 save('difference-key-hdr-association-' + name.lower(), source)
+            # All inputs are actual literal nodes; modern native GPU requests
+            # evaluate this through CPU. It must not acquire GPU dot3 order.
+            for name in ['Image', 'Matte']:
+                sink, source, node = setup(.1, .1, color_mode='constant', zero_key=True,
+                    constant_color=(*association['constantProbe']['rgb'], 2))
+                tree.links.new(node.outputs[name], sink.inputs[0])
+                save('difference-key-hdr-association-constant-' + name.lower(), source)
         finally:
             oracle.image, oracle.pixels = original_image, original_pixels
             tree.nodes.clear()

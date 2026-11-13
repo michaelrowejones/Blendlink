@@ -224,7 +224,7 @@ const installRoot = mkdtempSync(join(tmpdir(), 'blendlink-addon-install-'))
 const resources = join(installRoot, 'resources')
 const archive = join(installRoot, 'blendlink.zip')
 const savedScene = join(installRoot, 'Scene With Spaces.blend')
-const installEnvironment = { ...process.env, BLENDER_USER_RESOURCES: resources }
+const installEnvironment = { ...process.env, BLENDER_USER_RESOURCES: resources, BLENDLINK_REINSTALL_NODE: process.execPath }
 mkdirSync(resources, { recursive: true })
 
 function runInstallStep(label, args) {
@@ -450,6 +450,15 @@ print("##blendlink-addon-install " + json.dumps({
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }
   console.log('BLENDLINK_FULL_TEST addon: isolated install passed')
+  const reinstallOutput = runInstallStep('same-process extension reinstall', [
+    '--background', '--factory-startup', '--python-exit-code', '1',
+    '--python', join(testsDir, 'reinstall_check.py'), '--',
+    '--archive', archive, '--work', join(installRoot, 'reinstall'),
+  ])
+  if (!reinstallOutput.includes('BLENDLINK_ADDON_REINSTALL_PASSED ')) {
+    throw new Error(`Same-process extension reinstall did not pass:\n${reinstallOutput}`)
+  }
+  console.log('BLENDLINK_FULL_TEST addon: same-version reinstall, scene preservation and cleanup passed')
   if (desktopSmoke) {
     // Exercise the exact installed Python entry point with global Node/npm
     // removed. The local compiler override lets an unpublished revision run.

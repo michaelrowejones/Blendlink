@@ -38,24 +38,49 @@ from pathlib import Path
 import bpy
 from mathutils import Vector
 
-# Sibling modules in this directory, following the same convention as
-# export_scene.py: bakelib is loaded both as a Blender-side import and
-# directly by path from headless test modules, so it puts its own
-# directory on the path rather than assuming a caller did.
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from uvgeometry import (  # noqa: E402
-    _RECEIVER_RECTANGLE_EPSILON,
-    _RECEIVER_RECTANGLE_ORDERINGS,
-    _RECEIVER_RECTANGLE_SCORINGS,
-    _maxrects_receiver_attempt,
-    _ordered_receiver_rectangles,
-    _prune_receiver_free_rectangles,
-    _receiver_rectangle_contains,
-    _receiver_rectangles_intersect,
-    _uv_bounds_tuple_distance,
-    allocate_receiver_rectangles,
-    nearby_uv_bounds_pairs,
-)
+# Installed extensions must keep helpers in their own package namespace:
+# Blender replaces that namespace on reinstall, but deliberately leaves bare
+# modules alone. Source addon tests load this file under their package name
+# from the canonical sibling directory; ordinary exporter processes use the
+# historical bare import path.
+if __package__:
+    import importlib
+    import importlib.util
+    _uvgeometry_name = __package__ + ".uvgeometry"
+    try:
+        _uvgeometry = importlib.import_module(_uvgeometry_name)
+    except ModuleNotFoundError as error:
+        if error.name != _uvgeometry_name:
+            raise
+        _uvgeometry_path = Path(__file__).with_name("uvgeometry.py")
+        _uvgeometry_spec = importlib.util.spec_from_file_location(_uvgeometry_name, _uvgeometry_path)
+        _uvgeometry = importlib.util.module_from_spec(_uvgeometry_spec)
+        sys.modules[_uvgeometry_name] = _uvgeometry
+        try:
+            _uvgeometry_spec.loader.exec_module(_uvgeometry)
+        except Exception:
+            sys.modules.pop(_uvgeometry_name, None)
+            raise
+else:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import uvgeometry as _uvgeometry
+
+for _uvgeometry_export in (
+    "_RECEIVER_RECTANGLE_EPSILON",
+    "_RECEIVER_RECTANGLE_ORDERINGS",
+    "_RECEIVER_RECTANGLE_SCORINGS",
+    "_maxrects_receiver_attempt",
+    "_ordered_receiver_rectangles",
+    "_prune_receiver_free_rectangles",
+    "_receiver_rectangle_contains",
+    "_receiver_rectangles_intersect",
+    "_uv_bounds_tuple_distance",
+    "allocate_receiver_rectangles",
+    "nearby_uv_bounds_pairs",
+):
+    globals()[_uvgeometry_export] = getattr(_uvgeometry, _uvgeometry_export)
+del _uvgeometry_export
+
 
 
 def capture_fixed_camera_card(

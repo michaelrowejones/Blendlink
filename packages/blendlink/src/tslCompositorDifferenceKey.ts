@@ -46,6 +46,19 @@ const legacyMean = Fn(([red, green, blue]: TslEffectNode[]) => {
   { name: 'red', type: 'float' }, { name: 'green', type: 'float' }, { name: 'blue', type: 'float' },
 ] })
 
+/** This measured GPU dot3 reduces r+(g+b). Native modern constant inputs
+ * fold through CPU instead and retain the original left-associated mean. */
+const llvmpipeMean = Fn(([red, green, blue]: TslEffectNode[]) => {
+  const sum = rounded(min(red, 12).add(rounded(min(green, 12).add(min(blue, 12)))))
+  const quotient = rounded(sum.div(3)), twice = rounded(quotient.mul(2))
+  const product = rounded(twice.add(quotient)), bridge = rounded(product.sub(twice))
+  const error = rounded(rounded(twice.sub(rounded(product.sub(bridge)))).add(rounded(quotient.sub(bridge))))
+  const residual = rounded(rounded(sum.sub(product)).sub(error))
+  return rounded(quotient.add(rounded(residual.div(3))))
+}).setLayout({ name: 'blendlinkLlvmPipeDifferenceMeanV1', type: 'float', inputs: [
+  { name: 'red', type: 'float' }, { name: 'green', type: 'float' }, { name: 'blue', type: 'float' },
+] })
+
 /** Independent average-RGB-distance key. Legacy CPU fully keyed pixels
  * become zero even for negative input alpha; modern/GPU retain the alpha cap. */
 export function buildCompositorDifferenceKey(op: SourceCompositorOperation,
@@ -68,7 +81,8 @@ export function buildCompositorDifferenceKey(op: SourceCompositorOperation,
   if (!['Image', 'Matte'].includes(op.source.output)) return fail('Difference Key requires Image or Matte output')
   return Fn(() => {
     const color = input('Image 1').toVar(), delta = abs(color.rgb.sub(input('Image 2').rgb)).toVar()
-    const difference = (device === 'CPU' || roundedGpu ? legacyMean(delta.r, delta.g, delta.b)
+    const difference = (device === 'CPU' ? legacyMean(delta.r, delta.g, delta.b)
+      : roundedGpu ? llvmpipeMean(delta.r, delta.g, delta.b)
       : delta.r.add(delta.g).add(delta.b).div(3)).toVar()
     const [tolerance, falloff] = settings
     const ratio = falloff === 0 ? float(0) : max(difference.sub(tolerance), 0).div(falloff)
