@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 
 import bpy
+import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from compositor_reference import NativeCompositorReference, compositor_graph
@@ -17,6 +18,7 @@ def main(output):
         name='Composite output alpha', image_only_scene=True)
     scene, tree = oracle.scene, oracle.tree
     scene.render.engine = 'BLENDER_EEVEE' if bpy.app.version >= (5, 0, 0) else 'BLENDER_EEVEE_NEXT'
+    source_refusals = []
     for use_alpha in ((True,) if oracle.modern else (True, False)):
         for mode in ('field', 'grade', 'translate', 'constant-zero', 'constant-hdr'):
             sink, source = oracle.reset()
@@ -38,6 +40,29 @@ def main(output):
                 value = oracle.color((-.25, 2, .125, 0 if mode == 'constant-zero' else 2))
             tree.links.new(value, sink.inputs[0])
             before = compositor_graph.extract(scene)
+            if before['status'] != 'extracted':
+                # This fixture's output policy does not qualify an unrelated
+                # native GPU sampler. Keep its authored graph and actual pixels
+                # as an explicit source refusal, outside the numerical index.
+                assert (oracle.modern and oracle.device == 'GPU' and mode == 'translate'
+                    and bpy.context.preferences.system.gpu_backend != 'METAL'), before
+                diagnostic = before['diagnostics'][-1]
+                assert diagnostic['code'] == 'unsupported-transform-mode' and 'verified native GPU sampler' in diagnostic['message'], before
+                replacement = tree.nodes.new('CompositorNodeImage'); replacement.image = oracle.image
+                for link in list(source.outputs['Image'].links):
+                    tree.links.new(replacement.outputs['Image'], link.to_socket)
+                scene.render.filepath = str(output / 'refused-native.exr')
+                with oracle._render_sampling():
+                    bpy.ops.render.render(write_still=True)
+                loaded = bpy.data.images.load(scene.render.filepath, check_existing=False); loaded.alpha_mode = 'PREMUL'
+                native = np.asarray(loaded.pixels[:], np.float32)
+                assert len(native) == oracle.width * oracle.height * 4 and np.isfinite(native).all()
+                source_refusals.append({'case': mode, 'program': before, 'diagnostics': before['diagnostics'],
+                    'device': oracle.device, 'backend': bpy.context.preferences.system.gpu_backend,
+                    'width': oracle.width, 'height': oracle.height, 'input': oracle.pixels.ravel().tolist(),
+                    'expected': native.tolist(), 'numericalCase': False})
+                bpy.data.images.remove(loaded)
+                continue
             assert before['status'] == 'extracted', before
             assert before.get('outputAlpha') == (None if use_alpha else 'legacy-composite-opaque-v1'), before
             oracle.save('composite-output-' + str(int(use_alpha)) + '-' + mode, source, exact_alpha=True)
@@ -54,6 +79,10 @@ def main(output):
         refused = compositor_graph.extract(scene)
         assert refused['status'] == 'unsupported' and refused['diagnostics'][-1]['code'] == 'animated-tree', refused
         tree.animation_data_clear()
+    expected_refusals = int(oracle.modern and oracle.device == 'GPU'
+        and bpy.context.preferences.system.gpu_backend != 'METAL')
+    assert len(source_refusals) == expected_refusals, source_refusals
+    (output / 'source-refusals.json').write_text(json.dumps(source_refusals, indent=2))
     oracle.finish('BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_PASSED')
 
 

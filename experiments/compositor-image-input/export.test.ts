@@ -26,7 +26,11 @@ it('publishes exact packed-Image input bytes in the actual pinned Final presenta
   expect(Object.keys(presentation.compositor.images)).toHaveLength(1)
   const input = decodeStaticCompositorImage(Object.values(presentation.compositor.images)[0] as any)
   const reference = JSON.parse(readFileSync(resolve(root, 'native-reference.json'), 'utf8'))
-  const maximum = Math.max(...input.map((value, index) => Math.abs(value - reference.nativeInput[index])))
+  expect(presentation.compositor.outputAlpha ?? null).toBe(reference.outputAlpha ?? null)
+  let maximum = 0
+  if (reference.nativeInput) for (let index = 0; index < input.length; index++)
+    maximum = Math.max(maximum, Math.abs(input[index]! - reference.nativeInput[index]))
+  if (reference.nativeInputSha256) expect(hash(new Uint8Array(input.buffer, input.byteOffset, input.byteLength))).toBe(reference.nativeInputSha256)
   expect(maximum).toBeLessThanOrEqual(2e-5)
   const issues = await verifyAll(config)
   expect(issues.filter(issue => issue.severity !== 'warning')).toEqual([])

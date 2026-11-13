@@ -149,6 +149,7 @@ if (!plan.compositor) {
   nativeCompositorGpu = { status: 'not-requested', reason: 'Explicit ' + plan.suite + ' suite' }
 } else if (capabilities.offlineGpuAvailable && capabilities.gpuParityVersionSupported) {
   const gpuFamilies = [
+    ['color-key-gpu-subset', 'compositor_color_key_gpu_subset_check.py', 'BLENDLINK_COMPOSITOR_COLOR_KEY_GPU_REFERENCES', 'BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE'],
     ['output-alpha-gpu', 'compositor_output_alpha_check.py', 'BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_REFERENCES', 'BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_DEVICE'],
     ['math-gpu', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES', 'BLENDLINK_COMPOSITOR_MATH_DEVICE'],
     ['blur-gpu', 'compositor_blur_check.py', 'BLENDLINK_COMPOSITOR_BLUR_REFERENCES', 'BLENDLINK_COMPOSITOR_BLUR_DEVICE'],

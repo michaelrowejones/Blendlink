@@ -187,11 +187,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        family: [Luminance Key, Difference Key, Color Spill, Color Key, Chroma Key, Image, Composite Output]
+        family: [Luminance Key, Difference Key, Color Spill, Color Key, Color Key GPU subset, Chroma Key, Image, Composite Output]
         source_device: [CPU, GPU]
         exclude:
           - family: Color Key
             source_device: GPU
+          - family: Color Key GPU subset
+            source_device: CPU
           - family: Chroma Key
             source_device: GPU
           - family: Image
@@ -217,6 +219,11 @@ jobs:
             device_variable: BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE
             reference_variable: BLENDLINK_COMPOSITOR_COLOR_KEY_REFERENCES
             evidence: color-key
+          - family: Color Key GPU subset
+            fixture: compositor_color_key_gpu_subset_check.py
+            device_variable: BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_COLOR_KEY_GPU_REFERENCES
+            evidence: color-key-gpu-subset
           - family: Chroma Key
             fixture: compositor_chroma_key_check.py
             device_variable: BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE

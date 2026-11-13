@@ -31,8 +31,9 @@ Blender 4.2 currently requires even source and drawing-buffer dimensions.
 Investigated odd legacy windows had unqualified/corrupt native results.
 An unsupported resize raises a named limitation, preserves caller MRT/target/
 clear state, and can recover at the next valid extent without rebuilding.
-The retained Image corpus uses the default legacy Composite Use Alpha setting;
-terminal output-alpha policy belongs after finite-window realization.
+Legacy Composite Use Alpha is applied after finite-window realization. Its
+disabled state makes the entire output opaque, including padded canvas pixels.
+A separate 4.2 resize and actual Final packed-PNG proof retains that policy.
 
 ## Limits
 
@@ -58,15 +59,15 @@ terminal output-alpha policy belongs after finite-window realization.
 
 ## Earned evidence
 
-The durable native fixture produces **95 graphs on 4.2 and 97 each on 5.2/5.3**:
-289 graph cases / 329 actual reference frames. It measures Image/Alpha,
+The durable native fixture produces **96 graphs on 4.2 and 97 each on 5.2/5.3**:
+290 graph cases / 334 actual reference frames. It measures Image/Alpha,
 file/packed/generated sources, RGB/RGBA PNGs, unsaved painted file/packed
 buffers, alpha modes, signed/HDR float values, a losslessly compressed 1080p
 background, pointwise grading and shared Image/Alpha use. Resize cases retain
 one compositor through odd/even sizes, DPR 2, repeated extents and legacy
 rejection/recovery, checking caller state and stable shader structure.
 
-The built SDK passes **1,156 graph checks / 1,316 positive output-frame checks**
+The built SDK passes **1,160 graph checks / 1,336 positive output-frame checks**
 across recorded Apple M5 Pro Metal and LLVM SwiftShader, each using WebGPU and
 WebGL2. Maximum absolute error is 2.384185791015625e-7 against the unchanged
 2e-5 budget. The copied installed-package probe extracts an actual pinned
@@ -81,9 +82,62 @@ proof loads that exact GLB and pinned presentation through the production post
 pipeline, including the display transform, and rejects a bad presentation pin.
 All three native versions pass both recorded adapters/backends; the largest
 Final pixel difference is 5.960464477539063e-8.
+The additional 4.2 Final packed-PNG scene with Use Alpha disabled passes all
+four adapter/backend profiles exactly, including opaque padding; source and
+published-input preservation and bad-pin rejection remain required.
 
 This is a partial input/canvas port, not universal image formats, working spaces,
 video playback, mip/transform coverage or whole-renderer appearance parity.
+
+## Preparation and responsiveness
+
+The normal post-pipeline installer prepares Image inputs asynchronously before
+finalization. It owns one opaque preparation per install attempt. The signal
+already used by the compiled-scene transaction cancels decoding, including a
+pending application scheduler. A failed or cancelled replacement leaves the
+previous pipeline usable. Handles are bound to the original program and image
+bytes, reject mutation/cross-document/disposed/forged reuse, and release CPU
+references after graph construction. Textures then own their Float32 arrays.
+There is no global decoded-image cache and the published IR/pins are unchanged.
+
+Base64 conversion uses feature-detected native conversion or an indexed
+fallback. Native DecompressionStream is fed bounded 2KiB input pulls; browsers
+without it use Three's existing streaming fflate. Checksum and finite scans
+also cooperate with a default 4ms work target. A whole-Blob DecompressionStream
+prototype produced a 150ms task and was rejected; an asynchronous API alone
+did not make that path responsive. The synchronous decoder/builder remain
+compatible for explicit low-level callers; the normal installer uses prepared
+arrays and does not decode again during finalization.
+
+The 1920x1080 case retains 33,177,600 decoded bytes and 2,383,040 compressed
+bytes. Browser phase measurements found callback base64 conversion cost
+57–62ms versus 3–6ms indexed / 0.5–1.3ms native, and callback finite scans
+30–33ms versus 4–5ms indexed. Those changes alone reduced synchronous decode
+from 180–188ms to 104–114ms; that still blocks an interactive preview.
+
+The actual pinned 1080p-input Final fixture now measures preparation, finalization,
+GPU rendering/readback, repeated replacement and cancellation separately.
+It processes the full native-sized input/RTT and crops to a 16x8 output canvas;
+this timing corpus does not qualify a 1080p final drawing-buffer deadline.
+Recorded Apple Metal and SwiftShader runs on both browser APIs retained
+16.8ms preparation RAF gaps, no preparation long tasks, cancellation/rejection
+within 22ms for a 16ms scheduled request, exact last-good pixels, and unchanged
+GPU texture counts. The native-stream phase corpus observed 4.1–5.3ms maximum
+CPU slices. Preparation trades throughput for responsiveness: measured native
+stream preparation took about 0.35–0.46s; feature-disabled streaming fallback
+about 0.50–0.70s. Reapply remains cancellable throughout that interval. These
+are local measurements, not timing guarantees on other hardware or workloads.
+
+Cold shader compilation/texture upload is a separate limitation. A retained
+early Metal/WebGL run produced a 166ms post-preparation task; later runs did
+not. Three's public scene compileAsync does not compile the RenderPipeline's
+private final quad/RTT stack. These results do not guarantee a universal
+first-frame GPU deadline or eliminate browser/driver initialization stalls.
+
+`performance.js` deliberately reproduces synchronous phases for measurement;
+its resulting long tasks are not the normal installer path. The cancellation
+timestamp is taken before pixel verification. Use the Final fixture's
+`installationTimings` for the actual application path.
 
 ## Reproduce
 
@@ -115,6 +169,15 @@ BLENDLINK_COMPOSITOR_IMAGE_BUILT=1 node packages/blendlink/scripts/run-vitest.mj
   experiments/compositor-image-input/export.test.ts
 node experiments/compositor-image-input/run.mjs --built
 ```
+
+Set `BLENDLINK_COMPOSITOR_IMAGE_1080P=1` before saving the Final fixture to run
+the large-image installation/cancel/reapply proof. Use
+`BLENDLINK_IMAGE_FORCE_STREAM_FALLBACK=1` for explicit native-stream/native-base64
+feature-disabled playback. Optional
+`BLENDLINK_IMAGE_PERFORMANCE_PROGRAM=/absolute/path/to/packed-1080p-crop.json`
+adds isolated base64/inflate/checksum/finite timing using a native reference
+from the regular Image corpus. Reports and immutable runtime snapshots retain
+separate performance/fallback suffixes.
 
 Primary contracts:
 

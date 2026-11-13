@@ -112,6 +112,8 @@ export interface ThreeComponentAdapterContext {
 }
 
 export interface InstallThreeComponentsOptions {
+  /** Cancels attempt-owned CPU preparation before any post pipeline installs. */
+  signal?: AbortSignal
   sourcePresentation?: import('./sourceDisplay.js').SourcePresentation
   components?: readonly Readonly<PortableComponentRecord>[] | null
   root: THREE.Object3D

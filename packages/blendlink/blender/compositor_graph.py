@@ -595,7 +595,7 @@ def extract(scene):
                 elif node.bl_idname == "CompositorNodeColorMatte":
                     normalize_color_key(node, socket, op, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
-                        lambda incoming, message: fail("unsupported-color-key", path, node, incoming, message))
+                        lambda incoming, message: fail("unsupported-color-key", path, node, incoming, message), result["ops"])
                 elif node.bl_idname == "CompositorNodeChromaMatte":
                     normalize_chroma_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,

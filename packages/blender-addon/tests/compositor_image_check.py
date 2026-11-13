@@ -150,6 +150,25 @@ def main(destination):
             'assertShaderCost':{'maxPasses':2,'maxFragmentBytes':100000}}))
         oracle.rows.append({'case':case})
         oracle.scene.render.resolution_x=16;oracle.scene.render.resolution_y=8
+    if bpy.app.version<(5,0):
+        sink.use_alpha=False;program=compositor_graph.extract(oracle.scene)
+        assert program['status']=='extracted' and program['outputAlpha']=='legacy-composite-opaque-v1',program
+        opaque_frames=[]
+        for frame in frames:
+            frame=dict(frame)
+            if 'expectError' not in frame:
+                oracle.scene.render.resolution_x=frame['width'];oracle.scene.render.resolution_y=frame['height']
+                oracle.scene.render.filepath=str(destination/'opaque-responsive.exr');bpy.ops.render.render(write_still=True)
+                native=bpy.data.images.load(oracle.scene.render.filepath,check_existing=False);native.alpha_mode='PREMUL'
+                frame['expected']=list(native.pixels[:]);assert set(frame['expected'][3::4])=={1}
+                bpy.data.images.remove(native)
+            opaque_frames.append(frame)
+        case=oracle.prefix+'-image-responsive-8x4-opaque'
+        (destination/(case+'.json')).write_text(json.dumps({'case':case,'blenderVersion':bpy.app.version_string,
+            'blenderHash':bpy.app.build_hash.decode(),'program':program,'resizeFrames':opaque_frames,
+            'assertShaderCost':{'maxPasses':2,'maxFragmentBytes':100000}}))
+        oracle.rows.append({'case':case})
+        oracle.scene.render.resolution_x=16;oracle.scene.render.resolution_y=8
     failures=[]
     for target in ['gpu','filter','mixed-render','different-image','positive-odd-source','missing','sequence','byte-color','animated']:
         sink,unused=oracle.reset();node=tree.nodes.new('CompositorNodeImage');node.image=images[0];output=node.outputs['Image']

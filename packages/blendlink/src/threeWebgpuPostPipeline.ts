@@ -21,6 +21,7 @@ import * as THREE from 'three'
 import { buildSourceDisplay } from './tslSourceDisplay.js'
 import { buildSourceDepth } from './tslSourcePasses.js'
 import { buildSourceCompositor, SourceCompositorUnsupported } from './tslSourceCompositor.js'
+import { prepareStaticCompositorImages, type PreparedStaticCompositorImages } from './tslCompositorStaticImage.js'
 import { RenderPipeline } from 'three/webgpu'
 import {
   Fn,
@@ -142,16 +143,26 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   private finalized = false
   private activated = false
   private disposed = false
+  private preparedImages: PreparedStaticCompositorImages | undefined
 
   static async create(
     options: InstallThreeComponentsOptions,
   ): Promise<ThreeWebgpuPostPipelineService> {
+    options.signal?.throwIfAborted()
     const needsAO = (options.components ?? []).some((component) =>
       component.enabled && component.type === 'blendlink.ambient-occlusion')
     const n8ao = needsAO
       ? await import('n8ao-webgpu') as unknown as N8AOWebgpuModule
       : null
-    return new ThreeWebgpuPostPipelineService(n8ao, options)
+    const graph = options.sourcePresentation?.compositor
+    const preparedImages = graph?.ops.some(op => op.kind === 'image-input')
+      ? await prepareStaticCompositorImages(graph, { signal: options.signal }) : undefined
+    try {
+      options.signal?.throwIfAborted()
+      const pipeline = new ThreeWebgpuPostPipelineService(n8ao, options)
+      pipeline.preparedImages = preparedImages
+      return pipeline
+    } catch (error) { preparedImages?.dispose(); throw error }
   }
 
   private constructor(
@@ -197,6 +208,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   finalize(): void {
     if (this.disposed) throw new Error('The Blendlink post pipeline has already been disposed.')
     if (this.finalized) return
+    this.options.signal?.throwIfAborted()
     const registrations = [...this.registrations.values()]
       .sort((left, right) => phaseRank(left.phase) - phaseRank(right.phase)
         || left.id.localeCompare(right.id))
@@ -259,7 +271,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
             return buildSourceDepth(scenePass.getTextureNode('depth'), () => this.options.camera)
           }
           return null
-        }, { resolvePassExtent: (_request, renderer) => {
+        }, { preparedImages: this.preparedImages, resolvePassExtent: (_request, renderer) => {
           // Registered color effects represent the full physical scene image,
           // even when their result is a field expression rather than a texture.
           renderer.getDrawingBufferSize(compositorExtent)
@@ -270,6 +282,8 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       } catch (error) {
         if (!(error instanceof SourceCompositorUnsupported)) throw error
         ;(this.options.onWarning ?? console.warn)(`${error.message}. The complete compositor is bypassed; the scene and display transform remain active.`)
+      } finally {
+        this.preparedImages?.dispose(); this.preparedImages = undefined
       }
     }
     // The HDR→LDR boundary: renderOutput applies the renderer's authored
@@ -357,6 +371,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   dispose(): void {
     if (this.disposed) return
     this.disposed = true
+    this.preparedImages?.dispose(); this.preparedImages = undefined
     const errors: unknown[] = []
     for (const registration of [...this.registrations.values()].reverse()) {
       try { registration.dispose?.() } catch (error) { errors.push(error) }

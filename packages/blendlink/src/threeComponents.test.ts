@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { deflateSync } from 'node:zlib'
 import * as THREE from 'three'
 import {
   BlendFunction, BloomEffect, Effect, EffectComposer, LUT3DEffect, OutlineEffect, SMAAEffect,
@@ -61,6 +62,31 @@ function postFixture(hdr = true) {
 }
 
 describe('installThreeComponents', () => {
+  it('aborts Image preparation without activating replacements or disposing the existing components', async () => {
+    const f = fixture(), previous = await installThreeComponents({ ...f })
+    Object.assign(f.renderer, { isWebGPURenderer: true, getPixelRatio: () => 1 })
+    const controller = new AbortController(), input = new Float32Array(16).fill(.25)
+    const sourcePresentation: import('./sourceDisplay.js').SourcePresentation = {
+      schemaVersion: 1, model: 'blendlink-source-presentation-v1', warnings: [], compositor: {
+        version: 1, status: 'extracted', passes: [], diagnostics: [], images: { image: {
+          model: 'native-cpu-static-image-v1', encoding: 'zlib-le-rgba32f', width: 2, height: 2,
+          decodedBytes: input.byteLength, data: deflateSync(new Uint8Array(input.buffer)).toString('base64'),
+          source: { name: 'Background', kind: 'GENERATED', colorSpace: 'Raw', alphaMode: 'PREMUL', storage: 'direct-float-buffer' },
+        } }, ops: [{ id: 'image', kind: 'image-input', type: 'RGBA', inputs: {}, properties: {
+          evaluation_device: 'CPU', image_id: 'image', image_window_model: 'modern-cpu-v1',
+        }, source: { path: ['Compositor'], node: 'Image', nodeType: 'CompositorNodeImage', output: 'Image' } }],
+        output: { kind: 'ref', type: 'RGBA', node: 'image' },
+      },
+    }
+    const pending = installThreeComponents({ ...f, sourcePresentation, signal: controller.signal })
+    controller.abort()
+    await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+    sourcePresentation.compositor!.images!.image!.data = '???='
+    await expect(installThreeComponents({ ...f, sourcePresentation })).rejects.toThrow(/Static Image/)
+    previous.render()
+    expect(f.render).toHaveBeenCalledWith(f.scene, f.camera)
+    previous.dispose()
+  })
   it('keeps the normal Three render path as a first-class no-component case', async () => {
     const f = fixture()
     const installed = await installThreeComponents({ ...f })

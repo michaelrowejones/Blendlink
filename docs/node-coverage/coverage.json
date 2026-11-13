@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "e711033e0e97d11fdce8e9a6896787452b202bf264622a3a74bfa9751b89488d",
+  "capabilityMapSha256": "8c3d29244e74bf05764913b60efe548956e0152f1c1f54ce7c5455d55bee7dfa",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T02:07:07.233822+00:00",
+  "generatedAt": "2026-11-13T03:11:36.476940+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -412,11 +412,23 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/COLOR_KEY.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorGray.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorGray.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_key_gpu_subset_check.py"
+                },
+                {
+                  "path": "experiments/color-key-gpu-precision/README.md"
                 }
               ],
               "id": "CompositorNodeColorMatte",
               "label": "Color Key",
-              "limits": "CPU source compositing only. Image/Matte preserve strict native HSV thresholds, legacy doubled-hue versus modern half-threshold wrap, ignored key alpha and original signed/HDR alpha; Image multiplies whole RGBA by Matte. Live Image/Key Color with fixed normal Float32 Hue/Saturation/Value thresholds in [0,1], or zero; modern proven fixed Value/Math links accepted. Native threshold neighbors, nonbinary colors, groups, cascades and Matte-to-Alpha use are measured. GPU-authored fields/folded constants require a named refusal: actual Metal hue boundaries remain unported. Subnormal/changing controls, animation and unsupported image-domain combinations refuse.",
+              "limits": "CPU source compositing supports the documented chromatic domain. Fresh GPU sources additionally admit independently proven grayscale Image and Key Color, or exactly zero Saturation/Value dead predicates. Image/Matte preserve strict native HSV thresholds, legacy doubled-hue versus modern half-threshold wrap, ignored key alpha and original signed/HDR alpha; Image multiplies whole RGBA by Matte. Live Image/Key Color with fixed normal Float32 Hue/Saturation/Value thresholds in [0,1], or zero; modern proven fixed Value/Math links accepted. Native threshold neighbors, nonbinary colors, groups, cascades and Matte-to-Alpha use are measured. General chromatic GPU fields/folded constants retain a named refusal: measured Metal fast-reciprocal and FMA boundaries remain unported. Fresh grayscale/dead models independently inspect executable scalar/RGB shapes; a gray annotation or declared scalar type is insufficient. Grayscale Hue is zero or >=2^-125; Image still multiplies full RGBA by original signed/HDR alpha. Zero Saturation/Value prunes the unused Key Color subtree without rewriting source nodes. Subnormal/changing controls, animation and unsupported image-domain combinations refuse.",
               "runtimeOps": [
                 "color-key"
               ],
@@ -6169,11 +6181,23 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/COLOR_KEY.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorGray.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorGray.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_key_gpu_subset_check.py"
+                },
+                {
+                  "path": "experiments/color-key-gpu-precision/README.md"
                 }
               ],
               "id": "CompositorNodeColorMatte",
               "label": "Color Key",
-              "limits": "CPU source compositing only. Image/Matte preserve strict native HSV thresholds, legacy doubled-hue versus modern half-threshold wrap, ignored key alpha and original signed/HDR alpha; Image multiplies whole RGBA by Matte. Live Image/Key Color with fixed normal Float32 Hue/Saturation/Value thresholds in [0,1], or zero; modern proven fixed Value/Math links accepted. Native threshold neighbors, nonbinary colors, groups, cascades and Matte-to-Alpha use are measured. GPU-authored fields/folded constants require a named refusal: actual Metal hue boundaries remain unported. Subnormal/changing controls, animation and unsupported image-domain combinations refuse.",
+              "limits": "CPU source compositing supports the documented chromatic domain. Fresh GPU sources additionally admit independently proven grayscale Image and Key Color, or exactly zero Saturation/Value dead predicates. Image/Matte preserve strict native HSV thresholds, legacy doubled-hue versus modern half-threshold wrap, ignored key alpha and original signed/HDR alpha; Image multiplies whole RGBA by Matte. Live Image/Key Color with fixed normal Float32 Hue/Saturation/Value thresholds in [0,1], or zero; modern proven fixed Value/Math links accepted. Native threshold neighbors, nonbinary colors, groups, cascades and Matte-to-Alpha use are measured. General chromatic GPU fields/folded constants retain a named refusal: measured Metal fast-reciprocal and FMA boundaries remain unported. Fresh grayscale/dead models independently inspect executable scalar/RGB shapes; a gray annotation or declared scalar type is insufficient. Grayscale Hue is zero or >=2^-125; Image still multiplies full RGBA by original signed/HDR alpha. Zero Saturation/Value prunes the unused Key Color subtree without rewriting source nodes. Subnormal/changing controls, animation and unsupported image-domain combinations refuse.",
               "runtimeOps": [
                 "color-key"
               ],
@@ -13428,11 +13452,23 @@
                 },
                 {
                   "path": "experiments/native-compositor-differential/COLOR_KEY.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorGray.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorGray.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_color_key_gpu_subset_check.py"
+                },
+                {
+                  "path": "experiments/color-key-gpu-precision/README.md"
                 }
               ],
               "id": "CompositorNodeColorMatte",
               "label": "Color Key",
-              "limits": "CPU source compositing only. Image/Matte preserve strict native HSV thresholds, legacy doubled-hue versus modern half-threshold wrap, ignored key alpha and original signed/HDR alpha; Image multiplies whole RGBA by Matte. Live Image/Key Color with fixed normal Float32 Hue/Saturation/Value thresholds in [0,1], or zero; modern proven fixed Value/Math links accepted. Native threshold neighbors, nonbinary colors, groups, cascades and Matte-to-Alpha use are measured. GPU-authored fields/folded constants require a named refusal: actual Metal hue boundaries remain unported. Subnormal/changing controls, animation and unsupported image-domain combinations refuse.",
+              "limits": "CPU source compositing supports the documented chromatic domain. Fresh GPU sources additionally admit independently proven grayscale Image and Key Color, or exactly zero Saturation/Value dead predicates. Image/Matte preserve strict native HSV thresholds, legacy doubled-hue versus modern half-threshold wrap, ignored key alpha and original signed/HDR alpha; Image multiplies whole RGBA by Matte. Live Image/Key Color with fixed normal Float32 Hue/Saturation/Value thresholds in [0,1], or zero; modern proven fixed Value/Math links accepted. Native threshold neighbors, nonbinary colors, groups, cascades and Matte-to-Alpha use are measured. General chromatic GPU fields/folded constants retain a named refusal: measured Metal fast-reciprocal and FMA boundaries remain unported. Fresh grayscale/dead models independently inspect executable scalar/RGB shapes; a gray annotation or declared scalar type is insufficient. Grayscale Hue is zero or >=2^-125; Image still multiplies full RGBA by original signed/HDR alpha. Zero Saturation/Value prunes the unused Key Color subtree without rewriting source nodes. Subnormal/changing controls, animation and unsupported image-domain combinations refuse.",
               "runtimeOps": [
                 "color-key"
               ],
@@ -21350,10 +21386,10 @@
     "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
     "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
-    "packages/blendlink/blender/compositor_color_key.py": "40a10dde3fb179aba672664446b89cd80cb3a03881490143643a5cd5b7a3cb32",
+    "packages/blendlink/blender/compositor_color_key.py": "3d905f6f46171a0c9beb48edf280d3969d8f53ef77a11a0334124cdc176e84f5",
     "packages/blendlink/blender/compositor_difference_key.py": "fb6ed344f0f524ab8fe958978bad80f2938f7816b972653cc9f85b68a5f6c727",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
-    "packages/blendlink/blender/compositor_graph.py": "5e918ca33632a1a16c42bf3a20dbef62eeec5e4affb1cc6554b5fe0fb9837593",
+    "packages/blendlink/blender/compositor_graph.py": "5545c2cb8a531c6fce38d9c7c5b45ec0c81355f72ee61f792fe72c96e316939f",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_luminance_key.py": "d264bc0f2011484945e2dc14937198e4664cee7971967ced4b3c38eb765afaef",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
@@ -21369,7 +21405,7 @@
     "packages/blendlink/src/materialProgramDocument.ts": "bf243be3d306b0d0b22096bfb80895d1e486c3e177566c9bfedbbbce5b784358",
     "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
     "packages/blendlink/src/staticNoise4d.ts": "8101c6f4eedaf76b907a9fb98c7ed9f7b52aa0b9690f7b4ffbdaf393882406b5",
-    "packages/blendlink/src/threeRuntime.ts": "225b3dd29834a6f2adfea60f8e6122545ddc3f0bbc74204568b9993f04d45c2b",
+    "packages/blendlink/src/threeRuntime.ts": "5a75a312194004603e9e1afdaf577273d3b510c03a915a65d659a7a00e74f419",
     "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
     "packages/blendlink/src/tslBumpHeight.ts": "30608ecb254e9e957f61d7e8c7f309a160f6429ff4d781d78ab4a6e6f733245b",
     "packages/blendlink/src/tslBumpPassthrough.ts": "33607d6c8638df6490950c56375a7c004ac737d2241b40b5db1da71ccbc6ffb9",
@@ -21379,17 +21415,18 @@
     "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
     "packages/blendlink/src/tslCompositorChromaKey.ts": "f69481feb37448ad02f7873091a540eb18bf1564620489e2a0d7010fd0fc6875",
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
-    "packages/blendlink/src/tslCompositorColorKey.ts": "ecbe2a81ee5de9242c684bb0cfb3835686b3d945ef633cdb1cf9ae96bf1fd9c1",
+    "packages/blendlink/src/tslCompositorColorKey.ts": "6453d7f41612cef2aa92e449f5357ffa0ff1c77ae3025fc40d82812da26e5941",
     "packages/blendlink/src/tslCompositorCoordinateFma.ts": "6916359803b825eecd65595d1fa694a8b3db0800be78db0568b9168e20b55d88",
     "packages/blendlink/src/tslCompositorDifferenceKey.ts": "a0a3529fa5b2c5855c15ef5b4e196aa0214827608ed4ff5d4e00322d30cd4607",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
+    "packages/blendlink/src/tslCompositorGray.ts": "e32c05ec6deb9a8a793d3de4751ebac288a7fe0ab1d90555f8ec4504562975d1",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
     "packages/blendlink/src/tslCompositorImageDomain.ts": "6aa10c0d77118edd4cd328db8e7d174b74a3b375917b4882838b95304779847c",
     "packages/blendlink/src/tslCompositorLuminanceKey.ts": "5cc490f872801c5bf63ff8112ef383738b1edf4c12683b2ca50dc38a865e070a",
     "packages/blendlink/src/tslCompositorResampling.ts": "6ff79d9bb5f31bee831e2491fe5cfb89582584c80026b1a3c0c302985377a1d6",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorSpill.ts": "df6393b864834cfb8a386c88ce52d3b45ed169df94b4c8724b501272d148903d",
-    "packages/blendlink/src/tslCompositorStaticImage.ts": "5ec341735260ed5023c2068023d1393ac55a3e554b36a8b9b8e06adbbf5f3b4c",
+    "packages/blendlink/src/tslCompositorStaticImage.ts": "828d21dd3e7fcea1eeaad148a39e9009b92d6c5ab434c0897cdd15aeea30d3be",
     "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "1f86ebba961d969993afacf372228d8a8c99c1323a02fe1c60cce22425ee7373",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
@@ -21412,7 +21449,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "d850b71f18296bf695b2490cf894c34ceb23e622126bb3162a42ff9f593b04a5",
+    "packages/blendlink/src/tslSourceCompositor.ts": "aa3f83127e82dc937e4ac1c437df446d7c8ffe884379481d6556b759ab5ec94c",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
     "packages/blendlink/src/tslTangentNodes.ts": "517c0e9d33d838d381fafb311d6289282860f8fe6fcae3b1b6bd10c59b424831",
     "packages/blendlink/src/tslTangentNormalMap.ts": "ac9b769015f51c282bd5b6bf3a98bb52f7cf950befa86c6042ec2eb79de9030d",

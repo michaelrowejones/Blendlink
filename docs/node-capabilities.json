@@ -3031,7 +3031,19 @@
         "postRealizationAlpha": true,
         "unknownOutputModelsRefuse": true,
         "legacySinkAnimationRefuses": true,
-        "freshHostedLegacyProof": "pending"
+        "freshHostedLegacyProof": {
+          "commit": "cac7b143691576e61a48ebafa1205c9a52145e62",
+          "run": 43350388137,
+          "cpuJob": 131639767962,
+          "cpuArtifact": 14003811753,
+          "nativeCpuGraphs": 10,
+          "gpuStatus": "qualified",
+          "gpuJob": 131643650208,
+          "gpuArtifact": 14004735156,
+          "nativeGpuGraphs": 10,
+          "browserReadbacks": 40,
+          "maximumAbsoluteError": 0
+        }
       }
     },
     "compositor:CompositorNodeViewer": {
@@ -6464,7 +6476,7 @@
         "color-key"
       ],
       "modes": {},
-      "limits": "CPU source compositing only. Image/Matte preserve strict native HSV thresholds, legacy doubled-hue versus modern half-threshold wrap, ignored key alpha and original signed/HDR alpha; Image multiplies whole RGBA by Matte. Live Image/Key Color with fixed normal Float32 Hue/Saturation/Value thresholds in [0,1], or zero; modern proven fixed Value/Math links accepted. Native threshold neighbors, nonbinary colors, groups, cascades and Matte-to-Alpha use are measured. GPU-authored fields/folded constants require a named refusal: actual Metal hue boundaries remain unported. Subnormal/changing controls, animation and unsupported image-domain combinations refuse.",
+      "limits": "CPU source compositing supports the documented chromatic domain. Fresh GPU sources additionally admit independently proven grayscale Image and Key Color, or exactly zero Saturation/Value dead predicates. Image/Matte preserve strict native HSV thresholds, legacy doubled-hue versus modern half-threshold wrap, ignored key alpha and original signed/HDR alpha; Image multiplies whole RGBA by Matte. Live Image/Key Color with fixed normal Float32 Hue/Saturation/Value thresholds in [0,1], or zero; modern proven fixed Value/Math links accepted. Native threshold neighbors, nonbinary colors, groups, cascades and Matte-to-Alpha use are measured. General chromatic GPU fields/folded constants retain a named refusal: measured Metal fast-reciprocal and FMA boundaries remain unported. Fresh grayscale/dead models independently inspect executable scalar/RGB shapes; a gray annotation or declared scalar type is insufficient. Grayscale Hue is zero or >=2^-125; Image still multiplies full RGBA by original signed/HDR alpha. Zero Saturation/Value prunes the unused Key Color subtree without rewriting source nodes. Subnormal/changing controls, animation and unsupported image-domain combinations refuse.",
       "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
       "evidence": [
         {
@@ -6481,6 +6493,18 @@
         },
         {
           "path": "experiments/native-compositor-differential/COLOR_KEY.md"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorGray.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorGray.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_color_key_gpu_subset_check.py"
+        },
+        {
+          "path": "experiments/color-key-gpu-precision/README.md"
         }
       ],
       "verification": {
@@ -6496,7 +6520,27 @@
         "budget": 2e-05,
         "exactAlpha": true,
         "nativeGpuRefusalPerVersion": true,
-        "sourcePreservedDuringExtraction": true
+        "sourcePreservedDuringExtraction": true,
+        "exactGpuReductions": {
+          "models": [
+            "native-color-key-gray-v1",
+            "native-color-key-dead-v1"
+          ],
+          "nativeVersions": [
+            "4.2.0",
+            "5.2.0",
+            "5.3.0"
+          ],
+          "nativeGpuScenes": 201,
+          "gpuPhysicalAndSoftwareReadbacks": 804,
+          "maximumGpuAbsoluteError": 0,
+          "combinedGpuAndUnchangedCpuReadbacks": 1992,
+          "cpuCasesPerVersionUnchanged": 99,
+          "explicitRefusalsPerVersion": 4,
+          "sourcePreserved": true,
+          "generalChromaticGpuQualified": false,
+          "freshHostedProof": "pending"
+        }
       }
     },
     "compositor:CompositorNodeChromaMatte": {
@@ -6539,7 +6583,25 @@
           "Apple M5 Pro Metal",
           "LLVM SwiftShader"
         ],
-        "sourcePreservedDuringExtraction": true
+        "sourcePreservedDuringExtraction": true,
+        "installedWindowsNativeMath": {
+          "scope": "installed scalar bindings only; no full Windows compositor pixel claim",
+          "commit": "cac7b143691576e61a48ebafa1205c9a52145e62",
+          "run": 43350388113,
+          "windows42Job": 131640001454,
+          "windows52Job": 131640001869,
+          "installedExactScalarComparisonsPerVersion": 144,
+          "primitiveFunctions": [
+            "sinf",
+            "cosf",
+            "tanf",
+            "sqrtf",
+            "atan2f",
+            "expf"
+          ],
+          "actualBlenderCpuFields": true,
+          "reinstallManagedToolsExportOfflinePassed": true
+        }
       }
     },
     "compositor:CompositorNodeImage": {
@@ -6583,21 +6645,40 @@
           "5.3.0"
         ],
         "sourceCompositorDevice": "CPU",
-        "nativeGraphs": 289,
-        "nativeFrames": 329,
-        "browserGraphChecks": 1156,
-        "browserOutputFrameChecks": 1316,
+        "nativeGraphs": 290,
+        "nativeFrames": 334,
+        "browserGraphChecks": 1160,
+        "browserOutputFrameChecks": 1336,
         "maximumAbsoluteError": 2.384185791015625e-07,
         "budget": 2e-05,
-        "finalGlbs": 3,
-        "finalPipelineReadbacks": 12,
+        "finalGlbs": 4,
+        "finalPipelineReadbacks": 16,
         "maximumFinalError": 5.960464477539063e-08,
         "sourcePreserved": true,
         "copiedPackagePayloadVerified": true,
         "browserAdapters": [
           "Apple M5 Pro Metal",
           "LLVM SwiftShader"
-        ]
+        ],
+        "imagePreparation": {
+          "scope": "Actual pinned Blender5.3 CPU-source 1920x1080 packed-PNG Final; WebGPU/WebGL2 on recorded Metal/SwiftShader, plus feature-disabled streaming fallback",
+          "attemptOwned": true,
+          "originalProgramAndPinsPreserved": true,
+          "cancelledReplacementPreservesLastGoodPixelsAndGpuResources": true,
+          "finiteChecksumAndPayloadBindingChecked": true,
+          "synchronousLowLevelApiRetained": true,
+          "coldShaderUploadDeadlineGuaranteed": false
+        },
+        "freshHostedLinux": {
+          "commit": "cac7b143691576e61a48ebafa1205c9a52145e62",
+          "run": 43350388137,
+          "job": 131639767973,
+          "artifact": 14004136291,
+          "nativeGraphs": 97,
+          "browserReadbacks": 194,
+          "maximumAbsoluteError": 1.1920928955078125e-07,
+          "actualWebGLRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+        }
       }
     }
   },

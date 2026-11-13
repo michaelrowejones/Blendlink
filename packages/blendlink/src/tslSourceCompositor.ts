@@ -1,7 +1,7 @@
 import { buildCompositorColorKey } from './tslCompositorColorKey.js'
 import { buildCompositorChromaKey } from './tslCompositorChromaKey.js'
 import { buildCompositorFilter } from './tslCompositorFilter.js'
-import { MAX_STATIC_PROGRAM_PIXELS, staticCompositorTexture, type StaticCompositorWindow } from './tslCompositorStaticImage.js'
+import { MAX_STATIC_PROGRAM_PIXELS, assertPreparedStaticCompositorImages, staticCompositorTexture, type PreparedStaticCompositorImages, type StaticCompositorWindow } from './tslCompositorStaticImage.js'
 import { buildCompositorFlip } from './tslCompositorSpatial.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
 import { buildCompositorLuminanceKey } from './tslCompositorLuminanceKey.js'
@@ -467,8 +467,11 @@ function buildCompositorCurves(op: SourceCompositorOperation,
 export function buildSourceCompositor(
   program: SourceCompositorProgram,
   resolvePass: (pass: NonNullable<SourceCompositorOperation['pass']>) => TslEffectNode | null,
-  options: { resolvePassExtent?: (pass: NonNullable<SourceCompositorOperation['pass']>, renderer: TslEffectNode) => readonly [number, number] } = {},
+  options: { preparedImages?: PreparedStaticCompositorImages; resolvePassExtent?: (pass: NonNullable<SourceCompositorOperation['pass']>, renderer: TslEffectNode) => readonly [number, number] } = {},
 ): BuiltSourceCompositor {
+  // A stale/cancelled preparation is an installation failure, never permission
+  // to silently bypass the authored compositor and replace the last good view.
+  if (options.preparedImages) assertPreparedStaticCompositorImages(options.preparedImages, program)
   const resources: { dispose(): void }[] = []
   const dispose = (): void => {
     for (const resource of resources.splice(0).reverse()) resource.dispose()
@@ -599,7 +602,7 @@ export function buildSourceCompositor(
               if (imagePixels + record.width * record.height > MAX_STATIC_PROGRAM_PIXELS)
                 domainFail('Static compositor Image inputs exceed the 8-megapixel decoded program budget')
               let built: ReturnType<typeof staticCompositorTexture>
-              try { built = staticCompositorTexture(record) }
+              try { built = staticCompositorTexture(record, options.preparedImages ? { handle: options.preparedImages, program } : undefined) }
               catch (error) { return domainFail((error as Error).message) }
               imagePixels += record.width * record.height
               images.set(id as string, built); resources.push(built.texture)
@@ -800,7 +803,7 @@ export function buildSourceCompositor(
             const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
             const device = compositorEvaluationDevice(op, single)
             node = buildCompositorColorKey(op, input, device, color => compositorRgbToHsv(color, device),
-              message => { throw new SourceCompositorUnsupported(message) })
+              message => { throw new SourceCompositorUnsupported(message) }, program.ops.slice(0, program.ops.indexOf(op)))
             break
           }
           case 'chroma-key': {

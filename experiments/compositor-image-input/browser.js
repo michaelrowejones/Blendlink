@@ -6,8 +6,9 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
 import { loadSourcePresentation } from '@image-source-display'
 import { ThreeWebgpuPostPipelineService } from '@image-post-pipeline'
 import { bindCompiledScene } from '@image-bindings'
+import { imagePerformanceProof, imagePipelinePerformanceProof } from './performance.js'
 
-window.runProof = async ({ manifest, reference }) => {
+window.runProof = async ({ manifest, reference, performanceProgramUrl }) => {
   const webgl = new URLSearchParams(location.search).get('backend') === 'webgl2'
   const adapter = webgl ? null : await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' })
   if (!webgl && !adapter) throw new Error('WebGPU adapter unavailable')
@@ -61,16 +62,30 @@ window.runProof = async ({ manifest, reference }) => {
     const untouched=await renderer.readRenderTargetPixelsAsync(target,0,0,reference.width,reference.height)
     const forward=errorFor(untouched,reference.calibration,false),reverse=errorFor(untouched,reference.calibration,true),flip=reverse<forward
     if(Math.min(forward,reverse)>1e-6)throw new Error('Independent output orientation calibration failed')
-    pipeline=await ThreeWebgpuPostPipelineService.create({root:gltf.scene,scene,camera,renderer,bindings,sourcePresentation:presentation,onWarning:message=>warnings.push(message)})
-    pipeline.finalize();pipeline.activate(scene,camera)
+    let installationTimings
+    const create=signal=>ThreeWebgpuPostPipelineService.create({root:gltf.scene,scene,camera,renderer,bindings,sourcePresentation:presentation,signal,onWarning:message=>warnings.push(message)})
+    const render=async candidate=>{
+      candidate.activate(scene,camera)
+      renderer.setRenderTarget(target);candidate.render()
+      const pixels=await renderer.readRenderTargetPixelsAsync(target,0,0,reference.width,reference.height)
+      return errorFor(pixels,reference.expected,flip)
+    }
+    if(reference.imageWidth>=1000){
+      const proof=await imagePipelinePerformanceProof(create,render,renderer)
+      pipeline=proof.pipeline;installationTimings=proof.timings
+    }else{
+      pipeline=await create();pipeline.finalize();pipeline.activate(scene,camera)
+    }
     if(!pipeline.resolvedOrder.includes('blender-compositor'))throw new Error('Production post pipeline bypassed the Image graph')
     renderer.setRenderTarget(target);pipeline.render()
     const actual=await renderer.readRenderTargetPixelsAsync(target,0,0,reference.width,reference.height)
     const maximum=errorFor(actual,reference.expected,flip)
+    const timings=performanceProgramUrl?await imagePerformanceProof(performanceProgramUrl,renderer,quad,material,target,errorFor,flip):undefined
     const validation=await device?.popErrorScope();if(validation)errors.push(validation.message)
     if(errors.length||warnings.length)throw new Error(JSON.stringify({errors,warnings}))
     return {backend:webgl?'webgl2':'webgpu',gpu,maximum,meshCount,badPinRejected,glbSha256:digest,
-      imageDefinitions:Object.keys(presentation.compositor.images).length,pipeline:pipeline.resolvedOrder}
+      imageDefinitions:Object.keys(presentation.compositor.images).length,pipeline:pipeline.resolvedOrder,timings,installationTimings,
+      decoderFeatures:{nativeStream:typeof DecompressionStream==='function',nativeBase64:typeof Uint8Array.fromBase64==='function'}}
   } finally {
     pipeline?.dispose();bindings.dispose();target.dispose();control.dispose();material.dispose()
     const geometries=new Set(),materials=new Set()

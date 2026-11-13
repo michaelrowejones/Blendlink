@@ -63,11 +63,15 @@ try:
     addon.validation.recompute(bpy.context.scene)
     record = addon.validation.result().material_compatibility[material.name]
     assert record['materialCompilation']['outcome'] == 'blocked'
+    normal = next(entry for entry in record['materialCompilation']['channels']['channels']
+                  if entry['channel'] == 'Normal')
+    refusal = normal.get('tslIrRefusal')
+    assert normal['route'] == 'refused' and isinstance(refusal, str) and refusal.startswith('Bump Height'), normal
     layout = RecordingLayout()
     with patch.object(addon.material_compiler, 'plan_materials', side_effect=AssertionError('Compilation ran during draw')):
         addon.ui._draw_material_compatibility(layout, record)
     text = ' '.join(event[-1] for event in layout.events)
-    assert 'TSL Program needs attention' in text and 'height-function derivative' in text, text
+    assert 'TSL Program needs attention' in text and refusal in text, text
     assert 'ready to compile' not in text
 finally:
     addon.unregister()

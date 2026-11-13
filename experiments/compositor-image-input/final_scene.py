@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Actual artist-style saved packed-PNG scene and independent CPU references."""
-import json,os,struct,zlib
+import hashlib,json,os,struct,zlib
 from pathlib import Path
 import bpy
 import numpy as np
@@ -19,7 +19,8 @@ if modern:
     tree.interface.new_socket(name='Image',in_out='OUTPUT',socket_type='NodeSocketColor');scene.compositing_node_group=tree
 else:scene.use_nodes=True;tree=scene.node_tree
 tree.nodes.clear();sink=tree.nodes.new('NodeGroupOutput' if modern else 'CompositorNodeComposite')
-width,height=12,6;y,x=np.mgrid[:height,:width]
+large=os.environ.get('BLENDLINK_COMPOSITOR_IMAGE_1080P')=='1'
+width,height=(1920,1080) if large else (12,6);y,x=np.mgrid[:height,:width]
 pixels=np.stack([(x*17+y*41)%256,(x*57+y*13)%256,(x*31+y*7)%256,
     np.asarray([0,64,128,255],np.uint8)[x%4]],axis=-1).astype(np.uint8)
 def chunk(kind,data):return struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data))
@@ -36,10 +37,17 @@ def render(w,h):
     values=list(reference.pixels[:]);bpy.data.images.remove(reference)
     return values
 native_input=render(width,height)
+native_input_sha=hashlib.sha256(np.asarray(native_input,dtype='<f4').tobytes()).hexdigest()
+if large:native_input=None
 grade=tree.nodes.new('CompositorNodeInvert');tree.links.new(node.outputs['Image'],grade.inputs['Color']);tree.links.new(grade.outputs[0],sink.inputs[0])
+opaque=os.environ.get('BLENDLINK_COMPOSITOR_IMAGE_OPAQUE')=='1'
+if opaque:
+    assert not modern,'Legacy Composite opaque-output fixture requires Blender4.2'
+    sink.use_alpha=False
 expected=render(16,8)
 source=out/'Artist Image.blend';bpy.ops.wm.save_as_mainfile(filepath=str(source))
 (out/'native-reference.json').write_text(json.dumps({'blender':bpy.app.version_string,'hash':bpy.app.build_hash.decode(),
-    'width':16,'height':8,'imageWidth':width,'imageHeight':height,'nativeInput':native_input,'expected':expected,
+    'width':16,'height':8,'imageWidth':width,'imageHeight':height,'nativeInput':native_input,'nativeInputSha256':native_input_sha,'expected':expected,
+    'outputAlpha':'legacy-composite-opaque-v1' if opaque else None,
     'calibration':np.random.default_rng(4195).uniform(-.5,2,(8,16,4)).astype(np.float32).ravel().tolist()}))
 print('BLENDLINK_STATIC_IMAGE_FINAL_SAVED',source)

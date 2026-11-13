@@ -46,3 +46,46 @@ describe('Color Key document admission', () => {
   })
 
 })
+
+describe('Color Key independent GPU domains', () => {
+  it('admits grayscale default controls and exact-zero S/V predicates with signed HDR alpha', () => {
+    for (const model of ['native-color-key-gray-v1', 'native-color-key-dead-v1']) for (const folded of ['CPU', 'GPU']) {
+      const document = program(), op = document.ops[0]!
+      Object.assign(op.properties, { color_key_model: model, evaluation_device: 'GPU', single_value_device: folded })
+      if (model === 'native-color-key-gray-v1') {
+        op.inputs.Image!.value = { kind: 'constant', type: 'RGBA', value: [-2, -2, -2, -.5] }
+        op.inputs['Key Color']!.value = { kind: 'constant', type: 'RGBA', value: [.25, .25, .25, 3] }
+      } else {
+        op.properties.color_key_settings = [.01, 0, .1]
+        delete op.inputs['Key Color']
+      }
+      const built = buildSourceCompositor(document, () => null)
+      expect(built.node.isNode).toBe(true); built.dispose()
+    }
+  })
+
+  it('rejects a forged gray annotation and scalar ref type', () => {
+    for (const transform of [false, true]) {
+      const document = program(), op = document.ops[0]!
+      Object.assign(op.properties, { color_key_model: 'native-color-key-gray-v1', evaluation_device: 'GPU', single_value_device: 'GPU', grayscale: true })
+      op.inputs['Key Color']!.value = { kind: 'constant', type: 'RGBA', value: [1, 1, 1, 1] }
+      if (transform) {
+        document.ops.unshift({ id: 'rgb', kind: 'rgb', type: 'RGBA', source: op.source, properties: {}, inputs: {}, value: [1, .25, .25, 1] })
+        op.inputs.Image!.value = { kind: 'convert', type: 'RGBA', fromType: 'VALUE', input: { kind: 'ref', type: 'VALUE', node: 'rgb' } }
+      }
+      expect(() => buildSourceCompositor(document, () => null)).toThrow(/independently proven replicated scalar/)
+    }
+  })
+
+  it('requires actual dead controls and retains named chromatic refusal', () => {
+    for (const model of ['native-color-key-dead-v1', 'native-color-key-gray-v1']) {
+      const document = program(), op = document.ops[0]!
+      Object.assign(op.properties, { color_key_model: model, evaluation_device: 'GPU', single_value_device: 'GPU' })
+      expect(() => buildSourceCompositor(document, () => null)).toThrow(model.endsWith('dead-v1') ? /exact zero/ : /replicated scalar/)
+    }
+    const document = program(), op = document.ops[0]!
+    Object.assign(op.properties, { color_key_model: 'native-color-key-gray-v1', evaluation_device: 'GPU', single_value_device: 'GPU', color_key_settings: [2 ** -126, .1, .1] })
+    for (const name of ['Image', 'Key Color']) op.inputs[name]!.value = { kind: 'constant', type: 'RGBA', value: [1, 1, 1, 1] }
+    expect(() => buildSourceCompositor(document, () => null)).toThrow(/half threshold remains normal/)
+  })
+})

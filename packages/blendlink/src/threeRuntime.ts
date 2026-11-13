@@ -2681,6 +2681,7 @@ async function installLoadedThreeCompiledSceneNow(
       }
     }
     components = await installThreeComponents({
+      ...(options.signal ? { signal: options.signal } : {}),
       ...(sourcePresentation ? { sourcePresentation } : {}),
       // Generated descriptors are `as const`; the component installer never
       // mutates them, but accepts the canonical portable record shape.
