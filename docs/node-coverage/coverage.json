@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "f2a928acb8e9171f403c82e5cede827bdc6a126f5c750c5a48850ea9b9086e20",
+  "capabilityMapSha256": "e711033e0e97d11fdce8e9a6896787452b202bf264622a3a74bfa9751b89488d",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T01:37:43.335604+00:00",
+  "generatedAt": "2026-11-13T02:07:07.233822+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -60,10 +60,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 19,
+            "partial": 20,
             "structural": 7,
             "supported": 25,
-            "unsupported": 53
+            "unsupported": 52
           },
           "enumValueCounts": {
             "partial": 2,
@@ -644,11 +644,17 @@
                 {
                   "anchor": "def extract",
                   "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_output_alpha_check.py"
                 }
               ],
               "id": "CompositorNodeComposite",
               "label": "Composite",
-              "limits": "Graph structure/output selection/editor-only node, not a shading operator. Supported socket domains and static acyclic group traversal only; Material Output Surface only, no general Volume/Displacement port.",
+              "limits": "Unique active legacy Composite output with a static Color image input. Fresh Use Alpha disabled uses legacy-composite-opaque-v1 to set final alpha one after finite image-domain realization, including padded pixels; RGB and source node settings remain unchanged. Default Use Alpha and older serialized programs retain prior behavior. Sink-only tree animation/drivers refuse. Modern Group Output has no legacy switch.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -941,7 +947,7 @@
               ],
               "id": "CompositorNodeDiffMatte",
               "label": "Difference Key",
-              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime, GPU RGB sums use measured r+(g+b) association and division is explicitly rounded. Modern constant graphs retain the separate CPU (r+g)+b path. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh Linux emission retained 41 actual cases and exposed asymmetric RGB threshold failures in the first rounded-division candidate. The corrected reduction matches all 41 retained cases exactly on physical and software WebGPU/WebGL2. Fresh hosted verification of the expanded 43-case corpus, including all-constant CPU-fold controls, is pending; retained-reference replay alone is not fresh-source certification.",
+              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime, GPU RGB sums use measured r+(g+b) association and division is explicitly rounded. Modern constant graphs retain the separate CPU (r+g)+b path. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh Linux emission retained 41 actual cases and exposed asymmetric RGB threshold failures in the first rounded-division candidate. The corrected reduction matches all 41 retained cases exactly on physical and software WebGPU/WebGL2. Fresh hosted Linux emission of the expanded 43-case corpus, including asymmetric fields and all-constant CPU-fold controls, passes both browser APIs with zero error under the original budget. Other source GPU identities remain unqualified.",
               "runtimeOps": [
                 "difference-key"
               ],
@@ -1322,17 +1328,44 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "layer": {},
                 "view": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_image.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImage.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImage.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_image_check.py"
+                },
+                {
+                  "path": "experiments/compositor-image-input/README.md"
+                },
+                {
+                  "path": "experiments/compositor-image-input/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-image-input/run.mjs"
+                }
+              ],
               "id": "CompositorNodeImage",
               "label": "Image",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Static CPU-source Image/Alpha inputs: packed/file sRGB PNGs; generated sRGB byte buffers with Straight/Premultiplied alpha; generated Linear Rec.709 or Non-Color/Raw float buffers. RGB/RGBA, single-view/layer, bundled Rec.709 OCIO only. Native byte color/association normalization and direct float storage remain distinct; no scene/compositor/surface bake or source-image rewrite. Lossless compressed Float32 input values preserve signed/HDR RGBA; input storage deduplicates Image/Alpha. Finite native canvases process pointwise nodes before terminal centering/crop/pad. Modern CPU retains exact Float32 parity/neighbor stages; legacy4.2 requires even source/output extents with named invalid-resize recovery. Source images <=4096 per axis and4M pixels; program8M distinct pixels; output1..8192. Dynamic/sequence/movie/UDIM/multiview/multilayer, file-float display windows, custom OCIO, unsupported transforms/neighborhood operations and mixed RenderLayers/different image canvases refuse. This is not universal image-format/video coverage or full rendering parity.",
+              "runtimeOps": [
+                "image-input"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -5752,10 +5785,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 25,
+            "partial": 26,
             "structural": 6,
             "supported": 23,
-            "unsupported": 114
+            "unsupported": 113
           },
           "enumValueCounts": {
             "partial": 12,
@@ -6611,7 +6644,7 @@
               ],
               "id": "CompositorNodeDiffMatte",
               "label": "Difference Key",
-              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime, GPU RGB sums use measured r+(g+b) association and division is explicitly rounded. Modern constant graphs retain the separate CPU (r+g)+b path. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh Linux emission retained 41 actual cases and exposed asymmetric RGB threshold failures in the first rounded-division candidate. The corrected reduction matches all 41 retained cases exactly on physical and software WebGPU/WebGL2. Fresh hosted verification of the expanded 43-case corpus, including all-constant CPU-fold controls, is pending; retained-reference replay alone is not fresh-source certification.",
+              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime, GPU RGB sums use measured r+(g+b) association and division is explicitly rounded. Modern constant graphs retain the separate CPU (r+g)+b path. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh Linux emission retained 41 actual cases and exposed asymmetric RGB threshold failures in the first rounded-division candidate. The corrected reduction matches all 41 retained cases exactly on physical and software WebGPU/WebGL2. Fresh hosted Linux emission of the expanded 43-case corpus, including asymmetric fields and all-constant CPU-fold controls, passes both browser APIs with zero error under the original budget. Other source GPU identities remain unqualified.",
               "runtimeOps": [
                 "difference-key"
               ],
@@ -6972,17 +7005,44 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "layer": {},
                 "view": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_image.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImage.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImage.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_image_check.py"
+                },
+                {
+                  "path": "experiments/compositor-image-input/README.md"
+                },
+                {
+                  "path": "experiments/compositor-image-input/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-image-input/run.mjs"
+                }
+              ],
               "id": "CompositorNodeImage",
               "label": "Image",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Static CPU-source Image/Alpha inputs: packed/file sRGB PNGs; generated sRGB byte buffers with Straight/Premultiplied alpha; generated Linear Rec.709 or Non-Color/Raw float buffers. RGB/RGBA, single-view/layer, bundled Rec.709 OCIO only. Native byte color/association normalization and direct float storage remain distinct; no scene/compositor/surface bake or source-image rewrite. Lossless compressed Float32 input values preserve signed/HDR RGBA; input storage deduplicates Image/Alpha. Finite native canvases process pointwise nodes before terminal centering/crop/pad. Modern CPU retains exact Float32 parity/neighbor stages; legacy4.2 requires even source/output extents with named invalid-resize recovery. Source images <=4096 per axis and4M pixels; program8M distinct pixels; output1..8192. Dynamic/sequence/movie/UDIM/multiview/multilayer, file-float display windows, custom OCIO, unsupported transforms/neighborhood operations and mixed RenderLayers/different image canvases refuse. This is not universal image-format/video coverage or full rendering parity.",
+              "runtimeOps": [
+                "image-input"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -12984,10 +13044,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 27,
+            "partial": 28,
             "structural": 6,
             "supported": 24,
-            "unsupported": 130
+            "unsupported": 129
           },
           "enumValueCounts": {
             "partial": 17,
@@ -13977,7 +14037,7 @@
               ],
               "id": "CompositorNodeDiffMatte",
               "label": "Difference Key",
-              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime, GPU RGB sums use measured r+(g+b) association and division is explicitly rounded. Modern constant graphs retain the separate CPU (r+g)+b path. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh Linux emission retained 41 actual cases and exposed asymmetric RGB threshold failures in the first rounded-division candidate. The corrected reduction matches all 41 retained cases exactly on physical and software WebGPU/WebGL2. Fresh hosted verification of the expanded 43-case corpus, including all-constant CPU-fold controls, is pending; retained-reference replay alone is not fresh-source certification.",
+              "limits": "Image and Matte outputs preserve native average absolute RGB difference, ignored second-image alpha, tolerance/falloff, alpha cap and whole-RGBA multiplication. Legacy CPU fully keyed negative-alpha behavior differs from modern/GPU and is recorded separately. CPU-source Float32 sum/divide-by-three stages are corrected explicitly, including modern constant graphs inside GPU compositing. Finite fixed Tolerance/Falloff in [0,1], with Falloff zero or >=1/64; modern proven static Value/Math links are accepted. Unproved/changing controls, narrow nonzero falloff, animation/drivers and unsupported image-origin combinations refuse. Fields, constants, two image inputs, signed/HDR values, zero falloff, threshold neighbors, HDR alpha, ignored key alpha and cascades are measured; this is not full Keying/temporal matte coverage. Fresh GPU OpenGL exports use a separate native-difference-key-rne-v1 only for the exact recorded Blender 5.2 Linux x64 Mesa llvmpipe context; its source profile is independently checked at runtime, GPU RGB sums use measured r+(g+b) association and division is explicitly rounded. Modern constant graphs retain the separate CPU (r+g)+b path. Unmeasured fresh OpenGL profiles refuse with native inputs/pixels and named Image/Matte diagnostics retained. Original serialized v1 and the existing Metal path keep their prior arithmetic. Fresh Linux emission retained 41 actual cases and exposed asymmetric RGB threshold failures in the first rounded-division candidate. The corrected reduction matches all 41 retained cases exactly on physical and software WebGPU/WebGL2. Fresh hosted Linux emission of the expanded 43-case corpus, including asymmetric fields and all-constant CPU-fold controls, passes both browser APIs with zero error under the original budget. Other source GPU identities remain unqualified.",
               "runtimeOps": [
                 "difference-key"
               ],
@@ -14338,17 +14398,44 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "layer": {},
                 "view": {}
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_image.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImage.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImage.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_image_check.py"
+                },
+                {
+                  "path": "experiments/compositor-image-input/README.md"
+                },
+                {
+                  "path": "experiments/compositor-image-input/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-image-input/run.mjs"
+                }
+              ],
               "id": "CompositorNodeImage",
               "label": "Image",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Static CPU-source Image/Alpha inputs: packed/file sRGB PNGs; generated sRGB byte buffers with Straight/Premultiplied alpha; generated Linear Rec.709 or Non-Color/Raw float buffers. RGB/RGBA, single-view/layer, bundled Rec.709 OCIO only. Native byte color/association normalization and direct float storage remain distinct; no scene/compositor/surface bake or source-image rewrite. Lossless compressed Float32 input values preserve signed/HDR RGBA; input storage deduplicates Image/Alpha. Finite native canvases process pointwise nodes before terminal centering/crop/pad. Modern CPU retains exact Float32 parity/neighbor stages; legacy4.2 requires even source/output extents with named invalid-resize recovery. Source images <=4096 per axis and4M pixels; program8M distinct pixels; output1..8192. Dynamic/sequence/movie/UDIM/multiview/multilayer, file-float display windows, custom OCIO, unsupported transforms/neighborhood operations and mixed RenderLayers/different image canvases refuse. This is not universal image-format/video coverage or full rendering parity.",
+              "runtimeOps": [
+                "image-input"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -21258,15 +21345,16 @@
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
     "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
-    "packages/blendlink/blender/compositor_affine.py": "a29c7ab3a8bbb6d6f17ebc26e5e1dfafaa547ed4171a549498977e49c9b8766c",
+    "packages/blendlink/blender/compositor_affine.py": "7df4327f10d8cb0d223cd4b2e5c67b2f62721e246831ce4a6fd98ec4653b03e4",
     "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
-    "packages/blendlink/blender/compositor_blur.py": "916b300583cfcf06c3c1add69fa24396cea43d3bf699c32dea4f314a45661b66",
-    "packages/blendlink/blender/compositor_chroma_key.py": "9640a5663a707cc5823b17b21a2d7206dfc3e963e3738c0914f47274648a3c6f",
+    "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
+    "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
     "packages/blendlink/blender/compositor_color_key.py": "40a10dde3fb179aba672664446b89cd80cb3a03881490143643a5cd5b7a3cb32",
     "packages/blendlink/blender/compositor_difference_key.py": "fb6ed344f0f524ab8fe958978bad80f2938f7816b972653cc9f85b68a5f6c727",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
-    "packages/blendlink/blender/compositor_graph.py": "b4476a9a49d82abf53c2db0f1d465ec52694965b9e7241fc9b8929dd18ec8cd5",
+    "packages/blendlink/blender/compositor_graph.py": "5e918ca33632a1a16c42bf3a20dbef62eeec5e4affb1cc6554b5fe0fb9837593",
+    "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_luminance_key.py": "d264bc0f2011484945e2dc14937198e4664cee7971967ced4b3c38eb765afaef",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
@@ -21296,11 +21384,13 @@
     "packages/blendlink/src/tslCompositorDifferenceKey.ts": "a0a3529fa5b2c5855c15ef5b4e196aa0214827608ed4ff5d4e00322d30cd4607",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
-    "packages/blendlink/src/tslCompositorImageDomain.ts": "8b4314dedfd42eb038ff70ffecca4afe028d2254164f796e200c93467777eb57",
+    "packages/blendlink/src/tslCompositorImageDomain.ts": "6aa10c0d77118edd4cd328db8e7d174b74a3b375917b4882838b95304779847c",
     "packages/blendlink/src/tslCompositorLuminanceKey.ts": "5cc490f872801c5bf63ff8112ef383738b1edf4c12683b2ca50dc38a865e070a",
     "packages/blendlink/src/tslCompositorResampling.ts": "6ff79d9bb5f31bee831e2491fe5cfb89582584c80026b1a3c0c302985377a1d6",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorSpill.ts": "df6393b864834cfb8a386c88ce52d3b45ed169df94b4c8724b501272d148903d",
+    "packages/blendlink/src/tslCompositorStaticImage.ts": "5ec341735260ed5023c2068023d1393ac55a3e554b36a8b9b8e06adbbf5f3b4c",
+    "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "1f86ebba961d969993afacf372228d8a8c99c1323a02fe1c60cce22425ee7373",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
@@ -21322,7 +21412,7 @@
     "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "0d236093aac5e72e84e4a50569ea7c3d9ee9aaec7b6b87d39944f766a2414a55",
+    "packages/blendlink/src/tslSourceCompositor.ts": "d850b71f18296bf695b2490cf894c34ceb23e622126bb3162a42ff9f593b04a5",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
     "packages/blendlink/src/tslTangentNodes.ts": "517c0e9d33d838d381fafb311d6289282860f8fe6fcae3b1b6bd10c59b424831",
     "packages/blendlink/src/tslTangentNormalMap.ts": "ac9b769015f51c282bd5b6bf3a98bb52f7cf950befa86c6042ec2eb79de9030d",

@@ -19,10 +19,10 @@ def _native_math():
     These are authored parameters, not sampled image/matte data. Host double
     trig and NumPy SIMD trig can differ from scalar sinf/cosf/tanf by an ULP.
     """
-    names = [None]
-    if sys.platform == 'win32':
-        names.append('ucrtbase.dll')
-    else:
+    # Windows LoadLibrary requires a DLL name; the POSIX process handle
+    # (None) is not a valid candidate there. Use the existing system UCRT.
+    names = ['ucrtbase.dll'] if sys.platform == 'win32' else [None]
+    if sys.platform != 'win32':
         library = ctypes.util.find_library('m')
         if library:
             names.append(library)

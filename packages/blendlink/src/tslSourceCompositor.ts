@@ -1,6 +1,7 @@
 import { buildCompositorColorKey } from './tslCompositorColorKey.js'
 import { buildCompositorChromaKey } from './tslCompositorChromaKey.js'
 import { buildCompositorFilter } from './tslCompositorFilter.js'
+import { MAX_STATIC_PROGRAM_PIXELS, staticCompositorTexture, type StaticCompositorWindow } from './tslCompositorStaticImage.js'
 import { buildCompositorFlip } from './tslCompositorSpatial.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
 import { buildCompositorLuminanceKey } from './tslCompositorLuminanceKey.js'
@@ -485,9 +486,15 @@ export function buildSourceCompositor(
           .join('; ') || 'Unsupported compositor graph',
       )
     }
+    if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
+      throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
     const nodes = new Map<string, TslEffectNode>()
+    const images = new Map<string, ReturnType<typeof staticCompositorTexture>>()
+    let imagePixels = 0
     const origins = new Map<string, CompositorImageOrigin | null>()
-    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine')
+    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input')
+    if (program.ops.some(op => op.kind === 'image-input') && program.ops.some(op => op.kind === 'render-pass'))
+      throw new SourceCompositorUnsupported('Static Image and Render Layers currently need separate canvas-domain realization')
     if (program.ops.some(op => op.kind === 'image-affine') && program.ops.some(op => op.kind === 'translate'
       && op.properties.image_domain_model === 'deferred-integer-origin-v1'))
       throw new SourceCompositorUnsupported('Affine transform chains require freshly exported native translation metadata')
@@ -542,8 +549,11 @@ export function buildSourceCompositor(
     for (const op of program.ops) {
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
-      const single = op.kind !== 'render-pass' && Object.values(op.inputs).every(input => isSingleValue(input.value))
+      const single = !['render-pass', 'image-input'].includes(op.kind) && Object.values(op.inputs).every(input => isSingleValue(input.value))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
+      if (incoming.some(input => input.domain?.staticWindow)
+        && ['translate', 'image-affine', 'blur', 'filter', 'flip', 'glare'].includes(op.kind))
+        domainFail('Static Image neighborhood/transform consumers require native finite-window processing; only pointwise consumers are qualified')
       if (!['translate', 'image-affine'].includes(op.kind) && incoming.some(input => input.domain?.affineMatrix))
         domainFail('Intermediate affine image consumers require native resized data/display-window realization; this model supports terminal transform chains')
       const selectedDomain = op.properties.image_domain_input
@@ -576,6 +586,30 @@ export function buildSourceCompositor(
       let node: TslEffectNode
       try {
         switch (op.kind) {
+          case 'image-input': {
+            const id = op.properties.image_id, model = op.properties.image_window_model
+            if (op.properties.evaluation_device !== 'CPU' || typeof id !== 'string' || !program.images?.[id]
+              || !['legacy-cpu-even-v1', 'modern-cpu-v1'].includes(String(model)) || !['Image', 'Alpha'].includes(op.source.output)
+              || op.type !== (op.source.output === 'Image' ? 'RGBA' : 'VALUE'))
+              domainFail('Static Image requires its native CPU input and finite-window metadata')
+            const record = program.images![id as string]!
+            if (model === 'legacy-cpu-even-v1' && (record.width % 2 !== 0 || record.height % 2 !== 0))
+              domainFail('Legacy CPU Static Image requires even source dimensions')
+            if (!images.has(id as string)) {
+              if (imagePixels + record.width * record.height > MAX_STATIC_PROGRAM_PIXELS)
+                domainFail('Static compositor Image inputs exceed the 8-megapixel decoded program budget')
+              let built: ReturnType<typeof staticCompositorTexture>
+              try { built = staticCompositorTexture(record) }
+              catch (error) { return domainFail((error as Error).message) }
+              imagePixels += record.width * record.height
+              images.set(id as string, built); resources.push(built.texture)
+            }
+            node = images.get(id as string)!.node
+            if (op.source.output === 'Alpha') node = node.a
+            domain = { x: 0, y: 0, staticWindow: { width: record.width, height: record.height, model } as StaticCompositorWindow,
+              roots: [{ node }] }
+            break
+          }
           case 'image-affine':
             affineImageOrigin(op, domain, domainFail)
             node = input('Image')
@@ -1139,10 +1173,11 @@ export function buildSourceCompositor(
       }
     }
     const output = value(program.output), domain = origin(program.output)
-    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine')?.source
-    return { node: usesImageDomains && domain ? realizeCompositorOrigin(output, domain, [0, 0], resources,
+    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input')?.source
+    const realized = usesImageDomains && domain ? realizeCompositorOrigin(output, domain, [0, 0], resources,
       message => { throw new SourceCompositorUnsupported(transformSource
-        ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output, dispose }
+        ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output
+    return { node: program.outputAlpha === 'legacy-composite-opaque-v1' ? vec4(realized.rgb, 1) : realized, dispose }
   } catch (error) {
     dispose()
     throw error

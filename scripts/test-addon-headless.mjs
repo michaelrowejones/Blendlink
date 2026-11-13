@@ -10,6 +10,7 @@ const packageVersion = JSON.parse(readFileSync(
 const cli = join(root, 'packages', 'blendlink', 'dist', 'cli.js')
 const testsDir = join(root, 'packages', 'blender-addon', 'tests')
 const addonTest = join(testsDir, 'run_headless.py')
+const nativeCompositorMathProbe = readFileSync(join(testsDir, 'native_compositor_math_check.py'), 'utf8')
 const legacyCurveSidecarTest = join(
   root, 'experiments', 'legacy-curve-sidecar-differential', 'run.py',
 )
@@ -359,6 +360,17 @@ for node_type, expected in families:
 bpy.data.objects.remove(owner, do_unlink=True)
 bpy.data.meshes.remove(mesh)
 bpy.data.materials.remove(material)
+# The exact installed scalar C bindings must agree with Blender CPU fields.
+# This trusted verification function receives installed modules explicitly;
+# its standalone checkout imports never execute inside the isolated package.
+cmath_namespace = {"__name__": "blendlink_installed_cmath_probe"}
+exec(${JSON.stringify(nativeCompositorMathProbe)}, cmath_namespace)
+native_math_qualification = cmath_namespace["verify_native_math"](
+    importlib.import_module(module_name + ".compositor_chroma_key"),
+    importlib.import_module(module_name + ".compositor_affine"),
+    importlib.import_module(module_name + ".compositor_blur"))
+print("BLENDLINK_INSTALLED_NATIVE_MATH_PASSED " + json.dumps(native_math_qualification, sort_keys=True))
+
 # Exercise compositor sibling imports through the installed package too.
 compositor_scene = bpy.data.scenes.new("Installed Compositor Translation Probe")
 compositor_tree = None
@@ -419,6 +431,7 @@ print("##blendlink-addon-install " + json.dumps({
     "atlasOperator": bpy.ops.blendlink.check_atlas_fit.get_rna_type().identifier,
     "bootstrap": str(Path(module.__file__).parent / "bootstrap.py"),
     "compositorFamilies": ${JSON.stringify(installedCompositorFamilies)},
+    "nativeMath": native_math_qualification,
     "nodeFamilies": len({node_type for node_type, _expected in families}),
     "testedNodeFamilies": list(dict.fromkeys(node_type for node_type, _expected in families)),
     "testedNodeCapabilities": [node_type + "#" + expected for node_type, expected in families],
@@ -444,8 +457,11 @@ print("##blendlink-addon-install " + json.dumps({
   const validNodeFamilies = Array.isArray(tested) && tested.length === status.nodeFamilies &&
     new Set(tested).size === tested.length && required.every(name => tested.includes(name)) &&
     tested.every(name => required.includes(name) || optional.includes(name))
+  const validNativeMath = status.nativeMath?.exactScalarComparisons === 144 && status.nativeMath?.points === 16 &&
+    status.nativeMath?.renderRequired === false && status.nativeMath?.oracle === 'actual Geometry Nodes CPU float fields' &&
+    JSON.stringify(status.nativeMath?.functions) === JSON.stringify(['sinf', 'cosf', 'tanf', 'sqrtf', 'atan2f', 'expf'])
   if (status.version !== packageVersion || !status.enabled || !status.operator || !status.package ||
-      !validNodeFamilies || !validCapabilities || JSON.stringify(status.compositorFamilies) !== JSON.stringify(installedCompositorFamilies) ||
+      !validNativeMath || !validNodeFamilies || !validCapabilities || JSON.stringify(status.compositorFamilies) !== JSON.stringify(installedCompositorFamilies) ||
       status.exportOperator !== 'BLENDLINK_OT_export_website' || status.atlasOperator !== 'BLENDLINK_OT_check_atlas_fit') {
     throw new Error(`Installed extension failed its postconditions: ${JSON.stringify(status)}`)
   }

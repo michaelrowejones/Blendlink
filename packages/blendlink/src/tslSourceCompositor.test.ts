@@ -45,4 +45,10 @@ describe('native compositor Color Balance', () => {
     expect(() => buildSourceCompositor(program, () => null)).toThrow(SourceCompositorUnsupported)
     expect(() => buildSourceCompositor(program, () => null)).toThrow(/Type requires a constant setting/)
   })
+
+  it('refuses an unknown output alpha contract instead of silently ignoring it', () => {
+    const program = colorBalance('linear')
+    Object.assign(program, { outputAlpha: 'future-composite-alpha' })
+    expect(() => buildSourceCompositor(program, () => null)).toThrow(/unknown alpha model/)
+  })
 })

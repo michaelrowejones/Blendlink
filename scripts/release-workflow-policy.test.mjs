@@ -26,6 +26,10 @@ test('pull requests run platform checks while distribution stays tag-only', () =
   }
 })
 
+test('new PR revisions can supersede stale checks without cancelling tagged distribution', () => {
+  assert.match(workflow, /concurrency:\n  group: release-candidate-\$\{\{ github\.ref \}\}\n(?:  #[^\n]*\n)?  cancel-in-progress: \$\{\{ github\.event_name == 'pull_request' \}\}/)
+})
+
 test('release candidate attests and retains one exact carrier', () => {
   const candidate = job('release-candidate', 'publish-npm')
   assert.match(candidate, /verify-retained-release\.mjs retained/)

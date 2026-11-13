@@ -7,6 +7,8 @@ import { ownBlurRtt } from './tslCompositorBlur.js'
 import { resampleCompositorField, type CompositorSampling } from './tslCompositorResampling.js'
 import { resampleCompositorAffine } from './tslCompositorAffine.js'
 import { invertCompositorAffine, multiplyCompositorAffine, type CompositorAffineMatrix } from './tslCompositorAffineMath.js'
+import { realizeStaticCompositorWindow } from './tslCompositorStaticImageDomain.js'
+import type { StaticCompositorWindow } from './tslCompositorStaticImage.js'
 
 const { Fn, clamp, ivec2, rtt, select, textureSize, uv, vec4 } = TSL as unknown as Record<
   'Fn' | 'clamp' | 'ivec2' | 'rtt' | 'select' | 'textureSize' | 'uv' | 'vec4',
@@ -14,6 +16,7 @@ const { Fn, clamp, ivec2, rtt, select, textureSize, uv, vec4 } = TSL as unknown 
 
 /** A real finite pixel window with a deferred origin, not an already clipped field. */
 export interface CompositorImageOrigin {
+  staticWindow?: StaticCompositorWindow
   x: number
   y: number
   sampling?: CompositorSampling
@@ -25,6 +28,8 @@ export function mergeImageOrigins(origins: (CompositorImageOrigin | null)[], fai
   const fields = origins.filter((value): value is CompositorImageOrigin => value !== null)
   if (!fields.length) return null
   const first = fields[0]!
+  if (fields.some(value => JSON.stringify(value.staticWindow) !== JSON.stringify(first.staticWindow)))
+    fail('Static Image inputs with different canvas sizes/models require native cross-domain realization')
   if (fields.some(value => value.x !== first.x || value.y !== first.y))
     fail('Inputs with different image origins require native cross-domain realization')
   return { ...first, roots: [...new Set(fields.flatMap(value => value.roots))] }
@@ -118,6 +123,11 @@ export function validateCompositorExtent(origin: CompositorImageOrigin, renderer
 
 export function realizeCompositorOrigin(input: TslEffectNode, from: CompositorImageOrigin,
   to: readonly [number, number], resources: { dispose(): void }[], fail: (message: string) => never): TslEffectNode {
+  if (from.staticWindow) {
+    if (from.x !== 0 || from.y !== 0 || from.affineMatrix || to.some(value => value !== 0))
+      return fail('Static Image transform consumers require native finite-window processing')
+    return realizeStaticCompositorWindow(input, from.staticWindow, resources, fail)
+  }
   if (from.affineMatrix) {
     if (!from.sampling) return fail('Affine realization requires native sampling metadata')
     const target = [1, 0, to[0], 0, 1, to[1], 0, 0, 1]

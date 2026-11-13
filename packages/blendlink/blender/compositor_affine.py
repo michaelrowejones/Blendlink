@@ -15,10 +15,10 @@ def f32(value):
 @lru_cache(maxsize=1)
 def native_trigonometry():
     """AngleRadian<float> calls scalar C sin/cos, not Matrix.Rotation's wrapper."""
-    names = [None]
-    if sys.platform == 'win32':
-        names.append('ucrtbase.dll')
-    else:
+    # Windows LoadLibrary requires a DLL name; the POSIX process handle
+    # (None) is not a valid candidate there. Use the existing system UCRT.
+    names = ['ucrtbase.dll'] if sys.platform == 'win32' else [None]
+    if sys.platform != 'win32':
         library = ctypes.util.find_library('m')
         if library:
             names.append(library)

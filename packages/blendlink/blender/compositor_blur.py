@@ -21,10 +21,11 @@ def gaussian_float_math():
     coefficient ULP is visible when gamma's filtered alpha is close to zero.
     """
     def libraries():
-        yield None
         if sys.platform == "win32":
+            # LoadLibrary requires a DLL name, unlike POSIX's process handle.
             yield "ucrtbase.dll"
         else:
+            yield None
             library = ctypes.util.find_library("m")
             if library:
                 yield library
