@@ -1332,6 +1332,12 @@
         },
         {
           "path": "experiments/noise-field-production/README.md"
+        },
+        {
+          "path": "packages/blendlink/src/tslIrInspection.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslIrInspection.test.ts"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -1571,6 +1577,21 @@
             "experimentalOverlay": false,
             "actualWebGLRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
           }
+        },
+        "bindingInspection": {
+          "pixelPayloadExcluded": true,
+          "originalKernelAndImageVectorRetained": true,
+          "localHighLevelLifecycleCases": 14,
+          "freshHostedTiming": "pending",
+          "priorHostedLongTasksMilliseconds": [
+            68,
+            70
+          ],
+          "localNineInspectorMedianMilliseconds": {
+            "before": 10.5235,
+            "after": 0.030167
+          },
+          "benchmarkScope": "Node CPU inspection only; unchanged native 16384-point cap IR"
         }
       }
     },
@@ -6828,13 +6849,21 @@
         "remainingTexturesAfterDisposal": 0,
         "sourcePreserved": true,
         "freshHostedOpenGl": {
-          "commit": "65263edf7f11d202983a3d98c6821593c6c483f9",
-          "run": 43361880881,
-          "cpuJob": 131677061657,
-          "cpuArtifact": 14009065522,
+          "commit": "ac6df52f552303ef85c1ba98f9cf2346772feaf5",
+          "run": 43364473395,
+          "cpuMaskJob": 131685513624,
+          "cpuMaskArtifact": 14009652332,
           "cpuMaskCases": 50,
-          "gpuStatus": "fixture stopped before numeric replay on earlier unqualified Translate diagnostic; exact refusal assertion corrected, fresh run pending",
-          "resizeStatus": "fresh hosted qualification pending"
+          "gpuMaskJob": 131685513576,
+          "gpuMaskArtifact": 14009069684,
+          "gpuMaskCases": 38,
+          "cpuResizeJob": 131685513474,
+          "cpuResizeArtifact": 14009508722,
+          "cpuResizeCases": 69,
+          "bothBrowserApis": true,
+          "gpuMaskAndCpuResizeBuiltReadbacks": 214,
+          "maximumAbsoluteError": 2.384185791015625e-07,
+          "experimentalOverlay": false
         },
         "mainCombinedBuiltReadbacks52": 176,
         "mainCombinedMaximumAbsoluteError": 2.384185791015625e-07,

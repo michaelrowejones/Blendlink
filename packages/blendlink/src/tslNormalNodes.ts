@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 // Native normal-map functions adapt Cycles svm/tex_coord.h (Apache-2.0).
 // Copyright 2011-2026 Blender Foundation. Three.js bindings and domain guards
 // are supplied by Blendlink. See assets/blender-spectral-NOTICE.txt and license.
@@ -154,7 +155,7 @@ export function collectNormalMapRequirements(value: unknown, result: TslIrExpres
   }
   if (!value || typeof value !== 'object') return
   if ((value as TslIrExpression).op === 'normal_map_native') result.push(value as TslIrExpression)
-  Object.values(value).forEach((child) => collectNormalMapRequirements(child, result))
+  irInspectionChildren(value).forEach((child) => collectNormalMapRequirements(child, result))
 }
 
 export function validateNormalMapBinding(

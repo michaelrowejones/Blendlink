@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 import { Vector3, type Object3D, type Material } from 'three'
 import { uniform } from 'three/tsl'
 import { materialProgramObjectOwner, materialProgramObjectOwnerNode } from './materialProgramDocument.js'
@@ -11,7 +12,7 @@ export function collectObjectInfoOutputs(value: unknown, outputs: Set<string>): 
   if (Array.isArray(value)) { value.forEach(item => collectObjectInfoOutputs(item, outputs)); return }
   if (!record(value)) return
   if (value.op === 'object_info') outputs.add(String(value.output))
-  Object.values(value).forEach(item => collectObjectInfoOutputs(item, outputs))
+  irInspectionChildren(value).forEach(item => collectObjectInfoOutputs(item, outputs))
 }
 
 function vector(value: unknown, size: number, label: string): number[] {

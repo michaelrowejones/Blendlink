@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 // Native packed-normal math adapts Cycles util/types_normal.h (Apache-2.0).
 // Copyright 2011-2026 Blender Foundation. Blendlink supplies Three.js bindings,
 // source-scene storage profiles, per-owner uniforms and runtime guards.
@@ -51,7 +52,7 @@ export function collectGeometryContextOutputs(value: unknown, outputs: Set<Outpu
   if (!value || typeof value !== 'object') return
   const record = value as TslIrExpression
   if (record.op === 'geometry_context') outputs.add(record.output as Output)
-  Object.values(value).forEach((item) => collectGeometryContextOutputs(item, outputs))
+  irInspectionChildren(value).forEach((item) => collectGeometryContextOutputs(item, outputs))
 }
 
 function checkedMatrix(object: Object3D): void {

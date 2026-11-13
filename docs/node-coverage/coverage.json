@@ -1,7 +1,7 @@
 {
-  "capabilityMapSha256": "80964b9b42b33f95a7213efac4d0acc2dfd7e38bf8a3596aaf96fd4e01d31fc5",
+  "capabilityMapSha256": "6bc3f1b23b5c81fc70e294b8a4f3ee11a1b9e3179d5e4503e50d6f4ab20ababa",
   "capabilityValidationFailures": [],
-  "generatedAt": "2026-11-13T04:11:54.741271+00:00",
+  "generatedAt": "2026-11-13T04:33:14.163307+00:00",
   "nativeAvailabilityChanges": [],
   "nativeEnumerationUnresolved": [
     {
@@ -5160,6 +5160,12 @@
                 },
                 {
                   "path": "experiments/noise-field-production/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslIrInspection.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslIrInspection.test.ts"
                 }
               ],
               "id": "ShaderNodeTexNoise",
@@ -12487,6 +12493,12 @@
                 },
                 {
                   "path": "experiments/noise-field-production/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslIrInspection.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslIrInspection.test.ts"
                 }
               ],
               "id": "ShaderNodeTexNoise",
@@ -20824,6 +20836,12 @@
                 },
                 {
                   "path": "experiments/noise-field-production/README.md"
+                },
+                {
+                  "path": "packages/blendlink/src/tslIrInspection.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslIrInspection.test.ts"
                 }
               ],
               "id": "ShaderNodeTexNoise",
@@ -21560,12 +21578,12 @@
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
     "packages/blendlink/src/compiledMaterialPrograms.ts": "b64a73e57cd1ac8d99102eed7e53bab5f5fa79283f74853eea468fd30edf992d",
     "packages/blendlink/src/compiledSceneAudit.ts": "e50ccf4daee1f7ea17cad4ec7a1f4828dfa401b1f8627a829b3de4d9e2857760",
-    "packages/blendlink/src/materialProgramDocument.ts": "d0cbd35a374dd5cce426269fa412e7fbb0557af78aaad76de574193de3385416",
+    "packages/blendlink/src/materialProgramDocument.ts": "71dce3562f4556e1f364799495f407f4a6a81f3d34dcf19206790fcaaa8f6627",
     "packages/blendlink/src/sceneDiagnostics.ts": "b4da47131e0dcc1d3fc8aefd085c469606a64826152ead1dfb27ad37c8dd0e57",
     "packages/blendlink/src/staticNoise4d.ts": "8101c6f4eedaf76b907a9fb98c7ed9f7b52aa0b9690f7b4ffbdaf393882406b5",
     "packages/blendlink/src/threeRuntime.ts": "f6238c57d537dbc3218b135f6aaf80b00de819f362298cadbd2825ad18451538",
     "packages/blendlink/src/tslBrickNodes.ts": "a83bda1457dbdf1f24b4ab577a53e07d63c49f91f1ea04fd2a7f0e38e5594d6d",
-    "packages/blendlink/src/tslBumpHeight.ts": "30608ecb254e9e957f61d7e8c7f309a160f6429ff4d781d78ab4a6e6f733245b",
+    "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
     "packages/blendlink/src/tslBumpPassthrough.ts": "33607d6c8638df6490950c56375a7c004ac737d2241b40b5db1da71ccbc6ffb9",
     "packages/blendlink/src/tslColorConversion.ts": "dab1c34326c1e3da91d598444062205b0ad2016172f7278121cdab007fd59e80",
     "packages/blendlink/src/tslCompositorAffine.ts": "8b2ce8dbe3468882fbbf9f5077d8c2d4bb3dfc0cb48e221b1a36d4688045b2e3",
@@ -21592,8 +21610,9 @@
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
-    "packages/blendlink/src/tslGeometryContext.ts": "736a1849bc49b15d9b67b71bc29519c8d643ac6ee2b2ab862cfc363279efcc23",
-    "packages/blendlink/src/tslMaterialProgram.ts": "0970970ce89e4e913e2b75ec0d4b342b6c929fe3b61e13a07e4f52497a966d68",
+    "packages/blendlink/src/tslGeometryContext.ts": "c0277d3eec99b9c6c7aa8f3cd97252dbe88204a36c271e5b7c6b3943d62745ec",
+    "packages/blendlink/src/tslIrInspection.ts": "976cdc3ae2f8a9bfde73f466b912f7acef17223288dfd6b8f61acb311750e3c7",
+    "packages/blendlink/src/tslMaterialProgram.ts": "9488803e03dcc7fdfb3c48d1d162c01ef1413249fd4043ce3cdc3423b3f4f109",
     "packages/blendlink/src/tslMaterialRuntime.ts": "598f1088d08ba9b6852550fba6cfb0456314074f1fc3e20df0228c04d97fa8e4",
     "packages/blendlink/src/tslMathModuloNative.ts": "f56ae4c332f93d0f597242607d02fdc8938af1d877392da3f4e3481b2e030da2",
     "packages/blendlink/src/tslMfNoiseCoordinates.ts": "3d697e3dd7a01418263fa7edac3154db127b669f4212cf533b15c94ed53046a7",
@@ -21606,16 +21625,16 @@
     "packages/blendlink/src/tslNoiseFields.ts": "006b0581ca5816eacbe5695b0c9d901168a4b35292d4d10bef792ba7dd094316",
     "packages/blendlink/src/tslNoiseInputPrecision.ts": "1d69da52f38a4743352dc18f5e808fe9a198f213bfc0d20cef2dc5d3f9a56f02",
     "packages/blendlink/src/tslNormalInputBounds.ts": "238dd8753e6b2962a0977f7128e394b69ce771eda99a8a76450e34ea033813db",
-    "packages/blendlink/src/tslNormalNodes.ts": "a2505eff8008f6f99f53909759dde91aa8cb02a8299f557351a0757761c6fa03",
+    "packages/blendlink/src/tslNormalNodes.ts": "44bdea1ec6aa909effafa67ad627086b3272e6c89767d6c38da4828003ea1126",
     "packages/blendlink/src/tslNormalNoiseBounds.ts": "d077612c85a079e3f0cbc337510b241753744d4896cadf0f7c373015453bbc1c",
-    "packages/blendlink/src/tslObjectInfo.ts": "c8e53a2f6252aaed411a8ff0d6495f5bc1ab64eb659f3250ffbac0ee4e765b7d",
+    "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
     "packages/blendlink/src/tslSharedUtilities.ts": "847612c8c2519bcbce3b759118ba653e5aaf009040be1eaa089f7c25a6a1f1f9",
     "packages/blendlink/src/tslSourceCompositor.ts": "318017adc598f6e0f09327ac36635b6ee1fb1958d9d43d620a66d56a8fbcdde8",
     "packages/blendlink/src/tslSpectralNodes.ts": "f65d7821ac0eb867c3ef7ad3aaf4d8b7d824f4c41581bd17e9182b8bd20402ee",
-    "packages/blendlink/src/tslTangentNodes.ts": "517c0e9d33d838d381fafb311d6289282860f8fe6fcae3b1b6bd10c59b424831",
-    "packages/blendlink/src/tslTangentNormalMap.ts": "ac9b769015f51c282bd5b6bf3a98bb52f7cf950befa86c6042ec2eb79de9030d",
+    "packages/blendlink/src/tslTangentNodes.ts": "248c6f398b631f479370f30a2dda91437a8269ed805e7f1767c700ec29ed952d",
+    "packages/blendlink/src/tslTangentNormalMap.ts": "b054680f158299006576d6d1b889fededd1f37b3c8941c0fe7c38b734508a287",
     "packages/blendlink/src/tslVaryingNoise.ts": "ae1c81175f338531bd7790505d35d7136e894d01fb44488733829fe273223ea4",
-    "packages/blendlink/src/tslVectorTransform.ts": "5f5210b22de500e1d48faabbf86b19bee9c7d246a380658c845fb2ab7959fb66"
+    "packages/blendlink/src/tslVectorTransform.ts": "6301a09b66a535ebdd595bd94912e58db8435ce785d3ceac8691e1886e3bd96f"
   }
 }

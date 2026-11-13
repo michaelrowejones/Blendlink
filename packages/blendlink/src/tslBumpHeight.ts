@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 /** Bounded EEVEE affine-UV Height, guarded against the actual mesh and view. */
 import { Matrix3, Vector3, Vector4, type Mesh, type Camera } from 'three'
 import { float, Fn, frontFacing, max, mix, select, uniform, uv, vec3 } from 'three/tsl'
@@ -128,7 +129,7 @@ export function collectBumpHeights(value: unknown, result: TslIrExpression[]): v
   }
   if (!value || typeof value !== 'object') return
   if ((value as TslIrExpression).op === 'bump_height_native') result.push(value as TslIrExpression)
-  Object.values(value).forEach((child) => collectBumpHeights(child, result))
+  irInspectionChildren(value).forEach((child) => collectBumpHeights(child, result))
 }
 
 function parameters(expression: TslIrExpression) {

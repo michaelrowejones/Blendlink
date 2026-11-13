@@ -1,5 +1,28 @@
 # Cooperative finite nearest-image Noise fields
 
+## Binding-inspection payload cost
+
+The ac6df52 hosted lifecycle report isolates a 68/70 ms task: roughly 54/56 ms
+occur before installation resolves, followed by about 9 ms of harness source
+comparison and 4/7 ms of render submission. This is not evidence that the stall
+is exclusively shader compilation. All numerical canaries passed separately.
+
+Binding/UV/geometry/normal inspectors previously traversed every numeric
+`tex_image.pixels` element repeatedly. `irInspectionChildren` excludes only that
+data field, preserving every other child, the original Noise kernel, actual
+image coordinates and future metadata dependencies. Image builders and
+cooperative preparation still validate the complete pixel payload; no source
+program, precision budget or binding requirement is changed.
+
+A retained local Node CPU benchmark of the original 16,384-point cap IR reduced
+the median combined nine-inspector cost from 10.52 ms to 0.030 ms (25 measured
+iterations after five warmups). That is a CPU-inspection measurement, not a
+native-pixel or hosted timing claim. The built optimized lifecycle replay passes
+all 14 cases without long tasks. Fresh hosted timing remains required. The
+regression tests use a throwing pixel-data getter while checking that actual
+UV/object/normal/tangent/Height dependencies inside image coordinates remain
+visible to each inspector.
+
 Fresh source exports can emit `noise_field_nearest` with profile
 `finite-nearest-f32-v1`. Its `kernel` contains the original precise 4D FBM Color
 program. Existing serialized `noise`, `noise_fractal`, `noise_normalized`, Math,

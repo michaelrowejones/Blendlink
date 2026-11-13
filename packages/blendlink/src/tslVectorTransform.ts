@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 import { Matrix3, Matrix4, Vector3, type Camera, type Object3D } from 'three'
 import { length, select, uniform, vec4 } from 'three/tsl'
 import { TslIrError, type TslExpression, type TslIrExpression } from './tslNodeRecipe.js'
@@ -88,7 +89,7 @@ export function collectVectorTransformRequirements(value: unknown, requirements:
     const from = expression.from as Space, to = expression.to as Space, kind = expression.kind as Kind
     requirements.push({ from, to, kind, ...(kind === 'NORMAL' ? { normal: literalVector(expression.input) ?? [], normalModel: expression.normalModel as VectorTransformRequirement['normalModel'] } : {}) })
   }
-  Object.values(value).forEach(item => collectVectorTransformRequirements(item, requirements))
+  irInspectionChildren(value).forEach(item => collectVectorTransformRequirements(item, requirements))
 }
 
 /** Installer/auditor preflight uses the actual bound object matrix. Camera

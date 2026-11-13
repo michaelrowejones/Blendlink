@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 import type * as THREE from 'three'
 import type { MaterialProgramChannel } from './tslMaterialProgram.js'
 
@@ -119,7 +120,7 @@ export async function assertLegacyMaterialCarriers(
   const nativeNormal=(value:unknown):boolean=>{
     if(Array.isArray(value))return value.some(nativeNormal)
     if(!value||typeof value!=='object')return false
-    return ['normal_map_native','normal_view_native','normal_map_tangent_native','bump_height_native'].includes(String((value as Record<string,unknown>).op))||Object.values(value).some(nativeNormal)
+    return ['normal_map_native','normal_view_native','normal_map_tangent_native','bump_height_native'].includes(String((value as Record<string,unknown>).op))||irInspectionChildren(value).some(nativeNormal)
   }
   const normalNames=[...primaryNormals].filter(([source])=>Object.hasOwn(programs.materials,source)&&nativeNormal(programs.materials[source]?.channels))
     .flatMap(([,names])=>[...names]).sort()

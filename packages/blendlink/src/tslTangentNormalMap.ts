@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 /* SPDX-FileCopyrightText: 2026 Blendlink contributors
  * SPDX-License-Identifier: Apache-2.0
  * Native tangent-normal composition with independently checked finite inputs. */
@@ -25,7 +26,7 @@ export function collectTangentNormalMaps(value: unknown, result: TslIrExpression
   if (!value || typeof value !== 'object') return
   if ((value as TslIrExpression).op === 'normal_map_tangent_native')
     result.push(value as TslIrExpression)
-  Object.values(value).forEach((child) => collectTangentNormalMaps(child, result))
+  irInspectionChildren(value).forEach((child) => collectTangentNormalMaps(child, result))
 }
 
 function parameters(

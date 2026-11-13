@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 /* SPDX-FileCopyrightText: 2026 Blendlink contributors
  * SPDX-License-Identifier: Apache-2.0
  * Native UV tangent transforms, packing and interpolation expressed in Three TSL. */
@@ -21,7 +22,7 @@ export function collectTangentRequirements(value: unknown, result: TslIrExpressi
   }
   if (!value || typeof value !== 'object') return
   if ((value as TslIrExpression).op === 'tangent_native') result.push(value as TslIrExpression)
-  Object.values(value).forEach((child) => collectTangentRequirements(child, result))
+  irInspectionChildren(value).forEach((child) => collectTangentRequirements(child, result))
 }
 
 function shape(expression: TslIrExpression): void {

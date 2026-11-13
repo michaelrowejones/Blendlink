@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 /**
  * The IR-to-node-graph half of the TSL material runtime (plan-doc gap
  * 8b.3): everything needed to turn a shipped program's channels plus
@@ -110,7 +111,7 @@ export function collectObjectAttributeNames(
     if (record.op === 'attribute_object' && typeof record.name === 'string') {
       names.add(record.name)
     }
-    for (const item of Object.values(record)) {
+    for (const item of irInspectionChildren(record)) {
       collectObjectAttributeNames(item, names)
     }
   }
@@ -120,7 +121,7 @@ export function requiresActiveUv(value: unknown): boolean {
   if (Array.isArray(value)) return value.some(requiresActiveUv)
   if (!value || typeof value !== 'object') return false
   const record = value as Record<string, unknown>
-  return record.op === 'uv_active' || Object.values(record).some(requiresActiveUv)
+  return record.op === 'uv_active' || irInspectionChildren(record).some(requiresActiveUv)
 }
 
 function activeUvChannel(extras: TslRuntimeMeshExtras | null, materialName: string): number {
