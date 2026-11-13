@@ -27,6 +27,11 @@ jobs:
           - browser: full-chromium-swiftshader
             channel: chromium
             arguments: '["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader"]'
+          # Chrome's documented Linux headless Vulkan presentation path.
+          # This remains a diagnostic candidate until all strict reports pass.
+          - browser: full-chromium-vulkan-swiftshader
+            channel: chromium
+            arguments: '["--enable-gpu","--enable-features=Vulkan","--use-angle=vulkan","--use-vulkan=swiftshader","--disable-vulkan-surface","--use-webgpu-adapter=swiftshader"]'
     env:
       LIBGL_ALWAYS_SOFTWARE: '1'
       BLENDLINK_CAMERA_DATA_NATIVE_BACKEND: OPENGL
@@ -141,6 +146,16 @@ jobs:
             exit 1
           fi
           cat "$BLENDLINK_CAMERA_DATA_NATIVE/package-probe.log"
+
+      - name: Isolate public WebGPU canvas presentation without Three or Camera Data
+        if: ${{ !cancelled() && steps.final.outcome == 'success' }}
+        run: |
+          if ! xvfb-run --auto-servernum node experiments/camera-data/canvas-probe.mjs \
+            > "$BLENDLINK_CAMERA_DATA_NATIVE/canvas-control-$BLENDLINK_TEST_PROFILE.log" 2>&1; then
+            cat "$BLENDLINK_CAMERA_DATA_NATIVE/canvas-control-$BLENDLINK_TEST_PROFILE.log"
+            exit 1
+          fi
+          cat "$BLENDLINK_CAMERA_DATA_NATIVE/canvas-control-$BLENDLINK_TEST_PROFILE.log"
 
       - name: Require complete strict reports from the actual requested software adapter
         if: ${{ !cancelled() && steps.final.outcome == 'success' }}
