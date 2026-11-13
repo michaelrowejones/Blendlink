@@ -80,6 +80,22 @@ describe('validated live Base Color carrier evidence', () => {
     gltf.materials[0].extras.blendlink_source_material = 'Unrelated'
     expect((await inspect(gltf)).issues.map(issue => issue.code)).toContain(missing)
   })
+  it('validates fresh Squeeze Roughness on a portable color and every actual marked binding',async()=>{
+    const output={op:'squeeze_native',model:'eevee-squeeze-f32-v1',sourceEngine:'EEVEE',sourceProfile:'darwin-arm64-metal-v1',nativeVersion:[5,2,0],nativeGpuBackend:'METAL',inputModel:'opaque-nearest-f32-data-or-literal-v1',value:{op:'const_float',value:1},width:{op:'const_float',value:1},center:{op:'const_float',value:0}}
+    const gltf:any=fixture();gltf.materials[0].pbrMetallicRoughness={baseColorFactor:[.125,.25,.5,1]}
+    gltf.meshes[0].extras={blendlink_tsl_runtime:{schemaVersion:1,requiresNodeRenderer:{schemaVersion:1,model:'squeeze-native-v1'}}}
+    const publish=(expression:unknown)=>publication({Roughness:{tslIr:{...checker,output:expression}}})
+    expect((await inspect(gltf,publish(output))).issues).toEqual([])
+    for(const patch of [{nativeGpuBackend:'OPENGL'},{value:{op:'const_float',value:16},width:{op:'const_float',value:16}},{value:{op:'attribute_object',name:'unbound',output:'fac'}}])
+      await expect(inspect(gltf,publish({...output,...patch}))).rejects.toThrow(/Compiled live material program/)
+    const image={op:'tex_image',sourceEngine:'EEVEE',nativeGpuBackend:'METAL',sourceImageStorage:'rgba32f',sourceImageUploadRounding:'none',width:1,height:1,pixels:[.25,.5,.125,1],interpolation:'Closest',extension:'REPEAT',output:'color',vector:{op:'const_vec3',value:[.25,.75,0]}}
+    const imageOutput={...output,value:{op:'separate',channel:'x',input:image}}
+    expect((await inspect(gltf,publish(imageOutput))).issues).toEqual([])
+    image.pixels[0]=32;await expect(inspect(gltf,publish(imageOutput))).rejects.toThrow(/Squeeze Value/)
+    delete gltf.meshes[0].extras;await expect(inspect(gltf,publish(output))).rejects.toThrow(/exported node-renderer declaration/)
+    gltf.meshes[0].extras={blendlink_tsl_runtime:{schemaVersion:1,requiresNodeRenderer:{schemaVersion:1,model:'squeeze-native-v1'}}}
+    gltf.materials[0].extensions={KHR_materials_unlit:{}};await expect(inspect(gltf,publish(output))).rejects.toThrow(/lit material carrier/)
+  })
   it('does not accept a material program that only supplies Roughness', async () => {
     expect((await inspect(fixture(), publication({ Roughness: { tslIr: checker } }))).issues.map(issue => issue.code)).toContain(missing)
   })

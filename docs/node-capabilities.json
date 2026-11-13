@@ -831,6 +831,145 @@
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
     },
+    "shader:ShaderNodeSqueeze": {
+      "category": "partial",
+      "limits": "Fresh eevee-squeeze-f32-v1 only: Blender 5.2.0/5.3.0 on macOS arm64, with actual METAL source-backend attestation. Inputs may be exact Float32 literals, qualified Squeeze outputs, or direct RGB channels of opaque full-float Non-Color nearest images with literal coordinates. UV, Generated, Object and other spatial coordinates remain unqualified. Static FILE/GENERATED images require flat projection, Closest interpolation, REPEAT/EXTEND/CLIP, straight alpha 1 and Half Precision off. Image payload <= 1024 pixels; validation <= 12288 values, 64 visits and depth 8 (at most 4 nested Squeeze nodes). Steep near-midpoint Width 16 stresses are proved; 5..8-node chains refuse. Source and runtime independently prove finite exact Float32 magnitude <= 16 for actual inputs/pixels/coordinates and staged abs((Value-Center)*Width) <= 24, including Clip zero. Unknown graphs, ranges, images, profiles or versions refuse before texture allocation; asserted unit intervals grant no admission. No Cycles live parity: the actual default ALL output differs, so automatic EEVEE-to-Cycles bake fallback is engine-sensitive. Blender 4.2 retains native numerical research, but source attestation is N/A and production admission is unavailable. Browser Metal and SwiftShader are verified on both APIs; this is channel-function proof, not whole-look lighting parity. CPU Final preflight requires the fresh exporter-owned mesh renderer marker. A matched Squeeze program in any channel refuses legacy rendering even when Base Color is portable. Literal/image-driven Roughness-only actual Final programs are verified; ordinary unmarked portable/old-IR no-fetch behavior remains unchanged.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "squeeze_native"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/squeeze_ir.py",
+          "anchor": "def emit_squeeze"
+        },
+        {
+          "path": "packages/blender-addon/engine_fallback.py",
+          "anchor": "ShaderNodeSqueeze"
+        },
+        {
+          "path": "packages/blendlink/src/tslSqueeze.ts",
+          "anchor": "export function buildTslSqueeze"
+        },
+        {
+          "path": "packages/blender-addon/tests/squeeze_translation_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslSqueeze.test.ts"
+        },
+        {
+          "path": "experiments/squeeze-node-differential/README.md"
+        },
+        {
+          "path": "experiments/squeeze-node-differential/sources.json"
+        },
+        {
+          "path": "experiments/squeeze-node-differential/protocol.test.mjs"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "requiresSqueezeRenderer"
+        },
+        {
+          "path": "packages/blendlink/src/materialProgramDocument.ts",
+          "anchor": "primarySqueezes"
+        },
+        {
+          "path": "packages/blendlink/src/compiledMaterialPrograms.ts",
+          "anchor": "function hasSqueeze"
+        },
+        {
+          "path": "packages/blendlink/src/materialProgramDocument.test.ts"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "versionOverrides": {
+        "4.2.0": {
+          "category": "unsupported",
+          "runtimeOps": [],
+          "limits": "Native EEVEE Squeeze is viable and numerical research is retained, but 4.2 background export cannot attest its GPU backend. The fresh producer returns SOURCE_ATTESTATION_NA and 0 production cases. Metal qualification is not inferred from a preference or platform; automatic Cycles baking differs."
+        }
+      },
+      "verification": {
+        "nativeVersions": [
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeEngines": [
+          "EEVEE actual Metal"
+        ],
+        "sourceProfile": "darwin-arm64-metal-v1",
+        "casesPerVersion": 26,
+        "squeezeCasesPerVersion": 25,
+        "independentControlsPerVersion": 1,
+        "packedRawFilesPerVersion": 28,
+        "actualFinalGlbs": 52,
+        "actualFinalSqueezeGlbs": 50,
+        "runtimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "recordedAdapters": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "caseRunsRawAndFinal": 416,
+        "rgbComparisons": 1277952,
+        "nativeRawIntervalWidth": 5.960464477539063e-08,
+        "kernelBudget": 2e-05,
+        "maximumDistanceOutsideNativeInterval": 0,
+        "maximumDistanceToNativeIntervalLowerBound": 2.9802322387695312e-08,
+        "sourcePreserved": true,
+        "copiedAddonPackageProbe": true,
+        "negativeControls": [
+          "missing actual WebGPU adapter",
+          "duplicate fallback APIs",
+          "bad published program pin",
+          "unbounded product",
+          "changed image pixels before allocation",
+          "actual portable-color Roughness legacy refusal",
+          "actual Roughness source-profile rejection",
+          "actual primitive renderer marker removed"
+        ],
+        "validationWork": {
+          "maxImagePixels": 1024,
+          "maxPixelValues": 12288,
+          "browserMedianMilliseconds": 0.10000002384185791,
+          "browserMaximumMilliseconds": 0.5,
+          "sourceMedianMillisecondsByVersion": {
+            "5.2.0": 1.9808335055131465,
+            "5.3.0": 2.0684790215454996
+          }
+        },
+        "notApplicableSourceVersions": {
+          "4.2.0": "Background GPU backend attestation unavailable; zero production cases. Native numerical research remains distinct."
+        },
+        "steepStress": {
+          "width": 16,
+          "center": 0.5,
+          "values": [
+            "nextafter(.5,-infinity)",
+            ".5",
+            "nextafter(.5,+infinity)"
+          ],
+          "admittedDepths": [
+            2,
+            3,
+            4
+          ],
+          "nativeRefusedDepths": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "nativeRefusedCasesPerVersion": 12,
+          "maximumDistanceToNativeIntervalLowerBound": 0
+        },
+        "roughnessOnlyFinalCasesPerVersion": 2
+      }
+    },
     "shader:ShaderNodeClamp": {
       "category": "supported",
       "limits": "MINMAX and RANGE with finite authored or live Value/Min/Max. RANGE orders bounds per evaluation; MINMAX retains authored order, including reversed and collapsed bounds. Animated/driven node trees follow the shared material limits.",
@@ -8591,7 +8730,6 @@
     "shader:ShaderNodeRaycast",
     "shader:ShaderNodeScript",
     "shader:ShaderNodeShadowRaycast",
-    "shader:ShaderNodeSqueeze",
     "shader:ShaderNodeSubsurfaceScattering",
     "shader:ShaderNodeTexEnvironment",
     "shader:ShaderNodeTexGabor",

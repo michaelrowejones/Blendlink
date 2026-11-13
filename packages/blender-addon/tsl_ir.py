@@ -1364,6 +1364,16 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeValue":
         return _scalar(_constant_value(node.outputs["Value"]))
 
+    if idname == "ShaderNodeSqueeze":
+        if __package__:
+            from .squeeze_ir import emit_squeeze
+            from .procedural import _walk_channel_upstream
+        else:
+            from squeeze_ir import emit_squeeze
+            from procedural import _walk_channel_upstream
+        return emit_squeeze(node, from_socket, scalar=lambda socket: emit_input(socket, stack=stack),
+            refuse=_refuse, evaluation_engine=get_evaluation_engine(), stack=stack, walk=_walk_channel_upstream)
+
     if idname == "ShaderNodeNormal":
         if __package__:
             from .normal_direction_ir import emit_normal_direction

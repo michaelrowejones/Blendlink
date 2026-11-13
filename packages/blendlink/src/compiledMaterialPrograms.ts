@@ -42,6 +42,12 @@ function hasCameraData(value:unknown):boolean {
   return value.op==='camera_data_native'||irInspectionChildren(value).some(hasCameraData)
 }
 
+function hasSqueeze(value:unknown):boolean {
+  if(Array.isArray(value))return value.some(hasSqueeze)
+  if(!record(value))return false
+  return value.op==='squeeze_native'||irInspectionChildren(value).some(hasSqueeze)
+}
+
 function imageFile(value: unknown): string {
   if (typeof value !== 'string' || !value || value === '.' || value === '..' || /[\\/\u0000?#:%]/.test(value)) {
     throw new Error('Compiled material program image must name a basename beside its sidecar.')
@@ -206,13 +212,17 @@ export async function validatedBaseColorProgramMaterials(
     const nativeNormal=record(program)&&hasNativeNormal(program.channels)
     const magic=record(program)&&hasMagic(program.channels)
     const cameraData=record(program)&&hasCameraData(program.channels)
-    if(!baseColorRequired&&!nativeNormal&&!magic&&!cameraData)return []
+    const squeeze=record(program)&&hasSqueeze(program.channels)
+    if(!baseColorRequired&&!nativeNormal&&!magic&&!cameraData&&!squeeze)return []
     const channel = record(program) && record(program.channels) ? program.channels['Base Color'] : null
     if (baseColorRequired&&(!record(channel) || !record(channel.tslIr))) return []
     // GLTFLoader creates MeshBasicMaterial for an unlit carrier; the actual
     // program installer only swaps MeshStandardMaterial-compatible carriers.
-    if (record(material.extensions) && Object.hasOwn(material.extensions, 'KHR_materials_unlit')) return []
-    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal,magic,cameraData }]
+    if (record(material.extensions) && Object.hasOwn(material.extensions, 'KHR_materials_unlit')) {
+      if(squeeze)throw new Error('Squeeze Value requires a lit material carrier compatible with its node renderer')
+      return []
+    }
+    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal,magic,cameraData,squeeze }]
   })
   if (!candidates.length) return accepted
   const { buildTslColorNode, createTslBuildResources, TslIrError } = await import('./tslNodeRecipe.js')
@@ -268,7 +278,7 @@ export async function validatedBaseColorProgramMaterials(
       return texture
     },
   })
-    for (const { index, ir, program,baseColorRequired,nativeNormal,magic,cameraData } of candidates) {
+    for (const { index, ir, program,baseColorRequired,nativeNormal,magic,cameraData,squeeze } of candidates) {
       let bindingCount = 0
       let valid = true
       let refusal=''
@@ -304,6 +314,8 @@ export async function validatedBaseColorProgramMaterials(
                 [...names].some(name => !Object.hasOwn(properties, name) || !objectAttributeValue(properties[name]))) {
               throw new TslIrError('Material program requires unavailable per-object properties or a non-mesh binding')
             }
+            if(squeeze&&(extras?.requiresNodeRenderer?.schemaVersion!==1||extras.requiresNodeRenderer.model!=='squeeze-native-v1'))
+              throw new TslIrError('Squeeze Value requires its exported node-renderer declaration on the actual primitive')
             const options:import('./tslNodeRecipe.js').BuildTslOptions = { ...buildOptionsFor(extras, resources, `materials[${index}]`, textures?.resolver, objectAttributeResolver()), preparedNoiseFields:preparation }
             if(geometry.size){
               const accessors=Array.isArray(gltf.accessors)?gltf.accessors:[]
@@ -406,10 +418,10 @@ export async function validatedBaseColorProgramMaterials(
             }
             inspect(record(program) ? program.channels : ir)
             if(ir)buildTslColorNode(ir, options)
-            if((nativeNormal||magic||cameraData)&&record(program)&&record(program.channels)){
+            if((nativeNormal||magic||cameraData||squeeze)&&record(program)&&record(program.channels)){
               const built=buildMaterialProgram(program.channels as unknown as Record<string,import('./tslMaterialProgram.js').MaterialProgramChannel>,options)
               for(const [name,channel] of Object.entries(program.channels)){
-                if(hasNativeNormal(channel)||hasMagic(channel)||hasCameraData(channel)){
+                if(hasNativeNormal(channel)||hasMagic(channel)||hasCameraData(channel)||hasSqueeze(channel)){
                   const skipped=built.skipped.find(item=>item.channel===name)
                   if(skipped)throw new TslIrError(`Native material channel ${name}: ${skipped.reason}`)
                 }

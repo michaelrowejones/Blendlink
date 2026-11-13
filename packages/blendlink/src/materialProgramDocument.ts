@@ -95,6 +95,7 @@ export async function assertLegacyMaterialCarriers(
   const missing = new Map<string, Set<string>>()
   const primaryNormals = new Map<string,Set<string>>()
   const primaryCameras = new Map<string,Set<string>>()
+  const primarySqueezes = new Map<string,Set<string>>()
   options.root.traverse(object => {
     const mesh = object as THREE.Mesh
     if (!mesh.isMesh) return
@@ -103,6 +104,11 @@ export async function assertLegacyMaterialCarriers(
       const source = material?.userData?.blendlink_source_material
       if (typeof source !== 'string') continue
       const context=mesh.userData?.blendlink_tsl_runtime?.geometryContext
+      const required=mesh.userData?.blendlink_tsl_runtime?.requiresNodeRenderer
+      if(required?.schemaVersion===1&&required.model==='squeeze-native-v1'){
+        const names=primarySqueezes.get(source)??new Set<string>()
+        names.add(material.name||source);primarySqueezes.set(source,names)
+      }
       if(Array.isArray(context)&&context.includes('normal')){
         const names=primaryNormals.get(source)??new Set<string>()
         names.add(material.name||source);primaryNormals.set(source,names)
@@ -120,8 +126,18 @@ export async function assertLegacyMaterialCarriers(
       missing.set(source, names)
     }
   })
-  if (!missing.size&&!primaryNormals.size&&!primaryCameras.size) return
+  if (!missing.size&&!primaryNormals.size&&!primaryCameras.size&&!primarySqueezes.size) return
   const programs = options.loadPrograms ? await options.loadPrograms() : await fetchMaterialPrograms(pointer)
+  const nativeSqueeze=(value:unknown):boolean=>{
+    if(Array.isArray(value))return value.some(nativeSqueeze)
+    if(!value||typeof value!=='object')return false
+    const expression=value as Record<string,unknown>
+    return (expression.op==='squeeze_native'&&expression.model==='eevee-squeeze-f32-v1')||irInspectionChildren(value).some(nativeSqueeze)
+  }
+  const squeezeNames=[...primarySqueezes].filter(([source])=>Object.hasOwn(programs.materials,source)&&nativeSqueeze(programs.materials[source]?.channels))
+    .flatMap(([,names])=>[...names]).sort()
+  if(squeezeNames.length)throw new Error(`Legacy WebGLRenderer cannot render the shipped live Squeeze Value program for ${squeezeNames.map(name=>JSON.stringify(name)).join(', ')}. `+
+    'Its portable material does not carry every live channel. Use WebGPURenderer (including its WebGL2 fallback).')
   const nativeCamera=(value:unknown):boolean=>{
     if(Array.isArray(value))return value.some(nativeCamera)
     if(!value||typeof value!=='object')return false

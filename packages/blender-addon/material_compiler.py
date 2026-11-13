@@ -5666,6 +5666,8 @@ def _ir_runtime_needs(value, needs) -> None:
         op = value.get("op")
         if op == "uv" and value.get("uvMap"):
             needs["uvMaps"].add(str(value["uvMap"]))
+        if op == "squeeze_native" and value.get("model") == "eevee-squeeze-f32-v1":
+            needs["requiresSqueezeRenderer"] = True
         if op == "uv_active":
             needs["usesActiveUv"] = True
         if op == "vertex_color" and value.get("layer"):
@@ -5708,7 +5710,7 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
     needs = {
         "uvMaps": set(), "usesActiveUv": False, "colorLayers": set(), "objectAttributes": set(), "objectInfo": set(),
         "texspace": False, "objectSpace": False, "vectorTransformOwner": False,
-        "geometryContext": set(),"tangentFrames": set(),
+        "geometryContext": set(),"tangentFrames": set(), "requiresSqueezeRenderer": False,
     }
     for item in (decision.channel_plan or {}).get("channels", ()):
         ir = item.get("tslIr")
@@ -5716,7 +5718,8 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
             _ir_runtime_needs(ir, needs)
     if not needs["uvMaps"] and not needs["usesActiveUv"] and not needs["colorLayers"] \
             and not needs["texspace"] and not needs["objectSpace"] \
-            and not needs["objectAttributes"] and not needs["objectInfo"]:
+            and not needs["objectAttributes"] and not needs["objectInfo"] \
+            and not needs["requiresSqueezeRenderer"]:
         return None
     mesh = getattr(obj, "data", None)
     if mesh is None:
@@ -5725,6 +5728,8 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
             f'data on "{getattr(obj, "name", "?")}", which has none.'
         )
     entry = {"schemaVersion": 1}
+    if needs["requiresSqueezeRenderer"]:
+        entry["requiresNodeRenderer"] = {"schemaVersion": 1, "model": "squeeze-native-v1"}
     if needs["usesActiveUv"]:
         layers = getattr(mesh, "uv_layers", None)
         active_name = source_uv_state.get("activeRenderUv") if source_uv_state is not None else None

@@ -35,6 +35,7 @@ export interface MaterialProgramChannel {
 /** The mesh extras stamped by the exporter (blendlink_tsl_runtime). */
 export interface TslRuntimeMeshExtras {
   schemaVersion?: number
+  requiresNodeRenderer?: {schemaVersion:1;model:'squeeze-native-v1'}
   uvChannels?: Record<string, number>
   activeRenderUv?: { schemaVersion: 1; model: 'source-active-render-v1'; uvMap: string; channel: number }
   colorLayers?: Record<string, string>

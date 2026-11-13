@@ -41,11 +41,13 @@ Live programs work on its WebGPU backend and its WebGL2 fallback. Existing site
 integrations need the same renderer family to install live programs. An
 integration using legacy `WebGLRenderer` keeps the portable/baked carrier.
 When a material's base color exists only in its live program, legacy renderer
-installation explains the missing capability and stops. Preview and export use
-the required node renderer automatically.
+installation explains the missing capability and stops. Fresh Squeeze programs
+also require the node renderer in every channel, including Roughness when Base
+Color is portable. Preview and export use the required node renderer automatically.
 
 Final validation checks shipped program bytes against their manifest identity
 and validates the live base-color expression against the actual mesh inputs.
+Fresh Squeeze expressions receive this validation in every material channel.
 A material name or marker alone cannot excuse a missing color carrier. Programs
 whose required dependencies cannot be validated still need a portable/baked
 carrier for publication. External images are resolved against the shipped
@@ -80,10 +82,11 @@ the previous serialized model remains compatible. Fresh Luminance Key now
 preserves this boundary within its measured Mac CPU profiles, including
 tiny-value behavior and final RGBA products. Unmeasured CPU/compiler profiles
 retain explicit legacy v1 precision and do not gain that HDR guarantee.
-Separate Linux/Windows native qualification remains pending; experimental
-kernel trials cannot promote production admission. Ordinary-value comparisons
-do not certify this boundary. These are partial ports, and complete node
-parity remains unfinished.
+Luminance Key additionally has [qualified production receipts](../experiments/luma-cpu-precision/host-production-receipts.json)
+for the documented Linux 5.2 and Windows 4.2/5.2 CPU profiles. These do not
+qualify other builds or GPU evaluators. Experimental kernel trials cannot
+promote production admission, and ordinary-value comparisons do not certify
+this boundary. These are partial ports; complete node parity remains unfinished.
 
 ## How a port earns support
 
@@ -144,6 +147,14 @@ execution remain outside this port. Older native versions report actual node
 absence rather than a numerical pass. The [compositor selector proof](../experiments/native-compositor-differential/VECTOR_COMPONENT.md)
 keeps native selection/Separate XYZ pairs, browser numeric checks and ZIP source
 extraction evidence distinct. It does not claim signed-zero browser word parity.
+
+Squeeze Value has a [bounded EEVEE live port](../experiments/squeeze-node-differential/README.md)
+on verified Blender 5.2/5.3 macOS Metal sources. It accepts exact Float32 literals,
+qualified Squeeze results, and scalar channels from small opaque nearest data
+images sampled at literal coordinates. Spatial coordinates and other input
+graphs remain outside this port. Blender 4.2 cannot attest the required source
+backend in background export and retains an explicit refusal. Cycles evaluates
+this node differently, so automatic fallback cannot silently switch engines.
 
 ## Work toward full coverage
 
