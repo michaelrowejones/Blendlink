@@ -82,3 +82,28 @@ same actual backend and finish all native/Final/numeric/ownership/package and
 plain-canvas checks on Linux before it can earn that CI configuration. Prior
 failed profiles remain retained; their absence from this smaller matrix is not
 a retroactive pass. A normal-trigger CI fix remains separate and unpromoted.
+
+## QA3 failure and native backtrace capture
+
+QA3 run `43416969774` at `1f717b5af52fb2d2f6ece15105ca1f3c32a14879`
+failed both configurations. Graphite artifact `14031578675` SHA-256
+`b0a0bcb33268f5537242062e690b2779f7c6610db6685f050b8ea9720deee024`
+records actual GraphiteDawnVulkan/enabled Graphite, but the GPU process repeatedly
+exits 133 before usable contexts. Both Camera APIs produce zero samples; the
+plain control reports no WebGPU adapter. This is a distinct earlier upstream
+execution failure, not a Camera numeric counterexample. The shell baseline
+artifact `14031917415` / `25e2a35a8a2ff1c32acd17d6c27276352199be12f7eb7b148277b9a259c2e1a0`
+repeats the prior first 30/full WebGL 240+8 behavior. Neither qualifies.
+
+The retained Graphite stderr has no primary FATAL/CHECK text or native stack,
+only failed command-buffer creation and the GPU-process exit 133 report. That
+alone cannot identify a particular Chromium assert or SwiftShader defect.
+The next temporary job therefore uses the identical Graphite rendering flags
+and only native debugger/logging instrumentation. `--gpu-launcher` starts each
+GPU subprocess under gdb, stopping on the actual signal and retaining module
+maps, instruction/register location and native thread backtraces. No process
+heap, environment or full core is exported. Binary/library hashes are retained.
+There is no Blender, build, native reference generation or node qualification
+in this diagnostic job, and its result cannot replace a failed numeric test.
+Prior complete native/Final artifacts remain unchanged. A bounded diagnostic
+150-second timeout does not change any production or numeric-suite watchdog.

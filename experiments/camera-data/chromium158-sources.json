@@ -17,6 +17,16 @@
       "path": "gpu/command_buffer/service/shared_image/wrapped_sk_image_backing_factory.cc",
       "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/gpu/command_buffer/service/shared_image/wrapped_sk_image_backing_factory.cc",
       "sha256": "0b47bf9bd30d4f8254395d430f96cd8e02f372582d092b965242a11a095f0d42"
+    },
+    {
+      "path": "content/browser/gpu/gpu_process_host.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/content/browser/gpu/gpu_process_host.cc",
+      "sha256": "82259c004403aade94feb2bfe2a83e4161ec8f37bca0a6c42c80dabe24b29ab9"
+    },
+    {
+      "path": "content/public/common/content_switches.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/content/public/common/content_switches.cc",
+      "sha256": "b382d678d144da4d658fa6aba65a5658f78cbe1102d158ca617582ef9651a6cc"
     }
   ]
 }
